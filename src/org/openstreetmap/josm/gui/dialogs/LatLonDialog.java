@@ -8,12 +8,7 @@ import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -42,30 +37,6 @@ public class LatLonDialog extends ExtendedDialog {
     private JosmTextField tfLatLon, tfEastNorth;
     private LatLon latLonCoordinates;
     private EastNorth eastNorthCoordinates;
-
-    private static final Double ZERO = 0.0;
-    private static final String DEG = "\u00B0";
-    private static final String MIN = "\u2032";
-    private static final String SEC = "\u2033";
-
-    private static final char N_TR = LatLon.NORTH.charAt(0);
-    private static final char S_TR = LatLon.SOUTH.charAt(0);
-    private static final char E_TR = LatLon.EAST.charAt(0);
-    private static final char W_TR = LatLon.WEST.charAt(0);
-
-    private static final Pattern P = Pattern.compile(
-            "([+|-]?\\d+[.,]\\d+)|"             // (1)
-            + "([+|-]?\\d+)|"                   // (2)
-            + "("+DEG+"|o|deg)|"                // (3)
-            + "('|"+MIN+"|min)|"                // (4)
-            + "(\"|"+SEC+"|sec)|"               // (5)
-            + "(,|;)|"                          // (6)
-            + "([NSEW"+N_TR+S_TR+E_TR+W_TR+"])|"// (7)
-            + "\\s+|"
-            + "(.+)");
-
-    private static final Pattern P_XML = Pattern.compile(
-            "lat=[\"']([+|-]?\\d+[.,]\\d+)[\"']\\s+lon=[\"']([+|-]?\\d+[.,]\\d+)[\"']");
 
     protected JPanel buildLatLon() {
         JPanel pnl = new JPanel(new GridBagLayout());
@@ -230,7 +201,7 @@ public class LatLonDialog extends ExtendedDialog {
     protected void parseLatLonUserInput() {
         LatLon latLon;
         try {
-            latLon = parseLatLon(tfLatLon.getText());
+            latLon = LatLon.parse(tfLatLon.getText());
             if (!LatLon.isValidLat(latLon.lat()) || !LatLon.isValidLon(latLon.lon())) {
                 latLon = null;
             }
@@ -338,94 +309,15 @@ public class LatLonDialog extends ExtendedDialog {
         }
     }
 
+    /**
+     * Parses the given string as lat/lon.
+     * @param coord String to parse
+     * @return parsed lat/lon
+     * @deprecated use {@link LatLon#parse(String)} instead
+     */
+    @Deprecated
     public static LatLon parseLatLon(final String coord) {
-        final LatLonHolder latLon = new LatLonHolder();
-        final Matcher mXml = P_XML.matcher(coord);
-        if (mXml.matches()) {
-            setLatLonObj(latLon,
-                    Double.valueOf(mXml.group(1).replace(',', '.')), ZERO, ZERO, "N",
-                    Double.valueOf(mXml.group(2).replace(',', '.')), ZERO, ZERO, "E");
-        } else {
-            final Matcher m = P.matcher(coord);
-
-            final StringBuilder sb = new StringBuilder();
-            final List<Object> list = new ArrayList<>();
-
-            while (m.find()) {
-                if (m.group(1) != null) {
-                    sb.append('R');     // floating point number
-                    list.add(Double.valueOf(m.group(1).replace(',', '.')));
-                } else if (m.group(2) != null) {
-                    sb.append('Z');     // integer number
-                    list.add(Double.valueOf(m.group(2)));
-                } else if (m.group(3) != null) {
-                    sb.append('o');     // degree sign
-                } else if (m.group(4) != null) {
-                    sb.append('\'');    // seconds sign
-                } else if (m.group(5) != null) {
-                    sb.append('"');     // minutes sign
-                } else if (m.group(6) != null) {
-                    sb.append(',');     // separator
-                } else if (m.group(7) != null) {
-                    sb.append('x');     // cardinal direction
-                    String c = m.group(7).toUpperCase(Locale.ENGLISH);
-                    if ("N".equals(c) || "S".equals(c) || "E".equals(c) || "W".equals(c)) {
-                        list.add(c);
-                    } else {
-                        list.add(c.replace(N_TR, 'N').replace(S_TR, 'S')
-                                .replace(E_TR, 'E').replace(W_TR, 'W'));
-                    }
-                } else if (m.group(8) != null) {
-                    throw new IllegalArgumentException("invalid token: " + m.group(8));
-                }
-            }
-
-            final String pattern = sb.toString();
-
-            final Object[] params = list.toArray();
-
-            if (pattern.matches("Ro?,?Ro?")) {
-                setLatLonObj(latLon,
-                        params[0], ZERO, ZERO, "N",
-                        params[1], ZERO, ZERO, "E");
-            } else if (pattern.matches("xRo?,?xRo?")) {
-                setLatLonObj(latLon,
-                        params[1], ZERO, ZERO, params[0],
-                        params[3], ZERO, ZERO, params[2]);
-            } else if (pattern.matches("Ro?x,?Ro?x")) {
-                setLatLonObj(latLon,
-                        params[0], ZERO, ZERO, params[1],
-                        params[2], ZERO, ZERO, params[3]);
-            } else if (pattern.matches("Zo[RZ]'?,?Zo[RZ]'?|Z[RZ],?Z[RZ]")) {
-                setLatLonObj(latLon,
-                        params[0], params[1], ZERO, "N",
-                        params[2], params[3], ZERO, "E");
-            } else if (pattern.matches("xZo[RZ]'?,?xZo[RZ]'?|xZo?[RZ],?xZo?[RZ]")) {
-                setLatLonObj(latLon,
-                        params[1], params[2], ZERO, params[0],
-                        params[4], params[5], ZERO, params[3]);
-            } else if (pattern.matches("Zo[RZ]'?x,?Zo[RZ]'?x|Zo?[RZ]x,?Zo?[RZ]x")) {
-                setLatLonObj(latLon,
-                        params[0], params[1], ZERO, params[2],
-                        params[3], params[4], ZERO, params[5]);
-            } else if (pattern.matches("ZoZ'[RZ]\"?x,?ZoZ'[RZ]\"?x|ZZ[RZ]x,?ZZ[RZ]x")) {
-                setLatLonObj(latLon,
-                        params[0], params[1], params[2], params[3],
-                        params[4], params[5], params[6], params[7]);
-            } else if (pattern.matches("xZoZ'[RZ]\"?,?xZoZ'[RZ]\"?|xZZ[RZ],?xZZ[RZ]")) {
-                setLatLonObj(latLon,
-                        params[1], params[2], params[3], params[0],
-                        params[5], params[6], params[7], params[4]);
-            } else if (pattern.matches("ZZ[RZ],?ZZ[RZ]")) {
-                setLatLonObj(latLon,
-                        params[0], params[1], params[2], "N",
-                        params[3], params[4], params[5], "E");
-            } else {
-                throw new IllegalArgumentException("invalid format: " + pattern);
-            }
-        }
-
-        return new LatLon(latLon.lat, latLon.lon);
+        return LatLon.parse(coord);
     }
 
     public static EastNorth parseEastNorth(String s) {
@@ -437,43 +329,6 @@ public class LatLonDialog extends ExtendedDialog {
             return new EastNorth(east, north);
         } catch (NumberFormatException nfe) {
             return null;
-        }
-    }
-
-    private static class LatLonHolder {
-        private double lat;
-        private double lon;
-    }
-
-    private static void setLatLonObj(final LatLonHolder latLon,
-            final Object coord1deg, final Object coord1min, final Object coord1sec, final Object card1,
-            final Object coord2deg, final Object coord2min, final Object coord2sec, final Object card2) {
-
-        setLatLon(latLon,
-                (Double) coord1deg, (Double) coord1min, (Double) coord1sec, (String) card1,
-                (Double) coord2deg, (Double) coord2min, (Double) coord2sec, (String) card2);
-    }
-
-    private static void setLatLon(final LatLonHolder latLon,
-            final double coord1deg, final double coord1min, final double coord1sec, final String card1,
-            final double coord2deg, final double coord2min, final double coord2sec, final String card2) {
-
-        setLatLon(latLon, coord1deg, coord1min, coord1sec, card1);
-        setLatLon(latLon, coord2deg, coord2min, coord2sec, card2);
-    }
-
-    private static void setLatLon(final LatLonHolder latLon, final double coordDeg, final double coordMin, final double coordSec,
-            final String card) {
-        if (coordDeg < -180 || coordDeg > 180 || coordMin < 0 || coordMin >= 60 || coordSec < 0 || coordSec > 60) {
-            throw new IllegalArgumentException("out of range");
-        }
-
-        double coord = (coordDeg < 0 ? -1 : 1) * (Math.abs(coordDeg) + coordMin / 60 + coordSec / 3600);
-        coord = "N".equals(card) || "E".equals(card) ? coord : -coord;
-        if ("N".equals(card) || "S".equals(card)) {
-            latLon.lat = coord;
-        } else {
-            latLon.lon = coord;
         }
     }
 
