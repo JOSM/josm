@@ -13,9 +13,7 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Locale;
@@ -49,6 +47,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.gui.widgets.JosmHTMLEditorKit;
+import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
@@ -138,23 +137,15 @@ public class HelpBrowser extends JDialog implements IHelpBrowser {
      */
     protected StyleSheet buildStyleSheet() {
         StyleSheet ss = new StyleSheet();
-        StringBuilder css = new StringBuilder();
-        try (BufferedReader breader = new BufferedReader(
-                new InputStreamReader(
-                        getClass().getResourceAsStream("/data/help-browser.css"), StandardCharsets.UTF_8
-                )
-        )) {
-            String line;
-            while ((line = breader.readLine()) != null) {
-                css.append(line);
-                css.append('\n');
-            }
+        final String css;
+        try (CachedFile cf = new CachedFile("resource://data/help-browser.css")) {
+            css = new String(cf.getByteContent(), StandardCharsets.ISO_8859_1);
         } catch (IOException e) {
             Main.error(tr("Failed to read CSS file ''help-browser.css''. Exception is: {0}", e.toString()));
             Main.error(e);
             return ss;
         }
-        ss.addRule(css.toString());
+        ss.addRule(css);
         return ss;
     }
 
