@@ -291,6 +291,12 @@ public class SessionReader {
         public List<LayerDependency> getLayerDependencies() {
             return layerDependencies;
         }
+
+        @Override
+        public String toString() {
+            return "ImportSupport [layerName=" + layerName + ", layerIndex=" + layerIndex + ", layerDependencies="
+                    + layerDependencies + ", inZipPath=" + inZipPath + ']';
+        }
     }
 
     public static class LayerDependency {
@@ -488,7 +494,10 @@ public class SessionReader {
                 Exception exception = null;
                 try {
                     layer = imp.load(e, support, progressMonitor.createSubTaskMonitor(1, false));
-                } catch (IllegalDataException | IOException ex) {
+                    if (layer == null) {
+                        throw new IllegalStateException("Importer " + imp + " returned null for " + support);
+                    }
+                } catch (IllegalDataException | IllegalStateException | IOException ex) {
                     exception = ex;
                 }
                 if (exception != null) {
@@ -510,7 +519,6 @@ public class SessionReader {
                     }
                 }
 
-                if (layer == null) throw new RuntimeException();
                 layersMap.put(idx, layer);
             }
             progressMonitor.worked(1);
