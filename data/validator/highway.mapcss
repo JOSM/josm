@@ -16,7 +16,7 @@ way[highway][name =~ /(?i).* (Ave|Blvd|Br|Brg|Cct|Cir|Cl|Cr|Crct|Cres|Crt|Ct|Dr|
   assertMatch: "way highway=unclassified name=\"Bou blvd.\"";
 }
 
-node[highway =~ /motorway|trunk|primary|secondary|tertiary|unclassified|residential|service|living_street|pedestrian|track|path|footway|cycleway|bus_guideway|bridleway/] {
+node[highway =~ /motorway|trunk|primary|secondary|tertiary|unclassified|residential|service|living_street|pedestrian|track|path|footway|cycleway|bus_guideway|bridleway/][highway!=motorway_junction][highway!=services] {
   throwWarning: tr("wrong highway tag on a node");
   assertMatch: "node highway=primary";
   assertMatch: "node highway=primary_link";
