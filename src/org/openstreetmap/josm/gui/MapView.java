@@ -215,7 +215,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     // Layers that wasn't changed since last paint
     private final transient List<Layer> nonChangedLayers = new ArrayList<>();
     private int lastViewID;
-    private AtomicBoolean paintPreferencesChanged = new AtomicBoolean(true);
+    private final AtomicBoolean paintPreferencesChanged = new AtomicBoolean(true);
     private Rectangle lastClipBounds = new Rectangle();
     private transient MapMover mapMover;
 

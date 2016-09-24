@@ -78,6 +78,9 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
                 switch (matcher.group(1)) {
                     case "geocodeArea":
                         matcher.appendReplacement(sb, geocodeArea(matcher.group(2)));
+                        break;
+                    default:
+                        Main.warn("Unsupported syntax: " + matcher.group(1));
                 }
             } catch (UncheckedParseException ex) {
                 final String msg = tr("Failed to evaluate {0}", matcher.group());
