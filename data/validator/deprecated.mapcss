@@ -504,13 +504,19 @@ way[oneway=-1] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
   set samecolor;
   fixRemove: "color";
+  assertMatch: "way color=red colour=red";
+  assertNoMatch: "way color=red colour=green";
 }
 *[color][colour]!.samecolor {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  assertNoMatch: "way color=red colour=red";
+  assertMatch: "way color=red colour=green";
 }
 *[/:color/]{
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: ":colour";
+  assertNoMatch: "way color=red";
+  assertMatch: "way roof:color=grey";
 }
 *[/color:/] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
@@ -528,6 +534,11 @@ node[/^..$/],
 way[/^..$/],
 relation[/^..$/][!to] {
   throwWarning: tr("uncommon short key");
+  assertNoMatch: "relation to=Berlin";
+  assertMatch: "relation fo=bar";
+  assertMatch: "way to=bar";
+  assertMatch: "node fo=bar";
+  assertMatch: "node f=b";
 }
 
 /* see #11344 */

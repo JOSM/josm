@@ -16,7 +16,7 @@ way[highway][name =~ /(?i).* (Ave|Blvd|Br|Brg|Cct|Cir|Cl|Cr|Crct|Cres|Crt|Ct|Dr|
   assertMatch: "way highway=unclassified name=\"Bou blvd.\"";
 }
 
-node[highway =~ /motorway|trunk|primary|secondary|tertiary|unclassified|residential|service|living_street|pedestrian|track|path|footway|cycleway|bus_guideway|bridleway/][highway!=motorway_junction][highway!=services] {
+node[highway =~ /motorway|trunk|primary|secondary|tertiary|unclassified|residential|service|living_street|pedestrian|track|path|footway|cycleway|bus_guideway|bridleway/] {
   throwWarning: tr("wrong highway tag on a node");
   assertMatch: "node highway=primary";
   assertMatch: "node highway=primary_link";
@@ -108,6 +108,9 @@ way[footway=none] {
 }
 way[footway][footway!=sidewalk][footway!=crossing]!.footway_to_sidewalk { /* do not trigger this rule if already one of the two previous rules applied */
   throwWarning: tr("Value of ''{0}'' should either be ''{1}'' or ''{2}''. For sidewalks use ''{3}'' instead.", "{0.key}", "{1.value}", "{2.value}", "sidewalk=left|right|both|no");
+  assertNoMatch: "way footway=left";
+  assertNoMatch: "way footway=none";
+  assertMatch: "way footway=bar";
 }
 
 /* #11270 */

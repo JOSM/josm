@@ -72,10 +72,10 @@ node[source:outline] {
   throwWarning: tr("{0} on a node. Should be drawn as an area.", "{0.tag}");
 }
 
-/* {0} on a node, should be a relation; see #10252, #10769 */
+/* {0} on a node, should be a relation; Error level; see #10252, #10769 */
 node[route],
 node[restriction] {
-  throwWarning: tr("{0}=* on a node. Should be used in a relation", "{0.key}"); 
+  throwError: tr("{0}=* on a node. Should be used in a relation", "{0.key}"); 
 }
 
 /* {0} on a way, should be a node */
@@ -220,7 +220,7 @@ node:unconnected:in-downloaded-area[barrier=debris] {
   throwWarning: tr("{0} must be connected to a way", "{2.tag}");
 }
 
-/*see #11127*/
+/* #11127 */
 way[railway][bridge] > node,
 way[highway][bridge] > node {
   set node_in_bridge;
@@ -229,7 +229,7 @@ way[waterway] > node.node_in_bridge {
   throwWarning: tr("node connects waterway and bridge");
 }
 
-/*see #11128*/
+/* #11128 */
 way[highway] > node[tourism=information][information=guidepost] {
   set guidepost;
   throwOther: tr("{0} node connected to a highway", "{1.tag}");
@@ -261,9 +261,9 @@ area:closed[place=island][eval(areasize()) < 500000] {
   fixAdd: "place=islet";
 }
 
-/* 12561 - building larger than Aalsmeer Flower Auction */
-area:closed[building][eval(areasize()) > 500000] {
-  throwWarning: tr("Too large building");
+/* #12561 - building larger than Aalsmeer Flower Auction (518000) and Tesla factory (510000) */
+area:closed[building][building!=no][eval(areasize()) > 520000] {
+  throwError: tr("Too large building");
 }
 
 /* #12577 */
