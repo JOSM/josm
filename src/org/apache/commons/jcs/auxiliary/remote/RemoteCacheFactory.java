@@ -46,17 +46,14 @@ import org.apache.commons.jcs.engine.logging.behavior.ICacheEventLogger;
 public class RemoteCacheFactory
     extends AbstractAuxiliaryCacheFactory
 {
-    /** store reference of facades to initiate failover */
-    private static ConcurrentMap<String, RemoteCacheNoWaitFacade<?, ?>> facades;
-
     /** Monitor thread */
-    private static RemoteCacheMonitor monitor;
+    private RemoteCacheMonitor monitor;
 
     /** Contains mappings of RemoteLocation instance to RemoteCacheManager instance. */
-    private static ConcurrentMap<RemoteLocation, RemoteCacheManager> managers;
+    private ConcurrentMap<RemoteLocation, RemoteCacheManager> managers;
 
     /** Lock for initialization of manager instances */
-    private static Lock managerLock;
+    private Lock managerLock;
 
     /**
      * For LOCAL clients we get a handle to all the failovers, but we do not register a listener
@@ -156,26 +153,12 @@ public class RemoteCacheFactory
         }
 
         RemoteCacheNoWaitFacade<K, V> rcnwf =
-            new RemoteCacheNoWaitFacade<K, V>(noWaits, rca, cacheMgr, cacheEventLogger, elementSerializer );
-
-        facades.put( rca.getCacheName(), rcnwf );
+            new RemoteCacheNoWaitFacade<K, V>(noWaits, rca, cacheMgr, cacheEventLogger, elementSerializer, this );
 
         return rcnwf;
     }
 
     // end createCache
-
-    /**
-     * The facades are what the cache hub talks to.
-     *
-     * @param cacheName the name of the  cache facade
-     * @return Returns the facade for the given name.
-     */
-    @SuppressWarnings("unchecked") // Need to cast because of common map for all facades
-    public static <K, V> RemoteCacheNoWaitFacade<K, V> getFacade( String cacheName )
-    {
-        return (RemoteCacheNoWaitFacade<K, V>) facades.get( cacheName );
-    }
 
     /**
      * Returns an instance of RemoteCacheManager for the given connection parameters.
@@ -186,7 +169,7 @@ public class RemoteCacheFactory
      *
      * @return The instance value or null if no such manager exists
      */
-    public static RemoteCacheManager getManager( IRemoteCacheAttributes cattr )
+    public RemoteCacheManager getManager( IRemoteCacheAttributes cattr )
     {
         if ( cattr.getRemoteLocation() == null )
         {
@@ -213,17 +196,11 @@ public class RemoteCacheFactory
      * @param elementSerializer
      * @return The instance value, never null
      */
-    public static RemoteCacheManager getManager( IRemoteCacheAttributes cattr, ICompositeCacheManager cacheMgr,
+    public RemoteCacheManager getManager( IRemoteCacheAttributes cattr, ICompositeCacheManager cacheMgr,
                                                   ICacheEventLogger cacheEventLogger,
                                                   IElementSerializer elementSerializer )
     {
-        if ( cattr.getRemoteLocation() == null )
-        {
-            cattr.setRemoteLocation("", Registry.REGISTRY_PORT);
-        }
-
-        RemoteLocation loc = cattr.getRemoteLocation();
-        RemoteCacheManager ins = managers.get( loc );
+        RemoteCacheManager ins = getManager( cattr );
 
         if ( ins == null )
         {
@@ -231,12 +208,12 @@ public class RemoteCacheFactory
 
             try
             {
-                ins = managers.get( loc );
+                ins = managers.get( cattr.getRemoteLocation() );
 
                 if (ins == null)
                 {
                     ins = new RemoteCacheManager( cattr, cacheMgr, monitor, cacheEventLogger, elementSerializer);
-                    managers.put( loc, ins );
+                    managers.put( cattr.getRemoteLocation(), ins );
                     monitor.addManager(ins);
                 }
             }
@@ -256,7 +233,6 @@ public class RemoteCacheFactory
 	public void initialize()
 	{
 		super.initialize();
-		facades = new ConcurrentHashMap<String, RemoteCacheNoWaitFacade<?, ?>>();
 
 		managers = new ConcurrentHashMap<RemoteLocation, RemoteCacheManager>();
 		managerLock = new ReentrantLock();
@@ -277,7 +253,6 @@ public class RemoteCacheFactory
 		}
 
 		managers.clear();
-		facades.clear();
 
         if (monitor != null)
         {

@@ -75,7 +75,9 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
         this.noWaits = new ArrayList<RemoteCacheNoWait<K,V>>();
         for (ICache<K, V> nw : noWaits)
         {
-            this.noWaits.add((RemoteCacheNoWait<K,V>) nw);
+            RemoteCacheNoWait<K,V> rcnw = (RemoteCacheNoWait<K,V>) nw;
+            ((RemoteCache<K, V>)rcnw.getRemoteCache()).setFacade(this);
+            this.noWaits.add(rcnw);
         }
         this.remoteCacheAttributes = rca;
         setCacheEventLogger( cacheEventLogger );

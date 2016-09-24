@@ -52,16 +52,21 @@ public class RemoteCacheFailoverRunner<K, V> extends AbstractAuxiliaryCacheMonit
     /** The facade returned to the composite cache. */
     private final RemoteCacheNoWaitFacade<K, V> facade;
 
+    /** Factory instance */
+    private final RemoteCacheFactory cacheFactory;
+
     /**
      * Constructor for the RemoteCacheFailoverRunner object. This allows the
      * FailoverRunner to modify the facade that the CompositeCache references.
      *
      * @param facade the facade the CompositeCache talks to.
+     * @param cacheFactory the cache factory instance
      */
-    public RemoteCacheFailoverRunner( RemoteCacheNoWaitFacade<K, V> facade )
+    public RemoteCacheFailoverRunner( RemoteCacheNoWaitFacade<K, V> facade, RemoteCacheFactory cacheFactory )
     {
         super("JCS-RemoteCacheFailoverRunner");
         this.facade = facade;
+        this.cacheFactory = cacheFactory;
         setIdlePeriod(20000L);
     }
 
@@ -180,7 +185,7 @@ public class RemoteCacheFailoverRunner<K, V> extends AbstractAuxiliaryCacheMonit
 
                     RemoteCacheAttributes rca = (RemoteCacheAttributes) rca0.clone();
                     rca.setRemoteLocation(server);
-                    RemoteCacheManager rcm = RemoteCacheFactory.getManager( rca );
+                    RemoteCacheManager rcm = cacheFactory.getManager( rca );
 
                     if ( log.isDebugEnabled() )
                     {
@@ -294,7 +299,7 @@ public class RemoteCacheFailoverRunner<K, V> extends AbstractAuxiliaryCacheMonit
 
         RemoteCacheAttributes rca = (RemoteCacheAttributes) rca0.clone();
         rca.setRemoteLocation(server);
-        RemoteCacheManager rcm = RemoteCacheFactory.getManager( rca );
+        RemoteCacheManager rcm = cacheFactory.getManager( rca );
 
         if (rcm != null)
         {
@@ -336,7 +341,7 @@ public class RemoteCacheFailoverRunner<K, V> extends AbstractAuxiliaryCacheMonit
                                 // previous failed over configuration.
                                 RemoteCacheAttributes rcaOld = (RemoteCacheAttributes) rca0.clone();
                                 rcaOld.setRemoteLocation(serverOld);
-                                RemoteCacheManager rcmOld = RemoteCacheFactory.getManager( rcaOld );
+                                RemoteCacheManager rcmOld = cacheFactory.getManager( rcaOld );
 
                                 if ( rcmOld != null )
                                 {

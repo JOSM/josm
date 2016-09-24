@@ -260,34 +260,7 @@ public class RemoteCacheManager
 
                 if (remoteCacheNoWait == null)
                 {
-                    // create a listener first and pass it to the remotecache
-                    // sender.
-                    RemoteCacheListener<K, V> listener = null;
-                    try
-                    {
-                        listener = new RemoteCacheListener<K, V>( cattr, cacheMgr, elementSerializer );
-                        addRemoteCacheListener( cattr, listener );
-                    }
-                    catch ( IOException ioe )
-                    {
-                        log.error( "Problem adding listener. Message: " + ioe.getMessage()
-                            + " | RemoteCacheListener = " + listener, ioe );
-                    }
-                    catch ( Exception e )
-                    {
-                        log.error( "Problem adding listener. Message: " + e.getMessage() + " | RemoteCacheListener = "
-                            + listener, e );
-                    }
-
-                    IRemoteCacheClient<K, V> remoteCacheClient =
-                        new RemoteCache<K, V>( cattr, (ICacheServiceNonLocal<K, V>) remoteService, listener, monitor );
-                    remoteCacheClient.setCacheEventLogger( cacheEventLogger );
-                    remoteCacheClient.setElementSerializer( elementSerializer );
-
-                    remoteCacheNoWait = new RemoteCacheNoWait<K, V>( remoteCacheClient );
-                    remoteCacheNoWait.setCacheEventLogger( cacheEventLogger );
-                    remoteCacheNoWait.setElementSerializer( elementSerializer );
-
+                    remoteCacheNoWait = newRemoteCacheNoWait(cattr);
                     caches.put( cattr.getCacheName(), remoteCacheNoWait );
                 }
             }
@@ -298,6 +271,46 @@ public class RemoteCacheManager
         }
 
         // might want to do some listener sanity checking here.
+
+        return remoteCacheNoWait;
+    }
+
+    /**
+     * Create new RemoteCacheNoWait instance
+     *
+     * @param cattr the cache configuration
+     * @return the instance
+     */
+    private <K, V> RemoteCacheNoWait<K, V> newRemoteCacheNoWait(IRemoteCacheAttributes cattr)
+    {
+        RemoteCacheNoWait<K, V> remoteCacheNoWait;
+        // create a listener first and pass it to the remotecache
+        // sender.
+        RemoteCacheListener<K, V> listener = null;
+        try
+        {
+            listener = new RemoteCacheListener<K, V>( cattr, cacheMgr, elementSerializer );
+            addRemoteCacheListener( cattr, listener );
+        }
+        catch ( IOException ioe )
+        {
+            log.error( "Problem adding listener. Message: " + ioe.getMessage()
+                + " | RemoteCacheListener = " + listener, ioe );
+        }
+        catch ( Exception e )
+        {
+            log.error( "Problem adding listener. Message: " + e.getMessage() + " | RemoteCacheListener = "
+                + listener, e );
+        }
+
+        IRemoteCacheClient<K, V> remoteCacheClient =
+            new RemoteCache<K, V>( cattr, (ICacheServiceNonLocal<K, V>) remoteService, listener, monitor );
+        remoteCacheClient.setCacheEventLogger( cacheEventLogger );
+        remoteCacheClient.setElementSerializer( elementSerializer );
+
+        remoteCacheNoWait = new RemoteCacheNoWait<K, V>( remoteCacheClient );
+        remoteCacheNoWait.setCacheEventLogger( cacheEventLogger );
+        remoteCacheNoWait.setElementSerializer( elementSerializer );
 
         return remoteCacheNoWait;
     }

@@ -72,8 +72,9 @@ public class RemoteHttpCacheFactory
         ICache<K, V> ic = rcm.getCache( rca );
         noWaits.add( ic );
 
+        // FIXME Remove null parameter
         RemoteCacheNoWaitFacade<K, V> rcnwf =
-            new RemoteCacheNoWaitFacade<K, V>(noWaits, rca, cacheMgr, cacheEventLogger, elementSerializer );
+            new RemoteCacheNoWaitFacade<K, V>(noWaits, rca, cacheMgr, cacheEventLogger, elementSerializer, null );
 
         getFacades().put( rca.getCacheName(), rcnwf );
 

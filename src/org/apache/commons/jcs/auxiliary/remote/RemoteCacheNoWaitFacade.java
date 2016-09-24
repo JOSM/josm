@@ -44,6 +44,9 @@ public class RemoteCacheNoWaitFacade<K, V>
     /** log instance */
     private static final Log log = LogFactory.getLog( RemoteCacheNoWaitFacade.class );
 
+    /** Provide factory instance to RemoteCacheFailoverRunner */
+    private final RemoteCacheFactory cacheFactory;
+
     /**
      * Constructs with the given remote cache, and fires events to any listeners.
      * <p>
@@ -52,14 +55,17 @@ public class RemoteCacheNoWaitFacade<K, V>
      * @param cacheMgr
      * @param cacheEventLogger
      * @param elementSerializer
+     * @param cacheFactory
      */
     public RemoteCacheNoWaitFacade( List<ICache<K, V>> noWaits,
                                     RemoteCacheAttributes rca,
                                     ICompositeCacheManager cacheMgr,
                                     ICacheEventLogger cacheEventLogger,
-                                    IElementSerializer elementSerializer )
+                                    IElementSerializer elementSerializer,
+                                    RemoteCacheFactory cacheFactory)
     {
         super( noWaits, rca, cacheMgr, cacheEventLogger, elementSerializer );
+        this.cacheFactory = cacheFactory;
     }
 
     /**
@@ -80,7 +86,7 @@ public class RemoteCacheNoWaitFacade<K, V>
             if ( rcnw.getStatus() == CacheStatus.ERROR )
             {
                 // start failover, primary recovery process
-                RemoteCacheFailoverRunner<K, V> runner = new RemoteCacheFailoverRunner<K, V>( this );
+                RemoteCacheFailoverRunner<K, V> runner = new RemoteCacheFailoverRunner<K, V>( this, this.cacheFactory );
                 runner.setDaemon( true );
                 runner.start();
                 runner.notifyError();

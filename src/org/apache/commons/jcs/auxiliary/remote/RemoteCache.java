@@ -49,6 +49,9 @@ public class RemoteCache<K, V>
     /** for error notifications */
     private RemoteCacheMonitor monitor;
 
+    /** back link for failover initiation */
+    private AbstractRemoteCacheNoWaitFacade<K, V> facade;
+
     /**
      * Constructor for the RemoteCache object. This object communicates with a remote cache server.
      * One of these exists for each region. This also holds a reference to a listener. The same
@@ -100,6 +103,16 @@ public class RemoteCache<K, V>
     }
 
     /**
+     * Set facade
+     *
+     * @param facade the facade to set
+     */
+    protected void setFacade(AbstractRemoteCacheNoWaitFacade<K, V> facade)
+    {
+        this.facade = facade;
+    }
+
+    /**
      * Handles exception by disabling the remote cache service before re-throwing the exception in
      * the form of an IOException.
      * <p>
@@ -128,15 +141,12 @@ public class RemoteCache<K, V>
         // process.
         monitor.notifyError();
 
-        // initiate failover if local
-        RemoteCacheNoWaitFacade<K, V> rcnwf = RemoteCacheFactory.getFacade( getRemoteCacheAttributes().getCacheName() );
-
         if ( log.isDebugEnabled() )
         {
-            log.debug( "Initiating failover, rcnwf = " + rcnwf );
+            log.debug( "Initiating failover, rcnwf = " + facade );
         }
 
-        if ( rcnwf != null && rcnwf.getAuxiliaryCacheAttributes().getRemoteType() == RemoteType.LOCAL )
+        if ( facade != null && facade.getAuxiliaryCacheAttributes().getRemoteType() == RemoteType.LOCAL )
         {
             if ( log.isDebugEnabled() )
             {
@@ -144,7 +154,7 @@ public class RemoteCache<K, V>
             }
             // may need to remove the noWait index here. It will be 0 if it is
             // local since there is only 1 possible listener.
-            rcnwf.failover( rcnwf.getPrimaryServer() );
+            facade.failover( facade.getPrimaryServer() );
         }
 
         if ( ex instanceof IOException )

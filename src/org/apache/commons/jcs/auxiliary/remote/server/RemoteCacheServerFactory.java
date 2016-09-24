@@ -56,7 +56,7 @@ public class RemoteCacheServerFactory
     private static final Log log = LogFactory.getLog( RemoteCacheServerFactory.class );
 
     /** The single instance of the RemoteCacheServer object. */
-    private static RemoteCacheServer<? extends Serializable, ? extends Serializable> remoteCacheServer;
+    private static RemoteCacheServer<?, ?> remoteCacheServer;
 
     /** The name of the service. */
     private static String serviceName = IRemoteCacheConstants.REMOTE_CACHE_SERVICE_VAL;
