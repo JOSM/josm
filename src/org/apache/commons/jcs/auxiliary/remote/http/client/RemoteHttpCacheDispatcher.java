@@ -41,6 +41,9 @@ public class RemoteHttpCacheDispatcher
     extends AbstractHttpClient
     implements IRemoteCacheDispatcher
 {
+    /** Parameter encoding */
+    private static final String DEFAULT_ENCODING = "UTF-8";
+
     /** Named of the parameter */
     private static final String PARAMETER_REQUEST_TYPE = "RequestType";
 
@@ -99,8 +102,7 @@ public class RemoteHttpCacheDispatcher
         }
         catch ( Exception e )
         {
-            log.error( "Problem dispatching request.", e );
-            throw new IOException( e.getMessage() );
+            throw new IOException("Problem dispatching request.", e);
         }
     }
 
@@ -147,7 +149,7 @@ public class RemoteHttpCacheDispatcher
                 if ( remoteCacheRequest.getCacheName() != null )
                 {
                     url.append( PARAMETER_CACHE_NAME + "="
-                        + URLEncoder.encode( remoteCacheRequest.getCacheName(), "UTF-8" ) );
+                        + URLEncoder.encode( remoteCacheRequest.getCacheName(), DEFAULT_ENCODING ) );
                 }
             }
             if ( getRemoteHttpCacheAttributes().isIncludeKeysAndPatternsAsParameter() )
@@ -172,7 +174,7 @@ public class RemoteHttpCacheDispatcher
                     default:
                         break;
                 }
-                String encodedKeyValue = URLEncoder.encode( keyValue, "UTF-8" );
+                String encodedKeyValue = URLEncoder.encode( keyValue, DEFAULT_ENCODING );
                 url.append( "&" + PARAMETER_KEY + "=" + encodedKeyValue );
             }
             if ( getRemoteHttpCacheAttributes().isIncludeRequestTypeasAsParameter() )
@@ -180,7 +182,7 @@ public class RemoteHttpCacheDispatcher
                 url.append( "&"
                     + PARAMETER_REQUEST_TYPE
                     + "="
-                    + URLEncoder.encode( remoteCacheRequest.getRequestType().toString(), "UTF-8" ) );
+                    + URLEncoder.encode( remoteCacheRequest.getRequestType().toString(), DEFAULT_ENCODING ) );
             }
         }
         catch ( UnsupportedEncodingException e )
@@ -204,7 +206,7 @@ public class RemoteHttpCacheDispatcher
      * @throws IOException
      */
     @Override
-    public HttpState preProcessWebserviceCall( HttpMethod post )
+    protected HttpState preProcessWebserviceCall( HttpMethod post )
         throws IOException
     {
         // do nothing. Child can override.
@@ -219,7 +221,7 @@ public class RemoteHttpCacheDispatcher
      * @throws IOException
      */
     @Override
-    public void postProcessWebserviceCall( HttpMethod post, HttpState httpState )
+    protected void postProcessWebserviceCall( HttpMethod post, HttpState httpState )
         throws IOException
     {
         // do nothing. Child can override.

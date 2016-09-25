@@ -1,5 +1,7 @@
 package org.apache.commons.jcs.auxiliary.remote.http.client;
 
+import java.io.IOException;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -28,12 +30,10 @@ import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.IOException;
-
 /**
  * This class simply configures the http multithreaded connection manager.
  * <p>
- * This is abstract because it can't do anything. Child classes can overwrite whatever they want.
+ * This is abstract because it can do anything. Child classes can overwrite whatever they want.
  */
 public abstract class AbstractHttpClient
 {
@@ -57,13 +57,9 @@ public abstract class AbstractHttpClient
      */
     public AbstractHttpClient( RemoteHttpCacheAttributes remoteHttpCacheAttributes )
     {
-        setRemoteHttpCacheAttributes( remoteHttpCacheAttributes );
-        setConnectionManager( new MultiThreadedHttpConnectionManager() );
-
-        // THIS IS NOT THREAD SAFE:
-        // setHttpClient( new HttpClient() );
-        // THIS IS:
-        setHttpClient( new HttpClient( getConnectionManager() ) );
+        this.remoteHttpCacheAttributes = remoteHttpCacheAttributes;
+        this.connectionManager = new MultiThreadedHttpConnectionManager();
+        this.httpClient = new HttpClient(this.connectionManager);
 
         configureClient();
     }
@@ -71,27 +67,28 @@ public abstract class AbstractHttpClient
     /**
      * Configures the http client.
      */
-    public void configureClient()
+    protected void configureClient()
     {
         if ( getRemoteHttpCacheAttributes().getMaxConnectionsPerHost() > 0 )
         {
-            getConnectionManager().getParams().setMaxTotalConnections(
-                                                                       getRemoteHttpCacheAttributes()
-                                                                           .getMaxConnectionsPerHost() );
+            this.connectionManager.getParams()
+                .setMaxTotalConnections(getRemoteHttpCacheAttributes().getMaxConnectionsPerHost());
+            this.connectionManager.getParams()
+                .setDefaultMaxConnectionsPerHost(getRemoteHttpCacheAttributes().getMaxConnectionsPerHost());
         }
 
-        getConnectionManager().getParams().setSoTimeout( getRemoteHttpCacheAttributes().getSocketTimeoutMillis() );
+        this.connectionManager.getParams().setSoTimeout( getRemoteHttpCacheAttributes().getSocketTimeoutMillis() );
 
         String httpVersion = getRemoteHttpCacheAttributes().getHttpVersion();
         if ( httpVersion != null )
         {
             if ( "1.1".equals( httpVersion ) )
             {
-                getHttpClient().getParams().setParameter( "http.protocol.version", HttpVersion.HTTP_1_1 );
+                this.httpClient.getParams().setParameter( "http.protocol.version", HttpVersion.HTTP_1_1 );
             }
             else if ( "1.0".equals( httpVersion ) )
             {
-                getHttpClient().getParams().setParameter( "http.protocol.version", HttpVersion.HTTP_1_0 );
+                this.httpClient.getParams().setParameter( "http.protocol.version", HttpVersion.HTTP_1_0 );
             }
             else
             {
@@ -99,13 +96,11 @@ public abstract class AbstractHttpClient
             }
         }
 
-        getConnectionManager().getParams().setConnectionTimeout(
-                                                                 getRemoteHttpCacheAttributes()
-                                                                     .getConnectionTimeoutMillis() );
+        this.connectionManager.getParams()
+            .setConnectionTimeout(getRemoteHttpCacheAttributes().getConnectionTimeoutMillis());
 
         // By default we instruct HttpClient to ignore cookies.
-        String cookiePolicy = CookiePolicy.IGNORE_COOKIES;
-        getHttpClient().getParams().setCookiePolicy( cookiePolicy );
+        this.httpClient.getParams().setCookiePolicy( CookiePolicy.IGNORE_COOKIES );
     }
 
     /**
@@ -119,7 +114,7 @@ public abstract class AbstractHttpClient
         throws IOException
     {
         HttpState httpState = preProcessWebserviceCall( post );
-        getHttpClient().executeMethod( null, post, httpState );
+        this.httpClient.executeMethod( null, post, httpState );
         postProcessWebserviceCall( post, httpState );
     }
 
@@ -130,7 +125,7 @@ public abstract class AbstractHttpClient
      * @return HttpState
      * @throws IOException
      */
-    public abstract HttpState preProcessWebserviceCall( HttpMethod post )
+    protected abstract HttpState preProcessWebserviceCall( HttpMethod post )
         throws IOException;
 
     /**
@@ -140,53 +135,13 @@ public abstract class AbstractHttpClient
      * @param httpState state
      * @throws IOException
      */
-    public abstract void postProcessWebserviceCall( HttpMethod post, HttpState httpState )
+    protected abstract void postProcessWebserviceCall( HttpMethod post, HttpState httpState )
         throws IOException;
-
-    /**
-     * @return Returns the httpClient.
-     */
-    private HttpClient getHttpClient()
-    {
-        return httpClient;
-    }
-
-    /**
-     * @param httpClient The httpClient to set.
-     */
-    private void setHttpClient( HttpClient httpClient )
-    {
-        this.httpClient = httpClient;
-    }
-
-    /**
-     * @return Returns the connectionManager.
-     */
-    public MultiThreadedHttpConnectionManager getConnectionManager()
-    {
-        return connectionManager;
-    }
-
-    /**
-     * @param connectionManager The connectionManager to set.
-     */
-    public void setConnectionManager( MultiThreadedHttpConnectionManager connectionManager )
-    {
-        this.connectionManager = connectionManager;
-    }
-
-    /**
-     * @param remoteHttpCacheAttributes the remoteHttpCacheAttributes to set
-     */
-    public void setRemoteHttpCacheAttributes( RemoteHttpCacheAttributes remoteHttpCacheAttributes )
-    {
-        this.remoteHttpCacheAttributes = remoteHttpCacheAttributes;
-    }
 
     /**
      * @return the remoteHttpCacheAttributes
      */
-    public RemoteHttpCacheAttributes getRemoteHttpCacheAttributes()
+    protected RemoteHttpCacheAttributes getRemoteHttpCacheAttributes()
     {
         return remoteHttpCacheAttributes;
     }
