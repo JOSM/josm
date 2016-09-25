@@ -19,18 +19,19 @@ package org.apache.commons.jcs.auxiliary.remote.http.client;
  * under the License.
  */
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCacheFactory;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCache;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
-import org.apache.commons.jcs.auxiliary.remote.RemoteCacheNoWaitFacade;
+import org.apache.commons.jcs.auxiliary.remote.RemoteCacheNoWait;
+import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheClient;
+import org.apache.commons.jcs.auxiliary.remote.http.client.behavior.IRemoteHttpCacheClient;
 import org.apache.commons.jcs.auxiliary.remote.server.behavior.RemoteType;
-import org.apache.commons.jcs.engine.behavior.ICache;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
 import org.apache.commons.jcs.engine.behavior.IElementSerializer;
 import org.apache.commons.jcs.engine.logging.behavior.ICacheEventLogger;
+import org.apache.commons.jcs.utils.config.OptionConverter;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * The RemoteCacheFactory creates remote caches for the cache hub. It returns a no wait facade which
@@ -41,9 +42,11 @@ import org.apache.commons.jcs.engine.logging.behavior.ICacheEventLogger;
 public class RemoteHttpCacheFactory
     extends AbstractAuxiliaryCacheFactory
 {
-    /** store reference of facades to initiate failover */
-    private static final HashMap<String, RemoteCacheNoWaitFacade<?, ?>> facades =
-        new HashMap<String, RemoteCacheNoWaitFacade<?, ?>>();
+    /** The logger */
+    private static final Log log = LogFactory.getLog( RemoteHttpCacheFactory.class );
+
+    /** Monitor thread instance */
+    private RemoteHttpCacheMonitor monitor;
 
     /**
      * For LOCAL clients we get a handle to all the failovers, but we do not register a listener
@@ -64,29 +67,82 @@ public class RemoteHttpCacheFactory
     {
         RemoteHttpCacheAttributes rca = (RemoteHttpCacheAttributes) iaca;
 
-        ArrayList<ICache<K, V>> noWaits = new ArrayList<ICache<K, V>>();
-
-        RemoteHttpCacheManager rcm = RemoteHttpCacheManager.getInstance( cacheMgr, cacheEventLogger, elementSerializer );
         // TODO, use the configured value.
         rca.setRemoteType( RemoteType.LOCAL );
-        ICache<K, V> ic = rcm.getCache( rca );
-        noWaits.add( ic );
 
-        // FIXME Remove null parameter
-        RemoteCacheNoWaitFacade<K, V> rcnwf =
-            new RemoteCacheNoWaitFacade<K, V>(noWaits, rca, cacheMgr, cacheEventLogger, elementSerializer, null );
+        RemoteHttpClientListener<K, V> listener = new RemoteHttpClientListener<K, V>( rca, cacheMgr, elementSerializer );
 
-        getFacades().put( rca.getCacheName(), rcnwf );
+        IRemoteHttpCacheClient<K, V> remoteService = createRemoteHttpCacheClientForAttributes(rca);
 
-        return rcnwf;
+        IRemoteCacheClient<K, V> remoteCacheClient =
+                new RemoteHttpCache<K, V>( rca, remoteService, listener, monitor );
+        remoteCacheClient.setCacheEventLogger( cacheEventLogger );
+        remoteCacheClient.setElementSerializer( elementSerializer );
+
+        RemoteCacheNoWait<K, V> remoteCacheNoWait = new RemoteCacheNoWait<K, V>( remoteCacheClient );
+        remoteCacheNoWait.setCacheEventLogger( cacheEventLogger );
+        remoteCacheNoWait.setElementSerializer( elementSerializer );
+
+        return remoteCacheNoWait;
     }
 
     /**
-     * The facades are what the cache hub talks to.
-     * @return Returns the facades.
+     * This is an extension point. The manager and other classes will only create
+     * RemoteHttpCacheClient through this method.
+
+     * @param cattr the cache configuration
+     * @return the client instance
      */
-    public static HashMap<String, RemoteCacheNoWaitFacade<?, ?>> getFacades()
+    protected <V, K> IRemoteHttpCacheClient<K, V> createRemoteHttpCacheClientForAttributes(RemoteHttpCacheAttributes cattr)
     {
-        return facades;
+        IRemoteHttpCacheClient<K, V> remoteService = OptionConverter.instantiateByClassName( cattr
+                        .getRemoteHttpClientClassName(), null );
+
+        if ( remoteService == null )
+        {
+            if ( log.isInfoEnabled() )
+            {
+                log.info( "Creating the default client for " + cattr.getCacheName());
+            }
+            remoteService = new RemoteHttpCacheClient<K, V>( );
+        }
+
+        remoteService.initialize( cattr );
+        return remoteService;
+    }
+
+    /**
+     * @see org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCacheFactory#initialize()
+     */
+    @Override
+    public void initialize()
+    {
+        super.initialize();
+        monitor = new RemoteHttpCacheMonitor(this);
+        monitor.setDaemon(true);
+        monitor.start();
+    }
+
+    /**
+     * @see org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCacheFactory#dispose()
+     */
+    @Override
+    public void dispose()
+    {
+        if (monitor != null)
+        {
+            monitor.notifyShutdown();
+            try
+            {
+                monitor.join(5000);
+            }
+            catch (InterruptedException e)
+            {
+                // swallow
+            }
+            monitor = null;
+        }
+
+        super.dispose();
     }
 }

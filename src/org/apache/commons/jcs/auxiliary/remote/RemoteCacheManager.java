@@ -54,7 +54,8 @@ public class RemoteCacheManager
     private static final Log log = LogFactory.getLog( RemoteCacheManager.class );
 
     /** Contains instances of RemoteCacheNoWait managed by a RemoteCacheManager instance. */
-    final ConcurrentMap<String, RemoteCacheNoWait<?, ?>> caches = new ConcurrentHashMap<String, RemoteCacheNoWait<?, ?>>();
+    private final ConcurrentMap<String, RemoteCacheNoWait<?, ?>> caches =
+            new ConcurrentHashMap<String, RemoteCacheNoWait<?, ?>>();
 
     /** Lock for initialization of caches */
     private ReentrantLock cacheLock = new ReentrantLock();
@@ -281,7 +282,7 @@ public class RemoteCacheManager
      * @param cattr the cache configuration
      * @return the instance
      */
-    private <K, V> RemoteCacheNoWait<K, V> newRemoteCacheNoWait(IRemoteCacheAttributes cattr)
+    protected <K, V> RemoteCacheNoWait<K, V> newRemoteCacheNoWait(IRemoteCacheAttributes cattr)
     {
         RemoteCacheNoWait<K, V> remoteCacheNoWait;
         // create a listener first and pass it to the remotecache
@@ -339,6 +340,8 @@ public class RemoteCacheManager
                     log.error( "Problem releasing " + c.getCacheName(), ex );
                 }
             }
+
+            caches.clear();
         }
         finally
         {

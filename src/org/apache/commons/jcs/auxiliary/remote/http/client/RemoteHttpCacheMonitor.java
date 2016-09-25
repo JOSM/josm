@@ -34,35 +34,23 @@ import org.apache.commons.jcs.engine.CacheStatus;
  */
 public class RemoteHttpCacheMonitor extends AbstractAuxiliaryCacheMonitor
 {
-    /** The remote cache that we are monitoring */
-    private static RemoteHttpCacheMonitor instance;
-
     /** Set of remote caches to monitor. This are added on error, if not before. */
-    private final ConcurrentHashMap<RemoteHttpCache<?, ?>, RemoteHttpCache<?, ?>> remoteHttpCaches =
-        new ConcurrentHashMap<RemoteHttpCache<?, ?>, RemoteHttpCache<?, ?>>();
+    private final ConcurrentHashMap<RemoteHttpCache<?, ?>, RemoteHttpCache<?, ?>> remoteHttpCaches;
 
-    /** Constructor for the RemoteCacheMonitor object */
-    private RemoteHttpCacheMonitor()
-    {
-        super("JCS-RemoteHttpCacheMonitor");
-        setIdlePeriod(3000L);
-    }
+    /** Factory instance */
+    private RemoteHttpCacheFactory factory = null;
 
     /**
-     * Returns the singleton instance.
-     * <p>
-     * @return The instance value
+     * Constructor for the RemoteCacheMonitor object
+     *
+     * @param factory the factory to set
      */
-    public static RemoteHttpCacheMonitor getInstance()
+    public RemoteHttpCacheMonitor(RemoteHttpCacheFactory factory)
     {
-        synchronized ( RemoteHttpCacheMonitor.class )
-        {
-            if ( instance == null )
-            {
-                return instance = new RemoteHttpCacheMonitor();
-            }
-        }
-        return instance;
+        super("JCS-RemoteHttpCacheMonitor");
+        this.factory = factory;
+        this.remoteHttpCaches = new ConcurrentHashMap<RemoteHttpCache<?, ?>, RemoteHttpCache<?, ?>>();
+        setIdlePeriod(3000L);
     }
 
     /**
@@ -94,13 +82,18 @@ public class RemoteHttpCacheMonitor extends AbstractAuxiliaryCacheMonitor
     // performance reasons.
     // If exception is thrown owing to synchronization,
     // just skip the monitoring until the next round.
-    /** Main processing method for the RemoteCacheMonitor object */
+    /** Main processing method for the RemoteHttpCacheMonitor object */
     @Override
-    public void doWork()
+    protected void doWork()
     {
+        // If no factory has been set, skip
+        if (factory == null)
+        {
+            return;
+        }
+
         // If any cache is in error, it strongly suggests all caches
-        // managed by the
-        // same RmicCacheManager instance are in error. So we fix
+        // managed by the same RmicCacheManager instance are in error. So we fix
         // them once and for all.
         for (RemoteHttpCache<?, ?> remoteCache : this.remoteHttpCaches.values())
         {
@@ -110,8 +103,8 @@ public class RemoteHttpCacheMonitor extends AbstractAuxiliaryCacheMonitor
                 {
                     RemoteHttpCacheAttributes attributes = remoteCache.getRemoteHttpCacheAttributes();
 
-                    IRemoteHttpCacheClient<Serializable, Serializable> remoteService = RemoteHttpCacheManager.getInstance()
-                        .createRemoteHttpCacheClientForAttributes( attributes );
+                    IRemoteHttpCacheClient<Serializable, Serializable> remoteService =
+                            factory.createRemoteHttpCacheClientForAttributes( attributes );
 
                     if ( log.isInfoEnabled() )
                     {

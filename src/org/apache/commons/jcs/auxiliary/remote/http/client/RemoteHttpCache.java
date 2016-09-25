@@ -1,5 +1,7 @@
 package org.apache.commons.jcs.auxiliary.remote.http.client;
 
+import java.io.IOException;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -26,8 +28,6 @@ import org.apache.commons.jcs.engine.behavior.ICacheServiceNonLocal;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.IOException;
-
 /**
  * This uses an http client as the service.
  */
@@ -36,6 +36,9 @@ public class RemoteHttpCache<K, V>
 {
     /** The logger. */
     private static final Log log = LogFactory.getLog( RemoteHttpCache.class );
+
+    /** for error notifications */
+    private RemoteHttpCacheMonitor monitor;
 
     /** Keep the child copy here for the restore process. */
     private RemoteHttpCacheAttributes remoteHttpCacheAttributes;
@@ -49,13 +52,15 @@ public class RemoteHttpCache<K, V>
      * @param remoteHttpCacheAttributes
      * @param remote
      * @param listener
+     * @param monitor the cache monitor
      */
     public RemoteHttpCache( RemoteHttpCacheAttributes remoteHttpCacheAttributes, ICacheServiceNonLocal<K, V> remote,
-                            IRemoteCacheListener<K, V> listener )
+                            IRemoteCacheListener<K, V> listener, RemoteHttpCacheMonitor monitor )
     {
         super( remoteHttpCacheAttributes, remote, listener );
 
-        setRemoteHttpCacheAttributes( remoteHttpCacheAttributes );
+        this.remoteHttpCacheAttributes = remoteHttpCacheAttributes;
+        this.monitor = monitor;
     }
 
     /**
@@ -79,7 +84,7 @@ public class RemoteHttpCache<K, V>
 
             setRemoteCacheService( new ZombieCacheServiceNonLocal<K, V>( getRemoteCacheAttributes().getZombieQueueMaxSize() ) );
 
-            RemoteHttpCacheMonitor.getInstance().notifyError( this );
+            monitor.notifyError( this );
         }
 
         if ( ex instanceof IOException )
@@ -96,14 +101,6 @@ public class RemoteHttpCache<K, V>
     public String getEventLoggingExtraInfo()
     {
         return null;
-    }
-
-    /**
-     * @param remoteHttpCacheAttributes the remoteHttpCacheAttributes to set
-     */
-    public void setRemoteHttpCacheAttributes( RemoteHttpCacheAttributes remoteHttpCacheAttributes )
-    {
-        this.remoteHttpCacheAttributes = remoteHttpCacheAttributes;
     }
 
     /**

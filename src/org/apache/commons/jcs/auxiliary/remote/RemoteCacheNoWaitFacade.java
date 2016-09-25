@@ -66,6 +66,12 @@ public class RemoteCacheNoWaitFacade<K, V>
     {
         super( noWaits, rca, cacheMgr, cacheEventLogger, elementSerializer );
         this.cacheFactory = cacheFactory;
+
+        for (RemoteCacheNoWait<K,V> rcnw : this.noWaits)
+        {
+            ((RemoteCache<K, V>)rcnw.getRemoteCache()).setFacade(this);
+            this.noWaits.add(rcnw);
+        }
     }
 
     /**

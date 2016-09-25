@@ -50,7 +50,7 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
     private static final Log log = LogFactory.getLog( AbstractRemoteCacheNoWaitFacade.class );
 
     /** The connection to a remote server, or a zombie. */
-    private List<RemoteCacheNoWait<K, V>> noWaits;
+    protected List<RemoteCacheNoWait<K, V>> noWaits;
 
     /** holds failover and cluster information */
     private IRemoteCacheAttributes remoteCacheAttributes;
@@ -76,7 +76,6 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
         for (ICache<K, V> nw : noWaits)
         {
             RemoteCacheNoWait<K,V> rcnw = (RemoteCacheNoWait<K,V>) nw;
-            ((RemoteCache<K, V>)rcnw.getRemoteCache()).setFacade(this);
             this.noWaits.add(rcnw);
         }
         this.remoteCacheAttributes = rca;
