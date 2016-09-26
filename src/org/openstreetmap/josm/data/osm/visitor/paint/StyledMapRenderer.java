@@ -82,6 +82,7 @@ import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.AreaAndPerimeter;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * A map renderer which renders a map according to style rules in a set of style sheets.
@@ -241,6 +242,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
+    /**
+     * This stores a style and a primitive that should be painted with that style.
+     */
     public static class StyleRecord implements Comparable<StyleRecord> {
         private final StyleElement style;
         private final OsmPrimitive osm;
@@ -296,6 +300,27 @@ public class StyledMapRenderer extends AbstractMapRenderer {
          */
         public StyleElement getStyle() {
             return style;
+        }
+
+        /**
+         * Paints the primitive with the style.
+         * @param paintSettings The settings to use.
+         * @param painter The painter to paint the style.
+         */
+        public void paintPrimitive(MapPaintSettings paintSettings, StyledMapRenderer painter) {
+            style.paintPrimitive(
+                    osm,
+                    paintSettings,
+                    painter,
+                    (flags & FLAG_SELECTED) != 0,
+                    (flags & FLAG_OUTERMEMBER_OF_SELECTED) != 0,
+                    (flags & FLAG_MEMBER_OF_SELECTED) != 0
+            );
+        }
+
+        @Override
+        public String toString() {
+            return "StyleRecord [style=" + style + ", osm=" + osm + ", flags=" + flags + "]";
         }
     }
 
@@ -1827,11 +1852,17 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
             try {
                 for (final OsmPrimitive osm : input) {
-                    if (osm.isDrawable()) {
-                        osm.accept(this);
+                    try {
+                        if (osm.isDrawable()) {
+                            osm.accept(this);
+                        }
+                    } catch (RuntimeException e) {
+                        throw BugReport.intercept(e).put("osm", osm);
                     }
                 }
                 return output;
+            } catch (RuntimeException e) {
+                throw BugReport.intercept(e).put("input-size", input.size()).put("output-size", output.size());
             } finally {
                 MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
             }
@@ -1933,20 +1964,24 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 return;
             }
 
-            for (StyleRecord r : allStyleElems) {
-                r.style.paintPrimitive(
-                        r.osm,
-                        paintSettings,
-                        this,
-                        (r.flags & FLAG_SELECTED) != 0,
-                        (r.flags & FLAG_OUTERMEMBER_OF_SELECTED) != 0,
-                        (r.flags & FLAG_MEMBER_OF_SELECTED) != 0
-                );
+            for (StyleRecord record : allStyleElems) {
+                try {
+                    record.paintPrimitive(paintSettings, this);
+                } catch (RuntimeException e) {
+                    throw BugReport.intercept(e).put("record", record);
+                }
             }
 
             drawVirtualNodes(data, bbox);
 
             benchmark.renderDone();
+        } catch (RuntimeException e) {
+            throw BugReport.intercept(e)
+                    .put("data", data)
+                    .put("circum", circum)
+                    .put("scale", scale)
+                    .put("paintSettings", paintSettings)
+                    .put("renderVirtualNodes", renderVirtualNodes);
         } finally {
             data.getReadLock().unlock();
         }
