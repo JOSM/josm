@@ -1501,4 +1501,22 @@ public final class Utils {
             return val;
         }
     }
+
+    /**
+     * Clamp a integer value to the given range
+     * @param val The value
+     * @param min minimum value
+     * @param max maximum value
+     * @return the value
+     * @since 11053
+     */
+    public static int clamp(int val, int min, int max) {
+        if (val < min) {
+            return min;
+        } else if (val > max) {
+            return max;
+        } else {
+            return val;
+        }
+    }
 }

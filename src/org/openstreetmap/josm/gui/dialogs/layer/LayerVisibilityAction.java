@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -39,6 +40,10 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public final class LayerVisibilityAction extends AbstractAction implements IEnabledStateUpdating, LayerAction {
     private static final int SLIDER_STEPS = 100;
+    /**
+     * Steps the value is changed by a mouse wheel change (one full click)
+     */
+    private static final int SLIDER_WHEEL_INCREMENT = 5;
     private static final double MAX_SHARPNESS_FACTOR = 2;
     private static final double MAX_COLORFUL_FACTOR = 2;
     private final LayerListModel model;
@@ -171,6 +176,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
             setPaintTicks(true);
 
             addChangeListener(e -> onStateChanged());
+            addMouseWheelListener(this::mouseWheelMoved);
         }
 
         /**
@@ -183,6 +189,18 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
             for (T layer : layers) {
                 applyValueToLayer(layer);
             }
+        }
+
+        protected void mouseWheelMoved(MouseWheelEvent e) {
+            double rotation = e.getPreciseWheelRotation();
+            double destinationValue = getValue() + rotation * SLIDER_WHEEL_INCREMENT;
+            if (rotation < 0) {
+                destinationValue = Math.floor(destinationValue);
+            } else {
+                destinationValue = Math.ceil(destinationValue);
+            }
+            setValue(Utils.clamp((int) destinationValue, getMinimum(), getMaximum()));
+            e.consume();
         }
 
         protected void applyValueToLayer(T layer) {
@@ -203,13 +221,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
 
         protected int convertFromRealValue(double value) {
             int i = (int) ((value - minValue) / (maxValue - minValue) * SLIDER_STEPS + .5);
-            if (i < getMinimum()) {
-                return getMinimum();
-            } else if (i > getMaximum()) {
-                return getMaximum();
-            } else {
-                return i;
-            }
+            return Utils.clamp(i, getMinimum(), getMaximum());
         }
 
         public abstract ImageIcon getIcon();
