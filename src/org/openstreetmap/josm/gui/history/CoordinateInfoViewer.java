@@ -16,6 +16,7 @@ import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
+import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
@@ -334,6 +335,7 @@ public class CoordinateInfoViewer extends JPanel {
 
         MapViewer(HistoryBrowserModel model) {
             this.updater = new Updater(model, PointInTimeType.REFERENCE_POINT_IN_TIME);
+            setTileSource(new OsmTileSource.Mapnik()); // for attribution
             setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY));
         }
 
