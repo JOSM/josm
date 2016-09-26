@@ -1508,7 +1508,7 @@ public final class Utils {
      * @param min minimum value
      * @param max maximum value
      * @return the value
-     * @since 11053
+     * @since 11055
      */
     public static int clamp(int val, int min, int max) {
         if (val < min) {
