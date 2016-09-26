@@ -345,4 +345,24 @@ public final class MapPaintSettings implements PreferenceChangedListener {
     public boolean isOutlineOnly() {
         return outlineOnly;
     }
+
+    @Override
+    public String toString() {
+        // This is used for debugging exceptions.
+        return "MapPaintSettings [useRealWidth=" + useRealWidth + ", showDirectionArrow=" + showDirectionArrow
+                + ", showOnewayArrow=" + showOnewayArrow + ", defaultSegmentWidth=" + defaultSegmentWidth
+                + ", showOrderNumber=" + showOrderNumber + ", showHeadArrowOnly=" + showHeadArrowOnly
+                + ", showNamesDistance=" + showNamesDistance + ", useStrokesDistance=" + useStrokesDistance
+                + ", showIconsDistance=" + showIconsDistance + ", selectedNodeSize=" + selectedNodeSize
+                + ", connectionNodeSize=" + connectionNodeSize + ", unselectedNodeSize=" + unselectedNodeSize
+                + ", taggedNodeSize=" + taggedNodeSize + ", fillSelectedNode=" + fillSelectedNode
+                + ", fillUnselectedNode=" + fillUnselectedNode + ", fillTaggedNode=" + fillTaggedNode
+                + ", fillConnectionNode=" + fillConnectionNode + ", outlineOnly=" + outlineOnly + ", selectedColor="
+                + selectedColor + ", relationSelectedColor=" + relationSelectedColor + ", highlightColor="
+                + highlightColor + ", inactiveColor=" + inactiveColor + ", nodeColor=" + nodeColor + ", taggedColor="
+                + taggedColor + ", connectionColor=" + connectionColor + ", taggedConnectionColor="
+                + taggedConnectionColor + "]";
+    }
+
+
 }
