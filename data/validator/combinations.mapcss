@@ -256,7 +256,7 @@ way[highway][postal_code]["addr:postcode"][postal_code!=*"addr:postcode"] {
   throwWarning: tr("{0} together with {1} and conflicting values", "{1.key}", "{2.key}");
 }
 way[highway][highway!=services][highway!=rest_area][!postal_code]["addr:postcode"] {
-  throwWarning: tr("{0} together with {1}", "{0.key}", "{2.key}");
+  throwWarning: tr("{0} together with {1}", "{0.key}", "{4.key}");
   suggestAlternative: "postal_code";
   fixChangeKey: "addr:postcode=>postal_code";
 }
