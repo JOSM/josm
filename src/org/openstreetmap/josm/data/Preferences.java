@@ -17,6 +17,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -37,6 +38,7 @@ import java.util.TreeMap;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.json.Json;
@@ -1525,6 +1527,10 @@ public class Preferences {
         removeUrlFromEntries(loadedVersion, 10063,
                 "validator.org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.entries",
                 "resource://data/validator/power.mapcss");
+        // drop in March 2017
+        if (loadedVersion < 11058) {
+            migrateOldColorKeys();
+        }
 
         for (String key : OBSOLETE_PREF_KEYS) {
             if (settingsMap.containsKey(key)) {
@@ -1532,6 +1538,25 @@ public class Preferences {
                 Main.info(tr("Preference setting {0} has been removed since it is no longer used.", key));
             }
         }
+    }
+
+    private void migrateOldColorKeys() {
+        settingsMap.keySet().stream()
+                .filter(key -> key.startsWith("color."))
+                .flatMap(key -> {
+                    final String newKey = ColorProperty.getColorKey(key.substring("color.".length()));
+                    return key.equals(newKey) || settingsMap.containsKey(newKey)
+                            ? Stream.empty()
+                            : Stream.of(new AbstractMap.SimpleImmutableEntry<>(key, newKey));
+                })
+                .collect(Collectors.toList()) // to avoid ConcurrentModificationException
+                .forEach(entry -> {
+                    final String oldKey = entry.getKey();
+                    final String newKey = entry.getValue();
+                    Main.info("Migrating old color key {0} => {1}", oldKey, newKey);
+                    put(newKey, get(oldKey));
+                    put(oldKey, null);
+                });
     }
 
     private void removeUrlFromEntries(int loadedVersion, int versionMax, String key, String urlPart) {
