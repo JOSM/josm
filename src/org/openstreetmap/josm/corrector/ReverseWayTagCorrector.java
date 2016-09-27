@@ -4,17 +4,20 @@ package org.openstreetmap.josm.corrector;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.correction.RoleCorrection;
 import org.openstreetmap.josm.data.correction.TagCorrection;
+import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -63,7 +66,55 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         }
     }
 
-    private static class StringSwitcher {
+    private interface IStringSwitcher extends Function<String, String> {
+
+        static IStringSwitcher combined(IStringSwitcher... switchers) {
+            return key -> {
+                for (IStringSwitcher switcher : switchers) {
+                    final String newKey = switcher.apply(key);
+                    if (!key.equals(newKey)) {
+                        return newKey;
+                    }
+                }
+                return key;
+            };
+        }
+
+        static IStringSwitcher compassCardinal() {
+            final List<String> cardinal = Arrays.asList(
+                    "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+                    "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW");
+            return key -> {
+                final int index = cardinal.indexOf(key);
+                if (index >= 0) {
+                    return cardinal.get((index + cardinal.size() / 2) % cardinal.size());
+                }
+                return key;
+            };
+        }
+
+        static IStringSwitcher compassDegrees() {
+            return key -> {
+                if (!key.matches("\\d+")) {
+                    return key;
+                }
+                final int i = Integer.parseInt(key);
+                if (i < 0 || i > 360) {
+                    return key;
+                }
+                return Integer.toString((i + 180) % 360);
+            };
+        }
+
+        static IStringSwitcher compass() {
+            return combined(
+                    IStringSwitcher.compassCardinal(),
+                    IStringSwitcher.compassDegrees()
+            );
+        }
+    }
+
+    private static class StringSwitcher implements IStringSwitcher {
 
         private final String a;
         private final String b;
@@ -75,6 +126,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
             this.pattern = getPatternFor(a + '|' + b);
         }
 
+        @Override
         public String apply(String text) {
             Matcher m = pattern.matcher(text);
 
@@ -127,32 +179,23 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                 } else if (OsmUtils.isTrue(value)) {
                     newValue = OsmUtils.reverseval;
                 }
-                for (StringSwitcher prefixSuffixSwitcher : stringSwitchers) {
-                    newKey = prefixSuffixSwitcher.apply(key);
-                    if (!key.equals(newKey)) {
-                        break;
-                    }
-                }
-            } else if (key.startsWith("incline") || key.endsWith("incline")
-                    || key.startsWith("direction") || key.endsWith("direction")) {
+                newKey = COMBINED_SWITCHERS.apply(key);
+            } else if (key.startsWith("incline") || key.endsWith("incline")) {
                 newValue = UP_DOWN.apply(value);
                 if (newValue.equals(value)) {
                     newValue = invertNumber(value);
+                }
+            } else if (key.startsWith("direction") || key.endsWith("direction")) {
+                newValue = COMBINED_SWITCHERS.apply(value);
+                if (newValue.equals(value)) {
+                    newValue = IStringSwitcher.compass().apply(value);
                 }
             } else if (key.endsWith(":forward") || key.endsWith(":backward")) {
                 // Change key but not left/right value (fix #8518)
                 newKey = FORWARD_BACKWARD.apply(key);
             } else if (!ignoreKeyForCorrection(key)) {
-                for (StringSwitcher prefixSuffixSwitcher : stringSwitchers) {
-                    newKey = prefixSuffixSwitcher.apply(key);
-                    if (!key.equals(newKey)) {
-                        break;
-                    }
-                    newValue = prefixSuffixSwitcher.apply(value);
-                    if (!value.equals(newValue)) {
-                        break;
-                    }
-                }
+                newKey = COMBINED_SWITCHERS.apply(key);
+                newValue = COMBINED_SWITCHERS.apply(value);
             }
             return new Tag(newKey, newValue);
         }
@@ -160,14 +203,13 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
 
     private static final StringSwitcher FORWARD_BACKWARD = new StringSwitcher("forward", "backward");
     private static final StringSwitcher UP_DOWN = new StringSwitcher("up", "down");
-
-    private static final StringSwitcher[] stringSwitchers = new StringSwitcher[] {
+    private static final IStringSwitcher COMBINED_SWITCHERS = IStringSwitcher.combined(
         new StringSwitcher("left", "right"),
         new StringSwitcher("forwards", "backwards"),
         new StringSwitcher("east", "west"),
         new StringSwitcher("north", "south"),
         FORWARD_BACKWARD, UP_DOWN
-    };
+    );
 
     /**
      * Tests whether way can be reversed without semantic change, i.e., whether tags have to be changed.
@@ -206,8 +248,9 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
 
     static List<TagCorrection> getTagCorrections(Tagged way) {
         List<TagCorrection> tagCorrections = new ArrayList<>();
-        for (String key : way.keySet()) {
-            String value = way.get(key);
+        for (Map.Entry<String, String> entry : way.getKeys().entrySet()) {
+            final String key = entry.getKey();
+            final String value = entry.getValue();
             Tag newTag = TagSwitcher.apply(key, value);
             String newKey = newTag.getKey();
             String newValue = newTag.getValue();
@@ -244,17 +287,8 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                     continue;
                 }
 
-                boolean found = false;
-                String newRole = null;
-                for (StringSwitcher prefixSuffixSwitcher : stringSwitchers) {
-                    newRole = prefixSuffixSwitcher.apply(member.getRole());
-                    if (!newRole.equals(member.getRole())) {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (found) {
+                final String newRole = COMBINED_SWITCHERS.apply(member.getRole());
+                if (!member.getRole().equals(newRole)) {
                     roleCorrections.add(new RoleCorrection(relation, position, member, newRole));
                 }
 
@@ -264,13 +298,24 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         return roleCorrections;
     }
 
-    @Override
-    public Collection<Command> execute(Way oldway, Way way) throws UserCancelException {
+    static Map<OsmPrimitive, List<TagCorrection>> getTagCorrectionsMap(Way way) {
         Map<OsmPrimitive, List<TagCorrection>> tagCorrectionsMap = new HashMap<>();
-        List<TagCorrection> tagCorrections = getTagCorrections(way);
+        List<TagCorrection> tagCorrections = getTagCorrections((Tagged) way);
         if (!tagCorrections.isEmpty()) {
             tagCorrectionsMap.put(way, tagCorrections);
         }
+        for (Node node : way.getNodes()) {
+            final List<TagCorrection> corrections = getTagCorrections(node);
+            if (!corrections.isEmpty()) {
+                tagCorrectionsMap.put(node, corrections);
+            }
+        }
+        return tagCorrectionsMap;
+    }
+
+    @Override
+    public Collection<Command> execute(Way oldway, Way way) throws UserCancelException {
+        Map<OsmPrimitive, List<TagCorrection>> tagCorrectionsMap = getTagCorrectionsMap(way);
 
         Map<OsmPrimitive, List<RoleCorrection>> roleCorrectionMap = new HashMap<>();
         List<RoleCorrection> roleCorrections = getRoleCorrections(oldway);

@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.correction;
 
+import java.util.Objects;
+
 /**
  * Represents a change of a single tag.
  * Both key and value can be subject of this change.
@@ -45,5 +47,21 @@ public class TagCorrection implements Correction {
      */
     public boolean isValueChanged() {
         return !newValue.equals(oldValue);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof TagCorrection)) return false;
+        TagCorrection that = (TagCorrection) o;
+        return Objects.equals(oldKey, that.oldKey) &&
+                Objects.equals(newKey, that.newKey) &&
+                Objects.equals(oldValue, that.oldValue) &&
+                Objects.equals(newValue, that.newValue);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(oldKey, newKey, oldValue, newValue);
     }
 }
