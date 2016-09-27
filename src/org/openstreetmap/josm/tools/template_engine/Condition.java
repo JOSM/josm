@@ -40,15 +40,17 @@ public class Condition implements TemplateEntry {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("?{");
+        sb.append("?{ ");
         for (TemplateEntry entry: entries) {
             if (entry instanceof SearchExpressionCondition) {
                 sb.append(entry);
             } else {
                 sb.append('\'').append(entry).append('\'');
             }
-            sb.append('|');
+            sb.append(" | ");
         }
+        sb.setLength(sb.length() - 3);
+        sb.append(" }");
         return sb.toString();
     }
 }

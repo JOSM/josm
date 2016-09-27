@@ -55,7 +55,7 @@ public class Variable implements TemplateEntry {
 
     @Override
     public String toString() {
-        return '{' + variableName + '}';
+        return '{' + (special ? SPECIAL_VARIABLE_PREFIX : "") + variableName + '}';
     }
 
     public boolean isSpecial() {
