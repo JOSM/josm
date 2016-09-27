@@ -1,10 +1,20 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.corrector;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
+
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.data.correction.TagCorrection;
+import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -38,6 +48,14 @@ public class ReverseWayTagCorrectorTest {
             assertSwitch(new Tag(k, "down"), new Tag(k, "up"));
             assertSwitch(new Tag(k, "something"), new Tag(k, "something"));
         }
+        // direction=forward/backward/...
+        assertSwitch(new Tag("direction", "forward"), new Tag("direction", "backward"));
+        assertSwitch(new Tag("direction", "backward"), new Tag("direction", "forward"));
+        assertSwitch(new Tag("direction", "north"), new Tag("direction", "south"));
+        assertSwitch(new Tag("direction", "NNE"), new Tag("direction", "SSW"));
+        assertSwitch(new Tag("direction", "270"), new Tag("direction", "90"));
+        assertSwitch(new Tag("direction", "135"), new Tag("direction", "315"));
+        assertSwitch(new Tag("direction", "337"), new Tag("direction", "157"));
         // :left/:right with oneway (see #10977)
         assertSwitch(new Tag("cycleway:left:oneway", "-1"), new Tag("cycleway:right:oneway", "yes"));
         // :forward/:backward (see #8518)
@@ -97,5 +115,23 @@ public class ReverseWayTagCorrectorTest {
 
     private void assertSwitch(Tag oldTag, Tag newTag) {
         Assert.assertEquals(ReverseWayTagCorrector.TagSwitcher.apply(oldTag), newTag);
+    }
+
+    /**
+     * Test tag correction on way nodes
+     */
+    @Test
+    public void testSwitchingWayNodes() {
+        final OsmPrimitive n1 = OsmUtils.createPrimitive("node");
+        final OsmPrimitive n2 = OsmUtils.createPrimitive("node direction=SSW");
+        final OsmPrimitive n3 = OsmUtils.createPrimitive("node");
+        final Way w = new Way();
+        Stream.of(n1, n2, n3).map(Node.class::cast).forEach(w::addNode);
+        final Map<OsmPrimitive, List<TagCorrection>> tagCorrections = ReverseWayTagCorrector.getTagCorrectionsMap(w);
+        Assert.assertEquals(1, tagCorrections.size());
+        Assert.assertEquals(Collections.singleton(n2),
+                tagCorrections.keySet());
+        Assert.assertEquals(Collections.singletonList(new TagCorrection("direction", "SSW", "direction", "NNE")),
+                tagCorrections.values().iterator().next());
     }
 }
