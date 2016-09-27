@@ -41,6 +41,7 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.io.UploadStrategy;
 import org.openstreetmap.josm.gui.io.UploadStrategySpecification;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Reads primitives referring to a particular primitive (ways including a node, relations referring to a relation)
@@ -164,7 +165,7 @@ public class OsmServerBackreferenceReaderTest {
         //
         Main.pref.put("osm-server.atomic-upload", false);
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
-        Main.logLevel = 4;
+        Logging.setLogLevel(Logging.LEVEL_DEBUG);
 
         File dataSetCacheOutputFile = new File(System.getProperty("java.io.tmpdir"),
                 MultiFetchServerObjectReaderTest.class.getName() + ".dataset");

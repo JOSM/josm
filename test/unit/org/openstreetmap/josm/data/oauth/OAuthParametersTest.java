@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -38,7 +39,7 @@ public class OAuthParametersTest {
         OAuthParameters dev = OAuthParameters.createDefault("http://api06.dev.openstreetmap.org/api");
         assertNotNull(dev);
         assertNotEquals(def, dev);
-        Main.logLevel = 5; // enable trace for line coverage
+        Logging.setLogLevel(Logging.LEVEL_TRACE); // enable trace for line coverage
         assertEquals(def, OAuthParameters.createDefault("wrong_url"));
         OAuthParameters dev2 = new OAuthParameters(dev);
         assertEquals(dev, dev2);
