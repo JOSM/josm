@@ -173,6 +173,7 @@ public class TemplateParserTest {
         StringBuilder sb = new StringBuilder();
         entry.appendText(sb, dataProvider);
         Assert.assertEquals("name=waypointName, number=10", sb.toString());
+        Assert.assertEquals("{special:everything}", entry.toString());
     }
 
     /**
@@ -331,5 +332,14 @@ public class TemplateParserTest {
         entry.appendText(sb, parent2);
 
         Assert.assertEquals("child2", sb.toString());
+    }
+
+    @Test
+    public void testToStringCanBeParsedAgain() throws Exception {
+        final String s1 = "?{ '{name} ({desc})' | '{name} ({cmt})' | '{name}' | '{desc}' | '{cmt}' }";
+        final String s2 = new TemplateParser(s1).parse().toString();
+        final String s3 = new TemplateParser(s2).parse().toString();
+        Assert.assertEquals(s1, s2);
+        Assert.assertEquals(s2, s3);
     }
 }
