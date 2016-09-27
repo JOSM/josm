@@ -364,5 +364,4 @@ public final class MapPaintSettings implements PreferenceChangedListener {
                 + taggedConnectionColor + "]";
     }
 
-
 }
