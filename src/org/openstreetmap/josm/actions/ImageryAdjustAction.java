@@ -285,6 +285,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
                 return;
             }
             super.buttonAction(buttonIndex, evt);
+            restoreMapModeState();
         }
 
         @Override
@@ -310,16 +311,17 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
                 restoreMapModeState();
             }
 
-            private void restoreMapModeState() {
-                if (Main.map == null)
-                    return;
-                if (oldMapMode != null) {
-                    Main.map.selectMapMode(oldMapMode);
-                    oldMapMode = null;
-                } else {
-                    Main.map.selectSelectTool(false);
-                }
-            }
+        }
+    }
+
+    private void restoreMapModeState() {
+        if (Main.map == null)
+            return;
+        if (oldMapMode != null) {
+            Main.map.selectMapMode(oldMapMode);
+            oldMapMode = null;
+        } else {
+            Main.map.selectSelectTool(false);
         }
     }
 
