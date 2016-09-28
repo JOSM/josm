@@ -683,6 +683,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
             discardable = Main.pref.getCollection("tags.discardable",
                     Arrays.asList(
                             "created_by",
+                            "converted_by",
                             "geobase:datasetName",
                             "geobase:uuid",
                             "KSJ2:ADS",
