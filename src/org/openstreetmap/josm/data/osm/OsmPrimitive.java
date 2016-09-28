@@ -664,8 +664,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         if (uninteresting == null) {
             List<String> l = new LinkedList<>(Arrays.asList(
                 "source", "source_ref", "source:", "comment",
-                "converted_by", "watch", "watch:",
-                "description", "attribution"));
+                "watch", "watch:", "description", "attribution"));
             l.addAll(getDiscardableKeys());
             l.addAll(getWorkInProgressKeys());
             uninteresting = Main.pref.getCollection("tags.uninteresting", l);
