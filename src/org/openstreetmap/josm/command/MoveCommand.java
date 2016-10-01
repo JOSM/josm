@@ -92,6 +92,7 @@ public class MoveCommand extends Command {
         saveCheckpoint(); // (0,0) displacement will be saved
         this.x = x;
         this.y = y;
+        Objects.requireNonNull(objects, "objects");
         this.nodes = AllNodesVisitor.getAllNodes(objects);
         for (Node n : this.nodes) {
             oldState.add(new OldNodeState(n));
@@ -105,7 +106,10 @@ public class MoveCommand extends Command {
      * @param end The ending position (northern/eastern)
      */
     public MoveCommand(Collection<OsmPrimitive> objects, EastNorth start, EastNorth end) {
-        this(objects, end.getX()-start.getX(), end.getY()-start.getY());
+        this(
+                Objects.requireNonNull(objects, "objects"),
+                Objects.requireNonNull(end, "end").getX() - Objects.requireNonNull(start, "start").getX(),
+                Objects.requireNonNull(end, "end").getY() - Objects.requireNonNull(start, "start").getY());
         startEN = start;
     }
 
@@ -116,7 +120,10 @@ public class MoveCommand extends Command {
      * @param end The ending position (northern/eastern)
      */
     public MoveCommand(OsmPrimitive p, EastNorth start, EastNorth end) {
-        this(Collections.singleton(p), end.getX()-start.getX(), end.getY()-start.getY());
+        this(
+                Collections.singleton(Objects.requireNonNull(p, "p")),
+                Objects.requireNonNull(end, "end").getX() - Objects.requireNonNull(start, "start").getX(),
+                Objects.requireNonNull(end, "end").getY() - Objects.requireNonNull(start, "start").getY());
         startEN = start;
     }
 
