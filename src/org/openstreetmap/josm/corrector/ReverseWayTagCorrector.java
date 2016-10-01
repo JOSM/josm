@@ -4,7 +4,6 @@ package org.openstreetmap.josm.corrector;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -78,39 +77,6 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                 }
                 return key;
             };
-        }
-
-        static IStringSwitcher compassCardinal() {
-            final List<String> cardinal = Arrays.asList(
-                    "N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
-                    "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW");
-            return key -> {
-                final int index = cardinal.indexOf(key);
-                if (index >= 0) {
-                    return cardinal.get((index + cardinal.size() / 2) % cardinal.size());
-                }
-                return key;
-            };
-        }
-
-        static IStringSwitcher compassDegrees() {
-            return key -> {
-                if (!key.matches("\\d+")) {
-                    return key;
-                }
-                final int i = Integer.parseInt(key);
-                if (i < 0 || i > 360) {
-                    return key;
-                }
-                return Integer.toString((i + 180) % 360);
-            };
-        }
-
-        static IStringSwitcher compass() {
-            return combined(
-                    IStringSwitcher.compassCardinal(),
-                    IStringSwitcher.compassDegrees()
-            );
         }
     }
 
@@ -187,9 +153,6 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
                 }
             } else if (key.startsWith("direction") || key.endsWith("direction")) {
                 newValue = COMBINED_SWITCHERS.apply(value);
-                if (newValue.equals(value)) {
-                    newValue = IStringSwitcher.compass().apply(value);
-                }
             } else if (key.endsWith(":forward") || key.endsWith(":backward")) {
                 // Change key but not left/right value (fix #8518)
                 newKey = FORWARD_BACKWARD.apply(key);
