@@ -8,6 +8,8 @@ import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.Arrays;
 
 import javax.swing.BorderFactory;
@@ -143,6 +145,12 @@ public class LatLonDialog extends ExtendedDialog {
             }
         });
         setContent(tabs, false);
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowOpened(WindowEvent e) {
+                tfLatLon.requestFocusInWindow();
+            }
+        });
     }
 
     public LatLonDialog(Component parent, String title, String help) {
