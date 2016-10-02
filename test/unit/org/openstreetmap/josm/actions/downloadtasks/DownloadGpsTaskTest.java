@@ -41,6 +41,8 @@ public class DownloadGpsTaskTest {
         assertTrue(task.acceptsUrl("http://api.openstreetmap.org/trace/5000/data"));
         assertTrue(task.acceptsUrl("http://www.openstreetmap.org/trace/5000/data"));
         assertTrue(task.acceptsUrl("http://www.trackmyjourney.co.uk/exportgpx.php?session=S6rZR2Bh6GwX1wpB0C&trk=79292"));
+        assertTrue(task.acceptsUrl("https://www.openstreetmap.org/user/simon04/traces/750057"));
+        assertTrue(task.acceptsUrl("https://www.openstreetmap.org/edit?gpx=750057"));
         assertTrue(task.acceptsUrl(REMOTE_FILE));
     }
 
