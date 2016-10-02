@@ -459,6 +459,9 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         int nonChangedLayersCount = 0;
         Set<MapViewPaintable> invalidated = invalidatedListener.collectInvalidatedLayers();
         for (Layer l: visibleLayers) {
+            // `isChanged` for backward compatibility, see https://josm.openstreetmap.de/ticket/13175#comment:7
+            // Layers that still implement it (plugins) will use it to tell the MapView that they have been changed.
+            // This is why the MapView still uses it in addition to the invalidation events.
             if (l.isChanged() || invalidated.contains(l)) {
                 break;
             } else {
