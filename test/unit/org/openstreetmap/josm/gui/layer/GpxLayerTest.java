@@ -82,7 +82,6 @@ public class GpxLayerTest {
         assertEquals(Color.MAGENTA, layer2.getColorProperty().get());
         assertEquals("<html>0 tracks, 0 routes, 0 waypoints<br>Length: < 0.01 m<br></html>", layer2.getToolTipText());
 
-        assertFalse(layer.isChanged());
         assertTrue(layer.checkSaveConditions());
         assertTrue(layer.isInfoResizable());
         assertTrue(layer.isSavable());
