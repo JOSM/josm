@@ -5,9 +5,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -38,6 +40,8 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
     private DownloadTask downloadTask;
 
     private static final String PATTERN_TRACE_ID = "https?://.*(osm|openstreetmap).org/trace/\\p{Digit}+/data";
+    private static final String PATTERN_USER_TRACE_ID = "https?://.*(osm|openstreetmap).org/user/[^/]+/traces/(\\p{Digit}+)";
+    private static final String PATTERN_EDIT_TRACE_ID = "https?://.*(osm|openstreetmap).org/edit/?\\?gpx=(\\p{Digit}+)";
 
     private static final String PATTERN_TRACKPOINTS_BBOX = "https?://.*/api/0.6/trackpoints\\?bbox=.*,.*,.*,.*";
 
@@ -48,7 +52,11 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
 
     @Override
     public String[] getPatterns() {
-        return new String[] {PATTERN_EXTERNAL_GPX_FILE, PATTERN_EXTERNAL_GPX_SCRIPT, PATTERN_TRACE_ID, PATTERN_TRACKPOINTS_BBOX};
+        return new String[] {
+                PATTERN_EXTERNAL_GPX_FILE, PATTERN_EXTERNAL_GPX_SCRIPT,
+                PATTERN_TRACE_ID, PATTERN_USER_TRACE_ID, PATTERN_EDIT_TRACE_ID,
+                PATTERN_TRACKPOINTS_BBOX,
+        };
     }
 
     @Override
@@ -68,6 +76,14 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
     @Override
     public Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {
         CheckParameterUtil.ensureParameterNotNull(url, "url");
+        final Optional<String> mappedUrl = Stream.of(PATTERN_USER_TRACE_ID, PATTERN_EDIT_TRACE_ID)
+                .map(p -> Pattern.compile(p).matcher(url))
+                .filter(Matcher::matches)
+                .map(m -> "https://www.openstreetmap.org/trace/" + m.group(2) + "/data")
+                .findFirst();
+        if (mappedUrl.isPresent()) {
+            return loadUrl(newLayer, mappedUrl.get(), progressMonitor);
+        }
         if (url.matches(PATTERN_TRACE_ID)
          || url.matches(PATTERN_EXTERNAL_GPX_SCRIPT)
          || url.matches(PATTERN_EXTERNAL_GPX_FILE)) {
