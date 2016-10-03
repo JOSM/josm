@@ -216,11 +216,17 @@ way[oneway=-1 ][/:forward/][!traffic_sign:forward][bicycle:forward!=use_sidepath
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
 }
 
-/* #11127 */
-way[waterway][bridge=yes] {
+/* #11127, #13727 */
+way[waterway][bridge=yes][waterway!=weir] {
   throwWarning: tr("{0} together with {1}", "{0.key}", "{1.tag}");
   suggestAlternative: "bridge=aqueduct";
   fixAdd: "bridge=aqueduct";
+}
+way[waterway=weir][bridge=yes][highway] {
+  throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  suggestAlternative: "waterway=weir + ford=yes";
+  suggestAlternative: "waterway=dam";
+  suggestAlternative: tr("two objects, one with {0} and one with {1} + {2} + {3}", "{0.tag}", "{2.key}", "{1.tag}", "layer");
 }
 
 /* only {0.key}, see #11104 #12422 */
