@@ -102,7 +102,7 @@
     <chunk id="barrier_2">
         <optional text="Allowed traffic:">
             <check key="foot" text="Foot" default="on"/>
-            <check key="bicycle" text="Bicycle" default="on"/>
+            <check key="bicycle" text="Bicycle"/>
         </optional>
     </chunk>
     <chunk id="name_ref">
