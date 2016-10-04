@@ -46,7 +46,11 @@ public final class DeleteLayerAction extends AbstractAction implements IEnabledS
         if (!Main.saveUnsavedModifications(selectedLayers, false))
             return;
         for (Layer l: selectedLayers) {
-            Main.getLayerManager().removeLayer(l);
+            if (model.getLayerManager().containsLayer(l)) {
+                // it may happen that this call removes other layers.
+                // this is why we need to check if every layer is still in the list of selected layers.
+                model.getLayerManager().removeLayer(l);
+            }
         }
     }
 
