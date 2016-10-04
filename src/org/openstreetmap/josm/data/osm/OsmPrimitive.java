@@ -496,14 +496,32 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     /**
      * Determines if this object is selectable.
+     * <p>
+     * A primitive can be selected if all conditions are met:
+     * <ul>
+     * <li>it is drawable
+     * <li>it is not disabled (greyed out) by a filter.
+     * </ul>
      * @return {@code true} if this object is selectable
      */
     public boolean isSelectable() {
-        return (flags & (FLAG_DELETED + FLAG_INCOMPLETE + FLAG_DISABLED + FLAG_HIDE_IF_DISABLED)) == 0;
+        // not synchronized -> check disabled twice just to be sure we did not have a race condition.
+        return !isDisabled() && isDrawable() && !isDisabled();
     }
 
     /**
      * Determines if this object is drawable.
+     * <p>
+     * A primitive is complete if all conditions are met:
+     * <ul>
+     * <li>type and id is known
+     * <li>tags are known
+     * <li>it is not deleted
+     * <li>it is not hidden by a filter
+     * <li>for nodes: lat/lon are known
+     * <li>for ways: all nodes are known and complete
+     * <li>for relations: all members are known and complete
+     * </ul>
      * @return {@code true} if this object is drawable
      */
     public boolean isDrawable() {
