@@ -173,4 +173,17 @@ public class MapCSSTagCheckerTest {
         }
         assertTrue("not all assertions included in the tests are met", assertionErrors.isEmpty());
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/13762">Bug #13762</a>.
+     * @throws ParseException if a parsing error occurs
+     */
+    @Test
+    public void testTicket13762() throws ParseException {
+        final ParseResult parseResult = TagCheck.readMapCSS(new StringReader("" +
+                "meta[lang=de] {\n" +
+                "    title: \"Deutschlandspezifische Regeln\";" +
+                "}"));
+        assertTrue(parseResult.parseErrors.isEmpty());
+    }
 }
