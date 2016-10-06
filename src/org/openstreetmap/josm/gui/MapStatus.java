@@ -220,7 +220,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
 
     private final transient List<StatusTextHistory> statusText = new ArrayList<>();
 
-    private static class StatusTextHistory {
+    protected static final class StatusTextHistory {
         private final Object id;
         private final String text;
 
