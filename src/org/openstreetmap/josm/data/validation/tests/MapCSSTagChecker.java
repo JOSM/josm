@@ -394,7 +394,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 MapCSSRule x = it.next();
                 if (x.selector instanceof GeneralSelector) {
                     GeneralSelector gs = (GeneralSelector) x.selector;
-                    if ("meta".equals(gs.base) && gs.getConditions().isEmpty()) {
+                    if ("meta".equals(gs.base)) {
                         it.remove();
                     }
                 }
