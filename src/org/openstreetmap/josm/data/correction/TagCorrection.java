@@ -52,12 +52,13 @@ public class TagCorrection implements Correction {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof TagCorrection)) return false;
+        if (o == null || getClass() != o.getClass())
+            return false;
         TagCorrection that = (TagCorrection) o;
         return Objects.equals(oldKey, that.oldKey) &&
-                Objects.equals(newKey, that.newKey) &&
-                Objects.equals(oldValue, that.oldValue) &&
-                Objects.equals(newValue, that.newValue);
+               Objects.equals(newKey, that.newKey) &&
+               Objects.equals(oldValue, that.oldValue) &&
+               Objects.equals(newValue, that.newValue);
     }
 
     @Override
