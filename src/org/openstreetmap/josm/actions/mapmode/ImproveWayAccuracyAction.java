@@ -14,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -478,15 +479,20 @@ public class ImproveWayAccuracyAction extends MapMode implements
                     final List<Node> nodes = newWay.getNodes();
                     nodes.remove(candidateNode);
                     newWay.setNodes(nodes);
-                    Main.main.undoRedo.add(new ChangeCommand(targetWay, newWay));
+                    if (nodes.size() < 2) {
+                        final Command deleteCmd = DeleteCommand.delete(getLayerManager().getEditLayer(), Collections.singleton(targetWay), true);
+                        if (deleteCmd != null) {
+                            Main.main.undoRedo.add(deleteCmd);
+                        }
+                    } else {
+                        Main.main.undoRedo.add(new ChangeCommand(targetWay, newWay));
+                    }
                 } else if (candidateNode.isTagged()) {
                     JOptionPane.showMessageDialog(Main.parent,
                             tr("Cannot delete node that has tags"),
                             tr("Error"), JOptionPane.ERROR_MESSAGE);
                 } else {
-                    List<Node> nodeList = new ArrayList<>();
-                    nodeList.add(candidateNode);
-                    Command deleteCmd = DeleteCommand.delete(getLayerManager().getEditLayer(), nodeList, true);
+                    final Command deleteCmd = DeleteCommand.delete(getLayerManager().getEditLayer(), Collections.singleton(candidateNode), true);
                     if (deleteCmd != null) {
                         Main.main.undoRedo.add(deleteCmd);
                     }
