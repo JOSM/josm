@@ -21,7 +21,9 @@ public interface Data {
      * Returns the total area of downloaded data (the "yellow rectangles").
      * @return Area object encompassing downloaded data.
      */
-    Area getDataSourceArea();
+    default Area getDataSourceArea() {
+        return DataSource.getDataSourceArea(getDataSources());
+    }
 
     /**
      * <p>Replies the list of data source bounds.</p>
@@ -35,5 +37,7 @@ public interface Data {
      * @return the list of data source bounds. An empty list, if no non-null data source
      * bounds are defined.
      */
-    List<Bounds> getDataSourceBounds();
+    default List<Bounds> getDataSourceBounds() {
+        return DataSource.getDataSourceBounds(getDataSources());
+    }
 }
