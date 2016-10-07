@@ -144,7 +144,7 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements InvocationHa
             }
             break;
         case "handleQuitRequestWith":
-            boolean closed = Main.exitJosm(false, 0);
+            boolean closed = Main.exitJosm(false, 0, null);
             if (args[1] != null) {
                 try {
                     args[1].getClass().getDeclaredMethod(closed ? "performQuit" : "cancelQuit").invoke(args[1]);

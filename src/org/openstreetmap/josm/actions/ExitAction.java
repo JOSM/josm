@@ -27,6 +27,6 @@ public class ExitAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Main.exitJosm(true, 0);
+        Main.exitJosm(true, 0, null);
     }
 }

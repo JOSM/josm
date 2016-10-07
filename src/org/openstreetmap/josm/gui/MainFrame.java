@@ -91,7 +91,7 @@ public class MainFrame extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(final WindowEvent evt) {
-                Main.exitJosm(true, 0);
+                Main.exitJosm(true, 0, null);
             }
         });
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);

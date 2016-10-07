@@ -18,6 +18,7 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
@@ -46,6 +47,7 @@ import org.openstreetmap.josm.actions.UploadAction;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.io.SaveLayersModel.Mode;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.SwingRenderingProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -57,7 +59,20 @@ import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 public class SaveLayersDialog extends JDialog implements TableModelListener {
-    public enum UserAction {
+
+    /**
+     * The cause for requesting an action on unsaved modifications
+     */
+    public enum Reason {
+        /** deleting a layer */
+        DELETE,
+        /** exiting JOSM */
+        EXIT,
+        /* restarting JOSM */
+        RESTART
+    }
+
+    private enum UserAction {
         /** save/upload layers was successful, proceed with operation */
         PROCEED,
         /** save/upload of layers was not successful or user canceled operation */
@@ -75,6 +90,44 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
     private transient SaveAndUploadTask saveAndUploadTask;
 
     private final JButton saveAndProceedActionButton = new JButton(saveAndProceedAction);
+
+    /**
+     * Asks user to perform "save layer" operations (save on disk and/or upload data to server) before data layers deletion.
+     *
+     * @param selectedLayers The layers to check. Only instances of {@link AbstractModifiableLayer} are considered.
+     * @param reason the cause for requesting an action on unsaved modifications
+     * @return {@code true} if there was nothing to save, or if the user wants to proceed to save operations.
+     *         {@code false} if the user cancels.
+     * @since 11093
+     */
+    public static boolean saveUnsavedModifications(Iterable<? extends Layer> selectedLayers, Reason reason) {
+        SaveLayersDialog dialog = new SaveLayersDialog(Main.parent);
+        List<AbstractModifiableLayer> layersWithUnmodifiedChanges = new ArrayList<>();
+        for (Layer l: selectedLayers) {
+            if (!(l instanceof AbstractModifiableLayer)) {
+                continue;
+            }
+            AbstractModifiableLayer odl = (AbstractModifiableLayer) l;
+            if (odl.isModified() &&
+                    ((!odl.isSavable() && !odl.isUploadable()) ||
+                            odl.requiresSaveToFile() ||
+                            (odl.requiresUploadToServer() && !odl.isUploadDiscouraged()))) {
+                layersWithUnmodifiedChanges.add(odl);
+            }
+        }
+        dialog.prepareForSavingAndUpdatingLayers(reason);
+        if (!layersWithUnmodifiedChanges.isEmpty()) {
+            dialog.getModel().populate(layersWithUnmodifiedChanges);
+            dialog.setVisible(true);
+            switch(dialog.getUserAction()) {
+                case PROCEED: return true;
+                case CANCEL:
+                default: return false;
+            }
+        }
+
+        return true;
+    }
 
     /**
      * Constructs a new {@code SaveLayersDialog}.
@@ -130,16 +183,20 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         return pnl2;
     }
 
-    public void prepareForSavingAndUpdatingLayersBeforeExit() {
-        setTitle(tr("Unsaved changes - Save/Upload before exiting?"));
-        this.saveAndProceedAction.initForSaveAndExit();
-        this.discardAndProceedAction.initForDiscardAndExit();
-    }
-
-    public void prepareForSavingAndUpdatingLayersBeforeDelete() {
-        setTitle(tr("Unsaved changes - Save/Upload before deleting?"));
-        this.saveAndProceedAction.initForSaveAndDelete();
-        this.discardAndProceedAction.initForDiscardAndDelete();
+    public void prepareForSavingAndUpdatingLayers(final Reason reason) {
+        switch (reason) {
+            case EXIT:
+                setTitle(tr("Unsaved changes - Save/Upload before exiting?"));
+                break;
+            case DELETE:
+                setTitle(tr("Unsaved changes - Save/Upload before deleting?"));
+                break;
+            case RESTART:
+                setTitle(tr("Unsaved changes - Save/Upload before restarting?"));
+                break;
+        }
+        this.saveAndProceedAction.initForReason(reason);
+        this.discardAndProceedAction.initForReason(reason);
     }
 
     public UserAction getUserAction() {
@@ -322,19 +379,28 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
 
     class DiscardAndProceedAction extends AbstractAction implements PropertyChangeListener {
         DiscardAndProceedAction() {
-            initForDiscardAndExit();
+            initForReason(Reason.EXIT);
         }
 
-        public void initForDiscardAndExit() {
-            putValue(NAME, tr("Exit now!"));
-            putValue(SHORT_DESCRIPTION, tr("Exit JOSM without saving. Unsaved changes are lost."));
-            putValue(SMALL_ICON, ImageProvider.get("exit"));
-        }
+        public void initForReason(Reason reason) {
+            switch (reason) {
+                case EXIT:
+                    putValue(NAME, tr("Exit now!"));
+                    putValue(SHORT_DESCRIPTION, tr("Exit JOSM without saving. Unsaved changes are lost."));
+                    putValue(SMALL_ICON, ImageProvider.get("exit"));
+                    break;
+                case RESTART:
+                    putValue(NAME, tr("Restart now!"));
+                    putValue(SHORT_DESCRIPTION, tr("Restart JOSM without saving. Unsaved changes are lost."));
+                    putValue(SMALL_ICON, ImageProvider.get("restart"));
+                    break;
+                case DELETE:
+                    putValue(NAME, tr("Delete now!"));
+                    putValue(SHORT_DESCRIPTION, tr("Delete layers without saving. Unsaved changes are lost."));
+                    putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
+                    break;
+            }
 
-        public void initForDiscardAndDelete() {
-            putValue(NAME, tr("Delete now!"));
-            putValue(SHORT_DESCRIPTION, tr("Delete layers without saving. Unsaved changes are lost."));
-            putValue(SMALL_ICON, ImageProvider.get("dialogs", "delete"));
         }
 
         @Override
@@ -384,20 +450,27 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         private final transient Image upldDis = new ImageProvider("upload").setDisabled(true).get().getImage();
 
         SaveAndProceedAction() {
-            initForSaveAndExit();
+            initForReason(Reason.EXIT);
         }
 
-        public void initForSaveAndExit() {
-            putValue(NAME, tr("Perform actions before exiting"));
-            putValue(SHORT_DESCRIPTION, tr("Exit JOSM with saving. Unsaved changes are uploaded and/or saved."));
-            putValue(BASE_ICON, ImageProvider.get("exit"));
-            redrawIcon();
-        }
-
-        public void initForSaveAndDelete() {
-            putValue(NAME, tr("Perform actions before deleting"));
-            putValue(SHORT_DESCRIPTION, tr("Save/Upload layers before deleting. Unsaved changes are not lost."));
-            putValue(BASE_ICON, ImageProvider.get("dialogs", "delete"));
+        public void initForReason(Reason reason) {
+            switch (reason) {
+                case EXIT:
+                    putValue(NAME, tr("Perform actions before exiting"));
+                    putValue(SHORT_DESCRIPTION, tr("Exit JOSM with saving. Unsaved changes are uploaded and/or saved."));
+                    putValue(BASE_ICON, ImageProvider.get("exit"));
+                    break;
+                case RESTART:
+                    putValue(NAME, tr("Perform actions before restarting"));
+                    putValue(SHORT_DESCRIPTION, tr("Restart JOSM with saving. Unsaved changes are uploaded and/or saved."));
+                    putValue(BASE_ICON, ImageProvider.get("restart"));
+                    break;
+                case DELETE:
+                    putValue(NAME, tr("Perform actions before deleting"));
+                    putValue(SHORT_DESCRIPTION, tr("Save/Upload layers before deleting. Unsaved changes are not lost."));
+                    putValue(BASE_ICON, ImageProvider.get("dialogs", "delete"));
+                    break;
+            }
             redrawIcon();
         }
 
