@@ -587,18 +587,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                     // Add GUI for sub preferences
                     for (PreferenceSetting setting : settings) {
                         if (setting instanceof SubPreferenceSetting) {
-                            SubPreferenceSetting sps = (SubPreferenceSetting) setting;
-                            if (sps.getTabPreferenceSetting(this) == preferenceSettings) {
-                                try {
-                                    sps.addGui(this);
-                                } catch (SecurityException ex) {
-                                    Main.error(ex);
-                                } catch (RuntimeException ex) {
-                                    BugReportExceptionHandler.handleException(ex);
-                                } finally {
-                                    settingsInitialized.add(sps);
-                                }
-                            }
+                            addSubPreferenceSetting(preferenceSettings, (SubPreferenceSetting) setting);
                         }
                     }
                     Icon icon = getIconAt(index);
@@ -614,6 +603,20 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                     settingsInitialized.add(preferenceSettings);
                     getModel().addChangeListener(this);
                 }
+            }
+        }
+    }
+
+    private void addSubPreferenceSetting(TabPreferenceSetting preferenceSettings, SubPreferenceSetting sps) {
+        if (sps.getTabPreferenceSetting(this) == preferenceSettings) {
+            try {
+                sps.addGui(this);
+            } catch (SecurityException ex) {
+                Main.error(ex);
+            } catch (RuntimeException ex) {
+                BugReportExceptionHandler.handleException(ex);
+            } finally {
+                settingsInitialized.add(sps);
             }
         }
     }
