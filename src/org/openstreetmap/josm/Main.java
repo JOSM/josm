@@ -80,6 +80,7 @@ import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
+import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
@@ -100,6 +101,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
+import org.openstreetmap.josm.tools.OverpassTurboQueryWizard;
 import org.openstreetmap.josm.tools.PlatformHook;
 import org.openstreetmap.josm.tools.PlatformHookOsx;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
@@ -527,6 +529,10 @@ public abstract class Main {
             for (Future<Void> i : service.invokeAll(tasks)) {
                 i.get();
             }
+            // asynchronous initializations to be completed eventually
+            service.submit((Runnable) TMSLayer::getCache);
+            service.submit((Runnable) OsmValidator::initializeTests);
+            service.submit(OverpassTurboQueryWizard::getInstance);
             service.shutdown();
         } catch (InterruptedException | ExecutionException ex) {
             throw new RuntimeException(ex);

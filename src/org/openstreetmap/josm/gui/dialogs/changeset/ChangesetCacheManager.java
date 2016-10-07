@@ -18,7 +18,9 @@ import java.awt.event.WindowEvent;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.DefaultListSelectionModel;
@@ -46,18 +48,23 @@ import org.openstreetmap.josm.actions.downloadtasks.ChangesetQueryTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
+import org.openstreetmap.josm.data.osm.ChangesetDataSet;
+import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.dialogs.changeset.query.ChangesetQueryDialog;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.io.CloseChangesetTask;
+import org.openstreetmap.josm.gui.io.DownloadPrimitivesWithReferrersTask;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.StreamUtils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -106,6 +113,7 @@ public class ChangesetCacheManager extends JFrame {
     private CloseSelectedChangesetsAction actCloseSelectedChangesetsAction;
     private DownloadSelectedChangesetsAction actDownloadSelectedChangesets;
     private DownloadSelectedChangesetContentAction actDownloadSelectedContent;
+    private DownloadSelectedChangesetObjectsAction actDownloadSelectedChangesetObjects;
     private JTable tblChangesets;
 
     /**
@@ -240,6 +248,10 @@ public class ChangesetCacheManager extends JFrame {
         model.getSelectionModel().addListSelectionListener(actDownloadSelectedContent);
         tb.add(actDownloadSelectedContent);
 
+        // -- download the objects contained in the selected changesets from the OSM server
+        model.getSelectionModel().addListSelectionListener(actDownloadSelectedChangesetObjects);
+        tb.add(actDownloadSelectedChangesetObjects);
+
         pnl.add(tb, BorderLayout.CENTER);
         return pnl;
     }
@@ -281,6 +293,7 @@ public class ChangesetCacheManager extends JFrame {
         actCloseSelectedChangesetsAction = new CloseSelectedChangesetsAction(model);
         actDownloadSelectedChangesets = new DownloadSelectedChangesetsAction(model);
         actDownloadSelectedContent = new DownloadSelectedChangesetContentAction(model);
+        actDownloadSelectedChangesetObjects = new DownloadSelectedChangesetObjectsAction(model);
 
         cp.add(buildToolbarPanel(), BorderLayout.NORTH);
         cp.add(buildContentPanel(), BorderLayout.CENTER);
@@ -537,6 +550,46 @@ public class ChangesetCacheManager extends JFrame {
         }
     }
 
+    /**
+     * Downloads the objects contained in the selected changesets from the OSM server
+     */
+    private class DownloadSelectedChangesetObjectsAction extends AbstractAction implements ListSelectionListener {
+
+        DownloadSelectedChangesetObjectsAction(ChangesetCacheManagerModel model) {
+            putValue(NAME, tr("Download changed objects"));
+            new ImageProvider("downloadprimitive").getResource().attachImageIcon(this);
+            putValue(SHORT_DESCRIPTION, tr("Download the current version of the changed objects in the selected changesets"));
+            updateEnabledState();
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (!GraphicsEnvironment.isHeadless()) {
+                actDownloadSelectedContent.actionPerformed(e);
+                Main.worker.submit(() -> {
+                    final List<PrimitiveId> primitiveIds = model.getSelectedChangesets().stream()
+                            .map(Changeset::getContent)
+                            .filter(Objects::nonNull)
+                            .flatMap(content -> StreamUtils.toStream(content::iterator))
+                            .map(ChangesetDataSet.ChangesetDataSetEntry::getPrimitive)
+                            .map(HistoryOsmPrimitive::getPrimitiveId)
+                            .distinct()
+                            .collect(Collectors.toList());
+                    new DownloadPrimitivesWithReferrersTask(false, primitiveIds, true, true, null, null).run();
+                });
+            }
+        }
+
+        protected void updateEnabledState() {
+            setEnabled(model.hasSelectedChangesets() && !Main.isOffline(OnlineResource.OSM_API));
+        }
+
+        @Override
+        public void valueChanged(ListSelectionEvent e) {
+            updateEnabledState();
+        }
+    }
+
     static class ShowDetailAction extends AbstractAction {
         private final ChangesetCacheManagerModel model;
 
@@ -618,6 +671,7 @@ public class ChangesetCacheManager extends JFrame {
             add(actCloseSelectedChangesetsAction);
             add(actDownloadSelectedChangesets);
             add(actDownloadSelectedContent);
+            add(actDownloadSelectedChangesetObjects);
         }
     }
 
