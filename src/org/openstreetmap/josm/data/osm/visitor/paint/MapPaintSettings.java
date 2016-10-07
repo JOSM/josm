@@ -25,6 +25,8 @@ public final class MapPaintSettings implements PreferenceChangedListener {
     private int defaultSegmentWidth;
     /** Preference: should the segment numbers of ways be displayed */
     private boolean showOrderNumber;
+    /** Preference: should the segment numbers of ways be displayed on selected way */
+    private boolean showOrderNumberOnSelectedWay;
     /** Preference: should only the last arrow of a way be displayed */
     private boolean showHeadArrowOnly;
     private int showNamesDistance;
@@ -89,6 +91,7 @@ public final class MapPaintSettings implements PreferenceChangedListener {
         }
 
         showOrderNumber = Main.pref.getBoolean("draw.segment.order_number", false);
+        showOrderNumberOnSelectedWay = Main.pref.getBoolean("draw.segment.order_number.on_selected", false);
         showHeadArrowOnly = Main.pref.getBoolean("draw.segment.head_only", false);
 
         showNamesDistance = Main.pref.getInteger("mappaint.shownames", 10000000);
@@ -232,6 +235,14 @@ public final class MapPaintSettings implements PreferenceChangedListener {
      */
     public boolean isShowOrderNumber() {
         return showOrderNumber;
+    }
+
+    /**
+     * Determines if the segment numbers of the selected way should be displayed
+     * @return {@code true} if the segment numbers of the selected way should be displayed
+     */
+    public boolean isShowOrderNumberOnSelectedWay() {
+        return showOrderNumberOnSelectedWay;
     }
 
     /**

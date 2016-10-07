@@ -42,6 +42,7 @@ public class DrawingPreference implements SubPreferenceSetting {
     private final JCheckBox headArrow = new JCheckBox(tr("Only on the head of a way."));
     private final JCheckBox onewayArrow = new JCheckBox(tr("Draw oneway arrows."));
     private final JCheckBox segmentOrderNumber = new JCheckBox(tr("Draw segment order numbers"));
+    private final JCheckBox segmentOrderNumberOnSelectedWay = new JCheckBox(tr("Draw segment order numbers on selected way"));
     private final JCheckBox sourceBounds = new JCheckBox(tr("Draw boundaries of downloaded data"));
     private final JCheckBox virtualNodes = new JCheckBox(tr("Draw virtual nodes in select mode"));
     private final JCheckBox inactive = new JCheckBox(tr("Draw inactive layers in other color"));
@@ -91,6 +92,8 @@ public class DrawingPreference implements SubPreferenceSetting {
         // segment order number
         segmentOrderNumber.setToolTipText(tr("Draw the order numbers of all segments within their way."));
         segmentOrderNumber.setSelected(Main.pref.getBoolean("draw.segment.order_number", false));
+        segmentOrderNumberOnSelectedWay.setToolTipText(tr("Draw the order numbers of all segments within their way."));
+        segmentOrderNumberOnSelectedWay.setSelected(Main.pref.getBoolean("draw.segment.order_number.on_selected", false));
 
         // downloaded area
         sourceBounds.setToolTipText(tr("Draw the boundaries of data loaded from the server."));
@@ -135,6 +138,7 @@ public class DrawingPreference implements SubPreferenceSetting {
         panel.add(headArrow, GBC.eop().insets(40, 0, 0, 0));
         panel.add(onewayArrow, GBC.eop().insets(20, 0, 0, 0));
         panel.add(segmentOrderNumber, GBC.eop().insets(20, 0, 0, 0));
+        panel.add(segmentOrderNumberOnSelectedWay, GBC.eop().insets(20, 0, 0, 0));
 
         panel.add(new JLabel(tr("Select and draw mode options")),
                 GBC.eop().insets(5, 10, 0, 0));
@@ -175,6 +179,7 @@ public class DrawingPreference implements SubPreferenceSetting {
         Main.pref.put("draw.segment.head_only", headArrow.isSelected());
         Main.pref.put("draw.oneway", onewayArrow.isSelected());
         Main.pref.put("draw.segment.order_number", segmentOrderNumber.isSelected());
+        Main.pref.put("draw.segment.order_number.on_selected", segmentOrderNumberOnSelectedWay.isSelected());
         Main.pref.put("draw.data.downloaded_area", sourceBounds.isSelected());
         Main.pref.put("draw.data.inactive_color", inactive.isSelected());
         Main.pref.put("mappaint.use-antialiasing", useAntialiasing.isSelected());

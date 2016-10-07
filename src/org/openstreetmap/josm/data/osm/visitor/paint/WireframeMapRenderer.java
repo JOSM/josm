@@ -59,6 +59,8 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
     protected boolean showHeadArrowOnly;
     /** Preference: should the segment numbers of ways be displayed */
     protected boolean showOrderNumber;
+    /** Preference: should the segment numbers of the selected be displayed */
+    protected boolean showOrderNumberOnSelectedWay;
     /** Preference: should selected nodes be filled */
     protected boolean fillSelectedNode;
     /** Preference: should unselected nodes be filled */
@@ -133,6 +135,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         showOnewayArrow = settings.isShowOnewayArrow();
         showHeadArrowOnly = settings.isShowHeadArrowOnly();
         showOrderNumber = settings.isShowOrderNumber();
+        showOrderNumberOnSelectedWay = settings.isShowOrderNumberOnSelectedWay();
         selectedNodeSize = settings.getSelectedNodeSize();
         unselectedNodeSize = settings.getUnselectedNodeSize();
         connectionNodeSize = settings.getConnectionNodeSize();
@@ -320,7 +323,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
                 if ((pOutside & lastPOutside) == 0) {
                     drawSegment(lastP, p, wayColor,
                             showOnlyHeadArrowOnly ? !it.hasNext() : showThisDirectionArrow);
-                    if (showOrderNumber && !isInactiveMode) {
+                    if ((showOrderNumber || (showOrderNumberOnSelectedWay && w.isSelected())) && !isInactiveMode) {
                         drawOrderNumber(lastP, p, orderNumber, g.getColor());
                     }
                 }
