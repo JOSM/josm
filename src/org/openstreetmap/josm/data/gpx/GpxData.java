@@ -1,14 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.gpx;
 
-import java.awt.geom.Area;
 import java.io.File;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -469,17 +468,7 @@ public class GpxData extends WithAttributes implements Data {
 
     @Override
     public Collection<DataSource> getDataSources() {
-        return dataSources;
-    }
-
-    @Override
-    public Area getDataSourceArea() {
-        return DataSource.getDataSourceArea(dataSources);
-    }
-
-    @Override
-    public List<Bounds> getDataSourceBounds() {
-        return DataSource.getDataSourceBounds(dataSources);
+        return Collections.unmodifiableCollection(dataSources);
     }
 
     @Override

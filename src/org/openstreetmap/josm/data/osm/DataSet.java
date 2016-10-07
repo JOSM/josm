@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,7 +22,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Predicate;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.ProjectionBounds;
@@ -922,12 +920,7 @@ public final class DataSet implements Data, ProjectionChangeListener {
 
     @Override
     public Collection<DataSource> getDataSources() {
-        return dataSources;
-    }
-
-    @Override
-    public Area getDataSourceArea() {
-        return DataSource.getDataSourceArea(dataSources);
+        return Collections.unmodifiableCollection(dataSources);
     }
 
     /**
@@ -1325,11 +1318,6 @@ public final class DataSet implements Data, ProjectionChangeListener {
                 primitive.setDeleted(true);
             }
         }
-    }
-
-    @Override
-    public List<Bounds> getDataSourceBounds() {
-        return DataSource.getDataSourceBounds(dataSources);
     }
 
     /**
