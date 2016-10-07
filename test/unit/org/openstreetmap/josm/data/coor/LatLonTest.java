@@ -2,11 +2,14 @@
 package org.openstreetmap.josm.data.coor;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.text.DecimalFormat;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -22,7 +25,7 @@ public class LatLonTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
+    public JOSMTestRules test = new JOSMTestRules().projection();
 
     private static final double EPSILON = 1e-6;
 
@@ -100,6 +103,19 @@ public class LatLonTest {
     }
 
     /**
+     * Test {@link LatLon#toIntervalLat}
+     */
+    @Test
+    public void testToIntervalLat() {
+        assertEquals(-90.0, LatLon.toIntervalLat(-90.0), 0);
+        assertEquals(0.0, LatLon.toIntervalLat(0.0), 0);
+        assertEquals(90.0, LatLon.toIntervalLat(90.0), 0);
+
+        assertEquals(-90.0, LatLon.toIntervalLat(-91.0), 0);
+        assertEquals(90.0, LatLon.toIntervalLat(91.0), 0);
+    }
+
+    /**
      * Test of {@link LatLon#toIntervalLon}
      */
     @Test
@@ -135,6 +151,16 @@ public class LatLonTest {
     }
 
     /**
+     * Unit test of {@link LatLon#LatLon(LatLon)}.
+     */
+    @Test
+    public void testCopyConstructor() {
+        assertEquals(LatLon.NORTH_POLE, new LatLon(LatLon.NORTH_POLE));
+        assertEquals(LatLon.SOUTH_POLE, new LatLon(LatLon.SOUTH_POLE));
+        assertEquals(new LatLon(1, 2), new LatLon(new LatLon(1, 2)));
+    }
+
+    /**
      * Test of {@link LatLon#bearing}
      */
     @Test
@@ -149,11 +175,32 @@ public class LatLonTest {
     }
 
     /**
-     * Tests the methods {@link LatLon#latToString(CoordinateFormat)}, {@link LatLon#lonToString(CoordinateFormat)}.
+     * Test of {@link LatLon#distance}
+     */
+    @Test
+    public void testDistance() {
+        assertEquals(0.0, LatLon.ZERO.distance(LatLon.ZERO), 0);
+        assertEquals(90.0, LatLon.ZERO.distance(LatLon.NORTH_POLE), 0);
+        assertEquals(180.0, LatLon.SOUTH_POLE.distance(LatLon.NORTH_POLE), 0);
+    }
+
+    /**
+     * Test of {@link LatLon#distanceSq}
+     */
+    @Test
+    public void testDistanceSq() {
+        assertEquals(0.0, LatLon.ZERO.distanceSq(LatLon.ZERO), 0);
+        assertEquals(90d*90d, LatLon.ZERO.distanceSq(LatLon.NORTH_POLE), 0);
+        assertEquals(180d*180d, LatLon.SOUTH_POLE.distanceSq(LatLon.NORTH_POLE), 0);
+    }
+
+    /**
+     * Tests the methods {@link LatLon#latToString}, {@link LatLon#lonToString}, {@link LatLon#toStringCSV}.
      */
     @Test
     public void testFormatting() {
         LatLon c = new LatLon(47.000000, 19.000000);
+        assertEquals("47.0;19.0", c.toStringCSV(";"));
         assertEquals("47.0", c.latToString(CoordinateFormat.DECIMAL_DEGREES));
         assertEquals("19.0", c.lonToString(CoordinateFormat.DECIMAL_DEGREES));
         assertEquals("47°00'00.0\"N", c.latToString(CoordinateFormat.DEGREES_MINUTES_SECONDS));
@@ -162,11 +209,15 @@ public class LatLonTest {
         assertEquals("19°00.000'E", c.lonToString(CoordinateFormat.NAUTICAL));
         assertEquals("5942074.0724311", c.latToString(CoordinateFormat.EAST_NORTH));
         assertEquals("2115070.3250722", c.lonToString(CoordinateFormat.EAST_NORTH));
+        c = new LatLon(-47.000000, -19.000000);
+        assertEquals("47°00'00.0\"S", c.latToString(CoordinateFormat.DEGREES_MINUTES_SECONDS));
+        assertEquals("19°00'00.0\"W", c.lonToString(CoordinateFormat.DEGREES_MINUTES_SECONDS));
+        assertEquals("47°00.000'S", c.latToString(CoordinateFormat.NAUTICAL));
+        assertEquals("19°00.000'W", c.lonToString(CoordinateFormat.NAUTICAL));
     }
 
     /**
      * Test {@link LatLon#interpolate(LatLon, double)}
-     * @since 10915
      */
     @Test
     public void testInterpolate() {
@@ -186,8 +237,43 @@ public class LatLonTest {
     }
 
     /**
+     * Test {@link LatLon#isOutSideWorld}
+     */
+    @Test
+    public void testIsOutSideWorld() {
+        assertFalse(LatLon.ZERO.isOutSideWorld());
+        assertTrue(LatLon.NORTH_POLE.isOutSideWorld());
+        assertTrue(LatLon.SOUTH_POLE.isOutSideWorld());
+        assertTrue(new LatLon(-181, 0).isOutSideWorld());
+        assertTrue(new LatLon(181, 0).isOutSideWorld());
+    }
+
+    /**
+     * Test {@link LatLon#isValid}
+     */
+    @Test
+    public void testIsValid() {
+        assertTrue(LatLon.ZERO.isValid());
+        assertTrue(LatLon.NORTH_POLE.isValid());
+        assertTrue(LatLon.SOUTH_POLE.isValid());
+
+        assertFalse(new LatLon(-91, 0).isValid());
+        assertFalse(new LatLon(91, 0).isValid());
+        assertFalse(new LatLon(0, -181).isValid());
+        assertFalse(new LatLon(0, 181).isValid());
+    }
+
+    /**
+     * Test {@link LatLon#isWithin}
+     */
+    @Test
+    public void testIsWithin() {
+        assertTrue(LatLon.ZERO.isWithin(new Bounds(LatLon.ZERO)));
+        assertFalse(LatLon.ZERO.isWithin(new Bounds(LatLon.NORTH_POLE)));
+    }
+
+    /**
      * Test {@link LatLon#getCenter(LatLon)}
-     * @since 10915
      */
     @Test
     public void testGetCenter() {
