@@ -8,7 +8,11 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.AbstractAction;
 import javax.swing.JLabel;
@@ -32,6 +36,7 @@ import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -102,7 +107,20 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
             final DataSet ds = new DataSet();
             for (Marker marker : layer.data) {
                 final Node node = new Node(marker.getCoor());
-                node.put("name", marker.getText());
+                final Collection<String> mapping = Main.pref.getCollection("gpx.to-osm-mapping",
+                        Arrays.asList("name", "name", "desc", "description", "cmt", "note", "sym", "gpxicon"));
+                if (mapping.size() % 2 == 0) {
+                    final Iterator<String> it = mapping.iterator();
+                    while (it.hasNext()) {
+                        final String gpxKey = it.next();
+                        final String osmKey = it.next();
+                        Optional.ofNullable(marker.getTemplateValue(gpxKey, false))
+                                .map(String::valueOf)
+                                .ifPresent(s -> node.put(osmKey, s));
+                    }
+                } else {
+                    Logging.warn("Invalid gpx.to-osm-mapping Einstein setting: expecting even number of entries");
+                }
                 ds.addPrimitive(node);
             }
             return ds;
