@@ -170,24 +170,28 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
                 if (canceled) {
                     break;
                 }
-                String msg = getLoadingMessage(pid);
-                progressMonitor.indeterminateSubTask(tr(msg, Long.toString(pid.getUniqueId())));
-                reader = null;
-                HistoryDataSet ds;
-                try {
-                    reader = new OsmServerHistoryReader(pid.getType(), pid.getUniqueId());
-                    ds = loadHistory(reader, progressMonitor);
-                } catch (OsmTransferException e) {
-                    if (canceled)
-                        return;
-                    throw e;
-                }
-                loadedData.mergeInto(ds);
+                loadHistory(pid);
             }
         } catch (OsmTransferException e) {
             lastException = e;
             return;
         }
+    }
+
+    private void loadHistory(PrimitiveId pid) throws OsmTransferException {
+        String msg = getLoadingMessage(pid);
+        progressMonitor.indeterminateSubTask(tr(msg, Long.toString(pid.getUniqueId())));
+        reader = null;
+        HistoryDataSet ds;
+        try {
+            reader = new OsmServerHistoryReader(pid.getType(), pid.getUniqueId());
+            ds = loadHistory(reader, progressMonitor);
+        } catch (OsmTransferException e) {
+            if (canceled)
+                return;
+            throw e;
+        }
+        loadedData.mergeInto(ds);
     }
 
     protected static HistoryDataSet loadHistory(OsmServerHistoryReader reader, ProgressMonitor progressMonitor) throws OsmTransferException {

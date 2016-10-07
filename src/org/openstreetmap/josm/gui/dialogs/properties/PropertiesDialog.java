@@ -1162,47 +1162,49 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
                     uris.add(new URI(String.format("%sMap_Features", base)));
                 }
 
-                Main.worker.execute(() -> {
-                    try {
-                        // find a page that actually exists in the wiki
-                        HttpClient.Response conn;
-                        for (URI u : uris) {
-                            conn = HttpClient.create(u.toURL(), "HEAD").connect();
-
-                            if (conn.getResponseCode() != 200) {
-                                conn.disconnect();
-                            } else {
-                                long osize = conn.getContentLength();
-                                if (osize > -1) {
-                                    conn.disconnect();
-
-                                    final URI newURI = new URI(u.toString()
-                                            .replace("=", "%3D") /* do not URLencode whole string! */
-                                            .replaceFirst("/wiki/", "/w/index.php?redirect=no&title=")
-                                    );
-                                    conn = HttpClient.create(newURI.toURL(), "HEAD").connect();
-                                }
-
-                                /* redirect pages have different content length, but retrieving a "nonredirect"
-                                 *  page using index.php and the direct-link method gives slightly different
-                                 *  content lengths, so we have to be fuzzy.. (this is UGLY, recode if u know better)
-                                 */
-                                if (conn.getContentLength() != -1 && osize > -1 && Math.abs(conn.getContentLength() - osize) > 200) {
-                                    Main.info("{0} is a mediawiki redirect", u);
-                                    conn.disconnect();
-                                } else {
-                                    conn.disconnect();
-
-                                    OpenBrowser.displayUrl(u.toString());
-                                    break;
-                                }
-                            }
-                        }
-                    } catch (URISyntaxException | IOException e1) {
-                        Main.error(e1);
-                    }
-                });
+                Main.worker.execute(() -> displayHelp(uris));
             } catch (URISyntaxException e1) {
+                Main.error(e1);
+            }
+        }
+
+        private void displayHelp(final List<URI> uris) {
+            try {
+                // find a page that actually exists in the wiki
+                HttpClient.Response conn;
+                for (URI u : uris) {
+                    conn = HttpClient.create(u.toURL(), "HEAD").connect();
+
+                    if (conn.getResponseCode() != 200) {
+                        conn.disconnect();
+                    } else {
+                        long osize = conn.getContentLength();
+                        if (osize > -1) {
+                            conn.disconnect();
+
+                            final URI newURI = new URI(u.toString()
+                                    .replace("=", "%3D") /* do not URLencode whole string! */
+                                    .replaceFirst("/wiki/", "/w/index.php?redirect=no&title=")
+                            );
+                            conn = HttpClient.create(newURI.toURL(), "HEAD").connect();
+                        }
+
+                        /* redirect pages have different content length, but retrieving a "nonredirect"
+                         *  page using index.php and the direct-link method gives slightly different
+                         *  content lengths, so we have to be fuzzy.. (this is UGLY, recode if u know better)
+                         */
+                        if (conn.getContentLength() != -1 && osize > -1 && Math.abs(conn.getContentLength() - osize) > 200) {
+                            Main.info("{0} is a mediawiki redirect", u);
+                            conn.disconnect();
+                        } else {
+                            conn.disconnect();
+
+                            OpenBrowser.displayUrl(u.toString());
+                            break;
+                        }
+                    }
+                }
+            } catch (URISyntaxException | IOException e1) {
                 Main.error(e1);
             }
         }

@@ -310,8 +310,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                                 : null;
                         if (ai.key.startsWith("throw")) {
                             try {
-                                final Severity severity = Severity.valueOf(ai.key.substring("throw".length()).toUpperCase(Locale.ENGLISH));
-                                check.errors.put(ai, severity);
+                                check.errors.put(ai, Severity.valueOf(ai.key.substring("throw".length()).toUpperCase(Locale.ENGLISH)));
                             } catch (IllegalArgumentException e) {
                                 Main.warn(e, "Unsupported "+ai.key+" instruction. Allowed instructions are "+POSSIBLE_THROWS+'.');
                             }
@@ -752,11 +751,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 }
                 addMapCSS(i);
                 if (Main.pref.getBoolean("validator.auto_reload_local_rules", true) && source.isLocal()) {
-                    try {
-                        Main.fileWatcher.registerValidatorRule(source);
-                    } catch (IOException e) {
-                        Main.error(e);
-                    }
+                    Main.fileWatcher.registerValidatorRule(source);
                 }
             } catch (IOException ex) {
                 Main.warn(tr("Failed to add {0} to tag checker", i));

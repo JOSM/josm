@@ -1852,19 +1852,23 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
             try {
                 for (final OsmPrimitive osm : input) {
-                    try {
-                        if (osm.isDrawable()) {
-                            osm.accept(this);
-                        }
-                    } catch (RuntimeException e) {
-                        throw BugReport.intercept(e).put("osm", osm);
-                    }
+                    acceptDrawable(osm);
                 }
                 return output;
             } catch (RuntimeException e) {
                 throw BugReport.intercept(e).put("input-size", input.size()).put("output-size", output.size());
             } finally {
                 MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
+            }
+        }
+
+        private void acceptDrawable(final OsmPrimitive osm) {
+            try {
+                if (osm.isDrawable()) {
+                    osm.accept(this);
+                }
+            } catch (RuntimeException e) {
+                throw BugReport.intercept(e).put("osm", osm);
             }
         }
 
@@ -1965,11 +1969,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             }
 
             for (StyleRecord record : allStyleElems) {
-                try {
-                    record.paintPrimitive(paintSettings, this);
-                } catch (RuntimeException e) {
-                    throw BugReport.intercept(e).put("record", record);
-                }
+                paintRecord(record);
             }
 
             drawVirtualNodes(data, bbox);
@@ -1984,6 +1984,14 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     .put("renderVirtualNodes", renderVirtualNodes);
         } finally {
             data.getReadLock().unlock();
+        }
+    }
+
+    private void paintRecord(StyleRecord record) {
+        try {
+            record.paintPrimitive(paintSettings, this);
+        } catch (RuntimeException e) {
+            throw BugReport.intercept(e).put("record", record);
         }
     }
 }
