@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.util.Collections;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -33,7 +34,7 @@ public final class DeleteLayerAction extends JosmAction {
         if (activeLayer == null) {
             return;
         }
-        if (!Main.saveUnsavedModifications(Collections.singletonList(activeLayer), false)) {
+        if (!SaveLayersDialog.saveUnsavedModifications(Collections.singletonList(activeLayer), SaveLayersDialog.Reason.DELETE)) {
             return;
         }
         Main.getLayerManager().removeLayer(activeLayer);

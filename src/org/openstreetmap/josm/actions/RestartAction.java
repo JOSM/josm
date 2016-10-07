@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -58,7 +59,7 @@ public class RestartAction extends JosmAction {
         // Request for restart is indicated by exit code 9.
         String scriptRestart = System.getProperty("josm.restart");
         if ("true".equals(scriptRestart)) {
-            Main.exitJosm(true, 9);
+            Main.exitJosm(true, 9, SaveLayersDialog.Reason.RESTART);
         }
 
         try {
@@ -82,7 +83,7 @@ public class RestartAction extends JosmAction {
      * @throws IOException in case of any I/O error
      */
     public static void restartJOSM() throws IOException {
-        if (isRestartSupported() && !Main.exitJosm(false, 0)) return;
+        if (isRestartSupported() && !Main.exitJosm(false, 0, SaveLayersDialog.Reason.RESTART)) return;
         final List<String> cmd;
         // special handling for OSX .app package
         if (Main.isPlatformOsx() && System.getProperty("java.library.path").contains("/JOSM.app/Contents/MacOS")) {
