@@ -69,6 +69,7 @@ public abstract class AbstractProperty<T> {
      * @param <T> property type
      * @since 10824
      */
+    @FunctionalInterface
     public interface ValueChangeListener<T> {
         /**
          * Method called when a property value has changed.

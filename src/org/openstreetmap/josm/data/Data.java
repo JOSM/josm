@@ -9,6 +9,7 @@ import java.util.List;
  * Generic data, holding data downloaded from various data sources.
  * @since 7575
  */
+@FunctionalInterface
 public interface Data {
 
     /**
