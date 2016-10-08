@@ -1813,7 +1813,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         private final transient ElemStyles styles = MapPaintStyles.getStyles();
         private final int directExecutionTaskSize;
 
-        private final boolean drawArea = circum <= Main.pref.getInteger("mappaint.fillareas", 10000000);
+        private final boolean drawArea = circum <= Main.pref.getInteger("mappaint.fillareas", 10_000_000);
         private final boolean drawMultipolygon = drawArea && Main.pref.getBoolean("mappaint.multipolygon", true);
         private final boolean drawRestriction = Main.pref.getBoolean("mappaint.restriction", true);
 

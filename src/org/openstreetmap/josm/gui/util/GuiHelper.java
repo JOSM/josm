@@ -481,7 +481,7 @@ public final class GuiHelper {
      * @since 10024
      */
     public static void extendTooltipDelay(Component c) {
-        extendTooltipDelay(c, 60000);
+        extendTooltipDelay(c, 60_000);
     }
 
     /**

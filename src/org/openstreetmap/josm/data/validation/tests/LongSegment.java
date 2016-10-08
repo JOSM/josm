@@ -49,7 +49,7 @@ public class LongSegment extends Test {
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        maxlength = Main.pref.getInteger("validator.maximum.segment.length", 15000);
+        maxlength = Main.pref.getInteger("validator.maximum.segment.length", 15_000);
     }
 
     @Override

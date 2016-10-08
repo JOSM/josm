@@ -264,8 +264,8 @@ public class CustomProjection extends AbstractProjection {
                     throw new ProjectionConfigurationException(tr("Expected integer value in range 1-60 for ''+zone=...'' parameter."));
                 this.lon0 = 6d * zone - 183d;
                 this.k0 = 0.9996;
-                this.x0 = 500000;
-                this.y0 = parameters.containsKey(Param.south.key) ? 10000000 : 0;
+                this.x0 = 500_000;
+                this.y0 = parameters.containsKey(Param.south.key) ? 10_000_000 : 0;
             }
             String s = parameters.get(Param.x_0.key);
             if (s != null) {

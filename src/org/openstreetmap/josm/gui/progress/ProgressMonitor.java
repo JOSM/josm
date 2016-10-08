@@ -37,7 +37,7 @@ public interface ProgressMonitor {
     }
 
     /** Ticks count used, when no other value is supplied */
-    int DEFAULT_TICKS = 10000;
+    int DEFAULT_TICKS = 10_000;
 
     /**
      * Can be used with {@link #worked(int)} and {@link #createSubTaskMonitor(int, boolean)} to

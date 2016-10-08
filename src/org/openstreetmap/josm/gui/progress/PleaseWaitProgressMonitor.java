@@ -36,7 +36,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         void appendLogMessage(String message);
     }
 
-    public static final int PROGRESS_BAR_MAX = 10000;
+    public static final int PROGRESS_BAR_MAX = 10_000;
     private final Component dialogParent;
 
     private int currentProgressValue;

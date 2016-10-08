@@ -116,7 +116,7 @@ public class DownloadFileTask extends PleaseWaitRunnable {
                 InputStream in = downloadConnection.getResponse().getContent();
                 OutputStream out = new FileOutputStream(file)
             ) {
-                byte[] buffer = new byte[32768];
+                byte[] buffer = new byte[32_768];
                 int count = 0;
                 long p1 = 0;
                 long p2;

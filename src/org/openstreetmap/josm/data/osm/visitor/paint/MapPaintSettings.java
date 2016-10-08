@@ -94,9 +94,9 @@ public final class MapPaintSettings implements PreferenceChangedListener {
         showOrderNumberOnSelectedWay = Main.pref.getBoolean("draw.segment.order_number.on_selected", false);
         showHeadArrowOnly = Main.pref.getBoolean("draw.segment.head_only", false);
 
-        showNamesDistance = Main.pref.getInteger("mappaint.shownames", 10000000);
-        useStrokesDistance = Main.pref.getInteger("mappaint.strokes", 10000000);
-        showIconsDistance = Main.pref.getInteger("mappaint.showicons", 10000000);
+        showNamesDistance = Main.pref.getInteger("mappaint.shownames", 10_000_000);
+        useStrokesDistance = Main.pref.getInteger("mappaint.strokes", 10_000_000);
+        showIconsDistance = Main.pref.getInteger("mappaint.showicons", 10_000_000);
 
         selectedNodeSize = Main.pref.getInteger("mappaint.node.selected-size", 5);
         unselectedNodeSize = Main.pref.getInteger("mappaint.node.unselected-size", 3);

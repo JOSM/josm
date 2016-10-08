@@ -79,9 +79,9 @@ public final class Utils {
     public static final Pattern WHITE_SPACES_PATTERN = Pattern.compile("\\s+");
 
     private static final int MILLIS_OF_SECOND = 1000;
-    private static final int MILLIS_OF_MINUTE = 60000;
-    private static final int MILLIS_OF_HOUR = 3600000;
-    private static final int MILLIS_OF_DAY = 86400000;
+    private static final int MILLIS_OF_MINUTE = 60_000;
+    private static final int MILLIS_OF_HOUR = 3_600_000;
+    private static final int MILLIS_OF_DAY = 86_400_000;
 
     /**
      * A list of all characters allowed in URLs

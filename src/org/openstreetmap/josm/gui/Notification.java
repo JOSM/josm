@@ -52,13 +52,13 @@ public class Notification {
     /**
      * Somewhat longer message (10 s).
      */
-    public static final int TIME_LONG = Main.pref.getInteger("notification-time-long-ms", 10000);
+    public static final int TIME_LONG = Main.pref.getInteger("notification-time-long-ms", 10_000);
 
     /**
      * Long text.
      * (Make sure is still sensible to show as a notification)
      */
-    public static final int TIME_VERY_LONG = Main.pref.getInteger("notification-time-very_long-ms", 20000);
+    public static final int TIME_VERY_LONG = Main.pref.getInteger("notification-time-very_long-ms", 20_000);
 
     private Component content;
     private int duration = Notification.TIME_DEFAULT;
