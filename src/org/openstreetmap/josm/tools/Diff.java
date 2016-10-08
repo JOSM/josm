@@ -791,7 +791,8 @@ public class Diff {
                 start = i;
                 otherStart = j;
 
-                for (;;) {
+                boolean loop = true;
+                while (loop) {
                     /* Now find the end of this run of changes.  */
 
                     while (i < iEnd && changed[1+i]) {
@@ -818,7 +819,7 @@ public class Diff {
                            to keep in synch.  */
                         ++j;
                     } else {
-                        break;
+                        loop = false;
                     }
                 }
 

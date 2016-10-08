@@ -59,22 +59,27 @@ public class BugReportQueue {
         } else {
             reportsToDisplay.add(report);
             if (displayThread == null) {
-                displayThread = new Thread(this::displayAll, "bug-report-display");
+                displayThread = new Thread(new BugReportDisplayRunnable(), "bug-report-display");
                 displayThread.start();
             }
             notifyAll();
         }
     }
 
-    private void displayAll() {
-        try {
-            while (true) {
-                ReportedException e = getNext();
-                SuppressionMode suppress = displayFor(e);
-                handleDialogResult(e, suppress);
+    private class BugReportDisplayRunnable implements Runnable {
+
+        private volatile boolean running = true;
+
+        @Override
+        public void run() {
+            try {
+                while (running) {
+                    ReportedException e = getNext();
+                    handleDialogResult(e, displayFor(e));
+                }
+            } catch (InterruptedException e) {
+                displayFor(BugReport.intercept(e));
             }
-        } catch (InterruptedException e) {
-            displayFor(BugReport.intercept(e));
         }
     }
 
