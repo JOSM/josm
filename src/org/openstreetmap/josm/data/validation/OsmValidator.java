@@ -182,7 +182,7 @@ public final class OsmValidator {
         ignoredErrors.clear();
         if (ValidatorPreference.PREF_USE_IGNORE.get()) {
             Path path = Paths.get(getValidatorDir()).resolve("ignorederrors");
-            if (Files.exists(path)) {
+            if (path.toFile().exists()) {
                 try {
                     ignoredErrors.addAll(Files.readAllLines(path, StandardCharsets.UTF_8));
                 } catch (final FileNotFoundException e) {

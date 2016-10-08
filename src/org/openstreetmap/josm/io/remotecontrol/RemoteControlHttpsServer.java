@@ -206,7 +206,7 @@ public class RemoteControlHttpsServer extends Thread {
         Path path = dir.resolve(KEYSTORE_FILENAME);
         Files.createDirectories(dir);
 
-        if (!Files.exists(path)) {
+        if (!path.toFile().exists()) {
             Main.debug("No keystore found, creating a new one");
 
             // Create new keystore like previous one generated with JDK keytool as follows:
