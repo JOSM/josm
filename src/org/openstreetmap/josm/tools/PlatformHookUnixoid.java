@@ -216,9 +216,9 @@ public class PlatformHookUnixoid implements PlatformHook {
     public static String getPackageDetails(String ... packageNames) {
         try {
             // CHECKSTYLE.OFF: SingleSpaceSeparator
-            boolean dpkg = Files.exists(Paths.get("/usr/bin/dpkg-query"));
-            boolean eque = Files.exists(Paths.get("/usr/bin/equery"));
-            boolean rpm  = Files.exists(Paths.get("/bin/rpm"));
+            boolean dpkg = Paths.get("/usr/bin/dpkg-query").toFile().exists();
+            boolean eque = Paths.get("/usr/bin/equery").toFile().exists();
+            boolean rpm  = Paths.get("/bin/rpm").toFile().exists();
             // CHECKSTYLE.ON: SingleSpaceSeparator
             if (dpkg || rpm || eque) {
                 for (String packageName : packageNames) {
@@ -389,7 +389,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             String result = null;
             if (path != null) {
                 Path p = Paths.get(path);
-                if (Files.exists(p)) {
+                if (p.toFile().exists()) {
                     try (BufferedReader reader = Files.newBufferedReader(p, StandardCharsets.UTF_8)) {
                         String id = null;
                         String release = null;
