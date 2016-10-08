@@ -12,9 +12,9 @@ import java.awt.event.WindowListener;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.swing.BorderFactory;
@@ -205,7 +205,8 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
             final String parsedText = ids.stream().map(x -> x.getType().getAPIName().charAt(0) + String.valueOf(x.getUniqueId()))
                     .collect(Collectors.joining(", "));
             tfId.tryToPasteFrom(parsedText);
-            final Set<OsmPrimitiveType> types = ids.stream().map(SimplePrimitiveId::getType).collect(Collectors.toSet());
+            final EnumSet<OsmPrimitiveType> types = ids.stream().map(SimplePrimitiveId::getType).collect(
+                    Collectors.toCollection(() -> EnumSet.noneOf(OsmPrimitiveType.class)));
             if (types.size() == 1) {
                 // select corresponding type
                 cbType.setSelectedItem(types.iterator().next());
