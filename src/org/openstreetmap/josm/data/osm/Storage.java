@@ -274,7 +274,7 @@ public class Storage<T> extends AbstractSet<T> {
      * @return new hash
      */
     private static int rehash(int h) {
-        return (1103515245*h) >> 2;
+        return (1_103_515_245*h) >> 2;
     }
 
     /**

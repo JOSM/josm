@@ -311,8 +311,8 @@ public final class AudioPlayer extends Thread {
                                 double calibratedOffset = offset * calibration;
                                 bytesPerSecond = audioFormat.getFrameRate() /* frames per second */
                                 * audioFormat.getFrameSize() /* bytes per frame */;
-                                if (speed * bytesPerSecond > 256000.0) {
-                                    speed = 256000 / bytesPerSecond;
+                                if (speed * bytesPerSecond > 256_000.0) {
+                                    speed = 256_000 / bytesPerSecond;
                                 }
                                 if (calibratedOffset > 0.0) {
                                     long bytesToSkip = (long) (calibratedOffset /* seconds (double) */ * bytesPerSecond);

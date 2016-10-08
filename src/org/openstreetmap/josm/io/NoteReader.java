@@ -77,7 +77,7 @@ public class NoteReader {
                 return;
             case "osm-notes":
                 parseMode = NoteParseMode.DUMP;
-                notes = new ArrayList<>(10000);
+                notes = new ArrayList<>(10_000);
                 return;
             }
 

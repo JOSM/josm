@@ -101,28 +101,30 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
      * @since 11093
      */
     public static boolean saveUnsavedModifications(Iterable<? extends Layer> selectedLayers, Reason reason) {
-        SaveLayersDialog dialog = new SaveLayersDialog(Main.parent);
-        List<AbstractModifiableLayer> layersWithUnmodifiedChanges = new ArrayList<>();
-        for (Layer l: selectedLayers) {
-            if (!(l instanceof AbstractModifiableLayer)) {
-                continue;
+        if (!GraphicsEnvironment.isHeadless()) {
+            SaveLayersDialog dialog = new SaveLayersDialog(Main.parent);
+            List<AbstractModifiableLayer> layersWithUnmodifiedChanges = new ArrayList<>();
+            for (Layer l: selectedLayers) {
+                if (!(l instanceof AbstractModifiableLayer)) {
+                    continue;
+                }
+                AbstractModifiableLayer odl = (AbstractModifiableLayer) l;
+                if (odl.isModified() &&
+                        ((!odl.isSavable() && !odl.isUploadable()) ||
+                                odl.requiresSaveToFile() ||
+                                (odl.requiresUploadToServer() && !odl.isUploadDiscouraged()))) {
+                    layersWithUnmodifiedChanges.add(odl);
+                }
             }
-            AbstractModifiableLayer odl = (AbstractModifiableLayer) l;
-            if (odl.isModified() &&
-                    ((!odl.isSavable() && !odl.isUploadable()) ||
-                            odl.requiresSaveToFile() ||
-                            (odl.requiresUploadToServer() && !odl.isUploadDiscouraged()))) {
-                layersWithUnmodifiedChanges.add(odl);
-            }
-        }
-        dialog.prepareForSavingAndUpdatingLayers(reason);
-        if (!layersWithUnmodifiedChanges.isEmpty()) {
-            dialog.getModel().populate(layersWithUnmodifiedChanges);
-            dialog.setVisible(true);
-            switch(dialog.getUserAction()) {
-                case PROCEED: return true;
-                case CANCEL:
-                default: return false;
+            dialog.prepareForSavingAndUpdatingLayers(reason);
+            if (!layersWithUnmodifiedChanges.isEmpty()) {
+                dialog.getModel().populate(layersWithUnmodifiedChanges);
+                dialog.setVisible(true);
+                switch(dialog.getUserAction()) {
+                    case PROCEED: return true;
+                    case CANCEL:
+                    default: return false;
+                }
             }
         }
 

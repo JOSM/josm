@@ -197,7 +197,7 @@ public class JumpToAction extends JosmAction {
             // available on standard renderers, so choose this is in case m should be zero
             int zoomLvl = 18;
             if (m > 0)
-                zoomLvl = (int) Math.round((-1) * Math.log(m/10000000)/Math.log(2));
+                zoomLvl = (int) Math.round((-1) * Math.log(m/10_000_000)/Math.log(2));
 
             url.setText(OsmUrlToBounds.getURL(dlat, dlon, zoomLvl));
         } catch (NumberFormatException x) {

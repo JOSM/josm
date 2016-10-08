@@ -41,7 +41,7 @@ public class SystemOfMeasurement {
      * Metric system (international standard).
      * @since 3406
      */
-    public static final SystemOfMeasurement METRIC = new SystemOfMeasurement(1, "m", 1000, "km", "km/h", 3.6, 10000, "ha");
+    public static final SystemOfMeasurement METRIC = new SystemOfMeasurement(1, "m", 1000, "km", "km/h", 3.6, 10_000, "ha");
 
     /**
      * Chinese system.
