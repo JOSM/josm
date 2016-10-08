@@ -65,7 +65,7 @@ public class CustomizeColor extends AbstractAction implements LayerAction, Multi
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Color cl = colors.stream().map(c -> c.get()).filter(Objects::nonNull).findAny().orElse(Color.GRAY);
+        Color cl = colors.stream().map(AbstractProperty::get).filter(Objects::nonNull).findAny().orElse(Color.GRAY);
         JColorChooser c = new JColorChooser(cl);
         Object[] options = new Object[]{tr("OK"), tr("Cancel"), tr("Default")};
         int answer = JOptionPane.showOptionDialog(

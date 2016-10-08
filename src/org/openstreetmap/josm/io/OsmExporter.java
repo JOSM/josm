@@ -128,7 +128,7 @@ public class OsmExporter extends FileExporter {
         try (
             OutputStream out = getOutputStream(file);
             Writer writer = new OutputStreamWriter(out, StandardCharsets.UTF_8);
-            OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
+            OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion())
         ) {
             layer.data.getReadLock().lock();
             try {

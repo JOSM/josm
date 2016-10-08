@@ -1476,7 +1476,7 @@ public class Preferences {
     public String toXML(Collection<Entry<String, Setting<?>>> settings, boolean nopass, boolean defaults) {
         try (
             StringWriter sw = new StringWriter();
-            PreferencesWriter prefWriter = new PreferencesWriter(new PrintWriter(sw), nopass, defaults);
+            PreferencesWriter prefWriter = new PreferencesWriter(new PrintWriter(sw), nopass, defaults)
         ) {
             prefWriter.write(settings);
             sw.flush();
