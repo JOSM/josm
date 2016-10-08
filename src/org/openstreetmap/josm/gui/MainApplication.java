@@ -112,7 +112,9 @@ public class MainApplication extends Main {
 
     @Override
     protected void shutdown() {
-        mainFrame.storeState();
+        if (mainFrame != null) {
+            mainFrame.storeState();
+        }
         super.shutdown();
     }
 

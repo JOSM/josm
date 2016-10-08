@@ -9,9 +9,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 
+import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -243,5 +246,24 @@ public final class TestUtils {
             relation.addMember(member);
         }
         return relation;
+    }
+
+    /**
+     * Creates a new empty command.
+     * @return a new empty command
+     */
+    public static Command newCommand() {
+        return new Command() {
+            @Override
+            public String getDescriptionText() {
+                return "";
+            }
+
+            @Override
+            public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted,
+                    Collection<OsmPrimitive> added) {
+                // Do nothing
+            }
+        };
     }
 }

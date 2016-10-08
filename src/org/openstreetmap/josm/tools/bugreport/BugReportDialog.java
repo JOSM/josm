@@ -110,7 +110,7 @@ public class BugReportDialog extends JDialog {
         panel.add(new JLabel(tr("Manually report at:")), GBC.std());
         panel.add(new UrlLabel(Main.getJOSMWebsite() + "/newticket"), GBC.std().fill(GBC.HORIZONTAL));
         JButton copy = new JButton("Copy to clipboard");
-        copy.addActionListener(e -> textPanel.copyToClippboard());
+        copy.addActionListener(e -> textPanel.copyToClipboard());
         panel.add(copy, GBC.eol().anchor(GBC.EAST));
         content.add(panel, GBC.eop().fill());
     }

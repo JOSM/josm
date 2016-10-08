@@ -64,8 +64,9 @@ public class DebugTextDisplay extends JScrollPane {
     /**
      * Copies the debug text to the clipboard. This includes the code tags for trac.
      * @return <code>true</code> if copy was successful
+     * @since 11102 (typo)
      */
-    public boolean copyToClippboard() {
+    public boolean copyToClipboard() {
         return ClipboardUtils.copyString(String.format(CODE_PATTERN, text));
     }
 
