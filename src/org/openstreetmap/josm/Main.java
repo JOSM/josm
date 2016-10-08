@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.GraphicsEnvironment;
 import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -816,9 +817,11 @@ public abstract class Main {
     }
 
     protected void shutdown() {
-        worker.shutdown();
-        ImageProvider.shutdown(false);
-        JCSCacheManager.shutdown();
+        if (!GraphicsEnvironment.isHeadless()) {
+            worker.shutdown();
+            ImageProvider.shutdown(false);
+            JCSCacheManager.shutdown();
+        }
         if (map != null) {
             map.rememberToggleDialogWidth();
         }
@@ -829,8 +832,10 @@ public abstract class Main {
         } catch (IOException ex) {
             Main.warn(ex, tr("Failed to save default preferences."));
         }
-        worker.shutdownNow();
-        ImageProvider.shutdown(true);
+        if (!GraphicsEnvironment.isHeadless()) {
+            worker.shutdownNow();
+            ImageProvider.shutdown(true);
+        }
     }
 
     /**
