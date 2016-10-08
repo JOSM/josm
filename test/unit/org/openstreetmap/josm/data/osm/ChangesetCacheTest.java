@@ -54,7 +54,7 @@ public class ChangesetCacheTest {
     }
 
     @Test
-    public void updateGetRemoveCycle() {
+    public void testUpdateGetRemoveCycle() {
         ChangesetCache cache = ChangesetCache.getInstance();
         cache.clear();
 
@@ -67,7 +67,7 @@ public class ChangesetCacheTest {
     }
 
     @Test
-    public void updateTwice() {
+    public void testUpdateTwice() {
         ChangesetCache cache = ChangesetCache.getInstance();
         cache.clear();
 
@@ -93,7 +93,7 @@ public class ChangesetCacheTest {
     }
 
     @Test
-    public void contains() throws ReflectiveOperationException {
+    public void testContains() throws ReflectiveOperationException {
         ChangesetCache cache = ChangesetCache.getInstance();
         getListeners(cache).clear();
         cache.clear();
@@ -111,7 +111,7 @@ public class ChangesetCacheTest {
     }
 
     @Test
-    public void fireingEventsAddAChangeset() throws ReflectiveOperationException {
+    public void testFireingEventsAddAChangeset() throws ReflectiveOperationException {
         ChangesetCache cache = ChangesetCache.getInstance();
         cache.clear();
         getListeners(cache).clear();
@@ -133,7 +133,7 @@ public class ChangesetCacheTest {
     }
 
     @Test
-    public void fireingEventsUpdateChangeset() throws ReflectiveOperationException {
+    public void testFireingEventsUpdateChangeset() throws ReflectiveOperationException {
         ChangesetCache cache = ChangesetCache.getInstance();
         cache.clear();
         getListeners(cache).clear();
@@ -157,7 +157,7 @@ public class ChangesetCacheTest {
     }
 
     @Test
-    public void fireingEventsRemoveChangeset() throws ReflectiveOperationException {
+    public void testFireingEventsRemoveChangeset() throws ReflectiveOperationException {
         ChangesetCache cache = ChangesetCache.getInstance();
         cache.clear();
         getListeners(cache).clear();
