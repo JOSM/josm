@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -160,6 +161,19 @@ public final class TestUtils {
         int dashPos = version.indexOf('-');
         return Integer.parseInt(version.substring(0,
                 dotPos > -1 ? dotPos : dashPos > -1 ? dashPos : 1));
+    }
+
+    /**
+     * Returns a private field value.
+     * @param obj object
+     * @param fieldName private field name
+     * @return private field value
+     * @throws ReflectiveOperationException if a reflection operation error occurs
+     */
+    public static Object getPrivateField(Object obj, String fieldName) throws ReflectiveOperationException {
+        Field f = obj.getClass().getDeclaredField(fieldName);
+        f.setAccessible(true);
+        return f.get(obj);
     }
 
     /**
