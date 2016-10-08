@@ -128,7 +128,7 @@ public class HSQLDiskCacheFactory
         }
 
         Connection cConn = DriverManager.getConnection( database, user, password );
-        setupTABLE( cConn, attributes.getTableName() );
+        setupTable( cConn, attributes.getTableName() );
 
         if ( log.isInfoEnabled() )
         {
@@ -144,10 +144,8 @@ public class HSQLDiskCacheFactory
      * @param cConn
      * @param tableName
      */
-    private void setupTABLE( Connection cConn, String tableName ) throws SQLException
+    protected void setupTable( Connection cConn, String tableName ) throws SQLException
     {
-        boolean newT = true;
-
         // TODO make the cached nature of the table configurable
         StringBuilder createSql = new StringBuilder();
         createSql.append( "CREATE CACHED TABLE ").append( tableName );
@@ -155,8 +153,8 @@ public class HSQLDiskCacheFactory
         createSql.append( "CACHE_KEY             VARCHAR(250)          NOT NULL, " );
         createSql.append( "REGION                VARCHAR(250)          NOT NULL, " );
         createSql.append( "ELEMENT               BINARY, " );
-        createSql.append( "CREATE_TIME           DATE, " );
-        createSql.append( "CREATE_TIME_SECONDS   BIGINT, " );
+        createSql.append( "CREATE_TIME           TIMESTAMP, " );
+        createSql.append( "UPDATE_TIME_SECONDS   BIGINT, " );
         createSql.append( "MAX_LIFE_SECONDS      BIGINT, " );
         createSql.append( "SYSTEM_EXPIRE_TIME_SECONDS      BIGINT, " );
         createSql.append( "IS_ETERNAL            CHAR(1), " );
@@ -171,11 +169,7 @@ public class HSQLDiskCacheFactory
         }
         catch ( SQLException e )
         {
-            if ("23000".equals(e.getSQLState()))
-            {
-                newT = false;
-            }
-            else
+            if (!"23000".equals(e.getSQLState()))
             {
                 throw e;
             }
@@ -183,32 +177,6 @@ public class HSQLDiskCacheFactory
         finally
         {
             sStatement.close();
-        }
-
-        if ( newT )
-        {
-            // TODO create an index on SYSTEM_EXPIRE_TIME_SECONDS
-            String setupData[] = { "create index iKEY on " + tableName + " (CACHE_KEY, REGION)" };
-            Statement iStatement = cConn.createStatement();
-
-            try
-            {
-                for ( int i = 0; i < setupData.length; i++ )
-                {
-                    try
-                    {
-                        iStatement.execute( setupData[i] );
-                    }
-                    catch ( SQLException e )
-                    {
-                        log.error( "Exception caught when creating index.", e );
-                    }
-                }
-            }
-            finally
-            {
-                iStatement.close();
-            }
         }
     }
 }
