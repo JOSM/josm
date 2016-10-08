@@ -179,9 +179,9 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
         }
         Map<Severity, Map<String, Map<String, List<TestError>>>> errorTreeDeep
             = errors.stream().filter(filterToUse).collect(
-                    Collectors.groupingBy(e -> e.getSeverity(), () -> new EnumMap<>(Severity.class),
+                    Collectors.groupingBy(TestError::getSeverity, () -> new EnumMap<>(Severity.class),
                             Collectors.groupingBy(e -> e.getDescription() == null ? "" : e.getDescription(),
-                                    Collectors.groupingBy(e -> e.getMessage()))));
+                                    Collectors.groupingBy(TestError::getMessage))));
 
         List<TreePath> expandedPaths = new ArrayList<>();
         errorTreeDeep.forEach((s, severityErrorsDeep) -> {

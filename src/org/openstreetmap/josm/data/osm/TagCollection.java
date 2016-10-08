@@ -534,7 +534,7 @@ public class TagCollection implements Iterable<Tag>, Serializable {
      * @return the set of values
      */
     public Set<String> getValues() {
-        return tags.keySet().stream().map(e -> e.getValue()).collect(Collectors.toSet());
+        return tags.keySet().stream().map(Tag::getValue).collect(Collectors.toSet());
     }
 
     /**
@@ -547,7 +547,7 @@ public class TagCollection implements Iterable<Tag>, Serializable {
      */
     public Set<String> getValues(String key) {
         // null-safe
-        return generateStreamForKey(key).map(e -> e.getValue()).collect(Collectors.toSet());
+        return generateStreamForKey(key).map(Tag::getValue).collect(Collectors.toSet());
     }
 
     /**
@@ -736,7 +736,7 @@ public class TagCollection implements Iterable<Tag>, Serializable {
     }
 
     private Stream<String> generateKeyStream() {
-        return tags.keySet().stream().map(tag -> tag.getKey());
+        return tags.keySet().stream().map(Tag::getKey);
     }
 
     /**
