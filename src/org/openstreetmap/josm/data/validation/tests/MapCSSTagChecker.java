@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.FixCommand.evaluateObject;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
@@ -716,10 +715,10 @@ public class MapCSSTagChecker extends Test.TagTest {
      */
     public synchronized ParseResult addMapCSS(String url) throws ParseException, IOException {
         CheckParameterUtil.ensureParameterNotNull(url, "url");
-        CachedFile cache = new CachedFile(url);
-        InputStream zip = cache.findZipEntryInputStream("validator.mapcss", "");
         ParseResult result;
-        try (InputStream s = zip != null ? zip : cache.getInputStream()) {
+        try (CachedFile cache = new CachedFile(url);
+             InputStream zip = cache.findZipEntryInputStream("validator.mapcss", "");
+             InputStream s = zip != null ? zip : cache.getInputStream()) {
             result = TagCheck.readMapCSS(new BufferedReader(UTFInputStreamReader.create(s)));
             checks.remove(url);
             checks.putAll(url, result.parseChecks);
@@ -729,8 +728,6 @@ public class MapCSSTagChecker extends Test.TagTest {
                     Main.warn(msg);
                 }
             }
-        } finally {
-            cache.close();
         }
         return result;
     }
