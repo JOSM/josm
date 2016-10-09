@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.actions;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,31 +46,28 @@ public class MergeNodesActionTest {
     }
 
     /**
-     * Unit test of {@link MergeNodesAction#selectTargetLocationNode} - mode 0
+     * Unit test of {@link MergeNodesAction#selectTargetLocationNode}
      */
     @Test
-    public void testSelectTargetLocationNodeMode0() {
+    public void testSelectTargetLocationNode() {
         Main.pref.putInteger("merge-nodes.mode", 0);
         assertEquals(1, MergeNodesAction.selectTargetLocationNode(Arrays.asList(new Node(0), new Node(1))).getId());
-    }
 
-    /**
-     * Unit test of {@link MergeNodesAction#selectTargetLocationNode} - mode 1
-     */
-    @Test
-    public void testSelectTargetLocationNodeMode1() {
         Main.pref.putInteger("merge-nodes.mode", 1);
         assertEquals(LatLon.ZERO, MergeNodesAction.selectTargetLocationNode(
                 Arrays.asList(new Node(LatLon.NORTH_POLE), new Node(LatLon.SOUTH_POLE))).getCoor());
-    }
 
-    /**
-     * Unit test of {@link MergeNodesAction#selectTargetLocationNode} - mode 2 with a single node
-     */
-    @Test
-    public void testSelectTargetLocationNodeMode2SingleNode() {
         Main.pref.putInteger("merge-nodes.mode", 2);
         assertEquals(LatLon.NORTH_POLE, MergeNodesAction.selectTargetLocationNode(
                 Arrays.asList(new Node(LatLon.NORTH_POLE))).getCoor());
+    }
+
+    /**
+     * Unit test of {@link MergeNodesAction#selectTargetNode}
+     */
+    @Test
+    public void testSelectTargetNode() {
+        assertNull(MergeNodesAction.selectTargetNode(Collections.emptyList()));
+        assertEquals(1, MergeNodesAction.selectTargetNode(Arrays.asList(new Node(1))).getId());
     }
 }
