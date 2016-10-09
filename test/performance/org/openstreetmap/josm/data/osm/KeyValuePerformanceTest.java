@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
@@ -65,7 +66,7 @@ public class KeyValuePerformanceTest {
 
         for (int i = 0; i < STRING_INTERN_TESTS; i++) {
             // warm up
-            assertTrue(str1.equals(str1B));
+            assertEquals(str1, str1B);
         }
 
         PerformanceTestTimer timer = PerformanceTestUtils.startTimer("Assertion overhead.");
@@ -76,7 +77,7 @@ public class KeyValuePerformanceTest {
 
         timer = PerformanceTestUtils.startTimer("str1.equals(str2) succeeds (without intern)");
         for (int i = 0; i < STRING_INTERN_TESTS; i++) {
-            assertTrue(str1.equals(str1B));
+            assertEquals(str1, str1B);
         }
         timer.done();
 

@@ -76,7 +76,6 @@ public class CombineWayAction extends JosmAction {
         new Notification(msg)
                 .setIcon(JOptionPane.INFORMATION_MESSAGE)
                 .show();
-        return;
     }
 
     protected static Way getTargetWay(Collection<Way> combinedWays) {
