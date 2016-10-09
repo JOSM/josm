@@ -11,6 +11,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -68,6 +69,9 @@ public class MergeNodesActionTest {
     @Test
     public void testSelectTargetNode() {
         assertNull(MergeNodesAction.selectTargetNode(Collections.emptyList()));
-        assertEquals(1, MergeNodesAction.selectTargetNode(Arrays.asList(new Node(1))).getId());
+        DataSet ds = new DataSet();
+        Node n1 = new Node(1);
+        ds.addPrimitive(n1);
+        assertEquals(1, MergeNodesAction.selectTargetNode(Arrays.asList(n1)).getId());
     }
 }
