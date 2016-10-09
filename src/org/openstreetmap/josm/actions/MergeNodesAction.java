@@ -103,19 +103,18 @@ public class MergeNodesAction extends JosmAction {
         int size = candidates.size();
         if (size == 0)
             throw new IllegalArgumentException("empty list");
+        if (size == 1) // to avoid division by 0 in mode 2
+            return candidates.get(0);
 
         switch (Main.pref.getInteger("merge-nodes.mode", 0)) {
         case 0:
-            Node targetNode = candidates.get(size - 1);
-            for (final Node n : candidates) { // pick last one
-                targetNode = n;
-            }
-            return targetNode;
+            return candidates.get(size - 1);
         case 1:
             double east1 = 0, north1 = 0;
             for (final Node n : candidates) {
-                east1 += n.getEastNorth().east();
-                north1 += n.getEastNorth().north();
+                EastNorth en = n.getEastNorth();
+                east1 += en.east();
+                north1 += en.north();
             }
 
             return new Node(new EastNorth(east1 / size, north1 / size));
