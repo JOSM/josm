@@ -268,7 +268,7 @@ public class JOSMTestRules implements TestRule {
         MemoryManagerTest.resetState(allowMemoryManagerLeaks);
 
         // TODO: Remove global listeners and other global state.
-        Main.pref.resetToInitialState();;
+        Main.pref.resetToInitialState();
         Main.platform = null;
         // Parts of JOSM uses weak references - destroy them.
         System.gc();

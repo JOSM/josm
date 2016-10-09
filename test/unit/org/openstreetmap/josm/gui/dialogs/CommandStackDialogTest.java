@@ -57,8 +57,10 @@ public class CommandStackDialogTest {
             assertFalse(Main.main.undoRedo.redoCommands.isEmpty());
 
             CommandStackDialog dlg = new CommandStackDialog();
-            dlg.showDialog();
+            Main.map.addToggleDialog(dlg);
+            dlg.unfurlDialog();
             assertTrue(dlg.isVisible());
+            Main.map.removeToggleDialog(dlg);
             dlg.hideDialog();
             assertFalse(dlg.isVisible());
         } finally {

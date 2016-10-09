@@ -4,7 +4,9 @@ package org.openstreetmap.josm.gui.io;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.GraphicsEnvironment;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -58,16 +60,15 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
     @Override
     protected void finish() {
         if (JosmUserIdentityManager.getInstance().isAnonymous()) {
-            JOptionPane.showMessageDialog(
-                    GuiHelper.getFrameForComponent(parent),
-                    "<html>" + tr("Could not retrieve the list of your open changesets because<br>"
-                            + "JOSM does not know your identity.<br>"
-                            + "You have either chosen to work anonymously or you are not entitled<br>"
-                            + "to know the identity of the user on whose behalf you are working.")
-                            + "</html>",
-                            tr("Missing user identity"),
-                            JOptionPane.ERROR_MESSAGE
-            );
+            String msg = tr("Could not retrieve the list of your open changesets because<br>"
+                    + "JOSM does not know your identity.<br>"
+                    + "You have either chosen to work anonymously or you are not entitled<br>"
+                    + "to know the identity of the user on whose behalf you are working.");
+            Main.warn(msg);
+            if (!GraphicsEnvironment.isHeadless()) {
+                JOptionPane.showMessageDialog(GuiHelper.getFrameForComponent(parent),
+                        "<html>" + msg + "</html>", tr("Missing user identity"), JOptionPane.ERROR_MESSAGE);
+            }
             return;
         }
         if (canceled) return;
@@ -152,7 +153,20 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
         }
     }
 
+    /**
+     * Determines if this task has been cancelled.
+     * @return {@code true} if this task has been cancelled
+     */
     public boolean isCanceled() {
         return canceled;
+    }
+
+    /**
+     * Returns the changesets.
+     * @return the changesets, or {@code null}
+     * @since 11110
+     */
+    public final List<Changeset> getChangesets() {
+        return changesets != null ? Collections.unmodifiableList(changesets) : null;
     }
 }
