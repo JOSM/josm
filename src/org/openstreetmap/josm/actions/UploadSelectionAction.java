@@ -78,9 +78,7 @@ public class UploadSelectionAction extends JosmAction {
     protected Set<OsmPrimitive> getModifiedPrimitives(Collection<OsmPrimitive> primitives) {
         Set<OsmPrimitive> ret = new HashSet<>();
         for (OsmPrimitive p: primitives) {
-            if (p.isNewOrUndeleted()) {
-                ret.add(p);
-            } else if (p.isModified() && !p.isIncomplete()) {
+            if (p.isNewOrUndeleted() || (p.isModified() && !p.isIncomplete())) {
                 ret.add(p);
             }
         }

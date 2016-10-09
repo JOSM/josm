@@ -160,14 +160,10 @@ public class MergeNodesAction extends JosmAction {
             if (!n.isNew()) {
                 // Among existing nodes, try to keep the oldest used one
                 if (!n.getReferrers().isEmpty()) {
-                    if (targetNode == null) {
-                        targetNode = n;
-                    } else if (n.getId() < targetNode.getId()) {
+                    if (targetNode == null || n.getId() < targetNode.getId()) {
                         targetNode = n;
                     }
-                } else if (oldestNode == null) {
-                    oldestNode = n;
-                } else if (n.getId() < oldestNode.getId()) {
+                } else if (oldestNode == null || n.getId() < oldestNode.getId()) {
                     oldestNode = n;
                 }
             }
@@ -199,9 +195,7 @@ public class MergeNodesAction extends JosmAction {
             for (Node n: w.getNodes()) {
                 if (!nodesToDelete.contains(n) && !n.equals(targetNode)) {
                     newNodes.add(n);
-                } else if (newNodes.isEmpty()) {
-                    newNodes.add(targetNode);
-                } else if (!newNodes.get(newNodes.size()-1).equals(targetNode)) {
+                } else if (newNodes.isEmpty() || !newNodes.get(newNodes.size()-1).equals(targetNode)) {
                     // make sure we collapse a sequence of deleted nodes
                     // to exactly one occurrence of the merged target node
                     newNodes.add(targetNode);

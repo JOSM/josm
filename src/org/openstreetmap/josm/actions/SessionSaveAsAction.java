@@ -130,9 +130,7 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
 
         boolean zip;
         FileFilter ff = fc.getFileFilter();
-        if (zipRequired) {
-            zip = true;
-        } else if (joz.equals(ff)) {
+        if (zipRequired || joz.equals(ff)) {
             zip = true;
         } else if (jos.equals(ff)) {
             zip = false;

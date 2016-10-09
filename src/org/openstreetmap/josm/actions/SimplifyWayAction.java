@@ -100,9 +100,7 @@ public class SimplifyWayAction extends JosmAction {
             if (ways.isEmpty()) {
                 alertSelectAtLeastOneWay();
                 return;
-            } else if (!confirmWayWithNodesOutsideBoundingBox(ways)) {
-                return;
-            } else if (ways.size() > 10 && !confirmSimplifyManyWays(ways.size())) {
+            } else if (!confirmWayWithNodesOutsideBoundingBox(ways) || (ways.size() > 10 && !confirmSimplifyManyWays(ways.size()))) {
                 return;
             }
 
