@@ -177,7 +177,7 @@ public final class ShowStatusReportAction extends JosmAction {
                 }
             }
         }
-        text.append("\n");
+        text.append('\n');
         appendCollection(text, "Plugins", Utils.transform(PluginHandler.getBugReportInformation(), i -> "+ " + i));
         appendCollection(text, "Tagging presets", getCustomUrls(TaggingPresetPreference.PresetPrefHelper.INSTANCE));
         appendCollection(text, "Map paint styles", getCustomUrls(MapPaintPreference.MapPaintPrefHelper.INSTANCE));
