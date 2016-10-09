@@ -90,7 +90,7 @@ public class PrimitiveTransferable implements Transferable {
         final StringBuilder sb = new StringBuilder();
         for (PrimitiveData primitive : primitives.getDirectlyAdded()) {
             if (sb.length() > 0) {
-                sb.append("\n");
+                sb.append('\n');
             }
             sb.append(OsmPrimitiveType.from(primitive).getAPIName()).append(' ').append(primitive.getId());
         }
