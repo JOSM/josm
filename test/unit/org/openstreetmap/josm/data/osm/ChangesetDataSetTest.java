@@ -1,18 +1,20 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.Assert;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.data.osm.ChangesetDataSet.ChangesetModificationType;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Date;
 import java.util.Set;
+
+import org.junit.Assert;
+import org.junit.Rule;
+import org.junit.Test;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.ChangesetDataSet.ChangesetModificationType;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link ChangesetDataSet}.
@@ -37,16 +39,17 @@ public class ChangesetDataSetTest {
             cds.getPrimitivesByModificationType(null);
             Assert.fail("Should have thrown an IllegalArgumentException as we gave a null argument.");
         } catch (IllegalArgumentException e) {
+            Main.trace(e);
             // Was expected
         }
-        
+
         // empty object, a modification type => empty list
         Assert.assertTrue(
             "Empty data set should produce an empty list.",
             cds.getPrimitivesByModificationType(
                     ChangesetModificationType.CREATED).isEmpty()
         );
-        
+
         // object with various items and modification types, fetch for CREATED
         // => list containing only the CREATED item
         HistoryOsmPrimitive prim1 = new HistoryNode(1, 1, true, User.getAnonymous(), 1, new Date(), LatLon.ZERO);
@@ -59,6 +62,5 @@ public class ChangesetDataSetTest {
                     ChangesetModificationType.CREATED);
         Assert.assertEquals("We should have found only one item.", 1, result.size());
         Assert.assertTrue("The item found is prim1.", result.contains(prim1));
-        
     }
 }
