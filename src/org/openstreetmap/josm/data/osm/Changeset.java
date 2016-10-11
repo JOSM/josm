@@ -207,11 +207,12 @@ public final class Changeset implements Tagged {
     @Override
     public void setKeys(Map<String, String> keys) {
         CheckParameterUtil.ensureParameterNotNull(keys, "keys");
-        for (String value : keys.values()) {
-            if (value != null && value.length() > MAX_CHANGESET_TAG_LENGTH) {
+        keys.values().stream()
+                .filter(value -> (value != null && value.length() > MAX_CHANGESET_TAG_LENGTH))
+                .findFirst()
+                .ifPresent(value -> {
                 throw new IllegalArgumentException("Changeset tag value is too long: "+value);
-            }
-        }
+        });
         this.tags = keys;
     }
 

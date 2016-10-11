@@ -2,11 +2,11 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -116,13 +116,10 @@ public class ChangesetDataSet {
      */
     public Set<HistoryOsmPrimitive> getPrimitivesByModificationType(ChangesetModificationType cmt) {
         CheckParameterUtil.ensureParameterNotNull(cmt, "cmt");
-        Set<HistoryOsmPrimitive> ret = new HashSet<>();
-        for (Entry<PrimitiveId, ChangesetModificationType> entry: modificationTypes.entrySet()) {
-            if (entry.getValue().equals(cmt)) {
-                ret.add(primitives.get(entry.getKey()));
-            }
-        }
-        return ret;
+        return modificationTypes.entrySet().stream()
+                .filter(entry -> entry.getValue().equals(cmt))
+                .map(entry -> primitives.get(entry.getKey()))
+                .collect(Collectors.toSet());
     }
 
     /**

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
@@ -182,13 +183,9 @@ public final class ChangesetCache implements PreferenceChangedListener {
      * @return The list of open changesets
      */
     public List<Changeset> getOpenChangesets() {
-        List<Changeset> ret = new ArrayList<>();
-        for (Changeset cs: cache.values()) {
-            if (cs.isOpen()) {
-                ret.add(cs);
-            }
-        }
-        return ret;
+        return cache.values().stream()
+                .filter(Changeset::isOpen)
+                .collect(Collectors.toList());
     }
 
     /**

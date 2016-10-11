@@ -6,8 +6,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
 
@@ -178,5 +181,36 @@ public class ChangesetCacheTest {
         cache.addChangesetCacheListener(listener);
         cache.remove(1);
         cache.removeChangesetCacheListener(listener);
+    }
+
+    /**
+     * Unit test of method {@link ChangesetCache#getOpenChangesets}.
+     */
+    @Test
+    public void testGetOpenChangesets() {
+        final ChangesetCache cache = ChangesetCache.getInstance();
+        // empty cache => empty list
+        Assert.assertTrue(
+                "Empty cache should produce an empty list.",
+                cache.getOpenChangesets().isEmpty()
+        );
+
+        // cache with only closed changesets => empty list
+        Changeset closedCs = new Changeset(1);
+        closedCs.setOpen(false);
+        cache.update(closedCs);
+        Assert.assertTrue(
+                "Cache with only closed changesets should produce an empty list.",
+                cache.getOpenChangesets().isEmpty()
+        );
+
+        // cache with open and closed changesets => list with only the open ones
+        Changeset openCs = new Changeset(2);
+        openCs.setOpen(true);
+        cache.update(openCs);
+        Assert.assertEquals(
+                Collections.singletonList(openCs),
+                cache.getOpenChangesets()
+        );
     }
 }
