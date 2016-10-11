@@ -225,11 +225,11 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends ChangeNotifi
     protected void fireFrozenChanged(boolean oldValue, boolean newValue) {
         synchronized (listeners) {
             PropertyChangeEvent evt = new PropertyChangeEvent(this, FROZEN_PROP, oldValue, newValue);
-            for (PropertyChangeListener listener: listeners) {
+            listeners.forEach((listener) -> {
                 listener.propertyChange(evt);
+            });
             }
         }
-    }
 
     public final void setFrozen(boolean isFrozen) {
         boolean oldValue = this.isFrozen;
@@ -677,11 +677,8 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends ChangeNotifi
 
             if (row >= getEntries().size()) return false;
             T e1 = getEntries().get(row);
-            for (T e2: getOppositeEntries()) {
-                if (isEqualEntry(e1, e2)) return true;
+            return getOppositeEntries().stream().anyMatch(e2 -> isEqualEntry(e1, e2));
             }
-            return false;
-        }
 
         protected List<T> getEntries() {
             return entries.get(role);
