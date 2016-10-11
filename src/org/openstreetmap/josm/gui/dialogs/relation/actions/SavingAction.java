@@ -137,6 +137,9 @@ abstract class SavingAction extends AbstractRelationEditorAction {
                         options[0], // OK is default
                         "/Dialog/RelationEditor#RelationChangedOutsideOfEditor"
         );
+        if (ret == 0) {
+            Main.map.conflictDialog.unfurlDialog();
+        }
         return ret == 0;
     }
 
