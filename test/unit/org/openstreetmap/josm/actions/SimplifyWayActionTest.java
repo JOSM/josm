@@ -2,17 +2,25 @@
 package org.openstreetmap.josm.actions;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.stream.Stream;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.command.DeleteCommand;
+import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Unit tests for class {@link SimplifyWayAction}.
@@ -95,5 +103,26 @@ public final class SimplifyWayActionTest {
         } finally {
             Main.getLayerManager().removeLayer(layer);
         }
+    }
+
+    /**
+     * Tests that also the first node may be simplified, see #13094.
+     */
+    @Test
+    public void testSimplifyFirstNode() {
+        final DataSet ds = new DataSet();
+        final Node n1 = new Node(new LatLon(47.26269614984, 11.34044231149));
+        final Node n2 = new Node(new LatLon(47.26274590831, 11.34053120859));
+        final Node n3 = new Node(new LatLon(47.26276562382, 11.34034715039));
+        final Node n4 = new Node(new LatLon(47.26264639132, 11.34035341438));
+        final Way w = new Way();
+        Stream.of(n1, n2, n3, n4, w).forEach(ds::addPrimitive);
+        Stream.of(n1, n2, n3, n4, n1).forEach(w::addNode);
+        final SequenceCommand command = action.simplifyWay(w);
+        assertNotNull(command);
+        assertEquals(2, command.getChildren().size());
+        final Collection<DeleteCommand> deleteCommands = Utils.filteredCollection(command.getChildren(), DeleteCommand.class);
+        assertEquals(1, deleteCommands.size());
+        assertEquals(Collections.singleton(n1), deleteCommands.iterator().next().getParticipatingPrimitives());
     }
 }
