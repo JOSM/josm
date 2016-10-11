@@ -25,7 +25,6 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -123,6 +122,16 @@ public final class OrthogonalizeAction extends JosmAction {
                         .setIcon(JOptionPane.INFORMATION_MESSAGE)
                         .show();
             }
+        }
+
+        @Override
+        protected void updateEnabledState() {
+            updateEnabledStateOnCurrentSelection();
+        }
+
+        @Override
+        protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
+            setEnabled(selection != null && !selection.isEmpty());
         }
     }
 
@@ -617,8 +626,7 @@ public final class OrthogonalizeAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        DataSet ds = getLayerManager().getEditDataSet();
-        setEnabled(ds != null && !ds.selectionEmpty());
+        updateEnabledStateOnCurrentSelection();
     }
 
     @Override
