@@ -11,6 +11,7 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import java.util.Set;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.Main;
@@ -38,6 +40,59 @@ public class MultipolygonBuilder {
 
     private static final ForkJoinPool THREAD_POOL =
             Utils.newForkJoinPool("multipolygon_creation.numberOfThreads", "multipolygon-builder-%d", Thread.NORM_PRIORITY);
+
+    /**
+     * Helper class to avoid unneeded costly intersection calculations.
+     * If the intersection between polygons a and b was calculated we also know
+     * the result of intersection between b and a. The lookup in the hash tables is
+     * much faster than the intersection calculation.
+     */
+    private static class IntersectionMatrix {
+        private final Map<Pair<JoinedPolygon, JoinedPolygon>, PolygonIntersection> results;
+
+        IntersectionMatrix(Collection<JoinedPolygon> polygons) {
+            results = new HashMap<>(Utils.hashMapInitialCapacity(polygons.size() * polygons.size()));
+        }
+
+        /**
+         * Compute the reverse result of the intersection test done by {@code Geometry.polygonIntersection(Area a1, Area a2)}
+         *
+         * @param intersection the intersection result for polygons a1 and a2 (in that order)
+         * @return the intersection result for a2 and a1
+         */
+        private PolygonIntersection getReverseIntersectionResult(PolygonIntersection intersection) {
+            switch (intersection) {
+                case FIRST_INSIDE_SECOND:
+                    return PolygonIntersection.SECOND_INSIDE_FIRST;
+                case SECOND_INSIDE_FIRST:
+                    return PolygonIntersection.FIRST_INSIDE_SECOND;
+                default:
+                    return intersection;
+            }
+        }
+
+        /**
+         * Returns the precomputed intersection between two polygons if known. Otherwise perform {@code computation}.
+         *
+         * @param a1          first polygon
+         * @param a2          second polygon
+         * @param computation the computation to perform when intersection is unknown
+         * @return the intersection between two polygons
+         * @see Map#computeIfAbsent
+         */
+        PolygonIntersection computeIfAbsent(JoinedPolygon a1, JoinedPolygon a2, Supplier<PolygonIntersection> computation) {
+            PolygonIntersection intersection = results.get(Pair.create(a1, a2));
+            if (intersection == null) {
+                intersection = computation.get();
+                synchronized (results) {
+                    results.put(Pair.create(a1, a2), intersection);
+                    results.put(Pair.create(a2, a1), getReverseIntersectionResult(intersection));
+                }
+            }
+            return intersection;
+        }
+
+    }
 
     /**
      * Represents one polygon that consists of multiple ways.
@@ -291,7 +346,8 @@ public class MultipolygonBuilder {
         return null;
     }
 
-    private static Pair<Boolean, List<JoinedPolygon>> findInnerWaysCandidates(JoinedPolygon outerWay, Collection<JoinedPolygon> boundaryWays) {
+    private static Pair<Boolean, List<JoinedPolygon>> findInnerWaysCandidates(IntersectionMatrix cache,
+            JoinedPolygon outerWay, Collection<JoinedPolygon> boundaryWays) {
         boolean outerGood = true;
         List<JoinedPolygon> innerCandidates = new ArrayList<>();
 
@@ -303,7 +359,8 @@ public class MultipolygonBuilder {
             // Preliminary computation on bounds. If bounds do not intersect, no need to do a costly area intersection
             if (outerWay.bounds.intersects(innerWay.bounds)) {
                 // Bounds intersection, let's see in detail
-                PolygonIntersection intersection = Geometry.polygonIntersection(outerWay.area, innerWay.area);
+                final PolygonIntersection intersection = cache.computeIfAbsent(outerWay, innerWay,
+                        () -> Geometry.polygonIntersection(outerWay.area, innerWay.area));
 
                 if (intersection == PolygonIntersection.FIRST_INSIDE_SECOND) {
                     outerGood = false;  // outer is inside another polygon
@@ -326,7 +383,8 @@ public class MultipolygonBuilder {
      * @return the outermostWay, or {@code null} if intersection found.
      */
     private static List<PolygonLevel> findOuterWaysMultiThread(List<JoinedPolygon> boundaryWays) {
-        return THREAD_POOL.invoke(new Worker(boundaryWays, 0, boundaryWays.size(), new ArrayList<PolygonLevel>(),
+        final IntersectionMatrix cache = new IntersectionMatrix(boundaryWays);
+        return THREAD_POOL.invoke(new Worker(cache, boundaryWays, 0, boundaryWays.size(), new ArrayList<PolygonLevel>(),
                 Math.max(32, boundaryWays.size() / THREAD_POOL.getParallelism() / 3)));
     }
 
@@ -340,8 +398,10 @@ public class MultipolygonBuilder {
         private final int to;
         private final transient List<PolygonLevel> output;
         private final int directExecutionTaskSize;
+        private final IntersectionMatrix cache;
 
-        Worker(List<JoinedPolygon> input, int from, int to, List<PolygonLevel> output, int directExecutionTaskSize) {
+        Worker(IntersectionMatrix cache, List<JoinedPolygon> input, int from, int to, List<PolygonLevel> output, int directExecutionTaskSize) {
+            this.cache = cache;
             this.input = input;
             this.from = from;
             this.to = to;
@@ -352,15 +412,16 @@ public class MultipolygonBuilder {
         /**
          * Collects outer way and corresponding inner ways from all boundaries.
          * @param level nesting level
+         * @param cache cache that tracks previously calculated results
          * @param boundaryWays boundary ways
          * @return the outermostWay, or {@code null} if intersection found.
          */
-        private static List<PolygonLevel> findOuterWaysRecursive(int level, List<JoinedPolygon> boundaryWays) {
+        private static List<PolygonLevel> findOuterWaysRecursive(int level, IntersectionMatrix cache, List<JoinedPolygon> boundaryWays) {
 
             final List<PolygonLevel> result = new ArrayList<>();
 
             for (JoinedPolygon outerWay : boundaryWays) {
-                if (processOuterWay(level, boundaryWays, result, outerWay) == null) {
+                if (processOuterWay(level, cache, boundaryWays, result, outerWay) == null) {
                     return null;
                 }
             }
@@ -368,9 +429,9 @@ public class MultipolygonBuilder {
             return result;
         }
 
-        private static List<PolygonLevel> processOuterWay(int level, List<JoinedPolygon> boundaryWays,
+        private static List<PolygonLevel> processOuterWay(int level, IntersectionMatrix cache, List<JoinedPolygon> boundaryWays,
                 final List<PolygonLevel> result, JoinedPolygon outerWay) {
-            Pair<Boolean, List<JoinedPolygon>> p = findInnerWaysCandidates(outerWay, boundaryWays);
+            Pair<Boolean, List<JoinedPolygon>> p = findInnerWaysCandidates(cache, outerWay, boundaryWays);
             if (p == null) {
                 // ways intersect
                 return null;
@@ -382,7 +443,7 @@ public class MultipolygonBuilder {
 
                 //process inner ways
                 if (!p.b.isEmpty()) {
-                    List<PolygonLevel> innerList = findOuterWaysRecursive(level + 1, p.b);
+                    List<PolygonLevel> innerList = findOuterWaysRecursive(level + 1, cache, p.b);
                     if (innerList == null) {
                         return null; //intersection found
                     }
@@ -408,7 +469,7 @@ public class MultipolygonBuilder {
             } else {
                 final Collection<ForkJoinTask<List<PolygonLevel>>> tasks = new ArrayList<>();
                 for (int fromIndex = from; fromIndex < to; fromIndex += directExecutionTaskSize) {
-                    tasks.add(new Worker(input, fromIndex, Math.min(fromIndex + directExecutionTaskSize, to),
+                    tasks.add(new Worker(cache, input, fromIndex, Math.min(fromIndex + directExecutionTaskSize, to),
                             new ArrayList<PolygonLevel>(), directExecutionTaskSize));
                 }
                 for (ForkJoinTask<List<PolygonLevel>> task : ForkJoinTask.invokeAll(tasks)) {
@@ -424,7 +485,7 @@ public class MultipolygonBuilder {
 
         List<PolygonLevel> computeDirectly() {
             for (int i = from; i < to; i++) {
-                if (processOuterWay(0, input, output, input.get(i)) == null) {
+                if (processOuterWay(0, cache, input, output, input.get(i)) == null) {
                     return null;
                 }
             }
