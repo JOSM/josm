@@ -211,7 +211,12 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
                     if (event instanceof NodeMovedEvent) {
                         pd.nodeMoved((NodeMovedEvent) event);
                     } else if (event instanceof WayNodesChangedEvent) {
+                        final boolean oldClosedStatus = pd.isClosed();
                         pd.wayNodesChanged((WayNodesChangedEvent) event);
+                        if (pd.isClosed() != oldClosedStatus) {
+                            removeMultipolygonFrom(r, maps); // see ticket #13591
+                            return;
+                        }
                     }
                 }
             }
