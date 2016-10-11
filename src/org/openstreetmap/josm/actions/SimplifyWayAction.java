@@ -8,6 +8,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -133,7 +134,11 @@ public class SimplifyWayAction extends JosmAction {
      * in order to simplify the way.
      */
     protected boolean isRequiredNode(Way way, Node node) {
-        boolean isRequired = Collections.frequency(way.getNodes(), node) > 1;
+        int frequency = Collections.frequency(way.getNodes(), node);
+        if ((way.getNode(0) == node) && (way.getNode(way.getNodesCount()-1) == node)) {
+            frequency = frequency - 1; // closed way closing node counted only once
+        }
+        boolean isRequired = frequency > 1;
         if (!isRequired) {
             List<OsmPrimitive> parents = new LinkedList<>();
             parents.addAll(node.getReferrers());
@@ -186,6 +191,19 @@ public class SimplifyWayAction extends JosmAction {
             buildSimplifiedNodeList(w.getNodes(), lower, Math.min(w.getNodesCount()-1, i), threshold, newNodes);
             lower = i;
             i++;
+        }
+
+        if ((newNodes.size() > 3) && (newNodes.get(0) == newNodes.get(newNodes.size() - 1))) {
+            // Closed way, check if the first node could also be simplified ...
+            if (!isRequiredNode(w, newNodes.get(0))) {
+                final List<Node> l1 = Arrays.asList(newNodes.get(newNodes.size() - 2), newNodes.get(0), newNodes.get(1));
+                final List<Node> l2 = new ArrayList<>(3);
+                buildSimplifiedNodeList(l1, 0, 2, threshold, l2);
+                if (!l2.contains(newNodes.get(0))) {
+                    newNodes.remove(0);
+                    newNodes.set(newNodes.size() - 1, newNodes.get(0)); // close the way
+                }
+            }
         }
 
         Set<Node> delNodes = new HashSet<>();
@@ -252,18 +270,18 @@ public class SimplifyWayAction extends JosmAction {
     /* From Aviaton Formulary v1.3
      * http://williams.best.vwh.net/avform.htm
      */
-    public static double dist(double lat1, double lon1, double lat2, double lon2) {
+    private static double dist(double lat1, double lon1, double lat2, double lon2) {
         return 2 * Math.asin(Math.sqrt(Math.pow(Math.sin((lat1 - lat2) / 2), 2) + Math.cos(lat1) * Math.cos(lat2)
                 * Math.pow(Math.sin((lon1 - lon2) / 2), 2)));
     }
 
-    public static double course(double lat1, double lon1, double lat2, double lon2) {
+    private static double course(double lat1, double lon1, double lat2, double lon2) {
         return Math.atan2(Math.sin(lon1 - lon2) * Math.cos(lat2), Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1)
                 * Math.cos(lat2) * Math.cos(lon1 - lon2))
                 % (2 * Math.PI);
     }
 
-    public static double xtd(double lat1, double lon1, double lat2, double lon2, double lat3, double lon3) {
+    private static double xtd(double lat1, double lon1, double lat2, double lon2, double lat3, double lon3) {
         double distAD = dist(lat1, lon1, lat3, lon3);
         double crsAD = course(lat1, lon1, lat3, lon3);
         double crsAB = course(lat1, lon1, lat2, lon2);
