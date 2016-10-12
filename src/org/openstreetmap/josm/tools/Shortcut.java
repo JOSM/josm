@@ -7,10 +7,12 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -267,20 +269,31 @@ public final class Shortcut {
     ///////////////////////////////
 
     // here we store our shortcuts
-    private static Map<String, Shortcut> shortcuts = new LinkedHashMap<>();
+    private static List<Shortcut> shortcuts = new CopyOnWriteArrayList<>();
 
     // and here our modifier groups
     private static Map<Integer, Integer> groups = new HashMap<>();
 
     // check if something collides with an existing shortcut
+
+    /**
+     * Returns the registered shortcut fot the key and modifier
+     * @param requestedKey the requested key
+     * @param modifier the modifier
+     * @return the registered shortcut or {@code null}
+     */
     public static Shortcut findShortcut(int requestedKey, int modifier) {
+        return findShortcutByKeyOrShortText(requestedKey, modifier, null)
+                .orElse(null);
+    }
+
+    private static Optional<Shortcut> findShortcutByKeyOrShortText(int requestedKey, int modifier, String shortText) {
         if (modifier == getGroupModifier(NONE))
-            return null;
-        for (Shortcut sc : shortcuts.values()) {
-            if (sc.isSame(requestedKey, modifier))
-                return sc;
-        }
-        return null;
+            return Optional.empty();
+        return shortcuts.stream()
+                .filter(sc -> sc.isSame(requestedKey, modifier) || (shortText != null && shortText.equals(sc.getShortText())))
+                .findAny();
+
     }
 
     /**
@@ -288,13 +301,9 @@ public final class Shortcut {
      * @return a list of all shortcuts
      */
     public static List<Shortcut> listAll() {
-        List<Shortcut> l = new ArrayList<>();
-        for (Shortcut c : shortcuts.values()) {
-            if (!"core:none".equals(c.shortText)) {
-                l.add(c);
-            }
-        }
-        return l;
+        return shortcuts.stream()
+                .filter(c -> !"core:none".equals(c.shortText))
+                .collect(Collectors.toList());
     }
 
     /** None group: used with KeyEvent.CHAR_UNDEFINED if no shortcut is defined */
@@ -353,21 +362,21 @@ public final class Shortcut {
         for (Shortcut sc : newshortcuts) {
             if (sc.isAssignedUser()
             && findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null) {
-                shortcuts.put(sc.getShortText(), sc);
+                shortcuts.add(sc);
             }
         }
         // Shortcuts at their default values
         for (Shortcut sc : newshortcuts) {
             if (!sc.isAssignedUser() && sc.isAssignedDefault()
             && findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null) {
-                shortcuts.put(sc.getShortText(), sc);
+                shortcuts.add(sc);
             }
         }
         // Shortcuts that were automatically moved
         for (Shortcut sc : newshortcuts) {
             if (!sc.isAssignedUser() && !sc.isAssignedDefault()
             && findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null) {
-                shortcuts.put(sc.getShortText(), sc);
+                shortcuts.add(sc);
             }
         }
     }
@@ -392,7 +401,7 @@ public final class Shortcut {
     // shutdown handling
     public static boolean savePrefs() {
         boolean changed = false;
-        for (Shortcut sc : shortcuts.values()) {
+        for (Shortcut sc : shortcuts) {
             changed = changed | sc.save();
         }
         return changed;
@@ -410,17 +419,17 @@ public final class Shortcut {
      * @return the system shortcut
      */
     public static Shortcut registerSystemShortcut(String shortText, String longText, int key, int modifier) {
-        if (shortcuts.containsKey(shortText))
-            return shortcuts.get(shortText);
-        Shortcut potentialShortcut = findShortcut(key, modifier);
-        if (potentialShortcut != null) {
+        final Optional<Shortcut> existing = findShortcutByKeyOrShortText(key, modifier, shortText);
+        if (existing.isPresent() && shortText.equals(existing.get().getShortText())) {
+            return existing.get();
+        } else if (existing.isPresent()) {
             // this always is a logic error in the hook
-            Main.error("CONFLICT WITH SYSTEM KEY "+shortText+": "+potentialShortcut);
+            Main.error("CONFLICT WITH SYSTEM KEY " + shortText + ": " + existing.get());
             return null;
         }
-        potentialShortcut = new Shortcut(shortText, longText, key, RESERVED, key, modifier, true, false);
-        shortcuts.put(shortText, potentialShortcut);
-        return potentialShortcut;
+        final Shortcut shortcut = new Shortcut(shortText, longText, key, RESERVED, key, modifier, true, false);
+        shortcuts.add(shortcut);
+        return shortcut;
     }
 
     /**
@@ -446,15 +455,16 @@ public final class Shortcut {
     // and now the workhorse. same parameters as above, just one more
     private static Shortcut registerShortcut(String shortText, String longText, int requestedKey, int requestedGroup, Integer modifier) {
         doInit();
-        if (shortcuts.containsKey(shortText)) { // a re-register? maybe a sc already read from the preferences?
-            Shortcut sc = shortcuts.get(shortText);
+        Integer defaultModifier = findModifier(requestedGroup, modifier);
+        final Optional<Shortcut> existing = findShortcutByKeyOrShortText(requestedKey, defaultModifier, shortText);
+        if (existing.isPresent() && shortText.equals(existing.get().getShortText())) {
+            // a re-register? maybe a sc already read from the preferences?
+            final Shortcut sc = existing.get();
             sc.setLongText(longText); // or set by the platformHook, in this case the original longText doesn't match the real action
             sc.saveDefault();
             return sc;
-        }
-        Integer defaultModifier = findModifier(requestedGroup, modifier);
-        Shortcut conflict = findShortcut(requestedKey, defaultModifier);
-        if (conflict != null) {
+        } else if (existing.isPresent()) {
+            final Shortcut conflict = existing.get();
             if (Main.isPlatformOsx()) {
                 // Try to reassign Meta to Ctrl
                 int newmodifier = findNewOsxModifier(requestedGroup);
@@ -476,7 +486,7 @@ public final class Shortcut {
         } else {
             Shortcut newsc = new Shortcut(shortText, longText, requestedKey, requestedGroup, requestedKey, defaultModifier, true, false);
             newsc.saveDefault();
-            shortcuts.put(shortText, newsc);
+            shortcuts.add(newsc);
             return newsc;
         }
 
@@ -499,7 +509,7 @@ public final class Shortcut {
         Main.info(tr("Silent shortcut conflict: ''{0}'' moved by ''{1}'' to ''{2}''.",
             shortText, conflict.getShortText(), newsc.getKeyText()));
         newsc.saveDefault();
-        shortcuts.put(shortText, newsc);
+        shortcuts.replaceAll(sc -> shortText.equals(sc.getShortText()) ? newsc : sc);
         return newsc;
     }
 
@@ -511,9 +521,7 @@ public final class Shortcut {
      * @return the platform specific key stroke for the  'Copy' command
      */
     public static KeyStroke getCopyKeyStroke() {
-        Shortcut sc = shortcuts.get("system:copy");
-        if (sc == null) return null;
-        return sc.getKeyStroke();
+        return getKeyStrokeForShortKey("system:copy");
     }
 
     /**
@@ -524,9 +532,7 @@ public final class Shortcut {
      * @return the platform specific key stroke for the 'Paste' command
      */
     public static KeyStroke getPasteKeyStroke() {
-        Shortcut sc = shortcuts.get("system:paste");
-        if (sc == null) return null;
-        return sc.getKeyStroke();
+        return getKeyStrokeForShortKey("system:paste");
     }
 
     /**
@@ -537,8 +543,14 @@ public final class Shortcut {
      * @return the platform specific key stroke for the 'Cut' command
      */
     public static KeyStroke getCutKeyStroke() {
-        Shortcut sc = shortcuts.get("system:cut");
-        if (sc == null) return null;
-        return sc.getKeyStroke();
+        return getKeyStrokeForShortKey("system:cut");
+    }
+
+    private static KeyStroke getKeyStrokeForShortKey(String shortKey) {
+        return shortcuts.stream()
+                .filter(sc -> shortKey.equals(sc.getShortText()))
+                .findAny()
+                .map(Shortcut::getKeyStroke)
+                .orElse(null);
     }
 }
