@@ -41,7 +41,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
 
     private static final String PATTERN_TRACE_ID = "https?://.*(osm|openstreetmap).org/trace/\\p{Digit}+/data";
     private static final String PATTERN_USER_TRACE_ID = "https?://.*(osm|openstreetmap).org/user/[^/]+/traces/(\\p{Digit}+)";
-    private static final String PATTERN_EDIT_TRACE_ID = "https?://.*(osm|openstreetmap).org/edit/?\\?gpx=(\\p{Digit}+)";
+    private static final String PATTERN_EDIT_TRACE_ID = "https?://.*(osm|openstreetmap).org/edit/?\\?gpx=(\\p{Digit}+)(#.*)?";
 
     private static final String PATTERN_TRACKPOINTS_BBOX = "https?://.*/api/0.6/trackpoints\\?bbox=.*,.*,.*,.*";
 
