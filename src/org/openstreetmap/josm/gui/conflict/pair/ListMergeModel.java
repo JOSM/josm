@@ -225,9 +225,7 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends ChangeNotifi
     protected void fireFrozenChanged(boolean oldValue, boolean newValue) {
         synchronized (listeners) {
             PropertyChangeEvent evt = new PropertyChangeEvent(this, FROZEN_PROP, oldValue, newValue);
-            listeners.forEach((listener) -> {
-                listener.propertyChange(evt);
-            });
+            listeners.forEach(listener -> listener.propertyChange(evt));
             }
         }
 
