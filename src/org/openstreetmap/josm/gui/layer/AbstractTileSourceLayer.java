@@ -609,7 +609,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     private class FlushTileCacheAction extends AbstractAction {
         FlushTileCacheAction() {
             super(tr("Flush tile cache"));
-            setEnabled(tileLoader instanceof CachedTileLoader);
         }
 
         @Override
