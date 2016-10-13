@@ -558,7 +558,7 @@ public class BlockDiskCache<K, V>
         return removed;
     }
 
-    
+
 	private boolean performSingleKeyRemoval(K key) {
 		boolean removed;
 		// remove single item.
@@ -730,17 +730,6 @@ public class BlockDiskCache<K, V>
     protected void freeBlocks( int[] blocksToFree )
     {
         this.dataFile.freeBlocks( blocksToFree );
-    }
-
-    /**
-     * Gets basic stats for the disk cache.
-     * <p>
-     * @return String
-     */
-    @Override
-    public String getStats()
-    {
-        return getStatistics().toString();
     }
 
     /**
