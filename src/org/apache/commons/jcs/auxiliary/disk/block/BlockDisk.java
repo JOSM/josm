@@ -26,12 +26,12 @@ import java.io.RandomAccessFile;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.jcs.engine.behavior.IElementSerializer;
 import org.apache.commons.jcs.utils.serialization.StandardSerializer;
-import org.apache.commons.jcs.utils.struct.SingleLinkedList;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -63,7 +63,7 @@ public class BlockDisk
     private final AtomicInteger numberOfBlocks = new AtomicInteger(0);
 
     /** Empty blocks that can be reused. */
-    private final SingleLinkedList<Integer> emptyBlocks = new SingleLinkedList<Integer>();
+    private final ConcurrentLinkedQueue<Integer> emptyBlocks = new ConcurrentLinkedQueue<Integer>();
 
     /** The serializer. */
     private final IElementSerializer elementSerializer;
@@ -145,7 +145,7 @@ public class BlockDisk
         // get them from the empty list or take the next one
         for (int i = 0; i < numBlocksNeeded; i++)
         {
-            Integer emptyBlock = emptyBlocks.takeFirst();
+            Integer emptyBlock = emptyBlocks.poll();
             if (emptyBlock == null)
             {
                 emptyBlock = Integer.valueOf(numberOfBlocks.getAndIncrement());
@@ -366,7 +366,7 @@ public class BlockDisk
         {
             for ( short i = 0; i < blocksToFree.length; i++ )
             {
-                emptyBlocks.addLast( Integer.valueOf( blocksToFree[i] ) );
+                emptyBlocks.offer( Integer.valueOf( blocksToFree[i] ) );
             }
         }
     }

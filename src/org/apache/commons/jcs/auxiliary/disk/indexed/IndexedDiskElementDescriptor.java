@@ -78,16 +78,21 @@ public class IndexedDiskElementDescriptor
     @Override
     public boolean equals(Object o)
     {
-        if (o instanceof IndexedDiskElementDescriptor)
+    	if (o == null)
+    	{
+    		return false;
+    	}
+    	else if (o instanceof IndexedDiskElementDescriptor)
         {
-            return compareTo((IndexedDiskElementDescriptor) o) == 0;
+    		IndexedDiskElementDescriptor ided = (IndexedDiskElementDescriptor)o;
+            return pos == ided.pos && len == ided.len;
         }
 
         return false;
     }
 
     /**
-     * Compares based on length.
+     * Compares based on length, then on pos descending.
      * <p>
      * @param o Object
      * @return int
@@ -100,19 +105,28 @@ public class IndexedDiskElementDescriptor
             return 1;
         }
 
-        int oLen = o.len;
-        if ( oLen == len )
+        if ( o.len == len )
         {
-            return 0;
+        	if ( o.pos == pos )
+        	{
+        		return 0;
+        	}
+        	else if ( o.pos < pos )
+        	{
+        		return -1;
+        	}
+        	else
+        	{
+        		return 1;
+        	}
         }
-        else if ( oLen > len )
+        else if ( o.len > len )
         {
             return -1;
         }
-        else if ( oLen < len )
+        else
         {
             return 1;
         }
-        return 0;
     }
 }
