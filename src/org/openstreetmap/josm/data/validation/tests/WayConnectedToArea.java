@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.Node;
@@ -91,9 +90,10 @@ public class WayConnectedToArea extends Test {
         if (w.hasKey("highway") && wayNode.hasTag("leisure", "slipway") && area.hasTag("natural", "water")) {
             return;
         }
-        errors.add(new TestError(this, Severity.WARNING,
-                tr("Way terminates on Area"), 2301,
-                Arrays.asList(w, p),
-                Arrays.asList(wayNode)));
+        errors.add(TestError.builder(this, Severity.WARNING, 2301)
+                .message(tr("Way terminates on Area"))
+                .primitives(w, p)
+                .highlight(wayNode)
+                .build());
     }
 }

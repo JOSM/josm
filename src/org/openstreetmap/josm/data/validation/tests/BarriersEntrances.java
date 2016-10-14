@@ -32,7 +32,11 @@ public class BarriersEntrances extends Test {
                     return;
                 }
             }
-            errors.add(new TestError(this, Severity.WARNING, tr("Barrier entrance not set on a barrier"), BARRIER_ENTRANCE_WITHOUT_BARRIER, n));
+            errors.add(TestError
+                    .builder(this, Severity.WARNING, BARRIER_ENTRANCE_WITHOUT_BARRIER)
+                    .message(tr("Barrier entrance not set on a barrier"))
+                    .primitives(n)
+                    .build());
         }
     }
 }

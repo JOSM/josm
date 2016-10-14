@@ -7,7 +7,6 @@ import java.awt.geom.Area;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -263,9 +262,11 @@ public abstract class UnconnectedWays extends Test {
 
     protected final void addErrors(Severity severity, Map<Node, Way> errorMap, String message) {
         for (Map.Entry<Node, Way> error : errorMap.entrySet()) {
-            errors.add(new TestError(this, severity, message, UNCONNECTED_WAYS,
-                    Arrays.asList(error.getKey(), error.getValue()),
-                    Arrays.asList(error.getKey())));
+            errors.add(TestError.builder(this, severity, UNCONNECTED_WAYS)
+                    .message(message)
+                    .primitives(error.getKey(), error.getValue())
+                    .highlight(error.getKey())
+                    .build());
         }
     }
 

@@ -166,13 +166,19 @@ public class ConditionalKeys extends Test.TagTest {
         for (final String key : SubclassFilteredCollection.filter(p.keySet(),
                 Pattern.compile(":conditional(:.*)?$").asPredicate())) {
             if (!isKeyValid(key)) {
-                errors.add(new TestError(this, Severity.WARNING, tr("Wrong syntax in {0} key", key), 3201, p));
+                errors.add(TestError.builder(this, Severity.WARNING, 3201)
+                        .message(tr("Wrong syntax in {0} key", key))
+                        .primitives(p)
+                        .build());
                 continue;
             }
             final String value = p.get(key);
             final String error = validateValue(key, value);
             if (error != null) {
-                errors.add(new TestError(this, Severity.WARNING, tr("Error in {0} value: {1}", key, error), 3202, p));
+                errors.add(TestError.builder(this, Severity.WARNING, 3202)
+                        .message(tr("Error in {0} value: {1}", key, error))
+                        .primitives(p)
+                        .build());
             }
         }
         return errors;

@@ -202,14 +202,20 @@ public class DuplicateRelation extends Test {
         super.endTest();
         for (Set<OsmPrimitive> duplicated : relations.values()) {
             if (duplicated.size() > 1) {
-                TestError testError = new TestError(this, Severity.ERROR, tr("Duplicated relations"), DUPLICATE_RELATION, duplicated);
+                TestError testError = TestError.builder(this, Severity.ERROR, DUPLICATE_RELATION)
+                        .message(tr("Duplicated relations"))
+                        .primitives(duplicated)
+                        .build();
                 errors.add(testError);
             }
         }
         relations = null;
         for (Set<OsmPrimitive> duplicated : relationsNoKeys.values()) {
             if (duplicated.size() > 1) {
-                TestError testError = new TestError(this, Severity.WARNING, tr("Relations with same members"), SAME_RELATION, duplicated);
+                TestError testError = TestError.builder(this, Severity.WARNING, SAME_RELATION)
+                        .message(tr("Relations with same members"))
+                        .primitives(duplicated)
+                        .build();
                 errors.add(testError);
             }
         }

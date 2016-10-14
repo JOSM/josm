@@ -7,19 +7,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.command.ChangePropertyCommand;
-import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.validation.FixableTestError;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -73,18 +70,6 @@ public class Highways extends Test {
      */
     public Highways() {
         super(tr("Highways"), tr("Performs semantic checks on highways."));
-    }
-
-    protected static class WrongRoundaboutHighway extends TestError {
-
-        public final String correctValue;
-
-        public WrongRoundaboutHighway(Highways tester, Way w, String key) {
-            super(tester, Severity.WARNING,
-                    tr("Incorrect roundabout (highway: {0} instead of {1})", w.get("highway"), key),
-                    WRONG_ROUNDABOUT_HIGHWAY, w);
-            this.correctValue = key;
-        }
     }
 
     @Override
@@ -146,7 +131,11 @@ public class Highways extends Test {
                 if (list.size() > 2 || oneway1 == null || oneway2 == null || !oneway1 || !oneway2) {
                     // Error when the highway tags do not match
                     if (!w.get("highway").equals(s)) {
-                        errors.add(new WrongRoundaboutHighway(this, w, s));
+                        errors.add(TestError.builder(this, Severity.WARNING, WRONG_ROUNDABOUT_HIGHWAY)
+                                .message(tr("Incorrect roundabout (highway: {0} instead of {1})", w.get("highway"), s))
+                                .primitives(w)
+                                .fix(() -> new ChangePropertyCommand(w, "highway", s))
+                                .build());
                     }
                     break;
                 }
@@ -179,8 +168,10 @@ public class Highways extends Test {
 
     private void testHighwayLink(final Way way) {
         if (!isHighwayLinkOkay(way)) {
-            errors.add(new TestError(this, Severity.WARNING,
-                    tr("Highway link is not linked to adequate highway/link"), SOURCE_WRONG_LINK, way));
+            errors.add(TestError.builder(this, Severity.WARNING, SOURCE_WRONG_LINK)
+                    .message(tr("Highway link is not linked to adequate highway/link"))
+                    .primitives(way)
+                    .build());
         }
     }
 
@@ -212,8 +203,10 @@ public class Highways extends Test {
                     handleCarWay(n, w);
                 }
                 if ((leftByPedestrians || leftByCyclists) && leftByCars) {
-                    errors.add(new TestError(this, Severity.OTHER, tr("Missing pedestrian crossing information"),
-                            MISSING_PEDESTRIAN_CROSSING, n));
+                    errors.add(TestError.builder(this, Severity.OTHER, MISSING_PEDESTRIAN_CROSSING)
+                            .message(tr("Missing pedestrian crossing information"))
+                            .primitives(n)
+                            .build());
                     return;
                 }
             }
@@ -248,41 +241,25 @@ public class Highways extends Test {
             // Check country
             String country = value.substring(0, index);
             if (!ISO_COUNTRIES.contains(country)) {
+                final TestError.Builder error = TestError.builder(this, Severity.WARNING, SOURCE_MAXSPEED_UNKNOWN_COUNTRY_CODE)
+                        .message(tr("Unknown country code: {0}", country))
+                        .primitives(p);
                 if ("UK".equals(country)) {
-                    errors.add(new FixableTestError(this, Severity.WARNING,
-                            tr("Unknown country code: {0}", country), SOURCE_MAXSPEED_UNKNOWN_COUNTRY_CODE, p,
-                            new ChangePropertyCommand(p, SOURCE_MAXSPEED, value.replace("UK:", "GB:"))));
+                    errors.add(error.fix(() -> new ChangePropertyCommand(p, SOURCE_MAXSPEED, value.replace("UK:", "GB:"))).build());
                 } else {
-                    errors.add(new TestError(this, Severity.WARNING,
-                            tr("Unknown country code: {0}", country), SOURCE_MAXSPEED_UNKNOWN_COUNTRY_CODE, p));
+                    errors.add(error.build());
                 }
             }
             // Check context
             String context = value.substring(index+1);
             if (!KNOWN_SOURCE_MAXSPEED_CONTEXTS.contains(context)) {
-                errors.add(new TestError(this, Severity.WARNING,
-                        tr("Unknown source:maxspeed context: {0}", context), SOURCE_MAXSPEED_UNKNOWN_CONTEXT, p));
+                errors.add(TestError.builder(this, Severity.WARNING, SOURCE_MAXSPEED_UNKNOWN_CONTEXT)
+                        .message(tr("Unknown source:maxspeed context: {0}", context))
+                        .primitives(p)
+                        .build());
             }
             // TODO: Check coherence of context against maxspeed
             // TODO: Check coherence of context against highway
         }
-    }
-
-    @Override
-    public boolean isFixable(TestError testError) {
-        return testError instanceof WrongRoundaboutHighway;
-    }
-
-    @Override
-    public Command fixError(TestError testError) {
-        if (testError instanceof WrongRoundaboutHighway) {
-            // primitives list can be empty if all primitives have been purged
-            Iterator<? extends OsmPrimitive> it = testError.getPrimitives().iterator();
-            if (it.hasNext()) {
-                return new ChangePropertyCommand(it.next(),
-                        "highway", ((WrongRoundaboutHighway) testError).correctValue);
-            }
-        }
-        return null;
     }
 }

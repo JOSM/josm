@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.osm.Node;
@@ -101,9 +102,10 @@ public class InternetTags extends Test {
                 String proto = validator instanceof EmailValidator ? "mailto://" : "http://";
                 return doValidateTag(p, k, proto+value, validator, code);
             }
-            String msg = tr("''{0}'': {1}", k, errMsg);
-            // todo obtain English message for ignore functionality
-            error = new TestError(this, Severity.WARNING, validator.getValidatorName(), msg, msg, code, p);
+            error = TestError.builder(this, Severity.WARNING, code)
+                    .message(validator.getValidatorName(), marktr("''{0}'': {1}"), k, errMsg)
+                    .primitives(p)
+                    .build();
         }
         return error;
     }

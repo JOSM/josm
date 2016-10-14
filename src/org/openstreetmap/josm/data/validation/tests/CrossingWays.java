@@ -246,11 +246,11 @@ public abstract class CrossingWays extends Test {
                         highlight.add(es2);
 
                         final String message = createMessage(es1.way, es2.way);
-                        errors.add(new TestError(this, Severity.WARNING,
-                                message,
-                                CROSSING_WAYS,
-                                prims,
-                                highlight));
+                        errors.add(TestError.builder(this, Severity.WARNING, CROSSING_WAYS)
+                                .message(message)
+                                .primitives(prims)
+                                .highlightWaySegments(highlight)
+                                .build());
                         seenWays.put(prims, highlight);
                     } else {
                         highlight.add(es1);

@@ -139,9 +139,12 @@ public class OverlappingWays extends Test {
                         type = OVERLAPPING_WAY;
                     }
 
-                    preliminaryErrors.add(new TestError(this,
-                            type < OVERLAPPING_HIGHWAY_AREA ? Severity.WARNING : Severity.OTHER,
-                                    errortype, type, prims, duplicated));
+                    Severity severity = type < OVERLAPPING_HIGHWAY_AREA ? Severity.WARNING : Severity.OTHER;
+                    preliminaryErrors.add(TestError.builder(this, severity, type)
+                            .message(errortype)
+                            .primitives(prims)
+                            .highlightWaySegments(duplicated)
+                            .build());
                     seenWays.put(currentWays, duplicated);
                 } else { /* way seen, mark highlight layer only */
                     highlight.addAll(duplicated);
@@ -201,8 +204,11 @@ public class OverlappingWays extends Test {
 
         final Set<WaySegment> duplicateWaySegment = checkDuplicateWaySegment(w);
         if (duplicateWaySegment != null) {
-            errors.add(new TestError(this, Severity.ERROR, tr("Way contains segment twice"),
-                    DUPLICATE_WAY_SEGMENT, Collections.singleton(w), duplicateWaySegment));
+            errors.add(TestError.builder(this, Severity.ERROR, DUPLICATE_WAY_SEGMENT)
+                    .message(tr("Way contains segment twice"))
+                    .primitives(w)
+                    .highlightWaySegments(duplicateWaySegment)
+                    .build());
             return;
         }
 

@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -42,8 +41,11 @@ public class DuplicatedWayNodes extends Test {
                 continue;
             }
             if (lastN == n) {
-                errors.add(new TestError(this, Severity.ERROR, tr("Duplicated way nodes"), DUPLICATE_WAY_NODE,
-                        Arrays.asList(w), Arrays.asList(n)));
+                errors.add(TestError.builder(this, Severity.ERROR, DUPLICATE_WAY_NODE)
+                        .message(tr("Duplicated way nodes"))
+                        .primitives(w)
+                        .highlight(n)
+                        .build());
                 break;
             }
             lastN = n;

@@ -1,11 +1,15 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.TreeSet;
+import java.util.function.Supplier;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
@@ -25,6 +29,8 @@ import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
 import org.openstreetmap.josm.tools.AlphanumComparator;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.I18n;
 
 /**
  * Validation error
@@ -38,18 +44,207 @@ public class TestError implements Comparable<TestError>, DataSetListener {
     /** The error message */
     private String message;
     /** Deeper error description */
-    private String description;
-    private String descriptionEn;
+    private final String description;
+    private final String descriptionEn;
     /** The affected primitives */
     private Collection<? extends OsmPrimitive> primitives;
     /** The primitives or way segments to be highlighted */
-    private Collection<?> highlighted;
+    private final Collection<?> highlighted;
     /** The tester that raised this error */
     private Test tester;
     /** Internal code used by testers to classify errors */
-    private int code;
+    private final int code;
     /** If this error is selected */
     private boolean selected;
+    /** Supplying a command to fix the error */
+    private final Supplier<Command> fixingCommand;
+
+    /**
+     * A builder for a {@code TestError}.
+     * @since 11129
+     */
+    public static final class Builder {
+        private final Test tester;
+        private final Severity severity;
+        private final int code;
+        private String message;
+        private String description;
+        private String descriptionEn;
+        private Collection<? extends OsmPrimitive> primitives;
+        private Collection<?> highlighted;
+        private Supplier<Command> fixingCommand;
+
+        private Builder(Test tester, Severity severity, int code) {
+            this.tester = tester;
+            this.severity = severity;
+            this.code = code;
+        }
+
+        /**
+         * Sets the error message.
+         *
+         * @param message The error message
+         * @return {@code this}
+         */
+        public Builder message(String message) {
+            this.message = message;
+            return this;
+        }
+
+        /**
+         * Sets the error message.
+         *
+         * @param message       The the message of this error group
+         * @param description   The translated description of this error
+         * @param descriptionEn The English description (for ignoring errors)
+         * @return {@code this}
+         */
+        public Builder messageWithManuallyTranslatedDescription(String message, String description, String descriptionEn) {
+            this.message = message;
+            this.description = description;
+            this.descriptionEn = descriptionEn;
+            return this;
+        }
+
+        /**
+         * Sets the error message.
+         *
+         * @param message The the message of this error group
+         * @param marktrDescription The {@linkplain I18n#marktr prepared for i18n} description of this error
+         * @param args The description arguments to be applied in {@link I18n#tr(String, Object...)}
+         * @return {@code this}
+         */
+        public Builder message(String message, String marktrDescription, Object... args) {
+            this.message = message;
+            this.description = I18n.tr(marktrDescription, args);
+            this.descriptionEn = new MessageFormat(marktrDescription, Locale.ENGLISH).format(args);
+            return this;
+        }
+
+        /**
+         * Sets the primitives affected by this error.
+         *
+         * @param primitives the primitives affected by this error
+         * @return {@code this}
+         */
+        public Builder primitives(OsmPrimitive... primitives) {
+            return primitives(Arrays.asList(primitives));
+        }
+
+        /**
+         * Sets the primitives affected by this error.
+         *
+         * @param primitives the primitives affected by this error
+         * @return {@code this}
+         */
+        public Builder primitives(Collection<? extends OsmPrimitive> primitives) {
+            CheckParameterUtil.ensureThat(this.primitives != null, "primitives already set");
+            this.primitives = primitives;
+            return this;
+        }
+
+        /**
+         * Sets the primitives to highlight when selecting this error.
+         *
+         * @param highlighted the primitives to highlight
+         * @return {@code this}
+         * @see ValidatorVisitor#visit(OsmPrimitive)
+         */
+        public Builder highlight(OsmPrimitive... highlighted) {
+            return highlight(Arrays.asList(highlighted));
+        }
+
+        /**
+         * Sets the primitives to highlight when selecting this error.
+         *
+         * @param highlighted the primitives to highlight
+         * @return {@code this}
+         * @see ValidatorVisitor#visit(OsmPrimitive)
+         */
+        public Builder highlight(Collection<? extends OsmPrimitive> highlighted) {
+            CheckParameterUtil.ensureThat(this.highlighted != null, "highlighted already set");
+            this.highlighted = highlighted;
+            return this;
+        }
+
+        /**
+         * Sets the way segments to highlight when selecting this error.
+         *
+         * @param highlighted the way segments to highlight
+         * @return {@code this}
+         * @see ValidatorVisitor#visit(WaySegment)
+         */
+        public Builder highlightWaySegments(Collection<WaySegment> highlighted) {
+            CheckParameterUtil.ensureThat(this.highlighted != null, "highlighted already set");
+            this.highlighted = highlighted;
+            return this;
+        }
+
+        /**
+         * Sets the node pairs to highlight when selecting this error.
+         *
+         * @param highlighted the node pairs to highlight
+         * @return {@code this}
+         * @see ValidatorVisitor#visit(List)
+         */
+        public Builder highlightNodePairs(Collection<List<Node>> highlighted) {
+            CheckParameterUtil.ensureThat(this.highlighted != null, "highlighted already set");
+            this.highlighted = highlighted;
+            return this;
+        }
+
+        /**
+         * Sets a supplier to obtain a command to fix the error.
+         *
+         * @param fixingCommand the fix supplier
+         * @return {@code this}
+         */
+        public Builder fix(Supplier<Command> fixingCommand) {
+            CheckParameterUtil.ensureThat(this.fixingCommand != null, "fixingCommand already set");
+            this.fixingCommand = fixingCommand;
+            return this;
+        }
+
+        /**
+         * Returns a new test error with the specified values
+         *
+         * @return a new test error with the specified values
+         * @throws IllegalArgumentException when {@link #message} or {@link #primitives} is null/empty.
+         */
+        public TestError build() {
+            CheckParameterUtil.ensureParameterNotNull(message, "message not set");
+            CheckParameterUtil.ensureParameterNotNull(primitives, "primitives not set");
+            CheckParameterUtil.ensureThat(!primitives.isEmpty(), "primitives is empty");
+            if (this.highlighted == null) {
+                this.highlighted = Collections.emptySet();
+            }
+            return new TestError(this);
+        }
+    }
+
+    /**
+     * Starts building a new {@code TestError}
+     * @param tester The tester
+     * @param severity The severity of this error
+     * @param code The test error reference code
+     * @return a new test builder
+     * @since 11129
+     */
+    public static Builder builder(Test tester, Severity severity, int code) {
+        return new Builder(tester, severity, code);
+    }
+
+    private TestError(Builder builder) {
+        this.tester = builder.tester;
+        this.severity = builder.severity;
+        this.message = builder.message;
+        this.description = builder.description;
+        this.descriptionEn = builder.descriptionEn;
+        this.primitives = builder.primitives;
+        this.highlighted = builder.highlighted;
+        this.code = builder.code;
+        this.fixingCommand = builder.fixingCommand;
+    }
 
     /**
      * Constructs a new {@code TestError}.
@@ -61,7 +256,9 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * @param code The test error reference code
      * @param primitives The affected primitives
      * @param highlighted OSM primitives to highlight
+     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
      */
+    @Deprecated
     public TestError(Test tester, Severity severity, String message, String description, String descriptionEn,
             int code, Collection<? extends OsmPrimitive> primitives, Collection<?> highlighted) {
         this.tester = tester;
@@ -72,6 +269,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
         this.primitives = primitives;
         this.highlighted = highlighted;
         this.code = code;
+        this.fixingCommand = null;
     }
 
     /**
@@ -82,7 +280,9 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * @param code The test error reference code
      * @param primitives The affected primitives
      * @param highlighted OSM primitives to highlight
+     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
      */
+    @Deprecated
     public TestError(Test tester, Severity severity, String message, int code, Collection<? extends OsmPrimitive> primitives,
             Collection<?> highlighted) {
         this(tester, severity, message, null, null, code, primitives, highlighted);
@@ -97,7 +297,9 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * @param descriptionEn The English description
      * @param code The test error reference code
      * @param primitives The affected primitives
+     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
      */
+    @Deprecated
     public TestError(Test tester, Severity severity, String message, String description, String descriptionEn,
             int code, Collection<? extends OsmPrimitive> primitives) {
         this(tester, severity, message, description, descriptionEn, code, primitives, primitives);
@@ -110,7 +312,9 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * @param message The error message
      * @param code The test error reference code
      * @param primitives The affected primitives
+     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
      */
+    @Deprecated
     public TestError(Test tester, Severity severity, String message, int code, Collection<? extends OsmPrimitive> primitives) {
         this(tester, severity, message, null, null, code, primitives, primitives);
     }
@@ -122,7 +326,9 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * @param message The error message
      * @param code The test error reference code
      * @param primitive The affected primitive
+     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
      */
+    @Deprecated
     public TestError(Test tester, Severity severity, String message, int code, OsmPrimitive primitive) {
         this(tester, severity, message, null, null, code, Collections.singletonList(primitive), Collections
                 .singletonList(primitive));
@@ -137,7 +343,9 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * @param descriptionEn The English description
      * @param code The test error reference code
      * @param primitive The affected primitive
+     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
      */
+    @Deprecated
     public TestError(Test tester, Severity severity, String message, String description, String descriptionEn,
             int code, OsmPrimitive primitive) {
         this(tester, severity, message, description, descriptionEn, code, Collections.singletonList(primitive));
@@ -162,7 +370,9 @@ public class TestError implements Comparable<TestError>, DataSetListener {
     /**
      * Sets the error message
      * @param message The error message
+     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
      */
+    @Deprecated
     public void setMessage(String message) {
         this.message = message;
     }
@@ -191,8 +401,10 @@ public class TestError implements Comparable<TestError>, DataSetListener {
 
     /**
      * Sets the list of primitives affected by this error
-     * @param primitives the list of primitives affected by this error
+     * @param primitives the list of primitives affected by this error*
+     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
      */
+    @Deprecated
     public void setPrimitives(List<? extends OsmPrimitive> primitives) {
         this.primitives = primitives;
     }
@@ -208,7 +420,9 @@ public class TestError implements Comparable<TestError>, DataSetListener {
     /**
      * Sets the severity of this error
      * @param severity the severity of this error
+     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
      */
+    @Deprecated
     public void setSeverity(Severity severity) {
         this.severity = severity;
     }
@@ -271,7 +485,9 @@ public class TestError implements Comparable<TestError>, DataSetListener {
     /**
      * Set the tester that raised the error.
      * @param tester te tester
+     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
      */
+    @Deprecated
     public void setTester(Test tester) {
         this.tester = tester;
     }
@@ -290,7 +506,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * @return true if the error can be fixed
      */
     public boolean isFixable() {
-        return tester != null && tester.isFixable(this);
+        return fixingCommand != null || ((tester != null) && tester.isFixable(this));
     }
 
     /**
@@ -299,6 +515,13 @@ public class TestError implements Comparable<TestError>, DataSetListener {
      * @return The command to fix the error
      */
     public Command getFix() {
+        // obtain fix from the error
+        final Command fix = fixingCommand != null ? fixingCommand.get() : null;
+        if (fix != null) {
+            return fix;
+        }
+
+        // obtain fix from the tester
         if (tester == null || !tester.isFixable(this) || primitives.isEmpty())
             return null;
 

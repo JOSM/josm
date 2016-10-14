@@ -41,14 +41,23 @@ public class ValidatorTreePanelTest {
         assertNotNull(new ValidatorTreePanel());
 
         ValidatorTreePanel vtp = new ValidatorTreePanel(new ArrayList<>(Arrays.asList(
-                new TestError(null, Severity.ERROR, "err", 0, new Node(1)),
-                new TestError(null, Severity.WARNING, "warn", 0, new Node(2)))));
+                TestError.builder(null, Severity.ERROR, 0)
+                        .message("err")
+                        .primitives(new Node(1))
+                        .build(),
+                TestError.builder(null, Severity.WARNING, 0)
+                        .message("warn")
+                        .primitives(new Node(2))
+                        .build())));
         assertNotNull(vtp);
         assertEquals(2, vtp.getErrors().size());
         vtp.setVisible(true);
         vtp.setVisible(false);
         Node n = new Node(10);
-        vtp.setErrors(Arrays.asList(new TestError(null, Severity.ERROR, "", 0, n)));
+        vtp.setErrors(Arrays.asList(TestError.builder(null, Severity.ERROR, 0)
+                .message("")
+                .primitives(n)
+                .build()));
         assertEquals(1, vtp.getErrors().size());
         vtp.selectRelatedErrors(Collections.<OsmPrimitive>singleton(n));
         vtp.expandAll();

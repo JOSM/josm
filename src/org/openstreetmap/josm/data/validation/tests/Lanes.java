@@ -48,12 +48,18 @@ public class Lanes extends Test.TagTest {
 
         if (lanesCount.size() > 1) {
             // if not all numbers are the same
-            errors.add(new TestError(this, Severity.WARNING, message, 3100, p));
+            errors.add(TestError.builder(this, Severity.WARNING, 3100)
+                    .message(message)
+                    .primitives(p)
+                    .build());
         } else if (lanesCount.size() == 1 && p.hasKey(lanesKey)) {
             // ensure that lanes <= *:lanes
             try {
                 if (Integer.parseInt(p.get(lanesKey)) > lanesCount.iterator().next()) {
-                    errors.add(new TestError(this, Severity.WARNING, tr("Number of {0} greater than {1}", lanesKey, "*:" + lanesKey), 3100, p));
+                    errors.add(TestError.builder(this, Severity.WARNING, 3100)
+                            .message(tr("Number of {0} greater than {1}", lanesKey, "*:" + lanesKey))
+                            .primitives(p)
+                            .build());
                 }
             } catch (NumberFormatException ignore) {
                 Main.debug(ignore.getMessage());
@@ -68,8 +74,10 @@ public class Lanes extends Test.TagTest {
         final String backward = Utils.firstNonNull(p.get("lanes:backward"), "0");
         try {
         if (Integer.parseInt(lanes) < Integer.parseInt(forward) + Integer.parseInt(backward)) {
-            errors.add(new TestError(this, Severity.WARNING,
-                    tr("Number of {0} greater than {1}", tr("{0}+{1}", "lanes:forward", "lanes:backward"), "lanes"), 3101, p));
+            errors.add(TestError.builder(this, Severity.WARNING, 3101)
+                    .message(tr("Number of {0} greater than {1}", tr("{0}+{1}", "lanes:forward", "lanes:backward"), "lanes"))
+                    .primitives(p)
+                    .build());
         }
         } catch (NumberFormatException ignore) {
             Main.debug(ignore.getMessage());

@@ -146,8 +146,10 @@ public class Coastlines extends Test {
             }
             // simple closed ways are reported by WronglyOrderedWays
             if (visited.size() > 1 && nodes.get(0) == nodes.get(nodes.size()-1) && Geometry.isClockwise(nodes)) {
-                errors.add(new TestError(this, Severity.WARNING, tr("Reversed coastline: land not on left side"),
-                        WRONG_ORDER_COASTLINE, visited));
+                errors.add(TestError.builder(this, Severity.WARNING, WRONG_ORDER_COASTLINE)
+                        .message(tr("Reversed coastline: land not on left side"))
+                        .primitives(visited)
+                        .build());
             }
         }
     }
@@ -225,9 +227,16 @@ public class Coastlines extends Test {
             return; // we already know this error
         }
         if (errCode != REVERSED_COASTLINE)
-            errors.add(new TestError(this, Severity.ERROR, msg, errCode, primitives, Collections.singletonList(n)));
+            errors.add(TestError.builder(this, Severity.ERROR, errCode)
+                    .message(msg)
+                    .primitives(primitives)
+                    .highlight(n)
+                    .build());
         else
-            errors.add(new TestError(this, Severity.ERROR, msg, errCode, primitives));
+            errors.add(TestError.builder(this, Severity.ERROR, errCode)
+                    .message(msg)
+                    .primitives(primitives)
+                    .build());
     }
 
     @Override

@@ -97,25 +97,43 @@ public class UntaggedWay extends Test {
                 }
 
                 if (!hasName && !isJunction) {
-                    errors.add(new TestError(this, Severity.WARNING, tr("Unnamed ways"), UNNAMED_WAY, w));
+                    errors.add(TestError.builder(this, Severity.WARNING, UNNAMED_WAY)
+                            .message(tr("Unnamed ways"))
+                            .primitives(w)
+                            .build());
                 } else if (isJunction) {
-                    errors.add(new TestError(this, Severity.OTHER, tr("Unnamed junction"), UNNAMED_JUNCTION, w));
+                    errors.add(TestError.builder(this, Severity.OTHER, UNNAMED_JUNCTION)
+                            .message(tr("Unnamed junction"))
+                            .primitives(w)
+                            .build());
                 }
             }
         }
 
         if (!w.isTagged() && !waysUsedInRelations.contains(w)) {
             if (w.hasKeys()) {
-                errors.add(new TestError(this, Severity.WARNING, tr("Untagged ways (commented)"), COMMENTED_WAY, w));
+                errors.add(TestError.builder(this, Severity.WARNING, COMMENTED_WAY)
+                        .message(tr("Untagged ways (commented)"))
+                        .primitives(w)
+                        .build());
             } else {
-                errors.add(new TestError(this, Severity.WARNING, tr("Untagged ways"), UNTAGGED_WAY, w));
+                errors.add(TestError.builder(this, Severity.WARNING, UNTAGGED_WAY)
+                        .message(tr("Untagged ways"))
+                        .primitives(w)
+                        .build());
             }
         }
 
         if (w.getNodesCount() == 0) {
-            errors.add(new TestError(this, Severity.ERROR, tr("Empty ways"), EMPTY_WAY, w));
+            errors.add(TestError.builder(this, Severity.ERROR, EMPTY_WAY)
+                    .message(tr("Empty ways"))
+                    .primitives(w)
+                    .build());
         } else if (w.getNodesCount() == 1) {
-            errors.add(new TestError(this, Severity.ERROR, tr("One node ways"), ONE_NODE_WAY, w));
+            errors.add(TestError.builder(this, Severity.ERROR, ONE_NODE_WAY)
+                    .message(tr("One node ways"))
+                    .primitives(w)
+                    .build());
         }
     }
 

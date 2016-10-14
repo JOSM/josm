@@ -4,7 +4,6 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -95,15 +94,11 @@ public class UnclosedWays extends Test {
         public final TestError getTestError(Way w, UnclosedWays test) {
             String value = w.get(key);
             if (isValueErroneous(value)) {
-                // CHECKSTYLE.OFF: SingleSpaceSeparator
-                String  type = engMessage.contains("{0}") ? tr(engMessage, tr(value)) : tr(engMessage);
-                String etype = engMessage.contains("{0}") ? MessageFormat.format(engMessage, value) : engMessage;
-                // CHECKSTYLE.ON: SingleSpaceSeparator
-                return new TestError(test, Severity.WARNING, tr("Unclosed way"),
-                        type, etype, code, Arrays.asList(w),
-                        // The important parts of an unclosed way are the first and
-                        // the last node which should be connected, therefore we highlight them
-                        Arrays.asList(w.firstNode(), w.lastNode()));
+                return TestError.builder(test, Severity.WARNING, code)
+                        .message(tr("Unclosed way"), engMessage, engMessage.contains("{0}") ? new Object[]{value} : new Object[]{})
+                        .primitives(w)
+                        .highlight(Arrays.asList(w.firstNode(), w.lastNode()))
+                        .build();
             }
             return null;
         }

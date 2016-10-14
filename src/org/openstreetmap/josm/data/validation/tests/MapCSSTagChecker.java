@@ -38,7 +38,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
-import org.openstreetmap.josm.data.validation.FixableTestError;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -566,10 +565,10 @@ public class MapCSSTagChecker extends Test.TagTest {
          */
         TestError getErrorForPrimitive(OsmPrimitive p) {
             final Environment env = new Environment(p);
-            return getErrorForPrimitive(p, whichSelectorMatchesEnvironment(env), env);
+            return getErrorForPrimitive(p, whichSelectorMatchesEnvironment(env), env, null);
         }
 
-        TestError getErrorForPrimitive(OsmPrimitive p, Selector matchingSelector, Environment env) {
+        TestError getErrorForPrimitive(OsmPrimitive p, Selector matchingSelector, Environment env, Test tester) {
             if (matchingSelector != null && !errors.isEmpty()) {
                 final Command fix = fixPrimitive(p);
                 final String description = getDescriptionForMatchingSelector(p, matchingSelector);
@@ -581,11 +580,13 @@ public class MapCSSTagChecker extends Test.TagTest {
                 } else {
                     primitives = Collections.singletonList(p);
                 }
+                final TestError.Builder error = TestError.builder(tester, getSeverity(), 3000)
+                        .messageWithManuallyTranslatedDescription(description1, description2, matchingSelector.toString())
+                        .primitives(primitives);
                 if (fix != null) {
-                    return new FixableTestError(null, getSeverity(), description1, description2, matchingSelector.toString(), 3000,
-                            primitives, fix);
+                    return error.fix(() -> fix).build();
                 } else {
-                    return new TestError(null, getSeverity(), description1, description2, matchingSelector.toString(), 3000, primitives);
+                    return error.build();
                 }
             } else {
                 return null;
@@ -684,9 +685,8 @@ public class MapCSSTagChecker extends Test.TagTest {
                 final Selector selector = check.whichSelectorMatchesEnvironment(env);
                 if (selector != null) {
                     check.rule.declaration.execute(env);
-                    final TestError error = check.getErrorForPrimitive(p, selector, env);
+                    final TestError error = check.getErrorForPrimitive(p, selector, env, new MapCSSTagCheckerAndRule(check.rule));
                     if (error != null) {
-                        error.setTester(new MapCSSTagCheckerAndRule(check.rule));
                         r.add(error);
                     }
                 }

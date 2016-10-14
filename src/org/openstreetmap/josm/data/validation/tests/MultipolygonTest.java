@@ -1,17 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.geom.GeneralPath;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -147,8 +146,11 @@ public class MultipolygonTest extends Test {
                     return;
                 }
             }
-            errors.add(new TestError(this, Severity.WARNING, tr("Area style way is not closed"), NOT_CLOSED,
-                    Collections.singletonList(w), Arrays.asList(nodes.get(0), nodes.get(nodes.size() - 1))));
+            errors.add(TestError.builder(this, Severity.WARNING, NOT_CLOSED)
+                    .message(tr("Area style way is not closed"))
+                    .primitives(w)
+                    .highlight(Arrays.asList(nodes.get(0), nodes.get(nodes.size() - 1)))
+                    .build());
         }
     }
 
@@ -185,7 +187,10 @@ public class MultipolygonTest extends Test {
             }
         }
         if (!hasOuterWay) {
-            addError(r, new TestError(this, Severity.WARNING, tr("No outer way for multipolygon"), MISSING_OUTER_WAY, r));
+            errors.add(TestError.builder(this, Severity.WARNING, MISSING_OUTER_WAY)
+                    .message(tr("No outer way for multipolygon"))
+                    .primitives(r)
+                    .build());
         }
     }
 
@@ -203,15 +208,13 @@ public class MultipolygonTest extends Test {
                 if (memberInNewMP != null && !memberInNewMP.isEmpty()) {
                     final String roleInNewMP = memberInNewMP.iterator().next().getRole();
                     if (!member.getRole().equals(roleInNewMP)) {
-                        List<OsmPrimitive> l = new ArrayList<>();
-                        l.add(r);
-                        l.add(member.getMember());
-                        addError(r, new TestError(this, Severity.WARNING, RelationChecker.ROLE_VERIF_PROBLEM_MSG,
-                                tr("Role for ''{0}'' should be ''{1}''",
-                                        member.getMember().getDisplayName(DefaultNameFormatter.getInstance()), roleInNewMP),
-                                MessageFormat.format("Role for ''{0}'' should be ''{1}''",
-                                        member.getMember().getDisplayName(DefaultNameFormatter.getInstance()), roleInNewMP),
-                                WRONG_MEMBER_ROLE, l, Collections.singleton(member.getMember())));
+                        errors.add(TestError.builder(this, Severity.WARNING, WRONG_MEMBER_ROLE)
+                                .message(RelationChecker.ROLE_VERIF_PROBLEM_MSG,
+                                        marktr("Role for ''{0}'' should be ''{1}''"),
+                                        member.getMember().getDisplayName(DefaultNameFormatter.getInstance()), roleInNewMP)
+                                .primitives(addRelationIfNeeded(r, member.getMember()))
+                                .highlight(member.getMember())
+                                .build());
                     }
                 }
             }
@@ -241,14 +244,18 @@ public class MultipolygonTest extends Test {
                     }
                 }
                 if (area == null) {
-                    addError(r, new TestError(this, Severity.OTHER, tr("No area style for multipolygon"), NO_STYLE, r));
+                    errors.add(TestError.builder(this, Severity.OTHER, NO_STYLE)
+                            .message(tr("No area style for multipolygon"))
+                            .primitives(r)
+                            .build());
                 } else {
                     /* old style multipolygon - solve: copy tags from outer way to multipolygon */
-                    addError(r, new TestError(this, Severity.WARNING,
-                            trn("Multipolygon relation should be tagged with area tags and not the outer way",
+                    errors.add(TestError.builder(this, Severity.WARNING, NO_STYLE_POLYGON)
+                            .message(trn("Multipolygon relation should be tagged with area tags and not the outer way",
                                     "Multipolygon relation should be tagged with area tags and not the outer ways",
-                                    polygon.getOuterWays().size()),
-                       NO_STYLE_POLYGON, r));
+                                    polygon.getOuterWays().size()))
+                            .primitives(r)
+                            .build());
                 }
             }
 
@@ -257,27 +264,30 @@ public class MultipolygonTest extends Test {
                     AreaElement areaInner = ElemStyles.getAreaElemStyle(wInner, false);
 
                     if (areaInner != null && area.equals(areaInner)) {
-                        List<OsmPrimitive> l = new ArrayList<>();
-                        l.add(r);
-                        l.add(wInner);
-                        addError(r, new TestError(this, Severity.OTHER,
-                                tr("With the currently used mappaint style the style for inner way equals the multipolygon style"),
-                                INNER_STYLE_MISMATCH, l, Collections.singletonList(wInner)));
+                        errors.add(TestError.builder(this, Severity.OTHER, INNER_STYLE_MISMATCH)
+                                .message(tr("With the currently used mappaint style the style for inner way equals the multipolygon style"))
+                                .primitives(addRelationIfNeeded(r, wInner))
+                                .highlight(wInner)
+                                .build());
                     }
                 }
                 for (Way wOuter : polygon.getOuterWays()) {
                     AreaElement areaOuter = ElemStyles.getAreaElemStyle(wOuter, false);
                     if (areaOuter != null) {
-                        List<OsmPrimitive> l = new ArrayList<>();
-                        l.add(r);
-                        l.add(wOuter);
                         if (!area.equals(areaOuter)) {
-                            addError(r, new TestError(this, Severity.OTHER, !areaStyle ? tr("Style for outer way mismatches")
-                            : tr("With the currently used mappaint style(s) the style for outer way mismatches the area style"),
-                            OUTER_STYLE_MISMATCH, l, Collections.singletonList(wOuter)));
+                            String message = !areaStyle ? tr("Style for outer way mismatches")
+                                    : tr("With the currently used mappaint style(s) the style for outer way mismatches the area style");
+                            errors.add(TestError.builder(this, Severity.OTHER, OUTER_STYLE_MISMATCH)
+                                    .message(message)
+                                    .primitives(addRelationIfNeeded(r, wOuter))
+                                    .highlight(wOuter)
+                                    .build());
                         } else if (areaStyle) { /* style on outer way of multipolygon, but equal to polygon */
-                            addError(r, new TestError(this, Severity.WARNING, tr("Area style on outer way"), OUTER_STYLE,
-                            l, Collections.singletonList(wOuter)));
+                            errors.add(TestError.builder(this, Severity.WARNING, OUTER_STYLE)
+                                    .message(tr("Area style on outer way"))
+                                    .primitives(addRelationIfNeeded(r, wOuter))
+                                    .highlight(wOuter)
+                                    .build());
                         }
                     }
                 }
@@ -297,10 +307,11 @@ public class MultipolygonTest extends Test {
     private void checkGeometry(Relation r, Multipolygon polygon) {
         List<Node> openNodes = polygon.getOpenEnds();
         if (!openNodes.isEmpty()) {
-            List<OsmPrimitive> primitives = new LinkedList<>();
-            primitives.add(r);
-            primitives.addAll(openNodes);
-            addError(r, new TestError(this, Severity.WARNING, tr("Multipolygon is not closed"), NON_CLOSED_WAY, primitives, openNodes));
+            errors.add(TestError.builder(this, Severity.WARNING, NON_CLOSED_WAY)
+                    .message(tr("Multipolygon is not closed"))
+                    .primitives(addRelationIfNeeded(r, openNodes))
+                    .highlight(openNodes)
+                    .build());
         }
 
         // For painting is used Polygon class which works with ints only. For validation we need more precision
@@ -327,8 +338,11 @@ public class MultipolygonTest extends Test {
                 outside &= checkCrossingWays(r, outerPolygons, outerPolygonsPaths, pdInner, o) == Intersection.OUTSIDE;
             }
             if (outside) {
-                addError(r, new TestError(this, Severity.WARNING, tr("Multipolygon inner way is outside"),
-                        INNER_WAY_OUTSIDE, Collections.singletonList(r), Arrays.asList(pdInner.getNodes())));
+                errors.add(TestError.builder(this, Severity.WARNING, INNER_WAY_OUTSIDE)
+                        .message(tr("Multipolygon inner way is outside"))
+                        .primitives(r)
+                        .highlightNodePairs(Collections.singletonList(pdInner.getNodes()))
+                        .build());
             }
         }
     }
@@ -338,8 +352,11 @@ public class MultipolygonTest extends Test {
         if (intersection == Intersection.CROSSING) {
             PolyData pdOther = polygons.get(idx);
             if (pdOther != null) {
-                addError(r, new TestError(this, Severity.WARNING, tr("Intersection between multipolygon ways"),
-                        CROSSING_WAYS, Collections.singletonList(r), Arrays.asList(pd.getNodes(), pdOther.getNodes())));
+                errors.add(TestError.builder(this, Severity.WARNING, CROSSING_WAYS)
+                        .message(tr("Intersection between multipolygon ways"))
+                        .primitives(r)
+                        .highlightNodePairs(Arrays.asList(pd.getNodes(), pdOther.getNodes()))
+                        .build());
             }
         }
         return intersection;
@@ -356,37 +373,43 @@ public class MultipolygonTest extends Test {
         for (RelationMember rm : r.getMembers()) {
             if (rm.isWay()) {
                 if (!(rm.hasRole("inner", "outer") || !rm.hasRole())) {
-                    addError(r, new TestError(this, Severity.WARNING, tr("No useful role for multipolygon member"),
-                            WRONG_MEMBER_ROLE, rm.getMember()));
+                    errors.add(TestError.builder(this, Severity.WARNING, WRONG_MEMBER_ROLE)
+                            .message(tr("No useful role for multipolygon member"))
+                            .primitives(addRelationIfNeeded(r, rm.getMember()))
+                            .build());
                 }
             } else {
                 if (!rm.hasRole("admin_centre", "label", "subarea", "land_area")) {
-                    addError(r, new TestError(this, Severity.WARNING, tr("Non-Way in multipolygon"), WRONG_MEMBER_TYPE, rm.getMember()));
+                    errors.add(TestError.builder(this, Severity.WARNING, WRONG_MEMBER_TYPE)
+                            .message(tr("Non-Way in multipolygon"))
+                            .primitives(addRelationIfNeeded(r, rm.getMember()))
+                            .build());
                 }
             }
         }
     }
 
-    private static void addRelationIfNeeded(TestError error, Relation r) {
+    private static Collection<? extends OsmPrimitive> addRelationIfNeeded(Relation r, OsmPrimitive primitive) {
+        return addRelationIfNeeded(r, Collections.singleton(primitive));
+    }
+
+    private static Collection<? extends OsmPrimitive> addRelationIfNeeded(Relation r, Collection<? extends OsmPrimitive> primitives) {
         // Fix #8212 : if the error references only incomplete primitives,
         // add multipolygon in order to let user select something and fix the error
-        Collection<? extends OsmPrimitive> primitives = error.getPrimitives();
         if (!primitives.contains(r)) {
             for (OsmPrimitive p : primitives) {
                 if (!p.isIncomplete()) {
-                    return;
+                    return null;
                 }
             }
             // Diamond operator does not work with Java 9 here
             @SuppressWarnings("unused")
             List<OsmPrimitive> newPrimitives = new ArrayList<OsmPrimitive>(primitives);
             newPrimitives.add(0, r);
-            error.setPrimitives(newPrimitives);
+            return newPrimitives;
+        } else {
+            return primitives;
         }
     }
 
-    private void addError(Relation r, TestError error) {
-        addRelationIfNeeded(error, r);
-        errors.add(error);
-    }
 }
