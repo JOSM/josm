@@ -13,7 +13,6 @@ import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -177,72 +176,70 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
         if (filter != null) {
             filterToUse = filterToUse.and(e -> e.getPrimitives().stream().anyMatch(filter::contains));
         }
-        Map<Severity, Map<String, Map<String, List<TestError>>>> errorTreeDeep
+        Map<Severity, Map<String, Map<String, List<TestError>>>> errorsBySeverityMessageDescription
             = errors.stream().filter(filterToUse).collect(
                     Collectors.groupingBy(TestError::getSeverity, () -> new EnumMap<>(Severity.class),
                             Collectors.groupingBy(TestError::getMessage,
                                     Collectors.groupingBy(e -> e.getDescription() == null ? "" : e.getDescription()
                                     ))));
 
-        List<TreePath> expandedPaths = new ArrayList<>();
-        errorTreeDeep.forEach((s, severityErrorsDeep) -> {
+        final List<TreePath> expandedPaths = new ArrayList<>();
+        errorsBySeverityMessageDescription.forEach((severity, errorsByMessageDescription) -> {
             // Severity node
-            DefaultMutableTreeNode severityNode = new GroupTreeNode(s);
+            final DefaultMutableTreeNode severityNode = new GroupTreeNode(severity);
             rootNode.add(severityNode);
 
-            if (oldSelectedRows.contains(s)) {
+            if (oldSelectedRows.contains(severity)) {
                 expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode}));
             }
 
-            Map<String, List<TestError>> severityErrors = severityErrorsDeep.get("");
-            if (severityErrors != null) {
-                for (Entry<String, List<TestError>> msgErrors : severityErrors.entrySet()) {
-                    // Message node
-                    List<TestError> errs = msgErrors.getValue();
-                    String msg = tr("{0} ({1})", msgErrors.getKey(), errs.size());
-                    DefaultMutableTreeNode messageNode = new DefaultMutableTreeNode(msg);
+            final Map<String, List<TestError>> errorsWithEmptyMessageByDescription = errorsByMessageDescription.get("");
+            if (errorsWithEmptyMessageByDescription != null) {
+                errorsWithEmptyMessageByDescription.forEach((description, errors) -> {
+                    final String msg = tr("{0} ({1})", description, errors.size());
+                    final DefaultMutableTreeNode messageNode = new DefaultMutableTreeNode(msg);
                     severityNode.add(messageNode);
 
-                    if (oldSelectedRows.contains(msgErrors.getKey())) {
+                    if (oldSelectedRows.contains(description)) {
                         expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode, messageNode}));
                     }
 
-                    errs.stream().map(DefaultMutableTreeNode::new).forEach(messageNode::add);
-                }
+                    errors.stream().map(DefaultMutableTreeNode::new).forEach(messageNode::add);
+                });
             }
 
-            severityErrorsDeep.forEach((description, errorlist) -> {
-                if (description.isEmpty()) {
+            errorsByMessageDescription.forEach((message, errorsByDescription) -> {
+                if (message.isEmpty()) {
                     return;
                 }
                 // Group node
-                DefaultMutableTreeNode groupNode;
-                if (errorlist.size() > 1) {
-                    groupNode = new GroupTreeNode(description);
+                final DefaultMutableTreeNode groupNode;
+                if (errorsByDescription.size() > 1) {
+                    groupNode = new GroupTreeNode(message);
                     severityNode.add(groupNode);
-                    if (oldSelectedRows.contains(description)) {
+                    if (oldSelectedRows.contains(message)) {
                         expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode, groupNode}));
                     }
                 } else {
                     groupNode = null;
                 }
 
-                errorlist.forEach((message, errs) -> {
+                errorsByDescription.forEach((description, errors) -> {
                     // Message node
-                    String msg;
+                    final String msg;
                     if (groupNode != null) {
-                        msg = tr("{0} ({1})", message, errs.size());
+                        msg = tr("{0} ({1})", description, errors.size());
                     } else {
-                        msg = tr("{0} - {1} ({2})", message, description, errs.size());
+                        msg = tr("{0} - {1} ({2})", message, description, errors.size());
                     }
-                    DefaultMutableTreeNode messageNode = new DefaultMutableTreeNode(msg);
+                    final DefaultMutableTreeNode messageNode = new DefaultMutableTreeNode(msg);
                     if (groupNode != null) {
                         groupNode.add(messageNode);
                     } else {
                         severityNode.add(messageNode);
                     }
 
-                    if (oldSelectedRows.contains(message)) {
+                    if (oldSelectedRows.contains(description)) {
                         if (groupNode != null) {
                             expandedPaths.add(new TreePath(new Object[] {rootNode, severityNode, groupNode, messageNode}));
                         } else {
@@ -250,7 +247,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
                         }
                     }
 
-                    errs.stream().map(DefaultMutableTreeNode::new).forEach(messageNode::add);
+                    errors.stream().map(DefaultMutableTreeNode::new).forEach(messageNode::add);
                 });
             });
         });
