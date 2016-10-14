@@ -17,7 +17,6 @@ import javax.script.ScriptException;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.validation.FixableTestError;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -131,12 +130,13 @@ public class OpeningHourTest extends Test.TagTest {
          * @return The real test error given to JOSM validator. Can be fixable or not if a prettified values has been determined.
          */
         public TestError getTestError(final OsmPrimitive p, final String key) {
-            final String messageEn = message; // todo obtain English message for ignore functionality
+            final TestError.Builder error = TestError.builder(OpeningHourTest.this, severity, 2901)
+                    .message(tr("Opening hours syntax"), message) // todo obtain English message for ignore functionality
+                    .primitives(p);
             if (prettifiedValue == null || prettifiedValue.equals(p.get(key))) {
-                return new TestError(OpeningHourTest.this, severity, tr("Opening hours syntax"), message, messageEn, 2901, p);
+                return error.build();
             } else {
-                return new FixableTestError(OpeningHourTest.this, severity, tr("Opening hours syntax"), message, messageEn, 2901, p,
-                        new ChangePropertyCommand(p, key, prettifiedValue));
+                return error.fix(() -> new ChangePropertyCommand(p, key, prettifiedValue)).build();
             }
         }
 

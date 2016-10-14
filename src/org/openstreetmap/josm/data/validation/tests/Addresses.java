@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -50,27 +49,6 @@ public class Addresses extends Test {
     protected static final String ASSOCIATED_STREET  = "associatedStreet";
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
-    protected static class AddressError extends TestError {
-
-        public AddressError(Addresses tester, int code, OsmPrimitive p, String message) {
-            this(tester, code, Collections.singleton(p), message);
-        }
-
-        public AddressError(Addresses tester, int code, Collection<OsmPrimitive> collection, String message) {
-            this(tester, code, collection, message, null, null);
-        }
-
-        public AddressError(Addresses tester, int code, Collection<OsmPrimitive> collection, String message,
-                String description, String englishDescription) {
-            this(tester, code, Severity.WARNING, collection, message, description, englishDescription);
-        }
-
-        public AddressError(Addresses tester, int code, Severity severity, Collection<OsmPrimitive> collection, String message,
-                String description, String englishDescription) {
-            super(tester, severity, message, description, englishDescription, code, collection);
-        }
-    }
-
     /**
      * Constructor
      */
@@ -97,8 +75,10 @@ public class Addresses extends Test {
             }
             List<OsmPrimitive> errorList = new ArrayList<>(list);
             errorList.add(0, p);
-            errors.add(new AddressError(this, MULTIPLE_STREET_RELATIONS, level, errorList,
-                    tr("Multiple associatedStreet relations"), null, null));
+            errors.add(TestError.builder(this, level, MULTIPLE_STREET_RELATIONS)
+                    .message(tr("Multiple associatedStreet relations"))
+                    .primitives(errorList)
+                    .build());
         }
         return list;
     }
@@ -118,7 +98,10 @@ public class Addresses extends Test {
                 }
             }
             // No street found
-            errors.add(new AddressError(this, HOUSE_NUMBER_WITHOUT_STREET, p, tr("House number without street")));
+            errors.add(TestError.builder(this, Severity.WARNING, HOUSE_NUMBER_WITHOUT_STREET)
+                    .message(tr("House number without street"))
+                    .primitives(p)
+                    .build());
         }
     }
 
@@ -178,18 +161,21 @@ public class Addresses extends Test {
                 }
             }
             // Report duplicate house numbers
-            String englishDescription = marktr("House number ''{0}'' duplicated");
             for (Entry<String, List<OsmPrimitive>> entry : map.entrySet()) {
                 List<OsmPrimitive> list = entry.getValue();
                 if (list.size() > 1) {
-                    errors.add(new AddressError(this, DUPLICATE_HOUSE_NUMBER, list,
-                            tr("Duplicate house numbers"), tr(englishDescription, entry.getKey()), englishDescription));
+                    errors.add(TestError.builder(this, Severity.WARNING, DUPLICATE_HOUSE_NUMBER)
+                            .message(tr("Duplicate house numbers"), marktr("House number ''{0}'' duplicated"), entry.getKey())
+                            .primitives(list)
+                            .build());
                 }
             }
             // Report wrong street names
             if (!wrongStreetNames.isEmpty()) {
-                errors.add(new AddressError(this, MULTIPLE_STREET_NAMES, wrongStreetNames,
-                        tr("Multiple street names in relation")));
+                errors.add(TestError.builder(this, Severity.WARNING, MULTIPLE_STREET_NAMES)
+                        .message(tr("Multiple street names in relation"))
+                        .primitives(wrongStreetNames)
+                        .build());
             }
             // Report addresses too far away
             if (!street.isEmpty()) {
@@ -244,7 +230,9 @@ public class Addresses extends Test {
         if (hasIncompleteWays) return;
         List<OsmPrimitive> errorList = new ArrayList<>(street);
         errorList.add(0, house);
-        errors.add(new AddressError(this, HOUSE_NUMBER_TOO_FAR, errorList,
-                tr("House number too far from street")));
+        errors.add(TestError.builder(this, Severity.WARNING, HOUSE_NUMBER_TOO_FAR)
+                .message(tr("House number too far from street"))
+                .primitives(errorList)
+                .build());
     }
 }

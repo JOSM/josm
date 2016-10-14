@@ -6,14 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
-import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -47,9 +43,7 @@ public class PowerLines extends Test {
     protected static final Collection<String> POWER_ALLOWED_TAGS = Arrays.asList("switch", "transformer", "busbar", "generator", "switchgear",
             "portal", "terminal", "insulator");
 
-    private final Map<Way, String> towerPoleTagMap = new HashMap<>();
-
-    private final List<PowerLineError> potentialErrors = new ArrayList<>();
+    private final List<TestError> potentialErrors = new ArrayList<>();
 
     private final List<OsmPrimitive> powerStations = new ArrayList<>();
 
@@ -65,14 +59,17 @@ public class PowerLines extends Test {
         if (w.isUsable()) {
             if (isPowerLine(w) && !w.hasTag("location", "underground")) {
                 String fixValue = null;
-                boolean erroneous = false;
+                TestError.Builder error = null;
+                Node errorNode = null;
                 boolean canFix = false;
                 for (Node n : w.getNodes()) {
                     if (!isPowerTower(n)) {
                         if (!isPowerAllowed(n) && IN_DOWNLOADED_AREA.test(n)) {
                             if (!w.isFirstLastNode(n) || !isPowerStation(n)) {
-                                potentialErrors.add(new PowerLineError(this, n, w));
-                                erroneous = true;
+                                error = TestError.builder(this, Severity.WARNING, POWER_LINES)
+                                        .message(tr("Missing power tower/pole within power line"))
+                                        .primitives(n);
+                                errorNode = n;
                             }
                         }
                     } else if (fixValue == null) {
@@ -84,8 +81,11 @@ public class PowerLines extends Test {
                         canFix = false;
                     }
                 }
-                if (erroneous && canFix) {
-                    towerPoleTagMap.put(w, fixValue);
+                if (error != null && canFix) {
+                    final ChangePropertyCommand fix = new ChangePropertyCommand(errorNode, "power", fixValue);
+                    potentialErrors.add(error.fix(() -> fix).build());
+                } else if (error != null) {
+                    potentialErrors.add(error.build());
                 }
             } else if (w.isClosed() && isPowerStation(w)) {
                 powerStations.add(w);
@@ -103,18 +103,18 @@ public class PowerLines extends Test {
     @Override
     public void startTest(ProgressMonitor progressMonitor) {
         super.startTest(progressMonitor);
-        towerPoleTagMap.clear();
         powerStations.clear();
         potentialErrors.clear();
     }
 
     @Override
     public void endTest() {
-        for (PowerLineError e : potentialErrors) {
-            Node n = e.getNode();
-            if (n != null && !isInPowerStation(n)) {
-                errors.add(e);
-            }
+        for (TestError e : potentialErrors) {
+            e.getPrimitives().stream()
+                    .map(Node.class::cast)
+                    .filter(n -> !isInPowerStation(n))
+                    .findAny()
+                    .ifPresent(ignore -> errors.add(e));
         }
         potentialErrors.clear();
         super.endTest();
@@ -140,24 +140,6 @@ public class PowerLines extends Test {
             }
         }
         return false;
-    }
-
-    @Override
-    public Command fixError(TestError testError) {
-        if (testError instanceof PowerLineError && isFixable(testError)) {
-            // primitives list can be empty if all primitives have been purged
-            Iterator<? extends OsmPrimitive> it = testError.getPrimitives().iterator();
-            if (it.hasNext()) {
-                return new ChangePropertyCommand(it.next(),
-                        "power", towerPoleTagMap.get(((PowerLineError) testError).line));
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public boolean isFixable(TestError testError) {
-        return testError instanceof PowerLineError && towerPoleTagMap.containsKey(((PowerLineError) testError).line);
     }
 
     /**
@@ -216,21 +198,5 @@ public class PowerLines extends Test {
     private static boolean isBuildingIn(OsmPrimitive p, Collection<String> values) {
         String v = p.get("building");
         return v != null && values != null && values.contains(v);
-    }
-
-    protected static class PowerLineError extends TestError {
-        private final Way line;
-
-        public PowerLineError(PowerLines tester, Node n, Way line) {
-            super(tester, Severity.WARNING,
-                    tr("Missing power tower/pole within power line"), POWER_LINES, n);
-            this.line = line;
-        }
-
-        public final Node getNode() {
-            // primitives list can be empty if all primitives have been purged
-            Iterator<? extends OsmPrimitive> it = getPrimitives().iterator();
-            return it.hasNext() ? (Node) it.next() : null;
-        }
     }
 }

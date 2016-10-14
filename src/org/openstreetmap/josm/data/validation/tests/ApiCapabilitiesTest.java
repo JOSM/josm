@@ -49,7 +49,10 @@ public class ApiCapabilitiesTest extends Test {
             } else {
                 message = tr("Way contains more than {0} nodes. It should be split or simplified", maxNodes);
             }
-            errors.add(new TestError(this, Severity.ERROR, message, MAX_WAY_NODES_ERROR, w));
+            errors.add(TestError.builder(this, Severity.ERROR, MAX_WAY_NODES_ERROR)
+                    .message(message)
+                    .primitives(w)
+                    .build());
         }
     }
 }

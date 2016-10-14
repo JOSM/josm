@@ -96,7 +96,10 @@ public class SimilarNamedWays extends Test {
                     List<OsmPrimitive> primitives = new ArrayList<>(2);
                     primitives.add(w);
                     primitives.add(w2);
-                    errors.add(new TestError(this, Severity.WARNING, tr("Similarly named ways"), SIMILAR_NAMED, primitives));
+                    errors.add(TestError.builder(this, Severity.WARNING, SIMILAR_NAMED)
+                            .message(tr("Similarly named ways"))
+                            .primitives(primitives)
+                            .build());
                     errorWays.put(w, w2);
                 }
             }

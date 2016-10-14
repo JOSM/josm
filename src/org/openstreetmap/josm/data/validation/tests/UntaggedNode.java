@@ -43,8 +43,10 @@ public class UntaggedNode extends Test implements AbstractPrimitive.KeyValueVisi
         if (n.isUsable() && !n.isTagged() && n.getReferrers().isEmpty()) {
 
             if (!n.hasKeys() && IN_DOWNLOADED_AREA.test(n)) {
-                String msg = marktr("No tags");
-                errors.add(new TestError(this, Severity.WARNING, ERROR_MESSAGE, tr(msg), msg, UNTAGGED_NODE_BLANK, n));
+                errors.add(TestError.builder(this, Severity.WARNING, UNTAGGED_NODE_BLANK)
+                        .message(ERROR_MESSAGE, marktr("No tags"))
+                        .primitives(n)
+                        .build());
                 return;
             }
             n.visitKeys(this);
@@ -55,8 +57,10 @@ public class UntaggedNode extends Test implements AbstractPrimitive.KeyValueVisi
     public void visitKeyValue(AbstractPrimitive n, String key, String value) {
         if (key.toLowerCase(Locale.ENGLISH).contains("fixme") || value.toLowerCase(Locale.ENGLISH).contains("fixme")) {
             /* translation note: don't translate quoted words */
-            String msg = marktr("Has tag containing ''fixme'' or ''FIXME''");
-            errors.add(new TestError(this, Severity.WARNING, ERROR_MESSAGE, tr(msg), msg, UNTAGGED_NODE_FIXME, (OsmPrimitive) n));
+            errors.add(TestError.builder(this, Severity.WARNING, UNTAGGED_NODE_FIXME)
+                    .message(ERROR_MESSAGE, marktr("Has tag containing ''fixme'' or ''FIXME''"))
+                    .primitives((OsmPrimitive) n)
+                    .build());
             return;
         }
 
@@ -80,11 +84,17 @@ public class UntaggedNode extends Test implements AbstractPrimitive.KeyValueVisi
             code = UNTAGGED_NODE_SOURCE;
         }
         if (msg != null) {
-            errors.add(new TestError(this, Severity.WARNING, ERROR_MESSAGE, tr(msg), msg, code, (OsmPrimitive) n));
+            errors.add(TestError.builder(this, Severity.WARNING, code)
+                    .message(ERROR_MESSAGE, msg)
+                    .primitives((OsmPrimitive) n)
+                    .build());
             return;
         }
         // Does not happen, but just to be sure. Maybe definition of uninteresting tags changes in future.
-        errors.add(new TestError(this, Severity.WARNING, ERROR_MESSAGE, tr("Other"), "Other", UNTAGGED_NODE_OTHER, (OsmPrimitive) n));
+        errors.add(TestError.builder(this, Severity.WARNING, UNTAGGED_NODE_OTHER)
+                .message(ERROR_MESSAGE, marktr("Other"))
+                .primitives((OsmPrimitive) n)
+                .build());
     }
 
     @Override

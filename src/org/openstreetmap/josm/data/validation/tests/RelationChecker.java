@@ -4,7 +4,6 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -115,16 +114,23 @@ public class RelationChecker extends Test {
         Map<String, RolePreset> allroles = buildAllRoles(n);
         if (allroles.isEmpty() && n.hasTag("type", "route")
                 && n.hasTag("route", "train", "subway", "monorail", "tram", "bus", "trolleybus", "aerialway", "ferry")) {
-            errors.add(new TestError(this, Severity.WARNING,
-                    tr("Route scheme is unspecified. Add {0} ({1}=public_transport; {2}=legacy)", "public_transport:version", "2", "1"),
-                    RELATION_UNKNOWN, n));
+            errors.add(TestError.builder(this, Severity.WARNING, RELATION_UNKNOWN)
+                    .message(tr("Route scheme is unspecified. Add {0} ({1}=public_transport; {2}=legacy)", "public_transport:version", "2", "1"))
+                    .primitives(n)
+                    .build());
         } else if (allroles.isEmpty()) {
-            errors.add(new TestError(this, Severity.WARNING, tr("Relation type is unknown"), RELATION_UNKNOWN, n));
+            errors.add(TestError.builder(this, Severity.WARNING, RELATION_UNKNOWN)
+                    .message(tr("Relation type is unknown"))
+                    .primitives(n)
+                    .build());
         }
 
         Map<String, RoleInfo> map = buildRoleInfoMap(n);
         if (map.isEmpty()) {
-            errors.add(new TestError(this, Severity.ERROR, tr("Relation is empty"), RELATION_EMPTY, n));
+            errors.add(TestError.builder(this, Severity.ERROR, RELATION_EMPTY)
+                    .message(tr("Relation is empty"))
+                    .primitives(n)
+                    .build());
         } else if (!allroles.isEmpty()) {
             checkRoles(n, allroles, map);
         }
@@ -229,10 +235,12 @@ public class RelationChecker extends Test {
                             // we still need to iterate further, as we might have
                             // different present, for which memberExpression will match
                             // but stash the error in case no better reason will be found later
-                            String s = marktr("Role member does not match expression {0} in template {1}");
-                            possibleMatchError = new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                                    tr(s, r.memberExpression, rolePreset.name), s, WRONG_TYPE,
-                                    member.getMember().isUsable() ? member.getMember() : n);
+                            possibleMatchError = TestError.builder(this, Severity.WARNING, WRONG_TYPE)
+                                    .message(ROLE_VERIF_PROBLEM_MSG,
+                                            marktr("Role member does not match expression {0} in template {1}"),
+                                            r.memberExpression, rolePreset.name)
+                                    .primitives(member.getMember().isUsable() ? member.getMember() : n)
+                                    .build();
                         }
                     }
                 }
@@ -251,7 +259,6 @@ public class RelationChecker extends Test {
         } else {
             // no errors found till now. So member at least failed at matching the type
             // it could also fail at memberExpression, but we can't guess at which
-            String s = marktr("Role member type {0} does not match accepted list of {1} in template {2}");
 
             // prepare Set of all accepted types in template
             Collection<TaggingPresetType> types = EnumSet.noneOf(TaggingPresetType.class);
@@ -262,9 +269,12 @@ public class RelationChecker extends Test {
             // convert in localization friendly way to string of accepted types
             String typesStr = types.stream().map(x -> tr(x.getName())).collect(Collectors.joining("/"));
 
-            errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                    tr(s, member.getType(), typesStr, rolePreset.name), s, WRONG_TYPE,
-                    member.getMember().isUsable() ? member.getMember() : n));
+            errors.add(TestError.builder(this, Severity.WARNING, WRONG_TYPE)
+                    .message(ROLE_VERIF_PROBLEM_MSG,
+                            marktr("Role member type {0} does not match accepted list of {1} in template {2}"),
+                            member.getType(), typesStr, rolePreset.name)
+                    .primitives(member.getMember().isUsable() ? member.getMember() : n)
+                    .build());
         }
         return false;
     }
@@ -300,14 +310,16 @@ public class RelationChecker extends Test {
                 String templates = allroles.keySet().stream().map(I18n::tr).collect(Collectors.joining("/"));
 
                 if (!key.isEmpty()) {
-                    String s = marktr("Role {0} unknown in templates {1}");
 
-                    errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                            tr(s, key, templates), MessageFormat.format(s, key), ROLE_UNKNOWN, n));
+                    errors.add(TestError.builder(this, Severity.WARNING, ROLE_UNKNOWN)
+                            .message(ROLE_VERIF_PROBLEM_MSG, marktr("Role {0} unknown in templates {1}"), key, templates)
+                            .primitives(n)
+                            .build());
                 } else {
-                    String s = marktr("Empty role type found when expecting one of {0}");
-                    errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                            tr(s, templates), s, ROLE_EMPTY, n));
+                    errors.add(TestError.builder(this, Severity.WARNING, ROLE_EMPTY)
+                            .message(ROLE_VERIF_PROBLEM_MSG, marktr("Empty role type found when expecting one of {0}"), templates)
+                            .primitives(n)
+                            .build());
                 }
             }
         }
@@ -318,17 +330,20 @@ public class RelationChecker extends Test {
         long vc = r.getValidCount(count);
         if (count != vc) {
             if (count == 0) {
-                String s = marktr("Role {0} missing");
-                errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                        tr(s, keyname), MessageFormat.format(s, keyname), ROLE_MISSING, n));
+                errors.add(TestError.builder(this, Severity.WARNING, ROLE_MISSING)
+                        .message(ROLE_VERIF_PROBLEM_MSG, marktr("Role {0} missing"), keyname)
+                        .primitives(n)
+                        .build());
             } else if (vc > count) {
-                String s = marktr("Number of {0} roles too low ({1})");
-                errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                        tr(s, keyname, count), MessageFormat.format(s, keyname, count), LOW_COUNT, n));
+                errors.add(TestError.builder(this, Severity.WARNING, LOW_COUNT)
+                        .message(ROLE_VERIF_PROBLEM_MSG, marktr("Number of {0} roles too low ({1})"), keyname, count)
+                        .primitives(n)
+                        .build());
             } else {
-                String s = marktr("Number of {0} roles too high ({1})");
-                errors.add(new TestError(this, Severity.WARNING, ROLE_VERIF_PROBLEM_MSG,
-                        tr(s, keyname, count), MessageFormat.format(s, keyname, count), HIGH_COUNT, n));
+                errors.add(TestError.builder(this, Severity.WARNING, HIGH_COUNT)
+                        .message(ROLE_VERIF_PROBLEM_MSG, marktr("Number of {0} roles too high ({1})"), keyname, count)
+                        .primitives(n)
+                        .build());
             }
         }
     }

@@ -4,8 +4,6 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.Node;
@@ -98,8 +96,11 @@ public class TurnrestrictionTest extends Test {
                     }
                     break;
                 default:
-                    errors.add(new TestError(this, Severity.WARNING, tr("Unknown role"), UNKNOWN_ROLE,
-                            l, Collections.singletonList(m)));
+                    errors.add(TestError.builder(this, Severity.WARNING, UNKNOWN_ROLE)
+                            .message(tr("Unknown role"))
+                            .primitives(l)
+                            .highlight(m.getMember())
+                            .build());
                 }
             } else if (m.isNode()) {
                 Node n = m.getNode();
@@ -114,41 +115,71 @@ public class TurnrestrictionTest extends Test {
                         via.add(n);
                     }
                 } else {
-                    errors.add(new TestError(this, Severity.WARNING, tr("Unknown role"), UNKNOWN_ROLE,
-                            l, Collections.singletonList(m)));
+                    errors.add(TestError.builder(this, Severity.WARNING, UNKNOWN_ROLE)
+                            .message(tr("Unknown role"))
+                            .primitives(l)
+                            .highlight(m.getMember())
+                            .build());
                 }
             } else {
-                errors.add(new TestError(this, Severity.WARNING, tr("Unknown member type"), UNKNOWN_TYPE,
-                        l, Collections.singletonList(m)));
+                errors.add(TestError.builder(this, Severity.WARNING, UNKNOWN_TYPE)
+                        .message(tr("Unknown member type"))
+                        .primitives(l)
+                        .highlight(m.getMember())
+                        .build());
             }
         }
         if (morefrom) {
-            errors.add(new TestError(this, Severity.ERROR, tr("More than one \"from\" way found"), MORE_FROM, r));
+            errors.add(TestError.builder(this, Severity.ERROR, MORE_FROM)
+                    .message(tr("More than one \"from\" way found"))
+                    .primitives(r)
+                    .build());
         }
         if (moreto) {
-            errors.add(new TestError(this, Severity.ERROR, tr("More than one \"to\" way found"), MORE_TO, r));
+            errors.add(TestError.builder(this, Severity.ERROR, MORE_TO)
+                    .message(tr("More than one \"to\" way found"))
+                    .primitives(r)
+                    .build());
         }
         if (morevia) {
-            errors.add(new TestError(this, Severity.ERROR, tr("More than one \"via\" node found"), MORE_VIA, r));
+            errors.add(TestError.builder(this, Severity.ERROR, MORE_VIA)
+                    .message(tr("More than one \"via\" node found"))
+                    .primitives(r)
+                    .build());
         }
         if (mixvia) {
-            errors.add(new TestError(this, Severity.ERROR, tr("Cannot mix node and way for role \"via\""), MIX_VIA, r));
+            errors.add(TestError.builder(this, Severity.ERROR, MIX_VIA)
+                    .message(tr("Cannot mix node and way for role \"via\""))
+                    .primitives(r)
+                    .build());
         }
 
         if (fromWay == null) {
-            errors.add(new TestError(this, Severity.ERROR, tr("No \"from\" way found"), NO_FROM, r));
+            errors.add(TestError.builder(this, Severity.ERROR, NO_FROM)
+                    .message(tr("No \"from\" way found"))
+                    .primitives(r)
+                    .build());
             return;
         }
         if (toWay == null) {
-            errors.add(new TestError(this, Severity.ERROR, tr("No \"to\" way found"), NO_TO, r));
+            errors.add(TestError.builder(this, Severity.ERROR, NO_TO)
+                    .message(tr("No \"to\" way found"))
+                    .primitives(r)
+                    .build());
             return;
         }
         if (fromWay.equals(toWay)) {
-            errors.add(new TestError(this, r.hasTag("restriction", "no_u_turn") ? Severity.OTHER : Severity.WARNING,
-                    tr("\"from\" way equals \"to\" way"), FROM_EQUALS_TO, r));
+            Severity severity = r.hasTag("restriction", "no_u_turn") ? Severity.OTHER : Severity.WARNING;
+            errors.add(TestError.builder(this, severity, FROM_EQUALS_TO)
+                    .message(tr("\"from\" way equals \"to\" way"))
+                    .primitives(r)
+                    .build());
         }
         if (via.isEmpty()) {
-            errors.add(new TestError(this, Severity.ERROR, tr("No \"via\" node or way found"), NO_VIA, r));
+            errors.add(TestError.builder(this, Severity.ERROR, NO_VIA)
+                    .message(tr("No \"via\" node or way found"))
+                    .primitives(r)
+                    .build());
             return;
         }
 
@@ -159,7 +190,10 @@ public class TurnrestrictionTest extends Test {
             checkIfConnected(fromWay, viaPseudoWay,
                     tr("The \"from\" way does not start or end at a \"via\" node."), FROM_VIA_NODE);
             if (toWay.isOneway() != 0 && viaNode.equals(toWay.lastNode(true))) {
-                errors.add(new TestError(this, Severity.WARNING, tr("Superfluous turnrestriction as \"to\" way is oneway"), SUPERFLUOUS, r));
+                errors.add(TestError.builder(this, Severity.WARNING, SUPERFLUOUS)
+                        .message(tr("Superfluous turnrestriction as \"to\" way is oneway"))
+                        .primitives(r)
+                        .build());
                 return;
             }
             checkIfConnected(viaPseudoWay, toWay,
@@ -177,7 +211,10 @@ public class TurnrestrictionTest extends Test {
                 }
             }
             if (toWay.isOneway() != 0 && ((Way) via.get(via.size() - 1)).isFirstLastNode(toWay.lastNode(true))) {
-                errors.add(new TestError(this, Severity.WARNING, tr("Superfluous turnrestriction as \"to\" way is oneway"), SUPERFLUOUS, r));
+                errors.add(TestError.builder(this, Severity.WARNING, SUPERFLUOUS)
+                        .message(tr("Superfluous turnrestriction as \"to\" way is oneway"))
+                        .primitives(r)
+                        .build());
                 return;
             }
             checkIfConnected((Way) via.get(via.size() - 1), toWay,
@@ -205,7 +242,10 @@ public class TurnrestrictionTest extends Test {
             c = current.isFirstLastNode(previous.firstNode()) || current.isFirstLastNode(previous.lastNode());
         }
         if (!c) {
-            errors.add(new TestError(this, Severity.ERROR, msg, code, Arrays.asList(previous, current)));
+            errors.add(TestError.builder(this, Severity.ERROR, code)
+                    .message(msg)
+                    .primitives(previous, current)
+                    .build());
         }
     }
 }

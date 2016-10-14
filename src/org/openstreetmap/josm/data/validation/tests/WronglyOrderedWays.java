@@ -3,8 +3,6 @@ package org.openstreetmap.josm.data.validation.tests;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.Collections;
-
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
@@ -50,6 +48,9 @@ public class WronglyOrderedWays extends Test {
     }
 
     private void reportError(Way w, String msg, int type) {
-        errors.add(new TestError(this, Severity.WARNING, msg, type, Collections.singletonList(w)));
+        errors.add(TestError.builder(this, Severity.WARNING, type)
+                .message(msg)
+                .primitives(w)
+                .build());
     }
 }

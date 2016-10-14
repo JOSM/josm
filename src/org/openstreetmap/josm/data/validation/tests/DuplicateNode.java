@@ -31,7 +31,6 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.MultiMap;
 
 /**
@@ -83,13 +82,6 @@ public class DuplicateNode extends Test {
         public int getHashCode(Object k) {
             LatLon coorK = getLatLon(k);
             return coorK == null ? 0 : coorK.hashCode();
-        }
-    }
-
-    private static class DuplicateNodeTestError extends TestError {
-        DuplicateNodeTestError(Test parentTest, Severity severity, String msg, int code, Set<OsmPrimitive> primitives) {
-            super(parentTest, severity, tr("Duplicated nodes"), tr(msg), msg, code, primitives);
-            CheckParameterUtil.ensureThat(!primitives.isEmpty(), "Empty primitives: " + msg);
         }
     }
 
@@ -213,85 +205,55 @@ public class DuplicateNode extends Test {
                 long nbType = typeMap.entrySet().stream().filter(Entry::getValue).count();
 
                 if (nbType > 1) {
-                    errors.add(new DuplicateNodeTestError(
-                            parentTest,
-                            Severity.WARNING,
-                            marktr("Mixed type duplicated nodes"),
-                            DUPLICATE_NODE_MIXED,
-                            primitives
-                            ));
+                    errors.add(TestError.builder(parentTest, Severity.WARNING, DUPLICATE_NODE_MIXED)
+                            .message(marktr("Mixed type duplicated nodes"))
+                            .primitives(primitives)
+                            .build());
                 } else if (typeMap.get("highway")) {
-                    errors.add(new DuplicateNodeTestError(
-                            parentTest,
-                            Severity.ERROR,
-                            marktr("Highway duplicated nodes"),
-                            DUPLICATE_NODE_HIGHWAY,
-                            primitives
-                            ));
+                    errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_HIGHWAY)
+                            .message(marktr("Highway duplicated nodes"))
+                            .primitives(primitives)
+                            .build());
                 } else if (typeMap.get("railway")) {
-                    errors.add(new DuplicateNodeTestError(
-                            parentTest,
-                            Severity.ERROR,
-                            marktr("Railway duplicated nodes"),
-                            DUPLICATE_NODE_RAILWAY,
-                            primitives
-                            ));
+                    errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_RAILWAY)
+                            .message(marktr("Railway duplicated nodes"))
+                            .primitives(primitives)
+                            .build());
                 } else if (typeMap.get("waterway")) {
-                    errors.add(new DuplicateNodeTestError(
-                            parentTest,
-                            Severity.ERROR,
-                            marktr("Waterway duplicated nodes"),
-                            DUPLICATE_NODE_WATERWAY,
-                            primitives
-                            ));
+                    errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_WATERWAY)
+                            .message(marktr("Waterway duplicated nodes"))
+                            .primitives(primitives)
+                            .build());
                 } else if (typeMap.get("boundary")) {
-                    errors.add(new DuplicateNodeTestError(
-                            parentTest,
-                            Severity.ERROR,
-                            marktr("Boundary duplicated nodes"),
-                            DUPLICATE_NODE_BOUNDARY,
-                            primitives
-                            ));
+                    errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_BOUNDARY)
+                            .message(marktr("Boundary duplicated nodes"))
+                            .primitives(primitives)
+                            .build());
                 } else if (typeMap.get("power")) {
-                    errors.add(new DuplicateNodeTestError(
-                            parentTest,
-                            Severity.ERROR,
-                            marktr("Power duplicated nodes"),
-                            DUPLICATE_NODE_POWER,
-                            primitives
-                            ));
+                    errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_POWER)
+                            .message(marktr("Power duplicated nodes"))
+                            .primitives(primitives)
+                            .build());
                 } else if (typeMap.get("natural")) {
-                    errors.add(new DuplicateNodeTestError(
-                            parentTest,
-                            Severity.ERROR,
-                            marktr("Natural duplicated nodes"),
-                            DUPLICATE_NODE_NATURAL,
-                            primitives
-                            ));
+                    errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_NATURAL)
+                            .message(marktr("Natural duplicated nodes"))
+                            .primitives(primitives)
+                            .build());
                 } else if (typeMap.get("building")) {
-                    errors.add(new DuplicateNodeTestError(
-                            parentTest,
-                            Severity.ERROR,
-                            marktr("Building duplicated nodes"),
-                            DUPLICATE_NODE_BUILDING,
-                            primitives
-                            ));
+                    errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_BUILDING)
+                            .message(marktr("Building duplicated nodes"))
+                            .primitives(primitives)
+                            .build());
                 } else if (typeMap.get("landuse")) {
-                    errors.add(new DuplicateNodeTestError(
-                            parentTest,
-                            Severity.ERROR,
-                            marktr("Landuse duplicated nodes"),
-                            DUPLICATE_NODE_LANDUSE,
-                            primitives
-                            ));
+                    errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_LANDUSE)
+                            .message(marktr("Landuse duplicated nodes"))
+                            .primitives(primitives)
+                            .build());
                 } else {
-                    errors.add(new DuplicateNodeTestError(
-                            parentTest,
-                            Severity.WARNING,
-                            marktr("Other duplicated nodes"),
-                            DUPLICATE_NODE_OTHER,
-                            primitives
-                            ));
+                    errors.add(TestError.builder(parentTest, Severity.WARNING, DUPLICATE_NODE_OTHER)
+                            .message(marktr("Other duplicated nodes"))
+                            .primitives(primitives)
+                            .build());
                 }
                 it.remove();
             }
@@ -304,13 +266,10 @@ public class DuplicateNode extends Test {
                 duplicates.addAll(l);
             }
             if (duplicates.size() > 1) {
-                errors.add(new TestError(
-                        parentTest,
-                        Severity.WARNING,
-                        tr("Nodes at same position"),
-                        DUPLICATE_NODE,
-                        duplicates
-                        ));
+                errors.add(TestError.builder(parentTest, Severity.WARNING, DUPLICATE_NODE)
+                        .message(tr("Nodes at same position"))
+                        .primitives(duplicates)
+                        .build());
             }
         }
         return errors;

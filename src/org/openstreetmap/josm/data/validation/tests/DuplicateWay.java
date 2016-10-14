@@ -122,7 +122,10 @@ public class DuplicateWay extends Test {
         super.endTest();
         for (Set<OsmPrimitive> duplicated : ways.values()) {
             if (duplicated.size() > 1) {
-                TestError testError = new TestError(this, Severity.ERROR, tr("Duplicated ways"), DUPLICATE_WAY, duplicated);
+                TestError testError = TestError.builder(this, Severity.ERROR, DUPLICATE_WAY)
+                        .message(tr("Duplicated ways"))
+                        .primitives(duplicated)
+                        .build();
                 errors.add(testError);
             }
         }
@@ -149,7 +152,10 @@ public class DuplicateWay extends Test {
                 if (skip) {
                     continue;
                 }
-                TestError testError = new TestError(this, Severity.WARNING, tr("Ways with same position"), SAME_WAY, sameway);
+                TestError testError = TestError.builder(this, Severity.WARNING, SAME_WAY)
+                        .message(tr("Ways with same position"))
+                        .primitives(sameway)
+                        .build();
                 errors.add(testError);
             }
         }

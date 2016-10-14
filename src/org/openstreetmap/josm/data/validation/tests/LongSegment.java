@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.Main;
@@ -39,10 +40,10 @@ public class LongSegment extends Test {
         Double length = w.getLongestSegmentLength();
         if (length > maxlength) {
             length /= 1000.0;
-            errors.add(new TestError(this, Severity.WARNING, tr("Long segments"),
-                    tr("Very long segment of {0} kilometers", length.intValue()),
-                    String.format("Very long segment of %d kilometers", length.intValue()),
-                    LONG_SEGMENT, w));
+            errors.add(TestError.builder(this, Severity.WARNING, LONG_SEGMENT)
+                    .message(tr("Long segments"), marktr("Very long segment of {0} kilometers"), length.intValue())
+                    .primitives(w)
+                    .build());
         }
     }
 
