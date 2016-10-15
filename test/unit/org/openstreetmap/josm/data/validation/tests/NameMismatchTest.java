@@ -76,4 +76,13 @@ public class NameMismatchTest {
         errors = test("node name=\"Italia - Italien - Italy\" name:it=Italia name:de=Italien name:en=Italy");
         assertEquals(0, errors.size());
     }
+
+    /**
+     * Test that {@code name:etymology:wikidata} does not count.
+     */
+    @Test
+    public void testEtymologyWikidata() {
+        final List<TestError> errors = test("node name=Foo name:etymology:wikidata=Bar");
+        assertEquals(0, errors.size());
+    }
 }
