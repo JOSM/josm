@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,11 +47,23 @@ public class ValidatorTreePanelTest {
                         .primitives(new Node(1))
                         .build(),
                 TestError.builder(null, Severity.WARNING, 0)
-                        .message("warn")
+                        .message("warn", "foo")
+                        .primitives(new Node(2))
+                        .build(),
+                TestError.builder(null, Severity.WARNING, 0)
+                        .message("warn", "bar")
                         .primitives(new Node(2))
                         .build())));
         assertNotNull(vtp);
-        assertEquals(2, vtp.getErrors().size());
+        final Enumeration nodes = vtp.getRoot().breadthFirstEnumeration();
+        assertEquals("", nodes.nextElement().toString());
+        assertEquals("Errors (1)", nodes.nextElement().toString());
+        assertEquals("Warnings (2)", nodes.nextElement().toString());
+        assertEquals("err (1)", nodes.nextElement().toString());
+        assertEquals("warn (2)", nodes.nextElement().toString());
+        nodes.nextElement();
+        assertEquals("bar (1)", nodes.nextElement().toString());
+        assertEquals("foo (1)", nodes.nextElement().toString());
         vtp.setVisible(true);
         vtp.setVisible(false);
         Node n = new Node(10);
