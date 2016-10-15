@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.HashSet;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -66,14 +65,13 @@ public class NameMismatch extends Test.TagTest {
     public void check(OsmPrimitive p) {
         Set<String> names = new HashSet<>();
 
-        for (Entry<String, String> entry : p.getKeys().entrySet()) {
-            if (entry.getKey().startsWith("name:")) {
-                String n = entry.getValue();
+        p.getKeys().forEach((key, n) -> {
+            if (key.startsWith("name:") && !"name:etymology:wikidata".equals(key)) {
                 if (n != null) {
                     names.add(n);
                 }
             }
-        }
+        });
 
         if (names.isEmpty()) return;
 
