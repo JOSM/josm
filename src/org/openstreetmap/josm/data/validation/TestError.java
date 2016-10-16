@@ -139,6 +139,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
          */
         public Builder primitives(Collection<? extends OsmPrimitive> primitives) {
             CheckParameterUtil.ensureThat(this.primitives == null, "primitives already set");
+            CheckParameterUtil.ensureParameterNotNull(primitives, "primitives");
             this.primitives = primitives;
             if (this.highlighted == null) {
                 this.highlighted = primitives;
@@ -165,6 +166,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
          * @see ValidatorVisitor#visit(OsmPrimitive)
          */
         public Builder highlight(Collection<? extends OsmPrimitive> highlighted) {
+            CheckParameterUtil.ensureParameterNotNull(highlighted, "highlighted");
             this.highlighted = highlighted;
             return this;
         }
@@ -177,6 +179,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
          * @see ValidatorVisitor#visit(WaySegment)
          */
         public Builder highlightWaySegments(Collection<WaySegment> highlighted) {
+            CheckParameterUtil.ensureParameterNotNull(highlighted, "highlighted");
             this.highlighted = highlighted;
             return this;
         }
@@ -189,6 +192,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
          * @see ValidatorVisitor#visit(List)
          */
         public Builder highlightNodePairs(Collection<List<Node>> highlighted) {
+            CheckParameterUtil.ensureParameterNotNull(highlighted, "highlighted");
             this.highlighted = highlighted;
             return this;
         }
