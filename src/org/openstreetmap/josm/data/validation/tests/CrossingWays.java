@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +65,8 @@ public abstract class CrossingWays extends Test {
 
         @Override
         boolean ignoreWaySegmentCombination(Way w1, Way w2) {
+            if (w1 == w2)
+                return false;
             if (!Objects.equals(getLayer(w1), getLayer(w2))) {
                 return true;
             }
@@ -171,6 +172,38 @@ public abstract class CrossingWays extends Test {
     }
 
     /**
+     * Self crossing ways test (for all the rest)
+     */
+    public static class SelfCrossing extends CrossingWays {
+        CrossingWays.Ways normalTest = new Ways();
+        CrossingWays.Barrier barrierTest = new Barrier();
+        CrossingWays.Boundaries boundariesTest = new Boundaries();
+
+        /**
+         * Constructs a new SelfIntersection test.
+         */
+        public SelfCrossing() {
+            super(tr("Self crossing"));
+        }
+
+        @Override
+        public boolean isPrimitiveUsable(OsmPrimitive p) {
+            return super.isPrimitiveUsable(p) && !(normalTest.isPrimitiveUsable(p) || barrierTest.isPrimitiveUsable(p)
+                    || boundariesTest.isPrimitiveUsable(p));
+        }
+
+        @Override
+        boolean ignoreWaySegmentCombination(Way w1, Way w2) {
+            return (w1 != w2); // should not happen
+        }
+
+        @Override
+        String createMessage(Way w1, Way w2) {
+            return tr("Self-crossing ways");
+        }
+    }
+
+    /**
      * Constructs a new {@code CrossingWays} test.
      * @param title The test title
      * @since 6691
@@ -220,6 +253,11 @@ public abstract class CrossingWays extends Test {
 
     @Override
     public void visit(Way w) {
+        if (this instanceof SelfCrossing) {
+            // free memory, we are not interested in previous ways
+            cellSegments.clear();
+            seenWays.clear();
+        }
 
         int nodesSize = w.getNodesCount();
         for (int i = 0; i < nodesSize - 1; i++) {
@@ -230,7 +268,7 @@ public abstract class CrossingWays extends Test {
                 Main.warn("Crossing ways test skipped "+es1);
                 continue;
             }
-            for (List<WaySegment> segments : getSegments(en1, en2)) {
+            for (List<WaySegment> segments : getSegments(cellSegments, en1, en2)) {
                 for (WaySegment es2 : segments) {
                     List<Way> prims;
                     List<WaySegment> highlight;
@@ -239,7 +277,10 @@ public abstract class CrossingWays extends Test {
                         continue;
                     }
 
-                    prims = Arrays.asList(es1.way, es2.way);
+                    prims = new ArrayList<>();
+                    prims.add(es1.way);
+                    if (es1.way != es2.way)
+                        prims.add(es2.way);
                     if ((highlight = seenWays.get(prims)) == null) {
                         highlight = new ArrayList<>();
                         highlight.add(es1);
@@ -265,12 +306,12 @@ public abstract class CrossingWays extends Test {
     /**
      * Returns all the cells this segment crosses.  Each cell contains the list
      * of segments already processed
-     *
+     * @param cellSegments map with already collected way segments
      * @param n1 The first EastNorth
      * @param n2 The second EastNorth
      * @return A list with all the cells the segment crosses
      */
-    private List<List<WaySegment>> getSegments(EastNorth n1, EastNorth n2) {
+    public static List<List<WaySegment>> getSegments(Map<Point2D, List<WaySegment>> cellSegments, EastNorth n1, EastNorth n2) {
 
         List<List<WaySegment>> cells = new ArrayList<>();
         for (Point2D cell : ValUtil.getSegmentCells(n1, n2, OsmValidator.griddetail)) {
