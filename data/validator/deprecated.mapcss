@@ -525,7 +525,8 @@ way[oneway=-1] {
 
 /* see #11234 */
 *[/=|\+|\/|&|<|>|;|'|"|%|#|@|\\|,|\.|\{|\}|\?|\*|\^|\$/] {
-  throwWarning: tr("key with uncommon character");
+  throwWarning: tr("{0}", "{0.key}");
+  group: tr("key with uncommon character");
 }
 
 /* see #11330 */
