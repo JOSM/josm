@@ -399,7 +399,7 @@ public class MultipolygonTest extends Test {
         if (!primitives.contains(r)) {
             for (OsmPrimitive p : primitives) {
                 if (!p.isIncomplete()) {
-                    return null;
+                    return primitives;
                 }
             }
             // Diamond operator does not work with Java 9 here
