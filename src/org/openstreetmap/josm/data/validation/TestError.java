@@ -140,6 +140,9 @@ public class TestError implements Comparable<TestError>, DataSetListener {
         public Builder primitives(Collection<? extends OsmPrimitive> primitives) {
             CheckParameterUtil.ensureThat(this.primitives == null, "primitives already set");
             this.primitives = primitives;
+            if (this.highlighted == null) {
+                this.highlighted = primitives;
+            }
             return this;
         }
 
@@ -162,7 +165,6 @@ public class TestError implements Comparable<TestError>, DataSetListener {
          * @see ValidatorVisitor#visit(OsmPrimitive)
          */
         public Builder highlight(Collection<? extends OsmPrimitive> highlighted) {
-            CheckParameterUtil.ensureThat(this.highlighted == null, "highlighted already set");
             this.highlighted = highlighted;
             return this;
         }
@@ -175,7 +177,6 @@ public class TestError implements Comparable<TestError>, DataSetListener {
          * @see ValidatorVisitor#visit(WaySegment)
          */
         public Builder highlightWaySegments(Collection<WaySegment> highlighted) {
-            CheckParameterUtil.ensureThat(this.highlighted == null, "highlighted already set");
             this.highlighted = highlighted;
             return this;
         }
@@ -188,7 +189,6 @@ public class TestError implements Comparable<TestError>, DataSetListener {
          * @see ValidatorVisitor#visit(List)
          */
         public Builder highlightNodePairs(Collection<List<Node>> highlighted) {
-            CheckParameterUtil.ensureThat(this.highlighted == null, "highlighted already set");
             this.highlighted = highlighted;
             return this;
         }
