@@ -218,7 +218,8 @@ node:unconnected:in-downloaded-area[barrier=cycle_barrier],
 node:unconnected:in-downloaded-area[barrier=hampshire_gate],
 node:unconnected:in-downloaded-area[barrier=height_restrictor],
 node:unconnected:in-downloaded-area[barrier=debris] {
-  throwWarning: tr("{0} must be connected to a way", "{2.tag}");
+  throwWarning: tr("{0}", "{2.tag}");
+  group: tr("isolated node which must be connected to a way");
 }
 
 /* #11127 */
