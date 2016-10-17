@@ -4,6 +4,14 @@ package org.openstreetmap.josm.gui.mappaint;
 import java.util.Locale;
 import java.util.Objects;
 
+/**
+ * A MapCSS keyword.
+ *
+ * For example "<code>round</code>" is a keyword in
+ * <pre>linecap: round;</pre>
+ * Keywords are similar to a Java enum value. In accordance with the CSS
+ * specification, they are parsed case insensitive.
+ */
 public class Keyword {
     public final String val;
 

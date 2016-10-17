@@ -40,11 +40,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * This class manages the ElemStyles instance. The object you get with
- * getStyles() is read only, any manipulation happens via one of
- * the wrapper methods here. (readFromPreferences, moveStyles, ...)
+ * This class manages the list of available map paint styles and gives access to
+ * the ElemStyles singleton.
  *
- * On change, mapPaintSylesUpdated() is fired for all listeners.
+ * On change, {@link MapPaintSylesUpdateListener#mapPaintStylesUpdated()} is fired
+ * for all listeners.
  */
 public final class MapPaintStyles {
 
@@ -59,8 +59,12 @@ public final class MapPaintStyles {
     private static ElemStyles styles = new ElemStyles();
 
     /**
-     * Returns the {@link ElemStyles} instance.
-     * @return the {@code ElemStyles} instance
+     * Returns the {@link ElemStyles} singleton instance.
+     *
+     * The returned object is read only, any manipulation happens via one of
+     * the other wrapper methods in this class. ({@link #readFromPreferences},
+     * {@link #moveStyles}, ...)
+     * @return the {@code ElemStyles} singleton instance
      */
     public static ElemStyles getStyles() {
         return styles;
