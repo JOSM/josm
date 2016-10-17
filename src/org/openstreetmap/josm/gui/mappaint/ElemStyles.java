@@ -34,6 +34,26 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * Generates a list of {@link StyleElement}s for a primitive, to
+ * be drawn on the map.
+ * There are several steps to derive the list of elements for display:
+ * <ol>
+ * <li>{@link #generateStyles(OsmPrimitive, double, boolean)} applies the
+ * {@link StyleSource}s one after another to get a key-value map of MapCSS
+ * properties. Then a preliminary set of StyleElements is derived from the
+ * properties map.</li>
+ * <li>{@link #getImpl(OsmPrimitive, double, NavigatableComponent)} handles the
+ * different forms of multipolygon tagging.</li>
+ * <li>{@link #getStyleCacheWithRange(OsmPrimitive, double, NavigatableComponent)}
+ * adds a default StyleElement for primitives that would be invisible otherwise.
+ * (For example untagged nodes and ways.)</li>
+ * </ol>
+ * The results are cached with respect to the current scale.
+ *
+ * Use {@link #setStyleSources(Collection)} to select the StyleSources that are
+ * applied.
+ */
 public class ElemStyles implements PreferenceChangedListener {
     private final List<StyleSource> styleSources;
     private boolean drawMultipolygon;
