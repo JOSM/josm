@@ -10,6 +10,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Point2D.Double;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.swing.JComponent;
 
@@ -192,7 +193,11 @@ public final class MapViewState implements Serializable {
      * @since 10827
      */
     public MapViewPoint getPointFor(Node node) {
-        return getPointFor(node.getEastNorth(getProjection()));
+        try {
+            return getPointFor(node.getEastNorth(getProjection()));
+        } catch (RuntimeException e) {
+            throw BugReport.intercept(e).put("node", node);
+        }
     }
 
     /**
@@ -582,8 +587,7 @@ public final class MapViewState implements Serializable {
         private final EastNorth eastNorth;
 
         MapViewEastNorthPoint(EastNorth eastNorth) {
-            CheckParameterUtil.ensureParameterNotNull(eastNorth, "eastNorth");
-            this.eastNorth = eastNorth;
+            this.eastNorth = Objects.requireNonNull(eastNorth, "eastNorth");
         }
 
         @Override
