@@ -67,7 +67,7 @@ import org.apache.commons.logging.LogConfigurationException;
  * <code>"simplelog.properties"</code>, and includes any matching definitions
  * from this resource (if it exists).
  *
- * @version $Id: SimpleLog.java 1765341 2016-10-17 16:56:41Z ggregory $
+ * @version $Id: SimpleLog.java 1765376 2016-10-17 21:52:30Z ggregory $
  */
 public class SimpleLog implements Log, Serializable {
 
@@ -162,7 +162,7 @@ public class SimpleLog implements Log, Serializable {
         if (null != in) {
             try {
                 simpleLogProps.load(in);
-            } catch (java.io.IOException e) {
+            } catch (IOException e) {
                 // ignored
             } finally {
                 try {
