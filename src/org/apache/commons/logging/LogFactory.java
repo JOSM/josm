@@ -40,7 +40,7 @@ import java.util.Properties;
  * based on the SAXParserFactory and DocumentBuilderFactory implementations
  * (corresponding to the JAXP pluggability APIs) found in Apache Xerces.
  *
- * @version $Id: LogFactory.java 1606041 2014-06-27 11:56:59Z tn $
+ * @version $Id: LogFactory.java 1765341 2016-10-17 16:56:41Z ggregory $
  */
 public abstract class LogFactory {
     // Implementation note re AccessController usage
@@ -539,8 +539,12 @@ public abstract class LogFactory {
                         rd = new BufferedReader(new InputStreamReader(is));
                     }
 
-                    String factoryClassName = rd.readLine();
-                    rd.close();
+                    String factoryClassName;
+                    try {
+                        factoryClassName = rd.readLine();
+                    } finally {
+                        rd.close();
+                    }
 
                     if (factoryClassName != null && ! "".equals(factoryClassName)) {
                         if (isDiagnosticsEnabled()) {

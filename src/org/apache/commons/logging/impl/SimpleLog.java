@@ -17,6 +17,7 @@
 
 package org.apache.commons.logging.impl;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
@@ -66,7 +67,7 @@ import org.apache.commons.logging.LogConfigurationException;
  * <code>"simplelog.properties"</code>, and includes any matching definitions
  * from this resource (if it exists).
  *
- * @version $Id: SimpleLog.java 1747117 2016-06-07 02:19:52Z ggregory $
+ * @version $Id: SimpleLog.java 1765341 2016-10-17 16:56:41Z ggregory $
  */
 public class SimpleLog implements Log, Serializable {
 
@@ -158,12 +159,17 @@ public class SimpleLog implements Log, Serializable {
     static {
         // Add props from the resource simplelog.properties
         InputStream in = getResourceAsStream("simplelog.properties");
-        if(null != in) {
+        if (null != in) {
             try {
                 simpleLogProps.load(in);
-                in.close();
-            } catch(java.io.IOException e) {
+            } catch (java.io.IOException e) {
                 // ignored
+            } finally {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                    // ignored
+                }
             }
         }
 
