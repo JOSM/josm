@@ -36,7 +36,7 @@ public class AddCommand extends Command {
      * @param osm The primitive to add
      */
     public AddCommand(OsmPrimitive osm) {
-        this.osm = osm;
+        this.osm = Objects.requireNonNull(osm, "osm");
     }
 
     /**
@@ -46,7 +46,7 @@ public class AddCommand extends Command {
      */
     public AddCommand(OsmDataLayer layer, OsmPrimitive osm) {
         super(layer);
-        this.osm = osm;
+        this.osm = Objects.requireNonNull(osm, "osm");
     }
 
     protected static final void checkNodeStyles(OsmPrimitive osm) {
