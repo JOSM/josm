@@ -96,12 +96,14 @@ way[footway=both],
 way[footway=no] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "sidewalk";
+  group: tr("deprecated tagging");
   fixChangeKey: "footway => sidewalk";
   set footway_to_sidewalk;
 }
 way[footway=none] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
   suggestAlternative: "sidewalk=no";
+  group: tr("deprecated tagging");
   fixRemove: "footway";
   fixAdd: "sidewalk=no";
   set footway_to_sidewalk;
