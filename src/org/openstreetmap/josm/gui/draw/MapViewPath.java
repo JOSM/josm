@@ -202,7 +202,7 @@ public class MapViewPath extends MapPath2D {
 
     private class ClampingPathVisitor extends MapPath2D {
         private final MapViewRectangle clip;
-        private double strokeOffset;
+        private double strokeProgress;
         private final double strokeLength;
         private MapViewPoint lastMoveTo;
 
@@ -211,7 +211,7 @@ public class MapViewPath extends MapPath2D {
 
         ClampingPathVisitor(MapViewRectangle clip, double strokeOffset, double strokeLength) {
             this.clip = clip;
-            this.strokeOffset = strokeOffset;
+            this.strokeProgress = Math.min(strokeLength - strokeOffset, 0);
             this.strokeLength = strokeLength;
         }
 
@@ -268,7 +268,7 @@ public class MapViewPath extends MapPath2D {
                 lineTo(exit);
                 cursorIsActive = exit.equals(next);
             }
-            strokeOffset += cursor.distanceToInView(next);
+            strokeProgress += cursor.distanceToInView(next);
 
             cursor = next;
         }
@@ -281,7 +281,7 @@ public class MapViewPath extends MapPath2D {
             }
 
             double distance = Math.sqrt(distanceSq);
-            double offset = ((strokeOffset + distance)) % strokeLength;
+            double offset = ((strokeProgress + distance)) % strokeLength;
             if (offset < 0.01) {
                 return entry;
             }
