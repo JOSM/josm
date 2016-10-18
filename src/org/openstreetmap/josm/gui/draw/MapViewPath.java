@@ -1,8 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.draw;
 
-import java.awt.geom.Point2D;
-import java.text.MessageFormat;
+import java.awt.BasicStroke;
+import java.awt.Shape;
+import java.awt.Stroke;
+import java.awt.geom.PathIterator;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
@@ -11,10 +13,12 @@ import org.openstreetmap.josm.gui.MapViewState;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
 
+
 /**
  * This is a version of a java Path2D that allows you to add points to it by simply giving their east/north, lat/lon or node coordinates.
  * <p>
- * Paths far outside the view area are automatically clipped to increase performance.
+ * It is possible to clip the part of the path that is outside the view. This is useful when drawing dashed lines. Those lines use up a lot of
+ * performance if the zoom level is high and the part outside the view is long. See {@link #computeClippedLine(Stroke)}.
  * @author Michael Zangl
  * @since 10875
  */
@@ -90,33 +94,7 @@ public class MapViewPath extends MapPath2D {
 
     @Override
     public MapViewPath lineTo(MapViewPoint p) {
-        Point2D currentPoint = getCurrentPoint();
-        if (currentPoint == null) {
-            throw new IllegalStateException("Path not started yet.");
-        }
-        MapViewPoint current = state.getForView(currentPoint.getX(), currentPoint.getY());
-        MapViewPoint end = p;
-
-        MapViewRectangle clip = state.getViewClipRectangle();
-        MapViewPoint entry = clip.getLineEntry(current, end);
-        if (entry == null) {
-            // skip this one - outside the view.
-            super.moveTo(end);
-        } else {
-            if (!entry.equals(current)) {
-                super.moveTo(entry);
-            }
-            MapViewPoint exit = clip.getLineEntry(end, current);
-            if (exit == null) {
-                throw new AssertionError(MessageFormat.format(
-                        "getLineEntry produces wrong results when doing the reverse lookup. Attempt: {0}->{1}",
-                        end.getEastNorth(), current.getEastNorth()));
-            }
-            super.lineTo(exit);
-            if (!exit.equals(end)) {
-                super.moveTo(end);
-            }
-        }
+        super.lineTo(p);
         return this;
     }
 
@@ -189,5 +167,127 @@ public class MapViewPath extends MapPath2D {
         if (first != null) {
             lineTo(first);
         }
+    }
+
+    /**
+     * Compute a line that is similar to the current path expect for that parts outside the screen are skipped using moveTo commands.
+     *
+     * The line is computed in a way that dashes stay in their place when moving the view.
+     *
+     * The resulting line is not intended to fill areas.
+     * @param stroke The stroke to compute the line for.
+     * @return The new line shape.
+     */
+    public Shape computeClippedLine(Stroke stroke) {
+        if (stroke instanceof BasicStroke && ((BasicStroke) stroke).getDashArray() != null) {
+            float length = 0;
+            for (float f : ((BasicStroke) stroke).getDashArray()) {
+                length += f;
+            }
+            return computeClippedLine(((BasicStroke) stroke).getDashPhase(), length);
+        } else {
+            return computeClippedLine(0, 0);
+        }
+    }
+
+    private Shape computeClippedLine(double strokeOffset, double strokeLength) {
+        ClampingPathVisitor path = new ClampingPathVisitor(state.getViewClipRectangle(), strokeOffset, strokeLength);
+        if (path.visit(getPathIterator(null))) {
+            return path;
+        } else {
+            // could not clip the path.
+            return this;
+        }
+    }
+
+    private class ClampingPathVisitor extends MapPath2D {
+        private final MapViewRectangle clip;
+        private double strokeOffset;
+        private final double strokeLength;
+        private MapViewPoint lastMoveTo;
+
+        private MapViewPoint cursor;
+        private boolean cursorIsActive = false;
+
+        ClampingPathVisitor(MapViewRectangle clip, double strokeOffset, double strokeLength) {
+            this.clip = clip;
+            this.strokeOffset = strokeOffset;
+            this.strokeLength = strokeLength;
+        }
+
+        /**
+         * Append a path to this one. The path is clipped to the current view.
+         * @param it The iterator
+         * @return true if adding the path was successful.
+         */
+        public boolean visit(PathIterator it) {
+            double[] coords = new double[8];
+            while (!it.isDone()) {
+                int type = it.currentSegment(coords);
+                switch (type) {
+                case PathIterator.SEG_CLOSE:
+                    visitClose();
+                    break;
+                case PathIterator.SEG_LINETO:
+                    visitLineTo(coords[0], coords[1]);
+                    break;
+                case PathIterator.SEG_MOVETO:
+                    visitMoveTo(coords[0], coords[1]);
+                    break;
+                default:
+                    // cannot handle this shape - this should be very rare. We let Java2D do the clipping.
+                    return false;
+                }
+                it.next();
+            }
+            return true;
+        }
+
+        void visitClose() {
+            drawLineTo(lastMoveTo);
+        }
+
+        void visitMoveTo(double x, double y) {
+            MapViewPoint point = state.getForView(x, y);
+            lastMoveTo = point;
+            cursor = point;
+        }
+
+        void visitLineTo(double x, double y) {
+            drawLineTo(state.getForView(x, y));
+        }
+
+        private void drawLineTo(MapViewPoint next) {
+            MapViewPoint entry = clip.getLineEntry(cursor, next);
+            if (entry != null) {
+                MapViewPoint exit = clip.getLineEntry(next, cursor);
+                if (!cursorIsActive || !entry.equals(cursor)) {
+                    entry = alignStrokeOffset(entry, cursor);
+                    moveTo(entry);
+                }
+                lineTo(exit);
+                cursorIsActive = exit.equals(next);
+            }
+            strokeOffset += cursor.distanceToInView(next);
+
+            cursor = next;
+        }
+
+        private MapViewPoint alignStrokeOffset(MapViewPoint entry, MapViewPoint originalStart) {
+            double distanceSq = entry.distanceToInViewSq(originalStart);
+            if (distanceSq < 0.01 || strokeLength <= 0.001) {
+                // don't move if there is nothing to move.
+                return entry;
+            }
+
+            double distance = Math.sqrt(distanceSq);
+            double offset = ((strokeOffset + distance)) % strokeLength;
+            if (offset < 0.01) {
+                return entry;
+            }
+
+            return entry.interpolate(originalStart, offset / distance);
+        }
+
     }
 }

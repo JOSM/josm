@@ -552,7 +552,7 @@ public final class MapViewState implements Serializable {
          * @return The new point
          * @since 10874
          */
-        public MapViewPoint interpolate(MapViewPoint p1, int i) {
+        public MapViewPoint interpolate(MapViewPoint p1, double i) {
             return new MapViewViewPoint((1 - i) * getInViewX() + i * p1.getInViewX(), (1 - i) * getInViewY() + i * p1.getInViewY());
         }
     }

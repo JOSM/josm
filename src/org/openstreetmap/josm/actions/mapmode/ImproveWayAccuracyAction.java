@@ -232,11 +232,12 @@ public class ImproveWayAccuracyAction extends MapMode implements
             // Highlighting the targetWay in Selecting state
             // Non-native highlighting is used, because sometimes highlighted
             // segments are covered with others, which is bad.
-            g.setStroke(SELECT_TARGET_WAY_STROKE.get());
+            BasicStroke stroke = SELECT_TARGET_WAY_STROKE.get();
+            g.setStroke(stroke);
 
             List<Node> nodes = targetWay.getNodes();
 
-            g.draw(new MapViewPath(mv).append(nodes, false));
+            g.draw(new MapViewPath(mv).append(nodes, false).computeClippedLine(stroke));
 
         } else if (state == State.IMPROVING) {
             // Drawing preview lines and highlighting the node
@@ -300,7 +301,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
                     b.lineTo(p2);
                 }
             }
-            g.draw(b);
+            g.draw(b.computeClippedLine(g.getStroke()));
 
             // Highlighting candidateNode
             if (candidateNode != null) {
@@ -312,7 +313,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
                 b.reset();
                 drawIntersectingWayHelperLines(mv, b);
                 g.setStroke(MOVE_NODE_INTERSECTING_STROKE.get());
-                g.draw(b);
+                g.draw(b.computeClippedLine(g.getStroke()));
             }
 
         }
