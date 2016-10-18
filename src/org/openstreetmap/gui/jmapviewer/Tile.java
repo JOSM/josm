@@ -126,7 +126,7 @@ public class Tile {
         final CachedCallable<BufferedImage> tmpImage = new CachedCallable<>(new Callable<BufferedImage>() {
             @Override
             public BufferedImage call() throws Exception {
-                return new BufferedImage(source.getTileSize(), source.getTileSize(), BufferedImage.TYPE_INT_RGB);
+                return new BufferedImage(source.getTileSize(), source.getTileSize(), BufferedImage.TYPE_INT_ARGB);
             }
         });
 
