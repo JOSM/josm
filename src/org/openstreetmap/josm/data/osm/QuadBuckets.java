@@ -500,7 +500,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     class QuadBucketIterator implements Iterator<T> {
         private QBLevel<T> currentNode;
         private int contentIndex;
-        private int iteratedOver;
         QuadBuckets<T> qb;
 
         final QBLevel<T> nextContentNode(QBLevel<T> q) {
@@ -521,7 +520,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             } else {
                 currentNode = nextContentNode(qb.root);
             }
-            iteratedOver = 0;
             this.qb = qb;
         }
 
@@ -553,7 +551,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             if (ret == null)
                 throw new NoSuchElementException();
             contentIndex++;
-            iteratedOver++;
             return ret;
         }
 
