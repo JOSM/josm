@@ -18,6 +18,7 @@
 *[wikipedia =~ /https?:\/\//] {
   throwWarning: tr("deprecated format for wikipedia tag");
   suggestAlternative: tr("''wikipedia''=''language:page title''");
+  group: tr("deprecated tagging");
   assertMatch: "node wikipedia=http://en.wikipedia.org/wiki/OpenStreetMap";
   assertNoMatch: "node wikipedia=en:OpenStreetMap";
 }

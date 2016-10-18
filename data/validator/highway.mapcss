@@ -54,6 +54,7 @@ way[highway=unclassified][!name][noname!=yes] {
 
 way.major_road[!ref] {
   throwOther: tr("highway without a reference");
+  group: tr("missing tag");
   assertMatch: "way highway=primary";
   assertNoMatch: "way highway=primary ref=123";
 }
@@ -119,9 +120,11 @@ way[footway][footway!=sidewalk][footway!=crossing]!.footway_to_sidewalk { /* do 
 way[railway =~ /^(light_rail|miniature|narrow_gauge|preserved|rail)$/] > node { set .is_in_railway }
 way[highway =~ /^(bridleway|cycleway|footway|path|steps)$/] > node[railway != crossing].is_in_railway {
   throwWarning: tr("pedestrian railway crossing without {0}", "{0.tag}");
+  group: tr("missing tag");
   fixAdd: "railway=crossing";
 }
 way[highway =~ /^(bus_guideway|living_street|motorway|pedestrian|primary|raceway|residential|road|secondary|service|tertiary|track|trunk|unclassified)/] > node[railway != level_crossing].is_in_railway {
   throwWarning: tr("railway crossing without {0}", "{0.tag}");
+  group: tr("missing tag");
   fixAdd: "railway=level_crossing";
 }

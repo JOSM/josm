@@ -102,6 +102,7 @@ way[route=bus] {
 /* #12502 */
 node[leisure=park][natural=tree] {
   throwWarning: tr("{0} together with {1} on a node. Remove {0}.", "{0.tag}", "{1.tag}");
+  group: tr("suspicious tag combination");
   fixRemove: "leisure";
 }
 node[leisure=park][natural!=tree] {
@@ -287,4 +288,11 @@ way[waterway=~/^(stream|ditch|river|drain)$/]!:closed >[index=-1] node[natural!=
 way[natural=coastline] ∈ area[natural=water],
 way[natural=coastline] ∈ area[waterway=riverbank] {
   throwError: tr("Coastline inside {1}", "{0.tag}");
+}
+
+/* #10471 */
+way[waterway] > node[ford?] { set ford_on_waterway; }
+way[highway] > node[ford?] { set ford_on_highway; }
+node[ford?]:in-downloaded-area!.ford_on_waterway, node[ford?]:in-downloaded-area!.ford_on_highway {
+    throwWarning: tr("{0} should be on the node where {1} and {2} intersect", "ford", "highway", "waterway");
 }

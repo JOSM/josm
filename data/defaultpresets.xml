@@ -913,7 +913,7 @@
             <label text="Vehicles per use" />
             <space />
             <combo key="agricultural" text="Agricultural" values="yes,official,designated,destination,permissive,private,no" match="key" />
-            <combo key="emergency" text="Emergency vehicles" values="yes,official,designated,destination,permissive,private,no" match="keyvalue" />
+            <combo key="emergency" text="Emergency vehicles" values="yes,official,designated,destination,no" match="keyvalue" />
             <combo key="hov" text="High-occupancy vehicles (hov)" values="yes,official,designated,destination,permissive,private,no" match="key" />
             <combo key="psv" text="Public Service Vehicles (psv)" values="yes,official,designated,destination,permissive,private,no" match="key" />
             <combo key="tourist_bus" text="Tourist buses" values="yes,no" match="key" />

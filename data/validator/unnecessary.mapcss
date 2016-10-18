@@ -24,7 +24,7 @@ area:closed[shop    ][area?] {
 
 *[emergency=permissive] {
   /* see #9458 - emergency=permissive makes no sense */
-  throwWarning: tr("{0}={1} makes no sense", "emergency", "permissive");
+  throwWarning: tr("{0} makes no sense", "{0.tag");
   fixAdd: "emergency=yes";
   assertMatch: "way emergency=permissive";
   assertNoMatch: "way emergency=designated";
