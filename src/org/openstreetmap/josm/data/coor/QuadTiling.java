@@ -48,19 +48,6 @@ public final class QuadTiling {
         return new LatLon(y, x);
     }
 
-    static long xy2tile(long x, long y) {
-        long tile = 0;
-        int i;
-        for (i = NR_LEVELS-1; i >= 0; i--) {
-            long xbit = (x >> i) & 1;
-            long ybit = (y >> i) & 1;
-            tile <<= 2;
-            // Note that x is the MSB
-            tile |= (xbit << 1) | ybit;
-        }
-        return tile;
-    }
-
     static long lon2x(double lon) {
         long ret = (long) ((lon + 180.0) * WORLD_PARTS / 360.0);
         if (Utils.equalsEpsilon(ret, WORLD_PARTS)) {
@@ -75,34 +62,6 @@ public final class QuadTiling {
             ret--;
         }
         return ret;
-    }
-
-    public static long quadTile(LatLon coor) {
-        return xy2tile(lon2x(coor.lon()), lat2y(coor.lat()));
-    }
-
-    public static int index(int level, long quad) {
-        long mask = 0x00000003;
-        int totalShift = TILES_PER_LEVEL_SHIFT*(NR_LEVELS-level-1);
-        return (int) (mask & (quad >> totalShift));
-    }
-
-    /**
-     * Returns quad tiling index for given coordinates and level.
-     *
-     * @param coor coordinates
-     * @param level level
-     *
-     * @return quad tiling index for given coordinates and level.
-     * @since 2263
-     */
-    public static int index(LatLon coor, int level) {
-        // The nodes that don't return coordinates will all get stuck in a single tile.
-        // Hopefully there are not too many of them
-        if (coor == null)
-            return 0;
-
-        return index(coor.lat(), coor.lon(), level);
     }
 
     /**
