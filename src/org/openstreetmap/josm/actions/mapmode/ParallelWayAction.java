@@ -470,14 +470,14 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
             MapViewPath line = new MapViewPath(mv);
             line.moveTo(referenceSegment.getFirstNode());
             line.lineTo(referenceSegment.getSecondNode());
-            g.draw(line);
+            g.draw(line.computeClippedLine(g.getStroke()));
 
             g.setStroke(HELPER_LINE_STROKE.get());
             g.setColor(mainColor);
             line = new MapViewPath(mv);
             line.moveTo(helperLineStart);
             line.lineTo(helperLineEnd);
-            g.draw(line);
+            g.draw(line.computeClippedLine(g.getStroke()));
         }
     }
 

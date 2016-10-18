@@ -450,18 +450,18 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    private void displaySegments(Path2D path, Path2D orientationArrows, Path2D onewayArrows, Path2D onewayArrowsCasing,
+    private void displaySegments(MapViewPath path, Path2D orientationArrows, Path2D onewayArrows, Path2D onewayArrowsCasing,
             Color color, BasicStroke line, BasicStroke dashes, Color dashedColor) {
         g.setColor(isInactiveMode ? inactiveColor : color);
         if (useStrokes) {
             g.setStroke(line);
         }
-        g.draw(path);
+        g.draw(path.computeClippedLine(g.getStroke()));
 
         if (!isInactiveMode && useStrokes && dashes != null) {
             g.setColor(dashedColor);
             g.setStroke(dashes);
-            g.draw(path);
+            g.draw(path.computeClippedLine(dashes));
         }
 
         if (orientationArrows != null) {
@@ -1029,7 +1029,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param path path to draw
      * @param line line style
      */
-    private void drawPathHighlight(Path2D path, BasicStroke line) {
+    private void drawPathHighlight(MapViewPath path, BasicStroke line) {
         if (path == null)
             return;
         g.setColor(highlightColorTransparent);
