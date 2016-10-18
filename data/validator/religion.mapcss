@@ -2,6 +2,7 @@
 
 *[religion =~ /^(christian|jewish|muslim)$/][!denomination] {
   throwOther: tr("religion without denomination");
+  group: tr("missing tag");
   assertMatch: "node religion=christian";
   assertNoMatch: "node religion=christian denomination=catholic";
   assertNoMatch: "node religion=foobar";

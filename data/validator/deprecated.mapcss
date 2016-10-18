@@ -928,7 +928,8 @@ relation[/^..$/][!to] {
 
 /* #12494 */
 *[/^[^t][^i][^g].+_[0-9]$/][!/^note_[0-9]$/][!/^description_[0-9]$/] {
-  throwOther: tr("questionable key (ending with a number): {0}", "{0.key}");
+  throwOther: tr("{0}", "{0.key}");
+  group: tr("questionable key (ending with a number)");
   assertMatch: "way name_1=foo";
   assertNoMatch: "way note_2=foo";
   assertNoMatch: "way description_3=foo";

@@ -16,6 +16,7 @@ relation[type=public_transport][!public_transport],
 relation[type=waterway][!waterway],
 relation[type=enforcement][!enforcement] {
   throwWarning: tr("{0} relation without {0} tag", "{1.key}");
+  group: tr("missing tag");
   assertMatch: "relation type=route";
   assertNoMatch: "relation type=route route=train";
   assertMatch: "relation type=route_master";

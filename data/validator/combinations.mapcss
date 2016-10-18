@@ -76,6 +76,7 @@ way[junction                   ][!highway][junction!=yes],
 *[source:addr                  ][!/^addr:/],
 *[source:maxspeed              ][!/^maxspeed:?/] {
   throwWarning: tr("{0} without {1}", "{0.key}", "{1.key}");
+  group: tr("missing tag");
   assertMatch: "way lanes=42";
   assertNoMatch: "way lanes=42 highway=unclassified";
   assertMatch: "node source:addr:postcode=postman";
@@ -89,6 +90,7 @@ way[junction                   ][!highway][junction!=yes],
 *[leaf_type ][!leaf_cycle],
 *[leaf_cycle][!leaf_type] {
   throwOther: tr("{0} without {1}", "{0.key}", "{1.key}");
+  group: tr("missing tag");
 }
 
 /* {0.key} without {1.tag} */
@@ -108,12 +110,14 @@ way[junction                   ][!highway][junction!=yes],
 *[cutline                      ][man_made!=cutline],
 *[bunker_type                  ][military!=bunker] {
   throwWarning: tr("{0} without {1}", "{0.key}", "{1.tag}");
+  group: tr("missing tag");
 }
 
 /* {0.key} without {1.tag} or {2.tag} */
 *[substation                   ][power!=substation][pipeline!=substation],
 *[reservoir_type               ][landuse!=reservoir][water!=reservoir] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.tag}", "{2.tag}");
+  group: tr("missing tag");
 }
 
 /* {0.tag} without {1.key} (warning level) */
@@ -128,6 +132,7 @@ relation[route=ski][!piste:type][type=route],
 *[power=generator][!generator:source],
 *[amenity=place_of_worship][!religion] {
   throwWarning: tr("{0} without {1}", "{0.tag}", "{1.key}");
+  group: tr("missing tag");
 }
 
 /* {0.tag} without {1.key} (info level) */
@@ -143,6 +148,7 @@ way[power=cable                ][!voltage],
 *[amenity=parking              ][!parking],
 *[amenity=parking_entrance     ][!parking] {
   throwOther: tr("{0} without {1}", "{0.tag}", "{1.key}");
+  group: tr("missing tag");
   assertMatch: "way power=line";
   assertNoMatch: "way power=line voltage=1";
   assertNoMatch: "way power=switch";
@@ -157,45 +163,53 @@ way[power=cable                ][!voltage],
 /* {0.key} without {1.key} or {2.key} */
 way[oneway][!highway][!railway] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.key}");
+  group: tr("missing tag");
 }
 
 /* {0.key} without {1.key} or {2.tag} */
 *[smoothness                   ][!highway][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking|bicycle_parking)$/],
 *[segregated                   ][!highway][railway!=crossing] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.tag}");
+  group: tr("missing tag");
 }
 
 /* {0.tag} without {1.tag} (info level) see #11600 #11393 #11850 */
 *[highway=motorway][!oneway][junction!=roundabout],
 *[highway=motorway_link][!oneway][junction!=roundabout] {
   throwOther: tr("{0} without {1}", "{0.tag}", "{1.tag}");
+  group: tr("missing tag");
 }
 
 /* {0.tag} without {1.tag} or {2.tag} */
 *[amenity=recycling][recycling_type!=container][recycling_type!=centre] {
   throwWarning: tr("{0} without {1} or {2}", "{0.tag}", "{1.tag}", "{2.tag}");
+  group: tr("missing tag");
 }
 
 /* {0.key} without {1.key}, {2.tag} or {3.tag} */
 *[intermittent                 ][!waterway][natural!~/^(water|spring)$/][ford!=yes],
 *[boat                         ][!waterway][natural!=water][landuse!=basin] {
   throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.tag}", "{3.tag}");
+  group: tr("missing tag");
 }
 
 /* {0.key} without {1.key}, {2.key} or {3.key} */
 *[snowplowing                  ][!highway][!amenity][!leisure] {
   throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.key}", "{3.key}");
+  group: tr("missing tag");
 }
 
 /* {0.key} without {1.key}, {2.key} or {3.tag} */
 *[incline                      ][!highway][!railway][aeroway!~/^(runway|taxiway)$/],
 *[toll                         ][!highway][!barrier][route!~/^(ferry|road)$/] {
   throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.key}", "{3.tag}");
+  group: tr("missing tag");
 }
 
 /* {0.tag} together with {1.key}, see #10837 */
 *[noname?][name] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.key}");
+  group: tr("suspicious tag combination");
 }
 
 /* {0.tag} together with {1.key}, see #9389, #11977, #13156 */
@@ -204,22 +218,26 @@ way[oneway=yes][/:forward/][!traffic_sign:forward][bicycle:forward!=use_sidepath
 way[oneway=-1 ][/:backward/][!traffic_sign:backward][bicycle:backward!=use_sidepath],
 way[oneway=-1 ][/:forward/][!traffic_sign:forward][bicycle:forward!=use_sidepath] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.key}");
+  group: tr("suspicious tag combination");
 }
 
 /* {0.tag} together with {1.tag} (info level), see #9696 */
 *[highway=footway][oneway=no] {
   throwOther: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  group: tr("suspicious tag combination");
 }
 
 /* {0.tag} together with {1.tag}, see #10186 */
 *[highway=footway][bicycle=designated] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  group: tr("suspicious tag combination");
 }
 
 /* #11127, #13727 */
 way[waterway][bridge=yes][waterway!=weir] {
   throwWarning: tr("{0} together with {1}", "{0.key}", "{1.tag}");
   suggestAlternative: "bridge=aqueduct";
+  group: tr("suspicious tag combination");
   fixAdd: "bridge=aqueduct";
 }
 way[waterway=weir][bridge=yes][highway] {
@@ -227,6 +245,7 @@ way[waterway=weir][bridge=yes][highway] {
   suggestAlternative: "waterway=weir + ford=yes";
   suggestAlternative: "waterway=dam";
   suggestAlternative: tr("two objects, one with {0} and one with {1} + {2} + {3}", "{0.tag}", "{2.key}", "{1.tag}", "layer");
+  group: tr("suspicious tag combination");
 }
 
 /* only {0.key}, see #11104 #12422 */
@@ -235,11 +254,13 @@ way[waterway=weir][bridge=yes][highway] {
 *[ref][eval(number_of_tags()) = 1],
 *[lit][eval(number_of_tags()) = 1] {
   throwWarning: tr("incomplete object: only {0}", "{0.key}");
+  group: tr("missing tag");
 }
 /* only {0.key} and {1.key}, see #11104 */
 *[name][area][eval(number_of_tags()) = 2],
 *[name][ref][eval(number_of_tags()) = 2] {
   throwWarning: tr("incomplete object: only {0} and {1}", "{0.key}", "{1.key}");
+  group: tr("missing tag");
 }
 
 /* #9811, #11491, #12865 */
@@ -247,23 +268,29 @@ way[waterway=weir][bridge=yes][highway] {
 *[boundary][/^addr:/],
 *[highway][/^addr:/][highway!=services][highway!=rest_area][!"addr:postcode"] {
   throwWarning: tr("{0} together with addr:*", "{0.key}");
+  group: tr("suspicious tag combination");
 }
 *[!highway][postal_code]["addr:postcode"][postal_code=*"addr:postcode"] {
   throwWarning: tr("{0} together with {1}", "{1.key}", "{2.key}");
+  group: tr("suspicious tag combination");
 }
 *[!highway][postal_code]["addr:postcode"][postal_code!=*"addr:postcode"] {
   throwWarning: tr("{0} together with {1} and conflicting values", "{1.key}", "{2.key}");
+  group: tr("suspicious tag combination");
 }
 way[highway][postal_code]["addr:postcode"][postal_code=*"addr:postcode"] {
   throwWarning: tr("{0} together with {1}", "{1.key}", "{2.key}");
+  group: tr("suspicious tag combination");
   fixRemove: "addr:postcode";
 }
 way[highway][postal_code]["addr:postcode"][postal_code!=*"addr:postcode"] {
   throwWarning: tr("{0} together with {1} and conflicting values", "{1.key}", "{2.key}");
+  group: tr("suspicious tag combination");
 }
 way[highway][highway!=services][highway!=rest_area][!postal_code]["addr:postcode"] {
   throwWarning: tr("{0} together with {1}", "{0.key}", "{4.key}");
   suggestAlternative: "postal_code";
+  group: tr("suspicious tag combination");
   fixChangeKey: "addr:postcode=>postal_code";
 }
 
@@ -271,6 +298,7 @@ way[highway][highway!=services][highway!=rest_area][!postal_code]["addr:postcode
 *[highway=footway][cycleway=lane] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
   suggestAlternative: "highway=path + foot=designated + bicycle=designated + segregated=yes";
+  group: tr("suspicious tag combination");
 }
 
 /* {0} on suspicious object */
@@ -280,10 +308,12 @@ way[highway][highway!=services][highway!=rest_area][!postal_code]["addr:postcode
 *[width   ][!highway][!railway][!waterway][!aeroway][!cycleway][!footway][!barrier][!man_made][!entrance],
 *[maxspeed][!highway][!railway][traffic_sign !~ /^((.*;)?maxspeed(;.*)?|[A-Z][A-Z]:.+)$/][type != enforcement][waterway !~ /^(river|canal|lock)$/][!traffic_calming] {
   throwWarning: tr("{0} on suspicious object", "{0.key}");
+  group: tr("suspicious tag combination");
 }
 
-node[amenity =~ /^(restaurant|cafe|fast_food)$/][!name][noname!=yes] {
-  throwOther: tr("restaurant without name");
+node[amenity][amenity =~ /^(restaurant|cafe|fast_food)$/][!name][noname!=yes] {
+  throwOther: tr("{0} without {1}", "{0.tag}", "{2.key}");
+  group: tr("missing tag");
   assertMatch: "node amenity=restaurant";
   assertNoMatch: "node amenity=restaurant noname=yes";
   assertNoMatch: "node amenity=restaurant name=Foobar";
@@ -293,19 +323,22 @@ way[highway][barrier],
 *[highway][waterway][waterway!=dam][waterway!=weir],
 way[highway][natural],
 *[landuse][building] {
-  throwWarning: tr("{0} used with {1}", "{0.key}", "{1.key}");
+  throwWarning: tr("{0} together with {1}", "{0.key}", "{1.key}");
+  group: tr("suspicious tag combination");
   assertNoMatch: "node highway=street_lamp natural=birds_nest note=josm#10193";
 }
 
 /* #6932 */
 *[natural=water][leisure=swimming_pool] {
   throwWarning: tr("natural water used for swimming pool");
+  group: tr("suspicious tag combination");
   fixRemove: "natural";
 }
 
 /* #9593, #11183, #12418, #12761 */
 *[sport][!building][!club][tourism != hotel][highway != raceway][leisure !~ /^(sports_centre|stadium|track|pitch|golf_course|water_park|swimming_pool|recreation_ground|ice_rink|horse_riding)$/][natural !~ /^(beach|bare_rock|cliff|peak|water)$/][amenity !~ /^(pub|restaurant|swimming_pool)$/][landuse !~ /^(recreation_ground|piste|farm|farmland)$/][barrier !~ /^(wall|retaining_wall)$/][!"piste:type"][shop!=sports] {
     throwWarning: tr("sport without physical feature");
+    group: tr("missing tag");
     assertMatch: "node sport=tennis";
     assertNoMatch: "node sport=tennis leisure=pitch";
     assertNoMatch: "node sport=beachvolleyball natural=beach";
@@ -317,18 +350,13 @@ way[highway][natural],
 /* #10140 */
 *[building:levels][!building][!building:part] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.key}");
-}
-
-/* #10471 */
-way[waterway] > node[ford?] { set ford_on_waterway; }
-way[highway] > node[ford?] { set ford_on_highway; }
-node[ford?]:in-downloaded-area!.ford_on_waterway, node[ford?]:in-downloaded-area!.ford_on_highway {
-    throwWarning: tr("{0} should be on the node where {1} and {2} intersect", "ford", "highway", "waterway");
+  group: tr("missing tag");
 }
 
 /* any other *_name tag (with some exceptions) but not a name , see #10837 #11297 #11539 */
 *[/_name$/][!name][!old_name][!loc_name][!uic_name][!artist_name][!"osak:municipality_name"][!"osak:street_name"][noname!=yes] {
   throwWarning: tr("alternative name without {0}", "{1.key}");
+  group: tr("missing tag");
 }
 
 /* #10837 */
@@ -342,6 +370,7 @@ way[destination][!oneway?][junction!=roundabout][highway] {
 way["maxspeed:forward"=*"maxspeed:backward"][!maxspeed] {
   throwWarning: tr("Same value of {0} and {1}", "{0.key}", "{1.key}");
   suggestAlternative: "maxspeed";
+  group: tr("suspicious tag combination");
   fixChangeKey: "maxspeed:forward=>maxspeed";
   fixRemove: "maxspeed:backward";
 }
@@ -349,21 +378,25 @@ way["maxspeed:forward"=*maxspeed]["maxspeed:backward"=*maxspeed][maxspeed] {
   throwWarning: tr("Same value of {0}, {1} and {2}", "{0.key}", "{1.key}", "{2.key}");
   set AllSameMaxspeed;
   suggestAlternative: "maxspeed";
+  group: tr("suspicious tag combination");
   fixRemove: "maxspeed:forward";
   fixRemove: "maxspeed:backward";
 }
 way["maxspeed:forward"]["maxspeed:backward"][maxspeed]!.AllSameMaxspeed {
   throwWarning: tr("{0} and {1} together with {2} and conflicting values", "{0.key}", "{1.key}", "{2.key}");
+  group: tr("suspicious tag combination");
 }
 way["maxspeed:forward"][maxspeed][!"maxspeed:backward"],
 way["maxspeed:backward"][maxspeed][!"maxspeed:forward"] {
   throwWarning: tr("{0} together with {1}", "{0.key}", "{1.key}");
+  group: tr("suspicious tag combination");
 }
 
 /* #11837 */
 way[layer][layer<0][bridge][bridge!=no][location!=underground][indoor!=yes][!tunnel],
 way[layer][layer>0][tunnel][tunnel!=no][location!=overground][indoor!=yes][!bridge] {
-  throwWarning: tr("Suspicious tag combination: {0} and {1}", "{2.tag}", "{0.tag}");
+  throwWarning: tr("{0} together with {1}", "{2.tag}", "{0.tag}");
+  group: tr("suspicious tag combination");
 }
 
 /* #12942 */
@@ -374,24 +407,29 @@ relation[oneway][type!=route] {
 /* #9182 */
 way[waterway][layer][layer=~/^(-1|-2|-3|-4|-5)$/][!tunnel][culvert!=yes][covered!=yes][pipeline!=yes][location!=underground][eval(waylength()) > 400] {
   throwWarning: tr("Long waterway with {0} but without a tag which defines it as tunnel or underground. Remove {1} or add a tunnel tag if applicable. Also check crossing bridges and their {1} tags.", "{1.tag}", "{1.key}");
+  group: tr("suspicious tag combination");
 }
 way[waterway][layer][layer=~/^(-1|-2|-3|-4|-5)$/][!tunnel][culvert!=yes][covered!=yes][pipeline!=yes][location!=underground][eval(waylength()) <= 400] {
   throwOther: tr("Short waterway with {0} but without a tag which defines it as tunnel or underground. Remove {1} or add a tunnel tag if applicable. Also check crossing bridges and their {1} tags.", "{1.tag}", "{1.key}");
+  group: tr("suspicious tag combination");
 }
 
 /* #13144 */
 *[unisex=yes][female=yes][male!=yes],
 *[unisex=yes][male=yes][female!=yes] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
+  group: tr("suspicious tag combination");
 }
 *[unisex=yes][female=yes][male=yes] {
   throwWarning: tr("{0} together with {1} and {2}. Remove {1} and {2}", "{0.tag}", "{1.tag}", "{2.tag}");
+  group: tr("suspicious tag combination");
   fixRemove: "female";
   fixRemove: "male";
 }
 *[female=yes][male=yes][!unisex][shop=hairdresser] { /* for toilets male=yes female=yes unisex=no combination is valid */
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
   suggestAlternative: "unisex=yes";
+  group: tr("suspicious tag combination");
   fixRemove: "female";
   fixRemove: "male";
   fixAdd: "unisex=yes";
@@ -400,10 +438,12 @@ way[waterway][layer][layer=~/^(-1|-2|-3|-4|-5)$/][!tunnel][culvert!=yes][covered
 /* #13138 */
 area:closed[water][natural!=water][water!=intermittent] { /* water=intermittent is deprecated and has an own warning */
   throwWarning: tr("{0} without {1}", "{1.key}", "{2.tag}");
+  group: tr("missing tag");
   fixAdd: "natural=water";
 }
 way!:closed[water][natural!=water][water!=intermittent] {
   throwWarning: tr("{0} without {1}", "{1.key}", "{2.tag}");
+  group: tr("missing tag");
 }
 
 /* see #8519, #11529, limited to motorways and trunks to avoid false positives for streets with lanes for non motorized traffic */
@@ -415,6 +455,7 @@ way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][destination
 way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][destination:ref:lanes   ][tag(lanes)!=eval(count(split("|", tag("destination:ref:lanes"))))],
 way[highway =~ /^(motorway|motorway_link|trunk|trunk_link)$/][lanes][destination:symbol:lanes][tag(lanes)!=eval(count(split("|", tag("destination:symbol:lanes"))))] {
     throwWarning: tr("Different number of lanes in the keys {0} and {1}", "{1.key}", "{2.key}");
+    group: tr("suspicious tag combination");
 }
 
 /* #13680 */
@@ -422,6 +463,7 @@ area[golf=bunker][natural=beach] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
   suggestAlternative: "natural=sand";
   suggestAlternative: "surface=sand";
+  group: tr("suspicious tag combination");
 }
 
 /* #13705 */
@@ -430,5 +472,6 @@ relation[type=multipolygon][building] > way {
 }
 way["addr:housenumber"][!building][!"building:part"][!"demolished:building"][!note][!amenity][!leisure][!landuse][!man_made][!tourism][!barrier]!.part_of_building_MP {
   /* don't exclude shop because a lot of real missing bulding tag cases have a shop tag. */
-  throwOther: tr("Suspicious object: possibly missing {0} tag.", "{1.key}");
+  throwOther: tr("possibly missing {0} tag", "{1.key}");
+  group: tr("missing tag");
 }
