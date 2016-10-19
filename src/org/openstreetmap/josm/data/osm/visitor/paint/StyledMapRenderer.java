@@ -1448,15 +1448,14 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         MapViewPath path = new MapViewPath(mapState);
         MapViewPath orientationArrows = showOrientation ? new MapViewPath(mapState) : null;
-        MapViewPath onewayArrows = showOneway ? new MapViewPath(mapState) : null;
-        MapViewPath onewayArrowsCasing = showOneway ? new MapViewPath(mapState) : null;
+        MapViewPath onewayArrows;
+        MapViewPath onewayArrowsCasing;
         Rectangle bounds = g.getClipBounds();
         if (bounds != null) {
             // avoid arrow heads at the border
             bounds.grow(100, 100);
         }
 
-        boolean initialMoveToNeeded = true;
         List<Node> wayNodes = way.getNodes();
         if (wayNodes.size() < 2) return;
 
@@ -1481,6 +1480,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         MapViewPoint lastPoint = null;
         double wayLength = 0;
         Iterator<MapViewPoint> it = new OffsetIterator(wayNodes, offset);
+        boolean initialMoveToNeeded = true;
         while (it.hasNext()) {
             MapViewPoint p = it.next();
             if (lastPoint != null) {
@@ -1502,24 +1502,38 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 if (showOneway) {
                     final double segmentLength = p1.distanceToInView(p2);
                     if (segmentLength != 0) {
-                        final double nx = (p2.getInViewX() - p1.getInViewX()) / segmentLength;
-                        final double ny = (p2.getInViewY() - p1.getInViewY()) / segmentLength;
-
-                        final double interval = 60;
-                        // distance from p1
-                        double dist = interval - (wayLength % interval);
-
-                        while (dist < segmentLength) {
-                            appenOnewayPath(onewayReversed, p1, nx, ny, dist, 3d, onewayArrowsCasing);
-                            appenOnewayPath(onewayReversed, p1, nx, ny, dist, 2d, onewayArrows);
-                            dist += interval;
-                        }
                     }
                     wayLength += segmentLength;
                 }
             }
             lastPoint = p;
         }
+        if (showOneway) {
+            onewayArrows = new MapViewPath(mapState);
+            onewayArrowsCasing = new MapViewPath(mapState);
+            double interval = 60;
+
+            path.visitClippedLine(0, 60, (inLineOffset, start, end, startIsOldEnd) -> {
+                double segmentLength = start.distanceToInView(end);
+                if (segmentLength > 0.001) {
+                    final double nx = (end.getInViewX() - start.getInViewX()) / segmentLength;
+                    final double ny = (end.getInViewY() - start.getInViewY()) / segmentLength;
+
+                    // distance from p1
+                    double dist = interval - (inLineOffset % interval);
+
+                    while (dist < segmentLength) {
+                        appenOnewayPath(onewayReversed, start, nx, ny, dist, 3d, onewayArrowsCasing);
+                        appenOnewayPath(onewayReversed, start, nx, ny, dist, 2d, onewayArrows);
+                        dist += interval;
+                    }
+                }
+            });
+        } else {
+            onewayArrows = null;
+            onewayArrowsCasing = null;
+        }
+
         if (way.isHighlighted()) {
             drawPathHighlight(path, line);
         }

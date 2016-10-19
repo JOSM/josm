@@ -177,51 +177,108 @@ public class MapViewPath extends MapPath2D {
      * The resulting line is not intended to fill areas.
      * @param stroke The stroke to compute the line for.
      * @return The new line shape.
+     * @since 11147
      */
     public Shape computeClippedLine(Stroke stroke) {
-        if (stroke instanceof BasicStroke && ((BasicStroke) stroke).getDashArray() != null) {
-            float length = 0;
-            for (float f : ((BasicStroke) stroke).getDashArray()) {
-                length += f;
+        MapPath2D clamped = new MapPath2D();
+        if (visitClippedLine(stroke, (inLineOffset, start, end, startIsOldEnd) -> {
+            if (!startIsOldEnd) {
+                clamped.moveTo(start);
             }
-            return computeClippedLine(((BasicStroke) stroke).getDashPhase(), length);
-        } else {
-            return computeClippedLine(0, 0);
-        }
-    }
-
-    private Shape computeClippedLine(double strokeOffset, double strokeLength) {
-        ClampingPathVisitor path = new ClampingPathVisitor(state.getViewClipRectangle(), strokeOffset, strokeLength);
-        if (path.visit(getPathIterator(null))) {
-            return path;
+            clamped.lineTo(end);
+        })) {
+            return clamped;
         } else {
             // could not clip the path.
             return this;
         }
     }
 
-    private class ClampingPathVisitor extends MapPath2D {
+    /**
+     * Visits all straight segments of this path. The segments are clamped to the view.
+     * If they are clamped, the start points are aligned with the pattern.
+     * @param stroke The stroke to take the dash information from.
+     * @param consumer The consumer to call for each segment
+     * @return false if visiting the path failed because there e.g. were non-straight segments.
+     * @since 11147
+     */
+    public boolean visitClippedLine(Stroke stroke, PathSegmentConsumer consumer) {
+        if (stroke instanceof BasicStroke && ((BasicStroke) stroke).getDashArray() != null) {
+            float length = 0;
+            for (float f : ((BasicStroke) stroke).getDashArray()) {
+                length += f;
+            }
+            return visitClippedLine(((BasicStroke) stroke).getDashPhase(), length, consumer);
+        } else {
+            return visitClippedLine(0, 0, consumer);
+        }
+    }
+
+    /**
+     * Visits all straight segments of this path. The segments are clamped to the view.
+     * If they are clamped, the start points are aligned with the pattern.
+     * @param strokeOffset The initial offset of the pattern
+     * @param strokeLength The dash pattern length. 0 to use no pattern.
+     * @param consumer The consumer to call for each segment
+     * @return false if visiting the path failed because there e.g. were non-straight segments.
+     * @since 11147
+     */
+    public boolean visitClippedLine(double strokeOffset, double strokeLength, PathSegmentConsumer consumer) {
+        return new ClampingPathVisitor(state.getViewClipRectangle(), strokeOffset, strokeLength, consumer)
+            .visit(this);
+    }
+
+
+    /**
+     * This class is used to visit the segments of this path.
+     * @author Michael Zangl
+     * @since 11147
+     */
+    public interface PathSegmentConsumer {
+
+        /**
+         * Add a line segment between two points
+         * @param inLineOffset The offset of start in the line
+         * @param start The start point
+         * @param end The end point
+         * @param startIsOldEnd If the start point equals the last end point.
+         */
+        void addLineBetween(double inLineOffset, MapViewPoint start, MapViewPoint end, boolean startIsOldEnd);
+
+    }
+
+    private class ClampingPathVisitor {
         private final MapViewRectangle clip;
-        private double strokeProgress;
+        private final PathSegmentConsumer consumer;
+        protected double strokeProgress;
         private final double strokeLength;
         private MapViewPoint lastMoveTo;
 
         private MapViewPoint cursor;
         private boolean cursorIsActive = false;
 
-        ClampingPathVisitor(MapViewRectangle clip, double strokeOffset, double strokeLength) {
+        /**
+         * Create a new {@link ClampingPathVisitor}
+         * @param clip View clip rectangle
+         * @param strokeOffset Initial stroke offset
+         * @param strokeLength Total length of a stroke sequence
+         * @param consumer The consumer to notify of the path segments.
+         */
+        ClampingPathVisitor(MapViewRectangle clip, double strokeOffset, double strokeLength, PathSegmentConsumer consumer) {
             this.clip = clip;
             this.strokeProgress = Math.min(strokeLength - strokeOffset, 0);
             this.strokeLength = strokeLength;
+            this.consumer = consumer;
         }
 
         /**
          * Append a path to this one. The path is clipped to the current view.
-         * @param it The iterator
+         * @param mapViewPath The iterator
          * @return true if adding the path was successful.
          */
-        public boolean visit(PathIterator it) {
+        public boolean visit(MapViewPath mapViewPath) {
             double[] coords = new double[8];
+            PathIterator it = mapViewPath.getPathIterator(null);
             while (!it.isDone()) {
                 int type = it.currentSegment(coords);
                 switch (type) {
@@ -251,6 +308,7 @@ public class MapViewPath extends MapPath2D {
             MapViewPoint point = state.getForView(x, y);
             lastMoveTo = point;
             cursor = point;
+            cursorIsActive = false;
         }
 
         void visitLineTo(double x, double y) {
@@ -263,15 +321,15 @@ public class MapViewPath extends MapPath2D {
                 MapViewPoint exit = clip.getLineEntry(next, cursor);
                 if (!cursorIsActive || !entry.equals(cursor)) {
                     entry = alignStrokeOffset(entry, cursor);
-                    moveTo(entry);
                 }
-                lineTo(exit);
+                consumer.addLineBetween(strokeProgress + cursor.distanceToInView(entry), entry, exit, cursorIsActive);
                 cursorIsActive = exit.equals(next);
             }
             strokeProgress += cursor.distanceToInView(next);
 
             cursor = next;
         }
+
 
         private MapViewPoint alignStrokeOffset(MapViewPoint entry, MapViewPoint originalStart) {
             double distanceSq = entry.distanceToInViewSq(originalStart);
