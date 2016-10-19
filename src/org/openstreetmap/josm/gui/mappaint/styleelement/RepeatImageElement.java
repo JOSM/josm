@@ -14,7 +14,28 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 public class RepeatImageElement extends StyleElement {
 
-    public enum LineImageAlignment { TOP, CENTER, BOTTOM }
+    /**
+     * The side on which the image should be aligned to the line.
+     */
+    public enum LineImageAlignment {
+        TOP(.5),
+        CENTER(0),
+        BOTTOM(-.5);
+
+        private final double alignmentOffset;
+
+        LineImageAlignment(double alignmentOffset) {
+            this.alignmentOffset = alignmentOffset;
+        }
+
+        /**
+         * Gets the alignment offset.
+         * @return The offset relative to the image height compared to placing the image in the middle of the line.
+         */
+        public double getAlignmentOffset() {
+            return alignmentOffset;
+        }
+    }
 
     public MapImage pattern;
     public float offset;
