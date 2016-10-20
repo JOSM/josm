@@ -31,13 +31,7 @@ public class SelfIntersectingWay extends Test {
     @Override
     public void visit(Way w) {
         Set<Node> nodes = new HashSet<>();
-        int last = w.getNodesCount();
-        if (last < 2)
-            return;
-        if (w.firstNode() == w.lastNode())
-            last--; // closed way, ignore last node
-        nodes.add(w.firstNode());
-        for (int i = 1; i < last; i++) {
+        for (int i = 1; i < w.getNodesCount() - 1; i++) {
             Node n = w.getNode(i);
             if (nodes.contains(n)) {
                 errors.add(TestError.builder(this, Severity.WARNING, SELF_INTERSECT)

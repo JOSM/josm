@@ -40,76 +40,8 @@ public class SelfIntersectingWayTest {
         return nodes;
     }
 
-
     /**
-     * Self-Intersection at first (+ last) node of closed way
-     */
-    @Test
-    public void TestClosedWay() {
-        List<Node> nodes = createNodes();
-
-        Way w = (Way) OsmUtils.createPrimitive("way ");
-        List<Node> wayNodes = new ArrayList<>();
-        wayNodes.add(nodes.get(0));
-        wayNodes.add(nodes.get(1));
-        wayNodes.add(nodes.get(2));
-        wayNodes.add(nodes.get(0)); // problem
-        wayNodes.add(nodes.get(3));
-        wayNodes.add(nodes.get(4));
-        wayNodes.add(nodes.get(0));
-        w.setNodes(wayNodes);
-        SelfIntersectingWay test = new SelfIntersectingWay();
-        test.visit(w);
-        Assert.assertEquals(1, test.getErrors().size());
-        Assert.assertTrue(test.getErrors().iterator().next().getHighlighted().contains(nodes.get(0)));
-    }
-
-    /**
-     * Self-Intersection at first node of unclosed way
-     */
-    @Test
-    public void TestUnclosedWayFirst() {
-        List<Node> nodes = createNodes();
-
-        Way w = (Way) OsmUtils.createPrimitive("way ");
-        List<Node> wayNodes = new ArrayList<>();
-        wayNodes.add(nodes.get(0));
-        wayNodes.add(nodes.get(1));
-        wayNodes.add(nodes.get(2));
-        wayNodes.add(nodes.get(0)); // problem
-        wayNodes.add(nodes.get(3));
-        wayNodes.add(nodes.get(4));
-        w.setNodes(wayNodes);
-        SelfIntersectingWay test = new SelfIntersectingWay();
-        test.visit(w);
-        Assert.assertEquals(1, test.getErrors().size());
-        Assert.assertTrue(test.getErrors().iterator().next().getHighlighted().contains(nodes.get(0)));
-    }
-
-    /**
-     * Self-Intersection at first node of unclosed way
-     */
-    @Test
-    public void TestUnclosedWayLast() {
-        List<Node> nodes = createNodes();
-
-        Way w = (Way) OsmUtils.createPrimitive("way ");
-        List<Node> wayNodes = new ArrayList<>();
-        wayNodes.add(nodes.get(0));
-        wayNodes.add(nodes.get(1)); // problem
-        wayNodes.add(nodes.get(2));
-        wayNodes.add(nodes.get(3));
-        wayNodes.add(nodes.get(4));
-        wayNodes.add(nodes.get(1));
-        w.setNodes(wayNodes);
-        SelfIntersectingWay test = new SelfIntersectingWay();
-        test.visit(w);
-        Assert.assertEquals(1, test.getErrors().size());
-        Assert.assertTrue(test.getErrors().iterator().next().getHighlighted().contains(nodes.get(1)));
-    }
-
-    /**
-     * Self-Intersection at normal node (not first / last)
+     * Self-Intersection at inner node (not first / last).
      */
     @Test
     public void TestUnclosedWayNormal() {
@@ -128,6 +60,73 @@ public class SelfIntersectingWayTest {
         test.visit(w);
         Assert.assertEquals(1, test.getErrors().size());
         Assert.assertTrue(test.getErrors().iterator().next().getHighlighted().contains(nodes.get(1)));
+    }
+
+    /**
+     * First node is identical to an inner node ("P"-Shape).
+     * This is considered okay.
+     */
+    @Test
+    public void TestUnclosedWayFirst() {
+        List<Node> nodes = createNodes();
+
+        Way w = (Way) OsmUtils.createPrimitive("way ");
+        List<Node> wayNodes = new ArrayList<>();
+        wayNodes.add(nodes.get(0));
+        wayNodes.add(nodes.get(1));
+        wayNodes.add(nodes.get(2));
+        wayNodes.add(nodes.get(0)); // problem
+        wayNodes.add(nodes.get(3));
+        wayNodes.add(nodes.get(4));
+        w.setNodes(wayNodes);
+        SelfIntersectingWay test = new SelfIntersectingWay();
+        test.visit(w);
+        Assert.assertEquals(0, test.getErrors().size());
+    }
+
+    /**
+     * Last node is identical to an inner node ("b"-Shape).
+     * This is considered okay.
+     */
+    @Test
+    public void TestUnclosedWayLast() {
+        List<Node> nodes = createNodes();
+
+        Way w = (Way) OsmUtils.createPrimitive("way ");
+        List<Node> wayNodes = new ArrayList<>();
+        wayNodes.add(nodes.get(0));
+        wayNodes.add(nodes.get(1)); // problem node
+        wayNodes.add(nodes.get(2));
+        wayNodes.add(nodes.get(3));
+        wayNodes.add(nodes.get(4));
+        wayNodes.add(nodes.get(1));
+        w.setNodes(wayNodes);
+        SelfIntersectingWay test = new SelfIntersectingWay();
+        test.visit(w);
+        Assert.assertEquals(0, test.getErrors().size());
+    }
+
+    /**
+     * Both endpoints join at one inner node ("8"-shape).
+     * This is considered okay.
+     */
+    @Test
+    public void TestClosedWay() {
+        List<Node> nodes = createNodes();
+
+        Way w = (Way) OsmUtils.createPrimitive("way ");
+        List<Node> wayNodes = new ArrayList<>();
+        wayNodes.add(nodes.get(0));
+        wayNodes.add(nodes.get(1));
+        wayNodes.add(nodes.get(2));
+        wayNodes.add(nodes.get(0)); // problem
+        wayNodes.add(nodes.get(3));
+        wayNodes.add(nodes.get(4));
+        wayNodes.add(nodes.get(0));
+        w.setNodes(wayNodes);
+        SelfIntersectingWay test = new SelfIntersectingWay();
+        test.visit(w);
+        Assert.assertEquals(0, test.getErrors().size());
     }
 
 }
