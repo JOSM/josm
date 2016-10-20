@@ -4950,7 +4950,10 @@
             <space />
             <key key="emergency" value="defibrillator" />
             <reference ref="oh_wheelchair" />
-            <text  key="operator" text="Operator" />
+            <text key="operator" text="Operator" />
+            <text key="defibrillator:location" text="Location description" />
+            <text key="phone" text="Phone Number" />
+            <combo key="access" text="Access" values="yes,private,customers,permissive,no" />
             <check key="indoor" text="Located inside a building?" />
             <!-- lastcheck is in use for aed devices, but not yet well discussed or documented
             <optional>
