@@ -57,6 +57,7 @@ public class AudioPlayerTest {
             System.out.println("Play finished after " + Utils.getDurationString(duration));
             assertTrue(duration < MAX_DURATION);
             AudioPlayer.reset();
+            Thread.sleep(1000); // precaution, see #13809
         }
     }
 }
