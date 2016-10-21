@@ -128,6 +128,7 @@ relation[route=horse][!network][type=route],
 relation[route=piste][!piste:type][type=route],
 relation[route=ski][!piste:type][type=route],
 *[tourism=information][!information],
+*[leisure=pitch][!sport],
 *[aeroway=terminal][!building],
 *[power=generator][!generator:source],
 *[amenity=place_of_worship][!religion] {

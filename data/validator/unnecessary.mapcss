@@ -6,6 +6,7 @@
 *[layer="0"] {
   /* see #9365 - Useless tag layer=0 */
   throwWarning: tr("{0} is unnecessary", "{0.tag}");
+  group: tr("unnecessary tag");
   fixRemove: "{0.key}";
   assertMatch: "way layer=0";
   assertMatch: "way bridge=no";
@@ -19,6 +20,7 @@ area:closed[leisure ][area?][!highway],
 area:closed[natural ][area?],
 area:closed[shop    ][area?] {
   throwWarning: tr("{0} is unnecessary for {1}", "{2.key}", "{1.key}");
+  group: tr("unnecessary tag");
   fixRemove: "{2.key}";
 }
 

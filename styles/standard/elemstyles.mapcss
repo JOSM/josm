@@ -3706,8 +3706,6 @@ node[public_transport=station] {
 
 area[sport="9pin"],
 area[sport="10pin"],
-area[sport=athletics],
-area[sport=running],
 area[sport=soccer],
 area[sport=australian_football],
 area[sport=american_football],
@@ -3723,14 +3721,6 @@ node[sport="9pin"] {
 }
 node[sport="10pin"] {
     icon-image: "presets/sport/10pin.svg";
-    set icon_z17;
-}
-node[sport=athletics] {
-    icon-image: "presets/sport/athletics.svg";
-    set icon_z17;
-}
-node[sport=running] {
-    icon-image: "presets/sport/running.svg";
     set icon_z17;
 }
 node[sport=soccer],
@@ -3853,17 +3843,33 @@ node[sport=motor] {
     icon-image: "presets/sport/motor.svg";
     set icon_z17;
 }
-area[sport=multi],
+area[sport=athletics] {
+    fill-color: sport_athletics#cfebd7;
+}
+node[sport=athletics] {
+    icon-image: "presets/sport/athletics.svg";
+    set icon_z17;
+}
+area[sport=running] {
+    fill-color: sport_running#cfebd8;
+}
+node[sport=running] {
+    icon-image: "presets/sport/running.svg";
+    set icon_z17;
+}
+area[sport=multi] {
+    fill-color: sport_multi#cfebd9;
+}
+node[sport=multi] {
+    icon-image: "presets/sport/multi.svg";
+    set icon_z17;
+}
 area[sport=pelota],
 area[sport=racquet],
 area[sport=ice_skating],
 area[sport=roller_skating],
 area[sport=skateboard] {
     fill-color: sport#bde3cb;
-}
-node[sport=multi] {
-    icon-image: "presets/sport/multi.svg";
-    set icon_z17;
 }
 node[sport=pelota] {
     icon-image: "presets/sport/pelota.svg";

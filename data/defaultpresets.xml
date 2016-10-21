@@ -29,7 +29,7 @@
         </combo>
     </chunk>
     <chunk id="riding_surface">
-        <combo key="leisure" text="Type" values="pitch,sports_centre,stadium,track" values_context="riding" />
+        <combo key="leisure" text="Type" values="horse_riding,pitch,sports_centre,stadium,track" values_context="riding" />
         <combo key="surface" text="Surface" values="grass,sand,clay,dirt,fine_gravel,ground,mud,unpaved,compacted" />
     </chunk>
     <chunk id="highway_base">
@@ -9973,7 +9973,7 @@
                 <key key="type" value="route"/>
                 <key key="route" value="bicycle"/>
                 <text key="name" text="Name" />
-                <combo key="network" text="Network" values="icn,ncn,rcn,lcn" />
+                <combo key="network" text="Network" values="icn,ncn,rcn,lcn" display_values="international,national,regional,local" values_sort="false" />
                 <optional>
                     <reference ref="route_hikebike_optionals" />
                 </optional>
@@ -10020,7 +10020,7 @@
                 <key key="type" value="route"/>
                 <key key="route" value="hiking"/>
                 <text key="name" text="Name" />
-                <combo key="network" text="Network" values="iwn,nwn,rwn,lwn" />
+                <combo key="network" text="Network" values="iwn,nwn,rwn,lwn" display_values="international,national,regional,local" values_sort="false"/>
                 <optional>
                     <reference ref="route_hikebike_optionals" />
                 </optional>
@@ -10036,7 +10036,7 @@
                 <key key="type" value="route"/>
                 <key key="route" value="foot"/>
                 <text key="name" text="Name" />
-                <combo key="network" text="Network" values="rwn,lwn" />
+                <combo key="network" text="Network" values="rwn,lwn" display_values="regional,local" values_sort="false" />
                 <optional>
                     <reference ref="route_hikebike_optionals" />
                 </optional>
@@ -10052,7 +10052,7 @@
                 <key key="type" value="route"/>
                 <key key="route" value="horse"/>
                 <text key="name" text="Name" />
-                <combo key="network" text="Network" values="ihn,nhn,rhn,lhn" />
+                <combo key="network" text="Network" values="ihn,nhn,rhn,lhn" display_values="international,national,regional,local" values_sort="false" />
                 <optional>
                     <reference ref="route_hikebike_optionals" />
                 </optional>
