@@ -330,7 +330,6 @@ public class MapViewPath extends MapPath2D {
             cursor = next;
         }
 
-
         private MapViewPoint alignStrokeOffset(MapViewPoint entry, MapViewPoint originalStart) {
             double distanceSq = entry.distanceToInViewSq(originalStart);
             if (distanceSq < 0.01 || strokeLength <= 0.001) {
@@ -346,6 +345,5 @@ public class MapViewPath extends MapPath2D {
 
             return entry.interpolate(originalStart, offset / distance);
         }
-
     }
 }
