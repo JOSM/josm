@@ -58,7 +58,7 @@ public abstract class CrossingWays extends Test {
                     && !isProposedOrAbandoned(w)
                     && ((w.hasKey(HIGHWAY) && !w.hasTag(HIGHWAY, "rest_area", "services"))
                     || w.hasKey(WATERWAY)
-                    || (w.hasKey(RAILWAY) && !isSubwayOrTram(w))
+                    || (w.hasKey(RAILWAY) && !isSubwayOrTramOrRazed(w))
                     || isCoastline(w)
                     || isBuilding(w));
         }
@@ -73,7 +73,7 @@ public abstract class CrossingWays extends Test {
             if (w1.hasKey(HIGHWAY) && w2.hasKey(HIGHWAY) && !Objects.equals(w1.get("level"), w2.get("level"))) {
                 return true;
             }
-            if (isSubwayOrTram(w2)) {
+            if (isSubwayOrTramOrRazed(w2)) {
                 return true;
             }
             if (isCoastline(w1) != isCoastline(w2)) {
@@ -239,8 +239,8 @@ public abstract class CrossingWays extends Test {
         return w.hasTag("natural", "water", "coastline") || w.hasTag("landuse", "reservoir");
     }
 
-    static boolean isSubwayOrTram(OsmPrimitive w) {
-        return w.hasTag(RAILWAY, "subway", "tram");
+    static boolean isSubwayOrTramOrRazed(OsmPrimitive w) {
+        return w.hasTag(RAILWAY, "subway", "tram", "razed");
     }
 
     static boolean isProposedOrAbandoned(OsmPrimitive w) {
