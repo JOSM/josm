@@ -172,7 +172,7 @@ public class MultipolygonTest extends Test {
 
             // Rest of checks is only for complete multipolygons
             if (!r.hasIncompleteMembers()) {
-                Multipolygon polygon = MultipolygonCache.getInstance().get(Main.map.mapView, r);
+                Multipolygon polygon = new Multipolygon(r);
 
                 // Create new multipolygon using the logics from CreateMultipolygonAction and see if roles match.
                 checkMemberRoleCorrectness(r);
