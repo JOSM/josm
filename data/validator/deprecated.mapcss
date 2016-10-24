@@ -523,9 +523,10 @@ way[sidewalk=yes] {
 }
 
 /* unclear definition, see #11183 */
-*[sport=skiing][!piste:type] {
+*[sport=skiing] {
   throwWarning: tr("Definition of {0} is unclear", "{0.tag}");
-  suggestAlternative: {1.key};
+  suggestAlternative: tr("{0} + {1} + {2}", "piste:type=*", "piste:difficulty=*", "piste:grooming=*");
+  group: tr("deprecated tagging");
 }
 
 /* see #11223 */
