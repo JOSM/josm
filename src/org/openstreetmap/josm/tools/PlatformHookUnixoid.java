@@ -5,40 +5,22 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Desktop;
 import java.awt.Dimension;
-import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences.pref;
-import org.openstreetmap.josm.data.Preferences.writeExplicitly;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 
@@ -50,51 +32,6 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
  */
 public class PlatformHookUnixoid implements PlatformHook {
 
-    /**
-     * Simple data class to hold information about a font.
-     *
-     * Used for fontconfig.properties files.
-     */
-    public static class FontEntry {
-        /**
-         * The character subset. Basically a free identifier, but should be unique.
-         */
-        @pref
-        public String charset;
-
-        /**
-         * Platform font name.
-         */
-        @pref
-        @writeExplicitly
-        public String name = "";
-
-        /**
-         * File name.
-         */
-        @pref
-        @writeExplicitly
-        public String file = "";
-
-        /**
-         * Constructs a new {@code FontEntry}.
-         */
-        public FontEntry() {
-        }
-
-        /**
-         * Constructs a new {@code FontEntry}.
-         * @param charset The character subset. Basically a free identifier, but should be unique
-         * @param name Platform font name
-         * @param file File name
-         */
-        public FontEntry(String charset, String name, String file) {
-            this.charset = charset;
-            this.name = name;
-            this.file = file;
-        }
-    }
-
     private String osDescription;
 
     @Override
@@ -103,16 +40,6 @@ public class PlatformHookUnixoid implements PlatformHook {
         if ("org.GNOME.Accessibility.AtkWrapper".equals(System.getProperty("assistive_technologies"))) {
             System.clearProperty("assistive_technologies");
         }
-    }
-
-    @Override
-    public void afterPrefStartupHook() {
-        // Do nothing
-    }
-
-    @Override
-    public void startupHook() {
-        // Do nothing
     }
 
     @Override
@@ -150,36 +77,9 @@ public class PlatformHookUnixoid implements PlatformHook {
         // CHECKSTYLE.ON: LineLength
     }
 
-    /**
-     * This should work for all platforms. Yeah, should.
-     * See PlatformHook.java for a list of reasons why this is implemented here...
-     */
-    @Override
-    public String makeTooltip(String name, Shortcut sc) {
-        StringBuilder result = new StringBuilder();
-        result.append("<html>").append(name);
-        if (sc != null && !sc.getKeyText().isEmpty()) {
-            result.append(" <font size='-2'>(")
-                  .append(sc.getKeyText())
-                  .append(")</font>");
-        }
-        return result.append("&nbsp;</html>").toString();
-    }
-
     @Override
     public String getDefaultStyle() {
         return "javax.swing.plaf.metal.MetalLookAndFeel";
-    }
-
-    @Override
-    public boolean canFullscreen() {
-        return !GraphicsEnvironment.isHeadless() &&
-                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().isFullScreenSupported();
-    }
-
-    @Override
-    public boolean rename(File from, File to) {
-        return from.renameTo(to);
     }
 
     /**
@@ -468,13 +368,6 @@ public class PlatformHookUnixoid implements PlatformHook {
     }
 
     @Override
-    public boolean setupHttpsCertificate(String entryAlias, KeyStore.TrustedCertificateEntry trustedCert)
-            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
-        // TODO setup HTTPS certificate on Unix systems
-        return false;
-    }
-
-    @Override
     public File getDefaultCacheDirectory() {
         return new File(Main.pref.getUserDataDirectory(), "cache");
     }
@@ -490,133 +383,4 @@ public class PlatformHookUnixoid implements PlatformHook {
         return Main.pref.getPreferencesDirectory();
     }
 
-    /**
-     * <p>Add more fallback fonts to the Java runtime, in order to get
-     * support for more scripts.</p>
-     *
-     * <p>The font configuration in Java doesn't include some Indic scripts,
-     * even though MS Windows ships with fonts that cover these unicode ranges.</p>
-     *
-     * <p>To fix this, the fontconfig.properties template is copied to the JOSM
-     * cache folder. Then, the additional entries are added to the font
-     * configuration. Finally the system property "sun.awt.fontconfig" is set
-     * to the customized fontconfig.properties file.</p>
-     *
-     * <p>This is a crude hack, but better than no font display at all for these languages.
-     * There is no guarantee, that the template file
-     * ($JAVA_HOME/lib/fontconfig.properties.src) matches the default
-     * configuration (which is in a binary format).
-     * Furthermore, the system property "sun.awt.fontconfig" is undocumented and
-     * may no longer work in future versions of Java.</p>
-     *
-     * <p>Related Java bug: <a href="https://bugs.openjdk.java.net/browse/JDK-8008572">JDK-8008572</a></p>
-     *
-     * @param templateFileName file name of the fontconfig.properties template file
-     */
-    protected void extendFontconfig(String templateFileName) {
-        String customFontconfigFile = Main.pref.get("fontconfig.properties", null);
-        if (customFontconfigFile != null) {
-            Utils.updateSystemProperty("sun.awt.fontconfig", customFontconfigFile);
-            return;
-        }
-        if (!Main.pref.getBoolean("font.extended-unicode", true))
-            return;
-
-        String javaLibPath = System.getProperty("java.home") + File.separator + "lib";
-        Path templateFile = FileSystems.getDefault().getPath(javaLibPath, templateFileName);
-        if (!Files.isReadable(templateFile)) {
-            Main.warn("extended font config - unable to find font config template file "+templateFile.toString());
-            return;
-        }
-        try (FileInputStream fis = new FileInputStream(templateFile.toFile())) {
-            Properties props = new Properties();
-            props.load(fis);
-            byte[] content = Files.readAllBytes(templateFile);
-            File cachePath = Main.pref.getCacheDirectory();
-            Path fontconfigFile = cachePath.toPath().resolve("fontconfig.properties");
-            OutputStream os = Files.newOutputStream(fontconfigFile);
-            os.write(content);
-            try (Writer w = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8))) {
-                Collection<FontEntry> extrasPref = Main.pref.getListOfStructs(
-                        "font.extended-unicode.extra-items", getAdditionalFonts(), FontEntry.class);
-                Collection<FontEntry> extras = new ArrayList<>();
-                w.append("\n\n# Added by JOSM to extend unicode coverage of Java font support:\n\n");
-                List<String> allCharSubsets = new ArrayList<>();
-                for (FontEntry entry: extrasPref) {
-                    Collection<String> fontsAvail = getInstalledFonts();
-                    if (fontsAvail != null && fontsAvail.contains(entry.file.toUpperCase(Locale.ENGLISH))) {
-                        if (!allCharSubsets.contains(entry.charset)) {
-                            allCharSubsets.add(entry.charset);
-                            extras.add(entry);
-                        } else {
-                            Main.trace("extended font config - already registered font for charset ''{0}'' - skipping ''{1}''",
-                                    entry.charset, entry.name);
-                        }
-                    } else {
-                        Main.trace("extended font config - Font ''{0}'' not found on system - skipping", entry.name);
-                    }
-                }
-                for (FontEntry entry: extras) {
-                    allCharSubsets.add(entry.charset);
-                    if ("".equals(entry.name)) {
-                        continue;
-                    }
-                    String key = "allfonts." + entry.charset;
-                    String value = entry.name;
-                    String prevValue = props.getProperty(key);
-                    if (prevValue != null && !prevValue.equals(value)) {
-                        Main.warn("extended font config - overriding ''{0}={1}'' with ''{2}''", key, prevValue, value);
-                    }
-                    w.append(key + '=' + value + '\n');
-                }
-                w.append('\n');
-                for (FontEntry entry: extras) {
-                    if ("".equals(entry.name) || "".equals(entry.file)) {
-                        continue;
-                    }
-                    String key = "filename." + entry.name.replace(' ', '_');
-                    String value = entry.file;
-                    String prevValue = props.getProperty(key);
-                    if (prevValue != null && !prevValue.equals(value)) {
-                        Main.warn("extended font config - overriding ''{0}={1}'' with ''{2}''", key, prevValue, value);
-                    }
-                    w.append(key + '=' + value + '\n');
-                }
-                w.append('\n');
-                String fallback = props.getProperty("sequence.fallback");
-                if (fallback != null) {
-                    w.append("sequence.fallback=" + fallback + ',' + Utils.join(",", allCharSubsets) + '\n');
-                } else {
-                    w.append("sequence.fallback=" + Utils.join(",", allCharSubsets) + '\n');
-                }
-            }
-            Utils.updateSystemProperty("sun.awt.fontconfig", fontconfigFile.toString());
-        } catch (IOException ex) {
-            Main.error(ex);
-        }
-    }
-
-    /**
-     * Get a list of fonts that are installed on the system.
-     *
-     * Must be done without triggering the Java Font initialization.
-     * (See {@link #extendFontconfig(java.lang.String)}, have to set system
-     * property first, which is then read by sun.awt.FontConfiguration upon initialization.)
-     *
-     * @return list of file names
-     */
-    public Collection<String> getInstalledFonts() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Get default list of additional fonts to add to the configuration.
-     *
-     * Java will choose thee first font in the list that can render a certain character.
-     *
-     * @return list of FontEntry objects
-     */
-    public Collection<FontEntry> getAdditionalFonts() {
-        throw new UnsupportedOperationException();
-    }
 }
