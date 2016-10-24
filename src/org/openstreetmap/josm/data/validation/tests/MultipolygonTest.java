@@ -10,12 +10,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.CreateMultipolygonAction;
+import org.openstreetmap.josm.command.ChangeCommand;
+import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -66,6 +71,10 @@ public class MultipolygonTest extends Test {
     public static final int NO_STYLE_POLYGON = 1611;
     /** Area style on outer way */
     public static final int OUTER_STYLE = 1613;
+    /** Multipolygon member repeated (same primitive, same role */
+    public static final int REPEATED_MEMBER_SAME_ROLE = 1614;
+    /** Multipolygon member repeated (same primitive, different role) */
+    public static final int REPEATED_MEMBER_DIFF_ROLE = 1615;
 
     private static volatile ElemStyles styles;
 
@@ -159,6 +168,7 @@ public class MultipolygonTest extends Test {
         if (r.isMultipolygon()) {
             checkMembersAndRoles(r);
             checkOuterWay(r);
+            checkRepeatedWayMembers(r);
 
             // Rest of checks is only for complete multipolygons
             if (!r.hasIncompleteMembers()) {
@@ -412,4 +422,106 @@ public class MultipolygonTest extends Test {
         }
     }
 
+    /**
+     * Check for:<ul>
+     * <li>{@link #REPEATED_MEMBER_DIFF_ROLE}: Multipolygon member(s) repeated with different role</li>
+     * <li>{@link #REPEATED_MEMBER_SAME_ROLE}: Multipolygon member(s) repeated with same role</li>
+     * </ul>
+     * @param r relation
+     * @return true if repeated members have been detected, false otherwise
+     */
+    private boolean checkRepeatedWayMembers(Relation r) {
+        boolean hasDups = false;
+        Map<OsmPrimitive, List<RelationMember>> seenMemberPrimitives = new HashMap<>();
+        for (RelationMember rm : r.getMembers()) {
+            List<RelationMember> list = seenMemberPrimitives.get(rm.getMember());
+            if (list == null) {
+                list = new ArrayList<>(2);
+                seenMemberPrimitives.put(rm.getMember(), list);
+            } else {
+                hasDups = true;
+            }
+            list.add(rm);
+        }
+        if (hasDups) {
+            List<OsmPrimitive> repeatedSameRole = new ArrayList<>();
+            List<OsmPrimitive> repeatedDiffRole = new ArrayList<>();
+            for (Entry<OsmPrimitive, List<RelationMember>> e : seenMemberPrimitives.entrySet()) {
+                List<RelationMember> visited = e.getValue();
+                if (e.getValue().size() == 1)
+                    continue;
+                // we found a duplicate member, check if the roles differ
+                boolean rolesDiffer = false;
+                RelationMember rm = visited.get(0);
+                List<OsmPrimitive> primitives = new ArrayList<>();
+                for (int i = 1; i < visited.size(); i++) {
+                    RelationMember v = visited.get(i);
+                    primitives.add(rm.getMember());
+                    if (!v.getRole().equals(rm.getRole())) {
+                        rolesDiffer = true;
+                    }
+                }
+                if (rolesDiffer) {
+                    repeatedDiffRole.addAll(primitives);
+                } else {
+                    repeatedSameRole.addAll(primitives);
+                }
+            }
+            addRepeatedMemberError(r, repeatedDiffRole, REPEATED_MEMBER_DIFF_ROLE, tr("Multipolygon member(s) repeated with different role"));
+            addRepeatedMemberError(r, repeatedSameRole, REPEATED_MEMBER_SAME_ROLE, tr("Multipolygon member(s) repeated with same role"));
+        }
+        return hasDups;
+    }
+
+    private void addRepeatedMemberError(Relation r, List<OsmPrimitive> repeatedMembers, int errorCode, String msg) {
+        if (!repeatedMembers.isEmpty()) {
+            List<OsmPrimitive> prims = new ArrayList<>(1 + repeatedMembers.size());
+            prims.add(r);
+            prims.addAll(repeatedMembers);
+            errors.add(TestError.builder(this, Severity.WARNING, errorCode)
+                    .message(msg)
+                    .primitives(prims)
+                    .highlight(repeatedMembers)
+                    .build());
+        }
+    }
+
+    @Override
+    public Command fixError(TestError testError) {
+        if (testError.getCode() == REPEATED_MEMBER_SAME_ROLE) {
+            ArrayList<OsmPrimitive> primitives = new ArrayList<>(testError.getPrimitives());
+            if (primitives.size() >= 2) {
+                if (primitives.get(0) instanceof Relation) {
+                    Relation oldRel = (Relation) primitives.get(0);
+                    Relation newRel = new Relation(oldRel);
+                    List<OsmPrimitive> repeatedPrims = primitives.subList(1, primitives.size());
+                    List<RelationMember> oldMembers = oldRel.getMembers();
+
+                    List<RelationMember> newMembers = new ArrayList<>();
+                    HashSet<OsmPrimitive> toRemove = new HashSet<>(repeatedPrims);
+                    HashSet<OsmPrimitive> found = new HashSet<>(repeatedPrims.size());
+                    for (RelationMember rm : oldMembers) {
+                        if (toRemove.contains(rm.getMember())) {
+                            if (found.contains(rm.getMember()) == false) {
+                                found.add(rm.getMember());
+                                newMembers.add(rm);
+                            }
+                        } else {
+                            newMembers.add(rm);
+                        }
+                    }
+                    newRel.setMembers(newMembers);
+                    return new ChangeCommand (oldRel, newRel);
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isFixable(TestError testError) {
+        if (testError.getCode() == REPEATED_MEMBER_SAME_ROLE)
+            return true;
+        return false;
+    }
 }
