@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Locale;
 
 import javax.swing.JOptionPane;
 
@@ -367,20 +368,68 @@ public class PlatformHookUnixoid implements PlatformHook {
         });
     }
 
+    /**
+     * Get the dot directory <code>~/.josm</code>.
+     * @return the dot directory
+     */
+    private File getDotDirectory() {
+        String dirName = "." + Main.pref.getJOSMDirectoryBaseName().toLowerCase(Locale.ENGLISH);
+        return new File(System.getProperty("user.home"), dirName);
+    }
+
+    /**
+     * Returns true if the dot directory should be used for storing preferences,
+     * cache and user data.
+     * Currently this is the case, if the dot directory already exists.
+     * @return true if the dot directory should be used
+     */
+    private boolean useDotDirectory() {
+        return getDotDirectory().exists();
+    }
+
     @Override
     public File getDefaultCacheDirectory() {
-        return new File(Main.pref.getUserDataDirectory(), "cache");
+        if (useDotDirectory()) {
+            return new File(getDotDirectory(), "cache");
+        } else {
+            String xdgCacheDir = System.getenv("XDG_CACHE_HOME");
+            if (xdgCacheDir != null && !xdgCacheDir.isEmpty()) {
+                return new File(xdgCacheDir, Main.pref.getJOSMDirectoryBaseName());
+            } else {
+                return new File(System.getProperty("user.home") + File.separator +
+                        ".cache" + File.separator + Main.pref.getJOSMDirectoryBaseName());
+            }
+        }
     }
 
     @Override
     public File getDefaultPrefDirectory() {
-        return new File(System.getProperty("user.home"), ".josm");
+        if (useDotDirectory()) {
+            return getDotDirectory();
+        } else {
+            String xdgConfigDir = System.getenv("XDG_CONFIG_HOME");
+            if (xdgConfigDir != null && !xdgConfigDir.isEmpty()) {
+                return new File(xdgConfigDir, Main.pref.getJOSMDirectoryBaseName());
+            } else {
+                return new File(System.getProperty("user.home") + File.separator +
+                        ".config" + File.separator + Main.pref.getJOSMDirectoryBaseName());
+            }
+        }
     }
 
     @Override
     public File getDefaultUserDataDirectory() {
-        // Use preferences directory by default
-        return Main.pref.getPreferencesDirectory();
+        if (useDotDirectory()) {
+            return getDotDirectory();
+        } else {
+            String xdgDataDir = System.getenv("XDG_DATA_HOME");
+            if (xdgDataDir != null && !xdgDataDir.isEmpty()) {
+                return new File(xdgDataDir, Main.pref.getJOSMDirectoryBaseName());
+            } else {
+                return new File(System.getProperty("user.home") + File.separator +
+                        ".local" + File.separator + "share" + File.separator + Main.pref.getJOSMDirectoryBaseName());
+            }
+        }
     }
 
 }

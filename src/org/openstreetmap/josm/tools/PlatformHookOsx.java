@@ -365,16 +365,19 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
 
     @Override
     public File getDefaultCacheDirectory() {
-        return new File(System.getProperty("user.home")+"/Library/Caches", "JOSM");
+        return new File(System.getProperty("user.home")+"/Library/Caches",
+                Main.pref.getJOSMDirectoryBaseName());
     }
 
     @Override
     public File getDefaultPrefDirectory() {
-        return new File(System.getProperty("user.home")+"/Library/Preferences", "JOSM");
+        return new File(System.getProperty("user.home")+"/Library/Preferences",
+                Main.pref.getJOSMDirectoryBaseName());
     }
 
     @Override
     public File getDefaultUserDataDirectory() {
-        return new File(System.getProperty("user.home")+"/Library", "JOSM");
+        return new File(System.getProperty("user.home")+"/Library",
+                Main.pref.getJOSMDirectoryBaseName());
     }
 }

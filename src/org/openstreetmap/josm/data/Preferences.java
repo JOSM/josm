@@ -294,6 +294,21 @@ public class Preferences {
     }
 
     /**
+     * Get the base name of the JOSM directories for preferences, cache and
+     * user data.
+     * Default value is "JOSM", unless overridden by system property "josm.dir.name".
+     * @return the base name of the JOSM directories for preferences, cache and
+     * user data
+     */
+    public String getJOSMDirectoryBaseName() {
+        String name = System.getProperty("josm.dir.name");
+        if (name != null)
+            return name;
+        else
+            return "JOSM";
+    }
+
+    /**
      * Returns the user defined preferences directory, containing the preferences.xml file
      * @return The user defined preferences directory, containing the preferences.xml file
      * @since 7834

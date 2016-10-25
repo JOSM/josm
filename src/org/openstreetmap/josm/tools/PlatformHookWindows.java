@@ -357,12 +357,12 @@ public class PlatformHookWindows implements PlatformHook {
             // Fallback for Windows OS earlier than Windows Vista, where the variable is not defined
             p = System.getenv("APPDATA");
         }
-        return new File(new File(p, "JOSM"), "cache");
+        return new File(new File(p, Main.pref.getJOSMDirectoryBaseName()), "cache");
     }
 
     @Override
     public File getDefaultPrefDirectory() {
-        return new File(System.getenv("APPDATA"), "JOSM");
+        return new File(System.getenv("APPDATA"), Main.pref.getJOSMDirectoryBaseName());
     }
 
     @Override
