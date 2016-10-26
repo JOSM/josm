@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016101901, Last Updated Thu Oct 20 07:07:02 2016 UTC
+        // Taken from Version 2016102600, Last Updated Wed Oct 26 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -1347,6 +1347,7 @@ public final class DomainValidator extends AbstractValidator {
         "vlaanderen", // vlaanderen DNS.be vzw
         "vodka", // vodka Top Level Domain Holdings Limited
         "volkswagen", // volkswagen Volkswagen Group of America Inc.
+        "volvo", // volvo Volvo Holding Sverige Aktiebolag
         "vote", // vote Monolith Registry LLC
         "voting", // voting Valuetainment Corp.
         "voto", // voto Monolith Registry LLC
