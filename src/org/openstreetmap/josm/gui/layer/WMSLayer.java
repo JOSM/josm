@@ -80,7 +80,7 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
     }
 
     @Override
-    protected AbstractWMSTileSource getTileSource(ImageryInfo info) {
+    protected AbstractWMSTileSource getTileSource() {
         if (info.getImageryType() == ImageryType.WMS && info.getUrl() != null) {
             TemplatedWMSTileSource.checkUrl(info.getUrl());
             AbstractWMSTileSource tileSource = new TemplatedWMSTileSource(info);

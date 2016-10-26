@@ -215,12 +215,12 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     protected abstract TileLoaderFactory getTileLoaderFactory();
 
     /**
+     * Creates and returns a new {@link TileSource} instance depending on {@link #info} specified in the constructor.
      *
-     * @param info imagery info
      * @return TileSource for specified ImageryInfo
      * @throws IllegalArgumentException when Imagery is not supported by layer
      */
-    protected abstract T getTileSource(ImageryInfo info);
+    protected abstract T getTileSource();
 
     protected Map<String, String> getHeaders(T tileSource) {
         if (tileSource instanceof TemplatedTileSource) {
@@ -678,7 +678,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     private void initializeIfRequired() {
         if (tileSource == null) {
-            tileSource = getTileSource(info);
+            tileSource = getTileSource();
             if (tileSource == null) {
                 throw new IllegalArgumentException(tr("Failed to create tile source"));
             }
