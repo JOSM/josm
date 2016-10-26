@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -75,8 +76,8 @@ public class APIDataSet {
                 toDelete.add(osm);
             }
         }
-        final Comparator<OsmPrimitive> orderingNodesWaysRelations = Comparator.comparingInt(osm -> osm.getType().ordinal());
-        final Comparator<OsmPrimitive> byUniqueId = Comparator.comparing(OsmPrimitive::getUniqueId);
+        final Comparator<OsmPrimitive> orderingNodesWaysRelations = OsmPrimitiveComparator.orderingNodesWaysRelations();
+        final Comparator<OsmPrimitive> byUniqueId = OsmPrimitiveComparator.comparingUniqueId();
         toAdd.sort(orderingNodesWaysRelations.thenComparing(byUniqueId));
         toUpdate.sort(orderingNodesWaysRelations.thenComparing(byUniqueId));
         toDelete.sort(orderingNodesWaysRelations.reversed().thenComparing(byUniqueId));

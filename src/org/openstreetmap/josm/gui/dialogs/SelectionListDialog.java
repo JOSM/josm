@@ -658,7 +658,9 @@ public class SelectionListDialog extends ToggleDialog {
         public synchronized void sort() {
             if (selection.size() <= Main.pref.getInteger("selection.no_sort_above", 100_000)) {
                 boolean quick = selection.size() > Main.pref.getInteger("selection.fast_sort_above", 10_000);
-                selection.sort(new OsmPrimitiveComparator(quick, false));
+                selection.sort(OsmPrimitiveComparator.orderingWaysRelationsNodes().thenComparing(quick
+                        ? OsmPrimitiveComparator.comparingUniqueId()
+                        : OsmPrimitiveComparator.comparingNames()));
             }
         }
 
