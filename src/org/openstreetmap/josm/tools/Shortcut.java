@@ -6,12 +6,14 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
@@ -269,7 +271,17 @@ public final class Shortcut {
     ///////////////////////////////
 
     // here we store our shortcuts
-    private static List<Shortcut> shortcuts = new CopyOnWriteArrayList<>();
+    private static Collection<Shortcut> shortcuts = new CopyOnWriteArrayList<Shortcut>() {
+        @Override
+        public boolean add(Shortcut shortcut) {
+            // expensive consistency check only in debug mode
+            if (Main.isDebugEnabled()
+                    && stream().map(Shortcut::getShortText).anyMatch(shortcut.getShortText()::equals)) {
+                Main.warn(new AssertionError(shortcut.getShortText() + " already added"));
+            }
+            return super.add(shortcut);
+        }
+    };
 
     // and here our modifier groups
     private static Map<Integer, Integer> groups = new HashMap<>();
@@ -288,12 +300,11 @@ public final class Shortcut {
     }
 
     private static Optional<Shortcut> findShortcutByKeyOrShortText(int requestedKey, int modifier, String shortText) {
-        if (modifier == getGroupModifier(NONE))
-            return Optional.empty();
+        final Predicate<Shortcut> sameKey = sc -> modifier != getGroupModifier(NONE) && sc.isSame(requestedKey, modifier);
+        final Predicate<Shortcut> sameShortText = sc -> sc.getShortText().equals(shortText);
         return shortcuts.stream()
-                .filter(sc -> sc.isSame(requestedKey, modifier) || (shortText != null && shortText.equals(sc.getShortText())))
+                .filter(sameKey.or(sameShortText))
                 .findAny();
-
     }
 
     /**
@@ -400,11 +411,9 @@ public final class Shortcut {
 
     // shutdown handling
     public static boolean savePrefs() {
-        boolean changed = false;
-        for (Shortcut sc : shortcuts) {
-            changed = changed | sc.save();
-        }
-        return changed;
+        return shortcuts.stream()
+                .map(Shortcut::save)
+                .reduce(false, Boolean::logicalOr); // has changed
     }
 
     /**
@@ -509,7 +518,7 @@ public final class Shortcut {
         Main.info(tr("Silent shortcut conflict: ''{0}'' moved by ''{1}'' to ''{2}''.",
             shortText, conflict.getShortText(), newsc.getKeyText()));
         newsc.saveDefault();
-        shortcuts.replaceAll(sc -> shortText.equals(sc.getShortText()) ? newsc : sc);
+        shortcuts.add(newsc);
         return newsc;
     }
 
