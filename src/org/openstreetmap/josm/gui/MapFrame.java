@@ -283,7 +283,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         Main.getLayerManager().addLayerChangeListener(this);
         Main.getLayerManager().addActiveLayerChangeListener(this);
 
-        boolean unregisterTab = Shortcut.findShortcut(KeyEvent.VK_TAB, 0) != null;
+        boolean unregisterTab = Shortcut.findShortcut(KeyEvent.VK_TAB, 0).isPresent();
         if (unregisterTab) {
             for (JComponent c: allDialogButtons) {
                 c.setFocusTraversalKeysEnabled(false);

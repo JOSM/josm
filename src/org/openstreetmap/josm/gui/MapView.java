@@ -276,9 +276,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             }
         });
 
-        if (Shortcut.findShortcut(KeyEvent.VK_TAB, 0) != null) {
-            setFocusTraversalKeysEnabled(false);
-        }
+        setFocusTraversalKeysEnabled(!Shortcut.findShortcut(KeyEvent.VK_TAB, 0).isPresent());
 
         for (JComponent c : getMapNavigationComponents(this)) {
             add(c);
@@ -296,7 +294,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         Dimension size = zoomSlider.getPreferredSize();
         zoomSlider.setSize(size);
         zoomSlider.setLocation(3, 0);
-        zoomSlider.setFocusTraversalKeysEnabled(Shortcut.findShortcut(KeyEvent.VK_TAB, 0) == null);
+        zoomSlider.setFocusTraversalKeysEnabled(!Shortcut.findShortcut(KeyEvent.VK_TAB, 0).isPresent());
 
         MapScaler scaler = new MapScaler(forMapView);
         scaler.setPreferredLineLength(size.width - 10);

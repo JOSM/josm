@@ -798,16 +798,14 @@ public class TagEditHelper {
         public void setContentPane(Container contentPane) {
             final int commandDownMask = GuiHelper.getMenuShortcutKeyMaskEx();
             List<String> lines = new ArrayList<>();
-            Shortcut sc = Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask);
-            if (sc != null) {
-                lines.add(sc.getKeyText() + ' ' + tr("to apply first suggestion"));
-            }
+            Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask).ifPresent(sc ->
+                    lines.add(sc.getKeyText() + ' ' + tr("to apply first suggestion"))
+            );
             lines.add(KeyEvent.getKeyModifiersText(KeyEvent.SHIFT_MASK)+'+'+KeyEvent.getKeyText(KeyEvent.VK_ENTER) + ' '
                     +tr("to add without closing the dialog"));
-            sc = Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask | KeyEvent.SHIFT_DOWN_MASK);
-            if (sc != null) {
-                lines.add(sc.getKeyText() + ' ' + tr("to add first suggestion without closing the dialog"));
-            }
+            Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask | KeyEvent.SHIFT_DOWN_MASK).ifPresent(sc ->
+                    lines.add(sc.getKeyText() + ' ' + tr("to add first suggestion without closing the dialog"))
+            );
             final JLabel helpLabel = new JLabel("<html>" + Utils.join("<br>", lines) + "</html>");
             helpLabel.setFont(helpLabel.getFont().deriveFont(Font.PLAIN));
             contentPane.add(helpLabel, GBC.eol().fill(GridBagConstraints.HORIZONTAL).insets(5, 5, 5, 5));

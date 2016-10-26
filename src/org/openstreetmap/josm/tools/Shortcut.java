@@ -292,11 +292,10 @@ public final class Shortcut {
      * Returns the registered shortcut fot the key and modifier
      * @param requestedKey the requested key
      * @param modifier the modifier
-     * @return the registered shortcut or {@code null}
+     * @return an {@link Optional} registered shortcut, never {@code null}
      */
-    public static Shortcut findShortcut(int requestedKey, int modifier) {
-        return findShortcutByKeyOrShortText(requestedKey, modifier, null)
-                .orElse(null);
+    public static Optional<Shortcut> findShortcut(int requestedKey, int modifier) {
+        return findShortcutByKeyOrShortText(requestedKey, modifier, null);
     }
 
     private static Optional<Shortcut> findShortcutByKeyOrShortText(int requestedKey, int modifier, String shortText) {
@@ -367,7 +366,7 @@ public final class Shortcut {
         // (2) User defined shortcuts
         Main.pref.getAllPrefixCollectionKeys("shortcut.entry.").stream()
                 .map(Shortcut::new)
-                .filter(sc -> findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null)
+                .filter(sc -> !findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()).isPresent())
                 .sorted(Comparator.comparing(sc -> sc.isAssignedUser() ? 1 : sc.isAssignedDefault() ? 2 : 3))
                 .forEachOrdered(shortcuts::add);
     }
@@ -457,7 +456,7 @@ public final class Shortcut {
             if (Main.isPlatformOsx()) {
                 // Try to reassign Meta to Ctrl
                 int newmodifier = findNewOsxModifier(requestedGroup);
-                if (findShortcut(requestedKey, newmodifier) == null) {
+                if (!findShortcut(requestedKey, newmodifier).isPresent()) {
                     Main.info("Reassigning OSX shortcut '" + shortText + "' from Meta to Ctrl because of conflict with " + conflict);
                     return reassignShortcut(shortText, longText, requestedKey, conflict, requestedGroup, requestedKey, newmodifier);
                 }
@@ -465,7 +464,7 @@ public final class Shortcut {
             for (int m : mods) {
                 for (int k : keys) {
                     int newmodifier = getGroupModifier(m);
-                    if (findShortcut(k, newmodifier) == null) {
+                    if (!findShortcut(k, newmodifier).isPresent()) {
                         Main.info("Reassigning shortcut '" + shortText + "' from " + modifier + " to " + newmodifier +
                                 " because of conflict with " + conflict);
                         return reassignShortcut(shortText, longText, requestedKey, conflict, m, k, newmodifier);
