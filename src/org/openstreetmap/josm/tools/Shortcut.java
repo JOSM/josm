@@ -7,8 +7,8 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -365,31 +365,11 @@ public final class Shortcut {
         // (1) System reserved shortcuts
         Main.platform.initSystemShortcuts();
         // (2) User defined shortcuts
-        List<Shortcut> newshortcuts = new LinkedList<>();
-        for (String s : Main.pref.getAllPrefixCollectionKeys("shortcut.entry.")) {
-            newshortcuts.add(new Shortcut(s));
-        }
-
-        for (Shortcut sc : newshortcuts) {
-            if (sc.isAssignedUser()
-            && findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null) {
-                shortcuts.add(sc);
-            }
-        }
-        // Shortcuts at their default values
-        for (Shortcut sc : newshortcuts) {
-            if (!sc.isAssignedUser() && sc.isAssignedDefault()
-            && findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null) {
-                shortcuts.add(sc);
-            }
-        }
-        // Shortcuts that were automatically moved
-        for (Shortcut sc : newshortcuts) {
-            if (!sc.isAssignedUser() && !sc.isAssignedDefault()
-            && findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null) {
-                shortcuts.add(sc);
-            }
-        }
+        Main.pref.getAllPrefixCollectionKeys("shortcut.entry.").stream()
+                .map(Shortcut::new)
+                .filter(sc -> findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null)
+                .sorted(Comparator.comparing(sc -> sc.isAssignedUser() ? 1 : sc.isAssignedDefault() ? 2 : 3))
+                .forEachOrdered(shortcuts::add);
     }
 
     private static int getGroupModifier(int group) {
