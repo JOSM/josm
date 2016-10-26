@@ -155,14 +155,10 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
 
     @Override
     protected void updateEnabledState() {
-        ImageryType type = info.getImageryType();
-        // never enable blacklisted entries. Do not add same imagery layer twice (fix #2519)
         if (info.isBlacklisted()) {
             setEnabled(false);
-        } else if (type == ImageryType.TMS || type == ImageryType.BING || type == ImageryType.SCANEX) {
-            setEnabled(true);
         } else {
-            setEnabled(!Main.getLayerManager().getLayers().isEmpty());
+            setEnabled(true);
         }
     }
 }
