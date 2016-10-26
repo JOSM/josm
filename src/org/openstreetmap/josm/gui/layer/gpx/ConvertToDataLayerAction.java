@@ -36,7 +36,6 @@ import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -119,7 +118,7 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
                                 .ifPresent(s -> node.put(osmKey, s));
                     }
                 } else {
-                    Logging.warn("Invalid gpx.to-osm-mapping Einstein setting: expecting even number of entries");
+                    Main.warn("Invalid gpx.to-osm-mapping Einstein setting: expecting even number of entries");
                 }
                 ds.addPrimitive(node);
             }

@@ -54,6 +54,9 @@ public final class Logging {
         LOGGER.setLevel(Level.ALL);
         LOGGER.setUseParentHandlers(false);
 
+        // for a more concise logging output via java.util.logging.SimpleFormatter
+        Utils.updateSystemProperty("java.util.logging.SimpleFormatter.format", "%1$tF %1$tT.%1$tL %4$s: %5$s%6$s%n");
+
         ConsoleHandler stderr = new ConsoleHandler();
         LOGGER.addHandler(stderr);
         stderr.setLevel(LEVEL_WARN);
