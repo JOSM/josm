@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
 import org.openstreetmap.josm.data.conflict.Conflict;
@@ -56,6 +58,11 @@ public class APIDataSet {
         init(ds.allPrimitives());
     }
 
+    /**
+     * Initializes the API data set with the modified primitives, ignores unmodified primitives.
+     *
+     * @param primitives the primitives
+     */
     public final void init(Collection<OsmPrimitive> primitives) {
         toAdd.clear();
         toUpdate.clear();
@@ -88,25 +95,6 @@ public class APIDataSet {
 
     /**
      * Replies true if one of the primitives to be updated or to be deleted
-     * participates in the conflict <code>conflict</code>
-     *
-     * @param conflict the conflict
-     * @return true if one of the primitives to be updated or to be deleted
-     * participates in the conflict <code>conflict</code>
-     */
-    public boolean participatesInConflict(Conflict<?> conflict) {
-        if (conflict == null) return false;
-        for (OsmPrimitive p: toUpdate) {
-            if (conflict.isParticipating(p)) return true;
-        }
-        for (OsmPrimitive p: toDelete) {
-            if (conflict.isParticipating(p)) return true;
-        }
-        return false;
-    }
-
-    /**
-     * Replies true if one of the primitives to be updated or to be deleted
      * participates in at least one conflict in <code>conflicts</code>
      *
      * @param conflicts the collection of conflicts
@@ -115,20 +103,14 @@ public class APIDataSet {
      */
     public boolean participatesInConflict(ConflictCollection conflicts) {
         if (conflicts == null || conflicts.isEmpty()) return false;
-        Set<PrimitiveId> idsParticipatingInConflicts = new HashSet<>();
-        for (OsmPrimitive p: conflicts.getMyConflictParties()) {
-            idsParticipatingInConflicts.add(p.getPrimitiveId());
-        }
-        for (OsmPrimitive p: conflicts.getTheirConflictParties()) {
-            idsParticipatingInConflicts.add(p.getPrimitiveId());
-        }
-        for (OsmPrimitive p: toUpdate) {
-            if (idsParticipatingInConflicts.contains(p.getPrimitiveId())) return true;
-        }
-        for (OsmPrimitive p: toDelete) {
-            if (idsParticipatingInConflicts.contains(p.getPrimitiveId())) return true;
-        }
-        return false;
+        Set<PrimitiveId> idsParticipatingInConflicts = conflicts.get().stream()
+                .flatMap(c -> Stream.of(c.getMy(), c.getTheir()))
+                .map(OsmPrimitive::getPrimitiveId)
+                .collect(Collectors.toSet());
+        return Stream.of(toUpdate, toDelete)
+                .flatMap(Collection::stream)
+                .map(OsmPrimitive::getPrimitiveId)
+                .anyMatch(idsParticipatingInConflicts::contains);
     }
 
     /**
