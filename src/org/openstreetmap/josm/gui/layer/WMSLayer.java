@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * This is a layer that grabs the current screen from an WMS server. The data
@@ -60,6 +61,9 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
      */
     public WMSLayer(ImageryInfo info) {
         super(info);
+        CheckParameterUtil.ensureThat(info.getImageryType() == ImageryType.WMS, "ImageryType is WMS");
+        CheckParameterUtil.ensureParameterNotNull(info.getUrl(), "info.url");
+        TemplatedWMSTileSource.checkUrl(info.getUrl());
         this.supportedProjections = new TreeSet<>(info.getServerProjections());
     }
 
@@ -81,13 +85,9 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
 
     @Override
     protected AbstractWMSTileSource getTileSource() {
-        if (info.getImageryType() == ImageryType.WMS && info.getUrl() != null) {
-            TemplatedWMSTileSource.checkUrl(info.getUrl());
-            AbstractWMSTileSource tileSource = new TemplatedWMSTileSource(info);
-            info.setAttribution(tileSource);
-            return tileSource;
-        }
-        return null;
+        AbstractWMSTileSource tileSource = new TemplatedWMSTileSource(info);
+        info.setAttribution(tileSource);
+        return tileSource;
     }
 
     /**
