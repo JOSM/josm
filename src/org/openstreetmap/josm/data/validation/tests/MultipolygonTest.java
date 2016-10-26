@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.CreateMultipolygonAction;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
@@ -29,7 +28,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData.Intersection;
-import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
@@ -502,7 +500,7 @@ public class MultipolygonTest extends Test {
                     HashSet<OsmPrimitive> found = new HashSet<>(repeatedPrims.size());
                     for (RelationMember rm : oldMembers) {
                         if (toRemove.contains(rm.getMember())) {
-                            if (found.contains(rm.getMember()) == false) {
+                            if (!found.contains(rm.getMember())) {
                                 found.add(rm.getMember());
                                 newMembers.add(rm);
                             }
@@ -511,7 +509,7 @@ public class MultipolygonTest extends Test {
                         }
                     }
                     newRel.setMembers(newMembers);
-                    return new ChangeCommand (oldRel, newRel);
+                    return new ChangeCommand(oldRel, newRel);
                 }
             }
         }
