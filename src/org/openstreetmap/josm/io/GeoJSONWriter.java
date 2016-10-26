@@ -17,6 +17,7 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonWriter;
 import javax.json.stream.JsonGenerator;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -118,7 +119,10 @@ public class GeoJSONWriter {
 
         @Override
         public void visit(Relation r) {
-            if (r != null && r.isMultipolygon() && !r.hasIncompleteMembers()) {
+            if (r == null || !r.isMultipolygon() || r.hasIncompleteMembers()) {
+                return;
+            }
+            try {
                 final Pair<List<JoinedPolygon>, List<JoinedPolygon>> mp = MultipolygonBuilder.joinWays(r);
                 final JsonArrayBuilder polygon = Json.createArrayBuilder();
                 Stream.concat(mp.a.stream(), mp.b.stream())
@@ -129,6 +133,9 @@ public class GeoJSONWriter {
                 geomObj.add("type", "MultiPolygon");
                 final JsonArrayBuilder multiPolygon = Json.createArrayBuilder().add(polygon);
                 geomObj.add("coordinates", multiPolygon);
+            } catch (MultipolygonBuilder.JoinedPolygonCreationException ex) {
+                Main.warn("GeoJSON: Failed to export multipolygon " + r.getUniqueId());
+                Main.warn(ex);
             }
         }
     }
