@@ -74,7 +74,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
                 AlignImageryPanel.addNagPanelIfNeeded(infoToAdd);
             }
         } catch (IllegalArgumentException ex) {
-            if (ex.getMessage() == null || ex.getMessage().isEmpty()) {
+            if (ex.getMessage() == null || ex.getMessage().isEmpty() || GraphicsEnvironment.isHeadless()) {
                 throw ex;
             } else {
                 JOptionPane.showMessageDialog(Main.parent,

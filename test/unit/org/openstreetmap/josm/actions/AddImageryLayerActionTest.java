@@ -70,7 +70,11 @@ public final class AddImageryLayerActionTest {
     @Test
     public void testActionPerformedDisabled() {
         assertTrue(Main.getLayerManager().getLayersOfType(TMSLayer.class).isEmpty());
-        new AddImageryLayerAction(new ImageryInfo()).actionPerformed(null);
+        try {
+            new AddImageryLayerAction(new ImageryInfo()).actionPerformed(null);
+        } catch (IllegalArgumentException expected) {
+            assertEquals("Parameter 'info.url' must not be null", expected.getMessage());
+        }
         assertTrue(Main.getLayerManager().getLayersOfType(TMSLayer.class).isEmpty());
     }
 }
