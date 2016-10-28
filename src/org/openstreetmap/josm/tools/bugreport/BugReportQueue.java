@@ -9,6 +9,7 @@ import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This class handles the display of the bug report dialog.
@@ -52,6 +53,7 @@ public class BugReportQueue {
      * @param report The error to display
      */
     public synchronized void submit(ReportedException report) {
+        Logging.logWithStackTrace(Logging.LEVEL_ERROR, "Handled by bug report queue", report);
         if (suppressAllMessages || suppressFor.stream().anyMatch(report::isSame)) {
             Main.info("User requested to skip error " + report);
         } else if (reportsToDisplay.size() > 100 || reportsToDisplay.stream().filter(report::isSame).count() >= 10) {
