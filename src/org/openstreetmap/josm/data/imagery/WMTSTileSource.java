@@ -8,6 +8,7 @@ import java.awt.Point;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -308,6 +309,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                 return ret;
             } catch (XMLStreamException e) {
                 cf.clear();
+                Main.warn(new String(data, StandardCharsets.UTF_8));
                 throw new IllegalArgumentException(e);
             }
         }
