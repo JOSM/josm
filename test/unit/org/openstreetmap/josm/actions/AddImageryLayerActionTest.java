@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.actions;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -35,11 +34,11 @@ public final class AddImageryLayerActionTest {
      */
     @Test
     public void testEnabledState() {
-        assertFalse(new AddImageryLayerAction(new ImageryInfo()).isEnabled());
+        assertTrue(new AddImageryLayerAction(new ImageryInfo()).isEnabled());
         assertTrue(new AddImageryLayerAction(new ImageryInfo("foo_tms", "http://bar", "tms", null, null)).isEnabled());
         assertTrue(new AddImageryLayerAction(new ImageryInfo("foo_bing", "http://bar", "bing", null, null)).isEnabled());
         assertTrue(new AddImageryLayerAction(new ImageryInfo("foo_scanex", "http://bar", "scanex", null, null)).isEnabled());
-        assertFalse(new AddImageryLayerAction(new ImageryInfo("foo_wms_endpoint", "http://bar", "wms_endpoint", null, null)).isEnabled());
+        assertTrue(new AddImageryLayerAction(new ImageryInfo("foo_wms_endpoint", "http://bar", "wms_endpoint", null, null)).isEnabled());
     }
 
     /**
