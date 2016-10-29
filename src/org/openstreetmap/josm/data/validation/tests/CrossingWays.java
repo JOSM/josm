@@ -194,7 +194,7 @@ public abstract class CrossingWays extends Test {
 
         @Override
         boolean ignoreWaySegmentCombination(Way w1, Way w2) {
-            return (w1 != w2); // should not happen
+            return w1 != w2; // should not happen
         }
 
         @Override

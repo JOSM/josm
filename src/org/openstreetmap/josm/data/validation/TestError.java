@@ -74,7 +74,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
         private Collection<?> highlighted;
         private Supplier<Command> fixingCommand;
 
-        private Builder(Test tester, Severity severity, int code) {
+        Builder(Test tester, Severity severity, int code) {
             this.tester = tester;
             this.severity = severity;
             this.code = code;
@@ -238,7 +238,7 @@ public class TestError implements Comparable<TestError>, DataSetListener {
         return new Builder(tester, severity, code);
     }
 
-    private TestError(Builder builder) {
+    TestError(Builder builder) {
         this.tester = builder.tester;
         this.severity = builder.severity;
         this.message = builder.message;

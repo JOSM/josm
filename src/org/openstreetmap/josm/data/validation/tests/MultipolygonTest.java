@@ -488,29 +488,27 @@ public class MultipolygonTest extends Test {
     public Command fixError(TestError testError) {
         if (testError.getCode() == REPEATED_MEMBER_SAME_ROLE) {
             ArrayList<OsmPrimitive> primitives = new ArrayList<>(testError.getPrimitives());
-            if (primitives.size() >= 2) {
-                if (primitives.get(0) instanceof Relation) {
-                    Relation oldRel = (Relation) primitives.get(0);
-                    Relation newRel = new Relation(oldRel);
-                    List<OsmPrimitive> repeatedPrims = primitives.subList(1, primitives.size());
-                    List<RelationMember> oldMembers = oldRel.getMembers();
+            if (primitives.size() >= 2 && primitives.get(0) instanceof Relation) {
+                Relation oldRel = (Relation) primitives.get(0);
+                Relation newRel = new Relation(oldRel);
+                List<OsmPrimitive> repeatedPrims = primitives.subList(1, primitives.size());
+                List<RelationMember> oldMembers = oldRel.getMembers();
 
-                    List<RelationMember> newMembers = new ArrayList<>();
-                    HashSet<OsmPrimitive> toRemove = new HashSet<>(repeatedPrims);
-                    HashSet<OsmPrimitive> found = new HashSet<>(repeatedPrims.size());
-                    for (RelationMember rm : oldMembers) {
-                        if (toRemove.contains(rm.getMember())) {
-                            if (!found.contains(rm.getMember())) {
-                                found.add(rm.getMember());
-                                newMembers.add(rm);
-                            }
-                        } else {
+                List<RelationMember> newMembers = new ArrayList<>();
+                HashSet<OsmPrimitive> toRemove = new HashSet<>(repeatedPrims);
+                HashSet<OsmPrimitive> found = new HashSet<>(repeatedPrims.size());
+                for (RelationMember rm : oldMembers) {
+                    if (toRemove.contains(rm.getMember())) {
+                        if (!found.contains(rm.getMember())) {
+                            found.add(rm.getMember());
                             newMembers.add(rm);
                         }
+                    } else {
+                        newMembers.add(rm);
                     }
-                    newRel.setMembers(newMembers);
-                    return new ChangeCommand(oldRel, newRel);
                 }
+                newRel.setMembers(newMembers);
+                return new ChangeCommand(oldRel, newRel);
             }
         }
         return null;

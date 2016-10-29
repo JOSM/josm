@@ -406,7 +406,7 @@ public class PlatformHookWindows implements PlatformHook {
         String javaLibPath = System.getProperty("java.home") + File.separator + "lib";
         Path templateFile = FileSystems.getDefault().getPath(javaLibPath, templateFileName);
         if (!Files.isReadable(templateFile)) {
-            Main.warn("extended font config - unable to find font config template file "+templateFile.toString());
+            Main.warn("extended font config - unable to find font config template file {0}", templateFile.toString());
             return;
         }
         try (FileInputStream fis = new FileInputStream(templateFile.toFile())) {

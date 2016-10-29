@@ -134,7 +134,7 @@ public class GeoJSONWriter {
                 final JsonArrayBuilder multiPolygon = Json.createArrayBuilder().add(polygon);
                 geomObj.add("coordinates", multiPolygon);
             } catch (MultipolygonBuilder.JoinedPolygonCreationException ex) {
-                Main.warn("GeoJSON: Failed to export multipolygon " + r.getUniqueId());
+                Main.warn("GeoJSON: Failed to export multipolygon {0}", r.getUniqueId());
                 Main.warn(ex);
             }
         }
