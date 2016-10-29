@@ -210,7 +210,7 @@ public final class DistributeAction extends JosmAction {
     private static Collection<Command> distributeNodes(Collection<Node> nodes) {
         // Find from the selected nodes two that are the furthest apart.
         // Let's call them A and B.
-        double distance = 0;
+        double distance = Double.NEGATIVE_INFINITY;
 
         Node nodea = null;
         Node nodeb = null;
@@ -255,7 +255,7 @@ public final class DistributeAction extends JosmAction {
             Node s = null;
 
             // Find the node that is furthest from B (i.e. closest to A)
-            distance = 0.0;
+            distance = Double.NEGATIVE_INFINITY;
             for (Node n : nodes) {
                 double dist = Math.sqrt(nodeb.getEastNorth().distance(n.getEastNorth()));
                 if (dist > distance) {
