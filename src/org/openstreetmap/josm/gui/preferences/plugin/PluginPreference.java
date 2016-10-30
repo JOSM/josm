@@ -590,7 +590,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                             tr("Enter URL"),
                             JOptionPane.QUESTION_MESSAGE
                             );
-                    if (s != null) {
+                    if (s != null && !s.isEmpty()) {
                         model.addElement(s);
                     }
                 }
@@ -616,7 +616,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                             null,
                             list.getSelectedValue()
                             );
-                    if (s != null) {
+                    if (s != null && !s.isEmpty()) {
                         model.setElementAt(s, list.getSelectedIndex());
                     }
                 }

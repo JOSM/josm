@@ -816,7 +816,7 @@ public class TagEditHelper {
             String s = String.format("%d", PROPERTY_RECENT_TAGS_NUMBER.get());
             while (true) {
                 s = JOptionPane.showInputDialog(this, tr("Please enter the number of recently added tags to display"), s);
-                if (s == null) {
+                if (s == null || s.isEmpty()) {
                     return;
                 }
                 try {
