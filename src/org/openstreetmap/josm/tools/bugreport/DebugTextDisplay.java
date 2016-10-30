@@ -28,7 +28,7 @@ public class DebugTextDisplay extends JScrollPane {
         textArea.setCaretPosition(0);
         textArea.setEditable(false);
         setViewportView(textArea);
-        setPreferredSize(new Dimension(600, 300));
+        setPreferredSize(new Dimension(600, 270));
     }
 
     /**
