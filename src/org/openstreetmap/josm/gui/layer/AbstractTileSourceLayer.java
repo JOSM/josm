@@ -126,6 +126,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     public static final int MIN_ZOOM = 2;
     private static final Font InfoFont = new Font("sansserif", Font.BOLD, 13);
 
+    /** additional layer menu actions */
+    private static List<MenuAddition> menuAdditions = new LinkedList<>();
+
     /** minimum zoom level to show to user */
     public static final IntegerProperty PROP_MIN_ZOOM_LVL = new IntegerProperty(PREFERENCE_PREFIX + ".min_zoom_lvl", 2);
     /** maximum zoom level to show to user */
@@ -1763,11 +1766,75 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         return clickedTiles.findAny().orElse(null);
     }
 
+    /**
+     * Class to store a menu action and the class it belongs to.
+     */
+    private static class MenuAddition {
+        final Action addition;
+        @SuppressWarnings("rawtypes")
+        final Class<? extends AbstractTileSourceLayer> clazz;
+
+        @SuppressWarnings("rawtypes")
+        MenuAddition(Action addition, Class<? extends AbstractTileSourceLayer> clazz) {
+            this.addition = addition;
+            this.clazz = clazz;
+        }
+    }
+
+    /**
+     * Register an additional layer context menu entry.
+     *
+     * @param addition additional menu action
+     * @since 11197
+     */
+    public static void registerMenuAddition(Action addition) {
+        menuAdditions.add(new MenuAddition(addition, AbstractTileSourceLayer.class));
+    }
+
+    /**
+     * Register an additional layer context menu entry for a imagery layer
+     * class.  The menu entry is valid for the specified class and subclasses
+     * thereof only.
+     * <p>
+     * Example:
+     * <pre>
+     * TMSLayer.registerMenuAddition(new TMSSpecificAction(), TMSLayer.class);
+     * </pre>
+     *
+     * @param addition additional menu action
+     * @param clazz class the menu action is registered for
+     * @since 11197
+     */
+    public static void registerMenuAddition(Action addition,
+                                            Class<? extends AbstractTileSourceLayer<?>> clazz) {
+        menuAdditions.add(new MenuAddition(addition, clazz));
+    }
+
+    /**
+     * Prepare list of additional layer context menu entries.  The list is
+     * empty if there are no additional menu entries.
+     *
+     * @return list of additional layer context menu entries
+     */
+    private List<Action> getMenuAdditions() {
+        final LinkedList<Action> menuAdds = new LinkedList<>();
+        for (MenuAddition menuAdd: menuAdditions) {
+            if (menuAdd.clazz.isInstance(this)) {
+                menuAdds.add(menuAdd.addition);
+            }
+        }
+        if (!menuAdds.isEmpty()) {
+            menuAdds.addFirst(SeparatorLayerAction.INSTANCE);
+        }
+        return menuAdds;
+    }
+
     @Override
     public Action[] getMenuEntries() {
         ArrayList<Action> actions = new ArrayList<>();
         actions.addAll(Arrays.asList(getLayerListEntries()));
         actions.addAll(Arrays.asList(getCommonEntries()));
+        actions.addAll(getMenuAdditions());
         actions.add(SeparatorLayerAction.INSTANCE);
         actions.add(new LayerListPopup.InfoAction(this));
         return actions.toArray(new Action[actions.size()]);
