@@ -15,6 +15,8 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.auth.CredentialsAgentException;
+import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.HttpClient;
 
 /**
@@ -28,8 +30,19 @@ import org.openstreetmap.josm.tools.HttpClient;
  */
 public abstract class OsmServerReader extends OsmConnection {
     private final OsmApi api = OsmApi.getOsmApi();
-    private boolean doAuthenticate = OsmApi.isUsingOAuth();
+    private boolean doAuthenticate;
     protected boolean gpxParsedProperly;
+
+    /**
+     * Constructs a new {@code OsmServerReader}.
+     */
+    public OsmServerReader() {
+        try {
+            doAuthenticate = OsmApi.isUsingOAuth() && CredentialsManager.getInstance().lookupOAuthAccessToken() != null;
+        } catch (CredentialsAgentException e) {
+            Main.warn(e);
+        }
+    }
 
     /**
      * Open a connection to the given url and return a reader on the input stream
