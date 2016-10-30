@@ -531,6 +531,15 @@ public class CachedFile implements Closeable {
      * @since 10993
      */
     public void clear() throws IOException {
+        URL url;
+        try {
+            url = new URL(name);
+            if ("file".equals(url.getProtocol())) {
+                return; // this is local file - do not delete it
+            }
+        } catch (MalformedURLException e) {
+            return; // if it's not a URL, then it still might be a local file - better not to delete
+        }
         File f = getFile();
         if (f != null && f.exists()) {
             Utils.deleteFile(f);
