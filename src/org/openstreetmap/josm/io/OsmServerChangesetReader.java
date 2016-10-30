@@ -28,13 +28,6 @@ import org.openstreetmap.josm.tools.XmlParsingException;
 public class OsmServerChangesetReader extends OsmServerReader {
 
     /**
-     * Constructs a new {@code OsmServerChangesetReader}.
-     */
-    public OsmServerChangesetReader() {
-        setDoAuthenticate(false);
-    }
-
-    /**
      * don't use - not implemented!
      */
     @Override
