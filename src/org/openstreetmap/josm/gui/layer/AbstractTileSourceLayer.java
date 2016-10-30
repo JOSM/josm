@@ -41,7 +41,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
@@ -92,6 +91,8 @@ import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings.FilterChangeListener;
 import org.openstreetmap.josm.gui.layer.imagery.TileCoordinateConverter;
+import org.openstreetmap.josm.gui.layer.imagery.TilePosition;
+import org.openstreetmap.josm.gui.layer.imagery.TileRange;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings.DisplaySettingsChangeEvent;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings.DisplaySettingsChangeListener;
@@ -1267,97 +1268,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     }
 
     private final TileSet nullTileSet = new TileSet();
-
-    /**
-     * This is a rectangular range of tiles.
-     */
-    private static class TileRange {
-        int minX;
-        int maxX;
-        int minY;
-        int maxY;
-        int zoom;
-
-        private TileRange() {
-        }
-
-        protected TileRange(TileXY t1, TileXY t2, int zoom) {
-            minX = (int) Math.floor(Math.min(t1.getX(), t2.getX()));
-            minY = (int) Math.floor(Math.min(t1.getY(), t2.getY()));
-            maxX = (int) Math.ceil(Math.max(t1.getX(), t2.getX()));
-            maxY = (int) Math.ceil(Math.max(t1.getY(), t2.getY()));
-            this.zoom = zoom;
-        }
-
-        protected double tilesSpanned() {
-            return Math.sqrt(1.0 * this.size());
-        }
-
-        protected int size() {
-            int xSpan = maxX - minX + 1;
-            int ySpan = maxY - minY + 1;
-            return xSpan * ySpan;
-        }
-
-        /**
-         * Gets a stream of all tile positions in this set
-         * @return A stream of all positions
-         */
-        public Stream<TilePosition> tilePositions() {
-            if (zoom == 0) {
-                return Stream.empty();
-            } else {
-                return IntStream.rangeClosed(minX, maxX).mapToObj(
-                        x -> IntStream.rangeClosed(minY, maxY).mapToObj(y -> new TilePosition(x, y, zoom))
-                        ).flatMap(Function.identity());
-            }
-        }
-    }
-
-    /**
-     * The position of a single tile.
-     * @author Michael Zangl
-     */
-    private static class TilePosition {
-        private final int x;
-        private final int y;
-        private final int zoom;
-        TilePosition(int x, int y, int zoom) {
-            this.x = x;
-            this.y = y;
-            this.zoom = zoom;
-        }
-
-        TilePosition(Tile tile) {
-            this(tile.getXtile(), tile.getYtile(), tile.getZoom());
-        }
-
-        /**
-         * @return the x position
-         */
-        public int getX() {
-            return x;
-        }
-
-        /**
-         * @return the y position
-         */
-        public int getY() {
-            return y;
-        }
-
-        /**
-         * @return the zoom
-         */
-        public int getZoom() {
-            return zoom;
-        }
-
-        @Override
-        public String toString() {
-            return "TilePosition [x=" + x + ", y=" + y + ", zoom=" + zoom + ']';
-        }
-    }
 
     private class TileSet extends TileRange {
 
