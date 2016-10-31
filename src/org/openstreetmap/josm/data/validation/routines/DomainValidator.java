@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016102600, Last Updated Wed Oct 26 07:07:01 2016 UTC
+        // Taken from Version 2016103001, Last Updated Mon Oct 31 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -381,6 +381,7 @@ public final class DomainValidator extends AbstractValidator {
         "barclays", // barclays Barclays Bank PLC
         "barefoot", // barefoot Gallo Vineyards, Inc.
         "bargains", // bargains Half Hallow, LLC
+        "baseball", // baseball MLB Advanced Media DH, LLC
         "basketball", // basketball Fédération Internationale de Basketball (FIBA)
         "bauhaus", // bauhaus Werkhaus GmbH
         "bayern", // bayern Bayern Connect GmbH
@@ -465,6 +466,8 @@ public final class DomainValidator extends AbstractValidator {
         "cars", // cars Uniregistry, Corp.
         "cartier", // cartier Richemont DNS Inc.
         "casa", // casa Top Level Domain Holdings Limited
+        "case", // case CNH Industrial N.V.
+        "caseih", // caseih CNH Industrial N.V.
         "cash", // cash Delta Lake, LLC
         "casino", // casino Binky Sky, LLC
         "cat", // cat Fundacio puntCAT
@@ -807,6 +810,7 @@ public final class DomainValidator extends AbstractValidator {
         "istanbul", // istanbul Istanbul Metropolitan Municipality / Medya A.S.
         "itau", // itau Itau Unibanco Holding S.A.
         "itv", // itv ITV Services Limited
+        "iveco", // iveco CNH Industrial N.V.
         "iwc", // iwc Richemont DNS Inc.
         "jaguar", // jaguar Jaguar Land Rover Ltd
         "java", // java Oracle Corporation
@@ -986,6 +990,7 @@ public final class DomainValidator extends AbstractValidator {
         "network", // network Trixy Manor, LLC
         "neustar", // neustar NeuStar, Inc.
         "new", // new Charleston Road Registry Inc.
+        "newholland", // newholland CNH Industrial N.V.
         "news", // news United TLD Holdco Ltd.
         "next", // next Next plc
         "nextdirect", // nextdirect Next plc
