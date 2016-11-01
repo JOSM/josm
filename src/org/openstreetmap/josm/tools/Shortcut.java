@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -271,7 +270,9 @@ public final class Shortcut {
     ///////////////////////////////
 
     // here we store our shortcuts
-    private static Collection<Shortcut> shortcuts = new CopyOnWriteArrayList<Shortcut>() {
+    private static ShortcutCollection shortcuts = new ShortcutCollection();
+
+    private static class ShortcutCollection extends CopyOnWriteArrayList<Shortcut> {
         @Override
         public boolean add(Shortcut shortcut) {
             // expensive consistency check only in debug mode
@@ -280,6 +281,15 @@ public final class Shortcut {
                 Main.warn(new AssertionError(shortcut.getShortText() + " already added"));
             }
             return super.add(shortcut);
+        }
+
+        public void replace(Shortcut newShortcut) {
+            final Optional<Shortcut> existing = findShortcutByKeyOrShortText(-1, NONE, newShortcut.shortText);
+            if (existing.isPresent()) {
+                replaceAll(sc -> existing.get() == sc ? newShortcut : sc);
+            } else {
+                add(newShortcut);
+            }
         }
     };
 
@@ -368,7 +378,7 @@ public final class Shortcut {
                 .map(Shortcut::new)
                 .filter(sc -> !findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()).isPresent())
                 .sorted(Comparator.comparing(sc -> sc.isAssignedUser() ? 1 : sc.isAssignedDefault() ? 2 : 3))
-                .forEachOrdered(shortcuts::add);
+                .forEachOrdered(shortcuts::replace);
     }
 
     private static int getGroupModifier(int group) {
