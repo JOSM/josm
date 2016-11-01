@@ -88,6 +88,7 @@ import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitorExecutor;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.OnlineResource;
@@ -803,7 +804,9 @@ public abstract class Main {
      * @since 11093 (3378 with a different function signature)
      */
     public static boolean exitJosm(boolean exit, int exitCode, SaveLayersDialog.Reason reason) {
-        if (SaveLayersDialog.saveUnsavedModifications(getLayerManager().getLayers(), reason != null ? reason : SaveLayersDialog.Reason.EXIT)) {
+        final boolean proceed = Boolean.TRUE.equals(GuiHelper.runInEDTAndWaitAndReturn(() ->
+                SaveLayersDialog.saveUnsavedModifications(getLayerManager().getLayers(), reason != null ? reason : SaveLayersDialog.Reason.EXIT)));
+        if (proceed) {
             if (Main.main != null) {
                 Main.main.shutdown();
             }
