@@ -5,7 +5,6 @@
 /* {0.key} without {1.key} (warning level) */
 way[junction                   ][!highway][junction!=yes],
 *[lanes                        ][!highway],
-*[lcn                          ][!highway],
 *[living_street                ][!highway],
 *[maintenance                  ][!highway],
 *[median                       ][!highway],
