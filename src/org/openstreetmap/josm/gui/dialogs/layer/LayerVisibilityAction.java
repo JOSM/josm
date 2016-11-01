@@ -60,6 +60,8 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
     public LayerVisibilityAction(LayerListModel model) {
         this.model = model;
         popup = new JPopupMenu();
+        // prevent popup close on mouse wheel move
+        popup.addMouseWheelListener(MouseWheelEvent::consume);
 
         // just to add a border
         JPanel content = new JPanel();
@@ -81,9 +83,14 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
     }
 
     private void addSlider(JPanel content, FilterSlider<?> slider) {
-        content.add(new JLabel(slider.getIcon()), GBC.std().span(1, 2).insets(0, 0, 5, 0));
-        content.add(new JLabel(slider.getLabel()), GBC.eol());
-        content.add(slider, GBC.eop());
+        // wrap to a common content pane to allow for mouse wheel listener on label.
+        JPanel container = new JPanel(new GridBagLayout());
+        container.add(new JLabel(slider.getIcon()), GBC.std().span(1, 2).insets(0, 0, 5, 0));
+        container.add(new JLabel(slider.getLabel()), GBC.eol());
+        container.add(slider, GBC.eol());
+        content.add(container, GBC.eop());
+
+        container.addMouseWheelListener(slider::mouseWheelMoved);
         sliders.add(slider);
     }
 
@@ -176,7 +183,6 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
             setPaintTicks(true);
 
             addChangeListener(e -> onStateChanged());
-            addMouseWheelListener(this::mouseWheelMoved);
         }
 
         /**
@@ -192,6 +198,11 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
         }
 
         protected void mouseWheelMoved(MouseWheelEvent e) {
+            e.consume();
+            if (!isEnabled()) {
+                // ignore mouse wheel in disabled state.
+                return;
+            }
             double rotation = e.getPreciseWheelRotation();
             double destinationValue = getValue() + rotation * SLIDER_WHEEL_INCREMENT;
             if (rotation < 0) {
@@ -200,7 +211,6 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
                 destinationValue = Math.ceil(destinationValue);
             }
             setValue(Utils.clamp((int) destinationValue, getMinimum(), getMaximum()));
-            e.consume();
         }
 
         protected void applyValueToLayer(T layer) {
@@ -266,6 +276,19 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
                 setVisibleFlag(false);
             } else {
                 super.onStateChanged();
+            }
+        }
+
+        @Override
+        protected void mouseWheelMoved(MouseWheelEvent e) {
+            if (!isEnabled() && !filterLayers(model.getSelectedLayers()).isEmpty() && e.getPreciseWheelRotation() > 0) {
+                // make layer visible and set the value.
+                // this allows users to use the mouse wheel to make the layer visible if it was hidden previously.
+                e.consume();
+                setVisibleFlag(true);
+                setRealValue(0.05);
+            } else {
+                super.mouseWheelMoved(e);
             }
         }
 
