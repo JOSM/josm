@@ -48,8 +48,7 @@ public final class StyleCache {
             ds = new DividedScale<>();
         }
         s.states[idx] = ds.put(o, r);
-        s.intern();
-        return s;
+        return s.intern();
     }
 
     public Pair<StyleElementList, Range> getWithRange(double scale, boolean selected) {
