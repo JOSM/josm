@@ -123,7 +123,7 @@ public class InspectPrimitiveDialogTest {
             n.setUser(User.getAnonymous());
             ds.addPrimitive(n);
             ds.addSelected(n);
-            assertEquals(baseText + baseText + "Warning: The 2 selected objects have equal, but not identical style caches.",
+            assertEquals(baseText + baseText + "The 2 selected objects have identical style caches.",
                     InspectPrimitiveDialog.buildMapPaintText().replaceAll("@(\\p{XDigit})+", ""));
         } finally {
             Main.getLayerManager().removeLayer(layer);
