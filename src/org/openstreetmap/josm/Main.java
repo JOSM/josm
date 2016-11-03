@@ -805,7 +805,8 @@ public abstract class Main {
      */
     public static boolean exitJosm(boolean exit, int exitCode, SaveLayersDialog.Reason reason) {
         final boolean proceed = Boolean.TRUE.equals(GuiHelper.runInEDTAndWaitAndReturn(() ->
-                SaveLayersDialog.saveUnsavedModifications(getLayerManager().getLayers(), reason != null ? reason : SaveLayersDialog.Reason.EXIT)));
+                SaveLayersDialog.saveUnsavedModifications(getLayerManager().getLayers(),
+                        reason != null ? reason : SaveLayersDialog.Reason.EXIT)));
         if (proceed) {
             if (Main.main != null) {
                 Main.main.shutdown();
