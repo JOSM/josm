@@ -53,7 +53,7 @@ public class BugReportQueue {
      * @param report The error to display
      */
     public synchronized void submit(ReportedException report) {
-        Logging.logWithStackTrace(Logging.LEVEL_ERROR, "Handled by bug report queue", report);
+        Logging.logWithStackTrace(Logging.LEVEL_ERROR, "Handled by bug report queue", report.getCause());
         if (suppressAllMessages || suppressFor.stream().anyMatch(report::isSame)) {
             Main.info("User requested to skip error " + report);
         } else if (reportsToDisplay.size() > 100 || reportsToDisplay.stream().filter(report::isSame).count() >= 10) {
