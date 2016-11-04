@@ -99,6 +99,7 @@ public class PlatformHookWindows implements PlatformHook {
          * Constructs a new {@code FontEntry}.
          */
         public FontEntry() {
+            // Default constructor needed for construction by reflection
         }
 
         /**

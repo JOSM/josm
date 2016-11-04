@@ -372,7 +372,7 @@ public class PlatformHookUnixoid implements PlatformHook {
      * Get the dot directory <code>~/.josm</code>.
      * @return the dot directory
      */
-    private File getDotDirectory() {
+    private static File getDotDirectory() {
         String dirName = "." + Main.pref.getJOSMDirectoryBaseName().toLowerCase(Locale.ENGLISH);
         return new File(System.getProperty("user.home"), dirName);
     }

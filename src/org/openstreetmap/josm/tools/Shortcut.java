@@ -291,7 +291,7 @@ public final class Shortcut {
                 add(newShortcut);
             }
         }
-    };
+    }
 
     // and here our modifier groups
     private static Map<Integer, Integer> groups = new HashMap<>();

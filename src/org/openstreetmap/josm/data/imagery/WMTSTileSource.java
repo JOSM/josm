@@ -223,7 +223,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             setContent(panel);
         }
 
-        private List<Entry<String, List<Layer>>> groupLayersByName(Collection<Layer> layers) {
+        private static List<Entry<String, List<Layer>>> groupLayersByName(Collection<Layer> layers) {
             Map<String, List<Layer>> layerByName = layers.stream().collect(Collectors.groupingBy(x -> x.name));
             return layerByName.entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toList());
         }
@@ -246,7 +246,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
     private ScaleList nativeScaleList;
 
-    private String defaultLayer;
+    private final String defaultLayer;
 
     /**
      * Creates a tile source based on imagery info
