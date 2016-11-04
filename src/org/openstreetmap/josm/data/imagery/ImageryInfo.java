@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.swing.ImageIcon;
 
@@ -192,6 +193,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     private String icon;
     private boolean isGeoreferenceValid;
     private boolean isEpsg4326To3857Supported;
+    /** which layers should be activated by default on layer addition. **/
+    private Collection<String> defaultLayers = Collections.emptyList();
     // when adding a field, also adapt the ImageryInfo(ImageryInfo)
     // and ImageryInfo(ImageryPreferenceEntry) constructor, equals method, and ImageryPreferenceEntry
 
@@ -226,6 +229,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         @pref Map<String, String> metadataHeaders;
         @pref boolean valid_georeference;
         @pref boolean supports_epsg_4326_to_3857_conversion;
+        // TODO: disabled until change of layers is implemented
+        // @pref String default_layers;
 
         /**
          * Constructs a new empty WMS {@code ImageryPreferenceEntry}.
@@ -270,16 +275,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                     shapes = shapesString.toString();
                 }
             }
-            if (!i.serverProjections.isEmpty()) {
-                StringBuilder val = new StringBuilder();
-                for (String p : i.serverProjections) {
-                    if (val.length() > 0) {
-                        val.append(',');
-                    }
-                    val.append(p);
-                }
-                projections = val.toString();
-            }
+            projections = i.serverProjections.stream().collect(Collectors.joining(","));
             if (i.noTileHeaders != null && !i.noTileHeaders.isEmpty()) {
                 noTileHeaders = new MultiMap<>(i.noTileHeaders);
             }
@@ -296,6 +292,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
 
             valid_georeference = i.isGeoreferenceValid();
             supports_epsg_4326_to_3857_conversion = i.isEpsg4326To3857Supported();
+            // TODO disabled until change of layers is implemented
+            // default_layers = i.defaultLayers.stream().collect(Collectors.joining(","));
         }
 
         @Override
@@ -422,6 +420,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         metadataHeaders = e.metadataHeaders;
         isEpsg4326To3857Supported = e.supports_epsg_4326_to_3857_conversion;
         isGeoreferenceValid = e.valid_georeference;
+        // TODO disabled until change of layers is implemented
+        // defaultLayers = Arrays.asList(e.default_layers.split(","));
     }
 
     /**
@@ -453,6 +453,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this.metadataHeaders = i.metadataHeaders;
         this.isEpsg4326To3857Supported = i.isEpsg4326To3857Supported;
         this.isGeoreferenceValid = i.isGeoreferenceValid;
+        this.defaultLayers = i.defaultLayers;
     }
 
     @Override
@@ -496,7 +497,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                 Objects.equals(this.description, other.description) &&
                 Objects.equals(this.noTileHeaders, other.noTileHeaders) &&
                 Objects.equals(this.noTileChecksums, other.noTileChecksums) &&
-                Objects.equals(this.metadataHeaders, other.metadataHeaders);
+                Objects.equals(this.metadataHeaders, other.metadataHeaders) &&
+                Objects.equals(this.defaultLayers, other.defaultLayers);
     }
 
     @Override
@@ -1145,5 +1147,23 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
            }
        }
        return l;
+    }
+
+    /**
+     * Returns default layers that should be shown for this Imagery (if at all supported by imagery provider)
+     * If no layer is set to default and there is more than one imagery available, then user will be asked to choose the layer
+     * to work on
+     * @return Collection of the layer names
+     */
+    public Collection<String> getDefaultLayers() {
+        return defaultLayers;
+    }
+
+    /**
+     * Sets the default layers that user will work with
+     * @param layers
+     */
+    public void setDefaultLayers(Collection<String> layers) {
+        this.defaultLayers = layers;
     }
 }
