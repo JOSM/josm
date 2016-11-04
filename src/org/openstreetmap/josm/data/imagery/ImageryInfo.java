@@ -1161,7 +1161,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
 
     /**
      * Sets the default layers that user will work with
-     * @param layers
+     * @param layers set the list of default layers
      */
     public void setDefaultLayers(Collection<String> layers) {
         this.defaultLayers = layers;

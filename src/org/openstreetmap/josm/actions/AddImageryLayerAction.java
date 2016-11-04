@@ -70,8 +70,8 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
     /**
      * Converts general ImageryInfo to specific one, that does not need any user action to initialize
      * see: https://josm.openstreetmap.de/ticket/13868
-     * @param info
-     * @return
+     * @param info ImageryInfo that will be converted (or returned when no conversion needed)
+     * @return ImageryInfo object that's ready to be used to create TileSource
      */
     private ImageryInfo convertImagery(ImageryInfo info) {
         try {

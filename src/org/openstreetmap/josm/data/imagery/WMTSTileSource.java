@@ -160,7 +160,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     }
 
     private static final class SelectLayerDialog extends ExtendedDialog {
-        private final transient List<Entry<String,List<Layer>>> layers;
+        private final transient List<Entry<String, List<Layer>>> layers;
         private final JTable list;
 
         SelectLayerDialog(Collection<Layer> layers) {
