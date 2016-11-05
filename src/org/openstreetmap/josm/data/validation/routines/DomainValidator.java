@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016103001, Last Updated Mon Oct 31 07:07:01 2016 UTC
+        // Taken from Version 2016110401, Last Updated Sat Nov  5 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -343,6 +343,7 @@ public final class DomainValidator extends AbstractValidator {
         "android", // android Charleston Road Registry Inc.
         "anquan", // anquan QIHOO 360 TECHNOLOGY CO. LTD.
         "anz", // anz Australia and New Zealand Banking Group Limited
+        "aol", // aol AOL Inc.
         "apartments", // apartments June Maple, LLC
         "app", // app Charleston Road Registry Inc.
         "apple", // apple Apple Inc.
