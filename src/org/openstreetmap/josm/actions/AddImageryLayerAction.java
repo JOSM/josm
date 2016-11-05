@@ -177,7 +177,11 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             supportedCrs.retainAll(layer.getProjections());
         }
 
-        ImageryInfo ret = new ImageryInfo(info.getName(), url, "wms", info.getEulaAcceptanceRequired(), info.getCookies());
+        // copy all information from WMS
+        ImageryInfo ret = new ImageryInfo(info);
+        // and update according to user choice
+        ret.setUrl(url);
+        ret.setImageryType(ImageryType.WMS);
         if (layersString.length() > 2) {
             ret.setName(ret.getName() + ' ' + layersString.substring(0, layersString.length() - 2));
         }
