@@ -203,7 +203,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
                 // ignore mouse wheel in disabled state.
                 return;
             }
-            double rotation = e.getPreciseWheelRotation();
+            double rotation = -1 * e.getPreciseWheelRotation();
             double destinationValue = getValue() + rotation * SLIDER_WHEEL_INCREMENT;
             if (rotation < 0) {
                 destinationValue = Math.floor(destinationValue);
@@ -281,12 +281,11 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
 
         @Override
         protected void mouseWheelMoved(MouseWheelEvent e) {
-            if (!isEnabled() && !filterLayers(model.getSelectedLayers()).isEmpty() && e.getPreciseWheelRotation() > 0) {
+            if (!isEnabled() && !filterLayers(model.getSelectedLayers()).isEmpty() && e.getPreciseWheelRotation() < 0) {
                 // make layer visible and set the value.
                 // this allows users to use the mouse wheel to make the layer visible if it was hidden previously.
                 e.consume();
                 setVisibleFlag(true);
-                setRealValue(0.05);
             } else {
                 super.mouseWheelMoved(e);
             }
