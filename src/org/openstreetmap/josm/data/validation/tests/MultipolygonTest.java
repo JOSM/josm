@@ -402,14 +402,8 @@ public class MultipolygonTest extends Test {
     }
 
     private static Collection<? extends OsmPrimitive> addRelationIfNeeded(Relation r, Collection<? extends OsmPrimitive> primitives) {
-        // Fix #8212 : if the error references only incomplete primitives,
         // add multipolygon in order to let user select something and fix the error
         if (!primitives.contains(r)) {
-            for (OsmPrimitive p : primitives) {
-                if (!p.isIncomplete()) {
-                    return primitives;
-                }
-            }
             // Diamond operator does not work with Java 9 here
             @SuppressWarnings("unused")
             List<OsmPrimitive> newPrimitives = new ArrayList<OsmPrimitive>(primitives);
