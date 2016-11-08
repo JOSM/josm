@@ -79,12 +79,13 @@ public class ListenerList<T> {
      * @param listener The listener.
      */
     public synchronized void addWeakListener(T listener) {
-        ensureNotInList(listener);
-        // clean the weak listeners, just to be sure...
-        while (weakListeners.remove(new WeakListener<T>(null))) {
-            // continue
+        if (ensureNotInList(listener)) {
+            // clean the weak listeners, just to be sure...
+            while (weakListeners.remove(new WeakListener<T>(null))) {
+                // continue
+            }
+            weakListeners.add(new WeakListener<>(listener));
         }
-        weakListeners.add(new WeakListener<>(listener));
     }
 
     /**
@@ -92,14 +93,18 @@ public class ListenerList<T> {
      * @param listener The listener to add.
      */
     public synchronized void addListener(T listener) {
-        ensureNotInList(listener);
-        listeners.add(listener);
+        if (ensureNotInList(listener)) {
+            listeners.add(listener);
+        }
     }
 
-    private void ensureNotInList(T listener) {
+    private boolean ensureNotInList(T listener) {
         CheckParameterUtil.ensureParameterNotNull(listener, "listener");
         if (containsListener(listener)) {
             failAdd(listener);
+            return false;
+        } else {
+            return true;
         }
     }
 
@@ -216,6 +221,20 @@ public class ListenerList<T> {
         }
     }
 
+    private static class UncheckedListenerList<T> extends ListenerList<T> {
+        @Override
+        protected void failAdd(T listener) {
+            Logging.warn("Listener was alreaady added: {0}", listener);
+            // ignore
+        }
+
+        @Override
+        protected void failRemove(T listener) {
+            Logging.warn("Listener was removed twice or not added: {0}", listener);
+            // ignore
+        }
+    }
+
     /**
      * Create a new listener list
      * @param <T> The listener type the list should hold.
@@ -227,5 +246,17 @@ public class ListenerList<T> {
         } else {
             return new ListenerList<>();
         }
+    }
+
+    /**
+     * Creates a new listener list that does not fail if listeners are added ore removed twice.
+     * <p>
+     * Use of this list is discouraged. You should always use {@link #create()} in new implementations and check your listeners.
+     * @param <T> The listener type
+     * @return A new list.
+     * @since 11224
+     */
+    public static <T> ListenerList<T> createUnchecked() {
+        return new UncheckedListenerList<>();
     }
 }

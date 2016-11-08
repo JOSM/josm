@@ -5,12 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.tools.ListenerList;
 
 /**
  * This action toggles the Expert mode.
@@ -18,37 +16,29 @@ import org.openstreetmap.josm.Main;
  */
 public class ExpertToggleAction extends ToggleAction {
 
+    /**
+     * This listener is notified whenever the expert mode setting changed.
+     */
     @FunctionalInterface
     public interface ExpertModeChangeListener {
+        /**
+         * The expert mode changed.
+         * @param isExpert <code>true</code> if expert mode was enabled, false otherwise.
+         */
         void expertChanged(boolean isExpert);
     }
 
-    private static final List<WeakReference<ExpertModeChangeListener>> listeners = new ArrayList<>();
-    private static final List<WeakReference<Component>> visibilityToggleListeners = new ArrayList<>();
+    // TODO: Switch to checked list. We can do this as soon as we do not see any more warnings.
+    private static final ListenerList<ExpertModeChangeListener> listeners = ListenerList.createUnchecked();
+    private static final ListenerList<Component> visibilityToggleListeners = ListenerList.createUnchecked();
+
+    private static final BooleanProperty PREF_EXPERT = new BooleanProperty("expert", false);
 
     private static final ExpertToggleAction INSTANCE = new ExpertToggleAction();
 
     private static synchronized void fireExpertModeChanged(boolean isExpert) {
-        Iterator<WeakReference<ExpertModeChangeListener>> it1 = listeners.iterator();
-        while (it1.hasNext()) {
-            WeakReference<ExpertModeChangeListener> wr = it1.next();
-            ExpertModeChangeListener listener = wr.get();
-            if (listener == null) {
-                it1.remove();
-                continue;
-            }
-            listener.expertChanged(isExpert);
-        }
-        Iterator<WeakReference<Component>> it2 = visibilityToggleListeners.iterator();
-        while (it2.hasNext()) {
-            WeakReference<Component> wr = it2.next();
-            Component c = wr.get();
-            if (c == null) {
-                it2.remove();
-                continue;
-            }
-            c.setVisible(isExpert);
-        }
+        listeners.fireEvent(listener -> listener.expertChanged(isExpert));
+        visibilityToggleListeners.fireEvent(c -> c.setVisible(isExpert));
     }
 
     /**
@@ -62,11 +52,7 @@ public class ExpertToggleAction extends ToggleAction {
 
     public static synchronized void addExpertModeChangeListener(ExpertModeChangeListener listener, boolean fireWhenAdding) {
         if (listener == null) return;
-        for (WeakReference<ExpertModeChangeListener> wr : listeners) {
-            // already registered ? => abort
-            if (wr.get() == listener) return;
-        }
-        listeners.add(new WeakReference<>(listener));
+        listeners.addWeakListener(listener);
         if (fireWhenAdding) {
             listener.expertChanged(isExpert());
         }
@@ -79,38 +65,27 @@ public class ExpertToggleAction extends ToggleAction {
      */
     public static synchronized void removeExpertModeChangeListener(ExpertModeChangeListener listener) {
         if (listener == null) return;
-        Iterator<WeakReference<ExpertModeChangeListener>> it = listeners.iterator();
-        while (it.hasNext()) {
-            WeakReference<ExpertModeChangeListener> wr = it.next();
-            // remove the listener - and any other listener which god garbage
-            // collected in the meantime
-            if (wr.get() == null || wr.get() == listener) {
-                it.remove();
-            }
-        }
+        listeners.removeListener(listener);
     }
 
+    /**
+     * Marks a component to be only visible when expert mode is enabled. The visibility of the component is changed automatically.
+     * @param c The component.
+     */
     public static synchronized void addVisibilitySwitcher(Component c) {
         if (c == null) return;
-        for (WeakReference<Component> wr : visibilityToggleListeners) {
-            // already registered ? => abort
-            if (wr.get() == c) return;
-        }
-        visibilityToggleListeners.add(new WeakReference<>(c));
+        visibilityToggleListeners.addWeakListener(c);
         c.setVisible(isExpert());
     }
 
+    /**
+     * Stops tracking visibility changes for the given component.
+     * @param c The component.
+     * @see #addVisibilitySwitcher(Component)
+     */
     public static synchronized void removeVisibilitySwitcher(Component c) {
         if (c == null) return;
-        Iterator<WeakReference<Component>> it = visibilityToggleListeners.iterator();
-        while (it.hasNext()) {
-            WeakReference<Component> wr = it.next();
-            // remove the listener - and any other listener which god garbage
-            // collected in the meantime
-            if (wr.get() == null || wr.get() == c) {
-                it.remove();
-            }
-        }
+        visibilityToggleListeners.removeListener(c);
     }
 
     /**
@@ -127,20 +102,32 @@ public class ExpertToggleAction extends ToggleAction {
         if (Main.toolbar != null) {
             Main.toolbar.register(this);
         }
-        setSelected(Main.pref.getBoolean("expert", false));
+        setSelected(PREF_EXPERT.get());
         notifySelectedState();
     }
 
     @Override
     protected final void notifySelectedState() {
         super.notifySelectedState();
+        PREF_EXPERT.put(isSelected());
         fireExpertModeChanged(isSelected());
+    }
+
+    /**
+     * Forces the expert mode state to the given state.
+     * @param isExpert if expert mode should be used.
+     * @since 11224
+     */
+    public void setExpert(boolean isExpert) {
+        if (isSelected() != isExpert) {
+            setSelected(isExpert);
+            notifySelectedState();
+        }
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         toggleSelectedState(e);
-        Main.pref.put("expert", isSelected());
         notifySelectedState();
     }
 
