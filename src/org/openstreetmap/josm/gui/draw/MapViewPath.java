@@ -234,6 +234,7 @@ public class MapViewPath extends MapPath2D {
      * @author Michael Zangl
      * @since 11147
      */
+    @FunctionalInterface
     public interface PathSegmentConsumer {
 
         /**
@@ -255,7 +256,7 @@ public class MapViewPath extends MapPath2D {
         private MapViewPoint lastMoveTo;
 
         private MapViewPoint cursor;
-        private boolean cursorIsActive = false;
+        private boolean cursorIsActive;
 
         /**
          * Create a new {@link ClampingPathVisitor}
@@ -338,7 +339,7 @@ public class MapViewPath extends MapPath2D {
             }
 
             double distance = Math.sqrt(distanceSq);
-            double offset = ((strokeProgress + distance)) % strokeLength;
+            double offset = (strokeProgress + distance) % strokeLength;
             if (offset < 0.01) {
                 return entry;
             }
