@@ -419,7 +419,14 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         repaint();
     }
 
-    private void paintLayer(Layer layer, Graphics2D g, Bounds box) {
+    /**
+     * Paints the given layer to the graphics object, using the current state of this map view.
+     * @param layer The layer to draw.
+     * @param g A graphics object. It should have the width and height of this component
+     * @throws IllegalArgumentException If the layer is not part of this map view.
+     * @since 11226
+     */
+    public void paintLayer(Layer layer, Graphics2D g) {
         try {
             LayerPainter painter = registeredLayers.get(layer);
             if (painter == null) {
@@ -434,7 +441,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             painter.paint(paintGraphics);
             g.setPaintMode();
         } catch (RuntimeException t) {
-            BugReport.intercept(t).put("layer", layer).put("bounds", box).warn();
+            BugReport.intercept(t).put("layer", layer).warn();
         }
     }
 
@@ -479,7 +486,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
         Graphics2D tempG = offscreenBuffer.createGraphics();
         tempG.setClip(g.getClip());
-        Bounds box = getLatLonBounds(g.getClipBounds());
 
         if (!canUseBuffer || nonChangedLayersBuffer == null) {
             if (null == nonChangedLayersBuffer
@@ -492,7 +498,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             g2.fillRect(0, 0, getWidth(), getHeight());
 
             for (int i = 0; i < nonChangedLayersCount; i++) {
-                paintLayer(visibleLayers.get(i), g2, box);
+                paintLayer(visibleLayers.get(i), g2);
             }
         } else {
             // Maybe there were more unchanged layers then last time - draw them to buffer
@@ -500,7 +506,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 Graphics2D g2 = nonChangedLayersBuffer.createGraphics();
                 g2.setClip(g.getClip());
                 for (int i = nonChangedLayers.size(); i < nonChangedLayersCount; i++) {
-                    paintLayer(visibleLayers.get(i), g2, box);
+                    paintLayer(visibleLayers.get(i), g2);
                 }
             }
         }
@@ -513,11 +519,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         tempG.drawImage(nonChangedLayersBuffer, 0, 0, null);
 
         for (int i = nonChangedLayersCount; i < visibleLayers.size(); i++) {
-            paintLayer(visibleLayers.get(i), tempG, box);
+            paintLayer(visibleLayers.get(i), tempG);
         }
 
         try {
-            drawTemporaryLayers(tempG, box);
+            drawTemporaryLayers(tempG, getLatLonBounds(g.getClipBounds()));
         } catch (RuntimeException e) {
             BugReport.intercept(e).put("temporaryLayers", temporaryLayers).warn();
         }
