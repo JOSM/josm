@@ -1075,3 +1075,43 @@ way[highway=emergency_access_point][phone][emergency_telephone_code][phone!=*eme
   assertNoMatch: "node highway=emergency_access_point emergency_telephone_code=123";
   assertNoMatch: "node highway=emergency_access_point phone=123 emergency_telephone_code=123";
 }
+
+/* #13879 */
+way[tracktype=1] {
+  throwError: tr("{0}", "{0.tag}");
+  suggestAlternative: "tracktype=grade1";
+  group: tr("misspelled value");
+  fixAdd: "tracktype=grade1";
+}
+way[tracktype=2] {
+  throwError: tr("{0}", "{0.tag}");
+  suggestAlternative: "tracktype=grade2";
+  group: tr("misspelled value");
+  fixAdd: "tracktype=grade2";
+}
+way[tracktype=3] {
+  throwError: tr("{0}", "{0.tag}");
+  suggestAlternative: "tracktype=grade3";
+  group: tr("misspelled value");
+  fixAdd: "tracktype=grade3";
+}
+way[tracktype=4] {
+  throwError: tr("{0}", "{0.tag}");
+  suggestAlternative: "tracktype=grade4";
+  group: tr("misspelled value");
+  fixAdd: "tracktype=grade4";
+}
+way[tracktype=5] {
+  throwError: tr("{0}", "{0.tag}");
+  suggestAlternative: "tracktype=grade5";
+  group: tr("misspelled value");
+  fixAdd: "tracktype=grade5";
+}
+way[tracktype][tracktype!~/^(1|2|3|4|5|grade1|grade2|grade3|grade4|grade5)$/] {
+  throwError: tr("wrong value: {0}", "{0.tag}");
+  suggestAlternative: "tracktype=grade1";
+  suggestAlternative: "tracktype=grade2";
+  suggestAlternative: "tracktype=grade3";
+  suggestAlternative: "tracktype=grade4";
+  suggestAlternative: "tracktype=grade5";
+}
