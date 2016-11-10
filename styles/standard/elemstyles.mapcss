@@ -4585,14 +4585,6 @@ node|z-15[note][FIXME][!setting("hide_icons")]::core_note_fixme {
     icon-image: "presets/misc/note_fixme_annotation.svg";
 }
 
-/* special display of unreviewed tiger data (USA) */
-way["tiger:reviewed"=no]::core_tiger {
-    major-z-index: -10;
-    width: 11;
-    color: tiger_data#808000;
-    opacity: 0.6;
-}
-
 /****************************************/
 /* zoom levels and general node display */
 /****************************************/
