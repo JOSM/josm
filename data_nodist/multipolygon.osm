@@ -3663,7 +3663,7 @@
     <member type='way' ref='-5537' role='inner' />
     <member type='way' ref='-5539' role='outer' />
     <member type='way' ref='-5535' role='inner' />
-    <tag k='josm_error_codes' v='1602' />
+    <tag k='josm_error_codes' v='1602,1605' />
     <tag k='name' v='07/05 - one inner outside' />
     <tag k='natural' v='water' />
     <tag k='type' v='multipolygon' />
@@ -3693,7 +3693,7 @@
   </relation>
   <relation id='-6147' action='modify' visible='true'>
     <member type='way' ref='-5921' role='inner' />
-    <tag k='josm_error_codes' v='1602,1604,1706' />
+    <tag k='josm_error_codes' v='1602,1604,1605,1706' />
     <tag k='name' v='06/06 - No outer way' />
     <tag k='natural' v='water' />
     <tag k='type' v='multipolygon' />
@@ -3902,7 +3902,7 @@
   <relation id='-6189' action='modify' visible='true'>
     <member type='way' ref='-5851' role='inner' />
     <member type='way' ref='-5813' role='outer' />
-    <tag k='josm_error_codes' v='1602' />
+    <tag k='josm_error_codes' v='1602,1605' />
     <tag k='name' v='07/01 - Inner/Outer reversed' />
     <tag k='natural' v='water' />
     <tag k='type' v='multipolygon' />
@@ -3938,7 +3938,7 @@
     <member type='node' ref='-3587' role='outer' />
     <member type='way' ref='-5859' role='' />
     <member type='relation' ref='-6201' role='' />
-    <tag k='josm_error_codes' v='1601,1602,1611,1702,1703' />
+    <tag k='josm_error_codes' v='1601,1602,1604,1611,1702,1703' />
     <tag k='name' v='06/05 - wrong roles' />
     <tag k='type' v='multipolygon' />
   </relation>
@@ -4327,7 +4327,7 @@
   <relation id='-6285' action='modify' visible='true'>
     <member type='way' ref='-6073' role='inner' />
     <member type='way' ref='-6075' role='outer' />
-    <tag k='josm_error_codes' v='1602,1617' />
+    <tag k='josm_error_codes' v='1602,1605,1617' />
     <tag k='name' v='07/15 inner way shares all nodes with outer, but roles are wrong' />
     <tag k='natural' v='water' />
     <tag k='type' v='multipolygon' />
@@ -4336,7 +4336,7 @@
     <member type='way' ref='-6079' role='inner' />
     <member type='way' ref='-6077' role='inner' />
     <member type='way' ref='-6081' role='outer' />
-    <tag k='josm_error_codes' v='1602,1617' />
+    <tag k='josm_error_codes' v='1602,1605,1617' />
     <tag k='name' v='07/16 - shared way segment between outer ways, roles say inner' />
     <tag k='natural' v='water' />
     <tag k='type' v='multipolygon' />
