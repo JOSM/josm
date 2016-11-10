@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Ebene_2"
+   x="0px"
+   y="0px"
+   width="16"
+   height="11"
+   viewBox="0 0 16 11"
+   enable-background="new 0 0 16 11"
+   xml:space="preserve"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="02.svg"><metadata
+   id="metadata19"><rdf:RDF><cc:Work
+       rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+         rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title></dc:title></cc:Work></rdf:RDF></metadata><defs
+   id="defs17">
+</defs>
+<polygon
+   style="fill:#666666"
+   id="polygon5"
+   points="19,6 16.942,9.3 12.828,9.3 10.771,6 12.144,6 "
+   transform="matrix(0.88888889,0,0,1,-0.88888889,-6)" /><polygon
+   style="fill:#734a08"
+   id="polygon7"
+   points="1,13.7 10.872,6 19,6 9.229,13.7 "
+   transform="matrix(0.88888889,0,0,1,-0.88888889,-6)" /><polygon
+   style="fill:#0092da"
+   id="polygon9"
+   points="10.558,7.386 15.76,7.386 9.506,12.313 4.24,12.313 "
+   transform="matrix(0.83947215,0,0,1,-0.11008101,-6)" /><polygon
+   style="fill:#734a08"
+   id="polygon11"
+   points="9.229,13.7 7.171,17 3.057,17 1,13.7 2.372,13.7 "
+   transform="matrix(0.88888889,0,0,1,-0.88888889,-6)" /><polyline
+   style="fill:#734a08"
+   id="polyline13"
+   points="7.171,17 16.942,9.3 19,6 9.229,13.7  "
+   transform="matrix(0.88888889,0,0,1,-0.88888889,-6)" />
+</svg>

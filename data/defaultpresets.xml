@@ -5440,6 +5440,15 @@
                 <text key="description" text="Description" />
             </optional>
         </item> <!-- Water Point -->
+        <item name="Animal watering place" icon="presets/misc/watering_place.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=watering_place" />
+            <space />
+            <key key="amenity" value="watering_place" />
+            <optional>
+                <text key="name" text="Name" />
+                <text key="description" text="Description" />
+            </optional>
+        </item> <!-- Animal watering place -->
         <item name="Compressed Air" icon="presets/vehicle/compressed_air.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=compressed_air"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=compressed_air"

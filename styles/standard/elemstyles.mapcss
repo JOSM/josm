@@ -2723,7 +2723,8 @@ area[amenity=courthouse],
 area[amenity=prison],
 area[amenity=bank],
 area[amenity=bureau_de_change],
-area[amenity=bbq] {
+area[amenity=bbq],
+area[amenity=watering_place] {
     fill-color: amenity_light#f7efb7;
 }
 node[amenity=library] {
@@ -2796,6 +2797,10 @@ node[amenity=bbq] {
 }
 node[amenity=compressed_air] {
     icon-image: "presets/vehicle/compressed_air.svg";
+    set icon_z17;
+}
+node[amenity=watering_place] {
+    icon-image: "presets/misc/watering_place.svg";
     set icon_z17;
 }
 area[amenity=shelter],
