@@ -1004,7 +1004,9 @@
                 <combo key="motor_vehicle" text="Motor vehicles" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
                 <combo key="motorcycle" text="Motorcycle" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
                 <combo key="motorcar" text="Motorcar" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
+                <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" />
             </optional>
+            <preset_link preset_name="Road Restrictions" />
         </item> <!-- Track -->
         <item name="Path" icon="presets/transport/way/path.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=path"
@@ -1042,6 +1044,7 @@
                 <combo key="snowmobile" text="Snowmobile" values="yes,official,designated,permissive,destination,delivery,private,no" />
                 <!-- <combo key="motorcar" text="Motorcar" values="yes,designated,no" default="no" /> -->
             </optional>
+            <preset_link preset_name="Road Restrictions" />
         </item> <!-- Path -->
         <separator/>
         <item name="Dedicated Bridleway" icon="presets/transport/way/dedicated_bridleway.svg" type="way,closedway" preset_name_label="true">
