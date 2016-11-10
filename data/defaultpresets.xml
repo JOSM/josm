@@ -1044,7 +1044,6 @@
                 <combo key="snowmobile" text="Snowmobile" values="yes,official,designated,permissive,destination,delivery,private,no" />
                 <!-- <combo key="motorcar" text="Motorcar" values="yes,designated,no" default="no" /> -->
             </optional>
-            <preset_link preset_name="Road Restrictions" />
         </item> <!-- Path -->
         <separator/>
         <item name="Dedicated Bridleway" icon="presets/transport/way/dedicated_bridleway.svg" type="way,closedway" preset_name_label="true">
@@ -3779,6 +3778,7 @@
             <check key="microbrewery" text="Microbrewery" />
             <check key="outdoor_seating" text="Outdoor seating" />
             <combo key="takeaway" text="Takeaway" values="yes,no,only" />
+            <combo key="delivery" text="Delivery" values="yes,no,only,Mo-Su 12:00-22:00" />
             <reference ref="oh_wheelchair" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
             <space />
@@ -3800,6 +3800,7 @@
             <reference ref="cuisine" />
             <check key="outdoor_seating" text="Outdoor seating" />
             <combo key="takeaway" text="Takeaway" values="yes,no,only" />
+            <combo key="delivery" text="Delivery" values="yes,no,only,Mo-Su 12:00-22:00" />
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3817,7 +3818,6 @@
             <key key="amenity" value="food_court" />
             <reference ref="name_operator" />
             <check key="outdoor_seating" text="Outdoor seating" />
-            <combo key="takeaway" text="Takeaway" values="yes,no,only" />
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3842,6 +3842,7 @@
             <combo key="cuisine" text="Cuisine" values="ice_cream" />
             <check key="outdoor_seating" text="Outdoor seating" />
             <combo key="takeaway" text="Takeaway" values="yes,no,only" />
+            <combo key="delivery" text="Delivery" values="yes,no,only,Mo-Su 12:00-22:00" />
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3855,6 +3856,7 @@
             <reference ref="name_operator" />
             <check key="outdoor_seating" text="Outdoor seating" />
             <combo key="takeaway" text="Takeaway" values="yes,no,only" />
+            <combo key="delivery" text="Delivery" values="yes,no,only,Mo-Su 12:00-22:00" />
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3875,6 +3877,7 @@
             <check key="microbrewery" text="Microbrewery" />
             <check key="outdoor_seating" text="Outdoor seating" />
             <combo key="takeaway" text="Takeaway" values="yes,no,only" />
+            <combo key="delivery" text="Delivery" values="yes,no,only,Mo-Su 12:00-22:00" />
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
