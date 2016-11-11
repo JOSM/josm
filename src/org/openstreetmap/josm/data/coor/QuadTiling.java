@@ -74,10 +74,10 @@ public final class QuadTiling {
      * @return quad tiling index for given coordinates and level.
      * @since 6171
      */
-    public static int index(final double lat, final double lon, final int level) {
+    public static byte index(final double lat, final double lon, final int level) {
         long x = lon2x(lon);
         long y = lat2y(lat);
         int shift = NR_LEVELS-level-1;
-        return (int) ((x >> shift & 1) * 2 + (y >> shift & 1));
+        return (byte) ((x >> shift & 1) * 2 + (y >> shift & 1));
     }
 }

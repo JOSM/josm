@@ -14,7 +14,7 @@ import org.openstreetmap.josm.data.coor.QuadTiling;
 
 /**
  * Note: bbox of primitives added to QuadBuckets has to stay the same. In case of coordinate change, primitive must
- * be removed and readded.
+ * be removed and re-added.
  *
  * This class is (no longer) thread safe.
  * @param <T> type of primitives
@@ -22,21 +22,20 @@ import org.openstreetmap.josm.data.coor.QuadTiling;
  */
 public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     private static final boolean consistency_testing = false;
-    private static final int NW_INDEX = 1;
-    private static final int NE_INDEX = 3;
-    private static final int SE_INDEX = 2;
-    private static final int SW_INDEX = 0;
+    private static final byte NW_INDEX = 1;
+    private static final byte NE_INDEX = 3;
+    private static final byte SE_INDEX = 2;
+    private static final byte SW_INDEX = 0;
 
     static void abort(String s) {
         throw new AssertionError(s);
     }
 
-    public static final int MAX_OBJECTS_PER_LEVEL = 16;
+    private static final int MAX_OBJECTS_PER_NODE = 48;
 
-    static class QBLevel<T extends OsmPrimitive> {
-        private final int level;
-        private final int index;
-        private final BBox bbox;
+    static class QBLevel<T extends OsmPrimitive> extends BBox {
+        private final byte level;
+        private final byte index;
         private final long quad;
         private final QBLevel<T> parent;
         private boolean isLeaf = true;
@@ -45,28 +44,26 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         // child order by index is sw, nw, se, ne
         private QBLevel<T> nw, ne, sw, se;
 
-        private final QuadBuckets<T> buckets;
-
-        private QBLevel<T> getChild(int index) {
+        private QBLevel<T> getChild(byte index) {
             switch (index) {
             case NE_INDEX:
                 if (ne == null) {
-                    ne = new QBLevel<>(this, index, buckets);
+                    ne = new QBLevel<>(this, index);
                 }
                 return ne;
             case NW_INDEX:
                 if (nw == null) {
-                    nw = new QBLevel<>(this, index, buckets);
+                    nw = new QBLevel<>(this, index);
                 }
                 return nw;
             case SE_INDEX:
                 if (se == null) {
-                    se = new QBLevel<>(this, index, buckets);
+                    se = new QBLevel<>(this, index);
                 }
                 return se;
             case SW_INDEX:
                 if (sw == null) {
-                    sw = new QBLevel<>(this, index, buckets);
+                    sw = new QBLevel<>(this, index);
                 }
                 return sw;
             default:
@@ -81,52 +78,40 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
 
         @Override
         public String toString() {
-            return super.toString() + '[' + level + "]: " + bbox();
+            return super.toString() + '[' + level + "]: ";
         }
 
         /**
          * Constructor for root node
-         * @param buckets quadbuckets
          */
-        QBLevel(final QuadBuckets<T> buckets) {
+        QBLevel() {
+            super(-180, 90, 180, -90);
             level = 0;
             index = 0;
             quad = 0;
             parent = null;
-            bbox = new BBox(-180, 90, 180, -90);
-            this.buckets = buckets;
         }
 
-        QBLevel(QBLevel<T> parent, int parentIndex, final QuadBuckets<T> buckets) {
+        QBLevel(QBLevel<T> parent, byte index) {
             this.parent = parent;
-            this.level = parent.level + 1;
-            this.index = parentIndex;
-            this.buckets = buckets;
+            this.level = (byte) (parent.level + 1);
+            this.index = index;
 
             int shift = (QuadTiling.NR_LEVELS - level) * 2;
-            long mult = 1;
-            // Java blows the big one. It seems to wrap when you shift by > 31
-            if (shift >= 30) {
-                shift -= 30;
-                mult = 1 << 30;
-            }
-            long quadpart = mult * (parentIndex << shift);
+            long quadpart = (long) index << shift;
             this.quad = parent.quad | quadpart;
-            this.bbox = calculateBBox(); // calculateBBox reference quad
-        }
-
-        private BBox calculateBBox() {
-            LatLon bottomLeft = this.coor();
-            double lat = bottomLeft.lat() + parent.height() / 2;
-            double lon = bottomLeft.lon() + parent.width() / 2;
-            return new BBox(bottomLeft.lon(), bottomLeft.lat(), lon, lat);
+            LatLon bottomLeft = QuadTiling.tile2LatLon(this.quad);
+            xmin = bottomLeft.lon();
+            ymin = bottomLeft.lat();
+            xmax = xmin + parent.width() / 2;
+            ymax = ymin + parent.height() / 2;
         }
 
         QBLevel<T> findBucket(BBox bbox) {
             if (!hasChildren())
                 return this;
             else {
-                int idx = bbox.getIndex(level);
+                byte idx = bbox.getIndex(level);
                 if (idx == -1)
                     return this;
                 return getChild(idx).findBucket(bbox);
@@ -162,7 +147,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             content = null;
 
             for (T o : tmpcontent) {
-                int idx = o.getBBox().getIndex(level);
+                byte idx = o.getBBox().getIndex(level);
                 if (idx == -1) {
                     doAddContent(o);
                 } else {
@@ -282,14 +267,14 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
 
         void doAdd(T o) {
             if (consistency_testing) {
-                if (!matches(o, this.bbox())) {
+                if (o instanceof Node && !matches(o, this)) {
                     o.getBBox().getIndex(level);
                     o.getBBox().getIndex(level - 1);
-                    abort("\nobject " + o + " does not belong in node at level: " + level + " bbox: " + this.bbox());
+                    abort("\nobject " + o + " does not belong in node at level: " + level + " bbox: " + super.toString());
                 }
             }
             doAddContent(o);
-            if (isLeaf() && content.size() > MAX_OBJECTS_PER_LEVEL && level < QuadTiling.NR_LEVELS) {
+            if (isLeaf() && content.size() > MAX_OBJECTS_PER_NODE && level < QuadTiling.NR_LEVELS) {
                 doSplit();
             }
         }
@@ -298,10 +283,10 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             findBucket(o.getBBox()).doAdd(o);
         }
 
-        private void search(BBox searchBbox, List<T> result) {
-            if (!this.bbox().intersects(searchBbox))
+        private void search(QuadBuckets<T> buckets, BBox searchBbox, List<T> result) {
+            if (!this.intersects(searchBbox))
                 return;
-            else if (bbox().bounds(searchBbox)) {
+            else if (this.bounds(searchBbox)) {
                 buckets.searchCache = this;
             }
 
@@ -312,16 +297,16 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             //TODO Coincidence vector should be calculated here and only buckets that match search_bbox should be checked
 
             if (nw != null) {
-                nw.search(searchBbox, result);
+                nw.search(buckets, searchBbox, result);
             }
             if (ne != null) {
-                ne.search(searchBbox, result);
+                ne.search(buckets, searchBbox, result);
             }
             if (se != null) {
-                se.search(searchBbox, result);
+                se.search(buckets, searchBbox, result);
             }
             if (sw != null) {
-                sw.search(searchBbox, result);
+                sw.search(buckets, searchBbox, result);
             }
         }
 
@@ -336,26 +321,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
                     return i;
             }
             return -1;
-        }
-
-        double width() {
-            return bbox.width();
-        }
-
-        double height() {
-            return bbox.height();
-        }
-
-        public BBox bbox() {
-            return bbox;
-        }
-
-        /*
-         * This gives the coordinate of the bottom-left
-         * corner of the box
-         */
-        final LatLon coor() {
-            return QuadTiling.tile2LatLon(this.quad);
         }
 
         void removeFromParent() {
@@ -403,7 +368,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
 
     @Override
     public final void clear() {
-        root = new QBLevel<>(this);
+        root = new QBLevel<>();
         searchCache = null;
         size = 0;
     }
@@ -582,6 +547,11 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         return size == 0;
     }
 
+    /**
+     * Search the tree for objects in the bbox (or crossing the bbox if they are ways)
+     * @param searchBbox the bbox
+     * @return List of primitives within the bbox (or crossing the bbox if they are ways). Can be empty, but not null.
+     */
     public List<T> search(BBox searchBbox) {
         List<T> ret = new ArrayList<>();
         // Doing this cuts down search cost on a real-life data set by about 25%
@@ -589,7 +559,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             searchCache = root;
         }
         // Walk back up the tree when the last search spot can not cover the current search
-        while (searchCache != null && !searchCache.bbox().bounds(searchBbox)) {
+        while (searchCache != null && !searchCache.bounds(searchBbox)) {
             searchCache = searchCache.parent;
         }
 
@@ -601,7 +571,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         // Save parent because searchCache might change during search call
         QBLevel<T> tmp = searchCache.parent;
 
-        searchCache.search(searchBbox, ret);
+        searchCache.search(this, searchBbox, ret);
 
         // A way that spans this bucket may be stored in one
         // of the nodes which is a parent of the search cache
