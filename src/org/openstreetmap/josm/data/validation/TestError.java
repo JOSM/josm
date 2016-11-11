@@ -11,22 +11,12 @@ import java.util.Locale;
 import java.util.TreeSet;
 import java.util.function.Supplier;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
-import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
-import org.openstreetmap.josm.data.osm.event.DataSetListener;
-import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
-import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
-import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
-import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
-import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
-import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -36,7 +26,7 @@ import org.openstreetmap.josm.tools.I18n;
  * Validation error
  * @since 3669
  */
-public class TestError implements Comparable<TestError>, DataSetListener {
+public class TestError implements Comparable<TestError> {
     /** is this error on the ignore list */
     private boolean ignored;
     /** Severity */
@@ -581,47 +571,6 @@ public class TestError implements Comparable<TestError>, DataSetListener {
         v1.visit(getPrimitives());
         v2.visit(o.getPrimitives());
         return AlphanumComparator.getInstance().compare(v1.toString(), v2.toString());
-    }
-
-    @Override public void primitivesRemoved(PrimitivesRemovedEvent event) {
-        // Remove purged primitives (fix #8639)
-        try {
-            primitives.removeAll(event.getPrimitives());
-        } catch (UnsupportedOperationException e) {
-            if (event.getPrimitives().containsAll(primitives)) {
-                primitives = Collections.emptyList();
-            } else {
-                Main.warn(e, "Unable to remove primitives from "+this+'.');
-            }
-        }
-    }
-
-    @Override public void primitivesAdded(PrimitivesAddedEvent event) {
-        // Do nothing
-    }
-
-    @Override public void tagsChanged(TagsChangedEvent event) {
-        // Do nothing
-    }
-
-    @Override public void nodeMoved(NodeMovedEvent event) {
-        // Do nothing
-    }
-
-    @Override public void wayNodesChanged(WayNodesChangedEvent event) {
-        // Do nothing
-    }
-
-    @Override public void relationMembersChanged(RelationMembersChangedEvent event) {
-        // Do nothing
-    }
-
-    @Override public void otherDatasetChange(AbstractDatasetChangedEvent event) {
-        // Do nothing
-    }
-
-    @Override public void dataChanged(DataChangedEvent event) {
-        // Do nothing
     }
 
     @Override
