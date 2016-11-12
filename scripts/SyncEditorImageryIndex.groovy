@@ -106,7 +106,7 @@ class SyncEditorImageryIndex {
         def line
 
         while((line = fr.readLine()) != null) {
-            def res = (line =~ /^\|\| *(\d) *\|\| *(EII|Ignore) *\|\| *\{\{\{(.*)\}\}\} *\|\|/)
+            def res = (line =~ /^\|\| *(\d) *\|\| *(EII|Ignore) *\|\| *\{\{\{(.+)\}\}\} *\|\|/)
             if(res.count)
             {
                 skipEntries[res[0][3]] = res[0][1] as int
