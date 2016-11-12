@@ -73,7 +73,7 @@ public class DeletedStateConflictResolveCommand extends ConflictResolveCommand {
     }
 
     private void deleteMy() {
-        Set<OsmPrimitive> referrers = getLayer().data.unlinkReferencesToPrimitive(conflict.getMy());
+        Set<OsmPrimitive> referrers = getAffectedDataSet().unlinkReferencesToPrimitive(conflict.getMy());
         for (OsmPrimitive p : referrers) {
             if (!p.isNew() && !p.isDeleted()) {
                 p.setModified(true);

@@ -105,12 +105,12 @@ public class AddPrimitivesCommand extends Command {
             // When redoing this command, we have to add the same objects, otherwise
             // a subsequent command (e.g. MoveCommand) cannot be redone.
             for (OsmPrimitive osm : createdPrimitives) {
-                getLayer().data.addPrimitive(osm);
+                getAffectedDataSet().addPrimitive(osm);
             }
             primitivesToSelect = createdPrimitivesToSelect;
         }
 
-        getLayer().data.setSelected(primitivesToSelect);
+        getAffectedDataSet().setSelected(primitivesToSelect);
         return true;
     }
 

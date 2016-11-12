@@ -538,7 +538,7 @@ public class SplitWayAction extends JosmAction {
         // Change the original way
         final Way changedWay = new Way(way);
         changedWay.setNodes(wayToKeep.getNodes());
-        commandList.add(new ChangeCommand(way, changedWay));
+        commandList.add(layer != null ? new ChangeCommand(layer, way, changedWay) : new ChangeCommand(way.getDataSet(), way, changedWay));
         if (!newSelection.contains(way)) {
             newSelection.add(way);
         }
@@ -547,7 +547,7 @@ public class SplitWayAction extends JosmAction {
 
         newSelection.addAll(newWays);
         for (Way wayToAdd : newWays) {
-            commandList.add(new AddCommand(layer, wayToAdd));
+            commandList.add(layer != null ? new AddCommand(layer, wayToAdd) : new AddCommand(way.getDataSet(), wayToAdd));
         }
 
         boolean warnmerole = false;
@@ -677,7 +677,7 @@ public class SplitWayAction extends JosmAction {
             }
 
             if (c != null) {
-                commandList.add(new ChangeCommand(layer, r, c));
+                commandList.add(layer != null ? new ChangeCommand(layer, r, c) : new ChangeCommand(r.getDataSet(), r, c));
             }
         }
         if (warnmerole) {

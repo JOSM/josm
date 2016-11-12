@@ -106,8 +106,11 @@ public class UndoRedoHandler implements LayerChangeListener {
         if (commands.isEmpty())
             return;
         DataSet ds = Main.getLayerManager().getEditDataSet();
-        Collection<? extends OsmPrimitive> oldSelection = ds.getSelected();
-        ds.beginUpdate();
+        Collection<? extends OsmPrimitive> oldSelection = null;
+        if (ds != null) {
+            oldSelection = ds.getSelected();
+            ds.beginUpdate();
+        }
         try {
             for (int i = 1; i <= num; ++i) {
                 final Command c = commands.removeLast();
@@ -119,10 +122,14 @@ public class UndoRedoHandler implements LayerChangeListener {
                 }
             }
         } finally {
-            ds.endUpdate();
+            if (ds != null) {
+                ds.endUpdate();
+            }
         }
         fireCommandsChanged();
-        fireIfSelectionChanged(ds, oldSelection);
+        if (ds != null) {
+            fireIfSelectionChanged(ds, oldSelection);
+        }
     }
 
     /**

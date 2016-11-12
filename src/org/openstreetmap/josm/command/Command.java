@@ -136,11 +136,15 @@ public abstract class Command implements PseudoCommand {
     /** the layer which this command is applied to */
     private final OsmDataLayer layer;
 
+    /** the dataset which this command is applied to */
+    private final DataSet data;
+
     /**
      * Creates a new command in the context of the current edit layer, if any
      */
     public Command() {
         this.layer = Main.getLayerManager().getEditLayer();
+        this.data = layer != null ? layer.data : null;
     }
 
     /**
@@ -152,6 +156,20 @@ public abstract class Command implements PseudoCommand {
     public Command(OsmDataLayer layer) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         this.layer = layer;
+        this.data = layer.data;
+    }
+
+    /**
+     * Creates a new command in the context of a specific data set, without data layer
+     *
+     * @param data the data set. Must not be null.
+     * @throws IllegalArgumentException if data is null
+     * @since 11240
+     */
+    public Command(DataSet data) {
+        CheckParameterUtil.ensureParameterNotNull(data, "data");
+        this.layer = null;
+        this.data = data;
     }
 
     /**
@@ -225,7 +243,7 @@ public abstract class Command implements PseudoCommand {
      * @since 10467
      */
     public DataSet getAffectedDataSet() {
-        return layer == null ? null : layer.data;
+        return data;
     }
 
     /**
@@ -330,7 +348,8 @@ public abstract class Command implements PseudoCommand {
         if (obj == null || getClass() != obj.getClass()) return false;
         Command command = (Command) obj;
         return Objects.equals(cloneMap, command.cloneMap) &&
-                Objects.equals(layer, command.layer);
+               Objects.equals(layer, command.layer) &&
+               Objects.equals(data, command.data);
     }
 
     /**

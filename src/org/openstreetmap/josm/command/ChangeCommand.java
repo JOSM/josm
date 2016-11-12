@@ -9,6 +9,7 @@ import java.util.Objects;
 
 import javax.swing.Icon;
 
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Way;
@@ -46,6 +47,20 @@ public class ChangeCommand extends Command {
      */
     public ChangeCommand(OsmDataLayer layer, OsmPrimitive osm, OsmPrimitive newOsm) {
         super(layer);
+        this.osm = osm;
+        this.newOsm = newOsm;
+        sanityChecks();
+    }
+
+    /**
+     * Constructs a new {@code ChangeCommand} in the context of a given data set.
+     * @param data The data set
+     * @param osm The existing primitive to modify
+     * @param newOsm The new primitive
+     * @since 11240
+     */
+    public ChangeCommand(DataSet data, OsmPrimitive osm, OsmPrimitive newOsm) {
+        super(data);
         this.osm = osm;
         this.newOsm = newOsm;
         sanityChecks();

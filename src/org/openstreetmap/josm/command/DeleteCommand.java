@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SplitWayAction;
 import org.openstreetmap.josm.actions.SplitWayAction.SplitWayResult;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -130,6 +131,23 @@ public class DeleteCommand extends Command {
      */
     public DeleteCommand(OsmDataLayer layer, Collection<? extends OsmPrimitive> data) {
         super(layer);
+        CheckParameterUtil.ensureParameterNotNull(data, "data");
+        this.toDelete = data;
+        checkConsistency();
+    }
+
+    /**
+     * Constructor for a collection of data to be deleted in the context of
+     * a specific data set
+     *
+     * @param dataset the dataset context for deleting these primitives. Must not be null.
+     * @param data the primitives to delete. Must neither be null nor empty.
+     * @throws IllegalArgumentException if dataset is null
+     * @throws IllegalArgumentException if data is null or empty
+     * @since 11240
+     */
+    public DeleteCommand(DataSet dataset, Collection<? extends OsmPrimitive> data) {
+        super(dataset);
         CheckParameterUtil.ensureParameterNotNull(data, "data");
         this.toDelete = data;
         checkConsistency();
@@ -447,7 +465,8 @@ public class DeleteCommand extends Command {
         // build the delete command
         //
         if (!primitivesToDelete.isEmpty()) {
-            cmds.add(new DeleteCommand(layer, primitivesToDelete));
+            cmds.add(layer != null ? new DeleteCommand(layer, primitivesToDelete) :
+                new DeleteCommand(primitivesToDelete.iterator().next().getDataSet(), primitivesToDelete));
         }
 
         return new SequenceCommand(tr("Delete"), cmds);

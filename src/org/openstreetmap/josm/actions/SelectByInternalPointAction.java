@@ -29,15 +29,26 @@ public final class SelectByInternalPointAction {
     }
 
     /**
-     * Returns the surrounding polygons/multipolygons
-     * ordered by their area size (from small to large)
+     * Returns the surrounding polygons/multipolygons ordered by their area size (from small to large)
      * which contain the internal point.
      *
      * @param internalPoint the internal point.
      * @return the surrounding polygons/multipolygons
      */
     public static Collection<OsmPrimitive> getSurroundingObjects(EastNorth internalPoint) {
-        final DataSet ds = Main.getLayerManager().getEditDataSet();
+        return getSurroundingObjects(Main.getLayerManager().getEditDataSet(), internalPoint);
+    }
+
+    /**
+     * Returns the surrounding polygons/multipolygons ordered by their area size (from small to large)
+     * which contain the internal point.
+     *
+     * @param ds the data set
+     * @param internalPoint the internal point.
+     * @return the surrounding polygons/multipolygons
+     * @since 11240
+     */
+    public static Collection<OsmPrimitive> getSurroundingObjects(DataSet ds, EastNorth internalPoint) {
         if (ds == null) {
             return Collections.emptySet();
         }
