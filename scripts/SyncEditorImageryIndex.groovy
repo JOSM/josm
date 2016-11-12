@@ -254,7 +254,7 @@ class SyncEditorImageryIndex {
             def j = josmUrls.get(url)
             if (!getName(e).equals(getName(j))) {
                 myprintln "  name differs: $url"
-                myprintln "     (IEE):     ${getName(e)}"
+                myprintln "     (EII):     ${getName(e)}"
                 myprintln "     (JOSM):    ${getName(j)}"
             }
         }
@@ -266,7 +266,7 @@ class SyncEditorImageryIndex {
             def j = josmUrls.get(url)
             if (!getType(e).equals(getType(j))) {
                 myprintln "  type differs: ${getName(j)} - $url"
-                myprintln "     (IEE):     ${getType(e)}"
+                myprintln "     (EII):     ${getType(e)}"
                 myprintln "     (JOSM):    ${getType(j)}"
             }
         }
@@ -281,14 +281,14 @@ class SyncEditorImageryIndex {
             Integer jMinZoom = getMinZoom(j)
             if (eMinZoom != jMinZoom  && !(eMinZoom == 0 && jMinZoom == null)) {
                 myprintln "  minzoom differs: ${getDescription(j)}"
-                myprintln "     (IEE):     ${eMinZoom}"
+                myprintln "     (EII):     ${eMinZoom}"
                 myprintln "     (JOSM):    ${jMinZoom}"
             }
             Integer eMaxZoom = getMaxZoom(e)
             Integer jMaxZoom = getMaxZoom(j)
             if (eMaxZoom != jMaxZoom) {
                 myprintln "  maxzoom differs: ${getDescription(j)}"
-                myprintln "     (IEE):     ${eMaxZoom}"
+                myprintln "     (EII):     ${eMaxZoom}"
                 myprintln "     (JOSM):    ${jMaxZoom}"
             }
         }
@@ -300,7 +300,7 @@ class SyncEditorImageryIndex {
             def j = josmUrls.get(url)
             if (!getCountryCode(e).equals(getCountryCode(j))) {
                 myprintln "  country code differs: ${getDescription(j)}"
-                myprintln "     (IEE):     ${getCountryCode(e)}"
+                myprintln "     (EII):     ${getCountryCode(e)}"
                 myprintln "     (JOSM):    ${getCountryCode(j)}"
             }
         }
@@ -317,7 +317,7 @@ class SyncEditorImageryIndex {
             def j = josmUrls.get(url)
             if (!getQuality(e).equals(getQuality(j))) {
                 myprintln "  quality differs: ${getDescription(j)}"
-                myprintln "     (IEE):     ${getQuality(e)}"
+                myprintln "     (EII):     ${getQuality(e)}"
                 myprintln "     (JOSM):    ${getQuality(j)}"
             }
         }*/
