@@ -80,6 +80,9 @@ public class MultipolygonTest extends Test {
     /** Multipolygon rings share nodes */
     public static final int RINGS_SHARE_NODES = 1617;
 
+    private static final int FOUND_INSIDE = 1;
+    private static final int FOUND_OUTSIDE = 2;
+
     private final Set<String> keysCheckedByAnotherTest = new HashSet<>();
 
     /**
@@ -88,10 +91,6 @@ public class MultipolygonTest extends Test {
     public MultipolygonTest() {
         super(tr("Multipolygon"),
                 tr("This test checks if multipolygons are valid."));
-    }
-
-    @Override
-    public void initialize() {
     }
 
     @Override
@@ -136,13 +135,11 @@ public class MultipolygonTest extends Test {
             checkMembersAndRoles(r);
             checkOuterWay(r);
             boolean hasRepeatedMembers = checkRepeatedWayMembers(r);
-            if (!hasRepeatedMembers) {
-                // Rest of checks is only for complete multipolygon
-                if (!r.hasIncompleteMembers()) {
-                    Multipolygon polygon = new Multipolygon(r);
-                    checkStyleConsistency(r, polygon);
-                    checkGeometryAndRoles(r, polygon);
-                }
+            // Rest of checks is only for complete multipolygon
+            if (!hasRepeatedMembers && !r.hasIncompleteMembers()) {
+                Multipolygon polygon = new Multipolygon(r);
+                checkStyleConsistency(r, polygon);
+                checkGeometryAndRoles(r, polygon);
             }
         }
     }
@@ -284,7 +281,7 @@ public class MultipolygonTest extends Test {
                 for (int j = i + 1; j < allPolygons.size(); j++) {
                     PolyData pd2 = allPolygons.get(j);
                     if (!checkProblemMap(crossingPolyMap, pd1, pd2)) {
-                        checkPolygonsForSharedNodes(r, pd1, pd2, sharedNodes, wayMap);
+                        checkPolygonsForSharedNodes(r, pd1, pd2, sharedNodes);
                     }
                 }
             }
@@ -309,7 +306,7 @@ public class MultipolygonTest extends Test {
      * @param r the relation
      * @return List of nodes were ways intersect
      */
-    private Set<Node> findIntersectionNodes(Relation r) {
+    private static Set<Node> findIntersectionNodes(Relation r) {
         Set<Node> intersectionNodes = new HashSet<>();
         Map<Node, List<Way>> nodeMap = new HashMap<>();
         for (RelationMember rm : r.getMembers()) {
@@ -343,8 +340,7 @@ public class MultipolygonTest extends Test {
         CROSSING
     }
 
-    private void checkPolygonsForSharedNodes(Relation r, PolyData pd1, PolyData pd2, Set<Node> allSharedNodes,
-            Map<Long, RelationMember> wayMap) {
+    private void checkPolygonsForSharedNodes(Relation r, PolyData pd1, PolyData pd2, Set<Node> allSharedNodes) {
         Set<Node> sharedByPolygons = new HashSet<>(allSharedNodes);
         sharedByPolygons.retainAll(pd1.getNodes());
         sharedByPolygons.retainAll(pd2.getNodes());
@@ -390,13 +386,11 @@ public class MultipolygonTest extends Test {
         }
     }
 
-    private ExtPolygonIntersection checkOverlapAtSharedNodes(Set<Node> shared, PolyData pd1, PolyData pd2) {
+    private static ExtPolygonIntersection checkOverlapAtSharedNodes(Set<Node> shared, PolyData pd1, PolyData pd2) {
         // Idea: if two polygons share one or more nodes they can either just touch or share segments or intersect.
         // The insideness test is complex, so we try to reduce the number of these tests.
         // There is no need to check all nodes, we only have to check the node following a shared node.
 
-        final int FOUND_INSIDE = 1;
-        final int FOUND_OUTSIDE = 2;
         int[] flags = new int[2];
         for (int loop = 0; loop < flags.length; loop++) {
             List<Node> nodes2Test = loop == 0 ? pd1.getNodes() : pd2.getNodes();
@@ -446,8 +440,8 @@ public class MultipolygonTest extends Test {
      * Helper class for calculation of nesting levels
      */
     private static class PolygonLevel {
-        public final int level; // nesting level, even for outer, odd for inner polygons.
-        public final PolyData outerWay;
+        final int level; // nesting level, even for outer, odd for inner polygons.
+        final PolyData outerWay;
 
         PolygonLevel(PolyData pd, int level) {
             this.outerWay = pd;
@@ -503,7 +497,7 @@ public class MultipolygonTest extends Test {
      */
     private static boolean checkIfNodeIsInsidePolygon(Node n, PolyData p) {
         EastNorth en = n.getEastNorth();
-        return (en != null && p.get().contains(en.getX(), en.getY()));
+        return en != null && p.get().contains(en.getX(), en.getY());
     }
 
     /**
@@ -529,7 +523,7 @@ public class MultipolygonTest extends Test {
                     : sharedWaySegmentsPolygonsMap;
 
             for (Way w : r.getMemberPrimitives(Way.class)) {
-                findIntersectingWay(w, r, cellSegments, problemWays, loop == 1);
+                findIntersectingWay(w, cellSegments, problemWays, loop == 1);
             }
 
             if (!problemWays.isEmpty()) {
@@ -586,12 +580,11 @@ public class MultipolygonTest extends Test {
     /**
      * Find ways which are crossing without sharing a node.
      * @param w way that is member of the relation
-     * @param r the relation (used for error messages)
      * @param cellSegments map with already collected way segments
      * @param crossingWays list to collect crossing ways
      * @param findSharedWaySegments true: find shared way segments instead of crossings
      */
-    private void findIntersectingWay(Way w, Relation r, Map<Point2D, List<WaySegment>> cellSegments,
+    private static void findIntersectingWay(Way w, Map<Point2D, List<WaySegment>> cellSegments,
             Map<List<Way>, List<WaySegment>> crossingWays, boolean findSharedWaySegments) {
         int nodesSize = w.getNodesCount();
         for (int i = 0; i < nodesSize - 1; i++) {
@@ -636,14 +629,13 @@ public class MultipolygonTest extends Test {
      * @param pd2 2nd polygon
      * @return true if the combination of polygons is found in the map
      */
-    private boolean checkProblemMap(Map<PolyData, List<PolyData>> problemPolyMap, PolyData pd1, PolyData pd2) {
+    private static boolean checkProblemMap(Map<PolyData, List<PolyData>> problemPolyMap, PolyData pd1, PolyData pd2) {
         List<PolyData> crossingWithFirst = problemPolyMap.get(pd1);
-        if (crossingWithFirst != null) {
-            if (crossingWithFirst.contains(pd2))
-                return true;
+        if (crossingWithFirst != null && crossingWithFirst.contains(pd2)) {
+            return true;
         }
         List<PolyData> crossingWith2nd = problemPolyMap.get(pd2);
-        return (crossingWith2nd != null && crossingWith2nd.contains(pd1));
+        return crossingWith2nd != null && crossingWith2nd.contains(pd1);
     }
 
     /**
@@ -794,7 +786,7 @@ public class MultipolygonTest extends Test {
             this.sharedNodes = sharedNodes;
         }
 
-        public List<PolygonLevel> findOuterWays(List<PolyData> allPolygons) {
+        List<PolygonLevel> findOuterWays(List<PolyData> allPolygons) {
             return findOuterWaysRecursive(0, allPolygons);
         }
 

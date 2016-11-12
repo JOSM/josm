@@ -48,9 +48,10 @@ public class MultipolygonTestTest {
 
     /**
      * Non-regression test for bug #10469.
+     * @throws Exception if an exception occurs
      */
     @Test
-    public void testTicket10469() {
+    public void testTicket10469() throws Exception {
         MULTIPOLYGON_TEST.initialize();
         MULTIPOLYGON_TEST.startTest(null);
 

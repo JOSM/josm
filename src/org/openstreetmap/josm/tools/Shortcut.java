@@ -283,7 +283,7 @@ public final class Shortcut {
             return super.add(shortcut);
         }
 
-        public void replace(Shortcut newShortcut) {
+        void replace(Shortcut newShortcut) {
             final Optional<Shortcut> existing = findShortcutByKeyOrShortText(-1, NONE, newShortcut.shortText);
             if (existing.isPresent()) {
                 replaceAll(sc -> existing.get() == sc ? newShortcut : sc);
