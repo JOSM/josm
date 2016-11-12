@@ -36,7 +36,7 @@ public final class SelectByInternalPointAction {
      * @return the surrounding polygons/multipolygons
      */
     public static Collection<OsmPrimitive> getSurroundingObjects(EastNorth internalPoint) {
-        return getSurroundingObjects(Main.getLayerManager().getEditDataSet(), internalPoint);
+        return getSurroundingObjects(Main.getLayerManager().getEditDataSet(), internalPoint, false);
     }
 
     /**
@@ -45,10 +45,11 @@ public final class SelectByInternalPointAction {
      *
      * @param ds the data set
      * @param internalPoint the internal point.
+     * @param includeMultipolygonWays whether to include multipolygon ways in the result (false by default)
      * @return the surrounding polygons/multipolygons
-     * @since 11240
+     * @since 11247
      */
-    public static Collection<OsmPrimitive> getSurroundingObjects(DataSet ds, EastNorth internalPoint) {
+    public static Collection<OsmPrimitive> getSurroundingObjects(DataSet ds, EastNorth internalPoint, boolean includeMultipolygonWays) {
         if (ds == null) {
             return Collections.emptySet();
         }
@@ -61,9 +62,11 @@ public final class SelectByInternalPointAction {
         }
         for (Relation r : ds.getRelations()) {
             if (r.isUsable() && r.isMultipolygon() && r.isSelectable() && Geometry.isNodeInsideMultiPolygon(n, r, null)) {
-                for (RelationMember m : r.getMembers()) {
-                    if (m.isWay() && m.getWay().isClosed()) {
-                        found.values().remove(m.getWay());
+                if (!includeMultipolygonWays) {
+                    for (RelationMember m : r.getMembers()) {
+                        if (m.isWay() && m.getWay().isClosed()) {
+                            found.values().remove(m.getWay());
+                        }
                     }
                 }
                 // estimate multipolygon size by its bounding box area

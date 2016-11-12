@@ -1,0 +1,14 @@
+/* see ticket #12914 -- Discourage contributors to use operator=RFF and operator=ERDF in France. */
+*[operator=RFF][inside("FX")] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "operator=SNCF Réseau";
+  group: tr("deprecated tagging");
+  fixAdd: "operator=SNCF Réseau";
+}
+
+*[operator=ERDF][inside("FR")] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "operator=Enedis";
+  group: tr("deprecated tagging");
+  fixAdd: "operator=Enedis";
+}

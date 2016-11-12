@@ -15,7 +15,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -26,6 +28,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -39,6 +42,7 @@ import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
+import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -866,9 +870,7 @@ public final class ExpressionFactory {
          * @since 7193
          */
         public static boolean is_right_hand_traffic(Environment env) {
-            if (env.osm instanceof Node)
-                return RightAndLefthandTraffic.isRightHandTraffic(((Node) env.osm).getCoor());
-            return RightAndLefthandTraffic.isRightHandTraffic(env.osm.getBBox().getCenter());
+            return RightAndLefthandTraffic.isRightHandTraffic(center(env));
         }
 
         /**
@@ -943,6 +945,44 @@ public final class ExpressionFactory {
          */
         public static Object setting(Environment env, String key) { // NO_UCD (unused code)
             return env.source.settingValues.get(key);
+        }
+
+        /**
+         * Returns the center of the environment OSM primitive.
+         * @param env the environment
+         * @return the center of the environment OSM primitive
+         * @since 11247
+         */
+        public static LatLon center(Environment env) { // NO_UCD (unused code)
+            return env.osm instanceof Node ? ((Node) env.osm).getCoor() : env.osm.getBBox().getCenter();
+        }
+
+        /**
+         * Determines if the object is inside territories matching given ISO3166 codes.
+         * @param env the environment
+         * @param codes comma-separated list of ISO3166-1-alpha2 or ISO3166-2 country/subdivision codes
+         * @return {@code true} if the object is inside territory matching given ISO3166 codes
+         * @since 11247
+         */
+        public static boolean inside(Environment env, String codes) { // NO_UCD (unused code)
+            Set<String> osmCodes = Territories.getIso3166Codes(center(env));
+            for (String code : codes.toUpperCase(Locale.ENGLISH).split(",")) {
+                if (osmCodes.contains(code.trim())) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /**
+         * Determines if the object is outside territories matching given ISO3166 codes.
+         * @param env the environment
+         * @param codes comma-separated list of ISO3166-1-alpha2 or ISO3166-2 country/subdivision codes
+         * @return {@code true} if the object is outside territory matching given ISO3166 codes
+         * @since 11247
+         */
+        public static boolean outside(Environment env, String codes) { // NO_UCD (unused code)
+            return !inside(env, codes);
         }
     }
 

@@ -153,6 +153,7 @@ public class ValidatorTagCheckerRulesPreference implements SubPreferenceSetting 
             addDefault(def, "numeric",      tr("Numeric values"),      tr("Checks for wrong numeric values"));
             addDefault(def, "religion",     tr("Religion"),            tr("Checks for errors on religious objects"));
             addDefault(def, "relation",     tr("Relations"),           tr("Checks for errors on relations"));
+            addDefault(def, "territories",  tr("Territories"),         tr("Checks for territories-specific features"));
             addDefault(def, "unnecessary",  tr("Unnecessary tags"),    tr("Checks for unnecessary tags"));
             addDefault(def, "wikipedia",    tr("Wikipedia"),           tr("Checks for wrong wikipedia tags"));
             // CHECKSTYLE.ON: SingleSpaceSeparator

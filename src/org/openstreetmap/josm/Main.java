@@ -107,7 +107,9 @@ import org.openstreetmap.josm.tools.PlatformHook;
 import org.openstreetmap.josm.tools.PlatformHookOsx;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
+import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -515,6 +517,10 @@ public abstract class Main {
                     Main.warn(getErrorMessage(Utils.getRootCause(e)));
                 }
             }));
+
+        tasks.add(new InitializationTask(tr("Initializing internal boundaries data"), Territories::initialize));
+
+        tasks.add(new InitializationTask(tr("Initializing internal traffic data"), RightAndLefthandTraffic::initialize));
 
         tasks.add(new InitializationTask(tr("Initializing validator"), OsmValidator::initialize));
 
