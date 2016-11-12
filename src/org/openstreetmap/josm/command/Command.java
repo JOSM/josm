@@ -339,7 +339,7 @@ public abstract class Command implements PseudoCommand {
 
     @Override
     public int hashCode() {
-        return Objects.hash(cloneMap, layer);
+        return Objects.hash(cloneMap, layer, data);
     }
 
     @Override

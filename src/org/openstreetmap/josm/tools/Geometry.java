@@ -23,6 +23,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder.JoinedPolygon;
 import org.openstreetmap.josm.data.osm.Node;
@@ -34,6 +35,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
  * Some tools for geometry related tasks.
@@ -83,6 +85,9 @@ public final class Geometry {
             wayBounds[pos] = getNodesBounds(newNodes[pos]);
             changedWays[pos] = false;
         }
+
+        OsmDataLayer layer = Main.getLayerManager().getEditLayer();
+        DataSet dataset = ways.iterator().next().getDataSet();
 
         //iterate over all way pairs and introduce the intersections
         Comparator<Node> coordsComparator = new NodePositionComparator();
@@ -188,7 +193,7 @@ public final class Geometry {
                                 intersectionNodes.add(intNode);
 
                                 if (intNode == newNode) {
-                                    cmds.add(new AddCommand(intNode));
+                                    cmds.add(layer != null ? new AddCommand(layer, intNode) : new AddCommand(dataset, intNode));
                                 }
                             }
                         } else if (test && !intersectionNodes.isEmpty())
