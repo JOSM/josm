@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016110901, Last Updated Thu Nov 10 07:07:01 2016 UTC
+        // Taken from Version 2016111101, Last Updated Sat Nov 12 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -431,6 +431,7 @@ public final class DomainValidator extends AbstractValidator {
         "bostik", // bostik Bostik SA
         "bot", // bot Amazon Registry Services, Inc.
         "boutique", // boutique Over Galley, LLC
+        "box", // box NS1 Limited
         "bradesco", // bradesco Banco Bradesco S.A.
         "bridgestone", // bridgestone Bridgestone Corporation
         "broadway", // broadway Celebrate Broadway, Inc.
@@ -666,6 +667,7 @@ public final class DomainValidator extends AbstractValidator {
         "flowers", // flowers Uniregistry, Corp.
         "fly", // fly Charleston Road Registry Inc.
         "foo", // foo Charleston Road Registry Inc.
+        "food", // food Lifestyle Domain Holdings, Inc.
         "foodnetwork", // foodnetwork Lifestyle Domain Holdings, Inc.
         "football", // football Foggy Farms, LLC
         "ford", // ford Ford Motor Company
