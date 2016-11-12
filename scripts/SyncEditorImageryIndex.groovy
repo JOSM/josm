@@ -113,7 +113,7 @@ class SyncEditorImageryIndex {
                 if(res[0][2].equals("Ignore")) {
                     skipColors[res[0][3]] = "green"
                 } else {
-                    skipColors[res[0][3]] = "darkgreen"
+                    skipColors[res[0][3]] = "darkolivegreen"
                 }
             }
         }
