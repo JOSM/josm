@@ -699,6 +699,12 @@ Build-Date: ${build.tstamp}
             <arg value="--unlink"/>
         </exec>
         <exec append="false" executable="wget" failifexecutionfails="true">
+            <arg value="https://josm.openstreetmap.de/wiki/ImageryCompareIgnores?format=txt"/>
+            <arg value="-O"/>
+            <arg value="maps_ignores.txt"/>
+            <arg value="--unlink"/>
+        </exec>
+        <exec append="false" executable="wget" failifexecutionfails="true">
             <arg value="https://raw.githubusercontent.com/osmlab/editor-imagery-index/gh-pages/imagery.json"/>
             <arg value="-O"/>
             <arg value="imagery.json"/>

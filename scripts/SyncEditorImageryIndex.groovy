@@ -34,10 +34,13 @@ class SyncEditorImageryIndex {
 
     static String eiiInputFile = 'imagery.json'
     static String josmInputFile = 'maps.xml'
+    static String ignoreInputFile = 'maps_ignores.txt'
     static FileWriter outputFile = null
     static BufferedWriter outputStream = null
     int skipCount = 0;
+    String skipColor = "greenyellow" // should never be visible
     def skipEntries = [:]
+    def skipColors = [:]
 
     static def options
 
@@ -70,6 +73,7 @@ class SyncEditorImageryIndex {
         cli.o(longOpt:'output', args:1, argName: "output", "Output file, - prints to stdout (default: -)")
         cli.e(longOpt:'eii_input', args:1, argName:"eii_input", "Input file for the editor imagery index (json). Default is $eiiInputFile (current directory).")
         cli.j(longOpt:'josm_input', args:1, argName:"josm_input", "Input file for the JOSM imagery list (xml). Default is $josmInputFile (current directory).")
+        cli.i(longOpt:'ignore_input', args:1, argName:"ignore_input", "Input file for the ignore list. Default is $ignoreInputFile (current directory).")
         cli.s(longOpt:'shorten', "shorten the output, so it is easier to read in a console window")
         cli.n(longOpt:'noskip', argName:"noskip", "don't skip known entries")
         cli.x(longOpt:'xhtmlbody', argName:"xhtmlbody", "create XHTML body for display in a web page")
@@ -88,6 +92,9 @@ class SyncEditorImageryIndex {
         if (options.josm_input) {
             josmInputFile = options.josm_input
         }
+        if (options.ignore_input) {
+            ignoreInputFile = options.ignore_input
+        }
         if (options.output && options.output != "-") {
             outputFile = new FileWriter(options.output)
             outputStream = new BufferedWriter(outputFile)
@@ -95,81 +102,22 @@ class SyncEditorImageryIndex {
     }
 
     void loadSkip() {
-        /* TMS proxies for our wms */
-        skipEntries["-  [CH] Stadt Zürich Luftbild 2011 - http://mapproxy.sosm.ch:8080/tiles/zh_luftbild2011/EPSG900913/{z}/{x}/{y}.png?origin=nw"] = 1
-        skipEntries["-  [CH] Übersichtsplan Zürich - http://mapproxy.sosm.ch:8080/tiles/zh_uebersichtsplan/EPSG900913/{zoom}/{x}/{y}.png?origin=nw"] = 1
-        skipEntries["-  [CH] Kanton Solothurn 25cm (SOGIS 2011-2014) - http://mapproxy.osm.ch:8080/tiles/sogis2014/EPSG900913/{z}/{x}/{y}.png?origin=nw"] = 1
-        
-        /* URL style mismatch */
-        skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://{switch:a,b,c,d}.tile.stamen.com/terrain-background/{z}/{x}/{y}.jpg"] = 1
-        skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://whoots.mapwarper.net/tms/{z}/{x}/{y}/MD_SixInchImagery/http://geodata.md.gov/imap/services/Imagery/MD_SixInchImagery/MapServer/WmsServer"] = 1
-        skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://whoots.mapwarper.net/tms/{z}/{x}/{y}/Infrared2015/http://geodata.state.nj.us/imagerywms/Infrared2015"] = 1
-        skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://whoots.mapwarper.net/tms/{z}/{x}/{y}/Natural2015/http://geodata.state.nj.us/imagerywms/Natural2015"] = 1
-        skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://cyberjapandata.gsi.go.jp/xyz/ort/{z}/{x}/{y}.jpg"] = 1
-        skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://tms.cadastre.openstreetmap.fr/*/tout/{z}/{x}/{y}.png"] = 1
-        skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://mapproxy.osm.ch:8080/tiles/AGIS2014/EPSG900913/{z}/{x}/{y}.png?origin=nw"] = 1
-        skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://mapproxy.osm.ch:8080/tiles/sogis2014/EPSG900913/{z}/{x}/{y}.png?origin=nw"] = 1
-        skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://mapproxy.openmap.lt/ort10lt/g/{z}/{x}/{y}.jpeg"] = 1
-        skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://mapproxy.sosm.ch:8080/tiles/zh_luftbild2011/EPSG900913/{z}/{x}/{y}.png?origin=nw"] = 1
-        skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://mapproxy.openmap.lt/ort10lt/g/{z}/{x}/{y}.jpeg"] = 1
-        skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://mapproxy.osm.ch:8080/tiles/KTZUERICH2015/EPSG900913/{z}/{x}/{y}.png?origin=nw"] = 1
-        skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://geoservices.buergernetz.bz.it/geoserver/gwc/service/wmts/?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=P_BZ_BASEMAP_TOPO&STYLE=default&TILEMATRIXSET=GoogleMapsCompatible&TILEMATRIX=GoogleMapsCompatible%3A{z}&TILEROW={y}&TILECOL={x}&FORMAT=image%2Fjpeg"] = 1
-        skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://mapproxy.osm.ch:8080/tiles/KTBASELSTADT2015/EPSG900913/{z}/{x}/{y}.png?origin=nw"] = 1
-        skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://mapproxy.osm.ch:8080/tiles/bern2016/EPSG900913/{z}/{x}/{y}.png?origin=nw"] = 1
-        skipEntries["+++ EII-URL uses {z} instead of {zoom}: http://mapproxy.osm.ch:8080/tiles/BAYERNDOP80/EPSG900913/{z}/{x}/{y}.png?origin=nw"] = 1
-        skipEntries["+++ EII-URL uses {z} instead of {zoom}: https://api.mapbox.com/styles/v1/wille/cirnnxni1000jg8nfppc8g7pm/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoid2lsbGUiLCJhIjoicFNVWk5VWSJ9.hluCd0YGvYHNlFi_utWe2g"] = 1
-        
-        /* various reasons */
-        skipEntries["+++ EII-URL is not unique: http://geolittoral.application.equipement.gouv.fr/wms/metropole?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=ortholittorale&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["-  OpenStreetMap (Standard Black & White) - http://{switch:a,b,c}.www.toolserver.org/tiles/bw-mapnik/{zoom}/{x}/{y}.png"] = 1
-        skipEntries["-  OpenStreetMap (Standard) - http://{switch:a,b,c}.tile.openstreetmap.org/{zoom}/{x}/{y}.png"] = 1
-        skipEntries["-  [CH] Kanton Solothurn 25cm (SOGIS 2011-2014) - http://www.sogis1.so.ch/cgi-bin/sogis/sogis_orthofoto.wms?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=Orthofoto_SO&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["-  [CH] Kanton Solothurn Infrarot 12.5cm (SOGIS 2011) - http://www.sogis1.so.ch/cgi-bin/sogis/sogis_ortho.wms?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=Orthofoto11_CIR&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["-  [CZ] Czech CUZK:KM tiles proxy - http://osm-{switch:a,b,c}.zby.cz/tiles_cuzk.php/{zoom}/{x}/{y}.png"] = 1
-        skipEntries["-  [CZ] Czech UHUL:ORTOFOTO - http://geoportal2.uhul.cz/cgi-bin/oprl.asp?SERVICE=WMS&VERSION=1.1.1&REQUEST=GetMap&SRS={proj}&LAYERS=Ortofoto_cb&STYLES=default&FORMAT=image/jpeg&TRANSPARENT=TRUE&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["-  [CZ] Czech ÚHUL:ORTOFOTO tiles proxy - http://osm-{switch:a,b,c}.zby.cz/tiles_uhul.php/{zoom}/{x}/{y}.jpg"] = 1
-        skipEntries["-  [DE] Hamburg (40 cm) - http://gateway.hamburg.de/OGCFassade/HH_WMS_DOP40.aspx?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=0&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["-  [DE] Hamburg (DK5) - http://gateway.hamburg.de/OGCFassade/HH_WMS_Geobasisdaten.aspx?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=1&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["-  [EE] Estonia Basemap (Maaamet) - http://kaart.maaamet.ee/wms/alus-geo?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=pohi_vr2&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["-  [EE] Estonia Forestry (Maaamet) - http://kaart.maaamet.ee/wms/alus-geo?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=cir_ngr&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["-  [EE] Estonia Hillshading (Maaamet) - http://kaart.maaamet.ee/wms/alus-geo?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=reljeef&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        skipEntries["-  [EE] Estonia Ortho (Maaamet) - http://kaart.maaamet.ee/wms/alus-geo?VERSION=1.1.1&REQUEST=GetMap&LAYERS=of10000&SRS={proj}&FORMAT=image/jpeg&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 1
-        
-        /* name differs */
-        skipEntries["  name differs: http://wms.openstreetmap.fr/tms/1.0.0/tours_2013/{zoom}/{x}/{y}"] = 3
-        skipEntries["  name differs: http://wms.openstreetmap.fr/tms/1.0.0/tours/{zoom}/{x}/{y}"] = 3
-        skipEntries["  name differs: https://secure.erlangen.de/arcgiser/services/Luftbilder2011/MapServer/WmsServer?FORMAT=image/bmp&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=Erlangen_ratio10_5cm_gk4.jp2&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 3
-        skipEntries["  name differs: http://wms.openstreetmap.fr/tms/1.0.0/iomhaiti/{zoom}/{x}/{y}"] = 3
-        skipEntries["  name differs: http://{switch:a,b,c}.layers.openstreetmap.fr/bano/{zoom}/{x}/{y}.png"] = 3
-        skipEntries["  name differs: http://ooc.openstreetmap.org/os1/{zoom}/{x}/{y}.jpg"] = 3
-        skipEntries["  name differs: http://www.gisnet.lv/cgi-bin/osm_latvia?FORMAT=image/jpeg&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&Layers=piekraste&SRS={proj}&WIDTH={width}&height={height}&BBOX={bbox}"] = 3
-        skipEntries["  name differs: http://tms.cadastre.openstreetmap.fr/*/tout/{zoom}/{x}/{y}.png"] = 3
-        skipEntries["  name differs: http://{switch:a,b,c}.tiles.mapbox.com/v4/enf.e0b8291e/{zoom}/{x}/{y}.png?access_token=pk.eyJ1Ijoib3BlbnN0cmVldG1hcCIsImEiOiJhNVlHd29ZIn0.ti6wATGDWOmCnCYen-Ip7Q"] = 3
-        skipEntries["  name differs: http://geo.nls.uk/mapdata2/os/25_inch/scotland_1/{zoom}/{x}/{y}.png"] = 3
-        skipEntries["  name differs: http://geo.nls.uk/mapdata3/os/6_inch_gb_1900/{zoom}/{x}/{y}.png"] = 3
-        skipEntries["  name differs: http://geoserver.infobex.hu/Budapest2014/IST/{zoom}/{x}/{y}.jpg"] = 3
-        skipEntries["  name differs: http://mapproxy.openmap.lt/ort10lt/g/{zoom}/{x}/{y}.jpeg"] = 3
-        skipEntries["  name differs: http://e.tile.openstreetmap.hu/ortofoto2000/{zoom}/{x}/{y}.jpg"] = 3
-        skipEntries["  name differs: http://e.tile.openstreetmap.hu/ortofoto2005/{zoom}/{x}/{y}.jpg"] = 3
-        skipEntries["  name differs: http://gis3.stuttgart.de/wss/service/wms_Luftbilder2011_jpg_internet/guest?FORMAT=image/jpeg&VERSION=1.3.0&SERVICE=WMS&REQUEST=GetMap&Layers=0,1,2,3,4,5,6,7,8&STYLES=default,default,default,default,default,default,default,default,default&CRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 3
-        skipEntries["  name differs: https://secure.erlangen.de/arcgiser/services/Luftbilder2013/MapServer/WmsServer?FORMAT=image/bmp&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=Erlangen_ratio5_6.25cm.jp2&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 3
-        skipEntries["  name differs: http://{switch:a,b,c}.gps-tile.openstreetmap.org/lines/{zoom}/{x}/{y}.png"] = 3
-        skipEntries["  name differs: https://{switch:a,b,c}.tile.thunderforest.com/cycle/{zoom}/{x}/{y}.png"] = 3
-        skipEntries["  name differs: https://secure.erlangen.de/arcgiser/services/Luftbild2016/MapServer/WmsServer?FORMAT=image/bmp&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS=0&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}"] = 3
-        
-        /* maxzoom or minzoom differs */
-        skipEntries["  minzoom differs: [AU] LPI NSW Administrative Boundaries County - http://maps.six.nsw.gov.au/arcgis/services/public/NSW_Administrative_Boundaries/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=County&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE"] = 3
-        skipEntries["  minzoom differs: [AU] LPI NSW Administrative Boundaries NPWS Reserve - http://maps.six.nsw.gov.au/arcgis/services/public/NSW_Administrative_Boundaries/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=NPWSReserve&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE"] = 3
-        skipEntries["  minzoom differs: [AU] LPI NSW Administrative Boundaries Parish - http://maps.six.nsw.gov.au/arcgis/services/public/NSW_Administrative_Boundaries/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=Parish&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE"] = 3
-        skipEntries["  minzoom differs: [AU] LPI NSW Administrative Boundaries Suburb - http://maps.six.nsw.gov.au/arcgis/services/public/NSW_Administrative_Boundaries/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=Suburb&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE"] = 3
-        skipEntries["  minzoom differs: [AU] LPI NSW Imagery - http://maps.six.nsw.gov.au/arcgis/rest/services/public/NSW_Imagery/MapServer/tile/{zoom}/{y}/{x}"] = 3
-        skipEntries["  minzoom differs: [AU] LPI NSW Topographic Map - http://maps.six.nsw.gov.au/arcgis/rest/services/public/NSW_Topo_Map/MapServer/tile/{zoom}/{y}/{x}"] = 3
-        skipEntries["  minzoom differs: [AU] LPI NSW Administrative Boundaries State Forest - http://maps.six.nsw.gov.au/arcgis/services/public/NSW_Administrative_Boundaries/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=StateForest&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE"] = 3
-        skipEntries["  minzoom differs: [AU] LPI NSW Administrative Boundaries LGA - http://maps.six.nsw.gov.au/arcgis/services/public/NSW_Administrative_Boundaries/MapServer/WMSServer?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetMap&CRS={proj}&BBOX={bbox}&WIDTH={width}&HEIGHT={height}&LAYERS=LocalGovernmentArea&STYLES=&FORMAT=image/png32&DPI=96&MAP_RESOLUTION=96&FORMAT_OPTIONS=dpi:96&TRANSPARENT=TRUE"] = 3
-        skipEntries["  minzoom differs: [AU] LPI NSW Base Map - http://maps.six.nsw.gov.au/arcgis/rest/services/public/NSW_Base_Map/MapServer/tile/{zoom}/{y}/{x}"] = 3
-        /* country code differs */
-        
+        FileReader fr = new FileReader(ignoreInputFile)
+        def line
+
+        while((line = fr.readLine()) != null) {
+            def res = (line =~ /^\|\| *(\d) *\|\| *(EII|Ignore) *\|\| *\{\{\{(.*)\}\}\} *\|\|/)
+            if(res.count)
+            {
+                skipEntries[res[0][3]] = res[0][1] as int
+                if(res[0][2].equals("Ignore")) {
+                    skipColors[res[0][3]] = "green"
+                } else {
+                    skipColors[res[0][3]] = "darkgreen"
+                }
+            }
         }
+    }
 
     void myprintlnfinal(String s) {
         if(outputStream != null) {
@@ -184,11 +132,16 @@ class SyncEditorImageryIndex {
         if(skipEntries.containsKey(s)) {
             skipCount = skipEntries.get(s)
             skipEntries.remove(s)
+            if(skipColors.containsKey(s)) {
+                skipColor = skipColors.get(s)
+            } else {
+                skipColor = "greenyellow"
+            }
         }
         if(skipCount) {
             skipCount -= 1;
             if(options.xhtmlbody || options.xhtml) {
-                s = "<pre style=\"margin:3px;color:green\">"+s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")+"</pre>"
+                s = "<pre style=\"margin:3px;color:"+skipColor+"\">"+s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")+"</pre>"
             }
             if (!options.noskip) {
                 return;
