@@ -80,6 +80,9 @@ public final class RightAndLefthandTraffic {
      * @return true if there is right-hand traffic, false if there is left-hand traffic
      */
     public static synchronized boolean isRightHandTraffic(LatLon ll) {
+        if (rlCache == null) {
+            initialize();
+        }
         return !rlCache.get(ll);
     }
 
