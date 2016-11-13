@@ -71,6 +71,7 @@ public class PurgeAction extends JosmAction {
 
     protected transient OsmDataLayer layer;
     protected JCheckBox cbClearUndoRedo;
+    protected boolean modified;
 
     protected transient Set<OsmPrimitive> toPurge;
     /**
@@ -92,16 +93,34 @@ public class PurgeAction extends JosmAction {
         if (!isEnabled())
             return;
 
-        doPurge(getLayerManager().getEditDataSet().getAllSelected(), true);
+        PurgeCommand cmd = getPurgeCommand(getLayerManager().getEditDataSet().getAllSelected());
+        boolean clearUndoRedo = false;
+
+        if (!GraphicsEnvironment.isHeadless()) {
+            final boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
+                    "purge", Main.parent, buildPanel(modified), tr("Confirm Purging"),
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_OPTION);
+            if (!answer)
+                return;
+
+            clearUndoRedo = cbClearUndoRedo.isSelected();
+            Main.pref.put("purge.clear_undo_redo", clearUndoRedo);
+        }
+
+        Main.main.undoRedo.add(cmd);
+        if (clearUndoRedo) {
+            Main.main.undoRedo.clean();
+            getLayerManager().getEditDataSet().clearSelectionHistory();
+        }
     }
 
     /**
-     * Performs purge on selected OSM primitives.
+     * Creates command to purge selected OSM primitives.
      * @param sel selected OSM primitives
-     * @param confirm asks user confirmation through a popup dialog
-     * @since 11240
+     * @return command to purge selected OSM primitives
+     * @since 11252
      */
-    public void doPurge(Collection<OsmPrimitive> sel, boolean confirm) {
+    public PurgeCommand getPurgeCommand(Collection<OsmPrimitive> sel) {
         layer = Main.getLayerManager().getEditLayer();
 
         toPurge = new HashSet<>(sel);
@@ -203,7 +222,7 @@ public class PurgeAction extends JosmAction {
             toPurgeAdditionally.addAll(relSet);
         }
 
-        boolean modified = false;
+        modified = false;
         for (OsmPrimitive osm : toPurgeChecked) {
             if (osm.isModified()) {
                 modified = true;
@@ -211,26 +230,8 @@ public class PurgeAction extends JosmAction {
             }
         }
 
-        boolean clearUndoRedo = false;
-
-        if (!GraphicsEnvironment.isHeadless() && confirm) {
-            final boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
-                    "purge", Main.parent, buildPanel(modified), tr("Confirm Purging"),
-                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, JOptionPane.OK_OPTION);
-            if (!answer)
-                return;
-
-            clearUndoRedo = cbClearUndoRedo.isSelected();
-            Main.pref.put("purge.clear_undo_redo", clearUndoRedo);
-        }
-
-        Main.main.undoRedo.add(layer != null ? new PurgeCommand(layer, toPurgeChecked, makeIncomplete) :
-            new PurgeCommand(toPurgeChecked.iterator().next().getDataSet(), toPurgeChecked, makeIncomplete));
-
-        if (clearUndoRedo) {
-            Main.main.undoRedo.clean();
-            getLayerManager().getEditDataSet().clearSelectionHistory();
-        }
+        return layer != null ? new PurgeCommand(layer, toPurgeChecked, makeIncomplete) :
+            new PurgeCommand(toPurgeChecked.iterator().next().getDataSet(), toPurgeChecked, makeIncomplete);
     }
 
     private JPanel buildPanel(boolean modified) {

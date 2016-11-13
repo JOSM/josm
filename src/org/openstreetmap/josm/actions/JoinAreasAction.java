@@ -759,16 +759,23 @@ public class JoinAreasAction extends JosmAction {
         case 0:
             return;
         case 1:
-            Main.main.undoRedo.add(cmds.getFirst());
+            commitCommand(cmds.getFirst());
             break;
         default:
-            Command c = new SequenceCommand(tr(description), cmds);
-            Main.main.undoRedo.add(c);
+            commitCommand(new SequenceCommand(tr(description), cmds));
             break;
         }
 
         cmds.clear();
         cmdsCount++;
+    }
+
+    private static void commitCommand(Command c) {
+        if (Main.main != null) {
+            Main.main.undoRedo.add(c);
+        } else {
+            c.executeCommand();
+        }
     }
 
     /**
@@ -1278,14 +1285,14 @@ public class JoinAreasAction extends JosmAction {
 
             if (!way.insideToTheRight) {
                 ReverseWayResult res = ReverseWayAction.reverseWay(way.way);
-                Main.main.undoRedo.add(res.getReverseCommand());
+                commitCommand(res.getReverseCommand());
                 cmdsCount++;
             }
         }
 
         Pair<Way, Command> result = CombineWayAction.combineWaysWorker(actionWays);
 
-        Main.main.undoRedo.add(result.b);
+        commitCommand(result.b);
         cmdsCount++;
 
         return result.a;
@@ -1535,15 +1542,17 @@ public class JoinAreasAction extends JosmAction {
      * @param message The commit message to display
      */
     private void makeCommitsOneAction(String message) {
-        UndoRedoHandler ur = Main.main.undoRedo;
         cmds.clear();
-        int i = Math.max(ur.commands.size() - cmdsCount, 0);
-        for (; i < ur.commands.size(); i++) {
-            cmds.add(ur.commands.get(i));
-        }
+        if (Main.main != null) {
+            UndoRedoHandler ur = Main.main.undoRedo;
+            int i = Math.max(ur.commands.size() - cmdsCount, 0);
+            for (; i < ur.commands.size(); i++) {
+                cmds.add(ur.commands.get(i));
+            }
 
-        for (i = 0; i < cmds.size(); i++) {
-            ur.undo();
+            for (i = 0; i < cmds.size(); i++) {
+                ur.undo();
+            }
         }
 
         commitCommands(message == null ? marktr("Join Areas Function") : message);

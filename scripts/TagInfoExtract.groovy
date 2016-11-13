@@ -44,6 +44,8 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem.MatchType
 import org.openstreetmap.josm.io.CachedFile
+import org.openstreetmap.josm.tools.RightAndLefthandTraffic
+import org.openstreetmap.josm.tools.Territories
 import org.openstreetmap.josm.tools.Utils
 
 class TagInfoExtract {
@@ -375,6 +377,8 @@ class TagInfoExtract {
         Path tmpdir = Files.createTempDirectory(FileSystems.getDefault().getPath(base_dir), "pref")
         tmpdir.toFile().deleteOnExit()
         System.setProperty("josm.home", tmpdir.toString())
+        Territories.initialize()
+        RightAndLefthandTraffic.initialize()
 
         josm_svn_revision = Version.getInstance().getVersion()
         assert josm_svn_revision != Version.JOSM_UNKNOWN_VERSION

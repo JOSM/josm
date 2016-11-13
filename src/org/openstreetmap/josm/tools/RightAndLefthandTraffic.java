@@ -80,9 +80,6 @@ public final class RightAndLefthandTraffic {
      * @return true if there is right-hand traffic, false if there is left-hand traffic
      */
     public static synchronized boolean isRightHandTraffic(LatLon ll) {
-        if (rlCache == null) {
-            initialize();
-        }
         return !rlCache.get(ll);
     }
 
@@ -136,7 +133,7 @@ public final class RightAndLefthandTraffic {
             w.removeAll();
         }
         // Purge all other ways and relations so dataset only contains lefthand traffic data
-        new PurgeAction().doPurge(toPurge, false);
+        new PurgeAction().getPurgeCommand(toPurge).executeCommand();
         // Combine adjacent countries into a single polygon
         Collection<Way> optimizedWays = new ArrayList<>();
         List<Multipolygon> areas = JoinAreasAction.collectMultipolygons(ways);
