@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -189,6 +190,7 @@ public final class HttpClient {
         private final String responseMessage;
         private boolean uncompress;
         private boolean uncompressAccordingToContentDisposition;
+        private String responseData = null;
 
         private Response(HttpURLConnection connection, ProgressMonitor monitor) throws IOException {
             CheckParameterUtil.ensureParameterNotNull(connection, "connection");
@@ -197,6 +199,24 @@ public final class HttpClient {
             this.monitor = monitor;
             this.responseCode = connection.getResponseCode();
             this.responseMessage = connection.getResponseMessage();
+            if (this.responseCode >= 300) {
+                String contentType = getContentType();
+                if (contentType == null || (
+                        contentType.contains("text") ||
+                        contentType.contains("html") ||
+                        contentType.contains("xml"))
+                        ) {
+                    String content = this.fetchContent();
+                    if (content == null || content.isEmpty()) {
+                        Main.debug("Server did not return any body");
+                    } else {
+                        Main.debug("Response body: ");
+                        Main.debug(this.fetchContent());
+                    }
+                } else {
+                    Main.debug("Server returned content: {0} of length: {1}. Not printing.", contentType, this.getContentLength());
+                }
+            }
         }
 
         /**
@@ -263,6 +283,9 @@ public final class HttpClient {
             } catch (IOException ioe) {
                 Main.debug(ioe);
                 in = connection.getErrorStream();
+                if (in == null) {
+                    in = new ByteArrayInputStream(new byte[]{});
+                }
             }
             if (in != null) {
                 in = new ProgressInputStream(in, getContentLength(), monitor);
@@ -305,11 +328,13 @@ public final class HttpClient {
          * @return the response
          * @throws IOException if any I/O error occurs
          */
-        @SuppressWarnings("resource")
-        public String fetchContent() throws IOException {
-            try (Scanner scanner = new Scanner(getContentReader()).useDelimiter("\\A")) {
-                return scanner.hasNext() ? scanner.next() : "";
+        public synchronized String fetchContent() throws IOException {
+            if (responseData == null) {
+                try (Scanner scanner = new Scanner(getContentReader()).useDelimiter("\\A")) { // \A - beginning of input
+                    responseData = scanner.hasNext() ? scanner.next() : "";
+                }
             }
+            return responseData;
         }
 
         /**
