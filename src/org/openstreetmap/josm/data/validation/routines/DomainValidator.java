@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016111101, Last Updated Sat Nov 12 07:07:01 2016 UTC
+        // Taken from Version 2016111300, Last Updated Sun Nov 13 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -545,6 +545,7 @@ public final class DomainValidator extends AbstractValidator {
         "cricket", // cricket dot Cricket Limited
         "crown", // crown Crown Equipment Corporation
         "crs", // crs Federated Co-operatives Limited
+        "cruise", // cruise Viking River Cruises (Bermuda) Ltd.
         "cruises", // cruises Spring Way, LLC
         "csc", // csc Alliance-One Services, Inc.
         "cuisinella", // cuisinella SALM S.A.S.
@@ -968,6 +969,7 @@ public final class DomainValidator extends AbstractValidator {
         "mormon", // mormon IRI Domain Management, LLC (&quot;Applicant&quot;)
         "mortgage", // mortgage United TLD Holdco, Ltd
         "moscow", // moscow Foundation for Assistance for Internet Technologies and Infrastructure Development (FAITID)
+        "moto", // moto Motorola Trademark Holdings, LLC
         "motorcycles", // motorcycles DERMotorcycles, LLC
         "mov", // mov Charleston Road Registry Inc.
         "movie", // movie New Frostbite, LLC
