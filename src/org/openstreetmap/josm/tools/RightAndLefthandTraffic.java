@@ -41,6 +41,10 @@ import org.openstreetmap.josm.tools.Geometry.PolygonIntersection;
  */
 public final class RightAndLefthandTraffic {
 
+    private static final String DRIVING_SIDE = "driving_side";
+    private static final String LEFT = "left";
+    private static final String RIGHT = "right";
+
     private static class RLTrafficGeoProperty implements GeoProperty<Boolean> {
 
         @Override
@@ -108,14 +112,14 @@ public final class RightAndLefthandTraffic {
         Collection<Relation> allRelations = data.getRelations();
         Collection<Way> allWays = data.getWays();
         for (Way w : allWays) {
-            if ("left".equals(w.get("driving_side"))) {
+            if (LEFT.equals(w.get(DRIVING_SIDE))) {
                 addWayIfNotInner(ways, w);
             }
         }
         for (Relation r : allRelations) {
-            if (r.isMultipolygon() && "left".equals(r.get("driving_side"))) {
+            if (r.isMultipolygon() && LEFT.equals(r.get(DRIVING_SIDE))) {
                 for (RelationMember rm : r.getMembers()) {
-                    if (rm.isWay() && "outer".equals(rm.getRole())) {
+                    if (rm.isWay() && "outer".equals(rm.getRole()) && !RIGHT.equals(rm.getMember().get(DRIVING_SIDE))) {
                         addWayIfNotInner(ways, (Way) rm.getMember());
                     }
                 }
@@ -166,7 +170,7 @@ public final class RightAndLefthandTraffic {
     private static void addWayIfNotInner(Collection<Way> ways, Way w) {
         Set<Way> s = Collections.singleton(w);
         for (Relation r : OsmPrimitive.getParentRelations(s)) {
-            if (r.isMultipolygon() && "left".equals(r.get("driving_side")) &&
+            if (r.isMultipolygon() && LEFT.equals(r.get(DRIVING_SIDE)) &&
                 "inner".equals(r.getMembersFor(s).iterator().next().getRole())) {
                 if (Main.isDebugEnabled()) {
                     Main.debug("Skipping " + w.get("name:en") + " because inner part of " + r.get("name:en"));

@@ -33,6 +33,8 @@ public class RightAndLefthandTrafficTest {
         assertTrue("Martinique", RightAndLefthandTraffic.isRightHandTraffic(new LatLon(14.604, -61.069)));
         assertTrue("Madagascar", RightAndLefthandTraffic.isRightHandTraffic(new LatLon(-20.119, 46.316)));
         assertTrue("Shangai", RightAndLefthandTraffic.isRightHandTraffic(new LatLon(31.196, 121.36)));
+        assertTrue("Gibraltar", RightAndLefthandTraffic.isRightHandTraffic(new LatLon(36.141244, -5.347369)));
+        assertTrue("British Indian Ocean Territory", RightAndLefthandTraffic.isRightHandTraffic(new LatLon(-7.3, 72.4)));
 
         assertFalse("London", RightAndLefthandTraffic.isRightHandTraffic(new LatLon(51.507222, -0.1275)));
         assertFalse("Valetta (Malta)", RightAndLefthandTraffic.isRightHandTraffic(new LatLon(35.897778, 14.5125)));
