@@ -1,3 +1,5 @@
+<key>NSSupportsAutomaticGraphicsSwitching</key>
+<true/>
 <key>CFBundleAllowMixedLocalizations</key>
 <string>true</string>
 <key>UTExportedTypeDeclarations</key>
