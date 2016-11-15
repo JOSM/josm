@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.imagery.DefaultLayer;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource;
@@ -81,10 +82,10 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
                 return getWMSLayerInfo();
             case WMTS:
                 // specify which layer to use
-                String layerId = new WMTSTileSource(info).userSelectLayer();
+                DefaultLayer layerId = new WMTSTileSource(info).userSelectLayer();
                 if (layerId != null) {
                     ImageryInfo copy = new ImageryInfo(info);
-                    Collection<String> defaultLayers = new ArrayList<>(1);
+                    Collection<DefaultLayer> defaultLayers = new ArrayList<>(1);
                     defaultLayers.add(layerId);
                     copy.setDefaultLayers(defaultLayers);
                     return copy;

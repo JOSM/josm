@@ -194,7 +194,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     private boolean isGeoreferenceValid;
     private boolean isEpsg4326To3857Supported;
     /** which layers should be activated by default on layer addition. **/
-    private Collection<String> defaultLayers = Collections.emptyList();
+    private Collection<DefaultLayer> defaultLayers = Collections.emptyList();
     // when adding a field, also adapt the ImageryInfo(ImageryInfo)
     // and ImageryInfo(ImageryPreferenceEntry) constructor, equals method, and ImageryPreferenceEntry
 
@@ -1155,7 +1155,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * to work on
      * @return Collection of the layer names
      */
-    public Collection<String> getDefaultLayers() {
+    public Collection<DefaultLayer> getDefaultLayers() {
         return defaultLayers;
     }
 
@@ -1163,7 +1163,12 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * Sets the default layers that user will work with
      * @param layers set the list of default layers
      */
-    public void setDefaultLayers(Collection<String> layers) {
+    public void setDefaultLayers(Collection<DefaultLayer> layers) {
+        if (ImageryType.WMTS.equals(this.imageryType)) {
+            CheckParameterUtil.ensureThat(layers == null ||
+                    layers.isEmpty() ||
+                    layers.iterator().next() instanceof WMTSDefaultLayer, "Incorrect default layer");
+        }
         this.defaultLayers = layers;
     }
 }

@@ -173,7 +173,10 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                         public Object getValueAt(int rowIndex, int columnIndex) {
                             switch (columnIndex) {
                             case 0:
-                                return SelectLayerDialog.this.layers.get(rowIndex).getKey();
+                                return SelectLayerDialog.this.layers.get(rowIndex).getValue()
+                                        .stream()
+                                        .map(x -> x.name)
+                                        .collect(Collectors.joining(", ")); //this should be only one
                             case 1:
                                 return SelectLayerDialog.this.layers.get(rowIndex).getValue()
                                         .stream()
@@ -183,7 +186,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                                 return SelectLayerDialog.this.layers.get(rowIndex).getValue()
                                         .stream()
                                         .map(x -> x.tileMatrixSet.identifier)
-                                        .collect(Collectors.joining(", "));
+                                        .collect(Collectors.joining(", ")); //this should be only one
                             default:
                                 throw new IllegalArgumentException();
                             }
@@ -223,17 +226,13 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             setContent(panel);
         }
 
-        private static List<Entry<String, List<Layer>>> groupLayersByName(Collection<Layer> layers) {
-            Map<String, List<Layer>> layerByName = layers.stream().collect(Collectors.groupingBy(x -> x.name));
-            return layerByName.entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toList());
-        }
-
-        public String getSelectedLayer() {
+        public DefaultLayer getSelectedLayer() {
             int index = list.getSelectedRow();
             if (index < 0) {
                 return null; //nothing selected
             }
-            return layers.get(index).getKey();
+            Layer selectedLayer = layers.get(index).getValue().iterator().next();
+            return new WMTSDefaultLayer(selectedLayer.name, selectedLayer.tileMatrixSet.identifier);
         }
     }
 
@@ -246,7 +245,8 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
     private ScaleList nativeScaleList;
 
-    private final String defaultLayer;
+    private final WMTSDefaultLayer defaultLayer;
+
 
     /**
      * Creates a tile source based on imagery info
@@ -260,7 +260,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
         this.baseUrl = GetCapabilitiesParseHelper.normalizeCapabilitiesUrl(handleTemplate(info.getUrl()));
         this.layers = getCapabilities();
-        this.defaultLayer = info.getDefaultLayers().isEmpty() ? null : info.getDefaultLayers().iterator().next();
+        this.defaultLayer = info.getDefaultLayers().isEmpty() ? null : (WMTSDefaultLayer) info.getDefaultLayers().iterator().next();
         if (this.layers.isEmpty())
             throw new IllegalArgumentException(tr("No layers defined by getCapabilities document: {0}", info.getUrl()));
     }
@@ -269,12 +269,14 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
      * Creates a dialog based on this tile source with all available layers and returns the name of selected layer
      * @return Name of selected layer
      */
-    public String userSelectLayer() {
-        Collection<String> layerNames = layers.stream().map(x -> x.name).collect(Collectors.toSet());
+    public DefaultLayer userSelectLayer() {
+        Collection<Entry<String, List<Layer>>> grouppedLayers = groupLayersByName(layers);;
 
         // if there is only one layer name no point in asking
-        if (layerNames.size() == 1)
-            return layerNames.iterator().next();
+        if (grouppedLayers.size() == 1) {
+            Layer selectedLayer = grouppedLayers.iterator().next().getValue().iterator().next();
+            return new WMTSDefaultLayer(selectedLayer.name, selectedLayer.tileMatrixSet.identifier);
+        }
 
         final SelectLayerDialog layerSelection = new SelectLayerDialog(layers);
         if (layerSelection.showDialog().getValue() == 1) {
@@ -293,6 +295,12 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         }
         matcher.appendTail(output);
         return output.toString();
+    }
+
+    private static List<Entry<String, List<Layer>>> groupLayersByName(Collection<Layer> layers) {
+        Map<String, List<Layer>> layerByName = layers.stream().collect(
+                Collectors.groupingBy(x -> x.name + '\u001c' + x.tileMatrixSet.identifier));
+        return layerByName.entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toList());
     }
 
     /**
@@ -554,9 +562,11 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     public void initProjection(Projection proj) {
         // getLayers will return only layers matching the name, if the user already choose the layer
         // so we will not ask the user again to chose the layer, if he just changes projection
-        Collection<Layer> candidates = getLayers(currentLayer != null ? currentLayer.name : defaultLayer, proj.toCode());
-        if (candidates.size() == 1) {
+        Collection<Layer> candidates = getLayers(
+                currentLayer != null ? new WMTSDefaultLayer(currentLayer.name, currentLayer.tileMatrixSet.identifier) : defaultLayer,
+                proj.toCode());
 
+        if (candidates.size() == 1) {
             Layer newLayer = candidates.iterator().next();
             if (newLayer != null) {
                 this.currentTileMatrixSet = newLayer.tileMatrixSet;
@@ -579,15 +589,19 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
     /**
      *
-     * @param name of the layer to match
+     * @param searchLayer which layer do we look for
      * @param projectionCode projection code to match
      * @return Collection of layers matching the name of the layer and projection, or only projection if name is not provided
      */
-    private Collection<Layer> getLayers(String name, String projectionCode) {
+    private Collection<Layer> getLayers(WMTSDefaultLayer searchLayer, String projectionCode) {
         Collection<Layer> ret = new ArrayList<>();
         if (this.layers != null) {
             for (Layer layer: this.layers) {
-                if ((name == null || name.equals(layer.name)) && (projectionCode == null || projectionCode.equals(layer.tileMatrixSet.crs))) {
+                if ((searchLayer == null || (// if it's null, then accept all layers
+                        searchLayer.getLayerName().equals(layer.name) &&
+                        searchLayer.getTileMatrixSet().equals(layer.tileMatrixSet.identifier)))
+                        && (projectionCode == null || // if it's null, then accept any projection
+                        projectionCode.equals(layer.tileMatrixSet.crs))) {
                     ret.add(layer);
                 }
             }
