@@ -70,8 +70,8 @@ public final class RightAndLefthandTraffic {
         }
     }
 
-    private static volatile Collection<Area> leftHandTrafficPolygons;
-    private static volatile GeoPropertyIndex<Boolean> rlCache;
+    static volatile Collection<Area> leftHandTrafficPolygons;
+    static volatile GeoPropertyIndex<Boolean> rlCache;
 
     private RightAndLefthandTraffic() {
         // Hide implicit public constructor for utility classes

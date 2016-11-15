@@ -169,5 +169,15 @@ public class GeoPropertyIndex<T> {
                     (ll.lat() < bbox.getTopLeftLat() || (ll.lat() == 90.0 && bbox.getTopLeftLat() == 90.0));
         }
 
+        @Override
+        public String toString() {
+            return "GPLevel [val=" + val + ", level=" + level + ", bbox=" + bbox + ']';
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "GeoPropertyIndex [maxLevel=" + maxLevel + ", geoProp=" + geoProp + ", root=" + root + ", lastLevelUsed="
+                + lastLevelUsed + ']';
     }
 }
