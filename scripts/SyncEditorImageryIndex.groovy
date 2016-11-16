@@ -12,7 +12,7 @@
  *
  * Main JOSM binary needs to be in classpath, e.g.
  *
- * $ groovy -cp ../dist/josm-custom.jar sync_editor-imagery-index.groovy
+ * $ groovy -cp ../dist/josm-custom.jar SyncEditorImageryIndex.groovy
  *
  * Add option "-h" to show the available command line flags.
  */
