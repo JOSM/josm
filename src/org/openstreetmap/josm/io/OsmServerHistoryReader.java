@@ -60,11 +60,9 @@ public class OsmServerHistoryReader extends OsmServerReader {
         progressMonitor.beginTask("");
         try {
             progressMonitor.indeterminateSubTask(tr("Contacting OSM Server..."));
-            StringBuilder sb = new StringBuilder();
-            sb.append(primitiveType.getAPIName())
-            .append('/').append(id).append("/history");
+            final String urlStr = primitiveType.getAPIName() + '/' + id + "/history";
 
-            try (InputStream in = getInputStream(sb.toString(), progressMonitor.createSubTaskMonitor(1, true))) {
+            try (InputStream in = getInputStream(urlStr, progressMonitor.createSubTaskMonitor(1, true))) {
                 if (in == null)
                     return null;
                 progressMonitor.indeterminateSubTask(tr("Downloading history..."));

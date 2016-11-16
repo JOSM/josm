@@ -1391,14 +1391,27 @@ public abstract class Main {
     }
 
     /**
+     * Returns the OSM website URL depending on the selected {@link OsmApi}.
+     * @return the OSM website URL depending on the selected {@link OsmApi}
+     */
+    private static String getOSMWebsiteDependingOnSelectedApi() {
+        final String api = OsmApi.getOsmApi().getServerUrl();
+        if (OsmApi.DEFAULT_API_URL.equals(api)) {
+            return getOSMWebsite();
+        } else {
+            return api.replaceAll("/api$", "");
+        }
+    }
+
+    /**
      * Replies the base URL for browsing information about a primitive.
      * @return the base URL, i.e. https://www.openstreetmap.org
      * @since 7678
      */
     public static String getBaseBrowseUrl() {
         if (Main.pref != null)
-            return Main.pref.get("osm-browse.url", getOSMWebsite());
-        return getOSMWebsite();
+            return Main.pref.get("osm-browse.url", getOSMWebsiteDependingOnSelectedApi());
+        return getOSMWebsiteDependingOnSelectedApi();
     }
 
     /**
@@ -1408,8 +1421,8 @@ public abstract class Main {
      */
     public static String getBaseUserUrl() {
         if (Main.pref != null)
-            return Main.pref.get("osm-user.url", getOSMWebsite() + "/user");
-        return getOSMWebsite() + "/user";
+            return Main.pref.get("osm-user.url", getOSMWebsiteDependingOnSelectedApi() + "/user");
+        return getOSMWebsiteDependingOnSelectedApi() + "/user";
     }
 
     /**
