@@ -2982,6 +2982,7 @@ node[craft=tiler] {
 area[tourism=hotel],
 area[tourism=motel],
 area[tourism=guest_house],
+area[tourism=apartment],
 area[tourism=hostel],
 area[tourism=chalet],
 area[tourism=alpine_hut],
@@ -3000,6 +3001,10 @@ node[tourism=motel] {
 }
 node[tourism=guest_house] {
     icon-image: "presets/accommodation/guest_house.svg";
+    set icon_z17;
+}
+node[tourism=apartment] {
+    icon-image: "presets/accommodation/apartment.svg";
     set icon_z17;
 }
 node[tourism=hostel] {

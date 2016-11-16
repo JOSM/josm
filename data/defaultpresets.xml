@@ -3629,6 +3629,19 @@
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
         </item> <!-- Guest House/Bed & Breakfast -->
+        <item name="Apartment" icon="presets/accommodation/apartment.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=apartment" />
+            <space />
+            <key key="tourism" value="apartment" />
+            <reference ref="name_operator" />
+            <combo key="number_of_apartments" text="Number of apartments" values="1,2,3,4,5,6,7,8,9,10" />
+            <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
+            <reference ref="wheelchair" />
+            <space />
+            <reference ref="internet_smoking" />
+            <space />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Apartment -->
         <item name="Chalet" icon="presets/accommodation/chalet.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=chalet"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:tourism=chalet"
