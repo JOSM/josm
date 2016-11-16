@@ -5409,7 +5409,7 @@
             <combo key="height" text="Height" values="low,half,full,5,10,15,20" values_context="height" />
             <check key="shelter" text="Shelter" />
             <check key="hide" text="Hide" text_context="hunting stand" />
-            <check key="lock" text="Lock" />
+            <check key="lockable" text="Lockable" />
         </item> <!-- Hunting Stand -->
         <separator/>
         <item name="Drinking Water" icon="presets/food/drinking_water.svg" type="node" preset_name_label="true">

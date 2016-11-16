@@ -1115,3 +1115,12 @@ way[tracktype][tracktype!~/^(1|2|3|4|5|grade1|grade2|grade3|grade4|grade5)$/] {
   suggestAlternative: "tracktype=grade4";
   suggestAlternative: "tracktype=grade5";
 }
+
+/* #13953 */
+*[amenity=hunting_stand][lock=yes],
+*[amenity=hunting_stand][lock=no] {
+  throwWarning: tr("{0} is deprecated for {1}", "{1.key}", "{0.tag}");
+  suggestAlternative: "lockable";
+  group: tr("deprecated tagging");
+  fixChangeKey: "lock => lockable";
+}
