@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import java.awt.geom.Area;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -23,7 +22,6 @@ import org.openstreetmap.josm.actions.JoinAreasAction.JoinAreasResult;
 import org.openstreetmap.josm.actions.JoinAreasAction.Multipolygon;
 import org.openstreetmap.josm.actions.PurgeAction;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -33,8 +31,6 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.io.OsmWriter;
 import org.openstreetmap.josm.io.OsmWriterFactory;
-import org.openstreetmap.josm.tools.GeoPropertyIndex.GeoProperty;
-import org.openstreetmap.josm.tools.Geometry.PolygonIntersection;
 
 /**
  * Look up, if there is right- or left-hand traffic at a certain place.
@@ -45,33 +41,7 @@ public final class RightAndLefthandTraffic {
     private static final String LEFT = "left";
     private static final String RIGHT = "right";
 
-    private static class RLTrafficGeoProperty implements GeoProperty<Boolean> {
-
-        @Override
-        public Boolean get(LatLon ll) {
-            for (Area a : leftHandTrafficPolygons) {
-                if (a.contains(ll.lon(), ll.lat()))
-                    return Boolean.TRUE;
-            }
-            return Boolean.FALSE;
-        }
-
-        @Override
-        public Boolean get(BBox box) {
-            Area abox = new Area(box.toRectangle());
-            for (Area a : leftHandTrafficPolygons) {
-                PolygonIntersection is = Geometry.polygonIntersection(abox, a, 1e-10 /* using deg and not meters */);
-                if (is == PolygonIntersection.FIRST_INSIDE_SECOND)
-                    return Boolean.TRUE;
-                if (is != PolygonIntersection.OUTSIDE)
-                    return null;
-            }
-            return Boolean.FALSE;
-        }
-    }
-
-    static volatile Collection<Area> leftHandTrafficPolygons;
-    static volatile GeoPropertyIndex<Boolean> rlCache;
+    private static volatile GeoPropertyIndex<Boolean> rlCache;
 
     private RightAndLefthandTraffic() {
         // Hide implicit public constructor for utility classes
@@ -92,16 +62,12 @@ public final class RightAndLefthandTraffic {
      * TODO: Synchronization can be refined inside the {@link GeoPropertyIndex} as most look-ups are read-only.
      */
     public static synchronized void initialize() {
-        leftHandTrafficPolygons = new ArrayList<>();
         Collection<Way> optimizedWays = loadOptimizedBoundaries();
         if (optimizedWays.isEmpty()) {
             optimizedWays = computeOptimizedBoundaries();
             saveOptimizedBoundaries(optimizedWays);
         }
-        for (Way w : optimizedWays) {
-            leftHandTrafficPolygons.add(Geometry.getAreaLatLon(w.getNodes()));
-        }
-        rlCache = new GeoPropertyIndex<>(new RLTrafficGeoProperty(), 24);
+        rlCache = new GeoPropertyIndex<>(new DefaultGeoProperty(optimizedWays), 24);
     }
 
     private static Collection<Way> computeOptimizedBoundaries() {

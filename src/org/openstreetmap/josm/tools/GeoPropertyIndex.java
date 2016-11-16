@@ -19,28 +19,6 @@ import org.openstreetmap.josm.data.osm.BBox;
  */
 public class GeoPropertyIndex<T> {
 
-    /**
-     * A method to look up a property of the earth surface.
-     * (User input for the index.)
-     * @param <T> the property
-     */
-    public interface GeoProperty<T> {
-        /**
-         * Look up the property for a point.
-         * @param ll the point coordinates
-         * @return property value at that point. Must not be null.
-         */
-        T get(LatLon ll);
-
-        /**
-         * Look up the property for a coordinate rectangle.
-         * @param box the rectangle
-         * @return the property, if it is the same in the entire rectangle;
-         * null otherwise
-         */
-        T get(BBox box);
-    }
-
     private final int maxLevel;
     private final GeoProperty<T> geoProp;
     private final GPLevel<T> root;
