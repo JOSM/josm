@@ -258,4 +258,19 @@ public class OsmDataLayerTest {
         assertEquals("Data Layer 147", layer1.getName());
         assertEquals("Data Layer 148", layer2.getName());
     }
+
+    @Test
+    public void testLayerUnnumberedName() {
+        final OsmDataLayer layer = new OsmDataLayer(new DataSet(), "Data Layer ", null);
+        assertEquals("Data Layer ", layer.getName());
+    }
+
+    /**
+     * Non-regression test for ticket #13985
+     */
+    @Test
+    public void testLayerNameDoesFinish() {
+        final OsmDataLayer layer = new OsmDataLayer(new DataSet(), "Data Layer from GeoJSON: foo.geojson", null);
+        assertEquals("Data Layer from GeoJSON: foo.geojson", layer.getName());
+    }
 }
