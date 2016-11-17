@@ -25,7 +25,9 @@ public class BBox {
     /**
      * Constructs a new (invalid) BBox
      */
-    public BBox() { }
+    public BBox() {
+        // Nothing to do
+    }
 
     /**
      * Constructs a new {@code BBox} defined by a single point.

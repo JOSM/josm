@@ -356,8 +356,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         data.addDataSetListener(new DataSetListenerAdapter(this));
         data.addDataSetListener(MultipolygonCache.getInstance());
         DataSet.addSelectionListener(this);
-        if (name != null && name.startsWith(createLayerName(""))
-                && Character.isDigit((name.substring(createLayerName("").length()) + "XX" /*avoid StringIndexOutOfBoundsException*/).charAt(1))) {
+        if (name != null && name.startsWith(createLayerName("")) && Character.isDigit(
+                (name.substring(createLayerName("").length()) + "XX" /*avoid StringIndexOutOfBoundsException*/).charAt(1))) {
             while (AlphanumComparator.getInstance().compare(createLayerName(dataLayerCounter), name) < 0) {
                 final int i = dataLayerCounter.incrementAndGet();
                 if (i > 1_000_000) {
