@@ -36,14 +36,6 @@ public class IndexedDiskCacheAttributes
     /** -1 means no limit. */
     private int maxKeySize = DEFAULT_maxKeySize;
 
-    /** default value */
-    private static final int DEFAULT_maxRecycleBinSize = 5000;
-
-    /**
-     * Cannot be larger than the max size. If max is less than 0, this will be 5000
-     */
-    private int maxRecycleBinSize = DEFAULT_maxRecycleBinSize;
-
     /** default to -1, i.e., don't optimize until shutdown */
     private int optimizeAtRemoveCount = -1;
 
@@ -56,7 +48,7 @@ public class IndexedDiskCacheAttributes
     /** Should we clear the disk on startup. */
     public static final boolean DEFAULT_CLEAR_DISK_ON_STARTUP = false;
 
-    /** Should we clear the disk on startup. If true the congtents of disk are cleared. */
+    /** Should we clear the disk on startup. If true the contents of disk are cleared. */
     private boolean clearDiskOnStartup = DEFAULT_CLEAR_DISK_ON_STARTUP;
 
     /**
@@ -85,9 +77,6 @@ public class IndexedDiskCacheAttributes
     public void setMaxKeySize( int maxKeySize )
     {
         this.maxKeySize = maxKeySize;
-
-        // make sure the sizes are in accord with our rule.
-        setMaxRecycleBinSize( maxRecycleBinSize );
     }
 
     /**
@@ -109,27 +98,6 @@ public class IndexedDiskCacheAttributes
     public void setOptimizeAtRemoveCount( int cnt )
     {
         this.optimizeAtRemoveCount = cnt;
-    }
-
-    /**
-     * This cannot be larger than the maxKeySize. It wouldn't hurt anything, but it makes the config
-     * necessary. The recycle bin entry willbe at least as large as a key.
-     * <p>
-     * If the maxKeySize is -1 this will be set tot he default, which is 5000.
-     * <p>
-     * @param maxRecycleBinSize The maxRecycleBinSize to set.
-     */
-    public void setMaxRecycleBinSize( int maxRecycleBinSize )
-    {
-        this.maxRecycleBinSize = maxRecycleBinSize;
-    }
-
-    /**
-     * @return Returns the maxRecycleBinSize.
-     */
-    public int getMaxRecycleBinSize()
-    {
-        return maxRecycleBinSize;
     }
 
     /**
@@ -177,7 +145,6 @@ public class IndexedDiskCacheAttributes
         str.append( "\n diskPath = " + super.getDiskPath() );
         str.append( "\n maxPurgatorySize   = " + super.getMaxPurgatorySize() );
         str.append( "\n maxKeySize  = " + maxKeySize );
-        str.append( "\n maxRecycleBinSize  = " + maxRecycleBinSize );
         str.append( "\n optimizeAtRemoveCount  = " + optimizeAtRemoveCount );
         str.append( "\n shutdownSpoolTimeLimit  = " + super.getShutdownSpoolTimeLimit() );
         str.append( "\n optimizeOnShutdown  = " + optimizeOnShutdown );
