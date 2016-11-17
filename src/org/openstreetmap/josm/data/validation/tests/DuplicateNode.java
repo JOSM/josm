@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
@@ -206,52 +205,52 @@ public class DuplicateNode extends Test {
 
                 if (nbType > 1) {
                     errors.add(TestError.builder(parentTest, Severity.WARNING, DUPLICATE_NODE_MIXED)
-                            .message(marktr("Mixed type duplicated nodes"))
+                            .message(tr("Mixed type duplicated nodes"))
                             .primitives(primitives)
                             .build());
                 } else if (typeMap.get("highway")) {
                     errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_HIGHWAY)
-                            .message(marktr("Highway duplicated nodes"))
+                            .message(tr("Highway duplicated nodes"))
                             .primitives(primitives)
                             .build());
                 } else if (typeMap.get("railway")) {
                     errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_RAILWAY)
-                            .message(marktr("Railway duplicated nodes"))
+                            .message(tr("Railway duplicated nodes"))
                             .primitives(primitives)
                             .build());
                 } else if (typeMap.get("waterway")) {
                     errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_WATERWAY)
-                            .message(marktr("Waterway duplicated nodes"))
+                            .message(tr("Waterway duplicated nodes"))
                             .primitives(primitives)
                             .build());
                 } else if (typeMap.get("boundary")) {
                     errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_BOUNDARY)
-                            .message(marktr("Boundary duplicated nodes"))
+                            .message(tr("Boundary duplicated nodes"))
                             .primitives(primitives)
                             .build());
                 } else if (typeMap.get("power")) {
                     errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_POWER)
-                            .message(marktr("Power duplicated nodes"))
+                            .message(tr("Power duplicated nodes"))
                             .primitives(primitives)
                             .build());
                 } else if (typeMap.get("natural")) {
                     errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_NATURAL)
-                            .message(marktr("Natural duplicated nodes"))
+                            .message(tr("Natural duplicated nodes"))
                             .primitives(primitives)
                             .build());
                 } else if (typeMap.get("building")) {
                     errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_BUILDING)
-                            .message(marktr("Building duplicated nodes"))
+                            .message(tr("Building duplicated nodes"))
                             .primitives(primitives)
                             .build());
                 } else if (typeMap.get("landuse")) {
                     errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_LANDUSE)
-                            .message(marktr("Landuse duplicated nodes"))
+                            .message(tr("Landuse duplicated nodes"))
                             .primitives(primitives)
                             .build());
                 } else {
                     errors.add(TestError.builder(parentTest, Severity.WARNING, DUPLICATE_NODE_OTHER)
-                            .message(marktr("Other duplicated nodes"))
+                            .message(tr("Other duplicated nodes"))
                             .primitives(primitives)
                             .build());
                 }
