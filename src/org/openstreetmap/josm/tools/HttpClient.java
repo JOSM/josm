@@ -190,7 +190,7 @@ public final class HttpClient {
         private final String responseMessage;
         private boolean uncompress;
         private boolean uncompressAccordingToContentDisposition;
-        private String responseData = null;
+        private String responseData;
 
         private Response(HttpURLConnection connection, ProgressMonitor monitor) throws IOException {
             CheckParameterUtil.ensureParameterNotNull(connection, "connection");

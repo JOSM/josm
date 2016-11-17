@@ -39,7 +39,7 @@ public class DefaultGeoProperty implements GeoProperty<Boolean> {
     @Override
     public Boolean get(BBox box) {
         Area abox = new Area(box.toRectangle());
-        Geometry.PolygonIntersection is = Geometry.polygonIntersection(abox, area, 1e-10 /* using deg and not meters */ );
+        Geometry.PolygonIntersection is = Geometry.polygonIntersection(abox, area, 1e-10 /* using deg and not meters */);
         switch (is) {
             case FIRST_INSIDE_SECOND:
                 return Boolean.TRUE;

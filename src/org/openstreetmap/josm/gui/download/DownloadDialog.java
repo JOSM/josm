@@ -55,13 +55,13 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  * Dialog displayed to download OSM and/or GPS data from OSM server.
  */
 public class DownloadDialog extends JDialog {
-    private static IntegerProperty DOWNLOAD_TAB = new IntegerProperty("download.tab", 0);
+    private static final IntegerProperty DOWNLOAD_TAB = new IntegerProperty("download.tab", 0);
 
-    private static BooleanProperty DOWNLOAD_AUTORUN = new BooleanProperty("download.autorun", false);
-    private static BooleanProperty DOWNLOAD_OSM = new BooleanProperty("download.osm", true);
-    private static BooleanProperty DOWNLOAD_GPS = new BooleanProperty("download.gps", false);
-    private static BooleanProperty DOWNLOAD_NOTES = new BooleanProperty("download.notes", false);
-    private static BooleanProperty DOWNLOAD_NEWLAYER = new BooleanProperty("download.newlayer", false);
+    private static final BooleanProperty DOWNLOAD_AUTORUN = new BooleanProperty("download.autorun", false);
+    private static final BooleanProperty DOWNLOAD_OSM = new BooleanProperty("download.osm", true);
+    private static final BooleanProperty DOWNLOAD_GPS = new BooleanProperty("download.gps", false);
+    private static final BooleanProperty DOWNLOAD_NOTES = new BooleanProperty("download.notes", false);
+    private static final BooleanProperty DOWNLOAD_NEWLAYER = new BooleanProperty("download.newlayer", false);
 
     /** the unique instance of the download dialog */
     private static DownloadDialog instance;

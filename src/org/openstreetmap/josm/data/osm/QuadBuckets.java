@@ -472,7 +472,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     class QuadBucketIterator implements Iterator<T> {
         private QBLevel<T> currentNode;
         private int contentIndex;
-        private Iterator<T> invalidBBoxIterator = invalidBBoxPrimitives.iterator();
+        private final Iterator<T> invalidBBoxIterator = invalidBBoxPrimitives.iterator();
         boolean fromInvalidBBoxPrimitives;
         QuadBuckets<T> qb;
 

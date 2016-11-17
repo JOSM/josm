@@ -57,18 +57,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class PurgeAction extends JosmAction {
 
-    /**
-     * Constructs a new {@code PurgeAction}.
-     */
-    public PurgeAction() {
-        /* translator note: other expressions for "purge" might be "forget", "clean", "obliterate", "prune" */
-        super(tr("Purge..."), "purge", tr("Forget objects but do not delete them on server when uploading."),
-                Shortcut.registerShortcut("system:purge", tr("Edit: {0}", tr("Purge")),
-                KeyEvent.VK_P, Shortcut.CTRL_SHIFT),
-                true);
-        putValue("help", HelpUtil.ht("/Action/Purge"));
-    }
-
     protected transient OsmDataLayer layer;
     protected JCheckBox cbClearUndoRedo;
     protected boolean modified;
@@ -87,6 +75,18 @@ public class PurgeAction extends JosmAction {
      * Subset of toPurgeChecked. Those that have not been in the selection.
      */
     protected transient List<OsmPrimitive> toPurgeAdditionally;
+
+    /**
+     * Constructs a new {@code PurgeAction}.
+     */
+    public PurgeAction() {
+        /* translator note: other expressions for "purge" might be "forget", "clean", "obliterate", "prune" */
+        super(tr("Purge..."), "purge", tr("Forget objects but do not delete them on server when uploading."),
+                Shortcut.registerShortcut("system:purge", tr("Edit: {0}", tr("Purge")),
+                KeyEvent.VK_P, Shortcut.CTRL_SHIFT),
+                true);
+        putValue("help", HelpUtil.ht("/Action/Purge"));
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {

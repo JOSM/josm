@@ -270,7 +270,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
      * @return Name of selected layer
      */
     public DefaultLayer userSelectLayer() {
-        Collection<Entry<String, List<Layer>>> grouppedLayers = groupLayersByName(layers);;
+        Collection<Entry<String, List<Layer>>> grouppedLayers = groupLayersByName(layers);
 
         // if there is only one layer name no point in asking
         if (grouppedLayers.size() == 1) {
