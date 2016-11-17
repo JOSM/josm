@@ -43,7 +43,7 @@ public class FullscreenToggleAction extends ToggleAction {
         putValue("help", ht("/Action/FullscreenView"));
         putValue("toolbar", "fullscreen");
         Main.toolbar.register(this);
-        gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        gd = GraphicsEnvironment.isHeadless() ? null : GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         setSelected(Main.pref.getBoolean("draw.fullscreen", false));
         notifySelectedState();
     }
@@ -78,12 +78,14 @@ public class FullscreenToggleAction extends ToggleAction {
 
         boolean selected = isSelected();
 
-        frame.dispose();
-        frame.setUndecorated(selected);
+        if (frame != null) {
+            frame.dispose();
+            frame.setUndecorated(selected);
 
-        if (selected) {
-            prevBounds = frame.getBounds();
-            frame.setBounds(new Rectangle(GuiHelper.getScreenSize()));
+            if (selected) {
+                prevBounds = frame.getBounds();
+                frame.setBounds(new Rectangle(GuiHelper.getScreenSize()));
+            }
         }
 
         // we cannot use hw-exclusive fullscreen mode in MS-Win, as long
@@ -93,19 +95,23 @@ public class FullscreenToggleAction extends ToggleAction {
         // since windows (or java?) draws the undecorated window full-
         // screen by default (it's a simulated mode, but should be ok)
         String exclusive = Main.pref.get("draw.fullscreen.exclusive-mode", "auto");
-        if ("true".equals(exclusive) || ("auto".equals(exclusive) && !Main.isPlatformWindows())) {
+        if (("true".equals(exclusive) || ("auto".equals(exclusive) && !Main.isPlatformWindows())) && gd != null) {
             gd.setFullScreenWindow(selected ? frame : null);
         }
 
-        if (!selected && prevBounds != null) {
+        if (!selected && prevBounds != null && frame != null) {
             frame.setBounds(prevBounds);
         }
 
         for (Window wind : visibleWindows) {
-            wind.setVisible(true);
+            if (wind != null) {
+                wind.setVisible(true);
+            }
         }
 
         // Free F10 key to allow it to be used by plugins, even after full screen (see #7502)
-        frame.getJMenuBar().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0), "none");
+        if (frame != null) {
+            frame.getJMenuBar().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F10, 0), "none");
+        }
     }
 }
