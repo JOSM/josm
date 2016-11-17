@@ -35,6 +35,8 @@ import javax.swing.event.ChangeListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
@@ -46,12 +48,21 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * Dialog displayed to download OSM and/or GPS data from OSM server.
  */
 public class DownloadDialog extends JDialog {
+    private static IntegerProperty DOWNLOAD_TAB = new IntegerProperty("download.tab", 0);
+
+    private static BooleanProperty DOWNLOAD_AUTORUN = new BooleanProperty("download.autorun", false);
+    private static BooleanProperty DOWNLOAD_OSM = new BooleanProperty("download.osm", true);
+    private static BooleanProperty DOWNLOAD_GPS = new BooleanProperty("download.gps", false);
+    private static BooleanProperty DOWNLOAD_NOTES = new BooleanProperty("download.notes", false);
+    private static BooleanProperty DOWNLOAD_NEWLAYER = new BooleanProperty("download.newlayer", false);
+
     /** the unique instance of the download dialog */
     private static DownloadDialog instance;
 
@@ -130,10 +141,10 @@ public class DownloadDialog extends JDialog {
         pnl.add(tpDownloadAreaSelectors, GBC.eol().fill());
 
         try {
-            tpDownloadAreaSelectors.setSelectedIndex(Main.pref.getInteger("download.tab", 0));
+            tpDownloadAreaSelectors.setSelectedIndex(DOWNLOAD_TAB.get());
         } catch (IndexOutOfBoundsException ex) {
             Main.trace(ex);
-            Main.pref.putInteger("download.tab", 0);
+            DOWNLOAD_TAB.put(0);
         }
 
         Font labelFont = sizeCheck.getFont();
@@ -147,7 +158,7 @@ public class DownloadDialog extends JDialog {
         cbStartup.setToolTipText(
                 tr("<html>Autostart ''Download from OSM'' dialog every time JOSM is started.<br>" +
                         "You can open it manually from File menu or toolbar.</html>"));
-        cbStartup.addActionListener(e -> Main.pref.put("download.autorun", cbStartup.isSelected()));
+        cbStartup.addActionListener(e -> DOWNLOAD_AUTORUN.put(cbStartup.isSelected()));
 
         pnl.add(cbNewLayer, GBC.std().anchor(GBC.WEST).insets(5, 5, 5, 5));
         pnl.add(cbStartup, GBC.std().anchor(GBC.WEST).insets(15, 5, 5, 5));
@@ -350,11 +361,11 @@ public class DownloadDialog extends JDialog {
      * Remembers the current settings in the download dialog.
      */
     public void rememberSettings() {
-        Main.pref.put("download.tab", Integer.toString(tpDownloadAreaSelectors.getSelectedIndex()));
-        Main.pref.put("download.osm", cbDownloadOsmData.isSelected());
-        Main.pref.put("download.gps", cbDownloadGpxData.isSelected());
-        Main.pref.put("download.notes", cbDownloadNotes.isSelected());
-        Main.pref.put("download.newlayer", cbNewLayer.isSelected());
+        DOWNLOAD_TAB.put(tpDownloadAreaSelectors.getSelectedIndex());
+        DOWNLOAD_OSM.put(cbDownloadOsmData.isSelected());
+        DOWNLOAD_GPS.put(cbDownloadGpxData.isSelected());
+        DOWNLOAD_NOTES.put(cbDownloadNotes.isSelected());
+        DOWNLOAD_NEWLAYER.put(cbNewLayer.isSelected());
         if (currentBounds != null) {
             Main.pref.put("osm-download.bounds", currentBounds.encodeAsString(";"));
         }
@@ -364,15 +375,12 @@ public class DownloadDialog extends JDialog {
      * Restores the previous settings in the download dialog.
      */
     public void restoreSettings() {
-        cbDownloadOsmData.setSelected(Main.pref.getBoolean("download.osm", true));
-        cbDownloadGpxData.setSelected(Main.pref.getBoolean("download.gps", false));
-        cbDownloadNotes.setSelected(Main.pref.getBoolean("download.notes", false));
-        cbNewLayer.setSelected(Main.pref.getBoolean("download.newlayer", false));
+        cbDownloadOsmData.setSelected(DOWNLOAD_OSM.get());
+        cbDownloadGpxData.setSelected(DOWNLOAD_GPS.get());
+        cbDownloadNotes.setSelected(DOWNLOAD_NOTES.get());
+        cbNewLayer.setSelected(DOWNLOAD_NEWLAYER.get());
         cbStartup.setSelected(isAutorunEnabled());
-        int idx = Main.pref.getInteger("download.tab", 0);
-        if (idx < 0 || idx > tpDownloadAreaSelectors.getTabCount()) {
-            idx = 0;
-        }
+        int idx = Utils.clamp(DOWNLOAD_TAB.get(), 0, tpDownloadAreaSelectors.getTabCount() - 1);
         tpDownloadAreaSelectors.setSelectedIndex(idx);
 
         if (Main.isDisplayingMapView()) {
@@ -413,7 +421,7 @@ public class DownloadDialog extends JDialog {
      * @return {@code true} if the download dialog must be open at startup, {@code false} otherwise
      */
     public static boolean isAutorunEnabled() {
-        return Main.pref.getBoolean("download.autorun", false);
+        return DOWNLOAD_AUTORUN.get();
     }
 
     /**
