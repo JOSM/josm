@@ -117,9 +117,7 @@ public class RightAndLefthandTrafficTest {
     private static void check(boolean expected, String name, double lat, double lon) {
         boolean actual = RightAndLefthandTraffic.isRightHandTraffic(new LatLon(lat, lon));
         if (actual != expected) {
-            fail(name + " -> " +
-                    RightAndLefthandTraffic.leftHandTrafficPolygons.size() + " polygons, cache: " +
-                    RightAndLefthandTraffic.rlCache);
+            fail(name);
         }
     }
 }
