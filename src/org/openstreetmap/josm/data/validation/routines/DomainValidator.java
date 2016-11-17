@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016111300, Last Updated Sun Nov 13 07:07:01 2016 UTC
+        // Taken from Version 2016111601, Last Updated Thu Nov 17 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -824,6 +824,7 @@ public final class DomainValidator extends AbstractValidator {
         "jeep", // jeep FCA US LLC.
         "jetzt", // jetzt New TLD Company AB
         "jewelry", // jewelry Wild Bloom, LLC
+        "jio", // jio Affinity Names, Inc.
         "jlc", // jlc Richemont DNS Inc.
         "jll", // jll Jones Lang LaSalle Incorporated
         "jmp", // jmp Matrix IP LLC
@@ -1124,6 +1125,7 @@ public final class DomainValidator extends AbstractValidator {
         "reise", // reise Foggy Way, LLC
         "reisen", // reisen New Cypress, LLC
         "reit", // reit National Association of Real Estate Investment Trusts, Inc.
+        "reliance", // reliance Reliance Industries Limited
         "ren", // ren Beijing Qianxiang Wangjing Technology Development Co., Ltd.
         "rent", // rent XYZ.COM LLC
         "rentals", // rentals Big Hollow,LLC
@@ -1139,6 +1141,7 @@ public final class DomainValidator extends AbstractValidator {
         "richardli", // richardli Pacific Century Asset Management (HK) Limited
         "ricoh", // ricoh Ricoh Company, Ltd.
         "rightathome", // rightathome Johnson Shareholdings, Inc.
+        "ril", // ril Reliance Industries Limited
         "rio", // rio Empresa Municipal de Informática SA - IPLANRIO
         "rip", // rip United TLD Holdco Ltd.
         "rocher", // rocher Ferrero Trading Lux S.A.
