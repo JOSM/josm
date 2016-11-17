@@ -329,7 +329,12 @@ public final class Node extends OsmPrimitive implements INode {
 
     @Override
     public BBox getBBox() {
-        return new BBox(this);
+        return new BBox(lon, lat);
+    }
+
+    @Override
+    protected void addToBBox(BBox box, Set<PrimitiveId> visited) {
+        box.add(lon, lat);
     }
 
     @Override

@@ -633,6 +633,11 @@ public final class Way extends OsmPrimitive implements IWay {
     }
 
     @Override
+    protected void addToBBox(BBox box, Set<PrimitiveId> visited) {
+        box.add(getBBox());
+    }
+
+    @Override
     public void updatePosition() {
         bbox = new BBox(this);
     }
