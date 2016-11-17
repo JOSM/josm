@@ -70,7 +70,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
     /**
      * Grabs current MOTD from cache or webpage and parses it.
      */
-    private static class MotdContent extends CacheCustomContent<IOException> {
+    static class MotdContent extends CacheCustomContent<IOException> {
         MotdContent() {
             super("motd.html", CacheCustomContent.INTERVAL_DAILY);
         }
@@ -160,12 +160,12 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
         t.start();
     }
 
-    private String fixImageLinks(String s) {
-        Matcher m = Pattern.compile("src=\""+Main.getJOSMWebsite()+"/browser/trunk(/images/.*?\\.png)\\?format=raw\"").matcher(s);
+    static String fixImageLinks(String s) {
+        Matcher m = Pattern.compile("src=\"/browser/trunk(/images/.*?\\.png)\\?format=raw\"").matcher(s);
         StringBuffer sb = new StringBuffer();
         while (m.find()) {
             String im = m.group(1);
-            URL u = getClass().getResource(im);
+            URL u = GettingStarted.class.getResource(im);
             if (u != null) {
                 m.appendReplacement(sb, Matcher.quoteReplacement("src=\"" + u + '\"'));
             }

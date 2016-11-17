@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -19,6 +20,7 @@ public class UtilsTest {
     /**
      * Use default, basic test rules.
      */
+    @Rule
     public JOSMTestRules rules = new JOSMTestRules();
 
     /**

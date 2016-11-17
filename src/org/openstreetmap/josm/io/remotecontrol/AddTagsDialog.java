@@ -191,6 +191,9 @@ public class AddTagsDialog extends ExtendedDialog {
             public String getToolTipText(MouseEvent event) {
                 int r = rowAtPoint(event.getPoint());
                 int c = columnAtPoint(event.getPoint());
+                if (r < 0 || c < 0) {
+                    return getToolTipText();
+                }
                 Object o = getValueAt(r, c);
                 if (c == 1 || c == 2) return o.toString();
                 if (c == 3) return ((ExistingValues) o).getToolTip();

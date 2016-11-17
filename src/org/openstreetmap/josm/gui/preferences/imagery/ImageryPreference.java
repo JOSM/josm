@@ -13,6 +13,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -49,6 +50,7 @@ import org.openstreetmap.gui.jmapviewer.MapPolygonImpl;
 import org.openstreetmap.gui.jmapviewer.MapRectangleImpl;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
+import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
@@ -337,6 +339,15 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
             // Add default item map
             defaultMap = new JMapViewer();
+            defaultMap.setTileSource(new OsmTileSource.Mapnik()); // for attribution
+            defaultMap.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getButton() == MouseEvent.BUTTON1) {
+                        defaultMap.getAttribution().handleAttribution(e.getPoint(), true);
+                    }
+                }
+            });
             defaultMap.setZoomContolsVisible(false);
             defaultMap.setMinimumSize(new Dimension(100, 200));
             add(defaultMap, GBC.std().insets(5, 5, 0, 0).fill(GridBagConstraints.BOTH).weight(0.33, 0.6).insets(5, 0, 0, 0));

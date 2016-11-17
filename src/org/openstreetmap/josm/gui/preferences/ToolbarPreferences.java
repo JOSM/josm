@@ -1038,7 +1038,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     public void refreshToolbarControl() {
         control.removeAll();
         buttonActions.clear();
-        boolean unregisterTab = Shortcut.findShortcut(KeyEvent.VK_TAB, 0) != null;
+        boolean unregisterTab = Shortcut.findShortcut(KeyEvent.VK_TAB, 0).isPresent();
 
         for (ActionDefinition action : getDefinedActions()) {
             if (action.isSeparator()) {

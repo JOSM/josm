@@ -44,7 +44,7 @@ public class SelfIntersectingWayTest {
      * Self-Intersection at inner node (not first / last).
      */
     @Test
-    public void TestUnclosedWayNormal() {
+    public void testUnclosedWayNormal() {
         List<Node> nodes = createNodes();
 
         Way w = (Way) OsmUtils.createPrimitive("way ");
@@ -67,7 +67,7 @@ public class SelfIntersectingWayTest {
      * This is considered okay.
      */
     @Test
-    public void TestUnclosedWayFirst() {
+    public void testUnclosedWayFirst() {
         List<Node> nodes = createNodes();
 
         Way w = (Way) OsmUtils.createPrimitive("way ");
@@ -89,7 +89,7 @@ public class SelfIntersectingWayTest {
      * This is considered okay.
      */
     @Test
-    public void TestUnclosedWayLast() {
+    public void testUnclosedWayLast() {
         List<Node> nodes = createNodes();
 
         Way w = (Way) OsmUtils.createPrimitive("way ");
@@ -111,7 +111,7 @@ public class SelfIntersectingWayTest {
      * This is considered okay.
      */
     @Test
-    public void TestClosedWay() {
+    public void testClosedWay() {
         List<Node> nodes = createNodes();
 
         Way w = (Way) OsmUtils.createPrimitive("way ");

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -11,6 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.actions.upload.CyclicUploadDependencyException;
 import org.openstreetmap.josm.data.APIDataSet;
+import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -103,6 +105,13 @@ public class APIDataSetTest {
         List<OsmPrimitive> toUpdate = apiDataSet.getPrimitivesToUpdate();
         assertEquals(1, toUpdate.size());
         assertEquals(r4, toUpdate.get(0));
+
+        final ConflictCollection cc4 = new ConflictCollection();
+        cc4.add(r4, r4);
+        assertTrue(apiDataSet.participatesInConflict(cc4));
+        final ConflictCollection cc1 = new ConflictCollection();
+        cc1.add(r1, r1);
+        assertFalse(apiDataSet.participatesInConflict(cc1));
     }
 
     @Test

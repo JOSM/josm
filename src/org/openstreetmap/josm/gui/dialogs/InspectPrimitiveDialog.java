@@ -106,10 +106,9 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
 
     protected static String buildDataText(OsmDataLayer layer, List<OsmPrimitive> primitives) {
         InspectPrimitiveDataText dt = new InspectPrimitiveDataText(layer);
-        primitives.sort(new OsmPrimitiveComparator());
-        for (OsmPrimitive o : primitives) {
-            dt.addPrimitive(o);
-        }
+        primitives.stream()
+                .sorted(OsmPrimitiveComparator.orderingWaysRelationsNodes().thenComparing(OsmPrimitiveComparator.comparingNames()))
+                .forEachOrdered(dt::addPrimitive);
         return dt.toString();
     }
 

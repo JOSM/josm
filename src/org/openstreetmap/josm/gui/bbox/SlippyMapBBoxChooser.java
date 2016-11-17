@@ -38,6 +38,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
+import org.openstreetmap.josm.data.imagery.TileLoaderFactory;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.layer.AbstractCachedTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
@@ -127,7 +128,12 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         Map<String, String> headers = new HashMap<>();
         headers.put("User-Agent", Version.getInstance().getFullAgentString());
 
-        cachedLoader = AbstractCachedTileSourceLayer.getTileLoaderFactory("TMS", TMSCachedTileLoader.class).makeTileLoader(this, headers);
+        TileLoaderFactory cachedLoaderFactory = AbstractCachedTileSourceLayer.getTileLoaderFactory("TMS", TMSCachedTileLoader.class);
+        if (cachedLoaderFactory != null) {
+            cachedLoader = cachedLoaderFactory.makeTileLoader(this, headers);
+        } else {
+            cachedLoader = null;
+        }
 
         uncachedLoader = new OsmTileLoader(this);
         uncachedLoader.headers.putAll(headers);
@@ -205,7 +211,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
     }
 
     public final void setFileCacheEnabled(boolean enabled) {
-        if (enabled) {
+        if (enabled && cachedLoader != null) {
             setTileLoader(cachedLoader);
         } else {
             setTileLoader(uncachedLoader);

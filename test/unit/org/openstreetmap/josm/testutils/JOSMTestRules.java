@@ -34,7 +34,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @author Michael Zangl
  */
 public class JOSMTestRules implements TestRule {
-    private int timeout = 10 * 1000;
+    private int timeout = isDebugMode() ? -1 : 10 * 1000;
     private TemporaryFolder josmHome;
     private boolean usePreferences = false;
     private APIType useAPI = APIType.NONE;
@@ -59,7 +59,7 @@ public class JOSMTestRules implements TestRule {
      * @return this instance, for easy chaining
      */
     public JOSMTestRules timeout(int millis) {
-        timeout = millis;
+        timeout = isDebugMode() ? -1 : millis;
         return this;
     }
 
@@ -351,5 +351,10 @@ public class JOSMTestRules implements TestRule {
                 exceptionCaught = e;
             }
         }
+    }
+
+    private boolean isDebugMode() {
+        return java.lang.management.ManagementFactory.getRuntimeMXBean().
+                getInputArguments().toString().indexOf("-agentlib:jdwp") > 0;
     }
 }

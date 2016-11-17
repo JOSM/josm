@@ -99,7 +99,7 @@ public class BugReportDialog extends JDialog {
         JMultilineLabel messageLabel = new JMultilineLabel(message);
         messageLabel.setMaxWidth(MAX_MESSAGE_SIZE);
         panel.add(messageLabel, GBC.eol().fill());
-        content.add(panel, GBC.eop().fill(GBC.HORIZONTAL).insets(20));
+        content.add(panel, GBC.eop().fill(GBC.HORIZONTAL).insets(20, 10, 10, 10));
     }
 
     private void addDebugTextSection() {
@@ -107,7 +107,7 @@ public class BugReportDialog extends JDialog {
         addBorder(panel, tr("Debug information"));
         panel.add(textPanel, GBC.eop().fill());
 
-        panel.add(new JLabel(tr("Manually report at:")), GBC.std());
+        panel.add(new JLabel(tr("Manually report at:")+' '), GBC.std());
         panel.add(new UrlLabel(Main.getJOSMWebsite() + "/newticket"), GBC.std().fill(GBC.HORIZONTAL));
         JButton copy = new JButton("Copy to clipboard");
         copy.addActionListener(e -> textPanel.copyToClipboard());
@@ -134,20 +134,22 @@ public class BugReportDialog extends JDialog {
         helpText.setMaxWidth(MAX_MESSAGE_SIZE);
         panel.add(helpText, GBC.eop().fill(GridBagConstraints.HORIZONTAL));
 
+        Component settings = GBC.glue(0, 0);
         if (ExpertToggleAction.isExpert()) {
             // The default settings should be fine in most situations.
-            panel.add(new BugReportSettingsPanel(report), GBC.eop().fill(GBC.HORIZONTAL));
+            settings = new BugReportSettingsPanel(report);
         }
+        panel.add(settings);
 
         JButton sendBugReportButton = new JButton(tr("Report Bug"), ImageProvider.get("bug"));
         sendBugReportButton.addActionListener(e -> sendBug());
-        panel.add(sendBugReportButton, GBC.eop().anchor(GBC.EAST));
+        panel.add(sendBugReportButton, GBC.eol().insets(0, 0, 0, 0).anchor(GBC.SOUTHEAST));
         content.add(panel, GBC.eop().fill(GBC.HORIZONTAL));
     }
 
     private static void addBorder(JPanel panel, String title) {
         panel.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createTitledBorder(title), BorderFactory
-                .createEmptyBorder(10, 10, 10, 10)));
+                .createEmptyBorder(5, 5, 5, 5)));
     }
 
     private void addIgnoreButton() {
@@ -161,7 +163,7 @@ public class BugReportDialog extends JDialog {
         JButton ignore = new JButton(tr("Ignore this error."));
         ignore.addActionListener(e -> closeDialog());
         panel.add(ignore, GBC.std(1, 0).span(1, 2).anchor(GBC.CENTER));
-        content.add(panel, GBC.eol().fill(GBC.HORIZONTAL).insets(20));
+        content.add(panel, GBC.eol().fill(GBC.HORIZONTAL).insets(0, 0, 10, 10));
     }
 
     /**

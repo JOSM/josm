@@ -37,4 +37,12 @@ public class WMSLayerTest {
             Main.getLayerManager().removeLayer(wms);
         }
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/13828">Bug #13828</a>.
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testTicket13828() {
+        new WMSLayer(new ImageryInfo("TMS", "http://203.159.29.217/try2/{z}/{x}/{y}.png"));
+    }
 }

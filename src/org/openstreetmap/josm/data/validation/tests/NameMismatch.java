@@ -66,10 +66,8 @@ public class NameMismatch extends Test.TagTest {
         Set<String> names = new HashSet<>();
 
         p.getKeys().forEach((key, n) -> {
-            if (key.startsWith("name:") && !"name:etymology:wikidata".equals(key)) {
-                if (n != null) {
-                    names.add(n);
-                }
+            if (n != null && key.startsWith("name:") && !"name:etymology:wikidata".equals(key)) {
+                names.add(n);
             }
         });
 

@@ -29,15 +29,27 @@ public final class SelectByInternalPointAction {
     }
 
     /**
-     * Returns the surrounding polygons/multipolygons
-     * ordered by their area size (from small to large)
+     * Returns the surrounding polygons/multipolygons ordered by their area size (from small to large)
      * which contain the internal point.
      *
      * @param internalPoint the internal point.
      * @return the surrounding polygons/multipolygons
      */
     public static Collection<OsmPrimitive> getSurroundingObjects(EastNorth internalPoint) {
-        final DataSet ds = Main.getLayerManager().getEditDataSet();
+        return getSurroundingObjects(Main.getLayerManager().getEditDataSet(), internalPoint, false);
+    }
+
+    /**
+     * Returns the surrounding polygons/multipolygons ordered by their area size (from small to large)
+     * which contain the internal point.
+     *
+     * @param ds the data set
+     * @param internalPoint the internal point.
+     * @param includeMultipolygonWays whether to include multipolygon ways in the result (false by default)
+     * @return the surrounding polygons/multipolygons
+     * @since 11247
+     */
+    public static Collection<OsmPrimitive> getSurroundingObjects(DataSet ds, EastNorth internalPoint, boolean includeMultipolygonWays) {
         if (ds == null) {
             return Collections.emptySet();
         }
@@ -50,9 +62,11 @@ public final class SelectByInternalPointAction {
         }
         for (Relation r : ds.getRelations()) {
             if (r.isUsable() && r.isMultipolygon() && r.isSelectable() && Geometry.isNodeInsideMultiPolygon(n, r, null)) {
-                for (RelationMember m : r.getMembers()) {
-                    if (m.isWay() && m.getWay().isClosed()) {
-                        found.values().remove(m.getWay());
+                if (!includeMultipolygonWays) {
+                    for (RelationMember m : r.getMembers()) {
+                        if (m.isWay() && m.getWay().isClosed()) {
+                            found.values().remove(m.getWay());
+                        }
                     }
                 }
                 // estimate multipolygon size by its bounding box area

@@ -251,14 +251,16 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         }
 
         private void updateOffsetIntl() {
-            // Support projections with very small numbers (e.g. 4326)
-            int precision = Main.getProjection().getDefaultZoomInPPD() >= 1.0 ? 2 : 7;
-            // US locale to force decimal separator to be '.'
-            try (Formatter us = new Formatter(Locale.US)) {
-                TileSourceDisplaySettings ds = layer.getDisplaySettings();
-                tOffset.setText(us.format(new StringBuilder()
-                    .append("%1.").append(precision).append("f; %1.").append(precision).append('f').toString(),
-                    ds.getDx(), ds.getDy()).toString());
+            if (layer != null) {
+                // Support projections with very small numbers (e.g. 4326)
+                int precision = Main.getProjection().getDefaultZoomInPPD() >= 1.0 ? 2 : 7;
+                // US locale to force decimal separator to be '.'
+                try (Formatter us = new Formatter(Locale.US)) {
+                    TileSourceDisplaySettings ds = layer.getDisplaySettings();
+                    tOffset.setText(us.format(new StringBuilder()
+                        .append("%1.").append(precision).append("f; %1.").append(precision).append('f').toString(),
+                        ds.getDx(), ds.getDy()).toString());
+                }
             }
         }
 

@@ -61,6 +61,19 @@ Print debugging messages to console
 .TP
 .B \-\-offline=<osm_api|josm_website|all>
 Disable access to the given resource(s), separated by comma
+.SH FILES
+JOSM files are saved according to the XDG Base Directory Specification:
+.TP
+.B $HOME/.config/JOSM-latest
+Preferences
+.TP
+.B $HOME/.local/share/JOSM-latest
+User data
+.TP
+.B $HOME/.cache/JOSM-latest
+Cache
+.TP
+If the directory $HOME/.josm-latest exists, all files are stored there.
 .SH JAVA PROPERTIES
 The following options can be set by using Java system properties (i.e. \-Dkey=value
 passed to java, or specified inside JAVA_OPTS).
@@ -75,8 +88,10 @@ Set the JOSM user data directory.
 Set the JOSM cache directory.
 .TP
 .B josm.home=<homedir>
-Relocate all 3 directories to homedir. Cache directory will be in homedir/cache.
-Default is ~/.josm/.
+Relocate all 3 directories to homedir. Cache directory will be in <homedir>/cache.
+.TP
+.B josm.name=<JOSM-latest>
+Change the JOSM directory name.
 .SH ENVIRONMENT
 .IP JAVA_HOME
 Specify an alternate Java environment.

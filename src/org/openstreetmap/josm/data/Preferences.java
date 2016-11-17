@@ -101,6 +101,7 @@ import org.xml.sax.SAXException;
 public class Preferences {
 
     private static final String[] OBSOLETE_PREF_KEYS = {
+      "hdop.factor" /* remove entry after April 2017 */
     };
 
     private static final long MAX_AGE_DEFAULT_PREFERENCES = 60L * 60L * 24L * 50L; // 50 days (in seconds)
@@ -290,6 +291,21 @@ public class Preferences {
         if (forKey != null) {
             forKey.fireEvent(listener -> listener.preferenceChanged(evt));
         }
+    }
+
+    /**
+     * Get the base name of the JOSM directories for preferences, cache and
+     * user data.
+     * Default value is "JOSM", unless overridden by system property "josm.dir.name".
+     * @return the base name of the JOSM directories for preferences, cache and
+     * user data
+     */
+    public String getJOSMDirectoryBaseName() {
+        String name = System.getProperty("josm.dir.name");
+        if (name != null)
+            return name;
+        else
+            return "JOSM";
     }
 
     /**

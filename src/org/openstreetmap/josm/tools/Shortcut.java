@@ -6,12 +6,13 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
@@ -269,7 +270,28 @@ public final class Shortcut {
     ///////////////////////////////
 
     // here we store our shortcuts
-    private static List<Shortcut> shortcuts = new CopyOnWriteArrayList<>();
+    private static ShortcutCollection shortcuts = new ShortcutCollection();
+
+    private static class ShortcutCollection extends CopyOnWriteArrayList<Shortcut> {
+        @Override
+        public boolean add(Shortcut shortcut) {
+            // expensive consistency check only in debug mode
+            if (Main.isDebugEnabled()
+                    && stream().map(Shortcut::getShortText).anyMatch(shortcut.getShortText()::equals)) {
+                Main.warn(new AssertionError(shortcut.getShortText() + " already added"));
+            }
+            return super.add(shortcut);
+        }
+
+        void replace(Shortcut newShortcut) {
+            final Optional<Shortcut> existing = findShortcutByKeyOrShortText(-1, NONE, newShortcut.shortText);
+            if (existing.isPresent()) {
+                replaceAll(sc -> existing.get() == sc ? newShortcut : sc);
+            } else {
+                add(newShortcut);
+            }
+        }
+    }
 
     // and here our modifier groups
     private static Map<Integer, Integer> groups = new HashMap<>();
@@ -280,20 +302,18 @@ public final class Shortcut {
      * Returns the registered shortcut fot the key and modifier
      * @param requestedKey the requested key
      * @param modifier the modifier
-     * @return the registered shortcut or {@code null}
+     * @return an {@link Optional} registered shortcut, never {@code null}
      */
-    public static Shortcut findShortcut(int requestedKey, int modifier) {
-        return findShortcutByKeyOrShortText(requestedKey, modifier, null)
-                .orElse(null);
+    public static Optional<Shortcut> findShortcut(int requestedKey, int modifier) {
+        return findShortcutByKeyOrShortText(requestedKey, modifier, null);
     }
 
     private static Optional<Shortcut> findShortcutByKeyOrShortText(int requestedKey, int modifier, String shortText) {
-        if (modifier == getGroupModifier(NONE))
-            return Optional.empty();
+        final Predicate<Shortcut> sameKey = sc -> modifier != getGroupModifier(NONE) && sc.isSame(requestedKey, modifier);
+        final Predicate<Shortcut> sameShortText = sc -> sc.getShortText().equals(shortText);
         return shortcuts.stream()
-                .filter(sc -> sc.isSame(requestedKey, modifier) || (shortText != null && shortText.equals(sc.getShortText())))
+                .filter(sameKey.or(sameShortText))
                 .findAny();
-
     }
 
     /**
@@ -354,31 +374,11 @@ public final class Shortcut {
         // (1) System reserved shortcuts
         Main.platform.initSystemShortcuts();
         // (2) User defined shortcuts
-        List<Shortcut> newshortcuts = new LinkedList<>();
-        for (String s : Main.pref.getAllPrefixCollectionKeys("shortcut.entry.")) {
-            newshortcuts.add(new Shortcut(s));
-        }
-
-        for (Shortcut sc : newshortcuts) {
-            if (sc.isAssignedUser()
-            && findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null) {
-                shortcuts.add(sc);
-            }
-        }
-        // Shortcuts at their default values
-        for (Shortcut sc : newshortcuts) {
-            if (!sc.isAssignedUser() && sc.isAssignedDefault()
-            && findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null) {
-                shortcuts.add(sc);
-            }
-        }
-        // Shortcuts that were automatically moved
-        for (Shortcut sc : newshortcuts) {
-            if (!sc.isAssignedUser() && !sc.isAssignedDefault()
-            && findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()) == null) {
-                shortcuts.add(sc);
-            }
-        }
+        Main.pref.getAllPrefixCollectionKeys("shortcut.entry.").stream()
+                .map(Shortcut::new)
+                .filter(sc -> !findShortcut(sc.getAssignedKey(), sc.getAssignedModifier()).isPresent())
+                .sorted(Comparator.comparing(sc -> sc.isAssignedUser() ? 1 : sc.isAssignedDefault() ? 2 : 3))
+                .forEachOrdered(shortcuts::replace);
     }
 
     private static int getGroupModifier(int group) {
@@ -400,11 +400,9 @@ public final class Shortcut {
 
     // shutdown handling
     public static boolean savePrefs() {
-        boolean changed = false;
-        for (Shortcut sc : shortcuts) {
-            changed = changed | sc.save();
-        }
-        return changed;
+        return shortcuts.stream()
+                .map(Shortcut::save)
+                .reduce(false, Boolean::logicalOr); // has changed
     }
 
     /**
@@ -468,7 +466,7 @@ public final class Shortcut {
             if (Main.isPlatformOsx()) {
                 // Try to reassign Meta to Ctrl
                 int newmodifier = findNewOsxModifier(requestedGroup);
-                if (findShortcut(requestedKey, newmodifier) == null) {
+                if (!findShortcut(requestedKey, newmodifier).isPresent()) {
                     Main.info("Reassigning OSX shortcut '" + shortText + "' from Meta to Ctrl because of conflict with " + conflict);
                     return reassignShortcut(shortText, longText, requestedKey, conflict, requestedGroup, requestedKey, newmodifier);
                 }
@@ -476,7 +474,7 @@ public final class Shortcut {
             for (int m : mods) {
                 for (int k : keys) {
                     int newmodifier = getGroupModifier(m);
-                    if (findShortcut(k, newmodifier) == null) {
+                    if (!findShortcut(k, newmodifier).isPresent()) {
                         Main.info("Reassigning shortcut '" + shortText + "' from " + modifier + " to " + newmodifier +
                                 " because of conflict with " + conflict);
                         return reassignShortcut(shortText, longText, requestedKey, conflict, m, k, newmodifier);
@@ -509,7 +507,7 @@ public final class Shortcut {
         Main.info(tr("Silent shortcut conflict: ''{0}'' moved by ''{1}'' to ''{2}''.",
             shortText, conflict.getShortText(), newsc.getKeyText()));
         newsc.saveDefault();
-        shortcuts.replaceAll(sc -> shortText.equals(sc.getShortText()) ? newsc : sc);
+        shortcuts.add(newsc);
         return newsc;
     }
 

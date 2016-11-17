@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
@@ -16,6 +17,7 @@ import org.openstreetmap.josm.TestUtils;
 /**
  * Unit tests of {@link AudioPlayer} class.
  */
+@Ignore("unresolved sporadic deadlock - see #13809")
 public class AudioPlayerTest {
 
     // We play wav files of about 4 seconds + pause, so define timeout at 16 seconds

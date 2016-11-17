@@ -888,7 +888,9 @@ public class SearchCompiler {
                     this.searchRegex = Pattern.compile(s, regexFlags(caseSensitive));
                 } catch (PatternSyntaxException e) {
                     throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
-                } catch (IllegalArgumentException e) {
+                } catch (IllegalArgumentException | StringIndexOutOfBoundsException e) {
+                    // StringIndexOutOfBoundsException catched because of https://bugs.openjdk.java.net/browse/JI-9044959
+                    // See #13870: To remove after we switch to a version of Java which resolves this bug
                     throw new ParseError(tr(rxErrorMsgNoPos, s, e.getMessage()), e);
                 }
                 this.search = s;

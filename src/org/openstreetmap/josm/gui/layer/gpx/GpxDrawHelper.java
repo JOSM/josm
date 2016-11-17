@@ -61,7 +61,8 @@ public class GpxDrawHelper implements SoMChangeListener {
     private int delta;
     private double minTrackDurationForTimeColoring;
 
-    private int hdopfactor;
+    /** maximum value of displayed HDOP, minimum is 0 */
+    private int hdoprange;
 
     private static final double PHI = Math.toRadians(15);
 
@@ -213,7 +214,8 @@ public class GpxDrawHelper implements SoMChangeListener {
         delta = Main.pref.getInteger("draw.rawgps.min-arrow-distance", spec, 40);
         colorTracksTune = Main.pref.getInteger("draw.rawgps.colorTracksTune", spec, 45);
         colorModeDynamic = Main.pref.getBoolean("draw.rawgps.colors.dynamic", spec, false);
-        hdopfactor = Main.pref.getInteger("hdop.factor", 25);
+        /* good HDOP's are between 1 and 3, very bad HDOP's go into 3 digit values */
+        hdoprange = Main.pref.getInteger("hdop.range", 7);
         minTrackDurationForTimeColoring = Main.pref.getInteger("draw.rawgps.date-coloring-min-dt", 60);
         largePointAlpha = Main.pref.getInteger("draw.rawgps.large.alpha", -1) & 0xFF;
 
@@ -310,7 +312,7 @@ public class GpxDrawHelper implements SoMChangeListener {
             oldWp = null;
         } else { // color mode not dynamic
             velocityScale.setRange(0, colorTracksTune);
-            hdopScale.setRange(0, 1.0/hdopfactor);
+            hdopScale.setRange(0, hdoprange);
         }
         double now = System.currentTimeMillis()/1000.0;
         if (colored == ColorMode.TIME) {

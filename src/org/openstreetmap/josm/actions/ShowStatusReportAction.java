@@ -109,7 +109,7 @@ public final class ShowStatusReportAction extends JosmAction {
             .append((int) maxScreenSize.getWidth()).append('x')
             .append((int) maxScreenSize.getHeight()).append('\n');
 
-        if (Main.platform.getClass() == PlatformHookUnixoid.class) {
+        if (Main.platform instanceof PlatformHookUnixoid) {
             // Add Java package details
             String packageDetails = ((PlatformHookUnixoid) Main.platform).getJavaPackageDetails();
             if (packageDetails != null) {

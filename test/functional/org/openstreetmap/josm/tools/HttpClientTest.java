@@ -12,6 +12,8 @@ import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
 
 import javax.json.JsonObject;
 import javax.json.JsonReader;
@@ -39,9 +41,29 @@ public class HttpClientTest {
 
     private ProgressMonitor progress;
 
+    private LogRecord captured;
+    private final Handler handler = new Handler() {
+
+        @Override
+        public void publish(LogRecord record) {
+            captured = record;
+        }
+
+        @Override
+        public void flush() {
+        }
+
+        @Override
+        public void close() throws SecurityException {
+        }
+    };
+
     @Before
     public void setUp() {
         progress = TestUtils.newTestProgressMonitor();
+        captured = null;
+        Logging.getLogger().addHandler(handler);
+        Logging.getLogger().setLevel(Logging.LEVEL_DEBUG);
     }
 
     @Test
@@ -153,7 +175,70 @@ public class HttpClientTest {
         assertThat(response.getResponseMessage(), is("I'M A TEAPOT"));
         final String content = response.fetchContent();
         assertThat(content, containsString("-=[ teapot ]=-"));
+        assertThat(captured.getMessage(), containsString("-=[ teapot ]=-"));
+        assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
     }
+
+    @Test()
+    public void testHttp401() throws IOException {
+        // https://tools.ietf.org/html/rfc2324
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/401")).connect(progress);
+        assertThat(response.getResponseCode(), is(401));
+        assertThat(response.getResponseMessage(), is("UNAUTHORIZED"));
+        final String content = response.fetchContent();
+        assertThat(content, is(""));
+        assertThat(captured.getMessage(), containsString("Server did not return any body"));
+        assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
+    }
+
+    @Test
+    public void testHttp402() throws IOException {
+        // https://tools.ietf.org/html/rfc2324
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/402")).connect(progress);
+        assertThat(response.getResponseCode(), is(402));
+        assertThat(response.getResponseMessage(), is("PAYMENT REQUIRED"));
+        final String content = response.fetchContent();
+        assertThat(content, containsString("Fuck you, pay me!"));
+        assertThat(captured.getMessage(), containsString("Fuck you, pay me!"));
+        assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
+    }
+
+    @Test
+    public void testHttp403() throws IOException {
+        // https://tools.ietf.org/html/rfc2324
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/403")).connect(progress);
+        assertThat(response.getResponseCode(), is(403));
+        assertThat(response.getResponseMessage(), is("FORBIDDEN"));
+        final String content = response.fetchContent();
+        assertThat(content, is(""));
+        assertThat(captured.getMessage(), containsString("Server did not return any body"));
+        assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
+    }
+
+    @Test
+    public void testHttp404() throws IOException {
+        // https://tools.ietf.org/html/rfc2324
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/404")).connect(progress);
+        assertThat(response.getResponseCode(), is(404));
+        assertThat(response.getResponseMessage(), is("NOT FOUND"));
+        final String content = response.fetchContent();
+        assertThat(content, is(""));
+        assertThat(captured.getMessage(), containsString("Server did not return any body"));
+        assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
+    }
+
+    @Test
+    public void testHttp500() throws IOException {
+        // https://tools.ietf.org/html/rfc2324
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/500")).connect(progress);
+        assertThat(response.getResponseCode(), is(500));
+        assertThat(response.getResponseMessage(), is("INTERNAL SERVER ERROR"));
+        final String content = response.fetchContent();
+        assertThat(content, containsString(""));
+        assertThat(captured.getMessage(), containsString("Server did not return any body"));
+        assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
+    }
+
 
     @Test
     public void testRequestInTime() throws IOException {

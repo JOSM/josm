@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileLock;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -81,6 +82,7 @@ public final class JCSCacheManager {
         jcsLog.setLevel(Level.INFO);
         jcsLog.setUseParentHandlers(false);
         // we need a separate handler from Main's, as we downgrade LEVEL.INFO to DEBUG level
+        Arrays.stream(jcsLog.getHandlers()).forEach(jcsLog::removeHandler);
         jcsLog.addHandler(new Handler() {
             final SimpleFormatter formatter = new SimpleFormatter();
 

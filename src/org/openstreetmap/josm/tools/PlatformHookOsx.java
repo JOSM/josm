@@ -27,9 +27,9 @@ import org.xml.sax.SAXException;
  * {@code PlatformHook} implementation for Apple Mac OS X systems.
  * @since 1023
  */
-public class PlatformHookOsx extends PlatformHookUnixoid implements InvocationHandler {
+public class PlatformHookOsx implements PlatformHook, InvocationHandler {
 
-    private static PlatformHookOsx ivhandler = new PlatformHookOsx();
+    private static final PlatformHookOsx ivhandler = new PlatformHookOsx();
 
     @Override
     public void preStartupHook() {
@@ -365,16 +365,19 @@ public class PlatformHookOsx extends PlatformHookUnixoid implements InvocationHa
 
     @Override
     public File getDefaultCacheDirectory() {
-        return new File(System.getProperty("user.home")+"/Library/Caches", "JOSM");
+        return new File(System.getProperty("user.home")+"/Library/Caches",
+                Main.pref.getJOSMDirectoryBaseName());
     }
 
     @Override
     public File getDefaultPrefDirectory() {
-        return new File(System.getProperty("user.home")+"/Library/Preferences", "JOSM");
+        return new File(System.getProperty("user.home")+"/Library/Preferences",
+                Main.pref.getJOSMDirectoryBaseName());
     }
 
     @Override
     public File getDefaultUserDataDirectory() {
-        return new File(System.getProperty("user.home")+"/Library", "JOSM");
+        return new File(System.getProperty("user.home")+"/Library",
+                Main.pref.getJOSMDirectoryBaseName());
     }
 }

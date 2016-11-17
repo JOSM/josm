@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -447,5 +448,18 @@ public class SearchCompilerTest {
         assertEquals("\"foo=\"=*", search2);
         assertTrue(SearchCompiler.compile(search2).match(tag1));
         assertTrue(SearchCompiler.compile(search2).match(tag2));
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/13870">Bug #13870</a>.
+     * @throws ParseError always
+     */
+    @Test(expected = ParseError.class)
+    public void testPattern13870() throws ParseError {
+        // https://bugs.openjdk.java.net/browse/JI-9044959
+        SearchSetting setting = new SearchSetting();
+        setting.regexSearch = true;
+        setting.text = "[";
+        SearchCompiler.compile(setting);
     }
 }

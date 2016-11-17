@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.layer;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -191,13 +190,11 @@ public class OsmDataLayerTest {
     @Test
     public void testGetMenuEntries() {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
-        boolean mode = ExpertToggleAction.isExpert();
-        ExpertToggleAction.getInstance().actionPerformed(null);
-        assertNotEquals(mode, ExpertToggleAction.isExpert());
-        assertEquals(ExpertToggleAction.isExpert() ? 16 : 13, layer.getMenuEntries().length);
-        ExpertToggleAction.getInstance().actionPerformed(null);
-        assertEquals(mode, ExpertToggleAction.isExpert());
-        assertEquals(ExpertToggleAction.isExpert() ? 16 : 13, layer.getMenuEntries().length);
+        ExpertToggleAction.getInstance().setExpert(true);
+        assertEquals(16, layer.getMenuEntries().length);
+
+        ExpertToggleAction.getInstance().setExpert(false);
+        assertEquals(13, layer.getMenuEntries().length);
     }
 
     /**
@@ -260,5 +257,20 @@ public class OsmDataLayerTest {
         final OsmDataLayer layer2 = new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null);
         assertEquals("Data Layer 147", layer1.getName());
         assertEquals("Data Layer 148", layer2.getName());
+    }
+
+    @Test
+    public void testLayerUnnumberedName() {
+        final OsmDataLayer layer = new OsmDataLayer(new DataSet(), "Data Layer ", null);
+        assertEquals("Data Layer ", layer.getName());
+    }
+
+    /**
+     * Non-regression test for ticket #13985
+     */
+    @Test
+    public void testLayerNameDoesFinish() {
+        final OsmDataLayer layer = new OsmDataLayer(new DataSet(), "Data Layer from GeoJSON: foo.geojson", null);
+        assertEquals("Data Layer from GeoJSON: foo.geojson", layer.getName());
     }
 }

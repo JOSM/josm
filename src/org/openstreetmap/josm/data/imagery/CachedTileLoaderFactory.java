@@ -13,6 +13,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.preferences.StringProperty;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * TileLoaderFactory creating JCS cached TileLoaders
@@ -34,6 +35,7 @@ public class CachedTileLoaderFactory implements TileLoaderFactory {
      * @throws IllegalArgumentException if a suitable constructor cannot be found for {@code tileLoaderClass}
      */
     public CachedTileLoaderFactory(ICacheAccess<String, BufferedImageCacheEntry> cache, Class<? extends TileLoader> tileLoaderClass) {
+        CheckParameterUtil.ensureParameterNotNull(cache, "cache");
         this.cache = cache;
         try {
             tileLoaderConstructor = tileLoaderClass.getConstructor(

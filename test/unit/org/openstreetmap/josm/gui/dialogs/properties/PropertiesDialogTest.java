@@ -33,7 +33,7 @@ public class PropertiesDialogTest {
 
     private static String createSearchSetting(DataSet ds, boolean sameType) {
         List<OsmPrimitive> sel = new ArrayList<>(ds.allPrimitives());
-        Collections.sort(sel, new OsmPrimitiveComparator(true, false));
+        Collections.sort(sel, OsmPrimitiveComparator.comparingUniqueId());
         return PropertiesDialog.createSearchSetting("foo", sel, sameType).text;
     }
 

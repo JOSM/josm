@@ -48,9 +48,10 @@ public class MultipolygonTestTest {
 
     /**
      * Non-regression test for bug #10469.
+     * @throws Exception if an exception occurs
      */
     @Test
-    public void testTicket10469() {
+    public void testTicket10469() throws Exception {
         MULTIPOLYGON_TEST.initialize();
         MULTIPOLYGON_TEST.startTest(null);
 
@@ -83,6 +84,6 @@ public class MultipolygonTestTest {
     public void testMultipolygonFile() throws Exception {
         ValidatorTestUtils.testSampleFile("data_nodist/multipolygon.osm",
                 ds -> ds.getRelations().stream().filter(Relation::isMultipolygon).collect(Collectors.toList()),
-                name -> name.startsWith("06") || name.startsWith("07"), MULTIPOLYGON_TEST, RELATION_TEST);
+                name -> name.startsWith("06") || name.startsWith("07") || name.startsWith("08"), MULTIPOLYGON_TEST, RELATION_TEST);
     }
 }

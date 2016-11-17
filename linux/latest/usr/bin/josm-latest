@@ -24,7 +24,7 @@ if [ -f /etc/default/josm-latest ]; then
     . /etc/default/josm-latest
 fi
 
-JAVA_OPTS="-Djosm.restart=true -Djosm.home=$HOME/.josm-latest -Djava.net.useSystemProxies=true $JAVA_OPTS"
+JAVA_OPTS="-Djosm.restart=true -Djosm.dir.name=JOSM-latest -Djava.net.useSystemProxies=true $JAVA_OPTS"
 
 if [ -z "${JAVACMD}" ]; then
     for jcmd in $JAVA_CMDS; do

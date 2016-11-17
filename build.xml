@@ -25,7 +25,7 @@
         <property name="proj-build.dir" location="${base.dir}/build2"/>
         <property name="epsg.output" location="${base.dir}/data/projection/custom-epsg"/>
         <property name="groovy.jar" location="${base.dir}/tools/groovy-all-2.4.7.jar"/>
-        <property name="error_prone_ant.jar" location="${base.dir}/tools/error_prone_ant-2.0.13.jar"/>
+        <property name="error_prone_ant.jar" location="${base.dir}/tools/error_prone_ant-2.0.14.jar"/>
         <property name="javac.compiler" value="com.google.errorprone.ErrorProneAntCompilerAdapter" />
         <!-- build parameter: compression level (ant -Dclevel=N)
                  N ranges from 0 (no compression) to 9 (maximum compression)
@@ -699,6 +699,12 @@ Build-Date: ${build.tstamp}
             <arg value="--unlink"/>
         </exec>
         <exec append="false" executable="wget" failifexecutionfails="true">
+            <arg value="https://josm.openstreetmap.de/wiki/ImageryCompareIgnores?format=txt"/>
+            <arg value="-O"/>
+            <arg value="maps_ignores.txt"/>
+            <arg value="--unlink"/>
+        </exec>
+        <exec append="false" executable="wget" failifexecutionfails="true">
             <arg value="https://raw.githubusercontent.com/osmlab/editor-imagery-index/gh-pages/imagery.json"/>
             <arg value="-O"/>
             <arg value="imagery.json"/>
@@ -709,7 +715,7 @@ Build-Date: ${build.tstamp}
 
     <target name="checkstyle" depends="init-properties">
         <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
-             classpath="tools/checkstyle/checkstyle-7.1.2-all.jar"/>
+             classpath="tools/checkstyle/checkstyle-7.2-all.jar"/>
         <checkstyle config="tools/checkstyle/josm_checks.xml">
             <fileset dir="${base.dir}/src/org/openstreetmap/josm" includes="**/*.java"
                 excludes="gui/mappaint/mapcss/parsergen/*.java"/>

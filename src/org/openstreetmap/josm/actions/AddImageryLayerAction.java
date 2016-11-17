@@ -10,6 +10,8 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,8 +22,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.imagery.DefaultLayer;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
+import org.openstreetmap.josm.data.imagery.WMTSTileSource;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.AlignImageryPanel;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
@@ -30,6 +34,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.imagery.WMSImagery;
 import org.openstreetmap.josm.io.imagery.WMSImagery.LayerDetails;
 import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -63,74 +68,33 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (!isEnabled()) return;
+    /**
+     * Converts general ImageryInfo to specific one, that does not need any user action to initialize
+     * see: https://josm.openstreetmap.de/ticket/13868
+     * @param info ImageryInfo that will be converted (or returned when no conversion needed)
+     * @return ImageryInfo object that's ready to be used to create TileSource
+     */
+    private ImageryInfo convertImagery(ImageryInfo info) {
         try {
-            final ImageryInfo infoToAdd = ImageryType.WMS_ENDPOINT.equals(info.getImageryType())
-                    ? getWMSLayerInfo() : info;
-            if (infoToAdd != null) {
-                Main.getLayerManager().addLayer(ImageryLayer.create(infoToAdd));
-                AlignImageryPanel.addNagPanelIfNeeded(infoToAdd);
-            }
-        } catch (IllegalArgumentException ex) {
-            if (ex.getMessage() == null || ex.getMessage().isEmpty()) {
-                throw ex;
-            } else {
-                JOptionPane.showMessageDialog(Main.parent,
-                        ex.getMessage(), tr("Error"),
-                        JOptionPane.ERROR_MESSAGE);
-            }
-        }
-    }
-
-    protected ImageryInfo getWMSLayerInfo() {
-        try {
-            assert ImageryType.WMS_ENDPOINT.equals(info.getImageryType());
-            final WMSImagery wms = new WMSImagery();
-            wms.attemptGetCapabilities(info.getUrl());
-
-            final WMSLayerTree tree = new WMSLayerTree();
-            tree.updateTree(wms);
-            List<String> wmsFormats = wms.getFormats();
-            final JComboBox<String> formats = new JComboBox<>(wmsFormats.toArray(new String[wmsFormats.size()]));
-            formats.setSelectedItem(wms.getPreferredFormats());
-            formats.setToolTipText(tr("Select image format for WMS layer"));
-
-            if (!GraphicsEnvironment.isHeadless()) {
-                if (1 != new ExtendedDialog(Main.parent, tr("Select WMS layers"), new String[]{tr("Add layers"), tr("Cancel")}) { {
-                    final JScrollPane scrollPane = new JScrollPane(tree.getLayerTree());
-                    scrollPane.setPreferredSize(new Dimension(400, 400));
-                    final JPanel panel = new JPanel(new GridBagLayout());
-                    panel.add(scrollPane, GBC.eol().fill());
-                    panel.add(formats, GBC.eol().fill(GBC.HORIZONTAL));
-                    setContent(panel);
-                } }.showDialog().getValue()) {
-                    return null;
+            switch(info.getImageryType()) {
+            case WMS_ENDPOINT:
+                // convert to WMS type
+                return getWMSLayerInfo();
+            case WMTS:
+                // specify which layer to use
+                DefaultLayer layerId = new WMTSTileSource(info).userSelectLayer();
+                if (layerId != null) {
+                    ImageryInfo copy = new ImageryInfo(info);
+                    Collection<DefaultLayer> defaultLayers = new ArrayList<>(1);
+                    defaultLayers.add(layerId);
+                    copy.setDefaultLayers(defaultLayers);
+                    return copy;
                 }
+                // layer not selected - refuse to add
+                return null;
+            default:
+                return info;
             }
-
-            final String url = wms.buildGetMapUrl(
-                    tree.getSelectedLayers(), (String) formats.getSelectedItem());
-            Set<String> supportedCrs = new HashSet<>();
-            boolean first = true;
-            StringBuilder layersString = new StringBuilder();
-            for (LayerDetails layer: tree.getSelectedLayers()) {
-                if (first) {
-                    supportedCrs.addAll(layer.getProjections());
-                    first = false;
-                }
-                layersString.append(layer.name);
-                layersString.append(", ");
-                supportedCrs.retainAll(layer.getProjections());
-            }
-
-            ImageryInfo ret = new ImageryInfo(info.getName(), url, "wms", info.getEulaAcceptanceRequired(), info.getCookies());
-            if (layersString.length() > 2) {
-                ret.setName(ret.getName() + ' ' + layersString.substring(0, layersString.length() - 2));
-            }
-            ret.setServerProjections(supportedCrs);
-            return ret;
         } catch (MalformedURLException ex) {
             if (!GraphicsEnvironment.isHeadless()) {
                 JOptionPane.showMessageDialog(Main.parent, tr("Invalid service URL."),
@@ -154,15 +118,84 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
     }
 
     @Override
+    public void actionPerformed(ActionEvent e) {
+        if (!isEnabled()) return;
+        try {
+            final ImageryInfo infoToAdd = convertImagery(info);
+            if (infoToAdd != null) {
+                Main.getLayerManager().addLayer(ImageryLayer.create(infoToAdd));
+                AlignImageryPanel.addNagPanelIfNeeded(infoToAdd);
+            }
+        } catch (IllegalArgumentException ex) {
+            if (ex.getMessage() == null || ex.getMessage().isEmpty() || GraphicsEnvironment.isHeadless()) {
+                throw ex;
+            } else {
+                JOptionPane.showMessageDialog(Main.parent,
+                        ex.getMessage(), tr("Error"),
+                        JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    protected ImageryInfo getWMSLayerInfo() throws IOException, WMSGetCapabilitiesException {
+        CheckParameterUtil.ensureThat(ImageryType.WMS_ENDPOINT.equals(info.getImageryType()), "wms_endpoint imagery type expected");
+
+        final WMSImagery wms = new WMSImagery();
+        wms.attemptGetCapabilities(info.getUrl());
+
+        final WMSLayerTree tree = new WMSLayerTree();
+        tree.updateTree(wms);
+        List<String> wmsFormats = wms.getFormats();
+        final JComboBox<String> formats = new JComboBox<>(wmsFormats.toArray(new String[wmsFormats.size()]));
+        formats.setSelectedItem(wms.getPreferredFormats());
+        formats.setToolTipText(tr("Select image format for WMS layer"));
+
+        if (!GraphicsEnvironment.isHeadless()) {
+            if (1 != new ExtendedDialog(Main.parent, tr("Select WMS layers"), new String[]{tr("Add layers"), tr("Cancel")}) { {
+                final JScrollPane scrollPane = new JScrollPane(tree.getLayerTree());
+                scrollPane.setPreferredSize(new Dimension(400, 400));
+                final JPanel panel = new JPanel(new GridBagLayout());
+                panel.add(scrollPane, GBC.eol().fill());
+                panel.add(formats, GBC.eol().fill(GBC.HORIZONTAL));
+                setContent(panel);
+            } }.showDialog().getValue()) {
+                return null;
+            }
+        }
+
+        final String url = wms.buildGetMapUrl(
+                tree.getSelectedLayers(), (String) formats.getSelectedItem());
+        Set<String> supportedCrs = new HashSet<>();
+        boolean first = true;
+        StringBuilder layersString = new StringBuilder();
+        for (LayerDetails layer: tree.getSelectedLayers()) {
+            if (first) {
+                supportedCrs.addAll(layer.getProjections());
+                first = false;
+            }
+            layersString.append(layer.name);
+            layersString.append(", ");
+            supportedCrs.retainAll(layer.getProjections());
+        }
+
+        // copy all information from WMS
+        ImageryInfo ret = new ImageryInfo(info);
+        // and update according to user choice
+        ret.setUrl(url);
+        ret.setImageryType(ImageryType.WMS);
+        if (layersString.length() > 2) {
+            ret.setName(ret.getName() + ' ' + layersString.substring(0, layersString.length() - 2));
+        }
+        ret.setServerProjections(supportedCrs);
+        return ret;
+    }
+
+    @Override
     protected void updateEnabledState() {
-        ImageryType type = info.getImageryType();
-        // never enable blacklisted entries. Do not add same imagery layer twice (fix #2519)
         if (info.isBlacklisted()) {
             setEnabled(false);
-        } else if (type == ImageryType.TMS || type == ImageryType.BING || type == ImageryType.SCANEX) {
-            setEnabled(true);
         } else {
-            setEnabled(!Main.getLayerManager().getLayers().isEmpty());
+            setEnabled(true);
         }
     }
 }

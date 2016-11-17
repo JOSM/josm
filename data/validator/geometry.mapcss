@@ -296,3 +296,11 @@ way[highway] > node[ford?] { set ford_on_highway; }
 node[ford?]:in-downloaded-area!.ford_on_waterway, node[ford?]:in-downloaded-area!.ford_on_highway {
     throwWarning: tr("{0} should be on the node where {1} and {2} intersect", "ford", "highway", "waterway");
 }
+/* #13877 */
+area:closed[waterway = canal][area!=no],
+area:closed[waterway = drain][area!=no],
+area:closed[waterway = ditch][area!=no],
+area:closed[waterway = stream][area!=no],
+area:closed[waterway = river][area!=no] {
+  throwWarning: tr("{0} is the tag for the linear waterway. To tag the water area use {1} + {2} instead.", "{1.tag}", "natural=water", "water=*");
+}

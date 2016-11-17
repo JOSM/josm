@@ -1454,7 +1454,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
 
         MapViewPoint lastPoint = null;
-        double wayLength = 0;
         Iterator<MapViewPoint> it = new OffsetIterator(wayNodes, offset);
         boolean initialMoveToNeeded = true;
         while (it.hasNext()) {
@@ -1474,12 +1473,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     //TODO: Cache
                     ArrowPaintHelper drawHelper = new ArrowPaintHelper(PHI, 10 + line.getLineWidth());
                     drawHelper.paintArrowAt(orientationArrows, p2, p1);
-                }
-                if (showOneway) {
-                    final double segmentLength = p1.distanceToInView(p2);
-                    if (segmentLength != 0) {
-                    }
-                    wayLength += segmentLength;
                 }
             }
             lastPoint = p;

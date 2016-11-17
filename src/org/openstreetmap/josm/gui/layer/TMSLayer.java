@@ -59,19 +59,18 @@ public class TMSLayer extends AbstractCachedTileSourceLayer<TMSTileSource> imple
 
     /**
      * Creates and returns a new TileSource instance depending on the {@link ImageryType}
-     * of the passed ImageryInfo object.
+     * of the {@link ImageryInfo} object specified in the constructor.
      *
      * If no appropriate TileSource is found, null is returned.
      * Currently supported ImageryType are {@link ImageryType#TMS},
      * {@link ImageryType#BING}, {@link ImageryType#SCANEX}.
      *
      *
-     * @param info imagery info
      * @return a new TileSource instance or null if no TileSource for the ImageryInfo/ImageryType could be found.
      * @throws IllegalArgumentException if url from imagery info is null or invalid
      */
     @Override
-    protected TMSTileSource getTileSource(ImageryInfo info) {
+    protected TMSTileSource getTileSource() {
         return getTileSourceStatic(info, () -> {
             Main.debug("Attribution loaded, running loadAllErrorTiles");
             this.loadAllErrorTiles(false);

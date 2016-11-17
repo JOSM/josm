@@ -114,6 +114,19 @@ public final class WaySegment implements Comparable<WaySegment> {
                 s2.getSecondNode().getEastNorth().east(), s2.getSecondNode().getEastNorth().north());
     }
 
+    /**
+     * Checks whether this segment and another way segment share the same points
+     * @param s2 The other segment
+     * @return true if other way segment is the same or reverse
+     */
+    public boolean isSimilar(WaySegment s2) {
+        if (getFirstNode().equals(s2.getFirstNode()) && getSecondNode().equals(s2.getSecondNode()))
+            return true;
+        if (getFirstNode().equals(s2.getSecondNode()) && getSecondNode().equals(s2.getFirstNode()))
+            return true;
+        return false;
+    }
+
     @Override
     public String toString() {
         return "WaySegment [way=" + way.getUniqueId() + ", lowerIndex=" + lowerIndex + ']';

@@ -76,4 +76,18 @@ public class GeoJSONWriterTest {
             assertTrue(writer.write().contains("MultiPolygon"));
         }
     }
+
+    /**
+     * Unit test for exporting invalid multipolygons, see #13827
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testMultipolygonRobustness() throws Exception {
+        try (FileInputStream in = new FileInputStream("data_nodist/multipolygon.osm")) {
+            DataSet ds = OsmReader.parseDataSet(in, null);
+            final OsmDataLayer layer = new OsmDataLayer(ds, "foo", null);
+            final GeoJSONWriter writer = new GeoJSONWriter(layer);
+            assertTrue(writer.write().contains("MultiPolygon"));
+        }
+    }
 }

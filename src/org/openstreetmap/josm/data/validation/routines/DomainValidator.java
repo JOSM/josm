@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016101901, Last Updated Thu Oct 20 07:07:02 2016 UTC
+        // Taken from Version 2016111300, Last Updated Sun Nov 13 07:07:01 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -343,6 +343,7 @@ public final class DomainValidator extends AbstractValidator {
         "android", // android Charleston Road Registry Inc.
         "anquan", // anquan QIHOO 360 TECHNOLOGY CO. LTD.
         "anz", // anz Australia and New Zealand Banking Group Limited
+        "aol", // aol AOL Inc.
         "apartments", // apartments June Maple, LLC
         "app", // app Charleston Road Registry Inc.
         "apple", // apple Apple Inc.
@@ -381,6 +382,7 @@ public final class DomainValidator extends AbstractValidator {
         "barclays", // barclays Barclays Bank PLC
         "barefoot", // barefoot Gallo Vineyards, Inc.
         "bargains", // bargains Half Hallow, LLC
+        "baseball", // baseball MLB Advanced Media DH, LLC
         "basketball", // basketball Fédération Internationale de Basketball (FIBA)
         "bauhaus", // bauhaus Werkhaus GmbH
         "bayern", // bayern Bayern Connect GmbH
@@ -429,6 +431,7 @@ public final class DomainValidator extends AbstractValidator {
         "bostik", // bostik Bostik SA
         "bot", // bot Amazon Registry Services, Inc.
         "boutique", // boutique Over Galley, LLC
+        "box", // box NS1 Limited
         "bradesco", // bradesco Banco Bradesco S.A.
         "bridgestone", // bridgestone Bridgestone Corporation
         "broadway", // broadway Celebrate Broadway, Inc.
@@ -465,6 +468,8 @@ public final class DomainValidator extends AbstractValidator {
         "cars", // cars Uniregistry, Corp.
         "cartier", // cartier Richemont DNS Inc.
         "casa", // casa Top Level Domain Holdings Limited
+        "case", // case CNH Industrial N.V.
+        "caseih", // caseih CNH Industrial N.V.
         "cash", // cash Delta Lake, LLC
         "casino", // casino Binky Sky, LLC
         "cat", // cat Fundacio puntCAT
@@ -540,6 +545,7 @@ public final class DomainValidator extends AbstractValidator {
         "cricket", // cricket dot Cricket Limited
         "crown", // crown Crown Equipment Corporation
         "crs", // crs Federated Co-operatives Limited
+        "cruise", // cruise Viking River Cruises (Bermuda) Ltd.
         "cruises", // cruises Spring Way, LLC
         "csc", // csc Alliance-One Services, Inc.
         "cuisinella", // cuisinella SALM S.A.S.
@@ -662,6 +668,7 @@ public final class DomainValidator extends AbstractValidator {
         "flowers", // flowers Uniregistry, Corp.
         "fly", // fly Charleston Road Registry Inc.
         "foo", // foo Charleston Road Registry Inc.
+        "food", // food Lifestyle Domain Holdings, Inc.
         "foodnetwork", // foodnetwork Lifestyle Domain Holdings, Inc.
         "football", // football Foggy Farms, LLC
         "ford", // ford Ford Motor Company
@@ -670,6 +677,7 @@ public final class DomainValidator extends AbstractValidator {
         "forum", // forum Fegistry, LLC
         "foundation", // foundation John Dale, LLC
         "fox", // fox FOX Registry, LLC
+        "free", // free Amazon Registry Services, Inc.
         "fresenius", // fresenius Fresenius Immobilien-Verwaltungs-GmbH
         "frl", // frl FRLregistry B.V.
         "frogans", // frogans OP3FT
@@ -807,6 +815,7 @@ public final class DomainValidator extends AbstractValidator {
         "istanbul", // istanbul Istanbul Metropolitan Municipality / Medya A.S.
         "itau", // itau Itau Unibanco Holding S.A.
         "itv", // itv ITV Services Limited
+        "iveco", // iveco CNH Industrial N.V.
         "iwc", // iwc Richemont DNS Inc.
         "jaguar", // jaguar Jaguar Land Rover Ltd
         "java", // java Oracle Corporation
@@ -960,6 +969,7 @@ public final class DomainValidator extends AbstractValidator {
         "mormon", // mormon IRI Domain Management, LLC (&quot;Applicant&quot;)
         "mortgage", // mortgage United TLD Holdco, Ltd
         "moscow", // moscow Foundation for Assistance for Internet Technologies and Infrastructure Development (FAITID)
+        "moto", // moto Motorola Trademark Holdings, LLC
         "motorcycles", // motorcycles DERMotorcycles, LLC
         "mov", // mov Charleston Road Registry Inc.
         "movie", // movie New Frostbite, LLC
@@ -986,6 +996,7 @@ public final class DomainValidator extends AbstractValidator {
         "network", // network Trixy Manor, LLC
         "neustar", // neustar NeuStar, Inc.
         "new", // new Charleston Road Registry Inc.
+        "newholland", // newholland CNH Industrial N.V.
         "news", // news United TLD Holdco Ltd.
         "next", // next Next plc
         "nextdirect", // nextdirect Next plc
@@ -1347,6 +1358,7 @@ public final class DomainValidator extends AbstractValidator {
         "vlaanderen", // vlaanderen DNS.be vzw
         "vodka", // vodka Top Level Domain Holdings Limited
         "volkswagen", // volkswagen Volkswagen Group of America Inc.
+        "volvo", // volvo Volvo Holding Sverige Aktiebolag
         "vote", // vote Monolith Registry LLC
         "voting", // voting Valuetainment Corp.
         "voto", // voto Monolith Registry LLC

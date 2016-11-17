@@ -10,6 +10,7 @@ import java.util.Objects;
 
 import javax.swing.Icon;
 
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Way;
@@ -46,6 +47,17 @@ public class AddCommand extends Command {
      */
     public AddCommand(OsmDataLayer layer, OsmPrimitive osm) {
         super(layer);
+        this.osm = Objects.requireNonNull(osm, "osm");
+    }
+
+    /**
+     * Creates the command and specify the element to add in the context of the given data set.
+     * @param data The data set. Must not be {@code null}
+     * @param osm The primitive to add
+     * @since 11240
+     */
+    public AddCommand(DataSet data, OsmPrimitive osm) {
+        super(data);
         this.osm = Objects.requireNonNull(osm, "osm");
     }
 

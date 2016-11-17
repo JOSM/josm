@@ -1,0 +1,7 @@
+/* see ticket #12914 -- Discourage contributors to use operator=ERDF in France. */
+*[operator=ERDF][inside("FR")] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "operator=Enedis";
+  group: tr("deprecated tagging");
+  fixAdd: "operator=Enedis";
+}

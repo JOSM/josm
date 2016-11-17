@@ -2723,7 +2723,8 @@ area[amenity=courthouse],
 area[amenity=prison],
 area[amenity=bank],
 area[amenity=bureau_de_change],
-area[amenity=bbq] {
+area[amenity=bbq],
+area[amenity=watering_place] {
     fill-color: amenity_light#f7efb7;
 }
 node[amenity=library] {
@@ -2796,6 +2797,10 @@ node[amenity=bbq] {
 }
 node[amenity=compressed_air] {
     icon-image: "presets/vehicle/compressed_air.svg";
+    set icon_z17;
+}
+node[amenity=watering_place] {
+    icon-image: "presets/misc/watering_place.svg";
     set icon_z17;
 }
 area[amenity=shelter],
@@ -2977,6 +2982,7 @@ node[craft=tiler] {
 area[tourism=hotel],
 area[tourism=motel],
 area[tourism=guest_house],
+area[tourism=apartment],
 area[tourism=hostel],
 area[tourism=chalet],
 area[tourism=alpine_hut],
@@ -2995,6 +3001,10 @@ node[tourism=motel] {
 }
 node[tourism=guest_house] {
     icon-image: "presets/accommodation/guest_house.svg";
+    set icon_z17;
+}
+node[tourism=apartment] {
+    icon-image: "presets/accommodation/apartment.svg";
     set icon_z17;
 }
 node[tourism=hostel] {
@@ -3706,8 +3716,6 @@ node[public_transport=station] {
 
 area[sport="9pin"],
 area[sport="10pin"],
-area[sport=athletics],
-area[sport=running],
 area[sport=soccer],
 area[sport=australian_football],
 area[sport=american_football],
@@ -3723,14 +3731,6 @@ node[sport="9pin"] {
 }
 node[sport="10pin"] {
     icon-image: "presets/sport/10pin.svg";
-    set icon_z17;
-}
-node[sport=athletics] {
-    icon-image: "presets/sport/athletics.svg";
-    set icon_z17;
-}
-node[sport=running] {
-    icon-image: "presets/sport/running.svg";
     set icon_z17;
 }
 node[sport=soccer],
@@ -3853,17 +3853,33 @@ node[sport=motor] {
     icon-image: "presets/sport/motor.svg";
     set icon_z17;
 }
-area[sport=multi],
+area[sport=athletics] {
+    fill-color: sport_athletics#cfebd7;
+}
+node[sport=athletics] {
+    icon-image: "presets/sport/athletics.svg";
+    set icon_z17;
+}
+area[sport=running] {
+    fill-color: sport_running#cfebd8;
+}
+node[sport=running] {
+    icon-image: "presets/sport/running.svg";
+    set icon_z17;
+}
+area[sport=multi] {
+    fill-color: sport_multi#cfebd9;
+}
+node[sport=multi] {
+    icon-image: "presets/sport/multi.svg";
+    set icon_z17;
+}
 area[sport=pelota],
 area[sport=racquet],
 area[sport=ice_skating],
 area[sport=roller_skating],
 area[sport=skateboard] {
     fill-color: sport#bde3cb;
-}
-node[sport=multi] {
-    icon-image: "presets/sport/multi.svg";
-    set icon_z17;
 }
 node[sport=pelota] {
     icon-image: "presets/sport/pelota.svg";
@@ -4577,14 +4593,6 @@ node|z-15[note][fixme][!setting("hide_icons")]::core_note_fixme,
 node|z16-[note][FIXME]::core_note_fixme,
 node|z-15[note][FIXME][!setting("hide_icons")]::core_note_fixme {
     icon-image: "presets/misc/note_fixme_annotation.svg";
-}
-
-/* special display of unreviewed tiger data (USA) */
-way["tiger:reviewed"=no]::core_tiger {
-    major-z-index: -10;
-    width: 11;
-    color: tiger_data#808000;
-    opacity: 0.6;
 }
 
 /****************************************/

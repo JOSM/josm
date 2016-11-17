@@ -29,6 +29,15 @@ import javax.swing.tree.TreeSelectionModel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
+import org.openstreetmap.josm.data.osm.event.DataSetListener;
+import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
+import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
+import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
+import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
+import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
@@ -45,7 +54,7 @@ import org.openstreetmap.josm.tools.ListenerList;
  *
  * @author frsantos
  */
-public class ValidatorTreePanel extends JTree implements Destroyable {
+public class ValidatorTreePanel extends JTree implements Destroyable, DataSetListener {
 
     private static final class GroupTreeNode extends DefaultMutableTreeNode {
 
@@ -94,6 +103,10 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
             if ("javax.swing.plaf.basic.BasicTreeUI$Handler".equals(keyListener.getClass().getName())) {
                 removeKeyListener(keyListener);
             }
+        }
+        DataSet ds = Main.getLayerManager().getEditDataSet();
+        if (ds != null) {
+            ds.addDataSetListener(this);
         }
     }
 
@@ -302,13 +315,9 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
         if (errors == null)
             return;
         clearErrors();
-        DataSet ds = Main.getLayerManager().getEditDataSet();
         for (TestError error : newerrors) {
             if (!error.isIgnored()) {
                 errors.add(error);
-                if (ds != null) {
-                    ds.addDataSetListener(error);
-                }
             }
         }
         if (isVisible()) {
@@ -413,18 +422,59 @@ public class ValidatorTreePanel extends JTree implements Destroyable {
 
     private void clearErrors() {
         if (errors != null) {
-            DataSet ds = Main.getLayerManager().getEditDataSet();
-            if (ds != null) {
-                for (TestError e : errors) {
-                    ds.removeDataSetListener(e);
-                }
-            }
             errors.clear();
         }
     }
 
     @Override
     public void destroy() {
+        DataSet ds = Main.getLayerManager().getEditDataSet();
+        if (ds != null) {
+            ds.removeDataSetListener(this);
+        }
         clearErrors();
+    }
+
+    @Override public void primitivesRemoved(PrimitivesRemovedEvent event) {
+        // Remove purged primitives (fix #8639)
+        for (TestError err : errors) {
+            try {
+                err.getPrimitives().removeAll(event.getPrimitives());
+            } catch (UnsupportedOperationException e) {
+                if (event.getPrimitives().containsAll(err.getPrimitives())) {
+                    err.getPrimitives().clear();
+                } else {
+                    Main.warn(e, "Unable to remove primitives from "+err+'.');
+                }
+            }
+        }
+    }
+
+    @Override public void primitivesAdded(PrimitivesAddedEvent event) {
+        // Do nothing
+    }
+
+    @Override public void tagsChanged(TagsChangedEvent event) {
+        // Do nothing
+    }
+
+    @Override public void nodeMoved(NodeMovedEvent event) {
+        // Do nothing
+    }
+
+    @Override public void wayNodesChanged(WayNodesChangedEvent event) {
+        // Do nothing
+    }
+
+    @Override public void relationMembersChanged(RelationMembersChangedEvent event) {
+        // Do nothing
+    }
+
+    @Override public void otherDatasetChange(AbstractDatasetChangedEvent event) {
+        // Do nothing
+    }
+
+    @Override public void dataChanged(DataChangedEvent event) {
+        // Do nothing
     }
 }

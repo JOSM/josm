@@ -55,7 +55,7 @@ public class ValidatorTreePanelTest {
                         .primitives(new Node(2))
                         .build())));
         assertNotNull(vtp);
-        final Enumeration nodes = vtp.getRoot().breadthFirstEnumeration();
+        final Enumeration<?> nodes = vtp.getRoot().breadthFirstEnumeration();
         assertEquals("", nodes.nextElement().toString());
         assertEquals("Errors (1)", nodes.nextElement().toString());
         assertEquals("Warnings (2)", nodes.nextElement().toString());

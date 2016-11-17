@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.security.KeyStore;
@@ -22,7 +23,9 @@ public interface PlatformHook {
       * Reason: On OSX we need to inform the Swing libraries
       * that we want to be integrated with the OS before we setup our GUI.
       */
-    void preStartupHook();
+    default void preStartupHook() {
+        // Do nothing
+    }
 
     /**
       * The afterPrefStartupHook will be called early, but after
@@ -30,7 +33,9 @@ public interface PlatformHook {
       * command line arguments is finished.
       * It is guaranteed to be called before the GUI setup has started.
       */
-    void afterPrefStartupHook();
+    default void afterPrefStartupHook() {
+        // Do nothing
+    }
 
     /**
       * The startupHook will be called early, but after the GUI
@@ -39,7 +44,9 @@ public interface PlatformHook {
       * Reason: On OSX we need to register some callbacks with the
       * OS, so we'll receive events from the system menu.
       */
-    void startupHook();
+    default void startupHook() {
+        // Do nothing
+    }
 
     /**
       * The openURL hook will be used to open an URL in the
@@ -78,14 +85,22 @@ public interface PlatformHook {
       * Tooltips are usually not system dependent, unless the
       * JVM is too dumb to provide correct names for all the keys.
       *
-      * Another reason not to use the implementation in the *nix
-      * hook are LAFs that don't understand HTML, such as the OSX LAFs.
+      * Some LAFs don't understand HTML, such as the OSX LAFs.
       *
      * @param name Tooltip text to display
      * @param sc Shortcut associated (to display accelerator between parenthesis)
      * @return Full tooltip text (name + accelerator)
       */
-    String makeTooltip(String name, Shortcut sc);
+    default String makeTooltip(String name, Shortcut sc) {
+        StringBuilder result = new StringBuilder();
+        result.append("<html>").append(name);
+        if (sc != null && !sc.getKeyText().isEmpty()) {
+            result.append(" <font size='-2'>(")
+                  .append(sc.getKeyText())
+                  .append(")</font>");
+        }
+        return result.append("&nbsp;</html>").toString();
+    }
 
     /**
      * Returns the default LAF to be used on this platform to look almost as a native application.
@@ -97,7 +112,10 @@ public interface PlatformHook {
      * Determines if the platform allows full-screen.
      * @return {@code true} if full screen is allowed, {@code false} otherwise
      */
-    boolean canFullscreen();
+    default boolean canFullscreen() {
+        return !GraphicsEnvironment.isHeadless() &&
+                GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().isFullScreenSupported();
+    }
 
     /**
      * Renames a file.
@@ -105,7 +123,9 @@ public interface PlatformHook {
      * @param to Target file
      * @return {@code true} if the file has been renamed, {@code false} otherwise
      */
-    boolean rename(File from, File to);
+    default boolean rename(File from, File to) {
+        return from.renameTo(to);
+    }
 
     /**
      * Returns a detailed OS description (at least family + version).
@@ -125,8 +145,11 @@ public interface PlatformHook {
      * @throws NoSuchAlgorithmException in case of error
      * @since 7343
      */
-    boolean setupHttpsCertificate(String entryAlias, KeyStore.TrustedCertificateEntry trustedCert)
-            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException;
+    default boolean setupHttpsCertificate(String entryAlias, KeyStore.TrustedCertificateEntry trustedCert)
+            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+        // TODO setup HTTPS certificate on Unix and OS X systems
+        return false;
+    }
 
     /**
      * Returns the platform-dependent default cache directory.

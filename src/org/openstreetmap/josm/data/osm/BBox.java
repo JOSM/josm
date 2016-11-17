@@ -11,10 +11,16 @@ import org.openstreetmap.josm.tools.Utils;
 
 public class BBox {
 
-    private double xmin = Double.POSITIVE_INFINITY;
-    private double xmax = Double.NEGATIVE_INFINITY;
-    private double ymin = Double.POSITIVE_INFINITY;
-    private double ymax = Double.NEGATIVE_INFINITY;
+    protected double xmin = Double.POSITIVE_INFINITY;
+    protected double xmax = Double.NEGATIVE_INFINITY;
+    protected double ymin = Double.POSITIVE_INFINITY;
+    protected double ymax = Double.NEGATIVE_INFINITY;
+
+    /**
+     * Constructs a new (invalid) BBox
+     */
+    protected BBox() { }
+
 
     /**
      * Constructs a new {@code BBox} defined by a single point.
@@ -241,19 +247,19 @@ public class BBox {
         return new LatLon(ymin + (ymax-ymin)/2.0, xmin + (xmax-xmin)/2.0);
     }
 
-    int getIndex(final int level) {
+    byte getIndex(final int level) {
 
-        int idx1 = QuadTiling.index(ymin, xmin, level);
+        byte idx1 = QuadTiling.index(ymin, xmin, level);
 
-        final int idx2 = QuadTiling.index(ymin, xmax, level);
+        final byte idx2 = QuadTiling.index(ymin, xmax, level);
         if (idx1 == -1) idx1 = idx2;
         else if (idx1 != idx2) return -1;
 
-        final int idx3 = QuadTiling.index(ymax, xmin, level);
+        final byte idx3 = QuadTiling.index(ymax, xmin, level);
         if (idx1 == -1) idx1 = idx3;
         else if (idx1 != idx3) return -1;
 
-        final int idx4 = QuadTiling.index(ymax, xmax, level);
+        final byte idx4 = QuadTiling.index(ymax, xmax, level);
         if (idx1 == -1) idx1 = idx4;
         else if (idx1 != idx4) return -1;
 

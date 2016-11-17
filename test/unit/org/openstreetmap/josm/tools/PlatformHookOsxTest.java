@@ -75,14 +75,6 @@ public class PlatformHookOsxTest {
     }
 
     /**
-     * Test method for {@code PlatformHookOsx#getAdditionalFonts}
-     */
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetAdditionalFonts() {
-        hook.getAdditionalFonts();
-    }
-
-    /**
      * Test method for {@code PlatformHookOsx#getDefaultCacheDirectory}
      */
     @Test
@@ -112,14 +104,6 @@ public class PlatformHookOsxTest {
     @Test
     public void testGetDefaultStyle() {
         assertEquals("com.apple.laf.AquaLookAndFeel", hook.getDefaultStyle());
-    }
-
-    /**
-     * Test method for {@code PlatformHookOsx#getInstalledFonts}
-     */
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetInstalledFonts() {
-        hook.getInstalledFonts();
     }
 
     /**

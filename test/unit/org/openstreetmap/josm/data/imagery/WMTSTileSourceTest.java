@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.junit.Ignore;
 import org.junit.Rule;
@@ -37,6 +39,8 @@ public class WMTSTileSourceTest {
     private ImageryInfo testLotsOfLayers = getImagery(TestUtils.getTestDataRoot() + "wmts/getCapabilities-lots-of-layers.xml");
     private ImageryInfo testDuplicateTags = getImagery(TestUtils.getTestDataRoot() + "wmts/bug12573-wmts-identifier.xml");
     private ImageryInfo testMissingStyleIdentifer = getImagery(TestUtils.getTestDataRoot() + "wmts/bug12573-wmts-missing-style-identifier.xml");
+    private ImageryInfo testMultipleTileMatrixForLayer = getImagery(TestUtils.getTestDataRoot() +
+            "wmts/bug13975-multiple-tile-matrices-for-one-layer-projection.xml");
 
     /**
      * Setup test.
@@ -262,6 +266,22 @@ public class WMTSTileSourceTest {
         testSource.initProjection(Main.getProjection());
     }
 
+    @Test
+    public void testForMultipleTileMatricesForOneLayerProjection() throws Exception {
+        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
+        ImageryInfo copy = new ImageryInfo(testMultipleTileMatrixForLayer);
+        Collection<DefaultLayer> defaultLayers = new ArrayList<>(1);
+        defaultLayers.add(new WMTSDefaultLayer("Mashhad_BaseMap_1", "default028mm"));
+        copy.setDefaultLayers(defaultLayers);
+        WMTSTileSource testSource = new WMTSTileSource(copy);
+        testSource.initProjection(Main.getProjection());
+        assertEquals(
+                "http://188.253.0.155:6080/arcgis/rest/services/Mashhad_BaseMap_1/MapServer/WMTS/tile/1.0.0/Mashhad_BaseMap_1"
+                        + "/default/default028mm/1/3/2",
+                testSource.getTileUrl(1, 2, 3)
+                );
+    }
+
     private void verifyTile(LatLon expected, WMTSTileSource source, int x, int y, int z) {
         LatLon ll = new LatLon(source.tileXYToLatLon(x, y, z));
         assertEquals("Latitude", expected.lat(), ll.lat(), 1e-05);
@@ -276,7 +296,6 @@ public class WMTSTileSourceTest {
         TemplatedTMSTileSource verifier = new TemplatedTMSTileSource(testImageryTMS);
         LatLon result = new LatLon(testSource.tileXYToLatLon(x, y, z));
         LatLon expected = new LatLon(verifier.tileXYToLatLon(x, y, z + zoomOffset));
-        //System.out.println(z + "/" + x + "/" + y + " - result: " + result.toDisplayString() + " osmMercator: " +  expected.toDisplayString());
         assertEquals("Longitude", LatLon.normalizeLon(expected.lon() - result.lon()), 0.0, 1e-04);
         assertEquals("Latitude", expected.lat(), result.lat(), 1e-04);
     }

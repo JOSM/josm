@@ -356,9 +356,13 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         data.addDataSetListener(new DataSetListenerAdapter(this));
         data.addDataSetListener(MultipolygonCache.getInstance());
         DataSet.addSelectionListener(this);
-        if (name != null && name.startsWith(createLayerName(""))) {
+        if (name != null && name.startsWith(createLayerName(""))
+                && Character.isDigit((name.substring(createLayerName("").length()) + "XX" /*avoid StringIndexOutOfBoundsException*/).charAt(1))) {
             while (AlphanumComparator.getInstance().compare(createLayerName(dataLayerCounter), name) < 0) {
-                dataLayerCounter.incrementAndGet();
+                final int i = dataLayerCounter.incrementAndGet();
+                if (i > 1_000_000) {
+                    break; // to avoid looping in unforeseen case
+                }
             }
         }
     }
@@ -645,12 +649,11 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
          * Thus, sorting by OsmPrimitive#getUniqueId gives the original order.
          * (Only works if the data layer has not been saved to and been loaded from an osm file before.)
          */
-        final List<Way> sortedWays = new ArrayList<>(ways);
-        sortedWays.sort(new OsmPrimitiveComparator(true, false)); // sort by OsmPrimitive#getUniqueId ascending
-        Collections.reverse(sortedWays); // sort by OsmPrimitive#getUniqueId descending
-        for (Way w : sortedWays) {
+        ways.stream()
+                .sorted(OsmPrimitiveComparator.comparingUniqueId().reversed())
+                .forEachOrdered(w -> {
             if (!w.isUsable()) {
-                continue;
+                return;
             }
             Collection<Collection<WayPoint>> trk = new ArrayList<>();
             Map<String, Object> trkAttr = new HashMap<>();
@@ -676,7 +679,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
             }
 
             gpxData.tracks.add(new ImmutableGpxTrack(trk, trkAttr));
-        }
+        });
     }
 
     private static WayPoint nodeToWayPoint(Node n) {

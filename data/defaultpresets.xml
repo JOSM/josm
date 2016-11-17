@@ -29,7 +29,7 @@
         </combo>
     </chunk>
     <chunk id="riding_surface">
-        <combo key="leisure" text="Type" values="pitch,sports_centre,stadium,track" values_context="riding" />
+        <combo key="leisure" text="Type" values="horse_riding,pitch,sports_centre,stadium,track" values_context="riding" />
         <combo key="surface" text="Surface" values="grass,sand,clay,dirt,fine_gravel,ground,mud,unpaved,compacted" />
     </chunk>
     <chunk id="highway_base">
@@ -1004,7 +1004,9 @@
                 <combo key="motor_vehicle" text="Motor vehicles" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
                 <combo key="motorcycle" text="Motorcycle" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
                 <combo key="motorcar" text="Motorcar" values="yes,official,designated,destination,delivery,permissive,private,agricultural,forestry,no" />
+                <combo key="horse" text="Horse" values="yes,official,designated,permissive,destination,delivery,private,no" />
             </optional>
+            <preset_link preset_name="Road Restrictions" />
         </item> <!-- Track -->
         <item name="Path" icon="presets/transport/way/path.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=path"
@@ -3627,6 +3629,19 @@
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
         </item> <!-- Guest House/Bed & Breakfast -->
+        <item name="Apartment" icon="presets/accommodation/apartment.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=apartment" />
+            <space />
+            <key key="tourism" value="apartment" />
+            <reference ref="name_operator" />
+            <combo key="number_of_apartments" text="Number of apartments" values="1,2,3,4,5,6,7,8,9,10" />
+            <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
+            <reference ref="wheelchair" />
+            <space />
+            <reference ref="internet_smoking" />
+            <space />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Apartment -->
         <item name="Chalet" icon="presets/accommodation/chalet.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=chalet"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:tourism=chalet"
@@ -3776,6 +3791,7 @@
             <check key="microbrewery" text="Microbrewery" />
             <check key="outdoor_seating" text="Outdoor seating" />
             <combo key="takeaway" text="Takeaway" values="yes,no,only" />
+            <combo key="delivery" text="Delivery" values="yes,no,only,Mo-Su 12:00-22:00" />
             <reference ref="oh_wheelchair" />
             <combo key="stars" text="Stars" values="1,2,3,4,5,6,7" />
             <space />
@@ -3797,6 +3813,7 @@
             <reference ref="cuisine" />
             <check key="outdoor_seating" text="Outdoor seating" />
             <combo key="takeaway" text="Takeaway" values="yes,no,only" />
+            <combo key="delivery" text="Delivery" values="yes,no,only,Mo-Su 12:00-22:00" />
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3814,7 +3831,6 @@
             <key key="amenity" value="food_court" />
             <reference ref="name_operator" />
             <check key="outdoor_seating" text="Outdoor seating" />
-            <combo key="takeaway" text="Takeaway" values="yes,no,only" />
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3839,6 +3855,7 @@
             <combo key="cuisine" text="Cuisine" values="ice_cream" />
             <check key="outdoor_seating" text="Outdoor seating" />
             <combo key="takeaway" text="Takeaway" values="yes,no,only" />
+            <combo key="delivery" text="Delivery" values="yes,no,only,Mo-Su 12:00-22:00" />
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3852,6 +3869,7 @@
             <reference ref="name_operator" />
             <check key="outdoor_seating" text="Outdoor seating" />
             <combo key="takeaway" text="Takeaway" values="yes,no,only" />
+            <combo key="delivery" text="Delivery" values="yes,no,only,Mo-Su 12:00-22:00" />
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -3872,6 +3890,7 @@
             <check key="microbrewery" text="Microbrewery" />
             <check key="outdoor_seating" text="Outdoor seating" />
             <combo key="takeaway" text="Takeaway" values="yes,no,only" />
+            <combo key="delivery" text="Delivery" values="yes,no,only,Mo-Su 12:00-22:00" />
             <reference ref="oh_wheelchair" />
             <space />
             <reference ref="internet_smoking" />
@@ -5403,7 +5422,7 @@
             <combo key="height" text="Height" values="low,half,full,5,10,15,20" values_context="height" />
             <check key="shelter" text="Shelter" />
             <check key="hide" text="Hide" text_context="hunting stand" />
-            <check key="lock" text="Lock" />
+            <check key="lockable" text="Lockable" />
         </item> <!-- Hunting Stand -->
         <separator/>
         <item name="Drinking Water" icon="presets/food/drinking_water.svg" type="node" preset_name_label="true">
@@ -5434,6 +5453,15 @@
                 <text key="description" text="Description" />
             </optional>
         </item> <!-- Water Point -->
+        <item name="Animal watering place" icon="presets/misc/watering_place.svg" type="node,closedway" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=watering_place" />
+            <space />
+            <key key="amenity" value="watering_place" />
+            <optional>
+                <text key="name" text="Name" />
+                <text key="description" text="Description" />
+            </optional>
+        </item> <!-- Animal watering place -->
         <item name="Compressed Air" icon="presets/vehicle/compressed_air.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=compressed_air"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=compressed_air"
@@ -6086,7 +6114,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:building" />
             <space />
-            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,service,train_station,barn,stable,cabin,farm_auxiliary,transportation,greenhouse,office,university,hospital,kindergarten,manufacture,warehouse,retail,shed,storage_tank,supermarket,gasometer,silo,cowshed,construction,basilica,cathedral,chapel,church,temple,mosque,synagogue,transformer_tower,public,ruins" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
+            <combo key="building" text="Building" values="yes,roof,garage,garages,industrial,school,hangar,commercial,service,train_station,barn,stable,cabin,farm_auxiliary,transportation,greenhouse,office,university,college,hospital,kindergarten,manufacture,warehouse,retail,shed,storage_tank,supermarket,gasometer,silo,cowshed,construction,basilica,cathedral,chapel,church,temple,mosque,synagogue,transformer_tower,public,ruins" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <optional>
                 <text key="name" text="Name" />
                 <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
@@ -6126,7 +6154,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:building:part"
                   zh_CN.href="http://wiki.openstreetmap.org/wiki/Zh-hans:Key:building:part" />
             <space />
-            <combo key="building:part" text="Building part" values="yes,roof,garage,garages,industrial,school,hangar,commercial,barn,farm_auxiliary,transportation,greenhouse,office,university,hospital,warehouse,retail,shed,supermarket,cowshed,construction,ruins" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
+            <combo key="building:part" text="Building part" values="yes,roof,garage,garages,industrial,school,hangar,commercial,barn,farm_auxiliary,transportation,greenhouse,office,university,college,hospital,warehouse,retail,shed,supermarket,cowshed,construction,ruins" values_context="building" default="yes" match="keyvalue!" values_searchable="true" />
             <text key="name" text="Name" />
             <combo key="building:levels" text="Levels" values="1,2,3,4,5,6,7,8,9,10,11" text_context="building" />
             <combo key="building:min_level" text="Skipped Levels" values="1,2,3,4,5,6,7,8,9,10" text_context="building" />
@@ -9973,7 +10001,7 @@
                 <key key="type" value="route"/>
                 <key key="route" value="bicycle"/>
                 <text key="name" text="Name" />
-                <combo key="network" text="Network" values="icn,ncn,rcn,lcn" />
+                <combo key="network" text="Network" values="icn,ncn,rcn,lcn" display_values="international,national,regional,local" values_sort="false" />
                 <optional>
                     <reference ref="route_hikebike_optionals" />
                 </optional>
@@ -10020,7 +10048,7 @@
                 <key key="type" value="route"/>
                 <key key="route" value="hiking"/>
                 <text key="name" text="Name" />
-                <combo key="network" text="Network" values="iwn,nwn,rwn,lwn" />
+                <combo key="network" text="Network" values="iwn,nwn,rwn,lwn" display_values="international,national,regional,local" values_sort="false"/>
                 <optional>
                     <reference ref="route_hikebike_optionals" />
                 </optional>
@@ -10036,7 +10064,7 @@
                 <key key="type" value="route"/>
                 <key key="route" value="foot"/>
                 <text key="name" text="Name" />
-                <combo key="network" text="Network" values="rwn,lwn" />
+                <combo key="network" text="Network" values="rwn,lwn" display_values="regional,local" values_sort="false" />
                 <optional>
                     <reference ref="route_hikebike_optionals" />
                 </optional>
@@ -10052,7 +10080,7 @@
                 <key key="type" value="route"/>
                 <key key="route" value="horse"/>
                 <text key="name" text="Name" />
-                <combo key="network" text="Network" values="ihn,nhn,rhn,lhn" />
+                <combo key="network" text="Network" values="ihn,nhn,rhn,lhn" display_values="international,national,regional,local" values_sort="false" />
                 <optional>
                     <reference ref="route_hikebike_optionals" />
                 </optional>

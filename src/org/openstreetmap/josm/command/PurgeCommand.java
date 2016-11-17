@@ -42,22 +42,38 @@ public class PurgeCommand extends Command {
 
     protected final ConflictCollection purgedConflicts = new ConflictCollection();
 
-    protected final DataSet ds;
-
     /**
+     * Constructs a new {@code PurgeCommand} (handles conflicts).
      * This command relies on a number of consistency conditions:
      *  - makeIncomplete must be a subset of toPurge.
-     *  - Each primitive, that is in toPurge but not in makeIncomplete, must
-     *      have all its referrers in toPurge.
-     *  - Each element of makeIncomplete must not be new and must have only
-     *      referrers that are either a relation or included in toPurge.
+     *  - Each primitive, that is in toPurge but not in makeIncomplete, must have all its referrers in toPurge.
+     *  - Each element of makeIncomplete must not be new and must have only referrers that are either a relation or included in toPurge.
      * @param layer OSM data layer
      * @param toPurge primitives to purge
      * @param makeIncomplete primitives to make incomplete
      */
     public PurgeCommand(OsmDataLayer layer, Collection<OsmPrimitive> toPurge, Collection<OsmPrimitive> makeIncomplete) {
         super(layer);
-        this.ds = layer.data;
+        init(toPurge, makeIncomplete);
+    }
+
+    /**
+     * Constructs a new {@code PurgeCommand} (does not handle conflicts).
+     * This command relies on a number of consistency conditions:
+     *  - makeIncomplete must be a subset of toPurge.
+     *  - Each primitive, that is in toPurge but not in makeIncomplete, must have all its referrers in toPurge.
+     *  - Each element of makeIncomplete must not be new and must have only referrers that are either a relation or included in toPurge.
+     * @param data OSM data set
+     * @param toPurge primitives to purge
+     * @param makeIncomplete primitives to make incomplete
+     * @since 11240
+     */
+    public PurgeCommand(DataSet data, Collection<OsmPrimitive> toPurge, Collection<OsmPrimitive> makeIncomplete) {
+        super(data);
+        init(toPurge, makeIncomplete);
+    }
+
+    private void init(Collection<OsmPrimitive> toPurge, Collection<OsmPrimitive> makeIncomplete) {
         /**
          * The topological sort is to avoid missing way nodes and missing
          * relation members when adding primitives back to the dataset on undo.
@@ -81,7 +97,7 @@ public class PurgeCommand extends Command {
 
     @Override
     public boolean executeCommand() {
-        ds.beginUpdate();
+        getAffectedDataSet().beginUpdate();
         try {
             purgedConflicts.get().clear();
             /**
@@ -104,36 +120,38 @@ public class PurgeCommand extends Command {
                     empty.setIncomplete(true);
                     osm.load(empty);
                 } else {
-                    ds.removePrimitive(osm);
-                    Conflict<?> conflict = getLayer().getConflicts().getConflictForMy(osm);
-                    if (conflict != null) {
-                        purgedConflicts.add(conflict);
-                        getLayer().getConflicts().remove(conflict);
+                    getAffectedDataSet().removePrimitive(osm);
+                    if (getLayer() != null) {
+                        Conflict<?> conflict = getLayer().getConflicts().getConflictForMy(osm);
+                        if (conflict != null) {
+                            purgedConflicts.add(conflict);
+                            getLayer().getConflicts().remove(conflict);
+                        }
                     }
                 }
             }
         } finally {
-            ds.endUpdate();
+            getAffectedDataSet().endUpdate();
         }
         return true;
     }
 
     @Override
     public void undoCommand() {
-        if (ds == null)
+        if (getAffectedDataSet() == null)
             return;
 
         for (OsmPrimitive osm : toPurge) {
             PrimitiveData data = makeIncompleteDataByPrimId.get(osm);
             if (data != null) {
-                if (ds.getPrimitiveById(osm) != osm)
+                if (getAffectedDataSet().getPrimitiveById(osm) != osm)
                     throw new AssertionError(
                             String.format("Primitive %s has been made incomplete when purging, but it cannot be found on undo.", osm));
                 osm.load(data);
             } else {
-                if (ds.getPrimitiveById(osm) != null)
+                if (getAffectedDataSet().getPrimitiveById(osm) != null)
                     throw new AssertionError(String.format("Primitive %s was removed when purging, but is still there on undo", osm));
-                ds.addPrimitive(osm);
+                getAffectedDataSet().addPrimitive(osm);
             }
         }
 
@@ -278,7 +296,7 @@ public class PurgeCommand extends Command {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), toPurge, makeIncompleteData, makeIncompleteDataByPrimId, purgedConflicts, ds);
+        return Objects.hash(super.hashCode(), toPurge, makeIncompleteData, makeIncompleteDataByPrimId, purgedConflicts, getAffectedDataSet());
     }
 
     @Override
@@ -290,7 +308,6 @@ public class PurgeCommand extends Command {
         return Objects.equals(toPurge, that.toPurge) &&
                 Objects.equals(makeIncompleteData, that.makeIncompleteData) &&
                 Objects.equals(makeIncompleteDataByPrimId, that.makeIncompleteDataByPrimId) &&
-                Objects.equals(purgedConflicts, that.purgedConflicts) &&
-                Objects.equals(ds, that.ds);
+                Objects.equals(purgedConflicts, that.purgedConflicts);
     }
 }

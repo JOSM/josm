@@ -84,7 +84,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
                 }
                 return;
             }
-            if (source == null) return;
+            if (source == null || !source.isShowing()) return;
             for (ImageryLayer layer : layers) {
                 JMenuItem layerMenu = layer.getOffsetMenuItem();
                 layerMenu.setText(layer.getName());

@@ -112,7 +112,11 @@ public abstract class AbstractCachedTileSourceLayer<T extends AbstractTMSTileSou
      * @return factory returning cached tile loaders using specified cache and TileLoaders
      */
     public static TileLoaderFactory getTileLoaderFactory(String name, Class<? extends TileLoader> klazz) {
-        return new CachedTileLoaderFactory(getCache(name), klazz);
+        CacheAccess<String, BufferedImageCacheEntry> cache = getCache(name);
+        if (cache == null) {
+            return null;
+        }
+        return new CachedTileLoaderFactory(cache, klazz);
     }
 
     /**

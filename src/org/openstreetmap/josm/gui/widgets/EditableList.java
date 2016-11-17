@@ -49,7 +49,7 @@ public class EditableList extends JPanel {
                     title,
                     title,
                     JOptionPane.QUESTION_MESSAGE);
-            if (source != null) {
+            if (source != null && !source.isEmpty()) {
                 ((DefaultListModel<String>) sourcesList.getModel()).addElement(source);
             }
             sourcesList.clearSelection();
@@ -64,7 +64,7 @@ public class EditableList extends JPanel {
             if (row == -1) {
                 if (sourcesList.getModel().getSize() == 0) {
                     String source1 = JOptionPane.showInputDialog(Main.parent, title, title, JOptionPane.QUESTION_MESSAGE);
-                    if (source1 != null) {
+                    if (source1 != null && !source1.isEmpty()) {
                         ((DefaultListModel<String>) sourcesList.getModel()).addElement(source1);
                     }
                 } else {
@@ -81,7 +81,7 @@ public class EditableList extends JPanel {
                         title,
                         JOptionPane.QUESTION_MESSAGE, null, null,
                         sourcesList.getSelectedValue());
-                if (source2 != null) {
+                if (source2 != null && !source2.isEmpty()) {
                     ((DefaultListModel<String>) sourcesList.getModel()).setElementAt(source2, row);
                 }
             }
