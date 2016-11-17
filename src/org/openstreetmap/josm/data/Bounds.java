@@ -26,6 +26,10 @@ public class Bounds {
      */
     private double minLat, minLon, maxLat, maxLon;
 
+    /**
+     * Gets the point that has both the minimal lat and lon coordinate
+     * @return The point
+     */
     public LatLon getMin() {
         return new LatLon(minLat, minLon);
     }
@@ -50,6 +54,10 @@ public class Bounds {
         return minLon;
     }
 
+    /**
+     * Gets the point that has both the maximum lat and lon coordinate
+     * @return The point
+     */
     public LatLon getMax() {
         return new LatLon(maxLat, maxLon);
     }

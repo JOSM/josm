@@ -313,8 +313,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         int indexOf(QBLevel<T> findThis) {
             QBLevel<T>[] children = getChildren();
             for (int i = 0; i < QuadTiling.TILES_PER_LEVEL; i++) {
-                if (children[i] == findThis)
+                if (children[i] == findThis) {
                     return i;
+                }
             }
             return -1;
         }
@@ -343,11 +344,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         }
 
         boolean canRemove() {
-            if (content != null && !content.isEmpty())
-                return false;
-            if (this.hasChildren())
-                return false;
-            return true;
+            return (content == null || content.isEmpty()) && !this.hasChildren();
         }
     }
 
@@ -373,10 +370,11 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
 
     @Override
     public boolean add(T n) {
-        if (n.getBBox().isValid())
+        if (n.getBBox().isValid()) {
             root.add(n);
-        else
+        } else {
             invalidBBoxPrimitives.add(n);
+        }
         size++;
         return true;
     }
@@ -387,8 +385,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             if (objects.contains(o)) {
                 continue;
             }
-            if (!this.remove(o))
+            if (!this.remove(o)) {
                 return false;
+            }
         }
         return true;
     }
@@ -414,8 +413,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     @Override
     public boolean containsAll(Collection<?> objects) {
         for (Object o : objects) {
-            if (!this.contains(o))
+            if (!this.contains(o)) {
                 return false;
+            }
         }
         return true;
     }
@@ -427,10 +427,12 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         searchCache = null; // Search cache might point to one of removed buckets
         QBLevel<T> bucket = root.findBucket(t.getBBox());
         boolean removed = bucket.removeContent(t);
-        if (!removed)
+        if (!removed) {
             removed = invalidBBoxPrimitives.remove(o);
-        if (removed)
+        }
+        if (removed) {
             size--;
+        }
         return removed;
     }
 
@@ -438,8 +440,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     public boolean contains(Object o) {
         @SuppressWarnings("unchecked")
         T t = (T) o;
-        if (!t.getBBox().isValid())
+        if (!t.getBBox().isValid()) {
             return invalidBBoxPrimitives.contains(o);
+        }
         QBLevel<T> bucket = root.findBucket(t.getBBox());
         return bucket != null && bucket.content != null && bucket.content.contains(t);
     }
@@ -520,8 +523,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
 
         @Override
         public T next() {
-            if (fromInvalidBBoxPrimitives)
+            if (fromInvalidBBoxPrimitives) {
                 return invalidBBoxIterator.next();
+            }
             T ret = peek();
             if (ret == null)
                 throw new NoSuchElementException();

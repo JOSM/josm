@@ -51,17 +51,19 @@ public class BBoxTest {
         assertTrue(b2.bounds(b1));
         assertTrue(b1.bounds(b2));
 
-        // invalid latlon values
-        LatLon invalid1 = new LatLon(-190, 340);
-        BBox b3 = new BBox(invalid1, latLon1);
-        BBox b4 = new BBox(latLon1, invalid1);
-        BBox b5 = new BBox(invalid1, invalid1);
-        // what should be the result?
+        // outside of world latlon values
+        LatLon outOfWorld = new LatLon(-190, 340);
+        BBox b3 = new BBox(outOfWorld, latLon1);
+        BBox b4 = new BBox(latLon1, outOfWorld);
+        BBox b5 = new BBox(outOfWorld, outOfWorld);
+
         assertTrue(b3.isValid());
         assertTrue(b4.isValid());
         assertTrue(b3.bounds(latLon1));
         assertTrue(b4.bounds(latLon1));
         assertTrue(b5.isValid());
+        assertFalse(b3.isInWorld());
+        assertFalse(b4.isInWorld());
         assertFalse(b5.isInWorld());
     }
 
