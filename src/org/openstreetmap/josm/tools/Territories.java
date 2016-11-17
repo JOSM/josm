@@ -19,7 +19,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
-import org.openstreetmap.josm.tools.GeoPropertyIndex.GeoProperty;
 
 /**
  * Look up territories ISO3166 codes at a certain place.
