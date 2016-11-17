@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import org.fest.reflect.core.Reflection;
 import org.fest.reflect.reference.TypeRef;
@@ -174,5 +175,80 @@ public class QuadBucketsTest {
             Assert.assertEquals(count, qbWays.size());
         }
         Assert.assertEquals(0, qbWays.size());
+
+    }
+
+    /**
+     *  Add more data so that quad buckets tree has a few leaves
+     */
+    @Test
+    public void testSplitsWithIncompleteData() {
+        DataSet ds = new DataSet();
+        long nodeId = 1;
+        long wayId = 1;
+        final int NUM_COMPLETE_WAYS = 300;
+        final int NUM_INCOMPLETE_WAYS = 10;
+        final int NUM_NODES_PER_WAY = 20;
+        final int NUM_INCOMPLETE_NODES = 10;
+
+        // force splits in quad buckets
+        Random random = new Random(31);
+        for (int i = 0; i < NUM_COMPLETE_WAYS; i++) {
+            Way w = new Way(wayId++);
+            List<Node> nodes = new ArrayList<>();
+            double center = random.nextDouble() * 10;
+            for (int j = 0; j < NUM_NODES_PER_WAY; j++) {
+                Node n = new Node(nodeId++);
+                double lat = random.nextDouble() * 0.001;
+                double lon = random.nextDouble() * 0.001;
+                n.setCoor(new LatLon(center + lat, center + lon));
+                nodes.add(n);
+                ds.addPrimitive(n);
+            }
+            w.setNodes(nodes);
+            ds.addPrimitive(w);
+        }
+        Assert.assertEquals(NUM_COMPLETE_WAYS, ds.getWays().size());
+        Assert.assertEquals(NUM_COMPLETE_WAYS * NUM_NODES_PER_WAY, ds.getNodes().size());
+
+        // add some incomplete nodes
+        List<Node> incompleteNodes = new ArrayList<>();
+        for (int i = 0; i < NUM_INCOMPLETE_NODES; i++) {
+            Node n = new Node(nodeId++);
+            incompleteNodes.add(n);
+            n.setIncomplete(true);
+            ds.addPrimitive(n);
+        }
+        Assert.assertEquals(NUM_COMPLETE_WAYS * NUM_NODES_PER_WAY + NUM_INCOMPLETE_NODES, ds.getNodes().size());
+        // add some incomplete ways
+        List<Way> incompleteWays = new ArrayList<>();
+        for (int i = 0; i < NUM_INCOMPLETE_WAYS; i++) {
+            Way w = new Way(wayId++);
+            incompleteWays.add(w);
+            w.setIncomplete(true);
+            ds.addPrimitive(w);
+        }
+        Assert.assertEquals(NUM_COMPLETE_WAYS + NUM_INCOMPLETE_WAYS, ds.getWays().size());
+
+        BBox planet = new BBox(-180, -90, 180, 90);
+        // incomplete ways should not be found with search
+        Assert.assertEquals(NUM_COMPLETE_WAYS, ds.searchWays(planet).size());
+        // incomplete ways are only retrieved via iterator or object reference
+        for (Way w : incompleteWays) {
+            Assert.assertTrue(ds.getWays().contains(w));
+        }
+
+        QuadBuckets<Way> qb = new QuadBuckets<>();
+        qb.addAll(ds.getWays());
+        int count = qb.size();
+        Assert.assertEquals(count, ds.getWays().size());
+        Iterator<Way> iter = qb.iterator();
+        while (iter.hasNext()) {
+            iter.next();
+            iter.remove();
+            count--;
+            Assert.assertEquals(count, qb.size());
+        }
+        Assert.assertEquals(0, qb.size());
     }
 }

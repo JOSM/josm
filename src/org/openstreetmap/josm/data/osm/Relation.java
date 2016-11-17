@@ -446,50 +446,28 @@ public final class Relation extends OsmPrimitive implements IRelation {
 
     @Override
     public BBox getBBox() {
-        RelationMember[] members = this.members;
+        if (getDataSet() != null && bbox != null)
+            return new BBox(bbox); // use cached value
 
-        if (members.length == 0)
-            return new BBox(0, 0, 0, 0);
-        if (getDataSet() == null)
-            return calculateBBox(new HashSet<PrimitiveId>());
-        else {
-            if (bbox == null) {
-                bbox = calculateBBox(new HashSet<PrimitiveId>());
-            }
-            if (bbox == null)
-                return new BBox(0, 0, 0, 0); // No real members
-            else
-                return new BBox(bbox);
-        }
+        BBox box = new BBox();
+        addToBBox(box, new HashSet<PrimitiveId>());
+        if (getDataSet() != null)
+            bbox = box; // set cache
+        return new BBox(box);
     }
 
-    private BBox calculateBBox(Set<PrimitiveId> visitedRelations) {
-        if (visitedRelations.contains(this))
-            return null;
-        visitedRelations.add(this);
-
-        RelationMember[] members = this.members;
-        if (members.length == 0)
-            return null;
-        else {
-            BBox result = null;
-            for (RelationMember rm:members) {
-                BBox box = rm.isRelation() ? rm.getRelation().calculateBBox(visitedRelations) : rm.getMember().getBBox();
-                if (box != null) {
-                    if (result == null) {
-                        result = box;
-                    } else {
-                        result.add(box);
-                    }
-                }
-            }
-            return result;
+    @Override
+    protected void addToBBox(BBox box, Set<PrimitiveId> visited) {
+        for (RelationMember rm : members) {
+            if (visited.add(rm.getMember()))
+                rm.getMember().addToBBox(box, visited);
         }
     }
 
     @Override
     public void updatePosition() {
-        bbox = calculateBBox(new HashSet<PrimitiveId>());
+        bbox = null; // make sure that it is recalculated
+        bbox = getBBox();
     }
 
     @Override

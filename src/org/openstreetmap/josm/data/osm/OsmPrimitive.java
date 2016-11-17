@@ -1416,4 +1416,11 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     public boolean isMultipolygon() {
         return false;
     }
+
+    /**
+     * If necessary, extend the bbox to contain this primitive
+     * @param box a bbox instance
+     * @param visited a set of visited members  or null
+     */
+    protected abstract void addToBBox(BBox box, Set<PrimitiveId> visited);
 }

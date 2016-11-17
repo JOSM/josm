@@ -503,7 +503,9 @@ public final class DataSet implements Data, ProjectionChangeListener {
                 throw new DataIntegrityProblemException(
                         tr("Unable to add primitive {0} to the dataset because it is already included", primitive.toString()));
 
-            primitive.updatePosition(); // Set cached bbox for way and relation (required for reindexWay and reinexRelation to work properly)
+            allPrimitives.add(primitive);
+            primitive.setDataset(this);
+            primitive.updatePosition(); // Set cached bbox for way and relation (required for reindexWay and reindexRelation to work properly)
             boolean success = false;
             if (primitive instanceof Node) {
                 success = nodes.add((Node) primitive);
@@ -514,8 +516,6 @@ public final class DataSet implements Data, ProjectionChangeListener {
             }
             if (!success)
                 throw new RuntimeException("failed to add primitive: "+primitive);
-            allPrimitives.add(primitive);
-            primitive.setDataset(this);
             firePrimitivesAdded(Collections.singletonList(primitive), false);
         } finally {
             endUpdate();

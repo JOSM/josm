@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -166,11 +167,6 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         }
 
         boolean matches(final T o, final BBox searchBbox) {
-            if (o instanceof Node) {
-                final LatLon latLon = ((Node) o).getCoor();
-                // node without coords -> bbox[0,0,0,0]
-                return searchBbox.bounds(latLon != null ? latLon : LatLon.ZERO);
-            }
             return o.getBBox().intersects(searchBbox);
         }
 
@@ -358,6 +354,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     private QBLevel<T> root;
     private QBLevel<T> searchCache;
     private int size;
+    private Collection<T> invalidBBoxPrimitives;
 
     /**
      * Constructs a new {@code QuadBuckets}.
@@ -369,13 +366,17 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     @Override
     public final void clear() {
         root = new QBLevel<>();
+        invalidBBoxPrimitives = new LinkedHashSet<>();
         searchCache = null;
         size = 0;
     }
 
     @Override
     public boolean add(T n) {
-        root.add(n);
+        if (n.getBBox().isValid())
+            root.add(n);
+        else
+            invalidBBoxPrimitives.add(n);
         size++;
         return true;
     }
@@ -425,17 +426,20 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         T t = (T) o;
         searchCache = null; // Search cache might point to one of removed buckets
         QBLevel<T> bucket = root.findBucket(t.getBBox());
-        if (bucket.removeContent(t)) {
+        boolean removed = bucket.removeContent(t);
+        if (!removed)
+            removed = invalidBBoxPrimitives.remove(o);
+        if (removed)
             size--;
-            return true;
-        } else
-            return false;
+        return removed;
     }
 
     @Override
     public boolean contains(Object o) {
         @SuppressWarnings("unchecked")
         T t = (T) o;
+        if (!t.getBBox().isValid())
+            return invalidBBoxPrimitives.contains(o);
         QBLevel<T> bucket = root.findBucket(t.getBBox());
         return bucket != null && bucket.content != null && bucket.content.contains(t);
     }
@@ -465,6 +469,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     class QuadBucketIterator implements Iterator<T> {
         private QBLevel<T> currentNode;
         private int contentIndex;
+        private Iterator<T> invalidBBoxIterator = invalidBBoxPrimitives.iterator();
+        boolean fromInvalidBBoxPrimitives;
         QuadBuckets<T> qb;
 
         final QBLevel<T> nextContentNode(QBLevel<T> q) {
@@ -490,8 +496,10 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
 
         @Override
         public boolean hasNext() {
-            if (this.peek() == null)
-                return false;
+            if (this.peek() == null) {
+                fromInvalidBBoxPrimitives = true;
+                return invalidBBoxIterator.hasNext();
+            }
             return true;
         }
 
@@ -512,6 +520,8 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
 
         @Override
         public T next() {
+            if (fromInvalidBBoxPrimitives)
+                return invalidBBoxIterator.next();
             T ret = peek();
             if (ret == null)
                 throw new NoSuchElementException();
@@ -521,14 +531,20 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
 
         @Override
         public void remove() {
-            // two uses
-            // 1. Back up to the thing we just returned
-            // 2. move the index back since we removed
-            //    an element
-            contentIndex--;
-            T object = peek();
-            if (currentNode.removeContent(object))
+            if (fromInvalidBBoxPrimitives) {
+                invalidBBoxIterator.remove();
                 qb.size--;
+            } else {
+                // two uses
+                // 1. Back up to the thing we just returned
+                // 2. move the index back since we removed
+                //    an element
+                contentIndex--;
+                T object = peek();
+                if (currentNode.removeContent(object))
+                    qb.size--;
+
+            }
         }
     }
 
@@ -554,6 +570,10 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
      */
     public List<T> search(BBox searchBbox) {
         List<T> ret = new ArrayList<>();
+        if (!searchBbox.isValid()) {
+            return ret;
+        }
+
         // Doing this cuts down search cost on a real-life data set by about 25%
         if (searchCache == null) {
             searchCache = root;

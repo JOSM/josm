@@ -75,6 +75,15 @@ public class RelationTest {
         w1.addNode(n3);
         Assert.assertEquals(w1.getBBox(), r1.getBBox());
         Assert.assertEquals(w1.getBBox(), r2.getBBox());
+
+        // create incomplete node and add it to the relation, this must not change the bbox
+        BBox oldBBox = r2.getBBox();
+        Node n4 = new Node();
+        n4.setIncomplete(true);
+        ds.addPrimitive(n4);
+        r2.addMember(new RelationMember("", n4));
+
+        Assert.assertEquals(oldBBox, r2.getBBox());
     }
 
     @Test
