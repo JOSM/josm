@@ -4,10 +4,8 @@ package org.openstreetmap.josm.actions;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.geom.Area;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -42,7 +40,7 @@ public final class CreateCircleActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform();
+    public JOSMTestRules test = new JOSMTestRules().platform().projection().commands();
 
     /**
      * FIXME: Conveniance method to prevent Selection Change events.
@@ -151,31 +149,34 @@ public final class CreateCircleActionTest {
         addSelected(n3, dataSet);
 
         // Mock left/right hand traffic database
-        Field leftHandTrafficPolygons = RightAndLefthandTraffic.class
-            .getDeclaredField("leftHandTrafficPolygons");
         Field rlCache = RightAndLefthandTraffic.class.getDeclaredField("rlCache");
-        Utils.setObjectsAccessible(leftHandTrafficPolygons, rlCache);
-        leftHandTrafficPolygons.set(null, new ArrayList<Area>());
+        Utils.setObjectsAccessible(rlCache);
+        Object origRlCache = rlCache.get(null);
         rlCache.set(null, new GeoPropertyIndex<>(new ConstantTrafficHand(true), 24));
 
-        CreateCircleAction action = new CreateCircleAction();
-        action.setEnabled(true);
         try {
-            Main.getLayerManager().addLayer(layer);
-            action.actionPerformed(null);
-        } finally {
-            // Ensure we clean the place before leaving, even if test fails.
-            Main.getLayerManager().removeLayer(layer);
-        }
+            CreateCircleAction action = new CreateCircleAction();
+            action.setEnabled(true);
+            try {
+                Main.getLayerManager().addLayer(layer);
+                action.actionPerformed(null);
+            } finally {
+                // Ensure we clean the place before leaving, even if test fails.
+                Main.getLayerManager().removeLayer(layer);
+            }
 
-        // Expected result: Dataset contain one closed way, clockwise
-        Collection<Way> resultingWays = dataSet.getWays();
-        assertSame(String.format("Expect one way after perform action. %d found", resultingWays.size()),
-                   resultingWays.size(), 1);
-        Way resultingWay = resultingWays.iterator().next();
-        assertTrue("Resulting way is not closed",
-                   resultingWay.isClosed());
-        assertTrue("Found anti-clockwise way while traffic is left hand.",
-                   Geometry.isClockwise(resultingWay));
+            // Expected result: Dataset contain one closed way, clockwise
+            Collection<Way> resultingWays = dataSet.getWays();
+            assertSame(String.format("Expect one way after perform action. %d found", resultingWays.size()),
+                       resultingWays.size(), 1);
+            Way resultingWay = resultingWays.iterator().next();
+            assertTrue("Resulting way is not closed",
+                       resultingWay.isClosed());
+            assertTrue("Found anti-clockwise way while traffic is left hand.",
+                       Geometry.isClockwise(resultingWay));
+        } finally {
+            // Restore left/right hand traffic database
+            rlCache.set(null, origRlCache);
+        }
     }
 }

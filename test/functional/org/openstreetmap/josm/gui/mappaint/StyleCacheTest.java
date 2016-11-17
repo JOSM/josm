@@ -125,7 +125,7 @@ public class StyleCacheTest {
                 counter.put(sel, k + 1);
             }
         }
-        int EXPECTED_NO_PRIMITIVES = 4298; // needs to be updated if data file or bbox changes
+        int EXPECTED_NO_PRIMITIVES = 4294; // needs to be updated if data file or bbox changes
         Assert.assertEquals(
                 "The number of rendered primitives should be " + EXPECTED_NO_PRIMITIVES,
                 EXPECTED_NO_PRIMITIVES, noPrimitives);

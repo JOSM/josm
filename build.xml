@@ -229,6 +229,7 @@ Build-Date: ${build.tstamp}
             <exclude name="org/apache/commons/compress/compressors/lzma/**"/>
             <exclude name="org/apache/commons/compress/compressors/xz/**"/>
             <exclude name="org/apache/commons/compress/compressors/CompressorStreamFactory.java"/>
+            <exclude name="org/apache/commons/compress/compressors/CompressorStreamProvider.java"/>
             <exclude name="org/apache/commons/compress/compressors/CompressorException.java"/>
             <exclude name="org/apache/commons/compress/compressors/FileNameUtil.java"/>
             <exclude name="org/apache/commons/compress/compressors/deflate/**"/>
