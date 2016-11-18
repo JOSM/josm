@@ -15,6 +15,7 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapStatus.BackgroundProgressMonitor;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 
@@ -51,10 +52,16 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 
     private boolean cancelable;
 
-    private static void doInEDT(Runnable runnable) {
+    private void doInEDT(Runnable runnable) {
         // This must be invoke later even if current thread is EDT because inside there is dialog.setVisible
         // which freeze current code flow until modal dialog is closed
-        SwingUtilities.invokeLater(runnable);
+        SwingUtilities.invokeLater(() -> {
+            try {
+                runnable.run();
+            } catch (RuntimeException e) {
+                throw BugReport.intercept(e).put("monitor", this);
+            }
+        });
     }
 
     private void setDialogVisible(boolean visible) {
@@ -171,8 +178,9 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
             }
             if (dialogParent != null && dialog == null) {
                 dialog = new PleaseWaitDialog(dialogParent);
-            } else
+            } else {
                 throw new ProgressException("PleaseWaitDialog parent must be set");
+            }
 
             if (windowTitle != null) {
                 dialog.setTitle(windowTitle);
@@ -324,5 +332,13 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
             return Main.parent;
         else
             return parent;
+    }
+
+    @Override
+    public String toString() {
+        return "PleaseWaitProgressMonitor [currentProgressValue=" + currentProgressValue + ", customText=" + customText
+                + ", title=" + title + ", indeterminate=" + indeterminate + ", isInBackground=" + isInBackground
+                + ", windowTitle=" + windowTitle + ", taskId=" + taskId + ", cancelable=" + cancelable + ", state="
+                + state + "]";
     }
 }
