@@ -2409,7 +2409,7 @@
             <combo key="mooring" text="Mooring" values="yes,no,private,commercial" />
             <check key="floating" text="Floating" />
         </item> <!-- Pier -->
-        <item name="Lock Gate" icon="presets/nautical/lock_gate.svg" type="node" preset_name_label="true">
+        <item name="Lock Gate" icon="presets/nautical/lock_gate.svg" type="node,way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=lock_gate"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:waterway=lock_gate"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=lock_gate"

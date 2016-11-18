@@ -4204,6 +4204,12 @@ way[waterway=canal] {
     width: 2;
     color: water#0000ff;
 }
+way[waterway=river][lock=yes],
+way[waterway=canal][lock=yes] {
+    casing-width: 2;
+    casing-color: lock#303030;
+    casing-dashes: 5,20;
+}
 way[waterway=stream] {
     width: 1;
     color: stream#6600cc;
@@ -4227,6 +4233,10 @@ area[waterway=dock] {
 node[waterway=dock] {
     icon-image: "presets/nautical/boatyard.svg";
     set icon_z17;
+}
+way[waterway=lock_gate] {
+    width: 3;
+    color: lock_gate#303030;
 }
 node[waterway=lock_gate] {
     icon-image: "presets/nautical/lock_gate.svg";
