@@ -5,22 +5,16 @@ import java.awt.Component;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.TransferHandler.TransferSupport;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.OpenLocationAction;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.data.osm.PrimitiveId;
-import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.io.DownloadPrimitivesWithReferrersTask;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
@@ -51,11 +45,13 @@ public class OsmLinkPaster extends AbstractOsmDataPaster {
         }
 
         String transferData = (String) support.getTransferable().getTransferData(df);
-        List<PrimitiveId> ids = parseIds(transferData);
-
-        if (!ids.isEmpty()) {
-            Main.worker.submit(new DownloadPrimitivesWithReferrersTask(layer == null,
-                    ids, PASTE_REFERRERS.get(), PASTE_REFERRERS.get(), null, null));
+        OpenLocationAction action = new OpenLocationAction() {
+            @Override
+            protected void warnNoSuitableTasks(String url) {
+                // ignore this.
+            }
+        };
+        if (action.openUrl(transferData)) {
             return true;
         }
 
@@ -80,35 +76,5 @@ public class OsmLinkPaster extends AbstractOsmDataPaster {
         } else {
             return new LatLon(Double.parseDouble(matcher.group("lat")), Double.parseDouble(matcher.group("lon")));
         }
-    }
-
-    static List<PrimitiveId> parseIds(String transferData) {
-        Matcher matcher = Pattern
-                .compile(OSM_SERVER + "(?<type>node|way|relation)/(?<id>\\d+)(\\/.*)?$")
-                .matcher(transferData);
-
-        if (!matcher.matches()) {
-            return Collections.emptyList();
-        }
-
-        OsmPrimitiveType type;
-        switch (matcher.group("type")) {
-        case "way":
-            type = OsmPrimitiveType.WAY;
-            break;
-
-        case "node":
-            type = OsmPrimitiveType.NODE;
-            break;
-
-        case "relation":
-            type = OsmPrimitiveType.RELATION;
-            break;
-
-        default:
-            throw new AssertionError();
-        }
-
-        return Collections.singletonList(new SimplePrimitiveId(Long.parseLong(matcher.group("id")), type));
     }
 }

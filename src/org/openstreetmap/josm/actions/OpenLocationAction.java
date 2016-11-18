@@ -4,7 +4,6 @@ package org.openstreetmap.josm.actions;
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -14,7 +13,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
@@ -37,10 +38,12 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmUrlTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadSessionTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -50,7 +53,10 @@ import org.openstreetmap.josm.tools.Utils;
  * @author imi
  */
 public class OpenLocationAction extends JosmAction {
-
+    /**
+     * true if the URL needs to be opened in a new layer, false otherwise
+     */
+    private static final BooleanProperty USE_NEW_LAYER = new BooleanProperty("download.newlayer", true);
     protected final transient List<Class<? extends DownloadTask>> downloadTasks;
 
     /**
@@ -102,25 +108,21 @@ public class OpenLocationAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
-        JCheckBox layer = new JCheckBox(tr("Separate Layer"));
-        layer.setToolTipText(tr("Select if the data should be downloaded into a new layer"));
-        layer.setSelected(Main.pref.getBoolean("download.newlayer"));
         JPanel all = new JPanel(new GridBagLayout());
-        GridBagConstraints gc = new GridBagConstraints();
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.weightx = 1.0;
-        gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        all.add(new JLabel(tr("Enter URL to download:")), gc);
+
+        // download URL selection
+        all.add(new JLabel(tr("Enter URL to download:")), GBC.eol());
         HistoryComboBox uploadAddresses = new HistoryComboBox();
         uploadAddresses.setToolTipText(tr("Enter an URL from where data should be downloaded"));
         restoreUploadAddressHistory(uploadAddresses);
-        gc.gridy = 1;
-        all.add(uploadAddresses, gc);
-        gc.gridy = 2;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.weighty = 1.0;
-        all.add(layer, gc);
+        all.add(uploadAddresses, GBC.eop().fill(GBC.BOTH));
+
+        // use separate layer
+        JCheckBox layer = new JCheckBox(tr("Separate Layer"));
+        layer.setToolTipText(tr("Select if the data should be downloaded into a new layer"));
+        layer.setSelected(USE_NEW_LAYER.get());
+        all.add(layer, GBC.eop().fill(GBC.BOTH));
+
         ExtendedDialog dialog = new ExtendedDialog(Main.parent,
                 tr("Download Location"),
                 new String[] {tr("Download URL"), tr("Cancel")}
@@ -133,9 +135,11 @@ public class OpenLocationAction extends JosmAction {
         });
         dialog.configureContextsensitiveHelp("/Action/OpenLocation", true /* show help button */);
         dialog.showDialog();
-        if (dialog.getValue() != 1) return;
-        remindUploadAddressHistory(uploadAddresses);
-        openUrl(layer.isSelected(), Utils.strip(uploadAddresses.getText()));
+        if (dialog.getValue() == 1) {
+            USE_NEW_LAYER.put(layer.isSelected());
+            remindUploadAddressHistory(uploadAddresses);
+            openUrl(Utils.strip(uploadAddresses.getText()));
+        }
     }
 
     /**
@@ -146,20 +150,19 @@ public class OpenLocationAction extends JosmAction {
      * @since 5691
      */
     public Collection<DownloadTask> findDownloadTasks(final String url, boolean isRemotecontrol) {
-        List<DownloadTask> result = new ArrayList<>();
-        for (Class<? extends DownloadTask> taskClass : downloadTasks) {
-            if (taskClass != null) {
-                try {
-                    DownloadTask task = taskClass.getConstructor().newInstance();
-                    if (task.acceptsUrl(url, isRemotecontrol)) {
-                        result.add(task);
+        return downloadTasks.stream()
+                .filter(Objects::nonNull)
+                .map(taskClass -> {
+                    try {
+                        return taskClass.getConstructor().newInstance();
+                    } catch (ReflectiveOperationException e) {
+                        Main.error(e);
+                        return null;
                     }
-                } catch (ReflectiveOperationException e) {
-                    Main.error(e);
-                }
-            }
-        }
-        return result;
+                })
+                .filter(Objects::nonNull)
+                .filter(task -> task.acceptsUrl(url, isRemotecontrol))
+                .collect(Collectors.toList());
     }
 
     /**
@@ -188,14 +191,27 @@ public class OpenLocationAction extends JosmAction {
      * @param newLayer true if the URL needs to be opened in a new layer, false otherwise
      * @param url The URL to open
      */
-    public void openUrl(boolean newLayer, final String url) {
+    public void openUrl(boolean newLayer, String url) {
+        realOpenUrl(newLayer, url);
+    }
+
+    /**
+     * Open the given URL. This class checks the {@link #USE_NEW_LAYER} preference to check if a new layer should be used.
+     * @param url The URL to open
+     * @return <code>true</code> if loading the task was started successfully.
+     */
+    public boolean openUrl(String url) {
+        return realOpenUrl(USE_NEW_LAYER.get(), url);
+    }
+
+    private boolean realOpenUrl(boolean newLayer, String url) {
         Collection<DownloadTask> tasks = findDownloadTasks(url, false);
 
         if (tasks.size() > 1) {
             tasks = askWhichTasksToLoad(tasks);
         } else if (tasks.isEmpty()) {
             warnNoSuitableTasks(url);
-            return;
+            return false;
         }
 
         PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download Data"));
@@ -204,10 +220,12 @@ public class OpenLocationAction extends JosmAction {
             try {
                 Future<?> future = task.loadUrl(newLayer, url, monitor);
                 Main.worker.submit(new PostDownloadHandler(task, future));
+                return true;
             } catch (IllegalArgumentException e) {
                 Main.error(e);
             }
         }
+        return false;
     }
 
     /**
@@ -234,7 +252,7 @@ public class OpenLocationAction extends JosmAction {
      * Displays an error message dialog that no suitable tasks have been found for the given url.
      * @param url the given url
      */
-    void warnNoSuitableTasks(final String url) {
+    protected void warnNoSuitableTasks(final String url) {
         final String details = findSummaryDocumentation();    // Explain what patterns are supported
         HelpAwareOptionPane.showMessageDialogInEDT(Main.parent, "<html><p>" + tr(
                 "Cannot open URL ''{0}''<br>The following download tasks accept the URL patterns shown:<br>{1}",
