@@ -15,12 +15,18 @@ import javax.swing.SpinnerNumberModel;
 import org.openstreetmap.josm.data.imagery.WMSCachedTileLoaderJob;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * {@code JPanel} giving access to WMS settings.
  * @since 5465
  */
 public class WMSSettingsPanel extends JPanel {
+
+    private static final int IMAGE_SIZE_MIN = 1;
+    private static final int IMAGE_SIZE_MAX = 4096;
+    private static final int THREADS_MIN = 1;
+    private static final int THREADS_MAX = 30;
 
     // WMS Settings
     private final JCheckBox autozoomActive;
@@ -42,7 +48,8 @@ public class WMSSettingsPanel extends JPanel {
         // Simultaneous connections
         add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
         JLabel labelSimConn = new JLabel(tr("Simultaneous connections:"));
-        spinSimConn = new JSpinner(new SpinnerNumberModel(WMSCachedTileLoaderJob.THREAD_LIMIT.get().intValue(), 1, 30, 1));
+        int threadLimitValue = Utils.clamp(WMSCachedTileLoaderJob.THREAD_LIMIT.get(), THREADS_MIN, THREADS_MAX);
+        spinSimConn = new JSpinner(new SpinnerNumberModel(threadLimitValue, THREADS_MIN, THREADS_MAX, 1));
         labelSimConn.setLabelFor(spinSimConn);
         add(labelSimConn, GBC.std());
         add(GBC.glue(5, 0), GBC.std());
@@ -50,7 +57,8 @@ public class WMSSettingsPanel extends JPanel {
 
         // Tile size
         JLabel labelTileSize = new JLabel(tr("Tile size:"));
-        tileSize = new JSpinner(new SpinnerNumberModel(WMSLayer.PROP_IMAGE_SIZE.get().intValue(), 1, 4096, 128));
+        int tileSizeValue = Utils.clamp(WMSLayer.PROP_IMAGE_SIZE.get(), IMAGE_SIZE_MIN, IMAGE_SIZE_MAX);
+        tileSize = new JSpinner(new SpinnerNumberModel(tileSizeValue, IMAGE_SIZE_MIN, IMAGE_SIZE_MAX, 128));
         labelTileSize.setLabelFor(tileSize);
         add(labelTileSize, GBC.std());
         add(GBC.glue(5, 0), GBC.std());
