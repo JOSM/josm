@@ -198,7 +198,8 @@ public class OpenLocationAction extends JosmAction {
     /**
      * Open the given URL. This class checks the {@link #USE_NEW_LAYER} preference to check if a new layer should be used.
      * @param url The URL to open
-     * @return <code>true</code> if loading the task was started successfully.
+     * @return <code>true</code> if at least one task was started successfully.
+     * @since 11279
      */
     public boolean openUrl(String url) {
         return realOpenUrl(USE_NEW_LAYER.get(), url);
@@ -216,16 +217,17 @@ public class OpenLocationAction extends JosmAction {
 
         PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download Data"));
 
+        boolean hadAnySuccess = false;
         for (final DownloadTask task : tasks) {
             try {
                 Future<?> future = task.loadUrl(newLayer, url, monitor);
                 Main.worker.submit(new PostDownloadHandler(task, future));
-                return true;
+                hadAnySuccess = true;
             } catch (IllegalArgumentException e) {
                 Main.error(e);
             }
         }
-        return false;
+        return hadAnySuccess;
     }
 
     /**
