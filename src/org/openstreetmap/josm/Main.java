@@ -504,6 +504,9 @@ public abstract class Main {
         registerActionShortcut(menu.help, Shortcut.registerShortcut("system:help", tr("Help"),
                 KeyEvent.VK_F1, Shortcut.DIRECT));
 
+        // This needs to be done before RightAndLefthandTraffic::initialize is called
+        new InitializationTask(tr("Initializing internal boundaries data"), Territories::initialize).call();
+
         // contains several initialization tasks to be executed (in parallel) by a ExecutorService
         List<Callable<Void>> tasks = new ArrayList<>();
 
@@ -517,8 +520,6 @@ public abstract class Main {
                     Main.warn(getErrorMessage(Utils.getRootCause(e)));
                 }
             }));
-
-        tasks.add(new InitializationTask(tr("Initializing internal boundaries data"), Territories::initialize));
 
         tasks.add(new InitializationTask(tr("Initializing internal traffic data"), RightAndLefthandTraffic::initialize));
 
