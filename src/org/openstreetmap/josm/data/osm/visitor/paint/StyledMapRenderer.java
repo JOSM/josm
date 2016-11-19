@@ -755,6 +755,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         return ap.getPerimeter() * extent * scale < threshold * ap.getArea();
     }
 
+    /**
+     * Draw a text onto a node
+     * @param n The node to draw the text on
+     * @param bs The text and it's alignment.
+     */
     public void drawBoxText(Node n, BoxTextElement bs) {
         if (!isShowNames() || bs == null)
             return;
