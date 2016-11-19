@@ -18,6 +18,9 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * This is the style that defines how an area is filled.
+ */
 public class AreaElement extends StyleElement {
 
     /**
@@ -25,9 +28,31 @@ public class AreaElement extends StyleElement {
      * an arbitrary color value sampled from the fillImage
      */
     public Color color;
+
+    /**
+     * An image to cover this area. May be null to disable this feature.
+     */
     public MapImage fillImage;
+
+    /**
+     * The text that should be written on this area.
+     */
     public TextLabel text;
+
+    /**
+     * Fill the area only partially from the borders
+     * <p>
+     * Public access is discouraged.
+     * @see StyledMapRenderer#drawArea(Way, Color, MapImage, Float, Float, boolean, TextLabel)
+     */
     public Float extent;
+
+    /**
+     * Areas smaller than this are filled no matter what value {@link #extent} has.
+     * <p>
+     * Public access is discouraged.
+     * @see StyledMapRenderer#drawArea(Way, Color, MapImage, Float, Float, boolean, TextLabel)
+     */
     public Float extentThreshold;
 
     protected AreaElement(Cascade c, Color color, MapImage fillImage, Float extent, Float extentThreshold, TextLabel text) {
@@ -40,6 +65,11 @@ public class AreaElement extends StyleElement {
         this.text = text;
     }
 
+    /**
+     * Create a new {@link AreaElement}
+     * @param env The current style definitions
+     * @return The area element or <code>null</code> if the area should not be filled.
+     */
     public static AreaElement create(final Environment env) {
         final Cascade c = env.mc.getCascade(env.layer);
         MapImage fillImage = null;
