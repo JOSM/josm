@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -148,7 +149,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         // store the history of comments
         hcbUploadComment.addCurrentItemToHistory();
         Main.pref.putCollection(HISTORY_KEY, hcbUploadComment.getHistory());
-        Main.pref.putInteger(HISTORY_LAST_USED_KEY, (int) (System.currentTimeMillis() / 1000));
+        Main.pref.putInteger(HISTORY_LAST_USED_KEY, (int) (TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())));
         // store the history of sources
         hcbUploadSource.addCurrentItemToHistory();
         Main.pref.putCollection(SOURCE_HISTORY_KEY, hcbUploadSource.getHistory());

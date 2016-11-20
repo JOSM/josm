@@ -8,6 +8,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.TimeUnit;
 
 import org.openstreetmap.josm.Main;
 
@@ -24,13 +25,13 @@ public abstract class CacheCustomContent<T extends Throwable> {
     /** Update interval meaning an update is always needed */
     public static final int INTERVAL_ALWAYS = -1;
     /** Update interval meaning an update is needed each hour */
-    public static final int INTERVAL_HOURLY = 60*60;
+    public static final int INTERVAL_HOURLY = (int) TimeUnit.HOURS.toSeconds(1);
     /** Update interval meaning an update is needed each day */
-    public static final int INTERVAL_DAILY = INTERVAL_HOURLY * 24;
+    public static final int INTERVAL_DAILY = (int) TimeUnit.DAYS.toSeconds(1);
     /** Update interval meaning an update is needed each week */
-    public static final int INTERVAL_WEEKLY = INTERVAL_DAILY * 7;
+    public static final int INTERVAL_WEEKLY = (int) TimeUnit.DAYS.toSeconds(7);
     /** Update interval meaning an update is needed each month */
-    public static final int INTERVAL_MONTHLY = INTERVAL_WEEKLY * 4;
+    public static final int INTERVAL_MONTHLY = (int) TimeUnit.DAYS.toSeconds(28);
     /** Update interval meaning an update is never needed */
     public static final int INTERVAL_NEVER = Integer.MAX_VALUE;
 
@@ -87,7 +88,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
         if (isOffline()) {
             return false;
         }
-        return Main.pref.getInteger("cache." + ident, 0) + updateInterval < System.currentTimeMillis()/1000
+        return Main.pref.getInteger("cache." + ident, 0) + updateInterval < TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
                 || !isCacheValid();
     }
 
@@ -135,7 +136,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
     public byte[] updateForce() throws T {
         this.data = updateData();
         saveToDisk();
-        Main.pref.putInteger("cache." + ident, (int) (System.currentTimeMillis()/1000));
+        Main.pref.putInteger("cache." + ident, (int) (TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())));
         return data;
     }
 

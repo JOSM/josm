@@ -1203,7 +1203,7 @@ public class SearchCompiler {
 
         @Override
         protected Long getNumber(OsmPrimitive osm) {
-            return osm.getRawTimestamp() * 1000L;
+            return osm.getTimestamp().getTime();
         }
 
         @Override

@@ -17,6 +17,7 @@ package oauth.signpost;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 import oauth.signpost.basic.UrlStringRequestAdapter;
 import oauth.signpost.exception.OAuthCommunicationException;
@@ -266,7 +267,7 @@ public abstract class AbstractOAuthConsumer implements OAuthConsumer {
     }
 
     protected String generateTimestamp() {
-        return Long.toString(System.currentTimeMillis() / 1000L);
+        return Long.toString(System.currentTimeMillis() / TimeUnit.SECONDS.toMillis(1));
     }
 
     protected String generateNonce() {

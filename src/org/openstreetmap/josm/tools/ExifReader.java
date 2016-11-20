@@ -5,6 +5,7 @@ import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -69,7 +70,7 @@ public final class ExifReader {
                 final Date date = DateUtils.fromString(dateStr);
                 if (subSeconds != null) {
                     try {
-                        date.setTime(date.getTime() + (long) (1000L * Double.parseDouble("0." + subSeconds)));
+                        date.setTime(date.getTime() + (long) (TimeUnit.SECONDS.toMillis(1) * Double.parseDouble("0." + subSeconds)));
                     } catch (NumberFormatException e) {
                         Main.warn("Failed parsing sub seconds from [{0}]", subSeconds);
                         Main.warn(e);

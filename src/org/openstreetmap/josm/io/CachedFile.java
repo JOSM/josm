@@ -23,6 +23,7 @@ import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -75,7 +76,7 @@ public class CachedFile implements Closeable {
     protected boolean initialized;
 
     public static final long DEFAULT_MAXTIME = -1L;
-    public static final long DAYS = 24L*60L*60L; // factor to get caching time in days
+    public static final long DAYS = TimeUnit.DAYS.toSeconds(1); // factor to get caching time in days
 
     private final Map<String, String> httpHeaders = new ConcurrentHashMap<>();
 
@@ -416,7 +417,7 @@ public class CachedFile implements Closeable {
         String prefKey = getPrefKey(url, destDir);
         String urlStr = url.toExternalForm();
         long age = 0L;
-        long lMaxAge = maxAge;
+        long maxAgeMillis = maxAge;
         Long ifModifiedSince = null;
         File localFile = null;
         List<String> localPathEntry = new ArrayList<>(Main.pref.getCollection(prefKey));
@@ -435,10 +436,10 @@ public class CachedFile implements Closeable {
                 if (maxAge == DEFAULT_MAXTIME
                         || maxAge <= 0 // arbitrary value <= 0 is deprecated
                 ) {
-                    lMaxAge = Main.pref.getInteger("mirror.maxtime", 7*24*60*60); // one week
+                    maxAgeMillis = TimeUnit.SECONDS.toMillis(Main.pref.getLong("mirror.maxtime", TimeUnit.DAYS.toSeconds(7)));
                 }
                 age = System.currentTimeMillis() - Long.parseLong(localPathEntry.get(0));
-                if (offline || age < lMaxAge*1000) {
+                if (offline || age < maxAgeMillis) {
                     return localFile;
                 }
                 if (cachingStrategy == CachingStrategy.IfModifiedSince) {
@@ -497,7 +498,7 @@ public class CachedFile implements Closeable {
                 destDirFile.getPath(), localFile.getPath()));
             }
         } catch (IOException e) {
-            if (age >= lMaxAge*1000 && age < lMaxAge*1000*2) {
+            if (age >= maxAgeMillis && age < maxAgeMillis*2) {
                 Main.warn(tr("Failed to load {0}, use cached file and retry next time: {1}", urlStr, e));
                 return localFile;
             } else {

@@ -14,6 +14,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,10 +42,8 @@ import org.openstreetmap.josm.tools.HttpClient;
  */
 public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, BufferedImageCacheEntry> implements TileJob, ICachedLoaderListener {
     private static final Logger LOG = FeatureAdapter.getLogger(TMSCachedTileLoaderJob.class.getCanonicalName());
-    private static final LongProperty MAXIMUM_EXPIRES = new LongProperty("imagery.generic.maximum_expires",
-            30 /*days*/ * 24 /*hours*/ * 60 /*minutes*/ * 60 /*seconds*/ *1000L /*milliseconds*/);
-    private static final LongProperty MINIMUM_EXPIRES = new LongProperty("imagery.generic.minimum_expires",
-            1 /*hour*/ * 60 /*minutes*/ * 60 /*seconds*/ *1000L /*milliseconds*/);
+    private static final LongProperty MAXIMUM_EXPIRES = new LongProperty("imagery.generic.maximum_expires", TimeUnit.DAYS.toMillis(30));
+    private static final LongProperty MINIMUM_EXPIRES = new LongProperty("imagery.generic.minimum_expires", TimeUnit.HOURS.toMillis(1));
     private final Tile tile;
     private volatile URL url;
 

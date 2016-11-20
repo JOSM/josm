@@ -46,12 +46,12 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements ICachedLoaderJob<K> {
     private static final Logger LOG = FeatureAdapter.getLogger(JCSCachedTileLoaderJob.class.getCanonicalName());
-    protected static final long DEFAULT_EXPIRE_TIME = 1000L * 60 * 60 * 24 * 7; // 7 days
+    protected static final long DEFAULT_EXPIRE_TIME = TimeUnit.DAYS.toMillis(7);
     // Limit for the max-age value send by the server.
-    protected static final long EXPIRE_TIME_SERVER_LIMIT = 1000L * 60 * 60 * 24 * 28; // 4 weeks
+    protected static final long EXPIRE_TIME_SERVER_LIMIT = TimeUnit.DAYS.toMillis(28);
     // Absolute expire time limit. Cached tiles that are older will not be used,
     // even if the refresh from the server fails.
-    protected static final long ABSOLUTE_EXPIRE_TIME_LIMIT = 1000L * 60 * 60 * 24 * 365; // 1 year
+    protected static final long ABSOLUTE_EXPIRE_TIME_LIMIT = TimeUnit.DAYS.toMillis(365);
 
     /**
      * maximum download threads that will be started
@@ -431,8 +431,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 if (str != null) {
                     for (String token: str.split(",")) {
                         if (token.startsWith("max-age=")) {
-                            lng = Long.parseLong(token.substring(8)) * 1000 +
-                                    System.currentTimeMillis();
+                            lng = TimeUnit.SECONDS.toMillis(Long.parseLong(token.substring(8))) + System.currentTimeMillis();
                         }
                     }
                 }

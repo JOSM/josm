@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -639,7 +640,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     private static String getLastChangesetTagFromHistory(String historyKey, List<String> def) {
         Collection<String> history = Main.pref.getCollection(historyKey, def);
         int age = (int) (System.currentTimeMillis() / 1000 - Main.pref.getInteger(BasicUploadSettingsPanel.HISTORY_LAST_USED_KEY, 0));
-        if (age < Main.pref.getInteger(BasicUploadSettingsPanel.HISTORY_MAX_AGE_KEY, 4 * 3600 * 1000) && history != null && !history.isEmpty()) {
+        if (age < Main.pref.getLong(BasicUploadSettingsPanel.HISTORY_MAX_AGE_KEY, TimeUnit.HOURS.toMillis(4)) && history != null && !history.isEmpty()) {
             return history.iterator().next();
         } else {
             return null;

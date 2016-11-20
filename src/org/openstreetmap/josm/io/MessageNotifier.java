@@ -92,7 +92,7 @@ public final class MessageNotifier {
         if (Main.isOffline(OnlineResource.OSM_API)) {
             Main.info(tr("{0} not available (offline mode)", tr("Message notifier")));
         } else if (!isRunning() && interval > 0 && isUserEnoughIdentified()) {
-            task = EXECUTOR.scheduleAtFixedRate(WORKER, 0, interval * 60L, TimeUnit.SECONDS);
+            task = EXECUTOR.scheduleAtFixedRate(WORKER, 0, TimeUnit.MINUTES.toSeconds(interval), TimeUnit.SECONDS);
             Main.info("Message notifier active (checks every "+interval+" minute"+(interval > 1 ? "s" : "")+')');
         }
     }
