@@ -46,6 +46,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -78,10 +79,10 @@ public final class Utils {
     /** Pattern matching white spaces */
     public static final Pattern WHITE_SPACES_PATTERN = Pattern.compile("\\s+");
 
-    private static final int MILLIS_OF_SECOND = 1000;
-    private static final int MILLIS_OF_MINUTE = 60_000;
-    private static final int MILLIS_OF_HOUR = 3_600_000;
-    private static final int MILLIS_OF_DAY = 86_400_000;
+    private static final long MILLIS_OF_SECOND = TimeUnit.SECONDS.toMillis(1);
+    private static final long MILLIS_OF_MINUTE = TimeUnit.MINUTES.toMillis(1);
+    private static final long MILLIS_OF_HOUR = TimeUnit.HOURS.toMillis(1);
+    private static final long MILLIS_OF_DAY = TimeUnit.DAYS.toMillis(1);
 
     /**
      * A list of all characters allowed in URLs

@@ -12,6 +12,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
@@ -144,7 +145,7 @@ public final class DateUtils {
      * @return The formatted date
      */
     public static synchronized String fromTimestamp(int timestamp) {
-        final ZonedDateTime temporal = Instant.ofEpochMilli(timestamp * 1000L).atZone(ZoneOffset.UTC);
+        final ZonedDateTime temporal = Instant.ofEpochMilli(TimeUnit.SECONDS.toMillis(timestamp)).atZone(ZoneOffset.UTC);
         return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(temporal);
     }
 

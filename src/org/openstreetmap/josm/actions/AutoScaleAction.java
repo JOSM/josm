@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.swing.JOptionPane;
 import javax.swing.event.ListSelectionListener;
@@ -311,7 +312,8 @@ public class AutoScaleAction extends JosmAction {
     }
 
     private BoundingXYVisitor modeDownload(BoundingXYVisitor v) {
-        if (lastZoomTime > 0 && System.currentTimeMillis() - lastZoomTime > Main.pref.getLong("zoom.bounds.reset.time", 10L*1000L)) {
+        if (lastZoomTime > 0 &&
+                System.currentTimeMillis() - lastZoomTime > Main.pref.getLong("zoom.bounds.reset.time", TimeUnit.SECONDS.toMillis(10))) {
             lastZoomTime = -1;
         }
         final DataSet dataset = getLayerManager().getEditDataSet();

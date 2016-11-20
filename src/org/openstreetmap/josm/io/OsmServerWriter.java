@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -63,10 +64,6 @@ public class OsmServerWriter {
     private final OsmApi api = OsmApi.getOsmApi();
     private boolean canceled;
 
-    private static final int MSECS_PER_SECOND = 1000;
-    private static final int SECONDS_PER_MINUTE = 60;
-    private static final int MSECS_PER_MINUTE = MSECS_PER_SECOND * SECONDS_PER_MINUTE;
-
     private long uploadStartTime;
 
     protected String timeLeft(int progress, int listSize) {
@@ -78,8 +75,8 @@ public class OsmServerWriter {
         double uploadsPerMs = (double) progress / elapsed;
         double uploadsLeft = (double) listSize - progress;
         long msLeft = (long) (uploadsLeft / uploadsPerMs);
-        long minutesLeft = msLeft / MSECS_PER_MINUTE;
-        long secondsLeft = (msLeft / MSECS_PER_SECOND) % SECONDS_PER_MINUTE;
+        long minutesLeft = msLeft / TimeUnit.MINUTES.toMillis(1);
+        long secondsLeft = (msLeft / TimeUnit.SECONDS.toMillis(1)) % TimeUnit.MINUTES.toSeconds(1);
         StringBuilder timeLeftStr = new StringBuilder().append(minutesLeft).append(':');
         if (secondsLeft < 10) {
             timeLeftStr.append('0');

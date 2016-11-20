@@ -36,6 +36,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
@@ -383,7 +384,7 @@ public final class PluginHandler {
             long tim = System.currentTimeMillis();
             long last = Main.pref.getLong("pluginmanager.lastupdate", 0);
             Integer maxTime = Main.pref.getInteger("pluginmanager.time-based-update.interval", DEFAULT_TIME_BASED_UPDATE_INTERVAL);
-            long d = (tim - last) / (24 * 60 * 60 * 1000L);
+            long d = TimeUnit.MILLISECONDS.toDays(tim - last);
             if ((last <= 0) || (maxTime <= 0)) {
                 Main.pref.put("pluginmanager.lastupdate", Long.toString(tim));
             } else if (d > maxTime) {

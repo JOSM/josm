@@ -5,6 +5,7 @@ import java.io.File;
 import java.lang.reflect.Constructor;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
@@ -69,8 +70,8 @@ public class CachedTileLoaderFactory implements TileLoaderFactory {
             headers.putAll(inputHeaders);
 
         return getLoader(listener, cache,
-                Main.pref.getInteger("socket.timeout.connect", 15) * 1000,
-                Main.pref.getInteger("socket.timeout.read", 30) * 1000,
+                (int) TimeUnit.SECONDS.toMillis(Main.pref.getInteger("socket.timeout.connect", 15)),
+                (int) TimeUnit.SECONDS.toMillis(Main.pref.getInteger("socket.timeout.read", 30)),
                 headers);
     }
 

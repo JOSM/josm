@@ -5,6 +5,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.DoubleSummaryStatistics;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -17,7 +18,6 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Objects of this class represent a gpx file with tracks, waypoints and routes.
@@ -192,23 +192,13 @@ public class GpxData extends WithAttributes implements Data {
      * @return  minimum and maximum dates in array of 2 elements
      */
     public static Date[] getMinMaxTimeForTrack(GpxTrack trk) {
-        WayPoint earliest = null, latest = null;
-
-        for (GpxTrackSegment seg : trk.getSegments()) {
-            for (WayPoint pnt : seg.getWayPoints()) {
-                if (latest == null) {
-                    latest = earliest = pnt;
-                } else {
-                    if (pnt.compareTo(earliest) < 0) {
-                        earliest = pnt;
-                    } else if (pnt.compareTo(latest) > 0) {
-                        latest = pnt;
-                    }
-                }
-            }
-        }
-        if (earliest == null || latest == null) return null;
-        return new Date[]{earliest.getTime(), latest.getTime()};
+        final DoubleSummaryStatistics statistics = trk.getSegments().stream()
+                .flatMap(seg -> seg.getWayPoints().stream())
+                .mapToDouble(pnt -> pnt.time)
+                .summaryStatistics();
+        return statistics.getCount() == 0
+                ? null
+                : new Date[]{new Date((long) (statistics.getMin() * 1000)), new Date((long) (statistics.getMax() * 1000))};
     }
 
     /**
@@ -219,22 +209,16 @@ public class GpxData extends WithAttributes implements Data {
      * @return minimum and maximum dates in array of 2 elements
     */
     public Date[] getMinMaxTimeForAllTracks() {
-        double min = 1e100;
-        double max = -1e100;
-        double now = System.currentTimeMillis()/1000.0;
-        for (GpxTrack trk: tracks) {
-            for (GpxTrackSegment seg : trk.getSegments()) {
-                for (WayPoint pnt : seg.getWayPoints()) {
-                    double t = pnt.time;
-                    if (t > 0 && t <= now) {
-                        if (t > max) max = t;
-                        if (t < min) min = t;
-                    }
-                }
-            }
-        }
-        if (Utils.equalsEpsilon(min, 1e100) || Utils.equalsEpsilon(max, -1e100)) return new Date[0];
-        return new Date[]{new Date((long) (min * 1000)), new Date((long) (max * 1000))};
+        double now = System.currentTimeMillis() / 1000.0;
+        final DoubleSummaryStatistics statistics = tracks.stream()
+                .flatMap(trk -> trk.getSegments().stream())
+                .flatMap(seg -> seg.getWayPoints().stream())
+                .mapToDouble(pnt -> pnt.time)
+                .filter(t -> t > 0 && t <= now)
+                .summaryStatistics();
+        return statistics.getCount() == 0
+                ? new Date[0]
+                : new Date[]{new Date((long) (statistics.getMin() * 1000)), new Date((long) (statistics.getMax() * 1000))};
     }
 
     /**

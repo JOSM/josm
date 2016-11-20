@@ -6,6 +6,7 @@ import java.io.StringReader;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.TileSourceInfo;
@@ -74,7 +75,7 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
                     return ret;
                 } catch (IOException ex) {
                     Main.warn(ex, "Could not connect to Bing API. Will retry in " + waitTimeSec + " seconds.");
-                    Thread.sleep(waitTimeSec * 1000L);
+                    Thread.sleep(TimeUnit.SECONDS.toMillis(waitTimeSec));
                     waitTimeSec *= 2;
                 }
             }

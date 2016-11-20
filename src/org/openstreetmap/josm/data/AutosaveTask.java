@@ -25,6 +25,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
@@ -74,7 +75,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     public static final BooleanProperty PROP_AUTOSAVE_ENABLED = new BooleanProperty("autosave.enabled", true);
     public static final IntegerProperty PROP_FILES_PER_LAYER = new IntegerProperty("autosave.filesPerLayer", 1);
     public static final IntegerProperty PROP_DELETED_LAYERS = new IntegerProperty("autosave.deletedLayersBackupCount", 5);
-    public static final IntegerProperty PROP_INTERVAL = new IntegerProperty("autosave.interval", 5 * 60);
+    public static final IntegerProperty PROP_INTERVAL = new IntegerProperty("autosave.interval", (int) TimeUnit.MINUTES.toSeconds(5));
     public static final IntegerProperty PROP_INDEX_LIMIT = new IntegerProperty("autosave.index-limit", 1000);
     /** Defines if a notification should be displayed after each autosave */
     public static final BooleanProperty PROP_NOTIFICATION = new BooleanProperty("autosave.notification", false);
@@ -130,7 +131,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 }
             }
 
-            new Timer(true).schedule(this, 1000L, PROP_INTERVAL.get() * 1000L);
+            new Timer(true).schedule(this, TimeUnit.SECONDS.toMillis(1), TimeUnit.SECONDS.toMillis(PROP_INTERVAL.get()));
             Main.getLayerManager().addLayerChangeListener(this, true);
         }
     }

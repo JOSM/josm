@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.openstreetmap.josm.tools.LanguageInfo;
@@ -248,7 +249,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     @Override
     public void setTimestamp(Date timestamp) {
-        this.timestamp = (int) (timestamp.getTime() / 1000);
+        this.timestamp = (int) TimeUnit.MILLISECONDS.toSeconds(timestamp.getTime());
     }
 
     @Override
@@ -258,7 +259,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     @Override
     public Date getTimestamp() {
-        return new Date(timestamp * 1000L);
+        return new Date(TimeUnit.SECONDS.toMillis(timestamp));
     }
 
     @Override

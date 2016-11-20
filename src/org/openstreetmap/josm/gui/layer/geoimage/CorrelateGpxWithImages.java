@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 
 import javax.swing.AbstractAction;
@@ -407,9 +408,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
             for (String tzStr : tmp) {
                 TimeZone tz = TimeZone.getTimeZone(tzStr);
 
-                String tzDesc = new StringBuilder(tzStr).append(" (")
-                .append(new Timezone(tz.getRawOffset() / 3600000.0).formatTimezone())
-                .append(')').toString();
+                String tzDesc = tzStr + " (" +
+                        new Timezone(((double) tz.getRawOffset()) / TimeUnit.HOURS.toMillis(1)).formatTimezone() +
+                        ')';
                 vtTimezones.add(tzDesc);
             }
 
@@ -425,9 +426,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 defaultTz = TimeZone.getTimeZone(tzId);
             }
 
-            cbTimezones.setSelectedItem(new StringBuilder(defaultTz.getID()).append(" (")
-                    .append(new Timezone(defaultTz.getRawOffset() / 3600000.0).formatTimezone())
-                    .append(')').toString());
+            cbTimezones.setSelectedItem(defaultTz.getID() + " (" +
+                    new Timezone(((double) defaultTz.getRawOffset()) / TimeUnit.HOURS.toMillis(1)).formatTimezone() +
+                    ')');
 
             gc.gridx = 1;
             gc.weightx = 1.0;
@@ -814,7 +815,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             if (selGpx == null)
                 return tr("No gpx selected");
 
-            final long offsetMs = ((long) (timezone.getHours() * 3600 * 1000)) + delta.getMilliseconds(); // in milliseconds
+            final long offsetMs = ((long) (timezone.getHours() * TimeUnit.HOURS.toMillis(1))) + delta.getMilliseconds(); // in milliseconds
             lastNumMatched = matchGpxTrack(dateImgLst, selGpx.data, offsetMs);
 
             return trn("<html>Matched <b>{0}</b> of <b>{1}</b> photo to GPX track.</html>",
@@ -845,7 +846,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         public void actionPerformed(ActionEvent arg0) {
 
             final Offset offset = Offset.milliseconds(
-                    delta.getMilliseconds() + Math.round(timezone.getHours() * 60 * 60 * 1000));
+                    delta.getMilliseconds() + Math.round(timezone.getHours() * TimeUnit.HOURS.toMillis(1)));
             final int dayOffset = offset.getDayOffset();
             final Pair<Timezone, Offset> timezoneOffsetPair = offset.withoutDayOffset().splitOutTimezone();
 
@@ -896,8 +897,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     lblSeconds.setText(tr("Seconds: {0}", Offset.milliseconds(100L * sldSeconds.getValue()).formatOffset()));
 
                     delta = Offset.milliseconds(100L * sldSeconds.getValue()
-                            + 1000L * 60 * sldMinutes.getValue()
-                            + 1000L * 60 * 60 * 24 * dayOffset);
+                            + TimeUnit.MINUTES.toMillis(sldMinutes.getValue())
+                            + TimeUnit.DAYS.toMillis(dayOffset));
 
                     tfTimezone.getDocument().removeDocumentListener(statusBarUpdater);
                     tfOffset.getDocument().removeDocumentListener(statusBarUpdater);
@@ -1145,7 +1146,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             WayPoint curWp, long curWpTime, long offset) {
         // Time between the track point and the previous one, 5 sec if first point, i.e. photos take
         // 5 sec before the first track point can be assumed to be take at the starting position
-        long interval = prevWpTime > 0 ? Math.abs(curWpTime - prevWpTime) : 5*1000;
+        long interval = prevWpTime > 0 ? Math.abs(curWpTime - prevWpTime) : TimeUnit.SECONDS.toMillis(5);
         int ret = 0;
 
         // i is the index of the timewise last photo that has the same or earlier EXIF time
@@ -1431,24 +1432,22 @@ public class CorrelateGpxWithImages extends AbstractAction {
         }
 
         int getDayOffset() {
-            final double diffInH = getMilliseconds() / 1000. / 60 / 60; // hours
-
             // Find day difference
-            return (int) Math.round(diffInH / 24);
+            return (int) Math.round(((double) getMilliseconds()) / TimeUnit.DAYS.toMillis(1));
         }
 
         Offset withoutDayOffset() {
-            return milliseconds(getMilliseconds() - getDayOffset() * 24L * 60L * 60L * 1000L);
+            return milliseconds(getMilliseconds() - TimeUnit.DAYS.toMillis(getDayOffset()));
         }
 
         Pair<Timezone, Offset> splitOutTimezone() {
             // In hours
-            double tz = withoutDayOffset().getSeconds() / 3600.0;
+            final double tz = ((double) withoutDayOffset().getSeconds()) / TimeUnit.HOURS.toSeconds(1);
 
             // Due to imprecise clocks we might get a "+3:28" timezone, which should obviously be 3:30 with
             // -2 minutes offset. This determines the real timezone and finds offset.
             final double timezone = (double) Math.round(tz * 2) / 2; // hours, rounded to one decimal place
-            final long delta = Math.round(getMilliseconds() - timezone * 60 * 60 * 1000); // milliseconds
+            final long delta = Math.round(getMilliseconds() - timezone * TimeUnit.HOURS.toMillis(1));
             return Pair.create(new Timezone(timezone), Offset.milliseconds(delta));
         }
 

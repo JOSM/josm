@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
@@ -42,8 +43,8 @@ public final class HttpClient {
 
     private URL url;
     private final String requestMethod;
-    private int connectTimeout = Main.pref.getInteger("socket.timeout.connect", 15) * 1000;
-    private int readTimeout = Main.pref.getInteger("socket.timeout.read", 30) * 1000;
+    private int connectTimeout = (int) TimeUnit.SECONDS.toMillis(Main.pref.getInteger("socket.timeout.connect", 15));
+    private int readTimeout = (int) TimeUnit.SECONDS.toMillis(Main.pref.getInteger("socket.timeout.read", 30));
     private byte[] requestBody;
     private long ifModifiedSince;
     private final Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);

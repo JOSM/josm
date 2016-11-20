@@ -8,6 +8,7 @@ import java.io.InputStream;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -131,9 +132,9 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         final Matcher timeoutMatcher = Pattern.compile("\\[timeout:(\\d+)\\]").matcher(overpassQuery);
         final int timeout;
         if (timeoutMatcher.find()) {
-            timeout = 1000 * Integer.parseInt(timeoutMatcher.group(1));
+            timeout = (int) TimeUnit.SECONDS.toMillis(Integer.parseInt(timeoutMatcher.group(1)));
         } else {
-            timeout = 180_000;
+            timeout = (int) TimeUnit.MINUTES.toMillis(3);
         }
         request.setConnectTimeout(timeout);
         request.setReadTimeout(timeout);
