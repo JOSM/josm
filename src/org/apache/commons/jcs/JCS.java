@@ -1,5 +1,7 @@
 package org.apache.commons.jcs;
 
+import java.util.Properties;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -27,8 +29,6 @@ import org.apache.commons.jcs.engine.behavior.IElementAttributes;
 import org.apache.commons.jcs.engine.control.CompositeCache;
 import org.apache.commons.jcs.engine.control.CompositeCacheManager;
 import org.apache.commons.jcs.engine.control.group.GroupAttrName;
-
-import java.util.Properties;
 
 /**
  * Simple class for using JCS. To use JCS in your application, you can use the static methods of
@@ -58,8 +58,11 @@ public abstract class JCS
      * @param name Name that will identify the region
      * @return CacheAccess instance for the new region
      * @throws CacheException
+     * 
+     * @deprecated Duplicate of getInstance(String)
      */
-    public static <K, V> CacheAccess<K, V> defineRegion( String name )
+    @Deprecated
+	public static <K, V> CacheAccess<K, V> defineRegion( String name )
         throws CacheException
     {
         CompositeCache<K, V> cache = getCacheManager().getCache( name );
@@ -73,8 +76,11 @@ public abstract class JCS
      * @param cattr CompositeCacheAttributes for the region
      * @return CacheAccess instance for the new region
      * @throws CacheException
+     * 
+     * @deprecated Duplicate of getInstance(String, ICompositeCacheAttributes)
      */
-    public static <K, V> CacheAccess<K, V> defineRegion( String name, ICompositeCacheAttributes cattr )
+    @Deprecated
+	public static <K, V> CacheAccess<K, V> defineRegion( String name, ICompositeCacheAttributes cattr )
         throws CacheException
     {
         CompositeCache<K, V> cache = getCacheManager().getCache( name, cattr );
@@ -90,8 +96,11 @@ public abstract class JCS
      * @param attr Attributes for the region
      * @return CacheAccess instance for the new region
      * @throws CacheException
+     * 
+     * @deprecated Duplicate of getInstance(String, ICompositeCacheAttributes, IElementAttributes)
      */
-    public static <K, V> CacheAccess<K, V> defineRegion( String name, ICompositeCacheAttributes cattr, IElementAttributes attr )
+    @Deprecated
+	public static <K, V> CacheAccess<K, V> defineRegion( String name, ICompositeCacheAttributes cattr, IElementAttributes attr )
         throws CacheException
     {
         CompositeCache<K, V> cache = getCacheManager().getCache( name, cattr, attr );
@@ -182,6 +191,22 @@ public abstract class JCS
     }
 
     /**
+     * Get a CacheAccess which accesses the provided region.
+     * <p>
+     * @param region Region that return CacheAccess will provide access to
+     * @param icca CacheAttributes for region
+     * @param eattr ElementAttributes for the region
+     * @return A CacheAccess which provides access to a given region.
+     * @throws CacheException
+     */
+    public static <K, V> CacheAccess<K, V> getInstance( String region, ICompositeCacheAttributes icca,  IElementAttributes eattr )
+        throws CacheException
+    {
+        CompositeCache<K, V> cache = getCacheManager().getCache( region, icca, eattr );
+        return new CacheAccess<K, V>( cache );
+    }
+    
+    /**
      * Get a GroupCacheAccess which accesses the provided region.
      * <p>
      * @param region Region that return GroupCacheAccess will provide access to
@@ -207,6 +232,22 @@ public abstract class JCS
         throws CacheException
     {
         CompositeCache<GroupAttrName<K>, V> cache = getCacheManager().getCache( region, icca );
+        return new GroupCacheAccess<K, V>( cache );
+    }
+
+    /**
+     * Get a GroupCacheAccess which accesses the provided region.
+     * <p>
+     * @param region Region that return CacheAccess will provide access to
+     * @param icca CacheAttributes for region
+     * @param eattr ElementAttributes for the region
+     * @return A GroupCacheAccess which provides access to a given region.
+     * @throws CacheException
+     */
+    public static <K, V> GroupCacheAccess<K, V> getGroupCacheInstance( String region, ICompositeCacheAttributes icca,  IElementAttributes eattr )
+        throws CacheException
+    {
+        CompositeCache<GroupAttrName<K>, V> cache = getCacheManager().getCache( region, icca, eattr );
         return new GroupCacheAccess<K, V>( cache );
     }
 }
