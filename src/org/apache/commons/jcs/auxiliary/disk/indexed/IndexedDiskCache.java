@@ -25,7 +25,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -586,16 +585,6 @@ public class IndexedDiskCache<K, V> extends AbstractDiskCache<K, V>
             {
                 log.debug(logCacheName + "Put to file: " + fileName + ", key: " + ce.getKey() + ", position: " + ded.pos
                     + ", size: " + ded.len);
-            }
-        }
-        catch (ConcurrentModificationException cme)
-        {
-            // do nothing, this means it has gone back to memory mid
-            // serialization
-            if (log.isDebugEnabled())
-            {
-                // this shouldn't be possible
-                log.debug(logCacheName + "Caught ConcurrentModificationException." + cme);
             }
         }
         catch (IOException e)
