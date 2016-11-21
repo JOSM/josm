@@ -24,11 +24,11 @@ import java.io.InputStream;
 import java.lang.management.ManagementFactory;
 import java.security.AccessControlException;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
@@ -125,8 +125,8 @@ public class CompositeCacheManager
     /** Once configured, you can force a reconfiguration of sorts. */
     private static final boolean DEFAULT_FORCE_RECONFIGURATION = false;
 
-    /** Those waiting for notification of a shutdown. */
-    private final LinkedHashSet<IShutdownObserver> shutdownObservers = new LinkedHashSet<IShutdownObserver>();
+    /** Stack for those waiting for notification of a shutdown. */
+    private final LinkedBlockingDeque<IShutdownObserver> shutdownObservers = new LinkedBlockingDeque<IShutdownObserver>();
 
     /** The central background scheduler. */
     private ScheduledExecutorService scheduledExecutor;
@@ -604,8 +604,6 @@ public class CompositeCacheManager
 
                 if ( cache == null )
                 {
-                    cattr.setCacheName( cattr.getCacheName() );
-
                     CompositeCacheConfigurator configurator = new CompositeCacheConfigurator();
 
                     cache = configurator.parseRegion( this.getConfigurationProperties(), this, cattr.getCacheName(),
@@ -662,17 +660,10 @@ public class CompositeCacheManager
             ThreadPoolManager.dispose();
 
             // notify any observers
-            synchronized ( shutdownObservers )
+            IShutdownObserver observer = null;
+            while ((observer = shutdownObservers.poll()) != null)
             {
-                // We don't need to worry about locking the set.
-                // since this is a shutdown command, nor do we need
-                // to queue these up.
-                for (IShutdownObserver observer : shutdownObservers)
-                {
-                    observer.shutdown();
-                }
-
-                shutdownObservers.clear();
+                observer.shutdown();
             }
 
             // Unregister JMX bean
@@ -914,13 +905,14 @@ public class CompositeCacheManager
     @Override
     public void registerShutdownObserver( IShutdownObserver observer )
     {
-        // synchronized to take care of iteration safety
-        // during shutdown.
-        synchronized ( shutdownObservers )
-        {
-            // the set will take care of duplication protection
-            shutdownObservers.add( observer );
-        }
+    	if (!shutdownObservers.contains(observer))
+    	{
+    		shutdownObservers.push( observer );
+    	}
+    	else
+    	{
+    		log.warn("Shutdown observer added twice " + observer);
+    	}
     }
 
     /**
@@ -929,10 +921,7 @@ public class CompositeCacheManager
     @Override
     public void deregisterShutdownObserver( IShutdownObserver observer )
     {
-        synchronized ( shutdownObservers )
-        {
-            shutdownObservers.remove( observer );
-        }
+        shutdownObservers.remove( observer );
     }
 
     /**
