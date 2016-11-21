@@ -18,6 +18,7 @@ import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
@@ -154,6 +155,7 @@ public class AddWMSLayerPanel extends AddImageryPanel {
         } else {
             info = wms.toImageryInfo(getImageryName(), tree.getSelectedLayers());
             info.setUrl(getWmsUrl());
+            info.setImageryType(ImageryType.WMS);
         }
         return info;
     }
