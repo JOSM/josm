@@ -77,7 +77,10 @@ public class AddTMSLayerPanel extends AddImageryPanel {
 
     @Override
     public ImageryInfo getImageryInfo() {
-        return new ImageryInfo(getImageryName(), getTmsUrl());
+        ImageryInfo ret = new ImageryInfo(getImageryName(), getTmsUrl());
+        ret.setImageryType(ImageryType.TMS);
+        return ret;
+
     }
 
     protected final String getTmsUrl() {

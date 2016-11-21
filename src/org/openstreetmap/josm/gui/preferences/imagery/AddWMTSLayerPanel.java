@@ -35,6 +35,7 @@ public class AddWMTSLayerPanel extends AddImageryPanel {
     @Override
     protected ImageryInfo getImageryInfo() {
         ImageryInfo ret = new ImageryInfo(getImageryName(), "wmts:" + sanitize(getImageryRawUrl(), ImageryType.WMTS));
+        ret.setImageryType(ImageryType.WMTS);
         try {
             new WMTSTileSource(ret); // check if constructor throws an error
         } catch (IOException e) {
