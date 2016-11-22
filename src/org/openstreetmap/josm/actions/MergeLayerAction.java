@@ -17,6 +17,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Action that merges two or more OSM data layers.
@@ -40,7 +41,9 @@ public class MergeLayerAction extends AbstractMergeAction {
         final Layer targetLayer = askTargetLayer(targetLayers);
         if (targetLayer == null)
             return;
+        final Object actionName = MergeLayerAction.this.getValue(NAME);
         Main.worker.submit(() -> {
+                final long start = System.currentTimeMillis();
                 boolean layerMerged = false;
                 for (final Layer sourceLayer: sourceLayers) {
                     if (sourceLayer != null && !sourceLayer.equals(targetLayer)) {
@@ -58,6 +61,7 @@ public class MergeLayerAction extends AbstractMergeAction {
                 }
                 if (layerMerged) {
                     Main.getLayerManager().setActiveLayer(targetLayer);
+                    Main.info(tr("{0} completed in {1}", actionName, Utils.getDurationString(System.currentTimeMillis() - start)));
                 }
         });
     }
