@@ -56,13 +56,13 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * This flag shows, that the properties have been changed by the user
      * and on upload the object will be send to the server.
      */
-    protected static final int FLAG_MODIFIED = 1 << 0;
+    protected static final short FLAG_MODIFIED = 1 << 0;
 
     /**
      * This flag is false, if the object is marked
      * as deleted on the server.
      */
-    protected static final int FLAG_VISIBLE = 1 << 1;
+    protected static final short FLAG_VISIBLE = 1 << 1;
 
     /**
      * An object that was deleted by the user.
@@ -71,14 +71,14 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * An object usually cannot be deleted if it has non-deleted
      * objects still referring to it.
      */
-    protected static final int FLAG_DELETED = 1 << 2;
+    protected static final short FLAG_DELETED = 1 << 2;
 
     /**
      * A primitive is incomplete if we know its id and type, but nothing more.
      * Typically some members of a relation are incomplete until they are
      * fetched from the server.
      */
-    protected static final int FLAG_INCOMPLETE = 1 << 3;
+    protected static final short FLAG_INCOMPLETE = 1 << 3;
 
     /**
      * Put several boolean flags to one short int field to save memory.
@@ -276,11 +276,11 @@ public abstract class AbstractPrimitive implements IPrimitive {
     /* FLAGS
     /* ------*/
 
-    protected void updateFlags(int flag, boolean value) {
+    protected void updateFlags(short flag, boolean value) {
         if (value) {
             flags |= flag;
         } else {
-            flags &= ~flag;
+            flags &= (short) ~flag;
         }
     }
 

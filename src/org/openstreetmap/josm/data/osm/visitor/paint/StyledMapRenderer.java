@@ -805,13 +805,13 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             FontRenderContext frc = g.getFontRenderContext();
             LineMetrics metrics = text.font.getLineMetrics(s, frc);
             if (bs.vAlign == VerticalTextAlignment.ABOVE) {
-                y -= -box.y + metrics.getDescent();
+                y -= -box.y + (int) metrics.getDescent();
             } else if (bs.vAlign == VerticalTextAlignment.TOP) {
-                y -= -box.y - metrics.getAscent();
+                y -= -box.y - (int) metrics.getAscent();
             } else if (bs.vAlign == VerticalTextAlignment.CENTER) {
-                y += (metrics.getAscent() - metrics.getDescent()) / 2;
+                y += (int) ((metrics.getAscent() - metrics.getDescent()) / 2);
             } else if (bs.vAlign == VerticalTextAlignment.BELOW) {
-                y += box.y + box.height + metrics.getAscent() + 2;
+                y += box.y + box.height + (int) metrics.getAscent() + 2;
             } else throw new AssertionError();
         }
         displayText(null, s, x, y, n.isDisabled(), text);

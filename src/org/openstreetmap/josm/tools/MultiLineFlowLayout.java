@@ -74,7 +74,7 @@ public class MultiLineFlowLayout extends FlowLayout {
                 if (x != 0) {
                     x += getHgap();
                 }
-                x += size.getWidth();
+                x += size.width;
                 if (x > containerWidth) {
                     totalHeight += rowHeight + getVgap();
                     rowHeight = 0;

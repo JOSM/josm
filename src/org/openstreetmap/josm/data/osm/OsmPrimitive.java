@@ -51,7 +51,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * Disabled objects usually cannot be selected or modified
      * while the filter is active.
      */
-    protected static final int FLAG_DISABLED = 1 << 4;
+    protected static final short FLAG_DISABLED = 1 << 4;
 
     /**
      * This flag is only relevant if an object is disabled by the
@@ -62,50 +62,50 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * When the primitive is not disabled, this flag should be
      * unset as well (for efficient access).
      */
-    protected static final int FLAG_HIDE_IF_DISABLED = 1 << 5;
+    protected static final short FLAG_HIDE_IF_DISABLED = 1 << 5;
 
     /**
      * Flag used internally by the filter mechanism.
      */
-    protected static final int FLAG_DISABLED_TYPE = 1 << 6;
+    protected static final short FLAG_DISABLED_TYPE = 1 << 6;
 
     /**
      * Flag used internally by the filter mechanism.
      */
-    protected static final int FLAG_HIDDEN_TYPE = 1 << 7;
+    protected static final short FLAG_HIDDEN_TYPE = 1 << 7;
 
     /**
      * This flag is set if the primitive is a way and
      * according to the tags, the direction of the way is important.
      * (e.g. one way street.)
      */
-    protected static final int FLAG_HAS_DIRECTIONS = 1 << 8;
+    protected static final short FLAG_HAS_DIRECTIONS = 1 << 8;
 
     /**
      * If the primitive is tagged.
      * Some trivial tags like source=* are ignored here.
      */
-    protected static final int FLAG_TAGGED = 1 << 9;
+    protected static final short FLAG_TAGGED = 1 << 9;
 
     /**
      * This flag is only relevant if FLAG_HAS_DIRECTIONS is set.
      * It shows, that direction of the arrows should be reversed.
      * (E.g. oneway=-1.)
      */
-    protected static final int FLAG_DIRECTION_REVERSED = 1 << 10;
+    protected static final short FLAG_DIRECTION_REVERSED = 1 << 10;
 
     /**
      * When hovering over ways and nodes in add mode, the
      * "target" objects are visually highlighted. This flag indicates
      * that the primitive is currently highlighted.
      */
-    protected static final int FLAG_HIGHLIGHTED = 1 << 11;
+    protected static final short FLAG_HIGHLIGHTED = 1 << 11;
 
     /**
      * If the primitive is annotated with a tag such as note, fixme, etc.
      * Match the "work in progress" tags in default map style.
      */
-    protected static final int FLAG_ANNOTATED = 1 << 12;
+    protected static final short FLAG_ANNOTATED = 1 << 12;
 
     /**
      * A tagged way that matches this pattern has a direction.
@@ -395,12 +395,12 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     /* FLAGS
     /* ------*/
 
-    private void updateFlagsNoLock(int flag, boolean value) {
+    private void updateFlagsNoLock(short flag, boolean value) {
         super.updateFlags(flag, value);
     }
 
     @Override
-    protected final void updateFlags(int flag, boolean value) {
+    protected final void updateFlags(short flag, boolean value) {
         boolean locked = writeLock();
         try {
             updateFlagsNoLock(flag, value);
@@ -439,7 +439,8 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         boolean locked = writeLock();
         try {
             int oldFlags = flags;
-            updateFlagsNoLock(FLAG_DISABLED + FLAG_HIDE_IF_DISABLED, false);
+            updateFlagsNoLock(FLAG_DISABLED, false);
+            updateFlagsNoLock(FLAG_HIDE_IF_DISABLED, false);
             return oldFlags != flags;
         } finally {
             writeUnlock(locked);
