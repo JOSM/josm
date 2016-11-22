@@ -297,19 +297,16 @@ public final class Node extends OsmPrimitive implements INode {
 
     @Override
     public boolean hasEqualSemanticAttributes(OsmPrimitive other, boolean testInterestingTagsOnly) {
-        if (!(other instanceof Node))
-            return false;
-        if (!super.hasEqualSemanticAttributes(other, testInterestingTagsOnly))
-            return false;
-        Node n = (Node) other;
-        LatLon coor = getCoor();
-        LatLon otherCoor = n.getCoor();
-        if (coor == null && otherCoor == null)
-            return true;
-        else if (coor != null && otherCoor != null)
-            return coor.equalsEpsilon(otherCoor);
-        else
-            return false;
+        return (other instanceof Node)
+                && hasEqualSemanticFlags(other)
+                && hasEqualCoordinates((Node) other)
+                && super.hasEqualSemanticAttributes(other, testInterestingTagsOnly);
+    }
+
+    private boolean hasEqualCoordinates(Node other) {
+        final LatLon c1 = getCoor();
+        final LatLon c2 = other.getCoor();
+        return (c1 == null && c2 == null) || (c1 != null && c2 != null && c1.equalsEpsilon(c2));
     }
 
     @Override

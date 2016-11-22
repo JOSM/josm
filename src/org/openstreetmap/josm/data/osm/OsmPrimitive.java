@@ -1187,12 +1187,17 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         return hasEqualSemanticAttributes(other, true);
     }
 
-    boolean hasEqualSemanticAttributes(final OsmPrimitive other, final boolean testInterestingTagsOnly) {
+    boolean hasEqualSemanticFlags(final OsmPrimitive other) {
         if (!isNew() && id != other.id)
             return false;
         if (isIncomplete() ^ other.isIncomplete()) // exclusive or operator for performance (see #7159)
             return false;
-        return testInterestingTagsOnly ? hasSameInterestingTags(other) : getKeys().equals(other.getKeys());
+        return true;
+    }
+
+    boolean hasEqualSemanticAttributes(final OsmPrimitive other, final boolean testInterestingTagsOnly) {
+        return hasEqualSemanticFlags(other)
+                && (testInterestingTagsOnly ? hasSameInterestingTags(other) : getKeys().equals(other.getKeys()));
     }
 
     /**
