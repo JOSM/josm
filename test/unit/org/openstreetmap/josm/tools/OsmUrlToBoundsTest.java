@@ -99,4 +99,14 @@ public class OsmUrlToBoundsTest {
             Assert.assertEquals(item.url, item.bounds, bounds);
         }
     }
+
+    /**
+     * Test for {@link OsmUrlToBounds#getZoom}.
+     */
+    @Test
+    public void testGetZoom() {
+        Assert.assertEquals(4, OsmUrlToBounds.getZoom(OsmUrlToBounds.positionToBounds(0, 0, 4)));
+        Assert.assertEquals(10, OsmUrlToBounds.getZoom(OsmUrlToBounds.positionToBounds(5, 5, 10)));
+        Assert.assertEquals(18, OsmUrlToBounds.getZoom(OsmUrlToBounds.positionToBounds(40, 20, 18)));
+    }
 }
