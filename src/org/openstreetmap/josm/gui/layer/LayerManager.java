@@ -191,7 +191,7 @@ public class LayerManager {
 
     protected synchronized void realAddLayer(Layer layer) {
         if (containsLayer(layer)) {
-            throw new IllegalArgumentException("Cannot add a layer twice.");
+            throw new IllegalArgumentException("Cannot add a layer twice: " + layer);
         }
         LayerPositionStrategy positionStrategy = layer.getDefaultLayerPosition();
         int position = positionStrategy.getPosition(this);
