@@ -9,8 +9,11 @@ import java.util.Map;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
+import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 
 public final class OsmUrlToBounds {
@@ -32,12 +35,11 @@ public final class OsmUrlToBounds {
         Bounds b = parseShortLink(url);
         if (b != null)
             return b;
-        int i = url.indexOf("#map");
-        if (i >= 0) {
+        if (url.contains("#map")) {
             // probably it's a URL following the new scheme?
             return parseHashURLs(url);
         }
-        i = url.indexOf('?');
+        final int i = url.indexOf('?');
         if (i == -1) {
             return null;
         }
@@ -200,19 +202,11 @@ public final class OsmUrlToBounds {
         double scale = (1 << zoom) * tileSizeInPixels / (2 * Math.PI * Ellipsoid.WGS84.a);
         double deltaX = width / 2.0 / scale;
         double deltaY = height / 2.0 / scale;
-        double x = Math.toRadians(lon) * Ellipsoid.WGS84.a;
-        double y = mercatorY(lat);
+        final Projection mercator = Projections.getProjectionByCode("EPSG:3857");
+        final EastNorth projected = mercator.latlon2eastNorth(new LatLon(lat, lon));
         return new Bounds(
-                invMercatorY(y - deltaY), Math.toDegrees(x - deltaX) / Ellipsoid.WGS84.a,
-                invMercatorY(y + deltaY), Math.toDegrees(x + deltaX) / Ellipsoid.WGS84.a);
-    }
-
-    public static double mercatorY(double lat) {
-        return Math.log(Math.tan(Math.PI/4 + Math.toRadians(lat)/2)) * Ellipsoid.WGS84.a;
-    }
-
-    public static double invMercatorY(double north) {
-        return Math.toDegrees(Math.atan(Math.sinh(north / Ellipsoid.WGS84.a)));
+                mercator.eastNorth2latlon(projected.add(-deltaX, -deltaY)),
+                mercator.eastNorth2latlon(projected.add(deltaX, deltaY)));
     }
 
     public static Pair<Double, Double> getTileOfLatLon(double lat, double lon, double zoom) {
