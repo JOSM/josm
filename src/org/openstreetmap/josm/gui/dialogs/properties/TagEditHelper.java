@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
+import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -78,6 +79,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPriority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
@@ -108,9 +110,6 @@ public class TagEditHelper {
 
     private final Comparator<AutoCompletionListItem> defaultACItemComparator =
             (o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getValue(), o2.getValue());
-
-    private String lastAddKey;
-    private String lastAddValue;
 
     /** Default number of recent tags */
     public static final int DEFAULT_LRU_TAGS_NUMBER = 5;
@@ -163,8 +162,20 @@ public class TagEditHelper {
     final RecentTagCollection recentTags = new RecentTagCollection(MAX_LRU_TAGS_NUMBER);
     SearchAction.SearchSetting tagsToIgnore;
 
-    // Copy of recently added tags, used to cache initial status
+    /**
+     * Copy of recently added tags in sorted from newest to oldest order.
+     *
+     * We store the maximum number of recent tags to allow dynamic change of number of tags shown in the preferences.
+     * Used to cache initial status.
+     */
     private List<Tag> tags;
+
+    static {
+        // init user input based on recent tags
+        final RecentTagCollection recentTags = new RecentTagCollection(MAX_LRU_TAGS_NUMBER);
+        recentTags.loadFromPreference(PROPERTY_RECENT_TAGS);
+        recentTags.toList().forEach(tag -> AutoCompletionManager.rememberUserInput(tag.getKey(), tag.getValue(), false));
+    }
 
     /**
      * Constructs a new {@code TagEditHelper}.
@@ -185,6 +196,12 @@ public class TagEditHelper {
      */
     public final String getDataKey(int viewRow) {
         return tagData.getValueAt(tagTable.convertRowIndexToModel(viewRow), 0).toString();
+    }
+
+    private boolean containsDataKey(String key) {
+        return IntStream.range(0, tagData.getRowCount())
+                .mapToObj(i -> tagData.getValueAt(i, 0) /* sic! do not use getDataKey*/)
+                .anyMatch(key::equals);
     }
 
     /**
@@ -334,6 +351,7 @@ public class TagEditHelper {
      */
     private void cacheRecentTags() {
         tags = recentTags.toList();
+        Collections.reverse(tags);
     }
 
     /**
@@ -664,25 +682,16 @@ public class TagEditHelper {
                 "This will change up to {0} objects.", sel.size(), sel.size())
                 +"<br><br>"+tr("Please select a key")), GBC.eol().fill(GBC.HORIZONTAL));
 
+            cacheRecentTags();
             AutoCompletionManager autocomplete = Main.getLayerManager().getEditLayer().data.getAutoCompletionManager();
             List<AutoCompletionListItem> keyList = autocomplete.getKeys();
 
-            AutoCompletionListItem itemToSelect = null;
             // remove the object's tag keys from the list
             Iterator<AutoCompletionListItem> iter = keyList.iterator();
             while (iter.hasNext()) {
                 AutoCompletionListItem item = iter.next();
-                if (item.getValue().equals(lastAddKey)) {
-                    itemToSelect = item;
-                }
-                for (int i = 0; i < tagData.getRowCount(); ++i) {
-                    if (item.getValue().equals(tagData.getValueAt(i, 0) /* sic! do not use getDataKey*/)) {
-                        if (itemToSelect == item) {
-                            itemToSelect = null;
-                        }
-                        iter.remove();
-                        break;
-                    }
+                if (containsDataKey(item.getValue())) {
+                    iter.remove();
                 }
             }
 
@@ -695,12 +704,15 @@ public class TagEditHelper {
             mainPanel.add(new JLabel(tr("Please select a value")), GBC.eol());
             values.setEditable(true);
             mainPanel.add(values, GBC.eop().fill(GBC.HORIZONTAL));
-            if (itemToSelect != null) {
-                keys.setSelectedItem(itemToSelect);
-                if (lastAddValue != null) {
-                    values.setSelectedItem(lastAddValue);
-                }
-            }
+
+            // pre-fill first recent tag for which the key is not already present
+            tags.stream()
+                    .filter(tag -> !containsDataKey(tag.getKey()))
+                    .findFirst()
+                    .ifPresent(tag -> {
+                        keys.setSelectedItem(tag.getKey());
+                        values.setSelectedItem(tag.getValue());
+                    });
 
             focus = addFocusAdapter(autocomplete, defaultACItemComparator);
             // fire focus event in advance or otherwise the popup list will be too small at first
@@ -718,7 +730,6 @@ public class TagEditHelper {
                     }
                 });
 
-            cacheRecentTags();
             suggestRecentlyAddedTags();
 
             mainPanel.add(Box.createVerticalGlue(), GBC.eop().fill());
@@ -860,10 +871,7 @@ public class TagEditHelper {
 
             int count = 0;
             destroyActions();
-            // We store the maximum number of recent tags to allow dynamic change of number of tags shown in the preferences.
-            // This implies to iterate in descending order, as the oldest elements will only be removed after we reach the maximum
-            // number and not the number of tags to show.
-            for (int i = tags.size()-1; i >= 0 && count < tagsToShow; i--) {
+            for (int i = 0; i < tags.size() && count < tagsToShow; i++) {
                 final Tag t = tags.get(i);
                 boolean keyExists = keyExists(t);
                 if (keyExists && PROPERTY_RECENT_EXISTING.get() == RecentExisting.HIDE)
@@ -1055,8 +1063,6 @@ public class TagEditHelper {
                     break;
                 }
             }
-            lastAddKey = key;
-            lastAddValue = value;
             recentTags.add(new Tag(key, value));
             valueCount.put(key, new TreeMap<String, Integer>());
             AutoCompletionManager.rememberUserInput(key, value, false);
