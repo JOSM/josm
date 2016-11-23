@@ -18,8 +18,10 @@ import javax.swing.event.DocumentListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
@@ -111,6 +113,11 @@ public class JumpToAction extends JosmAction {
         zm.getDocument().addDocumentListener(x);
         url.getDocument().addDocumentListener(new OsmURLListener());
 
+        SelectAllOnFocusGainedDecorator.decorate(lat);
+        SelectAllOnFocusGainedDecorator.decorate(lon);
+        SelectAllOnFocusGainedDecorator.decorate(zm);
+        SelectAllOnFocusGainedDecorator.decorate(url);
+
         JPanel p = new JPanel(new GridBagLayout());
         panel.add(p, BorderLayout.NORTH);
 
@@ -126,21 +133,16 @@ public class JumpToAction extends JosmAction {
         p.add(new JLabel(tr("URL")), GBC.eol());
         p.add(url, GBC.eol().fill(GBC.HORIZONTAL));
 
-        Object[] buttons = {tr("Jump there"), tr("Cancel")};
+        String[] buttons = {tr("Jump there"), tr("Cancel")};
         LatLon ll = null;
         double zoomLvl = 100;
         while (ll == null) {
-            int option = JOptionPane.showOptionDialog(
-                            Main.parent,
-                            panel,
-                            tr("Jump to Position"),
-                            JOptionPane.OK_CANCEL_OPTION,
-                            JOptionPane.PLAIN_MESSAGE,
-                            null,
-                            buttons,
-                            buttons[0]);
+            final int option = new ExtendedDialog(Main.parent, tr("Jump to Position"), buttons) {{
+                setContent(panel);
+                setCancelButton(2);
+            }}.showDialog().getValue();
 
-            if (option != JOptionPane.OK_OPTION) return;
+            if (option != 1) return;
             try {
                 zoomLvl = Double.parseDouble(zm.getText());
                 ll = new LatLon(Double.parseDouble(lat.getText()), Double.parseDouble(lon.getText()));
