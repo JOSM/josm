@@ -9,8 +9,11 @@ import java.util.Map;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
+import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 
 public final class OsmUrlToBounds {
@@ -32,12 +35,11 @@ public final class OsmUrlToBounds {
         Bounds b = parseShortLink(url);
         if (b != null)
             return b;
-        int i = url.indexOf("#map");
-        if (i >= 0) {
+        if (url.contains("#map")) {
             // probably it's a URL following the new scheme?
             return parseHashURLs(url);
         }
-        i = url.indexOf('?');
+        final int i = url.indexOf('?');
         if (i == -1) {
             return null;
         }
@@ -188,44 +190,26 @@ public final class OsmUrlToBounds {
                 zoom - 8 - (zoomOffset % 3) - 2);
     }
 
-    public static Bounds positionToBounds(final double lat, final double lon, final int zoom) {
-        int tileSizeInPixels = 256;
-        Dimension screenSize = GuiHelper.getScreenSize();
-        int height = screenSize.height;
-        int width = screenSize.width;
+    private static Dimension getScreenSize() {
         if (Main.isDisplayingMapView()) {
-            height = Main.map.mapView.getHeight();
-            width = Main.map.mapView.getWidth();
+            return new Dimension(Main.map.mapView.getWidth(), Main.map.mapView.getHeight());
+        } else {
+            return GuiHelper.getScreenSize();
         }
-        double scale = (1 << zoom) * tileSizeInPixels / (2 * Math.PI * Ellipsoid.WGS84.a);
-        double deltaX = width / 2.0 / scale;
-        double deltaY = height / 2.0 / scale;
-        double x = Math.toRadians(lon) * Ellipsoid.WGS84.a;
-        double y = mercatorY(lat);
+    }
+
+    private static final int TILE_SIZE_IN_PIXELS = 256;
+
+    public static Bounds positionToBounds(final double lat, final double lon, final int zoom) {
+        final Dimension screenSize = getScreenSize();
+        double scale = (1 << zoom) * TILE_SIZE_IN_PIXELS / (2 * Math.PI * Ellipsoid.WGS84.a);
+        double deltaX = screenSize.getWidth() / 2.0 / scale;
+        double deltaY = screenSize.getHeight() / 2.0 / scale;
+        final Projection mercator = Projections.getProjectionByCode("EPSG:3857");
+        final EastNorth projected = mercator.latlon2eastNorth(new LatLon(lat, lon));
         return new Bounds(
-                invMercatorY(y - deltaY), Math.toDegrees(x - deltaX) / Ellipsoid.WGS84.a,
-                invMercatorY(y + deltaY), Math.toDegrees(x + deltaX) / Ellipsoid.WGS84.a);
-    }
-
-    public static double mercatorY(double lat) {
-        return Math.log(Math.tan(Math.PI/4 + Math.toRadians(lat)/2)) * Ellipsoid.WGS84.a;
-    }
-
-    public static double invMercatorY(double north) {
-        return Math.toDegrees(Math.atan(Math.sinh(north / Ellipsoid.WGS84.a)));
-    }
-
-    public static Pair<Double, Double> getTileOfLatLon(double lat, double lon, double zoom) {
-        double x = Math.floor((lon + 180) / 360 * Math.pow(2.0, zoom));
-        double y = Math.floor((1 - Math.log(Math.tan(Math.toRadians(lat)) + 1 / Math.cos(Math.toRadians(lat))) / Math.PI)
-                / 2 * Math.pow(2.0, zoom));
-        return new Pair<>(x, y);
-    }
-
-    public static LatLon getLatLonOfTile(double x, double y, double zoom) {
-        double lon = x / Math.pow(2.0, zoom) * 360.0 - 180;
-        double lat = Math.toDegrees(Math.atan(Math.sinh(Math.PI - (2.0 * Math.PI * y) / Math.pow(2.0, zoom))));
-        return new LatLon(lat, lon);
+                mercator.eastNorth2latlon(projected.add(-deltaX, -deltaY)),
+                mercator.eastNorth2latlon(projected.add(deltaX, deltaY)));
     }
 
     /**
@@ -235,19 +219,13 @@ public final class OsmUrlToBounds {
      * @return matching zoom level for area
      */
     public static int getZoom(Bounds b) {
-        // convert to mercator (for calculation of zoom only)
-        double latMin = Math.log(Math.tan(Math.PI/4.0+b.getMinLat()/180.0*Math.PI/2.0))*180.0/Math.PI;
-        double latMax = Math.log(Math.tan(Math.PI/4.0+b.getMaxLat()/180.0*Math.PI/2.0))*180.0/Math.PI;
-        double size = Math.max(Math.abs(latMax-latMin), Math.abs(b.getMaxLon()-b.getMinLon()));
-        int zoom = 0;
-        while (zoom <= 20) {
-            if (size >= 180) {
-                break;
-            }
-            size *= 2;
-            zoom++;
-        }
-        return zoom;
+        final Projection mercator = Projections.getProjectionByCode("EPSG:3857");
+        final EastNorth min = mercator.latlon2eastNorth(b.getMin());
+        final EastNorth max = mercator.latlon2eastNorth(b.getMax());
+        final double deltaX = max.getX() - min.getX();
+        final double scale = getScreenSize().getWidth() / deltaX;
+        final double x = scale * (2 * Math.PI * Ellipsoid.WGS84.a) / TILE_SIZE_IN_PIXELS;
+        return (int) Math.round(Math.log(x) / Math.log(2));
     }
 
     /**

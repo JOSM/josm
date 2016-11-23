@@ -336,7 +336,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 Object nodeInfo = childNode.getUserObject();
                 if (nodeInfo instanceof TestError) {
                     TestError error = (TestError) nodeInfo;
-                    sel.addAll(error.getSelectablePrimitives());
+                    error.getPrimitives().stream()
+                            .filter(OsmPrimitive::isSelectable)
+                            .forEach(sel::add);
                 }
             }
         }
@@ -387,7 +389,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
                 hasFixes = hasFixes || error.isFixable();
                 if (addSelected) {
-                    sel.addAll(error.getSelectablePrimitives());
+                    error.getPrimitives().stream()
+                            .filter(OsmPrimitive::isSelectable)
+                            .forEach(sel::add);
                 }
             }
         }
