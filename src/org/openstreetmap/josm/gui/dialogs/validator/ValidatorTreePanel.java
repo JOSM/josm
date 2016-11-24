@@ -32,6 +32,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListener;
+import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
 import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
 import org.openstreetmap.josm.data.osm.event.PrimitivesAddedEvent;
 import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
@@ -104,10 +105,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
                 removeKeyListener(keyListener);
             }
         }
-        DataSet ds = Main.getLayerManager().getEditDataSet();
-        if (ds != null) {
-            ds.addDataSetListener(this);
-        }
+        DatasetEventManager.getInstance().addDatasetListener(this, DatasetEventManager.FireMode.IN_EDT);
     }
 
     @Override
