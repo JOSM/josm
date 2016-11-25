@@ -169,8 +169,8 @@ public class Multipolygon {
 
         /**
          * Constructs a new {@code JoinedWay}.
-         * @param nodes list of nodes
-         * @param wayIds list of way IDs
+         * @param nodes list of nodes - must not be null
+         * @param wayIds list of way IDs - must not be null
          * @param selected whether joined way is selected or not
          */
         public JoinedWay(List<Node> nodes, Collection<Long> wayIds, boolean selected) {
@@ -605,7 +605,9 @@ public class Multipolygon {
                 wayIds.add(w.getUniqueId());
             }
 
-            result.add(new JoinedWay(nodes, wayIds, selected));
+            if (nodes != null) {
+                result.add(new JoinedWay(nodes, wayIds, selected));
+            }
         }
 
         return result;
