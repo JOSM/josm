@@ -464,7 +464,6 @@ public final class Relation extends OsmPrimitive implements IRelation {
 
     @Override
     public void updatePosition() {
-        bbox = null; // make sure that it is recalculated
         bbox = getBBox();
     }
 
