@@ -25,7 +25,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
  */
 public abstract class AddImageryPanel extends JPanel {
 
-    protected final JosmTextArea rawUrl = new JosmTextArea(3, 40);
+    protected final JosmTextArea rawUrl = new JosmTextArea(3, 40).transferFocusOnTab();
     protected final JosmTextField name = new JosmTextField();
 
     protected final transient Collection<ContentValidationListener> listeners = new ArrayList<>();
