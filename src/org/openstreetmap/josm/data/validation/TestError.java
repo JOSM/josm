@@ -241,111 +241,6 @@ public class TestError implements Comparable<TestError> {
     }
 
     /**
-     * Constructs a new {@code TestError}.
-     * @param tester The tester
-     * @param severity The severity of this error
-     * @param message The error message
-     * @param description The translated description
-     * @param descriptionEn The English description
-     * @param code The test error reference code
-     * @param primitives The affected primitives
-     * @param highlighted OSM primitives to highlight
-     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
-     */
-    @Deprecated
-    public TestError(Test tester, Severity severity, String message, String description, String descriptionEn,
-            int code, Collection<? extends OsmPrimitive> primitives, Collection<?> highlighted) {
-        this.tester = tester;
-        this.severity = severity;
-        this.message = message;
-        this.description = description;
-        this.descriptionEn = descriptionEn;
-        this.primitives = primitives;
-        this.highlighted = highlighted;
-        this.code = code;
-        this.fixingCommand = null;
-    }
-
-    /**
-     * Constructs a new {@code TestError} without description.
-     * @param tester The tester
-     * @param severity The severity of this error
-     * @param message The error message
-     * @param code The test error reference code
-     * @param primitives The affected primitives
-     * @param highlighted OSM primitives to highlight
-     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
-     */
-    @Deprecated
-    public TestError(Test tester, Severity severity, String message, int code, Collection<? extends OsmPrimitive> primitives,
-            Collection<?> highlighted) {
-        this(tester, severity, message, null, null, code, primitives, highlighted);
-    }
-
-    /**
-     * Constructs a new {@code TestError}.
-     * @param tester The tester
-     * @param severity The severity of this error
-     * @param message The error message
-     * @param description The translated description
-     * @param descriptionEn The English description
-     * @param code The test error reference code
-     * @param primitives The affected primitives
-     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
-     */
-    @Deprecated
-    public TestError(Test tester, Severity severity, String message, String description, String descriptionEn,
-            int code, Collection<? extends OsmPrimitive> primitives) {
-        this(tester, severity, message, description, descriptionEn, code, primitives, primitives);
-    }
-
-    /**
-     * Constructs a new {@code TestError} without description.
-     * @param tester The tester
-     * @param severity The severity of this error
-     * @param message The error message
-     * @param code The test error reference code
-     * @param primitives The affected primitives
-     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
-     */
-    @Deprecated
-    public TestError(Test tester, Severity severity, String message, int code, Collection<? extends OsmPrimitive> primitives) {
-        this(tester, severity, message, null, null, code, primitives, primitives);
-    }
-
-    /**
-     * Constructs a new {@code TestError} without description, for a single primitive.
-     * @param tester The tester
-     * @param severity The severity of this error
-     * @param message The error message
-     * @param code The test error reference code
-     * @param primitive The affected primitive
-     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
-     */
-    @Deprecated
-    public TestError(Test tester, Severity severity, String message, int code, OsmPrimitive primitive) {
-        this(tester, severity, message, null, null, code, Collections.singletonList(primitive), Collections
-                .singletonList(primitive));
-    }
-
-    /**
-     * Constructs a new {@code TestError} for a single primitive.
-     * @param tester The tester
-     * @param severity The severity of this error
-     * @param message The error message
-     * @param description The translated description
-     * @param descriptionEn The English description
-     * @param code The test error reference code
-     * @param primitive The affected primitive
-     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
-     */
-    @Deprecated
-    public TestError(Test tester, Severity severity, String message, String description, String descriptionEn,
-            int code, OsmPrimitive primitive) {
-        this(tester, severity, message, description, descriptionEn, code, Collections.singletonList(primitive));
-    }
-
-    /**
      * Gets the error message
      * @return the error message
      */
@@ -362,16 +257,6 @@ public class TestError implements Comparable<TestError> {
     }
 
     /**
-     * Sets the error message
-     * @param message The error message
-     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
-     */
-    @Deprecated
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
-    /**
      * Gets the list of primitives affected by this error
      * @return the list of primitives affected by this error
      */
@@ -380,31 +265,11 @@ public class TestError implements Comparable<TestError> {
     }
 
     /**
-     * Sets the list of primitives affected by this error
-     * @param primitives the list of primitives affected by this error*
-     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
-     */
-    @Deprecated
-    public void setPrimitives(List<? extends OsmPrimitive> primitives) {
-        this.primitives = primitives;
-    }
-
-    /**
      * Gets the severity of this error
      * @return the severity of this error
      */
     public Severity getSeverity() {
         return severity;
-    }
-
-    /**
-     * Sets the severity of this error
-     * @param severity the severity of this error
-     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
-     */
-    @Deprecated
-    public void setSeverity(Severity severity) {
-        this.severity = severity;
     }
 
     /**
@@ -460,16 +325,6 @@ public class TestError implements Comparable<TestError> {
      */
     public Test getTester() {
         return tester;
-    }
-
-    /**
-     * Set the tester that raised the error.
-     * @param tester te tester
-     * @deprecated Use {@link #builder} instead. Will be removed in 2016-12.
-     */
-    @Deprecated
-    public void setTester(Test tester) {
-        this.tester = tester;
     }
 
     /**
