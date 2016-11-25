@@ -201,7 +201,9 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
         HistoryOsmPrimitive primitive = getPrimitive();
         if (primitive != null) {
             Changeset cs = primitive.getChangeset();
-            update(cs, model.isLatest(primitive), primitive.getTimestamp(), primitive.getVersion());
+            if (cs != null) {
+                update(cs, model.isLatest(primitive), primitive.getTimestamp(), primitive.getVersion());
+            }
         }
     }
 
@@ -216,7 +218,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
 
     /**
      * Updates the content of this panel based on the changeset information given by {@code cs}.
-     * @param cs the changeset information
+     * @param cs the changeset information - must not be null
      * @param isLatest whether this relates to a not yet commited changeset
      * @param timestamp the timestamp
      * @param version the version of the primitive
