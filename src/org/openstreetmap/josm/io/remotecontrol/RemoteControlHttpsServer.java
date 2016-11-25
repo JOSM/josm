@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -236,7 +237,9 @@ public class RemoteControlHttpsServer extends Thread {
             char[] entryPassword = KEYENTRY_PASSWORD.get().toCharArray();
 
             ks.setKeyEntry(ENTRY_ALIAS, pair.getPrivate(), entryPassword, new Certificate[]{cert});
-            ks.store(Files.newOutputStream(path, StandardOpenOption.CREATE), storePassword);
+            try (OutputStream out = Files.newOutputStream(path, StandardOpenOption.CREATE)) {
+                ks.store(out, storePassword);
+            }
         }
         return path;
     }
@@ -380,16 +383,14 @@ public class RemoteControlHttpsServer extends Thread {
         this.server = factory.createServerSocket(port, 1, ipv6 ?
             RemoteControl.getInet6Address() : RemoteControl.getInet4Address());
 
-        if (Main.isTraceEnabled()) {
-            if (server instanceof SSLServerSocket) {
-                SSLServerSocket sslServer = (SSLServerSocket) server;
-                Main.trace("SSL server - Enabled Cipher suites: "+Arrays.toString(sslServer.getEnabledCipherSuites()));
-                Main.trace("SSL server - Enabled Protocols: "+Arrays.toString(sslServer.getEnabledProtocols()));
-                Main.trace("SSL server - Enable Session Creation: "+sslServer.getEnableSessionCreation());
-                Main.trace("SSL server - Need Client Auth: "+sslServer.getNeedClientAuth());
-                Main.trace("SSL server - Want Client Auth: "+sslServer.getWantClientAuth());
-                Main.trace("SSL server - Use Client Mode: "+sslServer.getUseClientMode());
-            }
+        if (Main.isTraceEnabled() && server instanceof SSLServerSocket) {
+            SSLServerSocket sslServer = (SSLServerSocket) server;
+            Main.trace("SSL server - Enabled Cipher suites: "+Arrays.toString(sslServer.getEnabledCipherSuites()));
+            Main.trace("SSL server - Enabled Protocols: "+Arrays.toString(sslServer.getEnabledProtocols()));
+            Main.trace("SSL server - Enable Session Creation: "+sslServer.getEnableSessionCreation());
+            Main.trace("SSL server - Need Client Auth: "+sslServer.getNeedClientAuth());
+            Main.trace("SSL server - Want Client Auth: "+sslServer.getWantClientAuth());
+            Main.trace("SSL server - Use Client Mode: "+sslServer.getUseClientMode());
         }
     }
 
