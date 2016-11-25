@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.validation;
 
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -117,7 +118,7 @@ public class TestError implements Comparable<TestError> {
          * @return {@code this}
          */
         public Builder primitives(OsmPrimitive... primitives) {
-            return primitives(Arrays.asList(primitives));
+            return primitives(new ArrayList<>(Arrays.asList(primitives)));
         }
 
         /**
