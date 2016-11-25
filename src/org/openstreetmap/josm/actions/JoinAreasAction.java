@@ -1093,18 +1093,12 @@ public class JoinAreasAction extends JosmAction {
      */
     public static List<AssembledPolygon> findBoundaryPolygons(Collection<WayInPolygon> multigonWays,
             List<Way> discardedResult) {
-        //first find all discardable ways, by getting outer shells.
-        //this will produce incorrect boundaries in some cases, but second pass will fix it.
-        List<WayInPolygon> discardedWays = new ArrayList<>();
-
         // In multigonWays collection, some way are just a point (i.e. way like nodeA-nodeA)
         // This seems to appear when is apply over invalid way like #9911 test-case
         // Remove all of these way to make the next work.
         List<WayInPolygon> cleanMultigonWays = new ArrayList<>();
         for (WayInPolygon way: multigonWays) {
-            if (way.way.getNodesCount() == 2 && way.way.isClosed())
-                discardedWays.add(way);
-            else
+            if (way.way.getNodesCount() != 2 || !way.way.isClosed())
                 cleanMultigonWays.add(way);
         }
 
