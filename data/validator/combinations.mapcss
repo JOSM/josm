@@ -4,46 +4,44 @@
 
 /* {0.key} without {1.key} (warning level) */
 way[junction                   ][!highway][junction!=yes],
-*[lanes                        ][!highway],
-*[living_street                ][!highway],
-*[maintenance                  ][!highway],
-*[median                       ][!highway],
-*[motorroad                    ][!highway],
-*[ntd_id                       ][!highway],
-*[sac_scale                    ][!highway],
-*[sidewalk                     ][!highway],
-*[step_count                   ][!highway],
-*[tracktype                    ][!highway],
-*[trail_visibility             ][!highway],
-*[trolley_wire                 ][!highway],
-*[zip_left                     ][!highway],
-*[zip_right                    ][!highway],
-*[detail                       ][!railway][route!=railway],
-*[eddy_current_brake           ][!railway][route!=railway],
-*[electrified                  ][!railway][route!=railway],
-*[etcs                         ][!railway][route!=railway],
-*[gauge                        ][!railway][route!=railway],
-*[grade_of_track               ][!railway][route!=railway],
-*[kursbuchstrecke              ][!railway][route!=railway],
-*[lzb                          ][!railway][route!=railway],
-*[old_railway_operator         ][!railway][route!=railway],
-*[operating_procedure          ][!railway][route!=railway],
-*[pzb                          ][!railway][route!=railway],
-*[radio                        ][!railway][route!=railway],
-*[structure_gauge              ][!railway][route!=railway],
-*[tilting_technology           ][!railway][route!=railway],
-*[track_class                  ][!railway][route!=railway],
-*[tracks                       ][!railway][route!=railway],
-*[traffic_mode                 ][!railway][route!=railway],
-*[usage                        ][!railway][route!=railway][man_made!=pipeline],
-*[workrules                    ][!railway][route!=railway],
-*[stream                       ][!waterway],
-*[length_unit                  ][!waterway],
-*[llid                         ][!waterway],
-*[canal                        ][!waterway],
-*[have_riverbank               ][!waterway],
+way[lanes                      ][!highway],
+way[living_street              ][!highway],
+way[maintenance                ][!highway],
+way[median                     ][!highway],
+way[motorroad                  ][!highway],
+node[ntd_id                    ][!highway],
+way[sac_scale                  ][!highway],
+way[sidewalk                   ][!highway],
+way[step_count                 ][!highway],
+way[tracktype                  ][!highway],
+way[trail_visibility           ][!highway],
+way[trolley_wire               ][!highway],
+way[zip_left                   ][!highway],
+way[zip_right                  ][!highway],
+way[detail                     ][!railway][route!=railway],
+way[eddy_current_brake         ][!railway][route!=railway],
+way[electrified                ][!railway][route!=railway],
+way[etcs                       ][!railway][route!=railway],
+way[gauge                      ][!railway][route!=railway],
+way[grade_of_track             ][!railway][route!=railway],
+way[kursbuchstrecke            ][!railway][route!=railway],
+way[lzb                        ][!railway][route!=railway],
+way[old_railway_operator       ][!railway][route!=railway],
+way[operating_procedure        ][!railway][route!=railway],
+way[pzb                        ][!railway][route!=railway],
+way[structure_gauge            ][!railway][route!=railway],
+way[tilting_technology         ][!railway][route!=railway],
+way[track_class                ][!railway][route!=railway],
+way[tracks                     ][!railway][route!=railway],
+way[traffic_mode               ][!railway][route!=railway],
+way[usage                      ][!railway][route!=railway][man_made!=pipeline],
+way[workrules                  ][!railway][route!=railway],
+way[stream                     ][!waterway],
+way[length_unit                ][!waterway],
+way[canal                      ][!waterway],
+way[have_riverbank             ][!waterway],
 *[border_type                  ][!boundary],
-*[bridge:structure             ][!bridge],
+way[bridge:structure           ][!bridge],
 *[piste:difficulty             ][!piste:type],
 *[source:date                  ][!source],
 *[source:name                  ][!name],
@@ -84,8 +82,8 @@ way[junction                   ][!highway][junction!=yes],
 }
 
 /* {0.key} without {1.key} (info level) */
-*[lanes:forward][!lanes:backward][oneway!=yes][oneway!=-1],
-*[lanes:backward][!lanes:forward][oneway!=yes][oneway!=-1],
+way[lanes:forward][!lanes:backward][oneway!=yes][oneway!=-1],
+way[lanes:backward][!lanes:forward][oneway!=yes][oneway!=-1],
 *[leaf_type ][!leaf_cycle],
 *[leaf_cycle][!leaf_type] {
   throwOther: tr("{0} without {1}", "{0.key}", "{1.key}");
@@ -94,19 +92,19 @@ way[junction                   ][!highway][junction!=yes],
 
 /* {0.key} without {1.tag} */
 *[transformer                  ][!power],
-*[fence_type                   ][barrier!=fence],
+way[fence_type                 ][barrier!=fence],
 *[recycling_type               ][amenity!=recycling],
 *[information                  ][tourism!=information],
-*[board_type                   ][information!=board],
+node[board_type                ][information!=board],
 *[shelter_type                 ][amenity!=shelter],
-*[lamp_type                    ][highway!=street_lamp],
-*[map_type                     ][information!=map],
+node[lamp_type                 ][highway!=street_lamp],
+node[map_type                  ][information!=map],
 *[site_type                    ][historic!=archaeological_site],
 *[artwork_type                 ][tourism!=artwork],
 *[castle_type                  ][historic!=castle],
 *[bridge:movable               ][bridge!=movable],
 *[parking                      ][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking)$/],
-*[cutline                      ][man_made!=cutline],
+way[cutline                    ][man_made!=cutline],
 *[bunker_type                  ][military!=bunker] {
   throwWarning: tr("{0} without {1}", "{0.key}", "{1.tag}");
   group: tr("missing tag");
@@ -174,8 +172,8 @@ way[oneway][!highway][!railway] {
 }
 
 /* {0.tag} without {1.tag} (info level) see #11600 #11393 #11850 */
-*[highway=motorway][!oneway][junction!=roundabout],
-*[highway=motorway_link][!oneway][junction!=roundabout] {
+way[highway=motorway][!oneway][junction!=roundabout],
+way[highway=motorway_link][!oneway][junction!=roundabout] {
   throwOther: tr("{0} without {1}", "{0.tag}", "{1.tag}");
   group: tr("missing tag");
 }
@@ -200,7 +198,7 @@ way[oneway][!highway][!railway] {
 }
 
 /* {0.key} without {1.key}, {2.key} or {3.tag} */
-*[incline                      ][!highway][!railway][aeroway!~/^(runway|taxiway)$/],
+way[incline                    ][!highway][!railway][aeroway!~/^(runway|taxiway)$/],
 *[toll                         ][!highway][!barrier][route!~/^(ferry|road)$/] {
   throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.key}", "{3.tag}");
   group: tr("missing tag");
@@ -222,13 +220,13 @@ way[oneway=-1 ][/:forward/][!traffic_sign:forward][bicycle:forward!=use_sidepath
 }
 
 /* {0.tag} together with {1.tag} (info level), see #9696 */
-*[highway=footway][oneway=no] {
+way[highway=footway][oneway=no] {
   throwOther: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
   group: tr("suspicious tag combination");
 }
 
 /* {0.tag} together with {1.tag}, see #10186 */
-*[highway=footway][bicycle=designated] {
+way[highway=footway][bicycle=designated] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
   group: tr("suspicious tag combination");
 }
@@ -295,7 +293,7 @@ way[highway][highway!=services][highway!=rest_area][!postal_code]["addr:postcode
 }
 
 /* #9195 */
-*[highway=footway][cycleway=lane] {
+way[highway=footway][cycleway=lane] {
   throwWarning: tr("{0} together with {1}", "{0.tag}", "{1.tag}");
   suggestAlternative: "highway=path + foot=designated + bicycle=designated + segregated=yes";
   group: tr("suspicious tag combination");
