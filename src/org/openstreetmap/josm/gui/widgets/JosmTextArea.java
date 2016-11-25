@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.widgets;
 
+import java.awt.KeyboardFocusManager;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
@@ -87,6 +88,18 @@ public class JosmTextArea extends JTextArea implements FocusListener {
         super(doc, text, rows, columns);
         TextContextualPopupMenu.enableMenuFor(this, true);
         addFocusListener(this);
+    }
+
+    /**
+     * Restore default behaviour of focus transfer with TAB, overriden by {@link JTextArea}.
+     * @return {@code this}
+     * @since 11308
+     */
+    public JosmTextArea transferFocusOnTab() {
+        // http://stackoverflow.com/a/525867/2257172
+        setFocusTraversalKeys(KeyboardFocusManager.FORWARD_TRAVERSAL_KEYS, null);
+        setFocusTraversalKeys(KeyboardFocusManager.BACKWARD_TRAVERSAL_KEYS, null);
+        return this;
     }
 
     @Override

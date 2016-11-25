@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class AddTMSLayerPanel extends AddImageryPanel {
 
     private final JosmTextField tmsZoom = new JosmTextField();
-    private final JosmTextArea tmsUrl = new JosmTextArea(3, 40);
+    private final JosmTextArea tmsUrl = new JosmTextArea(3, 40).transferFocusOnTab();
     private final transient KeyAdapter keyAdapter = new KeyAdapter() {
         @Override
         public void keyReleased(KeyEvent e) {
