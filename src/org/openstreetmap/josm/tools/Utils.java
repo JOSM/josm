@@ -1385,7 +1385,9 @@ public final class Utils {
                 return null;
             return bout.toByteArray();
         } finally {
-            stream.close();
+            if (stream != null) {
+                stream.close();
+            }
         }
     }
 
