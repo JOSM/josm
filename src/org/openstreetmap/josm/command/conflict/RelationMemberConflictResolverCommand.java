@@ -10,6 +10,7 @@ import java.util.Objects;
 import javax.swing.Icon;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -18,33 +19,28 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Represents the resolution of conflicts in the member list of two {@link Relation}s.
- *
+ * @since 1631
  */
 public class RelationMemberConflictResolverCommand extends ConflictResolveCommand {
-    /** my relation */
-    private final Relation my;
-    /** their relation */
-    private final Relation their;
-    /** the list of merged nodes. This becomes the list of news of my way after the
-     *  command is executed
-     */
+    /** the conflict to resolve */
+    private final Conflict<Relation> conflict;
+    /** the list of merged nodes. This becomes the list of news of my way after the command is executed */
     private final List<RelationMember> mergedMembers;
 
     /**
-     *
-     * @param my my relation
-     * @param their their relation
+     * Constructs a new {@code RelationMemberConflictResolverCommand}.
+     * @param conflict the conflict to resolve
      * @param mergedMembers the list of merged relation members
      */
-    public RelationMemberConflictResolverCommand(Relation my, Relation their, List<RelationMember> mergedMembers) {
-        this.my = my;
-        this.their = their;
+    @SuppressWarnings("unchecked")
+    public RelationMemberConflictResolverCommand(Conflict<? extends OsmPrimitive> conflict, List<RelationMember> mergedMembers) {
+        this.conflict = (Conflict<Relation>) conflict;
         this.mergedMembers = mergedMembers;
     }
 
     @Override
     public String getDescriptionText() {
-        return tr("Resolve conflicts in member list of relation {0}", my.getId());
+        return tr("Resolve conflicts in member list of relation {0}", conflict.getMy().getId());
     }
 
     @Override
@@ -60,7 +56,7 @@ public class RelationMemberConflictResolverCommand extends ConflictResolveComman
 
         // replace the list of members of 'my' relation by the list of merged members
         //
-        my.setMembers(mergedMembers);
+        conflict.getMy().setMembers(mergedMembers);
 
         return true;
     }
@@ -68,7 +64,7 @@ public class RelationMemberConflictResolverCommand extends ConflictResolveComman
     @Override
     public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted,
             Collection<OsmPrimitive> added) {
-        modified.add(my);
+        modified.add(conflict.getMy());
     }
 
     @Override
@@ -91,14 +87,14 @@ public class RelationMemberConflictResolverCommand extends ConflictResolveComman
 
         // restore a conflict if necessary
         //
-        if (!editLayer.getConflicts().hasConflictForMy(my)) {
-            editLayer.getConflicts().add(my, their);
+        if (!editLayer.getConflicts().hasConflictForMy(conflict.getMy())) {
+            editLayer.getConflicts().add(conflict);
         }
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), my, their, mergedMembers);
+        return Objects.hash(super.hashCode(), conflict, mergedMembers);
     }
 
     @Override
@@ -107,8 +103,7 @@ public class RelationMemberConflictResolverCommand extends ConflictResolveComman
         if (obj == null || getClass() != obj.getClass()) return false;
         if (!super.equals(obj)) return false;
         RelationMemberConflictResolverCommand that = (RelationMemberConflictResolverCommand) obj;
-        return Objects.equals(my, that.my) &&
-                Objects.equals(their, that.their) &&
-                Objects.equals(mergedMembers, that.mergedMembers);
+        return Objects.equals(conflict, that.conflict) &&
+               Objects.equals(mergedMembers, that.mergedMembers);
     }
 }

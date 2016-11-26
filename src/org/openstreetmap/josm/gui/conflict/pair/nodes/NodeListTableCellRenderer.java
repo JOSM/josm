@@ -11,6 +11,7 @@ import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
+import org.openstreetmap.josm.command.conflict.WayNodesConflictResolverCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
@@ -53,7 +54,8 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
      * @param row the row
      * @param isSelected true, if the current row is selected
      */
-    protected void renderNode(ListMergeModel<Node>.EntriesTableModel model, Node node, int row, boolean isSelected) {
+    protected void renderNode(ListMergeModel<Node, WayNodesConflictResolverCommand>.EntriesTableModel model, Node node,
+            int row, boolean isSelected) {
         setIcon(icon);
         setBorder(null);
         if (model.getListMergeModel().isFrozen()) {
@@ -87,7 +89,7 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
      * @param model the model
      * @param row the row index
      */
-    protected void renderRowId(ListMergeModel<Node>.EntriesTableModel model, int row) {
+    protected void renderRowId(ListMergeModel<Node, WayNodesConflictResolverCommand>.EntriesTableModel model, int row) {
         setIcon(null);
         setBorder(rowNumberBorder);
         if (model.getListMergeModel().isFrozen()) {
@@ -129,7 +131,7 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
      * @return the table model
      */
     @SuppressWarnings("unchecked")
-    protected ListMergeModel<Node>.EntriesTableModel getModel(JTable table) {
-        return (ListMergeModel<Node>.EntriesTableModel) table.getModel();
+    protected ListMergeModel<Node, WayNodesConflictResolverCommand>.EntriesTableModel getModel(JTable table) {
+        return (ListMergeModel<Node, WayNodesConflictResolverCommand>.EntriesTableModel) table.getModel();
     }
 }

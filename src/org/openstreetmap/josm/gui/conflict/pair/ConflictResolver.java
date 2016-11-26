@@ -23,11 +23,9 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.conflict.pair.nodes.NodeListMergeModel;
 import org.openstreetmap.josm.gui.conflict.pair.nodes.NodeListMerger;
 import org.openstreetmap.josm.gui.conflict.pair.properties.PropertiesMergeModel;
 import org.openstreetmap.josm.gui.conflict.pair.properties.PropertiesMerger;
-import org.openstreetmap.josm.gui.conflict.pair.relation.RelationMemberListMergeModel;
 import org.openstreetmap.josm.gui.conflict.pair.relation.RelationMemberMerger;
 import org.openstreetmap.josm.gui.conflict.pair.tags.TagMergeModel;
 import org.openstreetmap.josm.gui.conflict.pair.tags.TagMerger;
@@ -45,7 +43,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *   <li>{@link #THEIR_PRIMITIVE_PROP} - new value is the {@link OsmPrimitive} in the role of
  *   their primitive</li>
  * </ul>
- *
+ * @since 1622
  */
 public class ConflictResolver extends JPanel implements PropertyChangeListener {
 
@@ -273,8 +271,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener {
     }
 
     /**
-     * Builds the resolution command(s) for the resolved conflicts in this
-     * ConflictResolver
+     * Builds the resolution command(s) for the resolved conflicts in this ConflictResolver
      *
      * @return the resolution command
      */
@@ -286,11 +283,9 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener {
         }
         commands.addAll(propertiesMerger.getModel().buildResolveCommand(conflict));
         if (my instanceof Way && nodeListMerger.getModel().isFrozen()) {
-            NodeListMergeModel model = (NodeListMergeModel) nodeListMerger.getModel();
-            commands.add(model.buildResolveCommand(conflict));
+            commands.add(nodeListMerger.getModel().buildResolveCommand(conflict));
         } else if (my instanceof Relation && relationMemberMerger.getModel().isFrozen()) {
-            RelationMemberListMergeModel model = (RelationMemberListMergeModel) relationMemberMerger.getModel();
-            commands.add(model.buildResolveCommand((Relation) my, (Relation) their));
+            commands.add(relationMemberMerger.getModel().buildResolveCommand(conflict));
         }
         if (isResolvedCompletely()) {
             commands.add(new VersionConflictResolveCommand(conflict));

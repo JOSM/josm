@@ -3,12 +3,12 @@ package org.openstreetmap.josm.gui.conflict.pair.relation;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.List;
 import java.util.Map;
 
 import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.command.conflict.RelationMemberConflictResolverCommand;
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -16,11 +16,12 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
 import org.openstreetmap.josm.gui.conflict.pair.ListRole;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+
 /**
  * The model for merging two lists of relation members
- *
+ * @since 1631
  */
-public class RelationMemberListMergeModel extends ListMergeModel<RelationMember> {
+public class RelationMemberListMergeModel extends ListMergeModel<RelationMember, RelationMemberConflictResolverCommand> {
 
     @Override
     public boolean isEqualEntry(RelationMember e1, RelationMember e2) {
@@ -95,22 +96,11 @@ public class RelationMemberListMergeModel extends ListMergeModel<RelationMember>
         return getMyPrimitiveById(entry.getMember());
     }
 
-    /**
-     * Builds the command to resolve conflicts in the node list of a way
-     *
-     * @param my  my relation. Must not be null.
-     * @param their  their relation. Must not be null
-     * @return the command
-     * @throws IllegalArgumentException if my is null
-     * @throws IllegalArgumentException if their is null
-     * @throws IllegalStateException if the merge is not yet frozen
-     */
-    public RelationMemberConflictResolverCommand buildResolveCommand(Relation my, Relation their) {
-        CheckParameterUtil.ensureParameterNotNull(my, "my");
-        CheckParameterUtil.ensureParameterNotNull(their, "their");
+    @Override
+    public RelationMemberConflictResolverCommand buildResolveCommand(Conflict<? extends OsmPrimitive> conflict) {
+        CheckParameterUtil.ensureParameterNotNull(conflict, "conflict");
         if (!isFrozen())
-            throw new IllegalArgumentException(tr("Merged nodes not frozen yet. Cannot build resolution command"));
-        List<RelationMember> entries = getMergedEntries();
-        return new RelationMemberConflictResolverCommand(my, their, entries);
+            throw new IllegalArgumentException(tr("Merged members not frozen yet. Cannot build resolution command"));
+        return new RelationMemberConflictResolverCommand(conflict, getMergedEntries());
     }
 }
