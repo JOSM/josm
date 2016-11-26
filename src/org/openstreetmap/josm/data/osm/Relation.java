@@ -450,8 +450,12 @@ public final class Relation extends OsmPrimitive implements IRelation {
         BBox box = new BBox();
         addToBBox(box, new HashSet<PrimitiveId>());
         if (getDataSet() != null)
-            bbox = box; // set cache
+            setBBox(box); // set cache
         return new BBox(box);
+    }
+
+    private void setBBox(BBox bbox) {
+        this.bbox = bbox;
     }
 
     @Override
@@ -464,14 +468,15 @@ public final class Relation extends OsmPrimitive implements IRelation {
 
     @Override
     public void updatePosition() {
-        bbox = getBBox();
+        setBBox(null); // make sure that it is recalculated
+        setBBox(getBBox());
     }
 
     @Override
     void setDataset(DataSet dataSet) {
         super.setDataset(dataSet);
         checkMembers();
-        bbox = null; // bbox might have changed if relation was in ds, was removed, modified, added back to dataset
+        setBBox(null); // bbox might have changed if relation was in ds, was removed, modified, added back to dataset
     }
 
     /**
