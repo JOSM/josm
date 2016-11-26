@@ -2,7 +2,9 @@
 package org.openstreetmap.josm.tools;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -161,4 +163,15 @@ public class UtilsTest {
         assertEquals("<ul><li>1</li><li>2</li></ul>", Utils.joinAsHtmlUnorderedList(items));
         assertEquals("<ul></ul>", Utils.joinAsHtmlUnorderedList(Collections.emptyList()));
     }
+
+    /**
+     * Tests if readBytesFromStream handles null streams (might happen when there is no data on error stream)
+     * @throws IOException
+     *
+     */
+    @Test
+    public void testNullStreamForReadBytesFromStream() throws IOException {
+        assertNull("Null on null stream", Utils.readBytesFromStream(null));
+    }
+
 }
