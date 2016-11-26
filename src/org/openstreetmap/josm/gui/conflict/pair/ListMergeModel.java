@@ -28,6 +28,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.command.conflict.ConflictResolveCommand;
+import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
@@ -68,10 +70,11 @@ import org.openstreetmap.josm.tools.Utils;
  * </ul>
  * A ListMergeModel is used in combination with a {@link ListMerger}.
  *
- * @param <T>  the type of the list entries
+ * @param <T> the type of the list entries
+ * @param <C> the type of conflict resolution command
  * @see ListMerger
  */
-public abstract class ListMergeModel<T extends PrimitiveId> extends ChangeNotifier {
+public abstract class ListMergeModel<T extends PrimitiveId, C extends ConflictResolveCommand> extends ChangeNotifier {
     public static final String FROZEN_PROP = ListMergeModel.class.getName() + ".frozen";
 
     private static final int MAX_DELETED_PRIMITIVE_IN_DIALOG = 5;
@@ -613,7 +616,11 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends ChangeNotifi
             ListMergeModel.this.setValueAt(this, value, row, col);
         }
 
-        public ListMergeModel<T> getListMergeModel() {
+        /**
+         * Returns the list merge model.
+         * @return the list merge model
+         */
+        public ListMergeModel<T, C> getListMergeModel() {
             return ListMergeModel.this;
         }
 
@@ -860,4 +867,13 @@ public abstract class ListMergeModel<T extends PrimitiveId> extends ChangeNotifi
             return compareModes.get(selectedIdx);
         }
     }
+
+    /**
+     * Builds the command to resolve conflicts in the list.
+     *
+     * @param conflict the conflict data set
+     * @return the command
+     * @throws IllegalStateException if the merge is not yet frozen
+     */
+    public abstract C buildResolveCommand(Conflict<? extends OsmPrimitive> conflict);
 }

@@ -31,6 +31,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.command.conflict.ConflictResolveCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -45,15 +46,17 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * A UI component for resolving conflicts in two lists of entries of type T.
  *
  * @param <T> the type of the entries
+ * @param <C> the type of conflict resolution command
  * @see ListMergeModel
  * @since 1631
  */
-public abstract class ListMerger<T extends PrimitiveId> extends JPanel implements PropertyChangeListener, ChangeListener, IConflictResolver {
+public abstract class ListMerger<T extends PrimitiveId, C extends ConflictResolveCommand> extends JPanel
+implements PropertyChangeListener, ChangeListener, IConflictResolver {
     protected OsmPrimitivesTable myEntriesTable;
     protected OsmPrimitivesTable mergedEntriesTable;
     protected OsmPrimitivesTable theirEntriesTable;
 
-    protected transient ListMergeModel<T> model;
+    protected transient ListMergeModel<T, C> model;
 
     private CopyStartLeftAction copyStartLeftAction;
     private CopyBeforeCurrentLeftAction copyBeforeCurrentLeftAction;
@@ -405,7 +408,7 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
      * Constructs a new {@code ListMerger}.
      * @param model list merger model
      */
-    public ListMerger(ListMergeModel<T> model) {
+    public ListMerger(ListMergeModel<T, C> model) {
         this.model = model;
         model.addChangeListener(this);
         build();
@@ -860,7 +863,11 @@ public abstract class ListMerger<T extends PrimitiveId> extends JPanel implement
         }
     }
 
-    public ListMergeModel<T> getModel() {
+    /**
+     * Returns the model.
+     * @return the model
+     */
+    public ListMergeModel<T, C> getModel() {
         return model;
     }
 

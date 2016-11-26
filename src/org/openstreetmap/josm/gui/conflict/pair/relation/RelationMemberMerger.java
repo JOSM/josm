@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.conflict.pair.relation;
 
 import javax.swing.JScrollPane;
 
+import org.openstreetmap.josm.command.conflict.RelationMemberConflictResolverCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -13,7 +14,7 @@ import org.openstreetmap.josm.gui.conflict.pair.ListMerger;
  * A UI component for resolving conflicts in the member lists of two {@link Relation}s.
  * @since 1631
  */
-public class RelationMemberMerger extends ListMerger<RelationMember> {
+public class RelationMemberMerger extends ListMerger<RelationMember, RelationMemberConflictResolverCommand> {
 
     /**
      * Constructs a new {@code RelationMemberMerger}.

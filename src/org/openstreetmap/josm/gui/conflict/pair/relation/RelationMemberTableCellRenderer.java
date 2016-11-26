@@ -10,7 +10,7 @@ import javax.swing.JTable;
 import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
-import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.command.conflict.RelationMemberConflictResolverCommand;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * This is the {@link TableCellRenderer} used in the tables of {@link RelationMemberMerger}.
- *
+ * @since 1631
  */
 public class RelationMemberTableCellRenderer extends JLabel implements TableCellRenderer {
     private final transient Border rowNumberBorder;
@@ -44,7 +44,8 @@ public class RelationMemberTableCellRenderer extends JLabel implements TableCell
         setToolTipText(null);
     }
 
-    protected void renderBackground(ListMergeModel<Node>.EntriesTableModel model, RelationMember member, int row, int col, boolean isSelected) {
+    protected void renderBackground(ListMergeModel<RelationMember, RelationMemberConflictResolverCommand>.EntriesTableModel model,
+            RelationMember member, int row, int col, boolean isSelected) {
         Color bgc = ConflictColors.BGCOLOR.get();
         if (col == 0) {
             if (model.getListMergeModel().isFrozen()) {
@@ -76,7 +77,8 @@ public class RelationMemberTableCellRenderer extends JLabel implements TableCell
         setBackground(bgc);
     }
 
-    protected void renderForeground(ListMergeModel<Node>.EntriesTableModel model, RelationMember member, int row, int col, boolean isSelected) {
+    protected void renderForeground(ListMergeModel<RelationMember, RelationMemberConflictResolverCommand>.EntriesTableModel model,
+            RelationMember member, int row, int col, boolean isSelected) {
         Color fgc = ConflictColors.FGCOLOR.get();
         if (col == 0 && model.isParticipatingInCurrentComparePair() && !model.getListMergeModel().isFrozen()) {
             fgc = ConflictColors.FGCOLOR_PARTICIPATING_IN_COMPARISON.get();
@@ -145,7 +147,7 @@ public class RelationMemberTableCellRenderer extends JLabel implements TableCell
      * @return the table model
      */
     @SuppressWarnings("unchecked")
-    protected ListMergeModel<Node>.EntriesTableModel getModel(JTable table) {
-        return (ListMergeModel<Node>.EntriesTableModel) table.getModel();
+    protected ListMergeModel<RelationMember, RelationMemberConflictResolverCommand>.EntriesTableModel getModel(JTable table) {
+        return (ListMergeModel<RelationMember, RelationMemberConflictResolverCommand>.EntriesTableModel) table.getModel();
     }
 }

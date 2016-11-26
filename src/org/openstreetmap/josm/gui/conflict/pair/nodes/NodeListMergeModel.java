@@ -17,7 +17,11 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
 import org.openstreetmap.josm.gui.conflict.pair.ListRole;
 
-public class NodeListMergeModel extends ListMergeModel<Node> {
+/**
+ * The model for merging two lists of way nodess
+ * @since 1622
+ */
+public class NodeListMergeModel extends ListMergeModel<Node, WayNodesConflictResolverCommand> {
 
     /**
      * Populates the model with the nodes in the two {@link Way}s <code>my</code> and
@@ -48,13 +52,7 @@ public class NodeListMergeModel extends ListMergeModel<Node> {
         fireModelDataChanged();
     }
 
-    /**
-     * Builds the command to resolve conflicts in the node list of a way
-     *
-     * @param conflict the conflict data set
-     * @return the command
-     * @throws IllegalStateException if the merge is not yet frozen
-     */
+    @Override
     public WayNodesConflictResolverCommand buildResolveCommand(Conflict<? extends OsmPrimitive> conflict) {
         if (!isFrozen())
             throw new IllegalArgumentException(tr("Merged nodes not frozen yet. Cannot build resolution command."));

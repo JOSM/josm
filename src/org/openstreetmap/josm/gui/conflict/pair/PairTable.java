@@ -5,6 +5,7 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableColumnModel;
 
+import org.openstreetmap.josm.command.conflict.ConflictResolveCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -13,7 +14,7 @@ import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 
 public abstract class PairTable extends OsmPrimitivesTable {
 
-    private final transient ListMergeModel<? extends PrimitiveId> model;
+    private final transient ListMergeModel<? extends PrimitiveId, ? extends ConflictResolveCommand> model;
 
     /**
      * Constructs a new {@code PairTable}.
@@ -23,7 +24,7 @@ public abstract class PairTable extends OsmPrimitivesTable {
      * @param cm column model
      * @param sm selection model
      */
-    public PairTable(String name, ListMergeModel<? extends PrimitiveId> model,
+    public PairTable(String name, ListMergeModel<? extends PrimitiveId, ? extends ConflictResolveCommand> model,
             OsmPrimitivesTableModel dm, TableColumnModel cm, ListSelectionModel sm) {
         super(dm, cm, sm);
         this.model = model;
