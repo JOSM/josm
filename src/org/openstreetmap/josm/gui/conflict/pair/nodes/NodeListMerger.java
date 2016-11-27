@@ -8,13 +8,13 @@ import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.conflict.pair.ListMerger;
+import org.openstreetmap.josm.gui.conflict.pair.AbstractListMerger;
 
 /**
  * A UI component for resolving conflicts in the node lists of two {@link Way}s.
  * @since 1622
  */
-public class NodeListMerger extends ListMerger<Node, WayNodesConflictResolverCommand> {
+public class NodeListMerger extends AbstractListMerger<Node, WayNodesConflictResolverCommand> {
 
     /**
      * Constructs a new {@code NodeListMerger}.

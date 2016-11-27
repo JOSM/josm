@@ -30,18 +30,18 @@ public class TestError implements Comparable<TestError> {
     /** is this error on the ignore list */
     private boolean ignored;
     /** Severity */
-    private Severity severity;
+    private final Severity severity;
     /** The error message */
-    private String message;
+    private final String message;
     /** Deeper error description */
     private final String description;
     private final String descriptionEn;
     /** The affected primitives */
-    private Collection<? extends OsmPrimitive> primitives;
+    private final Collection<? extends OsmPrimitive> primitives;
     /** The primitives or way segments to be highlighted */
     private final Collection<?> highlighted;
     /** The tester that raised this error */
-    private Test tester;
+    private final Test tester;
     /** Internal code used by testers to classify errors */
     private final int code;
     /** If this error is selected */

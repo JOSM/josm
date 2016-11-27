@@ -15,7 +15,7 @@ import org.openstreetmap.josm.command.conflict.WayNodesConflictResolverCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
-import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
+import org.openstreetmap.josm.gui.conflict.pair.AbstractListMergeModel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -54,7 +54,7 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
      * @param row the row
      * @param isSelected true, if the current row is selected
      */
-    protected void renderNode(ListMergeModel<Node, WayNodesConflictResolverCommand>.EntriesTableModel model, Node node,
+    protected void renderNode(AbstractListMergeModel<Node, WayNodesConflictResolverCommand>.EntriesTableModel model, Node node,
             int row, boolean isSelected) {
         setIcon(icon);
         setBorder(null);
@@ -89,7 +89,7 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
      * @param model the model
      * @param row the row index
      */
-    protected void renderRowId(ListMergeModel<Node, WayNodesConflictResolverCommand>.EntriesTableModel model, int row) {
+    protected void renderRowId(AbstractListMergeModel<Node, WayNodesConflictResolverCommand>.EntriesTableModel model, int row) {
         setIcon(null);
         setBorder(rowNumberBorder);
         if (model.getListMergeModel().isFrozen()) {
@@ -131,7 +131,7 @@ public class NodeListTableCellRenderer extends JLabel implements TableCellRender
      * @return the table model
      */
     @SuppressWarnings("unchecked")
-    protected ListMergeModel<Node, WayNodesConflictResolverCommand>.EntriesTableModel getModel(JTable table) {
-        return (ListMergeModel<Node, WayNodesConflictResolverCommand>.EntriesTableModel) table.getModel();
+    protected AbstractListMergeModel<Node, WayNodesConflictResolverCommand>.EntriesTableModel getModel(JTable table) {
+        return (AbstractListMergeModel<Node, WayNodesConflictResolverCommand>.EntriesTableModel) table.getModel();
     }
 }

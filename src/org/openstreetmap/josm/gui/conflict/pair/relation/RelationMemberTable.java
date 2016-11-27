@@ -6,7 +6,7 @@ import javax.swing.ListSelectionModel;
 import org.openstreetmap.josm.actions.ZoomToAction;
 import org.openstreetmap.josm.command.conflict.RelationMemberConflictResolverCommand;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
+import org.openstreetmap.josm.gui.conflict.pair.AbstractListMergeModel;
 import org.openstreetmap.josm.gui.conflict.pair.PairTable;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 
@@ -23,7 +23,7 @@ public class RelationMemberTable extends PairTable {
      * @param dm table model
      * @param sm selection model
      */
-    public RelationMemberTable(String name, ListMergeModel<RelationMember, RelationMemberConflictResolverCommand> model,
+    public RelationMemberTable(String name, AbstractListMergeModel<RelationMember, RelationMemberConflictResolverCommand> model,
             OsmPrimitivesTableModel dm, ListSelectionModel sm) {
         super(name, model, dm, new RelationMemberListColumnModel(), sm);
     }

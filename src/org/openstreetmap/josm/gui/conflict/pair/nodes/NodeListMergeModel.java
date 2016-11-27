@@ -14,14 +14,14 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
+import org.openstreetmap.josm.gui.conflict.pair.AbstractListMergeModel;
 import org.openstreetmap.josm.gui.conflict.pair.ListRole;
 
 /**
  * The model for merging two lists of way nodess
  * @since 1622
  */
-public class NodeListMergeModel extends ListMergeModel<Node, WayNodesConflictResolverCommand> {
+public class NodeListMergeModel extends AbstractListMergeModel<Node, WayNodesConflictResolverCommand> {
 
     /**
      * Populates the model with the nodes in the two {@link Way}s <code>my</code> and

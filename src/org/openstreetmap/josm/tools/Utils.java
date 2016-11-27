@@ -1365,12 +1365,12 @@ public final class Utils {
      * Reads the input stream and closes the stream at the end of processing (regardless if an exception was thrown)
      *
      * @param stream input stream
-     * @return byte array of data in input stream or null if stream is null
+     * @return byte array of data in input stream (empty if stream is null)
      * @throws IOException if any I/O error occurs
      */
     public static byte[] readBytesFromStream(InputStream stream) throws IOException {
         if (stream == null) {
-            return null;
+            return new byte[0];
         }
         try {
             ByteArrayOutputStream bout = new ByteArrayOutputStream(stream.available());
@@ -1385,12 +1385,10 @@ public final class Utils {
                 }
             } while (!finished);
             if (bout.size() == 0)
-                return null;
+                return new byte[0];
             return bout.toByteArray();
         } finally {
-            if (stream != null) {
-                stream.close();
-            }
+            stream.close();
         }
     }
 

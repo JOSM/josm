@@ -47,16 +47,16 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *
  * @param <T> the type of the entries
  * @param <C> the type of conflict resolution command
- * @see ListMergeModel
+ * @see AbstractListMergeModel
  * @since 1631
  */
-public abstract class ListMerger<T extends PrimitiveId, C extends ConflictResolveCommand> extends JPanel
+public abstract class AbstractListMerger<T extends PrimitiveId, C extends ConflictResolveCommand> extends JPanel
 implements PropertyChangeListener, ChangeListener, IConflictResolver {
     protected OsmPrimitivesTable myEntriesTable;
     protected OsmPrimitivesTable mergedEntriesTable;
     protected OsmPrimitivesTable theirEntriesTable;
 
-    protected transient ListMergeModel<T, C> model;
+    protected transient AbstractListMergeModel<T, C> model;
 
     private CopyStartLeftAction copyStartLeftAction;
     private CopyBeforeCurrentLeftAction copyBeforeCurrentLeftAction;
@@ -408,7 +408,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
      * Constructs a new {@code ListMerger}.
      * @param model list merger model
      */
-    public ListMerger(ListMergeModel<T, C> model) {
+    public AbstractListMerger(AbstractListMergeModel<T, C> model) {
         this.model = model;
         model.addChangeListener(this);
         build();
@@ -858,7 +858,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-        if (evt.getPropertyName().equals(ListMergeModel.FROZEN_PROP)) {
+        if (evt.getPropertyName().equals(AbstractListMergeModel.FROZEN_PROP)) {
             handlePropertyChangeFrozen((Boolean) evt.getOldValue(), (Boolean) evt.getNewValue());
         }
     }
@@ -867,7 +867,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
      * Returns the model.
      * @return the model
      */
-    public ListMergeModel<T, C> getModel() {
+    public AbstractListMergeModel<T, C> getModel() {
         return model;
     }
 
