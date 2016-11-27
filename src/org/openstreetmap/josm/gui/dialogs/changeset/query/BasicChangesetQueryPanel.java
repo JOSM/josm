@@ -26,8 +26,8 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.io.ChangesetQuery;
 
 /**
- * This panel presents a list of basic queries for changests.
- *
+ * This panel presents a list of basic queries for changesets.
+ * @since 2689
  */
 public class BasicChangesetQueryPanel extends JPanel {
 
@@ -144,6 +144,9 @@ public class BasicChangesetQueryPanel extends JPanel {
         build();
     }
 
+    /**
+     * Initializes the panel.
+     */
     public void init() {
         JMultilineLabel lbl = lblQueries.get(BasicQuery.MOST_RECENT_CHANGESETS);
         lbl.setText(tr("<html>Download the latest changesets</html>"));
@@ -175,6 +178,9 @@ public class BasicChangesetQueryPanel extends JPanel {
         restoreFromPreferences();
     }
 
+    /**
+     * Remember settings in preferences.
+     */
     public void rememberInPreferences() {
         BasicQuery q = getSelectedQuery();
         if (q == null) {
@@ -185,6 +191,9 @@ public class BasicChangesetQueryPanel extends JPanel {
         Main.pref.put("changeset-query.basic.my-changesets-only", cbMyChangesetsOnly.isSelected());
     }
 
+    /**
+     * Restore settings from preferences.
+     */
     public void restoreFromPreferences() {
         BasicQuery q;
         String value = Main.pref.get("changeset-query.basic.query", null);
@@ -213,6 +222,10 @@ public class BasicChangesetQueryPanel extends JPanel {
         return null;
     }
 
+    /**
+     * Builds the changeset query.
+     * @return the changeset query
+     */
     public ChangesetQuery buildChangesetQuery() {
         BasicQuery q = getSelectedQuery();
         ChangesetQuery query = new ChangesetQuery();
@@ -246,7 +259,6 @@ public class BasicChangesetQueryPanel extends JPanel {
 
     /**
      * Responds to changes in the selected query
-     *
      */
     class SelectQueryHandler implements ItemListener {
         @Override
