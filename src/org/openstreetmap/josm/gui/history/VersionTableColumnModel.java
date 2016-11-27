@@ -24,6 +24,8 @@ public class VersionTableColumnModel extends DefaultTableColumnModel {
     public static final int COL_DATE = 3;
     /** Column index for user */
     public static final int COL_USER = 4;
+    /** Column index for editor */
+    public static final int COL_EDITOR = 5;
 
     /**
      * Creates a new {@code VersionTableColumnModel}.
@@ -64,6 +66,11 @@ public class VersionTableColumnModel extends DefaultTableColumnModel {
         // column 4 - User
         col = new TableColumn(COL_USER);
         col.setHeaderValue(tr("User"));
+        col.setResizable(false);
+        addColumn(col);
+        // column 5 - Editor
+        col = new TableColumn(COL_EDITOR);
+        col.setHeaderValue(tr("Editor"));
         col.setResizable(false);
         addColumn(col);
     }

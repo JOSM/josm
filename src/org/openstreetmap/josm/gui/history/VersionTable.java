@@ -96,6 +96,7 @@ public class VersionTable extends JTable implements ChangeListener {
             adjustColumnWidth(this, 2, -8);
             adjustColumnWidth(this, 3, 0);
             adjustColumnWidth(this, 4, 0);
+            adjustColumnWidth(this, 5, 0);
         });
     }
 
