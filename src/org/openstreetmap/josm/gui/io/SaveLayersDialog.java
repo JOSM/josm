@@ -446,13 +446,18 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
     final class SaveAndProceedAction extends AbstractAction implements PropertyChangeListener {
         private static final int ICON_SIZE = 24;
         private static final String BASE_ICON = "BASE_ICON";
-        private final transient Image save = ImageProvider.get("save").getImage();
-        private final transient Image upld = ImageProvider.get("upload").getImage();
-        private final transient Image saveDis = new ImageProvider("save").setDisabled(true).get().getImage();
-        private final transient Image upldDis = new ImageProvider("upload").setDisabled(true).get().getImage();
+        private final transient Image save = getImage("save", false);
+        private final transient Image upld = getImage("upload", false);
+        private final transient Image saveDis = getImage("save", true);
+        private final transient Image upldDis = getImage("upload", true);
 
         SaveAndProceedAction() {
             initForReason(Reason.EXIT);
+        }
+
+        Image getImage(String name, boolean disabled) {
+            ImageIcon img = new ImageProvider(name).setDisabled(disabled).get();
+            return img != null ? img.getImage() : null;
         }
 
         public void initForReason(Reason reason) {
