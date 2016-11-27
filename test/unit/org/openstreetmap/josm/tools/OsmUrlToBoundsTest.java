@@ -38,6 +38,8 @@ public class OsmUrlToBoundsTest {
      */
     private static final ParseTestItem[] parseTestData = {
         new ParseTestItem("https://www.openstreetmap.org", null),
+        new ParseTestItem("geo:12.34,56.78?z=9",
+                OsmUrlToBounds.positionToBounds(12.34, 56.78, 9)),
         new ParseTestItem("https://www.openstreetmap.org/?bbox=-0.489,51.28,0.236,51.686",
                 new Bounds(51.28, -0.489, 51.686, 0.236)),
         new ParseTestItem("https://www.openstreetmap.org/?minlon=-0.489&minlat=51.28&maxlon=0.236&maxlat=51.686",
