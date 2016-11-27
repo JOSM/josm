@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui.conflict.pair;
 
 /**
- * Enumeration of roles entry lists play in {@link ListMergeModel}
+ * Enumeration of roles entry lists play in {@link AbstractListMergeModel}
  */
 public enum ListRole {
     MY_ENTRIES,

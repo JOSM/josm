@@ -162,7 +162,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener {
      * handles property change events
      * @param evt the event
      * @see TagMergeModel
-     * @see ListMergeModel
+     * @see AbstractListMergeModel
      * @see PropertiesMergeModel
      */
     @Override
@@ -180,7 +180,7 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener {
                 tabbedPane.setIconAt(1, mergeIncomplete);
             }
             updateResolvedCompletely();
-        } else if (evt.getPropertyName().equals(ListMergeModel.FROZEN_PROP)) {
+        } else if (evt.getPropertyName().equals(AbstractListMergeModel.FROZEN_PROP)) {
             boolean frozen = (Boolean) evt.getNewValue();
             if (evt.getSource() == nodeListMerger.getModel() && my instanceof Way) {
                 if (frozen) {

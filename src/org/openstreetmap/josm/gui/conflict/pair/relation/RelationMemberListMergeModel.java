@@ -13,7 +13,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.gui.conflict.pair.ListMergeModel;
+import org.openstreetmap.josm.gui.conflict.pair.AbstractListMergeModel;
 import org.openstreetmap.josm.gui.conflict.pair.ListRole;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * The model for merging two lists of relation members
  * @since 1631
  */
-public class RelationMemberListMergeModel extends ListMergeModel<RelationMember, RelationMemberConflictResolverCommand> {
+public class RelationMemberListMergeModel extends AbstractListMergeModel<RelationMember, RelationMemberConflictResolverCommand> {
 
     @Override
     public boolean isEqualEntry(RelationMember e1, RelationMember e2) {

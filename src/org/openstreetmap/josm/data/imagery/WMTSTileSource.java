@@ -314,7 +314,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                 setCachingStrategy(CachedFile.CachingStrategy.IfModifiedSince).
                 getInputStream()) {
             byte[] data = Utils.readBytesFromStream(in);
-            if (data == null || data.length == 0) {
+            if (data.length == 0) {
                 cf.clear();
                 throw new IllegalArgumentException("Could not read data from: " + baseUrl);
             }

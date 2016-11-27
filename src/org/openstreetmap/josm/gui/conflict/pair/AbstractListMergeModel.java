@@ -53,7 +53,7 @@ import org.openstreetmap.josm.tools.Utils;
  * A ListMergeModel is a factory for three {@link TableModel}s and three {@link ListSelectionModel}s:
  * <ol>
  *   <li>the table model and the list selection for for a  {@link JTable} which shows my entries.
- *    See {@link #getMyTableModel()} and {@link ListMergeModel#getMySelectionModel()}</li>
+ *    See {@link #getMyTableModel()} and {@link AbstractListMergeModel#getMySelectionModel()}</li>
  *   <li>dito for their entries and merged entries</li>
  * </ol>
  *
@@ -63,19 +63,19 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * ListMergeModel is an abstract class. Three methods have to be implemented by subclasses:
  * <ul>
- *   <li>{@link ListMergeModel#cloneEntryForMergedList} - clones an entry of type T</li>
- *   <li>{@link ListMergeModel#isEqualEntry} - checks whether two entries are equals </li>
- *   <li>{@link ListMergeModel#setValueAt(DefaultTableModel, Object, int, int)} - handles values edited in
+ *   <li>{@link AbstractListMergeModel#cloneEntryForMergedList} - clones an entry of type T</li>
+ *   <li>{@link AbstractListMergeModel#isEqualEntry} - checks whether two entries are equals </li>
+ *   <li>{@link AbstractListMergeModel#setValueAt(DefaultTableModel, Object, int, int)} - handles values edited in
  *     a JTable, dispatched from {@link TableModel#setValueAt(Object, int, int)} </li>
  * </ul>
- * A ListMergeModel is used in combination with a {@link ListMerger}.
+ * A ListMergeModel is used in combination with a {@link AbstractListMerger}.
  *
  * @param <T> the type of the list entries
  * @param <C> the type of conflict resolution command
- * @see ListMerger
+ * @see AbstractListMerger
  */
-public abstract class ListMergeModel<T extends PrimitiveId, C extends ConflictResolveCommand> extends ChangeNotifier {
-    public static final String FROZEN_PROP = ListMergeModel.class.getName() + ".frozen";
+public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends ConflictResolveCommand> extends ChangeNotifier {
+    public static final String FROZEN_PROP = AbstractListMergeModel.class.getName() + ".frozen";
 
     private static final int MAX_DELETED_PRIMITIVE_IN_DIALOG = 5;
 
@@ -189,7 +189,7 @@ public abstract class ListMergeModel<T extends PrimitiveId, C extends ConflictRe
     /**
      * Constructs a new {@code ListMergeModel}.
      */
-    public ListMergeModel() {
+    public AbstractListMergeModel() {
         entries = new EnumMap<>(ListRole.class);
         for (ListRole role : ListRole.values()) {
             entries.put(role, new ArrayList<T>());
@@ -574,13 +574,13 @@ public abstract class ListMergeModel<T extends PrimitiveId, C extends ConflictRe
 
     /**
      * This an adapter between a {@link JTable} and one of the three entry lists
-     * in the role {@link ListRole} managed by the {@link ListMergeModel}.
+     * in the role {@link ListRole} managed by the {@link AbstractListMergeModel}.
      *
      * From the point of view of the {@link JTable} it is a {@link TableModel}.
      *
-     * @see ListMergeModel#getMyTableModel()
-     * @see ListMergeModel#getTheirTableModel()
-     * @see ListMergeModel#getMergedTableModel()
+     * @see AbstractListMergeModel#getMyTableModel()
+     * @see AbstractListMergeModel#getTheirTableModel()
+     * @see AbstractListMergeModel#getMergedTableModel()
      */
     public class EntriesTableModel extends DefaultTableModel implements OsmPrimitivesTableModel {
         private final ListRole role;
@@ -613,15 +613,15 @@ public abstract class ListMergeModel<T extends PrimitiveId, C extends ConflictRe
 
         @Override
         public void setValueAt(Object value, int row, int col) {
-            ListMergeModel.this.setValueAt(this, value, row, col);
+            AbstractListMergeModel.this.setValueAt(this, value, row, col);
         }
 
         /**
          * Returns the list merge model.
          * @return the list merge model
          */
-        public ListMergeModel<T, C> getListMergeModel() {
-            return ListMergeModel.this;
+        public AbstractListMergeModel<T, C> getListMergeModel() {
+            return AbstractListMergeModel.this;
         }
 
         /**
@@ -631,7 +631,7 @@ public abstract class ListMergeModel<T extends PrimitiveId, C extends ConflictRe
          * @return true, if the if the {@link ListRole} of this {@link EntriesTableModel}
          * participates in the current {@link ComparePairType}
          *
-         * @see ListMergeModel.ComparePairListModel#getSelectedComparePair()
+         * @see AbstractListMergeModel.ComparePairListModel#getSelectedComparePair()
          */
         public boolean isParticipatingInCurrentComparePair() {
             return getComparePairListModel()
@@ -719,14 +719,14 @@ public abstract class ListMergeModel<T extends PrimitiveId, C extends ConflictRe
 
     /**
      * This is the selection model to be used in a {@link JTable} which displays
-     * an entry list managed by {@link ListMergeModel}.
+     * an entry list managed by {@link AbstractListMergeModel}.
      *
      * The model ensures that only rows displaying an entry in the entry list
      * can be selected. "Empty" rows can't be selected.
      *
-     * @see ListMergeModel#getMySelectionModel()
-     * @see ListMergeModel#getMergedSelectionModel()
-     * @see ListMergeModel#getTheirSelectionModel()
+     * @see AbstractListMergeModel#getMySelectionModel()
+     * @see AbstractListMergeModel#getMergedSelectionModel()
+     * @see AbstractListMergeModel#getTheirSelectionModel()
      *
      */
     protected class EntriesSelectionModel extends DefaultListSelectionModel {

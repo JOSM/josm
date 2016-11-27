@@ -23,6 +23,9 @@ import org.openstreetmap.josm.io.ChangesetQuery;
  */
 public class OpenAndCloseStateRestrictionPanel extends JPanel implements RestrictionPanel {
 
+    private static final String PREF_ROOT = "changeset-query.advanced.open-restrictions";
+    private static final String PREF_QUERY_TYPE = PREF_ROOT + ".query-type";
+
     private final JRadioButton rbOpenOnly = new JRadioButton();
     private final JRadioButton rbClosedOnly = new JRadioButton();
     private final JRadioButton rbBoth = new JRadioButton();
@@ -104,13 +107,12 @@ public class OpenAndCloseStateRestrictionPanel extends JPanel implements Restric
      * Remember settings in preferences.
      */
     public void rememberSettings() {
-        String prefRoot = "changeset-query.advanced.open-restrictions";
         if (rbBoth.isSelected()) {
-            Main.pref.put(prefRoot + ".query-type", "both");
+            Main.pref.put(PREF_QUERY_TYPE, "both");
         } else if (rbOpenOnly.isSelected()) {
-            Main.pref.put(prefRoot + ".query-type", "open");
+            Main.pref.put(PREF_QUERY_TYPE, "open");
         } else if (rbClosedOnly.isSelected()) {
-            Main.pref.put(prefRoot + ".query-type", "closed");
+            Main.pref.put(PREF_QUERY_TYPE, "closed");
         }
     }
 
@@ -118,8 +120,7 @@ public class OpenAndCloseStateRestrictionPanel extends JPanel implements Restric
      * Restore settings from preferences.
      */
     public void restoreFromSettings() {
-        String prefRoot = "changeset-query.advanced.open-restrictions";
-        String v = Main.pref.get(prefRoot + ".query-type", "open");
+        String v = Main.pref.get(PREF_QUERY_TYPE, "open");
         rbBoth.setSelected("both".equals(v));
         rbOpenOnly.setSelected("open".equals(v));
         rbClosedOnly.setSelected("closed".equals(v));

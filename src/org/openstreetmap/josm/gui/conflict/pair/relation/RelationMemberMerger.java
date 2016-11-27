@@ -8,13 +8,13 @@ import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.gui.conflict.pair.ListMerger;
+import org.openstreetmap.josm.gui.conflict.pair.AbstractListMerger;
 
 /**
  * A UI component for resolving conflicts in the member lists of two {@link Relation}s.
  * @since 1631
  */
-public class RelationMemberMerger extends ListMerger<RelationMember, RelationMemberConflictResolverCommand> {
+public class RelationMemberMerger extends AbstractListMerger<RelationMember, RelationMemberConflictResolverCommand> {
 
     /**
      * Constructs a new {@code RelationMemberMerger}.

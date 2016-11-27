@@ -14,7 +14,7 @@ import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 
 public abstract class PairTable extends OsmPrimitivesTable {
 
-    private final transient ListMergeModel<? extends PrimitiveId, ? extends ConflictResolveCommand> model;
+    private final transient AbstractListMergeModel<? extends PrimitiveId, ? extends ConflictResolveCommand> model;
 
     /**
      * Constructs a new {@code PairTable}.
@@ -24,7 +24,7 @@ public abstract class PairTable extends OsmPrimitivesTable {
      * @param cm column model
      * @param sm selection model
      */
-    public PairTable(String name, ListMergeModel<? extends PrimitiveId, ? extends ConflictResolveCommand> model,
+    public PairTable(String name, AbstractListMergeModel<? extends PrimitiveId, ? extends ConflictResolveCommand> model,
             OsmPrimitivesTableModel dm, TableColumnModel cm, ListSelectionModel sm) {
         super(dm, cm, sm);
         this.model = model;
