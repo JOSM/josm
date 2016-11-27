@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -24,6 +25,7 @@ public class StorageTest {
      * Unit test of methods {@link Storage#equals} and {@link Storage#hashCode}.
      */
     @Test
+    @Ignore("not ready")
     public void testEqualsContract() {
         EqualsVerifier.forClass(Storage.class).usingGetClass()
             /*.withPrefabValues(Collection.class, new HashSet<>(Arrays.asList(1)), new HashSet<>(Arrays.asList(2)))
