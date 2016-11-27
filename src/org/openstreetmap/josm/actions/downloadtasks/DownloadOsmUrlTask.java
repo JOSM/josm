@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.GeoUrlToBounds;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 
 /**
@@ -23,7 +24,9 @@ public class DownloadOsmUrlTask extends DownloadOsmTask {
     public String[] getPatterns() {
         return new String[]{
                 "https?://www\\.(osm|openstreetmap)\\.org/\\?lat=.*&lon=.*",
-                "https?://www\\.(osm|openstreetmap)\\.org/(.*)?#map=\\p{Digit}+/.*/.*"};
+                "https?://www\\.(osm|openstreetmap)\\.org/(.*)?#map=\\p{Digit}+/.*/.*",
+                GeoUrlToBounds.PATTERN.toString(),
+        };
     }
 
     @Override

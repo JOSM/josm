@@ -11,6 +11,8 @@ import org.openstreetmap.josm.data.Bounds;
 
 /**
  * Parses a Geo URL (as specified in <a href="https://tools.ietf.org/html/rfc5870">RFC 5870</a>) into {@link Bounds}.
+ *
+ * Note that Geo URLs are also handled by {@link OsmUrlToBounds}.
  */
 public final class GeoUrlToBounds {
 

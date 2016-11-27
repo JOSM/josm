@@ -16,6 +16,9 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 
+/**
+ * Parses various URL used in OpenStreetMap projects into {@link Bounds}.
+ */
 public final class OsmUrlToBounds {
     private static final String SHORTLINK_PREFIX = "http://osm.org/go/";
 
@@ -23,7 +26,15 @@ public final class OsmUrlToBounds {
         // Hide default constructor for utils classes
     }
 
+    /**
+     * Parses an URL into {@link Bounds}
+     * @param url the URL to be parsed
+     * @return the parsed {@link Bounds}, or {@code null}
+     */
     public static Bounds parse(String url) {
+        if (url.startsWith("geo:")) {
+            return GeoUrlToBounds.parse(url);
+        }
         try {
             // a percent sign indicates an encoded URL (RFC 1738).
             if (url.contains("%")) {
