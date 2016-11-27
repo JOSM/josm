@@ -95,10 +95,17 @@ public class ChangesetQueryDialog extends JDialog {
         addWindowListener(new WindowEventHandler());
     }
 
+    /**
+     * Determines if the dialog has been canceled.
+     * @return {@code true} if the dialog has been canceled
+     */
     public boolean isCanceled() {
         return canceled;
     }
 
+    /**
+     * Initializes HMI for user input.
+     */
     public void initForUserInput() {
         pnlBasicChangesetQueries.init();
     }
@@ -107,6 +114,10 @@ public class ChangesetQueryDialog extends JDialog {
         this.canceled = canceled;
     }
 
+    /**
+     * Returns the changeset query.
+     * @return the changeset query
+     */
     public ChangesetQuery getChangesetQuery() {
         if (isCanceled())
             return null;
@@ -123,6 +134,9 @@ public class ChangesetQueryDialog extends JDialog {
         }
     }
 
+    /**
+     * Initializes HMI for user input.
+     */
     public void startUserInput() {
         pnlUrlBasedQueries.startUserInput();
         pnlAdvancedQueries.startUserInput();
