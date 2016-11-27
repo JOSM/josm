@@ -9,6 +9,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -78,7 +80,7 @@ public final class TestUtils {
      * @throws IOException if any I/O error occurs
      */
     public static InputStream getRegressionDataStream(int ticketid, String filename) throws IOException {
-        return Compression.getUncompressedFileInputStream(new File(getRegressionDataDir(ticketid) + '/' + filename));
+        return Compression.getUncompressedFileInputStream(new File(getRegressionDataDir(ticketid), filename));
     }
 
     /**
@@ -172,7 +174,10 @@ public final class TestUtils {
      */
     public static Object getPrivateField(Object obj, String fieldName) throws ReflectiveOperationException {
         Field f = obj.getClass().getDeclaredField(fieldName);
-        f.setAccessible(true);
+        AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
+            f.setAccessible(true);
+            return null;
+        });
         return f.get(obj);
     }
 

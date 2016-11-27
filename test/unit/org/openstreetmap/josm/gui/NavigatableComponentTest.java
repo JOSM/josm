@@ -31,7 +31,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 public class NavigatableComponentTest {
 
-    private final class NavigatableComponentMock extends NavigatableComponent {
+    private static final class NavigatableComponentMock extends NavigatableComponent {
         @Override
         public Point getLocationOnScreen() {
             return new Point(30, 40);

@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -85,7 +86,7 @@ public class ProjectionRegressionTest {
             }
         }
 
-        Random rand = new Random();
+        Random rand = new SecureRandom();
         try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream(PROJECTION_DATA_FILE), StandardCharsets.UTF_8))) {
             out.write("# Data for test/unit/org/openstreetmap/josm/data/projection/ProjectionRegressionTest.java\n");

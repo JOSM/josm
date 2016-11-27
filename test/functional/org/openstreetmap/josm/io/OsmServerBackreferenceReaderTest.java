@@ -43,10 +43,13 @@ import org.openstreetmap.josm.gui.io.UploadStrategySpecification;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.tools.Logging;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Reads primitives referring to a particular primitive (ways including a node, relations referring to a relation)
  * @since 1806
  */
+@SuppressFBWarnings(value = "CRLF_INJECTION_LOGS")
 public class OsmServerBackreferenceReaderTest {
     private static final Logger logger = Logger.getLogger(OsmServerBackreferenceReader.class.getName());
 

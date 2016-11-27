@@ -7,10 +7,10 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.ZoneId;
@@ -142,12 +142,8 @@ public class AutosaveTaskTest {
     }
 
     private int countFiles() {
-        return task.getAutosaveDir().toFile().list(new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                return name.endsWith(".osm");
-            }
-        }).length;
+        String[] files = task.getAutosaveDir().toFile().list((dir, name) -> name.endsWith(".osm"));
+        return files != null ? files.length : 0;
     }
 
     /**
@@ -193,7 +189,8 @@ public class AutosaveTaskTest {
     @Test
     public void testDiscardUnsavedLayersIgnoresCurrentInstance() throws IOException {
         runAutosaveTaskSeveralTimes(1);
-        try (FileWriter file = new FileWriter(new File(task.getAutosaveDir().toFile(), "any_other_file.osm"))) {
+        try (BufferedWriter file = Files.newBufferedWriter(
+                new File(task.getAutosaveDir().toFile(), "any_other_file.osm").toPath(), StandardCharsets.UTF_8)) {
             file.append("");
         }
         assertEquals(2, countFiles());
@@ -236,7 +233,8 @@ public class AutosaveTaskTest {
     @Test
     public void testRecoverLayers() throws Exception {
         runAutosaveTaskSeveralTimes(1);
-        try (FileWriter file = new FileWriter(new File(task.getAutosaveDir().toFile(), "any_other_file.osm"))) {
+        try (BufferedWriter file = Files.newBufferedWriter(
+                new File(task.getAutosaveDir().toFile(), "any_other_file.osm").toPath(), StandardCharsets.UTF_8)) {
             file.append("<?xml version=\"1.0\"?><osm version=\"0.6\"><node id=\"1\" lat=\"1\" lon=\"2\" version=\"1\"/></osm>");
         }
 

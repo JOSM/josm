@@ -44,7 +44,9 @@ public class JCSCacheManagerTest {
             // test only when using block cache
             File cacheFile = new File("foobar/testUseBigDiskFile_BLOCK_v2.data");
             if (!cacheFile.exists()) {
-                cacheFile.createNewFile();
+                if (!cacheFile.createNewFile()) {
+                    System.err.println("Unable to create " + cacheFile.getAbsolutePath());
+                }
             }
             try (FileOutputStream fileOutputStream = new FileOutputStream(cacheFile, false)) {
                 fileOutputStream.getChannel().truncate(0);

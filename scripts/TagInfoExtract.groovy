@@ -8,8 +8,6 @@
  * groovy -cp dist/josm-custom.jar scripts/taginfoextract.groovy -t presets
  * groovy -cp dist/josm-custom.jar scripts/taginfoextract.groovy -t external_presets
  */
-import groovy.json.JsonBuilder
-
 import java.awt.image.BufferedImage
 import java.nio.file.FileSystems
 import java.nio.file.Files
@@ -47,6 +45,9 @@ import org.openstreetmap.josm.io.CachedFile
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic
 import org.openstreetmap.josm.tools.Territories
 import org.openstreetmap.josm.tools.Utils
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
+import groovy.json.JsonBuilder
 
 class TagInfoExtract {
 
@@ -117,6 +118,7 @@ class TagInfoExtract {
         abstract def find_url(boolean generate_image)
     }
 
+    @SuppressFBWarnings(value = "MF_CLASS_MASKS_FIELD")
     class NodeChecker extends Checker {
         NodeChecker(tag) {
             super(tag)
@@ -136,6 +138,7 @@ class TagInfoExtract {
         }
     }
 
+    @SuppressFBWarnings(value = "MF_CLASS_MASKS_FIELD")
     class WayChecker extends Checker {
         WayChecker(tag) {
             super(tag)
@@ -158,6 +161,7 @@ class TagInfoExtract {
         }
     }
 
+    @SuppressFBWarnings(value = "MF_CLASS_MASKS_FIELD")
     class AreaChecker extends Checker {
         AreaChecker(tag) {
             super(tag)

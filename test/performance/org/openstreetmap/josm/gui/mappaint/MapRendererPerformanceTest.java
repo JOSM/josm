@@ -165,7 +165,6 @@ public class MapRendererPerformanceTest {
         public int noWarmup = 3;
         public int noIterations = 7;
         public boolean dumpImage = DUMP_IMAGE;
-        public boolean skipDraw = false;
         public boolean clearStyleCache = true;
         public String label = "";
         public boolean mpGenerate = false;
@@ -263,7 +262,6 @@ public class MapRendererPerformanceTest {
         PerformanceTester test = new PerformanceTester();
         test.bounds = BOUNDS_CITY_ALL;
         test.label = "big";
-        test.skipDraw = true;
         test.dumpImage = false;
         test.noWarmup = 3;
         test.noIterations = 10;

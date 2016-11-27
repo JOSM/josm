@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.io.File;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -40,7 +41,8 @@ public final class OsmDataGenerator {
          * @param size The size of the list.
          */
         public RandomStringList(int seed, int size) {
-            random = new Random(seed);
+            random = new SecureRandom();
+            random.setSeed(seed);
             strings = new String[size];
             interned = new String[size];
             for (int i = 0; i < size; i++) {
@@ -87,7 +89,7 @@ public final class OsmDataGenerator {
          */
         protected DataGenerator(String datasetName) {
             this.datasetName = datasetName;
-            this.random = new Random(1234);
+            this.random = new SecureRandom();
         }
 
         /**
@@ -125,7 +127,7 @@ public final class OsmDataGenerator {
          * @return A file path.
          */
         public File getFile() {
-            return new File(DATA_DIR + File.separator + datasetName + ".osm");
+            return new File(DATA_DIR, datasetName + ".osm");
         }
 
         /**
@@ -138,7 +140,7 @@ public final class OsmDataGenerator {
 
         @Override
         public String toString() {
-            return "DataGenerator [datasetName=" + datasetName + "]";
+            return "DataGenerator [datasetName=" + datasetName + ']';
         }
     }
 

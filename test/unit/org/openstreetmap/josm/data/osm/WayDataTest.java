@@ -10,8 +10,12 @@ import java.util.Arrays;
 import org.junit.Assert;
 import org.junit.Test;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public class WayDataTest {
+
     @Test
+    @SuppressFBWarnings(value = "OBJECT_DESERIALIZATION")
     public void testSerializationForDragAndDrop() throws Exception {
         final WayData data = new WayData();
         data.setNodes(Arrays.asList(1415L, 9265L, 3589L, 7932L, 3846L));

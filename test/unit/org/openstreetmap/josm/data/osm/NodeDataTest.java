@@ -14,8 +14,11 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 public class NodeDataTest {
 
+    @SuppressFBWarnings(value = "OBJECT_DESERIALIZATION")
     private static NodeData serializeUnserialize(NodeData data) throws IOException, ClassNotFoundException {
         try (ByteArrayOutputStream bytes = new ByteArrayOutputStream();
              ObjectOutputStream out = new ObjectOutputStream(bytes)) {

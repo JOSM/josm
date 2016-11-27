@@ -30,6 +30,7 @@ public class ChangesetTest {
      * Unit test of method {@link Changeset#setKeys}.
      */
     @Test
+    @SuppressFBWarnings(value = "NP_NULL_PARAM_DEREF_ALL_TARGETS_DANGEROUS")
     public void testSetKeys() {
         final Changeset cs = new Changeset();
         // Cannot add null map => IllegalArgumentException
