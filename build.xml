@@ -662,7 +662,7 @@ Build-Date: ${build.tstamp}
         <attribute name="output"/>
         <sequential>
             <echo message="Generating Taginfo for type @{type} to @{output}"/>
-            <groovy src="${taginfoextract}" classpath="${dist.dir}/josm-custom.jar">
+            <groovy src="${taginfoextract}" classpath="${dist.dir}/josm-custom.jar:tools/findbugs/annotations.jar">
                 <arg value="-t"/>
                 <arg value="@{type}"/>
                 <arg value="--noexit"/>

@@ -19,7 +19,6 @@ import java.security.cert.X509Certificate;
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
@@ -28,6 +27,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for Remote Control
@@ -76,15 +77,18 @@ public class RemoteControlTest {
         TrustManager[] trustAllCerts = new TrustManager[] {
             new X509TrustManager() {
                 @Override
+                @SuppressFBWarnings(value = "WEAK_TRUST_MANAGER")
                 public X509Certificate[] getAcceptedIssuers() {
                     return new X509Certificate[0];
                 }
 
                 @Override
+                @SuppressFBWarnings(value = "WEAK_TRUST_MANAGER")
                 public void checkClientTrusted(X509Certificate[] certs, String authType) {
                 }
 
                 @Override
+                @SuppressFBWarnings(value = "WEAK_TRUST_MANAGER")
                 public void checkServerTrusted(X509Certificate[] certs, String authType) {
                 }
             }
@@ -96,12 +100,7 @@ public class RemoteControlTest {
         HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
 
         // Create all-trusting host name verifier
-        HostnameVerifier allHostsValid = new HostnameVerifier() {
-            @Override
-            public boolean verify(String hostname, SSLSession session) {
-                return true;
-            }
-        };
+        HostnameVerifier allHostsValid = (hostname, session) -> true;
 
         // Install the all-trusting host verifier
         HttpsURLConnection.setDefaultHostnameVerifier(allHostsValid);

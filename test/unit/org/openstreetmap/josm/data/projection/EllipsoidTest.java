@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 import org.junit.Assert;
@@ -19,7 +20,7 @@ public class EllipsoidTest {
      */
     @Test
     public void testLatLon2Cart2LatLon() {
-        Random r = new Random(System.currentTimeMillis());
+        Random r = new SecureRandom();
         double maxErrLat = 0, maxErrLon = 0;
         Ellipsoid ellips = Ellipsoid.WGS84;
         for (int num = 0; num < 1000; ++num) {

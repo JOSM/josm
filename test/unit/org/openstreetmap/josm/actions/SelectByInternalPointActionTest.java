@@ -19,6 +19,8 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Unit tests for class {@link SelectByInternalPointAction}.
  */
@@ -28,6 +30,7 @@ public final class SelectByInternalPointActionTest {
      * Setup test.
      */
     @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules rules = new JOSMTestRules().preferences().projection();
 
     /**

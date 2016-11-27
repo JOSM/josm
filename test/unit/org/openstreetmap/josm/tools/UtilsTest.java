@@ -15,6 +15,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Unit tests of {@link Utils} class.
  */
@@ -23,6 +25,7 @@ public class UtilsTest {
      * Use default, basic test rules.
      */
     @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules rules = new JOSMTestRules();
 
     /**

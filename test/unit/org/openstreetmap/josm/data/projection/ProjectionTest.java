@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection;
 
+import java.security.SecureRandom;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -17,7 +18,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
  */
 public class ProjectionTest {
 
-    private static Random rand = new Random(System.currentTimeMillis());
+    private static Random rand = new SecureRandom();
 
     boolean error;
     String text;

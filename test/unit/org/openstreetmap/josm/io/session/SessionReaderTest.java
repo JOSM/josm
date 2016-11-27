@@ -42,7 +42,7 @@ public class SessionReaderTest {
 
     private List<Layer> testRead(String sessionFileName) throws IOException, IllegalDataException {
         boolean zip = sessionFileName.endsWith(".joz");
-        File file = new File(getSessionDataDir()+"/"+sessionFileName);
+        File file = new File(getSessionDataDir(), sessionFileName);
         SessionReader reader = new SessionReader();
         reader.loadSession(file, zip, null);
         return reader.getLayers();

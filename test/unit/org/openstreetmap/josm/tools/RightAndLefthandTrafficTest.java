@@ -8,6 +8,8 @@ import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Unit tests of {@link RightAndLefthandTraffic} class.
  */
@@ -16,6 +18,7 @@ public class RightAndLefthandTrafficTest {
      * Test rules.
      */
     @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules rules = new JOSMTestRules().platform().projection().commands();
 
     /**

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -192,7 +193,7 @@ public class QuadBucketsTest {
         final int NUM_INCOMPLETE_NODES = 10;
 
         // force splits in quad buckets
-        Random random = new Random(31);
+        Random random = new SecureRandom();
         for (int i = 0; i < NUM_COMPLETE_WAYS; i++) {
             Way w = new Way(wayId++);
             List<Node> nodes = new ArrayList<>();
@@ -212,10 +213,8 @@ public class QuadBucketsTest {
         Assert.assertEquals(NUM_COMPLETE_WAYS * NUM_NODES_PER_WAY, ds.getNodes().size());
 
         // add some incomplete nodes
-        List<Node> incompleteNodes = new ArrayList<>();
         for (int i = 0; i < NUM_INCOMPLETE_NODES; i++) {
             Node n = new Node(nodeId++);
-            incompleteNodes.add(n);
             n.setIncomplete(true);
             ds.addPrimitive(n);
         }

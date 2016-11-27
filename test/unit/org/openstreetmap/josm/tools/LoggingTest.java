@@ -4,6 +4,7 @@ package org.openstreetmap.josm.tools;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -16,6 +17,8 @@ import java.util.logging.LogRecord;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * @author michael
@@ -72,11 +75,13 @@ public class LoggingTest {
         testLogCaptured(level, result -> assertEquals(expected, result), printMessage);
     }
 
+    @SuppressFBWarnings(value = "NP_NONNULL_PARAM_VIOLATION")
     private void testLogCaptured(Level level, Consumer<String> expectedTester, Runnable printMessage) {
         Logging.setLogLevel(level);
         captured = null;
         printMessage.run();
 
+        assertNotNull(captured);
         expectedTester.accept(captured.getMessage());
         assertEquals(level, captured.getLevel());
 

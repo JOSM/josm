@@ -5,7 +5,6 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +12,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -37,6 +37,8 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.preferences.projection.CodeProjectionChoice;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Test projections using reference data from external program.
@@ -71,9 +73,14 @@ public class ProjectionRefTest {
         }
     }
 
-    static Random rand = new Random();
+    static Random rand = new SecureRandom();
 
-    public static void main(String[] args) throws FileNotFoundException, IOException {
+    /**
+     * Program entry point.
+     * @param args no argument is expected
+     * @throws IOException in case of I/O error
+     */
+    public static void main(String[] args) throws IOException {
         Collection<RefEntry> refs = readData();
         refs = updateData(refs);
         writeData(refs);
@@ -199,12 +206,12 @@ public class ProjectionRefTest {
     }
 
     /**
-     * Run external cs2cs command from the PROJ.4 library to convert lat/lon to
-     * east/north value.
+     * Run external cs2cs command from the PROJ.4 library to convert lat/lon to east/north value.
      * @param def the proj.4 projection definition string
      * @param ll the LatLon
      * @return projected EastNorth or null in case of error
      */
+    @SuppressFBWarnings(value = "COMMAND_INJECTION")
     private static EastNorth latlon2eastNorthProj4(String def, LatLon ll) {
         List<String> args = new ArrayList<>();
         args.add(CS2CS_EXE);

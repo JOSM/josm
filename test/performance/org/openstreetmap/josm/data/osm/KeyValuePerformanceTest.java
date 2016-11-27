@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -124,7 +125,7 @@ public class KeyValuePerformanceTest {
     @Before
     public void generateTestStrings() {
         testStrings.clear();
-        random = new Random(123);
+        random = new SecureRandom();
         for (int i = 0; i < TEST_STRING_COUNT; i++) {
             testStrings.add(RandomStringUtils.random(10, 0, 0, true, true, null, random));
         }

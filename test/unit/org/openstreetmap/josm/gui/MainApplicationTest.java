@@ -8,11 +8,9 @@ import static org.junit.Assert.assertNull;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
-
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,6 +22,8 @@ import org.openstreetmap.josm.plugins.PluginHandlerTestIT;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.PluginListParseException;
 import org.openstreetmap.josm.plugins.PluginListParser;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link MainApplication} class.
@@ -38,6 +38,7 @@ public class MainApplicationTest {
         JOSMFixture.createUnitTestFixture().init(true);
     }
 
+    @SuppressFBWarnings(value = "DM_DEFAULT_ENCODING")
     private void testShow(final String arg, String expected) throws InterruptedException, IOException {
         PrintStream old = System.out;
         try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
@@ -48,10 +49,10 @@ public class MainApplicationTest {
                     MainApplication.main(new String[] {arg});
                 }
             };
-            t.run();
+            t.start();
             t.join();
             System.out.flush();
-            assertEquals(expected, baos.toString().trim());
+            assertEquals(expected, baos.toString(StandardCharsets.UTF_8.name()).trim());
         } finally {
             System.setOut(old);
         }
@@ -84,11 +85,8 @@ public class MainApplicationTest {
         final String old = System.getProperty("josm.plugins");
         try {
             System.setProperty("josm.plugins", "buildings_tools,plastic_laf");
-            SplashProgressMonitor monitor = new SplashProgressMonitor("foo", new ChangeListener() {
-                @Override
-                public void stateChanged(ChangeEvent e) {
-                    // Do nothing
-                }
+            SplashProgressMonitor monitor = new SplashProgressMonitor("foo", e -> {
+                // Do nothing
             });
             Collection<PluginInformation> plugins = MainApplication.updateAndLoadEarlyPlugins(null, monitor);
             if (plugins.isEmpty()) {

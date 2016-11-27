@@ -14,9 +14,11 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Random;
 import java.util.logging.Logger;
 
 import org.junit.Before;
@@ -38,9 +40,12 @@ import org.openstreetmap.josm.gui.io.UploadStrategy;
 import org.openstreetmap.josm.gui.io.UploadStrategySpecification;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Unit tests of {@link MultiFetchServerObjectReader}.
  */
+@SuppressFBWarnings(value = "CRLF_INJECTION_LOGS")
 public class MultiFetchServerObjectReaderTest {
     private static Logger logger = Logger.getLogger(MultiFetchServerObjectReader.class.getName());
 
@@ -58,6 +63,7 @@ public class MultiFetchServerObjectReaderTest {
     protected static DataSet buildTestDataSet() {
         DataSet ds = new DataSet();
         ds.setVersion("0.6");
+        Random rand = new SecureRandom();
 
         int numNodes = 1000;
         int numWays = 1000;
@@ -80,8 +86,8 @@ public class MultiFetchServerObjectReaderTest {
         //
         for (int i = 0; i < numWays; i++) {
             Way w = new Way();
-            int numNodesInWay = 2 + (int) Math.round(Math.random() * 5);
-            int start = (int) Math.round(Math.random() * numNodes);
+            int numNodesInWay = 2 + (int) Math.round(rand.nextDouble() * 5);
+            int start = (int) Math.round(rand.nextDouble() * numNodes);
             for (int j = 0; j < numNodesInWay; j++) {
                 int idx = (start + j) % numNodes;
                 Node n = nodes.get(idx);
@@ -97,15 +103,15 @@ public class MultiFetchServerObjectReaderTest {
         for (int i = 0; i < numRelations; i++) {
             Relation r = new Relation();
             r.put("name", "relation-" +i);
-            int numNodesInRelation = (int) Math.round(Math.random() * 10);
-            int start = (int) Math.round(Math.random() * numNodes);
+            int numNodesInRelation = (int) Math.round(rand.nextDouble() * 10);
+            int start = (int) Math.round(rand.nextDouble() * numNodes);
             for (int j = 0; j < numNodesInRelation; j++) {
                 int idx = (start + j) % 500;
                 Node n = nodes.get(idx);
                 r.addMember(new RelationMember("role-" + j, n));
             }
-            int numWaysInRelation = (int) Math.round(Math.random() * 10);
-            start = (int) Math.round(Math.random() * numWays);
+            int numWaysInRelation = (int) Math.round(rand.nextDouble() * 10);
+            start = (int) Math.round(rand.nextDouble() * numWays);
             for (int j = 0; j < numWaysInRelation; j++) {
                 int idx = (start + j) % 500;
                 Way w = ways.get(idx);

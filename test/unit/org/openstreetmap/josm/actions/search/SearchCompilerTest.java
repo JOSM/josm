@@ -26,6 +26,8 @@ import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Unit tests for class {@link SearchCompiler}.
  */
@@ -35,6 +37,7 @@ public class SearchCompilerTest {
      * We need prefs for this. We access preferences when creating OSM primitives.
      */
     @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
     private static final class SearchContext {

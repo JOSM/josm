@@ -42,7 +42,7 @@ public class MainLayerManagerTest extends LayerManagerTest {
         }
     }
 
-    protected class AbstractTestOsmLayer extends OsmDataLayer {
+    protected static class AbstractTestOsmLayer extends OsmDataLayer {
         public AbstractTestOsmLayer() {
             super(new DataSet(), "OSM layer", null);
         }

@@ -111,6 +111,7 @@ public final class PerformanceTestUtils {
         measurementPlotsPluginOutput(name, avg);
     }
 
+    @SuppressFBWarnings(value = "DM_GC")
     private static void cleanSystem() {
         System.gc();
         System.runFinalization();
