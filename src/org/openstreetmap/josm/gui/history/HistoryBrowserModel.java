@@ -15,6 +15,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -422,23 +423,32 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         @Override
         public Object getValueAt(int row, int column) {
             switch (column) {
-            case 0:
+            case VersionTableColumnModel.COL_VERSION:
                 return Long.toString(getPrimitive(row).getVersion());
-            case 1:
+            case VersionTableColumnModel.COL_REFERENCE:
                 return isReferencePointInTime(row);
-            case 2:
+            case VersionTableColumnModel.COL_CURRENT:
                 return isCurrentPointInTime(row);
-            case 3:
+            case VersionTableColumnModel.COL_DATE:
                 HistoryOsmPrimitive p3 = getPrimitive(row);
                 if (p3 != null && p3.getTimestamp() != null)
                     return DateUtils.formatDateTime(p3.getTimestamp(), DateFormat.SHORT, DateFormat.SHORT);
                 return null;
-            case 4:
+            case VersionTableColumnModel.COL_USER:
                 HistoryOsmPrimitive p4 = getPrimitive(row);
                 if (p4 != null) {
                     User user = p4.getUser();
                     if (user != null)
                         return user.getName();
+                }
+                return null;
+            case VersionTableColumnModel.COL_EDITOR:
+                HistoryOsmPrimitive p5 = getPrimitive(row);
+                if (p5 != null) {
+                    Changeset cs = p5.getChangeset();
+                    if (cs != null) {
+                        return cs.get("created_by");
+                    }
                 }
                 return null;
             }
