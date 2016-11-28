@@ -1087,13 +1087,7 @@ public final class CustomConfigurator {
                 }
             }
         }
-        Iterator<Map.Entry<String, Setting<?>>> it = tmpPref.settingsMap.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<String, Setting<?>> e = it.next();
-            if (e.getValue().getValue() == null) {
-                it.remove();
-            }
-        }
+        tmpPref.settingsMap.entrySet().removeIf(e -> e.getValue().getValue() == null);
 
         for (Map.Entry<String, Setting<?>> e: tmpPref.settingsMap.entrySet()) {
             Setting<?> setting = e.getValue();

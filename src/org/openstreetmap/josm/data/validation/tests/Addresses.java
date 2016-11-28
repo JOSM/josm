@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -58,12 +57,7 @@ public class Addresses extends Test {
 
     protected List<Relation> getAndCheckAssociatedStreets(OsmPrimitive p) {
         List<Relation> list = OsmPrimitive.getFilteredList(p.getReferrers(), Relation.class);
-        for (Iterator<Relation> it = list.iterator(); it.hasNext();) {
-            Relation r = it.next();
-            if (!r.hasTag("type", ASSOCIATED_STREET)) {
-                it.remove();
-            }
-        }
+        list.removeIf(r -> !r.hasTag("type", ASSOCIATED_STREET));
         if (list.size() > 1) {
             Severity level;
             // warning level only if several relations have different names, see #10945

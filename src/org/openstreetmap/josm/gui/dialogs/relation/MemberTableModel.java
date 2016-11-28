@@ -8,7 +8,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -348,13 +347,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
     public void removeMembersReferringTo(List<? extends OsmPrimitive> primitives) {
         if (primitives == null)
             return;
-        Iterator<RelationMember> it = members.iterator();
-        while (it.hasNext()) {
-            RelationMember member = it.next();
-            if (primitives.contains(member.getMember())) {
-                it.remove();
-            }
-        }
+        members.removeIf(member -> primitives.contains(member.getMember()));
         fireTableDataChanged();
     }
 

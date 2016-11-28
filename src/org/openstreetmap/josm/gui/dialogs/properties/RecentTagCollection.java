@@ -63,12 +63,7 @@ class RecentTagCollection {
 
     public void setTagsToIgnore(SearchCompiler.Match tagsToIgnore) {
         this.tagsToIgnore = tagsToIgnore;
-        final Iterator<Tag> it = recentTags.keySet().iterator();
-        while (it.hasNext()) {
-            if (tagsToIgnore.match(it.next())) {
-                it.remove();
-            }
-        }
+        recentTags.keySet().removeIf(tagsToIgnore::match);
     }
 
     public void setTagsToIgnore(SearchAction.SearchSetting tagsToIgnore) throws SearchCompiler.ParseError {

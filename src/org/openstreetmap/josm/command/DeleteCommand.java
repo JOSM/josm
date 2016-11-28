@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -438,13 +437,7 @@ public class DeleteCommand extends Command {
         //
         if (!silent) {
             Set<RelationToChildReference> references = RelationToChildReference.getRelationToChildReferences(primitivesToDelete);
-            Iterator<RelationToChildReference> it = references.iterator();
-            while (it.hasNext()) {
-                RelationToChildReference ref = it.next();
-                if (ref.getParent().isDeleted()) {
-                    it.remove();
-                }
-            }
+            references.removeIf(ref -> ref.getParent().isDeleted());
             if (!references.isEmpty()) {
                 DeleteFromRelationConfirmationDialog dialog = DeleteFromRelationConfirmationDialog.getInstance();
                 dialog.getModel().populate(references);

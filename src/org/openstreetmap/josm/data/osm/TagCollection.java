@@ -290,12 +290,7 @@ public class TagCollection implements Iterable<Tag>, Serializable {
      */
     public void removeByKey(String key) {
         if (key != null) {
-            Iterator<Tag> it = tags.keySet().iterator();
-            while (it.hasNext()) {
-                if (it.next().matchesKey(key)) {
-                    it.remove();
-                }
-            }
+            tags.keySet().removeIf(tag -> tag.matchesKey(key));
         }
     }
 

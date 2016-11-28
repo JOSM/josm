@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -155,29 +154,17 @@ public class UnJoinNodeWayAction extends JosmAction {
         List<Way> result = new ArrayList<>(OsmPrimitive.getFilteredList(selectedNodes.get(0).getReferrers(), Way.class));
         for (int i = 1; i < selectedNodes.size(); i++) {
             List<OsmPrimitive> ref = selectedNodes.get(i).getReferrers();
-            for (Iterator<Way> it = result.iterator(); it.hasNext();) {
-                if (!ref.contains(it.next())) {
-                    it.remove();
-                }
-            }
+            result.removeIf(way -> !ref.contains(way));
         }
 
         // Remove broken ways
-        for (Iterator<Way> it = result.iterator(); it.hasNext();) {
-            if (it.next().getNodesCount() <= 2) {
-                it.remove();
-            }
-        }
+        result.removeIf(way -> way.getNodesCount() <= 2);
 
         if (selectedWays.isEmpty())
             return result;
         else {
             // Return only selected ways
-            for (Iterator<Way> it = result.iterator(); it.hasNext();) {
-                if (!selectedWays.contains(it.next())) {
-                    it.remove();
-                }
-            }
+            result.removeIf(way -> !selectedWays.contains(way));
             return result;
         }
     }

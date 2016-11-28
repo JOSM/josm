@@ -546,12 +546,7 @@ public final class PluginHandler {
         Main.worker.submit(() -> {
             // Build list of plugins to download
             Set<PluginInformation> toDownload = new HashSet<>(pluginInfoDownloadTask.getAvailablePlugins());
-            for (Iterator<PluginInformation> it = toDownload.iterator(); it.hasNext();) {
-                PluginInformation info = it.next();
-                if (!missingRequiredPlugin.contains(info.getName())) {
-                    it.remove();
-                }
-            }
+            toDownload.removeIf(info -> !missingRequiredPlugin.contains(info.getName()));
             // Check if something has still to be downloaded
             if (!toDownload.isEmpty()) {
                 // download plugins
