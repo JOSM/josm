@@ -1124,3 +1124,31 @@ way[tracktype][tracktype!~/^(1|2|3|4|5|grade1|grade2|grade3|grade4|grade5)$/] {
   group: tr("deprecated tagging");
   fixChangeKey: "lock => lockable";
 }
+
+*[amenity=advertising][!advertising] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "advertising=*";
+  group: tr("deprecated tagging");
+}
+*[amenity=advertising][advertising] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "advertising=*";
+  group: tr("deprecated tagging");
+  fixRemove: "amenity";
+}
+
+way[direction=up][incline=up],
+way[direction=down][incline=down],
+way[direction=up][!incline],
+way[direction=down][!incline] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "incline";
+  group: tr("deprecated tagging");
+  fixChangeKey: "direction => incline";
+}
+way[direction=up][incline][incline!=up],
+way[direction=down][incline][incline!=down] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "incline";
+  group: tr("deprecated tagging");
+}
