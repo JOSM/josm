@@ -185,3 +185,23 @@ way["lanes:forward"]["lanes:forward" !~ /^[1-9]([0-9]*)$/][highway],
   assertMatch: "node admin_level=13";
   assertNoMatch: "node admin_level=5";
 }
+
+*[direction][direction>=0][direction<360] {
+    set correct_direction_degree;
+}
+*[direction][direction !~ /^(north|east|south|west|N|E|S|W|NE|SE|SW|NW|NNE|ENE|ESE|SSE|SSW|WSW|WNW|NNW|forward|backward|both|clockwise|anti-clockwise|anticlockwise|up|down)$/]!.correct_direction_degree {
+  throwWarning: tr("unusual value of {0}", "{1.key}");
+  assertMatch: "node direction=360";
+  assertMatch: "node direction=-10";
+  assertMatch: "node direction=north-east";
+  assertNoMatch: "node direction=up"; 
+  assertNoMatch: "node direction=down"; /* up/down are replaced by incline tag, has separate warning */
+  assertNoMatch: "node direction=0";
+  assertNoMatch: "node direction=45";
+  assertNoMatch: "node direction=N";
+  assertNoMatch: "node direction=NNE";
+  assertNoMatch: "node direction=west";
+  assertNoMatch: "node direction=forward";
+  assertNoMatch: "node direction=anti-clockwise";
+  assertNoMatch: "node direction=anticlockwise"; /* both spellings are in use and even wiki uses both */
+}
