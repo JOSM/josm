@@ -102,83 +102,163 @@ public final class Changeset implements Tagged {
         return changeset;
     }
 
+    /**
+     * Visitor pattern.
+     * @param v visitor
+     */
     public void visit(Visitor v) {
         v.visit(this);
     }
 
+    /**
+     * Compares this changeset to another, based on their identifier.
+     * @param other other changeset
+     * @return the value {@code 0} if {@code getId() == other.getId()};
+     *         a value less than {@code 0} if {@code getId() < other.getId()}; and
+     *         a value greater than {@code 0} if {@code getId() > other.getId()}
+     */
     public int compareTo(Changeset other) {
         return Integer.compare(getId(), other.getId());
     }
 
+    /**
+     * Returns the changeset name.
+     * @return the changeset name (untranslated: "changeset &lt;identifier&gt;")
+     */
     public String getName() {
         // no translation
         return "changeset " + getId();
     }
 
+    /**
+     * Returns the changeset display name, as per given name formatter.
+     * @param formatter name formatter
+     * @return the changeset display name, as per given name formatter
+     */
     public String getDisplayName(NameFormatter formatter) {
         return formatter.format(this);
     }
 
+    /**
+     * Returns the changeset identifier.
+     * @return the changeset identifier
+     */
     public int getId() {
         return id;
     }
 
+    /**
+     * Sets the changeset identifier.
+     * @param id changeset identifier
+     */
     public void setId(int id) {
         this.id = id;
     }
 
+    /**
+     * Returns the changeset user.
+     * @return the changeset user
+     */
     public User getUser() {
         return user;
     }
 
+    /**
+     * Sets the changeset user.
+     * @param user changeset user
+     */
     public void setUser(User user) {
         this.user = user;
     }
 
+    /**
+     * Returns the changeset creation date.
+     * @return the changeset creation date
+     */
     public Date getCreatedAt() {
         return createdAt;
     }
 
+    /**
+     * Sets the changeset creation date.
+     * @param createdAt changeset creation date
+     */
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
+    /**
+     * Returns the changeset closure date.
+     * @return the changeset closure date
+     */
     public Date getClosedAt() {
         return closedAt;
     }
 
+    /**
+     * Sets the changeset closure date.
+     * @param closedAt changeset closure date
+     */
     public void setClosedAt(Date closedAt) {
         this.closedAt = closedAt;
     }
 
+    /**
+     * Determines if this changeset is open.
+     * @return {@code true} if this changeset is open
+     */
     public boolean isOpen() {
         return open;
     }
 
+    /**
+     * Sets whether this changeset is open.
+     * @param open {@code true} if this changeset is open
+     */
     public void setOpen(boolean open) {
         this.open = open;
     }
 
+    /**
+     * Returns the min lat/lon of the changeset bounding box.
+     * @return the min lat/lon of the changeset bounding box
+     */
     public LatLon getMin() {
         return min;
     }
 
+    /**
+     * Sets the min lat/lon of the changeset bounding box.
+     * @param min min lat/lon of the changeset bounding box
+     */
     public void setMin(LatLon min) {
         this.min = min;
     }
 
+    /**
+     * Returns the max lat/lon of the changeset bounding box.
+     * @return the max lat/lon of the changeset bounding box
+     */
     public LatLon getMax() {
         return max;
     }
 
+    /**
+     * Sets the max lat/lon of the changeset bounding box.
+     * @param max min lat/lon of the changeset bounding box
+     */
+    public void setMax(LatLon max) {
+        this.max = max;
+    }
+
+    /**
+     * Returns the changeset bounding box.
+     * @return the changeset bounding box
+     */
     public Bounds getBounds() {
         if (min != null && max != null)
             return new Bounds(min, max);
         return null;
-    }
-
-    public void setMax(LatLon max) {
-        this.max = max;
     }
 
     /**
@@ -216,10 +296,18 @@ public final class Changeset implements Tagged {
         this.tags = keys;
     }
 
+    /**
+     * Determines if this changeset is incomplete.
+     * @return {@code true} if this changeset is incomplete
+     */
     public boolean isIncomplete() {
         return incomplete;
     }
 
+    /**
+     * Sets whether this changeset is incomplete
+     * @param incomplete {@code true} if this changeset is incomplete
+     */
     public void setIncomplete(boolean incomplete) {
         this.incomplete = incomplete;
     }
@@ -248,6 +336,11 @@ public final class Changeset implements Tagged {
         this.tags.clear();
     }
 
+    /**
+     * Determines if this changeset has equals semantic attributes with another one.
+     * @param other other changeset
+     * @return {@code true} if this changeset has equals semantic attributes with other changeset
+     */
     public boolean hasEqualSemanticAttributes(Changeset other) {
         if (other == null)
             return false;
@@ -314,10 +407,18 @@ public final class Changeset implements Tagged {
         return tags.keySet();
     }
 
+    /**
+     * Determines if this changeset is new.
+     * @return {@code true} if this changeset is new ({@code id <= 0})
+     */
     public boolean isNew() {
         return id <= 0;
     }
 
+    /**
+     * Merges changeset metadata from another changeset.
+     * @param other other changeset
+     */
     public void mergeFrom(Changeset other) {
         if (other == null)
             return;
@@ -338,14 +439,26 @@ public final class Changeset implements Tagged {
         this.content = other.content;
     }
 
+    /**
+     * Determines if this changeset has contents.
+     * @return {@code true} if this changeset has contents
+     */
     public boolean hasContent() {
         return content != null;
     }
 
+    /**
+     * Returns the changeset contents.
+     * @return the changeset contents, can be null
+     */
     public ChangesetDataSet getContent() {
         return content;
     }
 
+    /**
+     * Sets the changeset contents.
+     * @param content changeset contents, can be null
+     */
     public void setContent(ChangesetDataSet content) {
         this.content = content;
     }
