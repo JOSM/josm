@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -429,13 +428,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                 model.updateAvailablePlugins(pluginInfoDownloadTask.getAvailablePlugins());
                 // select plugins which actually have to be updated
                 //
-                Iterator<PluginInformation> it = toUpdate.iterator();
-                while (it.hasNext()) {
-                    PluginInformation pi = it.next();
-                    if (!pi.isUpdateRequired()) {
-                        it.remove();
-                    }
-                }
+                toUpdate.removeIf(pi -> !pi.isUpdateRequired());
                 if (toUpdate.isEmpty()) {
                     alertNothingToUpdate();
                     return;

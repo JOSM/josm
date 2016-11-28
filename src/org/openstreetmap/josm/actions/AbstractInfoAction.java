@@ -7,13 +7,13 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.notes.Note;
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
@@ -108,12 +108,7 @@ public abstract class AbstractInfoAction extends JosmAction {
 
         // filter out new primitives which are not yet uploaded to the server
         //
-        Iterator<OsmPrimitive> it = primitivesToShow.iterator();
-        while (it.hasNext()) {
-            if (it.next().isNew()) {
-                it.remove();
-            }
-        }
+        primitivesToShow.removeIf(AbstractPrimitive::isNew);
 
         if (primitivesToShow.isEmpty() && noteToShow == null) {
             JOptionPane.showMessageDialog(

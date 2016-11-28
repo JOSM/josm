@@ -1091,15 +1091,9 @@ public abstract class Main {
     public static void removeProjectionChangeListener(ProjectionChangeListener listener) {
         if (listener == null) return;
         synchronized (Main.class) {
-            Iterator<WeakReference<ProjectionChangeListener>> it = listeners.iterator();
-            while (it.hasNext()) {
-                WeakReference<ProjectionChangeListener> wr = it.next();
-                // remove the listener - and any other listener which got garbage
-                // collected in the meantime
-                if (wr.get() == null || wr.get() == listener) {
-                    it.remove();
-                }
-            }
+            // remove the listener - and any other listener which got garbage
+            // collected in the meantime
+            listeners.removeIf(wr -> wr.get() == null || wr.get() == listener);
         }
     }
 
@@ -1155,15 +1149,9 @@ public abstract class Main {
     public static void removeWindowSwitchListener(WindowSwitchListener listener) {
         if (listener == null) return;
         synchronized (Main.class) {
-            Iterator<WeakReference<WindowSwitchListener>> it = windowSwitchListeners.iterator();
-            while (it.hasNext()) {
-                WeakReference<WindowSwitchListener> wr = it.next();
-                // remove the listener - and any other listener which got garbage
-                // collected in the meantime
-                if (wr.get() == null || wr.get() == listener) {
-                    it.remove();
-                }
-            }
+            // remove the listener - and any other listener which got garbage
+            // collected in the meantime
+            windowSwitchListeners.removeIf(wr -> wr.get() == null || wr.get() == listener);
             if (windowSwitchListeners.isEmpty()) {
                 MasterWindowListener.teardown();
             }

@@ -32,7 +32,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -686,13 +685,7 @@ public class TagEditHelper {
             List<AutoCompletionListItem> keyList = autocomplete.getKeys();
 
             // remove the object's tag keys from the list
-            Iterator<AutoCompletionListItem> iter = keyList.iterator();
-            while (iter.hasNext()) {
-                AutoCompletionListItem item = iter.next();
-                if (containsDataKey(item.getValue())) {
-                    iter.remove();
-                }
-            }
+            keyList.removeIf(item -> containsDataKey(item.getValue()));
 
             keyList.sort(defaultACItemComparator);
             keys.setPossibleACItems(keyList);

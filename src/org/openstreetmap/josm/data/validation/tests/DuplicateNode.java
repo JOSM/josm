@@ -20,6 +20,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.Hash;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -314,11 +315,7 @@ public class DuplicateNode extends Test {
         Set<Node> nodes = new LinkedHashSet<>(OsmPrimitive.getFilteredList(sel, Node.class));
 
         // Filter nodes that have already been deleted (see #5764 and #5773)
-        for (Iterator<Node> it = nodes.iterator(); it.hasNext();) {
-            if (it.next().isDeleted()) {
-                it.remove();
-            }
-        }
+        nodes.removeIf(AbstractPrimitive::isDeleted);
 
         // Merge only if at least 2 nodes remain
         if (nodes.size() >= 2) {
