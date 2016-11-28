@@ -123,7 +123,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         if (cacheData != null) {
             byte[] content = cacheData.getContent();
             try {
-                return content != null || cacheData.getImage() != null || isNoTileAtZoom();
+                return content.length > 0 || cacheData.getImage() != null || isNoTileAtZoom();
             } catch (IOException e) {
                 LOG.log(Level.WARNING, "JCS TMS - error loading from cache for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
                 Main.warn(e);
@@ -324,7 +324,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     private boolean tryLoadTileImage(CacheEntry object) throws IOException {
         if (object != null) {
             byte[] content = object.getContent();
-            if (content != null && content.length > 0) {
+            if (content.length > 0) {
                 tile.loadImage(new ByteArrayInputStream(content));
                 if (tile.getImage() == null) {
                     tile.setError(tr("Could not load image from tile server"));

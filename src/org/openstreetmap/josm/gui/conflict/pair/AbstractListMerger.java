@@ -489,7 +489,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
         @Override
         public void actionPerformed(ActionEvent e) {
             int[] mergedRows = mergedEntriesTable.getSelectedRows();
-            if (mergedRows == null || mergedRows.length == 0)
+            if (mergedRows.length == 0)
                 return;
             int[] myRows = myEntriesTable.getSelectedRows();
             int current = mergedRows[0];
@@ -519,7 +519,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
         @Override
         public void actionPerformed(ActionEvent e) {
             int[] mergedRows = mergedEntriesTable.getSelectedRows();
-            if (mergedRows == null || mergedRows.length == 0)
+            if (mergedRows.length == 0)
                 return;
             int[] myRows = myEntriesTable.getSelectedRows();
             int current = mergedRows[0];
@@ -581,7 +581,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
         @Override
         public void actionPerformed(ActionEvent e) {
             int[] mergedRows = mergedEntriesTable.getSelectedRows();
-            if (mergedRows == null || mergedRows.length == 0)
+            if (mergedRows.length == 0)
                 return;
             int[] myRows = theirEntriesTable.getSelectedRows();
             int current = mergedRows[0];
@@ -607,7 +607,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
         @Override
         public void actionPerformed(ActionEvent e) {
             int[] mergedRows = mergedEntriesTable.getSelectedRows();
-            if (mergedRows == null || mergedRows.length == 0)
+            if (mergedRows.length == 0)
                 return;
             int[] myRows = theirEntriesTable.getSelectedRows();
             int current = mergedRows[0];
@@ -702,9 +702,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
         @Override
         public void valueChanged(ListSelectionEvent e) {
             int[] rows = mergedEntriesTable.getSelectedRows();
-            setEnabled(
-                    rows != null
-                    && rows.length > 0
+            setEnabled(rows.length > 0
                     && rows[0] != 0
             );
         }
@@ -736,9 +734,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
         @Override
         public void valueChanged(ListSelectionEvent e) {
             int[] rows = mergedEntriesTable.getSelectedRows();
-            setEnabled(
-                    rows != null
-                    && rows.length > 0
+            setEnabled(rows.length > 0
                     && rows[rows.length -1] != mergedEntriesTable.getRowCount() -1
             );
         }
@@ -770,10 +766,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
         @Override
         public void valueChanged(ListSelectionEvent e) {
             int[] rows = mergedEntriesTable.getSelectedRows();
-            setEnabled(
-                    rows != null
-                    && rows.length > 0
-            );
+            setEnabled(rows.length > 0);
         }
     }
 

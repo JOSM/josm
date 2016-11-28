@@ -195,8 +195,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         if (cacheData == null) {
             return false;
         }
-        byte[] content = cacheData.getContent();
-        return content != null && content.length > 0;
+        return cacheData.getContent().length > 0;
     }
 
     /**
