@@ -436,17 +436,8 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
     @Override public void primitivesRemoved(PrimitivesRemovedEvent event) {
         // Remove purged primitives (fix #8639)
         if (errors != null) {
-            for (TestError err : errors) {
-                try {
-                    err.getPrimitives().removeAll(event.getPrimitives());
-                } catch (UnsupportedOperationException e) {
-                    if (event.getPrimitives().containsAll(err.getPrimitives())) {
-                        err.getPrimitives().clear();
-                    } else {
-                        Main.warn(e, "Unable to remove primitives from "+err+'.');
-                    }
-                }
-            }
+            final Set<? extends OsmPrimitive> deletedPrimitives = new HashSet<>(event.getPrimitives());
+            errors.removeIf(error -> error.getPrimitives().stream().anyMatch(deletedPrimitives::contains));
         }
     }
 

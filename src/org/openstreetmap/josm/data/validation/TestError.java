@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.data.validation;
 
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -118,7 +117,7 @@ public class TestError implements Comparable<TestError> {
          * @return {@code this}
          */
         public Builder primitives(OsmPrimitive... primitives) {
-            return primitives(new ArrayList<>(Arrays.asList(primitives)));
+            return primitives(Arrays.asList(primitives));
         }
 
         /**
@@ -261,7 +260,7 @@ public class TestError implements Comparable<TestError> {
      * @return the list of primitives affected by this error
      */
     public Collection<? extends OsmPrimitive> getPrimitives() {
-        return primitives;
+        return Collections.unmodifiableCollection(primitives);
     }
 
     /**
@@ -399,7 +398,7 @@ public class TestError implements Comparable<TestError> {
      * @since 5671
      */
     public Collection<?> getHighlighted() {
-        return highlighted;
+        return Collections.unmodifiableCollection(highlighted);
     }
 
     @Override
