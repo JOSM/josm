@@ -313,6 +313,7 @@ public final class Shortcut {
         final Predicate<Shortcut> sameShortText = sc -> sc.getShortText().equals(shortText);
         return shortcuts.stream()
                 .filter(sameKey.or(sameShortText))
+                .sorted(Comparator.comparingInt(sc -> sameShortText.test(sc) ? 0 : 1))
                 .findAny();
     }
 
