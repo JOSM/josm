@@ -7,9 +7,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Optional;
 
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.ListCellRenderer;
@@ -93,12 +93,14 @@ public final class MenuItemSearchDialog extends ExtendedDialog {
         @Override
         public Component getListCellRendererComponent(JList<? extends JMenuItem> list, JMenuItem value, int index,
                                                       boolean isSelected, boolean cellHasFocus) {
-            final JLabel label = (JLabel) def.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-            label.setText(value.getText());
-            label.setIcon(value.getIcon());
-            label.setEnabled(value.isEnabled());
             final JMenuItem item = new JMenuItem(value.getText());
             item.setAction(value.getAction());
+            Optional.ofNullable(value.getAction())
+                    .filter(JosmAction.class::isInstance)
+                    .map(JosmAction.class::cast)
+                    .map(JosmAction::getShortcut)
+                    .map(Shortcut::getKeyStroke)
+                    .ifPresent(item::setAccelerator);
             if (isSelected) {
                 item.setBackground(list.getSelectionBackground());
                 item.setForeground(list.getSelectionForeground());
