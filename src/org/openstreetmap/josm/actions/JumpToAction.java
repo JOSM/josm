@@ -35,6 +35,11 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class JumpToAction extends JosmAction {
 
+    private final JosmTextField url = new JosmTextField();
+    private final JosmTextField lat = new JosmTextField();
+    private final JosmTextField lon = new JosmTextField();
+    private final JosmTextField zm = new JosmTextField();
+
     /**
      * Constructs a new {@code JumpToAction}.
      */
@@ -45,10 +50,13 @@ public class JumpToAction extends JosmAction {
         putValue("help", ht("/Action/JumpToPosition"));
     }
 
-    private final JosmTextField url = new JosmTextField();
-    private final JosmTextField lat = new JosmTextField();
-    private final JosmTextField lon = new JosmTextField();
-    private final JosmTextField zm = new JosmTextField();
+    static class JumpToPositionDialog extends ExtendedDialog {
+        JumpToPositionDialog(String[] buttons, JPanel panel) {
+            super(Main.parent, tr("Jump to Position"), buttons);
+            setContent(panel);
+            setCancelButton(2);
+        }
+    }
 
     class OsmURLListener implements DocumentListener {
         @Override
@@ -142,10 +150,7 @@ public class JumpToAction extends JosmAction {
         LatLon ll = null;
         double zoomLvl = 100;
         while (ll == null) {
-            final int option = new ExtendedDialog(Main.parent, tr("Jump to Position"), buttons) {{
-                setContent(panel);
-                setCancelButton(2);
-            }}.showDialog().getValue();
+            final int option = new JumpToPositionDialog(buttons, panel).showDialog().getValue();
 
             if (option != 1) return;
             try {
