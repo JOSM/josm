@@ -38,6 +38,7 @@ import org.apache.commons.compress.compressors.deflate.DeflateCompressorOutputSt
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.compressors.lzma.LZMACompressorInputStream;
+import org.apache.commons.compress.compressors.lzma.LZMACompressorOutputStream;
 import org.apache.commons.compress.compressors.lzma.LZMAUtils;
 import org.apache.commons.compress.compressors.pack200.Pack200CompressorInputStream;
 import org.apache.commons.compress.compressors.pack200.Pack200CompressorOutputStream;
@@ -530,6 +531,10 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
                 return new Pack200CompressorOutputStream(out);
             }
 
+            if (LZMA.equalsIgnoreCase(name)) {
+                return new LZMACompressorOutputStream(out);
+            }
+
             if (DEFLATE.equalsIgnoreCase(name)) {
                 return new DeflateCompressorOutputStream(out);
             }
@@ -576,7 +581,7 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
 
     @Override
     public Set<String> getOutputStreamCompressorNames() {
-        return Sets.newHashSet(GZIP, BZIP2, XZ, PACK200, DEFLATE);
+        return Sets.newHashSet(GZIP, BZIP2, XZ, LZMA, PACK200, DEFLATE);
     }
 
     /**
