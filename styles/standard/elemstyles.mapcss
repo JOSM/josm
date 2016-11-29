@@ -1882,6 +1882,7 @@ area[shop=medical_supply],
 area[shop=paint],
 area[shop=pawnbroker],
 area[shop=seafood],
+area[shop=dairy],
 area[shop=shoes],
 area[shop=sports],
 area[shop=stationery],
@@ -2127,6 +2128,10 @@ node[shop=pawnbroker] {
 }
 node[shop=seafood] {
     icon-image: "presets/shop/groceries/seafood.svg";
+    set icon_z17;
+}
+node[shop=dairy] {
+    icon-image: "presets/shop/groceries/dairy.svg";
     set icon_z17;
 }
 node[shop=shoes] {
