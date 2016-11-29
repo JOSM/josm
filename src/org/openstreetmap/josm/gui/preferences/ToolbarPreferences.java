@@ -68,10 +68,17 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Toolbar preferences.
+ * @since 172
+ */
 public class ToolbarPreferences implements PreferenceSettingFactory {
 
     private static final String EMPTY_TOOLBAR_MARKER = "<!-empty-!>";
 
+    /**
+     * Action definition.
+     */
     public static class ActionDefinition {
         private final Action action;
         private String name = "";
@@ -79,14 +86,26 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         private ImageIcon ico;
         private final Map<String, Object> parameters = new ConcurrentHashMap<>();
 
+        /**
+         * Constructs a new {@code ActionDefinition}.
+         * @param action action
+         */
         public ActionDefinition(Action action) {
             this.action = action;
         }
 
+        /**
+         * Returns action parameters.
+         * @return action parameters
+         */
         public Map<String, Object> getParameters() {
             return parameters;
         }
 
+        /**
+         * Returns {@link ParameterizedActionDecorator}, if applicable.
+         * @return {@link ParameterizedActionDecorator}, if applicable
+         */
         public Action getParametrizedAction() {
             if (getAction() instanceof ParameterizedAction)
                 return new ParameterizedActionDecorator((ParameterizedAction) getAction(), parameters);
@@ -94,18 +113,34 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 return getAction();
         }
 
+        /**
+         * Returns action.
+         * @return action
+         */
         public Action getAction() {
             return action;
         }
 
+        /**
+         * Returns action name.
+         * @return action name
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * Returns action display name.
+         * @return action display name
+         */
         public String getDisplayName() {
             return name.isEmpty() ? (String) action.getValue(Action.NAME) : name;
         }
 
+        /**
+         * Returns display tooltip.
+         * @return display tooltip
+         */
         public String getDisplayTooltip() {
             if (!name.isEmpty())
                 return name;
@@ -117,6 +152,10 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             return (String) action.getValue(Action.SHORT_DESCRIPTION);
         }
 
+        /**
+         * Returns display icon.
+         * @return display icon
+         */
         public Icon getDisplayIcon() {
             if (ico != null)
                 return ico;
@@ -126,27 +165,51 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             return (Icon) o;
         }
 
+        /**
+         * Sets action name.
+         * @param name action name
+         */
         public void setName(String name) {
             this.name = name;
         }
 
+        /**
+         * Returns icon name.
+         * @return icon name
+         */
         public String getIcon() {
             return icon;
         }
 
+        /**
+         * Sets icon name.
+         * @param icon icon name
+         */
         public void setIcon(String icon) {
             this.icon = icon;
             ico = ImageProvider.getIfAvailable("", icon);
         }
 
+        /**
+         * Determines if this a separator.
+         * @return {@code true} if this a separator
+         */
         public boolean isSeparator() {
             return action == null;
         }
 
+        /**
+         * Returns a new separator.
+         * @return new separator
+         */
         public static ActionDefinition getSeparator() {
             return new ActionDefinition(null);
         }
 
+        /**
+         * Determines if this action has parameters.
+         * @return {@code true} if this action has parameters
+         */
         public boolean hasParameters() {
             if (!(getAction() instanceof ParameterizedAction)) return false;
             for (Object o: parameters.values()) {
@@ -162,6 +225,10 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         private int index;
         private char[] s;
 
+        /**
+         * Constructs a new {@code ActionParser}.
+         * @param actions actions map - can be null
+         */
         public ActionParser(Map<String, Action> actions) {
             this.actions = actions;
         }
@@ -489,6 +556,9 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         return new Settings(rootActionsNode);
     }
 
+    /**
+     * Toolbar preferences settings.
+     */
     public class Settings extends DefaultTabPreferenceSetting {
 
         private final class SelectedListTransferHandler extends TransferHandler {
