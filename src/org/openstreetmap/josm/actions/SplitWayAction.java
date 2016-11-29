@@ -263,19 +263,7 @@ public class SplitWayAction extends JosmAction {
                     setHighlightedWaySegments(segments);
                 }
             });
-            list.setCellRenderer(new DefaultListCellRenderer() {
-                @Override
-                public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-                    final Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                    final String name = DefaultNameFormatter.getInstance().format((Way) value);
-                    // get rid of id from DefaultNameFormatter.decorateNameWithId()
-                    final String nameWithoutId = name
-                            .replace(tr(" [id: {0}]", ((Way) value).getId()), "")
-                            .replace(tr(" [id: {0}]", ((Way) value).getUniqueId()), "");
-                    ((JLabel) c).setText(tr("Segment {0}: {1}", index + 1, nameWithoutId));
-                    return c;
-                }
-            });
+            list.setCellRenderer(new SegmentListCellRenderer());
         }
 
         protected void setHighlightedWaySegments(Collection<WaySegment> segments) {
@@ -305,6 +293,20 @@ public class SplitWayAction extends JosmAction {
                 Main.main.undoRedo.add(result.getCommand());
                 Main.getLayerManager().getEditDataSet().setSelected(result.getNewSelection());
             }
+        }
+    }
+
+    static class SegmentListCellRenderer extends DefaultListCellRenderer {
+        @Override
+        public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+            final Component c = super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+            final String name = DefaultNameFormatter.getInstance().format((Way) value);
+            // get rid of id from DefaultNameFormatter.decorateNameWithId()
+            final String nameWithoutId = name
+                    .replace(tr(" [id: {0}]", ((Way) value).getId()), "")
+                    .replace(tr(" [id: {0}]", ((Way) value).getUniqueId()), "");
+            ((JLabel) c).setText(tr("Segment {0}: {1}", index + 1, nameWithoutId));
+            return c;
         }
     }
 

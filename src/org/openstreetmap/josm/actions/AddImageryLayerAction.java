@@ -45,6 +45,18 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class AddImageryLayerAction extends JosmAction implements AdaptableAction {
     private final transient ImageryInfo info;
 
+    static class SelectWmsLayersDialog extends ExtendedDialog {
+        SelectWmsLayersDialog(WMSLayerTree tree, JComboBox<String> formats) {
+            super(Main.parent, tr("Select WMS layers"), new String[]{tr("Add layers"), tr("Cancel")});
+            final JScrollPane scrollPane = new JScrollPane(tree.getLayerTree());
+            scrollPane.setPreferredSize(new Dimension(400, 400));
+            final JPanel panel = new JPanel(new GridBagLayout());
+            panel.add(scrollPane, GBC.eol().fill());
+            panel.add(formats, GBC.eol().fill(GBC.HORIZONTAL));
+            setContent(panel);
+        }
+    }
+
     /**
      * Constructs a new {@code AddImageryLayerAction} for the given {@code ImageryInfo}.
      * If an http:// icon is specified, it is fetched asynchronously.
@@ -150,17 +162,8 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         formats.setSelectedItem(wms.getPreferredFormats());
         formats.setToolTipText(tr("Select image format for WMS layer"));
 
-        if (!GraphicsEnvironment.isHeadless()) {
-            if (1 != new ExtendedDialog(Main.parent, tr("Select WMS layers"), new String[]{tr("Add layers"), tr("Cancel")}) { {
-                final JScrollPane scrollPane = new JScrollPane(tree.getLayerTree());
-                scrollPane.setPreferredSize(new Dimension(400, 400));
-                final JPanel panel = new JPanel(new GridBagLayout());
-                panel.add(scrollPane, GBC.eol().fill());
-                panel.add(formats, GBC.eol().fill(GBC.HORIZONTAL));
-                setContent(panel);
-            } }.showDialog().getValue()) {
-                return null;
-            }
+        if (!GraphicsEnvironment.isHeadless() && 1 != new SelectWmsLayersDialog(tree, formats).showDialog().getValue()) {
+            return null;
         }
 
         final String url = wms.buildGetMapUrl(

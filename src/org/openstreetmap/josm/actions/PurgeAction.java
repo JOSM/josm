@@ -88,6 +88,15 @@ public class PurgeAction extends JosmAction {
         putValue("help", HelpUtil.ht("/Action/Purge"));
     }
 
+    /** force selection to be active for all entries */
+    static class SelectionForcedOsmPrimitivRenderer extends OsmPrimitivRenderer {
+        @Override
+        public Component getListCellRendererComponent(JList<? extends OsmPrimitive> list,
+                OsmPrimitive value, int index, boolean isSelected, boolean cellHasFocus) {
+            return super.getListCellRendererComponent(list, value, index, true, false);
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
@@ -127,8 +136,7 @@ public class PurgeAction extends JosmAction {
         toPurgeAdditionally = new ArrayList<>();
         toPurgeChecked = new HashSet<>();
 
-        // Add referrer, unless the object to purge is not new
-        // and the parent is a relation
+        // Add referrer, unless the object to purge is not new and the parent is a relation
         Set<OsmPrimitive> toPurgeRecursive = new HashSet<>();
         while (!toPurge.isEmpty()) {
 
@@ -168,8 +176,7 @@ public class PurgeAction extends JosmAction {
                 }
             }
 
-        // Add untagged way nodes. Do not add nodes that have other
-        // referrers not yet to-be-purged.
+        // Add untagged way nodes. Do not add nodes that have other referrers not yet to-be-purged.
         if (Main.pref.getBoolean("purge.add_untagged_waynodes", true)) {
             Set<OsmPrimitive> wayNodes = new HashSet<>();
             for (OsmPrimitive osm : toPurgeChecked) {
@@ -205,9 +212,7 @@ public class PurgeAction extends JosmAction {
                 }
             }
 
-            /**
-             * Add higher level relations (list gets extended while looping over it)
-             */
+            // Add higher level relations (list gets extended while looping over it)
             List<Relation> relLst = new ArrayList<>(relSet);
             for (int i = 0; i < relLst.size(); ++i) { // foreach loop not applicable since list gets extended while looping over it
                 for (OsmPrimitive parent : relLst.get(i).getReferrers()) {
@@ -261,16 +266,7 @@ public class PurgeAction extends JosmAction {
             });
             JList<OsmPrimitive> list = new JList<>(toPurgeAdditionally.toArray(new OsmPrimitive[toPurgeAdditionally.size()]));
             /* force selection to be active for all entries */
-            list.setCellRenderer(new OsmPrimitivRenderer() {
-                @Override
-                public Component getListCellRendererComponent(JList<? extends OsmPrimitive> list,
-                        OsmPrimitive value,
-                        int index,
-                        boolean isSelected,
-                        boolean cellHasFocus) {
-                    return super.getListCellRendererComponent(list, value, index, true, false);
-                }
-            });
+            list.setCellRenderer(new SelectionForcedOsmPrimitivRenderer());
             JScrollPane scroll = new JScrollPane(list);
             scroll.setPreferredSize(new Dimension(250, 300));
             scroll.setMinimumSize(new Dimension(250, 300));

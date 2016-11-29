@@ -43,6 +43,19 @@ public class RenameLayerAction extends AbstractAction {
         this.putValue("help", ht("/Action/RenameLayer"));
     }
 
+    static class InitialValueOptionPane extends JOptionPane {
+        InitialValueOptionPane(Box panel, JosmTextField initial) {
+            super(panel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION, null, null, initial);
+        }
+
+        @Override
+        public void selectInitialValue() {
+            JosmTextField initial = (JosmTextField) getInitialValue();
+            initial.requestFocusInWindow();
+            initial.selectAll();
+        }
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         Box panel = Box.createVerticalBox();
@@ -55,12 +68,7 @@ public class RenameLayerAction extends AbstractAction {
             filerename.setSelected(Main.pref.getBoolean("layer.rename-file", true));
         }
 
-        final JOptionPane optionPane = new JOptionPane(panel, JOptionPane.QUESTION_MESSAGE, JOptionPane.OK_CANCEL_OPTION) {
-            @Override public void selectInitialValue() {
-                name.requestFocusInWindow();
-                name.selectAll();
-            }
-        };
+        final JOptionPane optionPane = new InitialValueOptionPane(panel, name);
         final JDialog dlg = optionPane.createDialog(Main.parent, tr("Rename layer"));
         dlg.setModalityType(ModalityType.DOCUMENT_MODAL);
         dlg.setVisible(true);

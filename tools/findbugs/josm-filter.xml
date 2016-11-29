@@ -1,6 +1,10 @@
 <FindBugsFilter>
 
 	<Match>
+		<Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED" />
+	</Match>
+
+	<Match>
 		<Class name="~com.*" />
 	</Match>
     <Match>
