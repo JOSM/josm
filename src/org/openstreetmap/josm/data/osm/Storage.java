@@ -71,6 +71,9 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class Storage<T> extends AbstractSet<T> {
 
+    /**
+     * Hash for {@link PrimitiveId}.
+     */
     public static class PrimitiveIdHash implements Hash<PrimitiveId, PrimitiveId> {
 
         @Override
@@ -110,35 +113,62 @@ public class Storage<T> extends AbstractSet<T> {
         this(Storage.<T>defaultHash(), capacity, false);
     }
 
+    /**
+     * Constructs a new {@code Storage} with given hash.
+     * @param ha hash
+     */
     public Storage(Hash<? super T, ? super T> ha) {
         this(ha, DEFAULT_CAPACITY, false);
     }
 
+    /**
+     * Constructs a new {@code Storage}.
+     * @param safeIterator If set to false, you must not modify the Storage while iterating over it.
+     * If set to true, you can safely modify, but the read-only iteration will happen on a copy of the unmodified Storage.
+     * This is similar to CopyOnWriteArrayList.
+     */
     public Storage(boolean safeIterator) {
         this(Storage.<T>defaultHash(), DEFAULT_CAPACITY, safeIterator);
     }
 
+    /**
+     * Constructs a new {@code Storage} with given capacity.
+     * @param capacity capacity
+     * @param safeIterator If set to false, you must not modify the Storage while iterating over it.
+     * If set to true, you can safely modify, but the read-only iteration will happen on a copy of the unmodified Storage.
+     * This is similar to CopyOnWriteArrayList.
+     */
     public Storage(int capacity, boolean safeIterator) {
         this(Storage.<T>defaultHash(), capacity, safeIterator);
     }
 
+    /**
+     * Constructs a new {@code Storage} with given hash.
+     * @param ha hash
+     * @param safeIterator If set to false, you must not modify the Storage while iterating over it.
+     * If set to true, you can safely modify, but the read-only iteration will happen on a copy of the unmodified Storage.
+     * This is similar to CopyOnWriteArrayList.
+     */
     public Storage(Hash<? super T, ? super T> ha, boolean safeIterator) {
         this(ha, DEFAULT_CAPACITY, safeIterator);
     }
 
+    /**
+     * Constructs a new {@code Storage} with given hash and capacity.
+     * @param ha hash
+     * @param capacity capacity
+     */
     public Storage(Hash<? super T, ? super T> ha, int capacity) {
         this(ha, capacity, false);
     }
 
     /**
-     * constructor
+     * Constructs a new {@code Storage} with given hash and capacity.
      * @param ha hash
      * @param capacity capacity
-     * @param safeIterator If set to false, you must not modify the Storage
-     *          while iterating over it. If set to true, you can safely
-     *          modify, but the read-only iteration will happen on a copy
-     *          of the unmodified Storage.
-     *          This is similar to CopyOnWriteArrayList.
+     * @param safeIterator If set to false, you must not modify the Storage while iterating over it.
+     * If set to true, you can safely modify, but the read-only iteration will happen on a copy of the unmodified Storage.
+     * This is similar to CopyOnWriteArrayList.
      */
     public Storage(Hash<? super T, ? super T> ha, int capacity, boolean safeIterator) {
         this.hash = ha;
