@@ -399,7 +399,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                 }
             }
         }
-        if (e.projections != null) {
+        if (e.projections != null && !e.projections.isEmpty()) {
+            // split generates null element on empty string which gives one element Array[null]
             serverProjections = Arrays.asList(e.projections.split(","));
         }
         attributionText = e.attribution_text;
