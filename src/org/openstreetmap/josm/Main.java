@@ -464,13 +464,29 @@ public abstract class Main {
 
     private static volatile InitStatusListener initListener;
 
+    /**
+     * Initialization task listener.
+     */
     public interface InitStatusListener {
 
+        /**
+         * Called when an initialization task updates its status.
+         * @param event task name
+         * @return new status
+         */
         Object updateStatus(String event);
 
+        /**
+         * Called when an initialization task completes.
+         * @param status final status
+         */
         void finish(Object status);
     }
 
+    /**
+     * Sets initialization task listener.
+     * @param listener initialization task listener
+     */
     public static void setInitStatusListener(InitStatusListener listener) {
         CheckParameterUtil.ensureParameterNotNull(listener);
         initListener = listener;
@@ -653,10 +669,19 @@ public abstract class Main {
         RedirectInputMap.redirect(source, contentPanePrivate);
     }
 
+    /**
+     * Registers a {@code JosmAction} and its shortcut.
+     * @param action action defining its own shortcut
+     */
     public static void registerActionShortcut(JosmAction action) {
         registerActionShortcut(action, action.getShortcut());
     }
 
+    /**
+     * Registers an action and its shortcut.
+     * @param action action to register
+     * @param shortcut shortcut to associate to {@code action}
+     */
     public static void registerActionShortcut(Action action, Shortcut shortcut) {
         KeyStroke keyStroke = shortcut.getKeyStroke();
         if (keyStroke == null)
@@ -672,14 +697,27 @@ public abstract class Main {
         contentPanePrivate.getActionMap().put(action, action);
     }
 
+    /**
+     * Unregisters a shortcut.
+     * @param shortcut shortcut to unregister
+     */
     public static void unregisterShortcut(Shortcut shortcut) {
         contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(shortcut.getKeyStroke());
     }
 
+    /**
+     * Unregisters a {@code JosmAction} and its shortcut.
+     * @param action action to unregister
+     */
     public static void unregisterActionShortcut(JosmAction action) {
         unregisterActionShortcut(action, action.getShortcut());
     }
 
+    /**
+     * Unregisters an action and its shortcut.
+     * @param action action to unregister
+     * @param shortcut shortcut to unregister
+     */
     public static void unregisterActionShortcut(Action action, Shortcut shortcut) {
         unregisterShortcut(shortcut);
         contentPanePrivate.getActionMap().remove(action);
