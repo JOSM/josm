@@ -38,30 +38,40 @@ public final class ChangesetCache implements PreferenceChangedListener {
     /** the unique instance */
     private static final ChangesetCache instance = new ChangesetCache();
 
+    /** the cached changesets */
+    private final Map<Integer, Changeset> cache = new HashMap<>();
+
+    private final CopyOnWriteArrayList<ChangesetCacheListener> listeners = new CopyOnWriteArrayList<>();
+
+    /**
+     * Constructs a new {@code ChangesetCache}.
+     */
+    private ChangesetCache() {
+        Main.pref.addPreferenceChangeListener(this);
+    }
+
     /**
      * Replies the unique instance of the cache
-     *
      * @return the unique instance of the cache
      */
     public static ChangesetCache getInstance() {
         return instance;
     }
 
-    /** the cached changesets */
-    private final Map<Integer, Changeset> cache = new HashMap<>();
-
-    private final CopyOnWriteArrayList<ChangesetCacheListener> listeners = new CopyOnWriteArrayList<>();
-
-    private ChangesetCache() {
-        Main.pref.addPreferenceChangeListener(this);
-    }
-
+    /**
+     * Add a changeset cache listener.
+     * @param listener changeset cache listener to add
+     */
     public void addChangesetCacheListener(ChangesetCacheListener listener) {
         if (listener != null) {
             listeners.addIfAbsent(listener);
         }
     }
 
+    /**
+     * Remove a changeset cache listener.
+     * @param listener changeset cache listener to remove
+     */
     public void removeChangesetCacheListener(ChangesetCacheListener listener) {
         if (listener != null) {
             listeners.remove(listener);
@@ -89,12 +99,20 @@ public final class ChangesetCache implements PreferenceChangedListener {
         }
     }
 
+    /**
+     * Update a single changeset.
+     * @param cs changeset to update
+     */
     public void update(Changeset cs) {
         DefaultChangesetCacheEvent e = new DefaultChangesetCacheEvent(this);
         update(cs, e);
         fireChangesetCacheEvent(e);
     }
 
+    /**
+     * Update a collection of changesets.
+     * @param changesets changesets to update
+     */
     public void update(Collection<Changeset> changesets) {
         if (changesets == null || changesets.isEmpty()) return;
         DefaultChangesetCacheEvent e = new DefaultChangesetCacheEvent(this);
@@ -104,21 +122,40 @@ public final class ChangesetCache implements PreferenceChangedListener {
         fireChangesetCacheEvent(e);
     }
 
+    /**
+     * Determines if the cache contains an entry for given changeset identifier.
+     * @param id changeset id
+     * @return {@code true} if the cache contains an entry for {@code id}
+     */
     public boolean contains(int id) {
         if (id <= 0) return false;
         return cache.get(id) != null;
     }
 
+    /**
+     * Determines if the cache contains an entry for given changeset.
+     * @param cs changeset
+     * @return {@code true} if the cache contains an entry for {@code cs}
+     */
     public boolean contains(Changeset cs) {
         if (cs == null) return false;
         if (cs.isNew()) return false;
         return contains(cs.getId());
     }
 
+    /**
+     * Returns the entry for given changeset identifier.
+     * @param id changeset id
+     * @return the entry for given changeset identifier, or null
+     */
     public Changeset get(int id) {
         return cache.get(id);
     }
 
+    /**
+     * Returns the list of changesets contained in the cache.
+     * @return the list of changesets contained in the cache
+     */
     public Set<Changeset> getChangesets() {
         return new HashSet<>(cache.values());
     }
@@ -131,6 +168,11 @@ public final class ChangesetCache implements PreferenceChangedListener {
         e.rememberRemovedChangeset(cs);
     }
 
+    /**
+     * Remove the entry for the given changeset identifier.
+     * A {@link ChangesetCacheEvent} is fired.
+     * @param id changeset id
+     */
     public void remove(int id) {
         DefaultChangesetCacheEvent e = new DefaultChangesetCacheEvent(this);
         remove(id, e);
@@ -139,6 +181,11 @@ public final class ChangesetCache implements PreferenceChangedListener {
         }
     }
 
+    /**
+     * Remove the entry for the given changeset.
+     * A {@link ChangesetCacheEvent} is fired.
+     * @param cs changeset
+     */
     public void remove(Changeset cs) {
         if (cs == null) return;
         if (cs.isNew()) return;
@@ -146,8 +193,8 @@ public final class ChangesetCache implements PreferenceChangedListener {
     }
 
     /**
-     * Removes the changesets in <code>changesets</code> from the cache. A
-     * {@link ChangesetCacheEvent} is fired.
+     * Removes the changesets in <code>changesets</code> from the cache.
+     * A {@link ChangesetCacheEvent} is fired.
      *
      * @param changesets the changesets to remove. Ignored if null.
      */
@@ -165,10 +212,17 @@ public final class ChangesetCache implements PreferenceChangedListener {
         }
     }
 
+    /**
+     * Returns the number of changesets contained in the cache.
+     * @return the number of changesets contained in the cache
+     */
     public int size() {
         return cache.size();
     }
 
+    /**
+     * Clears the cache.
+     */
     public void clear() {
         DefaultChangesetCacheEvent e = new DefaultChangesetCacheEvent(this);
         for (Changeset cs: cache.values()) {
