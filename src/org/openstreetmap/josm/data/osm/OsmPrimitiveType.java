@@ -8,14 +8,22 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
 
+/**
+ * OSM primitive type.
+ * @since 1670
+ */
 public enum OsmPrimitiveType {
 
+    /** Node type */
     NODE(marktr(/* ICON(data/) */"node"), Node.class, NodeData.class),
+    /** Way type */
     WAY(marktr(/* ICON(data/) */"way"), Way.class, WayData.class),
+    /** Relation type */
     RELATION(marktr(/* ICON(data/) */"relation"), Relation.class, RelationData.class),
 
-    /* only for display, no real type */
+    /** Closed way: only for display, no real type */
     CLOSEDWAY(marktr(/* ICON(data/) */"closedway"), null, WayData.class),
+    /** Multipolygon: only for display, no real type */
     MULTIPOLYGON(marktr(/* ICON(data/) */"multipolygon"), null, RelationData.class);
 
     private static final Collection<OsmPrimitiveType> DATA_VALUES = Arrays.asList(NODE, WAY, RELATION);
