@@ -1794,27 +1794,37 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    private class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> implements Visitor {
+    private static class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> implements Visitor {
         private final transient List<? extends OsmPrimitive> input;
         private final transient List<StyleRecord> output;
 
         private final transient ElemStyles styles = MapPaintStyles.getStyles();
         private final int directExecutionTaskSize;
+        private final double circum;
+        private final NavigatableComponent nc;
 
-        private final boolean drawArea = circum <= Main.pref.getInteger("mappaint.fillareas", 10_000_000);
-        private final boolean drawMultipolygon = drawArea && Main.pref.getBoolean("mappaint.multipolygon", true);
-        private final boolean drawRestriction = Main.pref.getBoolean("mappaint.restriction", true);
+        private final boolean drawArea;
+        private final boolean drawMultipolygon;
+        private final boolean drawRestriction;
 
         /**
          * Constructs a new {@code ComputeStyleListWorker}.
+         * @param circum distance on the map in meters that 100 screen pixels represent
+         * @param nc navigatable component
          * @param input the primitives to process
          * @param output the list of styles to which styles will be added
          * @param directExecutionTaskSize the threshold deciding whether to subdivide the tasks
          */
-        ComputeStyleListWorker(final List<? extends OsmPrimitive> input, List<StyleRecord> output, int directExecutionTaskSize) {
+        ComputeStyleListWorker(double circum, NavigatableComponent nc,
+                final List<? extends OsmPrimitive> input, List<StyleRecord> output, int directExecutionTaskSize) {
+            this.circum = circum;
+            this.nc = nc;
             this.input = input;
             this.output = output;
             this.directExecutionTaskSize = directExecutionTaskSize;
+            this.drawArea = circum <= Main.pref.getInteger("mappaint.fillareas", 10_000_000);
+            this.drawMultipolygon = drawArea && Main.pref.getBoolean("mappaint.multipolygon", true);
+            this.drawRestriction = Main.pref.getBoolean("mappaint.restriction", true);
             this.styles.setDrawMultipolygon(drawMultipolygon);
         }
 
@@ -1827,7 +1837,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 for (int fromIndex = 0; fromIndex < input.size(); fromIndex += directExecutionTaskSize) {
                     final int toIndex = Math.min(fromIndex + directExecutionTaskSize, input.size());
                     final List<StyleRecord> output = new ArrayList<>(directExecutionTaskSize);
-                    tasks.add(new ComputeStyleListWorker(input.subList(fromIndex, toIndex), output, directExecutionTaskSize).fork());
+                    tasks.add(new ComputeStyleListWorker(circum, nc, input.subList(fromIndex, toIndex), output, directExecutionTaskSize).fork());
                 }
                 for (ForkJoinTask<List<StyleRecord>> task : tasks) {
                     output.addAll(task.join());
@@ -1937,13 +1947,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             final List<StyleRecord> allStyleElems = new ArrayList<>(nodes.size()+ways.size()+relations.size());
 
             // Need to process all relations first.
-            // Reason: Make sure, ElemStyles.getStyleCacheWithRange is
-            // not called for the same primitive in parallel threads.
-            // (Could be synchronized, but try to avoid this for
-            // performance reasons.)
-            THREAD_POOL.invoke(new ComputeStyleListWorker(relations, allStyleElems,
+            // Reason: Make sure, ElemStyles.getStyleCacheWithRange is not called for the same primitive in parallel threads.
+            // (Could be synchronized, but try to avoid this for performance reasons.)
+            THREAD_POOL.invoke(new ComputeStyleListWorker(circum, nc, relations, allStyleElems,
                     Math.max(20, relations.size() / THREAD_POOL.getParallelism() / 3)));
-            THREAD_POOL.invoke(new ComputeStyleListWorker(new CompositeList<>(nodes, ways), allStyleElems,
+            THREAD_POOL.invoke(new ComputeStyleListWorker(circum, nc, new CompositeList<>(nodes, ways), allStyleElems,
                     Math.max(100, (nodes.size() + ways.size()) / THREAD_POOL.getParallelism() / 3)));
 
             if (!benchmark.renderSort()) {
