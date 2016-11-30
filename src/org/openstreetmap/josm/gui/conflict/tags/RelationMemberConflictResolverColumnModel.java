@@ -42,22 +42,24 @@ public class RelationMemberConflictResolverColumnModel extends DefaultTableColum
     }
 
     private static Component setColors(Component comp, JTable table, boolean isSelected, int row) {
-        RelationMemberConflictResolverModel model = (RelationMemberConflictResolverModel) table.getModel();
+        if (table.getModel() instanceof RelationMemberConflictResolverModel) {
+            RelationMemberConflictResolverModel model = (RelationMemberConflictResolverModel) table.getModel();
 
-        if (!isSelected && comp != null) {
-            switch (model.getDecision(row).getDecision()) {
-            case UNDECIDED:
-                comp.setForeground(ConflictColors.FGCOLOR_UNDECIDED.get());
-                comp.setBackground(ConflictColors.BGCOLOR_UNDECIDED.get());
-                break;
-            case KEEP:
-                comp.setForeground(ConflictColors.FGCOLOR_MEMBER_KEEP.get());
-                comp.setBackground(ConflictColors.BGCOLOR_MEMBER_KEEP.get());
-                break;
-            case REMOVE:
-                comp.setForeground(ConflictColors.FGCOLOR_MEMBER_REMOVE.get());
-                comp.setBackground(ConflictColors.BGCOLOR_MEMBER_REMOVE.get());
-                break;
+            if (!isSelected && comp != null) {
+                switch (model.getDecision(row).getDecision()) {
+                case UNDECIDED:
+                    comp.setForeground(ConflictColors.FGCOLOR_UNDECIDED.get());
+                    comp.setBackground(ConflictColors.BGCOLOR_UNDECIDED.get());
+                    break;
+                case KEEP:
+                    comp.setForeground(ConflictColors.FGCOLOR_MEMBER_KEEP.get());
+                    comp.setBackground(ConflictColors.BGCOLOR_MEMBER_KEEP.get());
+                    break;
+                case REMOVE:
+                    comp.setForeground(ConflictColors.FGCOLOR_MEMBER_REMOVE.get());
+                    comp.setBackground(ConflictColors.BGCOLOR_MEMBER_REMOVE.get());
+                    break;
+                }
             }
         }
         return comp;
