@@ -41,23 +41,15 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Imagery menu, holding entries for imagery preferences, offset actions and dynamic imagery entries
- * depending on current maview coordinates.
+ * depending on current mapview coordinates.
  * @since 3737
  */
 public class ImageryMenu extends JMenu implements LayerChangeListener {
 
-    /**
-     * Compare ImageryInfo objects alphabetically by name.
-     *
-     * ImageryInfo objects are normally sorted by country code first
-     * (for the preferences). We don't want this in the imagery menu.
-     */
-    public static final Comparator<ImageryInfo> alphabeticImageryComparator =
-            (ii1, ii2) -> ii1.getName().toLowerCase(Locale.ENGLISH).compareTo(ii2.getName().toLowerCase(Locale.ENGLISH));
+    static final class AdjustImageryOffsetAction extends JosmAction {
 
-    private final transient Action offsetAction = new JosmAction(
-            tr("Imagery offset"), "mapmode/adjustimg", tr("Adjust imagery offset"), null, false, false) {
-        {
+        AdjustImageryOffsetAction() {
+            super(tr("Imagery offset"), "mapmode/adjustimg", tr("Adjust imagery offset"), null, false, false);
             putValue("toolbar", "imagery-offset");
             Main.toolbar.register(this);
         }
@@ -93,7 +85,18 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
             }
             popup.show(source, source.getWidth()/2, source.getHeight()/2);
         }
-    };
+    }
+
+    /**
+     * Compare ImageryInfo objects alphabetically by name.
+     *
+     * ImageryInfo objects are normally sorted by country code first
+     * (for the preferences). We don't want this in the imagery menu.
+     */
+    public static final Comparator<ImageryInfo> alphabeticImageryComparator =
+            (ii1, ii2) -> ii1.getName().toLowerCase(Locale.ENGLISH).compareTo(ii2.getName().toLowerCase(Locale.ENGLISH));
+
+    private final transient Action offsetAction = new AdjustImageryOffsetAction();
 
     private final JMenuItem singleOffset = new JMenuItem(offsetAction);
     private JMenuItem offsetMenuItem = singleOffset;
@@ -226,6 +229,9 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
         return newMenu;
     }
 
+    /**
+     * Refresh offset menu item.
+     */
     public void refreshOffsetMenu() {
         offsetMenuItem = getNewOffsetMenu();
     }

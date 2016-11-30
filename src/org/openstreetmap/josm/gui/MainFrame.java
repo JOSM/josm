@@ -88,12 +88,7 @@ public class MainFrame extends JFrame {
         l.add(ImageProvider.get("logo_48x48x8").getImage());
         l.add(ImageProvider.get("logo").getImage());
         setIconImages(l);
-        addWindowListener(new WindowAdapter() {
-            @Override
-            public void windowClosing(final WindowEvent evt) {
-                Main.exitJosm(true, 0, null);
-            }
-        });
+        addWindowListener(new ExitWindowAdapter());
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         // This listener is never removed, since the main frame exists forever.
@@ -158,6 +153,13 @@ public class MainFrame extends JFrame {
     private void onLayerChange(OsmDataLayer layer) {
         if (layer == Main.getLayerManager().getEditLayer()) {
             refreshTitle();
+        }
+    }
+
+    static final class ExitWindowAdapter extends WindowAdapter {
+        @Override
+        public void windowClosing(final WindowEvent evt) {
+            Main.exitJosm(true, 0, null);
         }
     }
 
