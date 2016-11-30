@@ -60,12 +60,7 @@ public class RecentRelationsAction implements ActionListener, CommandQueueListen
             KeyEvent.VK_ESCAPE,
             Shortcut.SHIFT
         );
-        Main.registerActionShortcut(new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                EditRelationAction.launchEditor(getLastRelation());
-            }
-        }, shortcut);
+        Main.registerActionShortcut(new LaunchEditorAction(), shortcut);
     }
 
     /**
@@ -144,6 +139,13 @@ public class RecentRelationsAction implements ActionListener, CommandQueueListen
             return Collections.emptyList();
         } else {
             return ((OsmDataLayer) activeLayer).getRecentRelations();
+        }
+    }
+
+    protected static class LaunchEditorAction extends AbstractAction {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            EditRelationAction.launchEditor(getLastRelation());
         }
     }
 

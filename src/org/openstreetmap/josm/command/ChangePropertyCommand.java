@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,6 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.swing.Icon;
 
@@ -32,6 +32,30 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 24
  */
 public class ChangePropertyCommand extends Command {
+
+    static final class OsmPseudoCommand implements PseudoCommand {
+        private final OsmPrimitive osm;
+
+        OsmPseudoCommand(OsmPrimitive osm) {
+            this.osm = osm;
+        }
+
+        @Override
+        public String getDescriptionText() {
+            return osm.getDisplayName(DefaultNameFormatter.getInstance());
+        }
+
+        @Override
+        public Icon getDescriptionIcon() {
+            return ImageProvider.get(osm.getDisplayType());
+        }
+
+        @Override
+        public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
+            return Collections.singleton(osm);
+        }
+    }
+
     /**
      * All primitives that are affected with this command.
      */
@@ -211,23 +235,7 @@ public class ChangePropertyCommand extends Command {
     public Collection<PseudoCommand> getChildren() {
         if (objects.size() == 1)
             return null;
-        List<PseudoCommand> children = new ArrayList<>();
-        for (final OsmPrimitive osm : objects) {
-            children.add(new PseudoCommand() {
-                @Override public String getDescriptionText() {
-                    return osm.getDisplayName(DefaultNameFormatter.getInstance());
-                }
-
-                @Override public Icon getDescriptionIcon() {
-                    return ImageProvider.get(osm.getDisplayType());
-                }
-
-                @Override public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
-                    return Collections.singleton(osm);
-                }
-            });
-        }
-        return children;
+        return objects.stream().map(OsmPseudoCommand::new).collect(Collectors.toList());
     }
 
     /**

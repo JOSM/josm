@@ -133,6 +133,25 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
     private final MapView mv;
     private final transient Collector collector;
 
+    static final class ShowMonitorDialogMouseAdapter extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            PleaseWaitProgressMonitor monitor = Main.currentProgressMonitor;
+            if (monitor != null) {
+                monitor.showForegroundDialog();
+            }
+        }
+    }
+
+    static final class JumpToOnLeftClickMouseAdapter extends MouseAdapter {
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            if (e.getButton() != MouseEvent.BUTTON3) {
+                Main.main.menu.jumpToAct.showJumpToDialog();
+            }
+        }
+    }
+
     public class BackgroundProgressMonitor implements ProgressMonitorDialog {
 
         private String title;
@@ -828,14 +847,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
         setComponentPopupMenu(new MapStatusPopupMenu());
 
         // also show Jump To dialog on mouse click (except context menu)
-        MouseListener jumpToOnLeftClick = new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getButton() != MouseEvent.BUTTON3) {
-                    Main.main.menu.jumpToAct.showJumpToDialog();
-                }
-            }
-        };
+        MouseListener jumpToOnLeftClick = new JumpToOnLeftClickMouseAdapter();
 
         // Listen for mouse movements and set the position text field
         mv.addMouseMotionListener(new MouseMotionListener() {
@@ -917,15 +929,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
         GBC gbc = GBC.eol();
         gbc.ipadx = 100;
         add(progressBar, gbc);
-        progressBar.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                PleaseWaitProgressMonitor monitor = Main.currentProgressMonitor;
-                if (monitor != null) {
-                    monitor.showForegroundDialog();
-                }
-            }
-        });
+        progressBar.addMouseListener(new ShowMonitorDialogMouseAdapter());
 
         Main.pref.addPreferenceChangeListener(this);
 

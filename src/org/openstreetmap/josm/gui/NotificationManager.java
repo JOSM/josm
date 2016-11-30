@@ -182,6 +182,19 @@ class NotificationManager {
 
     private static class NotificationPanel extends JPanel {
 
+        static final class ShowNoteHelpAction extends AbstractAction {
+            private final Notification note;
+
+            private ShowNoteHelpAction(Notification note) {
+                this.note = note;
+            }
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                SwingUtilities.invokeLater(() -> HelpBrowser.setUrlForHelpTopic(note.getHelpTopic()));
+            }
+        }
+
         private JPanel innerPanel;
 
         NotificationPanel(Notification note, MouseListener freeze, ActionListener hideListener) {
@@ -213,12 +226,7 @@ class NotificationManager {
                 btnHelp.setIcon(ImageProvider.get("help"));
                 btnHelp.setToolTipText(tr("Show help information"));
                 HelpUtil.setHelpContext(btnHelp, note.getHelpTopic());
-                btnHelp.addActionListener(new AbstractAction() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        SwingUtilities.invokeLater(() -> HelpBrowser.setUrlForHelpTopic(note.getHelpTopic()));
-                    }
-                });
+                btnHelp.addActionListener(new ShowNoteHelpAction(note));
                 btnHelp.setOpaque(false);
                 tbHelp = new JToolBar();
                 tbHelp.setFloatable(false);
