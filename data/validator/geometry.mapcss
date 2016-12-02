@@ -139,6 +139,7 @@ area:closed:areaStyle ⧉ area:closed:areaStyle {
 /* see ticket #9311 */
 node[amenity=parking]["capacity:disabled" !~ /^(yes|[0-9]+)$/] ∈ *[amenity=parking] {
   throwWarning: tr("{0} inside {1}", "amenity=parking", "amenity=parking");
+  group: tr("{0} inside {1}", "amenity", "amenity");
 }
 
 /* see ticket #9556 */
