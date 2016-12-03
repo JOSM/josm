@@ -291,7 +291,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2016120200, Last Updated Fri Dec  2 07:07:01 2016 UTC
+        // Taken from Version 2016120300, Last Updated Sat Dec  3 07:07:02 2016 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -744,6 +744,7 @@ public final class DomainValidator extends AbstractValidator {
         "guide", // guide Snow Moon, LLC
         "guitars", // guitars Uniregistry, Corp.
         "guru", // guru Pioneer Cypress, LLC
+        "hair", // hair L&#39;Oreal
         "hamburg", // hamburg Hamburg Top-Level-Domain GmbH
         "hangout", // hangout Charleston Road Registry Inc.
         "haus", // haus United TLD Holdco, LTD.
