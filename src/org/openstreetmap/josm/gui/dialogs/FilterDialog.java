@@ -24,6 +24,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchAction;
@@ -106,20 +107,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
     };
 
     protected void build() {
-        userTable = new JTable(filterModel) {
-            @Override
-            protected JTableHeader createDefaultTableHeader() {
-                return new JTableHeader(columnModel) {
-                    @Override
-                    public String getToolTipText(MouseEvent e) {
-                        java.awt.Point p = e.getPoint();
-                        int index = columnModel.getColumnIndexAtX(p.x);
-                        int realIndex = columnModel.getColumn(index).getModelIndex();
-                        return COLUMN_TOOLTIPS[realIndex];
-                    }
-                };
-            }
-        };
+        userTable = new UserTable(filterModel);
 
         userTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
@@ -251,6 +239,24 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         MultikeyActionsHandler.getInstance().removeAction(enableFilterAction);
         MultikeyActionsHandler.getInstance().removeAction(hidingFilterAction);
         super.destroy();
+    }
+
+    static final class UserTable extends JTable {
+        UserTable(TableModel dm) {
+            super(dm);
+        }
+
+        @Override
+        protected JTableHeader createDefaultTableHeader() {
+            return new JTableHeader(columnModel) {
+                @Override
+                public String getToolTipText(MouseEvent e) {
+                    int index = columnModel.getColumnIndexAtX(e.getPoint().x);
+                    int realIndex = columnModel.getColumn(index).getModelIndex();
+                    return COLUMN_TOOLTIPS[realIndex];
+                }
+            };
+        }
     }
 
     static class StringRenderer extends DefaultTableCellRenderer {

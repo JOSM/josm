@@ -138,15 +138,7 @@ public class RelationListDialog extends ToggleDialog
         model = new RelationListModel(selectionModel);
         displaylist = new JList<>(model);
         displaylist.setSelectionModel(selectionModel);
-        displaylist.setCellRenderer(new OsmPrimitivRenderer() {
-            /**
-             * Don't show the default tooltip in the relation list.
-             */
-            @Override
-            protected String getComponentToolTipText(OsmPrimitive value) {
-                return null;
-            }
-        });
+        displaylist.setCellRenderer(new NoTooltipOsmRenderer());
         displaylist.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         displaylist.addMouseListener(new MouseEventHandler());
 
@@ -306,6 +298,14 @@ public class RelationListDialog extends ToggleDialog
         final CompileSearchTextDecorator decorator = CompileSearchTextDecorator.decorate(f);
         f.addPropertyChangeListener("filter", evt -> model.setFilter(decorator.getMatch()));
         return f;
+    }
+
+    static final class NoTooltipOsmRenderer extends OsmPrimitivRenderer {
+        @Override
+        protected String getComponentToolTipText(OsmPrimitive value) {
+            // Don't show the default tooltip in the relation list
+            return null;
+        }
     }
 
     class MouseEventHandler extends PopupMenuLauncher {

@@ -82,16 +82,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
         allDialogs.add(dlg);
         dlg.setDialogsPanel(this);
         dlg.setVisible(false);
-        final JPanel p = new JPanel() {
-            /**
-             * Honoured by the MultiSplitPaneLayout when the
-             * entire Window is resized.
-             */
-            @Override
-            public Dimension getMinimumSize() {
-                return new Dimension(0, 40);
-            }
-        };
+        final JPanel p = new MinSizePanel();
         p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
         p.setVisible(false);
 
@@ -111,6 +102,14 @@ public class DialogsPanel extends JPanel implements Destroyable {
             dlg.showNotify();
         } else {
             dlg.hideDialog();
+        }
+    }
+
+    static final class MinSizePanel extends JPanel {
+        @Override
+        public Dimension getMinimumSize() {
+            // Honoured by the MultiSplitPaneLayout when the entire Window is resized
+            return new Dimension(0, 40);
         }
     }
 

@@ -19,9 +19,36 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * Command that replaces the key of one or several objects
- *
+ * @since 3669
  */
 public class ChangePropertyKeyCommand extends Command {
+    final class SinglePrimitivePseudoCommand implements PseudoCommand {
+        private final String name;
+        private final OsmPrimitive osm;
+        private final Icon icon;
+
+        SinglePrimitivePseudoCommand(String name, OsmPrimitive osm, Icon icon) {
+            this.name = name;
+            this.osm = osm;
+            this.icon = icon;
+        }
+
+        @Override
+        public String getDescriptionText() {
+            return name;
+        }
+
+        @Override
+        public Icon getDescriptionIcon() {
+            return icon;
+        }
+
+        @Override
+        public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
+            return Collections.singleton(osm);
+        }
+    }
+
     /**
      * All primitives, that are affected with this command.
      */
@@ -107,24 +134,7 @@ public class ChangePropertyKeyCommand extends Command {
         final NameVisitor v = new NameVisitor();
         for (final OsmPrimitive osm : objects) {
             osm.accept(v);
-            final String name = v.name;
-            final Icon icon = v.icon;
-            children.add(new PseudoCommand() {
-                @Override
-                public String getDescriptionText() {
-                    return name;
-                }
-
-                @Override
-                public Icon getDescriptionIcon() {
-                    return icon;
-                }
-
-                @Override
-                public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
-                    return Collections.singleton(osm);
-                }
-            });
+            children.add(new SinglePrimitivePseudoCommand(v.name, osm, v.icon));
         }
         return children;
     }

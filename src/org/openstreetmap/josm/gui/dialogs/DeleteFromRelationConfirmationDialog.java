@@ -184,6 +184,19 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
      *
      */
     public static class RelationMemberTableModel extends DefaultTableModel {
+        private static class RelationToChildReferenceComparator implements Comparator<RelationToChildReference> {
+            private NameFormatter nf = DefaultNameFormatter.getInstance();
+
+            @Override
+            public int compare(RelationToChildReference o1, RelationToChildReference o2) {
+                int cmp = o1.getChild().getDisplayName(nf).compareTo(o2.getChild().getDisplayName(nf));
+                if (cmp != 0) return cmp;
+                cmp = o1.getParent().getDisplayName(nf).compareTo(o2.getParent().getDisplayName(nf));
+                if (cmp != 0) return cmp;
+                return Integer.compare(o1.getPosition(), o2.getPosition());
+            }
+        }
+
         private final transient List<RelationToChildReference> data;
 
         /**
@@ -199,27 +212,12 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
             return data.size();
         }
 
-        protected void sort() {
-            data.sort(new Comparator<RelationToChildReference>() {
-                    private NameFormatter nf = DefaultNameFormatter.getInstance();
-                    @Override
-                    public int compare(RelationToChildReference o1, RelationToChildReference o2) {
-                        int cmp = o1.getChild().getDisplayName(nf).compareTo(o2.getChild().getDisplayName(nf));
-                        if (cmp != 0) return cmp;
-                        cmp = o1.getParent().getDisplayName(nf).compareTo(o2.getParent().getDisplayName(nf));
-                        if (cmp != 0) return cmp;
-                        return Integer.compare(o1.getPosition(), o2.getPosition());
-                    }
-                }
-            );
-        }
-
         public void populate(Collection<RelationToChildReference> references) {
             data.clear();
             if (references != null) {
                 data.addAll(references);
             }
-            sort();
+            data.sort(new RelationToChildReferenceComparator());
             fireTableDataChanged();
         }
 
