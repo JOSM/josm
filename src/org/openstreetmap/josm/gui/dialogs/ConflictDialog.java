@@ -140,30 +140,14 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
 
         popupMenuHandler.addAction(Main.main.menu.autoScaleActions.get("conflict"));
 
-        final ResolveToMyVersionAction resolveToMyVersionAction = new ResolveToMyVersionAction();
-        final ResolveToTheirVersionAction resolveToTheirVersionAction = new ResolveToTheirVersionAction();
+        ResolveToMyVersionAction resolveToMyVersionAction = new ResolveToMyVersionAction();
+        ResolveToTheirVersionAction resolveToTheirVersionAction = new ResolveToTheirVersionAction();
         addListSelectionListener(resolveToMyVersionAction);
         addListSelectionListener(resolveToTheirVersionAction);
-        final JMenuItem btnResolveMy = popupMenuHandler.addAction(resolveToMyVersionAction);
-        final JMenuItem btnResolveTheir = popupMenuHandler.addAction(resolveToTheirVersionAction);
+        JMenuItem btnResolveMy = popupMenuHandler.addAction(resolveToMyVersionAction);
+        JMenuItem btnResolveTheir = popupMenuHandler.addAction(resolveToTheirVersionAction);
 
-        popupMenuHandler.addListener(new PopupMenuListener() {
-            @Override
-            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-                btnResolveMy.setVisible(ExpertToggleAction.isExpert());
-                btnResolveTheir.setVisible(ExpertToggleAction.isExpert());
-            }
-
-            @Override
-            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-                // Do nothing
-            }
-
-            @Override
-            public void popupMenuCanceled(PopupMenuEvent e) {
-                // Do nothing
-            }
-        });
+        popupMenuHandler.addListener(new ResolveButtonsPopupMenuListener(btnResolveTheir, btnResolveMy));
     }
 
     @Override
@@ -342,6 +326,32 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
     @Override
     public String helpTopic() {
         return ht("/Dialog/ConflictList");
+    }
+
+    static final class ResolveButtonsPopupMenuListener implements PopupMenuListener {
+        private final JMenuItem btnResolveTheir;
+        private final JMenuItem btnResolveMy;
+
+        private ResolveButtonsPopupMenuListener(JMenuItem btnResolveTheir, JMenuItem btnResolveMy) {
+            this.btnResolveTheir = btnResolveTheir;
+            this.btnResolveMy = btnResolveMy;
+        }
+
+        @Override
+        public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+            btnResolveMy.setVisible(ExpertToggleAction.isExpert());
+            btnResolveTheir.setVisible(ExpertToggleAction.isExpert());
+        }
+
+        @Override
+        public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+            // Do nothing
+        }
+
+        @Override
+        public void popupMenuCanceled(PopupMenuEvent e) {
+            // Do nothing
+        }
     }
 
     class MouseEventHandler extends PopupMenuLauncher {

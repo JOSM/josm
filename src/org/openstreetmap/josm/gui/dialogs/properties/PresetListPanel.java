@@ -24,6 +24,28 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class PresetListPanel extends JPanel {
 
+    static final class LabelMouseAdapter extends MouseAdapter {
+        private final TaggingPreset t;
+        private final TaggingPresetHandler presetHandler;
+
+        LabelMouseAdapter(TaggingPreset t, TaggingPresetHandler presetHandler) {
+            this.t = t;
+            this.presetHandler = presetHandler;
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            Collection<OsmPrimitive> selection = t.createSelection(presetHandler.getSelection());
+            if (selection == null || selection.isEmpty())
+                return;
+            int answer = t.showDialog(selection, false);
+
+            if (answer == TaggingPreset.DIALOG_ANSWER_APPLY) {
+                presetHandler.updateTags(t.getChangedTags());
+            }
+        }
+    }
+
     /**
      * Constructs a new {@code PresetListPanel}.
      */
@@ -49,19 +71,7 @@ public class PresetListPanel extends JPanel {
 
         for (final TaggingPreset t : TaggingPresets.getMatchingPresets(types, tags, true)) {
             final JLabel lbl = new TaggingPresetLabel(t);
-            lbl.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    Collection<OsmPrimitive> selection = t.createSelection(presetHandler.getSelection());
-                    if (selection == null || selection.isEmpty())
-                        return;
-                    int answer = t.showDialog(selection, false);
-
-                    if (answer == TaggingPreset.DIALOG_ANSWER_APPLY) {
-                        presetHandler.updateTags(t.getChangedTags());
-                    }
-                }
-            });
+            lbl.addMouseListener(new LabelMouseAdapter(t, presetHandler));
             add(lbl, GBC.eol().fill(GBC.HORIZONTAL));
         }
 

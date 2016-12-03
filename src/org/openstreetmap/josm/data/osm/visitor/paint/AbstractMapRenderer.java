@@ -22,14 +22,14 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
  * <p>Abstract common superclass for {@link Rendering} implementations.</p>
- *
+ * @since 4087
  */
 public abstract class AbstractMapRenderer implements Rendering {
 
     /** the graphics context to which the visitor renders OSM objects */
-    protected Graphics2D g;
+    protected final Graphics2D g;
     /** the map viewport - provides projection and hit detection functionality */
-    protected NavigatableComponent nc;
+    protected final NavigatableComponent nc;
 
     /**
      * The {@link MapViewState} to use to convert between coordinates.

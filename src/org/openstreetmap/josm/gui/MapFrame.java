@@ -523,14 +523,20 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
     }
 
     static final class NoBorderSplitPaneUI extends BasicSplitPaneUI {
+        static final class NoBorderBasicSplitPaneDivider extends BasicSplitPaneDivider {
+            private NoBorderBasicSplitPaneDivider(BasicSplitPaneUI ui) {
+                super(ui);
+            }
+
+            @Override
+            public void setBorder(Border b) {
+                // Do nothing
+            }
+        }
+
         @Override
         public BasicSplitPaneDivider createDefaultDivider() {
-            return new BasicSplitPaneDivider(this) {
-                @Override
-                public void setBorder(Border b) {
-                    // Do nothing
-                }
-            };
+            return new NoBorderBasicSplitPaneDivider(this);
         }
     }
 

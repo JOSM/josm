@@ -27,6 +27,13 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  */
 public class OsmLinkPaster extends AbstractOsmDataPaster {
 
+    static final class NoWarnOpenLocationAction extends OpenLocationAction {
+        @Override
+        protected void warnNoSuitableTasks(String url) {
+            // ignore this.
+        }
+    }
+
     private static final BooleanProperty PASTE_REFERRERS = new BooleanProperty("paste.url.download-referrers", true);
     private static final String OSM_SERVER = "^https?\\://(\\w+\\.)?(osm|openstreetmap)\\.org/";
 
@@ -45,13 +52,7 @@ public class OsmLinkPaster extends AbstractOsmDataPaster {
         }
 
         String transferData = (String) support.getTransferable().getTransferData(df);
-        OpenLocationAction action = new OpenLocationAction() {
-            @Override
-            protected void warnNoSuitableTasks(String url) {
-                // ignore this.
-            }
-        };
-        if (action.openUrl(transferData)) {
+        if (new NoWarnOpenLocationAction().openUrl(transferData)) {
             return true;
         }
 

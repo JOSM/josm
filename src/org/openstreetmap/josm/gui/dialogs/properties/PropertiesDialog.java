@@ -232,20 +232,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
                 }
             };
 
-    private final transient TaggingPresetHandler presetHandler = new TaggingPresetHandler() {
-        @Override
-        public void updateTags(List<Tag> tags) {
-            Command command = TaggingPreset.createCommand(getSelection(), tags);
-            if (command != null) {
-                Main.main.undoRedo.add(command);
-            }
-        }
-
-        @Override
-        public Collection<OsmPrimitive> getSelection() {
-            return Main.main == null ? Collections.<OsmPrimitive>emptyList() : Main.main.getInProgressSelection();
-        }
-    };
+    private final transient TaggingPresetHandler presetHandler = new TaggingPresetCommandHandler();
 
     /**
      * Create a new PropertiesDialog
@@ -828,6 +815,21 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
      */
     public void removeCustomPropertiesCellRenderer(TableCellRenderer renderer) {
         cellRenderer.removeCustomRenderer(renderer);
+    }
+
+    static final class TaggingPresetCommandHandler implements TaggingPresetHandler {
+        @Override
+        public void updateTags(List<Tag> tags) {
+            Command command = TaggingPreset.createCommand(getSelection(), tags);
+            if (command != null) {
+                Main.main.undoRedo.add(command);
+            }
+        }
+
+        @Override
+        public Collection<OsmPrimitive> getSelection() {
+            return Main.main == null ? Collections.<OsmPrimitive>emptyList() : Main.main.getInProgressSelection();
+        }
     }
 
     /**
