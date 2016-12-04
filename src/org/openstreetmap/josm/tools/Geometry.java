@@ -477,8 +477,8 @@ public final class Geometry {
 
     /**
      * Returns the Area of a polygon, from its list of nodes.
-     * @param polygon List of nodes forming polygon (EastNorth coordinates)
-     * @return Area for the given list of nodes
+     * @param polygon List of nodes forming polygon
+     * @return Area for the given list of nodes  (EastNorth coordinates)
      * @since 6841
      */
     public static Area getArea(List<Node> polygon) {
@@ -505,8 +505,8 @@ public final class Geometry {
 
     /**
      * Returns the Area of a polygon, from its list of nodes.
-     * @param polygon List of nodes forming polygon (LatLon coordinates)
-     * @return Area for the given list of nodes
+     * @param polygon List of nodes forming polygon
+     * @return Area for the given list of nodes (LatLon coordinates)
      * @since 6841
      */
     public static Area getAreaLatLon(List<Node> polygon) {
@@ -526,6 +526,31 @@ public final class Geometry {
         }
 
         return new Area(path);
+    }
+
+    /**
+     * Returns the Area of a polygon, from the multipolygon relation.
+     * @param multipolygon the multipolygon relation
+     * @return Area for the multipolygon (LatLon coordinates)
+     */
+    public static Area getAreaLatLon(Relation multipolygon) {
+        final Multipolygon mp = Main.map == null || Main.map.mapView == null
+                ? new Multipolygon(multipolygon)
+                : MultipolygonCache.getInstance().get(Main.map.mapView, multipolygon);
+        Area result = null;
+        for (Multipolygon.PolyData pd : mp.getCombinedPolygons()) {
+            Area area = getAreaLatLon(pd.getNodes());
+            for (Multipolygon.PolyData pdInner : pd.getInners()) {
+                Area areaInner = getAreaLatLon(pdInner.getNodes());
+                area.subtract(areaInner);
+            }
+            if (result == null) {
+                result = area;
+            } else {
+                result.add(area);
+            }
+        }
+        return result;
     }
 
     /**
