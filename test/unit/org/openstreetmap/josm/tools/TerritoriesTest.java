@@ -1,10 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-
-import java.util.Set;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,10 +30,8 @@ public class TerritoriesTest {
     }
 
     private static void check(String name, LatLon ll, String ... expectedCodes) {
-        Set<String> codes = Territories.getIso3166Codes(ll);
-        assertEquals(name + " -> " + codes, expectedCodes.length, codes.size());
         for (String e : expectedCodes) {
-            assertTrue(e, codes.contains(e));
+            assertTrue(name + " " + e, Territories.isIso3166Code(e, ll));
         }
     }
 }

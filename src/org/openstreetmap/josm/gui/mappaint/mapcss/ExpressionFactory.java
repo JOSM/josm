@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -965,9 +964,8 @@ public final class ExpressionFactory {
          * @since 11247
          */
         public static boolean inside(Environment env, String codes) { // NO_UCD (unused code)
-            Set<String> osmCodes = Territories.getIso3166Codes(center(env));
             for (String code : codes.toUpperCase(Locale.ENGLISH).split(",")) {
-                if (osmCodes.contains(code.trim())) {
+                if (Territories.isIso3166Code(code.trim(), center(env))) {
                     return true;
                 }
             }

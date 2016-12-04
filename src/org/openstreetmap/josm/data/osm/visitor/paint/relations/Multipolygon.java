@@ -162,6 +162,12 @@ public class Multipolygon {
         return roleMatcher;
     }
 
+    /**
+     * Class representing a string of ways.
+     *
+     * The last node of one way is the first way of the next one.
+     * The string may or may not be closed.
+     */
     public static class JoinedWay {
         protected final List<Node> nodes;
         protected final Collection<Long> wayIds;
