@@ -93,7 +93,7 @@ public final class Territories {
                     } else {
                         gp = new DefaultGeoProperty((Relation) osm);
                     }
-                    GeoPropertyIndex gpi = new GeoPropertyIndex(gp, 24);
+                    GeoPropertyIndex<Boolean> gpi = new GeoPropertyIndex<>(gp, 24);
                     if (iso1 != null) {
                         iso3166Cache.put(iso1, gpi);
                     }

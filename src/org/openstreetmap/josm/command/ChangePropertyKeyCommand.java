@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * @since 3669
  */
 public class ChangePropertyKeyCommand extends Command {
-    final class SinglePrimitivePseudoCommand implements PseudoCommand {
+    static final class SinglePrimitivePseudoCommand implements PseudoCommand {
         private final String name;
         private final OsmPrimitive osm;
         private final Icon icon;
