@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.tools;
 
 import java.awt.geom.Area;
+import java.awt.geom.Path2D;
 import java.util.Collection;
 
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -22,16 +23,12 @@ public class DefaultGeoProperty implements GeoProperty<Boolean> {
      * @param ways the ways forming the area
      */
     public DefaultGeoProperty(Collection<Way> ways) {
-        Area area = null;
+        Path2D path = new Path2D.Double();
+        path.setWindingRule(Path2D.WIND_EVEN_ODD);
         for (Way w : ways) {
-            Area wayArea = Geometry.getAreaLatLon(w.getNodes());
-            if (area == null) {
-                area = wayArea;
-            } else {
-                area.add(wayArea);
-            }
+            Geometry.buildPath2DLatLon(w.getNodes(), path);
         }
-        this.area = area;
+        this.area = new Area(path);
     }
 
     /**

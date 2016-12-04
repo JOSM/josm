@@ -504,14 +504,15 @@ public final class Geometry {
     }
 
     /**
-     * Returns the Area of a polygon, from its list of nodes.
-     * @param polygon List of nodes forming polygon
-     * @return Area for the given list of nodes (LatLon coordinates)
-     * @since 6841
+     * Builds a path from a list of nodes
+     * @param polygon Nodes, forming a closed polygon
+     * @param path path to add to; can be null, then a new path is created
+     * @return the path (LatLon coordinates)
      */
-    public static Area getAreaLatLon(List<Node> polygon) {
-        Path2D path = new Path2D.Double();
-
+    public static Path2D buildPath2DLatLon(List<Node> polygon, Path2D path) {
+        if (path == null) {
+            path = new Path2D.Double();
+        }
         boolean begin = true;
         for (Node n : polygon) {
             if (begin) {
@@ -524,8 +525,7 @@ public final class Geometry {
         if (!begin) {
             path.closePath();
         }
-
-        return new Area(path);
+        return path;
     }
 
     /**
@@ -537,20 +537,15 @@ public final class Geometry {
         final Multipolygon mp = Main.map == null || Main.map.mapView == null
                 ? new Multipolygon(multipolygon)
                 : MultipolygonCache.getInstance().get(Main.map.mapView, multipolygon);
-        Area result = null;
+        Path2D path = new Path2D.Double();
+        path.setWindingRule(Path2D.WIND_EVEN_ODD);
         for (Multipolygon.PolyData pd : mp.getCombinedPolygons()) {
-            Area area = getAreaLatLon(pd.getNodes());
+            buildPath2DLatLon(pd.getNodes(), path);
             for (Multipolygon.PolyData pdInner : pd.getInners()) {
-                Area areaInner = getAreaLatLon(pdInner.getNodes());
-                area.subtract(areaInner);
-            }
-            if (result == null) {
-                result = area;
-            } else {
-                result.add(area);
+                buildPath2DLatLon(pdInner.getNodes(), path);
             }
         }
-        return result;
+        return new Area(path);
     }
 
     /**
