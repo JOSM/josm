@@ -1,6 +1,6 @@
 /* absent/unknown denomination (ticket #7811) */
 
-*[religion =~ /^(christian|jewish|muslim)$/][!denomination] {
+*[religion =~ /^(christian|jewish|muslim)$/][!denomination][type!=route] {
   throwOther: tr("religion without denomination");
   group: tr("missing tag");
   assertMatch: "node religion=christian";
