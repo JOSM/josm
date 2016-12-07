@@ -191,12 +191,14 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             return;
         }
         ListSelectionModel s = table.getSelectionModel();
+        s.setValueIsAdjusting(true);
         s.clearSelection();
         for (int i = 0; i < layer.trackVisibility.length; i++) {
             if (layer.trackVisibility[i]) {
                 s.addSelectionInterval(i, i);
             }
         }
+        s.setValueIsAdjusting(false);
     }
 
     /** listens to selection changes in the table and redraws the map */

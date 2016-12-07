@@ -840,10 +840,12 @@ public class LayerListDialog extends ToggleDialog {
                 Main.map.mapView.moveLayer(l1, row-1);
             }
             fireTableDataChanged();
+            selectionModel.setValueIsAdjusting(true);
             selectionModel.clearSelection();
             for (int row : sel) {
                 selectionModel.addSelectionInterval(row-1, row-1);
             }
+            selectionModel.setValueIsAdjusting(false);
             ensureSelectedIsVisible();
         }
 
@@ -873,10 +875,12 @@ public class LayerListDialog extends ToggleDialog {
                 Main.map.mapView.moveLayer(l2, row);
             }
             fireTableDataChanged();
+            selectionModel.setValueIsAdjusting(true);
             selectionModel.clearSelection();
             for (int row : sel) {
                 selectionModel.addSelectionInterval(row+1, row+1);
             }
+            selectionModel.setValueIsAdjusting(false);
             ensureSelectedIsVisible();
         }
 

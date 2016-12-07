@@ -49,15 +49,17 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
     }
 
     public void setSelectedChangesets(Collection<Changeset> changesets) {
+        selectionModel.setValueIsAdjusting(true);
         selectionModel.clearSelection();
-        if (changesets == null) return;
-        for (Changeset cs: changesets) {
-            int idx = data.indexOf(cs);
-            if (idx < 0) {
-                continue;
+        if (changesets != null) {
+            for (Changeset cs: changesets) {
+                int idx = data.indexOf(cs);
+                if (idx >= 0) {
+                    selectionModel.addSelectionInterval(idx, idx);
+                }
             }
-            selectionModel.addSelectionInterval(idx, idx);
         }
+        selectionModel.setValueIsAdjusting(false);
     }
 
     protected void setChangesets(Collection<Changeset> changesets) {

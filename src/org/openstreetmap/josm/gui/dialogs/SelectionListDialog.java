@@ -577,14 +577,17 @@ public class SelectionListDialog extends ToggleDialog {
          * @param sel the collection of primitives to select
          */
         public synchronized void setSelected(Collection<OsmPrimitive> sel) {
+            selectionModel.setValueIsAdjusting(true);
             selectionModel.clearSelection();
-            if (sel == null) return;
-            for (OsmPrimitive p: sel) {
-                int i = selection.indexOf(p);
-                if (i >= 0) {
-                    selectionModel.addSelectionInterval(i, i);
+            if (sel != null) {
+                for (OsmPrimitive p: sel) {
+                    int i = selection.indexOf(p);
+                    if (i >= 0) {
+                        selectionModel.addSelectionInterval(i, i);
+                    }
                 }
             }
+            selectionModel.setValueIsAdjusting(false);
         }
 
         @Override

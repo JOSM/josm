@@ -103,15 +103,17 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
      * @param selected the collection of changesets to select. Ignored if empty.
      */
     public void setSelectedChangesets(Collection<Changeset> selected) {
-        GuiHelper.runInEDTAndWait(selectionModel::clearSelection);
-        if (selected == null || selected.isEmpty())
-            return;
-        for (Changeset cs: selected) {
-            final int idx = data.indexOf(cs);
-            if (idx >= 0) {
-                GuiHelper.runInEDTAndWait(() -> selectionModel.addSelectionInterval(idx, idx));
+        selectionModel.setValueIsAdjusting(true);
+        selectionModel.clearSelection();
+        if (selected != null) {
+            for (Changeset cs: selected) {
+                final int idx = data.indexOf(cs);
+                if (idx >= 0) {
+                    selectionModel.addSelectionInterval(idx, idx);
+                }
             }
         }
+        GuiHelper.runInEDTAndWait(() -> selectionModel.setValueIsAdjusting(false));
     }
 
     @Override
