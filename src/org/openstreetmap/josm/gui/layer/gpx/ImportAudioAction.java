@@ -40,6 +40,18 @@ import org.openstreetmap.josm.tools.Utils;
 public class ImportAudioAction extends AbstractAction {
     private final transient GpxLayer layer;
 
+    static final class AudioFileFilter extends FileFilter {
+        @Override
+        public boolean accept(File f) {
+            return f.isDirectory() || Utils.hasExtension(f, "wav");
+        }
+
+        @Override
+        public String getDescription() {
+            return tr("Wave Audio files (*.wav)");
+        }
+    }
+
     private static class Markers {
         public boolean timedMarkersOmitted;
         public boolean untimedMarkersOmitted;
@@ -69,18 +81,7 @@ public class ImportAudioAction extends AbstractAction {
             warnCantImportIntoServerLayer(layer);
             return;
         }
-        FileFilter filter = new FileFilter() {
-            @Override
-            public boolean accept(File f) {
-                return f.isDirectory() || Utils.hasExtension(f, "wav");
-            }
-
-            @Override
-            public String getDescription() {
-                return tr("Wave Audio files (*.wav)");
-            }
-        };
-        AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, true, null, filter,
+        AbstractFileChooser fc = DiskAccessAction.createAndOpenFileChooser(true, true, null, new AudioFileFilter(),
                 JFileChooser.FILES_ONLY, "markers.lastaudiodirectory");
         if (fc != null) {
             File[] sel = fc.getSelectedFiles();

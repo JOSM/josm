@@ -40,6 +40,39 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
 
     private final transient InputContext privateInputContext = InputContext.getInstance();
 
+    static final class InnerFocusListener implements FocusListener {
+        private final JTextComponent editorComponent;
+
+        InnerFocusListener(JTextComponent editorComponent) {
+            this.editorComponent = editorComponent;
+        }
+
+        @Override
+        public void focusLost(FocusEvent e) {
+            if (Main.map != null) {
+                Main.map.keyDetector.setEnabled(true);
+            }
+        }
+
+        @Override
+        public void focusGained(FocusEvent e) {
+            if (Main.map != null) {
+                Main.map.keyDetector.setEnabled(false);
+            }
+            // save unix system selection (middle mouse paste)
+            Clipboard sysSel = ClipboardUtils.getSystemSelection();
+            if (sysSel != null) {
+                Transferable old = ClipboardUtils.getClipboardContent(sysSel);
+                editorComponent.selectAll();
+                if (old != null) {
+                    sysSel.setContents(old, null);
+                }
+            } else {
+                editorComponent.selectAll();
+            }
+        }
+    }
+
     /**
      * Auto-complete a JosmComboBox.
      * <br>
@@ -184,34 +217,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
         setRenderer(new AutoCompleteListCellRenderer());
         final JTextComponent editorComponent = this.getEditorComponent();
         editorComponent.setDocument(new AutoCompletingComboBoxDocument(this));
-        editorComponent.addFocusListener(
-                new FocusListener() {
-                    @Override
-                    public void focusLost(FocusEvent e) {
-                        if (Main.map != null) {
-                            Main.map.keyDetector.setEnabled(true);
-                        }
-                    }
-
-                    @Override
-                    public void focusGained(FocusEvent e) {
-                        if (Main.map != null) {
-                            Main.map.keyDetector.setEnabled(false);
-                        }
-                        // save unix system selection (middle mouse paste)
-                        Clipboard sysSel = ClipboardUtils.getSystemSelection();
-                        if (sysSel != null) {
-                            Transferable old = ClipboardUtils.getClipboardContent(sysSel);
-                            editorComponent.selectAll();
-                            if (old != null) {
-                                sysSel.setContents(old, null);
-                            }
-                        } else {
-                            editorComponent.selectAll();
-                        }
-                    }
-                }
-        );
+        editorComponent.addFocusListener(new InnerFocusListener(editorComponent));
     }
 
     /**

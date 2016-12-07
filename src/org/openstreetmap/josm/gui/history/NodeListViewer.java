@@ -43,7 +43,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
  *   <li>on the left, it displays the node list for the version at {@link PointInTimeType#REFERENCE_POINT_IN_TIME}</li>
  *   <li>on the right, it displays the node list for the version at {@link PointInTimeType#CURRENT_POINT_IN_TIME}</li>
  * </ul>
- *
+ * @since 1709
  */
 public class NodeListViewer extends JPanel {
 
@@ -73,7 +73,7 @@ public class NodeListViewer extends JPanel {
         final DiffTableModel tableModel = model.getNodeListTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME);
         final NodeListTableColumnModel columnModel = new NodeListTableColumnModel();
         final JTable table = new JTable(tableModel, columnModel);
-        tableModel.addTableModelListener(newReversedChangeListener(table, columnModel));
+        tableModel.addTableModelListener(new ReversedChangeListener(table, columnModel));
         table.setName("table.referencenodelisttable");
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
@@ -86,35 +86,13 @@ public class NodeListViewer extends JPanel {
         final DiffTableModel tableModel = model.getNodeListTableModel(PointInTimeType.CURRENT_POINT_IN_TIME);
         final NodeListTableColumnModel columnModel = new NodeListTableColumnModel();
         final JTable table = new JTable(tableModel, columnModel);
-        tableModel.addTableModelListener(newReversedChangeListener(table, columnModel));
+        tableModel.addTableModelListener(new ReversedChangeListener(table, columnModel));
         table.setName("table.currentnodelisttable");
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         selectionSynchronizer.participateInSynchronizedSelection(table.getSelectionModel());
         table.addMouseListener(new InternalPopupMenuLauncher());
         table.addMouseListener(new DoubleClickAdapter(table));
         return table;
-    }
-
-    protected TableModelListener newReversedChangeListener(final JTable table, final NodeListTableColumnModel columnModel) {
-        return new TableModelListener() {
-            private Boolean reversed;
-            private final String nonReversedText = tr("Nodes") + (table.getFont().canDisplay('\u25bc') ? " \u25bc" : " (1-n)");
-            private final String reversedText = tr("Nodes") + (table.getFont().canDisplay('\u25b2') ? " \u25b2" : " (n-1)");
-
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                if (e.getSource() instanceof DiffTableModel) {
-                    final DiffTableModel mod = (DiffTableModel) e.getSource();
-                    if (reversed == null || reversed != mod.isReversed()) {
-                        reversed = mod.isReversed();
-                        columnModel.getColumn(0).setHeaderValue(reversed ? reversedText : nonReversedText);
-                        table.getTableHeader().setToolTipText(
-                                reversed ? tr("The nodes of this way are in reverse order") : null);
-                        table.getTableHeader().repaint();
-                    }
-                }
-            }
-        };
     }
 
     protected void build() {
@@ -201,6 +179,35 @@ public class NodeListViewer extends JPanel {
         this.model = model;
         if (this.model != null) {
             registerAsChangeListener(model);
+        }
+    }
+
+    static final class ReversedChangeListener implements TableModelListener {
+        private final NodeListTableColumnModel columnModel;
+        private final JTable table;
+        private Boolean reversed;
+        private final String nonReversedText;
+        private final String reversedText;
+
+        ReversedChangeListener(JTable table, NodeListTableColumnModel columnModel) {
+            this.columnModel = columnModel;
+            this.table = table;
+            nonReversedText = tr("Nodes") + (table.getFont().canDisplay('\u25bc') ? " \u25bc" : " (1-n)");
+            reversedText = tr("Nodes") + (table.getFont().canDisplay('\u25b2') ? " \u25b2" : " (n-1)");
+        }
+
+        @Override
+        public void tableChanged(TableModelEvent e) {
+            if (e.getSource() instanceof DiffTableModel) {
+                final DiffTableModel mod = (DiffTableModel) e.getSource();
+                if (reversed == null || reversed != mod.isReversed()) {
+                    reversed = mod.isReversed();
+                    columnModel.getColumn(0).setHeaderValue(reversed ? reversedText : nonReversedText);
+                    table.getTableHeader().setToolTipText(
+                            reversed ? tr("The nodes of this way are in reverse order") : null);
+                    table.getTableHeader().repaint();
+                }
+            }
         }
     }
 

@@ -130,16 +130,7 @@ public class BasicUploadSettingsPanel extends JPanel {
 
     public void setHistoryComboBoxDownFocusTraversalHandler(final Action handler, final HistoryComboBox hcb) {
         hcb.getEditor().addActionListener(handler);
-        hcb.getEditorComponent().addKeyListener(
-                new KeyAdapter() {
-                    @Override
-                    public void keyTyped(KeyEvent e) {
-                        if (e.getKeyCode() == KeyEvent.VK_TAB) {
-                            handler.actionPerformed(new ActionEvent(hcb, 0, "focusDown"));
-                        }
-                    }
-                }
-        );
+        hcb.getEditorComponent().addKeyListener(new HistoryComboBoxKeyAdapter(hcb, handler));
     }
 
     /**
@@ -181,6 +172,23 @@ public class BasicUploadSettingsPanel extends JPanel {
 
     public UploadParameterSummaryPanel getUploadParameterSummaryPanel() {
         return pnlUploadParameterSummary;
+    }
+
+    static final class HistoryComboBoxKeyAdapter extends KeyAdapter {
+        private final HistoryComboBox hcb;
+        private final Action handler;
+
+        HistoryComboBoxKeyAdapter(HistoryComboBox hcb, Action handler) {
+            this.hcb = hcb;
+            this.handler = handler;
+        }
+
+        @Override
+        public void keyTyped(KeyEvent e) {
+            if (e.getKeyCode() == KeyEvent.VK_TAB) {
+                handler.actionPerformed(new ActionEvent(hcb, 0, "focusDown"));
+            }
+        }
     }
 
     /**

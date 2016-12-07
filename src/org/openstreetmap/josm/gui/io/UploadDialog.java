@@ -54,9 +54,9 @@ import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.MultiLineFlowLayout;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
-import org.openstreetmap.josm.tools.MultiLineFlowLayout;
 
 /**
  * This is a dialog for entering upload options like the parameters for
@@ -134,13 +134,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         }
 
         // a tabbed pane with configuration panels in the lower half
-        tpConfigPanels = new JTabbedPane() {
-            @Override
-            public Dimension getPreferredSize() {
-                // make sure the tabbed pane never grabs more space than necessary
-                return super.getMinimumSize();
-            }
-        };
+        tpConfigPanels = new CompactTabbedPane();
 
         pnlBasicUploadSettings = new BasicUploadSettingsPanel(changesetCommentModel, changesetSourceModel);
         tpConfigPanels.add(pnlBasicUploadSettings);
@@ -411,6 +405,14 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
             return customComponents.add(c);
         }
         return false;
+    }
+
+    static final class CompactTabbedPane extends JTabbedPane {
+        @Override
+        public Dimension getPreferredSize() {
+            // make sure the tabbed pane never grabs more space than necessary
+            return super.getMinimumSize();
+        }
     }
 
     /**

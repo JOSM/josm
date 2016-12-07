@@ -59,20 +59,7 @@ public class RecentlyOpenedFilesMenu extends JMenu {
         Collection<String> fileHistory = Main.pref.getCollection("file-open.history");
 
         for (final String file : fileHistory) {
-            add(new AbstractAction() {
-                {
-                    putValue(NAME, file);
-                    putValue("help", ht("/Action/OpenRecent"));
-                    putValue("toolbar", Boolean.FALSE);
-                }
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    File f = new File(file);
-                    OpenFileTask task = new OpenFileTask(Collections.singletonList(f), null);
-                    task.setRecordHistory(true);
-                    Main.worker.submit(task);
-                }
-            });
+            add(new OpenRecentAction(file));
         }
         add(new JSeparator());
         if (clearAction == null) {
@@ -81,6 +68,24 @@ public class RecentlyOpenedFilesMenu extends JMenu {
         JMenuItem clearItem = new JMenuItem(clearAction);
         clearItem.setEnabled(!fileHistory.isEmpty());
         add(clearItem);
+    }
+
+    static final class OpenRecentAction extends AbstractAction {
+        private final String file;
+
+        OpenRecentAction(String file) {
+            this.file = file;
+            putValue(NAME, file);
+            putValue("help", ht("/Action/OpenRecent"));
+            putValue("toolbar", Boolean.FALSE);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            OpenFileTask task = new OpenFileTask(Collections.singletonList(new File(file)), null);
+            task.setRecordHistory(true);
+            Main.worker.submit(task);
+        }
     }
 
     private static class ClearAction extends AbstractAction {

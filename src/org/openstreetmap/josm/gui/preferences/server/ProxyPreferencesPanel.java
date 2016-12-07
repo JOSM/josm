@@ -41,6 +41,17 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
 
+    static final class AutoSizePanel extends JPanel {
+        AutoSizePanel() {
+            super(new GridBagLayout());
+        }
+
+        @Override
+        public Dimension getMinimumSize() {
+            return getPreferredSize();
+        }
+    }
+
     /**
      * The proxy policy is how JOSM will use proxy information.
      */
@@ -117,12 +128,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
      * @return panel with HTTP proxy configuration
      */
     protected final JPanel buildHttpProxyConfigurationPanel() {
-        JPanel pnl = new JPanel(new GridBagLayout()) {
-            @Override
-            public Dimension getMinimumSize() {
-                return getPreferredSize();
-            }
-        };
+        JPanel pnl = new AutoSizePanel();
         GridBagConstraints gc = new GridBagConstraints();
 
         gc.anchor = GridBagConstraints.WEST;
@@ -193,12 +199,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
      * @return panel with SOCKS proxy configuration
      */
     protected final JPanel buildSocksProxyConfigurationPanel() {
-        JPanel pnl = new JPanel(new GridBagLayout()) {
-            @Override
-            public Dimension getMinimumSize() {
-                return getPreferredSize();
-            }
-        };
+        JPanel pnl = new AutoSizePanel();
         GridBagConstraints gc = new GridBagConstraints();
         gc.anchor = GridBagConstraints.WEST;
         gc.insets = new Insets(5, 5, 0, 0);

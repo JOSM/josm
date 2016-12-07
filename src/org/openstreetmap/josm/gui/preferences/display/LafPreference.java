@@ -44,6 +44,16 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  */
 public class LafPreference implements SubPreferenceSetting {
 
+    static final class LafListCellRenderer implements ListCellRenderer<LookAndFeelInfo> {
+        private final DefaultListCellRenderer def = new DefaultListCellRenderer();
+
+        @Override
+        public Component getListCellRendererComponent(JList<? extends LookAndFeelInfo> list, LookAndFeelInfo value,
+                int index, boolean isSelected, boolean cellHasFocus) {
+            return def.getListCellRendererComponent(list, value.getName(), index, isSelected, cellHasFocus);
+        }
+    }
+
     /**
      * Factory used to create a new {@code LafPreference}.
      */
@@ -97,14 +107,7 @@ public class LafPreference implements SubPreferenceSetting {
             }
         }
 
-        lafCombo.setRenderer(new ListCellRenderer<LookAndFeelInfo>() {
-            private final DefaultListCellRenderer def = new DefaultListCellRenderer();
-            @Override
-            public Component getListCellRendererComponent(JList<? extends LookAndFeelInfo> list, LookAndFeelInfo value,
-                    int index, boolean isSelected, boolean cellHasFocus) {
-                return def.getListCellRendererComponent(list, value.getName(), index, isSelected, cellHasFocus);
-            }
-        });
+        lafCombo.setRenderer(new LafListCellRenderer());
 
         panel = new VerticallyScrollablePanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
