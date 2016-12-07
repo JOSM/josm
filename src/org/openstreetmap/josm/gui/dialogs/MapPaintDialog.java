@@ -350,10 +350,12 @@ public class MapPaintDialog extends ToggleDialog {
         public void actionPerformed(ActionEvent e) {
             int[] pos = tblStyles.getSelectedRows();
             MapPaintStyles.toggleStyleActive(pos);
+            selectionModel.setValueIsAdjusting(true);
             selectionModel.clearSelection();
             for (int p: pos) {
                 selectionModel.addSelectionInterval(p, p);
             }
+            selectionModel.setValueIsAdjusting(false);
         }
     }
 
@@ -386,10 +388,12 @@ public class MapPaintDialog extends ToggleDialog {
             int[] sel = tblStyles.getSelectedRows();
             MapPaintStyles.moveStyles(sel, increment);
 
+            selectionModel.setValueIsAdjusting(true);
             selectionModel.clearSelection();
             for (int row: sel) {
                 selectionModel.addSelectionInterval(row + increment, row + increment);
             }
+            selectionModel.setValueIsAdjusting(false);
             model.ensureSelectedIsVisible();
         }
 
@@ -433,10 +437,12 @@ public class MapPaintDialog extends ToggleDialog {
             final int[] rows = tblStyles.getSelectedRows();
             MapPaintStyles.reloadStyles(rows);
             Main.worker.submit(() -> SwingUtilities.invokeLater(() -> {
+                selectionModel.setValueIsAdjusting(true);
                 selectionModel.clearSelection();
                 for (int r: rows) {
                     selectionModel.addSelectionInterval(r, r);
                 }
+                selectionModel.setValueIsAdjusting(false);
             }));
         }
     }

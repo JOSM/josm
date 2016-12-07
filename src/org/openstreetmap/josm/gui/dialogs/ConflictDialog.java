@@ -312,6 +312,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
 
     @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+        lstConflicts.setValueIsAdjusting(true);
         lstConflicts.clearSelection();
         for (OsmPrimitive osm : newSelection) {
             if (conflicts != null && conflicts.hasConflictForMy(osm)) {
@@ -321,6 +322,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
                 }
             }
         }
+        lstConflicts.setValueIsAdjusting(false);
     }
 
     @Override

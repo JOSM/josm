@@ -504,10 +504,12 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
             mergedEntries.add(row -1, n);
         }
         fireModelDataChanged();
+        mergedEntriesSelectionModel.setValueIsAdjusting(true);
         mergedEntriesSelectionModel.clearSelection();
         for (int row: rows) {
             mergedEntriesSelectionModel.addSelectionInterval(row-1, row-1);
         }
+        mergedEntriesSelectionModel.setValueIsAdjusting(false);
     }
 
     /**
@@ -530,10 +532,12 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
             mergedEntries.add(row +1, n);
         }
         fireModelDataChanged();
+        mergedEntriesSelectionModel.setValueIsAdjusting(true);
         mergedEntriesSelectionModel.clearSelection();
         for (int row: rows) {
             mergedEntriesSelectionModel.addSelectionInterval(row+1, row+1);
         }
+        mergedEntriesSelectionModel.setValueIsAdjusting(false);
     }
 
     /**

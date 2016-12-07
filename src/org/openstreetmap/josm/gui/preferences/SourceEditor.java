@@ -664,6 +664,7 @@ public abstract class SourceEditor extends JPanel {
                 data.add(new SourceEntry(info.url, info.name, info.getDisplayName(), true));
             }
             fireTableDataChanged();
+            selectionModel.setValueIsAdjusting(true);
             selectionModel.clearSelection();
             for (ExtendedSourceEntry info: sources) {
                 int pos = data.indexOf(info);
@@ -671,6 +672,7 @@ public abstract class SourceEditor extends JPanel {
                     selectionModel.addSelectionInterval(pos, pos);
                 }
             }
+            selectionModel.setValueIsAdjusting(false);
         }
 
         public List<SourceEntry> getSources() {
@@ -698,10 +700,12 @@ public abstract class SourceEditor extends JPanel {
                 data.set(row, t2);
                 data.set(row + i, t1);
             }
+            selectionModel.setValueIsAdjusting(true);
             selectionModel.clearSelection();
             for (int row: sel) {
                 selectionModel.addSelectionInterval(row + i, row + i);
             }
+            selectionModel.setValueIsAdjusting(false);
         }
     }
 
