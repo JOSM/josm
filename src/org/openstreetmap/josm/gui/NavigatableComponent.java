@@ -82,6 +82,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
         void zoomChanged();
     }
 
+    /**
+     * To determine if a primitive is currently selectable.
+     */
     public transient Predicate<OsmPrimitive> isSelectablePredicate = prim -> {
         if (!prim.isSelectable()) return false;
         // if it isn't displayed on screen, you cannot click on it
@@ -93,11 +96,16 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     };
 
+    /** Snap distance */
     public static final IntegerProperty PROP_SNAP_DISTANCE = new IntegerProperty("mappaint.node.snap-distance", 10);
+    /** Zoom steps to get double scale */
     public static final DoubleProperty PROP_ZOOM_RATIO = new DoubleProperty("zoom.ratio", 2.0);
+    /** Divide intervals between native resolution levels to smaller steps if they are much larger than zoom ratio */
     public static final BooleanProperty PROP_ZOOM_INTERMEDIATE_STEPS = new BooleanProperty("zoom.intermediate-steps", true);
 
+    /** Property name for center change events */
     public static final String PROPNAME_CENTER = "center";
+    /** Property name for scale change events */
     public static final String PROPNAME_SCALE = "scale";
 
     /**
@@ -421,6 +429,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return state.getForView(x, y).getEastNorth();
     }
 
+    /**
+     * Determines the projection bounds of view area.
+     * @return the projection bounds of view area
+     */
     public ProjectionBounds getProjectionBounds() {
         return getState().getViewArea().getProjectionBounds();
     }
@@ -438,20 +450,32 @@ public class NavigatableComponent extends JComponent implements Helpful {
     }
 
     /**
+     * Returns unprojected geographic coordinates for a specific pixel position on the screen.
      * @param x X-Pixelposition to get coordinate from
      * @param y Y-Pixelposition to get coordinate from
      *
-     * @return Geographic unprojected coordinates from a specific pixel coordination
-     *      on the screen.
+     * @return Geographic unprojected coordinates from a specific pixel position on the screen.
      */
     public LatLon getLatLon(int x, int y) {
         return getProjection().eastNorth2latlon(getEastNorth(x, y));
     }
 
+    /**
+     * Returns unprojected geographic coordinates for a specific pixel position on the screen.
+     * @param x X-Pixelposition to get coordinate from
+     * @param y Y-Pixelposition to get coordinate from
+     *
+     * @return Geographic unprojected coordinates from a specific pixel position on the screen.
+     */
     public LatLon getLatLon(double x, double y) {
         return getLatLon((int) x, (int) y);
     }
 
+    /**
+     * Determines the projection bounds of given rectangle.
+     * @param r rectangle
+     * @return the projection bounds of {@code r}
+     */
     public ProjectionBounds getProjectionBounds(Rectangle r) {
         return getState().getViewArea(r).getProjectionBounds();
     }
@@ -464,6 +488,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return Main.getProjection().getLatLonBoundsBox(getProjectionBounds(r));
     }
 
+    /**
+     * Creates an affine transform that is used to convert the east/north coordinates to view coordinates.
+     * @return The affine transform.
+     */
     public AffineTransform getAffineTransform() {
         return getState().getAffineTransform();
     }
@@ -471,8 +499,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /**
      * Return the point on the screen where this Coordinate would be.
      * @param p The point, where this geopoint would be drawn.
-     * @return The point on screen where "point" would be drawn, relative
-     *      to the own top/left.
+     * @return The point on screen where "point" would be drawn, relative to the own top/left.
      */
     public Point2D getPoint2D(EastNorth p) {
         if (null == p)
@@ -480,6 +507,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
         return getState().getPointFor(p).getInView();
     }
 
+    /**
+     * Return the point on the screen where this Coordinate would be.
+     * @param latlon The point, where this geopoint would be drawn.
+     * @return The point on screen where "point" would be drawn, relative to the own top/left.
+     */
     public Point2D getPoint2D(LatLon latlon) {
         if (latlon == null)
             return new Point();
@@ -489,6 +521,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
             return getPoint2D(getProjection().latlon2eastNorth(latlon));
     }
 
+    /**
+     * Return the point on the screen where this Node would be.
+     * @param n The node, where this geopoint would be drawn.
+     * @return The point on screen where "node" would be drawn, relative to the own top/left.
+     */
     public Point2D getPoint2D(Node n) {
         return getPoint2D(n.getEastNorth());
     }
@@ -625,10 +662,18 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     }
 
+    /**
+     * Zoom to given east/north.
+     * @param newCenter new center coordinates
+     */
     public void zoomTo(EastNorth newCenter) {
         zoomTo(newCenter, getScale());
     }
 
+    /**
+     * Zoom to given lat/lon.
+     * @param newCenter new center coordinates
+     */
     public void zoomTo(LatLon newCenter) {
         zoomTo(Projections.project(newCenter));
     }
@@ -687,6 +732,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
         zoomTo(getCenter(), getScale()*factor);
     }
 
+    /**
+     * Zoom to given projection bounds.
+     * @param box new projection bounds
+     */
     public void zoomTo(ProjectionBounds box) {
         // -20 to leave some border
         int w = getWidth()-20;
@@ -706,11 +755,19 @@ public class NavigatableComponent extends JComponent implements Helpful {
         zoomTo(box.getCenter(), newScale);
     }
 
+    /**
+     * Zoom to given bounds.
+     * @param box new bounds
+     */
     public void zoomTo(Bounds box) {
         zoomTo(new ProjectionBounds(getProjection().latlon2eastNorth(box.getMin()),
                 getProjection().latlon2eastNorth(box.getMax())));
     }
 
+    /**
+     * Zoom to given viewport data.
+     * @param viewport new viewport data
+     */
     public void zoomTo(ViewportData viewport) {
         if (viewport == null) return;
         if (viewport.getBounds() != null) {
@@ -774,6 +831,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
         zoomTimestamp = now;
     }
 
+    /**
+     * Zoom to previous location.
+     */
     public void zoomPrevious() {
         if (!zoomUndoBuffer.isEmpty()) {
             ZoomData zoom = zoomUndoBuffer.pop();
@@ -782,6 +842,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     }
 
+    /**
+     * Zoom to next location.
+     */
     public void zoomNext() {
         if (!zoomRedoBuffer.isEmpty()) {
             ZoomData zoom = zoomRedoBuffer.pop();
@@ -790,10 +853,18 @@ public class NavigatableComponent extends JComponent implements Helpful {
         }
     }
 
+    /**
+     * Determines if zoom history contains "undo" entries.
+     * @return {@code true} if zoom history contains "undo" entries
+     */
     public boolean hasZoomUndoEntries() {
         return !zoomUndoBuffer.isEmpty();
     }
 
+    /**
+     * Determines if zoom history contains "redo" entries.
+     * @return {@code true} if zoom history contains "redo" entries
+     */
     public boolean hasZoomRedoEntries() {
         return !zoomRedoBuffer.isEmpty();
     }
@@ -1313,9 +1384,9 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
         if (osm != null) {
             if (osm instanceof Node) {
-                nearestList = new ArrayList<OsmPrimitive>(getNearestNodes(p, predicate));
+                nearestList = new ArrayList<>(getNearestNodes(p, predicate));
             } else if (osm instanceof Way) {
-                nearestList = new ArrayList<OsmPrimitive>(getNearestWays(p, predicate));
+                nearestList = new ArrayList<>(getNearestWays(p, predicate));
             }
             if (ignore != null) {
                 nearestList.removeAll(ignore);
