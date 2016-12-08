@@ -97,6 +97,10 @@ import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
+/**
+ * Editor for JOSM extensions source entries.
+ * @since 1743
+ */
 public abstract class SourceEditor extends JPanel {
 
     protected final SourceType sourceType;
@@ -716,6 +720,9 @@ public abstract class SourceEditor extends JPanel {
         }
     }
 
+    /**
+     * Source entry with additional metadata.
+     */
     public static class ExtendedSourceEntry extends SourceEntry implements Comparable<ExtendedSourceEntry> {
         /** file name used for display */
         public String simpleFileName;
@@ -1641,6 +1648,9 @@ public abstract class SourceEditor extends JPanel {
         }
     }
 
+    /**
+     * Helper class for specialized extensions preferences.
+     */
     public abstract static class SourcePrefHelper {
 
         private final String pref;
@@ -1681,7 +1691,7 @@ public abstract class SourceEditor extends JPanel {
 
             Collection<Map<String, String>> src = Main.pref.getListOfStructs(pref, (Collection<Map<String, String>>) null);
             if (src == null)
-                return new ArrayList<SourceEntry>(getDefault());
+                return new ArrayList<>(getDefault());
 
             List<SourceEntry> entries = new ArrayList<>();
             for (Map<String, String> sourcePref : src) {
