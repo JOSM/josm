@@ -4,7 +4,7 @@ package org.openstreetmap.josm.gui.mappaint;
 import java.util.Objects;
 
 /**
- * An interval of the form "lower &lt; x &lt;= upper" where 0 &lt;= lower &lt; upper.
+ * A scale interval of the form "lower &lt; x &lt;= upper" where 0 &lt;= lower &lt; upper.
  * (upper can be Double.POSITIVE_INFINITY)
  * immutable class
  */

@@ -7,9 +7,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Set;
 import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
-import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
 import org.openstreetmap.josm.Main;
@@ -56,8 +56,18 @@ public interface Selector {
      */
     boolean matches(Environment env);
 
+    /**
+     * Returns the subpart, if supported. A subpart identifies different rendering layers (<code>::subpart</code> syntax).
+     * @return the subpart, if supported
+     * @throws UnsupportedOperationException if not supported
+     */
     Subpart getSubpart();
 
+    /**
+     * Returns the scale range, an interval of the form "lower &lt; x &lt;= upper" where 0 &lt;= lower &lt; upper.
+     * @return the scale range, if supported
+     * @throws UnsupportedOperationException if not supported
+     */
     Range getRange();
 
     /**
@@ -74,6 +84,10 @@ public interface Selector {
      */
     Selector optimizedBaseCheck();
 
+    /**
+     * The type of child of parent selector.
+     * @see ChildOrParentSelector
+     */
     enum ChildOrParentSelectorType {
         CHILD, PARENT, ELEMENT_OF, CROSSING, SIBLING
     }
@@ -90,7 +104,8 @@ public interface Selector {
      *    selector_a &lt; selector_b { ... }       // the inverse notation (parent selector)
      *    node[traffic_calming] &lt; way { ... }   // example (way that has a traffic calming node)
      * </pre>
-     *
+     * <p>Child: see <a href="https://josm.openstreetmap.de/wiki/Help/Styles/MapCSSImplementation#Childselector">wiki</a>
+     * <br>Parent: see <a href="https://josm.openstreetmap.de/wiki/Help/Styles/MapCSSImplementation#Parentselector">wiki</a></p>
      */
     class ChildOrParentSelector implements Selector {
         public final Selector left;
@@ -481,6 +496,10 @@ public interface Selector {
         }
     }
 
+    /**
+     * In a child selector, conditions on the link between a parent and a child object.
+     * See <a href="https://josm.openstreetmap.de/wiki/Help/Styles/MapCSSImplementation#Linkselector">wiki</a>
+     */
     class LinkSelector extends AbstractSelector {
 
         public LinkSelector(List<Condition> conditions) {
@@ -510,10 +529,13 @@ public interface Selector {
 
         @Override
         public String toString() {
-            return "LinkSelector{" + "conditions=" + conds + '}';
+            return "LinkSelector{conditions=" + conds + '}';
         }
     }
 
+    /**
+     * General selector. See <a href="https://josm.openstreetmap.de/wiki/Help/Styles/MapCSSImplementation#Selectors">wiki</a>
+     */
     class GeneralSelector extends OptimizedGeneralSelector {
 
         public GeneralSelector(String base, Pair<Integer, Integer> zoom, List<Condition> conds, Subpart subpart) {
@@ -535,6 +557,10 @@ public interface Selector {
         }
     }
 
+    /**
+     * Superclass of {@link GeneralSelector}. Used to create an "optimized" copy of this selector that omits the base check.
+     * @see Selector#optimizedBaseCheck
+     */
     class OptimizedGeneralSelector extends AbstractSelector {
         public final String base;
         public final Range range;
@@ -650,7 +676,7 @@ public interface Selector {
         @Override
         public String toString() {
             return base + (Range.ZERO_TO_INFINITY.equals(range) ? "" : range) + Utils.join("", conds)
-                    + (subpart != null && subpart != Subpart.DEFAULT_SUBPART ? "::" + subpart : "");
+                    + (subpart != null && subpart != Subpart.DEFAULT_SUBPART ? ("::" + subpart) : "");
         }
     }
 }
