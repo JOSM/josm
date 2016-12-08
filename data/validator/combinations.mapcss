@@ -474,3 +474,13 @@ way["addr:housenumber"][!building][!"building:part"][!"demolished:building"][!no
   throwOther: tr("possibly missing {0} tag", "{1.key}");
   group: tr("missing tag");
 }
+
+way[highway][lanes][!lanes:forward][!lanes:backward][oneway!=yes][oneway!=-1][lanes>2],
+way[highway][lanes][!lanes:backward][!lanes:forward][oneway!=yes][oneway!=-1][lanes>2] {
+  throwWarning: tr("street with {0} > 2, but without {1} and {2} or {3}", "{1.key}", "{2.key}", "{3.key}", "{4.key}");
+  group: tr("missing tag");
+  assertNoMatch: "way highway=primary lanes=2";
+  assertNoMatch: "way highway=primary lanes=3 lanes:backward=2";
+  assertNoMatch: "way highway=primary lanes=3 oneway=-1";
+  assertMatch: "way highway=primary lanes=3";
+}
