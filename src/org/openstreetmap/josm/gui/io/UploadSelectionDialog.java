@@ -9,6 +9,7 @@ import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -195,22 +196,23 @@ public class UploadSelectionDialog extends JDialog {
     }
 
     static class OsmPrimitiveListModel extends AbstractListModel<OsmPrimitive> {
+        static final class OsmPrimitiveComparator implements Comparator<OsmPrimitive>, Serializable {
+            private final DefaultNameFormatter formatter = DefaultNameFormatter.getInstance();
+
+            @Override
+            public int compare(OsmPrimitive o1, OsmPrimitive o2) {
+                int ret = OsmPrimitiveType.from(o1).compareTo(OsmPrimitiveType.from(o2));
+                if (ret != 0)
+                    return ret;
+                return o1.getDisplayName(formatter).compareTo(o1.getDisplayName(formatter));
+            }
+        }
+
         private transient List<OsmPrimitive> data;
 
         protected void sort() {
-            if (data == null)
-                return;
-            data.sort(new Comparator<OsmPrimitive>() {
-                    private DefaultNameFormatter formatter = DefaultNameFormatter.getInstance();
-                    @Override
-                    public int compare(OsmPrimitive o1, OsmPrimitive o2) {
-                        int ret = OsmPrimitiveType.from(o1).compareTo(OsmPrimitiveType.from(o2));
-                        if (ret != 0)
-                            return ret;
-                        return o1.getDisplayName(formatter).compareTo(o1.getDisplayName(formatter));
-                    }
-                }
-            );
+            if (data != null)
+                data.sort(new OsmPrimitiveComparator());
         }
 
         public void setPrimitives(List<OsmPrimitive> data) {

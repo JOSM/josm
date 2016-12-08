@@ -32,10 +32,27 @@ public final class MultikeyActionsHandler {
 
     private final Map<MultikeyShortcutAction, MyAction> myActions = new HashMap<>();
 
-    private static final class ShowLayersPopupWorker implements Runnable {
+    static final class ShowLayersPopupWorker implements Runnable {
+        static final class StatusLinePopupMenuListener implements PopupMenuListener {
+            @Override
+            public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+                // Do nothing
+            }
+
+            @Override
+            public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+                Main.map.statusLine.resetHelpText(STATUS_BAR_ID);
+            }
+
+            @Override
+            public void popupMenuCanceled(PopupMenuEvent e) {
+                // Do nothing
+            }
+        }
+
         private final MyAction action;
 
-        private ShowLayersPopupWorker(MyAction action) {
+        ShowLayersPopupWorker(MyAction action) {
             this.action = action;
         }
 
@@ -76,27 +93,10 @@ public final class MultikeyActionsHandler {
                     layers.add(repeateItem);
                 }
             }
-            layers.addPopupMenuListener(new PopupMenuListener() {
-
-                @Override
-                public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-                    // Do nothing
-                }
-
-                @Override
-                public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-                    Main.map.statusLine.resetHelpText(STATUS_BAR_ID);
-                }
-
-                @Override
-                public void popupMenuCanceled(PopupMenuEvent e) {
-                    // Do nothing
-                }
-            });
-
+            layers.addPopupMenuListener(new StatusLinePopupMenuListener());
             layers.show(Main.parent, Integer.MAX_VALUE, Integer.MAX_VALUE);
             layers.setLocation(Main.parent.getX() + Main.parent.getWidth() - layers.getWidth(),
-                    Main.parent.getY() + Main.parent.getHeight() - layers.getHeight());
+                               Main.parent.getY() + Main.parent.getHeight() - layers.getHeight());
         }
     }
 

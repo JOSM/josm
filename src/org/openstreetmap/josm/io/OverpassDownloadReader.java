@@ -33,6 +33,19 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class OverpassDownloadReader extends BoundingBoxDownloader {
 
+    static final class OverpassOsmReader extends OsmReader {
+        @Override
+        protected void parseUnknown(boolean printWarning) throws XMLStreamException {
+            if ("remark".equals(parser.getLocalName()) && parser.getEventType() == XMLStreamConstants.START_ELEMENT) {
+                final String text = parser.getElementText();
+                if (text.contains("runtime error")) {
+                    throw new XMLStreamException(text);
+                }
+            }
+            super.parseUnknown(printWarning);
+        }
+    }
+
     final String overpassServer;
     final String overpassQuery;
 
@@ -147,18 +160,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
 
     @Override
     protected DataSet parseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
-        return new OsmReader() {
-            @Override
-            protected void parseUnknown(boolean printWarning) throws XMLStreamException {
-                if ("remark".equals(parser.getLocalName()) && parser.getEventType() == XMLStreamConstants.START_ELEMENT) {
-                    final String text = parser.getElementText();
-                    if (text.contains("runtime error")) {
-                        throw new XMLStreamException(text);
-                    }
-                }
-                super.parseUnknown(printWarning);
-            }
-        }.doParseDataSet(source, progressMonitor);
+        return new OverpassOsmReader().doParseDataSet(source, progressMonitor);
     }
 
     @Override

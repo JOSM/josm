@@ -36,9 +36,35 @@ import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
  */
 public final class HistoryBrowserDialogManager implements LayerChangeListener {
 
+    static final class UnloadedHistoryPredicate implements Predicate<PrimitiveId> {
+        private final HistoryDataSet hds = HistoryDataSet.getInstance();
+
+        @Override
+        public boolean test(PrimitiveId p) {
+            History h = hds.getHistory(p);
+            if (h == null)
+                // reload if the history is not in the cache yet
+                return true;
+            else
+                // reload if the history object of the selected object is not in the cache yet
+                return !p.isNew() && h.getByVersion(p.getUniqueId()) == null;
+        }
+    }
+
     private static final String WINDOW_GEOMETRY_PREF = HistoryBrowserDialogManager.class.getName() + ".geometry";
 
     private static HistoryBrowserDialogManager instance;
+
+    private final Map<Long, HistoryBrowserDialog> dialogs;
+
+    private final Predicate<PrimitiveId> unloadedHistoryPredicate = new UnloadedHistoryPredicate();
+
+    private final Predicate<PrimitiveId> notNewPredicate = p -> !p.isNew();
+
+    protected HistoryBrowserDialogManager() {
+        dialogs = new HashMap<>();
+        Main.getLayerManager().addLayerChangeListener(this);
+    }
 
     /**
      * Replies the unique instance.
@@ -49,13 +75,6 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
             instance = new HistoryBrowserDialogManager();
         }
         return instance;
-    }
-
-    private final Map<Long, HistoryBrowserDialog> dialogs;
-
-    protected HistoryBrowserDialogManager() {
-        dialogs = new HashMap<>();
-        Main.getLayerManager().addLayerChangeListener(this);
     }
 
     /**
@@ -210,22 +229,4 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
         };
         Main.worker.submit(r);
     }
-
-    private final Predicate<PrimitiveId> unloadedHistoryPredicate = new Predicate<PrimitiveId>() {
-
-        private HistoryDataSet hds = HistoryDataSet.getInstance();
-
-        @Override
-        public boolean test(PrimitiveId p) {
-            History h = hds.getHistory(p);
-            if (h == null)
-                // reload if the history is not in the cache yet
-                return true;
-            else
-                // reload if the history object of the selected object is not in the cache yet
-                return !p.isNew() && h.getByVersion(p.getUniqueId()) == null;
-        }
-    };
-
-    private final Predicate<PrimitiveId> notNewPredicate = p -> !p.isNew();
 }

@@ -24,6 +24,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
@@ -242,20 +243,26 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
     }
 
     static final class UserTable extends JTable {
+        static final class UserTableHeader extends JTableHeader {
+            UserTableHeader(TableColumnModel cm) {
+                super(cm);
+            }
+
+            @Override
+            public String getToolTipText(MouseEvent e) {
+                int index = columnModel.getColumnIndexAtX(e.getPoint().x);
+                int realIndex = columnModel.getColumn(index).getModelIndex();
+                return COLUMN_TOOLTIPS[realIndex];
+            }
+        }
+
         UserTable(TableModel dm) {
             super(dm);
         }
 
         @Override
         protected JTableHeader createDefaultTableHeader() {
-            return new JTableHeader(columnModel) {
-                @Override
-                public String getToolTipText(MouseEvent e) {
-                    int index = columnModel.getColumnIndexAtX(e.getPoint().x);
-                    int realIndex = columnModel.getColumn(index).getModelIndex();
-                    return COLUMN_TOOLTIPS[realIndex];
-                }
-            };
+            return new UserTableHeader(columnModel);
         }
     }
 

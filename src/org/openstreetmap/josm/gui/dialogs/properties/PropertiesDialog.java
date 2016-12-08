@@ -325,57 +325,9 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
 
         TableColumnModel mod = membershipTable.getColumnModel();
         membershipTable.getTableHeader().setReorderingAllowed(false);
-        mod.getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
-            @Override public Component getTableCellRendererComponent(JTable table, Object value,
-                    boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
-                if (value == null)
-                    return this;
-                if (c instanceof JLabel) {
-                    JLabel label = (JLabel) c;
-                    Relation r = (Relation) value;
-                    label.setText(r.getDisplayName(DefaultNameFormatter.getInstance()));
-                    if (r.isDisabledAndHidden()) {
-                        label.setFont(label.getFont().deriveFont(Font.ITALIC));
-                    }
-                }
-                return c;
-            }
-        });
-
-        mod.getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
-            @Override public Component getTableCellRendererComponent(JTable table, Object value,
-                    boolean isSelected, boolean hasFocus, int row, int column) {
-                if (value == null)
-                    return this;
-                Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
-                boolean isDisabledAndHidden = ((Relation) table.getValueAt(row, 0)).isDisabledAndHidden();
-                if (c instanceof JLabel) {
-                    JLabel label = (JLabel) c;
-                    label.setText(((MemberInfo) value).getRoleString());
-                    if (isDisabledAndHidden) {
-                        label.setFont(label.getFont().deriveFont(Font.ITALIC));
-                    }
-                }
-                return c;
-            }
-        });
-
-        mod.getColumn(2).setCellRenderer(new DefaultTableCellRenderer() {
-            @Override public Component getTableCellRendererComponent(JTable table, Object value,
-                    boolean isSelected, boolean hasFocus, int row, int column) {
-                Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
-                boolean isDisabledAndHidden = ((Relation) table.getValueAt(row, 0)).isDisabledAndHidden();
-                if (c instanceof JLabel) {
-                    JLabel label = (JLabel) c;
-                    label.setText(((MemberInfo) table.getValueAt(row, 1)).getPositionString());
-                    if (isDisabledAndHidden) {
-                        label.setFont(label.getFont().deriveFont(Font.ITALIC));
-                    }
-                }
-                return c;
-            }
-        });
+        mod.getColumn(0).setCellRenderer(new MemberOfCellRenderer());
+        mod.getColumn(1).setCellRenderer(new RoleCellRenderer());
+        mod.getColumn(2).setCellRenderer(new PositionCellRenderer());
         mod.getColumn(2).setPreferredWidth(20);
         mod.getColumn(1).setPreferredWidth(40);
         mod.getColumn(0).setPreferredWidth(200);
@@ -387,15 +339,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
     private void setupBlankSpaceMenu() {
         if (Main.pref.getBoolean("properties.menu.add_edit_delete", true)) {
             blankSpaceMenuHandler.addAction(addAction);
-            PopupMenuLauncher launcher = new PopupMenuLauncher(blankSpaceMenu) {
-                @Override
-                protected boolean checkSelection(Component component, Point p) {
-                    if (component instanceof JTable) {
-                        return ((JTable) component).rowAtPoint(p) == -1;
-                    }
-                    return true;
-                }
-            };
+            PopupMenuLauncher launcher = new BlankSpaceMenuLauncher(blankSpaceMenu);
             bothTables.addMouseListener(launcher);
             tagTable.addMouseListener(launcher);
         }
@@ -815,6 +759,75 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
      */
     public void removeCustomPropertiesCellRenderer(TableCellRenderer renderer) {
         cellRenderer.removeCustomRenderer(renderer);
+    }
+
+    static final class MemberOfCellRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                boolean isSelected, boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
+            if (value == null)
+                return this;
+            if (c instanceof JLabel) {
+                JLabel label = (JLabel) c;
+                Relation r = (Relation) value;
+                label.setText(r.getDisplayName(DefaultNameFormatter.getInstance()));
+                if (r.isDisabledAndHidden()) {
+                    label.setFont(label.getFont().deriveFont(Font.ITALIC));
+                }
+            }
+            return c;
+        }
+    }
+
+    static final class RoleCellRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                boolean isSelected, boolean hasFocus, int row, int column) {
+            if (value == null)
+                return this;
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
+            boolean isDisabledAndHidden = ((Relation) table.getValueAt(row, 0)).isDisabledAndHidden();
+            if (c instanceof JLabel) {
+                JLabel label = (JLabel) c;
+                label.setText(((MemberInfo) value).getRoleString());
+                if (isDisabledAndHidden) {
+                    label.setFont(label.getFont().deriveFont(Font.ITALIC));
+                }
+            }
+            return c;
+        }
+    }
+
+    static final class PositionCellRenderer extends DefaultTableCellRenderer {
+        @Override
+        public Component getTableCellRendererComponent(JTable table, Object value,
+                boolean isSelected, boolean hasFocus, int row, int column) {
+            Component c = super.getTableCellRendererComponent(table, value, isSelected, false, row, column);
+            boolean isDisabledAndHidden = ((Relation) table.getValueAt(row, 0)).isDisabledAndHidden();
+            if (c instanceof JLabel) {
+                JLabel label = (JLabel) c;
+                label.setText(((MemberInfo) table.getValueAt(row, 1)).getPositionString());
+                if (isDisabledAndHidden) {
+                    label.setFont(label.getFont().deriveFont(Font.ITALIC));
+                }
+            }
+            return c;
+        }
+    }
+
+    static final class BlankSpaceMenuLauncher extends PopupMenuLauncher {
+        BlankSpaceMenuLauncher(JPopupMenu menu) {
+            super(menu);
+        }
+
+        @Override
+        protected boolean checkSelection(Component component, Point p) {
+            if (component instanceof JTable) {
+                return ((JTable) component).rowAtPoint(p) == -1;
+            }
+            return true;
+        }
     }
 
     static final class TaggingPresetCommandHandler implements TaggingPresetHandler {

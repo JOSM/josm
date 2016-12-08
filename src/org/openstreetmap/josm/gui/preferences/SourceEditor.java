@@ -72,6 +72,7 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
@@ -137,13 +138,7 @@ public abstract class SourceEditor extends JPanel {
 
         selectionModel = new DefaultListSelectionModel();
         activeSourcesModel = new ActiveSourcesModel(selectionModel);
-        tblActiveSources = new JTable(activeSourcesModel) {
-            // some kind of hack to prevent the table from scrolling slightly to the right when clicking on the text
-            @Override
-            public void scrollRectToVisible(Rectangle aRect) {
-                super.scrollRectToVisible(new Rectangle(0, aRect.y, aRect.width, aRect.height));
-            }
-        };
+        tblActiveSources = new ScrollHackTable(activeSourcesModel);
         tblActiveSources.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
         tblActiveSources.setSelectionModel(selectionModel);
         tblActiveSources.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -420,6 +415,18 @@ public abstract class SourceEditor extends JPanel {
      * @return the translated string for {@code ident}
      */
     protected abstract String getStr(I18nString ident);
+
+    static final class ScrollHackTable extends JTable {
+        ScrollHackTable(TableModel dm) {
+            super(dm);
+        }
+
+        // some kind of hack to prevent the table from scrolling slightly to the right when clicking on the text
+        @Override
+        public void scrollRectToVisible(Rectangle aRect) {
+            super.scrollRectToVisible(new Rectangle(0, aRect.y, aRect.width, aRect.height));
+        }
+    }
 
     /**
      * Identifiers for strings that need to be provided.

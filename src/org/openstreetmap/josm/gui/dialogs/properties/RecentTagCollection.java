@@ -14,17 +14,28 @@ import org.openstreetmap.josm.data.preferences.CollectionProperty;
 
 class RecentTagCollection {
 
+    /**
+     * LRU cache for recently added tags (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html)
+     */
+    static final class LruCache extends LinkedHashMap<Tag, Void> {
+        private final int capacity;
+
+        LruCache(int capacity) {
+            super(capacity + 1, 1.1f, true);
+            this.capacity = capacity;
+        }
+
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Tag, Void> eldest) {
+            return size() > capacity;
+        }
+    }
+
     private final Map<Tag, Void> recentTags;
     private SearchCompiler.Match tagsToIgnore;
 
     RecentTagCollection(final int capacity) {
-        // LRU cache for recently added tags (http://java-planet.blogspot.com/2005/08/how-to-set-up-simple-lru-cache-using.html)
-        recentTags = new LinkedHashMap<Tag, Void>(capacity + 1, 1.1f, true) {
-            @Override
-            protected boolean removeEldestEntry(Map.Entry<Tag, Void> eldest) {
-                return size() > capacity;
-            }
-        };
+        recentTags = new LruCache(capacity);
         tagsToIgnore = SearchCompiler.Never.INSTANCE;
     }
 

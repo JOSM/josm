@@ -52,6 +52,19 @@ public class AddTagsDialog extends ExtendedDialog {
     private final String sender;
     private static final Set<String> trustedSenders = new HashSet<>();
 
+    static final class PropertyTableModel extends DefaultTableModel {
+        private final Class<?>[] types = {Boolean.class, String.class, Object.class, ExistingValues.class};
+
+        PropertyTableModel(int rowCount) {
+            super(new String[] {tr("Assume"), tr("Key"), tr("Value"), tr("Existing values")}, rowCount);
+        }
+
+        @Override
+        public Class<?> getColumnClass(int c) {
+            return types[c];
+        }
+    }
+
     /**
      * Class for displaying "delete from ... objects" in the table
      */
@@ -130,14 +143,7 @@ public class AddTagsDialog extends ExtendedDialog {
 
         this.sender = senderName;
 
-        final DefaultTableModel tm = new DefaultTableModel(new String[] {tr("Assume"), tr("Key"), tr("Value"), tr("Existing values")},
-                tags.length) {
-            private final Class<?>[] types = {Boolean.class, String.class, Object.class, ExistingValues.class};
-            @Override
-            public Class<?> getColumnClass(int c) {
-                return types[c];
-            }
-        };
+        final DefaultTableModel tm = new PropertyTableModel(tags.length);
 
         sel = primitives;
         count = new int[tags.length];

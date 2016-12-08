@@ -25,6 +25,19 @@ import org.openstreetmap.josm.tools.OpenBrowser;
  * A panel displaying the list of known plugins.
  */
 public class PluginListPanel extends VerticallyScrollablePanel {
+    static final class PluginCheckBoxMouseAdapter extends MouseAdapter {
+        private final PluginCheckBox cbPlugin;
+
+        PluginCheckBoxMouseAdapter(PluginCheckBox cbPlugin) {
+            this.cbPlugin = cbPlugin;
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            cbPlugin.doClick();
+        }
+    }
+
     private transient PluginPreferencesModel model;
 
     /**
@@ -128,12 +141,7 @@ public class PluginListPanel extends VerticallyScrollablePanel {
                     pluginText,
                     pi.getScaledIcon(),
                     SwingConstants.LEFT);
-            lblPlugin.addMouseListener(new MouseAdapter() {
-                @Override
-                public void mouseClicked(MouseEvent e) {
-                    cbPlugin.doClick();
-                }
-            });
+            lblPlugin.addMouseListener(new PluginCheckBoxMouseAdapter(cbPlugin));
 
             gbc.gridx = 0;
             gbc.gridy = ++row;

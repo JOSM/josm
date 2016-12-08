@@ -224,17 +224,29 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
     }
 
     private static class LayerListWarningMessagePanel extends JPanel {
+        static final class LayerCellRenderer implements ListCellRenderer<SaveLayerInfo> {
+            private final DefaultListCellRenderer def = new DefaultListCellRenderer();
+
+            @Override
+            public Component getListCellRendererComponent(JList<? extends SaveLayerInfo> list, SaveLayerInfo info, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+                def.setIcon(info.getLayer().getIcon());
+                def.setText(info.getName());
+                return def;
+            }
+        }
+
         private final JLabel lblMessage = new JLabel();
         private final JList<SaveLayerInfo> lstLayers = new JList<>();
 
         LayerListWarningMessagePanel(String msg, List<SaveLayerInfo> infos) {
+            super(new GridBagLayout());
             build();
             lblMessage.setText(msg);
             lstLayers.setListData(infos.toArray(new SaveLayerInfo[infos.size()]));
         }
 
         protected void build() {
-            setLayout(new GridBagLayout());
             GridBagConstraints gc = new GridBagConstraints();
             gc.gridx = 0;
             gc.gridy = 0;
@@ -243,18 +255,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             gc.weighty = 0.0;
             add(lblMessage, gc);
             lblMessage.setHorizontalAlignment(JLabel.LEFT);
-            lstLayers.setCellRenderer(
-                    new ListCellRenderer<SaveLayerInfo>() {
-                        private final DefaultListCellRenderer def = new DefaultListCellRenderer();
-                        @Override
-                        public Component getListCellRendererComponent(JList<? extends SaveLayerInfo> list, SaveLayerInfo info, int index,
-                                boolean isSelected, boolean cellHasFocus) {
-                            def.setIcon(info.getLayer().getIcon());
-                            def.setText(info.getName());
-                            return def;
-                        }
-                    }
-            );
+            lstLayers.setCellRenderer(new LayerCellRenderer());
             gc.gridx = 0;
             gc.gridy = 1;
             gc.fill = GridBagConstraints.HORIZONTAL;

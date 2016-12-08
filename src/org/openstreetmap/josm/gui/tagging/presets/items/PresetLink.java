@@ -24,6 +24,19 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class PresetLink extends TaggingPresetItem {
 
+    static final class TaggingPresetMouseAdapter extends MouseAdapter {
+        private final TaggingPreset t;
+
+        TaggingPresetMouseAdapter(TaggingPreset t) {
+            this.t = t;
+        }
+
+        @Override
+        public void mouseClicked(MouseEvent e) {
+            t.actionPerformed(null);
+        }
+    }
+
     /** The exact name of the preset to link to. Required. */
     public String preset_name = ""; // NOSONAR
 
@@ -35,12 +48,7 @@ public class PresetLink extends TaggingPresetItem {
             return false;
         TaggingPreset t = found.get();
         JLabel lbl = new TaggingPresetLabel(t);
-        lbl.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent arg0) {
-                t.actionPerformed(null);
-            }
-        });
+        lbl.addMouseListener(new TaggingPresetMouseAdapter(t));
         p.add(lbl, GBC.eol().fill(GBC.HORIZONTAL));
         return false;
     }

@@ -140,12 +140,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     private static final ColorProperty PROPERTY_OUTSIDE_COLOR = new ColorProperty(marktr("outside downloaded area"), Color.YELLOW);
 
     /** List of recent relations */
-    private final Map<Relation, Void> recentRelations = new LinkedHashMap<Relation, Void>(PROPERTY_RECENT_RELATIONS_NUMBER.get()+1, 1.1f, true) {
-        @Override
-        protected boolean removeEldestEntry(Map.Entry<Relation, Void> eldest) {
-            return size() > PROPERTY_RECENT_RELATIONS_NUMBER.get();
-        }
-    };
+    private final Map<Relation, Void> recentRelations = new LruCache(PROPERTY_RECENT_RELATIONS_NUMBER.get()+1);
 
     /**
      * Returns list of recently closed relations or null if none.
@@ -212,6 +207,17 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
     static String createLayerName(Object arg) {
         return tr("Data Layer {0}", arg);
+    }
+
+    static final class LruCache extends LinkedHashMap<Relation, Void> {
+        LruCache(int initialCapacity) {
+            super(initialCapacity, 1.1f, true);
+        }
+
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<Relation, Void> eldest) {
+            return size() > PROPERTY_RECENT_RELATIONS_NUMBER.get();
+        }
     }
 
     public static final class DataCountVisitor extends AbstractVisitor {
