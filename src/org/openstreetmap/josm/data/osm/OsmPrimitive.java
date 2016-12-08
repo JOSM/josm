@@ -247,7 +247,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * MAPPAINT
      *--------*/
     public StyleCache mappaintStyle;
-    public int mappaintCacheIdx;
+    private short mappaintCacheIdx;
 
     /* This should not be called from outside. Fixing the UI to add relevant
        get/set functions calling this implicitely is preferred, so we can have
@@ -255,6 +255,23 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     public void clearCachedStyle() {
         mappaintStyle = null;
     }
+
+    /**
+     * Returns mappaint cache index.
+     * @return mappaint cache index
+     */
+    public final short getMappaintCacheIdx() {
+        return mappaintCacheIdx;
+    }
+
+    /**
+     * Sets the mappaint cache index.
+     * @param mappaintCacheIdx mappaint cache index
+     */
+    public final void setMappaintCacheIdx(short mappaintCacheIdx) {
+        this.mappaintCacheIdx = mappaintCacheIdx;
+    }
+
     /* end of mappaint data */
 
     /*---------
