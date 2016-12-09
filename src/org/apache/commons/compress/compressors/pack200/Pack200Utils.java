@@ -22,7 +22,6 @@ package org.apache.commons.compress.compressors.pack200;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.jar.JarFile;
@@ -126,37 +125,27 @@ public class Pack200Utils {
      * @throws IOException if reading or writing fails
      */
     public static void normalize(final File from, final File to, Map<String, String> props)
-        throws IOException {
+            throws IOException {
         if (props == null) {
             props = new HashMap<>();
         }
         props.put(Pack200.Packer.SEGMENT_LIMIT, "-1");
-        final File f = File.createTempFile("commons-compress", "pack200normalize");
-        f.deleteOnExit();
+        final File tempFile = File.createTempFile("commons-compress", "pack200normalize");
         try {
-            OutputStream os = new FileOutputStream(f);
-            JarFile j = null;
-            try {
-                final Pack200.Packer p = Pack200.newPacker();
-                p.properties().putAll(props);
-                p.pack(j = new JarFile(from), os);
-                j = null;
-                os.close();
-                os = null;
-
-                final Pack200.Unpacker u = Pack200.newUnpacker();
-                os = new JarOutputStream(new FileOutputStream(to));
-                u.unpack(f, (JarOutputStream) os);
-            } finally {
-                if (j != null) {
-                    j.close();
-                }
-                if (os != null) {
-                    os.close();
-                }
+            try (FileOutputStream fos = new FileOutputStream(tempFile);
+                    JarFile jarFile = new JarFile(from)) {
+                final Pack200.Packer packer = Pack200.newPacker();
+                packer.properties().putAll(props);
+                packer.pack(jarFile, fos);
+            }
+            final Pack200.Unpacker unpacker = Pack200.newUnpacker();
+            try (JarOutputStream jos = new JarOutputStream(new FileOutputStream(to))) {
+                unpacker.unpack(tempFile, jos);
             }
         } finally {
-            f.delete();
+            if (!tempFile.delete()) {
+                tempFile.deleteOnExit();
+            }
         }
     }
 }

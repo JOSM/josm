@@ -58,6 +58,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
 
     /** The underlying stream to read compressed data from */
     private final PushbackInputStream in;
+    
     /** The dialect to expect */
     private final FramedSnappyDialect dialect;
 
