@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -115,7 +116,7 @@ public class NmeaReader {
             d = rmcTimeFmtStd.parse(p, new ParsePosition(0));
         }
         if (d == null)
-            throw new RuntimeException("Date is malformed"); // malformed
+            throw new JosmRuntimeException("Date is malformed");
         return d;
     }
 

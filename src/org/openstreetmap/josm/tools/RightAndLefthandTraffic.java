@@ -157,7 +157,7 @@ public final class RightAndLefthandTraffic {
             w.writeContent(ds);
             w.footer();
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            throw new JosmRuntimeException(ex);
         }
     }
 

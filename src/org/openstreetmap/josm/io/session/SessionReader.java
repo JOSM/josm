@@ -42,6 +42,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.IllegalDataException;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Document;
@@ -98,7 +99,7 @@ public class SessionReader {
         try {
             importer = importerClass.getConstructor().newInstance();
         } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
+            throw new JosmRuntimeException(e);
         }
         return importer;
     }
@@ -573,7 +574,7 @@ public class SessionReader {
                     cancel = dlg.getValue() != 2;
                 });
             } catch (InvocationTargetException | InterruptedException ex) {
-                throw new RuntimeException(ex);
+                throw new JosmRuntimeException(ex);
             }
         }
 

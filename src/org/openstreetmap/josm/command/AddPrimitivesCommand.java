@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 
 /**
  * Add primitives to a data layer.
@@ -169,7 +170,7 @@ public class AddPrimitivesCommand extends Command {
         for (PrimitiveData d : data) {
             OsmPrimitive osm = getAffectedDataSet().getPrimitiveById(d);
             if (osm == null)
-                throw new RuntimeException();
+                throw new JosmRuntimeException("No primitive found for " + d);
             prims.add(osm);
         }
         return prims;
@@ -187,8 +188,8 @@ public class AddPrimitivesCommand extends Command {
         if (!super.equals(obj)) return false;
         AddPrimitivesCommand that = (AddPrimitivesCommand) obj;
         return Objects.equals(data, that.data) &&
-                Objects.equals(toSelect, that.toSelect) &&
-                Objects.equals(createdPrimitives, that.createdPrimitives) &&
-                Objects.equals(createdPrimitivesToSelect, that.createdPrimitivesToSelect);
+               Objects.equals(toSelect, that.toSelect) &&
+               Objects.equals(createdPrimitives, that.createdPrimitives) &&
+               Objects.equals(createdPrimitivesToSelect, that.createdPrimitivesToSelect);
     }
 }

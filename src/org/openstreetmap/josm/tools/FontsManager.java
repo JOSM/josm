@@ -40,7 +40,7 @@ public final class FontsManager {
             try (CachedFile cf = new CachedFile(url); InputStream i = cf.getInputStream()) {
                 ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, i));
             } catch (IOException | FontFormatException ex) {
-                throw new RuntimeException(ex);
+                throw new JosmRuntimeException(ex);
             }
         }
     }

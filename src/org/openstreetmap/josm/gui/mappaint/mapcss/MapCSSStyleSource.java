@@ -59,6 +59,7 @@ import org.openstreetmap.josm.gui.mappaint.styleelement.LineElement;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -107,10 +108,10 @@ public class MapCSSStyleSource extends StyleSource {
             try {
                 SUPPORTED_KEYS.add((String) f.get(null));
                 if (!f.getName().toLowerCase(Locale.ENGLISH).replace('_', '-').equals(f.get(null))) {
-                    throw new RuntimeException(f.getName());
+                    throw new JosmRuntimeException(f.getName());
                 }
             } catch (IllegalArgumentException | IllegalAccessException ex) {
-                throw new RuntimeException(ex);
+                throw new JosmRuntimeException(ex);
             }
         }
         for (LineElement.LineType lt : LineElement.LineType.values()) {
@@ -467,7 +468,7 @@ public class MapCSSStyleSource extends StyleSource {
                     case "setting":
                         break;
                     default:
-                        final RuntimeException e = new RuntimeException(MessageFormat.format("Unknown MapCSS base selector {0}", base));
+                        final RuntimeException e = new JosmRuntimeException(MessageFormat.format("Unknown MapCSS base selector {0}", base));
                         Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
                         Main.error(e);
                         logError(e);

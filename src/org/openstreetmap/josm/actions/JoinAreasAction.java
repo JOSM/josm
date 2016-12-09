@@ -44,6 +44,7 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Geometry;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.UserCancelException;
@@ -1124,7 +1125,7 @@ public class JoinAreasAction extends JosmAction {
                 }
                 WayInPolygon nextWay = traverser.walk();
                 if (nextWay == null)
-                    throw new RuntimeException("Join areas internal error.");
+                    throw new JosmRuntimeException("Join areas internal error.");
                 if (path.get(0) == nextWay) {
                     // path is closed -> stop here
                     AssembledPolygon ring = new AssembledPolygon(path);
@@ -1179,7 +1180,7 @@ public class JoinAreasAction extends JosmAction {
                 WayInPolygon nextWay;
                 while ((nextWay = traverser.walk()) != startWay) {
                     if (nextWay == null)
-                        throw new RuntimeException("Join areas internal error.");
+                        throw new JosmRuntimeException("Join areas internal error.");
                     simpleRingWays.add(nextWay);
                 }
                 traverser.removeWays(simpleRingWays);
@@ -1253,7 +1254,7 @@ public class JoinAreasAction extends JosmAction {
 
         //should not happen
         if (joinedWay == null || !joinedWay.isClosed())
-            throw new RuntimeException("Join areas internal error.");
+            throw new JosmRuntimeException("Join areas internal error.");
 
         return joinedWay;
     }

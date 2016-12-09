@@ -636,7 +636,7 @@ public class ImageProvider {
         if (ir == null) {
             if (!optional) {
                 String ext = name.indexOf('.') != -1 ? "" : ".???";
-                throw new RuntimeException(
+                throw new JosmRuntimeException(
                         tr("Fatal: failed to locate image ''{0}''. This is a serious configuration problem. JOSM will stop working.",
                                 name + ext));
             } else {

@@ -39,6 +39,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.LinkSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Subpart;
 import org.openstreetmap.josm.tools.ColorHelper;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -65,18 +66,20 @@ public class MapCSSParser {
      * Nicer way to refer to a lexical state.
      */
     public static enum LexicalState {
-        PREPROCESSOR(0), /* the preprocessor */
-        DEFAULT(2);      /* the main parser */
-        
+        /** the preprocessor */
+        PREPROCESSOR(0),
+        /** the main parser */
+        DEFAULT(2);
+
         int idx; // the integer, which javacc assigns to this state
-        
+
         LexicalState(int idx) {
             if (!this.name().equals(MapCSSParserTokenManager.lexStateNames[idx])) {
-                throw new RuntimeException();
+                throw new JosmRuntimeException("Wrong name for index " + idx);
             }
             this.idx = idx;
         }
-    };
+    }
     
     /**
      * Constructor which initializes the parser with a certain lexical state.
@@ -94,7 +97,7 @@ public class MapCSSParser {
         try {
             scs = new SimpleCharStream(in, encoding, 1, 1);
         } catch (java.io.UnsupportedEncodingException e) {
-            throw new RuntimeException(e);
+            throw new JosmRuntimeException(e);
         }
         return new MapCSSParserTokenManager(scs, initState.idx);
     }

@@ -103,7 +103,7 @@ public final class Territories {
                 }
             }
         } catch (IOException | IllegalDataException ex) {
-            throw new RuntimeException(ex);
+            throw new JosmRuntimeException(ex);
         }
     }
 }

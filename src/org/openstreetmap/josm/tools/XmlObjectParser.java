@@ -257,8 +257,7 @@ public class XmlObjectParser implements Iterable<Object> {
             queueIterator = queue.iterator();
             return this;
         } catch (ParserConfigurationException e) {
-            // This should never happen ;-)
-            throw new RuntimeException(e);
+            throw new JosmRuntimeException(e);
         }
     }
 

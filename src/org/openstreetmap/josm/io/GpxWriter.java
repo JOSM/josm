@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.IWithAttributes;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 
 /**
  * Writes GPX files from GPX data or OSM data.
@@ -290,7 +291,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
             type = "trkpt";
             break;
         default:
-            throw new RuntimeException(tr("Unknown mode {0}.", mode));
+            throw new JosmRuntimeException(tr("Unknown mode {0}.", mode));
         }
         if (pnt != null) {
             LatLon c = pnt.getCoor();
