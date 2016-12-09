@@ -19,6 +19,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 
 // CHECKSTYLE.OFF: LineLength
 
@@ -107,7 +108,7 @@ public class SwissObliqueMercator extends AbstractProj {
         // iteration to finds S and phi
         while (abs(phi - prevPhi) > EPSILON) {
             if (++iteration > 30)
-                throw new RuntimeException("Two many iterations");
+                throw new JosmRuntimeException("Two many iterations");
             prevPhi = phi;
             double s = 1 / alpha * (log(tan(PI / 4 + b / 2)) - k) + ellps.e
             * log(tan(PI / 4 + asin(ellps.e * sin(phi)) / 2));

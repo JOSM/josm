@@ -1029,7 +1029,8 @@ public class LayerListDialog extends ToggleDialog {
                 case 3:
                     l.rename((String) value);
                     break;
-                default: throw new RuntimeException();
+                default:
+                    throw new IllegalArgumentException("Wrong column: " + col);
                 }
                 fireTableCellUpdated(row, col);
             }

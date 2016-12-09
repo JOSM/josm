@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.Context;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition.ToTagConvertable;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -818,7 +819,7 @@ public final class ConditionFactory {
             try {
                 return not ^ (Boolean) method.invoke(null, e);
             } catch (IllegalAccessException | InvocationTargetException ex) {
-                throw new RuntimeException(ex);
+                throw new JosmRuntimeException(ex);
             }
         }
 

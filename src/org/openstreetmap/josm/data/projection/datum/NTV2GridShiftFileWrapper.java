@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 
 /**
  * Wrapper for {@link NTV2GridShiftFile}.
@@ -56,7 +57,7 @@ public class NTV2GridShiftFileWrapper {
                 instance = new NTV2GridShiftFile();
                 instance.loadGridShiftFile(is, false);
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new JosmRuntimeException(e);
             }
         }
         return instance;

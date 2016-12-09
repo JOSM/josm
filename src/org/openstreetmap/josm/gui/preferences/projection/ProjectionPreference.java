@@ -36,6 +36,7 @@ import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 
 /**
  * Projection preferences.
@@ -478,7 +479,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
         // If the ProjectionChoice from the preferences is not available, it
         // should have been set to Mercator at JOSM start.
         if (pc == null)
-            throw new RuntimeException("Couldn't find the current projection in the list of available projections!");
+            throw new JosmRuntimeException("Couldn't find the current projection in the list of available projections!");
 
         projectionCombo.addActionListener(e -> {
             ProjectionChoice pc1 = (ProjectionChoice) projectionCombo.getSelectedItem();

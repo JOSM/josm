@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 
 /**
  * A dataset merger which takes a target and a source dataset and merges the source data set
@@ -142,7 +143,7 @@ public class DataSetMerger {
     protected void fixIncomplete(Way other) {
         Way myWay = (Way) getMergeTarget(other);
         if (myWay == null)
-            throw new RuntimeException(tr("Missing merge target for way with id {0}", other.getUniqueId()));
+            throw new JosmRuntimeException(tr("Missing merge target for way with id {0}", other.getUniqueId()));
     }
 
     /**
@@ -177,7 +178,7 @@ public class DataSetMerger {
                 OsmPrimitive target = it.next();
                 OsmPrimitive source = sourceDataSet.getPrimitiveById(target.getPrimitiveId());
                 if (source == null)
-                    throw new RuntimeException(
+                    throw new JosmRuntimeException(
                             tr("Object of type {0} with id {1} was marked to be deleted, but it''s missing in the source dataset",
                             target.getType(), target.getUniqueId()));
 

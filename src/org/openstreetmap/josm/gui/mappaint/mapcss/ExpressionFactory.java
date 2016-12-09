@@ -39,6 +39,7 @@ import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.Geometry;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Territories;
@@ -96,7 +97,7 @@ public final class ExpressionFactory {
             parameterFunctions.add(Math.class.getMethod("tan", double.class));
             parameterFunctions.add(Math.class.getMethod("tanh", double.class));
         } catch (NoSuchMethodException | SecurityException ex) {
-            throw new RuntimeException(ex);
+            throw new JosmRuntimeException(ex);
         }
     }
 
@@ -1239,7 +1240,7 @@ public final class ExpressionFactory {
             try {
                 result = m.invoke(null, convertedArgs);
             } catch (IllegalAccessException | IllegalArgumentException ex) {
-                throw new RuntimeException(ex);
+                throw new JosmRuntimeException(ex);
             } catch (InvocationTargetException ex) {
                 Main.error(ex);
                 return null;
@@ -1305,7 +1306,7 @@ public final class ExpressionFactory {
             try {
                 result = m.invoke(null, convertedArgs);
             } catch (IllegalAccessException | IllegalArgumentException ex) {
-                throw new RuntimeException(ex);
+                throw new JosmRuntimeException(ex);
             } catch (InvocationTargetException ex) {
                 Main.error(ex);
                 return null;

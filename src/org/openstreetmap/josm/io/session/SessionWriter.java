@@ -39,6 +39,7 @@ import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.gui.layer.WMTSLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Document;
@@ -96,7 +97,7 @@ public class SessionWriter {
         try {
             return exporterClass.getConstructor(layerClass).newInstance(layer);
         } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
+            throw new JosmRuntimeException(e);
         }
     }
 
@@ -173,7 +174,7 @@ public class SessionWriter {
          * @throws IOException if any I/O error occurs
          */
         public OutputStream getOutputStreamZip(String zipPath) throws IOException {
-            if (!isZip()) throw new RuntimeException();
+            if (!isZip()) throw new JosmRuntimeException("not zip");
             ZipEntry entry = new ZipEntry(zipPath);
             zipOut.putNextEntry(entry);
             return zipOut;
@@ -276,7 +277,7 @@ public class SessionWriter {
             DOMSource source = new DOMSource(doc);
             trans.transform(source, result);
         } catch (TransformerException e) {
-            throw new RuntimeException(e);
+            throw new JosmRuntimeException(e);
         }
     }
 

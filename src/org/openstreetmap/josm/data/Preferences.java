@@ -72,6 +72,7 @@ import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
@@ -1326,7 +1327,7 @@ public class Preferences {
                     }
                 }
             } catch (IllegalAccessException ex) {
-                throw new RuntimeException(ex);
+                throw new JosmRuntimeException(ex);
             }
         }
         return hash;
@@ -1386,14 +1387,14 @@ public class Preferences {
             } else if (f.getType().isAssignableFrom(MultiMap.class)) {
                 value = multiMapFromJson(key_value.getValue());
             } else
-                throw new RuntimeException("unsupported preference primitive type");
+                throw new JosmRuntimeException("unsupported preference primitive type");
 
             try {
                 f.set(struct, value);
             } catch (IllegalArgumentException ex) {
                 throw new AssertionError(ex);
             } catch (IllegalAccessException ex) {
-                throw new RuntimeException(ex);
+                throw new JosmRuntimeException(ex);
             }
         }
         return struct;

@@ -43,6 +43,7 @@ import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -146,7 +147,7 @@ public final class Projections {
         try {
             pds = loadProjectionDefinitions("resource://data/projection/custom-epsg");
         } catch (IOException ex) {
-            throw new RuntimeException(ex);
+            throw new JosmRuntimeException(ex);
         }
         inits = new LinkedHashMap<>();
         for (ProjectionDefinition pd : pds) {

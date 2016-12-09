@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
@@ -272,7 +273,7 @@ public class ImageryReader implements Closeable {
         public void endElement(String namespaceURI, String qName, String rqName) {
             switch (states.pop()) {
             case INIT:
-                throw new RuntimeException("parsing error: more closing than opening elements");
+                throw new JosmRuntimeException("parsing error: more closing than opening elements");
             case ENTRY:
                 if ("entry".equals(qName)) {
                     entry.setNoTileHeaders(noTileHeaders);

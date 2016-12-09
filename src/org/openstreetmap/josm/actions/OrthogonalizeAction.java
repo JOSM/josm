@@ -30,6 +30,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -293,7 +294,7 @@ public final class OrthogonalizeAction extends JosmAction {
                     int directionOffset = angleToDirectionChange(w.heading - refHeading, TOLERANCE2);
                     w.calcDirections(Direction.RIGHT.changeBy(directionOffset));
                     if (angleToDirectionChange(refHeading - w.heading, TOLERANCE2) != 0)
-                        throw new RuntimeException();
+                        throw new JosmRuntimeException("orthogonalize error");
                     totSum = EN.sum(totSum, w.segSum);
                 }
                 headingAll = EN.polar(new EastNorth(0., 0.), totSum);
@@ -402,7 +403,7 @@ public final class OrthogonalizeAction extends JosmAction {
                     nC.put(n, average);
                 }
             }
-            if (!s.isEmpty()) throw new RuntimeException();
+            if (!s.isEmpty()) throw new JosmRuntimeException("orthogonalize error");
         }
 
         // rotate back and log the change

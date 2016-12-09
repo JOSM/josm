@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 
 public class PushbackTokenizer {
 
@@ -73,7 +74,7 @@ public class PushbackTokenizer {
         try {
             c = search.read();
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
+            throw new JosmRuntimeException(e.getMessage(), e);
         }
     }
 

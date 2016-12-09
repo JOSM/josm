@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection.proj;
 
+import org.openstreetmap.josm.tools.JosmRuntimeException;
+
 /**
  * Proj Factory that creates instances from a given class.
  */
@@ -22,7 +24,7 @@ public class ClassProjFactory implements ProjFactory {
         try {
             proj = projClass.getConstructor().newInstance();
         } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
+            throw new JosmRuntimeException(e);
         }
         return proj;
     }

@@ -54,6 +54,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -228,7 +229,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                             JTextComponent tf = hcb.getEditorComponent();
                             tf.getDocument().insertString(tf.getCaretPosition(), ' ' + insertText, null);
                         } catch (BadLocationException ex) {
-                            throw new RuntimeException(ex.getMessage(), ex);
+                            throw new JosmRuntimeException(ex.getMessage(), ex);
                         }
                     }
                 });

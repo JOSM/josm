@@ -54,6 +54,7 @@ import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
 
@@ -633,7 +634,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 });
             } catch (InterruptedException | InvocationTargetException e) {
                 // FIXME: signature of realRun should have a generic checked exception we could throw here
-                throw new RuntimeException(e);
+                throw new JosmRuntimeException(e);
             } finally {
                 monitor.finishTask();
             }

@@ -99,6 +99,7 @@ import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
@@ -559,7 +560,7 @@ public abstract class Main {
             service.submit(OverpassTurboQueryWizard::getInstance);
             service.shutdown();
         } catch (InterruptedException | ExecutionException ex) {
-            throw new RuntimeException(ex);
+            throw new JosmRuntimeException(ex);
         }
 
         // hooks for the jmapviewer component
