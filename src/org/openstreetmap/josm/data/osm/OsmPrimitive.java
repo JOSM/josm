@@ -45,69 +45,6 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     private static final String SPECIAL_VALUE_LOCAL_NAME = "localname";
 
     /**
-     * An object can be disabled by the filter mechanism.
-     * Then it will show in a shade of gray on the map or it is completely
-     * hidden from the view.
-     * Disabled objects usually cannot be selected or modified
-     * while the filter is active.
-     */
-    protected static final short FLAG_DISABLED = 1 << 4;
-
-    /**
-     * This flag is only relevant if an object is disabled by the
-     * filter mechanism (i.e.&nbsp;FLAG_DISABLED is set).
-     * Then it indicates, whether it is completely hidden or
-     * just shown in gray color.
-     *
-     * When the primitive is not disabled, this flag should be
-     * unset as well (for efficient access).
-     */
-    protected static final short FLAG_HIDE_IF_DISABLED = 1 << 5;
-
-    /**
-     * Flag used internally by the filter mechanism.
-     */
-    protected static final short FLAG_DISABLED_TYPE = 1 << 6;
-
-    /**
-     * Flag used internally by the filter mechanism.
-     */
-    protected static final short FLAG_HIDDEN_TYPE = 1 << 7;
-
-    /**
-     * This flag is set if the primitive is a way and
-     * according to the tags, the direction of the way is important.
-     * (e.g. one way street.)
-     */
-    protected static final short FLAG_HAS_DIRECTIONS = 1 << 8;
-
-    /**
-     * If the primitive is tagged.
-     * Some trivial tags like source=* are ignored here.
-     */
-    protected static final short FLAG_TAGGED = 1 << 9;
-
-    /**
-     * This flag is only relevant if FLAG_HAS_DIRECTIONS is set.
-     * It shows, that direction of the arrows should be reversed.
-     * (E.g. oneway=-1.)
-     */
-    protected static final short FLAG_DIRECTION_REVERSED = 1 << 10;
-
-    /**
-     * When hovering over ways and nodes in add mode, the
-     * "target" objects are visually highlighted. This flag indicates
-     * that the primitive is currently highlighted.
-     */
-    protected static final short FLAG_HIGHLIGHTED = 1 << 11;
-
-    /**
-     * If the primitive is annotated with a tag such as note, fixme, etc.
-     * Match the "work in progress" tags in default map style.
-     */
-    protected static final short FLAG_ANNOTATED = 1 << 12;
-
-    /**
      * A tagged way that matches this pattern has a direction.
      * @see #FLAG_HAS_DIRECTIONS
      */
