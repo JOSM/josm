@@ -36,10 +36,17 @@ public interface CompressorStreamProvider {
      * stream.
      * 
      * @param name
-     *            of the compressor, i.e. {@value #GZIP}, {@value #BZIP2},
-     *            {@value #XZ}, {@value #LZMA}, {@value #PACK200},
-     *            {@value #SNAPPY_RAW}, {@value #SNAPPY_FRAMED}, {@value #Z} or
-     *            {@value #DEFLATE}
+     *            of the compressor, i.e.
+     *            {@value org.apache.commons.compress.compressors.CompressorStreamFactory#GZIP},
+     *            {@value org.apache.commons.compress.compressors.CompressorStreamFactory#BZIP2},
+     *            {@value org.apache.commons.compress.compressors.CompressorStreamFactory#XZ},
+     *            {@value org.apache.commons.compress.compressors.CompressorStreamFactory#LZMA},
+     *            {@value org.apache.commons.compress.compressors.CompressorStreamFactory#PACK200},
+     *            {@value org.apache.commons.compress.compressors.CompressorStreamFactory#SNAPPY_RAW},
+     *            {@value org.apache.commons.compress.compressors.CompressorStreamFactory#SNAPPY_FRAMED},
+     *            {@value org.apache.commons.compress.compressors.CompressorStreamFactory#Z}
+     *            or
+     *            {@value org.apache.commons.compress.compressors.CompressorStreamFactory#DEFLATE}
      * @param in
      *            the input stream
      * @param decompressUntilEOF
@@ -53,16 +60,21 @@ public interface CompressorStreamProvider {
      * @throws IllegalArgumentException
      *             if the name or input stream is null
      */
-    CompressorInputStream createCompressorInputStream(final String name, final InputStream in, final boolean decompressUntilEOF)
-            throws CompressorException;
+    CompressorInputStream createCompressorInputStream(final String name, final InputStream in,
+            final boolean decompressUntilEOF) throws CompressorException;
 
     /**
      * Creates a compressor output stream from an compressor name and an output
      * stream.
      * 
      * @param name
-     *            the compressor name, i.e. {@value #GZIP}, {@value #BZIP2},
-     *            {@value #XZ}, {@value #PACK200} or {@value #DEFLATE}
+     *            the compressor name, i.e.
+     *            {@value org.apache.commons.compress.compressors.CompressorStreamFactory#GZIP},
+     *            {@value org.apache.commons.compress.compressors.CompressorStreamFactory#BZIP2},
+     *            {@value org.apache.commons.compress.compressors.CompressorStreamFactory#XZ},
+     *            {@value org.apache.commons.compress.compressors.CompressorStreamFactory#PACK200}
+     *            or
+     *            {@value org.apache.commons.compress.compressors.CompressorStreamFactory#DEFLATE}
      * @param out
      *            the output stream
      * @return the compressor output stream
