@@ -110,8 +110,8 @@ public final class RightAndLefthandTraffic {
         if (areas != null) {
             try {
                 JoinAreasResult result = new JoinAreasAction().joinAreas(areas);
-                if (result.hasChanges) {
-                    for (Multipolygon mp : result.polygons) {
+                if (result.hasChanges()) {
+                    for (Multipolygon mp : result.getPolygons()) {
                         optimizedWays.add(mp.outerWay);
                     }
                 }
