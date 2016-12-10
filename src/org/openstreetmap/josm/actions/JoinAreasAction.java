@@ -66,9 +66,34 @@ public class JoinAreasAction extends JosmAction {
      */
     public static class JoinAreasResult {
 
-        public boolean hasChanges;
+        private final boolean hasChanges;
+        private final List<Multipolygon> polygons;
 
-        public List<Multipolygon> polygons;
+        /**
+         * Constructs a new {@code JoinAreasResult}.
+         * @param hasChanges whether the result has changes
+         * @param polygons the result polygons, can be null
+         */
+        public JoinAreasResult(boolean hasChanges, List<Multipolygon> polygons) {
+            this.hasChanges = hasChanges;
+            this.polygons = polygons;
+        }
+
+        /**
+         * Determines if the result has changes.
+         * @return {@code true} if the result has changes
+         */
+        public final boolean hasChanges() {
+            return hasChanges;
+        }
+
+        /**
+         * Returns the result polygons, can be null.
+         * @return the result polygons, can be null
+         */
+        public final List<Multipolygon> getPolygons() {
+            return polygons;
+        }
     }
 
     public static class Multipolygon {
@@ -544,8 +569,7 @@ public class JoinAreasAction extends JosmAction {
      */
     public JoinAreasResult joinAreas(List<Multipolygon> areas) throws UserCancelException {
 
-        JoinAreasResult result = new JoinAreasResult();
-        result.hasChanges = false;
+        boolean hasChanges = false;
 
         List<Way> allStartingWays = new ArrayList<>();
         List<Way> innerStartingWays = new ArrayList<>();
@@ -564,7 +588,7 @@ public class JoinAreasAction extends JosmAction {
         removedDuplicates |= removeDuplicateNodes(allStartingWays);
 
         if (removedDuplicates) {
-            result.hasChanges = true;
+            hasChanges = true;
             commitCommands(marktr("Removed duplicate nodes"));
         }
 
@@ -573,7 +597,7 @@ public class JoinAreasAction extends JosmAction {
 
         //no intersections, return.
         if (nodes.isEmpty())
-            return result;
+            return new JoinAreasResult(hasChanges, null);
         commitCommands(marktr("Added node on all intersections"));
 
         List<RelationRole> relations = new ArrayList<>();
@@ -654,9 +678,7 @@ public class JoinAreasAction extends JosmAction {
                     .show();
         }
 
-        result.hasChanges = true;
-        result.polygons = polygons;
-        return result;
+        return new JoinAreasResult(true, polygons);
     }
 
     /**
