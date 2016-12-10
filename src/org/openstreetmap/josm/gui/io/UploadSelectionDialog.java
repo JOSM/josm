@@ -197,13 +197,12 @@ public class UploadSelectionDialog extends JDialog {
 
     static class OsmPrimitiveListModel extends AbstractListModel<OsmPrimitive> {
         static final class OsmPrimitiveComparator implements Comparator<OsmPrimitive>, Serializable {
-            private final DefaultNameFormatter formatter = DefaultNameFormatter.getInstance();
-
             @Override
             public int compare(OsmPrimitive o1, OsmPrimitive o2) {
                 int ret = OsmPrimitiveType.from(o1).compareTo(OsmPrimitiveType.from(o2));
                 if (ret != 0)
                     return ret;
+                DefaultNameFormatter formatter = DefaultNameFormatter.getInstance();
                 return o1.getDisplayName(formatter).compareTo(o1.getDisplayName(formatter));
             }
         }
