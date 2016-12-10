@@ -506,13 +506,11 @@ public final class Geometry {
     /**
      * Builds a path from a list of nodes
      * @param polygon Nodes, forming a closed polygon
-     * @param path path to add to; can be null, then a new path is created
+     * @param path2d path to add to; can be null, then a new path is created
      * @return the path (LatLon coordinates)
      */
-    public static Path2D buildPath2DLatLon(List<Node> polygon, Path2D path) {
-        if (path == null) {
-            path = new Path2D.Double();
-        }
+    public static Path2D buildPath2DLatLon(List<Node> polygon, Path2D path2d) {
+        Path2D path = path2d != null ? path2d : new Path2D.Double();
         boolean begin = true;
         for (Node n : polygon) {
             if (begin) {
