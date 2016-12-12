@@ -826,7 +826,7 @@ public class OsmApi extends OsmConnection {
         String encodedMessage = Utils.encodeUrl(closeMessage);
         StringBuilder urlBuilder = noteStringBuilder(note)
             .append("/close");
-        if (encodedMessage != null && !encodedMessage.trim().isEmpty()) {
+        if (!encodedMessage.trim().isEmpty()) {
             urlBuilder.append("?text=");
             urlBuilder.append(encodedMessage);
         }
@@ -848,7 +848,7 @@ public class OsmApi extends OsmConnection {
         String encodedMessage = Utils.encodeUrl(reactivateMessage);
         StringBuilder urlBuilder = noteStringBuilder(note)
             .append("/reopen");
-        if (encodedMessage != null && !encodedMessage.trim().isEmpty()) {
+        if (!encodedMessage.trim().isEmpty()) {
             urlBuilder.append("?text=");
             urlBuilder.append(encodedMessage);
         }

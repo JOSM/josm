@@ -88,9 +88,7 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
             return job;
         }
         job = takeFirst();
-        if (job != null) {
-            acquireSemaphore(job);
-        }
+        acquireSemaphore(job);
         return job;
     }
 
@@ -118,11 +116,8 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
     private void acquireSemaphore(Runnable job) throws InterruptedException {
         if (job instanceof JCSCachedTileLoaderJob) {
             final JCSCachedTileLoaderJob<?, ?> jcsJob = (JCSCachedTileLoaderJob<?, ?>) job;
-            Semaphore limit = getSemaphore(jcsJob);
-            if (limit != null) {
-                limit.acquire();
-                jcsJob.setFinishedTask(() -> releaseSemaphore(jcsJob));
-            }
+            getSemaphore(jcsJob).acquire();
+            jcsJob.setFinishedTask(() -> releaseSemaphore(jcsJob));
         }
     }
 

@@ -353,10 +353,8 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
             if (getModel().isLeaf(child) && child instanceof DefaultMutableTreeNode
                     && ((DefaultMutableTreeNode) child).getUserObject() instanceof TestError) {
                 final TestError error = (TestError) ((DefaultMutableTreeNode) child).getUserObject();
-                if (error.getPrimitives() != null) {
-                    if (error.getPrimitives().stream().anyMatch(isRelevant)) {
-                        paths.add(p.pathByAddingChild(child));
-                    }
+                if (error.getPrimitives().stream().anyMatch(isRelevant)) {
+                    paths.add(p.pathByAddingChild(child));
                 }
             } else {
                 walkAndSelectRelatedErrors(p.pathByAddingChild(child), isRelevant, paths);

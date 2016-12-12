@@ -39,14 +39,13 @@ public final class TextTagPaster extends AbstractTagPaster {
     }
 
     private boolean containsValidTags(TransferSupport support) throws UnsupportedFlavorException, IOException {
-        Map<String, String> tags = getTagsImpl(support);
-        return tags != null && !tags.isEmpty();
+        return !getTagsImpl(support).isEmpty();
     }
 
     @Override
     protected Map<String, String> getTags(TransferSupport support) throws UnsupportedFlavorException, IOException {
         Map<String, String> tags = getTagsImpl(support);
-        if (tags == null || tags.isEmpty()) {
+        if (tags.isEmpty()) {
             TextTagParser.showBadBufferMessage(help);
             throw new IOException("Invalid tags to paste.");
         }

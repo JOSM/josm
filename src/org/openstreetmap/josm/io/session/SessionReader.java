@@ -379,7 +379,7 @@ public class SessionReader {
 
         String activeAtt = layersEl.getAttribute("active");
         try {
-            active = (activeAtt != null && !activeAtt.isEmpty()) ? Integer.parseInt(activeAtt)-1 : -1;
+            active = !activeAtt.isEmpty() ? (Integer.parseInt(activeAtt)-1) : -1;
         } catch (NumberFormatException e) {
             Main.warn("Unsupported value for 'active' layer attribute. Ignoring it. Error was: "+e.getMessage());
             active = -1;
@@ -406,15 +406,14 @@ public class SessionReader {
                     }
                     if (idx == null) {
                         error(tr("unexpected format of attribute ''index'' for element ''layer''"));
-                    }
-                    if (elems.containsKey(idx)) {
+                    } else if (elems.containsKey(idx)) {
                         error(tr("attribute ''index'' ({0}) for element ''layer'' must be unique", Integer.toString(idx)));
                     }
                     elems.put(idx, e);
 
                     deps.putVoid(idx);
                     String depStr = e.getAttribute("depends");
-                    if (depStr != null && !depStr.isEmpty()) {
+                    if (!depStr.isEmpty()) {
                         for (String sd : depStr.split(",")) {
                             Integer d = null;
                             try {

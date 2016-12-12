@@ -392,7 +392,7 @@ public class ChangesetQuery {
 
         protected Date[] parseTime(String value) throws ChangesetQueryUrlException {
             String[] dates = value.split(",");
-            if (dates == null || dates.length == 0 || dates.length > 2)
+            if (dates.length == 0 || dates.length > 2)
                 throw new ChangesetQueryUrlException(
                         tr("Unexpected value for ''{0}'' in changeset query url, got {1}", "time", value));
             if (dates.length == 1)

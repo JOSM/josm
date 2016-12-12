@@ -63,10 +63,7 @@ public final class PlayHeadMarker extends Marker {
         if (Main.isDisplayingMapView()) {
             Main.map.mapView.addMouseListener(new MouseAdapter() {
                 @Override public void mousePressed(MouseEvent ev) {
-                    Point p = ev.getPoint();
-                    if (ev.getButton() != MouseEvent.BUTTON1 || p == null)
-                        return;
-                    if (playHead.containsPoint(p)) {
+                    if (ev.getButton() == MouseEvent.BUTTON1 && playHead.containsPoint(ev.getPoint())) {
                         /* when we get a click on the marker, we need to switch mode to avoid
                          * getting confused with other drag operations (like select) */
                         oldMode = Main.map.mapMode;

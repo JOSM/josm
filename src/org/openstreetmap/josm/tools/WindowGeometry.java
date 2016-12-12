@@ -203,7 +203,7 @@ public class WindowGeometry {
 
     protected final void initFromPreferences(String preferenceKey) throws WindowGeometryException {
         String value = Main.pref.get(preferenceKey);
-        if (value == null || value.isEmpty())
+        if (value.isEmpty())
             throw new WindowGeometryException(
                     tr("Preference with key ''{0}'' does not exist. Cannot restore window geometry from preferences.", preferenceKey));
         topLeft = new Point();

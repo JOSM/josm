@@ -1166,7 +1166,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             img = applyImageProcessors((BufferedImage) img);
 
             Rectangle2D sourceRect = coordinateConverter.getRectangleForTile(tile);
-            if (borderRect != null && !sourceRect.intersects(borderRect)) {
+            if (!sourceRect.intersects(borderRect)) {
                 continue;
             }
             drawImageInside(g, img, sourceRect, borderRect);

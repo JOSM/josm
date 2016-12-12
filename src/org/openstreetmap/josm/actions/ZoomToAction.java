@@ -69,7 +69,7 @@ public class ZoomToAction extends AbstractAction implements LayerChangeListener,
         if (!isEnabled())
             return;
         int[] rows = this.table.getSelectedRows();
-        if (rows == null || rows.length == 0)
+        if (rows.length == 0)
             return;
         int row = rows[0];
         OsmDataLayer layer = this.table.getLayer();

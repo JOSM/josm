@@ -65,9 +65,8 @@ public class PlayHeadDragMode extends MapMode {
     }
 
     @Override public void mouseReleased(MouseEvent ev) {
-        Point p = ev.getPoint();
         mouseStart = null;
-        if (ev.getButton() != MouseEvent.BUTTON1 || p == null || !dragging)
+        if (ev.getButton() != MouseEvent.BUTTON1 || !dragging)
             return;
 
         requestFocusInMapView();
