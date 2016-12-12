@@ -279,6 +279,8 @@ public class GpxLayer extends Layer {
 
     @Override
     public void mergeFrom(Layer from) {
+        if (!(from instanceof GpxLayer))
+            throw new IllegalArgumentException("not a GpxLayer: " + from);
         data.mergeFrom(((GpxLayer) from).data);
         drawHelper.dataChanged();
     }

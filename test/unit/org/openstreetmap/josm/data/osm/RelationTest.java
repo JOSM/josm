@@ -138,4 +138,20 @@ public class RelationTest {
         assertFalse(r.isMultipolygon());
         assertEquals(OsmPrimitiveType.RELATION, r.getDisplayType());
     }
+
+    /**
+     * Test that {@link Relation#cloneFrom} throws IAE for invalid arguments
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testCloneFromIAE() {
+        new Relation().cloneFrom(new Node());
+    }
+
+    /**
+     * Test that {@link Relation#load} throws IAE for invalid arguments
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testLoadIAE() {
+        new Relation().load(new NodeData());
+    }
 }

@@ -54,4 +54,20 @@ public class WayTest {
         assertTrue(way.getBBox().isValid());
         assertEquals(way.getBBox(), new BBox(10, 10));
     }
+
+    /**
+     * Test that {@link Way#cloneFrom} throws IAE for invalid arguments
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testCloneFromIAE() {
+        new Way().cloneFrom(new Node());
+    }
+
+    /**
+     * Test that {@link Way#load} throws IAE for invalid arguments
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testLoadIAE() {
+        new Way().load(new NodeData());
+    }
 }

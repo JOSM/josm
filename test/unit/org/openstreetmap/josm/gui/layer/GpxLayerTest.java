@@ -22,6 +22,7 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.GpxReaderTest;
@@ -188,6 +189,14 @@ public class GpxLayerTest {
         assertFalse(layer.data.isEmpty());
         assertEquals(1, layer.data.tracks.size());
         assertEquals(1, layer.data.waypoints.size());
+    }
+
+    /**
+     * Test that {@link GpxLayer#mergeFrom} throws IAE for invalid arguments
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testMergeFromIAE() {
+        new GpxLayer(new GpxData()).mergeFrom(new OsmDataLayer(new DataSet(), "", null));
     }
 
     /**

@@ -621,7 +621,7 @@ public class MapCSSStyleSource extends StyleSource {
             } else {
                 matchingRuleIndex = wayRules;
             }
-        } else {
+        } else if (osm instanceof Relation) {
             if (((Relation) osm).isMultipolygon()) {
                 matchingRuleIndex = multipolygonRules;
             } else if (osm.hasKey("#canvas")) {
@@ -629,10 +629,11 @@ public class MapCSSStyleSource extends StyleSource {
             } else {
                 matchingRuleIndex = relationRules;
             }
+        } else {
+            throw new IllegalArgumentException("Unsupported type: " + osm);
         }
 
-        // the declaration indices are sorted, so it suffices to save the
-        // last used index
+        // the declaration indices are sorted, so it suffices to save the last used index
         int lastDeclUsed = -1;
 
         Iterator<MapCSSRule> candidates = matchingRuleIndex.getRuleCandidates(osm);

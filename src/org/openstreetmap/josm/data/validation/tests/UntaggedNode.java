@@ -53,13 +53,17 @@ public class UntaggedNode extends Test implements AbstractPrimitive.KeyValueVisi
         }
     }
 
+    private static OsmPrimitive[] castPrim(AbstractPrimitive n) {
+        return n instanceof OsmPrimitive ? (new OsmPrimitive[]{(OsmPrimitive) n}) : (new OsmPrimitive[0]);
+    }
+
     @Override
     public void visitKeyValue(AbstractPrimitive n, String key, String value) {
         if (key.toLowerCase(Locale.ENGLISH).contains("fixme") || value.toLowerCase(Locale.ENGLISH).contains("fixme")) {
             /* translation note: don't translate quoted words */
             errors.add(TestError.builder(this, Severity.WARNING, UNTAGGED_NODE_FIXME)
                     .message(ERROR_MESSAGE, marktr("Has tag containing ''fixme'' or ''FIXME''"))
-                    .primitives((OsmPrimitive) n)
+                    .primitives(castPrim(n))
                     .build());
             return;
         }
@@ -86,14 +90,14 @@ public class UntaggedNode extends Test implements AbstractPrimitive.KeyValueVisi
         if (msg != null) {
             errors.add(TestError.builder(this, Severity.WARNING, code)
                     .message(ERROR_MESSAGE, msg)
-                    .primitives((OsmPrimitive) n)
+                    .primitives(castPrim(n))
                     .build());
             return;
         }
         // Does not happen, but just to be sure. Maybe definition of uninteresting tags changes in future.
         errors.add(TestError.builder(this, Severity.WARNING, UNTAGGED_NODE_OTHER)
                 .message(ERROR_MESSAGE, marktr("Other"))
-                .primitives((OsmPrimitive) n)
+                .primitives(castPrim(n))
                 .build());
     }
 

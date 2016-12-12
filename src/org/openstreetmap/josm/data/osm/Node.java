@@ -237,6 +237,8 @@ public final class Node extends OsmPrimitive implements INode {
 
     @Override
     public void cloneFrom(OsmPrimitive osm) {
+        if (!(osm instanceof Node))
+            throw new IllegalArgumentException("Not a node: " + osm);
         boolean locked = writeLock();
         try {
             super.cloneFrom(osm);
@@ -259,6 +261,8 @@ public final class Node extends OsmPrimitive implements INode {
      */
     @Override
     public void mergeFrom(OsmPrimitive other) {
+        if (!(other instanceof Node))
+            throw new IllegalArgumentException("Not a node: " + other);
         boolean locked = writeLock();
         try {
             super.mergeFrom(other);
@@ -270,7 +274,10 @@ public final class Node extends OsmPrimitive implements INode {
         }
     }
 
-    @Override public void load(PrimitiveData data) {
+    @Override
+    public void load(PrimitiveData data) {
+        if (!(data instanceof NodeData))
+            throw new IllegalArgumentException("Not a node data: " + data);
         boolean locked = writeLock();
         try {
             super.load(data);
@@ -280,7 +287,8 @@ public final class Node extends OsmPrimitive implements INode {
         }
     }
 
-    @Override public NodeData save() {
+    @Override
+    public NodeData save() {
         NodeData data = new NodeData();
         saveCommonAttributes(data);
         if (!isIncomplete()) {

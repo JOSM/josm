@@ -276,6 +276,8 @@ public final class Way extends OsmPrimitive implements IWay {
 
     @Override
     public void load(PrimitiveData data) {
+        if (!(data instanceof WayData))
+            throw new IllegalArgumentException("Not a way data: " + data);
         boolean locked = writeLock();
         try {
             super.load(data);
@@ -313,6 +315,8 @@ public final class Way extends OsmPrimitive implements IWay {
 
     @Override
     public void cloneFrom(OsmPrimitive osm) {
+        if (!(osm instanceof Way))
+            throw new IllegalArgumentException("Not a way: " + osm);
         boolean locked = writeLock();
         try {
             super.cloneFrom(osm);
@@ -325,7 +329,7 @@ public final class Way extends OsmPrimitive implements IWay {
 
     @Override
     public String toString() {
-        String nodesDesc = isIncomplete() ? "(incomplete)" : "nodes=" + Arrays.toString(nodes);
+        String nodesDesc = isIncomplete() ? "(incomplete)" : ("nodes=" + Arrays.toString(nodes));
         return "{Way id=" + getUniqueId() + " version=" + getVersion()+ ' ' + getFlagsAsString() + ' ' + nodesDesc + '}';
     }
 
