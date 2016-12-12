@@ -400,7 +400,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
                 getLayerManager().getEditDataSet().setSelected(targetWay.getPrimitiveId());
                 updateStateByCurrentSelection();
             }
-        } else if (state == State.IMPROVING && mousePos != null) {
+        } else if (state == State.IMPROVING) {
             // Checking if the new coordinate is outside of the world
             if (mv.getLatLon(mousePos.x, mousePos.y).isOutSideWorld()) {
                 JOptionPane.showMessageDialog(Main.parent,

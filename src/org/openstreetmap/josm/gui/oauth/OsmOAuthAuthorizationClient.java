@@ -212,13 +212,13 @@ public class OsmOAuthAuthorizationClient {
 
         for (String setCookie: setCookies) {
             String[] kvPairs = setCookie.split(";");
-            if (kvPairs == null || kvPairs.length == 0) {
+            if (kvPairs.length == 0) {
                 continue;
             }
             for (String kvPair : kvPairs) {
                 kvPair = kvPair.trim();
                 String[] kv = kvPair.split("=");
-                if (kv == null || kv.length != 2) {
+                if (kv.length != 2) {
                     continue;
                 }
                 if ("_osm_session".equals(kv[0])) {

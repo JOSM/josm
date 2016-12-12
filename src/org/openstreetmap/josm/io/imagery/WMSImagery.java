@@ -242,7 +242,7 @@ public class WMSImagery {
             child = getChild(child, "OnlineResource");
             if (child != null) {
                 String baseURL = child.getAttribute("xlink:href");
-                if (baseURL != null && !baseURL.equals(serviceUrlStr)) {
+                if (!baseURL.equals(serviceUrlStr)) {
                     Main.info("GetCapabilities specifies a different service URL: " + baseURL);
                     serviceUrl = new URL(baseURL);
                 }

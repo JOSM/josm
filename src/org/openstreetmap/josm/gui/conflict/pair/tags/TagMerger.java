@@ -272,7 +272,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
         @Override
         public void actionPerformed(ActionEvent arg0) {
             int[] rows = mineTable.getSelectedRows();
-            if (rows == null || rows.length == 0)
+            if (rows.length == 0)
                 return;
             model.decide(rows, MergeDecisionType.KEEP_MINE);
             selectNextConflict(rows);
@@ -304,7 +304,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
         @Override
         public void actionPerformed(ActionEvent arg0) {
             int[] rows = theirTable.getSelectedRows();
-            if (rows == null || rows.length == 0)
+            if (rows.length == 0)
                 return;
             model.decide(rows, MergeDecisionType.KEEP_THEIR);
             selectNextConflict(rows);
@@ -402,7 +402,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
         @Override
         public void actionPerformed(ActionEvent arg0) {
             int[] rows = mergedTable.getSelectedRows();
-            if (rows == null || rows.length == 0)
+            if (rows.length == 0)
                 return;
             model.decide(rows, MergeDecisionType.UNDECIDED);
         }

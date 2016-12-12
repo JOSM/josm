@@ -159,7 +159,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
         public void select() {
             int[] indexes = userTable.getSelectedRows();
-            if (indexes == null || indexes.length == 0)
+            if (indexes.length == 0)
                 return;
             model.selectPrimitivesOwnedBy(userTable.getSelectedRows());
         }
@@ -195,7 +195,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         @Override
         public void actionPerformed(ActionEvent e) {
             int[] rows = userTable.getSelectedRows();
-            if (rows == null || rows.length == 0)
+            if (rows.length == 0)
                 return;
             List<User> users = model.getSelectedUsers(rows);
             if (users.isEmpty())

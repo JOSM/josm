@@ -668,7 +668,7 @@ public class TagChecker extends TagTest {
         Collection<? extends OsmPrimitive> primitives = testError.getPrimitives();
         for (OsmPrimitive p : primitives) {
             Map<String, String> tags = p.getKeys();
-            if (tags == null || tags.isEmpty()) {
+            if (tags.isEmpty()) {
                 continue;
             }
 

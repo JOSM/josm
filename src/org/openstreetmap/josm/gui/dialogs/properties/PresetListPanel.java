@@ -36,7 +36,7 @@ public class PresetListPanel extends JPanel {
         @Override
         public void mouseClicked(MouseEvent e) {
             Collection<OsmPrimitive> selection = t.createSelection(presetHandler.getSelection());
-            if (selection == null || selection.isEmpty())
+            if (selection.isEmpty())
                 return;
             int answer = t.showDialog(selection, false);
 

@@ -94,14 +94,12 @@ public class PluginListParser {
         try {
             if (name != null) {
                 PluginInformation info = createInfo(name, url, manifest);
-                if (info != null) {
-                    for (PluginProxy plugin : PluginHandler.pluginList) {
-                        if (plugin.getPluginInformation().name.equals(info.getName())) {
-                            info.localversion = plugin.getPluginInformation().localversion;
-                        }
+                for (PluginProxy plugin : PluginHandler.pluginList) {
+                    if (plugin.getPluginInformation().name.equals(info.getName())) {
+                        info.localversion = plugin.getPluginInformation().localversion;
                     }
-                    ret.add(info);
                 }
+                ret.add(info);
             }
         } catch (PluginListParseException ex) {
             Main.error(ex);

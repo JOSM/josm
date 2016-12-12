@@ -208,7 +208,7 @@ public final class HttpClient {
                         contentType.contains("xml"))
                         ) {
                     String content = this.fetchContent();
-                    if (content == null || content.isEmpty()) {
+                    if (content.isEmpty()) {
                         Main.debug("Server did not return any body");
                     } else {
                         Main.debug("Response body: ");
@@ -288,26 +288,24 @@ public final class HttpClient {
                     in = new ByteArrayInputStream(new byte[]{});
                 }
             }
-            if (in != null) {
-                in = new ProgressInputStream(in, getContentLength(), monitor);
-                in = "gzip".equalsIgnoreCase(getContentEncoding()) ? new GZIPInputStream(in) : in;
-                Compression compression = Compression.NONE;
-                if (uncompress) {
-                    final String contentType = getContentType();
-                    Main.debug("Uncompressing input stream according to Content-Type header: {0}", contentType);
-                    compression = Compression.forContentType(contentType);
-                }
-                if (uncompressAccordingToContentDisposition && Compression.NONE.equals(compression)) {
-                    final String contentDisposition = getHeaderField("Content-Disposition");
-                    final Matcher matcher = Pattern.compile("filename=\"([^\"]+)\"").matcher(
-                            contentDisposition != null ? contentDisposition : "");
-                    if (matcher.find()) {
-                        Main.debug("Uncompressing input stream according to Content-Disposition header: {0}", contentDisposition);
-                        compression = Compression.byExtension(matcher.group(1));
-                    }
-                }
-                in = compression.getUncompressedInputStream(in);
+            in = new ProgressInputStream(in, getContentLength(), monitor);
+            in = "gzip".equalsIgnoreCase(getContentEncoding()) ? new GZIPInputStream(in) : in;
+            Compression compression = Compression.NONE;
+            if (uncompress) {
+                final String contentType = getContentType();
+                Main.debug("Uncompressing input stream according to Content-Type header: {0}", contentType);
+                compression = Compression.forContentType(contentType);
             }
+            if (uncompressAccordingToContentDisposition && Compression.NONE.equals(compression)) {
+                final String contentDisposition = getHeaderField("Content-Disposition");
+                final Matcher matcher = Pattern.compile("filename=\"([^\"]+)\"").matcher(
+                        contentDisposition != null ? contentDisposition : "");
+                if (matcher.find()) {
+                    Main.debug("Uncompressing input stream according to Content-Disposition header: {0}", contentDisposition);
+                    compression = Compression.byExtension(matcher.group(1));
+                }
+            }
+            in = compression.getUncompressedInputStream(in);
             return in;
         }
 

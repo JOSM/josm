@@ -50,7 +50,7 @@ public class CopyCoordinatesAction extends JosmAction {
 
     private Collection<Node> getSelectedNodes() {
         DataSet ds = getLayerManager().getEditDataSet();
-        if (ds == null || ds.getSelected() == null) {
+        if (ds == null) {
             return Collections.emptyList();
         } else {
             return Utils.filteredCollection(ds.getSelected(), Node.class);

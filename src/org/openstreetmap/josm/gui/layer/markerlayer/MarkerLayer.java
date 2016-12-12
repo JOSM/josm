@@ -146,12 +146,10 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                 if (e.getButton() != MouseEvent.BUTTON1)
                     return;
                 boolean mousePressedInButton = false;
-                if (e.getPoint() != null) {
-                    for (Marker mkr : data) {
-                        if (mkr.containsPoint(e.getPoint())) {
-                            mousePressedInButton = true;
-                            break;
-                        }
+                for (Marker mkr : data) {
+                    if (mkr.containsPoint(e.getPoint())) {
+                        mousePressedInButton = true;
+                        break;
                     }
                 }
                 if (!mousePressedInButton)
@@ -169,11 +167,9 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                 mousePressed = false;
                 if (!isVisible())
                     return;
-                if (ev.getPoint() != null) {
-                    for (Marker mkr : data) {
-                        if (mkr.containsPoint(ev.getPoint())) {
-                            mkr.actionPerformed(new ActionEvent(this, 0, null));
-                        }
+                for (Marker mkr : data) {
+                    if (mkr.containsPoint(ev.getPoint())) {
+                        mkr.actionPerformed(new ActionEvent(this, 0, null));
                     }
                 }
                 invalidate();

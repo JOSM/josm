@@ -429,7 +429,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
 
         if (values_from != null) {
             String[] classMethod = values_from.split("#");
-            if (classMethod != null && classMethod.length == 2) {
+            if (classMethod.length == 2) {
                 try {
                     Method method = Class.forName(classMethod[0]).getMethod(classMethod[1]);
                     // Check method is public static String[] methodName()
@@ -516,7 +516,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
         if (display != null) {
             for (Entry<String, PresetListEntry> entry : lhm.entrySet()) {
                 String k = entry.getValue().toString();
-                if (k != null && k.equals(display)) {
+                if (k.equals(display)) {
                     value = entry.getKey();
                     break;
                 }

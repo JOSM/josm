@@ -565,12 +565,8 @@ public final class CustomConfigurator {
             if ("delete-keys".equals(oper)) {
                 String pattern = evalVars(item.getAttribute("pattern"));
                 String key = evalVars(item.getAttribute("key"));
-                if (key != null) {
-                    PreferencesUtils.deletePreferenceKey(key, mainPrefs);
-                }
-                if (pattern != null) {
-                    PreferencesUtils.deletePreferenceKeyByPattern(pattern, mainPrefs);
-                }
+                PreferencesUtils.deletePreferenceKey(key, mainPrefs);
+                PreferencesUtils.deletePreferenceKeyByPattern(pattern, mainPrefs);
                 return;
             }
 
@@ -608,11 +604,6 @@ public final class CustomConfigurator {
         }
 
         private void processDownloadElement(Element item) {
-            String address = evalVars(item.getAttribute("url"));
-            String path = evalVars(item.getAttribute("path"));
-            String unzip = evalVars(item.getAttribute("unzip"));
-            String mkdir = evalVars(item.getAttribute("mkdir"));
-
             String base = evalVars(item.getAttribute("base"));
             String dir = getDirectoryByAbbr(base);
             if (dir == null) {
@@ -620,13 +611,19 @@ public final class CustomConfigurator {
                 return;
             }
 
+            String path = evalVars(item.getAttribute("path"));
             if (path.contains("..") || path.startsWith("/") || path.contains(":")) {
                 return; // some basic protection
             }
-            if (address == null || path == null || address.isEmpty() || path.isEmpty()) {
+
+            String address = evalVars(item.getAttribute("url"));
+            if (address.isEmpty() || path.isEmpty()) {
                 log("Error: Please specify url=\"where to get file\" and path=\"where to place it\"");
                 return;
             }
+
+            String unzip = evalVars(item.getAttribute("unzip"));
+            String mkdir = evalVars(item.getAttribute("mkdir"));
             processDownloadOperation(address, path, dir, "true".equals(mkdir), "true".equals(unzip));
         }
 
@@ -640,7 +637,7 @@ public final class CustomConfigurator {
         private void processMsgBoxElement(Element elem) {
             String text = evalVars(elem.getAttribute("text"));
             String locText = evalVars(elem.getAttribute(LanguageInfo.getJOSMLocaleCode()+".text"));
-            if (locText != null && !locText.isEmpty()) text = locText;
+            if (!locText.isEmpty()) text = locText;
 
             String type = evalVars(elem.getAttribute("type"));
             messageBox(type, text);
