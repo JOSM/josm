@@ -942,17 +942,16 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     @Override
     public void eventDispatched(AWTEvent event) {
-        if (isShowing() && !isCollapsed && isDocked && buttonHiding == ButtonHidingType.DYNAMIC) {
-            if (buttonsPanel != null) {
-                Rectangle b = this.getBounds();
-                b.setLocation(getLocationOnScreen());
-                if (b.contains(((MouseEvent) event).getLocationOnScreen())) {
-                    if (!buttonsPanel.isVisible()) {
-                        buttonsPanel.setVisible(true);
-                    }
-                } else if (buttonsPanel.isVisible()) {
-                    buttonsPanel.setVisible(false);
+        if (event instanceof MouseEvent && isShowing() && !isCollapsed && isDocked && buttonHiding == ButtonHidingType.DYNAMIC
+                && buttonsPanel != null) {
+            Rectangle b = this.getBounds();
+            b.setLocation(getLocationOnScreen());
+            if (b.contains(((MouseEvent) event).getLocationOnScreen())) {
+                if (!buttonsPanel.isVisible()) {
+                    buttonsPanel.setVisible(true);
                 }
+            } else if (buttonsPanel.isVisible()) {
+                buttonsPanel.setVisible(false);
             }
         }
     }

@@ -234,7 +234,7 @@ public class AutoScaleAction extends JosmAction {
 
         switch (mode) {
         case "problem":
-            return modeProblem(v);
+            return modeProblem((ValidatorBoundingXYVisitor) v);
         case "data":
             return modeData(v);
         case "layer":
@@ -249,11 +249,11 @@ public class AutoScaleAction extends JosmAction {
         }
     }
 
-    private static BoundingXYVisitor modeProblem(BoundingXYVisitor v) {
+    private static BoundingXYVisitor modeProblem(ValidatorBoundingXYVisitor v) {
         TestError error = Main.map.validatorDialog.getSelectedError();
         if (error == null)
             return null;
-        ((ValidatorBoundingXYVisitor) v).visit(error);
+        v.visit(error);
         if (v.getBounds() == null)
             return null;
         v.enlargeBoundingBox(Main.pref.getDouble("validator.zoom-enlarge-bbox", 0.0002));

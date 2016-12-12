@@ -1087,7 +1087,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * Merges the technical and semantical attributes from <code>other</code> onto this.
      *
      * Both this and other must be new, or both must be assigned an OSM ID. If both this and <code>other</code>
-     * have an assigend OSM id, the IDs have to be the same.
+     * have an assigned OSM id, the IDs have to be the same.
      *
      * @param other the other primitive. Must not be null.
      * @throws IllegalArgumentException if other is null.

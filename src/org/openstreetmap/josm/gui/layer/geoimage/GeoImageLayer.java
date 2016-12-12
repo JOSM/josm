@@ -400,6 +400,8 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
 
     @Override
     public void mergeFrom(Layer from) {
+        if (!(from instanceof GeoImageLayer))
+            throw new IllegalArgumentException("not a GeoImageLayer: " + from);
         GeoImageLayer l = (GeoImageLayer) from;
 
         // Stop to load thumbnails on both layers.  Thumbnail loading will continue the next time

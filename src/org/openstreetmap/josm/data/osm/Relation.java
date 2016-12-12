@@ -239,6 +239,8 @@ public final class Relation extends OsmPrimitive implements IRelation {
 
     @Override
     public void cloneFrom(OsmPrimitive osm) {
+        if (!(osm instanceof Relation))
+            throw new IllegalArgumentException("Not a relation: " + osm);
         boolean locked = writeLock();
         try {
             super.cloneFrom(osm);
@@ -251,6 +253,8 @@ public final class Relation extends OsmPrimitive implements IRelation {
 
     @Override
     public void load(PrimitiveData data) {
+        if (!(data instanceof RelationData))
+            throw new IllegalArgumentException("Not a relation data: " + data);
         boolean locked = writeLock();
         try {
             super.load(data);
@@ -270,7 +274,8 @@ public final class Relation extends OsmPrimitive implements IRelation {
         }
     }
 
-    @Override public RelationData save() {
+    @Override
+    public RelationData save() {
         RelationData data = new RelationData();
         saveCommonAttributes(data);
         for (RelationMember member:getMembers()) {

@@ -79,4 +79,28 @@ public class NodeTest {
         assertTrue(box1.isValid());
         assertEquals(box1.getCenter(), new LatLon(15, 15));
     }
+
+    /**
+     * Test that {@link Node#cloneFrom} throws IAE for invalid arguments
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testCloneFromIAE() {
+        new Node().cloneFrom(new Way());
+    }
+
+    /**
+     * Test that {@link Node#mergeFrom} throws IAE for invalid arguments
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testMergeFromIAE() {
+        new Node().mergeFrom(new Way());
+    }
+
+    /**
+     * Test that {@link Node#load} throws IAE for invalid arguments
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testLoadIAE() {
+        new Node().load(new WayData());
+    }
 }

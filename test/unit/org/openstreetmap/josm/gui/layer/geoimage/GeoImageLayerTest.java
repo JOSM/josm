@@ -13,7 +13,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer.Loader;
 import org.openstreetmap.josm.io.GpxReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -55,5 +57,13 @@ public class GeoImageLayerTest {
             assertEquals("<html>1 image loaded. 0 were found to be GPS tagged.</html>", layer.getInfoComponent());
             assertEquals("<html>1 image loaded. 0 were found to be GPS tagged.</html>", layer.getToolTipText());
         }
+    }
+
+    /**
+     * Test that {@link GeoImageLayer#mergeFrom} throws IAE for invalid arguments
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testMergeFromIAE() {
+        new GeoImageLayer(null, null).mergeFrom(new OsmDataLayer(new DataSet(), "", null));
     }
 }
