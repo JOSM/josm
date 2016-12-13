@@ -210,10 +210,8 @@ public class SelectionListDialog extends ToggleDialog {
                     // else open relation editor if applicable
                     actEditRelationSelection.actionPerformed(null);
                 }
-            } else if (highlightEnabled && Main.isDisplayingMapView()) {
-                if (helper.highlightOnly(model.getElementAt(idx))) {
-                    Main.map.mapView.repaint();
-                }
+            } else if (highlightEnabled && Main.isDisplayingMapView() && helper.highlightOnly(model.getElementAt(idx))) {
+                Main.map.mapView.repaint();
             }
         }
 

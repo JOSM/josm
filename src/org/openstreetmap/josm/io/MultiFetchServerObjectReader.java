@@ -192,12 +192,10 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
         if (relation.isNew()) return this;
         remember(relation.getPrimitiveId());
         for (RelationMember member : !recursesDown() ? relation.getMembers() : Collections.<RelationMember>emptyList()) {
-            if (OsmPrimitiveType.from(member.getMember()).equals(OsmPrimitiveType.RELATION)) {
-                // avoid infinite recursion in case of cyclic dependencies in relations
-                //
-                if (relations.contains(member.getMember().getId())) {
-                    continue;
-                }
+            // avoid infinite recursion in case of cyclic dependencies in relations
+            if (OsmPrimitiveType.from(member.getMember()).equals(OsmPrimitiveType.RELATION)
+                    && relations.contains(member.getMember().getId())) {
+                continue;
             }
             if (!member.getMember().isIncomplete()) {
                 append(member.getMember());

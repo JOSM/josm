@@ -81,19 +81,16 @@ public class OsmExporter extends FileExporter {
     private void save(File file, OsmDataLayer layer, boolean noBackup) {
         File tmpFile = null;
         try {
-            // use a tmp file because if something errors out in the
-            // process of writing the file, we might just end up with
-            // a truncated file.  That can destroy lots of work.
+            // use a tmp file because if something errors out in the process of writing the file,
+            // we might just end up with a truncated file.  That can destroy lots of work.
             if (file.exists()) {
                 tmpFile = new File(file.getPath() + '~');
                 Utils.copyFile(file, tmpFile);
             }
 
             doSave(file, layer);
-            if (noBackup || !Main.pref.getBoolean("save.keepbackup", false)) {
-                if (tmpFile != null) {
-                    Utils.deleteFile(tmpFile);
-                }
+            if ((noBackup || !Main.pref.getBoolean("save.keepbackup", false)) && tmpFile != null) {
+                Utils.deleteFile(tmpFile);
             }
             layer.onPostSaveToFile();
         } catch (IOException e) {
@@ -106,8 +103,7 @@ public class OsmExporter extends FileExporter {
             );
 
             try {
-                // if the file save failed, then the tempfile will not
-                // be deleted.  So, restore the backup if we made one.
+                // if the file save failed, then the tempfile will not be deleted. So, restore the backup if we made one.
                 if (tmpFile != null && tmpFile.exists()) {
                     Utils.copyFile(tmpFile, file);
                 }

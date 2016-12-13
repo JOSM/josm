@@ -114,11 +114,8 @@ public abstract class AbstractTextComponentValidator implements ActionListener, 
         if (addDocumentListener) {
             tc.getDocument().addDocumentListener(this);
         }
-        if (addActionListener) {
-            if (tc instanceof JosmTextField) {
-                JosmTextField tf = (JosmTextField) tc;
-                tf.addActionListener(this);
-            }
+        if (addActionListener && tc instanceof JosmTextField) {
+            ((JosmTextField) tc).addActionListener(this);
         }
         tc.addPropertyChangeListener("enabled", this);
     }

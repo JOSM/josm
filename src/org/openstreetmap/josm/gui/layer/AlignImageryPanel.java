@@ -82,12 +82,10 @@ public class AlignImageryPanel extends JPanel {
      */
     public static void addNagPanelIfNeeded(ImageryInfo infoToAdd) {
         BooleanProperty showAgain = new BooleanProperty("message.imagery.nagPanel." + infoToAdd.getUrl(), true);
-        if (Main.isDisplayingMapView() && showAgain.get() && !infoToAdd.isGeoreferenceValid()) {
-            if (Main.map.getTopPanel(AlignImageryPanel.class) == null) {
-                double w = GuiHelper.getScreenSize().getWidth();
-                AlignImageryPanel p = new AlignImageryPanel(w > 1300, showAgain, infoToAdd);
-                Main.map.addTopPanel(p);
-            }
+        if (Main.isDisplayingMapView() && showAgain.get() && !infoToAdd.isGeoreferenceValid()
+                && Main.map.getTopPanel(AlignImageryPanel.class) == null) {
+            double w = GuiHelper.getScreenSize().getWidth();
+            Main.map.addTopPanel(new AlignImageryPanel(w > 1300, showAgain, infoToAdd));
         }
     }
 }

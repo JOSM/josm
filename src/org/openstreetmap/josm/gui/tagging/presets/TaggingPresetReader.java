@@ -279,10 +279,8 @@ public final class TaggingPresetReader {
                         all.getLast().data.add((TaggingPresetItem) o);
                         if (o instanceof ComboMultiSelect) {
                             ((ComboMultiSelect) o).addListEntries(listEntries);
-                        } else if (o instanceof Key) {
-                            if (((Key) o).value == null) {
-                                ((Key) o).value = ""; // Fix #8530
-                            }
+                        } else if (o instanceof Key && ((Key) o).value == null) {
+                            ((Key) o).value = ""; // Fix #8530
                         }
                         listEntries = new LinkedList<>();
                         lastrole = null;

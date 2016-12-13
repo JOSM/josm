@@ -126,11 +126,9 @@ public final class TaggingPresets {
      * @param presets The tagging presets to add
      */
     public static void addTaggingPresets(Collection<TaggingPreset> presets) {
-        if (presets != null) {
-            if (taggingPresets.addAll(presets)) {
-                for (TaggingPresetListener listener : listeners) {
-                    listener.taggingPresetsModified();
-                }
+        if (presets != null && taggingPresets.addAll(presets)) {
+            for (TaggingPresetListener listener : listeners) {
+                listener.taggingPresetsModified();
             }
         }
     }

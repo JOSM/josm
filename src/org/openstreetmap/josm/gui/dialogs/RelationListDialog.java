@@ -204,10 +204,8 @@ public class RelationListDialog extends ToggleDialog
         Component focused = FocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
 
         //update highlights
-        if (highlightEnabled && focused == displaylist && Main.isDisplayingMapView()) {
-            if (highlightHelper.highlightOnly(sel)) {
-                Main.map.mapView.repaint();
-            }
+        if (highlightEnabled && focused == displaylist && Main.isDisplayingMapView() && highlightHelper.highlightOnly(sel)) {
+            Main.map.mapView.repaint();
         }
     }
 

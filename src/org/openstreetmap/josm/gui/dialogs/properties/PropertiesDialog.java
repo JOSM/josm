@@ -384,10 +384,8 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
                 //update highlights
                 if (Main.isDisplayingMapView()) {
                     int row = membershipTable.rowAtPoint(e.getPoint());
-                    if (row >= 0) {
-                        if (highlightHelper.highlightOnly((Relation) membershipTable.getValueAt(row, 0))) {
-                            Main.map.mapView.repaint();
-                        }
+                    if (row >= 0 && highlightHelper.highlightOnly((Relation) membershipTable.getValueAt(row, 0))) {
+                        Main.map.mapView.repaint();
                     }
                 }
                 super.mouseClicked(e);

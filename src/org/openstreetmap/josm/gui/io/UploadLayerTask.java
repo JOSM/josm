@@ -131,10 +131,8 @@ public class UploadLayerTask extends AbstractIOTask {
                     recoverFromGoneOnServer(e, monitor);
                 }
             }
-            if (strategy.isCloseChangesetAfterUpload()) {
-                if (changeset != null && changeset.getId() > 0) {
-                    OsmApi.getOsmApi().closeChangeset(changeset, monitor.createSubTaskMonitor(0, false));
-                }
+            if (strategy.isCloseChangesetAfterUpload() && changeset != null && changeset.getId() > 0) {
+                OsmApi.getOsmApi().closeChangeset(changeset, monitor.createSubTaskMonitor(0, false));
             }
         } catch (OsmTransferException sxe) {
             if (isCanceled()) {

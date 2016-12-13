@@ -338,12 +338,9 @@ public class CachedFile implements Closeable {
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                if (entry.getName().endsWith('.' + extension)) {
-                    /* choose any file with correct extension. When more than
-                        one file, prefer the one which matches namepart */
-                    if (resentry == null || entry.getName().indexOf(namepart) >= 0) {
-                        resentry = entry;
-                    }
+                // choose any file with correct extension. When more than one file, prefer the one which matches namepart
+                if (entry.getName().endsWith('.' + extension) && (resentry == null || entry.getName().indexOf(namepart) >= 0)) {
+                    resentry = entry;
                 }
             }
             if (resentry != null) {

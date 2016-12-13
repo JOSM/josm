@@ -276,10 +276,8 @@ public class ColorPreference implements SubPreferenceSetting {
         }
         for (int i = 0; i < colors.getRowCount(); ++i) {
             String key = (String) colors.getValueAt(i, 0);
-            if (Main.pref.putColor(key, (Color) colors.getValueAt(i, 1))) {
-                if (key.startsWith("mappaint.")) {
-                    ret = true;
-                }
+            if (Main.pref.putColor(key, (Color) colors.getValueAt(i, 1)) && key.startsWith("mappaint.")) {
+                ret = true;
             }
         }
         OsmDataLayer.createHatchTexture();

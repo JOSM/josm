@@ -173,13 +173,11 @@ public interface NativeScaleLayer {
                 Scale previous = null;
                 for (int i = 0; i < size; i++) {
                     Scale current = this.scales.get(i);
-                    if (previous != null) {
-                        if (scale <= previous.scale && scale >= current.scale) {
-                            if (floor || previous.scale / scale < scale / current.scale) {
-                                return new Scale(previous.scale, previous.isNative, i-1);
-                            } else {
-                                return new Scale(current.scale, current.isNative, i);
-                            }
+                    if (previous != null && scale <= previous.scale && scale >= current.scale) {
+                        if (floor || previous.scale / scale < scale / current.scale) {
+                            return new Scale(previous.scale, previous.isNative, i-1);
+                        } else {
+                            return new Scale(current.scale, current.isNative, i);
                         }
                     }
                     previous = current;

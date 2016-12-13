@@ -142,10 +142,8 @@ public class ElemStyles implements PreferenceChangedListener {
                 }
                 if (!hasNonModifier) {
                     p.a = new StyleElementList(p.a, NodeElement.SIMPLE_NODE_ELEMSTYLE);
-                    if (!hasText) {
-                        if (TextLabel.AUTO_LABEL_COMPOSITION_STRATEGY.compose(osm) != null) {
-                            p.a = new StyleElementList(p.a, BoxTextElement.SIMPLE_NODE_TEXT_ELEMSTYLE);
-                        }
+                    if (!hasText && TextLabel.AUTO_LABEL_COMPOSITION_STRATEGY.compose(osm) != null) {
+                        p.a = new StyleElementList(p.a, BoxTextElement.SIMPLE_NODE_TEXT_ELEMSTYLE);
                     }
                 }
             }
@@ -317,18 +315,17 @@ public class ElemStyles implements PreferenceChangedListener {
             return p;
         } else if (osm instanceof Relation) {
             Pair<StyleElementList, Range> p = generateStyles(osm, scale, true);
-            if (drawMultipolygon && ((Relation) osm).isMultipolygon()) {
-                if (!Utils.exists(p.a, AreaElement.class) && Main.pref.getBoolean("multipolygon.deprecated.outerstyle", true)) {
-                    // look at outer ways to find area style
-                    Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, (Relation) osm);
-                    for (Way w : multipolygon.getOuterWays()) {
-                        Pair<StyleElementList, Range> wayStyles = generateStyles(w, scale, false);
-                        p.b = Range.cut(p.b, wayStyles.b);
-                        StyleElement area = Utils.find(wayStyles.a, AreaElement.class);
-                        if (area != null) {
-                            p.a = new StyleElementList(p.a, area);
-                            break;
-                        }
+            if (drawMultipolygon && ((Relation) osm).isMultipolygon()
+                    && !Utils.exists(p.a, AreaElement.class) && Main.pref.getBoolean("multipolygon.deprecated.outerstyle", true)) {
+                // look at outer ways to find area style
+                Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, (Relation) osm);
+                for (Way w : multipolygon.getOuterWays()) {
+                    Pair<StyleElementList, Range> wayStyles = generateStyles(w, scale, false);
+                    p.b = Range.cut(p.b, wayStyles.b);
+                    StyleElement area = Utils.find(wayStyles.a, AreaElement.class);
+                    if (area != null) {
+                        p.a = new StyleElementList(p.a, area);
+                        break;
                     }
                 }
             }
