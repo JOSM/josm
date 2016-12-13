@@ -1,13 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 
 /**
  * Unit tests for class {@link Storage}.
@@ -25,13 +25,10 @@ public class StorageTest {
      * Unit test of methods {@link Storage#equals} and {@link Storage#hashCode}.
      */
     @Test
-    @Ignore("not ready")
     public void testEqualsContract() {
         EqualsVerifier.forClass(Storage.class).usingGetClass()
-            /*.withPrefabValues(Collection.class, new HashSet<>(Arrays.asList(1)), new HashSet<>(Arrays.asList(2)))
-            .withPrefabValues(AbstractCollection.class, new HashSet<>(Arrays.asList(1)), new HashSet<>(Arrays.asList(2)))
-            .withPrefabValues(Set.class, new HashSet<>(Arrays.asList(1)), new HashSet<>(Arrays.asList(2)))
-            .withPrefabValues(AbstractSet.class, new HashSet<>(Arrays.asList(1)), new HashSet<>(Arrays.asList(2)))*/
+            .suppress(Warning.NONFINAL_FIELDS)
+            .withIgnoredFields("arrayCopyNecessary", "hash", "mask", "modCount", "safeIterator", "size")
             .withPrefabValues(Hash.class, Storage.<Integer>defaultHash(), Storage.<Boolean>defaultHash())
             .verify();
     }
