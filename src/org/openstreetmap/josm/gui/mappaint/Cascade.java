@@ -18,13 +18,28 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * Simple map of properties with dynamic typing.
  */
-public final class Cascade implements Cloneable {
+public final class Cascade {
 
-    private Map<String, Object> prop = new HashMap<>();
+    private final Map<String, Object> prop;
 
     private boolean defaultSelectedHandling = true;
 
     private static final Pattern HEX_COLOR_PATTERN = Pattern.compile("#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})");
+
+    /**
+     * Constructs a new {@code Cascade}.
+     */
+    public Cascade() {
+        this.prop = new HashMap<>();
+    }
+
+    /**
+     * Constructs a new {@code Cascade} from existing one.
+     * @param other other Cascade
+     */
+    public Cascade(Cascade other) {
+        this.prop = new HashMap<>(other.prop);
+    }
 
     public <T> T get(String key, T def, Class<T> klass) {
         return get(key, def, klass, false);
@@ -192,19 +207,6 @@ public final class Cascade implements Cloneable {
             }
         }
         return null;
-    }
-
-    @Override
-    public Cascade clone() {
-        try {
-            Cascade c = (Cascade) super.clone();
-            @SuppressWarnings({ "unchecked", "rawtypes" })
-            Map<String, Object> clonedProp = (Map<String, Object>) ((HashMap) this.prop).clone();
-            c.prop = clonedProp;
-            return c;
-        } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException(e);
-        }
     }
 
     @Override
