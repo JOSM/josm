@@ -1,6 +1,12 @@
 <FindBugsFilter>
 
 	<Match>
+		<Bug pattern="DM_EXIT" />
+	</Match>
+	<Match>
+		<Bug pattern="DMI_HARDCODED_ABSOLUTE_FILENAME" />
+	</Match>
+	<Match>
 		<Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS" />
 	</Match>
 	<Match>
