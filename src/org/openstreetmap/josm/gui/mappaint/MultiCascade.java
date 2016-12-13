@@ -38,7 +38,7 @@ public class MultiCascade implements StyleKeys {
         Cascade c = layers.get(layer);
         if (c == null) {
             if (layers.containsKey("*")) {
-                c = layers.get("*").clone();
+                c = new Cascade(layers.get("*"));
             } else {
                 c = new Cascade();
                 // Everything that is not on the default layer is assumed to
