@@ -149,7 +149,7 @@ public class CombineWayAction extends JosmAction {
             if (reversedWays.size() > unreversedWays.size()) {
                 Collections.reverse(path);
                 List<Way> tempWays = unreversedWays;
-                unreversedWays = reversedWays;
+                unreversedWays = null;
                 reversedWays = tempWays;
             }
             // if there are still reversed ways with direction-dependent tags, reverse their tags

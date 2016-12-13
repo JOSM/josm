@@ -46,6 +46,8 @@ public final class OrthogonalizeAction extends JosmAction {
             "(Afterwards, you can undo the movement for certain nodes:<br>"+
             "Select them and press the shortcut for Orthogonalize / Undo. The default is Shift-Q.)");
 
+    private static final double EPSILON = 1E-6;
+
     /**
      * Constructs a new {@code OrthogonalizeAction}.
      */
@@ -414,10 +416,9 @@ public final class OrthogonalizeAction extends JosmAction {
             final double dx = tmp.east() - n.getEastNorth().east();
             final double dy = tmp.north() - n.getEastNorth().north();
             if (headingNodes.contains(n)) { // The heading nodes should not have changed
-                final double epsilon = 1E-6;
-                if (Math.abs(dx) > Math.abs(epsilon * tmp.east()) ||
-                        Math.abs(dy) > Math.abs(epsilon * tmp.east()))
-                    throw new AssertionError();
+                if (Math.abs(dx) > Math.abs(EPSILON * tmp.east()) ||
+                    Math.abs(dy) > Math.abs(EPSILON * tmp.east()))
+                    throw new AssertionError("heading node has changed");
             } else {
                 OrthogonalizeAction.rememberMovements.put(n, new EastNorth(dx, dy));
                 commands.add(new MoveCommand(n, dx, dy));
