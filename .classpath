@@ -14,7 +14,7 @@
 	<classpathentry kind="lib" path="test/lib/fest/jcip-annotations-1.0.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/MRJToolkitStubs-1.0.jar"/>
 	<classpathentry kind="lib" path="test/lib/jfcunit.jar"/>
-	<classpathentry kind="lib" path="test/lib/equalsverifier-2.1.6.jar"/>
+	<classpathentry kind="lib" path="test/lib/equalsverifier-2.1.8.jar"/>
 	<classpathentry kind="lib" path="test/lib/reflections/reflections-0.9.10.jar"/>
 	<classpathentry kind="lib" path="test/lib/reflections/guava-19.0.jar"/>
 	<classpathentry kind="lib" path="test/lib/reflections/javassist-3.20.0-GA.jar"/>
