@@ -90,10 +90,8 @@ public class UploadSelectionAction extends JosmAction {
         OsmDataLayer editLayer = getLayerManager().getEditLayer();
         if (!isEnabled())
             return;
-        if (editLayer.isUploadDiscouraged()) {
-            if (UploadAction.warnUploadDiscouraged(editLayer)) {
-                return;
-            }
+        if (editLayer.isUploadDiscouraged() && UploadAction.warnUploadDiscouraged(editLayer)) {
+            return;
         }
         Collection<OsmPrimitive> modifiedCandidates = getModifiedPrimitives(editLayer.data.getAllSelected());
         Collection<OsmPrimitive> deletedCandidates = getDeletedPrimitives(editLayer.data);

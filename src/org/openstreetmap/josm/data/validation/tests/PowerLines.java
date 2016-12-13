@@ -64,13 +64,11 @@ public class PowerLines extends Test {
                 boolean canFix = false;
                 for (Node n : w.getNodes()) {
                     if (!isPowerTower(n)) {
-                        if (!isPowerAllowed(n) && IN_DOWNLOADED_AREA.test(n)) {
-                            if (!w.isFirstLastNode(n) || !isPowerStation(n)) {
-                                error = TestError.builder(this, Severity.WARNING, POWER_LINES)
-                                        .message(tr("Missing power tower/pole within power line"))
-                                        .primitives(n);
-                                errorNode = n;
-                            }
+                        if (!isPowerAllowed(n) && IN_DOWNLOADED_AREA.test(n) && (!w.isFirstLastNode(n) || !isPowerStation(n))) {
+                            error = TestError.builder(this, Severity.WARNING, POWER_LINES)
+                                    .message(tr("Missing power tower/pole within power line"))
+                                    .primitives(n);
+                            errorNode = n;
                         }
                     } else if (fixValue == null) {
                         // First tower/pole tag found, remember it

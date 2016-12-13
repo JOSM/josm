@@ -644,10 +644,9 @@ public class Multipolygon {
 
         PolyData result = null;
         for (PolyData combined : outerPolygons) {
-            if (combined.contains(inner.poly) != Intersection.OUTSIDE) {
-                if (result == null || result.contains(combined.poly) == Intersection.INSIDE) {
-                    result = combined;
-                }
+            if (combined.contains(inner.poly) != Intersection.OUTSIDE
+                    && (result == null || result.contains(combined.poly) == Intersection.INSIDE)) {
+                result = combined;
             }
         }
         return result;

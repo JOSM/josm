@@ -133,11 +133,9 @@ public class FilterMatcher {
                 hiddenFilters.add(fi);
             }
         } else {
-            if (filter.mode == SearchMode.replace) {
-                if (filter.hiding) {
-                    hiddenFilters.clear();
-                    disabledFilters.clear();
-                }
+            if (filter.mode == SearchMode.replace && filter.hiding) {
+                hiddenFilters.clear();
+                disabledFilters.clear();
             }
 
             disabledFilters.add(fi);

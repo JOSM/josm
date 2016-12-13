@@ -313,11 +313,9 @@ public class UrlValidator extends AbstractValidator {
 
         String authority = urlMatcher.group(PARSE_URL_AUTHORITY);
         if ("file".equals(scheme)) { // Special case - file: allows an empty authority
-            if (!"".equals(authority)) {
-                if (authority.contains(":")) { // but cannot allow trailing :
-                    setErrorMessage(tr("URL contains an invalid authority: {0}", authority));
-                    return false;
-                }
+            if (!"".equals(authority) && authority.contains(":")) { // but cannot allow trailing :
+                setErrorMessage(tr("URL contains an invalid authority: {0}", authority));
+                return false;
             }
             // drop through to continue validation
         } else { // not file:

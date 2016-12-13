@@ -186,10 +186,8 @@ public class UploadAction extends JosmAction {
      * @return true, if the preconditions are met; false, otherwise
      */
     public static boolean checkPreUploadConditions(AbstractModifiableLayer layer, APIDataSet apiData) {
-        if (layer.isUploadDiscouraged()) {
-            if (warnUploadDiscouraged(layer)) {
-                return false;
-            }
+        if (layer.isUploadDiscouraged() && warnUploadDiscouraged(layer)) {
+            return false;
         }
         if (layer instanceof OsmDataLayer) {
             OsmDataLayer osmLayer = (OsmDataLayer) layer;
