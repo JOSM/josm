@@ -114,12 +114,12 @@ public class AutoCompletionManager implements DataSetListener {
     /**
      * the same as tagCache but for the preset keys and values can be accessed directly
      */
-    protected static final MultiMap<String, String> PRESET_TAG_CACHE = new MultiMap<>();
+    static final MultiMap<String, String> PRESET_TAG_CACHE = new MultiMap<>();
 
     /**
      * Cache for tags that have been entered by the user.
      */
-    protected static final Set<UserInputTag> USER_INPUT_TAG_CACHE = new LinkedHashSet<>();
+    static final Set<UserInputTag> USER_INPUT_TAG_CACHE = new LinkedHashSet<>();
 
     /**
      * the cached list of member roles
@@ -131,7 +131,7 @@ public class AutoCompletionManager implements DataSetListener {
     /**
      * the same as roleCache but for the preset roles can be accessed directly
      */
-    protected static final Set<String> PRESET_ROLE_CACHE = new HashSet<>();
+    static final Set<String> PRESET_ROLE_CACHE = new HashSet<>();
 
     /**
      * Constructs a new {@code AutoCompletionManager}.
