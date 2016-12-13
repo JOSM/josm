@@ -103,19 +103,28 @@ import org.xml.sax.SAXException;
  */
 public abstract class SourceEditor extends JPanel {
 
+    /** the type of source entry **/
     protected final SourceType sourceType;
+    /** determines if the entry type can be enabled (set as active) **/
     protected final boolean canEnable;
 
+    /** the table of active sources **/
     protected final JTable tblActiveSources;
+    /** the underlying model of active sources **/
     protected final ActiveSourcesModel activeSourcesModel;
+    /** the list of available sources **/
     protected final JList<ExtendedSourceEntry> lstAvailableSources;
+    /** the underlying model of available sources **/
     protected final AvailableSourcesListModel availableSourcesModel;
+    /** the URL from which the available sources are fetched **/
     protected final String availableSourcesUrl;
+    /** the list of source providers **/
     protected final transient List<SourceProvider> sourceProviders;
 
     private JTable tblIconPaths;
     private IconPathTableModel iconPathsModel;
 
+    /** determines if the source providers have been initially loaded **/
     protected boolean sourcesInitiallyLoaded;
 
     /**
@@ -396,6 +405,12 @@ public abstract class SourceEditor extends JPanel {
      */
     public abstract boolean finish();
 
+    /**
+     * Default implementation of {@link #finish}.
+     * @param prefHelper Helper class for specialized extensions preferences
+     * @param iconPref icons path preference
+     * @return true if restart is required
+     */
     protected boolean doFinish(SourcePrefHelper prefHelper, String iconPref) {
         boolean changed = prefHelper.put(activeSourcesModel.getSources());
 
@@ -511,6 +526,11 @@ public abstract class SourceEditor extends JPanel {
         activeSourcesModel.removeIdxs(idxs);
     }
 
+    /**
+     * Reload available sources.
+     * @param url the URL from which the available sources are fetched
+     * @param sourceProviders the list of source providers
+     */
     protected void reloadAvailableSources(String url, List<SourceProvider> sourceProviders) {
         Main.worker.submit(new SourceLoader(url, sourceProviders));
     }
@@ -525,15 +545,26 @@ public abstract class SourceEditor extends JPanel {
         sourcesInitiallyLoaded = true;
     }
 
+    /**
+     * List model of available sources.
+     */
     protected static class AvailableSourcesListModel extends DefaultListModel<ExtendedSourceEntry> {
         private final transient List<ExtendedSourceEntry> data;
         private final DefaultListSelectionModel selectionModel;
 
+        /**
+         * Constructs a new {@code AvailableSourcesListModel}
+         * @param selectionModel selection model
+         */
         public AvailableSourcesListModel(DefaultListSelectionModel selectionModel) {
             data = new ArrayList<>();
             this.selectionModel = selectionModel;
         }
 
+        /**
+         * Sets the source list.
+         * @param sources source list
+         */
         public void setSources(List<ExtendedSourceEntry> sources) {
             data.clear();
             if (sources != null) {
@@ -553,6 +584,9 @@ public abstract class SourceEditor extends JPanel {
             return data.size();
         }
 
+        /**
+         * Deletes the selected sources.
+         */
         public void deleteSelected() {
             Iterator<ExtendedSourceEntry> it = data.iterator();
             int i = 0;
@@ -566,6 +600,10 @@ public abstract class SourceEditor extends JPanel {
             fireContentsChanged(this, 0, data.size());
         }
 
+        /**
+         * Returns the selected sources.
+         * @return the selected sources
+         */
         public List<ExtendedSourceEntry> getSelected() {
             List<ExtendedSourceEntry> ret = new ArrayList<>();
             for (int i = 0; i < data.size(); i++) {
@@ -577,10 +615,17 @@ public abstract class SourceEditor extends JPanel {
         }
     }
 
+    /**
+     * Table model of active sources.
+     */
     protected class ActiveSourcesModel extends AbstractTableModel {
         private transient List<SourceEntry> data;
         private final DefaultListSelectionModel selectionModel;
 
+        /**
+         * Constructs a new {@code ActiveSourcesModel}.
+         * @param selectionModel selection model
+         */
         public ActiveSourcesModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
             this.data = new ArrayList<>();
@@ -625,6 +670,10 @@ public abstract class SourceEditor extends JPanel {
             }
         }
 
+        /**
+         * Sets active sources.
+         * @param sources active sources
+         */
         public void setActiveSources(Collection<? extends SourceEntry> sources) {
             data.clear();
             if (sources != null) {
@@ -635,6 +684,10 @@ public abstract class SourceEditor extends JPanel {
             fireTableDataChanged();
         }
 
+        /**
+         * Adds an active source.
+         * @param entry source to add
+         */
         public void addSource(SourceEntry entry) {
             if (entry == null) return;
             data.add(entry);
@@ -645,6 +698,9 @@ public abstract class SourceEditor extends JPanel {
             }
         }
 
+        /**
+         * Removes the selected sources.
+         */
         public void removeSelected() {
             Iterator<SourceEntry> it = data.iterator();
             int i = 0;
@@ -658,6 +714,10 @@ public abstract class SourceEditor extends JPanel {
             fireTableDataChanged();
         }
 
+        /**
+         * Removes the sources at given indexes.
+         * @param idxs indexes to remove
+         */
         public void removeIdxs(Collection<Integer> idxs) {
             List<SourceEntry> newData = new ArrayList<>();
             for (int i = 0; i < data.size(); ++i) {
@@ -669,6 +729,10 @@ public abstract class SourceEditor extends JPanel {
             fireTableDataChanged();
         }
 
+        /**
+         * Adds multiple sources.
+         * @param sources source entries
+         */
         public void addExtendedSourceEntries(List<ExtendedSourceEntry> sources) {
             if (sources == null) return;
             for (ExtendedSourceEntry info: sources) {
@@ -686,6 +750,10 @@ public abstract class SourceEditor extends JPanel {
             selectionModel.setValueIsAdjusting(false);
         }
 
+        /**
+         * Returns the active sources.
+         * @return the active sources
+         */
         public List<SourceEntry> getSources() {
             return new ArrayList<>(data);
         }
@@ -831,12 +899,21 @@ public abstract class SourceEditor extends JPanel {
         }
     }
 
+    /**
+     * Dialog to edit a source entry.
+     */
     protected class EditSourceEntryDialog extends ExtendedDialog {
 
         private final JosmTextField tfTitle;
         private final JosmTextField tfURL;
         private JCheckBox cbActive;
 
+        /**
+         * Constructs a new {@code EditSourceEntryDialog}.
+         * @param parent parent component
+         * @param title dialog title
+         * @param e source entry to edit
+         */
         public EditSourceEntryDialog(Component parent, String title, SourceEntry e) {
             super(parent, title, new String[] {tr("Ok"), tr("Cancel")});
 
@@ -934,10 +1011,18 @@ public abstract class SourceEditor extends JPanel {
             return tfTitle.getText();
         }
 
+        /**
+         * Returns the entered URL / File.
+         * @return the entered URL / File
+         */
         public String getURL() {
             return tfURL.getText();
         }
 
+        /**
+         * Determines if the active combobox is selected.
+         * @return {@code true} if the active combobox is selected
+         */
         public boolean active() {
             if (!canEnable)
                 throw new UnsupportedOperationException();
@@ -1159,10 +1244,17 @@ public abstract class SourceEditor extends JPanel {
         }
     }
 
+    /**
+     * Table model for icons paths.
+     */
     protected static class IconPathTableModel extends AbstractTableModel {
         private final List<String> data;
         private final DefaultListSelectionModel selectionModel;
 
+        /**
+         * Constructs a new {@code IconPathTableModel}.
+         * @param selectionModel selection model
+         */
         public IconPathTableModel(DefaultListSelectionModel selectionModel) {
             this.selectionModel = selectionModel;
             this.data = new ArrayList<>();
@@ -1193,6 +1285,10 @@ public abstract class SourceEditor extends JPanel {
             updatePath(rowIndex, (String) aValue);
         }
 
+        /**
+         * Sets the icons paths.
+         * @param paths icons paths
+         */
         public void setIconPaths(Collection<String> paths) {
             data.clear();
             if (paths != null) {
@@ -1202,6 +1298,10 @@ public abstract class SourceEditor extends JPanel {
             fireTableDataChanged();
         }
 
+        /**
+         * Adds an icon path.
+         * @param path icon path to add
+         */
         public void addPath(String path) {
             if (path == null) return;
             data.add(path);
@@ -1213,6 +1313,11 @@ public abstract class SourceEditor extends JPanel {
             }
         }
 
+        /**
+         * Updates icon path at given index.
+         * @param pos position
+         * @param path new path
+         */
         public void updatePath(int pos, String path) {
             if (path == null) return;
             if (pos < 0 || pos >= getRowCount()) return;
@@ -1225,6 +1330,9 @@ public abstract class SourceEditor extends JPanel {
             }
         }
 
+        /**
+         * Removes the selected path.
+         */
         public void removeSelected() {
             Iterator<String> it = data.iterator();
             int i = 0;
@@ -1239,6 +1347,9 @@ public abstract class SourceEditor extends JPanel {
             selectionModel.clearSelection();
         }
 
+        /**
+         * Sorts paths lexicographically.
+         */
         protected void sort() {
             data.sort((o1, o2) -> {
                     if (o1.isEmpty() && o2.isEmpty())
@@ -1249,6 +1360,10 @@ public abstract class SourceEditor extends JPanel {
                 });
         }
 
+        /**
+         * Returns the icon paths.
+         * @return the icon paths
+         */
         public List<String> getIconPaths() {
             return new ArrayList<>(data);
         }
@@ -1745,6 +1860,11 @@ public abstract class SourceEditor extends JPanel {
         });
     }
 
+    /**
+     * Returns the title of the given source entry.
+     * @param entry source entry
+     * @return the title of the given source entry, or null if empty
+     */
     protected String getTitleForSourceEntry(SourceEntry entry) {
         return "".equals(entry.title) ? null : entry.title;
     }
