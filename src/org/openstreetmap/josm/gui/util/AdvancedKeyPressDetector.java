@@ -119,27 +119,23 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
         if (e.getID() == KeyEvent.KEY_PRESSED) {
             if (timer.isRunning()) {
                 timer.stop();
-            } else if (set.add(e.getKeyCode()) && enabled) {
-                if (isFocusInMainWindow()) {
-                    for (KeyPressReleaseListener q: keyListeners) {
-                        if (Main.isTraceEnabled()) {
-                            Main.trace(q+" => doKeyPressed("+e+')');
-                        }
-                        q.doKeyPressed(e);
+            } else if (set.add(e.getKeyCode()) && enabled && isFocusInMainWindow()) {
+                for (KeyPressReleaseListener q: keyListeners) {
+                    if (Main.isTraceEnabled()) {
+                        Main.trace(q+" => doKeyPressed("+e+')');
                     }
+                    q.doKeyPressed(e);
                 }
             }
         } else if (e.getID() == KeyEvent.KEY_RELEASED) {
             if (timer.isRunning()) {
                 timer.stop();
-                if (set.remove(e.getKeyCode()) && enabled) {
-                    if (isFocusInMainWindow()) {
-                        for (KeyPressReleaseListener q: keyListeners) {
-                            if (Main.isTraceEnabled()) {
-                                Main.trace(q+" => doKeyReleased("+e+')');
-                            }
-                            q.doKeyReleased(e);
+                if (set.remove(e.getKeyCode()) && enabled && isFocusInMainWindow()) {
+                    for (KeyPressReleaseListener q: keyListeners) {
+                        if (Main.isTraceEnabled()) {
+                            Main.trace(q+" => doKeyReleased("+e+')');
                         }
+                        q.doKeyReleased(e);
                     }
                 }
             } else {

@@ -97,10 +97,8 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
             //center view on selected note on double click
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2) {
-                    if (noteData != null && noteData.getSelectedNote() != null) {
-                        Main.map.mapView.zoomTo(noteData.getSelectedNote().getLatLon());
-                    }
+                if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2 && noteData != null && noteData.getSelectedNote() != null) {
+                    Main.map.mapView.zoomTo(noteData.getSelectedNote().getLatLon());
                 }
             }
         });

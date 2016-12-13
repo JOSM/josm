@@ -73,11 +73,9 @@ public class PopupMenuHandler {
             }
             MenuElement[] elements = menu.getSubElements();
             for (int i = 0; i < elements.length; i++) {
-                if (elements[i] instanceof JMenuItem) {
-                    if (((JMenuItem) elements[i]).getAction() == a) {
-                        menu.remove(i);
-                        return;
-                    }
+                if (elements[i] instanceof JMenuItem && ((JMenuItem) elements[i]).getAction() == a) {
+                    menu.remove(i);
+                    return;
                 }
             }
         }

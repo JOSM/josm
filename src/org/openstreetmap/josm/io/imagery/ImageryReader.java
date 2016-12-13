@@ -290,11 +290,9 @@ public class ImageryReader implements Closeable {
                 }
                 break;
             case MIRROR:
-                if ("mirror".equals(qName)) {
-                    if (mirrorEntry != null) {
-                        entry.addMirror(mirrorEntry);
-                        mirrorEntry = null;
-                    }
+                if ("mirror".equals(qName) && mirrorEntry != null) {
+                    entry.addMirror(mirrorEntry);
+                    mirrorEntry = null;
                 }
                 break;
             case MIRROR_ATTRIBUTE:

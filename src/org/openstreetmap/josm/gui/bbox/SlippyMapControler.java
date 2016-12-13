@@ -117,8 +117,7 @@ public class SlippyMapControler extends MouseAdapter {
     }
 
     /**
-     * Start drawing the selection rectangle if it was the 1st button (left
-     * button)
+     * Start drawing the selection rectangle if it was the 1st button (left button)
      */
     @Override
     public void mousePressed(MouseEvent e) {
@@ -131,12 +130,10 @@ public class SlippyMapControler extends MouseAdapter {
     @Override
     public void mouseDragged(MouseEvent e) {
         if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK &&
-                !(Main.isPlatformOsx() && e.getModifiersEx() == MAC_MOUSE_BUTTON3_MASK)) {
-            if (iStartSelectionPoint != null) {
-                iEndSelectionPoint = e.getPoint();
-                iSlippyMapChooser.setSelection(iStartSelectionPoint, iEndSelectionPoint);
-                isSelecting = true;
-            }
+                !(Main.isPlatformOsx() && e.getModifiersEx() == MAC_MOUSE_BUTTON3_MASK) && iStartSelectionPoint != null) {
+            iEndSelectionPoint = e.getPoint();
+            iSlippyMapChooser.setSelection(iStartSelectionPoint, iEndSelectionPoint);
+            isSelecting = true;
         }
     }
 

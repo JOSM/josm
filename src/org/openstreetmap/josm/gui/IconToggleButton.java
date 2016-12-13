@@ -78,13 +78,10 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
 
     String getPreferenceKey() {
         String s = (String) getSafeActionValue("toolbar");
-        if (s == null) {
-            if (getAction() != null) {
-                s = getAction().getClass().getName();
-            }
+        if (s == null && getAction() != null) {
+            s = getAction().getClass().getName();
         }
         return "sidetoolbar.hidden."+s;
-
     }
 
     @Override

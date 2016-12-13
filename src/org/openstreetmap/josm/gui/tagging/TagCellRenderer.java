@@ -100,17 +100,13 @@ public class TagCellRenderer extends JLabel implements TableCellRenderer {
         }
 
         switch(vColIndex) {
-        case 0: renderTagName((TagModel) value); break;
-        case 1: renderTagValue((TagModel) value); break;
-
-        default: throw new JosmRuntimeException("unexpected index in switch statement");
+            case 0: renderTagName((TagModel) value); break;
+            case 1: renderTagValue((TagModel) value); break;
+            default: throw new JosmRuntimeException("unexpected index in switch statement");
         }
-        if (hasFocus && isSelected) {
-            if (table.getSelectedColumnCount() == 1 && table.getSelectedRowCount() == 1) {
-                if (table.getEditorComponent() != null) {
-                    table.getEditorComponent().requestFocusInWindow();
-                }
-            }
+        if (hasFocus && isSelected && table.getSelectedColumnCount() == 1 && table.getSelectedRowCount() == 1
+                && table.getEditorComponent() != null) {
+            table.getEditorComponent().requestFocusInWindow();
         }
         return this;
     }
