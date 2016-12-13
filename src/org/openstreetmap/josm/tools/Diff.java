@@ -811,7 +811,7 @@ public class Diff {
 
                     if (end != iEnd && equivs[start] == equivs[end] && !otherChanged[1+j]
                          && !((preceding >= 0 && start == preceding) || (otherPreceding >= 0 && otherStart == otherPreceding))) {
-                        changed[1+end++] = true;
+                        changed[1+end] = true;
                         changed[1+start++] = false;
                         ++i;
                         /* Since one line-that-matches is now before this run
