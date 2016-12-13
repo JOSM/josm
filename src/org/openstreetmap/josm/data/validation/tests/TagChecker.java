@@ -465,68 +465,66 @@ public class TagChecker extends TagTest {
                         .build());
                 withErrors.put(p, "HTML");
             }
-            if (checkValues && key != null && value != null && !value.isEmpty() && presetsValueData != null) {
-                if (!isTagIgnored(key, value)) {
-                    if (!isKeyInPresets(key)) {
-                        String prettifiedKey = harmonizeKey(key);
-                        String fixedKey = harmonizedKeys.get(prettifiedKey);
-                        if (fixedKey != null && !"".equals(fixedKey) && !fixedKey.equals(key)) {
-                            // misspelled preset key
-                            final TestError.Builder error = TestError.builder(this, Severity.WARNING, MISSPELLED_KEY)
-                                    .message(tr("Misspelled property key"), marktr("Key ''{0}'' looks like ''{1}''."), key, fixedKey)
-                                    .primitives(p);
-                            if (p.hasKey(fixedKey)) {
-                                errors.add(error.build());
-                            } else {
-                                errors.add(error.fix(() -> new ChangePropertyKeyCommand(p, key, fixedKey)).build());
-                            }
-                            withErrors.put(p, "WPK");
+            if (checkValues && key != null && value != null && !value.isEmpty() && presetsValueData != null && !isTagIgnored(key, value)) {
+                if (!isKeyInPresets(key)) {
+                    String prettifiedKey = harmonizeKey(key);
+                    String fixedKey = harmonizedKeys.get(prettifiedKey);
+                    if (fixedKey != null && !"".equals(fixedKey) && !fixedKey.equals(key)) {
+                        // misspelled preset key
+                        final TestError.Builder error = TestError.builder(this, Severity.WARNING, MISSPELLED_KEY)
+                                .message(tr("Misspelled property key"), marktr("Key ''{0}'' looks like ''{1}''."), key, fixedKey)
+                                .primitives(p);
+                        if (p.hasKey(fixedKey)) {
+                            errors.add(error.build());
                         } else {
-                            errors.add(TestError.builder(this, Severity.OTHER, INVALID_VALUE)
-                                    .message(tr("Presets do not contain property key"), marktr("Key ''{0}'' not in presets."), key)
-                                    .primitives(p)
-                                    .build());
-                            withErrors.put(p, "UPK");
+                            errors.add(error.fix(() -> new ChangePropertyKeyCommand(p, key, fixedKey)).build());
                         }
-                    } else if (!isTagInPresets(key, value)) {
-                        // try to fix common typos and check again if value is still unknown
-                        String fixedValue = harmonizeValue(prop.getValue());
-                        Map<String, String> possibleValues = getPossibleValues(presetsValueData.get(key));
-                        if (possibleValues.containsKey(fixedValue)) {
-                            final String newKey = possibleValues.get(fixedValue);
-                            // misspelled preset value
-                            errors.add(TestError.builder(this, Severity.WARNING, MISSPELLED_VALUE)
-                                    .message(tr("Misspelled property value"),
-                                            marktr("Value ''{0}'' for key ''{1}'' looks like ''{2}''."), prop.getValue(), key, fixedValue)
-                                    .primitives(p)
-                                    .fix(() -> new ChangePropertyCommand(p, key, newKey))
-                                    .build());
-                            withErrors.put(p, "WPV");
-                        } else {
-                            // unknown preset value
-                            errors.add(TestError.builder(this, Severity.OTHER, INVALID_VALUE)
-                                    .message(tr("Presets do not contain property value"),
-                                            marktr("Value ''{0}'' for key ''{1}'' not in presets."), prop.getValue(), key)
-                                    .primitives(p)
-                                    .build());
-                            withErrors.put(p, "UPV");
-                        }
+                        withErrors.put(p, "WPK");
+                    } else {
+                        errors.add(TestError.builder(this, Severity.OTHER, INVALID_VALUE)
+                                .message(tr("Presets do not contain property key"), marktr("Key ''{0}'' not in presets."), key)
+                                .primitives(p)
+                                .build());
+                        withErrors.put(p, "UPK");
+                    }
+                } else if (!isTagInPresets(key, value)) {
+                    // try to fix common typos and check again if value is still unknown
+                    String fixedValue = harmonizeValue(prop.getValue());
+                    Map<String, String> possibleValues = getPossibleValues(presetsValueData.get(key));
+                    if (possibleValues.containsKey(fixedValue)) {
+                        final String newKey = possibleValues.get(fixedValue);
+                        // misspelled preset value
+                        errors.add(TestError.builder(this, Severity.WARNING, MISSPELLED_VALUE)
+                                .message(tr("Misspelled property value"),
+                                        marktr("Value ''{0}'' for key ''{1}'' looks like ''{2}''."), prop.getValue(), key, fixedValue)
+                                .primitives(p)
+                                .fix(() -> new ChangePropertyCommand(p, key, newKey))
+                                .build());
+                        withErrors.put(p, "WPV");
+                    } else {
+                        // unknown preset value
+                        errors.add(TestError.builder(this, Severity.OTHER, INVALID_VALUE)
+                                .message(tr("Presets do not contain property value"),
+                                        marktr("Value ''{0}'' for key ''{1}'' not in presets."), prop.getValue(), key)
+                                .primitives(p)
+                                .build());
+                        withErrors.put(p, "UPV");
                     }
                 }
             }
-            if (checkFixmes && key != null && value != null && !value.isEmpty()) {
-                if ((value.toLowerCase(Locale.ENGLISH).contains("fixme")
-                        || value.contains("check and delete")
-                        || key.contains("todo") || key.toLowerCase(Locale.ENGLISH).contains("fixme"))
-                        && !withErrors.contains(p, "FIXME")) {
-                    errors.add(TestError.builder(this, Severity.OTHER, FIXME)
-                            .message(tr("FIXMES"))
-                            .primitives(p)
-                            .build());
-                    withErrors.put(p, "FIXME");
-                }
+            if (checkFixmes && key != null && value != null && !value.isEmpty() && isFixme(key, value) && !withErrors.contains(p, "FIXME")) {
+               errors.add(TestError.builder(this, Severity.OTHER, FIXME)
+                .message(tr("FIXMES"))
+                .primitives(p)
+                .build());
+               withErrors.put(p, "FIXME");
             }
         }
+    }
+
+    private static boolean isFixme(String key, String value) {
+        return key.toLowerCase(Locale.ENGLISH).contains("fixme") || key.contains("todo")
+          || value.toLowerCase(Locale.ENGLISH).contains("fixme") || value.contains("check and delete");
     }
 
     private static Map<String, String> getPossibleValues(Set<String> values) {

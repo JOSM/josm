@@ -1049,10 +1049,8 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         else {
             int counter = 0;
             for (OsmPrimitive o : (OsmPrimitive[]) referrers) {
-                if (dataSet == o.dataSet && o instanceof Way) {
-                    if (++counter >= n)
-                        return true;
-                }
+                if (dataSet == o.dataSet && o instanceof Way && ++counter >= n)
+                    return true;
             }
             return false;
         }

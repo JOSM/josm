@@ -238,17 +238,15 @@ public class ImageryLayerInfo {
         Collection<String> newAddedIds = new TreeSet<>(addedIds);
         for (ImageryInfo info : layers) {
             for (ImageryInfo def : defaultLayers) {
-                if (isSimilar(def, info)) {
-                    if (def.getId() != null && !addedIds.contains(def.getId())) {
-                        if (!defaultLayerIds.containsKey(def.getId())) {
-                            // ignore ids used more than once (have been purged from the map)
-                            continue;
-                        }
-                        newAddedIds.add(def.getId());
-                        if (info.getId() == null) {
-                            info.setId(def.getId());
-                            changed = true;
-                        }
+                if (isSimilar(def, info) && def.getId() != null && !addedIds.contains(def.getId())) {
+                    if (!defaultLayerIds.containsKey(def.getId())) {
+                        // ignore ids used more than once (have been purged from the map)
+                        continue;
+                    }
+                    newAddedIds.add(def.getId());
+                    if (info.getId() == null) {
+                        info.setId(def.getId());
+                        changed = true;
                     }
                 }
             }

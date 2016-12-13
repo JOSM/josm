@@ -74,14 +74,12 @@ public class ParallelWays {
         sortedNodes = new ArrayList<>();
         for (int i = 0; i < sortedNodesPath.size(); i++) {
             Node n = sortedNodesPath.get(i);
-            if (i < sortedNodesPath.size()-1) {
-                if (sortedNodesPath.get(i+1).getCoor().equals(n.getCoor())) {
-                    removedNodes.add(n);
-                    for (Way w : ways) {
-                        w.removeNode(n);
-                    }
-                    continue;
+            if (i < sortedNodesPath.size()-1 && sortedNodesPath.get(i+1).getCoor().equals(n.getCoor())) {
+                removedNodes.add(n);
+                for (Way w : ways) {
+                    w.removeNode(n);
                 }
+                continue;
             }
             if (!removedNodes.contains(n)) {
                 sortedNodes.add(n);

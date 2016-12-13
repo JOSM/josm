@@ -193,16 +193,14 @@ public class SimplifyWayAction extends JosmAction {
             i++;
         }
 
-        if ((newNodes.size() > 3) && (newNodes.get(0) == newNodes.get(newNodes.size() - 1))) {
-            // Closed way, check if the first node could also be simplified ...
-            if (!isRequiredNode(w, newNodes.get(0))) {
-                final List<Node> l1 = Arrays.asList(newNodes.get(newNodes.size() - 2), newNodes.get(0), newNodes.get(1));
-                final List<Node> l2 = new ArrayList<>(3);
-                buildSimplifiedNodeList(l1, 0, 2, threshold, l2);
-                if (!l2.contains(newNodes.get(0))) {
-                    newNodes.remove(0);
-                    newNodes.set(newNodes.size() - 1, newNodes.get(0)); // close the way
-                }
+        // Closed way, check if the first node could also be simplified ...
+        if (newNodes.size() > 3 && newNodes.get(0) == newNodes.get(newNodes.size() - 1) && !isRequiredNode(w, newNodes.get(0))) {
+            final List<Node> l1 = Arrays.asList(newNodes.get(newNodes.size() - 2), newNodes.get(0), newNodes.get(1));
+            final List<Node> l2 = new ArrayList<>(3);
+            buildSimplifiedNodeList(l1, 0, 2, threshold, l2);
+            if (!l2.contains(newNodes.get(0))) {
+                newNodes.remove(0);
+                newNodes.set(newNodes.size() - 1, newNodes.get(0)); // close the way
             }
         }
 

@@ -252,16 +252,14 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         Set<OsmPrimitive> newHighlights = new HashSet<>();
 
         virtualManager.clear();
-        if (mode == Mode.MOVE) {
-            if (!dragInProgress() && virtualManager.activateVirtualNodeNearPoint(e.getPoint())) {
-                DataSet ds = getLayerManager().getEditDataSet();
-                if (ds != null && drawTargetHighlight) {
-                    ds.setHighlightedVirtualNodes(virtualManager.virtualWays);
-                }
-                mv.setNewCursor(SelectActionCursor.virtual_node.cursor(), this);
-                // don't highlight anything else if a virtual node will be
-                return repaintIfRequired(newHighlights);
+        if (mode == Mode.MOVE && !dragInProgress() && virtualManager.activateVirtualNodeNearPoint(e.getPoint())) {
+            DataSet ds = getLayerManager().getEditDataSet();
+            if (ds != null && drawTargetHighlight) {
+                ds.setHighlightedVirtualNodes(virtualManager.virtualWays);
             }
+            mv.setNewCursor(SelectActionCursor.virtual_node.cursor(), this);
+            // don't highlight anything else if a virtual node will be
+            return repaintIfRequired(newHighlights);
         }
 
         mv.setNewCursor(getCursor(c), this);
