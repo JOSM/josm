@@ -27,7 +27,7 @@ public abstract class KeyedItem extends TaggingPresetItem {
     protected static final BooleanProperty PROP_FILL_DEFAULT = new BooleanProperty("taggingpreset.fill-default-for-tagged-primitives", false);
 
     /** Last value of each key used in presets, used for prefilling corresponding fields */
-    protected static final Map<String, String> LAST_VALUES = new HashMap<>();
+    static final Map<String, String> LAST_VALUES = new HashMap<>();
 
     /** This specifies the property key that will be modified by the item. */
     public String key; // NOSONAR

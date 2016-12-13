@@ -101,7 +101,7 @@ public class MapCSSStyleSource extends StyleSource {
     /**
      * Set of all supported MapCSS keys.
      */
-    protected static final Set<String> SUPPORTED_KEYS = new HashSet<>();
+    static final Set<String> SUPPORTED_KEYS = new HashSet<>();
     static {
         Field[] declaredFields = StyleKeys.class.getDeclaredFields();
         for (Field f : declaredFields) {
