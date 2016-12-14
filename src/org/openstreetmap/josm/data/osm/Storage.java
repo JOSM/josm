@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.util.AbstractSet;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -238,10 +239,23 @@ public class Storage<T> extends AbstractSet<T> {
     @Override
     public synchronized int hashCode() {
         int h = 0;
-        for (T t : this) {
-            h += hash.getHashCode(t);
+        if (hash != null) {
+            for (T t : this) {
+                h += hash.getHashCode(t);
+            }
         }
         return h;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        Storage<?> other = (Storage<?>) obj;
+        return Arrays.equals(data, other.data)
+                && hashCode() == obj.hashCode();
     }
 
     // ----------------- Extended API ----------------------------
@@ -320,7 +334,7 @@ public class Storage<T> extends AbstractSet<T> {
         T entry;
         int hcode = rehash(ha.getHashCode(key));
         int bucket = hcode & mask;
-        while ((entry = data[bucket]) != null) {
+        while (bucket < data.length && (entry = data[bucket]) != null) {
             if (ha.equals(key, entry))
                 return bucket;
             bucket = (bucket+1) & mask;
@@ -499,6 +513,7 @@ public class Storage<T> extends AbstractSet<T> {
 
         @Override
         public boolean hasNext() {
+            if (data == null) return false;
             align();
             return slot < data.length;
         }
@@ -532,6 +547,7 @@ public class Storage<T> extends AbstractSet<T> {
 
         @Override
         public boolean hasNext() {
+            if (data == null) return false;
             align();
             return slot < data.length;
         }
