@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -16,7 +15,6 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
@@ -24,9 +22,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Tag;
-import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
-import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.styleelement.MapImage;
 import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement;
@@ -35,7 +31,6 @@ import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference.MapPaintPrefHelper;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.CachedFile;
-import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -47,10 +42,6 @@ import org.openstreetmap.josm.tools.Utils;
  * for all listeners.
  */
 public final class MapPaintStyles {
-
-    /** To remove in November 2016 */
-    private static final String XML_STYLE_MIME_TYPES =
-             "application/xml, text/xml, text/plain; q=0.8, application/zip, application/octet-stream; q=0.5";
 
     private static final Collection<String> DEPRECATED_IMAGE_NAMES = Arrays.asList(
             "presets/misc/deprecated.svg",
@@ -301,53 +292,15 @@ public final class MapPaintStyles {
     }
 
     private static StyleSource fromSourceEntry(SourceEntry entry) {
-        // TODO: Method to clean up in November 2016: remove XML detection completely
         Set<String> mimes = new HashSet<>(Arrays.asList(MapCSSStyleSource.MAPCSS_STYLE_MIME_TYPES.split(", ")));
-        mimes.addAll(Arrays.asList(XML_STYLE_MIME_TYPES.split(", ")));
         try (CachedFile cf = new CachedFile(entry.url).setHttpAccept(Utils.join(", ", mimes))) {
             String zipEntryPath = cf.findZipEntryPath("mapcss", "style");
             if (zipEntryPath != null) {
                 entry.isZip = true;
                 entry.zipEntryPath = zipEntryPath;
-                return new MapCSSStyleSource(entry);
             }
-            zipEntryPath = cf.findZipEntryPath("xml", "style");
-            if (zipEntryPath != null || Utils.hasExtension(entry.url, "xml"))
-                throw new IllegalDataException("XML style");
-            if (Utils.hasExtension(entry.url, "mapcss"))
-                return new MapCSSStyleSource(entry);
-            try (Reader reader = cf.getContentReader()) {
-                WHILE: while (true) {
-                    int c = reader.read();
-                    switch (c) {
-                        case -1:
-                            break WHILE;
-                        case ' ':
-                        case '\t':
-                        case '\n':
-                        case '\r':
-                            continue;
-                        case '<':
-                            throw new IllegalDataException("XML style");
-                        default:
-                            return new MapCSSStyleSource(entry);
-                    }
-                }
-            }
-            Main.warn("Could not detect style type. Using default (mapcss).");
             return new MapCSSStyleSource(entry);
-        } catch (IOException e) {
-            Main.warn(tr("Failed to load Mappaint styles from ''{0}''. Exception was: {1}", entry.url, e.toString()));
-            Main.error(e);
-        } catch (IllegalDataException e) {
-            String msg = tr("JOSM does no longer support mappaint styles written in the old XML format.\nPlease update ''{0}'' to MapCSS",
-                    entry.url);
-            Main.error(msg);
-            Main.debug(e);
-            HelpAwareOptionPane.showOptionDialog(Main.parent, msg, tr("Warning"), JOptionPane.WARNING_MESSAGE,
-                    HelpUtil.ht("/Styles/MapCSSImplementation"));
         }
-        return null;
     }
 
     /**

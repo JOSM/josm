@@ -1512,36 +1512,7 @@ public class Preferences {
      * @param loadedVersion JOSM version when the preferences file was written
      */
     private void removeObsolete(int loadedVersion) {
-        /* drop in October 2016 */
-        if (loadedVersion < 9715) {
-            Setting<?> setting = settingsMap.get("imagery.entries");
-            if (setting instanceof MapListSetting) {
-                List<Map<String, String>> l = new LinkedList<>();
-                boolean modified = false;
-                for (Map<String, String> map: ((MapListSetting) setting).getValue()) {
-                    Map<String, String> newMap = new HashMap<>();
-                    for (Entry<String, String> entry: map.entrySet()) {
-                        String value = entry.getValue();
-                        if ("noTileHeaders".equals(entry.getKey())) {
-                            value = value.replaceFirst("\":(\".*\")\\}", "\":[$1]}");
-                            if (!value.equals(entry.getValue())) {
-                                modified = true;
-                            }
-                        }
-                        newMap.put(entry.getKey(), value);
-                    }
-                    l.add(newMap);
-                }
-                if (modified) {
-                    putListOfStructs("imagery.entries", l);
-                }
-            }
-        }
-        // drop in November 2016
-        removeUrlFromEntries(loadedVersion, 9965,
-                "mappaint.style.entries",
-                "josm.openstreetmap.de/josmfile?page=Styles/LegacyStandard");
-        // drop in December 2016
+        // drop in March 2017
         removeUrlFromEntries(loadedVersion, 10063,
                 "validator.org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.entries",
                 "resource://data/validator/power.mapcss");
