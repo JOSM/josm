@@ -718,8 +718,9 @@ public class MapCSSTagChecker extends Test.TagTest {
         ParseResult result;
         try (CachedFile cache = new CachedFile(url);
              InputStream zip = cache.findZipEntryInputStream("validator.mapcss", "");
-             InputStream s = zip != null ? zip : cache.getInputStream()) {
-            result = TagCheck.readMapCSS(new BufferedReader(UTFInputStreamReader.create(s)));
+             InputStream s = zip != null ? zip : cache.getInputStream();
+             Reader reader = new BufferedReader(UTFInputStreamReader.create(s))) {
+            result = TagCheck.readMapCSS(reader);
             checks.remove(url);
             checks.putAll(url, result.parseChecks);
             // Check assertions, useful for development of local files
