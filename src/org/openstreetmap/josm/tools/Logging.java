@@ -260,8 +260,10 @@ public final class Logging {
     private static String getErrorLogWithStack(String message, Throwable t) {
         StringWriter sb = new StringWriter();
         sb.append(getErrorLog(message, t));
-        sb.append('\n');
-        t.printStackTrace(new PrintWriter(sb));
+        if (t != null) {
+            sb.append('\n');
+            t.printStackTrace(new PrintWriter(sb));
+        }
         return sb.toString();
     }
 

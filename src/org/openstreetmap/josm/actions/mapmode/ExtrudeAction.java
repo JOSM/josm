@@ -498,7 +498,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                         moveCommand2.moveAgainTo(movement2.getX(), movement2.getY());
                     }
                 }
-            } else {
+            } else if (bestMovement != null) {
                 if (mode == Mode.extrude || mode == Mode.create_new) {
                     //nothing here
                 } else if (mode == Mode.translate_node || mode == Mode.translate) {
@@ -896,18 +896,22 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
         // set neighboring segments
         Node prevNode = getPreviousNode(selectedSegment.lowerIndex);
-        EastNorth prevNodeEn = prevNode.getEastNorth();
-        dualAlignSegment1 = new ReferenceSegment(new EastNorth(
-            initialN1en.getX() - prevNodeEn.getX(),
-            initialN1en.getY() - prevNodeEn.getY()
-            ), initialN1en, prevNodeEn, false);
+        if (prevNode != null) {
+            EastNorth prevNodeEn = prevNode.getEastNorth();
+            dualAlignSegment1 = new ReferenceSegment(new EastNorth(
+                initialN1en.getX() - prevNodeEn.getX(),
+                initialN1en.getY() - prevNodeEn.getY()
+                ), initialN1en, prevNodeEn, false);
+        }
 
         Node nextNode = getNextNode(selectedSegment.lowerIndex + 1);
-        EastNorth nextNodeEn = nextNode.getEastNorth();
-        dualAlignSegment2 = new ReferenceSegment(new EastNorth(
-            initialN2en.getX() - nextNodeEn.getX(),
-            initialN2en.getY() - nextNodeEn.getY()
-            ), initialN2en, nextNodeEn, false);
+        if (nextNode != null) {
+            EastNorth nextNodeEn = nextNode.getEastNorth();
+            dualAlignSegment2 = new ReferenceSegment(new EastNorth(
+                initialN2en.getX() - nextNodeEn.getX(),
+                initialN2en.getY() - nextNodeEn.getY()
+                ), initialN2en, nextNodeEn, false);
+        }
     }
 
     /**

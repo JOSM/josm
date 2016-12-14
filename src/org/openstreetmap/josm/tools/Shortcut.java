@@ -204,8 +204,8 @@ public final class Shortcut {
     }
 
     public boolean isEvent(KeyEvent e) {
-        return getKeyStroke() != null && getKeyStroke().equals(
-        KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiers()));
+        KeyStroke ks = getKeyStroke();
+        return ks != null && ks.equals(KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiers()));
     }
 
     /**

@@ -68,7 +68,8 @@ public final class HelpUtil {
      */
     public static String getHelpTopicEditUrl(String absoluteHelpTopic) {
         String topicUrl = getHelpTopicUrl(absoluteHelpTopic);
-        topicUrl = topicUrl.replaceAll("#[^#]*$", ""); // remove optional fragment
+        if (topicUrl != null)
+            topicUrl = topicUrl.replaceAll("#[^#]*$", ""); // remove optional fragment
         return topicUrl + "?action=edit";
     }
 
@@ -83,7 +84,10 @@ public final class HelpUtil {
         String topic = extractAbsoluteHelpTopic(url);
         if (topic == null)
             return null;
-        String pattern = "/[A-Z][a-z]{1,2}(_[A-Z]{2})?:" + getHelpTopicPrefix(LocaleType.ENGLISH).replaceAll("^\\/+", "");
+        String topicPrefix = getHelpTopicPrefix(LocaleType.ENGLISH);
+        if (topicPrefix != null)
+            topicPrefix = topicPrefix.replaceAll("^\\/+", "");
+        String pattern = "/[A-Z][a-z]{1,2}(_[A-Z]{2})?:" + topicPrefix;
         if (url.matches(pattern)) {
             return topic.substring(pattern.length());
         }
@@ -99,14 +103,14 @@ public final class HelpUtil {
      */
     public static String extractAbsoluteHelpTopic(String url) {
         if (url == null || !url.startsWith(getWikiBaseHelpUrl())) return null;
-        url = url.substring(getWikiBaseHelpUrl().length());
+        String topic = url.substring(getWikiBaseHelpUrl().length());
         String prefix = getHelpTopicPrefix(LocaleType.ENGLISH);
-        if (url.startsWith(prefix))
-            return url;
+        if (prefix == null || topic.startsWith(prefix))
+            return topic;
 
         String pattern = "/[A-Z][a-z]{1,2}(_[A-Z]{2})?:" + prefix.replaceAll("^\\/+", "");
-        if (url.matches(pattern))
-            return url;
+        if (topic.matches(pattern))
+            return topic;
 
         return null;
     }

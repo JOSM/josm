@@ -401,26 +401,28 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     public void savePreferences() {
         // create a task for downloading plugins if the user has activated, yet not downloaded, new plugins
         final PluginPreference preference = getPluginPreference();
-        final Set<PluginInformation> toDownload = preference.getPluginsScheduledForUpdateOrDownload();
-        final PluginDownloadTask task;
-        if (toDownload != null && !toDownload.isEmpty()) {
-            task = new PluginDownloadTask(this, toDownload, tr("Download plugins"));
-        } else {
-            task = null;
-        }
+        if (preference != null) {
+            final Set<PluginInformation> toDownload = preference.getPluginsScheduledForUpdateOrDownload();
+            final PluginDownloadTask task;
+            if (toDownload != null && !toDownload.isEmpty()) {
+                task = new PluginDownloadTask(this, toDownload, tr("Download plugins"));
+            } else {
+                task = null;
+            }
 
-        // this is the task which will run *after* the plugins are downloaded
-        final Runnable continuation = new PluginDownloadAfterTask(preference, task, toDownload);
+            // this is the task which will run *after* the plugins are downloaded
+            final Runnable continuation = new PluginDownloadAfterTask(preference, task, toDownload);
 
-        if (task != null) {
-            // if we have to launch a plugin download task we do it asynchronously, followed
-            // by the remaining "save preferences" activites run on the Swing EDT.
-            Main.worker.submit(task);
-            Main.worker.submit(() -> SwingUtilities.invokeLater(continuation));
-        } else {
-            // no need for asynchronous activities. Simply run the remaining "save preference"
-            // activities on this thread (we are already on the Swing EDT
-            continuation.run();
+            if (task != null) {
+                // if we have to launch a plugin download task we do it asynchronously, followed
+                // by the remaining "save preferences" activites run on the Swing EDT.
+                Main.worker.submit(task);
+                Main.worker.submit(() -> SwingUtilities.invokeLater(continuation));
+            } else {
+                // no need for asynchronous activities. Simply run the remaining "save preference"
+                // activities on this thread (we are already on the Swing EDT
+                continuation.run();
+            }
         }
     }
 

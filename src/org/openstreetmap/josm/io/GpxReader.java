@@ -398,10 +398,11 @@ public class GpxReader implements GpxConstants {
                     data.put(META_AUTHOR_LINK, currentLink);
                 } else if (currentState != State.LINK) {
                     Map<String, Object> attr = getAttr();
-                    if (!attr.containsKey(META_LINKS)) {
+                    if (attr != null && !attr.containsKey(META_LINKS)) {
                         attr.put(META_LINKS, new LinkedList<GpxLink>());
                     }
-                    ((Collection<GpxLink>) attr.get(META_LINKS)).add(currentLink);
+                    if (attr != null)
+                        ((Collection<GpxLink>) attr.get(META_LINKS)).add(currentLink);
                 }
                 break;
             case WPT:
