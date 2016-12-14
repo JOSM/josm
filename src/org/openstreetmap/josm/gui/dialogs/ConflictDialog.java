@@ -334,7 +334,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
         private final JMenuItem btnResolveTheir;
         private final JMenuItem btnResolveMy;
 
-        private ResolveButtonsPopupMenuListener(JMenuItem btnResolveTheir, JMenuItem btnResolveMy) {
+        ResolveButtonsPopupMenuListener(JMenuItem btnResolveTheir, JMenuItem btnResolveMy) {
             this.btnResolveTheir = btnResolveTheir;
             this.btnResolveMy = btnResolveMy;
         }

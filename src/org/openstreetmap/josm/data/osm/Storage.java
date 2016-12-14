@@ -503,19 +503,28 @@ public class Storage<T> extends AbstractSet<T> {
         }
     }
 
-    private final class SafeReadonlyIter implements Iterator<T> {
-        private final T[] data;
-        private int slot;
-
-        SafeReadonlyIter(T[] data) {
-            this.data = data;
-        }
+    private abstract class AbstractIter implements Iterator<T> {
+        protected int slot;
 
         @Override
         public boolean hasNext() {
             if (data == null) return false;
             align();
             return slot < data.length;
+        }
+
+        protected void align() {
+            while (slot < data.length && data[slot] == null) {
+                slot++;
+            }
+        }
+    }
+
+    private final class SafeReadonlyIter extends AbstractIter {
+        private final T[] data;
+
+        SafeReadonlyIter(T[] data) {
+            this.data = data;
         }
 
         @Override
@@ -528,28 +537,14 @@ public class Storage<T> extends AbstractSet<T> {
         public void remove() {
             throw new UnsupportedOperationException();
         }
-
-        private void align() {
-            while (slot < data.length && data[slot] == null) {
-                slot++;
-            }
-        }
     }
 
-    private final class Iter implements Iterator<T> {
+    private final class Iter extends AbstractIter {
         private final int mods;
-        private int slot;
         private int removeSlot = -1;
 
         Iter() {
             mods = modCount;
-        }
-
-        @Override
-        public boolean hasNext() {
-            if (data == null) return false;
-            align();
-            return slot < data.length;
         }
 
         @Override
@@ -568,13 +563,11 @@ public class Storage<T> extends AbstractSet<T> {
             removeSlot = -1;
         }
 
-        private void align() {
+        @Override
+        protected void align() {
             if (mods != modCount)
                 throw new ConcurrentModificationException();
-            while (slot < data.length && data[slot] == null) {
-                slot++;
-            }
+            super.align();
         }
     }
-
 }
