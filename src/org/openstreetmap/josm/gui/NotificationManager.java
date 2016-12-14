@@ -185,7 +185,7 @@ class NotificationManager {
         static final class ShowNoteHelpAction extends AbstractAction {
             private final Notification note;
 
-            private ShowNoteHelpAction(Notification note) {
+            ShowNoteHelpAction(Notification note) {
                 this.note = note;
             }
 

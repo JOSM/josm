@@ -524,7 +524,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
 
     static final class NoBorderSplitPaneUI extends BasicSplitPaneUI {
         static final class NoBorderBasicSplitPaneDivider extends BasicSplitPaneDivider {
-            private NoBorderBasicSplitPaneDivider(BasicSplitPaneUI ui) {
+            NoBorderBasicSplitPaneDivider(BasicSplitPaneUI ui) {
                 super(ui);
             }
 
