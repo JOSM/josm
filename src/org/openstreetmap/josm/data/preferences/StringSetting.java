@@ -15,13 +15,6 @@ public class StringSetting extends AbstractSetting<String> {
     }
 
     @Override
-    public boolean equalVal(String otherVal) {
-        if (value == null)
-            return otherVal == null;
-        return value.equals(otherVal);
-    }
-
-    @Override
     public StringSetting copy() {
         return new StringSetting(value);
     }
@@ -34,12 +27,5 @@ public class StringSetting extends AbstractSetting<String> {
     @Override
     public StringSetting getNullInstance() {
         return new StringSetting(null);
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        if (!(other instanceof StringSetting))
-            return false;
-        return equalVal(((StringSetting) other).getValue());
     }
 }
