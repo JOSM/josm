@@ -24,7 +24,9 @@ public interface Setting<T> {
      * @param otherVal the other value
      * @return true if the values are equal
      */
-    boolean equalVal(T otherVal);
+    default boolean equalVal(T otherVal) {
+        return getValue() == null ? (otherVal == null) : getValue().equals(otherVal);
+    }
 
     /**
      * Clone the current object.

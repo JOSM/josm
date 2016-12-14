@@ -4,10 +4,7 @@ package org.openstreetmap.josm.data.preferences;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Setting containing a {@link List} of {@code List}s of {@link String} values.
@@ -38,23 +35,6 @@ public class ListListSetting extends AbstractSetting<List<List<String>>> {
             return new ListListSetting(valueList);
         }
         return new ListListSetting(null);
-    }
-
-    @Override
-    public boolean equalVal(List<List<String>> otherVal) {
-        if (value == null)
-            return otherVal == null;
-        if (otherVal == null)
-            return false;
-        if (value.size() != otherVal.size())
-            return false;
-        Iterator<List<String>> itA = value.iterator();
-        Iterator<List<String>> itB = otherVal.iterator();
-        while (itA.hasNext()) {
-            if (!Utils.equalCollection(itA.next(), itB.next()))
-                return false;
-        }
-        return true;
     }
 
     @Override
@@ -90,12 +70,5 @@ public class ListListSetting extends AbstractSetting<List<List<String>>> {
     @Override
     public ListListSetting getNullInstance() {
         return new ListListSetting(null);
-    }
-
-    @Override
-    public boolean equals(Object other) {
-        if (!(other instanceof ListListSetting))
-            return false;
-        return equalVal(((ListListSetting) other).getValue());
     }
 }
