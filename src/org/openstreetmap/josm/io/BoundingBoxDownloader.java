@@ -93,7 +93,8 @@ public class BoundingBoxDownloader extends OsmServerReader {
             if (crosses180th) {
                 // API 0.6 does not support requests crossing the 180th meridian, so make two requests
                 GpxData result = downloadRawGps(new Bounds(lat1, lon1, lat2, 180.0), progressMonitor);
-                result.mergeFrom(downloadRawGps(new Bounds(lat1, -180.0, lat2, lon2), progressMonitor));
+                if (result != null)
+                    result.mergeFrom(downloadRawGps(new Bounds(lat1, -180.0, lat2, lon2), progressMonitor));
                 return result;
             } else {
                 // Simple request

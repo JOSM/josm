@@ -890,11 +890,13 @@ public final class PluginHandler {
             }
             Map<String, PluginInformation> infos = loadLocallyAvailablePluginInformation(monitor.createSubTaskMonitor(1, false));
             List<PluginInformation> ret = new LinkedList<>();
-            for (Iterator<String> it = plugins.iterator(); it.hasNext();) {
-                String plugin = it.next();
-                if (infos.containsKey(plugin)) {
-                    ret.add(infos.get(plugin));
-                    it.remove();
+            if (infos != null) {
+                for (Iterator<String> it = plugins.iterator(); it.hasNext();) {
+                    String plugin = it.next();
+                    if (infos.containsKey(plugin)) {
+                        ret.add(infos.get(plugin));
+                        it.remove();
+                    }
                 }
             }
             if (!plugins.isEmpty()) {

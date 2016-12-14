@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.awt.geom.Area;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
@@ -419,7 +420,12 @@ public final class Node extends OsmPrimitive implements INode {
 
     @Override
     public boolean isOutsideDownloadArea() {
-        return !isNewOrUndeleted() && getDataSet() != null && getDataSet().getDataSourceArea() != null
-                && getCoor() != null && !getCoor().isIn(getDataSet().getDataSourceArea());
+        if (isNewOrUndeleted() || getDataSet() == null)
+            return false;
+        Area area = getDataSet().getDataSourceArea();
+        if (area == null)
+            return false;
+        LatLon coor = getCoor();
+        return coor != null && !coor.isIn(area);
     }
 }

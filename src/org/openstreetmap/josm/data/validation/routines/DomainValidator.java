@@ -220,6 +220,7 @@ public final class DomainValidator extends AbstractValidator {
      * @return true if the parameter is an infrastructure TLD
      */
     public boolean isValidInfrastructureTld(String iTld) {
+        if (iTld == null) return false;
         final String key = chompLeadingDot(unicodeToASCII(iTld).toLowerCase(Locale.ENGLISH));
         return arrayContains(INFRASTRUCTURE_TLDS, key);
     }
@@ -232,6 +233,7 @@ public final class DomainValidator extends AbstractValidator {
      * @return true if the parameter is a generic TLD
      */
     public boolean isValidGenericTld(String gTld) {
+        if (gTld == null) return false;
         final String key = chompLeadingDot(unicodeToASCII(gTld).toLowerCase(Locale.ENGLISH));
         return (arrayContains(GENERIC_TLDS, key) || arrayContains(genericTLDsPlus, key))
                 && !arrayContains(genericTLDsMinus, key);
@@ -245,6 +247,7 @@ public final class DomainValidator extends AbstractValidator {
      * @return true if the parameter is a country code TLD
      */
     public boolean isValidCountryCodeTld(String ccTld) {
+        if (ccTld == null) return false;
         final String key = chompLeadingDot(unicodeToASCII(ccTld).toLowerCase(Locale.ENGLISH));
         return (arrayContains(COUNTRY_CODE_TLDS, key) || arrayContains(countryCodeTLDsPlus, key))
                 && !arrayContains(countryCodeTLDsMinus, key);
@@ -258,6 +261,7 @@ public final class DomainValidator extends AbstractValidator {
      * @return true if the parameter is an local TLD
      */
     public boolean isValidLocalTld(String lTld) {
+        if (lTld == null) return false;
         final String key = chompLeadingDot(unicodeToASCII(lTld).toLowerCase(Locale.ENGLISH));
         return arrayContains(LOCAL_TLDS, key);
     }

@@ -14,6 +14,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.Lock;
@@ -498,6 +499,7 @@ public final class DataSet implements Data, ProjectionChangeListener {
      * @param primitive the primitive.
      */
     public void addPrimitive(OsmPrimitive primitive) {
+        Objects.requireNonNull(primitive, "primitive");
         beginUpdate();
         try {
             if (getPrimitiveById(primitive) != null)

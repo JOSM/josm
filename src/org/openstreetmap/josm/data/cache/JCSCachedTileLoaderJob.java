@@ -212,7 +212,12 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
      * @return key under which discovered server settings will be kept
      */
     protected String getServerKey() {
-        return getUrlNoException().getHost();
+        try {
+            return getUrl().getHost();
+        } catch (IOException e) {
+            Main.trace(e);
+            return null;
+        }
     }
 
     @Override
@@ -254,7 +259,12 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
     private void finishLoading(LoadResult result) {
         Set<ICachedLoaderListener> listeners;
         synchronized (inProgress) {
-            listeners = inProgress.remove(getUrlNoException().toString());
+            try {
+                listeners = inProgress.remove(getUrl().toString());
+            } catch (IOException e) {
+                listeners = null;
+                Main.trace(e);
+            }
         }
         if (listeners == null) {
             LOG.log(Level.WARNING, "Listener not found for URL: {0}. Listener not notified!", getUrlNoException());

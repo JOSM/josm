@@ -424,7 +424,10 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         public Object getValueAt(int row, int column) {
             switch (column) {
             case VersionTableColumnModel.COL_VERSION:
-                return Long.toString(getPrimitive(row).getVersion());
+                HistoryOsmPrimitive p1 = getPrimitive(row);
+                if (p1 != null)
+                    return Long.toString(p1.getVersion());
+                return null;
             case VersionTableColumnModel.COL_REFERENCE:
                 return isReferencePointInTime(row);
             case VersionTableColumnModel.COL_CURRENT:

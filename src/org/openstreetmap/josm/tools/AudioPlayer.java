@@ -123,7 +123,9 @@ public final class AudioPlayer extends Thread {
      * @throws Exception audio fault exception, e.g. can't open stream, unhandleable audio format
      */
     public static void play(URL url) throws Exception {
-        AudioPlayer.getInstance().command.play(url, 0.0, 1.0);
+        AudioPlayer instance = AudioPlayer.getInstance();
+        if (instance != null)
+            instance.command.play(url, 0.0, 1.0);
     }
 
     /**
@@ -133,7 +135,9 @@ public final class AudioPlayer extends Thread {
      * @throws Exception audio fault exception, e.g. can't open stream, unhandleable audio format
      */
     public static void play(URL url, double seconds) throws Exception {
-        AudioPlayer.getInstance().command.play(url, seconds, 1.0);
+        AudioPlayer instance = AudioPlayer.getInstance();
+        if (instance != null)
+            instance.command.play(url, seconds, 1.0);
     }
 
     /**
@@ -144,7 +148,9 @@ public final class AudioPlayer extends Thread {
      * @throws Exception audio fault exception, e.g. can't open stream,  unhandleable audio format
      */
     public static void play(URL url, double seconds, double speed) throws Exception {
-        AudioPlayer.getInstance().command.play(url, seconds, speed);
+        AudioPlayer instance = AudioPlayer.getInstance();
+        if (instance != null)
+            instance.command.play(url, seconds, speed);
     }
 
     /**
@@ -152,7 +158,9 @@ public final class AudioPlayer extends Thread {
      * @throws Exception audio fault exception, e.g. can't open stream,  unhandleable audio format
      */
     public static void pause() throws Exception {
-        AudioPlayer.getInstance().command.pause();
+        AudioPlayer instance = AudioPlayer.getInstance();
+        if (instance != null)
+            instance.command.pause();
     }
 
     /**
@@ -160,7 +168,8 @@ public final class AudioPlayer extends Thread {
      * @return url - could be null
      */
     public static URL url() {
-        return AudioPlayer.getInstance().playingUrl;
+        AudioPlayer instance = AudioPlayer.getInstance();
+        return instance == null ? null : instance.playingUrl;
     }
 
     /**
@@ -168,7 +177,8 @@ public final class AudioPlayer extends Thread {
      * @return boolean whether or not paused
      */
     public static boolean paused() {
-        return AudioPlayer.getInstance().state == State.PAUSED;
+        AudioPlayer instance = AudioPlayer.getInstance();
+        return instance == null ? false : (instance.state == State.PAUSED);
     }
 
     /**
@@ -176,7 +186,8 @@ public final class AudioPlayer extends Thread {
      * @return boolean whether or not playing
      */
     public static boolean playing() {
-        return AudioPlayer.getInstance().state == State.PLAYING;
+        AudioPlayer instance = AudioPlayer.getInstance();
+        return instance == null ? false : (instance.state == State.PLAYING);
     }
 
     /**
@@ -184,7 +195,8 @@ public final class AudioPlayer extends Thread {
      * @return double seconds
      */
     public static double position() {
-        return AudioPlayer.getInstance().position;
+        AudioPlayer instance = AudioPlayer.getInstance();
+        return instance == null ? -1 : instance.position;
     }
 
     /**
@@ -192,7 +204,8 @@ public final class AudioPlayer extends Thread {
      * @return double, speed multiplier
      */
     public static double speed() {
-        return AudioPlayer.getInstance().speed;
+        AudioPlayer instance = AudioPlayer.getInstance();
+        return instance == null ? -1 : instance.speed;
     }
 
     /**

@@ -93,7 +93,7 @@ public final class WaySegment implements Comparable<WaySegment> {
 
     @Override
     public int compareTo(WaySegment o) {
-        return equals(o) ? 0 : toWay().compareTo(o.toWay());
+        return o == null ? -1 : (equals(o) ? 0 : toWay().compareTo(o.toWay()));
     }
 
     /**

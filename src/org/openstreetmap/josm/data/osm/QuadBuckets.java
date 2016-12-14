@@ -115,7 +115,10 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
                 byte idx = bbox.getIndex(level);
                 if (idx == -1)
                     return this;
-                return getChild(idx).findBucket(bbox);
+                QBLevel<T> child = getChild(idx);
+                if (child == null)
+                    return this;
+                return child.findBucket(bbox);
             }
         }
 
@@ -139,9 +142,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
 
         /*
          * There is a race between this and qb.nextContentNode().
-         * If nextContentNode() runs into this bucket, it may
-         * attempt to null out 'children' because it thinks this
-         * is a dead end.
+         * If nextContentNode() runs into this bucket, it may attempt to null out 'children' because it thinks this is a dead end.
          */
         void doSplit() {
             List<T> tmpcontent = content;
@@ -152,7 +153,9 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
                 if (idx == -1) {
                     doAddContent(o);
                 } else {
-                    getChild(idx).doAdd(o);
+                    QBLevel<T> child = getChild(idx);
+                    if (child != null)
+                        child.doAdd(o);
                 }
             }
             isLeaf = false; // It's not enough to check children because all items could end up in this level (index == -1)
