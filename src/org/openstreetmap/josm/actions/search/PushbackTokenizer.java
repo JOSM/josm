@@ -53,10 +53,18 @@ public class PushbackTokenizer {
     }
 
     public enum Token {
-        NOT(marktr("<not>")), OR(marktr("<or>")), XOR(marktr("<xor>")), LEFT_PARENT(marktr("<left parent>")),
-        RIGHT_PARENT(marktr("<right parent>")), COLON(marktr("<colon>")), EQUALS(marktr("<equals>")),
-        KEY(marktr("<key>")), QUESTION_MARK(marktr("<question mark>")),
-        EOF(marktr("<end-of-file>")), LESS_THAN("<less-than>"), GREATER_THAN("<greater-than>");
+        NOT(marktr("<not>")),
+        OR(marktr("<or>")),
+        XOR(marktr("<xor>")),
+        LEFT_PARENT(marktr("<left parent>")),
+        RIGHT_PARENT(marktr("<right parent>")),
+        COLON(marktr("<colon>")),
+        EQUALS(marktr("<equals>")),
+        KEY(marktr("<key>")),
+        QUESTION_MARK(marktr("<question mark>")),
+        EOF(marktr("<end-of-file>")),
+        LESS_THAN("<less-than>"),
+        GREATER_THAN("<greater-than>");
 
         Token(String name) {
             this.name = name;

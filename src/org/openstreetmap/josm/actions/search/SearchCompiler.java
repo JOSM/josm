@@ -79,9 +79,7 @@ public class SearchCompiler {
         this.regexSearch = regexSearch;
         this.tokenizer = tokenizer;
 
-        /* register core match factories at first instance, so plugins should
-         * never be able to generate a NPE
-         */
+        // register core match factories at first instance, so plugins should never be able to generate a NPE
         if (simpleMatchFactoryMap.isEmpty()) {
             addMatchFactory(new CoreSimpleMatchFactory());
         }
