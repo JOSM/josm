@@ -903,9 +903,8 @@ public class ImageProvider {
      * @return the requested image or null if the request failed
      */
     private static ImageResource getIfAvailableHttp(String url, ImageType type) {
-        CachedFile cf = new CachedFile(url)
-                .setDestDir(new File(Main.pref.getCacheDirectory(), "images").getPath());
-        try (InputStream is = cf.getInputStream()) {
+        try (CachedFile cf = new CachedFile(url).setDestDir(new File(Main.pref.getCacheDirectory(), "images").getPath());
+             InputStream is = cf.getInputStream()) {
             switch (type) {
             case SVG:
                 SVGDiagram svg = null;
@@ -923,13 +922,11 @@ public class ImageProvider {
                 }
                 return img == null ? null : new ImageResource(img);
             default:
-                throw new AssertionError();
+                throw new AssertionError("Unsupported type: " + type);
             }
         } catch (IOException e) {
             Main.debug(e);
             return null;
-        } finally {
-            cf.close();
         }
     }
 
@@ -1225,12 +1222,10 @@ public class ImageProvider {
 
             parser.setEntityResolver((publicId, systemId) -> new InputSource(new ByteArrayInputStream(new byte[0])));
 
-            CachedFile cf = new CachedFile(base + fn).setDestDir(
-                    new File(Main.pref.getUserDataDirectory(), "images").getPath());
-            try (InputStream is = cf.getInputStream()) {
+            try (CachedFile cf = new CachedFile(base + fn).setDestDir(new File(Main.pref.getUserDataDirectory(), "images").getPath());
+                 InputStream is = cf.getInputStream()) {
                 parser.parse(new InputSource(is));
             }
-            cf.close();
         } catch (SAXReturnException r) {
             Main.trace(r);
             return r.getResult();
