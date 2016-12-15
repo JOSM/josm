@@ -238,9 +238,6 @@ public final class JCSCacheManager {
     }
 
     private static void removeStaleFiles(String basePathPart, String suffix) {
-        deleteCacheFiles(basePathPart); // TODO: this can be removed around 2016.09
-        deleteCacheFiles(basePathPart + "_BLOCK"); // TODO: this can be removed around 2016.09
-        deleteCacheFiles(basePathPart + "_INDEX"); // TODO: this can be removed around 2016.09
         deleteCacheFiles(basePathPart + suffix);
     }
 
