@@ -259,10 +259,7 @@ public final class MapPaintStyles {
         Collection<? extends SourceEntry> sourceEntries = MapPaintPrefHelper.INSTANCE.get();
 
         for (SourceEntry entry : sourceEntries) {
-            StyleSource source = fromSourceEntry(entry);
-            if (source != null) {
-                styles.add(source);
-            }
+            styles.add(fromSourceEntry(entry));
         }
         for (StyleSource source : styles.getStyleSources()) {
             loadStyleForFirstTime(source);
@@ -419,15 +416,13 @@ public final class MapPaintStyles {
      */
     public static StyleSource addStyle(SourceEntry entry) {
         StyleSource source = fromSourceEntry(entry);
-        if (source != null) {
-            styles.add(source);
-            loadStyleForFirstTime(source);
-            MapPaintPrefHelper.INSTANCE.put(styles.getStyleSources());
-            fireMapPaintSylesUpdated();
-            styles.clearCached();
-            if (Main.isDisplayingMapView()) {
-                Main.map.mapView.repaint();
-            }
+        styles.add(source);
+        loadStyleForFirstTime(source);
+        MapPaintPrefHelper.INSTANCE.put(styles.getStyleSources());
+        fireMapPaintSylesUpdated();
+        styles.clearCached();
+        if (Main.isDisplayingMapView()) {
+            Main.map.mapView.repaint();
         }
         return source;
     }
