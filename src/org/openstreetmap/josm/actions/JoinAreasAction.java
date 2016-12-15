@@ -97,12 +97,32 @@ public class JoinAreasAction extends JosmAction {
     }
 
     public static class Multipolygon {
-        public Way outerWay;
-        public List<Way> innerWays;
+        private final Way outerWay;
+        private final List<Way> innerWays;
 
+        /**
+         * Constructs a new {@code Multipolygon}.
+         * @param way outer way
+         */
         public Multipolygon(Way way) {
             outerWay = way;
             innerWays = new ArrayList<>();
+        }
+
+        /**
+         * Returns the outer way.
+         * @return the outer way
+         */
+        public final Way getOuterWay() {
+            return outerWay;
+        }
+
+        /**
+         * Returns the inner ways.
+         * @return the inner ways
+         */
+        public final List<Way> getInnerWays() {
+            return innerWays;
         }
     }
 
@@ -1238,7 +1258,7 @@ public class JoinAreasAction extends JosmAction {
 
     /**
      * Joins the lists of ways.
-     * @param polygon The list of outer ways that belong to that multigon.
+     * @param polygon The list of outer ways that belong to that multipolygon.
      * @return The newly created outer way
      * @throws UserCancelException if user cancels the operation
      */

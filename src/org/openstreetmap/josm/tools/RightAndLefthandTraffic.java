@@ -112,7 +112,7 @@ public final class RightAndLefthandTraffic {
                 JoinAreasResult result = new JoinAreasAction().joinAreas(areas);
                 if (result.hasChanges()) {
                     for (Multipolygon mp : result.getPolygons()) {
-                        optimizedWays.add(mp.outerWay);
+                        optimizedWays.add(mp.getOuterWay());
                     }
                 }
             } catch (UserCancelException ex) {
