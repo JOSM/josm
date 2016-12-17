@@ -4,7 +4,7 @@
 
 /* {0.key} without {1.key} (warning level) */
 way[junction                   ][!highway][junction!=yes],
-way[lanes                      ][!highway],
+way[lanes                      ][!highway][leisure!=track][leisure!=swimming_pool],
 way[living_street              ][!highway],
 way[maintenance                ][!highway],
 way[median                     ][!highway],
