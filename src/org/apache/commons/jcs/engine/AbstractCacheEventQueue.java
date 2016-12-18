@@ -1,5 +1,8 @@
 package org.apache.commons.jcs.engine;
 
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -25,8 +28,6 @@ import org.apache.commons.jcs.engine.behavior.ICacheListener;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.IOException;
-
 /**
  * An abstract base class to the different implementations
  */
@@ -45,34 +46,32 @@ public abstract class AbstractCacheEventQueue<K, V>
      */
     private int waitToDieMillis = DEFAULT_WAIT_TO_DIE_MILLIS;
 
-    // TODO privatise the fields
-
     /**
-     * When the events are pulled off the queue, the tell the listener to handle the specific event
+     * When the events are pulled off the queue, then tell the listener to handle the specific event
      * type. The work is done by the listener.
      */
-    protected ICacheListener<K, V> listener;
+    private ICacheListener<K, V> listener;
 
     /** Id of the listener registered with this queue */
-    protected long listenerId;
+    private long listenerId;
 
     /** The cache region name, if applicable. */
-    protected String cacheName;
+    private String cacheName;
 
     /** Maximum number of failures before we buy the farm. */
-    protected int maxFailure;
+    private int maxFailure;
 
     /** in milliseconds */
-    protected int waitBeforeRetry;
+    private int waitBeforeRetry;
 
-    /** this is true if there is no worker thread. */
-    protected boolean destroyed = true;
+    /** this is true if there is any worker thread. */
+    private final AtomicBoolean alive = new AtomicBoolean(false);
 
     /**
      * This means that the queue is functional. If we reached the max number of failures, the queue
      * is marked as non functional and will never work again.
      */
-    private boolean working = true;
+    private final AtomicBoolean working = new AtomicBoolean(true);
 
     /**
      * Returns the time to wait for events before killing the background thread.
@@ -111,9 +110,9 @@ public abstract class AbstractCacheEventQueue<K, V>
      * @return The alive value
      */
     @Override
-    public synchronized boolean isAlive()
+    public boolean isAlive()
     {
-        return !destroyed;
+        return alive.get();
     }
 
     /**
@@ -121,9 +120,9 @@ public abstract class AbstractCacheEventQueue<K, V>
      * <p>
      * @param aState
      */
-    public synchronized void setAlive( boolean aState )
+    public void setAlive( boolean aState )
     {
-        destroyed = !aState;
+        alive.set(aState);
     }
 
     /**
@@ -133,6 +132,43 @@ public abstract class AbstractCacheEventQueue<K, V>
     public long getListenerId()
     {
         return listenerId;
+    }
+
+    /**
+     * @return the cacheName
+     */
+    protected String getCacheName()
+    {
+        return cacheName;
+    }
+
+    /**
+     * Initializes the queue.
+     * <p>
+     * @param listener
+     * @param listenerId
+     * @param cacheName
+     * @param maxFailure
+     * @param waitBeforeRetry
+     */
+    protected void initialize( ICacheListener<K, V> listener, long listenerId, String cacheName, int maxFailure,
+                            int waitBeforeRetry)
+    {
+        if ( listener == null )
+        {
+            throw new IllegalArgumentException( "listener must not be null" );
+        }
+
+        this.listener = listener;
+        this.listenerId = listenerId;
+        this.cacheName = cacheName;
+        this.maxFailure = maxFailure <= 0 ? 3 : maxFailure;
+        this.waitBeforeRetry = waitBeforeRetry <= 0 ? 500 : waitBeforeRetry;
+
+        if ( log.isDebugEnabled() )
+        {
+            log.debug( "Constructed: " + this );
+        }
     }
 
     /**
@@ -150,12 +186,9 @@ public abstract class AbstractCacheEventQueue<K, V>
         {
             put( new PutEvent( ce ) );
         }
-        else
+        else if ( log.isWarnEnabled() )
         {
-            if ( log.isWarnEnabled() )
-            {
-                log.warn( "Not enqueuing Put Event for [" + this + "] because it's non-functional." );
-            }
+            log.warn( "Not enqueuing Put Event for [" + this + "] because it's non-functional." );
         }
     }
 
@@ -174,12 +207,9 @@ public abstract class AbstractCacheEventQueue<K, V>
         {
             put( new RemoveEvent( key ) );
         }
-        else
+        else if ( log.isWarnEnabled() )
         {
-            if ( log.isWarnEnabled() )
-            {
-                log.warn( "Not enqueuing Remove Event for [" + this + "] because it's non-functional." );
-            }
+            log.warn( "Not enqueuing Remove Event for [" + this + "] because it's non-functional." );
         }
     }
 
@@ -197,12 +227,9 @@ public abstract class AbstractCacheEventQueue<K, V>
         {
             put( new RemoveAllEvent() );
         }
-        else
+        else if ( log.isWarnEnabled() )
         {
-            if ( log.isWarnEnabled() )
-            {
-                log.warn( "Not enqueuing RemoveAll Event for [" + this + "] because it's non-functional." );
-            }
+            log.warn( "Not enqueuing RemoveAll Event for [" + this + "] because it's non-functional." );
         }
     }
 
@@ -217,12 +244,9 @@ public abstract class AbstractCacheEventQueue<K, V>
         {
             put( new DisposeEvent() );
         }
-        else
+        else if ( log.isWarnEnabled() )
         {
-            if ( log.isWarnEnabled() )
-            {
-                log.warn( "Not enqueuing Dispose Event for [" + this + "] because it's non-functional." );
-            }
+            log.warn( "Not enqueuing Dispose Event for [" + this + "] because it's non-functional." );
         }
     }
 
@@ -235,24 +259,12 @@ public abstract class AbstractCacheEventQueue<K, V>
 
 
     // /////////////////////////// Inner classes /////////////////////////////
-
-    /** The queue is composed of nodes. */
-    protected static class Node
-    {
-        /** Next node in the singly linked list. */
-        Node next = null;
-
-        /** The payload. */
-        AbstractCacheEventQueue<?, ?>.AbstractCacheEvent event = null;
-    }
-
     /**
      * Retries before declaring failure.
      * <p>
      * @author asmuts
      */
-    protected abstract class AbstractCacheEvent
-        implements Runnable
+    protected abstract class AbstractCacheEvent implements Runnable
     {
         /** Number of failures encountered processing this event. */
         int failures = 0;
@@ -260,8 +272,8 @@ public abstract class AbstractCacheEventQueue<K, V>
         /**
          * Main processing method for the AbstractCacheEvent object
          */
-        @SuppressWarnings("synthetic-access")
         @Override
+        @SuppressWarnings("synthetic-access")
         public void run()
         {
             try
@@ -442,7 +454,6 @@ public abstract class AbstractCacheEventQueue<K, V>
         {
             return "RemoveAllEvent";
         }
-
     }
 
     /**
@@ -483,7 +494,7 @@ public abstract class AbstractCacheEventQueue<K, V>
     @Override
     public boolean isWorking()
     {
-        return working;
+        return working.get();
     }
 
     /**
@@ -494,6 +505,6 @@ public abstract class AbstractCacheEventQueue<K, V>
      */
     public void setWorking( boolean b )
     {
-        working = b;
+        working.set(b);
     }
 }

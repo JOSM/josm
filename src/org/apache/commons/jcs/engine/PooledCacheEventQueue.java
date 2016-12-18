@@ -1,5 +1,9 @@
 package org.apache.commons.jcs.engine;
 
+import java.util.ArrayList;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -27,10 +31,6 @@ import org.apache.commons.jcs.engine.stats.behavior.IStats;
 import org.apache.commons.jcs.utils.threadpool.ThreadPoolManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.util.ArrayList;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * An event queue is used to propagate ordered cache events to one and only one target listener.
@@ -80,29 +80,14 @@ public class PooledCacheEventQueue<K, V>
      * @param waitBeforeRetry
      * @param threadPoolName
      */
-    @Override
-    public void initialize( ICacheListener<K, V> listener, long listenerId, String cacheName, int maxFailure,
+    protected void initialize( ICacheListener<K, V> listener, long listenerId, String cacheName, int maxFailure,
                             int waitBeforeRetry, String threadPoolName )
     {
-        if ( listener == null )
-        {
-            throw new IllegalArgumentException( "listener must not be null" );
-        }
-
-        this.listener = listener;
-        this.listenerId = listenerId;
-        this.cacheName = cacheName;
-        this.maxFailure = maxFailure <= 0 ? 3 : maxFailure;
-        this.waitBeforeRetry = waitBeforeRetry <= 0 ? 500 : waitBeforeRetry;
+        super.initialize(listener, listenerId, cacheName, maxFailure, waitBeforeRetry);
 
         // this will share the same pool with other event queues by default.
         pool = ThreadPoolManager.getInstance().getPool(
                 (threadPoolName == null) ? "cache_event_queue" : threadPoolName );
-
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "Initialized: " + this );
-        }
     }
 
     /**
@@ -115,22 +100,14 @@ public class PooledCacheEventQueue<K, V>
     }
 
     /**
-     * Event Q is empty.
-     */
-    public synchronized void stopProcessing()
-    {
-        destroyed = true;
-    }
-
-    /**
      * Destroy the queue. Interrupt all threads.
      */
     @Override
     public synchronized void destroy()
     {
-        if ( !destroyed )
+        if ( isAlive() )
         {
-            destroyed = true;
+            setAlive(false);
             pool.shutdownNow();
             if ( log.isInfoEnabled() )
             {
@@ -148,14 +125,6 @@ public class PooledCacheEventQueue<K, V>
     protected void put( AbstractCacheEvent event )
     {
         pool.execute( event );
-    }
-
-    /**
-     * @return Statistics info
-     */
-    public String getStats()
-    {
-        return getStatistics().toString();
     }
 
     /**

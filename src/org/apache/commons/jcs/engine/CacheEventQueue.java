@@ -1,5 +1,9 @@
 package org.apache.commons.jcs.engine;
 
+import java.util.ArrayList;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -27,8 +31,6 @@ import org.apache.commons.jcs.engine.stats.behavior.IStats;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.util.ArrayList;
-
 /**
  * An event queue is used to propagate ordered cache events to one and only one target listener.
  * <p>
@@ -48,17 +50,8 @@ public class CacheEventQueue<K, V>
     /** the thread that works the queue. */
     private Thread processorThread;
 
-    /** sync */
-    private final Object queueLock = new Object();
-
-    /** the head of the queue */
-    private Node head = new Node();
-
-    /** the end of the queue */
-    private Node tail = head;
-
-    /** Number of items in the queue */
-    private int size = 0;
+    /** Queue implementation */
+    private LinkedBlockingQueue<AbstractCacheEvent> queue = new LinkedBlockingQueue<AbstractCacheEvent>();
 
     /**
      * Constructs with the specified listener and the cache name.
@@ -84,38 +77,7 @@ public class CacheEventQueue<K, V>
     public CacheEventQueue( ICacheListener<K, V> listener, long listenerId, String cacheName, int maxFailure,
                             int waitBeforeRetry )
     {
-        initialize( listener, listenerId, cacheName, maxFailure, waitBeforeRetry, null );
-    }
-
-    /**
-     * Initializes the queue.
-     * <p>
-     * @param listener
-     * @param listenerId
-     * @param cacheName
-     * @param maxFailure
-     * @param waitBeforeRetry
-     * @param threadPoolName
-     */
-    @Override
-    public void initialize( ICacheListener<K, V> listener, long listenerId, String cacheName, int maxFailure,
-                            int waitBeforeRetry, String threadPoolName )
-    {
-        if ( listener == null )
-        {
-            throw new IllegalArgumentException( "listener must not be null" );
-        }
-
-        this.listener = listener;
-        this.listenerId = listenerId;
-        this.cacheName = cacheName;
-        this.maxFailure = maxFailure <= 0 ? 3 : maxFailure;
-        this.waitBeforeRetry = waitBeforeRetry <= 0 ? 500 : waitBeforeRetry;
-
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "Constructed: " + this );
-        }
+        initialize( listener, listenerId, cacheName, maxFailure, waitBeforeRetry );
     }
 
     /**
@@ -133,13 +95,10 @@ public class CacheEventQueue<K, V>
      * Kill the processor thread and indicate that the queue is destroyed and no longer alive, but it
      * can still be working.
      */
-    public void stopProcessing()
+    protected void stopProcessing()
     {
-        synchronized (queueLock)
-        {
-            destroyed = true;
-            processorThread = null;
-        }
+        setAlive(false);
+        processorThread = null;
     }
 
     /**
@@ -150,37 +109,31 @@ public class CacheEventQueue<K, V>
     @Override
     public void destroy()
     {
-        synchronized (queueLock)
+        if ( isAlive() )
         {
-            if ( !destroyed )
+            setAlive(false);
+
+            if ( log.isInfoEnabled() )
             {
-                destroyed = true;
-
-                if ( log.isInfoEnabled() )
-                {
-                    log.info( "Destroying queue, stats =  " + getStatistics() );
-                }
-
-                // Synchronize on queue so the thread will not wait forever,
-                // and then interrupt the QueueProcessor
-
-                if ( processorThread != null )
-                {
-                    processorThread.interrupt();
-                    processorThread = null;
-                }
-
-                if ( log.isInfoEnabled() )
-                {
-                    log.info( "Cache event queue destroyed: " + this );
-                }
+                log.info( "Destroying queue, stats =  " + getStatistics() );
             }
-            else
+
+            if ( processorThread != null )
             {
-                if ( log.isInfoEnabled() )
-                {
-                    log.info( "Destroy was called after queue was destroyed.  Doing nothing.  Stats =  " + getStatistics() );
-                }
+                processorThread.interrupt();
+                processorThread = null;
+            }
+
+            if ( log.isInfoEnabled() )
+            {
+                log.info( "Cache event queue destroyed: " + this );
+            }
+        }
+        else
+        {
+            if ( log.isInfoEnabled() )
+            {
+                log.info( "Destroy was called after queue was destroyed. Doing nothing. Stats =  " + getStatistics() );
             }
         }
     }
@@ -193,34 +146,23 @@ public class CacheEventQueue<K, V>
     @Override
     protected void put( AbstractCacheEvent event )
     {
-        Node newNode = new Node();
         if ( log.isDebugEnabled() )
         {
-            log.debug( "Event entering Queue for " + cacheName + ": " + event );
+            log.debug( "Event entering Queue for " + getCacheName() + ": " + event );
         }
 
-        newNode.event = event;
+        queue.offer(event);
 
-        synchronized ( queueLock )
+        if ( isWorking() )
         {
-            size++;
-            tail.next = newNode;
-            tail = newNode;
-            if ( isWorking() )
+            if ( !isAlive() )
             {
-                if ( !isAlive() )
+                setAlive(true);
+                processorThread = new QProcessor();
+                processorThread.start();
+                if ( log.isInfoEnabled() )
                 {
-                    destroyed = false;
-                    processorThread = new QProcessor( this );
-                    processorThread.start();
-                    if ( log.isInfoEnabled() )
-                    {
-                        log.info( "Cache event queue created: " + this );
-                    }
-                }
-                else
-                {
-                    queueLock.notify();
+                    log.info( "Cache event queue created: " + this );
                 }
             }
         }
@@ -234,23 +176,18 @@ public class CacheEventQueue<K, V>
      * @author asmuts
      * @created January 15, 2002
      */
-    private class QProcessor
+    protected class QProcessor
         extends Thread
     {
-        /** The queue to work */
-        CacheEventQueue<K, V> queue;
-
         /**
          * Constructor for the QProcessor object
          * <p>
          * @param aQueue the event queue to take items from.
          */
-        QProcessor( CacheEventQueue<K, V> aQueue )
+        QProcessor()
         {
-            super( "CacheEventQueue.QProcessor-" + aQueue.cacheName );
-
+            super( "CacheEventQueue.QProcessor-" + getCacheName() );
             setDaemon( true );
-            queue = aQueue;
         }
 
         /**
@@ -259,15 +196,22 @@ public class CacheEventQueue<K, V>
          * Waits for a specified time (waitToDieMillis) for something to come in and if no new
          * events come in during that period the run method can exit and the thread is dereferenced.
          */
-        @SuppressWarnings("synthetic-access")
         @Override
         public void run()
         {
-            AbstractCacheEvent event = null;
 
-            while ( queue.isAlive() )
+            while ( isAlive() )
             {
-                event = queue.take();
+                AbstractCacheEvent event = null;
+
+                try
+                {
+                    event = queue.poll(getWaitToDieMillis(), TimeUnit.MILLISECONDS);
+                }
+                catch (InterruptedException e)
+                {
+                    // is ok
+                }
 
                 if ( log.isDebugEnabled() )
                 {
@@ -276,79 +220,18 @@ public class CacheEventQueue<K, V>
 
                 if ( event == null )
                 {
-                    synchronized ( queueLock )
-                    {
-                        try
-                        {
-                            queueLock.wait( queue.getWaitToDieMillis() );
-                        }
-                        catch ( InterruptedException e )
-                        {
-                            log.warn( "Interrupted while waiting for another event to come in before we die." );
-                            return;
-                        }
-                        event = queue.take();
-                        if ( log.isDebugEnabled() )
-                        {
-                            log.debug( "Event from queue after sleep = " + event );
-                        }
-                    }
-                    if ( event == null )
-                    {
-                        queue.stopProcessing();
-                    }
+                    stopProcessing();
                 }
 
-                if ( queue.isWorking() && queue.isAlive() && event != null )
+                if ( event != null && isWorking() && isAlive() )
                 {
                     event.run();
                 }
             }
             if ( log.isDebugEnabled() )
             {
-                log.debug( "QProcessor exiting for " + queue );
+                log.debug( "QProcessor exiting for " + getCacheName() );
             }
-        }
-    }
-
-    /**
-     * Returns the next cache event from the queue or null if there are no events in the queue.
-     * <p>
-     * We have an empty node at the head and the tail. When we take an item from the queue we move
-     * the next node to the head and then clear the value from that node. This value is returned.
-     * <p>
-     * When the queue is empty the head node is the same as the tail node.
-     * <p>
-     * @return An event to process.
-     */
-    protected AbstractCacheEvent take()
-    {
-        synchronized ( queueLock )
-        {
-            // wait until there is something to read
-            if ( head == tail )
-            {
-                return null;
-            }
-
-            Node node = head.next;
-
-            @SuppressWarnings("unchecked") // No generics for public fields
-            AbstractCacheEvent value = (AbstractCacheEvent) node.event;
-
-            if ( log.isDebugEnabled() )
-            {
-                log.debug( "head.event = " + head.event );
-                log.debug( "node.event = " + node.event );
-            }
-
-            // Node becomes the new head (head is always empty)
-
-            node.event = null;
-            head = node;
-
-            size--;
-            return value;
         }
     }
 
@@ -366,30 +249,10 @@ public class CacheEventQueue<K, V>
 
         ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
 
-        elems.add(new StatElement<Boolean>( "Working", Boolean.valueOf(super.isWorking()) ) );
+        elems.add(new StatElement<Boolean>( "Working", Boolean.valueOf(this.isWorking()) ) );
         elems.add(new StatElement<Boolean>( "Alive", Boolean.valueOf(this.isAlive()) ) );
         elems.add(new StatElement<Boolean>( "Empty", Boolean.valueOf(this.isEmpty()) ) );
-
-        int sz = 0;
-        synchronized ( queueLock )
-        {
-            // wait until there is something to read
-            if ( head == tail )
-            {
-                sz = 0;
-            }
-            else
-            {
-                Node n = head;
-                while ( n != null )
-                {
-                    n = n.next;
-                    sz++;
-                }
-            }
-
-            elems.add(new StatElement<Integer>( "Size", Integer.valueOf(sz) ) );
-        }
+        elems.add(new StatElement<Integer>( "Size", Integer.valueOf(this.size()) ) );
 
         stats.setStatElements( elems );
 
@@ -402,7 +265,7 @@ public class CacheEventQueue<K, V>
     @Override
     public boolean isEmpty()
     {
-        return tail == head;
+        return queue.isEmpty();
     }
 
     /**
@@ -413,6 +276,6 @@ public class CacheEventQueue<K, V>
     @Override
     public int size()
     {
-        return size;
+        return queue.size();
     }
 }
