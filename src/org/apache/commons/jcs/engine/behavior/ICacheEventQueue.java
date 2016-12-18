@@ -1,5 +1,7 @@
 package org.apache.commons.jcs.engine.behavior;
 
+import java.io.IOException;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,8 +23,6 @@ package org.apache.commons.jcs.engine.behavior;
 
 import org.apache.commons.jcs.engine.stats.behavior.IStats;
 
-import java.io.IOException;
-
 /**
  * Interface for a cache event queue. An event queue is used to propagate
  * ordered cache events to one and only one target listener.
@@ -37,19 +37,6 @@ public interface ICacheEventQueue<K, V>
         /** Uses a thread pool. */
         POOLED
     }
-
-    /**
-     * Initializes the queue.
-     * <p>
-     * @param listener
-     * @param listenerId
-     * @param cacheName
-     * @param maxFailure
-     * @param waitBeforeRetry
-     * @param threadPoolName
-     */
-    void initialize( ICacheListener<K, V> listener, long listenerId, String cacheName, int maxFailure,
-                            int waitBeforeRetry, String threadPoolName );
 
     /**
      * Return the type of event queue we are using, either single or pooled.
