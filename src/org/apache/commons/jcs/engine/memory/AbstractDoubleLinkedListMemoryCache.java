@@ -26,6 +26,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.jcs.engine.CacheConstants;
@@ -117,7 +118,7 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
      * @return new ConcurrentHashMap()
      */
     @Override
-    public Map<K, MemoryElementDescriptor<K, V>> createMap()
+    public ConcurrentMap<K, MemoryElementDescriptor<K, V>> createMap()
     {
         return new ConcurrentHashMap<K, MemoryElementDescriptor<K, V>>();
     }

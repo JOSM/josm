@@ -49,9 +49,6 @@ public abstract class AbstractMemoryCache<K, V>
     /** Log instance */
     private static final Log log = LogFactory.getLog( AbstractMemoryCache.class );
 
-    /** The region name. This defines a namespace of sorts. */
-    private String cacheName;
-
     /** Cache Attributes.  Regions settings. */
     private ICompositeCacheAttributes cacheAttributes;
 
@@ -80,7 +77,6 @@ public abstract class AbstractMemoryCache<K, V>
         lock.lock();
         try
         {
-            this.cacheName = hub.getCacheName();
             this.cacheAttributes = hub.getCacheAttributes();
             this.cache = hub;
             map = createMap();
@@ -173,14 +169,14 @@ public abstract class AbstractMemoryCache<K, V>
         {
             if ( log.isDebugEnabled() )
             {
-                log.debug( cacheName + ": MemoryCache quiet hit for " + key );
+                log.debug( getCacheName() + ": MemoryCache quiet hit for " + key );
             }
 
             ce = me.getCacheElement();
         }
         else if ( log.isDebugEnabled() )
         {
-            log.debug( cacheName + ": MemoryCache quiet miss for " + key );
+            log.debug( getCacheName() + ": MemoryCache quiet miss for " + key );
         }
 
         return ce;
@@ -272,7 +268,7 @@ public abstract class AbstractMemoryCache<K, V>
         {
             return attributeCacheName;
         }
-        return cacheName;
+        return cache.getCacheName();
     }
 
     /**

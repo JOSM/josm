@@ -101,28 +101,6 @@ public class LHMLRUMemoryCache<K, V>
     }
 
     /**
-     * Get an item from the cache without affecting its last access time or position. There is no
-     * way to do this with the LinkedHashMap!
-     * <p>
-     * @param key Identifies item to find
-     * @return Element matching key if found, or null
-     * @throws IOException
-     */
-    @Override
-    public ICacheElement<K, V> getQuiet( K key )
-        throws IOException
-    {
-        MemoryElementDescriptor<K, V> me = map.get( key );
-
-        if (me != null)
-        {
-            return me.getCacheElement();
-        }
-
-        return null;
-    }
-
-    /**
      * Get an item from the cache
      * <p>
      * @param key Identifies item to find
@@ -130,7 +108,7 @@ public class LHMLRUMemoryCache<K, V>
      * @throws IOException
      */
     @Override
-    public synchronized ICacheElement<K, V> get( K key )
+    public ICacheElement<K, V> get( K key )
         throws IOException
     {
         if ( log.isDebugEnabled() )
@@ -171,7 +149,7 @@ public class LHMLRUMemoryCache<K, V>
      * @throws IOException
      */
     @Override
-    public synchronized boolean remove( K key )
+    public boolean remove( K key )
         throws IOException
     {
         if ( log.isDebugEnabled() )
@@ -240,12 +218,7 @@ public class LHMLRUMemoryCache<K, V>
     @Override
     public Set<K> getKeySet()
     {
-        // need a better locking strategy here.
-        synchronized ( this )
-        {
-            // may need to lock to map here?
-            return new LinkedHashSet<K>(map.keySet());
-        }
+        return new LinkedHashSet<K>(map.keySet());
     }
 
     /**
@@ -255,7 +228,7 @@ public class LHMLRUMemoryCache<K, V>
      * @return IStats
      */
     @Override
-    public synchronized IStats getStatistics()
+    public IStats getStatistics()
     {
         IStats stats = new Stats();
         stats.setTypeName( "LHMLRU Memory Cache" );
@@ -268,9 +241,6 @@ public class LHMLRUMemoryCache<K, V>
         elems.add(new StatElement<AtomicLong>("Miss Count", missCnt));
 
         stats.setStatElements( elems );
-
-        // int rate = ((hitCnt + missCnt) * 100) / (hitCnt * 100) * 100;
-        // buf.append("\n Hit Rate = " + rate + " %" );
 
         return stats;
     }

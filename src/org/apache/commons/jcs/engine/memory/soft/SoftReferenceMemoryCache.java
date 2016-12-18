@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -98,7 +99,7 @@ public class SoftReferenceMemoryCache<K, V> extends AbstractMemoryCache<K, V>
      * @see org.apache.commons.jcs.engine.memory.AbstractMemoryCache#createMap()
      */
     @Override
-    public Map<K, MemoryElementDescriptor<K, V>> createMap()
+    public ConcurrentMap<K, MemoryElementDescriptor<K, V>> createMap()
     {
         return new ConcurrentHashMap<K, MemoryElementDescriptor<K, V>>();
     }
