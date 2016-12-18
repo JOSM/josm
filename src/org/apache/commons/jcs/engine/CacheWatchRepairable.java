@@ -1,5 +1,12 @@
 package org.apache.commons.jcs.engine;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CopyOnWriteArraySet;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -24,12 +31,6 @@ import org.apache.commons.jcs.engine.behavior.ICacheObserver;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 /**
  * Intercepts the requests to the underlying ICacheObserver object so that the listeners can be
  * recorded locally for remote connection recovery purposes. (Durable subscription like those in JMS
@@ -45,11 +46,11 @@ public class CacheWatchRepairable
     private ICacheObserver cacheWatch;
 
     /** Map of cache regions. */
-    private final Map<String, Set<ICacheListener<?, ?>>> cacheMap =
-        new HashMap<String, Set<ICacheListener<?, ?>>>();
+    private final ConcurrentMap<String, Set<ICacheListener<?, ?>>> cacheMap =
+        new ConcurrentHashMap<String, Set<ICacheListener<?, ?>>>();
 
     /**
-     * Replaces the underlying cache watch service and reattached all existing listeners to the new
+     * Replaces the underlying cache watch service and re-attaches all existing listeners to the new
      * cache watch.
      * <p>
      * @param cacheWatch The new cacheWatch value
@@ -57,27 +58,24 @@ public class CacheWatchRepairable
     public void setCacheWatch( ICacheObserver cacheWatch )
     {
         this.cacheWatch = cacheWatch;
-        synchronized ( cacheMap )
+        for (Map.Entry<String, Set<ICacheListener<?, ?>>> entry : cacheMap.entrySet())
         {
-            for (Map.Entry<String, Set<ICacheListener<?, ?>>> entry : cacheMap.entrySet())
+            String cacheName = entry.getKey();
+            for (ICacheListener<?, ?> listener : entry.getValue())
             {
-                String cacheName = entry.getKey();
-                for (ICacheListener<?, ?> listener : entry.getValue())
+                try
                 {
-                    try
+                    if ( log.isInfoEnabled() )
                     {
-                        if ( log.isInfoEnabled() )
-                        {
-                            log.info( "Adding listener to cache watch. ICacheListener = " + listener
-                                + " | ICacheObserver = " + cacheWatch );
-                        }
-                        cacheWatch.addCacheListener( cacheName, listener );
+                        log.info( "Adding listener to cache watch. ICacheListener = " + listener
+                            + " | ICacheObserver = " + cacheWatch );
                     }
-                    catch ( IOException ex )
-                    {
-                        log.error( "Problem adding listener. ICacheListener = " + listener + " | ICacheObserver = "
-                            + cacheWatch, ex );
-                    }
+                    cacheWatch.addCacheListener( cacheName, listener );
+                }
+                catch ( IOException ex )
+                {
+                    log.error( "Problem adding listener. ICacheListener = " + listener + " | ICacheObserver = "
+                        + cacheWatch, ex );
                 }
             }
         }
@@ -96,16 +94,20 @@ public class CacheWatchRepairable
     {
         // Record the added cache listener locally, regardless of whether the
         // remote add-listener operation succeeds or fails.
-        synchronized ( cacheMap )
+        Set<ICacheListener<?, ?>> listenerSet = cacheMap.get( cacheName );
+        if ( listenerSet == null )
         {
-            Set<ICacheListener<?, ?>> listenerSet = cacheMap.get( cacheName );
-            if ( listenerSet == null )
+            Set<ICacheListener<?, ?>> newListenerSet = new CopyOnWriteArraySet<ICacheListener<?, ?>>();
+            listenerSet = cacheMap.putIfAbsent( cacheName, newListenerSet );
+
+            if (listenerSet == null)
             {
-                listenerSet = new HashSet<ICacheListener<?, ?>>();
-                cacheMap.put( cacheName, listenerSet );
+                listenerSet = newListenerSet;
             }
-            listenerSet.add( obj );
         }
+
+        listenerSet.add( obj );
+
         if ( log.isInfoEnabled() )
         {
             log.info( "Adding listener to cache watch. ICacheListener = " + obj
@@ -126,13 +128,11 @@ public class CacheWatchRepairable
     {
         // Record the added cache listener locally, regardless of whether the
         // remote add-listener operation succeeds or fails.
-        synchronized ( cacheMap )
+        for (Set<ICacheListener<?, ?>> listenerSet : cacheMap.values())
         {
-            for (Set<ICacheListener<?, ?>> listenerSet : cacheMap.values())
-            {
-                listenerSet.add( obj );
-            }
+            listenerSet.add( obj );
         }
+
         if ( log.isInfoEnabled() )
         {
             log.info( "Adding listener to cache watch. ICacheListener = " + obj
@@ -158,13 +158,10 @@ public class CacheWatchRepairable
         }
         // Record the removal locally, regardless of whether the remote
         // remove-listener operation succeeds or fails.
-        synchronized ( cacheMap )
+        Set<ICacheListener<?, ?>> listenerSet = cacheMap.get( cacheName );
+        if ( listenerSet != null )
         {
-            Set<ICacheListener<?, ?>> listenerSet = cacheMap.get( cacheName );
-            if ( listenerSet != null )
-            {
-                listenerSet.remove( obj );
-            }
+            listenerSet.remove( obj );
         }
         cacheWatch.removeCacheListener( cacheName, obj );
     }
@@ -184,16 +181,13 @@ public class CacheWatchRepairable
 
         // Record the removal locally, regardless of whether the remote
         // remove-listener operation succeeds or fails.
-        synchronized ( cacheMap )
+        for (Set<ICacheListener<?, ?>> listenerSet : cacheMap.values())
         {
-            for (Set<ICacheListener<?, ?>> listenerSet : cacheMap.values())
+            if ( log.isDebugEnabled() )
             {
-                if ( log.isDebugEnabled() )
-                {
-                    log.debug( "Before removing [" + obj + "] the listenerSet = " + listenerSet );
-                }
-                listenerSet.remove( obj );
+                log.debug( "Before removing [" + obj + "] the listenerSet = " + listenerSet );
             }
+            listenerSet.remove( obj );
         }
         cacheWatch.removeCacheListener( obj );
     }
