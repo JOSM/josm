@@ -224,7 +224,7 @@ public class Pack200CompressorInputStream extends CompressorInputStream {
         try {
             streamBridge.getInput().mark(limit);
         } catch (final IOException ex) {
-            throw new RuntimeException(ex);
+            throw new RuntimeException(ex); //NOSONAR
         }
     }
 
