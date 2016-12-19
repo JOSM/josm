@@ -275,7 +275,7 @@ public class LHMLRUMemoryCache<K, V>
     /**
      * Implementation of removeEldestEntry in LinkedHashMap
      */
-    public class LHMSpooler
+    protected class LHMSpooler
         extends java.util.LinkedHashMap<K, MemoryElementDescriptor<K, V>>
     {
         /** Don't change. */
@@ -314,7 +314,8 @@ public class LHMLRUMemoryCache<K, V>
                     log.debug( "LHMLRU max size: " + getCacheAttributes().getMaxObjects()
                         + ".  Spooling element, key: " + element.getKey() );
                 }
-                spoolToDisk( element );
+
+                waterfal( element );
 
                 if ( log.isDebugEnabled() )
                 {
@@ -322,22 +323,6 @@ public class LHMLRUMemoryCache<K, V>
                 }
             }
             return true;
-        }
-
-        /**
-         * Puts the element in the DiskStore
-         * <p>
-         * @param element The CacheElement
-         */
-        @SuppressWarnings("synthetic-access")
-        private void spoolToDisk( ICacheElement<K, V> element )
-        {
-            getCompositeCache().spoolToDisk( element );
-
-            if ( log.isDebugEnabled() )
-            {
-                log.debug( getCacheName() + "Spooled element to disk: " + element.getKey() );
-            }
         }
     }
 }

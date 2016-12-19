@@ -302,10 +302,8 @@ public class SoftReferenceMemoryCache<K, V> extends AbstractMemoryCache<K, V>
     /**
      * Trim the number of strong references to equal or below the number given
      * by the maxObjects parameter.
-     *
-     * @throws IOException
      */
-    private void trimStrongReferences() throws IOException
+    private void trimStrongReferences()
     {
         int max = getCacheAttributes().getMaxObjects();
         int startsize = strongReferences.size();

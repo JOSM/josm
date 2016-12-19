@@ -274,12 +274,10 @@ public abstract class AbstractMemoryCache<K, V>
     /**
      * Puts an item to the cache.
      * <p>
-     * @param ce
-     * @throws IOException
+     * @param ce the item
      */
     @Override
     public void waterfal( ICacheElement<K, V> ce )
-        throws IOException
     {
         this.cache.spoolToDisk( ce );
     }
