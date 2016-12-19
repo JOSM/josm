@@ -60,9 +60,9 @@ final class PureJavaCrc32C implements Checksum {
 
     while(len > 7) {
       final int c0 =(b[off+0] ^ localCrc) & 0xff;
-      final int c1 =(b[off+1] ^ (localCrc >>>= 8)) & 0xff;
-      final int c2 =(b[off+2] ^ (localCrc >>>= 8)) & 0xff;
-      final int c3 =(b[off+3] ^ (localCrc >>>= 8)) & 0xff;
+      final int c1 =(b[off+1] ^ (localCrc >>>= 8)) & 0xff; //NOSONAR
+      final int c2 =(b[off+2] ^ (localCrc >>>= 8)) & 0xff; //NOSONAR
+      final int c3 =(b[off+3] ^ (localCrc >>>= 8)) & 0xff; //NOSONAR
       localCrc = (T[T8_7_start + c0] ^ T[T8_6_start + c1])
           ^ (T[T8_5_start + c2] ^ T[T8_4_start + c3]);
 

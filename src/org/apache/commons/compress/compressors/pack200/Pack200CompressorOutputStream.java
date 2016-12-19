@@ -133,8 +133,8 @@ public class Pack200CompressorOutputStream extends CompressorOutputStream {
             JarInputStream ji = null;
             boolean success = false;
             try {
-                p.pack(ji = new JarInputStream(streamBridge.getInput()),
-                       originalOutput);
+                ji = new JarInputStream(streamBridge.getInput());
+                p.pack(ji, originalOutput);
                 success = true;
             } finally {
                 if (!success) {
