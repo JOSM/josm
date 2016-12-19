@@ -20,13 +20,11 @@ package org.apache.commons.jcs.engine.memory.lru;
  */
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.jcs.engine.CacheConstants;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
@@ -35,9 +33,6 @@ import org.apache.commons.jcs.engine.control.group.GroupAttrName;
 import org.apache.commons.jcs.engine.memory.AbstractMemoryCache;
 import org.apache.commons.jcs.engine.memory.util.DefaultMemoryElementDescriptor;
 import org.apache.commons.jcs.engine.memory.util.MemoryElementDescriptor;
-import org.apache.commons.jcs.engine.stats.StatElement;
-import org.apache.commons.jcs.engine.stats.Stats;
-import org.apache.commons.jcs.engine.stats.behavior.IStatElement;
 import org.apache.commons.jcs.engine.stats.behavior.IStats;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -51,15 +46,6 @@ public class LHMLRUMemoryCache<K, V>
     /** The Logger. */
     private static final Log log = LogFactory.getLog( LRUMemoryCache.class );
 
-    /** number of hits */
-    private AtomicLong hitCnt;
-
-    /** number of misses */
-    private AtomicLong missCnt;
-
-    /** number of puts */
-    private AtomicLong putCnt;
-
     /**
      * For post reflection creation initialization
      * <p>
@@ -69,9 +55,6 @@ public class LHMLRUMemoryCache<K, V>
     public void initialize( CompositeCache<K, V> hub )
     {
         super.initialize( hub );
-        hitCnt = new AtomicLong(0);
-        missCnt = new AtomicLong(0);
-        putCnt = new AtomicLong(0);
         log.info( "initialized LHMLRUMemoryCache for " + getCacheName() );
     }
 
@@ -230,17 +213,8 @@ public class LHMLRUMemoryCache<K, V>
     @Override
     public IStats getStatistics()
     {
-        IStats stats = new Stats();
+        IStats stats = super.getStatistics();
         stats.setTypeName( "LHMLRU Memory Cache" );
-
-        ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
-
-        elems.add(new StatElement<Integer>( "Map Size", Integer.valueOf(map.size()) ) );
-        elems.add(new StatElement<AtomicLong>("Put Count", putCnt));
-        elems.add(new StatElement<AtomicLong>("Hit Count", hitCnt));
-        elems.add(new StatElement<AtomicLong>("Miss Count", missCnt));
-
-        stats.setStatElements( elems );
 
         return stats;
     }

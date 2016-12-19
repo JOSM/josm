@@ -20,14 +20,13 @@ package org.apache.commons.jcs.engine.memory;
  */
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.jcs.engine.CacheConstants;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
@@ -36,7 +35,6 @@ import org.apache.commons.jcs.engine.control.group.GroupAttrName;
 import org.apache.commons.jcs.engine.memory.util.DefaultMemoryElementDescriptor;
 import org.apache.commons.jcs.engine.memory.util.MemoryElementDescriptor;
 import org.apache.commons.jcs.engine.stats.StatElement;
-import org.apache.commons.jcs.engine.stats.Stats;
 import org.apache.commons.jcs.engine.stats.behavior.IStatElement;
 import org.apache.commons.jcs.engine.stats.behavior.IStats;
 import org.apache.commons.jcs.utils.struct.DoubleLinkedList;
@@ -59,15 +57,6 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
     /** thread-safe double linked list for lru */
     protected DoubleLinkedList<MemoryElementDescriptor<K, V>> list; // TODO privatise
 
-    /** number of hits */
-    private AtomicLong hitCnt;
-
-    /** number of misses */
-    private AtomicLong missCnt;
-
-    /** number of puts */
-    private AtomicLong putCnt;
-
     /**
      * For post reflection creation initialization.
      * <p>
@@ -77,35 +66,9 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
     @Override
     public void initialize(CompositeCache<K, V> hub)
     {
-        lock.lock();
-        try
-        {
-            super.initialize(hub);
-            hitCnt = new AtomicLong(0);
-            missCnt = new AtomicLong(0);
-            putCnt = new AtomicLong(0);
-            list = new DoubleLinkedList<MemoryElementDescriptor<K, V>>();
-            log.info("initialized MemoryCache for " + getCacheName());
-        }
-        finally
-        {
-            lock.unlock();
-        }
-    }
-
-    /**
-     * Reset statistics
-     *
-     * @see org.apache.commons.jcs.engine.memory.AbstractMemoryCache#dispose()
-     */
-    @Override
-    public void dispose() throws IOException
-    {
-        super.dispose();
-        removeAll();
-        hitCnt.set(0);
-        missCnt.set(0);
-        putCnt.set(0);
+        super.initialize(hub);
+        list = new DoubleLinkedList<MemoryElementDescriptor<K, V>>();
+        log.info("initialized MemoryCache for " + getCacheName());
     }
 
     /**
@@ -689,26 +652,12 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
     @Override
     public IStats getStatistics()
     {
-        IStats stats = new Stats();
+        IStats stats = super.getStatistics();
         stats.setTypeName( /* add algorithm name */"Memory Cache");
 
-        ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
+        List<IStatElement<?>> elems = stats.getStatElements();
 
-        lock.lock(); // not sure that's really relevant here but not that important
-        try
-        {
-            elems.add(new StatElement<Integer>("List Size", Integer.valueOf(list.size())));
-            elems.add(new StatElement<Integer>("Map Size", Integer.valueOf(map.size())));
-            elems.add(new StatElement<AtomicLong>("Put Count", putCnt));
-            elems.add(new StatElement<AtomicLong>("Hit Count", hitCnt));
-            elems.add(new StatElement<AtomicLong>("Miss Count", missCnt));
-        }
-        finally
-        {
-            lock.unlock();
-        }
-
-        stats.setStatElements(elems);
+        elems.add(new StatElement<Integer>("List Size", Integer.valueOf(list.size())));
 
         return stats;
     }

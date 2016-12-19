@@ -21,15 +21,14 @@ package org.apache.commons.jcs.engine.memory.soft;
 
 import java.io.IOException;
 import java.lang.ref.SoftReference;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.jcs.engine.CacheConstants;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
@@ -40,7 +39,6 @@ import org.apache.commons.jcs.engine.memory.AbstractMemoryCache;
 import org.apache.commons.jcs.engine.memory.util.MemoryElementDescriptor;
 import org.apache.commons.jcs.engine.memory.util.SoftReferenceElementDescriptor;
 import org.apache.commons.jcs.engine.stats.StatElement;
-import org.apache.commons.jcs.engine.stats.Stats;
 import org.apache.commons.jcs.engine.stats.behavior.IStatElement;
 import org.apache.commons.jcs.engine.stats.behavior.IStats;
 import org.apache.commons.logging.Log;
@@ -70,15 +68,6 @@ public class SoftReferenceMemoryCache<K, V> extends AbstractMemoryCache<K, V>
      */
     private LinkedBlockingQueue<ICacheElement<K, V>> strongReferences;
 
-    /** number of hits */
-    private AtomicLong hitCnt;
-
-    /** number of misses */
-    private AtomicLong missCnt;
-
-    /** number of puts */
-    private AtomicLong putCnt;
-
     /**
      * For post reflection creation initialization
      * <p>
@@ -89,9 +78,6 @@ public class SoftReferenceMemoryCache<K, V> extends AbstractMemoryCache<K, V>
     {
         super.initialize( hub );
         strongReferences = new LinkedBlockingQueue<ICacheElement<K, V>>();
-        hitCnt = new AtomicLong(0);
-        missCnt = new AtomicLong(0);
-        putCnt = new AtomicLong(0);
         log.info( "initialized Soft Reference Memory Cache for " + getCacheName() );
     }
 
@@ -149,21 +135,13 @@ public class SoftReferenceMemoryCache<K, V> extends AbstractMemoryCache<K, V>
     @Override
     public IStats getStatistics()
     {
-        ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
+        IStats stats = super.getStatistics();
+        stats.setTypeName("Soft Reference Memory Cache");
 
-        int size = getSize();
-        int emptyrefs = map.size() - size;
-
-        elems.add(new StatElement<Integer>("Size", Integer.valueOf(size)));
+        List<IStatElement<?>> elems = stats.getStatElements();
+        int emptyrefs = map.size() - getSize();
         elems.add(new StatElement<Integer>("Empty References", Integer.valueOf(emptyrefs)));
         elems.add(new StatElement<Integer>("Strong References", Integer.valueOf(strongReferences.size())));
-        elems.add(new StatElement<AtomicLong>("Put Count", putCnt));
-        elems.add(new StatElement<AtomicLong>("Hit Count", hitCnt));
-        elems.add(new StatElement<AtomicLong>("Miss Count", missCnt));
-
-        IStats stats = new Stats();
-        stats.setTypeName("Soft Reference Memory Cache");
-        stats.setStatElements(elems);
 
         return stats;
     }
@@ -355,21 +333,6 @@ public class SoftReferenceMemoryCache<K, V> extends AbstractMemoryCache<K, V>
         }
 
         return val;
-    }
-
-    /**
-     * Prepares for shutdown.
-     * <p>
-     * @throws IOException
-     */
-    @Override
-    public void dispose() throws IOException
-    {
-        super.dispose();
-        removeAll();
-        hitCnt.set(0);
-        missCnt.set(0);
-        putCnt.set(0);
     }
 
     /**
