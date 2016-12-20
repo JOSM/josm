@@ -33,7 +33,7 @@ import java.io.OutputStream;
  */
 abstract class StreamBridge extends FilterOutputStream {
     private InputStream input;
-    private final Object INPUT_LOCK = new Object();
+    private final Object inputLock = new Object();
 
     protected StreamBridge(final OutputStream out) {
         super(out);
@@ -47,7 +47,7 @@ abstract class StreamBridge extends FilterOutputStream {
      * Provides the input view.
      */
     InputStream getInput() throws IOException {
-        synchronized (INPUT_LOCK) {
+        synchronized (inputLock) {
             if (input == null) {
                 input = getInputView();
             }
@@ -65,7 +65,7 @@ abstract class StreamBridge extends FilterOutputStream {
      */
     void stop() throws IOException {
         close();
-        synchronized (INPUT_LOCK) {
+        synchronized (inputLock) {
             if (input != null) {
                 input.close();
                 input = null;
