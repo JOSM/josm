@@ -506,14 +506,13 @@ public class Storage<T> extends AbstractSet<T> {
     private abstract class AbstractIter implements Iterator<T> {
         protected int slot;
 
-        @Override
-        public boolean hasNext() {
+        protected final boolean doHasNext(T[] data) {
             if (data == null) return false;
-            align();
+            align(data);
             return slot < data.length;
         }
 
-        protected void align() {
+        protected void align(T[] data) {
             while (slot < data.length && data[slot] == null) {
                 slot++;
             }
@@ -525,6 +524,11 @@ public class Storage<T> extends AbstractSet<T> {
 
         SafeReadonlyIter(T[] data) {
             this.data = data;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return doHasNext(data);
         }
 
         @Override
@@ -548,6 +552,11 @@ public class Storage<T> extends AbstractSet<T> {
         }
 
         @Override
+        public boolean hasNext() {
+            return doHasNext(data);
+        }
+
+        @Override
         public T next() {
             if (!hasNext()) throw new NoSuchElementException();
             removeSlot = slot;
@@ -564,10 +573,10 @@ public class Storage<T> extends AbstractSet<T> {
         }
 
         @Override
-        protected void align() {
+        protected void align(T[] data) {
             if (mods != modCount)
                 throw new ConcurrentModificationException();
-            super.align();
+            super.align(data);
         }
     }
 }
