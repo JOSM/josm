@@ -700,8 +700,10 @@ relation[/^..$/][!to] {
   fixAdd: "intermittent=yes";
 }
 
-*[type][man_made=pipeline],
-*[type][pipeline=marker] {
+/* #10907, #14141 */
+/* type=waterway on ways is questionable, but the autofix doesn't make it better, so disabled; type=route and type=network is used only on relations */
+way[type][type!=waterway][man_made=pipeline],
+node[type][pipeline=marker] {
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: "substance";
   group: tr("deprecated tagging");
