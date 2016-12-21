@@ -22,6 +22,7 @@ import javax.json.JsonObject
 import javax.json.JsonReader
 
 import org.openstreetmap.josm.data.imagery.ImageryInfo
+import org.openstreetmap.josm.data.imagery.Shape
 import org.openstreetmap.josm.io.imagery.ImageryReader
 
 class SyncEditorImageryIndex {
@@ -321,6 +322,37 @@ class SyncEditorImageryIndex {
                 myprintln "     (JOSM):    ${getQuality(j)}"
             }
         }*/
+        myprintln "*** Mismatching shapes: ***"
+        for (def url : josmUrls.keySet()) {
+            def j = josmUrls.get(url)
+            def num = 1
+            for (def shape : getShapes(j)) {
+                def p = shape.getPoints()
+                if(!p[0].equals(p[p.size()-1])) {
+                    myprintln "+++ JOSM shape $num unclosed: ${getDescription(j)}"
+                }
+                ++num
+            }
+        }
+        for (def url : eiiUrls.keySet()) {
+            def e = eiiUrls.get(url)
+            def num = 1
+            def s = getShapes(e)
+            for (def shape : s) {
+                def p = shape.getPoints()
+                if(!p[0].equals(p[p.size()-1])) {
+                    myprintln "+++ EII shape $num unclosed: ${getDescription(e)}"
+                }
+                ++num
+            }
+            if (!josmUrls.containsKey(url)) {
+                continue
+            }
+            def j = josmUrls.get(url)
+            if(!s.equals(getShapes(j))) {
+                myprintln " Different shapes: ${getDescription(j)}"
+            }
+        }
     }
 
     /**
@@ -333,6 +365,33 @@ class SyncEditorImageryIndex {
     static String getName(Object e) {
         if (e instanceof ImageryInfo) return e.getOriginalName()
         return e.getString("name")
+    }
+    static List<Shape> getShapes(Object e) {
+        if (e instanceof ImageryInfo) {
+          def bounds = e.getBounds();
+          if(bounds != null) {
+            return bounds.getShapes();
+          }
+          return []
+        }
+        def ex = e.get("extent")
+        if(ex != null) {
+            def poly = ex.get("polygon")
+            if(poly != null) {
+                List<Shape> l = []
+                for(def shapes: poly) {
+                    def s = new Shape()
+                    for(def point: shapes) {
+                        def lon = point[0].toString()
+                        def lat = point[1].toString()
+                        s.addPoint(lat, lon)
+                    }
+                    l.add(s)
+                }
+                return l
+            }
+        }
+        return []
     }
     static String getType(Object e) {
         if (e instanceof ImageryInfo) return e.getImageryType().getTypeString()
