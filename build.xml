@@ -688,7 +688,7 @@ Build-Date: ${build.tstamp}
         <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpath="${groovy.jar};tools/commons-cli-1.3.1.jar"/>
         <echo message="Checking editor imagery difference"/>
         <groovy src="scripts/SyncEditorImageryIndex.groovy" classpath="${dist.dir}/josm-custom.jar">
-            <arg value="-nomissingeii"/>
+                <!--<arg value="-nomissingeii"/>-->
         </groovy>
     </target>
 
@@ -706,9 +706,9 @@ Build-Date: ${build.tstamp}
             <arg value="--unlink"/>
         </exec>
         <exec append="false" executable="wget" failifexecutionfails="true">
-            <arg value="https://raw.githubusercontent.com/osmlab/editor-imagery-index/gh-pages/imagery.json"/>
+            <arg value="https://raw.githubusercontent.com/osmlab/editor-imagery-index/gh-pages/imagery.geojson"/>
             <arg value="-O"/>
-            <arg value="imagery.json"/>
+            <arg value="imagery.geojson"/>
             <arg value="--unlink"/>
         </exec>
         <antcall target="imageryindex"/>
