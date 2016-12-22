@@ -358,7 +358,10 @@ class SyncEditorImageryIndex {
                     myprintln "+ No EII shape: ${getDescription(j)}"
                 }
             } else if(!js.size() && s.size()) {
-                myprintln "- No JOSM shape: ${getDescription(j)}"
+                // don't report boundary like 5 point shapes as difference
+                if (s.size() != 1 || s[0].getPoints().size() != 5) {
+                    myprintln "- No JOSM shape: ${getDescription(j)}"
+                }
             } else if(s.size() != js.size()) {
                 myprintln "* Different number of shapes (${s.size()} != ${js.size()}): ${getDescription(j)}"
             } else {
@@ -415,9 +418,6 @@ class SyncEditorImageryIndex {
                         s.addPoint(lat, lon)
                     }
                     l.add(s)
-                }
-                if (l.size() == 1 && l[0].getPoints().size() == 5) {
-                    return [] // ignore a bounds equivalent shape
                 }
                 return l
             }
