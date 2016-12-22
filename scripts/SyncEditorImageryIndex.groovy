@@ -349,8 +349,15 @@ class SyncEditorImageryIndex {
                 continue
             }
             def j = josmUrls.get(url)
-            if(!s.equals(getShapes(j))) {
-                myprintln " Different shapes: ${getDescription(j)}"
+            def js = getShapes(j)
+            if(!s.equals(js)) {
+                if(!s.size()) {
+                    myprintln " No EII shape: ${getDescription(j)}"
+                } else if(!js.size()) {
+                    myprintln " No JOSM shape: ${getDescription(j)}"
+                } else {
+                    myprintln " Different shapes: ${getDescription(j)}"
+                }
             }
         }
     }
@@ -368,11 +375,11 @@ class SyncEditorImageryIndex {
     }
     static List<Shape> getShapes(Object e) {
         if (e instanceof ImageryInfo) {
-          def bounds = e.getBounds();
-          if(bounds != null) {
-            return bounds.getShapes();
-          }
-          return []
+            def bounds = e.getBounds();
+            if(bounds != null) {
+                return bounds.getShapes();
+            }
+            return []
         }
         def ex = e.get("extent")
         if(ex != null) {
@@ -387,6 +394,9 @@ class SyncEditorImageryIndex {
                         s.addPoint(lat, lon)
                     }
                     l.add(s)
+                }
+                if (l.size() == 1 && l[0].getPoints().size() == 5) {
+                    return [] // ignore a bounds equivalent shape
                 }
                 return l
             }
