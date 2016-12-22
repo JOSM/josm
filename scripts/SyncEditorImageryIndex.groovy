@@ -149,7 +149,7 @@ class SyncEditorImageryIndex {
                 return;
             }
         } else if(options.xhtmlbody || options.xhtml) {
-            String color = s.startsWith("***") ? "black" : (s.startsWith("+ ") ? "blue" : "red")
+            String color = s.startsWith("***") ? "black" : ((s.startsWith("+ ") || s.startsWith("+++ EII")) ? "blue" : "red")
             s = "<pre style=\"margin:3px;color:"+color+"\">"+s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")+"</pre>"
         }
         myprintlnfinal(s)
@@ -343,7 +343,7 @@ class SyncEditorImageryIndex {
             def s = getShapes(e)
             for (def shape : s) {
                 def p = shape.getPoints()
-                if(!p[0].equals(p[p.size()-1])) {
+                if(!p[0].equals(p[p.size()-1]) && !options.nomissingeii) {
                     myprintln "+++ EII shape $num unclosed: ${getDescription(e)}"
                 }
                 ++num
@@ -353,13 +353,31 @@ class SyncEditorImageryIndex {
             }
             def j = josmUrls.get(url)
             def js = getShapes(j)
-            if(!s.equals(js)) {
-                if(!s.size()) {
-                    myprintln " No EII shape: ${getDescription(j)}"
-                } else if(!js.size()) {
-                    myprintln " No JOSM shape: ${getDescription(j)}"
+            if(!s.size() && js.size() && !options.nomissingeii) {
+                myprintln "+ No EII shape: ${getDescription(j)}"
+            } else if(!js.size() && s.size()) {
+                myprintln "- No JOSM shape: ${getDescription(j)}"
+            } else {
+                if(s.size() != js.size()) {
+                    myprintln "* Different number of shapes (${s.size()} != ${js.size()}): ${getDescription(j)}"
                 } else {
-                    myprintln " Different shapes: ${getDescription(j)}"
+                    for(def nums = 0; nums < s.size(); ++nums) {
+                        def ep = s[nums].getPoints()
+                        def jp = js[nums].getPoints()
+                        if(ep.size() != jp.size()) {
+                            myprintln "* Different number of points for shape ${nums+1} (${ep.size()} ! = ${jp.size()})): ${getDescription(j)}"
+                        } else {
+                            for(def nump = 0; nump < ep.size(); ++nump) {
+                                def ept = ep[nump]
+                                def jpt = jp[nump]
+                                if(Math.abs(ept.getLat()-jpt.getLat()) > 0.000001 || Math.abs(ept.getLon()-jpt.getLon()) > 0.000001) {
+                                    myprintln "* Different coordinate for point ${nump+1} of shape ${nums+1}: ${getDescription(j)}"
+                                    nump = ep.size()
+                                    num = s.size()
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
