@@ -353,28 +353,28 @@ class SyncEditorImageryIndex {
             }
             def j = josmUrls.get(url)
             def js = getShapes(j)
-            if(!s.size() && js.size() && !options.nomissingeii) {
-                myprintln "+ No EII shape: ${getDescription(j)}"
+            if(!s.size() && js.size()) {
+                if(!options.nomissingeii) {
+                    myprintln "+ No EII shape: ${getDescription(j)}"
+                }
             } else if(!js.size() && s.size()) {
                 myprintln "- No JOSM shape: ${getDescription(j)}"
+            } else if(s.size() != js.size()) {
+                myprintln "* Different number of shapes (${s.size()} != ${js.size()}): ${getDescription(j)}"
             } else {
-                if(s.size() != js.size()) {
-                    myprintln "* Different number of shapes (${s.size()} != ${js.size()}): ${getDescription(j)}"
-                } else {
-                    for(def nums = 0; nums < s.size(); ++nums) {
-                        def ep = s[nums].getPoints()
-                        def jp = js[nums].getPoints()
-                        if(ep.size() != jp.size()) {
-                            myprintln "* Different number of points for shape ${nums+1} (${ep.size()} ! = ${jp.size()})): ${getDescription(j)}"
-                        } else {
-                            for(def nump = 0; nump < ep.size(); ++nump) {
-                                def ept = ep[nump]
-                                def jpt = jp[nump]
-                                if(Math.abs(ept.getLat()-jpt.getLat()) > 0.000001 || Math.abs(ept.getLon()-jpt.getLon()) > 0.000001) {
-                                    myprintln "* Different coordinate for point ${nump+1} of shape ${nums+1}: ${getDescription(j)}"
-                                    nump = ep.size()
-                                    num = s.size()
-                                }
+                for(def nums = 0; nums < s.size(); ++nums) {
+                    def ep = s[nums].getPoints()
+                    def jp = js[nums].getPoints()
+                    if(ep.size() != jp.size()) {
+                        myprintln "* Different number of points for shape ${nums+1} (${ep.size()} ! = ${jp.size()})): ${getDescription(j)}"
+                    } else {
+                        for(def nump = 0; nump < ep.size(); ++nump) {
+                            def ept = ep[nump]
+                            def jpt = jp[nump]
+                            if(Math.abs(ept.getLat()-jpt.getLat()) > 0.000001 || Math.abs(ept.getLon()-jpt.getLon()) > 0.000001) {
+                                myprintln "* Different coordinate for point ${nump+1} of shape ${nums+1}: ${getDescription(j)}"
+                                nump = ep.size()
+                                num = s.size()
                             }
                         }
                     }
