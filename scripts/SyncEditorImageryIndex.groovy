@@ -20,6 +20,7 @@ import javax.json.Json
 import javax.json.JsonArray
 import javax.json.JsonObject
 import javax.json.JsonReader
+import javax.json.JsonValue
 
 import org.openstreetmap.josm.data.imagery.ImageryInfo
 import org.openstreetmap.josm.data.imagery.Shape
@@ -33,7 +34,7 @@ class SyncEditorImageryIndex {
     def eiiUrls = new HashMap<String, JsonObject>()
     def josmUrls = new HashMap<String, ImageryInfo>()
 
-    static String eiiInputFile = 'imagery.json'
+    static String eiiInputFile = 'imagery.geojson'
     static String josmInputFile = 'maps.xml'
     static String ignoreInputFile = 'maps_ignores.txt'
     static FileWriter outputFile = null
@@ -173,7 +174,7 @@ class SyncEditorImageryIndex {
     void loadEIIEntries() {
         FileReader fr = new FileReader(eiiInputFile)
         JsonReader jr = Json.createReader(fr)
-        eiiEntries = jr.readArray()
+        eiiEntries = jr.readObject().get("features")
         jr.close()
 
         for (def e : eiiEntries) {
@@ -233,8 +234,9 @@ class SyncEditorImageryIndex {
         def l1 = inOneButNotTheOther(eiiUrls, josmUrls)
         myprintln "*** URLs found in EII but not in JOSM (${l1.size()}): ***"
         if (!l1.isEmpty()) {
-            for (def l : l1)
-                myprintln "-"+l
+            for (def l : l1) {
+                myprintln "-" + l
+            }
         }
 
         if (options.nomissingeii)
@@ -242,8 +244,9 @@ class SyncEditorImageryIndex {
         def l2 = inOneButNotTheOther(josmUrls, eiiUrls)
         myprintln "*** URLs found in JOSM but not in EII (${l2.size()}): ***"
         if (!l2.isEmpty()) {
-            for (def l : l2)
+            for (def l : l2) {
                 myprintln "+" + l
+            }
         }
     }
 
@@ -367,11 +370,11 @@ class SyncEditorImageryIndex {
      */
     static String getUrl(Object e) {
         if (e instanceof ImageryInfo) return e.url
-        return e.getString("url")
+        return e.get("properties").getString("url")
     }
     static String getName(Object e) {
         if (e instanceof ImageryInfo) return e.getOriginalName()
-        return e.getString("name")
+        return e.get("properties").getString("name")
     }
     static List<Shape> getShapes(Object e) {
         if (e instanceof ImageryInfo) {
@@ -381,10 +384,10 @@ class SyncEditorImageryIndex {
             }
             return []
         }
-        def ex = e.get("extent")
-        if(ex != null) {
-            def poly = ex.get("polygon")
-            if(poly != null) {
+        if(!e.isNull("geometry")) {
+            def ex = e.get("geometry")
+            if(ex != null && !ex.isNull("coordinates")) {
+                def poly = ex.get("coordinates")
                 List<Shape> l = []
                 for(def shapes: poly) {
                     def s = new Shape()
@@ -405,16 +408,14 @@ class SyncEditorImageryIndex {
     }
     static String getType(Object e) {
         if (e instanceof ImageryInfo) return e.getImageryType().getTypeString()
-        return e.getString("type")
+        return e.get("properties").getString("type")
     }
     static Integer getMinZoom(Object e) {
         if (e instanceof ImageryInfo) {
             int mz = e.getMinZoom()
             return mz == 0 ? null : mz
         } else {
-            def ext = e.getJsonObject("extent")
-            if (ext == null) return null
-            def num = ext.getJsonNumber("min_zoom")
+            def num = e.get("properties").getJsonNumber("min_zoom")
             if (num == null) return null
             return num.intValue()
         }
@@ -424,21 +425,19 @@ class SyncEditorImageryIndex {
             int mz = e.getMaxZoom()
             return mz == 0 ? null : mz
         } else {
-            def ext = e.getJsonObject("extent")
-            if (ext == null) return null
-            def num = ext.getJsonNumber("max_zoom")
+            def num = e.get("properties").getJsonNumber("max_zoom")
             if (num == null) return null
             return num.intValue()
         }
     }
     static String getCountryCode(Object e) {
         if (e instanceof ImageryInfo) return "".equals(e.getCountryCode()) ? null : e.getCountryCode()
-        return e.getString("country_code", null)
+        return e.get("properties").getString("country_code", null)
     }
     static String getQuality(Object e) {
         //if (e instanceof ImageryInfo) return "".equals(e.getQuality()) ? null : e.getQuality()
         if (e instanceof ImageryInfo) return null
-        return e.get("best") ? "best" : null
+        return e.get("properties").get("best") ? "best" : null
     }
     String getDescription(Object o) {
         def url = getUrl(o)
