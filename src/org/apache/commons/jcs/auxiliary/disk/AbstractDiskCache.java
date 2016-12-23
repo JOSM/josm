@@ -41,17 +41,18 @@ import org.apache.commons.jcs.engine.stats.StatElement;
 import org.apache.commons.jcs.engine.stats.Stats;
 import org.apache.commons.jcs.engine.stats.behavior.IStatElement;
 import org.apache.commons.jcs.engine.stats.behavior.IStats;
+import org.apache.commons.jcs.utils.struct.LRUMap;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
  * Abstract class providing a base implementation of a disk cache, which can be easily extended to
  * implement a disk cache for a specific persistence mechanism.
- * 
+ *
  * When implementing the abstract methods note that while this base class handles most things, it
  * does not acquire or release any locks. Implementations should do so as necessary. This is mainly
  * done to minimize the time spent in critical sections.
- * 
+ *
  * Error handling in this class needs to be addressed. Currently if an exception is thrown by the
  * persistence mechanism, this class destroys the event queue. Should it also destroy purgatory?
  * Should it dispose itself?
@@ -69,7 +70,7 @@ public abstract class AbstractDiskCache<K, V>
      * Map where elements are stored between being added to this cache and actually spooled to disk.
      * This allows puts to the disk cache to return quickly, and the more expensive operation of
      * serializing the elements to persistent storage queued for later.
-     * 
+     *
      * If the elements are pulled into the memory cache while the are still in purgatory, writing to
      * disk can be canceled.
      */
@@ -104,7 +105,7 @@ public abstract class AbstractDiskCache<K, V>
     /**
      * Construct the abstract disk cache, create event queues and purgatory. Child classes should
      * set the alive flag to true after they are initialized.
-     * 
+     *
      * @param attr
      */
     protected AbstractDiskCache( IDiskCacheAttributes attr )
@@ -141,7 +142,7 @@ public abstract class AbstractDiskCache<K, V>
     /**
      * Purgatory size of -1 means to use a HashMap with no size limit. Anything greater will use an
      * LRU map of some sort.
-     * 
+     *
      * TODO Currently setting this to 0 will cause nothing to be put to disk, since it will assume
      *       that if an item is not in purgatory, then it must have been plucked. We should make 0
      *       work, a way to not use purgatory.
@@ -158,7 +159,7 @@ public abstract class AbstractDiskCache<K, V>
             {
                 if ( diskCacheAttributes.getMaxPurgatorySize() >= 0 )
                 {
-                    purgatory = new LRUMapJCS<K, PurgatoryElement<K, V>>( diskCacheAttributes.getMaxPurgatorySize() );
+                    purgatory = new LRUMap<K, PurgatoryElement<K, V>>( diskCacheAttributes.getMaxPurgatorySize() );
                 }
                 else
                 {
@@ -177,10 +178,10 @@ public abstract class AbstractDiskCache<K, V>
     /**
      * Adds the provided element to the cache. Element will be added to purgatory, and then queued
      * for later writing to the serialized storage mechanism.
-     * 
+     *
      * An update results in a put event being created. The put event will call the handlePut method
      * defined here. The handlePut method calls the implemented doPut on the child.
-     * 
+     *
      * @param cacheElement
      * @throws IOException
      * @see org.apache.commons.jcs.engine.behavior.ICache#update
@@ -224,7 +225,7 @@ public abstract class AbstractDiskCache<K, V>
     /**
      * Check to see if the item is in purgatory. If so, return it. If not, check to see if we have
      * it on disk.
-     * 
+     *
      * @param key
      * @return ICacheElement&lt;K, V&gt; or null
      * @see AuxiliaryCache#get
@@ -302,12 +303,12 @@ public abstract class AbstractDiskCache<K, V>
     /**
      * Gets items from the cache matching the given pattern. Items from memory will replace those
      * from remote sources.
-     * 
+     *
      * This only works with string keys. It's too expensive to do a toString on every key.
-     * 
+     *
      * Auxiliaries will do their best to handle simple expressions. For instance, the JDBC disk
      * cache will convert * to % and . to _
-     * 
+     *
      * @param pattern
      * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data matching the pattern.
@@ -341,7 +342,7 @@ public abstract class AbstractDiskCache<K, V>
 
     /**
      * Gets multiple items from the cache based on the given set of keys.
-     * 
+     *
      * @param keys
      * @return a map of K key to ICacheElement&lt;K, V&gt; element, or an empty map if there is no
      *         data in cache for any of these keys
@@ -369,7 +370,7 @@ public abstract class AbstractDiskCache<K, V>
 
     /**
      * The keys in the cache.
-     * 
+     *
      * @see org.apache.commons.jcs.auxiliary.AuxiliaryCache#getKeySet()
      */
     @Override
@@ -377,7 +378,7 @@ public abstract class AbstractDiskCache<K, V>
 
     /**
      * Removes are not queued. A call to remove is immediate.
-     * 
+     *
      * @param key
      * @return whether the item was present to be removed.
      * @throws IOException
@@ -449,7 +450,7 @@ public abstract class AbstractDiskCache<K, V>
 
     /**
      * Adds a dispose request to the disk cache.
-     * 
+     *
      * Disposal proceeds in several steps.
      * <ol>
      * <li>Prior to this call the Composite cache dumped the memory into the disk cache. If it is
@@ -524,7 +525,7 @@ public abstract class AbstractDiskCache<K, V>
 
     /**
      * Gets basic stats for the abstract disk cache.
-     * 
+     *
      * @return String
      */
     @Override
@@ -535,7 +536,7 @@ public abstract class AbstractDiskCache<K, V>
 
     /**
      * Returns semi-structured data.
-     * 
+     *
      * @see org.apache.commons.jcs.auxiliary.AuxiliaryCache#getStatistics()
      */
     @Override
@@ -571,7 +572,7 @@ public abstract class AbstractDiskCache<K, V>
     /**
      * Size cannot be determined without knowledge of the cache implementation, so subclasses will
      * need to implement this method.
-     * 
+     *
      * @return the number of items.
      * @see ICache#getSize
      */
@@ -761,17 +762,17 @@ public abstract class AbstractDiskCache<K, V>
      * Before the event logging layer, the subclasses implemented the do* methods. Now the do*
      * methods call the *WithEventLogging method on the super. The *WithEventLogging methods call
      * the abstract process* methods. The children implement the process methods.
-     * 
+     *
      * ex. doGet calls getWithEventLogging, which calls processGet
      */
 
     /**
      * Get a value from the persistent store.
-     * 
+     *
      * Before the event logging layer, the subclasses implemented the do* methods. Now the do*
      * methods call the *EventLogging method on the super. The *WithEventLogging methods call the
      * abstract process* methods. The children implement the process methods.
-     * 
+     *
      * @param key Key to locate value for.
      * @return An object matching key, or null.
      * @throws IOException
@@ -784,11 +785,11 @@ public abstract class AbstractDiskCache<K, V>
 
     /**
      * Get a value from the persistent store.
-     * 
+     *
      * Before the event logging layer, the subclasses implemented the do* methods. Now the do*
      * methods call the *EventLogging method on the super. The *WithEventLogging methods call the
      * abstract process* methods. The children implement the process methods.
-     * 
+     *
      * @param pattern Used to match keys.
      * @return A map of matches..
      * @throws IOException
@@ -801,11 +802,11 @@ public abstract class AbstractDiskCache<K, V>
 
     /**
      * Add a cache element to the persistent store.
-     * 
+     *
      * Before the event logging layer, the subclasses implemented the do* methods. Now the do*
      * methods call the *EventLogging method on the super. The *WithEventLogging methods call the
      * abstract process* methods. The children implement the process methods.
-     * 
+     *
      * @param cacheElement
      * @throws IOException
      */
@@ -817,11 +818,11 @@ public abstract class AbstractDiskCache<K, V>
 
     /**
      * Remove an object from the persistent store if found.
-     * 
+     *
      * Before the event logging layer, the subclasses implemented the do* methods. Now the do*
      * methods call the *EventLogging method on the super. The *WithEventLogging methods call the
      * abstract process* methods. The children implement the process methods.
-     * 
+     *
      * @param key Key of object to remove.
      * @return whether or no the item was present when removed
      * @throws IOException
@@ -834,11 +835,11 @@ public abstract class AbstractDiskCache<K, V>
 
     /**
      * Remove all objects from the persistent store.
-     * 
+     *
      * Before the event logging layer, the subclasses implemented the do* methods. Now the do*
      * methods call the *EventLogging method on the super. The *WithEventLogging methods call the
      * abstract process* methods. The children implement the process methods.
-     * 
+     *
      * @throws IOException
      */
     protected final void doRemoveAll()
@@ -850,11 +851,11 @@ public abstract class AbstractDiskCache<K, V>
     /**
      * Dispose of the persistent store. Note that disposal of purgatory and setting alive to false
      * does NOT need to be done by this method.
-     * 
+     *
      * Before the event logging layer, the subclasses implemented the do* methods. Now the do*
      * methods call the *EventLogging method on the super. The *WithEventLogging methods call the
      * abstract process* methods. The children implement the process methods.
-     * 
+     *
      * @throws IOException
      */
     protected final void doDispose()
@@ -865,7 +866,7 @@ public abstract class AbstractDiskCache<K, V>
 
     /**
      * Gets the extra info for the event log.
-     * 
+     *
      * @return disk location
      */
     @Override
@@ -876,7 +877,7 @@ public abstract class AbstractDiskCache<K, V>
 
     /**
      * This is used by the event logging.
-     * 
+     *
      * @return the location of the disk, either path or ip.
      */
     protected abstract String getDiskLocation();
