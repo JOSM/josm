@@ -73,7 +73,7 @@ public class UrlLabel extends JLabel implements MouseListener {
     }
 
     protected final void refresh() {
-        if (url != null) {
+        if (url != null && !url.isEmpty()) {
             setText("<html><a href=\""+url+"\">"+description+"</a></html>");
             setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             setToolTipText(String.format("<html>%s<br/>%s</html>", url, tr("Right click = copy to clipboard")));
@@ -85,8 +85,8 @@ public class UrlLabel extends JLabel implements MouseListener {
     }
 
     /**
-     * Sets the URL to be visited if the user clicks on this URL label. If null, the
-     * label turns into a normal label without hyperlink.
+     * Sets the URL to be visited if the user clicks on this URL label.
+     * If null or empty, the label turns into a normal label without hyperlink.
      *
      * @param url the url. Can be null.
      */
@@ -108,10 +108,12 @@ public class UrlLabel extends JLabel implements MouseListener {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if (SwingUtilities.isLeftMouseButton(e)) {
-            OpenBrowser.displayUrl(url);
-        } else if (SwingUtilities.isRightMouseButton(e)) {
-            ClipboardUtils.copyString(url);
+        if (url != null && !url.isEmpty()) {
+            if (SwingUtilities.isLeftMouseButton(e)) {
+                OpenBrowser.displayUrl(url);
+            } else if (SwingUtilities.isRightMouseButton(e)) {
+                ClipboardUtils.copyString(url);
+            }
         }
     }
 

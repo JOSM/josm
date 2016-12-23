@@ -201,9 +201,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
         HistoryOsmPrimitive primitive = getPrimitive();
         if (primitive != null) {
             Changeset cs = primitive.getChangeset();
-            if (cs != null) {
-                update(cs, model.isLatest(primitive), primitive.getTimestamp(), primitive.getVersion());
-            }
+            update(cs, model.isLatest(primitive), primitive.getTimestamp(), primitive.getVersion());
         }
     }
 
@@ -218,7 +216,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
 
     /**
      * Updates the content of this panel based on the changeset information given by {@code cs}.
-     * @param cs the changeset information - must not be null
+     * @param cs the changeset information
      * @param isLatest whether this relates to a not yet commited changeset
      * @param timestamp the timestamp
      * @param version the version of the primitive
@@ -226,7 +224,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
     public void update(final Changeset cs, final boolean isLatest, final Date timestamp, final long version) {
         lblInfo.setText(getInfoText(timestamp, version, isLatest));
 
-        if (!isLatest) {
+        if (!isLatest && cs != null) {
             User user = cs.getUser();
             String url = Main.getBaseBrowseUrl() + "/changeset/" + cs.getId();
             lblChangeset.setUrl(url);
@@ -298,7 +296,9 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            ChangesetDialog.LaunchChangesetManager.displayChangesets(Collections.singleton(id));
+            if (id != null) {
+                ChangesetDialog.LaunchChangesetManager.displayChangesets(Collections.singleton(id));
+            }
             if (componentToSelect != null) {
                 ChangesetCacheManager.getInstance().setSelectedComponentInDetailPanel(componentToSelect);
             }
