@@ -93,10 +93,10 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
             this.preset = preset;
             TaggingPreset group = preset.group;
             while (group != null) {
-                Collections.addAll(groups, group.getLocaleName().toLowerCase(Locale.ENGLISH).split("\\s"));
+                addLocaleNames(groups, group);
                 group = group.group;
             }
-            Collections.addAll(names, preset.getLocaleName().toLowerCase(Locale.ENGLISH).split("\\s"));
+            addLocaleNames(names, preset);
             for (TaggingPresetItem item: preset.data) {
                 if (item instanceof KeyedItem) {
                     tags.add(((KeyedItem) item).key);
@@ -114,6 +114,13 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
                         tags.add(role.key);
                     }
                 }
+            }
+        }
+
+        private static void addLocaleNames(Collection<String> collection, TaggingPreset preset) {
+            String locName = preset.getLocaleName();
+            if (locName != null) {
+                Collections.addAll(collection, locName.toLowerCase(Locale.ENGLISH).split("\\s"));
             }
         }
 
