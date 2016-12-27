@@ -91,7 +91,7 @@ public class SearchNotesDownloadAction extends JosmAction {
         }
 
         int noteLimit = Main.pref.getInteger("osm.notes.downloadLimit", 1000);
-        int closedLimit = Main.pref.getInteger("osm.notes.daysCloased", 7);
+        int closedLimit = Main.pref.getInteger("osm.notes.daysClosed", 7);
 
         StringBuilder sb = new StringBuilder(128);
         sb.append(OsmApi.getOsmApi().getBaseUrl())
