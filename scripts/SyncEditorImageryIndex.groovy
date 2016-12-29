@@ -33,6 +33,7 @@ class SyncEditorImageryIndex {
 
     def eiiUrls = new HashMap<String, JsonObject>()
     def josmUrls = new HashMap<String, ImageryInfo>()
+    def josmMirrors = new HashMap<String, ImageryInfo>()
 
     static String eiiInputFile = 'imagery.geojson'
     static String josmInputFile = 'maps.xml'
@@ -205,14 +206,15 @@ class SyncEditorImageryIndex {
             if (josmUrls.containsKey(url)) {
                 myprintln "+++ JOSM-URL is not unique: "+url
             } else {
-              josmUrls.put(url, e)
+                josmUrls.put(url, e)
             }
             for (def m : e.getMirrors()) {
                 url = getUrl(m)
                 if (josmUrls.containsKey(url)) {
                     myprintln "+++ JOSM-Mirror-URL is not unique: "+url
                 } else {
-                  josmUrls.put(url, m)
+                    josmUrls.put(url, m)
+                    josmMirrors.put(url, m)
                 }
             }
         }
@@ -384,6 +386,41 @@ class SyncEditorImageryIndex {
                 }
             }
         }
+        myprintln "*** Mismatching icons: ***"
+        for (def url : eiiUrls.keySet()) {
+            def e = eiiUrls.get(url)
+            if (!josmUrls.containsKey(url)) {
+                continue
+            }
+            def j = josmUrls.get(url)
+            def ij = getIcon(j)
+            def ie = getIcon(e)
+            if(ij != null && ie == null) {
+                if(!options.nomissingeii) {
+                    myprintln "+ No EII icon: ${getDescription(j)}"
+                }
+            } else if(ij == null && ie != null) {
+                myprintln "- No JOSM icon: ${getDescription(j)}"
+            } else if(!ij.equals(ie)) {
+                myprintln "* Different icons: ${getDescription(j)}"
+            }
+        }
+        myprintln "*** Miscellaneous checks: ***"
+        def josmIds = new HashMap<String, ImageryInfo>()
+        for (def url : josmUrls.keySet()) {
+            def j = josmUrls.get(url)
+            def id = getId(j)
+            if(josmMirrors.containsKey(url)) {
+                continue;
+            }
+            if(id == null) {
+                myprintln "* No JOSM-ID: ${getDescription(j)}"
+            } else if(josmIds.containsKey(id)) {
+                myprintln "* JOSM-ID ${id} not unique: ${getDescription(j)}"
+            } else {
+                josmIds.put(id, j);
+            }
+        }
     }
 
     /**
@@ -392,6 +429,10 @@ class SyncEditorImageryIndex {
     static String getUrl(Object e) {
         if (e instanceof ImageryInfo) return e.url
         return e.get("properties").getString("url")
+    }
+    static String getId(Object e) {
+        if (e instanceof ImageryInfo) return e.getId()
+        return e.get("properties").getString("id")
     }
     static String getName(Object e) {
         if (e instanceof ImageryInfo) return e.getOriginalName()
@@ -456,6 +497,10 @@ class SyncEditorImageryIndex {
         //if (e instanceof ImageryInfo) return "".equals(e.getQuality()) ? null : e.getQuality()
         if (e instanceof ImageryInfo) return null
         return e.get("properties").get("best") ? "best" : null
+    }
+    static String getIcon(Object e) {
+        if (e instanceof ImageryInfo) return e.getIcon()
+        return e.get("properties").getString("icon", null)
     }
     String getDescription(Object o) {
         def url = getUrl(o)
