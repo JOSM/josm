@@ -54,7 +54,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
      */
     public MapMode(String name, String iconName, String tooltip, MapFrame mapFrame, Cursor cursor) {
         putValue(NAME, name);
-        putValue(SMALL_ICON, ImageProvider.get("mapmode", iconName));
+        new ImageProvider("mapmode", iconName).getResource().attachImageIcon(this);
         putValue(SHORT_DESCRIPTION, tooltip);
         this.cursor = cursor;
     }
