@@ -191,9 +191,6 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
             progressMonitor.subTask(tr("Read photos..."));
             progressMonitor.setTicksCount(files.size());
 
-            progressMonitor.subTask(tr("Read photos..."));
-            progressMonitor.setTicksCount(files.size());
-
             // read the image files
             List<ImageEntry> entries = new ArrayList<>(files.size());
 
