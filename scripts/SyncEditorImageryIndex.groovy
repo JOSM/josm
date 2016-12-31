@@ -420,6 +420,27 @@ class SyncEditorImageryIndex {
             } else {
                 josmIds.put(id, j);
             }
+            def js = getShapes(j)
+            if(js.size()) {
+                def minlat = 1000;
+                def minlon = 1000;
+                def maxlat = -1000;
+                def maxlon = -1000;
+                for(def s: js) {
+                    for(def p: s.getPoints()) {
+                        def lat = p.getLat();
+                        def lon = p.getLon();
+                        if(lat > maxlat) maxlat = lat;
+                        if(lon > maxlon) maxlon = lon;
+                        if(lat < minlat) minlat = lat;
+                        if(lon < minlon) minlon = lon;
+                    }
+                }
+                def b = j.getBounds();
+                if(b.getMinLat() != minlat || b.getMinLon() != minlon || b.getMaxLat() != maxlat || b.getMaxLon() != maxlon) {
+                    myprintln "* Bounds do not match shape (is ${b.getMinLat()},${b.getMinLon()},${b.getMaxLat()},${b.getMaxLon()}, calculated <bounds min-lat=\"${minlat}\" min-lon=\"${minlon}\" max-lat=\"${maxlat}\" max-lon=\"${maxlon}\">): ${getDescription(j)}"
+                }
+            }
         }
     }
 
