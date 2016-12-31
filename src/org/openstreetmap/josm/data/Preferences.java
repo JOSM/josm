@@ -67,6 +67,8 @@ import org.openstreetmap.josm.data.preferences.PreferencesReader;
 import org.openstreetmap.josm.data.preferences.PreferencesWriter;
 import org.openstreetmap.josm.data.preferences.Setting;
 import org.openstreetmap.josm.data.preferences.StringSetting;
+import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRulesPreference;
+import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRulesPreference.RulePrefHelper;
 import org.openstreetmap.josm.io.OfflineAccessException;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -1520,6 +1522,12 @@ public class Preferences {
         if (loadedVersion < 11058) {
             migrateOldColorKeys();
         }
+        // drop in September 2017
+        if (loadedVersion < 11424) {
+            addNewerDefaultEntry(
+                    "validator.org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.entries",
+                    "resource://data/validator/territories.mapcss");
+        }
 
         for (String key : OBSOLETE_PREF_KEYS) {
             if (settingsMap.containsKey(key)) {
@@ -1565,6 +1573,18 @@ public class Preferences {
                 if (modified) {
                     putListOfStructs(key, l);
                 }
+            }
+        }
+    }
+
+    private void addNewerDefaultEntry(String key, final String url) {
+        Setting<?> setting = settingsMap.get(key);
+        if (setting instanceof MapListSetting) {
+            List<Map<String, String>> l = new ArrayList<>(((MapListSetting) setting).getValue());
+            if (l.stream().noneMatch(x -> x.values().contains(url))) {
+                RulePrefHelper helper = ValidatorTagCheckerRulesPreference.RulePrefHelper.INSTANCE;
+                l.add(helper.serialize(helper.getDefault().stream().filter(x -> url.equals(x.url)).findFirst().get()));
+                putListOfStructs(key, l);
             }
         }
     }
