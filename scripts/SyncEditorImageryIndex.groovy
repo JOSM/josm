@@ -438,7 +438,7 @@ class SyncEditorImageryIndex {
                 }
                 def b = j.getBounds();
                 if(b.getMinLat() != minlat || b.getMinLon() != minlon || b.getMaxLat() != maxlat || b.getMaxLon() != maxlon) {
-                    myprintln "* Bounds do not match shape (is ${b.getMinLat()},${b.getMinLon()},${b.getMaxLat()},${b.getMaxLon()}, calculated <bounds min-lat=\"${minlat}\" min-lon=\"${minlon}\" max-lat=\"${maxlat}\" max-lon=\"${maxlon}\">): ${getDescription(j)}"
+                    myprintln "* Bounds do not match shape (is ${b.getMinLat()},${b.getMinLon()},${b.getMaxLat()},${b.getMaxLon()}, calculated <bounds min-lat='${minlat}' min-lon='${minlon}' max-lat='${maxlat}' max-lon='${maxlon}'>): ${getDescription(j)}"
                 }
             }
         }
