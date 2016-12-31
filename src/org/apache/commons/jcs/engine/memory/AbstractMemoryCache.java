@@ -28,7 +28,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.commons.jcs.engine.CacheStatus;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheAttributes;
 import org.apache.commons.jcs.engine.control.CompositeCache;
@@ -43,9 +42,6 @@ import org.apache.commons.logging.LogFactory;
 
 /**
  * This base includes some common code for memory caches.
- * <p>
- * This keeps a static reference to a memory shrinker clock daemon. If this region is configured to
- * use the shrinker, the clock daemon will be setup to run the shrinker on this region.
  */
 public abstract class AbstractMemoryCache<K, V>
     implements IMemoryCache<K, V>
@@ -58,9 +54,6 @@ public abstract class AbstractMemoryCache<K, V>
 
     /** The cache region this store is associated with */
     private CompositeCache<K, V> cache;
-
-    /** status */
-    private CacheStatus status;
 
     /** How many to spool at a time. */
     protected int chunkSize;
@@ -96,8 +89,6 @@ public abstract class AbstractMemoryCache<K, V>
         this.cache = hub;
 
         this.map = createMap();
-
-        this.status = CacheStatus.ALIVE;
     }
 
     /**
@@ -267,16 +258,6 @@ public abstract class AbstractMemoryCache<K, V>
     public int getSize()
     {
         return this.map.size();
-    }
-
-    /**
-     * Returns the cache status.
-     * <p>
-     * @return The status value
-     */
-    public CacheStatus getStatus()
-    {
-        return this.status;
     }
 
     /**

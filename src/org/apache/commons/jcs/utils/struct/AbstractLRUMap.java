@@ -64,21 +64,19 @@ public abstract class AbstractLRUMap<K, V>
     private final DoubleLinkedList<LRUElementDescriptor<K, V>> list;
 
     /** Map where items are stored by key. */
-    private Map<K, LRUElementDescriptor<K, V>> map;
+    private final Map<K, LRUElementDescriptor<K, V>> map;
 
-    /** stats */
-    int hitCnt = 0;
-
-    /** stats */
-    int missCnt = 0;
-
-    /** stats */
-    int putCnt = 0;
-
-    /** make configurable */
-    private int chunkSize = 1;
-
+    /** lock to keep map and list synchronous */
     private final Lock lock = new ReentrantLock();
+
+    /** stats */
+    private long hitCnt = 0;
+
+    /** stats */
+    private long missCnt = 0;
+
+    /** stats */
+    private long putCnt = 0;
 
     /**
      * This creates an unbounded version. Setting the max objects will result in spooling on
@@ -196,7 +194,7 @@ public abstract class AbstractLRUMap<K, V>
     @Override
     public V get( Object key )
     {
-        V retVal = null;
+        V retVal;
 
         if ( log.isDebugEnabled() )
         {
@@ -205,22 +203,28 @@ public abstract class AbstractLRUMap<K, V>
 
         LRUElementDescriptor<K, V> me = map.get( key );
 
-        if ( me != null )
+        if ( me == null )
         {
-            hitCnt++;
-            if ( log.isDebugEnabled() )
-            {
-                log.debug( "LRUMap hit for " + key );
-            }
-
-            retVal = me.getPayload();
-
-            list.makeFirst( me );
+            missCnt++;
+            retVal = null;
         }
         else
         {
-            missCnt++;
-            log.debug( "LRUMap miss for " + key );
+            hitCnt++;
+            retVal = me.getPayload();
+            list.makeFirst( me );
+        }
+
+        if ( log.isDebugEnabled() )
+        {
+            if ( me == null )
+            {
+                log.debug( "LRUMap miss for " + key );
+            }
+            else
+            {
+                log.debug( "LRUMap hit for " + key );
+            }
         }
 
         // verifyCache();
@@ -238,20 +242,23 @@ public abstract class AbstractLRUMap<K, V>
     public V getQuiet( Object key )
     {
         V ce = null;
-
         LRUElementDescriptor<K, V> me = map.get( key );
+
         if ( me != null )
         {
-            if ( log.isDebugEnabled() )
+            ce = me.getPayload();
+        }
+
+        if ( log.isDebugEnabled() )
+        {
+            if ( me == null )
+            {
+                log.debug( "LRUMap quiet miss for " + key );
+            }
+            else
             {
                 log.debug( "LRUMap quiet hit for " + key );
             }
-
-            ce = me.getPayload();
-        }
-        else if ( log.isDebugEnabled() )
-        {
-            log.debug( "LRUMap quiet miss for " + key );
         }
 
         return ce;
@@ -300,17 +307,16 @@ public abstract class AbstractLRUMap<K, V>
         putCnt++;
 
         LRUElementDescriptor<K, V> old = null;
+        LRUElementDescriptor<K, V> me = new LRUElementDescriptor<K, V>(key, value);
+
         lock.lock();
         try
         {
-            // TODO address double synchronization of addFirst, use write lock
-            addFirst( key, value );
-            // this must be synchronized
-            LRUElementDescriptor<K, V> first = list.getFirst();
-            old = map.put(first.getKey(), first);
+            list.addFirst( me );
+            old = map.put(key, me);
 
             // If the node was the same as an existing node, remove it.
-            if ( old != null && first.getKey().equals(old.getKey()))
+            if ( old != null && key.equals(old.getKey()))
             {
                 list.remove( old );
             }
@@ -321,7 +327,6 @@ public abstract class AbstractLRUMap<K, V>
         }
 
         // If the element limit is reached, we need to spool
-
         if (shouldRemove())
         {
             if (log.isDebugEnabled())
@@ -332,7 +337,6 @@ public abstract class AbstractLRUMap<K, V>
             // The spool will put them in a disk event queue, so there is no
             // need to pre-queue the queuing. This would be a bit wasteful
             // and wouldn't save much time in this synchronous call.
-
             while ( shouldRemove() )
             {
                 lock.lock();
@@ -366,10 +370,10 @@ public abstract class AbstractLRUMap<K, V>
             {
                 log.debug( "update: After spool map size: " + map.size() );
             }
-            if ( map.size() != dumpCacheSize() )
+            if ( map.size() != list.size() )
             {
-                log.error("update: After spool, size mismatch: map.size() = " + map.size() + ", linked list size = "
-                        + dumpCacheSize());
+                log.error("update: After spool, size mismatch: map.size() = " + map.size() +
+                        ", linked list size = " + list.size());
             }
         }
 
@@ -381,37 +385,6 @@ public abstract class AbstractLRUMap<K, V>
     }
 
     protected abstract boolean shouldRemove();
-
-
-    /**
-     * Adds a new node to the start of the link list.
-     * <p>
-     * @param key
-     * @param val The feature to be added to the First
-     */
-    private void addFirst(K key, V val)
-    {
-        lock.lock();
-        try
-        {
-            LRUElementDescriptor<K, V> me = new LRUElementDescriptor<K, V>(key, val);
-            list.addFirst( me );
-        }
-        finally
-        {
-            lock.unlock();
-        }
-    }
-
-    /**
-     * Returns the size of the list.
-     * <p>
-     * @return int
-     */
-    private int dumpCacheSize()
-    {
-        return list.size();
-    }
 
     /**
      * Dump the cache entries from first to list for debugging.
@@ -458,8 +431,8 @@ public abstract class AbstractLRUMap<K, V>
         }
 
         boolean found = false;
-        log.debug( "verifycache: mapContains " + map.size() + " elements, linked list contains " + dumpCacheSize()
-            + " elements" );
+        log.debug( "verifycache: mapContains " + map.size() +
+                " elements, linked list contains " + list.size() + " elements" );
         log.debug( "verifycache: checking linked list by key " );
         for (LRUElementDescriptor<K, V> li = list.getFirst(); li != null; li = (LRUElementDescriptor<K, V>) li.next )
         {
@@ -537,37 +510,6 @@ public abstract class AbstractLRUMap<K, V>
     }
 
     /**
-     * Logs an error is an element that should be in the cache is not.
-     * <p>
-     * @param key
-     */
-    @SuppressWarnings("unchecked") // No generics for public fields
-    protected void verifyCache( Object key )
-    {
-        if ( !log.isDebugEnabled() )
-        {
-            return;
-        }
-
-        boolean found = false;
-
-        // go through the linked list looking for the key
-        for (LRUElementDescriptor<K, V> li = list.getFirst(); li != null; li = (LRUElementDescriptor<K, V>) li.next )
-        {
-            if ( li.getKey() == key )
-            {
-                found = true;
-                log.debug( "verifycache(key) key match: " + key );
-                break;
-            }
-        }
-        if ( !found )
-        {
-            log.error( "verifycache(key), couldn't find key! : " + key );
-        }
-    }
-
-    /**
      * This is called when an item is removed from the LRU. We just log some information.
      * <p>
      * Children can implement this method for special behavior.
@@ -584,24 +526,6 @@ public abstract class AbstractLRUMap<K, V>
     }
 
     /**
-     * The chunk size is the number of items to remove when the max is reached. By default it is 1.
-     * <p>
-     * @param chunkSize The chunkSize to set.
-     */
-    public void setChunkSize( int chunkSize )
-    {
-        this.chunkSize = chunkSize;
-    }
-
-    /**
-     * @return Returns the chunkSize.
-     */
-    public int getChunkSize()
-    {
-        return chunkSize;
-    }
-
-    /**
      * @return IStats
      */
     public IStats getStatistics()
@@ -613,9 +537,9 @@ public abstract class AbstractLRUMap<K, V>
 
         elems.add(new StatElement<Integer>( "List Size", Integer.valueOf(list.size()) ) );
         elems.add(new StatElement<Integer>( "Map Size", Integer.valueOf(map.size()) ) );
-        elems.add(new StatElement<Integer>( "Put Count", Integer.valueOf(putCnt) ) );
-        elems.add(new StatElement<Integer>( "Hit Count", Integer.valueOf(hitCnt) ) );
-        elems.add(new StatElement<Integer>( "Miss Count", Integer.valueOf(missCnt) ) );
+        elems.add(new StatElement<Long>( "Put Count", Long.valueOf(putCnt) ) );
+        elems.add(new StatElement<Long>( "Hit Count", Long.valueOf(hitCnt) ) );
+        elems.add(new StatElement<Long>( "Miss Count", Long.valueOf(missCnt) ) );
 
         stats.setStatElements( elems );
 
