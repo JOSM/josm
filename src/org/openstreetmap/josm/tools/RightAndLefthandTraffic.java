@@ -117,6 +117,9 @@ public final class RightAndLefthandTraffic {
                 }
             } catch (UserCancelException ex) {
                 Main.warn(ex);
+            } catch (JosmRuntimeException ex) {
+                // Workaround to #10511 / #14185. To remove when #10511 is solved
+                Main.error(ex);
             }
         }
         if (optimizedWays.isEmpty()) {
