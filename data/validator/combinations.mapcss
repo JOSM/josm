@@ -322,7 +322,7 @@ node[amenity][amenity =~ /^(restaurant|cafe|fast_food)$/][!name][noname!=yes] {
 
 way[highway][barrier],
 *[highway][waterway][waterway!=dam][waterway!=weir],
-way[highway][natural],
+way[highway][natural][natural!=ridge],
 *[landuse][building] {
   throwWarning: tr("{0} together with {1}", "{0.key}", "{1.key}");
   group: tr("suspicious tag combination");
