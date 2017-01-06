@@ -156,7 +156,7 @@ public class GpxDrawHelper implements SoMChangeListener {
     private Color[] heatMapLutUserColor = createColorLut(Color.BLACK, Color.WHITE);
 
     // heat map color in use
-    private Color[] heatMapLutColor = null;
+    private Color[] heatMapLutColor;
 
     private void setupColors() {
         hdopAlpha = Main.pref.getInteger("hdop.color.alpha", -1);
@@ -514,7 +514,7 @@ public class GpxDrawHelper implements SoMChangeListener {
         }
 
         // heat mode
-        if (ColorMode.HEATMAP == colored) {
+        if (ColorMode.HEATMAP == colored && neutralColor != null) {
 
             // generate new user color map
             heatMapLutUserColor = createColorLut(Color.BLACK, neutralColor.darker(),
@@ -539,8 +539,7 @@ public class GpxDrawHelper implements SoMChangeListener {
 
             // force redraw of image
             heatMapCacheVisibleSegments = 0;
-
-        } // end of if (ColorMode.HEATMAP == colored)
+        }
 
         computeCacheInSync = true;
     }
@@ -772,12 +771,10 @@ public class GpxDrawHelper implements SoMChangeListener {
 
                 // draw it
                 g.drawLine(lastPaintPnt.x, lastPaintPnt.y, paintPnt.x, paintPnt.y);
-
-            } // end of if()
+            }
 
             lastPaintPnt = paintPnt;
-
-        } // end of for()
+        }
 
         // @last restore modified paint environment -----------------------------
         g.setPaint(oldPaint);
@@ -855,8 +852,7 @@ public class GpxDrawHelper implements SoMChangeListener {
 
         // transform into lookup table
         return colorTable;
-
-    } // end of createColorLut()
+    }
 
     /**
      * Creates a colormap by using a static color map with 1..n colors (RGB 0.0 ..1.0)
@@ -875,11 +871,10 @@ public class GpxDrawHelper implements SoMChangeListener {
 
         // forward
         return createColorLut(color);
-
-    } // end of createColorFromRawArray()
-
     /**
      * Creates a colormap by using a static color map with 1..n colors (RGB 0.0 ..1.0)
+     * @param str the filename (without extension) to look for into data/gpx
+     * @return the parsed colormap
      */
     protected static Color[] createColorFromResource(String str) {
 
@@ -905,17 +900,15 @@ public class GpxDrawHelper implements SoMChangeListener {
                 }
 
                 // extract RGB value
-                float r = Float.valueOf(column[0]).floatValue();
-                float g = Float.valueOf(column[1]).floatValue();
-                float b = Float.valueOf(column[2]).floatValue();
+                float r = Float.parseFloat(column[0]);
+                float g = Float.parseFloat(column[1]);
+                float b = Float.parseFloat(column[2]);
 
                 // some color tables are 0..1.0 and some 0.255
                 float scale = (r < 1 && g < 1 && b < 1) ? 1 : 255;
 
                 colorList.add(new Color(r/scale, g/scale, b/scale));
-
-            } // end of while()
-
+            }
         } catch (IOException e) {
             throw new JosmRuntimeException(e);
         }
@@ -927,8 +920,7 @@ public class GpxDrawHelper implements SoMChangeListener {
         }
 
         return createColorLut(colorList.toArray(new Color[ colorList.size() ]));
-
-    } // end of createColorFromResource()
+    }
 
     /**
      * Draw gray heat map with current Graphics2D setting
@@ -983,10 +975,8 @@ public class GpxDrawHelper implements SoMChangeListener {
                 heatMapPolyX.add((int) paintPnt.getX());
                 heatMapPolyY.add((int) paintPnt.getY());
             }
-
-        } // end of for()
-
-    } // end of drawHeatGrayMap
+        }
+    }
 
     /**
      * Map the gray map to heat map and draw them with current Graphics2D setting
@@ -1005,7 +995,8 @@ public class GpxDrawHelper implements SoMChangeListener {
         final int maxPixelX = imgGray.getWidth();
         final int maxPixelY = imgGray.getHeight();
 
-        int lastPixelY = 0; int lastPixelColor = 0;
+        int lastPixelY = 0;
+        int lastPixelColor = 0;
 
         // resample gray scale image with line linear weight of next sample in line
         // process each line and draw pixels / rectangles with same color with one operations
@@ -1053,12 +1044,10 @@ public class GpxDrawHelper implements SoMChangeListener {
                     lastPixelY = y; lastPixelColor = thePixelColor;
                 }
             }
+        }
+    }
 
-        } // end of for()
-
-    } // end of drawHeatMapGrayMap()
-
-   /**
+    /**
      * Collect and draw GPS segments and displays a heat-map
      * @param g               the common draw object to use
      * @param mv              the meta data to current displayed area
@@ -1099,7 +1088,7 @@ public class GpxDrawHelper implements SoMChangeListener {
 
         // the line width (foreground: draw extra small footprint line of track)
         final int lineWidthB = Math.max((int) (globalLineWidth / zoomScale) + 1, 2);
-        final int lineWidthF = lineWidthB > 2 ? globalLineWidth - 1 : 0;
+        final int lineWidthF = lineWidthB > 2 ? (globalLineWidth - 1) : 0;
 
         // recalculation of image needed
         final boolean imageRecalc = heatMapCacheVisibleSegments != visibleSegments.size() ||
@@ -1133,8 +1122,7 @@ public class GpxDrawHelper implements SoMChangeListener {
 
         // 4th. Draw data on target layer, map data via color lookup table --------------
         drawHeatMapGrayMap(g, heatMapImgGray, lineWidthB);
-
-    } // end of drawHeatMap()
+    }
 
     /**
      * Apply default color configuration to way segments

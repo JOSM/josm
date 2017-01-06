@@ -9,7 +9,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -58,32 +57,14 @@ public class PowerLines extends Test {
     public void visit(Way w) {
         if (w.isUsable()) {
             if (isPowerLine(w) && !w.hasTag("location", "underground")) {
-                String fixValue = null;
-                TestError.Builder error = null;
-                Node errorNode = null;
-                boolean canFix = false;
                 for (Node n : w.getNodes()) {
-                    if (!isPowerTower(n)) {
-                        if (!isPowerAllowed(n) && IN_DOWNLOADED_AREA.test(n) && (!w.isFirstLastNode(n) || !isPowerStation(n))) {
-                            error = TestError.builder(this, Severity.WARNING, POWER_LINES)
-                                    .message(tr("Missing power tower/pole within power line"))
-                                    .primitives(n);
-                            errorNode = n;
-                        }
-                    } else if (fixValue == null) {
-                        // First tower/pole tag found, remember it
-                        fixValue = n.get("power");
-                        canFix = true;
-                    } else if (!fixValue.equals(n.get("power"))) {
-                        // The power line contains both "tower" and "pole" -> cannot fix this error
-                        canFix = false;
+                    if (!isPowerTower(n) && !isPowerAllowed(n) && IN_DOWNLOADED_AREA.test(n)
+                        && (!w.isFirstLastNode(n) || !isPowerStation(n))) {
+                        potentialErrors.add(TestError.builder(this, Severity.WARNING, POWER_LINES)
+                                .message(tr("Missing power tower/pole within power line"))
+                                .primitives(n)
+                                .build());
                     }
-                }
-                if (error != null && canFix) {
-                    final ChangePropertyCommand fix = new ChangePropertyCommand(errorNode, "power", fixValue);
-                    potentialErrors.add(error.fix(() -> fix).build());
-                } else if (error != null) {
-                    potentialErrors.add(error.build());
                 }
             } else if (w.isClosed() && isPowerStation(w)) {
                 powerStations.add(w);
