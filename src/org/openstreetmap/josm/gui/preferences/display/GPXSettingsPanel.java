@@ -55,9 +55,12 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private final JRadioButton colorTypeDirection = new JRadioButton(tr("Direction (red = west, yellow = north, green = east, blue = south)"));
     private final JRadioButton colorTypeDilution = new JRadioButton(tr("Dilution of Position (red = high, green = low, if available)"));
     private final JRadioButton colorTypeTime = new JRadioButton(tr("Track date"));
+    private final JRadioButton colorTypeHeatMap = new JRadioButton(tr("Heat Map (dark = few tracks, bright = many tracks)"));
     private final JRadioButton colorTypeNone = new JRadioButton(tr("Single Color (can be customized for named layers)"));
     private final JRadioButton colorTypeGlobal = new JRadioButton(tr("Use global settings"));
     private final JosmComboBox<String> colorTypeVelocityTune = new JosmComboBox<>(new String[] {tr("Car"), tr("Bicycle"), tr("Foot")});
+    private final JosmComboBox<String> colorTypeHeatMapTune = new JosmComboBox<>(new String[] {tr("User"), tr("Inferno"), tr("Viridis"),
+                                                                                 tr("Wood"), tr("Heat")});
     private final JCheckBox makeAutoMarkers = new JCheckBox(tr("Create markers when reading GPX"));
     private final JCheckBox drawGpsArrows = new JCheckBox(tr("Draw Direction Arrows"));
     private final JCheckBox drawGpsArrowsFast = new JCheckBox(tr("Fast drawing (looks uglier)"));
@@ -68,6 +71,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private final JosmComboBox<String> audioWaypointLabel = new JosmComboBox<>(LABEL_PATTERN_DESC);
     private final JosmTextField audioWaypointLabelPattern = new JosmTextField();
     private final JCheckBox useGpsAntialiasing = new JCheckBox(tr("Smooth GPX graphics (antialiasing)"));
+    private final JCheckBox drawLineWithAlpha = new JCheckBox(tr("Draw with Opacity (alpha blending) "));
 
     private String layerName;
     private final boolean local; // flag to display LocalOnly checkbox
@@ -179,16 +183,16 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             drawGpsArrowsMinDist.setEnabled(drawGpsArrows.isSelected() && drawGpsArrows.isEnabled());
         });
         drawGpsArrows.setToolTipText(tr("Draw direction arrows for lines, connecting GPS points."));
-        add(drawGpsArrows, GBC.eop().insets(40, 0, 0, 0));
+        add(drawGpsArrows, GBC.eop().insets(20, 0, 0, 0));
 
         // drawGpsArrowsFast
         drawGpsArrowsFast.setToolTipText(tr("Draw the direction arrows using table lookups instead of complex math."));
-        add(drawGpsArrowsFast, GBC.eop().insets(60, 0, 0, 0));
+        add(drawGpsArrowsFast, GBC.eop().insets(40, 0, 0, 0));
         ExpertToggleAction.addVisibilitySwitcher(drawGpsArrowsFast);
 
         // drawGpsArrowsMinDist
         drawGpsArrowsMinDist.setToolTipText(tr("Do not draw arrows if they are not at least this distance away from the last one."));
-        add(new JLabel(tr("Minimum distance (pixels)")), GBC.std().insets(60, 0, 0, 0));
+        add(new JLabel(tr("Minimum distance (pixels)")), GBC.std().insets(40, 0, 0, 0));
         add(drawGpsArrowsMinDist, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
 
         // hdopCircleGpsPoints
@@ -210,6 +214,11 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         add(useGpsAntialiasing, GBC.eop().insets(20, 0, 0, 0));
         ExpertToggleAction.addVisibilitySwitcher(useGpsAntialiasing);
 
+        // alpha blending
+        drawLineWithAlpha.setToolTipText(tr("Apply dynamic alpha-blending and adjust width based on zoom level for all GPX lines."));
+        add(drawLineWithAlpha, GBC.eop().insets(20, 0, 0, 0));
+        ExpertToggleAction.addVisibilitySwitcher(drawLineWithAlpha);
+
         // colorTracks
         ButtonGroup colorGroup = new ButtonGroup();
         if (layerName != null) {
@@ -220,11 +229,18 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         colorGroup.add(colorTypeDirection);
         colorGroup.add(colorTypeDilution);
         colorGroup.add(colorTypeTime);
+        colorGroup.add(colorTypeHeatMap);
 
         colorTypeVelocity.addChangeListener(e -> {
             colorTypeVelocityTune.setEnabled(colorTypeVelocity.isSelected());
             colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected());
         });
+
+        colorTypeHeatMap.addChangeListener(e -> {
+            colorTypeHeatMapTune.setEnabled(colorTypeHeatMap.isSelected());
+            colorDynamic.setEnabled(false);
+        });
+
         colorTypeDilution.addChangeListener(e -> colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected()));
 
         colorTypeNone.setToolTipText(tr("All points and track segments will have the same color. Can be customized in Layer Manager."));
@@ -233,9 +249,12 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         colorTypeDilution.setToolTipText(
                 tr("Colors points and track segments by dilution of position (HDOP). Your capture device needs to log that information."));
         colorTypeTime.setToolTipText(tr("Colors points and track segments by its timestamp."));
+        colorTypeHeatMap.setToolTipText(tr("Collected points and track segments for a position and displayed as heat map."));
 
         // color Tracks by Velocity Tune
         colorTypeVelocityTune.setToolTipText(tr("Allows to tune the track coloring for different average speeds."));
+
+        colorTypeHeatMapTune.setToolTipText(tr("Selects the color schema for heat map."));
 
         add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
 
@@ -249,6 +268,9 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         add(colorTypeDirection, GBC.eol().insets(40, 0, 0, 0));
         add(colorTypeDilution, GBC.eol().insets(40, 0, 0, 0));
         add(colorTypeTime, GBC.eol().insets(40, 0, 0, 0));
+        add(colorTypeHeatMap, GBC.std().insets(40, 0, 0, 0));
+        add(colorTypeHeatMapTune, GBC.eop().insets(5, 0, 0, 5));
+
         ExpertToggleAction.addVisibilitySwitcher(colorTypeDirection);
         ExpertToggleAction.addVisibilitySwitcher(colorTypeDilution);
 
@@ -315,6 +337,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         drawRawGpsMaxLineLengthLocal.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.max-line-length.local", layerName, -1)));
         drawRawGpsMaxLineLength.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.max-line-length", layerName, 200)));
         drawLineWidth.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.linewidth", layerName, 0)));
+        drawLineWithAlpha.setSelected(Main.pref.getBoolean("draw.rawgps.lines.alpha-blend", layerName, false));
         forceRawGpsLines.setSelected(Main.pref.getBoolean("draw.rawgps.lines.force", layerName, false));
         drawGpsArrows.setSelected(Main.pref.getBoolean("draw.rawgps.direction", layerName, false));
         drawGpsArrowsFast.setSelected(Main.pref.getBoolean("draw.rawgps.alternatedirection", layerName, false));
@@ -322,6 +345,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         hdopCircleGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.hdopcircle", layerName, false));
         largeGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.large", layerName, false));
         useGpsAntialiasing.setSelected(Main.pref.getBoolean("mappaint.gpx.use-antialiasing", false));
+
         drawRawGpsLinesActionListener.actionPerformed(null);
 
         if (layerName != null && Main.pref.get("draw.rawgps.colors."+layerName).isEmpty()) {
@@ -336,11 +360,16 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             case 2: colorTypeDilution.setSelected(true); break;
             case 3: colorTypeDirection.setSelected(true); break;
             case 4: colorTypeTime.setSelected(true); break;
+            case 5: colorTypeHeatMap.setSelected(true); break;
             default: Main.warn("Unknown color type: " + colorType);
             }
             int ccts = Main.pref.getInteger("draw.rawgps.colorTracksTune", layerName, 45);
             colorTypeVelocityTune.setSelectedIndex(ccts == 10 ? 2 : (ccts == 20 ? 1 : 0));
             colorTypeVelocityTune.setEnabled(colorTypeVelocity.isSelected() && colorTypeVelocity.isEnabled());
+
+            colorTypeHeatMapTune.setSelectedIndex(Main.pref.getInteger("draw.rawgps.heatmap.colormap", layerName, 0));
+            colorTypeHeatMapTune.setEnabled(colorTypeHeatMap.isSelected() && colorTypeHeatMap.isEnabled());
+
             colorDynamic.setSelected(Main.pref.getBoolean("draw.rawgps.colors.dynamic", layerName, false));
             colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected());
         }
@@ -385,6 +414,8 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         Main.pref.put("draw.rawgps.hdopcircle"+layerNameDot, hdopCircleGpsPoints.isSelected());
         Main.pref.put("draw.rawgps.large"+layerNameDot, largeGpsPoints.isSelected());
         Main.pref.put("draw.rawgps.linewidth"+layerNameDot, drawLineWidth.getText());
+        Main.pref.put("draw.rawgps.lines.alpha-blend"+layerNameDot, drawLineWithAlpha.isSelected());
+
         Main.pref.put("mappaint.gpx.use-antialiasing", useGpsAntialiasing.isSelected());
 
         TemplateEntryProperty.forMarker(layerName).put(waypointLabelPattern.getText());
@@ -403,12 +434,17 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             Main.pref.putInteger("draw.rawgps.colors"+layerNameDot, 3);
         } else if (colorTypeTime.isSelected()) {
             Main.pref.putInteger("draw.rawgps.colors"+layerNameDot, 4);
+        } else if (colorTypeHeatMap.isSelected()) {
+            Main.pref.putInteger("draw.rawgps.colors"+layerNameDot, 5);
         } else {
             Main.pref.putInteger("draw.rawgps.colors"+layerNameDot, 0);
         }
         Main.pref.put("draw.rawgps.colors.dynamic"+layerNameDot, colorDynamic.isSelected());
         int ccti = colorTypeVelocityTune.getSelectedIndex();
         Main.pref.putInteger("draw.rawgps.colorTracksTune"+layerNameDot, ccti == 2 ? 10 : (ccti == 1 ? 20 : 45));
+
+        Main.pref.putInteger("draw.rawgps.heatmap.colormap"+layerNameDot, colorTypeHeatMapTune.getSelectedIndex());
+
         return false;
     }
 
