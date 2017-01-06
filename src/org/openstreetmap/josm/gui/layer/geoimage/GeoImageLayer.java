@@ -16,6 +16,7 @@ import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -97,7 +98,19 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
     boolean updateOffscreenBuffer = true;
 
     private MouseAdapter mouseAdapter;
+    private MouseMotionAdapter mouseMotionAdapter;
     private MapModeChangeListener mapModeListener;
+
+    /** Mouse position where the last image was selected. */
+    private Point lastSelPos;
+
+    /**
+     * Image cycle mode flag.
+     * It is possible that a mouse button release triggers multiple mouseReleased() events.
+     * To prevent the cycling in such a case we wait for the next mouse button press event
+     * before it is cycled to the next image.
+     */
+    private boolean cycleModeArmed;
 
     /**
      * Constructs a new {@code GeoImageLayer}.
@@ -467,6 +480,33 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
                 (int) Math.round(f * thumb.getHeight(null)));
     }
 
+    /**
+     * Paint one image.
+     * @param e Image to be painted
+     * @param mv Map view
+     * @param clip Bounding rectangle of the current clipping area
+     * @param tempG Temporary offscreen buffer
+     */
+    private void paintImage(ImageEntry e, MapView mv, Rectangle clip, Graphics2D tempG) {
+        if (e.getPos() == null) {
+            return;
+        }
+        Point p = mv.getPoint(e.getPos());
+        if (e.hasThumbnail()) {
+            Dimension d = scaledDimension(e.getThumbnail());
+            if (d != null) {
+                Rectangle target = new Rectangle(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
+                if (clip.intersects(target)) {
+                    tempG.drawImage(e.getThumbnail(), target.x, target.y, target.width, target.height, null);
+                }
+            }
+        } else { // thumbnail not loaded yet
+            icon.paintIcon(mv, tempG,
+                p.x - icon.getIconWidth() / 2,
+                p.y - icon.getIconHeight() / 2);
+        }
+    }
+
     @Override
     public void paint(Graphics2D g, MapView mv, Bounds bounds) {
         int width = mv.getWidth();
@@ -494,23 +534,11 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
 
                 if (data != null) {
                     for (ImageEntry e : data) {
-                        if (e.getPos() == null) {
-                            continue;
-                        }
-                        Point p = mv.getPoint(e.getPos());
-                        if (e.hasThumbnail()) {
-                            Dimension d = scaledDimension(e.getThumbnail());
-                            if (d != null) {
-                                Rectangle target = new Rectangle(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
-                                if (clip.intersects(target)) {
-                                    tempG.drawImage(e.getThumbnail(), target.x, target.y, target.width, target.height, null);
-                                }
-                            }
-                        } else { // thumbnail not loaded yet
-                            icon.paintIcon(mv, tempG,
-                                    p.x - icon.getIconWidth() / 2,
-                                    p.y - icon.getIconHeight() / 2);
-                        }
+                        paintImage(e, mv, clip, tempG);
+                    }
+                    if (currentPhoto >= 0 && currentPhoto < data.size()) {
+                        // Make sure the selected image is on top in case multiple images overlap.
+                        paintImage(data.get(currentPhoto), mv, clip, tempG);
                     }
                 }
                 updateOffscreenBuffer = false;
@@ -601,6 +629,20 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
     }
 
     /**
+     * Show current photo on map and in image viewer.
+     */
+    public void showCurrentPhoto() {
+        clearOtherCurrentPhotos();
+        if (currentPhoto >= 0) {
+            ImageViewerDialog.showImage(this, data.get(currentPhoto));
+        } else {
+            ImageViewerDialog.showImage(this, null);
+        }
+        updateOffscreenBuffer = true;
+        Main.map.repaint();
+    }
+
+    /**
      * Shows next photo.
      */
     public void showNextPhoto() {
@@ -609,11 +651,10 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
             if (currentPhoto >= data.size()) {
                 currentPhoto = data.size() - 1;
             }
-            ImageViewerDialog.showImage(this, data.get(currentPhoto));
         } else {
             currentPhoto = -1;
         }
-        Main.map.repaint();
+        showCurrentPhoto();
     }
 
     /**
@@ -625,11 +666,10 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
             if (currentPhoto < 0) {
                 currentPhoto = 0;
             }
-            ImageViewerDialog.showImage(this, data.get(currentPhoto));
         } else {
             currentPhoto = -1;
         }
-        Main.map.repaint();
+        showCurrentPhoto();
     }
 
     /**
@@ -638,11 +678,10 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
     public void showFirstPhoto() {
         if (data != null && !data.isEmpty()) {
             currentPhoto = 0;
-            ImageViewerDialog.showImage(this, data.get(currentPhoto));
         } else {
             currentPhoto = -1;
         }
-        Main.map.repaint();
+        showCurrentPhoto();
     }
 
     /**
@@ -651,11 +690,10 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
     public void showLastPhoto() {
         if (data != null && !data.isEmpty()) {
             currentPhoto = data.size() - 1;
-            ImageViewerDialog.showImage(this, data.get(currentPhoto));
         } else {
             currentPhoto = -1;
         }
-        Main.map.repaint();
+        showCurrentPhoto();
     }
 
     public void checkPreviousNextButtons() {
@@ -669,13 +707,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
             if (currentPhoto >= data.size()) {
                 currentPhoto = data.size() - 1;
             }
-            if (currentPhoto >= 0) {
-                ImageViewerDialog.showImage(this, data.get(currentPhoto));
-            } else {
-                ImageViewerDialog.showImage(this, null);
-            }
-            updateOffscreenBuffer = true;
-            Main.map.repaint();
+            showCurrentPhoto();
         }
     }
 
@@ -702,11 +734,6 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
                 if (currentPhoto >= data.size()) {
                     currentPhoto = data.size() - 1;
                 }
-                if (currentPhoto >= 0) {
-                    ImageViewerDialog.showImage(this, data.get(currentPhoto));
-                } else {
-                    ImageViewerDialog.showImage(this, null);
-                }
 
                 if (Utils.deleteFile(toDelete.getFile())) {
                     Main.info("File "+toDelete.getFile()+" deleted. ");
@@ -719,8 +746,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
                             );
                 }
 
-                updateOffscreenBuffer = true;
-                Main.map.repaint();
+                showCurrentPhoto();
             }
         }
     }
@@ -743,38 +769,105 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
     }
 
     /**
+     * Check if the position of the mouse event is within the rectangle of the photo icon or thumbnail.
+     * @param idx Image index, range 0 .. size-1
+     * @param evt Mouse event
+     * @return {@code true} if the photo matches the mouse position, {@code false} otherwise
+     */
+    private boolean isPhotoIdxUnderMouse(int idx, MouseEvent evt) {
+        if (idx >= 0 && data != null && idx < data.size()) {
+            ImageEntry img = data.get(idx);
+            if (img.getPos() != null) {
+                Point imgCenter = Main.map.mapView.getPoint(img.getPos());
+                Rectangle imgRect;
+                if (useThumbs && img.hasThumbnail()) {
+                    Dimension imgDim = scaledDimension(img.getThumbnail());
+                    if (imgDim != null) {
+                        imgRect = new Rectangle(imgCenter.x - imgDim.width / 2,
+                                                imgCenter.y - imgDim.height / 2,
+                                                imgDim.width, imgDim.height);
+                    } else {
+                        imgRect = null;
+                    }
+                } else {
+                    imgRect = new Rectangle(imgCenter.x - icon.getIconWidth() / 2,
+                                            imgCenter.y - icon.getIconHeight() / 2,
+                                            icon.getIconWidth(), icon.getIconHeight());
+                }
+                if (imgRect != null && imgRect.contains(evt.getPoint())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns index of the image that matches the position of the mouse event.
+     * @param evt    Mouse event
+     * @param cycle  Set to {@code true} to cycle through the photos at the
+     *               current mouse position if multiple icons or thumbnails overlap.
+     *               If set to {@code false} the topmost photo will be used.
+     * @return       Image index at mouse position, range 0 .. size-1,
+     *               or {@code -1} if there is no image at the mouse position
+     */
+    private int getPhotoIdxUnderMouse(MouseEvent evt, boolean cycle) {
+        if (data != null) {
+            if (cycle && currentPhoto >= 0) {
+                // Cycle loop is forward as that is the natural order.
+                // Loop 1: One after current photo up to last one.
+                for (int idx = currentPhoto + 1; idx < data.size(); ++idx) {
+                    if (isPhotoIdxUnderMouse(idx, evt)) {
+                        return idx;
+                    }
+                }
+                // Loop 2: First photo up to current one.
+                for (int idx = 0; idx <= currentPhoto; ++idx) {
+                    if (isPhotoIdxUnderMouse(idx, evt)) {
+                        return idx;
+                    }
+                }
+            } else {
+                // Check for current photo first, i.e. keep it selected if it is under the mouse.
+                if (currentPhoto >= 0 && isPhotoIdxUnderMouse(currentPhoto, evt)) {
+                    return currentPhoto;
+                }
+                // Loop from last to first to prefer topmost image.
+                for (int idx = data.size() - 1; idx >= 0; --idx) {
+                    if (isPhotoIdxUnderMouse(idx, evt)) {
+                        return idx;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Returns index of the image that matches the position of the mouse event.
+     * The topmost photo is picked if multiple icons or thumbnails overlap.
+     * @param evt Mouse event
+     * @return Image index at mouse position, range 0 .. size-1,
+     *         or {@code -1} if there is no image at the mouse position
+     */
+    private int getPhotoIdxUnderMouse(MouseEvent evt) {
+        return getPhotoIdxUnderMouse(evt, false);
+    }
+
+    /**
      * Returns the image that matches the position of the mouse event.
+     * The topmost photo is picked of multiple icons or thumbnails overlap.
      * @param evt Mouse event
      * @return Image at mouse position, or {@code null} if there is no image at the mouse position
      * @since 6392
      */
     public ImageEntry getPhotoUnderMouse(MouseEvent evt) {
-        if (data != null) {
-            for (int idx = data.size() - 1; idx >= 0; --idx) {
-                ImageEntry img = data.get(idx);
-                if (img.getPos() == null) {
-                    continue;
-                }
-                Point p = Main.map.mapView.getPoint(img.getPos());
-                Rectangle r;
-                if (useThumbs && img.hasThumbnail()) {
-                    Dimension d = scaledDimension(img.getThumbnail());
-                    if (d != null)
-                        r = new Rectangle(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
-                    else
-                        r = null;
-                } else {
-                    r = new Rectangle(p.x - icon.getIconWidth() / 2,
-                                      p.y - icon.getIconHeight() / 2,
-                                      icon.getIconWidth(),
-                                      icon.getIconHeight());
-                }
-                if (r != null && r.contains(evt.getPoint())) {
-                    return img;
-                }
-            }
+        int idx = getPhotoIdxUnderMouse(evt);
+        if (idx >= 0) {
+            return data.get(idx);
+        } else {
+            return null;
         }
-        return null;
     }
 
     /**
@@ -848,6 +941,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
                     return;
                 if (isVisible() && isMapModeOk()) {
                     Main.map.mapView.repaint();
+                    cycleModeArmed = true;
                 }
             }
 
@@ -858,41 +952,37 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
                 if (data == null || !isVisible() || !isMapModeOk())
                     return;
 
-                for (int i = data.size() - 1; i >= 0; --i) {
-                    ImageEntry e = data.get(i);
-                    if (e.getPos() == null) {
-                        continue;
-                    }
-                    Point p = Main.map.mapView.getPoint(e.getPos());
-                    Rectangle r;
-                    if (useThumbs && e.hasThumbnail()) {
-                        Dimension d = scaledDimension(e.getThumbnail());
-                        if (d != null)
-                            r = new Rectangle(p.x - d.width / 2, p.y - d.height / 2, d.width, d.height);
-                        else
-                            r = null;
-                    } else {
-                        r = new Rectangle(p.x - icon.getIconWidth() / 2,
-                                p.y - icon.getIconHeight() / 2,
-                                icon.getIconWidth(),
-                                icon.getIconHeight());
-                    }
-                    if (r != null && r.contains(ev.getPoint())) {
-                        clearOtherCurrentPhotos();
-                        currentPhoto = i;
-                        ImageViewerDialog.showImage(GeoImageLayer.this, e);
-                        Main.map.repaint();
-                        break;
-                    }
+                Point mousePos = ev.getPoint();
+                boolean cycle = cycleModeArmed && lastSelPos != null && lastSelPos.equals(mousePos);
+                int idx = getPhotoIdxUnderMouse(ev, cycle);
+                if (idx >= 0) {
+                    lastSelPos = mousePos;
+                    cycleModeArmed = false;
+                    currentPhoto = idx;
+                    showCurrentPhoto();
                 }
+            }
+        };
+
+        mouseMotionAdapter = new MouseMotionAdapter() {
+            @Override
+            public void mouseMoved(MouseEvent evt) {
+                lastSelPos = null;
+            }
+
+            @Override
+            public void mouseDragged(MouseEvent evt) {
+                lastSelPos = null;
             }
         };
 
         mapModeListener = (oldMapMode, newMapMode) -> {
             if (newMapMode == null || isSupportedMapMode(newMapMode)) {
                 Main.map.mapView.addMouseListener(mouseAdapter);
+                Main.map.mapView.addMouseMotionListener(mouseMotionAdapter);
             } else {
                 Main.map.mapView.removeMouseListener(mouseAdapter);
+                Main.map.mapView.removeMouseMotionListener(mouseMotionAdapter);
             }
         };
 
@@ -917,6 +1007,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
                 if (e.getRemovedLayer() == GeoImageLayer.this) {
                     stopLoadThumbs();
                     Main.map.mapView.removeMouseListener(mouseAdapter);
+                    Main.map.mapView.removeMouseMotionListener(mouseMotionAdapter);
                     MapFrame.removeMapModeChangeListener(mapModeListener);
                     currentPhoto = -1;
                     if (data != null) {
