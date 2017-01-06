@@ -24,6 +24,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -40,6 +41,7 @@ import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -376,6 +378,10 @@ public class OsmReader extends AbstractReader {
         String value = parser.getAttributeValue(null, "v");
         if (key == null || value == null) {
             throwException(tr("Missing key or value attribute in tag."));
+        } else if (Utils.isStripEmpty(key) && t instanceof AbstractPrimitive) {
+            // #14199: Empty keys as ignored by AbstractPrimitive#put, but it causes problems to fix existing data
+            // Drop the tag on import, but flag the primitive as modified
+            ((AbstractPrimitive) t).setModified(true);
         } else {
             t.put(key.intern(), value.intern());
         }

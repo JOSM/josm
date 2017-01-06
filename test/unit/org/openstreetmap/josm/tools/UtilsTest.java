@@ -2,6 +2,9 @@
 package org.openstreetmap.josm.tools;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -9,7 +12,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -52,28 +54,44 @@ public class UtilsTest {
             "\uFEFF"+ // ZERO WIDTH NO-BREAK SPACE
             "\u3000"; // IDEOGRAPHIC SPACE
         // CHECKSTYLE.ON: SingleSpaceSeparator
-        Assert.assertNull(Utils.strip(null));
-        Assert.assertEquals("", Utils.strip(""));
-        Assert.assertEquals("", Utils.strip(" "));
-        Assert.assertEquals("", Utils.strip("  "));
-        Assert.assertEquals("", Utils.strip("   "));
-        Assert.assertEquals("", Utils.strip(someWhite));
-        Assert.assertEquals("a", Utils.strip("a"));
-        Assert.assertEquals("ab", Utils.strip("ab"));
-        Assert.assertEquals("abc", Utils.strip("abc"));
-        Assert.assertEquals("a", Utils.strip(" a"));
-        Assert.assertEquals("ab", Utils.strip(" ab"));
-        Assert.assertEquals("abc", Utils.strip(" abc"));
-        Assert.assertEquals("a", Utils.strip("a "));
-        Assert.assertEquals("ab", Utils.strip("ab "));
-        Assert.assertEquals("abc", Utils.strip("abc "));
-        Assert.assertEquals("a", Utils.strip(someWhite+"a"+someWhite));
-        Assert.assertEquals("ab", Utils.strip(someWhite+"ab"+someWhite));
-        Assert.assertEquals("abc", Utils.strip(someWhite+"abc"+someWhite));
+        assertNull(Utils.strip(null));
+        assertEquals("", Utils.strip(""));
+        assertEquals("", Utils.strip(" "));
+        assertEquals("", Utils.strip("  "));
+        assertEquals("", Utils.strip("   "));
+        assertEquals("", Utils.strip(someWhite));
+        assertEquals("a", Utils.strip("a"));
+        assertEquals("ab", Utils.strip("ab"));
+        assertEquals("abc", Utils.strip("abc"));
+        assertEquals("a", Utils.strip(" a"));
+        assertEquals("ab", Utils.strip(" ab"));
+        assertEquals("abc", Utils.strip(" abc"));
+        assertEquals("a", Utils.strip("a "));
+        assertEquals("ab", Utils.strip("ab "));
+        assertEquals("abc", Utils.strip("abc "));
+        assertEquals("a", Utils.strip(someWhite+"a"+someWhite));
+        assertEquals("ab", Utils.strip(someWhite+"ab"+someWhite));
+        assertEquals("abc", Utils.strip(someWhite+"abc"+someWhite));
 
         // extended skip
-        Assert.assertEquals("a", Utils.strip("a", "b"));
-        Assert.assertEquals("b", Utils.strip("acbcac", "ac"));
+        assertEquals("a", Utils.strip("a", "b"));
+        assertEquals("b", Utils.strip("acbcac", "ac"));
+    }
+
+    /**
+     * Test of {@link Utils#isStripEmpty} method.
+     */
+    @Test
+    public void testIsStripEmpty() {
+        assertTrue(Utils.isStripEmpty(null));
+        assertTrue(Utils.isStripEmpty(""));
+        assertTrue(Utils.isStripEmpty(" "));
+        assertTrue(Utils.isStripEmpty("  "));
+        assertFalse(Utils.isStripEmpty("a"));
+        assertFalse(Utils.isStripEmpty("foo"));
+        assertFalse(Utils.isStripEmpty(" foo"));
+        assertFalse(Utils.isStripEmpty("foo "));
+        assertFalse(Utils.isStripEmpty(" foo "));
     }
 
     /**
@@ -81,13 +99,13 @@ public class UtilsTest {
      */
     @Test
     public void testToHexString() {
-        Assert.assertEquals("", Utils.toHexString(null));
-        Assert.assertEquals("", Utils.toHexString(new byte[0]));
-        Assert.assertEquals("01", Utils.toHexString(new byte[]{0x1}));
-        Assert.assertEquals("0102", Utils.toHexString(new byte[]{0x1, 0x2}));
-        Assert.assertEquals("12", Utils.toHexString(new byte[]{0x12}));
-        Assert.assertEquals("127f", Utils.toHexString(new byte[]{0x12, 0x7f}));
-        Assert.assertEquals("fedc", Utils.toHexString(new byte[]{(byte) 0xfe, (byte) 0xdc}));
+        assertEquals("", Utils.toHexString(null));
+        assertEquals("", Utils.toHexString(new byte[0]));
+        assertEquals("01", Utils.toHexString(new byte[]{0x1}));
+        assertEquals("0102", Utils.toHexString(new byte[]{0x1, 0x2}));
+        assertEquals("12", Utils.toHexString(new byte[]{0x12}));
+        assertEquals("127f", Utils.toHexString(new byte[]{0x12, 0x7f}));
+        assertEquals("fedc", Utils.toHexString(new byte[]{(byte) 0xfe, (byte) 0xdc}));
     }
 
     /**

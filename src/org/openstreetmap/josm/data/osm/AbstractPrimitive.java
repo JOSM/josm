@@ -537,7 +537,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
     @Override
     public void put(String key, String value) {
         Map<String, String> originalKeys = getKeys();
-        if (key == null || Utils.strip(key).isEmpty())
+        if (key == null || Utils.isStripEmpty(key))
             return;
         else if (value == null) {
             remove(key);

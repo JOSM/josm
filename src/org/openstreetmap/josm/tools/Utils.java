@@ -734,6 +734,24 @@ public final class Utils {
     }
 
     /**
+     * Determines if the given String would be empty if stripped.
+     * This is an efficient alternative to {@code strip(s).isEmpty()} that avoids to create useless String object.
+     * @param str The string to test
+     * @return {@code true} if the stripped version of {@code s} would be empty.
+     * @since 11435
+     */
+    public static boolean isStripEmpty(String str) {
+        if (str != null) {
+            for (int i = 0; i < str.length(); i++) {
+                if (!isStrippedChar(str.charAt(i), DEFAULT_STRIP)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
      * An alternative to {@link String#trim()} to effectively remove all leading
      * and trailing white characters, including Unicode ones.
      * @param str The string to strip
@@ -773,22 +791,24 @@ public final class Utils {
         int end = str.length();
         boolean leadingSkipChar = true;
         while (leadingSkipChar && start < end) {
-            char c = str.charAt(start);
-            leadingSkipChar = Character.isWhitespace(c) || Character.isSpaceChar(c) || stripChar(skipChars, c);
+            leadingSkipChar = isStrippedChar(str.charAt(start), skipChars);
             if (leadingSkipChar) {
                 start++;
             }
         }
         boolean trailingSkipChar = true;
         while (trailingSkipChar && end > start + 1) {
-            char c = str.charAt(end - 1);
-            trailingSkipChar = Character.isWhitespace(c) || Character.isSpaceChar(c) || stripChar(skipChars, c);
+            trailingSkipChar = isStrippedChar(str.charAt(end - 1), skipChars);
             if (trailingSkipChar) {
                 end--;
             }
         }
 
         return str.substring(start, end);
+    }
+
+    private static boolean isStrippedChar(char c, final char ... skipChars) {
+        return Character.isWhitespace(c) || Character.isSpaceChar(c) || stripChar(skipChars, c);
     }
 
     private static char[] stripChars(final String skipChars) {

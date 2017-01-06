@@ -273,7 +273,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
         final String text = cs != null ? cs.get(attr) : null;
         // Update text, hide prefixing label if empty
         if (label != null) {
-            label.setVisible(text != null && !Utils.strip(text).isEmpty());
+            label.setVisible(text != null && !Utils.isStripEmpty(text));
         }
         textArea.setText(text);
         // Hide container if values of both versions are empty
