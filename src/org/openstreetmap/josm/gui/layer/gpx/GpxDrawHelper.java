@@ -871,8 +871,6 @@ public class GpxDrawHelper implements SoMChangeListener {
 
         // forward
         return createColorLut(color);
-    }
-
     /**
      * Creates a colormap by using a static color map with 1..n colors (RGB 0.0 ..1.0)
      * @param str the filename (without extension) to look for into data/gpx
