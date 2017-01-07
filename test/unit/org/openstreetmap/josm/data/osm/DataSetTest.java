@@ -1,14 +1,16 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.Assert;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import java.util.List;
-import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
  * Unit tests for class {@link DataSet}.
@@ -33,14 +35,14 @@ public class DataSetTest {
             "Empty data set should produce an empty list.",
             ds.searchRelations(null).isEmpty()
         );
-        
+
         // empty data set, any bbox => empty list
-        BBox bbox = new BBox(LatLon.NORTH_POLE, LatLon.SOUTH_POLE);
+        BBox bbox = new BBox(new LatLon(-180, -90), new LatLon(180, 90));
         Assert.assertTrue(
             "Empty data set should produce an empty list.",
             ds.searchRelations(bbox).isEmpty()
         );
-        
+
         // data set with elements in the given bbox => these elements
         Node node = new Node(LatLon.ZERO);
         Relation r = new Relation(1);
@@ -52,6 +54,26 @@ public class DataSetTest {
         List<Relation> result = ds.searchRelations(bbox);
         Assert.assertEquals("We should have found only one item.", 1, result.size());
         Assert.assertTrue("The item found is relation r.", result.contains(r));
-        
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/14186">Bug #14186</a>.
+     */
+    @Test
+    public void testTicket14186() {
+        final DataSet ds = new DataSet();
+        Node n1 = new Node(1);
+        Node n2 = new Node(2);
+        Node n3 = new Node(3);
+        Way w1 = new Way(1);
+        w1.setNodes(Arrays.asList(n1, n2, n3));
+        Way w2 = new Way(2);
+        w2.setNodes(Arrays.asList(n1, n2, n3));
+        ds.addPrimitive(n1);
+        ds.addPrimitive(n2);
+        ds.addPrimitive(n3);
+        ds.addPrimitive(w1);
+        ds.addPrimitive(w2);
+        ds.unlinkNodeFromWays(n2);
     }
 }

@@ -977,7 +977,7 @@ public final class DataSet implements Data, ProjectionChangeListener {
         Set<Way> result = new HashSet<>();
         beginUpdate();
         try {
-            for (Way way: ways) {
+            for (Way way : OsmPrimitive.getFilteredList(node.getReferrers(), Way.class)) {
                 List<Node> wayNodes = way.getNodes();
                 if (wayNodes.remove(node)) {
                     if (wayNodes.size() < 2) {
