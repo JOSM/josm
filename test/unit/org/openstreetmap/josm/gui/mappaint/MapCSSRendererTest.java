@@ -64,7 +64,7 @@ public class MapCSSRendererTest {
      * @return The parameters.
      */
     @Parameters
-    public static Collection<Object[]> testRuns() {
+    public static Collection<Object[]> runs() {
         return Stream.of(
                 /** Tests for StyledMapRenderer#drawNodeSymbol */
                 new TestConfig("node-shapes", AREA_DEFAULT),
@@ -88,7 +88,7 @@ public class MapCSSRendererTest {
      * @throws Exception if an error occurs
      */
     @Test
-    public void render() throws Exception {
+    public void testRender() throws Exception {
         // load the data
         DataSet dataSet = testConfig.getOsmDataSet();
 
