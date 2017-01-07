@@ -9,6 +9,7 @@ import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
 
 /**
  * Tileloader for WMS based imagery. It is separate to use different ThreadPoolExecutor, as we want
@@ -19,6 +20,10 @@ import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
  */
 public class WMSCachedTileLoader extends TMSCachedTileLoader {
 
+    /**
+     * overrides the THREAD_LIMIT in superclass, as we want to have separate limit and pool for WMS
+     */
+    public static final IntegerProperty THREAD_LIMIT = new IntegerProperty("imagery.wms.loader.maxjobs", 3);
     /**
      * Creates a TileLoader with separate WMS downloader.
      *

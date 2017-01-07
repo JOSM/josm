@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import org.openstreetmap.josm.Main;
@@ -31,6 +32,12 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
 
     private final Map<String, Semaphore> hostSemaphores = new ConcurrentHashMap<>();
     private final int hostLimit;
+
+    private ThreadPoolExecutor executor;
+
+    private int corePoolSize;
+
+    private int maximumPoolSize;
 
     /**
      * Creates an unbounded queue
@@ -90,6 +97,41 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
         job = takeFirst();
         acquireSemaphore(job);
         return job;
+    }
+
+    /**
+     * Set the executor for which this queue works. It's needed to spawn new threads.
+     * See: http://stackoverflow.com/questions/9622599/java-threadpoolexecutor-strategy-direct-handoff-with-queue#
+     *
+     * @param executor
+     */
+
+    public void setExecutor(ThreadPoolExecutor executor) {
+        this.executor = executor;
+        this.maximumPoolSize = executor.getMaximumPoolSize();
+        this.corePoolSize = executor.getCorePoolSize();
+    }
+
+    @Override
+    public boolean offer(Runnable e)
+    {
+        if (super.offer(e) == false)
+        {
+            return false;
+        }
+
+        if (executor != null) {
+            // See: http://stackoverflow.com/questions/9622599/java-threadpoolexecutor-strategy-direct-handoff-with-queue#
+            // force spawn of a thread if not reached maximum
+            int currentPoolSize = executor.getPoolSize();
+            if (currentPoolSize < maximumPoolSize
+                    && currentPoolSize >= corePoolSize)
+            {
+                executor.setCorePoolSize(currentPoolSize + 1);
+                executor.setCorePoolSize(corePoolSize);
+            }
+        }
+        return true;
     }
 
     private Semaphore getSemaphore(JCSCachedTileLoaderJob<?, ?> job) {
