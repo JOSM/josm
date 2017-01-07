@@ -964,7 +964,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         private void updateOkButtonState() {
-            buttons.get(0).setEnabled(!Utils.strip(tfURL.getText()).isEmpty());
+            buttons.get(0).setEnabled(!Utils.isStripEmpty(tfURL.getText()));
         }
 
         @Override
