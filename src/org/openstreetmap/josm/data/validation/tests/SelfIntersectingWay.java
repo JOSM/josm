@@ -30,16 +30,32 @@ public class SelfIntersectingWay extends Test {
 
     @Override
     public void visit(Way w) {
+        int last = w.getNodesCount();
+        if (last < 2)
+            return;
         Set<Node> nodes = new HashSet<>();
-        for (int i = 1; i < w.getNodesCount() - 1; i++) {
+        nodes.add(w.firstNode());
+        int countFirst = 0;
+        int countLast = 0;
+        for (int i = 1; i < last; i++) {
             Node n = w.getNode(i);
             if (nodes.contains(n)) {
-                errors.add(TestError.builder(this, Severity.WARNING, SELF_INTERSECT)
-                        .message(tr("Self-intersecting ways"))
-                        .primitives(w)
-                        .highlight(n)
-                        .build());
-                break;
+                boolean ok = false;
+                if (n == w.firstNode()) {
+                    if (countFirst++ == 0)
+                        ok = true;
+                } else if (i + 1 == last) {
+                    if (countLast++ == 0)
+                        ok = true;
+                }
+                if (!ok || countFirst + countLast > 1) {
+                    errors.add(TestError.builder(this, Severity.WARNING, SELF_INTERSECT)
+                            .message(tr("Self-intersecting ways"))
+                            .primitives(w)
+                            .highlight(n)
+                            .build());
+                    break;
+                }
             } else {
                 nodes.add(n);
             }

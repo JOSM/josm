@@ -24,19 +24,20 @@ public class SelfIntersectingWayTest {
      */
     @BeforeClass
     public static void setUp() throws Exception {
-        JOSMFixture.createUnitTestFixture().init(true);
+        JOSMFixture.createUnitTestFixture().init(false);
     }
 
     private static List<Node> createNodes() {
         List<Node> nodes = new ArrayList<>();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 6; i++) {
             nodes.add(new Node(i+1));
         }
-        nodes.get(0).setCoor(new LatLon(34.2680878298, 133.56336369008));
-        nodes.get(1).setCoor(new LatLon(34.25096598132, 133.54891792012));
-        nodes.get(2).setCoor(new LatLon(34.24466741332, 133.56693544639));
-        nodes.get(3).setCoor(new LatLon(34.26815342405, 133.56066502976));
-        nodes.get(4).setCoor(new LatLon(34.26567411471, 133.56132705125));
+        nodes.get(0).setCoor(new LatLon(34.2680, 133.563));
+        nodes.get(1).setCoor(new LatLon(34.2509, 133.548));
+        nodes.get(2).setCoor(new LatLon(34.2446, 133.566));
+        nodes.get(3).setCoor(new LatLon(34.2681, 133.560));
+        nodes.get(4).setCoor(new LatLon(34.2656, 133.561));
+        nodes.get(5).setCoor(new LatLon(34.2655, 133.562));
         return nodes;
     }
 
@@ -85,6 +86,28 @@ public class SelfIntersectingWayTest {
     }
 
     /**
+     * First node is identical to an inner node ("P"-Shape).
+     * This is considered okay.
+     */
+    @Test
+    public void testUnclosedWayFirstRepeated() {
+        List<Node> nodes = createNodes();
+
+        Way w = (Way) OsmUtils.createPrimitive("way ");
+        List<Node> wayNodes = new ArrayList<>();
+        wayNodes.add(nodes.get(0));
+        wayNodes.add(nodes.get(1));
+        wayNodes.add(nodes.get(2));
+        wayNodes.add(nodes.get(0));
+        wayNodes.add(nodes.get(3));
+        wayNodes.add(nodes.get(4));
+        w.setNodes(wayNodes);
+        SelfIntersectingWay test = new SelfIntersectingWay();
+        test.visit(w);
+        Assert.assertEquals(0, test.getErrors().size());
+    }
+
+    /**
      * Last node is identical to an inner node ("b"-Shape).
      * This is considered okay.
      */
@@ -108,7 +131,7 @@ public class SelfIntersectingWayTest {
 
     /**
      * Both endpoints join at one inner node ("8"-shape).
-     * This is considered okay.
+     * This is considered to be an error.
      */
     @Test
     public void testClosedWay() {
@@ -126,7 +149,102 @@ public class SelfIntersectingWayTest {
         w.setNodes(wayNodes);
         SelfIntersectingWay test = new SelfIntersectingWay();
         test.visit(w);
-        Assert.assertEquals(0, test.getErrors().size());
+        Assert.assertEquals(1, test.getErrors().size());
+        Assert.assertTrue(test.getErrors().iterator().next().getHighlighted().contains(nodes.get(0)));
+    }
+
+    /**
+     * Closed way contains a spike.
+     * This is considered to be an error.
+     */
+    @Test
+    public void testSpikeWithStartInClosedWay() {
+        List<Node> nodes = createNodes();
+
+        Way w = (Way) OsmUtils.createPrimitive("way ");
+        List<Node> wayNodes = new ArrayList<>();
+        wayNodes.add(nodes.get(0));
+        wayNodes.add(nodes.get(1));
+        wayNodes.add(nodes.get(0)); // problem
+        wayNodes.add(nodes.get(3));
+        wayNodes.add(nodes.get(4));
+        wayNodes.add(nodes.get(0));
+        w.setNodes(wayNodes);
+        SelfIntersectingWay test = new SelfIntersectingWay();
+        test.visit(w);
+        Assert.assertEquals(1, test.getErrors().size());
+        Assert.assertTrue(test.getErrors().iterator().next().getHighlighted().contains(nodes.get(0)));
+    }
+
+    /**
+     * Closed way contains a spike.
+     * This is considered to be an error.
+     */
+    @Test
+    public void testSpikeWithEndInClosedWay() {
+        List<Node> nodes = createNodes();
+
+        Way w = (Way) OsmUtils.createPrimitive("way ");
+        List<Node> wayNodes = new ArrayList<>();
+        wayNodes.add(nodes.get(0));
+        wayNodes.add(nodes.get(1));
+        wayNodes.add(nodes.get(2));
+        wayNodes.add(nodes.get(0)); // problem
+        wayNodes.add(nodes.get(3));
+        wayNodes.add(nodes.get(0));
+        w.setNodes(wayNodes);
+        SelfIntersectingWay test = new SelfIntersectingWay();
+        test.visit(w);
+        Assert.assertEquals(1, test.getErrors().size());
+        Assert.assertTrue(test.getErrors().iterator().next().getHighlighted().contains(nodes.get(0)));
+    }
+
+    /**
+     * Closed way contains a spike.
+     * This is considered to be an error.
+     */
+    @Test
+    public void testSpikeInClosedWay() {
+        List<Node> nodes = createNodes();
+
+        Way w = (Way) OsmUtils.createPrimitive("way ");
+        List<Node> wayNodes = new ArrayList<>();
+        wayNodes.add(nodes.get(0));
+        wayNodes.add(nodes.get(1));
+        wayNodes.add(nodes.get(2));
+        wayNodes.add(nodes.get(3));
+        wayNodes.add(nodes.get(2));
+        wayNodes.add(nodes.get(0));
+        w.setNodes(wayNodes);
+        SelfIntersectingWay test = new SelfIntersectingWay();
+        test.visit(w);
+        Assert.assertEquals(1, test.getErrors().size());
+        Assert.assertTrue(test.getErrors().iterator().next().getHighlighted().contains(nodes.get(2)));
+    }
+
+    /**
+     * Closed way with barbell shape (a-b-c-a-d-e-f-d).
+     * This is considered to be an error.
+     */
+    @Test
+    public void testClosedWayBarbell() {
+        List<Node> nodes = createNodes();
+
+        Way w = (Way) OsmUtils.createPrimitive("way ");
+        List<Node> wayNodes = new ArrayList<>();
+        wayNodes.add(nodes.get(0));
+        wayNodes.add(nodes.get(1));
+        wayNodes.add(nodes.get(2));
+        wayNodes.add(nodes.get(0));
+        wayNodes.add(nodes.get(3));
+        wayNodes.add(nodes.get(4));
+        wayNodes.add(nodes.get(5));
+        wayNodes.add(nodes.get(3));
+        w.setNodes(wayNodes);
+        SelfIntersectingWay test = new SelfIntersectingWay();
+        test.visit(w);
+        Assert.assertEquals(1, test.getErrors().size());
+        Assert.assertTrue(test.getErrors().iterator().next().getHighlighted().contains(nodes.get(3)));
     }
 
 }
