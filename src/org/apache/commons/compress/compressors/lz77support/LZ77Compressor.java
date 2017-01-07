@@ -34,9 +34,10 @@ package org.apache.commons.compress.compressors.lz77support;
  * <p>This class attempts to extract the core logic - finding
  * back-references - so it can be re-used. It follows the algorithm
  * explained in section 4 of RFC 1951 (DEFLATE) and currently doesn't
- * implement the "lazy match" optimization. The three-byte hash function
- * used in this class is the same used by zlib and InfoZIP's ZIP
- * implementation of DEFLATE.</p>
+ * implement the "lazy match" optimization. The three-byte hash
+ * function used in this class is the same used by zlib and InfoZIP's
+ * ZIP implementation of DEFLATE. Strongly inspired by InfoZIP's
+ * implementation.</p>
  *
  * <p>LZ77 is used vaguely here (as well as many other places that
  * talk about it :-), LZSS would likely be closer to the truth but
@@ -86,11 +87,19 @@ public class LZ77Compressor {
     public static abstract class Block { }
     /**
      * Represents a literal block of data.
+     *
+     * <p>For performance reasons this encapsulates the real data, not
+     * a copy of it. Don't modify the data and process it inside of
+     * {@link Callback#accept} immediately as it will get overwritten
+     * sooner or later.</p>
      */
     public static final class LiteralBlock extends Block {
         private final byte[] data;
-        private LiteralBlock(byte[] data) {
+        private final int offset, length;
+        /* package private for tests */ LiteralBlock(byte[] data, int offset, int length) {
             this.data = data;
+            this.offset = offset;
+            this.length = length;
         }
         /**
          * The literal data.
@@ -100,6 +109,23 @@ public class LZ77Compressor {
          */
         public byte[] getData() {
             return data;
+        }
+        /**
+         * Offset into data where the literal block starts.
+         */
+        public int getOffset() {
+            return offset;
+        }
+        /**
+         * Length of literal block.
+         */
+        public int getLength() {
+            return length;
+        }
+
+        @Override
+        public String toString() {
+            return "LiteralBlock starting at " + offset + " with length " + length;
         }
     }
     /**
@@ -123,11 +149,18 @@ public class LZ77Compressor {
         public int getLength() {
             return length;
         }
+
+        @Override
+        public String toString() {
+            return "BackReference with " + offset + " and length " + length;
+        }
     }
     /**
      * A simple "we are done" marker.
      */
     public static final class EOD extends Block { }
+
+    private static final EOD THE_EOD = new EOD();
 
     /**
      * Callback invoked while the compressor processes data.
@@ -140,8 +173,40 @@ public class LZ77Compressor {
         void accept(Block b);
     }
 
+    static final int NUMBER_OF_BYTES_IN_HASH = 3;
+    private static final int NO_MATCH = -1;
+
     private final Parameters params;
     private final Callback callback;
+
+    // the sliding window, twice as big as "windowSize" parameter
+    private final byte[] window;
+    // the head of hash-chain - indexed by hash-code, points to the
+    // location inside of window of the latest sequence of bytes with
+    // the given hash.
+    private final int[] head;
+    // for each window-location points to the latest earlier location
+    // with the same hash. Only stored values for the latest
+    // "windowSize" elements, the index is "window location modulo
+    // windowSize".
+    private final int[] prev;
+
+    // bit mask used when indexing into prev
+    private final int wMask;
+
+    private boolean initialized = false;
+    // the position inside of window that shall be encoded right now
+    private int currentPosition;
+    // the number of bytes available to compress including the one at
+    // currentPosition
+    private int lookahead = 0;
+    // the hash of the three bytes stating at the current position
+    private int insertHash = 0;
+    // the position inside of the window where the current literal
+    // block starts (in case we are inside of a literal block).
+    private int blockStart = 0;
+    // position of the current match
+    private int matchStart = NO_MATCH;
 
     /**
      * Initializes a compressor with parameters and a callback.
@@ -158,6 +223,15 @@ public class LZ77Compressor {
         }
         this.params = params;
         this.callback = callback;
+
+        final int wSize = params.getWindowSize();
+        window = new byte[wSize * 2];
+        wMask = wSize - 1;
+        head = new int[HASH_SIZE];
+        for (int i = 0; i < HASH_SIZE; i++) {
+            head[i] = NO_MATCH;
+        }
+        prev = new int[wSize];
     }
 
     /**
@@ -179,6 +253,15 @@ public class LZ77Compressor {
      * @param len the number of bytes to compress
      */
     public void compress(byte[] data, int off, int len) {
+        final int wSize = params.getWindowSize();
+        while (len > wSize) {
+            doCompress(data, off, wSize);
+            off += wSize;
+            len -= wSize;
+        }
+        if (len > 0) {
+            doCompress(data, off, len);
+        }
     }
 
     /**
@@ -190,6 +273,131 @@ public class LZ77Compressor {
      * the execution of this method.</p>
      */
     public void finish() {
+        if (blockStart != currentPosition || lookahead > 0) {
+            currentPosition += lookahead;
+            flushLiteralBlock();
+        }
+        callback.accept(THE_EOD);
     }
 
+    // we use a 15 bit hashcode as calculated in updateHash
+    private static final int HASH_SIZE = 1 << 15;
+    private static final int HASH_MASK = HASH_SIZE - 1;
+    private static final int H_SHIFT = 5;
+
+    /**
+     * Assumes we are calculating the hash for three consecutive bytes
+     * as a rolling hash, i.e. for bytes ABCD if H is the hash of ABC
+     * the new hash for BCD is nextHash(H, D).
+     *
+     * <p>The hash is shifted by five bits on each update so all
+     * effects of A have been swapped after the third update.</p>
+     */
+    private int nextHash(int oldHash, byte nextByte) {
+        final int nextVal = nextByte & 0xFF;
+        return ((oldHash << H_SHIFT) ^ nextVal) & HASH_MASK;
+    }
+
+    // performs the actual algorithm with the pre-condition len <= windowSize
+    private void doCompress(byte[] data, int off, int len) {
+        int spaceLeft = window.length - currentPosition - lookahead;
+        if (len > spaceLeft) {
+            slide();
+        }
+        System.arraycopy(data, off, window, currentPosition + lookahead, len);
+        lookahead += len;
+        if (!initialized && lookahead >= params.getMinMatchSize()) {
+            initialize();
+        }
+        if (initialized) {
+            compress();
+        }
+    }
+
+    private void slide() {
+        final int wSize = params.getWindowSize();
+        System.arraycopy(window, wSize, window, 0, wSize);
+        currentPosition -= wSize;
+        matchStart -= wSize;
+        blockStart -= wSize;
+        for (int i = 0; i< HASH_SIZE; i++) {
+            int h = head[i];
+            head[i] = h >= wSize ? h - wSize : NO_MATCH;
+        }
+        for (int i = 0; i < wSize; i++) {
+            int p = prev[i];
+            prev[i] = p >= wSize ? p - wSize : NO_MATCH;
+        }
+    }
+
+    private void initialize() {
+        for (int i = 0; i < NUMBER_OF_BYTES_IN_HASH - 1; i++) {
+            insertHash = nextHash(insertHash, window[i]);
+        }
+        initialized = true;
+    }
+
+    private void compress() {
+        final int minMatch = params.getMinMatchSize();
+
+        while (lookahead >= minMatch) {
+            int matchLength = 0;
+            int hashHead = insertString();
+            if (hashHead != NO_MATCH && hashHead - currentPosition <= params.getMaxOffset()) {
+                // sets matchStart as a side effect
+                matchLength = longestMatch(hashHead);
+            }
+            if (matchLength >= minMatch) {
+                if (blockStart != currentPosition) {
+                    // emit preceeding literal block
+                    flushLiteralBlock();
+                    blockStart = NO_MATCH;
+                }
+                lookahead -= matchLength;
+                // inserts strings contained in current match
+                for (int i = 0; i < matchLength - 1; i++) {
+                    currentPosition++;
+                    insertString();
+                }
+                currentPosition++;
+                flushBackReference(matchLength);
+                blockStart = currentPosition;
+            } else {
+                // no match, append to current or start a new literal
+                lookahead--;
+                currentPosition++;
+                if (currentPosition - blockStart >= params.getMaxLiteralSize()) {
+                    flushLiteralBlock();
+                    blockStart = currentPosition;
+                }
+            }
+        }
+    }
+
+    /**
+     * Inserts the current three byte sequence into the dictionary and
+     * returns the previous previous head of the hash-chain.
+     *
+     * <p>Updates <code>insertHash</code> and <code>prev</code> as a
+     * side effect.</p>
+     */
+    private int insertString() {
+        insertHash = nextHash(insertHash, window[currentPosition -1 + NUMBER_OF_BYTES_IN_HASH]);
+        int hashHead = head[insertHash];
+        prev[currentPosition & wMask] = hashHead;
+        head[insertHash] = currentPosition;
+        return hashHead;
+    }
+
+    private void flushBackReference(int matchLength) {
+        callback.accept(new BackReference(matchStart, matchLength));
+    }
+
+    private void flushLiteralBlock() {
+        callback.accept(new LiteralBlock(window, blockStart, currentPosition - blockStart));
+    }
+
+    private int longestMatch(int matchHead) {
+        return 0;
+    }
 }

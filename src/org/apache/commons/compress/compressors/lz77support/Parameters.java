@@ -22,7 +22,7 @@ package org.apache.commons.compress.compressors.lz77support;
  * Parameters of the {@link LZ77Compressor compressor}.
  */
 public final class Parameters {
-    public static final int TRUE_MIN_MATCH_SIZE = 3;
+    public static final int TRUE_MIN_MATCH_SIZE = LZ77Compressor.NUMBER_OF_BYTES_IN_HASH;
     private final int windowSize, minMatchSize, maxMatchSize, maxOffset, maxLiteralSize;
 
     /**
