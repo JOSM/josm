@@ -143,8 +143,8 @@ public class GpxDrawHelper implements SoMChangeListener {
     int heatMapCacheLineWith;
 
     // copied value for line drawing
-    private List<Integer> heatMapPolyX = new ArrayList<>();
-    private List<Integer> heatMapPolyY = new ArrayList<>();
+    private final List<Integer> heatMapPolyX = new ArrayList<>();
+    private final List<Integer> heatMapPolyY = new ArrayList<>();
 
     // setup color maps used by heat map
     private static Color[] heatMapLutColorJosmInferno = createColorFromResource("inferno");
@@ -368,7 +368,7 @@ public class GpxDrawHelper implements SoMChangeListener {
                          Utils.getDurationString(timeDiff) +
                          "(" +
                          "segments= " + visibleSegments.size() +
-                         ", per 10000 = " + Utils.getDurationString(10000 * timeDiff / visibleSegments.size()) +
+                         ", per 10000 = " + Utils.getDurationString(10_000 * timeDiff / visibleSegments.size()) +
                          ")"
               );
         }
@@ -448,7 +448,6 @@ public class GpxDrawHelper implements SoMChangeListener {
             }
             dateScale.setRange(minval, maxval);
         }
-
 
         // Now the colors for all the points will be assigned
         for (Collection<WayPoint> segment : data.getLinesIterable(null)) {
@@ -718,7 +717,7 @@ public class GpxDrawHelper implements SoMChangeListener {
         } // end if large
     }
 
-   /**
+    /**
      * Draw GPX lines by using alpha blending
      * @param g               the common draw object to use
      * @param mv              the meta data to current displayed area
@@ -852,25 +851,6 @@ public class GpxDrawHelper implements SoMChangeListener {
 
         // transform into lookup table
         return colorTable;
-    }
-
-    /**
-     * Creates a colormap by using a static color map with 1..n colors (RGB 0.0 ..1.0)
-     * @param data array of multiple RGB color [n][3]
-     * @return a dynamic list of color objects
-     */
-    protected static Color[] createColorFromRawArray(double[][] data) {
-
-        // create the array
-        Color[] color = new Color[ data.length ];
-
-        for (int k = 0; k < data.length; k++) {
-           // cast an map to linear array
-           color[k] = new Color((float) data[k][0], (float) data[k][1], (float) data[k][2]);
-        }
-
-        // forward
-        return createColorLut(color);
     }
 
     /**

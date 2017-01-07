@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.SortedMap;
@@ -67,6 +68,7 @@ import org.openstreetmap.josm.data.preferences.PreferencesReader;
 import org.openstreetmap.josm.data.preferences.PreferencesWriter;
 import org.openstreetmap.josm.data.preferences.Setting;
 import org.openstreetmap.josm.data.preferences.StringSetting;
+import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRulesPreference;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRulesPreference.RulePrefHelper;
 import org.openstreetmap.josm.io.OfflineAccessException;
@@ -1583,7 +1585,10 @@ public class Preferences {
             List<Map<String, String>> l = new ArrayList<>(((MapListSetting) setting).getValue());
             if (l.stream().noneMatch(x -> x.values().contains(url))) {
                 RulePrefHelper helper = ValidatorTagCheckerRulesPreference.RulePrefHelper.INSTANCE;
-                l.add(helper.serialize(helper.getDefault().stream().filter(x -> url.equals(x.url)).findFirst().get()));
+                Optional<ExtendedSourceEntry> val = helper.getDefault().stream().filter(x -> url.equals(x.url)).findFirst();
+                if (val.isPresent()) {
+                    l.add(helper.serialize(val.get()));
+                }
                 putListOfStructs(key, l);
             }
         }
