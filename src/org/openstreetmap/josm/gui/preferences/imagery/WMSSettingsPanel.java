@@ -12,7 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import org.openstreetmap.josm.data.imagery.WMSCachedTileLoaderJob;
+import org.openstreetmap.josm.data.imagery.WMSCachedTileLoader;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
@@ -48,7 +48,7 @@ public class WMSSettingsPanel extends JPanel {
         // Simultaneous connections
         add(Box.createHorizontalGlue(), GBC.eol().fill(GBC.HORIZONTAL));
         JLabel labelSimConn = new JLabel(tr("Simultaneous connections:"));
-        int threadLimitValue = Utils.clamp(WMSCachedTileLoaderJob.THREAD_LIMIT.get(), THREADS_MIN, THREADS_MAX);
+        int threadLimitValue = Utils.clamp(WMSCachedTileLoader.THREAD_LIMIT.get(), THREADS_MIN, THREADS_MAX);
         spinSimConn = new JSpinner(new SpinnerNumberModel(threadLimitValue, THREADS_MIN, THREADS_MAX, 1));
         labelSimConn.setLabelFor(spinSimConn);
         add(labelSimConn, GBC.std());
@@ -70,7 +70,7 @@ public class WMSSettingsPanel extends JPanel {
      */
     public void loadSettings() {
         this.autozoomActive.setSelected(WMSLayer.PROP_DEFAULT_AUTOZOOM.get());
-        this.spinSimConn.setValue(WMSCachedTileLoaderJob.THREAD_LIMIT.get());
+        this.spinSimConn.setValue(WMSCachedTileLoader.THREAD_LIMIT.get());
         this.tileSize.setValue(WMSLayer.PROP_IMAGE_SIZE.get());
     }
 
@@ -80,7 +80,7 @@ public class WMSSettingsPanel extends JPanel {
      */
     public boolean saveSettings() {
         WMSLayer.PROP_DEFAULT_AUTOZOOM.put(this.autozoomActive.isSelected());
-        WMSCachedTileLoaderJob.THREAD_LIMIT.put((Integer) spinSimConn.getModel().getValue());
+        WMSCachedTileLoader.THREAD_LIMIT.put((Integer) spinSimConn.getModel().getValue());
         WMSLayer.PROP_IMAGE_SIZE.put((Integer) this.tileSize.getModel().getValue());
 
         return false;

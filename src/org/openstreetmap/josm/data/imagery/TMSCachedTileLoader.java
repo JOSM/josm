@@ -77,14 +77,17 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader {
      * @return new ThreadPoolExecutor that will use a @see HostLimitQueue based queue
      */
     public static ThreadPoolExecutor getNewThreadPoolExecutor(String nameFormat, int workers) {
-        return new ThreadPoolExecutor(
-                workers, // keep the thread number constant
+        HostLimitQueue workQueue = new HostLimitQueue(HOST_LIMIT.get().intValue());
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(
+                0, // 0 so for unused thread pools threads will eventually die, freeing also the threadpool
                 workers, // do not this number of threads
-                30, // keepalive for thread
+                300, // keepalive for thread
                 TimeUnit.SECONDS,
-                new HostLimitQueue(HOST_LIMIT.get().intValue()),
+                workQueue,
                 Utils.newThreadFactory(nameFormat, Thread.NORM_PRIORITY)
                 );
+        workQueue.setExecutor(executor);
+        return executor;
     }
 
     /**
