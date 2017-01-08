@@ -29,7 +29,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -1425,12 +1424,13 @@ public class Preferences {
         Utils.updateSystemProperty("user.language", get("language"));
         // Workaround to fix a Java bug. This ugly hack comes from Sun bug database: https://bugs.openjdk.java.net/browse/JDK-6292739
         // Force AWT toolkit to update its internal preferences (fix #6345).
+        // Does not work anymore with Java 9, to remove with Java 9 migration
         if (!GraphicsEnvironment.isHeadless()) {
             try {
                 Field field = Toolkit.class.getDeclaredField("resources");
                 Utils.setObjectsAccessible(field);
                 field.set(null, ResourceBundle.getBundle("sun.awt.resources.awt"));
-            } catch (ReflectiveOperationException | MissingResourceException e) {
+            } catch (ReflectiveOperationException | RuntimeException e) {
                 Main.warn(e);
             }
         }
