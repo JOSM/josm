@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.PushbackReader;
 import java.io.StringReader;
 import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -1631,52 +1632,81 @@ public class SearchCompiler {
     }
 
     /**
-     * Parse expression. This is a recursive method.
+     * Parse expression.
      *
      * @return match determined by parsing expression
-     * @throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError if search expression cannot be parsed
+     * @throws ParseError if search expression cannot be parsed
      */
     private Match parseExpression() throws ParseError {
-        Match factor = parseFactor();
-        if (factor == null)
-            // empty search string
-            return null;
-        if (tokenizer.readIfEqual(Token.OR))
-            return new Or(factor, parseExpression(tr("Missing parameter for OR")));
-        else if (tokenizer.readIfEqual(Token.XOR))
-            return new Xor(factor, parseExpression(tr("Missing parameter for XOR")));
-        else {
-            Match expression = parseExpression();
-            if (expression == null)
-                // reached end of search string, no more recursive calls
-                return factor;
-            else
-                // the default operator is AND
-                return new And(factor, expression);
-        }
+        // Step 1: parse the whole expression and build a list of factors and logical tokens
+        List<Object> list = parseExpressionStep1();
+        // Step 2: iterate the list in reverse order to build the logical expression
+        // This iterative approach avoids StackOverflowError for long expressions (see #14217)
+        return parseExpressionStep2(list);
     }
 
-    /**
-     * Parse expression, showing the specified error message if parsing fails.
-     *
-     * @param errorMessage to display if parsing error occurs
-     * @return match determined by parsing expression
-     * @throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError if search expression cannot be parsed
-     * @see #parseExpression()
-     */
-    private Match parseExpression(String errorMessage) throws ParseError {
-        Match expression = parseExpression();
-        if (expression == null)
-            throw new ParseError(errorMessage);
-        else
-            return expression;
+    private List<Object> parseExpressionStep1() throws ParseError {
+        Match factor;
+        String token = null;
+        String errorMessage = null;
+        List<Object> list = new ArrayList<>();
+        do {
+            factor = parseFactor();
+            if (factor != null) {
+                if (token != null) {
+                    list.add(token);
+                }
+                list.add(factor);
+                if (tokenizer.readIfEqual(Token.OR)) {
+                    token = "OR";
+                    errorMessage = tr("Missing parameter for OR");
+                } else if (tokenizer.readIfEqual(Token.XOR)) {
+                    token = "XOR";
+                    errorMessage = tr("Missing parameter for XOR");
+                } else {
+                    token = "AND";
+                    errorMessage = null;
+                }
+            } else if (errorMessage != null) {
+                throw new ParseError(errorMessage);
+            }
+        } while (factor != null);
+        return list;
+    }
+
+    private Match parseExpressionStep2(List<Object> list) {
+        Match result = null;
+        for (int i = list.size() - 1; i >= 0; i--) {
+            Object o = list.get(i);
+            if (o instanceof Match && result == null) {
+                result = (Match) o;
+            } else if (o instanceof String && i > 0) {
+                Match factor = (Match) list.get(i-1);
+                switch ((String) o) {
+                case "OR":
+                    result = new Or(factor, result);
+                    break;
+                case "XOR":
+                    result = new Xor(factor, result);
+                    break;
+                case "AND":
+                    result = new And(factor, result);
+                    break;
+                default: throw new IllegalStateException(tr("Unexpected token: {0}", o));
+                }
+                i--;
+            } else {
+                throw new IllegalStateException("i=" + i + "; o=" + o);
+            }
+        }
+        return result;
     }
 
     /**
      * Parse next factor (a search operator or search term).
      *
      * @return match determined by parsing factor string
-     * @throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError if search expression cannot be parsed
+     * @throws ParseError if search expression cannot be parsed
      */
     private Match parseFactor() throws ParseError {
         if (tokenizer.readIfEqual(Token.LEFT_PARENT)) {
