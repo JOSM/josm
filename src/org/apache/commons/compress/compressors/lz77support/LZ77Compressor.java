@@ -18,6 +18,8 @@
  */
 package org.apache.commons.compress.compressors.lz77support;
 
+import java.io.IOException;
+
 /**
  * Helper class for compression algorithms that use the ideas of LZ77.
  *
@@ -170,7 +172,12 @@ public class LZ77Compressor {
      * execution of {@link #compress} or {@link #finish}.</p>
      */
     public interface Callback /* extends Consumer<Block> */ {
-        void accept(Block b);
+        /**
+         * Consumes a block.
+         * @param b the block to consume
+         * @throws IOException in case of an error
+         */
+        void accept(Block b) throws IOException;
     }
 
     static final int NUMBER_OF_BYTES_IN_HASH = 3;
@@ -241,8 +248,9 @@ public class LZ77Compressor {
      * more blocks to the callback during the execution of this
      * method.
      * @param data the data to compress - must not be null
+     * @throws IOException if the callback throws an exception
      */
-    public void compress(byte[] data) {
+    public void compress(byte[] data) throws IOException {
         compress(data, 0, data.length);
     }
 
@@ -253,8 +261,9 @@ public class LZ77Compressor {
      * @param data the data to compress - must not be null
      * @param off the start offset of the data
      * @param len the number of bytes to compress
+     * @throws IOException if the callback throws an exception
      */
-    public void compress(byte[] data, int off, int len) {
+    public void compress(byte[] data, int off, int len) throws IOException {
         final int wSize = params.getWindowSize();
         while (len > wSize) {
             doCompress(data, off, wSize);
@@ -273,8 +282,9 @@ public class LZ77Compressor {
      * <p>The compressor will in turn emit at least one block ({@link
      * EOD}) but potentially multiple blocks to the callback during
      * the execution of this method.</p>
+     * @throws IOException if the callback throws an exception
      */
-    public void finish() {
+    public void finish() throws IOException {
         if (blockStart != currentPosition || lookahead > 0) {
             currentPosition += lookahead;
             flushLiteralBlock();
@@ -301,7 +311,7 @@ public class LZ77Compressor {
     }
 
     // performs the actual algorithm with the pre-condition len <= windowSize
-    private void doCompress(byte[] data, int off, int len) {
+    private void doCompress(byte[] data, int off, int len) throws IOException {
         int spaceLeft = window.length - currentPosition - lookahead;
         if (len > spaceLeft) {
             slide();
@@ -339,7 +349,7 @@ public class LZ77Compressor {
         initialized = true;
     }
 
-    private void compress() {
+    private void compress() throws IOException {
         final int minMatch = params.getMinMatchLength();
 
         while (lookahead >= minMatch) {
@@ -405,11 +415,11 @@ public class LZ77Compressor {
         }
     }
 
-    private void flushBackReference(int matchLength) {
+    private void flushBackReference(int matchLength) throws IOException {
         callback.accept(new BackReference(currentPosition - matchStart, matchLength));
     }
 
-    private void flushLiteralBlock() {
+    private void flushLiteralBlock() throws IOException {
         callback.accept(new LiteralBlock(window, blockStart, currentPosition - blockStart));
     }
 

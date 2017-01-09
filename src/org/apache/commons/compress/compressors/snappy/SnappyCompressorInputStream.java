@@ -140,7 +140,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
         }
         System.arraycopy(decompressBuf, readIndex, b, off, readable);
         readIndex += readable;
-        if (readIndex > blockSize) {
+        if (readIndex > 2 * blockSize) {
             slideBuffer();
         }
         return readable;
@@ -168,6 +168,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
             case 0x00:
 
                 length = readLiteralLength(b);
+                uncompressedBytesRemaining -= length;
 
                 if (expandLiteral(length)) {
                     return;
@@ -186,6 +187,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
                  */
 
                 length = 4 + ((b >> 2) & 0x07);
+                uncompressedBytesRemaining -= length;
                 offset = (b & 0xE0) << 3;
                 offset |= readOneByte();
 
@@ -205,6 +207,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
                  */
 
                 length = (b >> 2) + 1;
+                uncompressedBytesRemaining -= length;
 
                 offset = readOneByte();
                 offset |= readOneByte() << 8;
@@ -224,6 +227,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
                  */
 
                 length = (b >> 2) + 1;
+                uncompressedBytesRemaining -= length;
 
                 offset = readOneByte();
                 offset |= readOneByte() << 8;
@@ -237,7 +241,6 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
             }
 
             readNow -= length;
-            uncompressedBytesRemaining -= length;
         }
     }
 
@@ -307,6 +310,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
      * @return True if the decompressed data should be flushed
      */
     private boolean expandLiteral(final int length) throws IOException {
+        boolean shouldFlush = ensureBufferSpace(length);
         final int bytesRead = IOUtils.readFully(in, decompressBuf, writeIndex, length);
         count(bytesRead);
         if (length != bytesRead) {
@@ -314,7 +318,15 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
         }
 
         writeIndex += length;
-        return writeIndex >= 2 * this.blockSize;
+        return shouldFlush || writeIndex >= 2 * this.blockSize;
+    }
+
+    private boolean ensureBufferSpace(final int length) {
+        if (writeIndex + length >= decompressBuf.length) {
+            slideBuffer();
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -341,6 +353,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
             throw new IOException("Offset is larger than block size");
         }
         final int offset = (int) off;
+        boolean shouldFlush = ensureBufferSpace(length);
 
         if (offset == 1) {
             final byte lastChar = decompressBuf[writeIndex - 1];
@@ -368,7 +381,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
                 writeIndex += pad;
             }
         }
-        return writeIndex >= 2 * this.blockSize;
+        return shouldFlush || writeIndex >= 2 * this.blockSize;
     }
 
     /**
