@@ -200,7 +200,7 @@ public class CacheEventQueue<K, V>
         public void run()
         {
 
-            while ( isAlive() )
+            while ( CacheEventQueue.this.isAlive() )
             {
                 AbstractCacheEvent event = null;
 
@@ -223,7 +223,7 @@ public class CacheEventQueue<K, V>
                     stopProcessing();
                 }
 
-                if ( event != null && isWorking() && isAlive() )
+                if ( event != null && isWorking() && CacheEventQueue.this.isAlive() )
                 {
                     event.run();
                 }
