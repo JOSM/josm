@@ -28,7 +28,7 @@ public final class Parameters {
     /**
      * Initializes the compressor's parameters with a
      * <code>minMatchLength</code> of 3 and <code>max*Length</code>
-     * equal to <code>windowSize</code>.
+     * equal to <code>windowSize - 1</code>.
      *
      * @param windowSize the size of the sliding window - this
      * determines the maximum offset a back-reference can take.
@@ -36,7 +36,7 @@ public final class Parameters {
      * is smaller than <code>minMatchLength</code>.
      */
     public Parameters(int windowSize) {
-        this(windowSize, TRUE_MIN_MATCH_LENGTH, windowSize, windowSize, windowSize);
+        this(windowSize, TRUE_MIN_MATCH_LENGTH, windowSize - 1, windowSize - 1, windowSize);
     }
 
     /**
@@ -48,14 +48,18 @@ public final class Parameters {
      * @param minMatchLength the minimal length of a match found. A
      * true minimum of 3 is hard-coded inside of this implemention
      * but bigger lengths can be configured.
-     * @param maxMatchLength maximal site of a match found. A value
-     * smaller than <code>minMatchLength</code> is interpreted as
-     * infinite (actually {@link Integer.MAX_VALUE}).
+     * @param maxMatchLength maximal length of a match found. A value
+     * smaller than <code>minMatchLength</code> as well as values
+     * bigger than <code>windowSize - 1</code> are interpreted as
+     * <code>windowSize - 1</code>.
      * @param maxOffset maximal offset of a back-reference. A
-     * non-positive value is interpreted as <code>windowSize</code>.
-     * @param maxLiteralLength maximal length of a literal block. Negative
-     * numbers and 0 as well as values bigger than <code>2 *
-     * windowSize</code> are interpreted as <code>windowSize</code>.
+     * non-positive value as well as values bigger than
+     * <code>windowSize - 1</code> are interpreted as <code>windowSize
+     * - 1</code>.
+     * @param maxLiteralLength maximal length of a literal
+     * block. Negative numbers and 0 as well as values bigger than
+     * <code>windowSize</code> are interpreted as
+     * <code>windowSize</code>.
      * @throws IllegalArgumentException if <code>windowSize</code> is
      * smaller than <code>minMatchLength</code> or not a power of two.
      */
@@ -69,41 +73,46 @@ public final class Parameters {
             throw new IllegalArgumentException("windowSize must be a power of two");
         }
         this.windowSize = windowSize;
-        this.maxOffset = maxOffset < 1 ? this.windowSize
-            : Math.min(maxOffset, this.windowSize);
-        this.maxMatchLength = maxMatchLength < this.minMatchLength ? Integer.MAX_VALUE
-            : maxMatchLength;
-        this.maxLiteralLength = maxLiteralLength < 1 || maxLiteralLength > 2 * windowSize
-            ? windowSize : maxLiteralLength;
+        int limit = windowSize - 1;
+        this.maxOffset = maxOffset < 1 ? limit : Math.min(maxOffset, limit);
+        this.maxMatchLength = maxMatchLength < this.minMatchLength ? limit
+            : Math.min(maxMatchLength, limit);
+        this.maxLiteralLength = maxLiteralLength < 1 ? windowSize
+            : Math.min(maxLiteralLength, windowSize);
     }
 
     /**
      * Gets the size of the sliding window - this determines the
      * maximum offset a back-reference can take.
+     * @return the size of the sliding window
      */
     public int getWindowSize() {
         return windowSize;
     }
     /**
      * Gets the minimal length of a match found.
+     * @return the minimal length of a match found
      */
     public int getMinMatchLength() {
         return minMatchLength;
     }
     /**
      * Gets the maximal length of a match found.
+     * @return the maximal length of a match found
      */
     public int getMaxMatchLength() {
         return maxMatchLength;
     }
     /**
      * Gets the maximal offset of a match found.
+     * @return the maximal offset of a match found
      */
     public int getMaxOffset() {
         return maxOffset;
     }
     /**
      * Gets the maximal length of a literal block.
+     * @return the maximal length of a literal block
      */
     public int getMaxLiteralLength() {
         return maxLiteralLength;

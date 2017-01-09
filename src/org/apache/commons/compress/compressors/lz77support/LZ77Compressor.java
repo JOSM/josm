@@ -108,18 +108,21 @@ public class LZ77Compressor {
          *
          * <p>This returns a life view of the actual data in order to
          * avoid copying, modify the array at your own risk.</p>
+         * @return the data
          */
         public byte[] getData() {
             return data;
         }
         /**
          * Offset into data where the literal block starts.
+         * @return the offset
          */
         public int getOffset() {
             return offset;
         }
         /**
          * Length of literal block.
+         * @return the length
          */
         public int getLength() {
             return length;
@@ -141,12 +144,14 @@ public class LZ77Compressor {
         }
         /**
          * Provides the offset of the match.
+         * @return the offset
          */
         public int getOffset() {
             return offset;
         }
         /**
          * Provides the length of the match.
+         * @return the length
          */
         public int getLength() {
             return length;
