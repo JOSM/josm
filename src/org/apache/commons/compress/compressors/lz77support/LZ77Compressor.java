@@ -159,7 +159,7 @@ public class LZ77Compressor {
 
         @Override
         public String toString() {
-            return "BackReference with " + offset + " and length " + length;
+            return "BackReference with offset " + offset + " and length " + length;
         }
     }
     /**
@@ -198,7 +198,7 @@ public class LZ77Compressor {
     // the given hash.
     private final int[] head;
     // for each window-location points to the latest earlier location
-    // with the same hash. Only stored values for the latest
+    // with the same hash. Only stores values for the latest
     // "windowSize" elements, the index is "window location modulo
     // windowSize".
     private final int[] prev;
@@ -331,13 +331,17 @@ public class LZ77Compressor {
         }
     }
 
-    private void slide() {
+    private void slide() throws IOException {
         final int wSize = params.getWindowSize();
+        if (blockStart != currentPosition && blockStart < wSize) {
+            flushLiteralBlock();
+            blockStart = currentPosition;
+        }
         System.arraycopy(window, wSize, window, 0, wSize);
         currentPosition -= wSize;
         matchStart -= wSize;
         blockStart -= wSize;
-        for (int i = 0; i< HASH_SIZE; i++) {
+        for (int i = 0; i < HASH_SIZE; i++) {
             int h = head[i];
             head[i] = h >= wSize ? h - wSize : NO_MATCH;
         }
@@ -398,7 +402,7 @@ public class LZ77Compressor {
     private int insertString(int pos) {
         insertHash = nextHash(insertHash, window[pos - 1 + NUMBER_OF_BYTES_IN_HASH]);
         int hashHead = head[insertHash];
-        prev[currentPosition & wMask] = hashHead;
+        prev[pos & wMask] = hashHead;
         head[insertHash] = pos;
         return hashHead;
     }
