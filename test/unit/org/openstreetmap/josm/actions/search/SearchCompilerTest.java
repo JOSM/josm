@@ -3,11 +3,17 @@ package org.openstreetmap.josm.actions.search;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
@@ -82,7 +88,7 @@ public class SearchCompilerTest {
         }
     }
 
-    protected OsmPrimitive newPrimitive(String key, String value) {
+    private static OsmPrimitive newPrimitive(String key, String value) {
         final Node p = new Node();
         p.put(key, value);
         return p;
@@ -464,5 +470,15 @@ public class SearchCompilerTest {
         setting.regexSearch = true;
         setting.text = "[";
         SearchCompiler.compile(setting);
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/14217">Bug #14217</a>.
+     * @throws Exception never
+     */
+    @Test
+    public void testTicket14217() throws Exception {
+        assertNotNull(SearchCompiler.compile(new String(Files.readAllBytes(
+                Paths.get(TestUtils.getRegressionDataFile(14217, "filter.txt"))), StandardCharsets.UTF_8)));
     }
 }
