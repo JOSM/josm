@@ -116,9 +116,8 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
      * Set the executor for which this queue works. It's needed to spawn new threads.
      * See: http://stackoverflow.com/questions/9622599/java-threadpoolexecutor-strategy-direct-handoff-with-queue#
      *
-     * @param executor
+     * @param executor executor for which this queue works
      */
-
     public void setExecutor(ThreadPoolExecutor executor) {
         this.executor = executor;
         this.maximumPoolSize = executor.getMaximumPoolSize();
@@ -126,10 +125,8 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
     }
 
     @Override
-    public boolean offer(Runnable e)
-    {
-        if (super.offer(e) == false)
-        {
+    public boolean offer(Runnable e) {
+        if (!super.offer(e)) {
             return false;
         }
 
@@ -138,8 +135,7 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
             // force spawn of a thread if not reached maximum
             int currentPoolSize = executor.getPoolSize();
             if (currentPoolSize < maximumPoolSize
-                    && currentPoolSize >= corePoolSize)
-            {
+                    && currentPoolSize >= corePoolSize) {
                 executor.setCorePoolSize(currentPoolSize + 1);
                 executor.setCorePoolSize(corePoolSize);
             }
