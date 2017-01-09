@@ -17,6 +17,7 @@ import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -88,6 +89,7 @@ public class MapCSSRendererTest {
      * @throws Exception if an error occurs
      */
     @Test
+    @Ignore("not ready")
     public void testRender() throws Exception {
         // load the data
         DataSet dataSet = testConfig.getOsmDataSet();
