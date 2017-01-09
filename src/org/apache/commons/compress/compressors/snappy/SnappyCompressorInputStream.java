@@ -35,7 +35,7 @@ import org.apache.commons.compress.utils.IOUtils;
  * doesn't contain offsets bigger than 32k which is the default block
  * size used by this class.</p>
  *
- * @see <a href="http://code.google.com/p/snappy/source/browse/trunk/format_description.txt">Snappy compressed format description</a>
+ * @see <a href="https://github.com/google/snappy/blob/master/format_description.txt">Snappy compressed format description</a>
  * @since 1.7
  */
 public class SnappyCompressorInputStream extends CompressorInputStream {
