@@ -111,7 +111,7 @@ public class SearchCompiler {
 
     public class CoreSimpleMatchFactory implements SimpleMatchFactory {
         private final Collection<String> keywords = Arrays.asList("id", "version", "type", "user", "role",
-                "changeset", "nodes", "ways", "tags", "areasize", "waylength", "modified", "selected",
+                "changeset", "nodes", "ways", "tags", "areasize", "waylength", "modified", "deleted", "selected",
                 "incomplete", "untagged", "closed", "new", "indownloadedarea",
                 "allindownloadedarea", "inview", "allinview", "timestamp", "nth", "nth%", "hasRole");
 
@@ -120,6 +120,8 @@ public class SearchCompiler {
             switch(keyword) {
             case "modified":
                 return new Modified();
+            case "deleted":
+                return new Deleted();
             case "selected":
                 return new Selected();
             case "incomplete":
@@ -1251,6 +1253,21 @@ public class SearchCompiler {
         @Override
         public String toString() {
             return "modified";
+        }
+    }
+
+    /**
+     * Matches all objects that have been deleted
+     */
+    private static class Deleted extends Match {
+        @Override
+        public boolean match(OsmPrimitive osm) {
+            return osm.isDeleted();
+        }
+
+        @Override
+        public String toString() {
+            return "deleted";
         }
     }
 

@@ -461,7 +461,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("modified", "modified ", tr("all modified objects"))
                 .addKeyword("new", "new ", tr("all new objects"))
                 .addKeyword("selected", "selected ", tr("all selected objects"))
-                .addKeyword("incomplete", "incomplete ", tr("all incomplete objects")),
+                .addKeyword("incomplete", "incomplete ", tr("all incomplete objects"))
+                .addKeyword("deleted", "deleted ", tr("all deleted objects (checkbox <b>{0}</b> must be enabled)", tr("all objects"))),
                 GBC.eol());
             right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("related objects"))
