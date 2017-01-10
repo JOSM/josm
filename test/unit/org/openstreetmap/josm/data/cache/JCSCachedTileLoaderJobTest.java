@@ -110,8 +110,8 @@ public class JCSCachedTileLoaderJobTest {
                 listener.wait();
             }
         }
-        assertEquals("java.net.UnknownHostException: unkownhost.unkownhost", listener.attributes.getErrorMessage());
         assertEquals(LoadResult.FAILURE, listener.result); // because response will be cached, and that is checked below
+        assertEquals("java.net.UnknownHostException: unkownhost.unkownhost", listener.attributes.getErrorMessage());
 
         ICacheAccess<String, CacheEntry> cache = getCache();
         CacheEntry e = new CacheEntry(new byte[]{0, 1, 2, 3});
