@@ -350,7 +350,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
      */
     private boolean expandCopy(final long off, final int length) throws IOException {
         if (off > blockSize) {
-            throw new IOException("Offset is larger than block size");
+            throw new IOException("Offset " + off + " is larger than block size " + blockSize);
         }
         final int offset = (int) off;
         boolean shouldFlush = ensureBufferSpace(length);
