@@ -43,6 +43,7 @@ import org.apache.commons.compress.compressors.lzma.LZMAUtils;
 import org.apache.commons.compress.compressors.pack200.Pack200CompressorInputStream;
 import org.apache.commons.compress.compressors.pack200.Pack200CompressorOutputStream;
 import org.apache.commons.compress.compressors.snappy.FramedSnappyCompressorInputStream;
+import org.apache.commons.compress.compressors.snappy.FramedSnappyCompressorOutputStream;
 import org.apache.commons.compress.compressors.snappy.SnappyCompressorInputStream;
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream;
@@ -497,7 +498,8 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
      * 
      * @param name
      *            the compressor name, i.e. {@value #GZIP}, {@value #BZIP2},
-     *            {@value #XZ}, {@value #PACK200} or {@value #DEFLATE}
+     *            {@value #XZ}, {@value #PACK200}, {@value SNAPPY_FRAMED}
+     *            or {@value #DEFLATE}
      * @param out
      *            the output stream
      * @return the compressor output stream
@@ -537,6 +539,10 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
 
             if (DEFLATE.equalsIgnoreCase(name)) {
                 return new DeflateCompressorOutputStream(out);
+            }
+
+            if (SNAPPY_FRAMED.equalsIgnoreCase(name)) {
+                return new FramedSnappyCompressorOutputStream(out);
             }
 
         } catch (final IOException e) {

@@ -43,14 +43,15 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
     static final long MASK_OFFSET = 0xa282ead8L;
 
     private static final int STREAM_IDENTIFIER_TYPE = 0xff;
-    private static final int COMPRESSED_CHUNK_TYPE = 0;
+    static final int COMPRESSED_CHUNK_TYPE = 0;
     private static final int UNCOMPRESSED_CHUNK_TYPE = 1;
     private static final int PADDING_CHUNK_TYPE = 0xfe;
     private static final int MIN_UNSKIPPABLE_TYPE = 2;
     private static final int MAX_UNSKIPPABLE_TYPE = 0x7f;
     private static final int MAX_SKIPPABLE_TYPE = 0xfd;
 
-    private static final byte[] SZ_SIGNATURE = new byte[] {
+    // used by FramedSnappyCompressorOutputStream as well
+    static final byte[] SZ_SIGNATURE = new byte[] {
         (byte) STREAM_IDENTIFIER_TYPE, // tag
         6, 0, 0, // length
         's', 'N', 'a', 'P', 'p', 'Y'
