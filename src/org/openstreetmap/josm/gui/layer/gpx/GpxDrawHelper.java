@@ -742,7 +742,7 @@ public class GpxDrawHelper implements SoMChangeListener {
         // 3rd. determine current paint parameters -----------------------------
 
         // alpha value is based on zoom and line with combined with global layer alpha
-        float theLineAlpha = Math.min(Math.max((0.50f/(float) zoomScale)/(globalLineWidth + 1), 0.001f), 0.50f) * layerAlpha;
+        float theLineAlpha = Math.min(Math.max((0.50f/(float) zoomScale)/(globalLineWidth + 1), 0.01f), 0.50f) * layerAlpha;
         final int theLineWith = (int) (lineWidth / zoomScale) + 1;
 
         // 4th setup virtual paint area ----------------------------------------
@@ -833,7 +833,7 @@ public class GpxDrawHelper implements SoMChangeListener {
             int alpha = (int) (Math.sin(i * mapTo90Deg) * 255);
 
             // alpha with pre-offset, first color -> full transparent
-            alpha = i > 0 ? (75 + alpha) : 0;
+            alpha = i > 0 ? (10 + alpha) : 0;
 
             // shrink to maximum bound
             if (alpha > 255) {
@@ -851,6 +851,21 @@ public class GpxDrawHelper implements SoMChangeListener {
 
         // transform into lookup table
         return colorTable;
+    }
+
+    /**
+     * Creates a darker color
+     * @param in        Color object
+     * @param adjust    darker adjustment amount
+     * @return          new Color
+     */
+    protected static Color darkerColor(Color in, float adjust) {
+
+        final float r = ((float) in.getRed()/255);
+        final float g = ((float) in.getGreen()/255);
+        final float b = ((float) in.getBlue()/255);
+
+        return new Color(r*adjust, g*adjust, b*adjust);
     }
 
     /**
@@ -899,6 +914,11 @@ public class GpxDrawHelper implements SoMChangeListener {
         if (colorList.isEmpty()) {
             colorList.add(Color.BLACK);
             colorList.add(Color.WHITE);
+        } else {
+            // add additional darker elements to end of list
+            final Color lastColor = colorList.get(colorList.size() - 1);
+            colorList.add(darkerColor(lastColor, 0.975f));
+            colorList.add(darkerColor(lastColor, 0.950f));
         }
 
         return createColorLut(colorList.toArray(new Color[ colorList.size() ]));
@@ -924,11 +944,17 @@ public class GpxDrawHelper implements SoMChangeListener {
         // set initial values
         gB.setStroke(backStroke); gB.setComposite(backComp);
 
-        // for all points, draw single lines by using optimize drawing
+        // get last point in list
+        final WayPoint lastPnt = !listSegm.isEmpty() ? listSegm.get(listSegm.size() - 1) : null;
+
+        // for all points, draw single lines by using optimized drawing
         for (WayPoint trkPnt : listSegm) {
 
-            // something to paint or color changed (new segment needed, decrease performance ;-()
-            if (!trkPnt.drawLine && !heatMapPolyX.isEmpty()) {
+            // get transformed coordinates
+            final Point paintPnt = mv.getPoint(trkPnt.getEastNorth());
+
+            // end of line segment or end of list reached
+            if (!trkPnt.drawLine || (lastPnt == trkPnt)) {
 
                 // convert to primitive type
                 final int[] polyXArr = heatMapPolyX.stream().mapToInt(Integer::intValue).toArray();
@@ -945,18 +971,13 @@ public class GpxDrawHelper implements SoMChangeListener {
                     gB.setStroke(backStroke); gB.setComposite(backComp);
                 }
 
-                // drop used pints
+                // drop used points
                 heatMapPolyX.clear(); heatMapPolyY.clear();
-
-            } else {
-
-                // get transformed coordinates
-                final Point paintPnt = mv.getPoint(trkPnt.getEastNorth());
-
-                // store only the integer part (make sense because pixel is 1:1 here)
-                heatMapPolyX.add((int) paintPnt.getX());
-                heatMapPolyY.add((int) paintPnt.getY());
             }
+
+            // store only the integer part (make sense because pixel is 1:1 here)
+            heatMapPolyX.add((int) paintPnt.getX());
+            heatMapPolyY.add((int) paintPnt.getY());
         }
     }
 
@@ -965,17 +986,27 @@ public class GpxDrawHelper implements SoMChangeListener {
      * @param g               the common draw object to use
      * @param imgGray         gray scale input image
      * @param sampleRaster    the line with for drawing
+     * @param outlineWidth     line width for outlines
      */
-    private void drawHeatMapGrayMap(Graphics2D g, BufferedImage imgGray, int sampleRaster) {
+    private void drawHeatMapGrayMap(Graphics2D g, BufferedImage imgGray, int sampleRaster, int outlineWidth) {
 
         final int[] imgPixels = ((DataBufferInt) imgGray.getRaster().getDataBuffer()).getData();
 
         // samples offset and bounds are scaled with line width derived from zoom level
-        final int offX = Math.max(1, sampleRaster / 2);
-        final int offY = Math.max(1, sampleRaster / 2);
+        final int offX = Math.max(1, sampleRaster);
+        final int offY = Math.max(1, sampleRaster);
 
         final int maxPixelX = imgGray.getWidth();
         final int maxPixelY = imgGray.getHeight();
+
+        // always full or outlines at big samples rasters
+        final boolean drawOutlines = (outlineWidth > 0) && ((0 == sampleRaster) || (sampleRaster > 8));
+
+        // backup stroke
+        final Stroke oldStroke = g.getStroke();
+
+        // use basic stroke for outlines and default transparency
+        g.setStroke(new BasicStroke(outlineWidth));
 
         int lastPixelY = 0;
         int lastPixelColor = 0;
@@ -1000,33 +1031,44 @@ public class GpxDrawHelper implements SoMChangeListener {
 
                 // restart -> use initial sample
                 if (0 == y) {
-                    lastPixelY = 0; lastPixelColor = thePixelColor;
+                    lastPixelY = 0; lastPixelColor = thePixelColor - 1;
                 }
 
-                // different color to last one ?
-                if (Math.abs(lastPixelColor - thePixelColor) > 1) {
+                boolean bDrawIt = false;
 
-                    // draw only foreground pixels, skip small variations
-                    if (lastPixelColor > 1+1) {
+                // when one of segment is mapped to black
+                bDrawIt = bDrawIt || (lastPixelColor == 0) || (thePixelColor == 0);
+
+                // different color
+                bDrawIt = bDrawIt || (Math.abs(lastPixelColor-thePixelColor) > 0);
+
+                // when line is finished draw always
+                bDrawIt = bDrawIt || (y >= (maxPixelY-offY));
+
+                if (bDrawIt) {
+
+                    // draw only foreground pixels
+                    if (lastPixelColor > 0) {
 
                         // gray to RGB mapping
                         g.setColor(heatMapLutColor[ lastPixelColor ]);
 
-                        // start point for draw (
-                        int yN = lastPixelY > 0 ? lastPixelY : y;
-
                         // box from from last Y pixel to current pixel
-                        if (offX < sampleRaster) {
-                            g.fillRect(yN, x, offY + y - yN, offX);
+                        if (drawOutlines) {
+                            g.drawRect(lastPixelY, x, offY + y - lastPixelY, offX);
                         } else {
-                            g.drawRect(yN, x, offY + y - yN, offX);
+                            g.fillRect(lastPixelY, x, offY + y - lastPixelY, offX);
                         }
                     }
+
                     // restart detection
                     lastPixelY = y; lastPixelColor = thePixelColor;
                 }
             }
         }
+
+        // recover
+        g.setStroke(oldStroke);
     }
 
     /**
@@ -1041,8 +1083,8 @@ public class GpxDrawHelper implements SoMChangeListener {
         final Rectangle screenBounds = g.getDeviceConfiguration().getBounds();
         final double zoomScale = mv.getScale();
 
-        // adjust global settings
-        final int globalLineWidth = Math.min(Math.max(lineWidth, 1), 20);
+        // adjust global settings ( zero = default line width )
+        final int globalLineWidth = (0 == lineWidth) ? 1 : Math.min(Math.max(lineWidth, 1), 20);
 
         // 1st setup virtual paint area ----------------------------------------
 
@@ -1069,7 +1111,7 @@ public class GpxDrawHelper implements SoMChangeListener {
         // 2nd. determine current scale factors -------------------------------
 
         // the line width (foreground: draw extra small footprint line of track)
-        final int lineWidthB = Math.max((int) (globalLineWidth / zoomScale) + 1, 2);
+        final int lineWidthB = (int) Math.max(1.5f * (globalLineWidth / zoomScale) + 1, 2);
         final int lineWidthF = lineWidthB > 2 ? (globalLineWidth - 1) : 0;
 
         // recalculation of image needed
@@ -1086,7 +1128,7 @@ public class GpxDrawHelper implements SoMChangeListener {
             heatMapGraph2d.clearRect(0, 0, heatMapImgGray.getWidth(), heatMapImgGray.getHeight());
 
             // alpha combines both values, therefore the foreground shall be lighter
-            final float lineAlphaB = Math.min(Math.max((0.40f/(float) zoomScale)/(globalLineWidth + 1), 0.001f), 0.50f);
+            final float lineAlphaB = Math.min(Math.max((0.40f/(float) zoomScale)/(globalLineWidth + 1), 0.01f), 0.40f);
             final float lineAlphaF = lineAlphaB / 1.5f;
 
             // derive draw parameters and draw
@@ -1103,7 +1145,9 @@ public class GpxDrawHelper implements SoMChangeListener {
         }
 
         // 4th. Draw data on target layer, map data via color lookup table --------------
-        drawHeatMapGrayMap(g, heatMapImgGray, lineWidthB);
+        drawHeatMapGrayMap(g, heatMapImgGray,
+                lineWidthB > 2 ? (lineWidthB / 2) : 1,
+                lineWidth > 2 ? (lineWidth - 2) : 1);
     }
 
     /**
