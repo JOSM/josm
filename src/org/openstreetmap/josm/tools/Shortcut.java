@@ -403,7 +403,7 @@ public final class Shortcut {
     public static boolean savePrefs() {
         return shortcuts.stream()
                 .map(Shortcut::save)
-                .reduce(false, Boolean::logicalOr); // has changed
+                .reduce(Boolean.FALSE, Boolean::logicalOr); // has changed
     }
 
     /**
