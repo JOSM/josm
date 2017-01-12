@@ -861,9 +861,9 @@ public class GpxDrawHelper implements SoMChangeListener {
      */
     protected static Color darkerColor(Color in, float adjust) {
 
-        final float r = ((float) in.getRed()/255);
-        final float g = ((float) in.getGreen()/255);
-        final float b = ((float) in.getBlue()/255);
+        final float r = (float) in.getRed()/255;
+        final float g = (float) in.getGreen()/255;
+        final float b = (float) in.getBlue()/255;
 
         return new Color(r*adjust, g*adjust, b*adjust);
     }
