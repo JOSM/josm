@@ -212,11 +212,6 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                                 throw new IllegalArgumentException();
                             }
                         }
-
-                        @Override
-                        public boolean isCellEditable(int row, int column) {
-                            return false;
-                        }
                     });
             this.list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             this.list.setRowSelectionAllowed(true);
@@ -728,18 +723,8 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     }
 
     @Override
-    public int getTileXMin(int zoom) {
-        return 0;
-    }
-
-    @Override
     public int getTileYMax(int zoom) {
         return getTileYMax(zoom, Main.getProjection());
-    }
-
-    @Override
-    public int getTileYMin(int zoom) {
-        return 0;
     }
 
     @Override
