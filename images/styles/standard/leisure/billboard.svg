@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<!-- ClipArt by Arvin61r58 (http://openclipart.org/user-detail/Arvin61r58) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg2"
+   viewBox="0 0 976.15625 729.85008"
+   version="1.1"
+   inkscape:version="0.48.4 r9939"
+   width="100%"
+   height="100%"
+   sodipodi:docname="11.svg">
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1680"
+     inkscape:window-height="988"
+     id="namedview69"
+     showgrid="false"
+     inkscape:zoom="0.43628026"
+     inkscape:cx="797.85974"
+     inkscape:cy="398.68092"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <title
+     id="title4370">Billboard Frame</title>
+  <defs
+     id="defs4">
+    <filter
+       id="filter4278"
+       height="1"
+       width="1"
+       color-interpolation-filters="sRGB"
+       y="0"
+       x="0">
+      <feTurbulence
+         id="feTurbulence4280"
+         baseFrequency="0.021000000000000001 0.021000000000000001"
+         seed="0"
+         result="result0"
+         numOctaves="2"
+         type="turbulence" />
+      <feSpecularLighting
+         id="feSpecularLighting4282"
+         specularConstant="1"
+         result="result1"
+         specularExponent="24.29999924"
+         surfaceScale="2">
+        <feDistantLight
+           id="feDistantLight4284"
+           elevation="45"
+           azimuth="225" />
+      </feSpecularLighting>
+      <feDiffuseLighting
+         id="feDiffuseLighting4286"
+         surfaceScale="3"
+         in="result0"
+         result="result2"
+         diffuseConstant="1.21000004">
+        <feDistantLight
+           id="feDistantLight4288"
+           elevation="42"
+           azimuth="225" />
+      </feDiffuseLighting>
+      <feBlend
+         id="feBlend4290"
+         mode="multiply"
+         in2="SourceGraphic"
+         result="result91" />
+      <feComposite
+         id="feComposite4292"
+         in="result1"
+         in2="result91"
+         k3="1"
+         k2="1"
+         k1="0"
+         result="result92"
+         k4="0"
+         operator="arithmetic" />
+      <feComposite
+         id="feComposite4294"
+         operator="in"
+         result="result2"
+         in2="SourceAlpha" />
+    </filter>
+    <linearGradient
+       id="linearGradient4347"
+       y2="556.90997"
+       gradientUnits="userSpaceOnUse"
+       x2="456.60001"
+       gradientTransform="matrix(1.0492,0,0,0.83928,66.33,399.54)"
+       y1="556.90997"
+       x1="357.79999">
+      <stop
+         id="stop3825"
+         style="stop-color:#8a8a8a"
+         offset="0" />
+      <stop
+         id="stop3827"
+         style="stop-color:#676767"
+         offset=".071429" />
+      <stop
+         id="stop3829"
+         style="stop-color:#878787"
+         offset=".14286" />
+      <stop
+         id="stop3831"
+         style="stop-color:#b5b5b5"
+         offset=".21429" />
+      <stop
+         id="stop3833"
+         style="stop-color:#d7d7d7"
+         offset=".28571" />
+      <stop
+         id="stop3835"
+         style="stop-color:#d5d5d5"
+         offset=".35714" />
+      <stop
+         id="stop3837"
+         style="stop-color:#c3c3c3"
+         offset=".42857" />
+      <stop
+         id="stop3839"
+         style="stop-color:#b3b3b3"
+         offset=".5" />
+      <stop
+         id="stop3841"
+         style="stop-color:#a3a3a3"
+         offset=".57143" />
+      <stop
+         id="stop3843"
+         style="stop-color:#929292"
+         offset=".64286" />
+      <stop
+         id="stop3845"
+         style="stop-color:#7a7a7a"
+         offset=".71429" />
+      <stop
+         id="stop3847"
+         style="stop-color:#696969"
+         offset=".78571" />
+      <stop
+         id="stop3849"
+         style="stop-color:#686868"
+         offset=".85714" />
+      <stop
+         id="stop3851"
+         style="stop-color:#656565"
+         offset=".92857" />
+      <stop
+         id="stop3853"
+         style="stop-color:#797979"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient4353"
+       y2="715.01001"
+       gradientUnits="userSpaceOnUse"
+       x2="446.25"
+       gradientTransform="translate(3.2022,122.35)"
+       y1="689.37"
+       x1="446.25">
+      <stop
+         id="stop4109"
+         style="stop-color:#717171"
+         offset="0" />
+      <stop
+         id="stop4111"
+         style="stop-color:#e3e3e3"
+         offset="1" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4347"
+       id="linearGradient3096"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(1.0492,0,0,0.83928,56.9452,90.310078)"
+       x1="357.79999"
+       y1="556.90997"
+       x2="456.60001"
+       y2="556.90997" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4353"
+       id="linearGradient3098"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(3.2022,122.35)"
+       x1="446.25"
+       y1="689.37"
+       x2="446.25"
+       y2="715.01001" />
+  </defs>
+  <rect
+     id="rect2985"
+     style="fill:url(#linearGradient3096);fill-rule:evenodd"
+     rx="12.852"
+     ry="11.842"
+     height="344.26999"
+     width="95.811996"
+     y="385.58008"
+     x="440.19519" />
+  <g
+     transform="matrix(1,0,0,1.0753,-7.25,-451.87197)"
+     id="g4132">
+    <g
+       transform="matrix(1,0,0,0.83333,21.422,173.53)"
+       id="g4125">
+      <rect
+         x="33.09"
+         y="740.15002"
+         width="16.011"
+         height="25.618"
+         style="fill:#000000;fill-rule:evenodd"
+         id="rect4115" />
+      <rect
+         x="898.76001"
+         y="740.15002"
+         width="16.011"
+         height="25.618"
+         style="fill:#000000;fill-rule:evenodd"
+         id="rect4117" />
+      <rect
+         x="682.34003"
+         y="740.15002"
+         width="16.011"
+         height="25.618"
+         style="fill:#000000;fill-rule:evenodd"
+         id="rect4119" />
+      <rect
+         x="249.50999"
+         y="740.15002"
+         width="16.011"
+         height="25.618"
+         style="fill:#000000;fill-rule:evenodd"
+         id="rect4121" />
+      <rect
+         x="465.92001"
+         y="740.15002"
+         width="16.011"
+         height="25.618"
+         style="fill:#000000;fill-rule:evenodd"
+         id="rect4123" />
+    </g>
+    <path
+       inkscape:connector-curvature="0"
+       d="m 966.48,812.6 9.1053,-0.0628 6.5646,23.891 -13.718,-0.2011 -473.09,0.061 -473.09,0.0242 -13.718,0.20109 6.5646,-23.891 9.1053,0.0628 471.13,-0.0833 z"
+       style="fill:url(#linearGradient3098);stroke:#000000;stroke-width:1.92869997"
+       id="path4083-2" />
+  </g>
+  <g
+     transform="matrix(1,0,0,1.0753,-4.8711,-332.50292)"
+     id="g4071"
+     style="fill:#803300">
+    <rect
+       x="14.971"
+       y="312.10001"
+       width="956"
+       height="366"
+       style="fill:#803300;stroke:#000000;stroke-width:5.78609991"
+       id="rect4043" />
+    <rect
+       x="20.938"
+       y="317.76999"
+       width="944.06"
+       height="354.66"
+       style="fill:#803300;fill-rule:evenodd;stroke:#828282;stroke-width:5.78609991"
+       id="rect4043-1" />
+  </g>
+  <metadata
+     id="metadata67">
+    <rdf:RDF>
+      <cc:Work>
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <cc:license
+           rdf:resource="http://creativecommons.org/licenses/publicdomain/" />
+        <dc:publisher>
+          <cc:Agent
+             rdf:about="http://openclipart.org/">
+            <dc:title>Openclipart</dc:title>
+          </cc:Agent>
+        </dc:publisher>
+        <dc:title>Billboard Frame</dc:title>
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/licenses/publicdomain/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <text
+     xml:space="preserve"
+     style="font-size:335.74322510000002000px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:125%;letter-spacing:40.81823348999999700px;word-spacing:0px;fill:#ffcc00;fill-opacity:1;stroke:none;font-family:Calibri"
+     x="37.716553"
+     y="308.91446"
+     id="text3111"
+     sodipodi:linespacing="125%"
+     transform="scale(1.0174037,0.98289404)"><tspan
+       sodipodi:role="line"
+       id="tspan3113"
+       x="37.716553"
+       y="308.91446"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:Calibri;fill:#ffcc00">JOSM</tspan></text>
+</svg>
