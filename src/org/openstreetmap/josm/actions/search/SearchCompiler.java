@@ -1039,7 +1039,7 @@ public class SearchCompiler {
             this((int) tokenizer.readNumber(tr("Positive integer expected")), modulo);
         }
 
-        private Nth(int nth, boolean modulo) throws ParseError {
+        private Nth(int nth, boolean modulo) {
             this.nth = nth;
             this.modulo = modulo;
         }

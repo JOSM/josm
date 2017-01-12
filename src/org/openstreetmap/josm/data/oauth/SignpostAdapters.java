@@ -107,7 +107,7 @@ public final class SignpostAdapters {
         }
 
         @Override
-        public InputStream getMessagePayload() throws IOException {
+        public InputStream getMessagePayload() {
             return null;
         }
 
@@ -135,12 +135,12 @@ public final class SignpostAdapters {
         }
 
         @Override
-        public int getStatusCode() throws IOException {
+        public int getStatusCode() {
             return response.getResponseCode();
         }
 
         @Override
-        public String getReasonPhrase() throws Exception {
+        public String getReasonPhrase() {
             return response.getResponseMessage();
         }
 

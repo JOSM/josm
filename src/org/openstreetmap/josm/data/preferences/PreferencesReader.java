@@ -51,10 +51,8 @@ public class PreferencesReader {
      * @param file the file
      * @param defaults true when reading from the cache file for default preferences,
      * false for the regular preferences config file
-     * @throws IOException if any I/O error occurs
-     * @throws XMLStreamException if any XML stream error occurs
      */
-    public PreferencesReader(File file, boolean defaults) throws IOException, XMLStreamException {
+    public PreferencesReader(File file, boolean defaults) {
         this.defaults = defaults;
         this.reader = null;
         this.file = file;
@@ -65,9 +63,8 @@ public class PreferencesReader {
      * @param reader the {@link Reader}
      * @param defaults true when reading from the cache file for default preferences,
      * false for the regular preferences config file
-     * @throws XMLStreamException if any XML stream error occurs
      */
-    public PreferencesReader(Reader reader, boolean defaults) throws XMLStreamException {
+    public PreferencesReader(Reader reader, boolean defaults) {
         this.defaults = defaults;
         this.reader = reader;
         this.file = null;

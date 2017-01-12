@@ -241,12 +241,12 @@ public class Capabilities {
         private Capabilities capabilities;
 
         @Override
-        public void startDocument() throws SAXException {
+        public void startDocument() {
             capabilities = new Capabilities();
         }
 
         @Override
-        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) throws SAXException {
+        public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {
             for (int i = 0; i < atts.getLength(); i++) {
                 capabilities.put(qName, atts.getQName(i), atts.getValue(i));
             }

@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
-import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
@@ -59,10 +58,9 @@ public class TMSCachedTileLoader implements TileLoader, CachedTileLoader {
      * @param connectTimeout    to remote resource
      * @param readTimeout       to remote resource
      * @param headers           HTTP headers to be sent along with request
-     * @throws IOException      when cache initialization fails
      */
     public TMSCachedTileLoader(TileLoaderListener listener, ICacheAccess<String, BufferedImageCacheEntry> cache,
-            int connectTimeout, int readTimeout, Map<String, String> headers) throws IOException {
+            int connectTimeout, int readTimeout, Map<String, String> headers) {
         CheckParameterUtil.ensureParameterNotNull(cache, "cache");
         this.cache = cache;
         this.connectTimeout = connectTimeout;

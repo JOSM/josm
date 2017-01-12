@@ -201,18 +201,16 @@ public class NoteReader {
     /**
      * Initializes the reader with a given InputStream
      * @param source - InputStream containing Notes XML
-     * @throws IOException if any I/O error occurs
      */
-    public NoteReader(InputStream source) throws IOException {
+    public NoteReader(InputStream source) {
         this.inputSource = new InputSource(source);
     }
 
     /**
      * Initializes the reader with a string as a source
      * @param source UTF-8 string containing Notes XML to parse
-     * @throws IOException if any I/O error occurs
      */
-    public NoteReader(String source) throws IOException {
+    public NoteReader(String source) {
         this.inputSource = new InputSource(new ByteArrayInputStream(source.getBytes(StandardCharsets.UTF_8)));
     }
 
