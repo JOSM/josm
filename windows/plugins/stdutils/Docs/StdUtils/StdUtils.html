@@ -1,0 +1,752 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+
+<head>
+	<title>StdUtils plug-in</title>
+	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+	<meta http-equiv="expires" content="0">
+	<meta http-equiv="cache-control" content="no-cache">
+	<meta http-equiv="pragma" content="no-cache">
+	<style type="text/css">
+	<!--
+		pre { background-color: #ECECEC; }
+		tt { background-color: #F0F0F0; }
+	-->
+	</style>
+</head>
+
+<body>
+
+<!-- ---------------- -->
+
+<h1>StdUtils for NSIS</h1>
+
+<p>This plug-in provides access to a number of "standard" functions from the <a href="http://en.wikipedia.org/wiki/C_standard_library">C Standard Library</a>, which programmers are used to from their C/C++ compilers (and other languages), but which are not available in NSIS by default. In order to keep the plug-in size as small as possible (~15 KB) and for maximum compatibility, the Visual C++ Run-Time v6.0 (MSVCRT.DLL), which is included with all versions of Windows (since Windows 2000), is used - instead of linking the Visual C++ Run-Time library into the plug-in DLL.</p>
+<p>Many additional functions, <i>not</i> directly related to the C Standard Library, have sneaked in over the years. For example, this plug-in provides a wrapper for the <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb762164%28v=vs.85%29.aspx">SHFileOperation</a> function. Moreover it provides a method for launching programs in a non-elevated way (user context) from an elevated installer (admin mode) on UAC-enabled systems (Vista and later) - see below for details! Last but not least, a version of <tt>ExecShell</tt> with "wait for process termination" feature (based on <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb762154%28v=vs.85%29.aspx">ShellExecuteEx</a>) as well as a function to invoke "shell verbs" (e.g. for pinning items to the Taskbar in Windows 7) are provided. Overall I use this plug-in as my "Swiss army Army knife" for all the small things I needed in my NSIS-based installers but NSIS didn't provide out-of-the-box.</p>
+<p><font style="color:darkred;">ANSI and Unicode builds available. Support operating systems: Windows 2000 and later.</font></p>
+
+<br>
+
+<b>Table of Contents:</b>
+<ul>
+	<li><a href="#53826d99">Available Functions</a>
+	<li><a href="#e5717960">Installation</a>
+	<li><a href="#72a4075a">General Usage</a>
+	<li><a href="#66dd4753">Time Functions</a>
+	<li><a href="#dc3f60d9">Pseudorandom Number Generator (PRNG)</a>
+	<li><a href="#23711935">String Functions</a>
+	<li><a href="#df333b53">Shell File Operation</a>
+	<li><a href="#a3d3af46">ExecShellAsUser</a>
+	<li><a href="#0c74ed2a">ExecShellWait</a>
+	<li><a href="#f24cc3f9">GetParameter / GetAllParameters</a>
+	<li><a href="#d452a779">InvokeShellVerb</a>
+	<li><a href="#f57ec206">GetRealOSVersion / GetRealOSName / VerifyOSVersion</a>
+	<li><a href="#14863bf9">Debugging Functions</a>
+	<li><a href="#b92197af">Acknowledgment</a>
+	<li><a href="#db579654">License</a>
+	<li><a href="#01efe0f2">Download and Sources</a>
+</ul>
+
+<br>
+
+<!-- ---------------- -->
+
+<a name="53826d99"></a><h2>Available Functions</h2>
+
+<p>The following functions are provided by the StdUtils plug-in:
+
+<pre>!define StdUtils.Time             #time(), as in C standard library
+!define StdUtils.GetMinutes       #GetSystemTimeAsFileTime(), returns the number of minutes
+!define StdUtils.GetHours         #GetSystemTimeAsFileTime(), returns the number of hours
+!define StdUtils.GetDays          #GetSystemTimeAsFileTime(), returns the number of days
+!define StdUtils.Rand             #rand(), as in C standard library
+!define StdUtils.RandMax          #rand(), as in C standard library, with maximum value
+!define StdUtils.RandMinMax       #rand(), as in C standard library, with minimum/maximum value
+!define StdUtils.RandList         #rand(), as in C standard library, with list support
+!define StdUtils.FormatStr        #sprintf(), as in C standard library, one '%d' placeholder
+!define StdUtils.FormatStr2       #sprintf(), as in C standard library, two '%d' placeholders
+!define StdUtils.FormatStr3       #sprintf(), as in C standard library, three '%d' placeholders
+!define StdUtils.ScanStr          #sscanf(), as in C standard library, one '%d' placeholder
+!define StdUtils.ScanStr2         #sscanf(), as in C standard library, two '%d' placeholders
+!define StdUtils.ScanStr3         #sscanf(), as in C standard library, three '%d' placeholders
+!define StdUtils.TrimStr          #Remove whitspaces from string, left and right
+!define StdUtils.TrimStrLeft      #Remove whitspaces from string, left side only
+!define StdUtils.TrimStrRight     #Remove whitspaces from string, right side only
+!define StdUtils.RevStr           #Reverse a string, e.g. "reverse me" <-> "em esrever"
+!define StdUtils.SHFileMove       #SHFileOperation(), using the FO_MOVE operation
+!define StdUtils.SHFileCopy       #SHFileOperation(), using the FO_COPY operation
+!define StdUtils.ExecShellAsUser  #ShellExecute() as NON-elevated user from elevated installer
+!define StdUtils.InvokeShellVerb  #Invokes a "shell verb", e.g. for pinning items to the taskbar
+!define StdUtils.ExecShellWaitEx  #ShellExecuteEx(), returns the handle of the new process
+!define StdUtils.WaitForProcEx    #WaitForSingleObject(), e.g. to wait for a running process
+!define StdUtils.GetParameter     #Get the value of a specific command-line option
+!define StdUtils.GetAllParameters #Get complete command-line, but without executable name
+!define StdUtils.GetRealOSVersion #Get the *real* Windows version number, even on Windows 8.1+
+!define StdUtils.GetRealOSName    #Get the *real* Windows version, as a "friendly" name
+!define StdUtils.VerifyOSVersion  #Compare the *real* operating system to an expected version
+!define StdUtils.GetLibVersion    #Get the current StdUtils library version (for debugging)
+!define StdUtils.SetVerbose       #Enable or disable "verbose" mode (for debugging)</pre>
+
+<p><b>Please see the descriptions below for details on the individual functions!</b></p>
+
+<br>
+
+<!-- ---------------- -->
+
+<a name="e5717960"></a><h2>Installation</h2>
+
+<p>Depending on whether you are using the Unicode or ANSI (non-Unicode) variant of NSIS (we highly recommend using the Unicode variant!), you must copy either <tt>StdUtils\Plugins\Release_Unicode\StdUtils.dll</tt> or <tt>StdUtils\Plugins\Release_ANSI\StdUtils.dll</tt> into the <tt>Plugins</tt> sub-directory inside your NSIS installation directory. Also, in both cases, you must copy <tt>StdUtils\Include\StdUtils.nsh</tt> into the <tt>Include</tt> sub-directory inside your NSIS installation directory. That's it!</p>
+
+<br>
+
+<!-- ---------------- -->
+
+<a name="72a4075a"></a><h2>General Usage</h2>
+
+<p>In order to use the StdUtils plug-in in your script, simply include <tt>StdUtils.nsh</tt> and then use the pre-defined <tt>${StdUtils.<i>FunctionName</i>}</tt> macros like this:</p>
+
+<pre>!include '<span style="color:darkred;font-weight:bold;">StdUtils.nsh</span>'
+
+Section
+	<span style="color:darkred;font-weight:bold;">${StdUtils.Rand}</span> $1
+	DetailPrint "Random number obtained via StdUtils::Rand is: $1"
+SectionEnd</pre>
+
+<p>Note: We highly recommend to <u>not</u> call the plug-in functions directly. Instead, use the pre-defind macros, which ensures that the plug-in functions are used in the "proper" way.</p>
+<p>For more details, please have a look at the example scripts located in the <tt>StdUtils\Examples\StdUtils</tt> directory!</p>
+
+<br>
+
+<!-- ---------------- -->
+
+<a name="66dd4753"></a><h2>Time Functions</h2>
+
+<p><b><tt>${StdUtils.Time} <i>user_var(output)</i></tt></b></p>
+<p>Returns the number of seconds that have elapsed since 00:00, Jan 1, 1970 (UTC), also known as "Unix time", just like the <a href="http://www.cplusplus.com/reference/clibrary/ctime/time/">time()</a> function:
+
+<pre>!include 'StdUtils.nsh'
+
+RequestExecutionLevel user
+ShowInstDetails show
+
+Section
+	${StdUtils.Time} $1
+	DetailPrint "Time: $1"
+	Sleep 500
+	${StdUtils.Time} $1
+	DetailPrint "Time: $1"
+	Sleep 500
+	${StdUtils.Time} $1
+	DetailPrint "Time: $1"
+SectionEnd</pre>
+
+<p><br><b><tt>${StdUtils.GetMinutes} <i>user_var(output)</i><br>${StdUtils.GetHours} <i>user_var(output)</i><br>${StdUtils.GetDays} <i>user_var(output)</i></tt></b></p>
+<p>Retrieves the current system date and time, using the <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/ms724397%28v=vs.85%29.aspx">GetSystemTimeAsFileTime()</a> function. Returns the number of <i>minutes</i>, <i>hours</i> or <i>days</i> since 00:00, January 1, 1601 (UTC).
+
+<pre>!include 'StdUtils.nsh'
+
+RequestExecutionLevel user
+ShowInstDetails show
+
+Section
+	${StdUtils.GetMinutes} $1
+	DetailPrint "UTC time in minutes: $1"
+	${StdUtils.GetHours} $1
+	DetailPrint "UTC time in hours: $1"
+	${StdUtils.GetDays} $1
+	DetailPrint "UTC time in days: $1"
+SectionEnd</pre>
+
+<br>
+
+<!-- ---------------- -->
+
+<a name="dc3f60d9"></a><h2>Pseudorandom Number Generator (PRNG)</h2>
+
+<p><b><tt>${StdUtils.Rand} <i>user_var(output)</i><br>${StdUtils.RandMax} <i>user_var(output)</i> <i>max</i><br>${StdUtils.RandMinMax} <i>user_var(output)</i> <i>min</i> <i>max</i></tt></b></p>
+<p>Returns a pseudo-random integral number, similar to the <a href="http://www.cplusplus.com/reference/clibrary/cstdlib/rand/">rand()</a> function, but without the need to call <tt>srand()</tt>. Optionally the <i>minimum</i> and/or <i>maximum</i> value can be specified, so a random number in the <tt>min</tt> to <tt>max</tt> range will be returned. If <i>no</i> minimum is specified, the minimum defaults to <i>zero</i>. And if <i>no</i> maximum is specified, the maximum defaults to <tt>INT_MAX</tt>. Note that this function will use <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/aa387694%28v=vs.85%29.aspx">RtlGenRandom()</a>, where possible; otherwise it falls back to a method based on <tt>rand()</tt>. In the latter case, <tt>srand()</tt> will be initialized with a suitable seed <i>automatically</i>.</p>
+
+<pre>Section
+	${StdUtils.Rand} $1
+	DetailPrint "Random: $1"
+	${StdUtils.Rand} $1
+	DetailPrint "Random: $1"
+	${StdUtils.Rand} $1
+	DetailPrint "Random: $1"
+	${StdUtils.Rand} $1
+	DetailPrint "Random: $1"
+	${StdUtils.Rand} $1
+	DetailPrint "Random: $1"
+	${StdUtils.Rand} $1
+	DetailPrint "Random: $1"
+SectionEnd
+
+Section
+	${StdUtils.RandMax} $1 42
+	DetailPrint "Random Max: $1"
+	${StdUtils.RandMax} $1 42
+	DetailPrint "Random Max: $1"
+	${StdUtils.RandMax} $1 42
+	DetailPrint "Random Max: $1"
+	${StdUtils.RandMax} $1 42
+	DetailPrint "Random Max: $1"
+	${StdUtils.RandMax} $1 42
+	DetailPrint "Random Max: $1"
+	${StdUtils.RandMax} $1 42
+	DetailPrint "Random Max: $1"
+SectionEnd
+
+Section
+	${StdUtils.RandMinMax} $1 -4 -2
+	DetailPrint "Random Min/Max: $1"
+	${StdUtils.RandMinMax} $1 -4 -2
+	DetailPrint "Random Min/Max: $1"
+	${StdUtils.RandMinMax} $1 -4 -2
+	DetailPrint "Random Min/Max: $1"
+	${StdUtils.RandMinMax} $1 -4 -2
+	DetailPrint "Random Min/Max: $1"
+	${StdUtils.RandMinMax} $1 -4 -2
+	DetailPrint "Random Min/Max: $1"
+	${StdUtils.RandMinMax} $1 20 21
+	DetailPrint "Random Min/Max: $1"
+SectionEnd</pre>
+
+<p><br><b><tt>${StdUtils.RandList} <i>count</i> <i>max</i></tt></b></p>
+<p>Pushes a list of pseudo-random numbers onto the stack. The string "EOL" is pushed beforehand and thus will indicate the end of the list when popping the numbers off the stack. The <tt>count</tt> of the random numbers and the <tt>max</tt> value can be specified; the minimum value is <i>zero</i>.</p>
+
+<pre>Section
+	${StdUtils.RandList} 50 100
+	Pop $1
+	StrCmp $1 EOL +3
+	DetailPrint "RandList: $1"
+	Goto -3
+SectionEnd</pre>
+
+<br>
+
+<!-- ---------------- -->
+
+<a name="23711935"></a><h2>String Functions</h2>
+
+<p><b><tt>${StdUtils.FormatStr} <i>user_var(output)</i> <i>format_str</i> <i>val1</i><br>${StdUtils.FormatStr2} <i>user_var(output)</i> <i>format_str</i> <i>val1</i> <i>val2</i><br>${StdUtils.FormatStr3} <i>user_var(output)</i> <i>format_str</i> <i>val1</i> <i>val2</i> <i>val3</i></tt></b></p>
+<p>Returns a formatted string, similar to the <a href="http://www.cplusplus.com/reference/clibrary/cstdio/sprintf/">sprintf()</a> function. Only the <tt>%d</tt> placeholder is currently supported. There are versions for one, two and three placeholders:</p>
+
+<pre>Section
+	${StdUtils.FormatStr} $1 "Hello World is %05d woha!" 89
+	DetailPrint "FormatStr: $1"
+	${StdUtils.FormatStr2} $1 "Hello World is %05d and %05d woha!" 89 384
+	DetailPrint "FormatStr: $1"
+	${StdUtils.FormatStr3} $1 "Hello World is %05d and %05d or even %05d woha!" 89 384 2384
+	DetailPrint "FormatStr: $1"
+	${StdUtils.FormatStr} $1 "Hello World is %09000d." 89
+	DetailPrint "FormatStr: $1"
+SectionEnd</pre>
+
+<p><br><b><tt>${StdUtils.ScanStr} <i>user_var(output)</i> <i>format_str</i> <i>input</i> <i>default</i><br>${StdUtils.ScanStr2} <i>user_var(output1)</i> <i>user_var(output2)</i> <i>format_str</i> <i>input</i> <i>default1</i> <i>default2</i><br>${StdUtils.ScanStr3} <i>user_var(output1)</i> <i>user_var(output2)</i> <i>user_var(output3)</i> <i>format_str</i> <i>input</i> <i>default1</i> <i>default2</i> <i>default3</i></tt></b></p>
+<p>Parses input from a string according to a format specification similar to the <a href="http://www.cplusplus.com/reference/clibrary/cstdio/sscanf/">sscanf()</a> function. Only the <tt>%d</tt> placeholder is currently supported. There are versions for one, two and three placeholders:</p>
+
+<pre>Section
+	${StdUtils.ScanStr} $0 "Der Test sagt %d ist toll!" "Der Test sagt 571 ist toll!" 42
+	DetailPrint "ScanStr: $0"
+	${StdUtils.ScanStr} $0 "Der Hund sagt %d ist toll!" "Der Test sagt 571 ist toll!" 42
+	DetailPrint "ScanStr: $0"
+SectionEnd
+
+Section
+	${StdUtils.ScanStr2} $0 $1 "Der Test sagt %d sowie %d ist toll!" "Der Test sagt 571 sowie 831 ist toll!" 42 43
+	DetailPrint "ScanStr2: $0, $1"
+	${StdUtils.ScanStr2} $0 $1 "Der Test sagt %d sowie %d ist toll!" "Der Test sagt 571 horch 831 ist toll!" 42 43
+	DetailPrint "ScanStr2: $0, $1"
+	${StdUtils.ScanStr2} $0 $1 "Der Test sagt %d sowie %d ist toll!" "Der Hund sagt 571 horch 831 ist toll!" 42 43
+	DetailPrint "ScanStr2: $0, $1"
+SectionEnd
+
+Section
+	${StdUtils.ScanStr3} $0 $1 $2 "Der Test sagt %d sowie %d ist toll! Und %d." "Der Test sagt 571 sowie 831 ist toll! Und 325" 42 43 44
+	DetailPrint "ScanStr3: $0, $1, $2"
+	${StdUtils.ScanStr3} $0 $1 $2 "Der Test sagt %d sowie %d ist toll! Und %d." "Der Test sagt 571 sowie 831 ist toll! OMG 325" 42 43 44
+	DetailPrint "ScanStr3: $0, $1, $2"
+	${StdUtils.ScanStr3} $0 $1 $2 "Der Test sagt %d sowie %d ist toll! Und %d." "Der Test sagt 571 horch 831 ist toll! OMG 325" 42 43 44
+	DetailPrint "ScanStr3: $0, $1, $2"
+	${StdUtils.ScanStr3} $0 $1 $2 "Der Test sagt %d sowie %d ist toll! Und %d." "Der Hund sagt 571 horch 831 ist toll! OMG 325" 42 43 44
+	DetailPrint "ScanStr3: $0, $1, $2"
+SectionEnd</pre>
+
+<p><br><b><tt>${StdUtils.TrimStr} <i>user_var(input/output)</i><br>${StdUtils.TrimStrLeft} <i>user_var(input/output)</i><br>${StdUtils.TrimStrRight} <i>user_var(input/output)</i></tt></b></p>
+<p>Trims a string by removing all leading and/or trailing whitspace (space, tabular, line feed, carriage return) characters <i>in-place</i>:</p>
+
+<pre>Section
+	StrCpy $1 "        Some Text        "
+	DetailPrint "String: '$1'"
+	StrCpy $0 $1
+	${StdUtils.TrimStr} $0
+	DetailPrint "TrimStr: '$0'"
+	StrCpy $0 $1
+	${StdUtils.TrimStrLeft} $0
+	DetailPrint "TrimStrLeft: '$0'"
+	StrCpy $0 $1
+	${StdUtils.TrimStrRight} $0
+	DetailPrint "TrimStrRight: '$0'"
+	
+	StrCpy $1 "Some Text"
+	DetailPrint "String: '$1'"
+	StrCpy $0 $1
+	${StdUtils.TrimStr} $0
+	DetailPrint "TrimStr: '$0'"
+	StrCpy $0 $1
+	${StdUtils.TrimStrLeft} $0
+	DetailPrint "TrimStrLeft: '$0'"
+	StrCpy $0 $1
+	${StdUtils.TrimStrRight} $0
+	DetailPrint "TrimStrRight: '$0'"
+
+	StrCpy $1 ""
+	DetailPrint "String: '$1'"
+	StrCpy $0 $1
+	${StdUtils.TrimStr} $0
+	DetailPrint "TrimStr: '$0'"
+	StrCpy $0 $1
+	${StdUtils.TrimStrLeft} $0
+	DetailPrint "TrimStrLeft: '$0'"
+	StrCpy $0 $1
+	${StdUtils.TrimStrRight} $0
+	DetailPrint "TrimStrRight: '$0'"
+	
+	StrCpy $1 "   "
+	DetailPrint "String: '$1'"
+	StrCpy $0 $1
+	${StdUtils.TrimStr} $0
+	DetailPrint "TrimStr: '$0'"
+	StrCpy $0 $1
+	${StdUtils.TrimStrLeft} $0
+	DetailPrint "TrimStrLeft: '$0'"
+	StrCpy $0 $1
+	${StdUtils.TrimStrRight} $0
+	DetailPrint "TrimStrRight: '$0'"
+
+	StrCpy $1 "$\tFoobar$\r$\n"
+	DetailPrint "String: '$1'"
+	StrCpy $0 $1
+	${StdUtils.TrimStr} $0
+	DetailPrint "TrimStr: '$0'"
+	StrCpy $0 $1
+	${StdUtils.TrimStrLeft} $0
+	DetailPrint "TrimStrLeft: '$0'"
+	StrCpy $0 $1
+	${StdUtils.TrimStrRight} $0
+	DetailPrint "TrimStrRight: '$0'"
+SectionEnd</pre>
+
+<p><br><b><tt>${StdUtils.RevStr} <i>user_var(input/output)</i></tt></b></p>
+<p>Reverses the character order of a specified string <i>in-place</i>. For example, it converts "reverse me" to "em esrever", or vice versa.</p>
+
+<pre>Section
+	StrCpy $0 "ABC"
+	DetailPrint "String: $0"
+	${StdUtils.RevStr} $0
+	DetailPrint "RevStr: $0"
+	
+	StrCpy $0 "ABCD"
+	DetailPrint "String: $0"
+	${StdUtils.RevStr} $0
+	DetailPrint "RevStr: $0"
+
+	StrCpy $0 "Just a very long text with no specific meaning at all!"
+	DetailPrint "String: $0"
+	${StdUtils.RevStr} $0
+	DetailPrint "RevStr: $0"
+SectionEnd</pre>
+
+<br>
+
+<!-- ---------------- -->
+
+<a name="df333b53"></a><h2>Shell File Operation</h2>
+
+<p><b><tt>${StdUtils.SHFileMove} <i>user_var(output)</i> <i>from</i> <i>to</i> <i>hwnd</i><br>${StdUtils.SHFileCopy} <i>user_var(output)</i> <i>from</i> <i>to</i> <i>hwnd</i></tt></b></p>
+<p>Copies or moves a file system object (e.g. a <i>file</i> or a complete <i>folder</i>) from path <tt>from</tt> to path <tt>to</tt>, by using the <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb762164%28v=vs.85%29.aspx">SHFileOperation()</a> function. The function requires a window handle <tt>hwnd</tt> and usually the NSIS variable <tt>$HWNDPARENT</tt> is used for this purpose.</p>
+
+<pre>Section
+	InitPluginsDir
+	SetOutPath "$PLUGINSDIR\TestDirA"
+	File "${NSISDIR}\Contrib\Graphics\Checks\*.*"
+	SetOutPath "$PLUGINSDIR\TestDirA\SubDir"
+	File "${NSISDIR}\Contrib\Graphics\Header\*.*"
+	CreateDirectory "$PLUGINSDIR\SubDirX"
+	CreateDirectory "$PLUGINSDIR\SubDirY"
+	
+	${StdUtils.SHFileCopy} $0 "$PLUGINSDIR\TestDirA" "$PLUGINSDIR\SubDirX\TestDirB" $HWNDPARENT
+	DetailPrint "SHFileCopy: $0"
+	${StdUtils.SHFileMove} $0 "$PLUGINSDIR\TestDirA" "$PLUGINSDIR\SubDirY\TestDirC" $HWNDPARENT
+	DetailPrint "SHFileMove: $0"
+	ExecShell "explore" "$PLUGINSDIR"
+SectionEnd
+
+Section
+	MessageBox MB_ICONINFORMATION "The next three operations are going to fail!$\nBut only one will be verbose..."
+
+	${StdUtils.SHFileCopy} $0 "$PLUGINSDIR\TestDirXYZ" "$PLUGINSDIR\SubDirX\TestDirZ" $HWNDPARENT
+	DetailPrint "SHFileCopy: $0"
+	
+	${StdUtils.SetVerbose} 1
+	${StdUtils.SHFileCopy} $0 "$PLUGINSDIR\TestDirXYZ" "$PLUGINSDIR\SubDirX\TestDirZ" $HWNDPARENT
+	DetailPrint "SHFileCopy: $0"
+	
+	${StdUtils.SetVerbose} 0
+	${StdUtils.SHFileCopy} $0 "$PLUGINSDIR\TestDirXYZ" "$PLUGINSDIR\SubDirX\TestDirZ" $HWNDPARENT
+	DetailPrint "SHFileCopy: $0"
+SectionEnd</pre>
+
+<br>
+
+<!-- ---------------- -->
+
+<a name="a3d3af46"></a><h2>ExecShellAsUser</h2>
+
+<p><b><tt>${StdUtils.ExecShellAsUser} <i>user_var(output)</i> <i>file</i> <i>verb</i> <i>args</i></tt></b></p>
+<p>The <tt>${StdUtils.ExecShellAsUser}</tt> function allows for launching a child process with normal user privileges (user level), directly from an elevated installer instance (admin level). This is in contrast to the built-in <tt>Exec</tt>, <tt>ExecWait</tt> and <tt>ExecShell</tt> instructions, which all cause the child process to be elevated too. Consequently, the <tt>${StdUtils.ExecShellAsUser}</tt> function provides a simple and more lightweight alternative to the UAC plug-in. The function expects three arguments: The path to the <tt>file</tt> to be executed, the <tt>verb</tt> that shall be used to execute the file (e.g. "open") and the argument string <tt>args</tt> to be passed to the new process. The last two arguments are optional and can be specified as <i>empty</i> strings (""). If the function succeeded, then it returns either "ok" or "fallback". And if the function failed, then it returns either "einval", "timeout" or "error".</p>
+<p>Please note that "einval" indicates that the function was called with invalid parameters and "timeout" indicates that the function encountered a deadlock. Furthermore, note that "ok" indicates that the process has been created using the <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb774138%28v=vs.85%29.aspx">IShellDispatch2</a> COM interface, which is the <i>default</i> behavior, because it allows the new process to <i>not</i> be elevated. Finally, note that "fallback" indicates that the normal <a href="http://msdn.microsoft.com/en-us/library/windows/desktop/bb762153%28v=vs.85%29.aspx">ShellExecute()</a> method has been used instead of the COM interface, which is the expected behavior on systems <i>without</i> UAC support (e.g. Windows XP or older).</p>
+
+<pre>!include 'StdUtils.nsh'
+ 
+; make sure the installer will get elevated rights on UAC-enabled system (Vista+)
+RequestExecutionLevel <font color="darkred">admin </font>
+ShowInstDetails show
+ 
+Section
+	DetailPrint 'ExecShell: "$SYSDIR\mspaint.exe"'
+	; this instance of MS Paint will be *elevated*, just like the installer!
+	ExecShell "open" "$SYSDIR\mspaint.exe"
+	MessageBox MB_TOPMOST "Close Paint and click 'OK' to continue..."
+SectionEnd
+ 
+Section
+	DetailPrint 'ExecShellAsUser: "$SYSDIR\mspaint.exe"'
+	Sleep 1000
+	; now launch a *non-elevated* instance of MS Paint by using ExecShellAsUser
+	${StdUtils.ExecShellAsUser} $0 "$SYSDIR\mspaint.exe" "open" ""
+	; expected result is "ok" on UAC-enabled systems or "fallback" otherwise
+	DetailPrint "Result: $0"
+SectionEnd</pre>
+
+<br>
+
+<!-- ---------------- -->
+
+<a name="0c74ed2a"></a><h2>ExecShellWait</h2>
+
+<p><b><tt>${StdUtils.ExecShellWaitEx} <i>user_var(output_1)</i> <i>user_var(output_2)</i> <i>file</i> <i>verb</i> <i>args</i><br>${StdUtils.WaitForProcEx} <i>user_var(output)</i> <i>handle</i></tt></b></p>
+<p>The <tt>${StdUtils.ExecShellWaitEx}</tt> function works like the built-in <tt>ExecShell</tt> command, except that you can wait for the process to terminate. The function expects three arguments: The path to the file to be executed, the <i>verb</i> that shall be used to execute the file (e.g. "open") and the arguments to be passed to the new process. The last two arguments are optional and can be specified as <i>empty</i> strings (""). Furthermore, the function returns two values: The <i>first</i> value is either "ok", "no_wait" or "error", while the <i>second</i> value provides additional info. "ok" indicates that the process was created successfully and can be waited for, "no_wait" indicates that we cannot wait for the process (because <tt>ShellExecuteEx</tt> did not create a new process, but passed the file/URL to a running instance) and "error" indicates that something went wrong.</p>
+<p>If the <i>first</i> return value is "ok", the <i>second</i> return value contains the handle of the new process. If the <i>first</i> return value is "error", the <i>second</i> return value contains the Win32 error code. And if the <i>first</i> return value is "no_wait", the <i>second</i> return value is zero. Only if "ok" <i>and</i> a process handle were returned, you can call <tt>${StdUtils.WaitForProcEx}</tt> in order to wait until the process has terminated. This means that you must <i>always</i> carefully check the <i>first</i> return value of <tt>${StdUtils.ExecShellWaitEx}</tt> before you pass the <i>second</i> return value to <tt>${StdUtils.WaitForProcEx}</tt>. The behavior of <tt>${StdUtils.WaitForProcEx}</tt> is undefined if you pass something that isn't a valid process handle! If successfull, <tt>${StdUtils.WaitForProcEx}</tt> returns the exit code of the process after it has terminated. The function returns "error" if something went wrong.</p>
+
+<pre>!include 'StdUtils.nsh'
+ 
+RequestExecutionLevel user
+ShowInstDetails show
+ 
+Section
+	DetailPrint 'ExecShellWait: "$SYSDIR\mspaint.exe"'
+	Sleep 1000
+	${StdUtils.ExecShellWaitEx} $0 $1 "$SYSDIR\mspaint.exe" "open" "" ;try to launch the process
+
+	DetailPrint "Result: $0 -> $1" ;returns "ok", "no_wait" or "error".
+	StrCmp $0 "error" ExecFailed ;check if process failed to create
+	StrCmp $0 "no_wait" WaitNotPossible ;check if process can be waited for - always check this!
+	StrCmp $0 "ok" WaitForProc ;make sure process was created successfully
+	Abort
+	
+	WaitForProc:
+	DetailPrint "Waiting for process. ZZZzzzZZZzzz..."
+	${StdUtils.WaitForProcEx} $2 $1
+	DetailPrint "Process just terminated (exit code: $2)"
+	Goto WaitDone
+	
+	ExecFailed:
+	DetailPrint "Failed to create process (error code: $1)"
+	Goto WaitDone
+
+	WaitNotPossible:
+	DetailPrint "Can not wait for process."
+	Goto WaitDone
+	
+	WaitDone:
+SectionEnd</pre>
+
+<br>
+
+<!-- ---------------- -->
+
+<a name="f24cc3f9"></a><h2>GetParameter / GetAllParameters</h2>
+
+<p><b><tt>${StdUtils.GetParameter} <i>user_var(output)</i> <i>name</i> <i>default</i><br>${StdUtils.GetAllParameters} <i>user_var(output)</i> <i>truncate</i></tt></b></p>
+<p>With <tt>${StdUtils.GetParameter}</tt> you can check for the presence of a specific command-line parameter. If the parameter was specified with a (non-empty) value, then the parameter's value is return. If the parameter was specified without a value, then an empty string is return. If the parameter has not been specified, then the default value is returned.</p>
+
+<p>Parameters can be passed to the installer like this:</p>
+<ul>
+	<li><tt>Installer.exe /Foobar</tt>
+	<li><tt>Installer.exe /Foobar=SomeValue</tt>
+	<li><tt>Installer.exe "/Foobar=Some Value With Whitespaces"</tt>
+</ul>
+
+<p>Additionally you can use <tt>${StdUtils.GetAllParameters}</tt> to get the complete command-line string, but without the executable name. This is useful to forward all command-line parameters to an encapsulated installer, for example. The truncate parameters controls the behavior of this function, if the command-line is too long to fit into an NSIS string. With the parameter set to 1, the command-line will be truncated to a length of <tt>NSIS_MAX_STRLEN</tt> (usually 1024 or 8192) characters, if necessary. With the parameter set to 0, the command-line will not be truncated. Instead the value "too_long" is returned, if the command-line doesn't fit into an NSIS string.</p>
+
+<pre>!include 'StdUtils.nsh'
+ 
+RequestExecutionLevel user
+ShowInstDetails show
+ 
+Section
+	${StdUtils.GetParameter} $R0 "Foobar" "&lt;N/A&gt;"
+ 
+	StrCmp "$R0" "&lt;N/A&gt;" 0 +3
+	DetailPrint "Parameter /Foobar is *not* specified!"
+	Goto Finished
+ 
+	StrCmp "$R0" "" 0 +3 ;'Installer.exe [...] /Foobar'
+	DetailPrint "Parameter /Foobar specified without a value." 
+	Goto Finished
+ 
+	;'Installer.exe /Foobar=Foo' or 'Installer.exe "/Foobar=Foo Bar"'
+	${StdUtils.TrimStr} $R0
+	DetailPrint "Value of parameter /Foobar is: '$R0'"
+ 
+	Finished:
+	${StdUtils.GetAllParameters} $R0 0
+	DetailPrint "Complete command-line: '$R0'"
+	${StdUtils.GetAllParameters} $R0 1
+	DetailPrint "Truncated command-line: '$R0'"
+SectionEnd</pre>
+
+<br>
+
+<!-- ---------------- -->
+
+<a name="d452a779"></a><h2>InvokeShellVerb</h2>
+
+<p><b><tt>${StdUtils.InvokeShellVerb} <i>user_var(output)</i> <i>path</i> <i>file</i> <i>verb_id</i></tt></b></p>
+<p>The <tt>${StdUtils.InvokeShellVerb}</tt> function can be used to invoke a so-called "Shell Verb" on an arbitary item. The most common use for this is pinning (or unpinning) an item to (from) the Taskbar or Startmenu on Windows 7. Despite the fact the Microsoft claimes that there is no API for this, the API <i>does</i> exist and is commonly used (e.g. Firefox' insatller makes use of it too). The function expects three arguments: The directory where the item (e.g. executable file) is located, the name of the item (e.g. executable file) and the <i>resource id</i> of the verbt o be invoked. We need the resource id of the verb, because the verb itself is <i>language-specific</i>, but we certainly do <i>no</i> want to adjust the installer for each system langauge. Resource id's are langauge-independant and you can use the pre-defined constants <tt>${StdUtils.Const.ISV_PinToTaskbar}</tt>, <tt>${StdUtils.Const.ISV_UnpinFromTaskbar}</tt>, <tt>${StdUtils.Const.ISV_PinToStartmenu}</tt> or <tt>${StdUtils.Const.ISV_UnpinFromStartmenu}</tt> for convenience. Note that while this function works on Windows 7 (and later) only, it still is perfectly safe to call on older versions of Windows. If the function succeeded, then it returns "ok"; if the function is called with invalid parameters, then it returns "einval"; if the requested verb was not found for the specified item, then "not_found" will be returned (even if the specified item iteself <i>was</i> found!); if this function is used on Windows versions prior to Windows 7 (e.g. Vista or XP), then it will return "unsupported"; and if the function failed for another reason (e.g. file not found or invalid <i>verb_id</i>), then it will return "error".</p>
+<p>Hint: If you are getting the "not_found" error for a verb that is supposed to exists, then it's probably because the desired action isn't currently available for the item (e.g. it could be that you are trying to pin an item that already is pinned).</p>
+
+<pre>!include 'StdUtils.nsh'
+
+RequestExecutionLevel user ;no elevation needed for this test
+ShowInstDetails show
+
+Section
+	IfFileExists "$SYSDIR\mspaint.exe" +3
+	MessageBox MB_ICONSTOP 'File does not exist:$\n"$SYSDIR\mspaint.exe"$\n$\nExample cannot run!'
+	Quit
+SectionEnd
+
+Section
+	DetailPrint "Going to pin MSPaint..."
+	${StdUtils.InvokeShellVerb} $0 "$SYSDIR" "mspaint.exe" ${StdUtils.Const.ISV_PinToTaskbar}
+	DetailPrint "Result: $0"
+
+	StrCmp "$0" "ok" 0 +3
+	MessageBox MB_TOPMOST "Paint should have been pinned to Taskbar now!"
+	Goto +2
+	MessageBox MB_TOPMOST "Failed to pin, see log for details!"
+SectionEnd
+
+Section
+	DetailPrint "Going to un-pin MSPaint..."
+	${StdUtils.InvokeShellVerb} $0 "$SYSDIR" "mspaint.exe" ${StdUtils.Const.ISV_UnpinFromTaskbar}
+	DetailPrint "Result: $0"
+	
+	StrCmp "$0" "ok" 0 +3
+	MessageBox MB_TOPMOST "Paint should have been un-pinned from Taskbar now!"
+	Goto +2
+	MessageBox MB_TOPMOST "Failed to un-pin, see log for details!"
+SectionEnd</pre>
+
+<br>
+
+<!-- ---------------- -->
+
+<a name="f57ec206"></a><h2>GetRealOSVersion / GetRealOSName / VerifyOSVersion</h2>
+
+<p><b><tt>${StdUtils.GetRealOSVersion} <i>user_var(out_major)</i> <i>user_var(out_minor)</i> <i>user_var(out_spack)</i></tt></b></p>
+<p>The <tt>${StdUtils.GetRealOSVersion}</tt> function returns the <i>real</i> <a href="#b26a3e82">Windows NT version</a> installed on the computer. Note that starting with Windows 8.1 (Windows NT 6.3), Microsoft has <u>broken</u> the <tt>GetVersion()</tt> and <tt>GetVersionEx()</tt> functions! This has the consequence that Windows 8.1 (and all future versions?) will now identify itself as Windows 8.0! Various workarounds exist, such as adding certain GUID's to the application Manifest, which is only a <i>temporary</i> solution, or trying to read the Windows version from the Registry, which is unreliable. At the same time, the <tt>${StdUtils.GetRealOSVersion}</tt> function reveals the <i>actual</i> Windows version on Windows 8.1 (and later), regardless of the application Manifest. Furthermore, it will continue to work correctly in <i>future</i> Windows versions - provided that Microsoft doesn't break more Win32 API functions. Finally, this function still returns the <i>correct</i> Windows version, when the installer runs in "comaptibility mode". The function will return the <i>major</i> and <i>minor</i> Windows NT version (e.g. "6.3" on Windows 8.1) plus the Service Pack <i>spack</i>. It returns "error", if something went wrong.</p>
+<p>Note: This function uses an iterative approach: It first calls <tt>GetVersionEx()</tt> to get the "fake" Windows version. Then it tries to <i>increase</i> that value, step by step, using the <tt>VerifyVersionInfo()</tt> function - until the "real" version has been revealed.</p>
+
+<pre>!include 'StdUtils.nsh'
+
+RequestExecutionLevel user
+ShowInstDetails show
+
+Section
+	${StdUtils.GetRealOSVersion} $1 $2 $3
+	DetailPrint "Real Windows NT Version: $1,$2 (Service Pack: $3)"
+SectionEnd</pre>
+
+<p><br><b><tt>${StdUtils.GetRealOSBuildNo} <i>user_var(out)</i></tt></b></p>
+<p>The <tt>${StdUtils.GetRealOSBuildNo}</tt> function returns the <i>real</i> <a href="#b26a3e82">Windows NT build number</a> installed on the computer. The function will return the Windows NT build number (e.g. "7600" on Windows 7 RTM). It returns "error", if something went wrong.</p>
+<p>Note: This function uses the same algorithm as <tt>${StdUtils.GetRealOSVersion}</tt> to determine the <i>real</i> Windows build number, so it will give the expected result on Windows 8.1 and later.</p>
+
+<pre>!include 'StdUtils.nsh'
+
+RequestExecutionLevel user
+ShowInstDetails show
+
+Section
+	${StdUtils.GetRealOSBuildNo} $1
+	DetailPrint "Real Windows NT Build No.: $1"
+SectionEnd</pre>
+
+<p><br><b><tt>${StdUtils.GetRealOSName} <i>user_var(out)</i></tt></b></p>
+<p><tt>${StdUtils.GetRealOSName}</tt> is a convenience function that returns the installed Windows version as a <a href="#b26a3e82">friendly name</a> string. Currently the return value can be "winnt" (4.0), "win2k" (5.0), "winxp" (5.1), "xpx64" (5.2), "vista" (6.0), "win70" (6.1), "win80" (6.2) or "win81" (6.3). If an <i>unknown</i> Windows version is encountered, e.g. some future version that is not yet supported, the function will return "unknown". And it will return "error", if something went wrong.</p>
+<p>Note: This function uses the same algorithm as <tt>${StdUtils.GetRealOSVersion}</tt> to determine the <i>real</i> Windows version that will be converted to a friendly name, so it will give the expected result on Windows 8.1 and later.</p>
+
+<pre>!include 'StdUtils.nsh'
+
+RequestExecutionLevel user
+ShowInstDetails show
+
+Section
+	${StdUtils.GetRealOSName} $1
+	DetailPrint "Real Windows NT Friendly Name: $1"
+SectionEnd</pre>
+
+<p><br><b><tt>${StdUtils.VerifyOSVersion} <i>user_var(out)</i> <i>expected_major</i> <i>expected_minor</i> <i>expected_spack</i></tt></b></p>
+<p><tt>${StdUtils.VerifyOSVersion}</tt> is a convenience function to compare the installed Windows version against some expected one. The expected <a href="#b26a3e82">Windows NT version</a> (e.g. "6.2" for Windows 8.0) is specified by the <tt>expected_major</tt>, <tt>expected_minor</tt> and <tt>expected_spack</tt> parameters. The function returns "ok" when the installed Windows version matches the expected one <i>exactly</i>; it returns "older" when the installed version is <i>older</i> than expected; it returns "newer" when the installed version is <i>newer</i> than expected; and it retruns "error" if something went wrong.</p>
+<p>Note: This function uses the same algorithm as <tt>${StdUtils.GetRealOSVersion}</tt> to determine the <i>real</i> Windows version that will be compared to the expected version, so it will give the expected result on Windows 8.1 and later.</p>
+
+<pre>!include 'StdUtils.nsh'
+
+RequestExecutionLevel user
+ShowInstDetails show
+
+Section
+	${StdUtils.VerifyOSVersion} $1 5 1 0
+	DetailPrint "Check for Windows XP (RTM): $1"
+
+	${StdUtils.VerifyOSVersion} $1 5 1 3
+	DetailPrint "Check for Windows XP (SP3): $1"
+
+	${StdUtils.VerifyOSVersion} $1 6 1 0
+	DetailPrint "Check for Windows 7 (RTM): $1"
+
+	${StdUtils.VerifyOSVersion} $1 6 1 1
+	DetailPrint "Check for Windows 7 (SP1): $1"
+
+	${StdUtils.VerifyOSVersion} $1 6 2 0
+	DetailPrint "Check for Windows 8.0: $1"
+
+	${StdUtils.VerifyOSVersion} $1 6 3 0
+	DetailPrint "Check for Windows 8.1: $1"
+SectionEnd</pre>
+
+<p><br><b><tt>${StdUtils.VerifyOSBuildNo} <i>user_var(out)</i> <i>expected_build</i></tt></b></p>
+<p><tt>${StdUtils.VerifyOSBuildNo}</tt> is a convenience function to compare the installed Windows version against some expected version. The expected <a href="#b26a3e82">Windows NT build number</a> is specified by <tt>expected_build</tt> (e.g. "7600" on Windows 7 RTM). The function will retrun "ok" when the installed Windows build matches the expected one <i>exactly</i>; it returns "older" when the installed build is <i>older</i> than the expected one; it returns "newer" when the installed version is <i>newer</i> than the expected one; and it retruns "error" if something went wrong.</p>
+<p>Note: This function uses the same algorithm as <tt>${StdUtils.GetRealOSVersion}</tt> to determine the <i>real</i> Windows build number that will be compared to the expected build number, so it will give the expected result on Windows 8.1 and later.</p>
+
+<pre>!include 'StdUtils.nsh'
+
+RequestExecutionLevel user
+ShowInstDetails show
+
+Section
+	${StdUtils.VerifyOSBuildNo} $1 2600
+	DetailPrint "Check for Build #2600, Windows XP: $1"
+
+	${StdUtils.VerifyOSBuildNo} $1 7600
+	DetailPrint "Check for Build #7600, Windows 7 (RTM): $1"
+
+	${StdUtils.VerifyOSBuildNo} $1 7601
+	DetailPrint "Check for Build #7601, Windows 7 (SP1): $1"
+
+	${StdUtils.VerifyOSBuildNo} $1 9600
+	DetailPrint "Check for Build #9600, Windows 8.1: $1"
+SectionEnd</pre>
+
+<p><br><a name="b26a3e82">List of Windows NT versions:</a>
+
+<table border>
+	<tr><td><b>Marketing Name</b></td><td><b>NT Version</b></td><td><b>Friendly Name</b></td><td><b>Build No.</b></td></tr>
+	<tr><td>Windows NT 4.0</td><td><tt>4.0</tt></td><td><tt>"winnt"</tt></td><td><tt>1381</tt></td></tr>
+	<tr><td>Windows 2000</td><td><tt>5.0</tt></td><td><tt>"win2k"</tt></td><td><tt>2195</tt></td></tr>
+	<tr><td>Windows XP</td><td><tt>5.1</tt></td><td><tt>"winxp"</tt></td><td><tt>2600</tt></td></tr>
+	<tr><td>Windows XP - x64 Edition</td><td><tt>5.2</tt></td><td><tt>"xpx64"</tt></td><td><tt>3790</tt></td></tr>
+	<tr><td>Windows Vista</td><td><tt>6.0</tt></td><td><tt>"vista"</tt></td><td><tt>6000</tt> - <tt>6002</tt></td></tr>
+	<tr><td>Windows 7</td><td><tt>6.1</tt></td><td><tt>"win70"</tt></td><td><tt>7600</tt> - <tt>7601</tt></td></tr>
+	<tr><td>Windows 8</td><td><tt>6.2</tt></td><td><tt>"win80"</tt></td><td><tt>9200</tt></td></tr>
+	<tr><td>Windows 8.1</td><td><tt>6.3</tt></td><td><tt>"win81"</tt></td><td><tt>9600</tt></td></tr>
+</table>
+
+<br>
+
+<!-- ---------------- -->
+
+<a name="14863bf9"></a><h2>Debugging Functions</h2>
+
+<p><b><tt>${StdUtils.GetLibVersion} <i>user_var(out_ver)</i> <i>user_var(out_tst)</i></tt></b></p>
+<p>The <tt>${StdUtils.GetLibVersion}</tt> function returns the version of the StdUtils library that is being used. The version string (in the "w.x.y.z" format) is returned in <tt>out_ver</tt>; the build time-stamp is returned in <tt>out_tst</tt>.</p>
+<br style="margin: -0.5em">
+<p><b><tt>${StdUtils.SetVerbose} <i>on</i></tt></b></p>
+<p>The <tt>${StdUtils.SetVerbose}</tt> function enables or disables verbose error messages. Set <tt>on</tt> to '1' to <i>enable</i> verbose outputs or set it to '0' to <i>disable</i> verbose outputs. Verbose outputs are <i>disabled</i> by default. Do <b>not</b> enabled them for <i>release</i> versions of your installer!</p>
+
+<br>
+
+<!-- ---------------- -->
+
+<a name="b92197af"></a><h2>Acknowledgment</h2>
+
+<p>The <b>StdUtils</b> plug-in for NSIS was created by LoRd_MuldeR &lt;mulder2@gmx.de&gt;.</p>
+<p>This plug-in has partly been inspired by the <b>ShellExecAsUser</b> plug-in, created by <i>installer32</i>. This plug-in has partly been inspired by the <b>InvokeShellVerb</b> plug-in, created by <i>Robert Strong</i>.</p>
+<p>Special thanks to <i>Afrow UK</i> for providing his excellent plug-ins (his code helped me to understand how to write NSIS plug-ins).</p>
+
+<br>
+
+<!-- ---------------- -->
+
+<a name="db579654"></a><h2>License</h2>
+
+<pre>StdUtils plug-in for NSIS
+Copyright (C) 2004-2014 LoRd_MuldeR &lt;mulder2@gmx.de&gt;
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+This library is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public
+License along with this library; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA.</pre>
+
+<p>The author of the StdUtils plug-in Library for NSIS adds the following clarification to the GNU Lesser General Public License version 2.1: Installer programs (executables) created with NSIS (Nullsoft Scriptable Install System) that make use of the StdUtils plug-in Library (strictly through the NSIS plug-in interface) and that contain/distribute verbatim copies of the StdUtils plug-in Library are considered a "work that uses the Library"; they do <b>not</b> represent a derivative of the Library.</p>
+<p>Please see <a href="http://www.gnu.org/licenses/lgpl-2.1.html">http://www.gnu.org/licenses/lgpl-2.1.html</a> for details!</p>
+
+<br>
+
+<!-- ---------------- -->
+
+<a name="01efe0f2"></a><h2>Download and Sources</h2>
+
+<p>The source codes for the StdUtils plug-in are available from the code repository at:</p>
+
+<ul>
+	<li><a href="https://github.com/lordmulder/stdutils.git">https://github.com/lordmulder/stdutils.git</a> (<a href="https://github.com/lordmulder/stdutils">Browse</a>) (<a href="https://github.com/lordmulder/stdutils/commits/master">History</a>)
+	<li><a href="https://git.gitorious.org/stdutils-plug-in-for-nsis/stdutils-plug-in-for-nsis.git">https://git.gitorious.org/stdutils-plug-in-for-nsis/stdutils-plug-in-for-nsis.git</a> (<a href="https://gitorious.org/stdutils-plug-in-for-nsis/stdutils-plug-in-for-nsis/source/master:">Browse</a>) (<a href="https://gitorious.org/stdutils-plug-in-for-nsis/stdutils-plug-in-for-nsis/commits/">History</a>)
+	<li><a href="https://bitbucket.org/lord_mulder/stdutils.git">https://bitbucket.org/lord_mulder/stdutils.git</a> (<a href="https://bitbucket.org/lord_mulder/stdutils/src">Browse</a>) (<a href="https://bitbucket.org/lord_mulder/stdutils/commits">History</a>)
+</ul>
+
+<p>You can download pre-compiled binaries (i.e. ready-to-use DLL files) of the plug-in here:<br><a href="https://github.com/lordmulder/stdutils/releases/latest">https://github.com/lordmulder/stdutils/releases/latest</a></p>
+
+<br>
+<hr>
+
+<table width="100%">
+	<tr>
+		<td align="left"><a href="http://muldersoft.com/">http://muldersoft.com/</a> | <a href="http://sourceforge.net/projects/muldersoft/">http://sourceforge.net/projects/muldersoft/</a> | <a href="http://nsis.sourceforge.net/Category:Plugins">http://nsis.sourceforge.net/Category:Plugins</a></td>
+		<td align="right"><a href="http://www.youtube.com/watch?v=uKUYSl8c-90">Earth Heals Herself</a></td>
+	</tr>
+</table>
+
+</body>
+</html>
