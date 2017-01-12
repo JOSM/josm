@@ -312,7 +312,7 @@ public class BBox {
      * @since 11269
      */
     public boolean isInWorld() {
-        return isValid() && xmin >= -180.0 && xmax <= 180.0 && ymin >= -90.0 && ymax <= 90.0;
+        return xmin >= -180.0 && xmax <= 180.0 && ymin >= -90.0 && ymax <= 90.0 && isValid();
     }
 
     @Override

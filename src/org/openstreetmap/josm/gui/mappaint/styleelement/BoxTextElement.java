@@ -281,11 +281,11 @@ public class BoxTextElement extends StyleElement {
         if (obj == null || getClass() != obj.getClass()) return false;
         if (!super.equals(obj)) return false;
         BoxTextElement that = (BoxTextElement) obj;
-        return Objects.equals(text, that.text) &&
-                Objects.equals(boxProvider, that.boxProvider) &&
-                Objects.equals(box, that.box) &&
-                hAlign == that.hAlign &&
-                vAlign == that.vAlign;
+        return hAlign == that.hAlign &&
+               vAlign == that.vAlign &&
+               Objects.equals(text, that.text) &&
+               Objects.equals(boxProvider, that.boxProvider) &&
+               Objects.equals(box, that.box);
     }
 
     @Override

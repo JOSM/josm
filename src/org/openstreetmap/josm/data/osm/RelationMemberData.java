@@ -106,7 +106,7 @@ public class RelationMemberData implements PrimitiveId, Serializable {
         if (obj == null || getClass() != obj.getClass()) return false;
         RelationMemberData that = (RelationMemberData) obj;
         return memberId == that.memberId &&
-                Objects.equals(role, that.role) &&
-                memberType == that.memberType;
+               memberType == that.memberType &&
+               Objects.equals(role, that.role);
     }
 }

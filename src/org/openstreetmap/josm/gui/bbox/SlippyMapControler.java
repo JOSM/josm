@@ -129,8 +129,8 @@ public class SlippyMapControler extends MouseAdapter {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-        if ((e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK &&
-                !(Main.isPlatformOsx() && e.getModifiersEx() == MAC_MOUSE_BUTTON3_MASK) && iStartSelectionPoint != null) {
+        if (iStartSelectionPoint != null && (e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) == MouseEvent.BUTTON1_DOWN_MASK
+                && !(Main.isPlatformOsx() && e.getModifiersEx() == MAC_MOUSE_BUTTON3_MASK)) {
             iEndSelectionPoint = e.getPoint();
             iSlippyMapChooser.setSelection(iStartSelectionPoint, iEndSelectionPoint);
             isSelecting = true;

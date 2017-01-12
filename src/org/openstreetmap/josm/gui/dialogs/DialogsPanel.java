@@ -245,7 +245,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
             int dp = 0;        // available space from the large dialogs
             for (int i = 0; i < n; ++i) {
                 final ToggleDialog dlg = allDialogs.get(i);
-                if (dlg.isDialogInDefaultView() && dlg != triggeredBy) {
+                if (dlg != triggeredBy && dlg.isDialogInDefaultView()) {
                     final int ha = dlg.getSize().height;                              // current
                     final int h0 = ha * r / sumA;                                     // proportional shrinking
                     final int he = dlg.getPreferredHeight() * s2 / (sumP + hpTrig);  // fair share
@@ -260,7 +260,7 @@ public class DialogsPanel extends JPanel implements Destroyable {
             /** adjust, without changing the sum */
             for (int i = 0; i < n; ++i) {
                 final ToggleDialog dlg = allDialogs.get(i);
-                if (dlg.isDialogInDefaultView() && dlg != triggeredBy) {
+                if (dlg != triggeredBy && dlg.isDialogInDefaultView()) {
                     final int ha = dlg.getHeight();
                     final int h0 = ha * r / sumA;
                     final int he = dlg.getPreferredHeight() * s2 / (sumP + hpTrig);

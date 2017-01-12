@@ -196,7 +196,7 @@ public final class NameFinder {
             try {
                 if ("searchresults".equals(qName)) {
                     // do nothing
-                } else if ("named".equals(qName) && (depth == 2)) {
+                } else if (depth == 2 && "named".equals(qName)) {
                     currentResult = new SearchResult();
                     currentResult.name = atts.getValue("name");
                     currentResult.info = atts.getValue("info");
@@ -207,9 +207,9 @@ public final class NameFinder {
                     currentResult.lon = Double.parseDouble(atts.getValue("lon"));
                     currentResult.zoom = Integer.parseInt(atts.getValue("zoom"));
                     data.add(currentResult);
-                } else if ("description".equals(qName) && (depth == 3)) {
+                } else if (depth == 3 && "description".equals(qName)) {
                     description = new StringBuilder();
-                } else if ("named".equals(qName) && (depth == 4)) {
+                } else if (depth == 4 && "named".equals(qName)) {
                     // this is a "named" place in the nearest places list.
                     String info = atts.getValue("info");
                     if ("city".equals(info) || "town".equals(info) || "village".equals(info)) {
@@ -251,7 +251,7 @@ public final class NameFinder {
          */
         @Override
         public void endElement(String namespaceURI, String localName, String qName) throws SAXException {
-            if ("description".equals(qName) && description != null) {
+            if (description != null && "description".equals(qName)) {
                 currentResult.description = description.toString();
                 description = null;
             }

@@ -1206,7 +1206,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
                          *  page using index.php and the direct-link method gives slightly different
                          *  content lengths, so we have to be fuzzy.. (this is UGLY, recode if u know better)
                          */
-                        if (conn.getContentLength() != -1 && osize > -1 && Math.abs(conn.getContentLength() - osize) > 200) {
+                        if (osize > -1 && conn.getContentLength() != -1 && Math.abs(conn.getContentLength() - osize) > 200) {
                             Main.info("{0} is a mediawiki redirect", u);
                             conn.disconnect();
                         } else {

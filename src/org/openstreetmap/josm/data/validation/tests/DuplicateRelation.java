@@ -64,8 +64,8 @@ public class DuplicateRelation extends Test {
             if (obj == null || getClass() != obj.getClass()) return false;
             RelMember relMember = (RelMember) obj;
             return relId == relMember.relId &&
-                    Objects.equals(role, relMember.role) &&
                     type == relMember.type &&
+                    Objects.equals(role, relMember.role) &&
                     Objects.equals(tags, relMember.tags) &&
                     Objects.equals(coor, relMember.coor);
         }

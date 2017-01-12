@@ -295,7 +295,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
             return;
         if (changesetId < 0)
             throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' >= 0 expected, got {1}", "changesetId", changesetId));
-        if (isNew() && changesetId > 0)
+        if (changesetId > 0 && isNew())
             throw new IllegalStateException(tr("Cannot assign a changesetId > 0 to a new primitive. Value of changesetId is {0}", changesetId));
 
         this.changesetId = changesetId;
@@ -379,7 +379,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
 
     @Override
     public void setVisible(boolean visible) {
-        if (isNew() && !visible)
+        if (!visible && isNew())
             throw new IllegalStateException(tr("A primitive with ID = 0 cannot be invisible."));
         updateFlags(FLAG_VISIBLE, visible);
     }

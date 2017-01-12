@@ -251,7 +251,7 @@ public class SplitWayAction extends JosmAction {
             list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             list.addListSelectionListener(e -> {
                 final Way selected = list.getSelectedValue();
-                if (Main.isDisplayingMapView() && selected != null && selected.getNodesCount() > 1) {
+                if (selected != null && Main.isDisplayingMapView() && selected.getNodesCount() > 1) {
                     final Collection<WaySegment> segments = new ArrayList<>(selected.getNodesCount() - 1);
                     final Iterator<Node> it = selected.getNodes().iterator();
                     Node previousNode = it.next();

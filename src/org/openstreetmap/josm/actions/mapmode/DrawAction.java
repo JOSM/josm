@@ -228,7 +228,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         // update selection to reflect which way being modified
         OsmDataLayer editLayer = getLayerManager().getEditLayer();
-        if (getCurrentBaseNode() != null && editLayer != null && !editLayer.data.selectionEmpty()) {
+        if (editLayer != null && getCurrentBaseNode() != null && !editLayer.data.selectionEmpty()) {
             DataSet currentDataSet = editLayer.data;
             Way continueFrom = getWayForNode(getCurrentBaseNode());
             if (alt && continueFrom != null && (!getCurrentBaseNode().isSelected() || continueFrom.isSelected())) {
@@ -1123,7 +1123,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         }
 
         // This happens when nothing is selected, but we still want to highlight the "target node"
-        if (mouseOnExistingNode == null && getLayerManager().getEditDataSet().selectionEmpty() && mousePos != null) {
+        if (mouseOnExistingNode == null && mousePos != null && getLayerManager().getEditDataSet().selectionEmpty()) {
             mouseOnExistingNode = Main.map.mapView.getNearestNode(mousePos, OsmPrimitive::isSelectable);
         }
 
@@ -1160,7 +1160,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // sanity checks
         if (Main.map.mapView == null || mousePos == null
                 // don't draw line if we don't know where from or where to
-                || getCurrentBaseNode() == null || currentMouseEastNorth == null
+                || currentMouseEastNorth == null || getCurrentBaseNode() == null
                 // don't draw line if mouse is outside window
                 || !Main.map.mapView.getBounds().contains(mousePos))
             return;
@@ -1237,7 +1237,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         /*
          * Check whether a connection will be made
          */
-        if (getCurrentBaseNode() != null && !wayIsFinished) {
+        if (!wayIsFinished && getCurrentBaseNode() != null) {
             if (alt) {
                 rv.append(' ').append(tr("Start new way from last node."));
             } else {

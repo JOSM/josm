@@ -1169,15 +1169,14 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @return true if this primitive and other are equal with respect to their technical attributes
      */
     public boolean hasEqualTechnicalAttributes(OsmPrimitive other) {
-        if (other == null) return false;
-
-        return isDeleted() == other.isDeleted()
-                && isModified() == other.isModified()
-                && timestamp == other.timestamp
-                && version == other.version
-                && isVisible() == other.isVisible()
-                && Objects.equals(user, other.user)
-                && changesetId == other.changesetId;
+        return other != null
+            && timestamp == other.timestamp
+            && version == other.version
+            && changesetId == other.changesetId
+            && isDeleted() == other.isDeleted()
+            && isModified() == other.isModified()
+            && isVisible() == other.isVisible()
+            && Objects.equals(user, other.user);
     }
 
     /**

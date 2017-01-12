@@ -250,7 +250,7 @@ public class AddTagsDialog extends ExtendedDialog {
     @Override
     protected void buttonAction(int buttonIndex, ActionEvent evt) {
         // if layer all layers were closed, ignore all actions
-        if (Main.getLayerManager().getEditDataSet() != null && buttonIndex != 2) {
+        if (buttonIndex != 2 && Main.getLayerManager().getEditDataSet() != null) {
             TableModel tm = propertyTable.getModel();
             for (int i = 0; i < tm.getRowCount(); i++) {
                 if (buttonIndex == 1 || (Boolean) tm.getValueAt(i, 0)) {

@@ -198,10 +198,10 @@ public abstract class StyleElement implements StyleKeys {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         StyleElement that = (StyleElement) o;
-        return Float.compare(that.majorZIndex, majorZIndex) == 0 &&
-                Float.compare(that.zIndex, zIndex) == 0 &&
-                Float.compare(that.objectZIndex, objectZIndex) == 0 &&
-                isModifier == that.isModifier;
+        return isModifier == that.isModifier &&
+               Float.compare(that.majorZIndex, majorZIndex) == 0 &&
+               Float.compare(that.zIndex, zIndex) == 0 &&
+               Float.compare(that.objectZIndex, objectZIndex) == 0;
     }
 
     @Override

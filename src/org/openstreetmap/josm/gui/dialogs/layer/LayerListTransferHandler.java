@@ -95,7 +95,7 @@ public class LayerListTransferHandler extends TransferHandler {
 
             boolean isSameLayerManager = tableModel.getLayerManager() == layers.getManager();
 
-            if (support.getDropAction() == MOVE && isSameLayerManager) {
+            if (isSameLayerManager && support.getDropAction() == MOVE) {
                 for (Layer layer : layers.getLayers()) {
                     boolean wasBeforeInsert = layers.getManager().getLayers().indexOf(layer) <= dropLocation;
                     if (wasBeforeInsert) {

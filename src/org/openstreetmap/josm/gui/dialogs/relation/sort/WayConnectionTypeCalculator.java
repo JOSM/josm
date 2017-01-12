@@ -97,7 +97,7 @@ public class WayConnectionTypeCalculator {
                 }
             }
 
-            if (!RelationSortUtils.isOneway(m) && lastWct != null) {
+            if (lastWct != null && !RelationSortUtils.isOneway(m)) {
                 wct.direction = determineDirection(i-1, lastWct.direction, i);
                 wct.linkPrev = wct.direction != NONE;
             }
@@ -306,7 +306,7 @@ public class WayConnectionTypeCalculator {
                     else
                         return FORWARD;
                 }
-                if (n == RelationNodeMap.lastOnewayNode(m) && reversed) {
+                if (reversed && n == RelationNodeMap.lastOnewayNode(m)) {
                     if (RelationSortUtils.isBackward(m))
                         return FORWARD;
                     else

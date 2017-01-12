@@ -87,7 +87,7 @@ public class Text extends KeyedItem {
                 }
             } else if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
                 // selected osm primitives are untagged or filling default values feature is enabled
-                if (!"false".equals(use_last_as_default) && LAST_VALUES.containsKey(key) && !presetInitiallyMatches) {
+                if (!presetInitiallyMatches && !"false".equals(use_last_as_default) && LAST_VALUES.containsKey(key)) {
                     textField.setText(LAST_VALUES.get(key));
                 } else {
                     textField.setText(default_);

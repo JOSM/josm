@@ -158,7 +158,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
             if (!sc1.equals(sc2)) {
                 txtMappaint.append(tr("The 2 selected objects have different style caches."));
             }
-            if (sc1.equals(sc2) && sc1 != sc2) {
+            if (sc1 != sc2 && sc1.equals(sc2)) {
                 txtMappaint.append(tr("Warning: The 2 selected objects have equal, but not identical style caches."));
             }
         }

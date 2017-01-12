@@ -93,9 +93,9 @@ public class AutoCompletionManager implements DataSetListener {
                 return false;
             }
             final UserInputTag other = (UserInputTag) obj;
-            return Objects.equals(this.key, other.key)
-                && Objects.equals(this.value, other.value)
-                && this.defaultKey == other.defaultKey;
+            return this.defaultKey == other.defaultKey
+                && Objects.equals(this.key, other.key)
+                && Objects.equals(this.value, other.value);
         }
     }
 

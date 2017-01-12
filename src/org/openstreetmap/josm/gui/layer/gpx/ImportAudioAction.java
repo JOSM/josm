@@ -165,7 +165,7 @@ public class ImportAudioAction extends AbstractAction {
         }
 
         // (a) try explicit timestamped waypoints - unless suppressed
-        if (Main.pref.getBoolean("marker.audiofromexplicitwaypoints", true) && hasWaypoints) {
+        if (hasWaypoints && Main.pref.getBoolean("marker.audiofromexplicitwaypoints", true)) {
             for (WayPoint w : layer.data.waypoints) {
                 if (w.time > firstTime) {
                     waypoints.add(w);
@@ -176,7 +176,7 @@ public class ImportAudioAction extends AbstractAction {
         }
 
         // (b) try explicit waypoints without timestamps - unless suppressed
-        if (Main.pref.getBoolean("marker.audiofromuntimedwaypoints", true) && hasWaypoints) {
+        if (hasWaypoints && Main.pref.getBoolean("marker.audiofromuntimedwaypoints", true)) {
             for (WayPoint w : layer.data.waypoints) {
                 if (waypoints.contains(w)) {
                     continue;
@@ -196,7 +196,7 @@ public class ImportAudioAction extends AbstractAction {
         }
 
         // (c) use explicitly named track points, again unless suppressed
-        if ((Main.pref.getBoolean("marker.audiofromnamedtrackpoints", false)) && layer.data.tracks != null
+        if (layer.data.tracks != null && Main.pref.getBoolean("marker.audiofromnamedtrackpoints", false)
                 && !layer.data.tracks.isEmpty()) {
             for (GpxTrack track : layer.data.tracks) {
                 for (GpxTrackSegment seg : track.getSegments()) {
@@ -210,7 +210,7 @@ public class ImportAudioAction extends AbstractAction {
         }
 
         // (d) use timestamp of file as location on track
-        if ((Main.pref.getBoolean("marker.audiofromwavtimestamps", false)) && hasTracks) {
+        if (hasTracks && Main.pref.getBoolean("marker.audiofromwavtimestamps", false)) {
             double lastModified = wavFile.lastModified() / 1000.0; // lastModified is in
             // milliseconds
             double duration = AudioUtil.getCalibratedDuration(wavFile);

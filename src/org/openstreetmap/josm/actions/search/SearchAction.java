@@ -775,8 +775,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     regexSearch == that.regexSearch &&
                     mapCSSSearch == that.mapCSSSearch &&
                     allElements == that.allElements &&
-                    Objects.equals(text, that.text) &&
-                    mode == that.mode;
+                    mode == that.mode &&
+                    Objects.equals(text, that.text);
         }
 
         @Override

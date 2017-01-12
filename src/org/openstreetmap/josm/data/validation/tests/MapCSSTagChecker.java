@@ -318,20 +318,20 @@ public class MapCSSTagChecker extends Test.TagTest {
                             CheckParameterUtil.ensureThat(!(ai.val instanceof String) || !(val != null && val.contains("=")),
                                     "Unexpected '='. Please only specify the key to remove!");
                             check.fixCommands.add(FixCommand.fixRemove(ai.val));
-                        } else if ("fixChangeKey".equals(ai.key) && val != null) {
+                        } else if (val != null && "fixChangeKey".equals(ai.key)) {
                             CheckParameterUtil.ensureThat(val.contains("=>"), "Separate old from new key by '=>'!");
                             final String[] x = val.split("=>", 2);
                             check.fixCommands.add(FixCommand.fixChangeKey(Tag.removeWhiteSpaces(x[0]), Tag.removeWhiteSpaces(x[1])));
-                        } else if ("fixDeleteObject".equals(ai.key) && val != null) {
+                        } else if (val != null && "fixDeleteObject".equals(ai.key)) {
                             CheckParameterUtil.ensureThat("this".equals(val), "fixDeleteObject must be followed by 'this'");
                             check.deletion = true;
-                        } else if ("suggestAlternative".equals(ai.key) && val != null) {
+                        } else if (val != null && "suggestAlternative".equals(ai.key)) {
                             check.alternatives.add(val);
-                        } else if ("assertMatch".equals(ai.key) && val != null) {
+                        } else if (val != null && "assertMatch".equals(ai.key)) {
                             check.assertions.put(val, Boolean.TRUE);
-                        } else if ("assertNoMatch".equals(ai.key) && val != null) {
+                        } else if (val != null && "assertNoMatch".equals(ai.key)) {
                             check.assertions.put(val, Boolean.FALSE);
-                        } else if ("group".equals(ai.key) && val != null) {
+                        } else if (val != null && "group".equals(ai.key)) {
                             check.group = val;
                         } else {
                             throw new IllegalDataException("Cannot add instruction " + ai.key + ": " + ai.val + '!');

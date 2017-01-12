@@ -35,7 +35,7 @@ public class AudioPlayPauseAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         URL url = AudioPlayer.url();
         try {
-            if (AudioPlayer.paused() && url != null) {
+            if (url != null && AudioPlayer.paused()) {
                 AudioPlayer.play(url);
             } else if (AudioPlayer.playing()) {
                 if (!Utils.equalsEpsilon(AudioPlayer.speed(), 1.0))

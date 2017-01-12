@@ -159,13 +159,13 @@ public class LineElement extends StyleElement {
         if (!super.equals(obj))
             return false;
         final LineElement other = (LineElement) obj;
-        return Objects.equals(line, other.line) &&
-            Objects.equals(color, other.color) &&
-            Objects.equals(dashesLine, other.dashesLine) &&
-            Objects.equals(dashesBackground, other.dashesBackground) &&
-            offset == other.offset &&
-            realWidth == other.realWidth &&
-            wayDirectionArrows == other.wayDirectionArrows;
+        return offset == other.offset &&
+               realWidth == other.realWidth &&
+               wayDirectionArrows == other.wayDirectionArrows &&
+               Objects.equals(line, other.line) &&
+               Objects.equals(color, other.color) &&
+               Objects.equals(dashesLine, other.dashesLine) &&
+               Objects.equals(dashesBackground, other.dashesBackground);
     }
 
     @Override

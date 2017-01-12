@@ -91,7 +91,7 @@ public class Check extends KeyedItem {
     @Override
     public void addCommands(List<Tag> changedTags) {
         // if the user hasn't changed anything, don't create a command.
-        if (check.getState() == initialState && def == null) return;
+        if (def == null && check.getState() == initialState) return;
 
         // otherwise change things according to the selected value.
         changedTags.add(new Tag(key,

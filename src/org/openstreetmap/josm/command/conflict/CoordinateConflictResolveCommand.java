@@ -85,7 +85,6 @@ public class CoordinateConflictResolveCommand extends ConflictResolveCommand {
         if (obj == null || getClass() != obj.getClass()) return false;
         if (!super.equals(obj)) return false;
         CoordinateConflictResolveCommand that = (CoordinateConflictResolveCommand) obj;
-        return Objects.equals(conflict, that.conflict) &&
-                decision == that.decision;
+        return decision == that.decision && Objects.equals(conflict, that.conflict);
     }
 }

@@ -117,7 +117,7 @@ public class FilterTableModel extends AbstractTableModel {
             }
         }
 
-        if (Main.isDisplayingMapView() && changed) {
+        if (changed && Main.isDisplayingMapView()) {
             Main.map.mapView.repaint();
             Main.map.filterDialog.updateDialogHeader();
         }
