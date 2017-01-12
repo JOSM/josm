@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="15"
+   height="16"
+   viewBox="0 0 15 16"
+   id="svg4264"
+   version="1.1"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="rail_railway_switch.svg">
+  <defs
+     id="defs4266">
+    <pattern
+       y="0"
+       x="0"
+       height="6"
+       width="6"
+       patternUnits="userSpaceOnUse"
+       id="EMFhbasepattern" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="22.627417"
+     inkscape:cx="-11.517092"
+     inkscape:cy="4.0015607"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="true"
+     units="px"
+     inkscape:snap-bbox="true"
+     inkscape:bbox-paths="true"
+     inkscape:bbox-nodes="true"
+     inkscape:snap-bbox-edge-midpoints="false"
+     inkscape:snap-bbox-midpoints="false">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4137" />
+  </sodipodi:namedview>
+  <metadata
+     id="metadata4269">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+        <cc:license
+           rdf:resource="http://creativecommons.org/publicdomain/zero/1.0/" />
+      </cc:Work>
+      <cc:License
+         rdf:about="http://creativecommons.org/publicdomain/zero/1.0/">
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Reproduction" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#Distribution" />
+        <cc:permits
+           rdf:resource="http://creativecommons.org/ns#DerivativeWorks" />
+      </cc:License>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Camada 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-1036.3621)">
+    <path
+       sodipodi:nodetypes="ccccc"
+       style="fill:#c87137;fill-opacity:1"
+       inkscape:connector-curvature="0"
+       id="path3387-0-99-7-4-2-9-2-8-3-7-6-5"
+       d="m -1.0476837e-5,1039.3621 0,-2 15.000015476837,0 0,2 z"
+       class="st5" />
+    <path
+       sodipodi:nodetypes="ccccc"
+       style="fill:#c87137;fill-opacity:1"
+       inkscape:connector-curvature="0"
+       id="path3387-0-99-7-4-2-9-2-2-0-9-3-7-8"
+       d="m -4.7683722e-7,1043.3621 0,-2 14.00000147683722,0 0,2 z"
+       class="st5" />
+    <path
+       sodipodi:nodetypes="ccccc"
+       style="fill:#c87137;fill-opacity:1"
+       inkscape:connector-curvature="0"
+       id="path3387-0-99-7-4-2-9-2-1-0-8-5-3-6"
+       d="m -4.7683722e-7,1047.3621 0,-2 13.00000147683722,0 0,2 z"
+       class="st5" />
+    <path
+       sodipodi:nodetypes="ccccc"
+       style="fill:#c87137;fill-opacity:1"
+       inkscape:connector-curvature="0"
+       id="path3387-0-99-7-4-2-9-2-5-0-5-8-3-4"
+       d="m -4.7683722e-7,1051.3621 0,-2 12.00000147683722,0 0,2 z"
+       class="st5" />
+    <path
+       sodipodi:nodetypes="ccccc"
+       style="fill:#000000;fill-opacity:1"
+       inkscape:connector-curvature="0"
+       id="path3387-0-99-9-7-8-7-2-8-3-9"
+       d="m 3.0000019,1052.3621 -1.000011,0 0,-16 1.000011,0 z"
+       class="st5" />
+    <path
+       style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;baseline-shift:baseline;text-anchor:start;white-space:normal;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
+       d="m 5.9868759,1036.3621 c -3.703746,7.0026 -3.986328,15.2305 -3.986328,15.2305 l 1,0.035 c 0,0 0.323914,-8.4499 4.117188,-15.2656 l -1.13086,0 z"
+       id="path4812-4"
+       inkscape:connector-curvature="0" />
+    <path
+       class="st5"
+       d="m 10.000001,1052.3621 -1.0000113,0 0,-16 1.0000113,0 z"
+       id="path4143"
+       inkscape:connector-curvature="0"
+       style="fill:#000000;fill-opacity:1"
+       sodipodi:nodetypes="ccccc" />
+    <path
+       inkscape:connector-curvature="0"
+       id="path4145"
+       d="m 12.986875,1036.3621 c -3.7037463,7.0026 -3.9863283,15.2305 -3.9863283,15.2305 l 1.0000003,0.035 c 0,0 0.323914,-8.4499 4.117188,-15.2656 l -1.13086,0 z"
+       style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;direction:ltr;block-progression:tb;writing-mode:lr-tb;baseline-shift:baseline;text-anchor:start;white-space:normal;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate" />
+  </g>
+</svg>
