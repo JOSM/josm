@@ -221,7 +221,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
     }
 
     @Override
-    public void actionPerformed(ActionEvent arg0) {
+    public void actionPerformed(ActionEvent ae) {
         final JPanel msg = new JPanel(new GridBagLayout());
 
         dateFilter = new DateFilterPanel(layer, "gpx.traces", false);

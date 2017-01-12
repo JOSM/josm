@@ -47,7 +47,7 @@ public class VerticallyScrollablePanel extends JPanel implements Scrollable {
     }
 
     @Override
-    public int getScrollableBlockIncrement(Rectangle arg0, int arg1, int arg2) {
+    public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
         return 20;
     }
 

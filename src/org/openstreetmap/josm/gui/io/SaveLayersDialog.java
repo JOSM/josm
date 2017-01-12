@@ -694,7 +694,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
     }
 
     @Override
-    public void tableChanged(TableModelEvent arg0) {
+    public void tableChanged(TableModelEvent e) {
         boolean dis = model.getLayersToSave().isEmpty() && model.getLayersToUpload().isEmpty();
         if (saveAndProceedActionButton != null) {
             saveAndProceedActionButton.setEnabled(!dis);
