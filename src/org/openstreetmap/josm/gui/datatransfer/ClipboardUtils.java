@@ -140,10 +140,10 @@ public final class ClipboardUtils {
         return GuiHelper.runInEDTAndWaitAndReturn(() -> {
             try {
                 getClipboard().setContents(transferable, new DoNothingClipboardOwner());
-                return true;
+                return Boolean.TRUE;
             } catch (IllegalStateException ex) {
                 Main.error(ex);
-                return false;
+                return Boolean.FALSE;
             }
         });
     }

@@ -196,7 +196,7 @@ public final class ConditionFactory {
                 try {
                     testFloat = Float.parseFloat(test);
                 } catch (NumberFormatException e) {
-                    return false;
+                    return Boolean.FALSE;
                 }
                 float prototypeFloat = Float.parseFloat(prototype);
 
