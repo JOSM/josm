@@ -149,8 +149,7 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
     public boolean isOpenInEditor(OsmDataLayer layer, Relation relation) {
         if (relation == null) return false;
         DialogContext context = new DialogContext(layer, relation);
-        return openDialogs.keySet().contains(context);
-
+        return openDialogs.containsKey(context);
     }
 
     /**
