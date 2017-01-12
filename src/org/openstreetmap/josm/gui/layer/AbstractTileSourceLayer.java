@@ -1583,7 +1583,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             }
             List<Tile> newlyMissedTiles = new LinkedList<>();
             for (Tile missed : missedTiles) {
-                if ("no-tile".equals(missed.getValue("tile-info")) && zoomOffset > 0) {
+                if (zoomOffset > 0 && "no-tile".equals(missed.getValue("tile-info"))) {
                     // Don't try to paint from higher zoom levels when tile is overzoomed
                     newlyMissedTiles.add(missed);
                     continue;

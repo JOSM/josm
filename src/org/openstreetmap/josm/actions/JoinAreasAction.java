@@ -413,7 +413,7 @@ public class JoinAreasAction extends JosmAction {
                      candidatePrevNode = candidateWay.way.getNode(candidateWay.way.getNodesCount() - 2);
                 } else
                     continue;
-                if (candidateWay.equals(lastWay) && candidateComingToHead)
+                if (candidateComingToHead && candidateWay.equals(lastWay))
                     continue;
 
                 double candidateAngle = getAngle(headNode, candidatePrevNode, prevNode);

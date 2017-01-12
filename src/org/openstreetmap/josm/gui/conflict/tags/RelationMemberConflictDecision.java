@@ -82,10 +82,10 @@ public class RelationMemberConflictDecision {
         if (obj == null || getClass() != obj.getClass()) return false;
         RelationMemberConflictDecision that = (RelationMemberConflictDecision) obj;
         return pos == that.pos &&
-                Objects.equals(relation, that.relation) &&
-                Objects.equals(originalPrimitive, that.originalPrimitive) &&
-                Objects.equals(role, that.role) &&
-                decision == that.decision;
+               decision == that.decision &&
+               Objects.equals(relation, that.relation) &&
+               Objects.equals(originalPrimitive, that.originalPrimitive) &&
+               Objects.equals(role, that.role);
     }
 
     @Override

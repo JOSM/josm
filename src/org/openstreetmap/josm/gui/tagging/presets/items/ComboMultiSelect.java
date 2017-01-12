@@ -491,7 +491,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
             entries.add(e);
         }
 
-        if (Main.pref.getBoolean("taggingpreset.sortvalues", true) && values_sort) {
+        if (values_sort && Main.pref.getBoolean("taggingpreset.sortvalues", true)) {
             Collections.sort(entries);
         }
 

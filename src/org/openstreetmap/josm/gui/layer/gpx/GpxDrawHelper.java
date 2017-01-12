@@ -174,7 +174,7 @@ public class GpxDrawHelper implements SoMChangeListener {
     public void systemOfMeasurementChanged(String oldSoM, String newSoM) {
         SystemOfMeasurement som = SystemOfMeasurement.getSystemOfMeasurement();
         velocityScale.addTitle(tr("Velocity, {0}", som.speedName));
-        if (Main.isDisplayingMapView() && oldSoM != null && newSoM != null) {
+        if (oldSoM != null && newSoM != null && Main.isDisplayingMapView()) {
             Main.map.mapView.repaint();
         }
     }
@@ -1166,10 +1166,12 @@ public class GpxDrawHelper implements SoMChangeListener {
      * Check cache validity set necessary flags
      */
     private void checkCache() {
-        if ((computeCacheMaxLineLengthUsed != maxLineLength) || (!neutralColor.equals(computeCacheColorUsed))
-                || (computeCacheColored != colored) || (computeCacheColorTracksTune != colorTracksTune)
+        if ((computeCacheMaxLineLengthUsed != maxLineLength)
+                || (computeCacheColored != colored)
+                || (computeCacheColorTracksTune != colorTracksTune)
                 || (computeCacheColorDynamic != colorModeDynamic)
                 || (computeCacheHeatMapDrawColorTableIdx != heatMapDrawColorTableIdx)
+                || (!neutralColor.equals(computeCacheColorUsed))
       ) {
             computeCacheMaxLineLengthUsed = maxLineLength;
             computeCacheInSync = false;

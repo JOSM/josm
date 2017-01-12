@@ -296,7 +296,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
         boolean showThisDirectionArrow = ds.isSelected(w) || showDirectionArrow;
         /* head only takes over control if the option is true,
            the direction should be shown at all and not only because it's selected */
-        boolean showOnlyHeadArrowOnly = showThisDirectionArrow && !ds.isSelected(w) && showHeadArrowOnly;
+        boolean showOnlyHeadArrowOnly = showThisDirectionArrow && showHeadArrowOnly && !ds.isSelected(w);
         Color wayColor;
 
         if (isInactiveMode || w.isDisabled()) {

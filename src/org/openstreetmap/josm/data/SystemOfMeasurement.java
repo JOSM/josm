@@ -224,7 +224,7 @@ public class SystemOfMeasurement {
      */
     public String getDistText(final double dist, final NumberFormat format, final double threshold) {
         double a = dist / aValue;
-        if (!Main.pref.getBoolean("system_of_measurement.use_only_lower_unit", false) && a > bValue / aValue)
+        if (a > bValue / aValue && !Main.pref.getBoolean("system_of_measurement.use_only_lower_unit", false))
             return formatText(dist / bValue, bName, format);
         else if (a < threshold)
             return "< " + formatText(threshold, aName, format);

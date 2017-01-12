@@ -84,7 +84,7 @@ public class Combo extends ComboMultiSelect {
         } else if (usage.unused()) {
             // all items were unset (and so is default)
             originalValue = lhm.get("");
-            if ("force".equals(use_last_as_default) && LAST_VALUES.containsKey(key) && !presetInitiallyMatches) {
+            if (!presetInitiallyMatches && "force".equals(use_last_as_default) && LAST_VALUES.containsKey(key)) {
                 combobox.setSelectedItem(lhm.get(LAST_VALUES.get(key)));
             } else {
                 combobox.setSelectedItem(originalValue);

@@ -95,11 +95,11 @@ public class RepeatImageElement extends StyleElement {
         if (obj == null || getClass() != obj.getClass()) return false;
         if (!super.equals(obj)) return false;
         RepeatImageElement that = (RepeatImageElement) obj;
-        return Float.compare(that.offset, offset) == 0 &&
-                Float.compare(that.spacing, spacing) == 0 &&
-                Float.compare(that.phase, phase) == 0 &&
-                Objects.equals(pattern, that.pattern) &&
-                align == that.align;
+        return align == that.align &&
+               Float.compare(that.offset, offset) == 0 &&
+               Float.compare(that.spacing, spacing) == 0 &&
+               Float.compare(that.phase, phase) == 0 &&
+               Objects.equals(pattern, that.pattern);
     }
 
     @Override

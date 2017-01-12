@@ -443,7 +443,7 @@ public class Preferences {
         addPossibleResourceDir(locations, System.getProperty("josm.resources"));
         if (Main.isPlatformWindows()) {
             String appdata = System.getenv("APPDATA");
-            if (System.getenv("ALLUSERSPROFILE") != null && appdata != null
+            if (appdata != null && System.getenv("ALLUSERSPROFILE") != null
                     && appdata.lastIndexOf(File.separator) != -1) {
                 appdata = appdata.substring(appdata.lastIndexOf(File.separator));
                 locations.add(new File(new File(System.getenv("ALLUSERSPROFILE"),
@@ -612,7 +612,7 @@ public class Preferences {
         File backupFile = new File(prefFile + "_backup");
 
         // Backup old preferences if there are old preferences
-        if (prefFile.exists() && prefFile.length() > 0 && initSuccessful) {
+        if (initSuccessful && prefFile.exists() && prefFile.length() > 0) {
             Utils.copyFile(prefFile, backupFile);
         }
 

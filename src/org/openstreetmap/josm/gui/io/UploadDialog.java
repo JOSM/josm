@@ -642,8 +642,8 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     private static String getLastChangesetTagFromHistory(String historyKey, List<String> def) {
         Collection<String> history = Main.pref.getCollection(historyKey, def);
         int age = (int) (System.currentTimeMillis() / 1000 - Main.pref.getInteger(BasicUploadSettingsPanel.HISTORY_LAST_USED_KEY, 0));
-        if (age < Main.pref.getLong(BasicUploadSettingsPanel.HISTORY_MAX_AGE_KEY, TimeUnit.HOURS.toMillis(4))
-                && history != null && !history.isEmpty()) {
+        if (history != null && age < Main.pref.getLong(BasicUploadSettingsPanel.HISTORY_MAX_AGE_KEY, TimeUnit.HOURS.toMillis(4))
+                && !history.isEmpty()) {
             return history.iterator().next();
         } else {
             return null;

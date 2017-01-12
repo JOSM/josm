@@ -273,7 +273,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
                 }
             }
             doAddContent(o);
-            if (isLeaf() && content.size() > MAX_OBJECTS_PER_NODE && level < QuadTiling.NR_LEVELS) {
+            if (level < QuadTiling.NR_LEVELS && isLeaf() && content.size() > MAX_OBJECTS_PER_NODE) {
                 doSplit();
             }
         }

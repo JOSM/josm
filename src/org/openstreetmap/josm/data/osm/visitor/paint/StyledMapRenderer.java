@@ -1088,7 +1088,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     }
                 } else if (m.isNode()) {
                     Node n = m.getNode();
-                    if ("via".equals(m.getRole()) && via == null) {
+                    if (via == null && "via".equals(m.getRole())) {
                         via = n;
                     }
                 }

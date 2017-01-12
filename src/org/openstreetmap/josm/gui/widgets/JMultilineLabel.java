@@ -65,15 +65,13 @@ public class JMultilineLabel extends JEditorPane {
     }
 
     /**
-     * Tries to determine a suitable height for the given contents and return
-     * that dimension.
+     * Tries to determine a suitable height for the given contents and return that dimension.
      */
     @Override
     public Dimension getPreferredSize() {
-        // Without this check it will result in an infinite loop calling
-        // getPreferredSize. Remember the old bounds and only recalculate if
-        // the size actually changed.
-        if (this.getBounds().equals(oldbounds) && oldPreferred != null) {
+        // Without this check it will result in an infinite loop calling getPreferredSize.
+        // Remember the old bounds and only recalculate if the size actually changed.
+        if (oldPreferred != null && this.getBounds().equals(oldbounds)) {
             return oldPreferred;
         }
         oldbounds = this.getBounds();

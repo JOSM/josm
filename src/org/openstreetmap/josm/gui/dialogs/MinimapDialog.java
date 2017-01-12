@@ -54,7 +54,7 @@ public class MinimapDialog extends ToggleDialog implements NavigatableComponent.
 
     @Override
     public void zoomChanged() {
-        if (Main.isDisplayingMapView() && !skipEvents) {
+        if (!skipEvents && Main.isDisplayingMapView()) {
             MapView mv = Main.map.mapView;
             final Bounds currentBounds = new Bounds(
                     mv.getLatLon(0, mv.getHeight()),

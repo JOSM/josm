@@ -585,7 +585,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             selectionManager.unregister(mv);
 
             // Select Draw Tool if no selection has been made
-            if (getLayerManager().getEditDataSet().selectionEmpty() && !cancelDrawMode) {
+            if (!cancelDrawMode && getLayerManager().getEditDataSet().selectionEmpty()) {
                 Main.map.selectDrawTool(true);
                 updateStatusLine();
                 return;
@@ -638,8 +638,8 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
 
     @Override
     public void doKeyPressed(KeyEvent e) {
-        if (!Main.isDisplayingMapView() ||
-                !repeatedKeySwitchLassoOption || !getShortcut().isEvent(e)) return;
+        if (!repeatedKeySwitchLassoOption || !Main.isDisplayingMapView() || !getShortcut().isEvent(e))
+            return;
         if (Main.isDebugEnabled()) {
             Main.debug(getClass().getName()+" consuming event "+e);
         }
