@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
-import java.io.IOException;
 import java.util.Map;
 
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
@@ -24,6 +23,7 @@ public class WMSCachedTileLoader extends TMSCachedTileLoader {
      * overrides the THREAD_LIMIT in superclass, as we want to have separate limit and pool for WMS
      */
     public static final IntegerProperty THREAD_LIMIT = new IntegerProperty("imagery.wms.loader.maxjobs", 3);
+
     /**
      * Creates a TileLoader with separate WMS downloader.
      *
@@ -32,10 +32,9 @@ public class WMSCachedTileLoader extends TMSCachedTileLoader {
      * @param connectTimeout to tile source
      * @param readTimeout from tile source
      * @param headers to be sent with requests
-     * @throws IOException when there is a problem creating cache repository
      */
     public WMSCachedTileLoader(TileLoaderListener listener, ICacheAccess<String, BufferedImageCacheEntry> cache,
-            int connectTimeout, int readTimeout, Map<String, String> headers) throws IOException {
+            int connectTimeout, int readTimeout, Map<String, String> headers) {
 
         super(listener, cache, connectTimeout, readTimeout, headers);
         setDownloadExecutor(TMSCachedTileLoader.getNewThreadPoolExecutor("WMS-downloader-%d", THREAD_LIMIT.get()));

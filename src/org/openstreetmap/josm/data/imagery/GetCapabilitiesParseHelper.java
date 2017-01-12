@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.imagery;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -74,10 +73,9 @@ public final class GetCapabilitiesParseHelper {
     /**
      * @param in InputStream with pointing to GetCapabilities XML stream
      * @return safe XMLStreamReader, that is not validating external entities, nor loads DTD's
-     * @throws IOException if any I/O error occurs
      * @throws XMLStreamException if any XML stream error occurs
      */
-    public static XMLStreamReader getReader(InputStream in) throws IOException, XMLStreamException {
+    public static XMLStreamReader getReader(InputStream in) throws XMLStreamException {
         XMLInputFactory factory = XMLInputFactory.newFactory();
         // do not try to load external entities, nor validate the XML
         factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
