@@ -1,0 +1,3 @@
+This folder was used by JOSM until july 2016 when the icons were copied to the josm repository (see https://josm.openstreetmap.de/ticket/13084) and the png icons later replaced by svg icons (partly from https://trac.openstreetmap.org/browser/subversion/applications/share/map-icons/svg) (see https://josm.openstreetmap.de/ticket/13217).
+
+Now JOSM core doesn't use icons from osm svn anymore (maybe JOSM plugins though).
