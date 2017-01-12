@@ -62,9 +62,8 @@ public class WayConnectedToArea extends Test {
     }
 
     private void testForError(Way w, Node wayNode, OsmPrimitive p) {
-        if (wayNode.isOutsideDownloadArea()) {
-            return;
-        } else if (wayNode.getReferrers().stream().anyMatch(p1 -> p1.hasTag("route", "ferry"))) {
+        if (wayNode.isOutsideDownloadArea()
+                || wayNode.getReferrers().stream().anyMatch(p1 -> p1.hasTag("route", "ferry"))) {
             return;
         } else if (isArea(p)) {
             addPossibleError(w, wayNode, p, p);
