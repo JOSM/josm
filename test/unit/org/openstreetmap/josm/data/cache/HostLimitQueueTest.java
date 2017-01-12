@@ -91,7 +91,7 @@ public class HostLimitQueueTest {
      * @throws Exception in case of error
      */
     @Test
-    public void test_single_thread_per_host() throws Exception {
+    public void testSingleThreadPerHost() throws Exception {
         ThreadPoolExecutor tpe = getNewThreadPoolExecutor("test-%d", 3, 1);
         ICacheAccess<String, CacheEntry> cache = JCSCacheManager.getCache("test", 3, 0, "");
         AtomicInteger counter = new AtomicInteger(0);
@@ -116,7 +116,7 @@ public class HostLimitQueueTest {
      * @throws Exception in case of error
      */
     @Test
-    public void test_multiple_thread_per_host() throws Exception {
+    public void testMultipleThreadPerHost() throws Exception {
         ThreadPoolExecutor tpe = getNewThreadPoolExecutor("test-%d", 3, 2);
         ICacheAccess<String, CacheEntry> cache = JCSCacheManager.getCache("test", 3, 0, "");
         AtomicInteger counter = new AtomicInteger(0);
@@ -141,7 +141,7 @@ public class HostLimitQueueTest {
      * @throws Exception in case of error
      */
     @Test
-    public void test_two_hosts() throws Exception {
+    public void testTwoHosts() throws Exception {
         ThreadPoolExecutor tpe = getNewThreadPoolExecutor("test-%d", 3, 1);
         ICacheAccess<String, CacheEntry> cache = JCSCacheManager.getCache("test", 3, 0, "");
         AtomicInteger counter = new AtomicInteger(0);
