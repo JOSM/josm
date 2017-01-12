@@ -35,10 +35,10 @@ public class ShowThumbnailAction extends AbstractAction implements LayerAction {
 
     /**
      * This is called after the menu entry was selected.
-     * @param arg0 action event
+     * @param e action event
      */
     @Override
-    public void actionPerformed(ActionEvent arg0) {
+    public void actionPerformed(ActionEvent e) {
         layer.setUseThumbs(!layer.isUseThumbs());
         Main.map.mapView.repaint();
     }

@@ -539,7 +539,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     }
 
     @Override
-    public void actionPerformed(ActionEvent arg0) {
+    public void actionPerformed(ActionEvent ae) {
         // Construct the list of loaded GPX tracks
         Collection<Layer> layerLst = Main.getLayerManager().getLayers();
         GpxDataWrapper defaultItem = null;
