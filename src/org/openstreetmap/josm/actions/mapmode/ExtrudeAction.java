@@ -269,9 +269,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                 rv = new StringBuilder(tr("Move a segment along its normal, then release the mouse button."));
             else if (mode == Mode.translate_node)
                 rv = new StringBuilder(tr("Move the node along one of the segments, then release the mouse button."));
-            else if (mode == Mode.extrude)
-                rv = new StringBuilder(tr("Draw a rectangle of the desired size, then release the mouse button."));
-            else if (mode == Mode.create_new)
+            else if (mode == Mode.extrude || mode == Mode.create_new)
                 rv = new StringBuilder(tr("Draw a rectangle of the desired size, then release the mouse button."));
             else {
                 Main.warn("Extrude: unknown mode " + mode);
