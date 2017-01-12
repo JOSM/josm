@@ -87,7 +87,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
     }
 
     private void show(long id, HistoryBrowserDialog dialog) {
-        if (dialogs.values().contains(dialog)) {
+        if (dialogs.containsValue(dialog)) {
             show(id);
         } else {
             placeOnScreen(dialog);
@@ -97,7 +97,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
     }
 
     private void show(long id) {
-        if (dialogs.keySet().contains(id)) {
+        if (dialogs.containsKey(id)) {
             dialogs.get(id).toFront();
         }
     }

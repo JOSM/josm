@@ -1583,7 +1583,7 @@ public class Preferences {
         Setting<?> setting = settingsMap.get(key);
         if (setting instanceof MapListSetting) {
             List<Map<String, String>> l = new ArrayList<>(((MapListSetting) setting).getValue());
-            if (l.stream().noneMatch(x -> x.values().contains(url))) {
+            if (l.stream().noneMatch(x -> x.containsValue(url))) {
                 RulePrefHelper helper = ValidatorTagCheckerRulesPreference.RulePrefHelper.INSTANCE;
                 Optional<ExtendedSourceEntry> val = helper.getDefault().stream().filter(x -> url.equals(x.url)).findFirst();
                 if (val.isPresent()) {

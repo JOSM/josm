@@ -54,7 +54,7 @@ public class MergeSourceBuildingVisitor extends AbstractVisitor {
     }
 
     protected boolean isAlreadyRemembered(OsmPrimitive primitive) {
-        return mappedPrimitives.keySet().contains(primitive);
+        return mappedPrimitives.containsKey(primitive);
     }
 
     /**
