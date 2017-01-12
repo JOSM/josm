@@ -38,11 +38,10 @@ public class NoteExporter extends FileExporter {
     public void exportData(File file, Layer layer) throws IOException {
         Main.info("exporting notes to file: " + file);
         if (layer instanceof NoteLayer) {
-            OutputStream os = new FileOutputStream(file);
-            NoteWriter writer = new NoteWriter(os);
-            writer.write(((NoteLayer) layer).getNoteData());
-            os.flush();
-            writer.close();
+            try (OutputStream os = new FileOutputStream(file);
+                 NoteWriter writer = new NoteWriter(os)) {
+                writer.write(((NoteLayer) layer).getNoteData());
+            }
         }
     }
 }
