@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+   ***************************************************************************
+   Bundesanstalt fuer Strassenwesen
+   RWB-Symbol Nr.: 9
+   Bezeichnung:
+   Hafen, Faehrhafen, Faehre
+   Ausdehnung in cm:
+         X_min     X_max     Y_min     Y_max
+         0.00000  15.00000   0.00000  15.00000
+-->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="16"
+   height="14"
+   version="1.0"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="43.svg"
+   inkscape:output_extension="org.inkscape.output.svg.inkscape"
+   sodipodi:modified="true">
+  <metadata
+     id="metadata17">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs15" />
+  <sodipodi:namedview
+     inkscape:window-height="988"
+     inkscape:window-width="1680"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="1.0"
+     bordercolor="#666666"
+     pagecolor="#ffffff"
+     id="base"
+     inkscape:zoom="32"
+     inkscape:cx="3.6005368"
+     inkscape:cy="11.203125"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:current-layer="svg2"
+     width="140px"
+     height="80px"
+     showgrid="true"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-maximized="1">
+    <inkscape:grid
+       type="xygrid"
+       id="grid4150"
+       originx="-62"
+       originy="-33" />
+  </sodipodi:namedview>
+  <rect
+     style="opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:1;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0.60000002;stroke-opacity:1"
+     id="rect4167"
+     width="16"
+     height="14"
+     x="0"
+     y="0" />
+  <path
+     d="m 15.999588,11.18072 -0.2388,0.135912 -0.255856,0.145616 c -0.545829,0.310657 -1.159883,0.310657 -1.70571,0 l -0.511715,-0.291232 c -0.545827,-0.310656 -1.159882,-0.310656 -1.705709,0 l -0.511725,0.291232 c -0.545828,0.310657 -1.159883,0.310657 -1.705711,0 L 8.852649,11.171016 C 8.582411,11.017211 8.292551,10.938024 7.999794,10.938024 c -0.292757,0 -0.582617,0.07918 -0.852855,0.232992 l -0.511713,0.291232 c -0.545828,0.310657 -1.159883,0.310657 -1.70571,0 L 4.41779,11.171016 c -0.545828,-0.310656 -1.159882,-0.310656 -1.705709,0 l -0.511715,0.291232 c -0.545827,0.310657 -1.159882,0.310657 -1.705709,0 L 0.2388,11.316632 0,11.18072 l 0,1.304759 0.2388,0.135913 0.255857,0.145616 c 0.545827,0.310656 1.159882,0.310656 1.705709,0 l 0.511715,-0.291233 c 0.545827,-0.310656 1.159881,-0.310656 1.705709,0 l 0.511726,0.291233 c 0.545827,0.310656 1.159882,0.310656 1.70571,0 l 0.511713,-0.291233 c 0.270238,-0.153805 0.560098,-0.232992 0.852855,-0.232992 0.292757,0 0.582617,0.07918 0.852855,0.232992 l 0.511713,0.291233 c 0.545828,0.310656 1.159883,0.310656 1.705711,0 l 0.511725,-0.291233 c 0.545827,-0.310656 1.159882,-0.310656 1.705709,0 l 0.511715,0.291233 c 0.545827,0.310656 1.159881,0.310656 1.70571,0 l 0.255856,-0.145616 0.2388,-0.135913 0,-1.304759 z"
+     id="path6-6"
+     style="fill:#0000ff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+     inkscape:connector-curvature="0" />
+  <!--
+   ***************************************************************************
+-->
+  <!--
+      INHALT
+-->
+  <path
+     d="m 15.999588,8.217062 -0.2388,0.135913 -0.255856,0.145616 c -0.545829,0.310656 -1.159883,0.310656 -1.70571,0 L 13.287507,8.207358 c -0.545827,-0.310656 -1.159882,-0.310656 -1.705709,0 l -0.511725,0.291233 c -0.545828,0.310656 -1.159883,0.310656 -1.705711,0 L 8.852649,8.207358 C 8.582411,8.053553 8.292551,7.974366 7.999794,7.974366 c -0.292757,0 -0.582617,0.07918 -0.852855,0.232992 L 6.635226,8.498591 c -0.545828,0.310656 -1.159883,0.310656 -1.70571,0 L 4.41779,8.207358 c -0.545828,-0.310656 -1.159882,-0.310656 -1.705709,0 L 2.200366,8.498591 c -0.545827,0.310656 -1.159882,0.310656 -1.705709,0 L 0.2388,8.352975 0,8.217062 0,9.521821 0.2388,9.657734 0.494657,9.80335 c 0.545827,0.310656 1.159882,0.310656 1.705709,0 L 2.712081,9.512117 c 0.545827,-0.310656 1.159881,-0.310656 1.705709,0 L 4.929516,9.80335 c 0.545827,0.310656 1.159882,0.310656 1.70571,0 L 7.146939,9.512117 C 7.417177,9.358312 7.707037,9.279125 7.999794,9.279125 c 0.292757,0 0.582617,0.07918 0.852855,0.232992 L 9.364362,9.80335 c 0.545828,0.310656 1.159883,0.310656 1.705711,0 l 0.511725,-0.291233 c 0.545827,-0.310656 1.159882,-0.310656 1.705709,0 l 0.511715,0.291233 c 0.545827,0.310656 1.159881,0.310656 1.70571,0 l 0.255856,-0.145616 0.2388,-0.135913 0,-1.304759 z"
+     id="path6"
+     style="fill:#0000ff;fill-opacity:1;fill-rule:evenodd;stroke:none"
+     inkscape:connector-curvature="0" />
+  <!--
+       OBERE WASSERWELLE
+       UNTERE WASSERWELLE
+-->
+  <!--
+      SCHIFF
+-->
+  <path
+     d="m 14.744728,5.3193174 0.01563,-1.3278205 -1.092296,0.016849 0.329492,-0.9938315 -2.391848,-0.02903 L 12.016875,2.0014552 8.7596676,2 9.0255522,1.0110491 5.9831785,0.988952 5.5140336,2.2982562 3.9731868,2.3017462 3.4029179,2.9991217 1.062612,3.000939 C 2.2619776,5.2429628 3,6 4.023266,7.0995886 c 0.545827,0.227428 1.159882,0.227428 1.70571,0 0.7530013,-0.1950567 1.1153851,-0.2986114 1.8880055,-0.321279 0.292757,0 0.9654295,0.05797 1.2356675,0.170571 l 0.511713,0.213208 c 0.545828,0.227428 1.159883,0.227428 1.705711,0 l 0.511725,-0.213208 c 0.545827,-0.227428 1.159882,-0.227428 1.705709,0 l 0.511715,0.213208 c 0.714666,-0.5110313 0.819894,-1.3594745 0.945506,-1.8427712 z"
+     id="path10"
+     style="fill:#000000;fill-rule:evenodd;stroke:none"
+     sodipodi:nodetypes="ccccccccccccccccccccccc"
+     inkscape:connector-curvature="0" />
+  <!--
+      HECK
+      AUFBAU
+      SCHORNSTEIN UNTERTEIL
+      VORDECK
+      BUG
+      GEWELLTE WASSERLINIE
+      SCHORNSTEIN
+-->
+</svg>
