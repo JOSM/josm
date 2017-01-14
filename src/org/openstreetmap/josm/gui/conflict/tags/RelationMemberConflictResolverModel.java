@@ -244,7 +244,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
                         indices.add(decision.getPos());
                     }
                     if (roles.size() != 1 || !isCollectionOfConsecutiveNumbers(indices)) {
-                        // roles to not patch or not consecutive members in relation, leave undecided
+                        // roles do not match or not consecutive members in relation, leave undecided
                         continue;
                     }
                     decisions.get(0).decide(RelationMemberConflictDecisionType.KEEP);
