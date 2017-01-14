@@ -25,6 +25,7 @@ import java.util.Arrays;
 
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.utils.BoundedInputStream;
+import org.apache.commons.compress.utils.ByteUtils;
 import org.apache.commons.compress.utils.IOUtils;
 
 /**
@@ -74,6 +75,13 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
     private long expectedChecksum = -1;
     private final int blockSize;
     private final PureJavaCrc32C checksum = new PureJavaCrc32C();
+
+    private final ByteUtils.ByteSupplier supplier = new ByteUtils.ByteSupplier() {
+        @Override
+        public int getAsByte() throws IOException {
+            return readOneByte();
+        }
+    };
 
     /**
      * Constructs a new input stream that decompresses
@@ -246,11 +254,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
         if (read != 4) {
             throw new IOException("premature end of stream");
         }
-        long crc = 0;
-        for (int i = 0; i < 4; i++) {
-            crc |= (b[i] & 0xFFL) << (8 * i);
-        }
-        return crc;
+        return ByteUtils.fromLittleEndian(b);
     }
 
     static long unmask(long x) {
@@ -262,16 +266,7 @@ public class FramedSnappyCompressorInputStream extends CompressorInputStream {
     }
 
     private int readSize() throws IOException {
-        int b = 0;
-        int sz = 0;
-        for (int i = 0; i < 3; i++) {
-            b = readOneByte();
-            if (b == -1) {
-                throw new IOException("premature end of stream");
-            }
-            sz |= (b << (i * 8));
-        }
-        return sz;
+        return (int) ByteUtils.fromLittleEndian(supplier, 3);
     }
 
     private void skipBlock() throws IOException {

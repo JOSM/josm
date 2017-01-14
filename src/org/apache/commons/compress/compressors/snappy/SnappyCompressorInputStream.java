@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.utils.ByteUtils;
 import org.apache.commons.compress.utils.IOUtils;
 
 /**
@@ -71,6 +72,13 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
     private final byte[] oneByte = new byte[1];
 
     private boolean endReached = false;
+
+    private final ByteUtils.ByteSupplier supplier = new ByteUtils.ByteSupplier() {
+        @Override
+        public int getAsByte() throws IOException {
+            return readOneByte();
+        }
+    };
 
     /**
      * Constructor using the default buffer size of 32k.
@@ -209,8 +217,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
                 length = (b >> 2) + 1;
                 uncompressedBytesRemaining -= length;
 
-                offset = readOneByte();
-                offset |= readOneByte() << 8;
+                offset = ByteUtils.fromLittleEndian(supplier, 2);
 
                 if (expandCopy(offset, length)) {
                     return;
@@ -229,10 +236,7 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
                 length = (b >> 2) + 1;
                 uncompressedBytesRemaining -= length;
 
-                offset = readOneByte();
-                offset |= readOneByte() << 8;
-                offset |= readOneByte() << 16;
-                offset |= ((long) readOneByte()) << 24;
+                offset = ByteUtils.fromLittleEndian(supplier, 4);
 
                 if (expandCopy(offset, length)) {
                     return;
@@ -275,19 +279,13 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
             length = readOneByte();
             break;
         case 61:
-            length = readOneByte();
-            length |= readOneByte() << 8;
+            length = (int) ByteUtils.fromLittleEndian(supplier, 2);
             break;
         case 62:
-            length = readOneByte();
-            length |= readOneByte() << 8;
-            length |= readOneByte() << 16;
+            length = (int) ByteUtils.fromLittleEndian(supplier, 3);
             break;
         case 63:
-            length = readOneByte();
-            length |= readOneByte() << 8;
-            length |= readOneByte() << 16;
-            length |= (((long) readOneByte()) << 24);
+            length = (int) ByteUtils.fromLittleEndian(supplier, 4);
             break;
         default:
             length = b >> 2;

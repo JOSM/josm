@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import org.apache.commons.compress.compressors.CompressorOutputStream;
 import org.apache.commons.compress.compressors.lz77support.LZ77Compressor;
 import org.apache.commons.compress.compressors.lz77support.Parameters;
+import org.apache.commons.compress.utils.ByteUtils;
 
 /**
  * CompressorOutputStream for the raw Snappy format.
@@ -53,6 +54,7 @@ import org.apache.commons.compress.compressors.lz77support.Parameters;
 public class SnappyCompressorOutputStream extends CompressorOutputStream {
     private final LZ77Compressor compressor;
     private final OutputStream os;
+    private final ByteUtils.ByteConsumer consumer;
 
     // used in one-arg write method
     private final byte[] oneByte = new byte[1];
@@ -96,6 +98,7 @@ public class SnappyCompressorOutputStream extends CompressorOutputStream {
     public SnappyCompressorOutputStream(final OutputStream os, final long uncompressedSize, Parameters params)
         throws IOException {
         this.os = os;
+        consumer = new ByteUtils.OutputStreamByteConsumer(os);
         compressor = new LZ77Compressor(params, new LZ77Compressor.Callback() {
                 public void accept(LZ77Compressor.Block block) throws IOException {
                     //System.err.println(block);
@@ -206,10 +209,7 @@ public class SnappyCompressorOutputStream extends CompressorOutputStream {
     }
 
     private void writeLittleEndian(final int numBytes, int num) throws IOException {
-        for (int i = 0; i < numBytes; i++) {
-            os.write(num & 0xff);
-            num >>= 8;
-        }
+        ByteUtils.toLittleEndian(consumer, num, numBytes);
     }
 
     // Back-references ("copies") have their offset/size information

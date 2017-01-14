@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.commons.compress.compressors.CompressorOutputStream;
+import org.apache.commons.compress.utils.ByteUtils;
 
 /**
  * CompressorOutputStream for the framing Snappy format.
@@ -47,6 +48,8 @@ public class FramedSnappyCompressorOutputStream extends CompressorOutputStream {
     private final byte[] buffer = new byte[MAX_COMPRESSED_BUFFER_SIZE];
     private int currentIndex = 0;
 
+    private final ByteUtils.ByteConsumer consumer;
+
     /**
      * Constructs a new output stream that compresses
      * snappy-framed-compressed data to the specified output stream.
@@ -55,6 +58,7 @@ public class FramedSnappyCompressorOutputStream extends CompressorOutputStream {
      */
     public FramedSnappyCompressorOutputStream(final OutputStream out) throws IOException {
         this.out = out;
+        consumer = new ByteUtils.OutputStreamByteConsumer(out);
         out.write(FramedSnappyCompressorInputStream.SZ_SIGNATURE);
     }
 
@@ -111,10 +115,7 @@ public class FramedSnappyCompressorOutputStream extends CompressorOutputStream {
     }
 
     private void writeLittleEndian(final int numBytes, long num) throws IOException {
-        for (int i = 0; i < numBytes; i++) {
-            out.write((int) (num & 0xff));
-            num >>= 8;
-        }
+        ByteUtils.toLittleEndian(consumer, num, numBytes);
     }
 
     private void writeCrc() throws IOException {

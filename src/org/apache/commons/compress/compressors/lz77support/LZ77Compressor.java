@@ -176,7 +176,7 @@ public class LZ77Compressor {
      * bytes to compress and may be invoked multiple times during the
      * execution of {@link #compress} or {@link #finish}.</p>
      */
-    public interface Callback /* extends Consumer<Block> */ {
+    public interface Callback {
         /**
          * Consumes a block.
          * @param b the block to consume
