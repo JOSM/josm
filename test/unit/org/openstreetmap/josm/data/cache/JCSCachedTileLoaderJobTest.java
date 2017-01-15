@@ -99,15 +99,18 @@ public class JCSCachedTileLoaderJobTest {
      * @throws IOException in case of I/O error
      */
     @Test
-    @SuppressFBWarnings(value = "WA_NOT_IN_LOOP")
-    public void testUnknownHost() throws IOException, InterruptedException {
+    public void testUnknownHost() throws IOException {
         String key = "key_unknown_host";
         TestCachedTileLoaderJob job = new TestCachedTileLoaderJob("http://unkownhost.unkownhost/unkown", key);
         Listener listener = new Listener();
         job.submit(listener, true);
         synchronized (listener) {
-            if (!listener.ready) {
-                listener.wait();
+            while (!listener.ready) {
+                try {
+                    listener.wait();
+                } catch (InterruptedException e1) {
+                    // do nothing, still wait
+                }
             }
         }
         assertEquals(LoadResult.FAILURE, listener.result); // because response will be cached, and that is checked below
@@ -123,8 +126,12 @@ public class JCSCachedTileLoaderJobTest {
         listener = new Listener();
         job.submit(listener, true);
         synchronized (listener) {
-            if (!listener.ready) {
-                listener.wait();
+            while (!listener.ready) {
+                try {
+                    listener.wait();
+                } catch (InterruptedException e1) {
+                    // do nothing, wait
+                }
             }
         }
         assertEquals(LoadResult.SUCCESS, listener.result);
