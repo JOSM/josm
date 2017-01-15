@@ -52,7 +52,7 @@ public class PooledCacheEventQueue<K, V>
     private static final QueueType queueType = QueueType.POOLED;
 
     /** The Thread Pool to execute events with. */
-    private ThreadPoolExecutor pool = null;
+    protected ThreadPoolExecutor pool = null;
 
     /**
      * Constructor for the CacheEventQueue object
@@ -88,6 +88,7 @@ public class PooledCacheEventQueue<K, V>
         // this will share the same pool with other event queues by default.
         pool = ThreadPoolManager.getInstance().getPool(
                 (threadPoolName == null) ? "cache_event_queue" : threadPoolName );
+        setAlive(true);
     }
 
     /**
