@@ -51,7 +51,7 @@ import org.apache.commons.logging.LogFactory;
  *
  * int maximumPoolSize_DEFAULT = 150;
  *
- * int minimumPoolSize_DEFAULT = 4;
+ * int minimumPoolSize_DEFAULT = number of processors as reported by the JVM;
  *
  * int keepAliveTime_DEFAULT = 1000 * 60 * 5;
  *
@@ -72,27 +72,27 @@ public class ThreadPoolManager
     private static final Log log = LogFactory.getLog( ThreadPoolManager.class );
 
     /**
-     * DEFAULT SETTINGS, these are not final since they can be set via the properties file or object
+     * DEFAULT SETTINGS
      */
-    private static boolean useBoundary_DEFAULT = true;
+    private static final boolean useBoundary_DEFAULT = true;
 
     /** Default queue size limit */
-    private static int boundarySize_DEFAULT = 2000;
+    private static final int boundarySize_DEFAULT = 2000;
 
     /** Default max size */
-    private static int maximumPoolSize_DEFAULT = 150;
+    private static final int maximumPoolSize_DEFAULT = 150;
 
     /** Default min */
-    private static int minimumPoolSize_DEFAULT = 4;
+    private static final int minimumPoolSize_DEFAULT = Runtime.getRuntime().availableProcessors();
 
     /** Default keep alive */
-    private static int keepAliveTime_DEFAULT = 1000 * 60 * 5;
+    private static final int keepAliveTime_DEFAULT = 1000 * 60 * 5;
 
     /** Default when blocked */
-    private static WhenBlockedPolicy whenBlockedPolicy_DEFAULT = WhenBlockedPolicy.RUN;
+    private static final WhenBlockedPolicy whenBlockedPolicy_DEFAULT = WhenBlockedPolicy.RUN;
 
     /** Default startup size */
-    private static int startUpSize_DEFAULT = 4;
+    private static final int startUpSize_DEFAULT = minimumPoolSize_DEFAULT;
 
     /** The default config, created using property defaults if present, else those above. */
     private static PoolConfiguration defaultConfig;
