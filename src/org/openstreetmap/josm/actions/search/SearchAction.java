@@ -431,7 +431,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         if (Main.pref.getBoolean("expert", false)) {
             right.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("objects"))
-                .addKeyword("type:node", "type:node ", tr("all ways"))
+                .addKeyword("type:node", "type:node ", tr("all nodes"))
                 .addKeyword("type:way", "type:way ", tr("all ways"))
                 .addKeyword("type:relation", "type:relation ", tr("all relations"))
                 .addKeyword("closed", "closed ", tr("all closed ways"))
