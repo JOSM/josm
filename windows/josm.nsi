@@ -380,6 +380,7 @@ Section "un.$(un.JOSM_SEC_UNINSTALL)" un.SecUinstall
 SectionIn 1 2
 SetShellVarContext current
 
+ClearErrors
 Delete "$INSTDIR\josm-tested.jar"
 IfErrors 0 NoJOSMErrorMsg
 	MessageBox MB_OK $(un.JOSM_IN_USE_ERROR) IDOK 0 ;skipped if josm.jar removed
@@ -441,6 +442,7 @@ Section "-Un.Finally"
 ;-------------------------------------------
 SectionIn 1 2
 ; this test must be done after all other things uninstalled (e.g. Global Settings)
+IfSilent NoFinalErrorMsg
 IfFileExists "$INSTDIR" 0 NoFinalErrorMsg
     MessageBox MB_OK $(un.JOSM_INSTDIR_ERROR) IDOK 0 ; skipped if dir doesn't exist
 NoFinalErrorMsg:
