@@ -38,6 +38,7 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.preferences.AbstractProperty;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.MapViewState;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.ColorScale;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -138,8 +139,7 @@ public class GpxDrawHelper implements SoMChangeListener {
 
     // some cached values
     Rectangle heatMapCacheScreenBounds = new Rectangle();
-    int heatMapCacheVisibleSegments;
-    double heatMapCacheZoomScale;
+    MapViewState heatMapMapViewState;
     int heatMapCacheLineWith;
 
     // copied value for line drawing
@@ -537,7 +537,7 @@ public class GpxDrawHelper implements SoMChangeListener {
             }
 
             // force redraw of image
-            heatMapCacheVisibleSegments = 0;
+            heatMapMapViewState = null;
         }
 
         computeCacheInSync = true;
@@ -1087,7 +1087,8 @@ public class GpxDrawHelper implements SoMChangeListener {
 
         // get bounds of screen image and projection, zoom and adjust input parameters
         final Rectangle screenBounds = new Rectangle(mv.getWidth(), mv.getHeight());
-        final double zoomScale = mv.getScale();
+        final MapViewState mapViewState = mv.getState();
+        final double zoomScale = mapViewState.getScale();
 
         // adjust global settings ( zero = default line width )
         final int globalLineWidth = (0 == lineWidth) ? 1 : Math.min(Math.max(lineWidth, 1), 20);
@@ -1116,8 +1117,7 @@ public class GpxDrawHelper implements SoMChangeListener {
         final int lineWidthF = lineWidthB > 2 ? (globalLineWidth - 1) : 0;
 
         // recalculation of image needed
-        final boolean imageRecalc = heatMapCacheVisibleSegments != visibleSegments.size() ||
-                                    heatMapCacheZoomScale != zoomScale ||
+        final boolean imageRecalc = !mapViewState.equalsInWindow(heatMapMapViewState) ||
                                     heatMapCacheLineWith != globalLineWidth;
 
         // 3rd Calculate the heat map data by draw GPX traces with alpha value ----------
@@ -1140,8 +1140,7 @@ public class GpxDrawHelper implements SoMChangeListener {
                             new BasicStroke(lineWidthB, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
 
             // remember draw parameters
-            heatMapCacheVisibleSegments = visibleSegments.size();
-            heatMapCacheZoomScale = zoomScale;
+            heatMapMapViewState = mapViewState;
             heatMapCacheLineWith = globalLineWidth;
         }
 

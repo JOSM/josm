@@ -383,6 +383,22 @@ public final class MapViewState implements Serializable {
     }
 
     /**
+     * Check if this MapViewState equals another one, disregarding the position
+     * of the JOSM window on screen.
+     * @param other the other MapViewState
+     * @return true if the other MapViewState has the same size, scale, position and projection,
+     * false otherwise
+     */
+    public boolean equalsInWindow(MapViewState other) {
+        return other != null &&
+                this.viewWidth == other.viewWidth &&
+                this.viewHeight == other.viewHeight &&
+                this.scale == other.scale &&
+                Objects.equals(this.topLeft, other.topLeft) &&
+                Objects.equals(this.projecting, other.projecting);
+    }
+
+    /**
      * A class representing a point in the map view. It allows to convert between the different coordinate systems.
      * @author Michael Zangl
      */
