@@ -278,19 +278,23 @@ public final class AudioPlayer extends Thread {
                     case PLAYING:
                         command.possiblyInterrupt();
                         for (;;) {
-                            int nBytesRead;
-                            nBytesRead = audioInputStream.read(abData, 0, abData.length);
-                            position += nBytesRead / bytesPerSecond;
+                            int nBytesRead = 0;
+                            if (audioInputStream != null) {
+                                nBytesRead = audioInputStream.read(abData, 0, abData.length);
+                                position += nBytesRead / bytesPerSecond;
+                            }
                             command.possiblyInterrupt();
-                            if (nBytesRead < 0) {
+                            if (nBytesRead < 0 || audioInputStream == null || audioOutputLine == null) {
                                 break;
                             }
                             audioOutputLine.write(abData, 0, nBytesRead); // => int nBytesWritten
                             command.possiblyInterrupt();
                         }
                         // end of audio, clean up
-                        audioOutputLine.drain();
-                        audioOutputLine.close();
+                        if (audioOutputLine != null) {
+                            audioOutputLine.drain();
+                            audioOutputLine.close();
+                        }
                         audioOutputLine = null;
                         Utils.close(audioInputStream);
                         audioInputStream = null;
