@@ -27,23 +27,46 @@ package org.apache.commons.jcs.utils.threadpool;
 public final class PoolConfiguration
     implements Cloneable
 {
+    /**
+     * DEFAULT SETTINGS
+     */
+    private static final boolean DEFAULT_USE_BOUNDARY = true;
+
+    /** Default queue size limit */
+    private static final int DEFAULT_BOUNDARY_SIZE = 2000;
+
+    /** Default max size */
+    private static final int DEFAULT_MAXIMUM_POOL_SIZE = 150;
+
+    /** Default min */
+    private static final int DEFAULT_MINIMUM_POOL_SIZE = Runtime.getRuntime().availableProcessors();
+
+    /** Default keep alive */
+    private static final int DEFAULT_KEEPALIVE_TIME = 1000 * 60 * 5;
+
+    /** Default when blocked */
+    private static final WhenBlockedPolicy DEFAULT_WHEN_BLOCKED_POLICY = WhenBlockedPolicy.RUN;
+
+    /** Default startup size */
+    private static final int DEFAULT_STARTUP_SIZE = DEFAULT_MINIMUM_POOL_SIZE;
+
     /** Should we bound the queue */
-    private boolean useBoundary = true;
+    private boolean useBoundary = DEFAULT_USE_BOUNDARY;
 
     /** If the queue is bounded, how big can it get */
-    private int boundarySize = 2000;
+    private int boundarySize = DEFAULT_BOUNDARY_SIZE;
 
     /** only has meaning if a boundary is used */
-    private int maximumPoolSize = 150;
+    private int maximumPoolSize = DEFAULT_MAXIMUM_POOL_SIZE;
 
     /**
      * the exact number that will be used in a boundless queue. If the queue has a boundary, more
      * will be created if the queue fills.
      */
-    private int minimumPoolSize = 4;
+    private int minimumPoolSize = DEFAULT_MINIMUM_POOL_SIZE;
 
     /** How long idle threads above the minimum should be kept alive. */
-    private int keepAliveTime = 1000 * 60 * 5;
+    private int keepAliveTime = DEFAULT_KEEPALIVE_TIME;
 
     public enum WhenBlockedPolicy {
         /** abort when queue is full and max threads is reached. */
@@ -63,10 +86,10 @@ public final class PoolConfiguration
     }
 
     /** should be ABORT, BLOCK, RUN, WAIT, DISCARDOLDEST, */
-    private WhenBlockedPolicy whenBlockedPolicy = WhenBlockedPolicy.RUN;
+    private WhenBlockedPolicy whenBlockedPolicy = DEFAULT_WHEN_BLOCKED_POLICY;
 
     /** The number of threads to create on startup */
-    private int startUpSize = 4;
+    private int startUpSize = DEFAULT_MINIMUM_POOL_SIZE;
 
     /**
      * @param useBoundary The useBoundary to set.
@@ -89,7 +112,9 @@ public final class PoolConfiguration
      */
     public PoolConfiguration()
     {
-        // nop
+        this( DEFAULT_USE_BOUNDARY, DEFAULT_BOUNDARY_SIZE, DEFAULT_MAXIMUM_POOL_SIZE,
+              DEFAULT_MINIMUM_POOL_SIZE, DEFAULT_KEEPALIVE_TIME,
+              DEFAULT_WHEN_BLOCKED_POLICY, DEFAULT_STARTUP_SIZE );
     }
 
     /**

@@ -27,7 +27,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.jcs.utils.threadpool.PoolConfiguration.WhenBlockedPolicy;
+import org.apache.commons.jcs.utils.config.PropertySetter;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -71,31 +71,8 @@ public class ThreadPoolManager
     /** The logger */
     private static final Log log = LogFactory.getLog( ThreadPoolManager.class );
 
-    /**
-     * DEFAULT SETTINGS
-     */
-    private static final boolean useBoundary_DEFAULT = true;
-
-    /** Default queue size limit */
-    private static final int boundarySize_DEFAULT = 2000;
-
-    /** Default max size */
-    private static final int maximumPoolSize_DEFAULT = 150;
-
-    /** Default min */
-    private static final int minimumPoolSize_DEFAULT = Runtime.getRuntime().availableProcessors();
-
-    /** Default keep alive */
-    private static final int keepAliveTime_DEFAULT = 1000 * 60 * 5;
-
-    /** Default when blocked */
-    private static final WhenBlockedPolicy whenBlockedPolicy_DEFAULT = WhenBlockedPolicy.RUN;
-
-    /** Default startup size */
-    private static final int startUpSize_DEFAULT = minimumPoolSize_DEFAULT;
-
     /** The default config, created using property defaults if present, else those above. */
-    private static PoolConfiguration defaultConfig;
+    private PoolConfiguration defaultConfig;
 
     /** the root property name */
     private static final String PROP_NAME_ROOT = "thread_pool";
@@ -285,7 +262,7 @@ public class ThreadPoolManager
     /**
      * Initialize the ThreadPoolManager and create all the pools defined in the configuration.
      */
-    private static void configure()
+    private void configure()
     {
         if ( log.isDebugEnabled() )
         {
@@ -300,10 +277,7 @@ public class ThreadPoolManager
 
         // set intial default and then override if new
         // settings are available
-        defaultConfig = new PoolConfiguration( useBoundary_DEFAULT, boundarySize_DEFAULT, maximumPoolSize_DEFAULT,
-                                               minimumPoolSize_DEFAULT, keepAliveTime_DEFAULT,
-                                               whenBlockedPolicy_DEFAULT, startUpSize_DEFAULT );
-
+        defaultConfig = new PoolConfiguration();
         defaultConfig = loadConfig( DEFAULT_PROP_NAME_ROOT );
     }
 
@@ -313,75 +287,14 @@ public class ThreadPoolManager
      * @param root
      * @return PoolConfiguration
      */
-    private static PoolConfiguration loadConfig( String root )
+    private PoolConfiguration loadConfig( String root )
     {
         PoolConfiguration config = defaultConfig.clone();
+        PropertySetter.setProperties( config, props, root + "." );
 
-        try
+        if ( log.isDebugEnabled() )
         {
-            config.setUseBoundary( Boolean.parseBoolean( props.getProperty( root + ".useBoundary", "false" ) ) );
-        }
-        catch ( NumberFormatException nfe )
-        {
-            log.error( "useBoundary not a boolean.", nfe );
-        }
-
-        // load default if they exist
-        try
-        {
-            config.setBoundarySize( Integer.parseInt( props.getProperty( root + ".boundarySize", "2000" ) ) );
-        }
-        catch ( NumberFormatException nfe )
-        {
-            log.error( "boundarySize not a number.", nfe );
-        }
-
-        // maximum pool size
-        try
-        {
-            config.setMaximumPoolSize( Integer.parseInt( props.getProperty( root + ".maximumPoolSize", "150" ) ) );
-        }
-        catch ( NumberFormatException nfe )
-        {
-            log.error( "maximumPoolSize not a number.", nfe );
-        }
-
-        // minimum pool size
-        try
-        {
-            config.setMinimumPoolSize( Integer.parseInt( props.getProperty( root + ".minimumPoolSize", "4" ) ) );
-        }
-        catch ( NumberFormatException nfe )
-        {
-            log.error( "minimumPoolSize not a number.", nfe );
-        }
-
-        // keep alive
-        try
-        {
-            config.setKeepAliveTime( Integer.parseInt( props.getProperty( root + ".keepAliveTime", "300000" ) ) );
-        }
-        catch ( NumberFormatException nfe )
-        {
-            log.error( "keepAliveTime not a number.", nfe );
-        }
-
-        // when blocked
-        config.setWhenBlockedPolicy( props.getProperty( root + ".whenBlockedPolicy", "RUN" ) );
-
-        // startupsize
-        try
-        {
-            config.setStartUpSize( Integer.parseInt( props.getProperty( root + ".startUpSize", "4" ) ) );
-        }
-        catch ( NumberFormatException nfe )
-        {
-            log.error( "startUpSize not a number.", nfe );
-        }
-
-        if ( log.isInfoEnabled() )
-        {
-            log.info( root + " PoolConfiguration = " + config );
+            log.debug( root + " PoolConfiguration = " + config );
         }
 
         return config;
