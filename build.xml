@@ -234,6 +234,7 @@ Build-Date: ${build.tstamp}
             <exclude name="org/apache/commons/compress/compressors/FileNameUtil.java"/>
             <exclude name="org/apache/commons/compress/compressors/deflate/**"/>
             <exclude name="org/apache/commons/compress/compressors/gzip/**"/>
+            <exclude name="org/apache/commons/compress/compressors/lz4/**"/>
             <exclude name="org/apache/commons/compress/compressors/lzw/**"/>
             <exclude name="org/apache/commons/compress/compressors/pack200/**"/>
             <exclude name="org/apache/commons/compress/compressors/snappy/**"/>
