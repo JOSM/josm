@@ -324,7 +324,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /**
      * Changes the projection settings used for this map view.
      * <p>
-     * Made public temporarely, will be made private later.
+     * Made public temporarily, will be made private later.
      */
     public void fixProjection() {
         state = state.usingProjection(Main.getProjection());
