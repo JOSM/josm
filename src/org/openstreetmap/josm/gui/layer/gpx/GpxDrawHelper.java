@@ -1008,30 +1008,36 @@ public class GpxDrawHelper implements SoMChangeListener {
         // use basic stroke for outlines and default transparency
         g.setStroke(new BasicStroke(outlineWidth));
 
-        int lastPixelY = 0;
+        int lastPixelX = 0;
         int lastPixelColor = 0;
 
         // resample gray scale image with line linear weight of next sample in line
         // process each line and draw pixels / rectangles with same color with one operations
-        for (int x = 0; x < maxPixelX; x += offX) {
-            for (int y = 0; y < maxPixelY; y += offY) {
+        for (int y = 0; y < maxPixelY; y += offY) {
 
-                int thePixelColor = 0;
+            // the lines offsets
+            final int lastLineOffset = maxPixelX * (y+0);
+            final int nextLineOffset = maxPixelX * (y+1);
+
+            for (int x = 0; x < maxPixelX; x += offX) {
+
+                int thePixelColor = 0; int thePixelCount = 0;
 
                 // sample the image (it is gray scale)
-                int offset = (x * maxPixelX) + y;
+                int offset = lastLineOffset + x;
 
                 // merge next pixels of window of line
-                for (int k = 0; k < offX && offset + k < imgPixels.length; k++) {
+                for (int k = 0; k < offX && (offset + k) < nextLineOffset; k++) {
                     thePixelColor += imgPixels[offset+k] & 0xFF;
+                    thePixelCount++;
                 }
 
                 // mean value
-                thePixelColor /= offX;
+                thePixelColor = thePixelCount > 0 ? (thePixelColor / thePixelCount) : 0;
 
                 // restart -> use initial sample
-                if (0 == y) {
-                    lastPixelY = 0; lastPixelColor = thePixelColor - 1;
+                if (0 == x) {
+                    lastPixelX = 0; lastPixelColor = thePixelColor - 1;
                 }
 
                 boolean bDrawIt = false;
@@ -1055,14 +1061,14 @@ public class GpxDrawHelper implements SoMChangeListener {
 
                         // box from from last Y pixel to current pixel
                         if (drawOutlines) {
-                            g.drawRect(lastPixelY, x, offY + y - lastPixelY, offX);
+                            g.drawRect(lastPixelX, y, offX + x - lastPixelX, offY);
                         } else {
-                            g.fillRect(lastPixelY, x, offY + y - lastPixelY, offX);
+                            g.fillRect(lastPixelX, y, offX + x - lastPixelX, offY);
                         }
                     }
 
                     // restart detection
-                    lastPixelY = y; lastPixelColor = thePixelColor;
+                    lastPixelX = x; lastPixelColor = thePixelColor;
                 }
             }
         }
@@ -1080,18 +1086,13 @@ public class GpxDrawHelper implements SoMChangeListener {
     private void drawHeatMap(Graphics2D g, MapView mv, List<WayPoint> visibleSegments) {
 
         // get bounds of screen image and projection, zoom and adjust input parameters
-        final Rectangle screenBounds = g.getDeviceConfiguration().getBounds();
+        final Rectangle screenBounds = new Rectangle(mv.getWidth(), mv.getHeight());
         final double zoomScale = mv.getScale();
 
         // adjust global settings ( zero = default line width )
         final int globalLineWidth = (0 == lineWidth) ? 1 : Math.min(Math.max(lineWidth, 1), 20);
 
         // 1st setup virtual paint area ----------------------------------------
-
-        // HACK: sometime screen bounds does not return valid values when picture is shifted
-        // therefore we use a bigger area to avoid missing parts of image
-        screenBounds.width = screenBounds.width * 3 / 2;
-        screenBounds.height = screenBounds.height * 3 / 2;
 
         // new image buffer needed
         final boolean imageSetup = null == heatMapImgGray || !heatMapCacheScreenBounds.equals(screenBounds);
@@ -1141,13 +1142,11 @@ public class GpxDrawHelper implements SoMChangeListener {
             // remember draw parameters
             heatMapCacheVisibleSegments = visibleSegments.size();
             heatMapCacheZoomScale = zoomScale;
-            heatMapCacheLineWith = lineWidth;
+            heatMapCacheLineWith = globalLineWidth;
         }
 
         // 4th. Draw data on target layer, map data via color lookup table --------------
-        drawHeatMapGrayMap(g, heatMapImgGray,
-                lineWidthB > 2 ? (lineWidthB / 2) : 1,
-                lineWidth > 2 ? (lineWidth - 2) : 1);
+        drawHeatMapGrayMap(g, heatMapImgGray, lineWidthB > 2 ? (lineWidthB / 2) : 1, lineWidth > 2 ? (lineWidth - 2) : 1);
     }
 
     /**
