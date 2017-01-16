@@ -28,7 +28,6 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
-import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -75,7 +74,7 @@ public class RelationChecker extends Test {
         initializePresets();
     }
 
-    private static Collection<TaggingPreset> relationpresets = new LinkedList<>();
+    private static final Collection<TaggingPreset> relationpresets = new LinkedList<>();
 
     /**
      * Reads the presets data.
@@ -237,7 +236,7 @@ public class RelationChecker extends Test {
                             // but stash the error in case no better reason will be found later
                             possibleMatchError = TestError.builder(this, Severity.WARNING, WRONG_TYPE)
                                     .message(ROLE_VERIF_PROBLEM_MSG,
-                                            marktr("Role member does not match expression {0} in template {1}"),
+                                            marktr("Role member does not match expression ''{0}'' in template {1}"),
                                             r.memberExpression, rolePreset.name)
                                     .primitives(member.getMember().isUsable() ? member.getMember() : n)
                                     .build();
@@ -271,7 +270,7 @@ public class RelationChecker extends Test {
 
             errors.add(TestError.builder(this, Severity.WARNING, WRONG_TYPE)
                     .message(ROLE_VERIF_PROBLEM_MSG,
-                            marktr("Role member type {0} does not match accepted list of {1} in template {2}"),
+                            marktr("Role member type ''{0}'' does not match accepted list of ''{1}'' in template {2}"),
                             member.getType(), typesStr, rolePreset.name)
                     .primitives(member.getMember().isUsable() ? member.getMember() : n)
                     .build());
@@ -307,17 +306,17 @@ public class RelationChecker extends Test {
         // verify unwanted members
         for (String key : map.keySet()) {
             if (!allroles.containsKey(key)) {
-                String templates = allroles.keySet().stream().map(I18n::tr).collect(Collectors.joining("/"));
+                String templates = allroles.keySet().stream().collect(Collectors.joining("/"));
 
                 if (!key.isEmpty()) {
 
                     errors.add(TestError.builder(this, Severity.WARNING, ROLE_UNKNOWN)
-                            .message(ROLE_VERIF_PROBLEM_MSG, marktr("Role {0} unknown in templates {1}"), key, templates)
+                            .message(ROLE_VERIF_PROBLEM_MSG, marktr("Role ''{0}'' unknown in templates ''{1}''"), key, templates)
                             .primitives(n)
                             .build());
                 } else {
                     errors.add(TestError.builder(this, Severity.WARNING, ROLE_EMPTY)
-                            .message(ROLE_VERIF_PROBLEM_MSG, marktr("Empty role type found when expecting one of {0}"), templates)
+                            .message(ROLE_VERIF_PROBLEM_MSG, marktr("Empty role type found when expecting one of ''{0}''"), templates)
                             .primitives(n)
                             .build());
                 }
@@ -331,17 +330,17 @@ public class RelationChecker extends Test {
         if (count != vc) {
             if (count == 0) {
                 errors.add(TestError.builder(this, Severity.WARNING, ROLE_MISSING)
-                        .message(ROLE_VERIF_PROBLEM_MSG, marktr("Role {0} missing"), keyname)
+                        .message(ROLE_VERIF_PROBLEM_MSG, marktr("Role ''{0}'' missing"), keyname)
                         .primitives(n)
                         .build());
             } else if (vc > count) {
                 errors.add(TestError.builder(this, Severity.WARNING, LOW_COUNT)
-                        .message(ROLE_VERIF_PROBLEM_MSG, marktr("Number of {0} roles too low ({1})"), keyname, count)
+                        .message(ROLE_VERIF_PROBLEM_MSG, marktr("Number of ''{0}'' roles too low ({1})"), keyname, count)
                         .primitives(n)
                         .build());
             } else {
                 errors.add(TestError.builder(this, Severity.WARNING, HIGH_COUNT)
-                        .message(ROLE_VERIF_PROBLEM_MSG, marktr("Number of {0} roles too high ({1})"), keyname, count)
+                        .message(ROLE_VERIF_PROBLEM_MSG, marktr("Number of ''{0}'' roles too high ({1})"), keyname, count)
                         .primitives(n)
                         .build());
             }
