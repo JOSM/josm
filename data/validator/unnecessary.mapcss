@@ -24,6 +24,14 @@ area:closed[shop    ][area?] {
   fixRemove: "{2.key}";
 }
 
+/* #14256 */
+area:closed[aeroway=aerodrome][area?],
+area:closed[aeroway=helipad][area?] {
+  throwWarning: tr("{0} is unnecessary for {1}", "{2.key}", "{1.tag}");
+  group: tr("unnecessary tag");
+  fixRemove: "{2.key}";
+}
+
 *[emergency=permissive] {
   /* see #9458 - emergency=permissive makes no sense */
   throwWarning: tr("{0} makes no sense", "{0.tag");
