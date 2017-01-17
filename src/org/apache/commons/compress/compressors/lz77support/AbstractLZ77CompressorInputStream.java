@@ -182,7 +182,7 @@ public abstract class AbstractLZ77CompressorInputStream extends CompressorInputS
     }
 
     private void slideBuffer() {
-        System.arraycopy(buf, windowSize, buf, 0, windowSize);
+        System.arraycopy(buf, windowSize, buf, 0, windowSize * 2);
         writeIndex -= windowSize;
         readIndex -= windowSize;
     }

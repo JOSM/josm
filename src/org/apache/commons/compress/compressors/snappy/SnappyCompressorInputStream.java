@@ -21,7 +21,7 @@ package org.apache.commons.compress.compressors.snappy;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.compressors.lz77support.AbstractLZ77CompressorInputStream;
 import org.apache.commons.compress.utils.ByteUtils;
 import org.apache.commons.compress.utils.IOUtils;
 
@@ -39,7 +39,7 @@ import org.apache.commons.compress.utils.IOUtils;
  * @see <a href="https://github.com/google/snappy/blob/master/format_description.txt">Snappy compressed format description</a>
  * @since 1.7
  */
-public class SnappyCompressorInputStream extends CompressorInputStream {
+public class SnappyCompressorInputStream extends AbstractLZ77CompressorInputStream {
 
     /** Mask used to determine the type of "tag" is being processed */
     private static final int TAG_MASK = 0x03;
@@ -47,38 +47,16 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
     /** Default block size */
     public static final int DEFAULT_BLOCK_SIZE = 32768;
 
-    /** Buffer to write decompressed bytes to for back-references */
-    private final byte[] decompressBuf;
-
-    /** One behind the index of the last byte in the buffer that was written */
-    private int writeIndex;
-
-    /** Index of the next byte to be read. */
-    private int readIndex;
-
-    /** The actual block size specified */
-    private final int blockSize;
-
-    /** The underlying stream to read compressed data from */
-    private final InputStream in;
-
     /** The size of the uncompressed data */
     private final int size;
 
     /** Number of uncompressed bytes still to be read. */
     private int uncompressedBytesRemaining;
 
-    // used in no-arg read method
-    private final byte[] oneByte = new byte[1];
+    /** Current state of the stream */
+    private State state = State.NO_BLOCK;
 
     private boolean endReached = false;
-
-    private final ByteUtils.ByteSupplier supplier = new ByteUtils.ByteSupplier() {
-        @Override
-        public int getAsByte() throws IOException {
-            return readOneByte();
-        }
-    };
 
     /**
      * Constructor using the default buffer size of 32k.
@@ -104,29 +82,8 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
      */
     public SnappyCompressorInputStream(final InputStream is, final int blockSize)
             throws IOException {
-        this.in = is;
-        this.blockSize = blockSize;
-        this.decompressBuf = new byte[blockSize * 3];
-        this.writeIndex = readIndex = 0;
+        super(is, blockSize);
         uncompressedBytesRemaining = size = (int) readSize();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int read() throws IOException {
-        return read(oneByte, 0, 1) == -1 ? -1 : oneByte[0] & 0xFF;
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void close() throws IOException {
-        in.close();
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public int available() {
-        return writeIndex - readIndex;
     }
 
     /**
@@ -137,21 +94,25 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
         if (endReached) {
             return -1;
         }
-        final int avail = available();
-        if (len > avail) {
-            fill(len - avail);
+        switch (state) {
+        case NO_BLOCK:
+            fill(len);
+            return read(b, off, len);
+        case IN_LITERAL:
+            int litLen = readLiteral(b, off, len);
+            if (!hasMoreDataInBlock()) {
+                state = State.NO_BLOCK;
+            }
+            return litLen;
+        case IN_COPY:
+            int copyLen = readCopy(b, off, len);
+            if (!hasMoreDataInBlock()) {
+                state = State.NO_BLOCK;
+            }
+            return copyLen;
+        default:
+            throw new IOException("Unknown stream state " + state);
         }
-
-        final int readable = Math.min(len, available());
-        if (readable == 0 && len > 0) {
-            return -1;
-        }
-        System.arraycopy(decompressBuf, readIndex, b, off, readable);
-        readIndex += readable;
-        if (readIndex > 2 * blockSize) {
-            slideBuffer();
-        }
-        return readable;
     }
 
     /**
@@ -163,104 +124,88 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
     private void fill(final int len) throws IOException {
         if (uncompressedBytesRemaining == 0) {
             endReached = true;
+            return;
         }
-        int readNow = Math.min(len, uncompressedBytesRemaining);
 
-        while (readNow > 0) {
-            final int b = readOneByte();
-            int length = 0;
-            long offset = 0;
+        int b = readOneByte();
+        if (b == -1) {
+            throw new IOException("Premature end of stream reading block start");
+        }
+        int length = 0;
+        int offset = 0;
 
-            switch (b & TAG_MASK) {
+        switch (b & TAG_MASK) {
 
-            case 0x00:
+        case 0x00:
 
-                length = readLiteralLength(b);
-                uncompressedBytesRemaining -= length;
+            length = readLiteralLength(b);
+            uncompressedBytesRemaining -= length;
+            startLiteral(length);
+            state = State.IN_LITERAL;
+            break;
 
-                if (expandLiteral(length)) {
-                    return;
-                }
-                break;
+        case 0x01:
 
-            case 0x01:
+            /*
+             * These elements can encode lengths between [4..11] bytes and
+             * offsets between [0..2047] bytes. (len-4) occupies three bits
+             * and is stored in bits [2..4] of the tag byte. The offset
+             * occupies 11 bits, of which the upper three are stored in the
+             * upper three bits ([5..7]) of the tag byte, and the lower
+             * eight are stored in a byte following the tag byte.
+             */
 
-                /*
-                 * These elements can encode lengths between [4..11] bytes and
-                 * offsets between [0..2047] bytes. (len-4) occupies three bits
-                 * and is stored in bits [2..4] of the tag byte. The offset
-                 * occupies 11 bits, of which the upper three are stored in the
-                 * upper three bits ([5..7]) of the tag byte, and the lower
-                 * eight are stored in a byte following the tag byte.
-                 */
-
-                length = 4 + ((b >> 2) & 0x07);
-                uncompressedBytesRemaining -= length;
-                offset = (b & 0xE0) << 3;
-                offset |= readOneByte();
-
-                if (expandCopy(offset, length)) {
-                    return;
-                }
-                break;
-
-            case 0x02:
-
-                /*
-                 * These elements can encode lengths between [1..64] and offsets
-                 * from [0..65535]. (len-1) occupies six bits and is stored in
-                 * the upper six bits ([2..7]) of the tag byte. The offset is
-                 * stored as a little-endian 16-bit integer in the two bytes
-                 * following the tag byte.
-                 */
-
-                length = (b >> 2) + 1;
-                uncompressedBytesRemaining -= length;
-
-                offset = ByteUtils.fromLittleEndian(supplier, 2);
-
-                if (expandCopy(offset, length)) {
-                    return;
-                }
-                break;
-
-            case 0x03:
-
-                /*
-                 * These are like the copies with 2-byte offsets (see previous
-                 * subsection), except that the offset is stored as a 32-bit
-                 * integer instead of a 16-bit integer (and thus will occupy
-                 * four bytes).
-                 */
-
-                length = (b >> 2) + 1;
-                uncompressedBytesRemaining -= length;
-
-                offset = ByteUtils.fromLittleEndian(supplier, 4);
-
-                if (expandCopy(offset, length)) {
-                    return;
-                }
-                break;
+            length = 4 + ((b >> 2) & 0x07);
+            uncompressedBytesRemaining -= length;
+            offset = (b & 0xE0) << 3;
+            b = readOneByte();
+            if (b == -1) {
+                throw new IOException("Premature end of stream reading copy length");
             }
+            offset |= b;
 
-            readNow -= length;
+            startCopy(offset, length);
+            state = State.IN_COPY;
+            break;
+
+        case 0x02:
+
+            /*
+             * These elements can encode lengths between [1..64] and offsets
+             * from [0..65535]. (len-1) occupies six bits and is stored in
+             * the upper six bits ([2..7]) of the tag byte. The offset is
+             * stored as a little-endian 16-bit integer in the two bytes
+             * following the tag byte.
+             */
+
+            length = (b >> 2) + 1;
+            uncompressedBytesRemaining -= length;
+
+            offset = (int) ByteUtils.fromLittleEndian(supplier, 2);
+
+            startCopy(offset, length);
+            state = State.IN_COPY;
+            break;
+
+        case 0x03:
+
+            /*
+             * These are like the copies with 2-byte offsets (see previous
+             * subsection), except that the offset is stored as a 32-bit
+             * integer instead of a 16-bit integer (and thus will occupy
+             * four bytes).
+             */
+
+            length = (b >> 2) + 1;
+            uncompressedBytesRemaining -= length;
+
+            offset = (int) ByteUtils.fromLittleEndian(supplier, 4) & 0x7fffffff;
+
+            startCopy(offset, length);
+            state = State.IN_COPY;
+            break;
         }
     }
-
-    /**
-     * Slide buffer.
-     *
-     * <p>Move all bytes of the buffer after the first block down to
-     * the beginning of the buffer.</p>
-     */
-    private void slideBuffer() {
-        System.arraycopy(decompressBuf, blockSize, decompressBuf, 0,
-                         blockSize * 2);
-        writeIndex -= blockSize;
-        readIndex -= blockSize;
-    }
-
 
     /*
      * For literals up to and including 60 bytes in length, the
@@ -277,6 +222,9 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
         switch (b >> 2) {
         case 60:
             length = readOneByte();
+            if (length == -1) {
+                throw new IOException("Premature end of stream reading literal length");
+            }
             break;
         case 61:
             length = (int) ByteUtils.fromLittleEndian(supplier, 2);
@@ -293,112 +241,6 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
         }
 
         return length + 1;
-    }
-
-    /**
-     * Literals are uncompressed data stored directly in the byte stream.
-     * 
-     * @param length
-     *            The number of bytes to read from the underlying stream
-     * 
-     * @throws IOException
-     *             If the first byte cannot be read for any reason other than
-     *             end of file, or if the input stream has been closed, or if
-     *             some other I/O error occurs.
-     * @return True if the decompressed data should be flushed
-     */
-    private boolean expandLiteral(final int length) throws IOException {
-        boolean shouldFlush = ensureBufferSpace(length);
-        final int bytesRead = IOUtils.readFully(in, decompressBuf, writeIndex, length);
-        count(bytesRead);
-        if (length != bytesRead) {
-            throw new IOException("Premature end of stream");
-        }
-
-        writeIndex += length;
-        return shouldFlush || writeIndex >= 2 * this.blockSize;
-    }
-
-    private boolean ensureBufferSpace(final int length) {
-        if (writeIndex + length >= decompressBuf.length) {
-            slideBuffer();
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * Copies are references back into previous decompressed data, telling the
-     * decompressor to reuse data it has previously decoded. They encode two
-     * values: The offset, saying how many bytes back from the current position
-     * to read, and the length, how many bytes to copy. Offsets of zero can be
-     * encoded, but are not legal; similarly, it is possible to encode
-     * backreferences that would go past the end of the block (offset > current
-     * decompressed position), which is also nonsensical and thus not allowed.
-     * 
-     * @param off
-     *            The offset from the backward from the end of expanded stream
-     * @param length
-     *            The number of bytes to copy
-     * 
-     * @throws IOException
-     *             An the offset expands past the front of the decompression
-     *             buffer
-     * @return True if the decompressed data should be flushed
-     */
-    private boolean expandCopy(final long off, final int length) throws IOException {
-        if (off > blockSize) {
-            throw new IOException("Offset " + off + " is larger than block size " + blockSize);
-        }
-        final int offset = (int) off;
-        boolean shouldFlush = ensureBufferSpace(length);
-
-        if (offset == 1) {
-            final byte lastChar = decompressBuf[writeIndex - 1];
-            for (int i = 0; i < length; i++) {
-                decompressBuf[writeIndex++] = lastChar;
-            }
-        } else if (length < offset) {
-            System.arraycopy(decompressBuf, writeIndex - offset,
-                    decompressBuf, writeIndex, length);
-            writeIndex += length;
-        } else {
-            int fullRotations = length / offset;
-            final int pad = length - (offset * fullRotations);
-
-            while (fullRotations-- != 0) {
-                System.arraycopy(decompressBuf, writeIndex - offset,
-                        decompressBuf, writeIndex, offset);
-                writeIndex += offset;
-            }
-
-            if (pad > 0) {
-                System.arraycopy(decompressBuf, writeIndex - offset,
-                        decompressBuf, writeIndex, pad);
-
-                writeIndex += pad;
-            }
-        }
-        return shouldFlush || writeIndex >= 2 * this.blockSize;
-    }
-
-    /**
-     * This helper method reads the next byte of data from the input stream. The
-     * value byte is returned as an <code>int</code> in the range <code>0</code>
-     * to <code>255</code>. If no byte is available because the end of the
-     * stream has been reached, an Exception is thrown.
-     * 
-     * @return The next byte of data
-     * @throws IOException
-     *             EOF is reached or error reading the stream
-     */
-    private int readOneByte() throws IOException {
-        final int b = in.read();
-        if (b == -1) {
-            throw new IOException("Premature end of stream");
-        }
-        count(1);
-        return b & 0xFF;
     }
 
     /**
@@ -421,6 +263,9 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
 
         do {
             b = readOneByte();
+            if (b == -1) {
+                throw new IOException("Premature end of stream reading size");
+            }
             sz |= (b & 0x7f) << (index++ * 7);
         } while (0 != (b & 0x80));
         return sz;
@@ -431,8 +276,12 @@ public class SnappyCompressorInputStream extends CompressorInputStream {
      * 
      * @return the uncompressed size
      */
+    @Override
     public int getSize() {
         return size;
     }
 
+    private enum State {
+        NO_BLOCK, IN_LITERAL, IN_COPY
+    }
 }
