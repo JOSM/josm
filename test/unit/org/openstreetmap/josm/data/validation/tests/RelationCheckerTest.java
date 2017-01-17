@@ -97,7 +97,7 @@ public class RelationCheckerTest {
 
         List<TestError> errors = testRelation(r);
         assertEquals(1, errors.size());
-        assertEquals("Role member type 'relation' does not match accepted list of 'node/way' in template Turn Restriction",
+        assertEquals("Type 'relation' of relation member with role 'via' does not match accepted types 'node/way' in template Turn Restriction",
                 errors.get(0).getDescription());
     }
 
@@ -134,7 +134,7 @@ public class RelationCheckerTest {
 
         List<TestError> errors = testRelation(r);
         assertEquals(1, errors.size());
-        assertEquals("Role member does not match expression 'power' in template Power Route", errors.get(0).getDescription());
+        assertEquals("Role of relation member does not match expression 'power' in template Power Route", errors.get(0).getDescription());
     }
 
     @Test
@@ -147,19 +147,19 @@ public class RelationCheckerTest {
 
         r.addMember(new RelationMember("", createPrimitive("way no-rail-way=yes")));
         assertEquals(1, testRelation(r).size());
-        assertEquals("Role member does not match expression 'railway' in template Public Transport Route (Rail)",
+        assertEquals("Role of relation member does not match expression 'railway' in template Public Transport Route (Rail)",
                 testRelation(r).get(0).getDescription());
 
         r.removeMember(3);
         r.addMember(new RelationMember("stop", createPrimitive("way no-rail-way=yes")));
         assertEquals(1, testRelation(r).size());
-        assertEquals("Role member type 'way' does not match accepted list of 'node' in template Public Transport Route (Rail)",
+        assertEquals("Type 'way' of relation member with role 'stop' does not match accepted types 'node' in template Public Transport Route (Rail)",
                 testRelation(r).get(0).getDescription());
 
         r.removeMember(3);
         r.addMember(new RelationMember("stop", createPrimitive("node public_transport=stop_position bus=yes")));
         assertEquals(1, testRelation(r).size());
-        assertEquals("Role member does not match expression 'public_transport=stop_position && "+
+        assertEquals("Role of relation member does not match expression 'public_transport=stop_position && "+
                 "(train=yes || subway=yes || monorail=yes || tram=yes || light_rail=yes)' in template Public Transport Route (Rail)",
                 testRelation(r).get(0).getDescription());
     }

@@ -236,7 +236,7 @@ public class RelationChecker extends Test {
                             // but stash the error in case no better reason will be found later
                             possibleMatchError = TestError.builder(this, Severity.WARNING, WRONG_TYPE)
                                     .message(ROLE_VERIF_PROBLEM_MSG,
-                                            marktr("Role member does not match expression ''{0}'' in template {1}"),
+                                            marktr("Role of relation member does not match expression ''{0}'' in template {1}"),
                                             r.memberExpression, rolePreset.name)
                                     .primitives(member.getMember().isUsable() ? member.getMember() : n)
                                     .build();
@@ -270,8 +270,8 @@ public class RelationChecker extends Test {
 
             errors.add(TestError.builder(this, Severity.WARNING, WRONG_TYPE)
                     .message(ROLE_VERIF_PROBLEM_MSG,
-                            marktr("Role member type ''{0}'' does not match accepted list of ''{1}'' in template {2}"),
-                            member.getType(), typesStr, rolePreset.name)
+                            marktr("Type ''{0}'' of relation member with role ''{1}'' does not match accepted types ''{2}'' in template {3}"),
+                            member.getType(), member.getRole(), typesStr, rolePreset.name)
                     .primitives(member.getMember().isUsable() ? member.getMember() : n)
                     .build());
         }
