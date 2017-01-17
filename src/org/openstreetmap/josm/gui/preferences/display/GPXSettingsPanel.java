@@ -59,8 +59,12 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private final JRadioButton colorTypeNone = new JRadioButton(tr("Single Color (can be customized for named layers)"));
     private final JRadioButton colorTypeGlobal = new JRadioButton(tr("Use global settings"));
     private final JosmComboBox<String> colorTypeVelocityTune = new JosmComboBox<>(new String[] {tr("Car"), tr("Bicycle"), tr("Foot")});
-    private final JosmComboBox<String> colorTypeHeatMapTune = new JosmComboBox<>(new String[] {tr("User"), tr("Inferno"), tr("Viridis"),
-                                                                                 tr("Wood"), tr("Heat")});
+    private final JosmComboBox<String> colorTypeHeatMapTune = new JosmComboBox<>(new String[] {
+        trc("Heat map", "User"),
+        trc("Heat map", "Inferno"),
+        trc("Heat map", "Viridis"),
+        trc("Heat map", "Wood"),
+        trc("Heat map", "Heat")});
     private final JCheckBox makeAutoMarkers = new JCheckBox(tr("Create markers when reading GPX"));
     private final JCheckBox drawGpsArrows = new JCheckBox(tr("Draw Direction Arrows"));
     private final JCheckBox drawGpsArrowsFast = new JCheckBox(tr("Fast drawing (looks uglier)"));
@@ -264,12 +268,12 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         }
         add(colorTypeNone, GBC.eol().insets(40, 0, 0, 0));
         add(colorTypeVelocity, GBC.std().insets(40, 0, 0, 0));
-        add(colorTypeVelocityTune, GBC.eop().insets(5, 0, 0, 5));
+        add(colorTypeVelocityTune, GBC.eop().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
         add(colorTypeDirection, GBC.eol().insets(40, 0, 0, 0));
         add(colorTypeDilution, GBC.eol().insets(40, 0, 0, 0));
         add(colorTypeTime, GBC.eol().insets(40, 0, 0, 0));
         add(colorTypeHeatMap, GBC.std().insets(40, 0, 0, 0));
-        add(colorTypeHeatMapTune, GBC.eop().insets(5, 0, 0, 5));
+        add(colorTypeHeatMapTune, GBC.eop().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
 
         ExpertToggleAction.addVisibilitySwitcher(colorTypeDirection);
         ExpertToggleAction.addVisibilitySwitcher(colorTypeDilution);
