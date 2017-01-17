@@ -1118,7 +1118,7 @@ way[tracktype][tracktype!~/^(1|2|3|4|5|grade1|grade2|grade3|grade4|grade5)$/] {
   suggestAlternative: "tracktype=grade5";
 }
 
-way[area][area!=yes][area!=no] {
+area[area][area!=yes][area!=no] {
   throwError: tr("wrong value: {0}", "{0.tag}");
   suggestAlternative: "area=yes";
   suggestAlternative: "area=no";

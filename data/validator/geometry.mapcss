@@ -1,4 +1,5 @@
 /* {0} on a node, should be a way */
+node[area=no],
 node[oneway],
 node[bridge],
 node[sidewalk],
@@ -47,6 +48,7 @@ node[natural=tree_row] {
 }
 
 /* {0} on a node, should be an area; see ticket #10679 */
+node[area=yes],
 node[landuse],
 node[natural=scree],
 node[natural=scrub],
