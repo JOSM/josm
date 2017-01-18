@@ -85,7 +85,7 @@ public class OsmServerWriter {
     }
 
     /**
-     * Uploads the changes individually. Invokes one API call per uploaded primitmive.
+     * Uploads the changes individually. Invokes one API call per uploaded primitive.
      *
      * @param primitives the collection of primitives to upload
      * @param progressMonitor the progress monitor
@@ -117,10 +117,6 @@ public class OsmServerWriter {
                 processed.add(osm);
                 progressMonitor.worked(1);
             }
-        } catch (OsmTransferException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new OsmTransferException(e);
         } finally {
             progressMonitor.finishTask();
         }
