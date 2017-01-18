@@ -32,10 +32,10 @@ import org.apache.commons.compress.utils.ByteUtils;
  */
 public class BlockLZ4CompressorInputStream extends AbstractLZ77CompressorInputStream {
 
-    private static final int WINDOW_SIZE = 1 << 16;
-    private static final int SIZE_BITS = 4;
-    private static final int COPY_SIZE_MASK = (1 << SIZE_BITS) - 1;
-    private static final int LITERAL_SIZE_MASK = COPY_SIZE_MASK << SIZE_BITS;
+    static final int WINDOW_SIZE = 1 << 16;
+    static final int SIZE_BITS = 4;
+    static final int COPY_SIZE_MASK = (1 << SIZE_BITS) - 1;
+    static final int LITERAL_SIZE_MASK = COPY_SIZE_MASK << SIZE_BITS;
 
     /** Copy-size part of the block starting byte. */
     private int nextCopySize;
