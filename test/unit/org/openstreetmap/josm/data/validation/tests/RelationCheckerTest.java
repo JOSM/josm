@@ -153,7 +153,8 @@ public class RelationCheckerTest {
         r.removeMember(3);
         r.addMember(new RelationMember("stop", createPrimitive("way no-rail-way=yes")));
         assertEquals(1, testRelation(r).size());
-        assertEquals("Type 'way' of relation member with role 'stop' does not match accepted types 'node' in template Public Transport Route (Rail)",
+        assertEquals(
+                "Type 'way' of relation member with role 'stop' does not match accepted types 'node' in template Public Transport Route (Rail)",
                 testRelation(r).get(0).getDescription());
 
         r.removeMember(3);
