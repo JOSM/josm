@@ -88,7 +88,6 @@ public class CacheEventQueue<K, V>
             TimeUnit.MILLISECONDS,
             queue,
             new DaemonThreadFactory("CacheEventQueue.QProcessor-" + getCacheName()));
-        setAlive(true);
     }
 
     /**

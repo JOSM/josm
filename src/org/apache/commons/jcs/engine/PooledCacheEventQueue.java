@@ -88,7 +88,6 @@ public class PooledCacheEventQueue<K, V>
         // this will share the same pool with other event queues by default.
         pool = ThreadPoolManager.getInstance().getPool(
                 (threadPoolName == null) ? "cache_event_queue" : threadPoolName );
-        setAlive(true);
     }
 
     /**
@@ -106,9 +105,9 @@ public class PooledCacheEventQueue<K, V>
     @Override
     public synchronized void destroy()
     {
-        if ( isAlive() )
+        if ( isWorking() )
         {
-            setAlive(false);
+            setWorking(false);
             pool.shutdownNow();
             if ( log.isInfoEnabled() )
             {
@@ -139,8 +138,7 @@ public class PooledCacheEventQueue<K, V>
 
         ArrayList<IStatElement<?>> elems = new ArrayList<IStatElement<?>>();
 
-        elems.add(new StatElement<Boolean>( "Working", Boolean.valueOf(super.isWorking()) ) );
-        elems.add(new StatElement<Boolean>( "Alive", Boolean.valueOf(this.isAlive()) ) );
+        elems.add(new StatElement<Boolean>( "Working", Boolean.valueOf(isWorking()) ) );
         elems.add(new StatElement<Boolean>( "Empty", Boolean.valueOf(this.isEmpty()) ) );
 
         if ( pool.getQueue() != null )

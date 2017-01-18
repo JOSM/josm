@@ -64,9 +64,6 @@ public abstract class AbstractCacheEventQueue<K, V>
     /** in milliseconds */
     private int waitBeforeRetry;
 
-    /** this is true if there is any worker thread. */
-    private final AtomicBoolean alive = new AtomicBoolean(false);
-
     /**
      * This means that the queue is functional. If we reached the max number of failures, the queue
      * is marked as non functional and will never work again.
@@ -108,21 +105,27 @@ public abstract class AbstractCacheEventQueue<K, V>
      * If they queue has an active thread it is considered alive.
      * <p>
      * @return The alive value
+     * 
+     * @deprecated The alive-logic is not used 
      */
-    @Override
+    @Deprecated
+	@Override
     public boolean isAlive()
     {
-        return alive.get();
+        return true;
     }
 
     /**
      * Sets whether the queue is actively processing -- if there are working threads.
      * <p>
      * @param aState
+     * 
+     * @deprecated The alive-logic is not used 
      */
-    public void setAlive( boolean aState )
+    @Deprecated
+	public void setAlive( boolean aState )
     {
-        alive.set(aState);
+        // do nothing
     }
 
     /**
@@ -179,17 +182,9 @@ public abstract class AbstractCacheEventQueue<K, V>
      * @throws IOException
      */
     @Override
-    public synchronized void addPutEvent( ICacheElement<K, V> ce )
-        throws IOException
+    public void addPutEvent( ICacheElement<K, V> ce )
     {
-        if ( isWorking() )
-        {
-            put( new PutEvent( ce ) );
-        }
-        else if ( log.isWarnEnabled() )
-        {
-            log.warn( "Not enqueuing Put Event for [" + this + "] because it's non-functional." );
-        }
+        put( new PutEvent( ce ) );
     }
 
     /**
@@ -200,54 +195,28 @@ public abstract class AbstractCacheEventQueue<K, V>
      * @throws IOException
      */
     @Override
-    public synchronized void addRemoveEvent( K key )
-        throws IOException
+    public void addRemoveEvent( K key )
     {
-        if ( isWorking() )
-        {
-            put( new RemoveEvent( key ) );
-        }
-        else if ( log.isWarnEnabled() )
-        {
-            log.warn( "Not enqueuing Remove Event for [" + this + "] because it's non-functional." );
-        }
+        put( new RemoveEvent( key ) );
     }
 
     /**
      * This adds a remove all event to the queue. When it is processed, all elements will be removed
      * from the cache.
-     * <p>
-     * @throws IOException
      */
     @Override
-    public synchronized void addRemoveAllEvent()
-        throws IOException
+    public void addRemoveAllEvent()
     {
-        if ( isWorking() )
-        {
-            put( new RemoveAllEvent() );
-        }
-        else if ( log.isWarnEnabled() )
-        {
-            log.warn( "Not enqueuing RemoveAll Event for [" + this + "] because it's non-functional." );
-        }
+        put( new RemoveAllEvent() );
     }
 
     /**
-     * @throws IOException
+     * This adds a dispose event to the queue. When it is processed, the cache is shut down
      */
     @Override
-    public synchronized void addDisposeEvent()
-        throws IOException
+    public void addDisposeEvent()
     {
-        if ( isWorking() )
-        {
-            put( new DisposeEvent() );
-        }
-        else if ( log.isWarnEnabled() )
-        {
-            log.warn( "Not enqueuing Dispose Event for [" + this + "] because it's non-functional." );
-        }
+        put( new DisposeEvent() );
     }
 
     /**
@@ -293,8 +262,7 @@ public abstract class AbstractCacheEventQueue<K, V>
                         log.warn( "Error while running event from Queue: " + this
                             + ". Dropping Event and marking Event Queue as non-functional." );
                     }
-                    setWorking( false );
-                    setAlive( false );
+                    destroy();
                     return;
                 }
                 if ( log.isInfoEnabled() )
@@ -312,10 +280,7 @@ public abstract class AbstractCacheEventQueue<K, V>
                     {
                         log.warn( "Interrupted while sleeping for retry on event " + this + "." );
                     }
-                    // TODO consider if this is best. maybe we should just
-                    // destroy
-                    setWorking( false );
-                    setAlive( false );
+                    destroy();
                 }
             }
         }
@@ -342,10 +307,8 @@ public abstract class AbstractCacheEventQueue<K, V>
          * Constructor for the PutEvent object.
          * <p>
          * @param ice
-         * @throws IOException
          */
         PutEvent( ICacheElement<K, V> ice )
-            throws IOException
         {
             this.ice = ice;
         }
@@ -391,10 +354,8 @@ public abstract class AbstractCacheEventQueue<K, V>
          * Constructor for the RemoveEvent object
          * <p>
          * @param key
-         * @throws IOException
          */
         RemoveEvent( K key )
-            throws IOException
         {
             this.key = key;
         }
