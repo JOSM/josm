@@ -110,7 +110,8 @@ public class MergeNodesAction extends JosmAction {
         case 0:
             return candidates.get(size - 1);
         case 1:
-            double east1 = 0, north1 = 0;
+            double east1 = 0;
+            double north1 = 0;
             for (final Node n : candidates) {
                 EastNorth en = n.getEastNorth();
                 east1 += en.east();
@@ -131,7 +132,9 @@ public class MergeNodesAction extends JosmAction {
                 }
             }
 
-            double east2 = 0, north2 = 0, weight = 0;
+            double east2 = 0;
+            double north2 = 0;
+            double weight = 0;
             for (int i = 0; i < size; i++) {
                 final EastNorth en = candidates.get(i).getEastNorth();
                 final double w = weights[i];
@@ -139,6 +142,9 @@ public class MergeNodesAction extends JosmAction {
                 north2 += en.north() * w;
                 weight += w;
             }
+
+            if (weight == 0) // to avoid division by 0
+                return candidates.get(0);
 
             return new Node(new EastNorth(east2 / weight, north2 / weight));
         default:
