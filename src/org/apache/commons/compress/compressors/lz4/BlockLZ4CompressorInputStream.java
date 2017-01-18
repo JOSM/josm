@@ -34,11 +34,11 @@ public class BlockLZ4CompressorInputStream extends AbstractLZ77CompressorInputSt
 
     static final int WINDOW_SIZE = 1 << 16;
     static final int SIZE_BITS = 4;
-    static final int COPY_SIZE_MASK = (1 << SIZE_BITS) - 1;
-    static final int LITERAL_SIZE_MASK = COPY_SIZE_MASK << SIZE_BITS;
+    static final int BACK_REFERENCE_SIZE_MASK = (1 << SIZE_BITS) - 1;
+    static final int LITERAL_SIZE_MASK = BACK_REFERENCE_SIZE_MASK << SIZE_BITS;
 
-    /** Copy-size part of the block starting byte. */
-    private int nextCopySize;
+    /** Back-Reference-size part of the block starting byte. */
+    private int nextBackReferenceSize;
 
     /** Current state of the stream */
     private State state = State.NO_BLOCK;
@@ -69,21 +69,21 @@ public class BlockLZ4CompressorInputStream extends AbstractLZ77CompressorInputSt
         case IN_LITERAL:
             int litLen = readLiteral(b, off, len);
             if (!hasMoreDataInBlock()) {
-                state = State.LOOKING_FOR_COPY;
+                state = State.LOOKING_FOR_BACK_REFERENCE;
             }
             return litLen;
-        case LOOKING_FOR_COPY:
-            if (!initializeCopy()) {
+        case LOOKING_FOR_BACK_REFERENCE:
+            if (!initializeBackReference()) {
                 state = State.EOF;
                 return -1;
             }
             /*FALLTHROUGH*/
-        case IN_COPY:
-            int copyLen = readCopy(b, off, len);
+        case IN_BACK_REFERENCE:
+            int backReferenceLen = readBackReference(b, off, len);
             if (!hasMoreDataInBlock()) {
                 state = State.NO_BLOCK;
             }
-            return copyLen;
+            return backReferenceLen;
         default:
             throw new IOException("Unknown stream state " + state);
         }
@@ -94,9 +94,9 @@ public class BlockLZ4CompressorInputStream extends AbstractLZ77CompressorInputSt
         if (nextBlock == -1) {
             throw new IOException("Premature end of stream while looking for next block");
         }
-        nextCopySize = nextBlock & COPY_SIZE_MASK;
+        nextBackReferenceSize = nextBlock & BACK_REFERENCE_SIZE_MASK;
         long literalSizePart = (nextBlock & LITERAL_SIZE_MASK) >> SIZE_BITS;
-        if (literalSizePart == COPY_SIZE_MASK) {
+        if (literalSizePart == BACK_REFERENCE_SIZE_MASK) {
             literalSizePart += readSizeBytes();
         }
         startLiteral(literalSizePart);
@@ -117,30 +117,30 @@ public class BlockLZ4CompressorInputStream extends AbstractLZ77CompressorInputSt
     }
 
     /**
-     * @return false if there is no more copy - this means this is the
+     * @return false if there is no more back-reference - this means this is the
      * last block of the stream.
      */
-    private boolean initializeCopy() throws IOException {
-        int copyOffset = 0;
+    private boolean initializeBackReference() throws IOException {
+        int backReferenceOffset = 0;
         try {
-            copyOffset = (int) ByteUtils.fromLittleEndian(supplier, 2);
+            backReferenceOffset = (int) ByteUtils.fromLittleEndian(supplier, 2);
         } catch (IOException ex) {
-            if (nextCopySize == 0) { // the last block has no copy
+            if (nextBackReferenceSize == 0) { // the last block has no back-reference
                 return false;
             }
             throw ex;
         }
-        long copySize = nextCopySize;
-        if (nextCopySize == COPY_SIZE_MASK) {
-            copySize += readSizeBytes();
+        long backReferenceSize = nextBackReferenceSize;
+        if (nextBackReferenceSize == BACK_REFERENCE_SIZE_MASK) {
+            backReferenceSize += readSizeBytes();
         }
         // minimal match length 4 is encoded as 0
-        startCopy(copyOffset, copySize + 4);
-        state = State.IN_COPY;
+        startBackReference(backReferenceOffset, backReferenceSize + 4);
+        state = State.IN_BACK_REFERENCE;
         return true;
     }
 
     private enum State {
-        NO_BLOCK, IN_LITERAL, LOOKING_FOR_COPY, IN_COPY, EOF
+        NO_BLOCK, IN_LITERAL, LOOKING_FOR_BACK_REFERENCE, IN_BACK_REFERENCE, EOF
     }
 }

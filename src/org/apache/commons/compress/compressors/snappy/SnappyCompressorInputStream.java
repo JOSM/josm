@@ -104,12 +104,12 @@ public class SnappyCompressorInputStream extends AbstractLZ77CompressorInputStre
                 state = State.NO_BLOCK;
             }
             return litLen;
-        case IN_COPY:
-            int copyLen = readCopy(b, off, len);
+        case IN_BACK_REFERENCE:
+            int backReferenceLen = readBackReference(b, off, len);
             if (!hasMoreDataInBlock()) {
                 state = State.NO_BLOCK;
             }
-            return copyLen;
+            return backReferenceLen;
         default:
             throw new IOException("Unknown stream state " + state);
         }
@@ -160,12 +160,12 @@ public class SnappyCompressorInputStream extends AbstractLZ77CompressorInputStre
             offset = (b & 0xE0) << 3;
             b = readOneByte();
             if (b == -1) {
-                throw new IOException("Premature end of stream reading copy length");
+                throw new IOException("Premature end of stream reading back-reference length");
             }
             offset |= b;
 
-            startCopy(offset, length);
-            state = State.IN_COPY;
+            startBackReference(offset, length);
+            state = State.IN_BACK_REFERENCE;
             break;
 
         case 0x02:
@@ -183,8 +183,8 @@ public class SnappyCompressorInputStream extends AbstractLZ77CompressorInputStre
 
             offset = (int) ByteUtils.fromLittleEndian(supplier, 2);
 
-            startCopy(offset, length);
-            state = State.IN_COPY;
+            startBackReference(offset, length);
+            state = State.IN_BACK_REFERENCE;
             break;
 
         case 0x03:
@@ -201,8 +201,8 @@ public class SnappyCompressorInputStream extends AbstractLZ77CompressorInputStre
 
             offset = (int) ByteUtils.fromLittleEndian(supplier, 4) & 0x7fffffff;
 
-            startCopy(offset, length);
-            state = State.IN_COPY;
+            startBackReference(offset, length);
+            state = State.IN_BACK_REFERENCE;
             break;
         }
     }
@@ -282,6 +282,6 @@ public class SnappyCompressorInputStream extends AbstractLZ77CompressorInputStre
     }
 
     private enum State {
-        NO_BLOCK, IN_LITERAL, IN_COPY
+        NO_BLOCK, IN_LITERAL, IN_BACK_REFERENCE
     }
 }

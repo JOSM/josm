@@ -45,9 +45,9 @@ public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
         block.
 
       * the start of a literal/back-reference pair contains the length
-        of the copy (at least some part of it) so we can't start
-        writing the literal before we know how long the next copy is
-        going to be.
+        of the back-reference (at least some part of it) so we can't
+        start writing the literal before we know how long the next
+        back-reference is going to be.
 
       * there is a special rule for the final blocks
 

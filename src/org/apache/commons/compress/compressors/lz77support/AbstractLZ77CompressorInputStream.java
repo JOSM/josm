@@ -51,11 +51,11 @@ public abstract class AbstractLZ77CompressorInputStream extends CompressorInputS
     /** The underlying stream to read compressed data from */
     private final InputStream in;
 
-    /** Number of bytes still to be read from the current literal or copy. */
+    /** Number of bytes still to be read from the current literal or back-reference. */
     private long bytesRemaining;
 
-    /** Offset of the current copy. */
-    private int copyOffset;
+    /** Offset of the current back-reference. */
+    private int backReferenceOffset;
 
     /** uncompressed size */
     private int size = 0;
@@ -192,8 +192,8 @@ public abstract class AbstractLZ77CompressorInputStream extends CompressorInputS
      * @param the offset of the back-reference
      * @param length the length of the back-reference
      */
-    protected final void startCopy(int offset, long length) {
-        copyOffset = offset;
+    protected final void startBackReference(int offset, long length) {
+        backReferenceOffset = offset;
         bytesRemaining = length;
     }
 
@@ -205,7 +205,7 @@ public abstract class AbstractLZ77CompressorInputStream extends CompressorInputS
      * @return number of bytes read, may be 0. Will never return -1 as
      * EOF-detection is the responsibility of the subclass
      */
-    protected final int readCopy(final byte[] b, final int off, final int len) {
+    protected final int readBackReference(final byte[] b, final int off, final int len) {
         final int avail = available();
         if (len > avail) {
             tryToCopy(len - avail);
@@ -215,29 +215,29 @@ public abstract class AbstractLZ77CompressorInputStream extends CompressorInputS
 
     private void tryToCopy(int bytesToCopy) {
         // this will fit into the buffer without sliding and not
-        // require more than is available inside the copy
+        // require more than is available inside the back-reference
         int copy = (int) Math.min(Math.min(bytesToCopy, bytesRemaining),
                                   buf.length - writeIndex);
         if (copy == 0) {
             // NOP
-        } else if (copyOffset == 1) { // pretty common special case
+        } else if (backReferenceOffset == 1) { // pretty common special case
             final byte last = buf[writeIndex - 1];
             for (int i = 0; i < copy; i++) {
                 buf[writeIndex++] = last;
             }
-        } else if (copy < copyOffset) {
-            System.arraycopy(buf, writeIndex - copyOffset, buf, writeIndex, copy);
+        } else if (copy < backReferenceOffset) {
+            System.arraycopy(buf, writeIndex - backReferenceOffset, buf, writeIndex, copy);
             writeIndex += copy;
         } else {
-            final int fullRots = copy / copyOffset;
+            final int fullRots = copy / backReferenceOffset;
             for (int i = 0; i < fullRots; i++) {
-                System.arraycopy(buf, writeIndex - copyOffset, buf, writeIndex, copyOffset);
-                writeIndex += copyOffset;
+                System.arraycopy(buf, writeIndex - backReferenceOffset, buf, writeIndex, backReferenceOffset);
+                writeIndex += backReferenceOffset;
             }
 
-            final int pad = copy - (copyOffset * fullRots);
+            final int pad = copy - (backReferenceOffset * fullRots);
             if (pad > 0) {
-                System.arraycopy(buf, writeIndex - copyOffset, buf, writeIndex, pad);
+                System.arraycopy(buf, writeIndex - backReferenceOffset, buf, writeIndex, pad);
                 writeIndex += pad;
             }
         }
