@@ -98,7 +98,7 @@ public class LZ77Compressor {
     public static final class LiteralBlock extends Block {
         private final byte[] data;
         private final int offset, length;
-        /* package private for tests */ LiteralBlock(byte[] data, int offset, int length) {
+        public LiteralBlock(byte[] data, int offset, int length) {
             this.data = data;
             this.offset = offset;
             this.length = length;
@@ -138,7 +138,7 @@ public class LZ77Compressor {
      */
     public static final class BackReference extends Block {
         private final int offset, length;
-        private BackReference(int offset, int length) {
+        public BackReference(int offset, int length) {
             this.offset = offset;
             this.length = length;
         }

@@ -20,6 +20,9 @@ package org.apache.commons.compress.compressors.lz4;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.apache.commons.compress.compressors.CompressorOutputStream;
 import org.apache.commons.compress.compressors.lz77support.LZ77Compressor;
@@ -33,6 +36,10 @@ import org.apache.commons.compress.utils.ByteUtils;
  * @since 1.14
  */
 public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
+
+    private static final int MIN_BACK_REFERENCE_LENGTH = 4;
+    private static final int MIN_LENGTH_OF_LAST_LITERAL = 5;
+    private static final int MIN_OFFSET_OF_LAST_BACK_REFERENCE = 12;
 
     /*
 
@@ -69,7 +76,6 @@ public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
 
     private final LZ77Compressor compressor;
     private final OutputStream os;
-    private final ByteUtils.ByteConsumer consumer;
 
     // used in one-arg write method
     private final byte[] oneByte = new byte[1];
@@ -86,10 +92,9 @@ public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
      */
     public BlockLZ4CompressorOutputStream(final OutputStream os) throws IOException {
         this.os = os;
-        consumer = new ByteUtils.OutputStreamByteConsumer(os);
         int maxLen = BlockLZ4CompressorInputStream.WINDOW_SIZE - 1;
-        compressor = new LZ77Compressor(new Parameters(BlockLZ4CompressorInputStream.WINDOW_SIZE, 4, maxLen, maxLen,
-            maxLen),
+        compressor = new LZ77Compressor(new Parameters(BlockLZ4CompressorInputStream.WINDOW_SIZE,
+            MIN_BACK_REFERENCE_LENGTH, maxLen, maxLen, maxLen),
             new LZ77Compressor.Callback() {
                 public void accept(LZ77Compressor.Block block) throws IOException {
                     //System.err.println(block);
@@ -140,5 +145,69 @@ public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
     }
 
     private void writeFinalLiteralBlock() throws IOException {
+    }
+
+    final static class Pair {
+        private final List<byte[]> literals = new LinkedList<>();
+        private int brOffset, brLength;
+
+        void addLiteral(LZ77Compressor.LiteralBlock block) {
+            literals.add(Arrays.copyOfRange(block.getData(), block.getOffset(),
+                block.getOffset() + block.getLength()));
+        }
+        void setBackReference(LZ77Compressor.BackReference block) {
+            if (hasBackReference()) {
+                throw new IllegalStateException();
+            }
+            brOffset = block.getOffset();
+            brLength = block.getLength();
+        }
+        boolean hasBackReference() {
+            return brOffset > 0;
+        }
+        boolean canBeWritten(int lengthOfBlocksAfterThisPair) {
+            return hasBackReference()
+                && lengthOfBlocksAfterThisPair >= MIN_LENGTH_OF_LAST_LITERAL
+                && lengthOfBlocksAfterThisPair + brOffset + brLength >= MIN_OFFSET_OF_LAST_BACK_REFERENCE;
+        }
+        int length() {
+            return literalLength() + brLength;
+        }
+        void writeTo(OutputStream out) throws IOException {
+            int litLength = literalLength();
+            out.write(lengths(litLength, brLength));
+            if (litLength >= BlockLZ4CompressorInputStream.BACK_REFERENCE_SIZE_MASK) {
+                writeLength(litLength - BlockLZ4CompressorInputStream.BACK_REFERENCE_SIZE_MASK, out);
+            }
+            for (byte[] b : literals) {
+                out.write(b);
+            }
+            if (hasBackReference()) {
+                ByteUtils.toLittleEndian(out, brOffset, 2);
+                if (brLength - MIN_BACK_REFERENCE_LENGTH >= BlockLZ4CompressorInputStream.BACK_REFERENCE_SIZE_MASK) {
+                    writeLength(brLength - MIN_BACK_REFERENCE_LENGTH
+                        - BlockLZ4CompressorInputStream.BACK_REFERENCE_SIZE_MASK, out);
+                }
+            }
+        }
+        private int literalLength() {
+            int length = 0;
+            for (byte[] b : literals) {
+                length += b.length;
+            }
+            return length;
+        }
+        private static int lengths(int litLength, int brLength) {
+            int l = litLength < 15 ? litLength : 15;
+            int br = brLength < 4 ? 0 : (brLength < 19 ? brLength - 4 : 15);
+            return (l << BlockLZ4CompressorInputStream.SIZE_BITS) | br;
+        }
+        private static void writeLength(int length, OutputStream out) throws IOException {
+            while (length >= 255) {
+                out.write(255);
+                length -= 255;
+            }
+            out.write(length);
+        }
     }
 }
