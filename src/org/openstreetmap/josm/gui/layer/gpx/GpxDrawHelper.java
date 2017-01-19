@@ -737,7 +737,7 @@ public class GpxDrawHelper implements SoMChangeListener {
         final int globalLineWidth = Math.min(Math.max(lineWidth, 1), 20);
 
         // cache scale of view
-        final double zoomScale = mv.getScale();
+        final double zoomScale = mv.getDist100Pixel() / 50.0f;
 
         // 3rd. determine current paint parameters -----------------------------
 
@@ -1088,7 +1088,7 @@ public class GpxDrawHelper implements SoMChangeListener {
         // get bounds of screen image and projection, zoom and adjust input parameters
         final Rectangle screenBounds = new Rectangle(mv.getWidth(), mv.getHeight());
         final MapViewState mapViewState = mv.getState();
-        final double zoomScale = mapViewState.getScale();
+        final double zoomScale = mv.getDist100Pixel() / 50.0f;
 
         // adjust global settings ( zero = default line width )
         final int globalLineWidth = (0 == lineWidth) ? 1 : Math.min(Math.max(lineWidth, 1), 20);
