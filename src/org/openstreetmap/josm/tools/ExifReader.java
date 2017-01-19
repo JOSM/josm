@@ -55,7 +55,7 @@ public final class ExifReader {
                     }
                     if (tag.getTagType() == ExifIFD0Directory.TAG_DATETIME /* 0x0132 */ ||
                         tag.getTagType() == ExifSubIFDDirectory.TAG_DATETIME_DIGITIZED /* 0x9004 */) {
-                        if (dateStr != null) {
+                        if (dateStr == null) {
                             // prefer TAG_DATETIME_ORIGINAL
                             dateStr = tag.getDescription();
                         }

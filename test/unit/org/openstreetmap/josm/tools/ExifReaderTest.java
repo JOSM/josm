@@ -118,4 +118,15 @@ public class ExifReaderTest {
         String dateStr = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(ExifReader.readTime(file));
         assertEquals("2015-11-08T15:33:27.500", dateStr);
     }
+
+    /**
+     * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/14209">#14209</a>
+     * @throws IOException if an error occurs during reading
+     */
+    @Test
+    public void testTicket14209() throws IOException {
+        File file = new File(TestUtils.getRegressionDataFile(14209, "0MbEfj1S--.1.jpg"));
+        String dateStr = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(ExifReader.readTime(file));
+        assertEquals("2017-01-16T18:27:00.000", dateStr);
+    }
 }
