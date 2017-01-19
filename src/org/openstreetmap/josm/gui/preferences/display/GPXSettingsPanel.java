@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.preferences.display;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
@@ -19,6 +20,7 @@ import javax.swing.JRadioButton;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.gui.layer.gpx.GpxDrawHelper;
 import org.openstreetmap.josm.gui.layer.markerlayer.Marker;
 import org.openstreetmap.josm.gui.layer.markerlayer.Marker.TemplateEntryProperty;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationListener;
@@ -55,7 +57,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private final JRadioButton colorTypeDirection = new JRadioButton(tr("Direction (red = west, yellow = north, green = east, blue = south)"));
     private final JRadioButton colorTypeDilution = new JRadioButton(tr("Dilution of Position (red = high, green = low, if available)"));
     private final JRadioButton colorTypeTime = new JRadioButton(tr("Track date"));
-    private final JRadioButton colorTypeHeatMap = new JRadioButton(tr("Heat Map (dark = few tracks, bright = many tracks)"));
+    private final JRadioButton colorTypeHeatMap = new JRadioButton(tr("Heat Map (dark = few, bright = many)"));
     private final JRadioButton colorTypeNone = new JRadioButton(tr("Single Color (can be customized for named layers)"));
     private final JRadioButton colorTypeGlobal = new JRadioButton(tr("Use global settings"));
     private final JosmComboBox<String> colorTypeVelocityTune = new JosmComboBox<>(new String[] {tr("Car"), tr("Bicycle"), tr("Foot")});
@@ -259,6 +261,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         colorTypeVelocityTune.setToolTipText(tr("Allows to tune the track coloring for different average speeds."));
 
         colorTypeHeatMapTune.setToolTipText(tr("Selects the color schema for heat map."));
+        JLabel colorTypeHeatIconLabel = new JLabel();
 
         add(Box.createVerticalGlue(), GBC.eol().insets(0, 20, 0, 0));
 
@@ -273,7 +276,16 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         add(colorTypeDilution, GBC.eol().insets(40, 0, 0, 0));
         add(colorTypeTime, GBC.eol().insets(40, 0, 0, 0));
         add(colorTypeHeatMap, GBC.std().insets(40, 0, 0, 0));
-        add(colorTypeHeatMapTune, GBC.eop().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
+        add(colorTypeHeatIconLabel, GBC.std().insets(5, 0, 0, 5));
+        add(colorTypeHeatMapTune, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
+
+        colorTypeHeatMapTune.addPropertyChangeListener(e -> {
+            // get image size of environment
+            final int iconSize = (int) colorTypeHeatMapTune.getPreferredSize().getHeight();
+            // ask the GPX draw for the correct color of that layer
+            final Color color = GpxDrawHelper.DEFAULT_COLOR.getChildColor(layerName != null ? layerName : "").get();
+            colorTypeHeatIconLabel.setIcon(GpxDrawHelper.getColorMapImageIcon(color, colorTypeHeatMapTune.getSelectedIndex(), iconSize));
+        });
 
         ExpertToggleAction.addVisibilitySwitcher(colorTypeDirection);
         ExpertToggleAction.addVisibilitySwitcher(colorTypeDilution);

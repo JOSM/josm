@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import javax.swing.ImageIcon;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.SystemOfMeasurement.SoMChangeListener;
@@ -153,10 +155,7 @@ public class GpxDrawHelper implements SoMChangeListener {
     private static Color[] heatMapLutColorJosmRed2Blue = createColorFromResource("red2blue");
 
     // user defined heatmap color
-    private Color[] heatMapLutUserColor = createColorLut(Color.BLACK, Color.WHITE);
-
-    // heat map color in use
-    private Color[] heatMapLutColor;
+    private Color[] heatMapLutColor = createColorLut(Color.BLACK, Color.WHITE);
 
     private void setupColors() {
         hdopAlpha = Main.pref.getInteger("hdop.color.alpha", -1);
@@ -165,7 +164,6 @@ public class GpxDrawHelper implements SoMChangeListener {
         hdopScale = ColorScale.createHSBScale(256).makeReversed().addTitle(tr("HDOP"));
         dateScale = ColorScale.createHSBScale(256).addTitle(tr("Time"));
         directionScale = ColorScale.createCyclicScale(256).setIntervalCount(4).addTitle(tr("Direction"));
-        heatMapLutColor = heatMapLutUserColor;
 
         systemOfMeasurementChanged(null, null);
     }
@@ -513,28 +511,10 @@ public class GpxDrawHelper implements SoMChangeListener {
         }
 
         // heat mode
-        if (ColorMode.HEATMAP == colored && neutralColor != null) {
+        if (ColorMode.HEATMAP == colored) {
 
-            // generate new user color map
-            heatMapLutUserColor = createColorLut(Color.BLACK, neutralColor.darker(),
-                                                 neutralColor, neutralColor.brighter(), Color.WHITE);
-
-            // decide what, keep order is sync with setting on GUI
-            Color[][] lut = {
-                    heatMapLutUserColor,
-                    heatMapLutColorJosmInferno,
-                    heatMapLutColorJosmViridis,
-                    heatMapLutColorJosmBrown2Green,
-                    heatMapLutColorJosmRed2Blue
-            };
-
-            // select by index
-            if (heatMapDrawColorTableIdx < lut.length) {
-                heatMapLutColor = lut[ heatMapDrawColorTableIdx ];
-            } else {
-                // fallback
-                heatMapLutColor = heatMapLutUserColor;
-            }
+            // generate and get new user color map
+            heatMapLutColor = selectColorMap(neutralColor != null ? neutralColor : Color.WHITE, heatMapDrawColorTableIdx);
 
             // force redraw of image
             heatMapMapViewState = null;
@@ -782,18 +762,18 @@ public class GpxDrawHelper implements SoMChangeListener {
     }
 
     /**
-     * Creates a linear distributed colormap by linear blending between colors
-     * @param colors 1..n colors
-     * @return array of Color objects
+     * Generates a linear gradient map image
+     *
+     * @param width  image width
+     * @param height image height
+     * @param colors 1..n color descriptions
+     * @return image object
      */
-    protected static Color[] createColorLut(Color... colors) {
-
-        // number of lookup entries
-        int tableSize = 256;
+    protected static BufferedImage createImageGradientMap(int width, int height, Color... colors) {
 
         // create image an paint object
-        BufferedImage img = new BufferedImage(tableSize, 1, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g = img.createGraphics();
+        final BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        final Graphics2D g = img.createGraphics();
 
         float[] fract = new float[ colors.length ];
 
@@ -803,14 +783,28 @@ public class GpxDrawHelper implements SoMChangeListener {
         }
 
         // draw the gradient map
-        LinearGradientPaint gradient = new LinearGradientPaint(0, 0, tableSize, 1, fract, colors,
+        LinearGradientPaint gradient = new LinearGradientPaint(0, 0, width, height, fract, colors,
                                                                MultipleGradientPaint.CycleMethod.NO_CYCLE);
         g.setPaint(gradient);
-        g.fillRect(0, 0, tableSize, 1);
+        g.fillRect(0, 0, width, height);
         g.dispose();
 
         // access it via raw interface
-        final Raster imgRaster = img.getData();
+        return img;
+    }
+
+    /**
+     * Creates a linear distributed colormap by linear blending between colors
+     * @param colors 1..n colors
+     * @return array of Color objects
+     */
+    protected static Color[] createColorLut(Color... colors) {
+
+        // number of lookup entries
+        final int tableSize = 256;
+
+        // access it via raw interface
+        final Raster imgRaster = createImageGradientMap(tableSize, 1, colors).getData();
 
         // the pixel storage
         int[] pixel = new int[1];
@@ -824,7 +818,7 @@ public class GpxDrawHelper implements SoMChangeListener {
         for (int i = 0; i < tableSize; i++) {
 
             // get next single pixel
-            imgRaster.getDataElements((int) (i * (double) img.getWidth() / tableSize), 0, pixel);
+            imgRaster.getDataElements(i, 0, pixel);
 
             // get color and map
             Color c = new Color(pixel[0]);
@@ -922,6 +916,48 @@ public class GpxDrawHelper implements SoMChangeListener {
         }
 
         return createColorLut(colorList.toArray(new Color[ colorList.size() ]));
+    }
+
+    /**
+     * Returns the next user color map
+     *
+     * @param userColor - default or fallback user color
+     * @param tableIdx  - selected user color index
+     * @return color array
+     */
+    protected static Color[] selectColorMap(Color userColor, int tableIdx) {
+
+        // generate new user color map
+        Color[] nextUserColor = createColorLut(Color.BLACK, userColor.darker(),
+                                               userColor, userColor.brighter(), Color.WHITE);
+
+        // decide what, keep order is sync with setting on GUI
+        Color[][] lut = {
+                nextUserColor,
+                heatMapLutColorJosmInferno,
+                heatMapLutColorJosmViridis,
+                heatMapLutColorJosmBrown2Green,
+                heatMapLutColorJosmRed2Blue
+        };
+
+        // select by index
+        if (tableIdx < lut.length) {
+            nextUserColor = lut[ tableIdx ];
+        }
+
+        return nextUserColor;
+    }
+
+    /**
+     * Generates a Icon
+     *
+     * @param userColor selected user color
+     * @param tableIdx tabled index
+     * @param size size of the image
+     * @return a image icon that shows the
+     */
+    public static ImageIcon getColorMapImageIcon(Color userColor, int tableIdx, int size) {
+        return new ImageIcon(createImageGradientMap(size, size, selectColorMap(userColor, tableIdx)));
     }
 
     /**
