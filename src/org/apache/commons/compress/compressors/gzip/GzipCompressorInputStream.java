@@ -59,14 +59,14 @@ public class GzipCompressorInputStream extends CompressorInputStream {
     // Compressed input stream, possibly wrapped in a BufferedInputStream
     private final InputStream in;
 
-    // True if decompressing multimember streams.
+    // True if decompressing multi member streams.
     private final boolean decompressConcatenated;
 
     // Buffer to hold the input data
     private final byte[] buf = new byte[8192];
 
     // Amount of data in buf.
-    private int bufUsed = 0;
+    private int bufUsed;
 
     // Decompressor
     private Inflater inf = new Inflater(true);
@@ -233,7 +233,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
         return true;
     }
 
-    private byte[] readToNull(final DataInputStream inData) throws IOException {
+    private static byte[] readToNull(final DataInputStream inData) throws IOException {
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
         int b = 0;
         while ((b = inData.readUnsignedByte()) != 0x00) { // NOPMD
@@ -242,7 +242,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
         return bos.toByteArray();
     }
 
-    private long readLittleEndianInt(final DataInputStream inData) throws IOException {
+    private static long readLittleEndianInt(final DataInputStream inData) throws IOException {
         return inData.readUnsignedByte()
             | (inData.readUnsignedByte() << 8)
             | (inData.readUnsignedByte() << 16)
@@ -299,7 +299,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
                 // position to match the actual amount used.
                 //
                 // NOTE: The "if" is there just in case. Since we used
-                // in.mark earler, it should always skip enough.
+                // in.mark earlier, it should always skip enough.
                 in.reset();
 
                 final int skipAmount = bufUsed - inf.getRemaining();

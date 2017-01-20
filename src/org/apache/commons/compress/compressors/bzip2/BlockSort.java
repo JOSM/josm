@@ -28,7 +28,7 @@ import java.util.BitSet;
  * blocksort.c in his libbzip2</p>
  *
  * <p>The Burrows-Wheeler transform is a reversible transform of the
- * original data that is supposed to group similiar bytes close to
+ * original data that is supposed to group similar bytes close to
  * each other.  The idea is to sort all permutations of the input and
  * only keep the last byte of each permutation.  E.g. for "Commons
  * Compress" you'd get:</p>
