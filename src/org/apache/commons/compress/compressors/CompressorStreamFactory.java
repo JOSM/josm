@@ -38,6 +38,7 @@ import org.apache.commons.compress.compressors.deflate.DeflateCompressorOutputSt
 import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.compressors.lz4.BlockLZ4CompressorInputStream;
+import org.apache.commons.compress.compressors.lz4.BlockLZ4CompressorOutputStream;
 import org.apache.commons.compress.compressors.lzma.LZMACompressorInputStream;
 import org.apache.commons.compress.compressors.lzma.LZMACompressorOutputStream;
 import org.apache.commons.compress.compressors.lzma.LZMAUtils;
@@ -511,7 +512,8 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
      * 
      * @param name
      *            the compressor name, i.e. {@value #GZIP}, {@value #BZIP2},
-     *            {@value #XZ}, {@value #PACK200}, {@value SNAPPY_FRAMED}
+     *            {@value #XZ}, {@value #PACK200}, {@value SNAPPY_FRAMED},
+     *            {@value LZ4_BLOCK}
      *            or {@value #DEFLATE}
      * @param out
      *            the output stream
@@ -558,6 +560,10 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
                 return new FramedSnappyCompressorOutputStream(out);
             }
 
+            if (LZ4_BLOCK.equalsIgnoreCase(name)) {
+                return new BlockLZ4CompressorOutputStream(out);
+            }
+
         } catch (final IOException e) {
             throw new CompressorException("Could not create CompressorOutputStream", e);
         }
@@ -595,12 +601,12 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
 
     @Override
     public Set<String> getInputStreamCompressorNames() {
-        return Sets.newHashSet(GZIP, BZIP2, XZ, LZMA, PACK200, SNAPPY_RAW, SNAPPY_FRAMED, Z, DEFLATE);
+        return Sets.newHashSet(GZIP, BZIP2, XZ, LZMA, PACK200, SNAPPY_RAW, SNAPPY_FRAMED, Z, DEFLATE, LZ4_BLOCK);
     }
 
     @Override
     public Set<String> getOutputStreamCompressorNames() {
-        return Sets.newHashSet(GZIP, BZIP2, XZ, LZMA, PACK200, DEFLATE, SNAPPY_FRAMED);
+        return Sets.newHashSet(GZIP, BZIP2, XZ, LZMA, PACK200, DEFLATE, SNAPPY_FRAMED, LZ4_BLOCK);
     }
 
     /**
