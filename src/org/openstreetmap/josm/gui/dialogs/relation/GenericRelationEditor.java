@@ -271,17 +271,23 @@ public class GenericRelationEditor extends RelationEditor {
                 getRootPane(), memberTable, selectionTable);
         // CHECKSTYLE.ON: LineLength
 
-        registerCopyPasteAction(new PasteMembersAction(memberTable, getLayer(), this) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                super.actionPerformed(e);
-                tfRole.requestFocusInWindow();
-            }
-        }, "PASTE_MEMBERS", Shortcut.getPasteKeyStroke(), getRootPane(), memberTable, selectionTable);
-
-        registerCopyPasteAction(new CopyMembersAction(memberTableModel, getLayer(), this),
-                "COPY_MEMBERS", Shortcut.getCopyKeyStroke(), getRootPane(), memberTable, selectionTable);
-
+        KeyStroke key = Shortcut.getPasteKeyStroke();
+        if (key != null) {
+            // handle uncommon situation, that user has no keystroke assigned to paste
+            registerCopyPasteAction(new PasteMembersAction(memberTable, getLayer(), this) {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    super.actionPerformed(e);
+                    tfRole.requestFocusInWindow();
+                }
+            }, "PASTE_MEMBERS", key, getRootPane(), memberTable, selectionTable);
+        }
+        key = Shortcut.getCopyKeyStroke();
+        if (key != null) {
+            // handle uncommon situation, that user has no keystroke assigned to paste
+            registerCopyPasteAction(new CopyMembersAction(memberTableModel, getLayer(), this),
+                    "COPY_MEMBERS", key, getRootPane(), memberTable, selectionTable);
+        }
         tagEditorPanel.setNextFocusComponent(memberTable);
         selectionTable.setFocusable(false);
         memberTableModel.setSelectedMembers(selectedMembers);
