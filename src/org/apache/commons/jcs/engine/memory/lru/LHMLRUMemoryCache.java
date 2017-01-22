@@ -26,7 +26,6 @@ import java.util.Map;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.control.CompositeCache;
 import org.apache.commons.jcs.engine.memory.AbstractMemoryCache;
-import org.apache.commons.jcs.engine.memory.util.DefaultMemoryElementDescriptor;
 import org.apache.commons.jcs.engine.memory.util.MemoryElementDescriptor;
 import org.apache.commons.jcs.engine.stats.behavior.IStats;
 import org.apache.commons.logging.Log;
@@ -75,7 +74,7 @@ public class LHMLRUMemoryCache<K, V>
         throws IOException
     {
         putCnt.incrementAndGet();
-        map.put( ce.getKey(), new DefaultMemoryElementDescriptor<K, V>(ce) );
+        map.put( ce.getKey(), new MemoryElementDescriptor<K, V>(ce) );
     }
 
     /**

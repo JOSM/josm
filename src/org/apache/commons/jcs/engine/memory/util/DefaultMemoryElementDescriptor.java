@@ -23,7 +23,10 @@ import org.apache.commons.jcs.engine.behavior.ICacheElement;
 
 /**
  * This wrapper is needed for double linked lists.
+ *
+ * @deprecated Use MemoryElementDescriptor directly
  */
+@Deprecated
 public class DefaultMemoryElementDescriptor<K, V>
     extends MemoryElementDescriptor<K, V>
 {
@@ -38,14 +41,5 @@ public class DefaultMemoryElementDescriptor<K, V>
     public DefaultMemoryElementDescriptor( ICacheElement<K, V> ce )
     {
         super( ce );
-    }
-
-    /**
-     * @return the ce
-     */
-    @Override
-    public ICacheElement<K, V> getCacheElement()
-    {
-        return getPayload();
     }
 }
