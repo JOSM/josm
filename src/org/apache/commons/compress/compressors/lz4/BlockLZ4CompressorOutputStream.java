@@ -202,8 +202,8 @@ public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
         if (offset == 1) { // surprisingly common special case
             byte[] block = expandedBlocks.peekFirst();
             byte b = block[block.length - 1];
-            for (int i = 0; i < expanded.length; i++) {
-                expanded[i] = b;
+            if (b != 0) { // the fresh array contains 0s anyway
+                Arrays.fill(expanded, b);
             }
         } else {
             expandFromList(expanded, offset, length);
@@ -235,9 +235,6 @@ public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
                 block = expanded;
                 copyOffset = writeOffset  + offsetRemaining;
                 copyLen = Math.min(lengthRemaining, writeOffset + offsetRemaining);
-            }
-            if (copyLen < 1) {
-                throw new IllegalStateException("zero copy");
             }
             System.arraycopy(block, copyOffset, expanded, writeOffset, copyLen);
             offsetRemaining -= copyLen;

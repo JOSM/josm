@@ -20,6 +20,7 @@ package org.apache.commons.compress.compressors.lz77support;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import org.apache.commons.compress.compressors.CompressorInputStream;
 import org.apache.commons.compress.utils.ByteUtils;
@@ -222,9 +223,8 @@ public abstract class AbstractLZ77CompressorInputStream extends CompressorInputS
             // NOP
         } else if (backReferenceOffset == 1) { // pretty common special case
             final byte last = buf[writeIndex - 1];
-            for (int i = 0; i < copy; i++) {
-                buf[writeIndex++] = last;
-            }
+            Arrays.fill(buf, writeIndex, writeIndex + copy, last);
+            writeIndex += copy;
         } else if (copy < backReferenceOffset) {
             System.arraycopy(buf, writeIndex - backReferenceOffset, buf, writeIndex, copy);
             writeIndex += copy;
