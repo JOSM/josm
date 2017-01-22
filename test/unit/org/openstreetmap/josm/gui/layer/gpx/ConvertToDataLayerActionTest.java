@@ -2,6 +2,9 @@
 package org.openstreetmap.josm.gui.layer.gpx;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.IOException;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -12,6 +15,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.io.GpxReaderTest;
+import org.xml.sax.SAXException;
 
 /**
  * Unit tests of {@link ConvertToDataLayerAction} class.
@@ -38,5 +42,15 @@ public class ConvertToDataLayerActionTest {
         assertEquals(1, osm.getNodes().size());
         assertEquals(new TagMap("name", "Schranke", "description", "Pfad", "note", "Pfad", "gpxicon", "Toll Booth"),
                 osm.getNodes().iterator().next().getKeys());
+    }
+
+    /**
+     * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/14275">#14275</a>
+     * @throws IOException if an error occurs during reading
+     * @throws SAXException if any XML error occurs
+     */
+    @Test
+    public void testTicket14275() throws IOException, SAXException {
+        assertNotNull(GpxReaderTest.parseGpxData(TestUtils.getRegressionDataFile(14275, "1485101437.8189685.gpx")));
     }
 }
