@@ -47,7 +47,7 @@ import org.apache.commons.logging.LogFactory;
 public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends AbstractMemoryCache<K, V>
 {
     /** The logger. */
-    static final Log log = LogFactory.getLog(AbstractDoubleLinkedListMemoryCache.class);
+    private static final Log log = LogFactory.getLog(AbstractDoubleLinkedListMemoryCache.class);
 
     /** thread-safe double linked list for lru */
     protected DoubleLinkedList<MemoryElementDescriptor<K, V>> list; // TODO privatise
