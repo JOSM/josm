@@ -22,15 +22,19 @@ package org.apache.commons.jcs.engine.memory;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.commons.jcs.engine.CacheConstants;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheAttributes;
 import org.apache.commons.jcs.engine.control.CompositeCache;
+import org.apache.commons.jcs.engine.control.group.GroupAttrName;
 import org.apache.commons.jcs.engine.memory.behavior.IMemoryCache;
 import org.apache.commons.jcs.engine.memory.util.MemoryElementDescriptor;
 import org.apache.commons.jcs.engine.stats.StatElement;
@@ -98,28 +102,6 @@ public abstract class AbstractMemoryCache<K, V>
      * @return a threadsafe Map
      */
     public abstract Map<K, MemoryElementDescriptor<K, V>> createMap();
-
-    /**
-     * Removes an item from the cache
-     * <p>
-     * @param key Identifies item to be removed
-     * @return Description of the Return Value
-     * @throws IOException Description of the Exception
-     */
-    @Override
-    public abstract boolean remove( K key )
-        throws IOException;
-
-    /**
-     * Get an item from the cache
-     * <p>
-     * @param key Description of the Parameter
-     * @return Description of the Return Value
-     * @throws IOException Description of the Exception
-     */
-    @Override
-    public abstract ICacheElement<K, V> get( K key )
-        throws IOException;
 
     /**
      * Gets multiple items from the cache based on the given set of keys.
@@ -194,24 +176,30 @@ public abstract class AbstractMemoryCache<K, V>
         throws IOException;
 
     /**
-     * Get a set of the keys for all elements in the memory cache
-     * <p>
-     * @return A set of the key type
-     */
-    @Override
-    public abstract Set<K> getKeySet();
-
-    /**
      * Removes all cached items from the cache.
      * <p>
      * @throws IOException
      */
     @Override
-    public void removeAll()
-        throws IOException
+    public void removeAll() throws IOException
     {
-        map.clear();
+        lock.lock();
+        try
+        {
+            lockedRemoveAll();
+            map.clear();
+        }
+        finally
+        {
+            lock.unlock();
+        }
     }
+
+    /**
+     * Removes all cached items from the cache control structures.
+     * (guarded by the lock)
+     */
+    protected abstract void lockedRemoveAll();
 
     /**
      * Prepares for shutdown. Reset statistics
@@ -332,4 +320,204 @@ public abstract class AbstractMemoryCache<K, V>
     {
         return this.cache;
     }
+
+    /**
+     * Remove all keys of the same group hierarchy.
+     * @param key the key
+     * @return true if something has been removed
+     */
+    protected boolean removeByGroup(K key)
+    {
+        boolean removed = false;
+
+        // remove all keys of the same group hierarchy.
+        for (Iterator<Map.Entry<K, MemoryElementDescriptor<K, V>>> itr = map.entrySet().iterator(); itr.hasNext();)
+        {
+            Map.Entry<K, MemoryElementDescriptor<K, V>> entry = itr.next();
+            K k = entry.getKey();
+
+            if (k instanceof GroupAttrName && ((GroupAttrName<?>) k).groupId.equals(((GroupAttrName<?>) key).groupId))
+            {
+                lock.lock();
+                try
+                {
+                    itr.remove();
+                    lockedRemoveElement(entry.getValue());
+                    removed = true;
+                }
+                finally
+                {
+                    lock.unlock();
+                }
+            }
+        }
+
+        return removed;
+    }
+
+    /**
+     * Remove all keys of the same name hierarchy.
+     *
+     * @param key the key
+     * @return true if something has been removed
+     */
+    protected boolean removeByHierarchy(K key)
+    {
+        boolean removed = false;
+
+        // remove all keys of the same name hierarchy.
+        for (Iterator<Map.Entry<K, MemoryElementDescriptor<K, V>>> itr = map.entrySet().iterator(); itr.hasNext();)
+        {
+            Map.Entry<K, MemoryElementDescriptor<K, V>> entry = itr.next();
+            K k = entry.getKey();
+
+            if (k instanceof String && ((String) k).startsWith(key.toString()))
+            {
+                lock.lock();
+                try
+                {
+                    itr.remove();
+                    lockedRemoveElement(entry.getValue());
+                    removed = true;
+                }
+                finally
+                {
+                    lock.unlock();
+                }
+            }
+        }
+
+        return removed;
+    }
+
+    /**
+     * Remove element from control structure
+     * (guarded by the lock)
+     *
+     * @param me the memory element descriptor
+     */
+    protected abstract void lockedRemoveElement(MemoryElementDescriptor<K, V> me);
+
+    /**
+     * Removes an item from the cache. This method handles hierarchical removal. If the key is a
+     * String and ends with the CacheConstants.NAME_COMPONENT_DELIMITER, then all items with keys
+     * starting with the argument String will be removed.
+     * <p>
+     *
+     * @param key
+     * @return true if the removal was successful
+     * @throws IOException
+     */
+    @Override
+    public boolean remove(K key) throws IOException
+    {
+        if (log.isDebugEnabled())
+        {
+            log.debug("removing item for key: " + key);
+        }
+
+        boolean removed = false;
+
+        // handle partial removal
+        if (key instanceof String && ((String) key).endsWith(CacheConstants.NAME_COMPONENT_DELIMITER))
+        {
+            removed = removeByHierarchy(key);
+        }
+        else if (key instanceof GroupAttrName && ((GroupAttrName<?>) key).attrName == null)
+        {
+            removed = removeByGroup(key);
+        }
+        else
+        {
+            // remove single item.
+            lock.lock();
+            try
+            {
+                MemoryElementDescriptor<K, V> me = map.remove(key);
+                if (me != null)
+                {
+                    lockedRemoveElement(me);
+                    removed = true;
+                }
+            }
+            finally
+            {
+                lock.unlock();
+            }
+        }
+
+        return removed;
+    }
+
+    /**
+     * Get an Array of the keys for all elements in the memory cache
+     *
+     * @return An Object[]
+     */
+    @Override
+    public Set<K> getKeySet()
+    {
+        return new LinkedHashSet<K>(map.keySet());
+    }
+
+    /**
+     * Get an item from the cache.
+     * <p>
+     *
+     * @param key Identifies item to find
+     * @return ICacheElement&lt;K, V&gt; if found, else null
+     * @throws IOException
+     */
+    @Override
+    public ICacheElement<K, V> get(K key) throws IOException
+    {
+        ICacheElement<K, V> ce = null;
+
+        if (log.isDebugEnabled())
+        {
+            log.debug(getCacheName() + ": getting item for key " + key);
+        }
+
+        MemoryElementDescriptor<K, V> me = map.get(key);
+
+        if (me != null)
+        {
+            hitCnt.incrementAndGet();
+            ce = me.getCacheElement();
+
+            lock.lock();
+            try
+            {
+                lockedGetElement(me);
+            }
+            finally
+            {
+                lock.unlock();
+            }
+
+            if (log.isDebugEnabled())
+            {
+                log.debug(getCacheName() + ": MemoryCache hit for " + key);
+            }
+        }
+        else
+        {
+            missCnt.incrementAndGet();
+
+            if (log.isDebugEnabled())
+            {
+                log.debug(getCacheName() + ": MemoryCache miss for " + key);
+            }
+        }
+
+        return ce;
+    }
+
+    /**
+     * Update control structures after get
+     * (guarded by the lock)
+     *
+     * @param me the memory element descriptor
+     */
+    protected abstract void lockedGetElement(MemoryElementDescriptor<K, V> me);
 }

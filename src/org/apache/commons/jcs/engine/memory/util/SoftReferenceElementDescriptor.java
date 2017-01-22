@@ -42,7 +42,7 @@ public class SoftReferenceElementDescriptor<K, V>
      */
     public SoftReferenceElementDescriptor( ICacheElement<K, V> ce )
     {
-        super( ce );
+        super( null );
         this.srce = new SoftReference<ICacheElement<K, V>>(ce);
     }
 

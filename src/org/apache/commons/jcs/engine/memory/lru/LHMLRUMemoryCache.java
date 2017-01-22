@@ -21,15 +21,10 @@ package org.apache.commons.jcs.engine.memory.lru;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
-import org.apache.commons.jcs.engine.CacheConstants;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.control.CompositeCache;
-import org.apache.commons.jcs.engine.control.group.GroupAttrName;
 import org.apache.commons.jcs.engine.memory.AbstractMemoryCache;
 import org.apache.commons.jcs.engine.memory.util.DefaultMemoryElementDescriptor;
 import org.apache.commons.jcs.engine.memory.util.MemoryElementDescriptor;
@@ -84,124 +79,37 @@ public class LHMLRUMemoryCache<K, V>
     }
 
     /**
-     * Get an item from the cache
-     * <p>
-     * @param key Identifies item to find
-     * @return ICacheElement&lt;K, V&gt; if found, else null
-     * @throws IOException
+     * Update control structures after get
+     * (guarded by the lock)
+     *
+     * @param me the memory element descriptor
      */
     @Override
-    public ICacheElement<K, V> get( K key )
-        throws IOException
+    protected void lockedGetElement(MemoryElementDescriptor<K, V> me)
     {
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "getting item from cache " + getCacheName() + " for key " + key );
-        }
-
-        MemoryElementDescriptor<K, V> me = map.get( key );
-
-        if ( me != null )
-        {
-            hitCnt.incrementAndGet();
-            if ( log.isDebugEnabled() )
-            {
-                log.debug( getCacheName() + ": LHMLRUMemoryCache hit for " + key );
-            }
-            return me.getCacheElement();
-        }
-        else
-        {
-            missCnt.incrementAndGet();
-            if ( log.isDebugEnabled() )
-            {
-                log.debug( getCacheName() + ": LHMLRUMemoryCache miss for " + key );
-            }
-        }
-
-        return null;
+        // empty
     }
 
     /**
-     * Removes an item from the cache. This method handles hierarchical removal. If the key is a
-     * String and ends with the CacheConstants.NAME_COMPONENT_DELIMITER, then all items with keys
-     * starting with the argument String will be removed.
-     * <p>
-     * @param key
-     * @return true if removed
-     * @throws IOException
+     * Remove element from control structure
+     * (guarded by the lock)
+     *
+     * @param me the memory element descriptor
      */
     @Override
-    public boolean remove( K key )
-        throws IOException
+    protected void lockedRemoveElement(MemoryElementDescriptor<K, V> me)
     {
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "removing item for key: " + key );
-        }
-
-        boolean removed = false;
-
-        // handle partial removal
-        if ( key instanceof String && ( (String) key ).endsWith( CacheConstants.NAME_COMPONENT_DELIMITER ) )
-        {
-            // remove all keys of the same name hierarchy.
-            synchronized ( map )
-            {
-                for (Iterator<Map.Entry<K, MemoryElementDescriptor<K, V>>> itr = map.entrySet().iterator(); itr.hasNext(); )
-                {
-                    Map.Entry<K, MemoryElementDescriptor<K, V>> entry = itr.next();
-                    K k = entry.getKey();
-
-                    if ( k instanceof String && ( (String) k ).startsWith( key.toString() ) )
-                    {
-                        itr.remove();
-                        removed = true;
-                    }
-                }
-            }
-        }
-        else if ( key instanceof GroupAttrName && ((GroupAttrName<?>)key).attrName == null )
-        {
-            // remove all keys of the same name hierarchy.
-            synchronized ( map )
-            {
-                for (Iterator<Map.Entry<K, MemoryElementDescriptor<K, V>>> itr = map.entrySet().iterator(); itr.hasNext(); )
-                {
-                    Map.Entry<K, MemoryElementDescriptor<K, V>> entry = itr.next();
-                    K k = entry.getKey();
-
-                    if ( k instanceof GroupAttrName &&
-                        ((GroupAttrName<?>)k).groupId.equals(((GroupAttrName<?>)key).groupId) )
-                    {
-                        itr.remove();
-                        removed = true;
-                    }
-                }
-            }
-        }
-        else
-        {
-            // remove single item.
-            MemoryElementDescriptor<K, V> me = map.remove( key );
-            if ( me != null )
-            {
-                removed = true;
-            }
-        }
-
-        return removed;
+        // empty
     }
 
     /**
-     * Get an Array of the keys for all elements in the memory cache
-     * <p>
-     * @return An Object[]
+     * Removes all cached items from the cache control structures.
+     * (guarded by the lock)
      */
     @Override
-    public Set<K> getKeySet()
+    protected void lockedRemoveAll()
     {
-        return new LinkedHashSet<K>(map.keySet());
+        // empty
     }
 
     /**

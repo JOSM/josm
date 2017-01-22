@@ -30,9 +30,6 @@ public class DefaultMemoryElementDescriptor<K, V>
     /** Don't change */
     private static final long serialVersionUID = -1905161209035522460L;
 
-    /** The CacheElement wrapped by this descriptor */
-    private final ICacheElement<K, V> ce;
-
     /**
      * Constructs a usable MemoryElementDescriptor.
      * <p>
@@ -41,7 +38,6 @@ public class DefaultMemoryElementDescriptor<K, V>
     public DefaultMemoryElementDescriptor( ICacheElement<K, V> ce )
     {
         super( ce );
-        this.ce = ce;
     }
 
     /**
@@ -50,6 +46,6 @@ public class DefaultMemoryElementDescriptor<K, V>
     @Override
     public ICacheElement<K, V> getCacheElement()
     {
-        return ce;
+        return getPayload();
     }
 }

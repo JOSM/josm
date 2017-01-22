@@ -20,15 +20,10 @@ package org.apache.commons.jcs.engine.memory;
  */
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
-import org.apache.commons.jcs.engine.CacheConstants;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.control.CompositeCache;
 import org.apache.commons.jcs.engine.control.group.GroupAttrName;
@@ -52,7 +47,7 @@ import org.apache.commons.logging.LogFactory;
 public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends AbstractMemoryCache<K, V>
 {
     /** The logger. */
-    private static final Log log = LogFactory.getLog(AbstractDoubleLinkedListMemoryCache.class);
+    static final Log log = LogFactory.getLog(AbstractDoubleLinkedListMemoryCache.class);
 
     /** thread-safe double linked list for lru */
     protected DoubleLinkedList<MemoryElementDescriptor<K, V>> list; // TODO privatise
@@ -200,74 +195,6 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
     }
 
     /**
-     * Get an item from the cache If the item is found, it is removed from the list and added first.
-     * <p>
-     *
-     * @param key
-     *            Identifies item to find
-     * @return ICacheElement&lt;K, V&gt; if found, else null
-     * @throws IOException
-     */
-    @Override
-    public final ICacheElement<K, V> get(K key) throws IOException
-    {
-        ICacheElement<K, V> ce = null;
-
-        if (log.isDebugEnabled())
-        {
-            log.debug(getCacheName() + ": getting item for key " + key);
-        }
-
-        MemoryElementDescriptor<K, V> me = map.get(key);
-
-        if (me != null)
-        {
-            hitCnt.incrementAndGet();
-
-            lock.lock();
-            try
-            {
-                ce = me.getCacheElement();
-                // ABSTRACT
-                adjustListForGet(me);
-            }
-            finally
-            {
-                lock.unlock();
-            }
-
-            if (log.isDebugEnabled())
-            {
-                log.debug(getCacheName() + ": LRUMemoryCache hit for " + key);
-            }
-        }
-        else
-        {
-            missCnt.incrementAndGet();
-
-            if (log.isDebugEnabled())
-            {
-                log.debug(getCacheName() + ": LRUMemoryCache miss for " + key);
-            }
-        }
-
-        if (log.isDebugEnabled())
-        {
-            verifyCache();
-        }
-
-        return ce;
-    }
-
-    /**
-     * Adjust the list as needed for a get. This allows children to control the algorithm
-     * <p>
-     *
-     * @param me
-     */
-    protected abstract void adjustListForGet(MemoryElementDescriptor<K, V> me);
-
-    /**
      * This instructs the memory cache to remove the <i>numberToFree</i> according to its eviction
      * policy. For example, the LRUMemoryCache will remove the <i>numberToFree</i> least recently
      * used items. These will be spooled to disk if a disk auxiliary is available.
@@ -344,116 +271,61 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
     }
 
     /**
-     * Removes an item from the cache. This method handles hierarchical removal. If the key is a
-     * String and ends with the CacheConstants.NAME_COMPONENT_DELIMITER, then all items with keys
-     * starting with the argument String will be removed.
-     * <p>
-     *
-     * @param key
-     * @return true if the removal was successful
-     * @throws IOException
+     * @see org.apache.commons.jcs.engine.memory.AbstractMemoryCache#get(java.lang.Object)
      */
     @Override
-    public boolean remove(K key) throws IOException
+    public ICacheElement<K, V> get(K key) throws IOException
     {
+        ICacheElement<K, V> ce = super.get(key);
+
         if (log.isDebugEnabled())
         {
-            log.debug("removing item for key: " + key);
+            verifyCache();
         }
 
-        boolean removed = false;
-
-        // handle partial removal
-        if (key instanceof String && ((String) key).endsWith(CacheConstants.NAME_COMPONENT_DELIMITER))
-        {
-            // remove all keys of the same name hierarchy.
-            for (Iterator<Map.Entry<K, MemoryElementDescriptor<K, V>>> itr = map.entrySet().iterator(); itr.hasNext();)
-            {
-                Map.Entry<K, MemoryElementDescriptor<K, V>> entry = itr.next();
-                K k = entry.getKey();
-
-                if (k instanceof String && ((String) k).startsWith(key.toString()))
-                {
-                    lock.lock();
-                    try
-                    {
-                        list.remove(entry.getValue());
-                        itr.remove();
-                        removed = true;
-                    }
-                    finally
-                    {
-                        lock.unlock();
-                    }
-                }
-            }
-        }
-        else if (key instanceof GroupAttrName && ((GroupAttrName<?>) key).attrName == null)
-        {
-            // remove all keys of the same name hierarchy.
-            for (Iterator<Map.Entry<K, MemoryElementDescriptor<K, V>>> itr = map.entrySet().iterator(); itr.hasNext();)
-            {
-                Map.Entry<K, MemoryElementDescriptor<K, V>> entry = itr.next();
-                K k = entry.getKey();
-
-                if (k instanceof GroupAttrName && ((GroupAttrName<?>) k).groupId.equals(((GroupAttrName<?>) key).groupId))
-                {
-                    lock.lock();
-                    try
-                    {
-                        list.remove(entry.getValue());
-                        itr.remove();
-                        removed = true;
-                    }
-                    finally
-                    {
-                        lock.unlock();
-                    }
-                }
-            }
-        }
-        else
-        {
-            // remove single item.
-            lock.lock();
-            try
-            {
-                MemoryElementDescriptor<K, V> me = map.remove(key);
-                if (me != null)
-                {
-                    list.remove(me);
-                    removed = true;
-                }
-            }
-            finally
-            {
-                lock.unlock();
-            }
-        }
-
-        return removed;
+        return ce;
     }
 
     /**
-     * Remove all of the elements from both the Map and the linked list implementation. Overrides
-     * base class.
+     * Adjust the list as needed for a get. This allows children to control the algorithm
      * <p>
      *
-     * @throws IOException
+     * @param me
+     */
+    protected abstract void adjustListForGet(MemoryElementDescriptor<K, V> me);
+
+    /**
+     * Update control structures after get
+     * (guarded by the lock)
+     *
+     * @param me the memory element descriptor
      */
     @Override
-    public void removeAll() throws IOException
+    protected void lockedGetElement(MemoryElementDescriptor<K, V> me)
     {
-        lock.lock();
-        try
-        {
-            list.removeAll();
-            map.clear();
-        }
-        finally
-        {
-            lock.unlock();
-        }
+        adjustListForGet(me);
+    }
+
+    /**
+     * Remove element from control structure
+     * (guarded by the lock)
+     *
+     * @param me the memory element descriptor
+     */
+    @Override
+    protected void lockedRemoveElement(MemoryElementDescriptor<K, V> me)
+    {
+        list.remove(me);
+    }
+
+    /**
+     * Removes all cached items from the cache control structures.
+     * (guarded by the lock)
+     */
+    @Override
+    protected void lockedRemoveAll()
+    {
+        list.removeAll();
     }
 
     // --------------------------- internal methods (linked list implementation)
@@ -629,17 +501,6 @@ public abstract class AbstractDoubleLinkedListMemoryCache<K, V> extends Abstract
         {
             log.error("verifycache(key)[" + getCacheName() + "], couldn't find key! : " + key);
         }
-    }
-
-    /**
-     * Get an Array of the keys for all elements in the memory cache
-     *
-     * @return An Object[]
-     */
-    @Override
-    public Set<K> getKeySet()
-    {
-        return new LinkedHashSet<K>(map.keySet());
     }
 
     /**

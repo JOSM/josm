@@ -22,7 +22,6 @@ package org.apache.commons.jcs.engine.memory.soft;
 import java.io.IOException;
 import java.lang.ref.SoftReference;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,11 +29,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.apache.commons.jcs.engine.CacheConstants;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheAttributes;
 import org.apache.commons.jcs.engine.control.CompositeCache;
-import org.apache.commons.jcs.engine.control.group.GroupAttrName;
 import org.apache.commons.jcs.engine.memory.AbstractMemoryCache;
 import org.apache.commons.jcs.engine.memory.util.MemoryElementDescriptor;
 import org.apache.commons.jcs.engine.memory.util.SoftReferenceElementDescriptor;
@@ -147,107 +144,41 @@ public class SoftReferenceMemoryCache<K, V> extends AbstractMemoryCache<K, V>
     }
 
     /**
-     * Removes an item from the cache. This method handles hierarchical removal. If the key is a
-     * String and ends with the CacheConstants.NAME_COMPONENT_DELIMITER, then all items with keys
-     * starting with the argument String will be removed.
-     * <p>
+     * Update control structures after get
+     * (guarded by the lock)
      *
-     * @param key
-     * @return true if the removal was successful
-     * @throws IOException
+     * @param me the memory element descriptor
      */
     @Override
-    public boolean remove(K key) throws IOException
+    protected void lockedGetElement(MemoryElementDescriptor<K, V> me)
     {
-        if (log.isDebugEnabled())
-        {
-            log.debug("removing item for key: " + key);
-        }
+        ICacheElement<K, V> val = me.getCacheElement();
+        val.getElementAttributes().setLastAccessTimeNow();
 
-        boolean removed = false;
-
-        // handle partial removal
-        if (key instanceof String && ((String) key).endsWith(CacheConstants.NAME_COMPONENT_DELIMITER))
-        {
-            // remove all keys of the same name hierarchy.
-            for (Iterator<Map.Entry<K, MemoryElementDescriptor<K, V>>> itr = map.entrySet().iterator();
-                    itr.hasNext();)
-            {
-                Map.Entry<K, MemoryElementDescriptor<K, V>> entry = itr.next();
-                K k = entry.getKey();
-
-                if (k instanceof String && ((String) k).startsWith(key.toString()))
-                {
-                    lock.lock();
-                    try
-                    {
-                        strongReferences.remove(entry.getValue().getCacheElement());
-                        itr.remove();
-                        removed = true;
-                    }
-                    finally
-                    {
-                        lock.unlock();
-                    }
-                }
-            }
-        }
-        else if (key instanceof GroupAttrName && ((GroupAttrName<?>) key).attrName == null)
-        {
-            // remove all keys of the same name hierarchy.
-            for (Iterator<Map.Entry<K, MemoryElementDescriptor<K, V>>> itr = map.entrySet().iterator();
-                    itr.hasNext();)
-            {
-                Map.Entry<K, MemoryElementDescriptor<K, V>> entry = itr.next();
-                K k = entry.getKey();
-
-                if (k instanceof GroupAttrName && ((GroupAttrName<?>) k).groupId.equals(((GroupAttrName<?>) key).groupId))
-                {
-                    lock.lock();
-                    try
-                    {
-                        strongReferences.remove(entry.getValue().getCacheElement());
-                        itr.remove();
-                        removed = true;
-                    }
-                    finally
-                    {
-                        lock.unlock();
-                    }
-                }
-            }
-        }
-        else
-        {
-            // remove single item.
-            lock.lock();
-            try
-            {
-                MemoryElementDescriptor<K, V> me = map.remove(key);
-                if (me != null)
-                {
-                    strongReferences.remove(me.getCacheElement());
-                    removed = true;
-                }
-            }
-            finally
-            {
-                lock.unlock();
-            }
-        }
-
-        return removed;
+        // update the ordering of the strong references
+        strongReferences.add(val);
+        trimStrongReferences();
     }
 
     /**
-     * Removes all cached items from the cache.
-     * <p>
-     * @throws IOException
+     * Remove element from control structure
+     * (guarded by the lock)
+     *
+     * @param me the memory element descriptor
      */
     @Override
-    public void removeAll() throws IOException
+    protected void lockedRemoveElement(MemoryElementDescriptor<K, V> me)
     {
-        super.removeAll();
+        strongReferences.remove(me.getCacheElement());
+    }
+
+    /**
+     * Removes all cached items from the cache control structures.
+     * (guarded by the lock)
+     */
+    @Override
+    protected void lockedRemoveAll()
+    {
         strongReferences.clear();
     }
 
@@ -291,48 +222,6 @@ public class SoftReferenceMemoryCache<K, V> extends AbstractMemoryCache<K, V>
             ICacheElement<K, V> ce = strongReferences.poll();
             waterfal(ce);
         }
-    }
-
-    /**
-     * Get an item from the cache
-     * <p>
-     * @param key Description of the Parameter
-     * @return Description of the Return Value
-     * @throws IOException Description of the Exception
-     */
-    @Override
-    public ICacheElement<K, V> get(K key) throws IOException
-    {
-        ICacheElement<K, V> val = null;
-        lock.lock();
-
-        try
-        {
-            val = getQuiet(key);
-            if (val != null)
-            {
-                val.getElementAttributes().setLastAccessTimeNow();
-
-                // update the ordering of the strong references
-                strongReferences.add(val);
-                trimStrongReferences();
-            }
-        }
-        finally
-        {
-            lock.unlock();
-        }
-
-        if (val == null)
-        {
-            missCnt.incrementAndGet();
-        }
-        else
-        {
-            hitCnt.incrementAndGet();
-        }
-
-        return val;
     }
 
     /**
