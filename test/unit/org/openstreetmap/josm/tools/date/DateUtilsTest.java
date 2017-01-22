@@ -116,7 +116,7 @@ public class DateUtilsTest {
      * Unit test of {@link DateUtils#fromDate} method.
      */
     @Test
-    public void testFromDate() throws Exception {
+    public void testFromDate() {
         assertEquals("1970-01-01T00:00:00Z", DateUtils.fromDate(new Date(0)));
         assertEquals("1970-01-01T00:00:00.1Z", DateUtils.fromDate(new Date(100)));
         assertEquals("1970-01-01T00:00:00.12Z", DateUtils.fromDate(new Date(120)));

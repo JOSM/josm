@@ -36,6 +36,7 @@ import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -43,8 +44,13 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * @param <T> the source layer class
  */
 public abstract class ConvertToDataLayerAction<T extends Layer> extends AbstractAction {
+    /** source layer */
     protected final transient T layer;
 
+    /**
+     * Constructs a new {@code ConvertToDataLayerAction}
+     * @param layer source layer
+     */
     protected ConvertToDataLayerAction(final T layer) {
         super(tr("Convert to data layer"), ImageProvider.get("converttoosm"));
         this.layer = layer;
@@ -74,7 +80,11 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
                         Node n = new Node(p.getCoor());
                         String timestr = p.getString(GpxConstants.PT_TIME);
                         if (timestr != null) {
-                            n.setTimestamp(DateUtils.fromString(timestr));
+                            try {
+                                n.setTimestamp(DateUtils.fromString(timestr));
+                            } catch (UncheckedParseException e) {
+                                Main.warn(e, false);
+                            }
                         }
                         ds.addPrimitive(n);
                         nodes.add(n);
@@ -150,12 +160,12 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
             return;
         }
         final DataSet ds = convert();
-        final OsmDataLayer layer = new OsmDataLayer(ds, tr("Converted from: {0}", this.layer.getName()), null);
-        if (this.layer.getAssociatedFile() != null) {
-            layer.setAssociatedFile(new File(this.layer.getAssociatedFile().getParentFile(), this.layer.getAssociatedFile().getName() + ".osm"));
+        final OsmDataLayer osmLayer = new OsmDataLayer(ds, tr("Converted from: {0}", layer.getName()), null);
+        if (layer.getAssociatedFile() != null) {
+            osmLayer.setAssociatedFile(new File(layer.getAssociatedFile().getParentFile(), layer.getAssociatedFile().getName() + ".osm"));
         }
-        layer.setUploadDiscouraged(true);
-        Main.getLayerManager().addLayer(layer);
-        Main.getLayerManager().removeLayer(this.layer);
+        osmLayer.setUploadDiscouraged(true);
+        Main.getLayerManager().addLayer(osmLayer);
+        Main.getLayerManager().removeLayer(layer);
     }
 }
