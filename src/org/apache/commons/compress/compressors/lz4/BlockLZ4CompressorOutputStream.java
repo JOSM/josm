@@ -341,9 +341,9 @@ public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
         // only needs to be five bytes long if the previous
         // back-reference has an offset big enough
 
-        final int allButFirstOfLastPairs = lastPairs.size() - 1;
+        final int lastPairsSize = lastPairs.size();
         int toExpand = 0;
-        for (int i = 1; i < allButFirstOfLastPairs; i++) {
+        for (int i = 1; i < lastPairsSize; i++) {
             toExpand += pairLength.get(i);
         }
         Pair replacement = new Pair();
@@ -354,7 +354,7 @@ public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
         int splitLen = splitCandidate.length();
         int stillNeeded = MIN_OFFSET_OF_LAST_BACK_REFERENCE - toExpand;
         if (splitCandidate.hasBackReference()
-            && splitCandidate.backReferenceLength() > MIN_BACK_REFERENCE_LENGTH + stillNeeded) {
+            && splitCandidate.backReferenceLength() >= MIN_BACK_REFERENCE_LENGTH + stillNeeded) {
             replacement.prependLiteral(expand(toExpand + stillNeeded, stillNeeded));
             pairs.add(splitCandidate.splitWithNewBackReferenceLengthOf(splitCandidate.backReferenceLength()
                 - stillNeeded));
@@ -390,8 +390,7 @@ public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
         }
         boolean canBeWritten(int lengthOfBlocksAfterThisPair) {
             return hasBackReference()
-                && lengthOfBlocksAfterThisPair >= MIN_LENGTH_OF_LAST_LITERAL
-                && lengthOfBlocksAfterThisPair + brOffset + brLength >= MIN_OFFSET_OF_LAST_BACK_REFERENCE;
+                && lengthOfBlocksAfterThisPair >= MIN_OFFSET_OF_LAST_BACK_REFERENCE + MIN_BACK_REFERENCE_LENGTH;
         }
         int length() {
             return literalLength() + brLength;
