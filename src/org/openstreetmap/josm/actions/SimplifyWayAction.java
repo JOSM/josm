@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangeCommand;
@@ -54,12 +55,14 @@ public class SimplifyWayAction extends JosmAction {
     }
 
     protected void alertSelectAtLeastOneWay() {
-        new Notification(
-                tr("Please select at least one way to simplify."))
-                .setIcon(JOptionPane.WARNING_MESSAGE)
-                .setDuration(Notification.TIME_SHORT)
-                .setHelpTopic(ht("/Action/SimplifyWay#SelectAWayToSimplify"))
-                .show();
+        SwingUtilities.invokeLater(() ->
+            new Notification(
+                    tr("Please select at least one way to simplify."))
+                    .setIcon(JOptionPane.WARNING_MESSAGE)
+                    .setDuration(Notification.TIME_SHORT)
+                    .setHelpTopic(ht("/Action/SimplifyWay#SelectAWayToSimplify"))
+                    .show()
+        );
     }
 
     protected boolean confirmSimplifyManyWays(int numWays) {
