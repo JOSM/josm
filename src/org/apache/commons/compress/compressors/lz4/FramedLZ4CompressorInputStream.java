@@ -176,7 +176,7 @@ public class FramedLZ4CompressorInputStream extends CompressorInputStream {
             inUncompressed = true;
             currentBlock = capped;
         } else {
-            inUncompressed = true;
+            inUncompressed = false;
             currentBlock = new BlockLZ4CompressorInputStream(capped);
         }
     }
