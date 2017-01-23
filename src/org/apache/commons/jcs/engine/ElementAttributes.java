@@ -446,7 +446,9 @@ public class ElementAttributes
     {
         try
         {
-            return (IElementAttributes)super.clone();
+        	ElementAttributes c = (ElementAttributes) super.clone();
+        	c.setCreateTime();
+            return c;
         }
         catch (CloneNotSupportedException e)
         {

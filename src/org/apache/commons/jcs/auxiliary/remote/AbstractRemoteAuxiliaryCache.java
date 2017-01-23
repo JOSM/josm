@@ -118,10 +118,7 @@ public abstract class AbstractRemoteAuxiliaryCache<K, V>
             {
                 log.debug( "Thread Pool = " + pool );
             }
-            if ( pool != null )
-            {
-                usePoolForGet = true;
-            }
+            usePoolForGet = true;
         }
     }
 
@@ -145,7 +142,7 @@ public abstract class AbstractRemoteAuxiliaryCache<K, V>
                 getRemoteCacheListener().dispose();
             }
         }
-        catch ( Exception ex )
+        catch ( IOException ex )
         {
             log.error( "Couldn't dispose", ex );
             handleException( ex, "Failed to dispose [" + cacheName + "]", ICacheEventLogger.DISPOSE_EVENT );

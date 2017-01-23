@@ -1642,7 +1642,7 @@ public class CompositeCache<K, V>
                 {
                     if ( log.isDebugEnabled() )
                     {
-                        log.info( "Exceeded maxIdle: " + element.getKey() );
+                        log.debug( "Exceeded maxIdle: " + element.getKey() );
                     }
 
                     handleElementEvent( element, eventIdle );
