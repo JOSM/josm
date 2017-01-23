@@ -168,6 +168,7 @@ public class FramedLZ4CompressorInputStream extends CompressorInputStream {
         int realLen = (int) (len & (~UNCOMPRESSED_FLAG_MASK));
         if (realLen == 0) {
             endReached = true;
+            verifyContentChecksum();
             return;
         }
         InputStream capped = new BoundedInputStream(in, realLen);
@@ -190,6 +191,16 @@ public class FramedLZ4CompressorInputStream extends CompressorInputStream {
                 if (4 != skipped) {
                     throw new IOException("Premature end of stream while reading block checksum");
                 }
+            }
+        }
+    }
+
+    private void verifyContentChecksum() throws IOException {
+        if (expectContentChecksum) {
+            int skipped = (int) IOUtils.skip(in, 4);
+            count(skipped);
+            if (4 != skipped) {
+                throw new IOException("Premature end of stream while reading content checksum");
             }
         }
     }

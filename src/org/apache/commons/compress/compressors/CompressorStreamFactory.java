@@ -39,6 +39,7 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.compressors.lz4.BlockLZ4CompressorInputStream;
 import org.apache.commons.compress.compressors.lz4.BlockLZ4CompressorOutputStream;
+import org.apache.commons.compress.compressors.lz4.FramedLZ4CompressorInputStream;
 import org.apache.commons.compress.compressors.lzma.LZMACompressorInputStream;
 import org.apache.commons.compress.compressors.lzma.LZMACompressorOutputStream;
 import org.apache.commons.compress.compressors.lzma.LZMAUtils;
@@ -162,11 +163,19 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
 
     /**
      * Constant (value {@value}) used to identify the block LZ4
-     * compression method. Not supported as an output stream type.
+     * compression method.
      *
      * @since 1.14
      */
     public static final String LZ4_BLOCK = "lz4-block";
+
+    /**
+     * Constant (value {@value}) used to identify the frame LZ4
+     * compression method.
+     *
+     * @since 1.14
+     */
+    public static final String LZ4_FRAMED = "lz4-framed";
 
     /**
      * Constructs a new sorted map from input stream provider names to provider
@@ -294,6 +303,14 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
         return Z;
     }
 
+    public static String getLZ4Framed() {
+        return LZ4_FRAMED;
+    }
+
+    public static String getLZ4Block() {
+        return LZ4_BLOCK;
+    }
+
     static void putAll(final Set<String> names, final CompressorStreamProvider provider,
             final TreeMap<String, CompressorStreamProvider> map) {
         for (final String name : names) {
@@ -416,6 +433,10 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
                 return new LZMACompressorInputStream(in);
             }
 
+            if (FramedLZ4CompressorInputStream.matches(signature, signatureLength)) {
+                return new FramedLZ4CompressorInputStream(in);
+            }
+
         } catch (final IOException e) {
             throw new CompressorException("Failed to detect Compressor from InputStream.", e);
         }
@@ -431,7 +452,7 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
      *            of the compressor, i.e. {@value #GZIP}, {@value #BZIP2},
      *            {@value #XZ}, {@value #LZMA}, {@value #PACK200},
      *            {@value #SNAPPY_RAW}, {@value #SNAPPY_FRAMED}, {@value #Z},
-     *            {@value #LZ4_BLOCK}
+     *            {@value #LZ4_BLOCK}, {@value #LZ4_FRAMED}
      *            or {@value #DEFLATE}
      * @param in
      *            the input stream
@@ -493,6 +514,10 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
 
             if (LZ4_BLOCK.equalsIgnoreCase(name)) {
                 return new BlockLZ4CompressorInputStream(in);
+            }
+
+            if (LZ4_FRAMED.equalsIgnoreCase(name)) {
+                return new FramedLZ4CompressorInputStream(in);
             }
 
         } catch (final IOException e) {
@@ -601,12 +626,13 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
 
     @Override
     public Set<String> getInputStreamCompressorNames() {
-        return Sets.newHashSet(GZIP, BZIP2, XZ, LZMA, PACK200, SNAPPY_RAW, SNAPPY_FRAMED, Z, DEFLATE, LZ4_BLOCK);
+        return Sets.newHashSet(GZIP, BZIP2, XZ, LZMA, PACK200, DEFLATE, SNAPPY_RAW, SNAPPY_FRAMED, Z, LZ4_BLOCK,
+            LZ4_FRAMED);
     }
 
     @Override
     public Set<String> getOutputStreamCompressorNames() {
-        return Sets.newHashSet(GZIP, BZIP2, XZ, LZMA, PACK200, DEFLATE, SNAPPY_FRAMED, LZ4_BLOCK);
+        return Sets.newHashSet(GZIP, BZIP2, XZ, LZMA, PACK200, DEFLATE, SNAPPY_RAW, SNAPPY_FRAMED, LZ4_BLOCK);
     }
 
     /**
