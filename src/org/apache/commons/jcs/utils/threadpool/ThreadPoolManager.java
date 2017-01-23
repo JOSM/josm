@@ -23,7 +23,10 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -39,30 +42,12 @@ import org.apache.commons.logging.LogFactory;
  * This manager forces you to use a bounded queue. By default it uses the current thread for
  * execution when the buffer is full and no free threads can be created.
  * <p>
- * You can specify the props file to use or pass in a properties object prior to configuration. By
- * default it looks for configuration information in thread_pool.properties.
+ * You can specify the props file to use or pass in a properties object prior to configuration.
  * <p>
  * If set, the Properties object will take precedence.
  * <p>
- * If a value is not set for a particular pool, the hard coded defaults will be used.
- *
- * <pre>
- * int boundarySize_DEFAULT = 2000;
- *
- * int maximumPoolSize_DEFAULT = 150;
- *
- * int minimumPoolSize_DEFAULT = number of processors as reported by the JVM;
- *
- * int keepAliveTime_DEFAULT = 1000 * 60 * 5;
- *
- * boolean abortWhenBlocked = false;
- *
- * String whenBlockedPolicy_DEFAULT = IPoolConfiguration.POLICY_RUN;
- *
- * int startUpSize_DEFAULT = 4;
- * </pre>
- *
- * You can configure default settings by specifying a default pool in the properties, ie "cache.ccf"
+ * If a value is not set for a particular pool, the hard coded defaults in <code>PoolConfiguration</code> will be used.
+ * You can configure default settings by specifying <code>thread_pool.default</code> in the properties, ie "cache.ccf"
  * <p>
  * @author Aaron Smuts
  */
@@ -80,7 +65,13 @@ public class ThreadPoolManager
     /** default property file name */
     private static final String DEFAULT_PROP_NAME_ROOT = "thread_pool.default";
 
-    /**
+    /** the scheduler root property name */
+    private static final String PROP_NAME_SCHEDULER_ROOT = "scheduler_pool";
+
+    /** default scheduler property file name */
+    private static final String DEFAULT_PROP_NAME_SCHEDULER_ROOT = "scheduler_pool.default";
+
+   /**
      * You can specify the properties to be used to configure the thread pool. Setting this post
      * initialization will have no effect.
      */
@@ -90,24 +81,42 @@ public class ThreadPoolManager
     private static ThreadPoolManager INSTANCE = null;
 
     /** Map of names to pools. */
-    private ConcurrentHashMap<String, ThreadPoolExecutor> pools;
+    private ConcurrentHashMap<String, ExecutorService> pools;
+
+    /** Map of names to scheduler pools. */
+    private ConcurrentHashMap<String, ScheduledExecutorService> schedulerPools;
 
     /**
      * No instances please. This is a singleton.
      */
     private ThreadPoolManager()
     {
-        this.pools = new ConcurrentHashMap<String, ThreadPoolExecutor>();
+        this.pools = new ConcurrentHashMap<String, ExecutorService>();
+        this.schedulerPools = new ConcurrentHashMap<String, ScheduledExecutorService>();
         configure();
     }
 
     /**
      * Creates a pool based on the configuration info.
      * <p>
-     * @param config
-     * @return A ThreadPoll wrapper
+     * @param config the pool configuration
+     * @param threadNamePrefix prefix for the thread names of the pool
+     * @return A ThreadPool wrapper
      */
-    private ThreadPoolExecutor createPool( PoolConfiguration config )
+    public ExecutorService createPool( PoolConfiguration config, String threadNamePrefix)
+    {
+    	return createPool(config, threadNamePrefix, Thread.NORM_PRIORITY);
+    }
+    
+    /**
+     * Creates a pool based on the configuration info.
+     * <p>
+     * @param config the pool configuration
+     * @param threadNamePrefix prefix for the thread names of the pool
+     * @param threadPriority the priority of the created threads
+     * @return A ThreadPool wrapper
+     */
+    public ExecutorService createPool( PoolConfiguration config, String threadNamePrefix, int threadPriority )
     {
         BlockingQueue<Runnable> queue = null;
         if ( config.isUseBoundary() )
@@ -134,7 +143,7 @@ public class ThreadPoolManager
             config.getKeepAliveTime(),
             TimeUnit.MILLISECONDS,
             queue,
-            new DaemonThreadFactory("JCS-ThreadPoolManager-"));
+            new DaemonThreadFactory(threadNamePrefix, threadPriority));
 
         // when blocked policy
         switch (config.getWhenBlockedPolicy())
@@ -164,6 +173,23 @@ public class ThreadPoolManager
     }
 
     /**
+     * Creates a scheduler pool based on the configuration info.
+     * <p>
+     * @param config the pool configuration
+     * @param threadNamePrefix prefix for the thread names of the pool
+     * @param threadPriority the priority of the created threads
+     * @return A ScheduledExecutorService
+     */
+    public ScheduledExecutorService createSchedulerPool( PoolConfiguration config, String threadNamePrefix, int threadPriority )
+    {
+    	ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(
+    			config.getMaximumPoolSize(), 
+    			new DaemonThreadFactory(threadNamePrefix, threadPriority));
+
+        return scheduler;
+    }
+    
+    /**
      * Returns a configured instance of the ThreadPoolManger To specify a configuration file or
      * Properties object to use call the appropriate setter prior to calling getInstance.
      * <p>
@@ -185,34 +211,46 @@ public class ThreadPoolManager
     {
         if ( INSTANCE != null )
         {
-            for ( String poolName : INSTANCE.getPoolNames())
+            for ( ExecutorService pool : INSTANCE.pools.values() )
             {
                 try
                 {
-                    INSTANCE.getPool(poolName).shutdownNow();
+                    pool.shutdownNow();
                 }
                 catch (Throwable t)
                 {
-                    log.warn("Failed to close pool " + poolName, t);
+                    log.warn("Failed to close pool " + pool, t);
                 }
             }
-
+            
+            for ( ScheduledExecutorService pool : INSTANCE.schedulerPools.values() )
+            {
+                try
+                {
+                    pool.shutdownNow();
+                }
+                catch (Throwable t)
+                {
+                    log.warn("Failed to close pool " + pool, t);
+                }
+            }
+            
             INSTANCE = null;
         }
     }
 
     /**
-     * Returns a pool by name. If a pool by this name does not exist in the configuration file or
+     * Returns an executor service by name. If a service by this name does not exist in the configuration file or
      * properties, one will be created using the default values.
      * <p>
-     * Pools are lazily created.
+     * Services are lazily created.
      * <p>
      * @param name
-     * @return The thread pool configured for the name.
+     * @return The executor service configured for the name.
      */
-    public ThreadPoolExecutor getPool( String name )
+    public ExecutorService getExecutorService( String name )
     {
-        ThreadPoolExecutor pool = pools.get( name );
+    	ExecutorService pool = pools.get( name );
 
         if ( pool == null )
         {
@@ -222,16 +260,76 @@ public class ThreadPoolManager
             }
 
             PoolConfiguration config = loadConfig( PROP_NAME_ROOT + "." + name );
-            pool = createPool( config );
-            ThreadPoolExecutor _pool = pools.putIfAbsent( name, pool );
-            if (_pool != null)
+            ExecutorService _pool = createPool( config, "JCS-ThreadPoolManager-" + name + "-" );
+            pool = pools.putIfAbsent( name, _pool );
+            if (pool == null)
             {
                 pool = _pool;
+            }
+            else
+            {
+            	// already created in another thread
+            	_pool.shutdownNow();
             }
 
             if ( log.isDebugEnabled() )
             {
                 log.debug( "PoolName = " + getPoolNames() );
+            }
+        }
+
+        return pool;
+    }
+    
+    /**
+     * Returns a pool by name. If a pool by this name does not exist in the configuration file or
+     * properties, one will be created using the default values.
+     * <p>
+     * Pools are lazily created.
+     * <p>
+     * @param name
+     * @return The thread pool configured for the name.
+     * 
+     * @deprecated Use getExecutorService() instead
+     */
+    @Deprecated
+	public ThreadPoolExecutor getPool( String name )
+    {
+    	return (ThreadPoolExecutor) getExecutorService(name);
+    }
+
+    /**
+     * Returns a scheduler pool by name. If a pool by this name does not exist in the configuration file or
+     * properties, one will be created using the default values.
+     * <p>
+     * Pools are lazily created.
+     * <p>
+     * @param name
+     * @return The scheduler pool configured for the name.
+     */
+    public ScheduledExecutorService getSchedulerPool( String name )
+    {
+    	ScheduledExecutorService pool = schedulerPools.get( name );
+
+        if ( pool == null )
+        {
+            if ( log.isDebugEnabled() )
+            {
+                log.debug( "Creating scheduler pool for name [" + name + "]" );
+            }
+
+            PoolConfiguration defaultSchedulerConfig = loadConfig( DEFAULT_PROP_NAME_SCHEDULER_ROOT );
+            PoolConfiguration config = loadConfig( PROP_NAME_SCHEDULER_ROOT + "." + name, defaultSchedulerConfig );
+            ScheduledExecutorService _pool = createSchedulerPool( config, "JCS-ThreadPoolManager-" + name + "-", Thread.NORM_PRIORITY );
+            pool = schedulerPools.putIfAbsent( name, _pool );
+            if (pool == null)
+            {
+                pool = _pool;
+            }
+            else
+            {
+            	// already created in another thread
+            	_pool.shutdownNow();
             }
         }
 
@@ -282,14 +380,26 @@ public class ThreadPoolManager
     }
 
     /**
-     * Configures the default PoolConfiguration settings.
+     * Configures the PoolConfiguration settings.
      * <p>
-     * @param root
+     * @param root the configuration key prefix
      * @return PoolConfiguration
      */
     private PoolConfiguration loadConfig( String root )
     {
-        PoolConfiguration config = defaultConfig.clone();
+    	return loadConfig(root, defaultConfig);
+    }
+    
+    /**
+     * Configures the PoolConfiguration settings.
+     * <p>
+     * @param root the configuration key prefix
+     * @param defaultPoolConfiguration the default configuration
+     * @return PoolConfiguration
+     */
+    private PoolConfiguration loadConfig( String root, PoolConfiguration defaultPoolConfiguration )
+    {
+        PoolConfiguration config = defaultPoolConfiguration.clone();
         PropertySetter.setProperties( config, props, root + "." );
 
         if ( log.isDebugEnabled() )

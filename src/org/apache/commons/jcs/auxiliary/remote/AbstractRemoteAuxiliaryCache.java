@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -77,7 +77,7 @@ public abstract class AbstractRemoteAuxiliaryCache<K, V>
     private IRemoteCacheAttributes remoteCacheAttributes;
 
     /** A thread pool for gets if configured. */
-    private ThreadPoolExecutor pool = null;
+    private ExecutorService pool = null;
 
     /** Should we get asynchronously using a pool. */
     private boolean usePoolForGet = false;
@@ -113,7 +113,7 @@ public abstract class AbstractRemoteAuxiliaryCache<K, V>
 
         if ( getRemoteCacheAttributes().getGetTimeoutMillis() > 0 )
         {
-            pool = ThreadPoolManager.getInstance().getPool( getRemoteCacheAttributes().getThreadPoolName() );
+            pool = ThreadPoolManager.getInstance().getExecutorService( getRemoteCacheAttributes().getThreadPoolName() );
             if ( log.isDebugEnabled() )
             {
                 log.debug( "Thread Pool = " + pool );
@@ -570,8 +570,7 @@ public abstract class AbstractRemoteAuxiliaryCache<K, V>
 
         if ( pool != null )
         {
-            elems.add(new StatElement<Integer>( "Pool Size", Integer.valueOf(pool.getPoolSize()) ) );
-            elems.add(new StatElement<Integer>( "Maximum Pool Size", Integer.valueOf(pool.getMaximumPoolSize()) ) );
+            elems.add(new StatElement<ExecutorService>( "Pool", pool ) );
         }
 
         if ( getRemoteCacheService() instanceof ZombieCacheServiceNonLocal )

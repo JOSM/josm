@@ -25,14 +25,15 @@ import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.commons.jcs.engine.CacheInfo;
 import org.apache.commons.jcs.engine.behavior.IShutdownObserver;
 import org.apache.commons.jcs.io.ObjectInputStreamClassLoaderAware;
 import org.apache.commons.jcs.utils.discovery.UDPDiscoveryMessage.BroadcastType;
-import org.apache.commons.jcs.utils.threadpool.DaemonThreadFactory;
+import org.apache.commons.jcs.utils.threadpool.PoolConfiguration;
+import org.apache.commons.jcs.utils.threadpool.PoolConfiguration.WhenBlockedPolicy;
+import org.apache.commons.jcs.utils.threadpool.ThreadPoolManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -56,7 +57,7 @@ public class UDPDiscoveryReceiver
     private static final int maxPoolSize = 2;
 
     /** The processor */
-    private ThreadPoolExecutor pooledExecutor = null;
+    private ExecutorService pooledExecutor = null;
 
     /** number of messages received. For debugging and testing. */
     private int cnt = 0;
@@ -91,10 +92,9 @@ public class UDPDiscoveryReceiver
         this.multicastPort = multicastPort;
 
         // create a small thread pool to handle a barrage
-        pooledExecutor = (ThreadPoolExecutor)Executors.newFixedThreadPool(maxPoolSize,
-                new DaemonThreadFactory("JCS-UDPDiscoveryReceiver-", Thread.MIN_PRIORITY));
-        pooledExecutor.setRejectedExecutionHandler(new ThreadPoolExecutor.DiscardOldestPolicy());
-        //pooledExecutor.setMinimumPoolSize(1);
+        pooledExecutor = ThreadPoolManager.getInstance().createPool(
+        		new PoolConfiguration(false, 0, maxPoolSize, maxPoolSize, 0, WhenBlockedPolicy.DISCARDOLDEST, maxPoolSize), 
+        		"JCS-UDPDiscoveryReceiver-", Thread.MIN_PRIORITY);
 
         if ( log.isInfoEnabled() )
         {

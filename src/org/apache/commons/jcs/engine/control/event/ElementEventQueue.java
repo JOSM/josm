@@ -20,14 +20,14 @@ package org.apache.commons.jcs.engine.control.event;
  */
 
 import java.io.IOException;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.commons.jcs.engine.control.event.behavior.IElementEvent;
 import org.apache.commons.jcs.engine.control.event.behavior.IElementEventHandler;
 import org.apache.commons.jcs.engine.control.event.behavior.IElementEventQueue;
-import org.apache.commons.jcs.utils.threadpool.DaemonThreadFactory;
+import org.apache.commons.jcs.utils.threadpool.PoolConfiguration;
+import org.apache.commons.jcs.utils.threadpool.PoolConfiguration.WhenBlockedPolicy;
+import org.apache.commons.jcs.utils.threadpool.ThreadPoolManager;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -45,20 +45,16 @@ public class ElementEventQueue
     /** shutdown or not */
     private boolean destroyed = false;
 
-    /** The event queue */
-    private LinkedBlockingQueue<Runnable> queue;
-
     /** The worker thread pool. */
-    private ThreadPoolExecutor queueProcessor;
+    private ExecutorService queueProcessor;
 
     /**
      * Constructor for the ElementEventQueue object
      */
     public ElementEventQueue()
     {
-        queue = new LinkedBlockingQueue<Runnable>();
-        queueProcessor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
-                queue, new DaemonThreadFactory(THREAD_PREFIX));
+        queueProcessor = ThreadPoolManager.getInstance().createPool(
+        		new PoolConfiguration(false, 0, 1, 1, 0, WhenBlockedPolicy.RUN, 1), THREAD_PREFIX);
 
         if ( log.isDebugEnabled() )
         {

@@ -2,6 +2,7 @@ package org.apache.commons.jcs.engine;
 
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /*
@@ -52,7 +53,10 @@ public class PooledCacheEventQueue<K, V>
     private static final QueueType queueType = QueueType.POOLED;
 
     /** The Thread Pool to execute events with. */
-    protected ThreadPoolExecutor pool = null;
+    protected ExecutorService pool = null;
+
+    /** The Thread Pool queue */
+    protected BlockingQueue<Runnable> queue = null;
 
     /**
      * Constructor for the CacheEventQueue object
@@ -86,8 +90,13 @@ public class PooledCacheEventQueue<K, V>
         super.initialize(listener, listenerId, cacheName, maxFailure, waitBeforeRetry);
 
         // this will share the same pool with other event queues by default.
-        pool = ThreadPoolManager.getInstance().getPool(
+        pool = ThreadPoolManager.getInstance().getExecutorService(
                 (threadPoolName == null) ? "cache_event_queue" : threadPoolName );
+        
+        if (pool instanceof ThreadPoolExecutor)
+        {
+        	queue = ((ThreadPoolExecutor) pool).getQueue();
+        }
     }
 
     /**
@@ -141,15 +150,11 @@ public class PooledCacheEventQueue<K, V>
         elems.add(new StatElement<Boolean>( "Working", Boolean.valueOf(isWorking()) ) );
         elems.add(new StatElement<Boolean>( "Empty", Boolean.valueOf(this.isEmpty()) ) );
 
-        if ( pool.getQueue() != null )
+        if ( queue != null )
         {
-            BlockingQueue<Runnable> bb = pool.getQueue();
-            elems.add(new StatElement<Integer>( "Queue Size", Integer.valueOf(bb.size()) ) );
-            elems.add(new StatElement<Integer>( "Queue Capacity", Integer.valueOf(bb.remainingCapacity()) ) );
+            elems.add(new StatElement<Integer>( "Queue Size", Integer.valueOf(queue.size()) ) );
+            elems.add(new StatElement<Integer>( "Queue Capacity", Integer.valueOf(queue.remainingCapacity()) ) );
         }
-
-        elems.add(new StatElement<Integer>( "Pool Size", Integer.valueOf(pool.getPoolSize()) ) );
-        elems.add(new StatElement<Integer>( "Maximum Pool Size", Integer.valueOf(pool.getMaximumPoolSize()) ) );
 
         stats.setStatElements( elems );
 
@@ -165,32 +170,25 @@ public class PooledCacheEventQueue<K, V>
     @Override
     public boolean isEmpty()
     {
-        if ( pool.getQueue() == null )
-        {
-            return true;
-        }
-        else
-        {
-            return pool.getQueue().size() == 0;
-        }
+        return size() == 0;
     }
 
     /**
      * Returns the number of elements in the queue. If the queue cannot determine the size
-     * accurately it will return 1.
+     * accurately it will return 0.
      * <p>
      * @return number of items in the queue.
      */
     @Override
     public int size()
     {
-        if ( pool.getQueue() == null )
+        if ( queue == null )
         {
             return 0;
         }
         else
         {
-            return pool.getQueue().size();
+            return queue.size();
         }
     }
 }

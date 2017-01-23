@@ -19,12 +19,10 @@ package org.apache.commons.jcs.engine;
  * under the License.
  */
 
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.jcs.engine.behavior.ICacheListener;
-import org.apache.commons.jcs.utils.threadpool.DaemonThreadFactory;
+import org.apache.commons.jcs.utils.threadpool.PoolConfiguration;
+import org.apache.commons.jcs.utils.threadpool.PoolConfiguration.WhenBlockedPolicy;
+import org.apache.commons.jcs.utils.threadpool.ThreadPoolManager;
 
 /**
  * An event queue is used to propagate ordered cache events to one and only one target listener.
@@ -79,15 +77,9 @@ public class CacheEventQueue<K, V>
         super.initialize(listener, listenerId, cacheName, maxFailure, waitBeforeRetry);
 
         // create a default pool with one worker thread to mimic the SINGLE queue behavior
-        LinkedBlockingQueue<Runnable> queue = new LinkedBlockingQueue<Runnable>();
-
-        pool = new ThreadPoolExecutor(
-            0,
-            1,
-            getWaitToDieMillis(),
-            TimeUnit.MILLISECONDS,
-            queue,
-            new DaemonThreadFactory("CacheEventQueue.QProcessor-" + getCacheName()));
+        pool = ThreadPoolManager.getInstance().createPool(
+        		new PoolConfiguration(false, 0, 1, 0, getWaitToDieMillis(), WhenBlockedPolicy.BLOCK, 0), 
+        		"CacheEventQueue.QProcessor-" + getCacheName());
     }
 
     /**
