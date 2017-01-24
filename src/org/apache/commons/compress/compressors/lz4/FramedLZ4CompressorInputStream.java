@@ -35,12 +35,14 @@ import org.apache.commons.compress.utils.IOUtils;
  *
  * @see <a href="http://lz4.github.io/lz4/lz4_Frame_format.html">LZ4 Frame Format Description</a>
  * @since 1.14
+ * @NotThreadSafe
  */
 public class FramedLZ4CompressorInputStream extends CompressorInputStream {
     /*
      * TODO before releasing 1.14:
      *
      * + xxhash32 checksum validation
+     * + skippable frames
      * + decompressConcatenated
      * + block dependence
      */

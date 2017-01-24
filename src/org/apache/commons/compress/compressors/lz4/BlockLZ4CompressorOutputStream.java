@@ -36,6 +36,7 @@ import org.apache.commons.compress.utils.ByteUtils;
  *
  * @see <a href="http://lz4.github.io/lz4/lz4_Block_format.html">LZ4 Block Format Description</a>
  * @since 1.14
+ * @NotThreadSafe
  */
 public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
 

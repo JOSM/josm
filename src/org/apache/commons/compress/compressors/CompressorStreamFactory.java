@@ -40,6 +40,7 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.compress.compressors.lz4.BlockLZ4CompressorInputStream;
 import org.apache.commons.compress.compressors.lz4.BlockLZ4CompressorOutputStream;
 import org.apache.commons.compress.compressors.lz4.FramedLZ4CompressorInputStream;
+import org.apache.commons.compress.compressors.lz4.FramedLZ4CompressorOutputStream;
 import org.apache.commons.compress.compressors.lzma.LZMACompressorInputStream;
 import org.apache.commons.compress.compressors.lzma.LZMACompressorOutputStream;
 import org.apache.commons.compress.compressors.lzma.LZMAUtils;
@@ -538,7 +539,7 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
      * @param name
      *            the compressor name, i.e. {@value #GZIP}, {@value #BZIP2},
      *            {@value #XZ}, {@value #PACK200}, {@value SNAPPY_FRAMED},
-     *            {@value LZ4_BLOCK}
+     *            {@value LZ4_BLOCK}, {@value LZ4_FRAMED}
      *            or {@value #DEFLATE}
      * @param out
      *            the output stream
@@ -589,6 +590,10 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
                 return new BlockLZ4CompressorOutputStream(out);
             }
 
+            if (LZ4_FRAMED.equalsIgnoreCase(name)) {
+                return new FramedLZ4CompressorOutputStream(out);
+            }
+
         } catch (final IOException e) {
             throw new CompressorException("Could not create CompressorOutputStream", e);
         }
@@ -632,7 +637,7 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
 
     @Override
     public Set<String> getOutputStreamCompressorNames() {
-        return Sets.newHashSet(GZIP, BZIP2, XZ, LZMA, PACK200, DEFLATE, SNAPPY_RAW, SNAPPY_FRAMED, LZ4_BLOCK);
+        return Sets.newHashSet(GZIP, BZIP2, XZ, LZMA, PACK200, DEFLATE, SNAPPY_FRAMED, LZ4_BLOCK, LZ4_FRAMED);
     }
 
     /**
