@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.EOFException;
 import java.io.InputStream;
+import java.io.DataInput;
 import java.io.DataInputStream;
 import java.io.BufferedInputStream;
 import java.util.zip.DataFormatException;
@@ -30,6 +31,7 @@ import java.util.zip.Inflater;
 import java.util.zip.CRC32;
 
 import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.utils.ByteUtils;
 import org.apache.commons.compress.utils.CharsetNames;
 
 /**
@@ -165,7 +167,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
         }
 
         // Parsing the rest of the header may throw EOFException.
-        final DataInputStream inData = new DataInputStream(in);
+        final DataInput inData = new DataInputStream(in);
         final int method = inData.readUnsignedByte();
         if (method != Deflater.DEFLATED) {
             throw new IOException("Unsupported compression method "
@@ -178,7 +180,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
                     "Reserved flags are set in the .gz header");
         }
 
-        parameters.setModificationTime(readLittleEndianInt(inData) * 1000);
+        parameters.setModificationTime(ByteUtils.fromLittleEndian(inData, 4) * 1000);
         switch (inData.readUnsignedByte()) { // extra flags
         case 2:
             parameters.setCompressionLevel(Deflater.BEST_COMPRESSION);
@@ -233,20 +235,13 @@ public class GzipCompressorInputStream extends CompressorInputStream {
         return true;
     }
 
-    private static byte[] readToNull(final DataInputStream inData) throws IOException {
+    private static byte[] readToNull(final DataInput inData) throws IOException {
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
         int b = 0;
         while ((b = inData.readUnsignedByte()) != 0x00) { // NOPMD
             bos.write(b);
         }
         return bos.toByteArray();
-    }
-
-    private static long readLittleEndianInt(final DataInputStream inData) throws IOException {
-        return inData.readUnsignedByte()
-            | (inData.readUnsignedByte() << 8)
-            | (inData.readUnsignedByte() << 16)
-            | (((long) inData.readUnsignedByte()) << 24);
     }
 
     @Override
@@ -309,10 +304,10 @@ public class GzipCompressorInputStream extends CompressorInputStream {
 
                 bufUsed = 0;
 
-                final DataInputStream inData = new DataInputStream(in);
+                final DataInput inData = new DataInputStream(in);
 
                 // CRC32
-                final long crcStored = readLittleEndianInt(inData);
+                final long crcStored = ByteUtils.fromLittleEndian(inData, 4);
 
                 if (crcStored != crc.getValue()) {
                     throw new IOException("Gzip-compressed data is corrupt "
@@ -320,7 +315,7 @@ public class GzipCompressorInputStream extends CompressorInputStream {
                 }
 
                 // Uncompressed size modulo 2^32 (ISIZE in the spec)
-                final long isize = readLittleEndianInt(inData);
+                final long isize = ByteUtils.fromLittleEndian(inData, 4);
 
                 if (isize != (inf.getBytesWritten() & 0xffffffffl)) {
                     throw new IOException("Gzip-compressed data is corrupt"
