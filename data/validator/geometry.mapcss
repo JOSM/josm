@@ -74,10 +74,11 @@ node[source:outline] {
   throwWarning: tr("{0} on a node. Should be drawn as an area.", "{0.tag}");
 }
 
-/* {0} on a node, should be a relation; Error level; see #10252, #10769 */
+/* {0} on a node, should be a relation; Error level; see #10252, #10769, #14288 */
+node[type=multipolygon],
 node[route],
 node[restriction] {
-  throwError: tr("{0}=* on a node. Should be used in a relation", "{0.key}"); 
+  throwError: tr("{0} on a node. Should be used in a relation", "{0.tag}"); 
 }
 
 /* {0} on a way, should be a node */
@@ -96,9 +97,10 @@ way[natural=tree] {
   throwWarning: tr("{0} on a way. Should be used on a node.", "{0.tag}"); 
 }
 
-/* {0} on a way, should be a relation; see #10252 */
+/* {0} on a way, should be a relation; see #10252, #14288 */
+way[type=multipolygon],
 way[route=bus] {
-  throwWarning: tr("{0} on a way. Should be used in a relation", "{0.tag}"); 
+  throwError: tr("{0} on a way. Should be used in a relation", "{0.tag}"); 
 }
 
 /* #12502 */
