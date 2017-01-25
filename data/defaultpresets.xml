@@ -3475,6 +3475,7 @@
             <key key="aeroway" value="runway" />
             <optional>
                 <text key="ref" text="Reference" />
+                <reference ref="surface" />
             </optional>
         </item> <!-- Runway -->
         <item name="Taxiway" icon="presets/transport/airport/taxiway.svg" type="way,closedway" preset_name_label="true">
