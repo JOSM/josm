@@ -80,6 +80,9 @@ public class FramedLZ4CompressorInputStream extends CompressorInputStream {
     private InputStream currentBlock;
     private boolean endReached, inUncompressed;
 
+    // used for frame header checksum and content checksum, if present
+    private final XXHash32 contentHash = new XXHash32();
+
     /**
      * Creates a new input stream that decompresses streams compressed
      * using the LZ4 frame format.
@@ -139,6 +142,7 @@ public class FramedLZ4CompressorInputStream extends CompressorInputStream {
         if (flags == -1) {
             throw new IOException("Premature end of stream while reading frame flags");
         }
+        contentHash.update(flags);
         if ((flags & VERSION_MASK) != SUPPORTED_VERSION) {
             throw new IOException("Unsupported version " + (flags >> 6));
         }
@@ -148,18 +152,28 @@ public class FramedLZ4CompressorInputStream extends CompressorInputStream {
         expectBlockChecksum = (flags & BLOCK_CHECKSUM_MASK) != 0;
         expectContentSize = (flags & CONTENT_SIZE_MASK) != 0;
         expectContentChecksum = (flags & CONTENT_CHECKSUM_MASK) != 0;
-        if (readOneByte() == -1) { // max size is irrelevant for this implementation
+        int bdByte = readOneByte();
+        if (bdByte == -1) { // max size is irrelevant for this implementation
             throw new IOException("Premature end of stream while reading frame BD byte");
         }
+        contentHash.update(bdByte);
         if (expectContentSize) { // for now we don't care, contains the uncompressed size
-            int skipped = (int) IOUtils.skip(in, 8);
+            byte[] contentSize = new byte[8];
+            int skipped = (int) IOUtils.readFully(in, contentSize);
             count(skipped);
             if (8 != skipped) {
                 throw new IOException("Premature end of stream while reading content size");
             }
+            contentHash.update(contentSize, 0, contentSize.length);
         }
-        if (readOneByte() == -1) { // partial hash of header. not supported, yet
+        int headerHash = readOneByte();
+        if (headerHash == -1) { // partial hash of header.
             throw new IOException("Premature end of stream while reading frame header checksum");
+        }
+        int expectedHash = (int) ((contentHash.getValue() >> 8) & 0xff);
+        contentHash.reset();
+        if (headerHash != expectedHash) {
+            throw new IOException("frame header checksum mismatch.");
         }
     }
 

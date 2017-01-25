@@ -40,7 +40,7 @@ public class FramedLZ4CompressorOutputStream extends CompressorOutputStream {
     /*
      * TODO before releasing 1.14:
      *
-     * + xxhash32 checksum creation for headers, content, blocks
+     * + xxhash32 checksum creation for content, blocks
      * + block dependence
      */
 
@@ -56,6 +56,9 @@ public class FramedLZ4CompressorOutputStream extends CompressorOutputStream {
     private final OutputStream out;
     private boolean finished = false;
     private int currentIndex = 0;
+
+    // used for frame header checksum and content checksum, if present
+    private final XXHash32 contentHash = new XXHash32();
 
     /**
      * Constructs a new output stream that compresses data using the
@@ -129,10 +132,15 @@ public class FramedLZ4CompressorOutputStream extends CompressorOutputStream {
     }
 
     private void writeFrameDescriptor() throws IOException {
-        out.write(FramedLZ4CompressorInputStream.SUPPORTED_VERSION
-            | FramedLZ4CompressorInputStream.BLOCK_INDEPENDENCE_MASK);
-        out.write(BLOCK_SIZES.indexOf(blockData.length) << 4);
-        out.write(0); // TODO header checksum
+        int flags = FramedLZ4CompressorInputStream.SUPPORTED_VERSION
+            | FramedLZ4CompressorInputStream.BLOCK_INDEPENDENCE_MASK;
+        out.write(flags);
+        contentHash.update(flags);
+        int bd = BLOCK_SIZES.indexOf(blockData.length) << 4;
+        out.write(bd);
+        contentHash.update(bd);
+        out.write((int) ((contentHash.getValue() >> 8) & 0xff));
+        contentHash.reset();
     }
 
     private void flushBlock() throws IOException {
