@@ -29,7 +29,7 @@ public class ReverseWayNoTagCorrectorTest {
     public void testDirectionalTags() {
         assertEquals(1, ReverseWayNoTagCorrector.getDirectionalTags(new Tag("waterway", "drain")).size());
         assertEquals(1, ReverseWayNoTagCorrector.getDirectionalTags(new Tag("man_made", "embankment")).size());
-        assertEquals(1, ReverseWayNoTagCorrector.getDirectionalTags(new Tag("aerialway", "cable_car")).size());
+        assertEquals(1, ReverseWayNoTagCorrector.getDirectionalTags(new Tag("aerialway", "drag_lift")).size());
         assertEquals(0, ReverseWayNoTagCorrector.getDirectionalTags(new Tag("aerialway", "station")).size());
         assertEquals(0, ReverseWayNoTagCorrector.getDirectionalTags(new Tag("incline", "up")).size());
         assertEquals(0, ReverseWayNoTagCorrector.getDirectionalTags(new Tag("oneway", "yes")).size());
