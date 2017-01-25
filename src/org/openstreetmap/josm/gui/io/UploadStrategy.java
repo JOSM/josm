@@ -21,7 +21,7 @@ public enum UploadStrategy {
      */
     SINGLE_REQUEST_STRATEGY("singlerequest");
 
-    private String preferenceValue;
+    private final String preferenceValue;
 
     UploadStrategy(String preferenceValue) {
         this.preferenceValue = preferenceValue;

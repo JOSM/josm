@@ -71,7 +71,7 @@ public class MapCSSParser {
         /** the main parser */
         DEFAULT(2);
 
-        int idx; // the integer, which javacc assigns to this state
+        final int idx; // the integer, which javacc assigns to this state
 
         LexicalState(int idx) {
             if (!this.name().equals(MapCSSParserTokenManager.lexStateNames[idx])) {

@@ -30,7 +30,7 @@ public enum ComparePairType {
 
     /** the localized display name */
     private final String displayName;
-    private ListRole[] participatingRoles;
+    private final ListRole[] participatingRoles;
 
     ComparePairType(String displayName, ListRole ... participatingRoles) {
         this.displayName = displayName;
