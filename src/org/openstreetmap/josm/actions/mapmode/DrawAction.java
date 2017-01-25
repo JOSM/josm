@@ -14,12 +14,9 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -27,13 +24,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.DoubleStream;
 
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
-import javax.swing.JPopupMenu;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -44,7 +39,6 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -61,18 +55,14 @@ import org.openstreetmap.josm.data.preferences.StrokeProperty;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.MapViewState;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.draw.MapPath2D;
-import org.openstreetmap.josm.gui.draw.MapViewPath;
-import org.openstreetmap.josm.gui.draw.SymbolShape;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
 import org.openstreetmap.josm.gui.util.ModifierListener;
-import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
@@ -88,42 +78,42 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     private static final ArrowPaintHelper START_WAY_INDICATOR = new ArrowPaintHelper(Math.toRadians(90), 8);
 
-    private static final CachingProperty<Boolean> USE_REPEATED_SHORTCUT
+    static final CachingProperty<Boolean> USE_REPEATED_SHORTCUT
             = new BooleanProperty("draw.anglesnap.toggleOnRepeatedA", true).cached();
-    private static final CachingProperty<BasicStroke> RUBBER_LINE_STROKE
+    static final CachingProperty<BasicStroke> RUBBER_LINE_STROKE
             = new StrokeProperty("draw.stroke.helper-line", "3").cached();
 
-    private static final CachingProperty<BasicStroke> HIGHLIGHT_STROKE
+    static final CachingProperty<BasicStroke> HIGHLIGHT_STROKE
             = new StrokeProperty("draw.anglesnap.stroke.highlight", "10").cached();
-    private static final CachingProperty<BasicStroke> HELPER_STROKE
+    static final CachingProperty<BasicStroke> HELPER_STROKE
             = new StrokeProperty("draw.anglesnap.stroke.helper", "1 4").cached();
 
-    private static final CachingProperty<Double> SNAP_ANGLE_TOLERANCE
+    static final CachingProperty<Double> SNAP_ANGLE_TOLERANCE
             = new DoubleProperty("draw.anglesnap.tolerance", 5.0).cached();
-    private static final CachingProperty<Boolean> DRAW_CONSTRUCTION_GEOMETRY
+    static final CachingProperty<Boolean> DRAW_CONSTRUCTION_GEOMETRY
             = new BooleanProperty("draw.anglesnap.drawConstructionGeometry", true).cached();
-    private static final CachingProperty<Boolean> SHOW_PROJECTED_POINT
+    static final CachingProperty<Boolean> SHOW_PROJECTED_POINT
             = new BooleanProperty("draw.anglesnap.drawProjectedPoint", true).cached();
-    private static final CachingProperty<Boolean> SNAP_TO_PROJECTIONS
+    static final CachingProperty<Boolean> SNAP_TO_PROJECTIONS
             = new BooleanProperty("draw.anglesnap.projectionsnap", true).cached();
 
-    private static final CachingProperty<Boolean> SHOW_ANGLE
+    static final CachingProperty<Boolean> SHOW_ANGLE
             = new BooleanProperty("draw.anglesnap.showAngle", true).cached();
 
-    private static final CachingProperty<Color> SNAP_HELPER_COLOR
+    static final CachingProperty<Color> SNAP_HELPER_COLOR
             = new ColorProperty(marktr("draw angle snap"), Color.ORANGE).cached();
 
-    private static final CachingProperty<Color> HIGHLIGHT_COLOR
+    static final CachingProperty<Color> HIGHLIGHT_COLOR
             = new ColorProperty(marktr("draw angle snap highlight"), ORANGE_TRANSPARENT).cached();
 
-    private static final AbstractToStringProperty<Color> RUBBER_LINE_COLOR
+    static final AbstractToStringProperty<Color> RUBBER_LINE_COLOR
             = PaintColors.SELECTED.getProperty().getChildColor(marktr("helper line"));
 
-    private static final CachingProperty<Boolean> DRAW_HELPER_LINE
+    static final CachingProperty<Boolean> DRAW_HELPER_LINE
             = new BooleanProperty("draw.helper-line", true).cached();
-    private static final CachingProperty<Boolean> DRAW_TARGET_HIGHLIGHT
+    static final CachingProperty<Boolean> DRAW_TARGET_HIGHLIGHT
             = new BooleanProperty("draw.target-highlight", true).cached();
-    private static final CachingProperty<Double> SNAP_TO_INTERSECTION_THRESHOLD
+    static final CachingProperty<Double> SNAP_TO_INTERSECTION_THRESHOLD
             = new DoubleProperty("edit.snap-intersection-threshold", 10).cached();
 
     private final Cursor cursorJoinNode;
@@ -150,7 +140,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     private transient Node previousNode;
     private EastNorth currentMouseEastNorth;
 
-    private final transient SnapHelper snapHelper = new SnapHelper();
+    private final transient DrawSnapHelper snapHelper = new DrawSnapHelper(this);
 
     private final transient Shortcut backspaceShortcut;
     private final BackSpaceAction backspaceAction;
@@ -872,7 +862,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         // status bar was filled by snapHelper
     }
 
-    private static void showStatusInfo(double angle, double hdg, double distance, boolean activeFlag) {
+    static void showStatusInfo(double angle, double hdg, double distance, boolean activeFlag) {
         Main.map.statusLine.setAngle(angle);
         Main.map.statusLine.activateAnglePanel(activeFlag);
         Main.map.statusLine.setHeading(hdg);
@@ -1337,459 +1327,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             // select last added node - maybe we will continue drawing from it
             if (n != null) {
                 getLayerManager().getEditDataSet().addSelected(n);
-            }
-        }
-    }
-
-    private class SnapHelper {
-        private static final String DRAW_ANGLESNAP_ANGLES = "draw.anglesnap.angles";
-
-        private final class AnglePopupMenu extends JPopupMenu {
-
-            private final JCheckBoxMenuItem repeatedCb = new JCheckBoxMenuItem(
-                    new AbstractAction(tr("Toggle snapping by {0}", getShortcut().getKeyText())) {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
-                    USE_REPEATED_SHORTCUT.put(sel);
-                }
-            });
-
-            private final JCheckBoxMenuItem helperCb = new JCheckBoxMenuItem(
-                    new AbstractAction(tr("Show helper geometry")) {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
-                    DRAW_CONSTRUCTION_GEOMETRY.put(sel);
-                    SHOW_PROJECTED_POINT.put(sel);
-                    SHOW_ANGLE.put(sel);
-                    enableSnapping();
-                }
-            });
-
-            private final JCheckBoxMenuItem projectionCb = new JCheckBoxMenuItem(
-                    new AbstractAction(tr("Snap to node projections")) {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
-                    SNAP_TO_PROJECTIONS.put(sel);
-                    enableSnapping();
-                }
-            });
-
-            private AnglePopupMenu() {
-                helperCb.setState(DRAW_CONSTRUCTION_GEOMETRY.get());
-                projectionCb.setState(SNAP_TO_PROJECTIONS.get());
-                repeatedCb.setState(USE_REPEATED_SHORTCUT.get());
-                add(repeatedCb);
-                add(helperCb);
-                add(projectionCb);
-                add(new AbstractAction(tr("Disable")) {
-                    @Override public void actionPerformed(ActionEvent e) {
-                        saveAngles("180");
-                        init();
-                        enableSnapping();
-                    }
-                });
-                add(new AbstractAction(tr("0,90,...")) {
-                    @Override public void actionPerformed(ActionEvent e) {
-                        saveAngles("0", "90", "180");
-                        init();
-                        enableSnapping();
-                    }
-                });
-                add(new AbstractAction(tr("0,45,90,...")) {
-                    @Override public void actionPerformed(ActionEvent e) {
-                        saveAngles("0", "45", "90", "135", "180");
-                        init();
-                        enableSnapping();
-                    }
-                });
-                add(new AbstractAction(tr("0,30,45,60,90,...")) {
-                    @Override public void actionPerformed(ActionEvent e) {
-                        saveAngles("0", "30", "45", "60", "90", "120", "135", "150", "180");
-                        init();
-                        enableSnapping();
-                    }
-                });
-            }
-        }
-
-        private boolean snapOn; // snapping is turned on
-
-        private boolean active; // snapping is active for current mouse position
-        private boolean fixed; // snap angle is fixed
-        private boolean absoluteFix; // snap angle is absolute
-
-        private EastNorth dir2;
-        private EastNorth projected;
-        private String labelText;
-        private double lastAngle;
-
-        private double customBaseHeading = -1; // angle of base line, if not last segment)
-        private EastNorth segmentPoint1; // remembered first point of base segment
-        private EastNorth segmentPoint2; // remembered second point of base segment
-        private EastNorth projectionSource; // point that we are projecting to the line
-
-        private double[] snapAngles;
-
-        private double pe, pn; // (pe, pn) - direction of snapping line
-        private double e0, n0; // (e0, n0) - origin of snapping line
-
-        private final String fixFmt = "%d "+tr("FIX");
-
-        private JCheckBoxMenuItem checkBox;
-
-        private final MouseListener anglePopupListener = new PopupMenuLauncher(new AnglePopupMenu()) {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                super.mouseClicked(e);
-                if (e.getButton() == MouseEvent.BUTTON1) {
-                    toggleSnapping();
-                    updateStatusLine();
-                }
-            }
-        };
-
-        /**
-         * Set the initial state
-         */
-        public void init() {
-            snapOn = false;
-            checkBox.setState(snapOn);
-            fixed = false;
-            absoluteFix = false;
-
-            computeSnapAngles();
-            Main.pref.addWeakKeyPreferenceChangeListener(DRAW_ANGLESNAP_ANGLES, e -> this.computeSnapAngles());
-        }
-
-        private void computeSnapAngles() {
-            snapAngles = Main.pref.getCollection(DRAW_ANGLESNAP_ANGLES,
-                    Arrays.asList("0", "30", "45", "60", "90", "120", "135", "150", "180"))
-                    .stream()
-                    .mapToDouble(this::parseSnapAngle)
-                    .flatMap(s -> DoubleStream.of(s, 360-s))
-                    .toArray();
-        }
-
-        private double parseSnapAngle(String string) {
-            try {
-                return Double.parseDouble(string);
-            } catch (NumberFormatException e) {
-                Main.warn("Incorrect number in draw.anglesnap.angles preferences: {0}", string);
-                return 0;
-            }
-        }
-
-        /**
-         * Save the snap angles
-         * @param angles The angles
-         */
-        public void saveAngles(String ... angles) {
-            Main.pref.putCollection(DRAW_ANGLESNAP_ANGLES, Arrays.asList(angles));
-        }
-
-        public void setMenuCheckBox(JCheckBoxMenuItem checkBox) {
-            this.checkBox = checkBox;
-        }
-
-        /**
-         * Draw the snap hint line.
-         * @param g2 graphics
-         * @param mv MapView state
-         * @since 10874
-         */
-        public void drawIfNeeded(Graphics2D g2, MapViewState mv) {
-            if (!snapOn || !active)
-                return;
-            MapViewPoint p1 = mv.getPointFor(getCurrentBaseNode());
-            MapViewPoint p2 = mv.getPointFor(dir2);
-            MapViewPoint p3 = mv.getPointFor(projected);
-            if (DRAW_CONSTRUCTION_GEOMETRY.get()) {
-                g2.setColor(SNAP_HELPER_COLOR.get());
-                g2.setStroke(HELPER_STROKE.get());
-
-                MapViewPath b = new MapViewPath(mv);
-                b.moveTo(p2);
-                if (absoluteFix) {
-                    b.lineTo(p2.interpolate(p1, 2)); // bi-directional line
-                } else {
-                    b.lineTo(p3);
-                }
-                g2.draw(b);
-            }
-            if (projectionSource != null) {
-                g2.setColor(SNAP_HELPER_COLOR.get());
-                g2.setStroke(HELPER_STROKE.get());
-                MapViewPath b = new MapViewPath(mv);
-                b.moveTo(p3);
-                b.lineTo(projectionSource);
-                g2.draw(b);
-            }
-
-            if (customBaseHeading >= 0) {
-                g2.setColor(HIGHLIGHT_COLOR.get());
-                g2.setStroke(HIGHLIGHT_STROKE.get());
-                MapViewPath b = new MapViewPath(mv);
-                b.moveTo(segmentPoint1);
-                b.lineTo(segmentPoint2);
-                g2.draw(b);
-            }
-
-            g2.setColor(RUBBER_LINE_COLOR.get());
-            g2.setStroke(RUBBER_LINE_STROKE.get());
-            MapViewPath b = new MapViewPath(mv);
-            b.moveTo(p1);
-            b.lineTo(p3);
-            g2.draw(b);
-
-            g2.drawString(labelText, (int) p3.getInViewX()-5, (int) p3.getInViewY()+20);
-            if (SHOW_PROJECTED_POINT.get()) {
-                g2.setStroke(RUBBER_LINE_STROKE.get());
-                g2.draw(new MapViewPath(mv).shapeAround(p3, SymbolShape.CIRCLE, 10)); // projected point
-            }
-
-            g2.setColor(SNAP_HELPER_COLOR.get());
-            g2.setStroke(HELPER_STROKE.get());
-        }
-
-        /**
-         * If mouse position is close to line at 15-30-45-... angle, remembers this direction
-         * @param currentEN Current position
-         * @param baseHeading The heading
-         * @param curHeading The current mouse heading
-         */
-        public void checkAngleSnapping(EastNorth currentEN, double baseHeading, double curHeading) {
-            EastNorth p0 = getCurrentBaseNode().getEastNorth();
-            EastNorth snapPoint = currentEN;
-            double angle = -1;
-
-            double activeBaseHeading = (customBaseHeading >= 0) ? customBaseHeading : baseHeading;
-
-            if (snapOn && (activeBaseHeading >= 0)) {
-                angle = curHeading - activeBaseHeading;
-                if (angle < 0) {
-                    angle += 360;
-                }
-                if (angle > 360) {
-                    angle = 0;
-                }
-
-                double nearestAngle;
-                if (fixed) {
-                    nearestAngle = lastAngle; // if direction is fixed use previous angle
-                    active = true;
-                } else {
-                    nearestAngle = getNearestAngle(angle);
-                    if (getAngleDelta(nearestAngle, angle) < SNAP_ANGLE_TOLERANCE.get()) {
-                        active = customBaseHeading >= 0 || Math.abs(nearestAngle - 180) > 1e-3;
-                        // if angle is to previous segment, exclude 180 degrees
-                        lastAngle = nearestAngle;
-                    } else {
-                        active = false;
-                    }
-                }
-
-                if (active) {
-                    double phi;
-                    e0 = p0.east();
-                    n0 = p0.north();
-                    buildLabelText((nearestAngle <= 180) ? nearestAngle : (nearestAngle-360));
-
-                    phi = (nearestAngle + activeBaseHeading) * Math.PI / 180;
-                    // (pe,pn) - direction of snapping line
-                    pe = Math.sin(phi);
-                    pn = Math.cos(phi);
-                    double scale = 20 * Main.map.mapView.getDist100Pixel();
-                    dir2 = new EastNorth(e0 + scale * pe, n0 + scale * pn);
-                    snapPoint = getSnapPoint(currentEN);
-                } else {
-                    noSnapNow();
-                }
-            }
-
-            // find out the distance, in metres, between the base point and projected point
-            LatLon mouseLatLon = Main.map.mapView.getProjection().eastNorth2latlon(snapPoint);
-            double distance = getCurrentBaseNode().getCoor().greatCircleDistance(mouseLatLon);
-            double hdg = Math.toDegrees(p0.heading(snapPoint));
-            // heading of segment from current to calculated point, not to mouse position
-
-            if (baseHeading >= 0) { // there is previous line segment with some heading
-                angle = hdg - baseHeading;
-                if (angle < 0) {
-                    angle += 360;
-                }
-                if (angle > 360) {
-                    angle = 0;
-                }
-            }
-            showStatusInfo(angle, hdg, distance, isSnapOn());
-        }
-
-        private void buildLabelText(double nearestAngle) {
-            if (SHOW_ANGLE.get()) {
-                if (fixed) {
-                    if (absoluteFix) {
-                        labelText = "=";
-                    } else {
-                        labelText = String.format(fixFmt, (int) nearestAngle);
-                    }
-                } else {
-                    labelText = String.format("%d", (int) nearestAngle);
-                }
-            } else {
-                if (fixed) {
-                    if (absoluteFix) {
-                        labelText = "=";
-                    } else {
-                        labelText = String.format(tr("FIX"), 0);
-                    }
-                } else {
-                    labelText = "";
-                }
-            }
-        }
-
-        /**
-         * Gets a snap point close to p. Stores the result for display.
-         * @param p The point
-         * @return The snap point close to p.
-         */
-        public EastNorth getSnapPoint(EastNorth p) {
-            if (!active)
-                return p;
-            double de = p.east()-e0;
-            double dn = p.north()-n0;
-            double l = de*pe+dn*pn;
-            double delta = Main.map.mapView.getDist100Pixel()/20;
-            if (!absoluteFix && l < delta) {
-                active = false;
-                return p;
-            } //  do not go backward!
-
-            projectionSource = null;
-            if (SNAP_TO_PROJECTIONS.get()) {
-                DataSet ds = getLayerManager().getEditDataSet();
-                Collection<Way> selectedWays = ds.getSelectedWays();
-                if (selectedWays.size() == 1) {
-                    Way w = selectedWays.iterator().next();
-                    Collection<EastNorth> pointsToProject = new ArrayList<>();
-                    if (w.getNodesCount() < 1000) {
-                        for (Node n: w.getNodes()) {
-                            pointsToProject.add(n.getEastNorth());
-                        }
-                    }
-                    if (customBaseHeading >= 0) {
-                        pointsToProject.add(segmentPoint1);
-                        pointsToProject.add(segmentPoint2);
-                    }
-                    EastNorth enOpt = null;
-                    double dOpt = 1e5;
-                    for (EastNorth en: pointsToProject) { // searching for besht projection
-                        double l1 = (en.east()-e0)*pe+(en.north()-n0)*pn;
-                        double d1 = Math.abs(l1-l);
-                        if (d1 < delta && d1 < dOpt) {
-                            l = l1;
-                            enOpt = en;
-                            dOpt = d1;
-                        }
-                    }
-                    if (enOpt != null) {
-                        projectionSource = enOpt;
-                    }
-                }
-            }
-            projected = new EastNorth(e0+l*pe, n0+l*pn);
-            return projected;
-        }
-
-        /**
-         * Disables snapping
-         */
-        public void noSnapNow() {
-            active = false;
-            dir2 = null;
-            projected = null;
-            labelText = null;
-        }
-
-        public void setBaseSegment(WaySegment seg) {
-            if (seg == null) return;
-            segmentPoint1 = seg.getFirstNode().getEastNorth();
-            segmentPoint2 = seg.getSecondNode().getEastNorth();
-
-            double hdg = segmentPoint1.heading(segmentPoint2);
-            hdg = Math.toDegrees(hdg);
-            if (hdg < 0) {
-                hdg += 360;
-            }
-            if (hdg > 360) {
-                hdg -= 360;
-            }
-            customBaseHeading = hdg;
-        }
-
-        /**
-         * Enable snapping.
-         */
-        private void enableSnapping() {
-            snapOn = true;
-            checkBox.setState(snapOn);
-            customBaseHeading = -1;
-            unsetFixedMode();
-        }
-
-        private void toggleSnapping() {
-            snapOn = !snapOn;
-            checkBox.setState(snapOn);
-            customBaseHeading = -1;
-            unsetFixedMode();
-        }
-
-        public void setFixedMode() {
-            if (active) {
-                fixed = true;
-            }
-        }
-
-        public void unsetFixedMode() {
-            fixed = false;
-            absoluteFix = false;
-            lastAngle = 0;
-            active = false;
-        }
-
-        public boolean isActive() {
-            return active;
-        }
-
-        public boolean isSnapOn() {
-            return snapOn;
-        }
-
-        private double getNearestAngle(double angle) {
-            double bestAngle = DoubleStream.of(snapAngles).boxed()
-                    .min(Comparator.comparing(snapAngle -> getAngleDelta(angle, snapAngle))).orElse(0.0);
-            if (Math.abs(bestAngle-360) < 1e-3) {
-                bestAngle = 0;
-            }
-            return bestAngle;
-        }
-
-        private double getAngleDelta(double a, double b) {
-            double delta = Math.abs(a-b);
-            if (delta > 180)
-                return 360-delta;
-            else
-                return delta;
-        }
-
-        private void unFixOrTurnOff() {
-            if (absoluteFix) {
-                unsetFixedMode();
-            } else {
-                toggleSnapping();
             }
         }
     }
