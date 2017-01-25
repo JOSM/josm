@@ -54,6 +54,116 @@ class DrawSnapHelper {
 
     private static final String DRAW_ANGLESNAP_ANGLES = "draw.anglesnap.angles";
 
+    private static final class RepeatedAction extends AbstractAction {
+        RepeatedAction(DrawSnapHelper snapHelper) {
+            super(tr("Toggle snapping by {0}", snapHelper.drawAction.getShortcut().getKeyText()));
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
+            DrawAction.USE_REPEATED_SHORTCUT.put(sel);
+        }
+    }
+
+    private static final class HelperAction extends AbstractAction {
+        private final transient DrawSnapHelper snapHelper;
+
+        HelperAction(DrawSnapHelper snapHelper) {
+            super(tr("Show helper geometry"));
+            this.snapHelper = snapHelper;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
+            DrawAction.DRAW_CONSTRUCTION_GEOMETRY.put(sel);
+            DrawAction.SHOW_PROJECTED_POINT.put(sel);
+            DrawAction.SHOW_ANGLE.put(sel);
+            snapHelper.enableSnapping();
+        }
+    }
+
+    private static final class ProjectionAction extends AbstractAction {
+        private final transient DrawSnapHelper snapHelper;
+
+        ProjectionAction(DrawSnapHelper snapHelper) {
+            super(tr("Snap to node projections"));
+            this.snapHelper = snapHelper;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
+            DrawAction.SNAP_TO_PROJECTIONS.put(sel);
+            snapHelper.enableSnapping();
+        }
+    }
+
+    private static final class DisableAction extends AbstractAction {
+        private final transient DrawSnapHelper snapHelper;
+
+        DisableAction(DrawSnapHelper snapHelper) {
+            super(tr("Disable"));
+            this.snapHelper = snapHelper;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            snapHelper.saveAngles("180");
+            snapHelper.init();
+            snapHelper.enableSnapping();
+        }
+    }
+
+    private static final class Snap90DegreesAction extends AbstractAction {
+        private final transient DrawSnapHelper snapHelper;
+
+        Snap90DegreesAction(DrawSnapHelper snapHelper) {
+            super(tr("0,90,..."));
+            this.snapHelper = snapHelper;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            snapHelper.saveAngles("0", "90", "180");
+            snapHelper.init();
+            snapHelper.enableSnapping();
+        }
+    }
+
+    private static final class Snap45DegreesAction extends AbstractAction {
+        private final transient DrawSnapHelper snapHelper;
+
+        Snap45DegreesAction(DrawSnapHelper snapHelper) {
+            super(tr("0,45,90,..."));
+            this.snapHelper = snapHelper;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            snapHelper.saveAngles("0", "45", "90", "135", "180");
+            snapHelper.init();
+            snapHelper.enableSnapping();
+        }
+    }
+
+    private static final class Snap30DegreesAction extends AbstractAction {
+        private final transient DrawSnapHelper snapHelper;
+
+        Snap30DegreesAction(DrawSnapHelper snapHelper) {
+            super(tr("0,30,45,60,90,..."));
+            this.snapHelper = snapHelper;
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            snapHelper.saveAngles("0", "30", "45", "60", "90", "120", "135", "150", "180");
+            snapHelper.init();
+            snapHelper.enableSnapping();
+        }
+    }
+
     private static final class AnglePopupMenu extends JPopupMenu {
 
         private final JCheckBoxMenuItem repeatedCb;
@@ -61,36 +171,9 @@ class DrawSnapHelper {
         private final JCheckBoxMenuItem projectionCb;
 
         private AnglePopupMenu(final DrawSnapHelper snapHelper) {
-            repeatedCb = new JCheckBoxMenuItem(
-                    new AbstractAction(tr("Toggle snapping by {0}", snapHelper.drawAction.getShortcut().getKeyText())) {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
-                    DrawAction.USE_REPEATED_SHORTCUT.put(sel);
-                }
-            });
-
-            helperCb = new JCheckBoxMenuItem(
-                    new AbstractAction(tr("Show helper geometry")) {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
-                    DrawAction.DRAW_CONSTRUCTION_GEOMETRY.put(sel);
-                    DrawAction.SHOW_PROJECTED_POINT.put(sel);
-                    DrawAction.SHOW_ANGLE.put(sel);
-                    snapHelper.enableSnapping();
-                }
-            });
-
-            projectionCb = new JCheckBoxMenuItem(
-                    new AbstractAction(tr("Snap to node projections")) {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
-                    DrawAction.SNAP_TO_PROJECTIONS.put(sel);
-                    snapHelper.enableSnapping();
-                }
-            });
+            repeatedCb = new JCheckBoxMenuItem(new RepeatedAction(snapHelper));
+            helperCb = new JCheckBoxMenuItem(new HelperAction(snapHelper));
+            projectionCb = new JCheckBoxMenuItem(new ProjectionAction(snapHelper));
 
             helperCb.setState(DrawAction.DRAW_CONSTRUCTION_GEOMETRY.get());
             projectionCb.setState(DrawAction.SNAP_TO_PROJECTIONS.get());
@@ -98,38 +181,10 @@ class DrawSnapHelper {
             add(repeatedCb);
             add(helperCb);
             add(projectionCb);
-            add(new AbstractAction(tr("Disable")) {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    snapHelper.saveAngles("180");
-                    snapHelper.init();
-                    snapHelper.enableSnapping();
-                }
-            });
-            add(new AbstractAction(tr("0,90,...")) {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    snapHelper.saveAngles("0", "90", "180");
-                    snapHelper.init();
-                    snapHelper.enableSnapping();
-                }
-            });
-            add(new AbstractAction(tr("0,45,90,...")) {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    snapHelper.saveAngles("0", "45", "90", "135", "180");
-                    snapHelper.init();
-                    snapHelper.enableSnapping();
-                }
-            });
-            add(new AbstractAction(tr("0,30,45,60,90,...")) {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    snapHelper.saveAngles("0", "30", "45", "60", "90", "120", "135", "150", "180");
-                    snapHelper.init();
-                    snapHelper.enableSnapping();
-                }
-            });
+            add(new DisableAction(snapHelper));
+            add(new Snap90DegreesAction(snapHelper));
+            add(new Snap45DegreesAction(snapHelper));
+            add(new Snap30DegreesAction(snapHelper));
         }
     }
 
