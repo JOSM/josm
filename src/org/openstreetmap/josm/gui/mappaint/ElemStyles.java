@@ -462,6 +462,15 @@ public class ElemStyles implements PreferenceChangedListener {
     }
 
     /**
+     * remove a style source; only accessed from MapPaintStyles
+     * @param style style source to remove
+     * @return {@code true} if this list contained the specified element
+     */
+    boolean remove(StyleSource style) {
+        return styleSources.remove(style);
+    }
+
+    /**
      * set the style sources; only accessed from MapPaintStyles
      * @param sources new style sources
      */
