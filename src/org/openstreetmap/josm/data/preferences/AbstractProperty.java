@@ -86,12 +86,20 @@ public abstract class AbstractProperty<T> {
      */
     public static class ValueChangeEvent<T> {
         private final PreferenceChangeEvent base;
-
         private final AbstractProperty<T> source;
 
         ValueChangeEvent(PreferenceChangeEvent base, AbstractProperty<T> source) {
             this.base = base;
             this.source = source;
+        }
+
+        /**
+         * Get the base event.
+         * @return the base event
+         * @since 11496
+         */
+        public final PreferenceChangeEvent getBaseEvent() {
+            return base;
         }
 
         /**

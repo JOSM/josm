@@ -9,7 +9,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Optional;
 
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.JList;
 import javax.swing.JMenuItem;
 import javax.swing.ListCellRenderer;
@@ -87,8 +86,6 @@ public final class MenuItemSearchDialog extends ExtendedDialog {
     }
 
     private static class CellRenderer implements ListCellRenderer<JMenuItem> {
-
-        private final DefaultListCellRenderer def = new DefaultListCellRenderer();
 
         @Override
         public Component getListCellRendererComponent(JList<? extends JMenuItem> list, JMenuItem value, int index,
