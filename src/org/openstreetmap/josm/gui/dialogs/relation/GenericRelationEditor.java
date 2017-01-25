@@ -284,7 +284,7 @@ public class GenericRelationEditor extends RelationEditor {
         }
         key = Shortcut.getCopyKeyStroke();
         if (key != null) {
-            // handle uncommon situation, that user has no keystroke assigned to paste
+            // handle uncommon situation, that user has no keystroke assigned to copy
             registerCopyPasteAction(new CopyMembersAction(memberTableModel, getLayer(), this),
                     "COPY_MEMBERS", key, getRootPane(), memberTable, selectionTable);
         }

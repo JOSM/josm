@@ -65,7 +65,8 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         /** Use HTTP proxy: JOSM will use the given SOCKS proxy */
         USE_SOCKS_PROXY("use-socks-proxy");
 
-        private String policyName;
+        private final String policyName;
+
         ProxyPolicy(String policyName) {
             this.policyName = policyName;
         }

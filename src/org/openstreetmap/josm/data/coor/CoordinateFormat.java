@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 /**
  * An enumeration  of coordinate formats
- *
+ * @since 1990
  */
 public enum CoordinateFormat {
 
@@ -29,7 +29,8 @@ public enum CoordinateFormat {
      */
     EAST_NORTH(tr("Projected Coordinates"));
 
-    private String displayName;
+    private final String displayName;
+
     CoordinateFormat(String displayName) {
         this.displayName = displayName;
     }

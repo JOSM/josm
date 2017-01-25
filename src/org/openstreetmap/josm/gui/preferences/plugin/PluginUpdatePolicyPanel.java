@@ -35,7 +35,8 @@ public class PluginUpdatePolicyPanel extends JPanel {
         ALWAYS("always"),
         NEVER("never");
 
-        private String preferenceValue;
+        private final String preferenceValue;
+
         Policy(String preferenceValue) {
             this.preferenceValue = preferenceValue;
         }
