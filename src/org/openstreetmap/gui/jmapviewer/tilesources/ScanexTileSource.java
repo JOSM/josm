@@ -29,8 +29,8 @@ public class ScanexTileSource extends TMSTileSource {
         IRS("irs", "/TileSender.ashx?ModeKey=tile&MapName=F7B8CF651682420FA1749D894C8AD0F6&LayerName=BAC78D764F0443BD9AF93E7A998C9F5B"),
         SPOT("spot", "/TileSender.ashx?ModeKey=tile&MapName=F7B8CF651682420FA1749D894C8AD0F6&LayerName=F51CE95441284AF6B2FC319B609C7DEC");
 
-        private String name;
-        private String uri;
+        private final String name;
+        private final String uri;
 
         ScanexLayer(String name, String uri) {
             this.name = name;
@@ -124,7 +124,7 @@ public class ScanexTileSource extends TMSTileSource {
     @Override
     public ICoordinate xyToLatLon(int x, int y, int zoom) {
         return new Coordinate(
-                tileYToLat((double) y, zoom),
+                tileYToLat(y, zoom),
                 osmMercator.xToLon(x, zoom)
                 );
     }
@@ -140,7 +140,7 @@ public class ScanexTileSource extends TMSTileSource {
     @Override
     public ICoordinate tileXYToLatLon(int x, int y, int zoom) {
         return new Coordinate(
-                tileYToLat((double) y, zoom),
+                tileYToLat(y, zoom),
                 osmMercator.xToLon(x * getTileSize(), zoom)
                 );
     }
