@@ -144,6 +144,9 @@ public final class ShowStatusReportAction extends JosmAction {
                     // Hide some parameters for privacy concerns
                     if (param[0].toLowerCase(Locale.ENGLISH).startsWith("-dproxy")) {
                         it.set(param[0]+"=xxx");
+                    } else if ("-Djnlpx.vmargs".equals(param[0])) {
+                        // Remove jnlpx.vmargs (base64 encoded copy of VM arguments already included in clear)
+                        it.remove();
                     } else {
                         // Replace some paths for readability and privacy concerns
                         String val = paramCleanup(param[1]);
