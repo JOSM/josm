@@ -9,6 +9,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -31,6 +32,8 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.ParseResult;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.TagCheck;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -47,7 +50,7 @@ public class MapCSSTagCheckerTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection();
+    public JOSMTestRules test = new JOSMTestRules().projection().platform();
 
     static MapCSSTagChecker buildTagChecker(String css) throws ParseException {
         final MapCSSTagChecker test = new MapCSSTagChecker();
@@ -214,5 +217,49 @@ public class MapCSSTagCheckerTest {
             test.visit(OsmReader.parseDataSet(is, null).allPrimitives());
             assertEquals(6, test.getErrors().size());
         }
+    }
+
+    private void doTestNaturalWood(int ticket, String filename, int errorsCount, int setsCount) throws Exception {
+        final MapCSSTagChecker test = buildTagChecker(
+                "area:closed:areaStyle[tag(\"natural\") = parent_tag(\"natural\")] ⧉ area:closed:areaStyle[natural] {" +
+                "  throwWarning: tr(\"Overlapping Identical Natural Areas\");" +
+                "}");
+        final MapCSSStyleSource style = new MapCSSStyleSource(
+                "area[natural=wood] {" +
+                "    fill-color: woodarea#008000;" +
+                "}");
+        MapPaintStyles.addStyle(style);
+        try (InputStream is = TestUtils.getRegressionDataStream(ticket, filename)) {
+            test.visit(OsmReader.parseDataSet(is, null).allPrimitives());
+            List<TestError> errors = test.getErrors();
+            assertEquals(errorsCount, errors.size());
+            Set<Set<OsmPrimitive>> primitives = new HashSet<>();
+            for (TestError e : errors) {
+                primitives.add(new HashSet<>(e.getPrimitives()));
+            }
+            assertEquals(setsCount, primitives.size());
+        } finally {
+            MapPaintStyles.removeStyle(style);
+        }
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/12627">Bug #12627</a>.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    @Ignore("not fixed yet")
+    public void testTicket12627() throws Exception {
+        doTestNaturalWood(12627, "overlapping.osm", 1, 1);
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/14289">Bug #14289</a>.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    @Ignore("not fixed yet")
+    public void testTicket14289() throws Exception {
+        doTestNaturalWood(14289, "example2.osm", 3, 3);
     }
 }

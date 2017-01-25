@@ -206,7 +206,7 @@ public class CachedFile implements Closeable {
     public InputStream getInputStream() throws IOException {
         File file = getFile();
         if (file == null) {
-            if (name.startsWith("resource://")) {
+            if (name != null && name.startsWith("resource://")) {
                 InputStream is = getClass().getResourceAsStream(
                         name.substring("resource:/".length()));
                 if (is == null)
@@ -272,7 +272,7 @@ public class CachedFile implements Closeable {
                 cacheFile = checkLocal(url);
             }
         } catch (MalformedURLException e) {
-            if (name.startsWith("resource://")) {
+            if (name == null || name.startsWith("resource://")) {
                 return null;
             } else if (name.startsWith("josmdir://")) {
                 cacheFile = new File(Main.pref.getUserDataDirectory(), name.substring("josmdir://".length()));

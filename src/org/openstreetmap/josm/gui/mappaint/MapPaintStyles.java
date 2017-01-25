@@ -289,6 +289,9 @@ public final class MapPaintStyles {
     }
 
     private static StyleSource fromSourceEntry(SourceEntry entry) {
+        if (entry.url == null && entry instanceof MapCSSStyleSource) {
+            return (MapCSSStyleSource) entry;
+        }
         Set<String> mimes = new HashSet<>(Arrays.asList(MapCSSStyleSource.MAPCSS_STYLE_MIME_TYPES.split(", ")));
         try (CachedFile cf = new CachedFile(entry.url).setHttpAccept(Utils.join(", ", mimes))) {
             String zipEntryPath = cf.findZipEntryPath("mapcss", "style");
@@ -418,13 +421,29 @@ public final class MapPaintStyles {
         StyleSource source = fromSourceEntry(entry);
         styles.add(source);
         loadStyleForFirstTime(source);
+        refreshStyles();
+        return source;
+    }
+
+    /**
+     * Remove a map paint style.
+     * @param entry map paint style
+     * @since 11493
+     */
+    public static void removeStyle(SourceEntry entry) {
+        StyleSource source = fromSourceEntry(entry);
+        if (styles.remove(source)) {
+            refreshStyles();
+        }
+    }
+
+    private static void refreshStyles() {
         MapPaintPrefHelper.INSTANCE.put(styles.getStyleSources());
         fireMapPaintSylesUpdated();
         styles.clearCached();
         if (Main.isDisplayingMapView()) {
             Main.map.mapView.repaint();
         }
-        return source;
     }
 
     /***********************************

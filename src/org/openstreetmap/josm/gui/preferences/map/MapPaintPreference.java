@@ -271,7 +271,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
         @Override
         public Map<String, String> serialize(SourceEntry entry) {
             Map<String, String> res = new HashMap<>();
-            res.put("url", entry.url);
+            res.put("url", entry.url == null ? "" : entry.url);
             res.put("title", entry.title == null ? "" : entry.title);
             res.put("active", Boolean.toString(entry.active));
             if (entry.name != null) {
