@@ -352,7 +352,6 @@ public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
             replacement.prependLiteral(expand(toExpand, toExpand));
         }
         Pair splitCandidate = lastPairs.get(0);
-        int splitLen = splitCandidate.length();
         int stillNeeded = MIN_OFFSET_OF_LAST_BACK_REFERENCE - toExpand;
         if (splitCandidate.hasBackReference()
             && splitCandidate.backReferenceLength() >= MIN_BACK_REFERENCE_LENGTH + stillNeeded) {
@@ -360,7 +359,11 @@ public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
             pairs.add(splitCandidate.splitWithNewBackReferenceLengthOf(splitCandidate.backReferenceLength()
                 - stillNeeded));
         } else {
-            replacement.prependLiteral(expand(toExpand + splitLen, splitLen));
+            if (splitCandidate.hasBackReference()) {
+                int brLen = splitCandidate.backReferenceLength();
+                replacement.prependLiteral(expand(toExpand + brLen, brLen));
+            }
+            splitCandidate.prependTo(replacement);
         }
         pairs.add(replacement);
     }
@@ -439,7 +442,13 @@ public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
         private int backReferenceLength() {
             return brLength;
         }
-        Pair splitWithNewBackReferenceLengthOf(int newBackReferenceLength) {
+        private void prependTo(Pair other) {
+            Iterator<byte[]> litsBackwards = literals.descendingIterator();
+            while (litsBackwards.hasNext()) {
+                other.prependLiteral(litsBackwards.next());
+            }
+        }
+        private Pair splitWithNewBackReferenceLengthOf(int newBackReferenceLength) {
             Pair p = new Pair();
             p.literals.addAll(literals);
             p.brOffset = brOffset;
