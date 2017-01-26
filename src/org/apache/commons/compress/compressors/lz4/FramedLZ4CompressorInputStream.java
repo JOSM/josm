@@ -125,6 +125,9 @@ public class FramedLZ4CompressorInputStream extends CompressorInputStream {
                 r = readOnce(b, off, len);
             }
         }
+        if (expectContentChecksum && r != -1) {
+            contentHash.update(b, off, r);
+        }
         return r;
     }
 
@@ -213,11 +216,17 @@ public class FramedLZ4CompressorInputStream extends CompressorInputStream {
 
     private void verifyContentChecksum() throws IOException {
         if (expectContentChecksum) {
-            int skipped = (int) IOUtils.skip(in, 4);
-            count(skipped);
-            if (4 != skipped) {
+            byte[] checksum = new byte[4];
+            int read = IOUtils.readFully(in, checksum);
+            count(read);
+            if (4 != read) {
                 throw new IOException("Premature end of stream while reading content checksum");
             }
+            long expectedHash = contentHash.getValue();
+            if (expectedHash != ByteUtils.fromLittleEndian(checksum)) {
+                throw new IOException("content checksum mismatch.");
+            }
+            contentHash.reset();
         }
     }
 
