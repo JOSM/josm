@@ -78,7 +78,7 @@ public class CacheEventQueue<K, V>
 
         // create a default pool with one worker thread to mimic the SINGLE queue behavior
         pool = ThreadPoolManager.getInstance().createPool(
-        		new PoolConfiguration(false, 0, 1, 0, getWaitToDieMillis(), WhenBlockedPolicy.BLOCK, 0), 
+        		new PoolConfiguration(false, 0, 1, 0, getWaitToDieMillis(), WhenBlockedPolicy.RUN, 0),
         		"CacheEventQueue.QProcessor-" + getCacheName());
     }
 
