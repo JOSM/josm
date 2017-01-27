@@ -70,7 +70,7 @@ public final class DuplicateAction extends AbstractAction implements IEnabledSta
     @Override
     public void updateEnabledState() {
         if (layer == null) {
-            if (model.getSelectedLayers().size() == 1) {
+            if (model != null && model.getSelectedLayers().size() == 1) {
                 setEnabled(model.getSelectedLayers().get(0) instanceof OsmDataLayer);
             } else {
                 setEnabled(false);
