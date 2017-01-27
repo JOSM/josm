@@ -47,7 +47,6 @@ public class MenuScroller {
     private MenuScrollItem downItem;
     private final MenuScrollListener menuListener = new MenuScrollListener();
     private final MouseWheelListener mouseWheelListener = new MouseScrollListener();
-    private int interval;
     private int topFixedCount;
     private int firstIndex;
 
@@ -259,38 +258,13 @@ public class MenuScroller {
             throw new IllegalArgumentException("topFixedCount cannot be negative");
         }
 
-        upItem = new MenuScrollItem(MenuIcon.UP, -1);
-        downItem = new MenuScrollItem(MenuIcon.DOWN, +1);
-        setInterval(interval);
+        upItem = new MenuScrollItem(MenuIcon.UP, -1, interval);
+        downItem = new MenuScrollItem(MenuIcon.DOWN, +1, interval);
         setTopFixedCount(topFixedCount);
 
         this.menu = menu;
         menu.addPopupMenuListener(menuListener);
         menu.addMouseWheelListener(mouseWheelListener);
-    }
-
-    /**
-     * Returns the scroll interval in milliseconds
-     *
-     * @return the scroll interval in milliseconds
-     */
-    public int getInterval() {
-        return interval;
-    }
-
-    /**
-     * Sets the scroll interval in milliseconds
-     *
-     * @param interval the scroll interval in milliseconds
-     * @throws IllegalArgumentException if interval is 0 or negative
-     */
-    public void setInterval(int interval) {
-        if (interval <= 0) {
-            throw new IllegalArgumentException("interval must be greater than 0");
-        }
-        upItem.setInterval(interval);
-        downItem.setInterval(interval);
-        this.interval = interval;
     }
 
     /**
@@ -444,15 +418,11 @@ public class MenuScroller {
 
         private final MenuScrollTimer timer;
 
-        MenuScrollItem(MenuIcon icon, int increment) {
+        MenuScrollItem(MenuIcon icon, int increment, int interval) {
             setIcon(icon);
             setDisabledIcon(icon);
             timer = new MenuScrollTimer(increment, interval);
             addChangeListener(this);
-        }
-
-        public void setInterval(int interval) {
-            timer.setDelay(interval);
         }
 
         @Override
