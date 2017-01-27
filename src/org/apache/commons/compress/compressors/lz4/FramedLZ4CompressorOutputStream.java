@@ -40,7 +40,6 @@ public class FramedLZ4CompressorOutputStream extends CompressorOutputStream {
     /*
      * TODO before releasing 1.14:
      *
-     * + xxhash32 checksum creation for blocks
      * + block dependence
      */
 
@@ -55,8 +54,10 @@ public class FramedLZ4CompressorOutputStream extends CompressorOutputStream {
     private boolean finished = false;
     private int currentIndex = 0;
 
-    // used for frame header checksum and content checksum, if present
+    // used for frame header checksum and content checksum, if requested
     private final XXHash32 contentHash = new XXHash32();
+    // used for block checksum, if requested
+    private final XXHash32 blockHash;
 
     /**
      * The block sizes supported by the format.
@@ -89,7 +90,7 @@ public class FramedLZ4CompressorOutputStream extends CompressorOutputStream {
      */
     public static class Parameters {
         private final BlockSize blockSize;
-        private final boolean withContentChecksum;
+        private final boolean withContentChecksum, withBlockChecksum;
 
         /**
          * The default parameters of 4M block size, enabled content
@@ -97,20 +98,25 @@ public class FramedLZ4CompressorOutputStream extends CompressorOutputStream {
          *
          * <p>This matches the defaults of the lz4 command line utility.</p>
          */
-        public static Parameters DEFAULT = new Parameters(BlockSize.M4, true);
+        public static Parameters DEFAULT = new Parameters(BlockSize.M4, true, false);
 
         /**
          * Sets up custom parameters for the LZ4 stream.
          * @param blockSize the size of a single block.
          * @param withContentChecksum whether to write a content checksum
+         * @param withBlockChecksum whether to write a block checksum.
+         * Note that block checksums are not supported by the lz4
+         * command line utility
          */
-        public Parameters(BlockSize blockSize, boolean withContentChecksum) {
+        public Parameters(BlockSize blockSize, boolean withContentChecksum, boolean withBlockChecksum) {
             this.blockSize = blockSize;
             this.withContentChecksum = withContentChecksum;
+            this.withBlockChecksum = withBlockChecksum;
         }
         @Override
         public String toString() {
-            return "LZ4 Parameters with BlockSize " + blockSize + ", withContentChecksum " + withContentChecksum;
+            return "LZ4 Parameters with BlockSize " + blockSize + ", withContentChecksum " + withContentChecksum
+                + ", withBlockChecksum " + withBlockChecksum;
         }
     }
 
@@ -135,6 +141,7 @@ public class FramedLZ4CompressorOutputStream extends CompressorOutputStream {
         this.params = params;
         blockData = new byte[params.blockSize.getSize()];
         this.out = out;
+        blockHash = params.withBlockChecksum ? new XXHash32() : null;
         out.write(FramedLZ4CompressorInputStream.LZ4_SIGNATURE);
         writeFrameDescriptor();
     }
@@ -189,6 +196,9 @@ public class FramedLZ4CompressorOutputStream extends CompressorOutputStream {
         if (params.withContentChecksum) {
             flags |= FramedLZ4CompressorInputStream.CONTENT_CHECKSUM_MASK;
         }
+        if (params.withBlockChecksum) {
+            flags |= FramedLZ4CompressorInputStream.BLOCK_CHECKSUM_MASK;
+        }
         out.write(flags);
         contentHash.update(flags);
         int bd = params.blockSize.getIndex() << 4;
@@ -208,11 +218,20 @@ public class FramedLZ4CompressorOutputStream extends CompressorOutputStream {
             ByteUtils.toLittleEndian(out, currentIndex | FramedLZ4CompressorInputStream.UNCOMPRESSED_FLAG_MASK,
                 4);
             out.write(blockData, 0, currentIndex);
+            if (params.withBlockChecksum) {
+                blockHash.update(blockData, 0, currentIndex);
+            }
         } else {
             ByteUtils.toLittleEndian(out, b.length, 4);
             out.write(b);
+            if (params.withBlockChecksum) {
+                blockHash.update(b, 0, b.length);
+            }
         }
-        // TODO block checksum
+        if (params.withBlockChecksum) {
+            ByteUtils.toLittleEndian(out, blockHash.getValue(), 4);
+            blockHash.reset();
+        }
         currentIndex = 0;
     }
 
