@@ -282,7 +282,7 @@ public class MainApplication extends Main {
             CustomConfigurator.XMLCommandProcessor config = new CustomConfigurator.XMLCommandProcessor(Main.pref);
             for (String i : args.get(Option.LOAD_PREFERENCES)) {
                 info("Reading preferences from " + i);
-                try (InputStream is = HttpClient.create(new URL(i)).connect().getContent()) {
+                try (InputStream is = openStream(new URL(i))) {
                     config.openAndReadXML(is);
                 } catch (IOException ex) {
                     throw BugReport.intercept(ex).put("file", i);
@@ -381,6 +381,14 @@ public class MainApplication extends Main {
             // but they don't seem to break anything and are difficult to fix
             info("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to console");
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
+        }
+    }
+
+    private static InputStream openStream(URL url) throws IOException {
+        if ("file".equals(url.getProtocol())) {
+            return url.openStream();
+        } else {
+            return HttpClient.create(url).connect().getContent();
         }
     }
 
