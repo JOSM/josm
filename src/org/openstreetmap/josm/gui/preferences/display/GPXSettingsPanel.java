@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
 
@@ -280,11 +281,19 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         add(colorTypeHeatMapTune, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
 
         colorTypeHeatMapTune.addPropertyChangeListener(e -> {
-            // get image size of environment
-            final int iconSize = (int) colorTypeHeatMapTune.getPreferredSize().getHeight();
-            // ask the GPX draw for the correct color of that layer
-            final Color color = GpxDrawHelper.DEFAULT_COLOR.getChildColor(layerName != null ? layerName : "").get();
-            colorTypeHeatIconLabel.setIcon(GpxDrawHelper.getColorMapImageIcon(color, colorTypeHeatMapTune.getSelectedIndex(), iconSize));
+            final Dimension dim = colorTypeHeatMapTune.getPreferredSize();
+            if (null != dim) {
+                // get image size of environment
+                final int iconSize = (int) dim.getHeight();
+                final Color color;
+                // ask the GPX draw for the correct color of that layer ( if there is one )
+                if (null != layerName) {
+                    color = GpxDrawHelper.DEFAULT_COLOR.getChildColor(layerName).get();
+                } else {
+                    color = GpxDrawHelper.DEFAULT_COLOR.getDefaultValue();
+                }
+                colorTypeHeatIconLabel.setIcon(GpxDrawHelper.getColorMapImageIcon(color, colorTypeHeatMapTune.getSelectedIndex(), iconSize));
+            }
         });
 
         ExpertToggleAction.addVisibilitySwitcher(colorTypeDirection);
