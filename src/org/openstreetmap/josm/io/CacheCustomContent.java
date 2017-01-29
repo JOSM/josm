@@ -102,9 +102,11 @@ public abstract class CacheCustomContent<T extends Throwable> {
         }
     }
 
-    protected void checkOfflineAccess() {
-        // To be overriden by subclasses
-    }
+    /**
+     * Ensures underlying resource is not accessed in offline mode.
+     * @throws OfflineAccessException if resource is accessed in offline mode
+     */
+    protected abstract void checkOfflineAccess();
 
     /**
      * Updates data if required

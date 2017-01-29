@@ -579,9 +579,7 @@ public abstract class Main {
      * Called once at startup to initialize the main window content.
      * Should set {@link #menu}
      */
-    protected void initializeMainWindow() {
-        // can be implementd by subclasses
-    }
+    protected abstract void initializeMainWindow();
 
     private static class InitializationTask implements Callable<Void> {
 
