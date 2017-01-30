@@ -160,12 +160,6 @@ way[power=cable                ][!voltage],
   assertNoMatch: "way power=generator generator:output:electricity=yes voltage=1";
 }
 
-/* {0.key} without {1.key} or {2.key} */
-way[oneway][!highway][!railway] {
-  throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.key}", "{2.key}");
-  group: tr("missing tag");
-}
-
 /* {0.key} without {1.key} or {2.tag} */
 *[smoothness                   ][!highway][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking|bicycle_parking)$/],
 *[segregated                   ][!highway][railway!=crossing] {
@@ -194,6 +188,7 @@ way[highway=motorway_link][!oneway][junction!=roundabout] {
 }
 
 /* {0.key} without {1.key}, {2.key} or {3.key} */
+way[oneway][!highway][!railway][!aerialway],
 *[snowplowing                  ][!highway][!amenity][!leisure] {
   throwWarning: tr("{0} without {1}, {2} or {3}", "{0.key}", "{1.key}", "{2.key}", "{3.key}");
   group: tr("missing tag");
