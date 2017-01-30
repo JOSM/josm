@@ -43,6 +43,7 @@ public final class ExifReader {
         try {
             Metadata metadata = JpegMetadataReader.readMetadata(filename);
             String dateStr = null;
+            String dateTime = null;
             String subSeconds = null;
             for (Directory dirIt : metadata.getDirectories()) {
                 if (!(dirIt instanceof ExifDirectoryBase)) {
@@ -51,19 +52,23 @@ public final class ExifReader {
                 for (Tag tag : dirIt.getTags()) {
                     if (tag.getTagType() == ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL /* 0x9003 */ &&
                             !tag.getDescription().matches("\\[[0-9]+ .+\\]")) {
+                        // prefer DATETIME_ORIGINAL
                         dateStr = tag.getDescription();
                     }
-                    if (tag.getTagType() == ExifIFD0Directory.TAG_DATETIME /* 0x0132 */ ||
-                        tag.getTagType() == ExifSubIFDDirectory.TAG_DATETIME_DIGITIZED /* 0x9004 */) {
-                        if (dateStr == null) {
-                            // prefer TAG_DATETIME_ORIGINAL
-                            dateStr = tag.getDescription();
-                        }
+                    if (tag.getTagType() == ExifIFD0Directory.TAG_DATETIME /* 0x0132 */) {
+                        // prefer DATETIME over DATETIME_DIGITIZED
+                        dateTime = tag.getDescription();
+                    }
+                    if (tag.getTagType() == ExifSubIFDDirectory.TAG_DATETIME_DIGITIZED /* 0x9004 */ && dateTime == null) {
+                        dateTime = tag.getDescription();
                     }
                     if (tag.getTagType() == ExifIFD0Directory.TAG_SUBSECOND_TIME_ORIGINAL) {
                         subSeconds = tag.getDescription();
                     }
                 }
+            }
+            if (dateStr == null) {
+                dateStr = dateTime;
             }
             if (dateStr != null) {
                 dateStr = dateStr.replace('/', ':'); // workaround for HTC Sensation bug, see #7228

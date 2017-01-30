@@ -23,6 +23,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * EXIF metadata extraction test
  * @since 6209
@@ -69,14 +70,20 @@ public class ExifReaderTest {
     @Test
     public void testReadTimeSubSecond1() throws ParseException {
         Date date = ExifReader.readTime(new File("data_nodist/IMG_20150711_193419.jpg"));
-        String dateStr = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(date);
-        assertEquals("2015-07-11T19:34:19.100", dateStr);
+        doTest("2015-07-11T19:34:19.100", date);
 
         TimeZone.setDefault(TimeZone.getTimeZone("Europe/Berlin"));
         date = ExifReader.readTime(new File("data_nodist/IMG_20150711_193419.jpg"));
         TimeZone.setDefault(DateUtils.UTC);
-        dateStr = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(date);
-        assertEquals("2015-07-11T17:34:19.100", dateStr);
+        doTest("2015-07-11T17:34:19.100", date);
+    }
+
+    private static void doTest(String expectedDate, Date parsedDate) {
+        assertEquals(expectedDate, new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(parsedDate));
+    }
+
+    private static void doTestFile(String expectedDate, int ticket, String filename) {
+        doTest(expectedDate, ExifReader.readTime(new File(TestUtils.getRegressionDataFile(ticket, filename))));
     }
 
     /**
@@ -114,9 +121,7 @@ public class ExifReaderTest {
      */
     @Test
     public void testTicket11685() throws IOException {
-        File file = new File(TestUtils.getRegressionDataFile(11685, "2015-11-08_15-33-27-Xiaomi_YI-Y0030832.jpg"));
-        String dateStr = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(ExifReader.readTime(file));
-        assertEquals("2015-11-08T15:33:27.500", dateStr);
+        doTestFile("2015-11-08T15:33:27.500", 11685, "2015-11-08_15-33-27-Xiaomi_YI-Y0030832.jpg");
     }
 
     /**
@@ -125,8 +130,7 @@ public class ExifReaderTest {
      */
     @Test
     public void testTicket14209() throws IOException {
-        File file = new File(TestUtils.getRegressionDataFile(14209, "0MbEfj1S--.1.jpg"));
-        String dateStr = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS").format(ExifReader.readTime(file));
-        assertEquals("2017-01-16T18:27:00.000", dateStr);
+        doTestFile("2017-01-16T18:27:00.000", 14209, "0MbEfj1S--.1.jpg");
+        doTestFile("2016-08-13T19:51:13.000", 14209, "7VWFOryj--.1.jpg");
     }
 }
