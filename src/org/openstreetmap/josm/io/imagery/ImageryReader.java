@@ -447,10 +447,10 @@ public class ImageryReader implements Closeable {
                     }
                     break;
                 case "valid-georeference":
-                    entry.setGeoreferenceValid(Boolean.valueOf(accumulator.toString()));
+                    entry.setGeoreferenceValid(Boolean.parseBoolean(accumulator.toString()));
                     break;
                 case "epsg4326to3857Supported":
-                    entry.setEpsg4326To3857Supported(Boolean.valueOf(accumulator.toString()));
+                    entry.setEpsg4326To3857Supported(Boolean.parseBoolean(accumulator.toString()));
                     break;
                 default: // Do nothing
                 }
