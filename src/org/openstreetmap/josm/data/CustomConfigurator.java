@@ -89,8 +89,7 @@ public final class CustomConfigurator {
      * @param s message to log
      */
     public static void log(String s) {
-        summary.append(s);
-        summary.append('\n');
+        summary.append(s).append('\n');
     }
 
     /**
@@ -100,8 +99,7 @@ public final class CustomConfigurator {
      * @since 10469
      */
     public static void log(Exception e, String s) {
-        summary.append(s + ' ' + Main.getErrorMessage(e));
-        summary.append('\n');
+        summary.append(s).append(' ').append(Main.getErrorMessage(e)).append('\n');
     }
 
     /**
