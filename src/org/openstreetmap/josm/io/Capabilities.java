@@ -30,8 +30,9 @@ import org.xml.sax.helpers.DefaultHandler;
  *     &lt;area maximum="0.25"/&gt;
  *     &lt;tracepoints per_page="5000"/&gt;
  *     &lt;waynodes maximum="2000"/&gt;
- *     &lt;changesets maximum_elements="50000"/&gt;
+ *     &lt;changesets maximum_elements="10000"/&gt;
  *     &lt;timeout seconds="300"/&gt;
+ *     &lt;status database="online" api="online" gpx="online"/&gt;
  *   &lt;/api&gt;
  *   &lt;policy&gt;
  *     &lt;imagery&gt;
@@ -131,11 +132,9 @@ public class Capabilities {
             }
         } else {
             if (!capabilities.containsKey(element)) {
-                Map<String, String> h = new HashMap<>();
-                capabilities.put(element, h);
+                capabilities.put(element, new HashMap<>());
             }
-            Map<String, String> e = capabilities.get(element);
-            e.put(attribute, value);
+            capabilities.get(element).put(attribute, value);
         }
     }
 
@@ -154,7 +153,7 @@ public class Capabilities {
      */
     public boolean supportsVersion(String version) {
         return get("version", "minimum").compareTo(version) <= 0
-        && get("version", "maximum").compareTo(version) >= 0;
+            && get("version", "maximum").compareTo(version) >= 0;
     }
 
     private static void warnIllegalValue(String attr, String elem, Object val) {
