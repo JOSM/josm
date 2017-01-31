@@ -87,7 +87,7 @@ public final class Geometry {
         }
 
         OsmDataLayer layer = Main.getLayerManager().getEditLayer();
-        DataSet dataset = ways.iterator().next().getDataSet();
+        DataSet dataset = ways.get(0).getDataSet();
 
         //iterate over all way pairs and introduce the intersections
         Comparator<Node> coordsComparator = new NodePositionComparator();

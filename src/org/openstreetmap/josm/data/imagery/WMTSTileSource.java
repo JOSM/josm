@@ -226,7 +226,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             if (index < 0) {
                 return null; //nothing selected
             }
-            Layer selectedLayer = layers.get(index).getValue().iterator().next();
+            Layer selectedLayer = layers.get(index).getValue().get(0);
             return new WMTSDefaultLayer(selectedLayer.name, selectedLayer.tileMatrixSet.identifier);
         }
     }
@@ -269,7 +269,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
         // if there is only one layer name no point in asking
         if (grouppedLayers.size() == 1) {
-            Layer selectedLayer = grouppedLayers.iterator().next().getValue().iterator().next();
+            Layer selectedLayer = grouppedLayers.iterator().next().getValue().get(0);
             return new WMTSDefaultLayer(selectedLayer.name, selectedLayer.tileMatrixSet.identifier);
         }
 
