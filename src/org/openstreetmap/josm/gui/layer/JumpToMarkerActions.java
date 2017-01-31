@@ -44,12 +44,12 @@ public final class JumpToMarkerActions {
 
     private abstract static class JumpToMarker extends AbstractAction implements MultikeyShortcutAction {
 
-        private final transient Layer layer;
+        private final transient JumpToMarkerLayer layer;
         private final transient Shortcut multikeyShortcut;
         private transient WeakReference<Layer> lastLayer;
 
         JumpToMarker(JumpToMarkerLayer layer, Shortcut shortcut) {
-            this.layer = (Layer) layer;
+            this.layer = layer;
             this.multikeyShortcut = shortcut;
             this.multikeyShortcut.setAccelerator(this);
         }
@@ -73,17 +73,17 @@ public final class JumpToMarkerActions {
             Layer l = LayerListDialog.getLayerForIndex(index);
             if (l != null) {
                 if (l instanceof JumpToMarkerLayer) {
-                    execute(l);
+                    execute((JumpToMarkerLayer) l);
                 }
             } else if (repeat && lastLayer != null) {
                 l = lastLayer.get();
-                if (LayerListDialog.isLayerValid(l)) {
-                    execute(l);
+                if (LayerListDialog.isLayerValid(l) && l instanceof JumpToMarkerLayer) {
+                    execute((JumpToMarkerLayer) l);
                 }
             }
         }
 
-        protected abstract void execute(Layer l);
+        protected abstract void execute(JumpToMarkerLayer l);
 
         @Override
         public List<MultikeyInfo> getMultikeyCombinations() {
@@ -109,9 +109,9 @@ public final class JumpToMarkerActions {
         }
 
         @Override
-        protected void execute(Layer l) {
-            ((JumpToMarkerLayer) l).jumpToNextMarker();
-            setLastLayer(l);
+        protected void execute(JumpToMarkerLayer l) {
+            l.jumpToNextMarker();
+            setLastLayer((Layer) l);
         }
     }
 
@@ -125,9 +125,9 @@ public final class JumpToMarkerActions {
         }
 
         @Override
-        protected void execute(Layer l) {
-            ((JumpToMarkerLayer) l).jumpToPreviousMarker();
-            setLastLayer(l);
+        protected void execute(JumpToMarkerLayer l) {
+            l.jumpToPreviousMarker();
+            setLastLayer((Layer) l);
         }
     }
 }

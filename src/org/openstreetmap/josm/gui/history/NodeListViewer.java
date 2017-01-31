@@ -19,7 +19,6 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
-import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
@@ -317,9 +316,8 @@ public class NodeListViewer extends JPanel {
         }
     }
 
-    private static PrimitiveId primitiveIdAtRow(TableModel model, int row) {
-        DiffTableModel castedModel = (DiffTableModel) model;
-        Long id = (Long) castedModel.getValueAt(row, 0).value;
+    private static PrimitiveId primitiveIdAtRow(DiffTableModel model, int row) {
+        Long id = (Long) model.getValueAt(row, 0).value;
         return id == null ? null : new SimplePrimitiveId(id, OsmPrimitiveType.NODE);
     }
 
@@ -331,7 +329,7 @@ public class NodeListViewer extends JPanel {
         @Override
         protected int checkTableSelection(JTable table, Point p) {
             int row = super.checkTableSelection(table, p);
-            popupMenu.prepare(primitiveIdAtRow(table.getModel(), row));
+            popupMenu.prepare(primitiveIdAtRow((DiffTableModel) table.getModel(), row));
             return row;
         }
     }
@@ -352,7 +350,7 @@ public class NodeListViewer extends JPanel {
             int row = table.rowAtPoint(e.getPoint());
             if (row <= 0)
                 return;
-            PrimitiveId pid = primitiveIdAtRow(table.getModel(), row);
+            PrimitiveId pid = primitiveIdAtRow((DiffTableModel) table.getModel(), row);
             if (pid == null || pid.isNew())
                 return;
             showHistoryAction.setPrimitiveId(pid);
