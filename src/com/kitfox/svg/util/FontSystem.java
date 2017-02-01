@@ -55,7 +55,7 @@ public class FontSystem extends Font
     java.awt.Font sysFont;
     FontMetrics fm;
 
-    HashMap glyphCache = new HashMap();
+    HashMap<String, Glyph> glyphCache = new HashMap<String, Glyph>();
     
     public FontSystem(String fontFamily, int fontStyle, int fontWeight, int fontSize)
     {
@@ -93,6 +93,7 @@ public class FontSystem extends Font
         setFontFace(face);
     }
 
+    @Override
     public MissingGlyph getGlyph(String unicode)
     {
         FontRenderContext frc = new FontRenderContext(null, true, true);

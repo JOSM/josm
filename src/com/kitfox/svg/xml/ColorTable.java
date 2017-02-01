@@ -48,9 +48,9 @@ import java.util.regex.Pattern;
 public class ColorTable 
 {
 
-    static final Map colorTable;
+    static final Map<String, Color> colorTable;
     static {
-        HashMap table = new HashMap();
+        HashMap<String, Color> table = new HashMap<>();
 
 	//We really should be interpreting the currentColor keyword as 
         // a reference to the referring node's color, but this quick hack 

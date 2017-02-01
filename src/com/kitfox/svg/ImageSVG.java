@@ -76,11 +76,13 @@ public class ImageSVG extends RenderableElement
     {
     }
 
+    @Override
     public String getTagName()
     {
         return TAG_NAME;
     }
 
+    @Override
     protected void build() throws SVGException
     {
         super.build();
@@ -184,7 +186,8 @@ public class ImageSVG extends RenderableElement
         return height;
     }
 
-    void pick(Point2D point, boolean boundingBox, List retVec) throws SVGException
+    @Override
+    void pick(Point2D point, boolean boundingBox, List<List<SVGElement>> retVec) throws SVGException
     {
         if (getBoundingBox().contains(point))
         {
@@ -192,7 +195,8 @@ public class ImageSVG extends RenderableElement
         }
     }
 
-    void pick(Rectangle2D pickArea, AffineTransform ltw, boolean boundingBox, List retVec) throws SVGException
+    @Override
+    void pick(Rectangle2D pickArea, AffineTransform ltw, boolean boundingBox, List<List<SVGElement>> retVec) throws SVGException
     {
         if (ltw.createTransformedShape(getBoundingBox()).intersects(pickArea))
         {
@@ -200,6 +204,7 @@ public class ImageSVG extends RenderableElement
         }
     }
 
+    @Override
     public void render(Graphics2D g) throws SVGException
     {
         StyleAttribute styleAttrib = new StyleAttribute();
@@ -261,6 +266,7 @@ public class ImageSVG extends RenderableElement
         finishLayer(g);
     }
 
+    @Override
     public Rectangle2D getBoundingBox()
     {
         return boundsToParent(bounds);
@@ -273,6 +279,7 @@ public class ImageSVG extends RenderableElement
      * @return - true if this node has changed state as a result of the time
      * update
      */
+    @Override
     public boolean updateTime(double curTime) throws SVGException
     {
 //        if (trackManager.getNumTracks() == 0) return false;

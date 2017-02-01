@@ -51,6 +51,7 @@ public class Terminal extends PathCommand {
     public Terminal() {
     }
 
+    @Override
     public String toString()
     {
         return "Z";
@@ -58,6 +59,7 @@ public class Terminal extends PathCommand {
 
 
 //    public void appendPath(ExtendedGeneralPath path, BuildHistory hist)
+    @Override
     public void appendPath(GeneralPath path, BuildHistory hist)
     {
         path.closePath();
@@ -65,6 +67,7 @@ public class Terminal extends PathCommand {
         hist.setLastKnot(hist.startPoint.x, hist.startPoint.y);
     }
     
+    @Override
     public int getNumKnotsAdded()
     {
         return 0;

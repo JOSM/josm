@@ -40,7 +40,6 @@ import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -61,7 +60,7 @@ abstract public class Gradient extends FillElement
     protected int gradientUnits = GU_OBJECT_BOUNDING_BOX;
     //Either this gradient contains a list of stops, or it will take it's
     // stops from the referenced gradient
-    ArrayList stops = new ArrayList();
+    ArrayList<Stop> stops = new ArrayList<>();
     URI stopRef = null;
     protected AffineTransform gradientTransform = null;
     
@@ -76,6 +75,7 @@ abstract public class Gradient extends FillElement
     {
     }
 
+    @Override
     public String getTagName()
     {
         return TAG_NAME;
@@ -85,6 +85,7 @@ abstract public class Gradient extends FillElement
      * Called after the start element but before the end element to indicate
      * each child tag that has been processed
      */
+    @Override
     public void loaderAddChild(SVGLoaderHelper helper, SVGElement child) throws SVGElementException
     {
         super.loaderAddChild(helper, child);
@@ -96,6 +97,7 @@ abstract public class Gradient extends FillElement
         appendStop((Stop) child);
     }
 
+    @Override
     protected void build() throws SVGException
     {
         super.build();
@@ -172,9 +174,7 @@ abstract public class Gradient extends FillElement
 
         stopFractions = new float[stops.size()];
         int idx = 0;
-        for (Iterator it = stops.iterator(); it.hasNext();)
-        {
-            Stop stop = (Stop) it.next();
+        for (Stop stop : stops) {
             float val = stop.offset;
             if (idx != 0 && val < stopFractions[idx - 1])
             {
@@ -201,9 +201,7 @@ abstract public class Gradient extends FillElement
 
         stopColors = new Color[stops.size()];
         int idx = 0;
-        for (Iterator it = stops.iterator(); it.hasNext();)
-        {
-            Stop stop = (Stop) it.next();
+        for (Stop stop : stops) {
             int stopColorVal = stop.color.getRGB();
             Color stopColor = new Color((stopColorVal >> 16) & 0xff, (stopColorVal >> 8) & 0xff, stopColorVal & 0xff, clamp((int) (stop.opacity * 255), 0, 255));
             stopColors[idx++] = stopColor;
@@ -254,6 +252,7 @@ abstract public class Gradient extends FillElement
      * @return - true if this node has changed state as a result of the time
      * update
      */
+    @Override
     public boolean updateTime(double curTime) throws SVGException
     {
 //        if (trackManager.getNumTracks() == 0) return false;
@@ -261,7 +260,6 @@ abstract public class Gradient extends FillElement
 
         //Get current values for parameters
         StyleAttribute sty = new StyleAttribute();
-        boolean shapeChange = false;
         String strn;
 
 
@@ -334,9 +332,7 @@ abstract public class Gradient extends FillElement
         }
 
         //Check stops, if any
-        for (Iterator it = stops.iterator(); it.hasNext();)
-        {
-            Stop stop = (Stop) it.next();
+        for (Stop stop : stops) {
             if (stop.updateTime(curTime))
             {
                 stateChange = true;

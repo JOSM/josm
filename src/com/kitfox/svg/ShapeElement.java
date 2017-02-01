@@ -86,7 +86,7 @@ abstract public class ShapeElement extends RenderableElement
      */
 
     @Override
-    void pick(Point2D point, boolean boundingBox, List retVec) throws SVGException
+    void pick(Point2D point, boolean boundingBox, List<List<SVGElement>> retVec) throws SVGException
     {
 //        StyleAttribute styleAttrib = new StyleAttribute();
 //        if (getStyle(styleAttrib.setName("fill")) && getShape().contains(point))
@@ -97,9 +97,9 @@ abstract public class ShapeElement extends RenderableElement
     }
 
     @Override
-    void pick(Rectangle2D pickArea, AffineTransform ltw, boolean boundingBox, List retVec) throws SVGException
+    void pick(Rectangle2D pickArea, AffineTransform ltw, boolean boundingBox, List<List<SVGElement>> retVec) throws SVGException
     {
-        StyleAttribute styleAttrib = new StyleAttribute();
+//        StyleAttribute styleAttrib = new StyleAttribute();
 //        if (getStyle(styleAttrib.setName("fill")) && getShape().contains(point))
         if (ltw.createTransformedShape((boundingBox ? getBoundingBox() : getShape())).intersects(pickArea))
         {
@@ -396,10 +396,10 @@ abstract public class ShapeElement extends RenderableElement
             MarkerLayout layout = new MarkerLayout();
             layout.layout(shape);
             
-            ArrayList list = layout.getMarkerList();
+            ArrayList<MarkerPos> list = layout.getMarkerList();
             for (int i = 0; i < list.size(); ++i)
             {
-                MarkerPos pos = (MarkerPos)list.get(i);
+                MarkerPos pos = list.get(i);
 
                 switch (pos.type)
                 {

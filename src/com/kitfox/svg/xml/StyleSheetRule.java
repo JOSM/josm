@@ -21,6 +21,7 @@ public class StyleSheetRule
         this.className = className;
     }
 
+    @Override
     public int hashCode()
     {
         int hash = 7;
@@ -30,6 +31,7 @@ public class StyleSheetRule
         return hash;
     }
 
+    @Override
     public boolean equals(Object obj)
     {
         if (obj == null)

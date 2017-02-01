@@ -3,16 +3,16 @@
  * Copyright (c) 2004, Mark McKay
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or 
+ * Redistribution and use in source and binary forms, with or
  * without modification, are permitted provided that the following
  * conditions are met:
  *
- *   - Redistributions of source code must retain the above 
+ *   - Redistributions of source code must retain the above
  *     copyright notice, this list of conditions and the following
  *     disclaimer.
  *   - Redistributions in binary form must reproduce the above
  *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials 
+ *     disclaimer in the documentation and/or other materials
  *     provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -26,8 +26,8 @@
  * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE. 
- * 
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  * Mark McKay can be contacted at mark@kitfox.com.  Salamander and other
  * projects can be found at http://www.kitfox.com
  *
@@ -35,7 +35,6 @@
  */
 package com.kitfox.svg;
 
-import com.kitfox.svg.app.beans.SVGIcon;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
@@ -57,18 +56,21 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.GZIPInputStream;
+
 import javax.imageio.ImageIO;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
+
 import org.xml.sax.EntityResolver;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
+
+import com.kitfox.svg.app.beans.SVGIcon;
 
 /**
  * Many SVG files can be loaded at one time. These files will quite likely need
@@ -88,9 +90,9 @@ public class SVGUniverse implements Serializable
      * documents loaded from URLs will reflect their URLs and URIs for documents
      * initiated from streams will have the scheme <i>svgSalamander</i>.
      */
-    final HashMap loadedDocs = new HashMap();
-    final HashMap loadedFonts = new HashMap();
-    final HashMap loadedImages = new HashMap();
+    final HashMap<URI, SVGDiagram> loadedDocs = new HashMap<>();
+    final HashMap<String, Font> loadedFonts = new HashMap<>();
+    final HashMap<URL, SoftReference<BufferedImage>> loadedImages = new HashMap<>();
     public static final String INPUTSTREAM_SCHEME = "svgSalamander";
     /**
      * Current time in this universe. Used for resolving attributes that are
@@ -140,16 +142,15 @@ public class SVGUniverse implements Serializable
 
     public Font getDefaultFont()
     {
-        for (Iterator it = loadedFonts.values().iterator(); it.hasNext();)
-        {
-            return (Font) it.next();
+        for (Font font : loadedFonts.values()) {
+            return font;
         }
         return null;
     }
 
     public Font getFont(String fontName)
     {
-        return (Font) loadedFonts.get(fontName);
+        return loadedFonts.get(fontName);
     }
 
     URL registerImage(URI imageURI)
@@ -182,7 +183,7 @@ public class SVGUniverse implements Serializable
                         urlIdx++;
                     }
 
-                    SoftReference ref = new SoftReference(img);
+                    SoftReference<BufferedImage> ref = new SoftReference<>(img);
                     loadedImages.put(url, ref);
 
                     return url;
@@ -217,7 +218,7 @@ public class SVGUniverse implements Serializable
             return;
         }
 
-        SoftReference ref;
+        SoftReference<BufferedImage> ref;
         try
         {
             String fileName = imageURL.getFile();
@@ -230,11 +231,11 @@ public class SVGUniverse implements Serializable
                 Graphics2D g = img.createGraphics();
                 icon.paintIcon(null, g, 0, 0);
                 g.dispose();
-                ref = new SoftReference(img);
+                ref = new SoftReference<>(img);
             } else
             {
                 BufferedImage img = ImageIO.read(imageURL);
-                ref = new SoftReference(img);
+                ref = new SoftReference<>(img);
             }
             loadedImages.put(imageURL, ref);
         } catch (Exception e)
@@ -246,13 +247,13 @@ public class SVGUniverse implements Serializable
 
     BufferedImage getImage(URL imageURL)
     {
-        SoftReference ref = (SoftReference) loadedImages.get(imageURL);
+        SoftReference<BufferedImage> ref = loadedImages.get(imageURL);
         if (ref == null)
         {
             return null;
         }
 
-        BufferedImage img = (BufferedImage) ref.get();
+        BufferedImage img = ref.get();
         //If image was cleared from memory, reload it
         if (img == null)
         {
@@ -264,7 +265,7 @@ public class SVGUniverse implements Serializable
                 Logger.getLogger(SVGConst.SVG_LOGGER).log(Level.WARNING,
                     "Could not load image", e);
             }
-            ref = new SoftReference(img);
+            ref = new SoftReference<>(img);
             loadedImages.put(imageURL, ref);
         }
 
@@ -307,7 +308,7 @@ public class SVGUniverse implements Serializable
             //Strip fragment from URI
             URI xmlBase = new URI(path.getScheme(), path.getSchemeSpecificPart(), null);
 
-            SVGDiagram dia = (SVGDiagram) loadedDocs.get(xmlBase);
+            SVGDiagram dia = loadedDocs.get(xmlBase);
             if (dia == null && loadIfAbsent)
             {
 //System.err.println("SVGUnivserse: " + xmlBase.toString());
@@ -315,7 +316,7 @@ public class SVGUniverse implements Serializable
                 URL url = xmlBase.toURL();
 
                 loadSVG(url, false);
-                dia = (SVGDiagram) loadedDocs.get(xmlBase);
+                dia = loadedDocs.get(xmlBase);
                 if (dia == null)
                 {
                     return null;
@@ -348,7 +349,7 @@ public class SVGUniverse implements Serializable
             return null;
         }
 
-        SVGDiagram dia = (SVGDiagram) loadedDocs.get(xmlBase);
+        SVGDiagram dia = loadedDocs.get(xmlBase);
         if (dia != null || !loadIfAbsent)
         {
             return dia;
@@ -371,7 +372,7 @@ public class SVGUniverse implements Serializable
 
 
             loadSVG(url, false);
-            dia = (SVGDiagram) loadedDocs.get(xmlBase);
+            dia = loadedDocs.get(xmlBase);
             return dia;
         } catch (Exception e)
         {
@@ -603,22 +604,22 @@ public class SVGUniverse implements Serializable
 
     /**
      * Get list of uris of all loaded documents and subdocuments.
-     * @return 
+     * @return
      */
-    public ArrayList getLoadedDocumentURIs()
+    public ArrayList<URI> getLoadedDocumentURIs()
     {
-        return new ArrayList(loadedDocs.keySet());
+        return new ArrayList<>(loadedDocs.keySet());
     }
-    
+
     /**
      * Remove loaded document from cache.
-     * @param uri 
+     * @param uri
      */
     public void removeDocument(URI uri)
     {
         loadedDocs.remove(uri);
     }
-    
+
     public boolean isVerbose()
     {
         return verbose;

@@ -61,7 +61,7 @@ public class SVGDiagram implements Serializable
     public static final long serialVersionUID = 0;
     
     //Indexes elements within this SVG diagram
-    final HashMap idMap = new HashMap();
+    final HashMap<String, SVGElement> idMap = new HashMap<>();
 
     SVGRoot root;
     final SVGUniverse universe;
@@ -115,16 +115,16 @@ public class SVGDiagram implements Serializable
      *
      * @return the passed in list
      */
-    public List pick(Point2D point, List retVec) throws SVGException
+    public List<List<SVGElement>> pick(Point2D point, List<List<SVGElement>> retVec) throws SVGException
     {
         return pick(point, false, retVec);
     }
     
-    public List pick(Point2D point, boolean boundingBox, List retVec) throws SVGException
+    public List<List<SVGElement>> pick(Point2D point, boolean boundingBox, List<List<SVGElement>> retVec) throws SVGException
     {
         if (retVec == null)
         {
-            retVec = new ArrayList();
+            retVec = new ArrayList<>();
         }
         
         root.pick(point, boundingBox, retVec);
@@ -132,16 +132,16 @@ public class SVGDiagram implements Serializable
         return retVec;
     }
 
-    public List pick(Rectangle2D pickArea, List retVec) throws SVGException
+    public List<List<SVGElement>> pick(Rectangle2D pickArea, List<List<SVGElement>> retVec) throws SVGException
     {
         return pick(pickArea, false, retVec);
     }
     
-    public List pick(Rectangle2D pickArea, boolean boundingBox, List retVec) throws SVGException
+    public List<List<SVGElement>> pick(Rectangle2D pickArea, boolean boundingBox, List<List<SVGElement>> retVec) throws SVGException
     {
         if (retVec == null)
         {
-            retVec = new ArrayList();
+            retVec = new ArrayList<>();
         }
         
         root.pick(pickArea, new AffineTransform(), boundingBox, retVec);

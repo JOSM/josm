@@ -56,6 +56,7 @@ public class Cubic extends PathCommand {
     public Cubic() {
     }
 
+    @Override
     public String toString()
     {
         return "C " + k1x + " " + k1y
@@ -74,6 +75,7 @@ public class Cubic extends PathCommand {
     }
 
 //    public void appendPath(ExtendedGeneralPath path, BuildHistory hist)
+    @Override
     public void appendPath(GeneralPath path, BuildHistory hist)
     {
         float offx = isRelative ? hist.lastPoint.x : 0f;
@@ -87,6 +89,7 @@ public class Cubic extends PathCommand {
         hist.setLastKnot(k2x + offx, k2y + offy);
     }
 
+    @Override
     public int getNumKnotsAdded()
     {
         return 6;

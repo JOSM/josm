@@ -3,16 +3,16 @@
  * Copyright (c) 2004, Mark McKay
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or 
+ * Redistribution and use in source and binary forms, with or
  * without modification, are permitted provided that the following
  * conditions are met:
  *
- *   - Redistributions of source code must retain the above 
+ *   - Redistributions of source code must retain the above
  *     copyright notice, this list of conditions and the following
  *     disclaimer.
  *   - Redistributions in binary form must reproduce the above
  *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials 
+ *     disclaimer in the documentation and/or other materials
  *     provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -26,8 +26,8 @@
  * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE. 
- * 
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  * Mark McKay can be contacted at mark@kitfox.com.  Salamander and other
  * projects can be found at http://www.kitfox.com
  *
@@ -37,13 +37,16 @@
 package com.kitfox.svg;
 
 
-import java.util.*;
-import java.net.*;
-import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
-
+import java.net.URI;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * @author Mark McKay
@@ -51,11 +54,11 @@ import java.util.logging.Logger;
  */
 public class SVGLoader extends DefaultHandler
 {
-    final HashMap nodeClasses = new HashMap();
+    final HashMap<String, Class<?>> nodeClasses = new HashMap<>();
     //final HashMap attribClasses = new HashMap();
-    final LinkedList buildStack = new LinkedList();
+    final LinkedList<SVGElement> buildStack = new LinkedList<>();
 
-    final HashSet ignoreClasses = new HashSet();
+    final HashSet<String> ignoreClasses = new HashSet<>();
 
     final SVGLoaderHelper helper;
 
@@ -72,17 +75,17 @@ public class SVGLoader extends DefaultHandler
     int indent = 0;
 
     final boolean verbose;
-    
+
     /** Creates a new instance of SVGLoader */
     public SVGLoader(URI xmlBase, SVGUniverse universe)
     {
         this(xmlBase, universe, false);
     }
-    
+
     public SVGLoader(URI xmlBase, SVGUniverse universe, boolean verbose)
     {
         this.verbose = verbose;
-        
+
         diagram = new SVGDiagram(xmlBase, universe);
 
         //Compile a list of important builder classes
@@ -137,7 +140,8 @@ public class SVGLoader extends DefaultHandler
         }
         return sb.toString();
     }
-    
+
+    @Override
     public void startDocument() throws SAXException
     {
 //        System.err.println("Start doc");
@@ -145,11 +149,13 @@ public class SVGLoader extends DefaultHandler
 //        buildStack.clear();
     }
 
+    @Override
     public void endDocument() throws SAXException
     {
 //        System.err.println("End doc");
     }
 
+    @Override
     public void startElement(String namespaceURI, String sName, String qName, Attributes attrs) throws SAXException
     {
         if (verbose)
@@ -157,13 +163,13 @@ public class SVGLoader extends DefaultHandler
             System.err.println(printIndent(indent, " ") + "Starting parse of tag " + sName+ ": " + namespaceURI);
         }
         indent++;
-        
+
         if (skipNonSVGTagDepth != 0 || (!namespaceURI.equals("") && !namespaceURI.equals(SVGElement.SVG_NS)))
         {
             skipNonSVGTagDepth++;
             return;
         }
-        
+
         sName = sName.toLowerCase();
 
 //javax.swing.JOptionPane.showMessageDialog(null, sName);
@@ -186,24 +192,25 @@ public class SVGLoader extends DefaultHandler
 //System.err.println("+" + sName);
 
         try {
-            Class cls = (Class)obj;
+            Class<?> cls = (Class<?>)obj;
             SVGElement svgEle = (SVGElement)cls.newInstance();
 
             SVGElement parent = null;
-            if (buildStack.size() != 0) parent = (SVGElement)buildStack.getLast();
+            if (buildStack.size() != 0) parent = buildStack.getLast();
             svgEle.loaderStartElement(helper, attrs, parent);
 
             buildStack.addLast(svgEle);
         }
         catch (Exception e)
         {
-            Logger.getLogger(SVGConst.SVG_LOGGER).log(Level.WARNING, 
+            Logger.getLogger(SVGConst.SVG_LOGGER).log(Level.WARNING,
                 "Could not load", e);
             throw new SAXException(e);
         }
 
     }
 
+    @Override
     public void endElement(String namespaceURI, String sName, String qName)
         throws SAXException
     {
@@ -212,13 +219,13 @@ public class SVGLoader extends DefaultHandler
         {
             System.err.println(printIndent(indent, " ") + "Ending parse of tag " + sName+ ": " + namespaceURI);
         }
-        
+
         if (skipNonSVGTagDepth != 0)
         {
             skipNonSVGTagDepth--;
             return;
         }
-        
+
         sName = sName.toLowerCase();
 
         Object obj = nodeClasses.get(sName);
@@ -229,14 +236,14 @@ public class SVGLoader extends DefaultHandler
 //System.err.println("-" + sName);
 
         try {
-            SVGElement svgEle = (SVGElement)buildStack.removeLast();
+            SVGElement svgEle = buildStack.removeLast();
 
             svgEle.loaderEndElement(helper);
 
             SVGElement parent = null;
             if (buildStack.size() != 0)
             {
-                parent = (SVGElement)buildStack.getLast();
+                parent = buildStack.getLast();
             }
             //else loadRoot = (SVGElement)svgEle;
 
@@ -252,12 +259,13 @@ public class SVGLoader extends DefaultHandler
         }
         catch (Exception e)
         {
-            Logger.getLogger(SVGConst.SVG_LOGGER).log(Level.WARNING, 
+            Logger.getLogger(SVGConst.SVG_LOGGER).log(Level.WARNING,
                 "Could not parse", e);
             throw new SAXException(e);
         }
     }
 
+    @Override
     public void characters(char buf[], int offset, int len)
         throws SAXException
     {
@@ -268,18 +276,19 @@ public class SVGLoader extends DefaultHandler
 
         if (buildStack.size() != 0)
         {
-            SVGElement parent = (SVGElement)buildStack.getLast();
+            SVGElement parent = buildStack.getLast();
             String s = new String(buf, offset, len);
             parent.loaderAddText(helper, s);
         }
     }
 
+    @Override
     public void processingInstruction(String target, String data)
         throws SAXException
     {
         //Check for external style sheet
     }
-    
+
 //    public SVGElement getLoadRoot() { return loadRoot; }
     public SVGDiagram getLoadedDiagram() { return diagram; }
 }

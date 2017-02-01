@@ -3,16 +3,16 @@
  * Copyright (c) 2004, Mark McKay
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or 
+ * Redistribution and use in source and binary forms, with or
  * without modification, are permitted provided that the following
  * conditions are met:
  *
- *   - Redistributions of source code must retain the above 
+ *   - Redistributions of source code must retain the above
  *     copyright notice, this list of conditions and the following
  *     disclaimer.
  *   - Redistributions in binary form must reproduce the above
  *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials 
+ *     disclaimer in the documentation and/or other materials
  *     provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -26,8 +26,8 @@
  * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE. 
- * 
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  * Mark McKay can be contacted at mark@kitfox.com.  Salamander and other
  * projects can be found at http://www.kitfox.com
  *
@@ -36,12 +36,16 @@
 
 package com.kitfox.svg.xml;
 
-import com.kitfox.svg.SVGConst;
-import java.awt.*;
-import java.util.*;
-import java.util.regex.*;
+import java.awt.Toolkit;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import com.kitfox.svg.SVGConst;
 
 /**
  * @author Mark McKay
@@ -62,28 +66,18 @@ public class XMLParseUtil
         final Matcher matchWs = Pattern.compile("[^\\s]+").matcher("");
         matchWs.reset(list);
 
-        LinkedList matchList = new LinkedList();
+        LinkedList<String> matchList = new LinkedList<>();
         while (matchWs.find())
         {
             matchList.add(matchWs.group());
         }
 
         String[] retArr = new String[matchList.size()];
-        return (String[])matchList.toArray(retArr);
+        return matchList.toArray(retArr);
     }
 
     public static double parseDouble(String val)
     {
-        /*
-        if (val == null) return 0.0;
-
-        double retVal = 0.0;
-        try
-        { retVal = Double.parseDouble(val); }
-        catch (Exception e)
-        {}
-        return retVal;
-         */
         return findDouble(val);
     }
 
@@ -102,7 +96,7 @@ public class XMLParseUtil
         }
         catch (StringIndexOutOfBoundsException e)
         {
-            Logger.getLogger(SVGConst.SVG_LOGGER).log(Level.WARNING, 
+            Logger.getLogger(SVGConst.SVG_LOGGER).log(Level.WARNING,
                 "XMLParseUtil: regex parse problem: '" + val + "'", e);
         }
 
@@ -111,12 +105,12 @@ public class XMLParseUtil
 
         double retVal = 0;
         try
-        { 
-            retVal = Double.parseDouble(val); 
-            
+        {
+            retVal = Double.parseDouble(val);
+
             float pixPerInch;
             try {
-                pixPerInch = (float)Toolkit.getDefaultToolkit().getScreenResolution();
+                pixPerInch = Toolkit.getDefaultToolkit().getScreenResolution();
             }
             catch (NoClassDefFoundError err)
             {
@@ -125,7 +119,7 @@ public class XMLParseUtil
             }
             final float inchesPerCm = .3936f;
             final String units = fpMatch.group(6);
-            
+
             if ("%".equals(units)) retVal /= 100;
             else if ("in".equals(units))
             {
@@ -165,7 +159,7 @@ public class XMLParseUtil
 
         fpMatch.reset(list);
 
-        LinkedList doubList = new LinkedList();
+        LinkedList<Double> doubList = new LinkedList<>();
         while (fpMatch.find())
         {
             String val = fpMatch.group(1);
@@ -173,11 +167,11 @@ public class XMLParseUtil
         }
 
         double[] retArr = new double[doubList.size()];
-        Iterator it = doubList.iterator();
+        Iterator<Double> it = doubList.iterator();
         int idx = 0;
         while (it.hasNext())
         {
-            retArr[idx++] = ((Double)it.next()).doubleValue();
+            retArr[idx++] = it.next().doubleValue();
         }
 
         return retArr;
@@ -215,7 +209,7 @@ public class XMLParseUtil
 
         fpMatch.reset(list);
 
-        LinkedList floatList = new LinkedList();
+        LinkedList<Float> floatList = new LinkedList<>();
         while (fpMatch.find())
         {
             String val = fpMatch.group(1);
@@ -223,11 +217,11 @@ public class XMLParseUtil
         }
 
         float[] retArr = new float[floatList.size()];
-        Iterator it = floatList.iterator();
+        Iterator<Float> it = floatList.iterator();
         int idx = 0;
         while (it.hasNext())
         {
-            retArr[idx++] = ((Float)it.next()).floatValue();
+            retArr[idx++] = it.next().floatValue();
         }
 
         return retArr;
@@ -260,7 +254,7 @@ public class XMLParseUtil
 
         intMatch.reset(list);
 
-        LinkedList intList = new LinkedList();
+        LinkedList<Integer> intList = new LinkedList<>();
         while (intMatch.find())
         {
             String val = intMatch.group();
@@ -268,11 +262,11 @@ public class XMLParseUtil
         }
 
         int[] retArr = new int[intList.size()];
-        Iterator it = intList.iterator();
+        Iterator<Integer> it = intList.iterator();
         int idx = 0;
         while (it.hasNext())
         {
-            retArr[idx++] = ((Integer)it.next()).intValue();
+            retArr[idx++] = it.next().intValue();
         }
 
         return retArr;
@@ -306,7 +300,7 @@ public class XMLParseUtil
      *     "font-size:12;fill:#d32c27;fill-rule:evenodd;stroke-width:1pt;"
      * @param map - A map to which these styles will be added
      */
-    public static HashMap parseStyle(String styleString, HashMap map) {
+    public static HashMap<String, StyleAttribute> parseStyle(String styleString, HashMap<String, StyleAttribute> map) {
         final Pattern patSemi = Pattern.compile(";");
 
         String[] styles = patSemi.split(styleString);

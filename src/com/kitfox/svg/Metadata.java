@@ -52,11 +52,13 @@ public class Metadata extends SVGElement
     {
     }
 
+    @Override
     public String getTagName()
     {
         return TAG_NAME;
     }
 
+    @Override
     public boolean updateTime(double curTime)
     {
         return false;

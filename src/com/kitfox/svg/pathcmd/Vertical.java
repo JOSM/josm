@@ -51,6 +51,7 @@ public class Vertical extends PathCommand {
     public Vertical() {
     }
 
+    @Override
     public String toString()
     {
         return "V " + y;
@@ -62,6 +63,7 @@ public class Vertical extends PathCommand {
     }
 
 //    public void appendPath(ExtendedGeneralPath path, BuildHistory hist)
+    @Override
     public void appendPath(GeneralPath path, BuildHistory hist)
     {
         float offx = hist.lastPoint.x;
@@ -72,6 +74,7 @@ public class Vertical extends PathCommand {
         hist.setLastKnot(offx, y + offy);
     }
 
+    @Override
     public int getNumKnotsAdded()
     {
         return 2;
