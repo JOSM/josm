@@ -1032,7 +1032,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @since 9613
      */
     public void setNoTileHeaders(MultiMap<String, String> noTileHeaders) {
-       if (noTileHeaders == null) {
+       if (noTileHeaders == null || noTileHeaders.isEmpty()) {
            this.noTileHeaders = null;
        } else {
             this.noTileHeaders = noTileHeaders.toMap();
@@ -1052,7 +1052,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @since 9613
      */
     public void setNoTileChecksums(MultiMap<String, String> noTileChecksums) {
-        if (noTileChecksums == null) {
+        if (noTileChecksums == null || noTileChecksums.isEmpty()) {
             this.noTileChecksums = null;
         } else {
             this.noTileChecksums = noTileChecksums.toMap();
@@ -1072,7 +1072,11 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @since 8418
      */
     public void setMetadataHeaders(Map<String, String> metadataHeaders) {
-        this.metadataHeaders = metadataHeaders;
+        if (metadataHeaders == null || metadataHeaders.isEmpty()) {
+            this.metadataHeaders = null;
+        } else {
+            this.metadataHeaders = metadataHeaders;
+        }
     }
 
     /**

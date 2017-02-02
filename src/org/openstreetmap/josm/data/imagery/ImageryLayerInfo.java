@@ -169,6 +169,7 @@ public class ImageryLayerInfo {
             buildIdMap(defaultLayers, defaultLayerIds);
             updateEntriesFromDefaults();
             buildIdMap(layers, layerIds);
+            dropOldEntries();
         }
     }
 
@@ -231,28 +232,6 @@ public class ImageryLayerInfo {
         }
         Main.pref.putCollection("imagery.layers.default", newKnownDefaults);
 
-        // Add ids to user entries without id.
-        // Only do this the first time for each id, so the user can have
-        // custom entries that don't get updated automatically
-        Collection<String> addedIds = Main.pref.getCollection("imagery.layers.addedIds");
-        Collection<String> newAddedIds = new TreeSet<>(addedIds);
-        for (ImageryInfo info : layers) {
-            for (ImageryInfo def : defaultLayers) {
-                if (isSimilar(def, info) && def.getId() != null && !addedIds.contains(def.getId())) {
-                    if (!defaultLayerIds.containsKey(def.getId())) {
-                        // ignore ids used more than once (have been purged from the map)
-                        continue;
-                    }
-                    newAddedIds.add(def.getId());
-                    if (info.getId() == null) {
-                        info.setId(def.getId());
-                        changed = true;
-                    }
-                }
-            }
-        }
-        Main.pref.putCollection("imagery.layers.addedIds", newAddedIds);
-
         // automatically update user entries with same id as a default entry
         for (int i = 0; i < layers.size(); i++) {
             ImageryInfo info = layers.get(i);
@@ -262,11 +241,34 @@ public class ImageryLayerInfo {
             ImageryInfo matchingDefault = defaultLayerIds.get(info.getId());
             if (matchingDefault != null && !matchingDefault.equalsPref(info)) {
                 layers.set(i, matchingDefault);
+                Main.info(tr("Update imagery ''{0}''", info.getName()));
                 changed = true;
             }
         }
 
         if (changed) {
+            save();
+        }
+    }
+
+    /**
+     * Drop entries with Id which do no longer exist (removed from defaults).
+     */
+    public void dropOldEntries() {
+        List<String> drop = new ArrayList<>();
+
+        for (Map.Entry<String, ImageryInfo> info : layerIds.entrySet()) {
+            if (!defaultLayerIds.containsKey(info.getKey())) {
+                remove(info.getValue());
+                drop.add(info.getKey());
+                Main.info(tr("Drop old imagery ''{0}''", info.getValue().getName()));
+            }
+        }
+
+        if (!drop.isEmpty()) {
+            for (String id : drop) {
+                layerIds.remove(id);
+            }
             save();
         }
     }

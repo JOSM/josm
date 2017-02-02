@@ -106,7 +106,8 @@ import org.xml.sax.SAXException;
 public class Preferences {
 
     private static final String[] OBSOLETE_PREF_KEYS = {
-      "hdop.factor" /* remove entry after April 2017 */
+      "hdop.factor", /* remove entry after April 2017 */
+      "imagery.layers.addedIds" /* remove entry after June 2017 */
     };
 
     private static final long MAX_AGE_DEFAULT_PREFERENCES = TimeUnit.DAYS.toSeconds(50);
