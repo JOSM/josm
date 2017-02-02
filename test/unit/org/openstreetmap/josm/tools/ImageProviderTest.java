@@ -2,22 +2,49 @@
 package org.openstreetmap.josm.tools;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.awt.Transparency;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+
+import javax.swing.ImageIcon;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 
+import com.kitfox.svg.SVGConst;
+
 /**
  * Unit tests of {@link ImageProvider} class.
  */
 public class ImageProviderTest {
+
+    private static final class LogHandler14319 extends Handler {
+        boolean failed;
+
+        @Override
+        public void publish(LogRecord record) {
+            if ("Could not load image: https://host-in-the-trusted-network.com/test.jpg".equals(record.getMessage())) {
+                failed = true;
+            }
+        }
+
+        @Override
+        public void flush() {
+        }
+
+        @Override
+        public void close() throws SecurityException {
+        }
+    }
 
     /**
      * Setup test.
@@ -49,6 +76,20 @@ public class ImageProviderTest {
         File file = new File(TestUtils.getRegressionDataFile(10030, "tile.jpg"));
         BufferedImage img = ImageProvider.read(file, true, true);
         assertNotNull(img);
+    }
+
+    /**
+     * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/14319">#14319</a>
+     * @throws IOException if an error occurs during reading
+     */
+    @Test
+    public void testTicket14319() throws IOException {
+        LogHandler14319 handler = new LogHandler14319();
+        Logger.getLogger(SVGConst.SVG_LOGGER).addHandler(handler);
+        ImageIcon img = new ImageProvider(
+                new File(TestUtils.getRegressionDataDir(14319)).getAbsolutePath(), "attack.svg").get();
+        assertNotNull(img);
+        assertFalse(handler.failed);
     }
 
     /**
