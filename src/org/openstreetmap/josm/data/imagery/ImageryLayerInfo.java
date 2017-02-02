@@ -253,6 +253,7 @@ public class ImageryLayerInfo {
 
     /**
      * Drop entries with Id which do no longer exist (removed from defaults).
+     * @since 11527
      */
     public void dropOldEntries() {
         List<String> drop = new ArrayList<>();
