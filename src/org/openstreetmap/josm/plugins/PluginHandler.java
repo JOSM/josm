@@ -134,6 +134,7 @@ public final class PluginHandler {
             new DeprecatedPlugin("kendzi3d-jogl", tr("replaced by new {0} plugin", "jogl")),
             new DeprecatedPlugin("josm-geojson", tr("replaced by new {0} plugin", "geojson")),
             new DeprecatedPlugin("proj4j", inCore),
+            new DeprecatedPlugin("OpenStreetView", tr("replaced by new {0} plugin", "OpenStreetCam")),
         });
     }
 
