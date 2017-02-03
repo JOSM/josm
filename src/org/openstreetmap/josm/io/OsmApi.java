@@ -233,19 +233,6 @@ public class OsmApi extends OsmConnection {
                 initialized = true;
             }
 
-            /* This is an interim solution for openstreetmap.org not currently
-             * transmitting their imagery blacklist in the capabilities call.
-             * remove this as soon as openstreetmap.org adds blacklists.
-             * If you want to update this list, please ask for update of
-             * http://trac.openstreetmap.org/ticket/5024
-             * This list should not be maintained by each OSM editor (see #9210) */
-            if (this.serverUrl.matches(".*openstreetmap.org/api.*") && capabilities.getImageryBlacklist().isEmpty()) {
-                capabilities.put("blacklist", "regex", ".*\\.google\\.com/.*");
-                capabilities.put("blacklist", "regex", ".*209\\.85\\.2\\d\\d.*");
-                capabilities.put("blacklist", "regex", ".*209\\.85\\.1[3-9]\\d.*");
-                capabilities.put("blacklist", "regex", ".*209\\.85\\.12[89].*");
-            }
-
             /* This checks if there are any layers currently displayed that
              * are now on the blacklist, and removes them. This is a rare
              * situation - probably only occurs if the user changes the API URL
