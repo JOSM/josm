@@ -157,18 +157,16 @@ public final class MapRendererFactory {
     }
 
     /**
-     * <p>Replies true, if {@code Renderer} is already a registered map renderer
-     * class.</p>
+     * <p>Replies true, if {@code Renderer} is already a registered map renderer class.</p>
      *
      * @param renderer the map renderer class. Must not be null.
-     * @return true, if {@code Renderer} is already a registered map renderer
-     * class
+     * @return true, if {@code Renderer} is already a registered map renderer class
      * @throws IllegalArgumentException if {@code renderer} is null
      */
     public boolean isRegistered(Class<? extends AbstractMapRenderer> renderer) {
         CheckParameterUtil.ensureParameterNotNull(renderer);
         for (Descriptor d: descriptors) {
-            if (d.getRenderer().getName().equals(renderer.getName())) return true;
+            if (d.getRenderer().equals(renderer)) return true;
         }
         return false;
     }
@@ -209,12 +207,12 @@ public final class MapRendererFactory {
         Iterator<Descriptor> it = descriptors.iterator();
         while (it.hasNext()) {
             Descriptor d = it.next();
-            if (d.getRenderer().getName().equals(renderer.getName())) {
+            if (d.getRenderer().equals(renderer)) {
                 it.remove();
                 break;
             }
         }
-        if (activeRenderer != null && activeRenderer.getName().equals(renderer.getName())) {
+        if (activeRenderer != null && activeRenderer.equals(renderer)) {
             activateDefault();
         }
     }
@@ -287,18 +285,16 @@ public final class MapRendererFactory {
     }
 
     /**
-     * <p>Replies true, if currently the wireframe map renderer is active. Otherwise,
-     * false.</p>
+     * <p>Replies true, if currently the wireframe map renderer is active. Otherwise, false.</p>
      *
      * <p>There is a specific method for {@link WireframeMapRenderer} for legacy support.
      * Until 03/2011 there were only two possible map renderers in JOSM: the wireframe
      * renderer and the styled renderer. For the time being there are still UI elements
      * (menu entries, etc.) which toggle between these two renderers only.</p>
      *
-     * @return true, if currently the wireframe map renderer is active. Otherwise,
-     * false
+     * @return true, if currently the wireframe map renderer is active. Otherwise, false
      */
     public boolean isWireframeMapRendererActive() {
-        return activeRenderer != null && activeRenderer.getName().equals(WireframeMapRenderer.class.getName());
+        return WireframeMapRenderer.class.equals(activeRenderer);
     }
 }
