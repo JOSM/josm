@@ -68,6 +68,7 @@ public abstract class AbstractChangesetDownloadTask extends AbstractDownloadTask
                     SwingUtilities.invokeAndWait(r);
                 } catch (InterruptedException e) {
                     Main.warn("InterruptedException in "+getClass().getSimpleName()+" while updating changeset cache");
+                    Thread.currentThread().interrupt();
                 } catch (InvocationTargetException e) {
                     Throwable t = e.getTargetException();
                     if (t instanceof RuntimeException) {

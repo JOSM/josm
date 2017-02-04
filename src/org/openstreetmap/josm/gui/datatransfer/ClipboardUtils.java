@@ -113,6 +113,7 @@ public final class ClipboardUtils {
                 } catch (InterruptedException ex) {
                     Main.warn(ex, "InterruptedException in " + Utils.class.getSimpleName()
                             + " while getting clipboard content");
+                    Thread.currentThread().interrupt();
                 }
             } catch (NullPointerException e) {
                 // JDK-6322854: On Linux/X11, NPE can happen for unknown reasons, on all versions of Java

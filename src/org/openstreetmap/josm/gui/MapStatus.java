@@ -409,6 +409,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
                     } catch (InterruptedException e) {
                         // Occurs frequently during JOSM shutdown, log set to trace only
                         Main.trace("InterruptedException in "+MapStatus.class.getSimpleName());
+                        Thread.currentThread().interrupt();
                     } catch (InvocationTargetException e) {
                         Main.warn(e);
                     }

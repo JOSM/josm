@@ -663,6 +663,7 @@ public final class HttpClient {
             Thread.sleep(100);
         } catch (InterruptedException ex) {
             Main.warn("InterruptedException in " + HttpClient.class + " during cancel");
+            Thread.currentThread().interrupt();
         }
         connection.disconnect();
     }

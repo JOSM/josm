@@ -132,6 +132,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
                                         Thread.sleep(25);
                                     } catch (InterruptedException e) {
                                         Main.warn(e);
+                                        Thread.currentThread().interrupt();
                                     }
                                 }
                                 super.realRun();

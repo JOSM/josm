@@ -229,6 +229,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
         } catch (InterruptedException e) {
             Main.trace(e);
             lastException = e;
+            Thread.currentThread().interrupt();
         } catch (InvocationTargetException e) {
             Main.trace(e);
             lastException = new OsmTransferException(e.getCause());
