@@ -116,7 +116,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
             final List<NameFinder.SearchResult> results = NameFinder.queryNominatim(area);
             final PrimitiveId osmId = results.get(0).getOsmId();
             return String.format("area(%d)", osmId.getUniqueId() + idOffset.get(osmId.getType()));
-        } catch (IOException | NoSuchElementException ex) {
+        } catch (IOException | NoSuchElementException | IndexOutOfBoundsException ex) {
             throw new UncheckedParseException(ex);
         }
     }
