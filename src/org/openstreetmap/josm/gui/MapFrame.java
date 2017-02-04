@@ -118,7 +118,6 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
     private final JToolBar toolBarToggle = new JToolBar(JToolBar.VERTICAL);
 
     private final List<ToggleDialog> allDialogs = new ArrayList<>();
-    private final List<MapMode> mapModes = new ArrayList<>();
     private final List<IconToggleButton> allDialogButtons = new ArrayList<>();
     public final List<IconToggleButton> allMapModeButtons = new ArrayList<>();
 
@@ -387,9 +386,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
     }
 
     public void addMapMode(IconToggleButton b) {
-        if (b.getAction() instanceof MapMode) {
-            mapModes.add((MapMode) b.getAction());
-        } else
+        if (!(b.getAction() instanceof MapMode))
             throw new IllegalArgumentException("MapMode action must be subclass of MapMode");
         allMapModeButtons.add(b);
         toolBarActionsGroup.add(b);
