@@ -63,14 +63,14 @@ public class DateFilterPanel extends JPanel {
 
         setEnabled(enabled);
 
+        ChangeListener changeListener = e -> {
+            if (isEnabled()) applyFilterWithDelay();
+        };
+
         dateFrom.addDateListener(changeListener);
         dateTo.addDateListener(changeListener);
         noTimestampCb.addChangeListener(changeListener);
     }
-
-    private final transient ChangeListener changeListener = e -> {
-        if (isEnabled()) applyFilterWithDelay();
-    };
 
     private final Timer t = new Timer(200, e -> applyFilter());
 

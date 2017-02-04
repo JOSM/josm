@@ -326,16 +326,14 @@ public class ChildRelationBrowser extends JPanel {
      * The asynchronous task for downloading relation members.
      */
     class DownloadAllChildrenTask extends DownloadTask {
-        private final Relation relation;
         private final Stack<Relation> relationsToDownload;
         private final Set<Long> downloadedRelationIds;
 
         DownloadAllChildrenTask(Dialog parent, Relation r) {
             super(tr("Download relation members"), parent);
-            this.relation = r;
             relationsToDownload = new Stack<>();
             downloadedRelationIds = new HashSet<>();
-            relationsToDownload.push(this.relation);
+            relationsToDownload.push(r);
         }
 
         /**
