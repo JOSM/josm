@@ -32,7 +32,6 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.preferences.AbstractToStringProperty;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.CachingProperty;
@@ -105,7 +104,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
     private static final CachingProperty<Double> SNAP_DISTANCE_IMPERIAL = new DoubleProperty(prefKey("snap-distance-imperial"), 1).cached();
     private static final CachingProperty<Double> SNAP_DISTANCE_CHINESE  = new DoubleProperty(prefKey("snap-distance-chinese"), 1).cached();
     private static final CachingProperty<Double> SNAP_DISTANCE_NAUTICAL = new DoubleProperty(prefKey("snap-distance-nautical"), 0.1).cached();
-    private static final CachingProperty<Color> MAIN_COLOR = new ColorProperty(marktr("make parallel helper line"), (Color) null).cached();
+    private static final CachingProperty<Color> MAIN_COLOR = new ColorProperty(marktr("make parallel helper line"), Color.RED).cached();
 
     private static final CachingProperty<Map<Modifier, Boolean>> SNAP_MODIFIER_COMBO
             = new KeyboardModifiersProperty(prefKey("snap-modifier-combo"),             "?sC").cached();
@@ -460,10 +459,6 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
             CheckParameterUtil.ensureParameterNotNull(mv, "mv");
 
             Color mainColor = MAIN_COLOR.get();
-            if (mainColor == null) {
-                mainColor = PaintColors.SELECTED.get();
-            }
-
             // FIXME: should clip the line (gets insanely slow when zoomed in on a very long line
             g.setStroke(REF_LINE_STROKE.get());
             g.setColor(mainColor);
