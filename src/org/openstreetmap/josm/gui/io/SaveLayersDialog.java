@@ -585,7 +585,6 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     model.setUploadState(layer, UploadOrSaveState.OK);
                 }
                 currentTask = null;
-                currentFuture = null;
             }
         }
 

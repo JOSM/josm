@@ -29,23 +29,20 @@ public class HtmlPanel extends JPanel {
         jepMessage.setEditable(false);
         Font f = UIManager.getFont("Label.font");
         StyleSheet ss = new StyleSheet();
-        String rule = MessageFormat.format(
+        ss.addRule("body {" + MessageFormat.format(
                 "font-family: ''{0}'';font-size: {1,number}pt; font-weight: {2}; font-style: {3}",
                 f.getName(),
                 f.getSize(),
                 f.isBold() ? "bold" : "normal",
-                        f.isItalic() ? "italic" : "normal"
-        );
-        rule = "body {" + rule + '}';
-        rule = MessageFormat.format(
+                f.isItalic() ? "italic" : "normal"
+        ) + '}');
+        ss.addRule("strong {" + MessageFormat.format(
                 "font-family: ''{0}'';font-size: {1,number}pt; font-weight: {2}; font-style: {3}",
                 f.getName(),
                 f.getSize(),
                 "bold",
                 f.isItalic() ? "italic" : "normal"
-        );
-        rule = "strong {" + rule + '}';
-        ss.addRule(rule);
+        ) + '}');
         ss.addRule("a {text-decoration: underline; color: blue}");
         ss.addRule("ul {margin-left: 1cm; list-style-type: disc}");
         JosmHTMLEditorKit kit = new JosmHTMLEditorKit();

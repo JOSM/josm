@@ -66,17 +66,16 @@ public class OsmConnection {
         } catch (CredentialsAgentException e) {
             throw new OsmTransferException(e);
         }
-        String token;
-        if (response == null) {
-            token = ":";
-        } else if (response.isCanceled()) {
-            cancel = true;
-            return;
-        } else {
-            String username = response.getUsername() == null ? "" : response.getUsername();
-            String password = response.getPassword() == null ? "" : String.valueOf(response.getPassword());
-            token = username + ':' + password;
-            con.setHeader("Authorization", "Basic "+Base64.getEncoder().encodeToString(token.getBytes(StandardCharsets.UTF_8)));
+        if (response != null) {
+            if (response.isCanceled()) {
+                cancel = true;
+                return;
+            } else {
+                String username = response.getUsername() == null ? "" : response.getUsername();
+                String password = response.getPassword() == null ? "" : String.valueOf(response.getPassword());
+                String token = username + ':' + password;
+                con.setHeader("Authorization", "Basic "+Base64.getEncoder().encodeToString(token.getBytes(StandardCharsets.UTF_8)));
+            }
         }
     }
 
