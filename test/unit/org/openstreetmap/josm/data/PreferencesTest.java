@@ -42,7 +42,7 @@ public class PreferencesTest {
     public void testColorAlpha() {
         assertEquals(0x12, new ColorProperty("foo", new Color(0x12345678, true)).get().getAlpha());
         assertTrue(Main.pref.putColor("bar", new Color(0x12345678, true)));
-        assertEquals(0x12, new ColorProperty("bar", (String) null).get().getAlpha());
+        assertEquals(0x12, new ColorProperty("bar", Color.RED).get().getAlpha());
     }
 
     /**
