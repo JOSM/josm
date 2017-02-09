@@ -1235,7 +1235,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         int yCursor = -1;
         if (Main.isDebugEnabled()) {
             if (yCursor < t.getYtile()) {
-                if (t.getYtile() % 32 == 31) {
+                if (Math.abs(t.getYtile() % 32) == 31) {
                     g.fillRect(0, y - 1, mv.getWidth(), 3);
                 } else {
                     g.drawLine(0, y, mv.getWidth(), y);
