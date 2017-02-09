@@ -259,12 +259,16 @@ way[waterway=weir][bridge=yes][highway] {
   group: tr("missing tag");
 }
 
-/* #9811, #11491, #12865 */
-*[place][place!=farm][/^addr:/],
+/* #9811, #11491, #12865, #14310 */
+*[place][place!=farm][/^(addr:housenumber|addr:housename|addr:flats|addr:conscriptionnumber|addr:street|addr:place|addr:city|addr:country|addr:full|addr:hamlet|addr:suburb|addr:subdistrict|addr:district|addr:province|addr:state|addr:interpolation|addr:interpolation|addr:inclusion)$/],
+/* addr:postcode is used together with place in some countries */
 *[boundary][/^addr:/],
 *[highway][/^addr:/][highway!=services][highway!=rest_area][!"addr:postcode"] {
   throwWarning: tr("{0} together with addr:*", "{0.key}");
   group: tr("suspicious tag combination");
+  assertMatch: "node place=foo addr:housenumber=5";
+  assertMatch: "node place=foo addr:housenumber=5 addr:postcode=12345";
+  assertNoMatch: "node place=foo  addr:postcode=12345";
 }
 *[!highway][postal_code]["addr:postcode"][postal_code=*"addr:postcode"] {
   throwWarning: tr("{0} together with {1}", "{1.key}", "{2.key}");
