@@ -88,7 +88,9 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
                 return gotLock ? job : null;
             } catch (InterruptedException e) {
                 // acquire my got interrupted, first offer back what was taken
-                offer(job);
+                if (!offer(job)) {
+                    Main.warn("Unable to offer back " + job);
+                }
                 throw e;
             }
         }
@@ -106,7 +108,9 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
             acquireSemaphore(job);
         } catch (InterruptedException e) {
             // acquire my got interrupted, first offer back what was taken
-            offer(job);
+            if (!offer(job)) {
+                Main.warn("Unable to offer back " + job);
+            }
             throw e;
         }
         return job;
