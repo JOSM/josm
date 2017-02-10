@@ -5199,7 +5199,7 @@
             <key key="amenity" value="shower" />
             <combo key="access" text="Access rights" values="yes,permissive,customers" />
             <optional>
-			    <checkgroup columns="3">
+                <checkgroup columns="3">
                     <check key="female" text="Female" text_context="restroom" />
                     <check key="male" text="Male" text_context="restroom" />
                     <check key="unisex" text="Unisex" text_context="restroom" />
@@ -7119,7 +7119,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:historic=castle" />
             <space />
             <key key="historic" value="castle" />
-			<combo key="castle_type" text="Type" values="stately,defensive,fortress,manor,palace" />
+            <combo key="castle_type" text="Type" values="stately,defensive,fortress,manor,palace" />
             <reference ref="name_wikipedia" />
             <check key="ruins" text="Ruins" />
             <reference ref="link_contact_address_payment" />
