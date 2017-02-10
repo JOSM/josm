@@ -46,7 +46,10 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * git 8cbf52d, org.geotools.referencing.operation.projection.TransverseMercator
  * at the time of migration.
  * <p>
- *
+ * The non-standard parameter <code>gamma</code> has been added as a method
+ * to rotate the projected coordinates by a certain angle (clockwise, see
+ * {@link ObliqueMercator}).
+ * <p>
  * <b>References:</b>
  * <ul>
  *   <li> Proj-4.4.6 available at <A HREF="http://www.remotesensing.org/proj">www.remotesensing.org/proj</A><br>
@@ -106,6 +109,16 @@ public class TransverseMercator extends AbstractProj {
      */
     private double ml0;
 
+    /**
+     * The rectified bearing of the central line, in radians.
+     */
+    protected double rectifiedGridAngle;
+
+    /**
+     * Sine and Cosine values for the coordinate system rotation angle
+     */
+    private double sinrot, cosrot;
+
     @Override
     public String getName() {
         return tr("Transverse Mercator");
@@ -124,12 +137,22 @@ public class TransverseMercator extends AbstractProj {
         eb2 = params.ellps.eb2;
         latitudeOfOrigin = params.lat0 == null ? 0 : Math.toRadians(params.lat0);
         ml0 = mlfn(latitudeOfOrigin, Math.sin(latitudeOfOrigin), Math.cos(latitudeOfOrigin));
+
+        if (params.gamma != null) {
+                rectifiedGridAngle = Math.toRadians(params.gamma);
+        } else {
+                rectifiedGridAngle = 0.0;
+        }
+        sinrot = Math.sin(rectifiedGridAngle);
+        cosrot = Math.cos(rectifiedGridAngle);
+
     }
 
     @Override
     public double[] project(double y, double x) {
         double sinphi = Math.sin(y);
         double cosphi = Math.cos(y);
+        double u, v;
 
         double t = (Math.abs(cosphi) > EPSILON) ? sinphi/cosphi : 0;
         t *= t;
@@ -150,11 +173,19 @@ public class TransverseMercator extends AbstractProj {
             FC5 * als * (5.0 + t*(t - 18.0) + n*(14.0 - 58.0*t) +
             FC7 * als * (61.0+ t*(t*(179.0 - t) - 479.0)))));
 
+        u=y; v=x;
+        x = v * cosrot + u * sinrot;
+        y = u * cosrot - v * sinrot;
+
         return new double[] {x, y};
     }
 
     @Override
     public double[] invproject(double x, double y) {
+        double v = x * cosrot - y * sinrot;
+        double u = y * cosrot + x * sinrot;
+        x=v; y=u;
+
         double phi = invMlfn(ml0 + y);
 
         if (Math.abs(phi) >= Math.PI/2) {
