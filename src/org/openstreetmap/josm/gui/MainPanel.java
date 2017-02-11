@@ -43,7 +43,7 @@ public class MainPanel extends JPanel {
      * Update the content of this {@link MainFrame} to either display the map or display the welcome screen.
      * @param showMap If the map should be displayed.
      */
-    protected void updateContent(boolean showMap) {
+    protected synchronized void updateContent(boolean showMap) {
         GuiHelper.assertCallFromEdt();
         MapFrame old = map;
         if (old != null && showMap) {
@@ -108,7 +108,7 @@ public class MainPanel extends JPanel {
      * @param listener The MapFrameListener
      * @return {@code true} if the listeners collection changed as a result of the call.
      */
-    public boolean addAndFireMapFrameListener(MapFrameListener listener) {
+    public synchronized boolean addAndFireMapFrameListener(MapFrameListener listener) {
         boolean changed = addMapFrameListener(listener);
         if (changed && map != null) {
             listener.mapFrameInitialized(null, map);
@@ -138,7 +138,7 @@ public class MainPanel extends JPanel {
      * Gets the {@link GettingStarted} panel.
      * @return The panel.
      */
-    public GettingStarted getGettingStarted() {
+    public synchronized GettingStarted getGettingStarted() {
         if (gettingStarted == null) {
             gettingStarted = new GettingStarted();
         }
