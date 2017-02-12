@@ -173,7 +173,8 @@ public class TransverseMercator extends AbstractProj {
             FC5 * als * (5.0 + t*(t - 18.0) + n*(14.0 - 58.0*t) +
             FC7 * als * (61.0+ t*(t*(179.0 - t) - 479.0)))));
 
-        u=y; v=x;
+        u = y;
+        v = x;
         x = v * cosrot + u * sinrot;
         y = u * cosrot - v * sinrot;
 
@@ -184,7 +185,8 @@ public class TransverseMercator extends AbstractProj {
     public double[] invproject(double x, double y) {
         double v = x * cosrot - y * sinrot;
         double u = y * cosrot + x * sinrot;
-        x=v; y=u;
+        x = v;
+        y = u;
 
         double phi = invMlfn(ml0 + y);
 
