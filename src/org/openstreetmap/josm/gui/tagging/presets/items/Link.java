@@ -25,10 +25,7 @@ public class Link extends TextItem {
     @Override
     public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
         initializeLocaleText(tr("More information about this feature"));
-        String url = locale_href;
-        if (url == null) {
-            url = href;
-        }
+        String url = java.util.Optional.ofNullable(locale_href).orElse(href);
         if (url != null) {
             p.add(new UrlLabel(url, locale_text, 2), GBC.eol().insets(0, 10, 0, 0).fill(GBC.HORIZONTAL));
         }

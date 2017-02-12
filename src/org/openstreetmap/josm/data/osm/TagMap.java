@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -192,12 +193,8 @@ public class TagMap extends AbstractMap<String, String> implements Serializable 
 
     @Override
     public synchronized String put(String key, String value) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
-        if (value == null) {
-            throw new NullPointerException();
-        }
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(value);
         int index = indexOfKey(tags, key);
         int newTagArrayLength = tags.length;
         if (index < 0) {

@@ -273,7 +273,7 @@ public class NTV2SubGrid implements Serializable {
     }
 
     public int getSubGridCount() {
-        return (subGrid == null) ? 0 : subGrid.length;
+        return subGrid == null ? 0 : subGrid.length;
     }
 
     /**

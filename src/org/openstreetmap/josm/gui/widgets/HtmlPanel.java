@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.widgets;
 import java.awt.BorderLayout;
 import java.awt.Font;
 import java.text.MessageFormat;
+import java.util.Optional;
 
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
@@ -84,9 +85,6 @@ public class HtmlPanel extends JPanel {
      * @param text the text to display
      */
     public final void setText(String text) {
-        if (text == null) {
-            text = "";
-        }
-        jepMessage.setText(text);
+        jepMessage.setText(Optional.ofNullable(text).orElse(""));
     }
 }

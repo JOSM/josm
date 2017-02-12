@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.MessageFormat;
 import java.time.Year;
+import java.util.Optional;
 
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -222,18 +223,12 @@ public class GpxExporter extends FileExporter implements GpxConstants {
 
         if (enable) {
             if (copyrightYear.getText().isEmpty()) {
-                String sCopyrightYear = data.getString(META_COPYRIGHT_YEAR);
-                if (sCopyrightYear == null) {
-                    sCopyrightYear = Year.now().toString();
-                }
-                copyrightYear.setText(sCopyrightYear);
+                copyrightYear.setText(Optional.ofNullable(data.getString(META_COPYRIGHT_YEAR)).orElseGet(
+                        () -> Year.now().toString()));
             }
             if (copyright.getText().isEmpty()) {
-                String sCopyright = data.getString(META_COPYRIGHT_LICENSE);
-                if (sCopyright == null) {
-                    sCopyright = Main.pref.get("lastCopyright", "https://creativecommons.org/licenses/by-sa/2.5");
-                }
-                copyright.setText(sCopyright);
+                copyright.setText(Optional.ofNullable(data.getString(META_COPYRIGHT_LICENSE)).orElseGet(
+                        () -> Main.pref.get("lastCopyright", "https://creativecommons.org/licenses/by-sa/2.5")));
                 copyright.setCaretPosition(0);
             }
         } else {
@@ -281,16 +276,8 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             nameLabel.setEnabled(b);
             emailLabel.setEnabled(b);
             if (b) {
-                String sAuthorName = data.getString(META_AUTHOR_NAME);
-                if (sAuthorName == null) {
-                    sAuthorName = Main.pref.get("lastAuthorName");
-                }
-                authorName.setText(sAuthorName);
-                String sEmail = data.getString(META_AUTHOR_EMAIL);
-                if (sEmail == null) {
-                    sEmail = Main.pref.get("lastAuthorEmail");
-                }
-                email.setText(sEmail);
+                authorName.setText(Optional.ofNullable(data.getString(META_AUTHOR_NAME)).orElseGet(() -> Main.pref.get("lastAuthorName")));
+                email.setText(Optional.ofNullable(data.getString(META_AUTHOR_EMAIL)).orElseGet(() -> Main.pref.get("lastAuthorEmail")));
             } else {
                 authorName.setText("");
                 email.setText("");

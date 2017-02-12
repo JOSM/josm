@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -89,11 +90,8 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     public String getCacheKey() {
         if (tile != null) {
             TileSource tileSource = tile.getTileSource();
-            String tsName = tileSource.getName();
-            if (tsName == null) {
-                tsName = "";
-            }
-            return tsName.replace(':', '_') + ':' + tileSource.getTileId(tile.getZoom(), tile.getXtile(), tile.getYtile());
+            return Optional.ofNullable(tileSource.getName()).orElse("").replace(':', '_') + ':'
+                    + tileSource.getTileId(tile.getZoom(), tile.getXtile(), tile.getYtile());
         }
         return null;
     }

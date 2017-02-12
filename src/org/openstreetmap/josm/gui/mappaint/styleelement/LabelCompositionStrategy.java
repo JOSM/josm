@@ -162,19 +162,18 @@ public interface LabelCompositionStrategy {
         }
 
         private static List<String> buildNameTags(List<String> nameTags) {
-            if (nameTags == null) {
-                nameTags = Collections.emptyList();
-            }
             List<String> result = new ArrayList<>();
-            for (String tag: nameTags) {
-                if (tag == null) {
-                    continue;
+            if (nameTags != null) {
+                for (String tag: nameTags) {
+                    if (tag == null) {
+                        continue;
+                    }
+                    tag = tag.trim();
+                    if (tag.isEmpty()) {
+                        continue;
+                    }
+                    result.add(tag);
                 }
-                tag = tag.trim();
-                if (tag.isEmpty()) {
-                    continue;
-                }
-                result.add(tag);
             }
             return result;
         }

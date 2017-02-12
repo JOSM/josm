@@ -383,10 +383,7 @@ public final class Shortcut {
     }
 
     private static int getGroupModifier(int group) {
-        Integer m = groups.get(group);
-        if (m == null)
-            m = -1;
-        return m;
+        return Optional.ofNullable(groups.get(group)).orElse(-1);
     }
 
     private static int findModifier(int group, Integer modifier) {

@@ -1117,10 +1117,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     firstNode = lastNode;
                     lastNode = tmp;
                 } else {
-                    onewayvia = OsmUtils.getOsmBoolean(onewayviastr);
-                    if (onewayvia == null) {
-                        onewayvia = Boolean.FALSE;
-                    }
+                    onewayvia = Optional.ofNullable(OsmUtils.getOsmBoolean(onewayviastr)).orElse(Boolean.FALSE);
                 }
             }
 

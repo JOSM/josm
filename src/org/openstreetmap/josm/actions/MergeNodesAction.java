@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
@@ -175,12 +176,8 @@ public class MergeNodesAction extends JosmAction {
             }
             lastNode = n;
         }
-        if (targetNode == null) {
-            targetNode = oldestNode != null ? oldestNode : lastNode;
-        }
-        return targetNode;
+        return Optional.ofNullable(targetNode).orElse(oldestNode != null ? oldestNode : lastNode);
     }
-
 
     /**
      * Fixes the parent ways referring to one of the nodes.

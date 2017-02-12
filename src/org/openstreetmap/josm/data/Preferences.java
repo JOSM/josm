@@ -282,11 +282,9 @@ public class Preferences {
      * @param listener The listener to add.
      */
     public void removeKeyPreferenceChangeListener(String key, PreferenceChangedListener listener) {
-        ListenerList<PreferenceChangedListener> keyListener = keyListeners.get(key);
-        if (keyListener == null) {
-            throw new IllegalArgumentException("There are no listeners registered for " + key);
-        }
-        keyListener.removeListener(listener);
+        Optional.ofNullable(keyListeners.get(key)).orElseThrow(
+                () -> new IllegalArgumentException("There are no listeners registered for " + key))
+        .removeListener(listener);
     }
 
     protected void firePreferenceChanged(String key, Setting<?> oldValue, Setting<?> newValue) {
@@ -1150,11 +1148,7 @@ public class Preferences {
      * @return a list of objects of type T or an empty list if nothing was found
      */
     public <T> List<T> getListOfStructs(String key, Class<T> klass) {
-        List<T> r = getListOfStructs(key, null, klass);
-        if (r == null)
-            return Collections.emptyList();
-        else
-            return r;
+        return Optional.ofNullable(getListOfStructs(key, null, klass)).orElseGet(Collections::emptyList);
     }
 
     /**
@@ -1170,12 +1164,7 @@ public class Preferences {
             getListOfStructs(key, def == null ? null : serializeListOfStructs(def, klass));
         if (prop == null)
             return def == null ? null : new ArrayList<>(def);
-        List<T> lst = new ArrayList<>();
-        for (Map<String, String> entries : prop) {
-            T struct = deserializeStruct(entries, klass);
-            lst.add(struct);
-        }
-        return lst;
+        return prop.stream().map(p -> deserializeStruct(p, klass)).collect(Collectors.toList());
     }
 
     /**
@@ -1203,10 +1192,9 @@ public class Preferences {
             return null;
         Collection<Map<String, String>> vals = new ArrayList<>();
         for (T struct : l) {
-            if (struct == null) {
-                continue;
+            if (struct != null) {
+                vals.add(serializeStruct(struct, klass));
             }
-            vals.add(serializeStruct(struct, klass));
         }
         return vals;
     }

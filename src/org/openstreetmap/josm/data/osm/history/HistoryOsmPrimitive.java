@@ -196,8 +196,7 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
     }
 
     /**
-     * Sets the tags for this history primitive. Removes all
-     * tags if <code>tags</code> is null.
+     * Sets the tags for this history primitive. Removes all tags if <code>tags</code> is null.
      *
      * @param tags the tags. May be null.
      */

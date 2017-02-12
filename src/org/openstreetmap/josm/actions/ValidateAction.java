@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -54,8 +55,7 @@ public class ValidateAction extends JosmAction {
      * Does the validation.
      * <p>
      * If getSelectedItems is true, the selected items (or all items, if no one
-     * is selected) are validated. If it is false, last selected items are
-     * revalidated
+     * is selected) are validated. If it is false, last selected items are revalidated
      *
      * @param getSelectedItems If selected or last selected items must be validated
      */
@@ -82,15 +82,11 @@ public class ValidateAction extends JosmAction {
                 lastSelection = selection;
             }
         } else {
-            if (lastSelection == null) {
-                selection = Main.getLayerManager().getEditDataSet().allNonDeletedPrimitives();
-            } else {
-                selection = lastSelection;
-            }
+            selection = Optional.ofNullable(lastSelection).orElseGet(
+                    () -> Main.getLayerManager().getEditDataSet().allNonDeletedPrimitives());
         }
 
-        ValidationTask task = new ValidationTask(tests, selection, lastSelection);
-        Main.worker.submit(task);
+        Main.worker.submit(new ValidationTask(tests, selection, lastSelection));
     }
 
     @Override

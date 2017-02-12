@@ -3,6 +3,8 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.Optional;
+
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamException;
 
@@ -36,10 +38,7 @@ public class XmlStreamParsingException extends XMLStreamException {
 
     @Override
     public String getMessage() {
-        String msg = super.getMessage();
-        if (msg == null) {
-            msg = getClass().getName();
-        }
+        String msg = Optional.ofNullable(super.getMessage()).orElseGet(() -> getClass().getName());
         if (getLocation() == null)
             return msg;
         msg += ' ' + tr("(at line {0}, column {1})", getLocation().getLineNumber(), getLocation().getColumnNumber());

@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openstreetmap.josm.Main;
@@ -114,10 +115,8 @@ public class SystemOfMeasurement {
      * @since 8554
      */
     public static SystemOfMeasurement getSystemOfMeasurement() {
-        SystemOfMeasurement som = SystemOfMeasurement.ALL_SYSTEMS.get(ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get());
-        if (som == null)
-            return SystemOfMeasurement.METRIC;
-        return som;
+        return Optional.ofNullable(SystemOfMeasurement.ALL_SYSTEMS.get(ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get()))
+                .orElse(SystemOfMeasurement.METRIC);
     }
 
     /**

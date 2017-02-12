@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -124,13 +125,9 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable {
     }
 
     protected void showLastException() {
-        String msg = lastException.getMessage();
-        if (msg == null) {
-            msg = lastException.toString();
-        }
         JOptionPane.showMessageDialog(
                 Main.parent,
-                msg,
+                Optional.ofNullable(lastException.getMessage()).orElseGet(lastException::toString),
                 tr("Error"),
                 JOptionPane.ERROR_MESSAGE
         );

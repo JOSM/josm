@@ -11,6 +11,7 @@ import java.awt.geom.Point2D.Double;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.swing.JComponent;
 
@@ -375,10 +376,8 @@ public final class MapViewState implements Serializable {
     }
 
     private static EastNorth calculateDefaultCenter() {
-        Bounds b = DownloadDialog.getSavedDownloadBounds();
-        if (b == null) {
-            b = Main.getProjection().getWorldBoundsLatLon();
-        }
+        Bounds b = Optional.ofNullable(DownloadDialog.getSavedDownloadBounds()).orElseGet(
+                () -> Main.getProjection().getWorldBoundsLatLon());
         return Main.getProjection().latlon2eastNorth(b.getCenter());
     }
 

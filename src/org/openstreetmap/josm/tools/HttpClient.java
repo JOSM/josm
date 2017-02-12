@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Scanner;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
@@ -147,9 +148,8 @@ public final class HttpClient {
                 final String redirectLocation = connection.getHeaderField("Location");
                 if (redirectLocation == null) {
                     /* I18n: argument is HTTP response code */
-                    String msg = tr("Unexpected response from HTTP server. Got {0} response without ''Location'' header." +
-                            " Can''t redirect. Aborting.", connection.getResponseCode());
-                    throw new IOException(msg);
+                    throw new IOException(tr("Unexpected response from HTTP server. Got {0} response without ''Location'' header." +
+                            " Can''t redirect. Aborting.", connection.getResponseCode()));
                 } else if (maxRedirects > 0) {
                     url = new URL(url, redirectLocation);
                     maxRedirects--;
@@ -283,10 +283,7 @@ public final class HttpClient {
                 in = connection.getInputStream();
             } catch (IOException ioe) {
                 Main.debug(ioe);
-                in = connection.getErrorStream();
-                if (in == null) {
-                    in = new ByteArrayInputStream(new byte[]{});
-                }
+                in = Optional.ofNullable(connection.getErrorStream()).orElseGet(() -> new ByteArrayInputStream(new byte[]{}));
             }
             in = new ProgressInputStream(in, getContentLength(), monitor);
             in = "gzip".equalsIgnoreCase(getContentEncoding()) ? new GZIPInputStream(in) : in;

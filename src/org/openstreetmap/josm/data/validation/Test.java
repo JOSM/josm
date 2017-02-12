@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import javax.swing.JCheckBox;
@@ -148,11 +149,7 @@ public class Test extends AbstractVisitor {
      * @param progressMonitor  the progress monitor
      */
     public void startTest(ProgressMonitor progressMonitor) {
-        if (progressMonitor == null) {
-            this.progressMonitor = NullProgressMonitor.INSTANCE;
-        } else {
-            this.progressMonitor = progressMonitor;
-        }
+        this.progressMonitor = Optional.ofNullable(progressMonitor).orElse(NullProgressMonitor.INSTANCE);
         String startMessage = tr("Running test {0}", name);
         this.progressMonitor.beginTask(startMessage);
         Main.debug(startMessage);

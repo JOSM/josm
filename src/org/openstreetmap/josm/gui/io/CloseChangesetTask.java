@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.SwingUtilities;
 
@@ -37,10 +38,7 @@ public class CloseChangesetTask extends PleaseWaitRunnable {
      */
     public CloseChangesetTask(Collection<Changeset> changesets) {
         super(tr("Closing changeset"), false /* don't ignore exceptions */);
-        if (changesets == null) {
-            changesets = new ArrayList<>();
-        }
-        this.changesets = changesets;
+        this.changesets = Optional.ofNullable(changesets).orElseGet(ArrayList::new);
         this.closedChangesets = new ArrayList<>();
     }
 

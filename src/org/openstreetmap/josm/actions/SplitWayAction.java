@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -561,10 +562,7 @@ public class SplitWayAction extends JosmAction {
                 continue;
             }
             Relation c = null;
-            String type = r.get("type");
-            if (type == null) {
-                type = "";
-            }
+            String type = Optional.ofNullable(r.get("type")).orElse("");
 
             int ic = 0;
             int ir = 0;

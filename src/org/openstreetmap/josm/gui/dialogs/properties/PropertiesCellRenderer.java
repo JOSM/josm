@@ -11,6 +11,7 @@ import java.awt.Font;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JLabel;
@@ -40,16 +41,10 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
             = new BooleanProperty("display.discardable-keys", false).cached();
 
     static {
-        Color selectionBackground = UIManager.getColor("Table.selectionBackground");
-        if (selectionBackground == null) {
-            selectionBackground = Color.BLUE;
-        }
-        SELECTED_BG = new ColorProperty(marktr("Discardable key: selection Background"), selectionBackground).cached();
-        Color background = UIManager.getColor("Table.background");
-        if (background == null) {
-            background = Color.WHITE;
-        }
-        NORMAL_BG = new ColorProperty(marktr("Discardable key: background"), background).cached();
+        SELECTED_BG = new ColorProperty(marktr("Discardable key: selection Background"),
+                Optional.ofNullable(UIManager.getColor("Table.selectionBackground")).orElse(Color.BLUE)).cached();
+        NORMAL_BG = new ColorProperty(marktr("Discardable key: background"),
+                Optional.ofNullable(UIManager.getColor("Table.background")).orElse(Color.WHITE)).cached();
     }
 
     private final Collection<TableCellRenderer> customRenderer = new CopyOnWriteArrayList<>();

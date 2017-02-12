@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.validation.util;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import javax.swing.Icon;
 import javax.swing.JLabel;
@@ -41,10 +42,7 @@ public class MultipleNameVisitor extends NameVisitor {
 
         multipleClassname = null;
         for (OsmPrimitive osm : data) {
-            String name = osm.get("name");
-            if (name == null) {
-                name = osm.get("ref");
-            }
+            String name = Optional.ofNullable(osm.get("name")).orElseGet(() -> osm.get("ref"));
             if (name != null && !name.isEmpty() && multipleName.length() <= MULTIPLE_NAME_MAX_LENGTH) {
                 if (multipleName.length() > 0) {
                     multipleName.append(", ");

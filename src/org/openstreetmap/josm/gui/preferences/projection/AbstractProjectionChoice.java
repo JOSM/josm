@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.preferences.projection;
 
+import java.util.Optional;
+
 import org.openstreetmap.josm.data.projection.CustomProjection;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
@@ -59,9 +61,7 @@ public abstract class AbstractProjectionChoice implements ProjectionChoice {
     @Override
     public Projection getProjection() {
         String code = getCurrentCode();
-        String pref = Projections.getInit(code);
-        if (pref == null)
-            throw new AssertionError("Error: Unknown projection code");
-        return new CustomProjection(getProjectionName(), code, pref, getCacheDir());
+        return new CustomProjection(getProjectionName(), code, Optional.ofNullable(Projections.getInit(code))
+                .orElseThrow(() -> new AssertionError("Error: Unknown projection code: " + code)), getCacheDir());
     }
 }

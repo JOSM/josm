@@ -308,8 +308,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         if (reference.getId() != history.getId())
             throw new IllegalArgumentException(
                     tr("Failed to set reference. Reference ID {0} does not match history ID {1}.", reference.getId(), history.getId()));
-        HistoryOsmPrimitive primitive = history.getByVersion(reference.getVersion());
-        if (primitive == null)
+        if (history.getByVersion(reference.getVersion()) == null)
             throw new IllegalArgumentException(
                     tr("Failed to set reference. Reference version {0} not available in history.", reference.getVersion()));
 
@@ -339,8 +338,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         if (current.getId() != history.getId())
             throw new IllegalArgumentException(
                     tr("Failed to set reference. Reference ID {0} does not match history ID {1}.", current.getId(), history.getId()));
-        HistoryOsmPrimitive primitive = history.getByVersion(current.getVersion());
-        if (primitive == null)
+        if (history.getByVersion(current.getVersion()) == null)
             throw new IllegalArgumentException(
                     tr("Failed to set current primitive. Current version {0} not available in history.", current.getVersion()));
         this.current = current;
@@ -388,16 +386,13 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
 
     /**
      * Returns true if <code>primitive</code> is the latest primitive
-     * representing the version currently edited in the current data
-     * layer.
+     * representing the version currently edited in the current data layer.
      *
      * @param primitive the primitive to check
      * @return true if <code>primitive</code> is the latest primitive
      */
     public boolean isLatest(HistoryOsmPrimitive primitive) {
-        if (primitive == null)
-            return false;
-        return primitive == latest;
+        return primitive != null && primitive == latest;
     }
 
     /**

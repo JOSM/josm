@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
@@ -667,11 +668,8 @@ public class Multipolygon {
             }
 
             for (PolyData pdInner: innerPolygons) {
-                PolyData o = findOuterPolygon(pdInner, combinedPolygons);
-                if (o == null) {
-                    o = outerPolygons.get(0);
-                }
-                o.addInner(pdInner);
+                Optional.ofNullable(findOuterPolygon(pdInner, combinedPolygons)).orElseGet(() -> outerPolygons.get(0))
+                    .addInner(pdInner);
             }
         }
     }

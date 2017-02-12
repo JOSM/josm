@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
 
@@ -519,10 +520,7 @@ public class CombineWayAction extends JosmAction {
         }
 
         protected List<NodePair> getOutboundPairs(Node node) {
-            List<NodePair> l = successors.get(node);
-            if (l == null)
-                return Collections.emptyList();
-            return l;
+            return Optional.ofNullable(successors.get(node)).orElseGet(Collections::emptyList);
         }
 
         protected Set<Node> getNodes() {

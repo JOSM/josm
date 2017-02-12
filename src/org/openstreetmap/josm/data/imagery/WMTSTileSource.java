@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.Stack;
@@ -478,13 +479,9 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
      * @throws XMLStreamException See {@link XMLStreamReader}
      */
     private static TileMatrix parseTileMatrix(XMLStreamReader reader, String matrixCrs) throws XMLStreamException {
-        Projection matrixProj = Projections.getProjectionByCode(matrixCrs);
+        Projection matrixProj = Optional.ofNullable(Projections.getProjectionByCode(matrixCrs))
+                .orElseGet(Main::getProjection); // use current projection if none found. Maybe user is using custom string
         TileMatrix ret = new TileMatrix();
-
-        if (matrixProj == null) {
-            // use current projection if none found. Maybe user is using custom string
-            matrixProj = Main.getProjection();
-        }
         for (int event = reader.getEventType();
                 reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && QN_TILEMATRIX.equals(reader.getName()));
                 event = reader.next()) {

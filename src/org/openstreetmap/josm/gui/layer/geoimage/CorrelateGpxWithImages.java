@@ -36,6 +36,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
@@ -580,12 +581,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         JPanel panelTf = new JPanel(new GridBagLayout());
 
-        String prefTimezone = Main.pref.get("geoimage.timezone", "0:00");
-        if (prefTimezone == null) {
-            prefTimezone = "0:00";
-        }
         try {
-            timezone = Timezone.parseTimezone(prefTimezone);
+            timezone = Timezone.parseTimezone(Optional.ofNullable(Main.pref.get("geoimage.timezone", "0:00")).orElse("0:00"));
         } catch (ParseException e) {
             timezone = Timezone.ZERO;
         }

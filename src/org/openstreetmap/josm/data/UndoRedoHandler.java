@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Optional;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
@@ -73,11 +74,7 @@ public class UndoRedoHandler implements LayerChangeListener {
      * @param c The command to execute. Must not be {@code null}.
      */
     public synchronized void add(final Command c) {
-        DataSet ds = c.getAffectedDataSet();
-        if (ds == null) {
-            // old, legacy behaviour
-            ds = Main.getLayerManager().getEditDataSet();
-        }
+        DataSet ds = Optional.ofNullable(c.getAffectedDataSet()).orElseGet(() -> Main.getLayerManager().getEditDataSet());
         Collection<? extends OsmPrimitive> oldSelection = null;
         if (ds != null) {
             oldSelection = ds.getSelected();

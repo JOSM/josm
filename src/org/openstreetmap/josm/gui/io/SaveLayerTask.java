@@ -3,6 +3,8 @@ package org.openstreetmap.josm.gui.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.Optional;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -37,11 +39,8 @@ public class SaveLayerTask extends AbstractIOTask {
      */
     protected SaveLayerTask(SaveLayerInfo layerInfo, ProgressMonitor monitor) {
         CheckParameterUtil.ensureParameterNotNull(layerInfo, "layerInfo");
-        if (monitor == null) {
-            monitor = NullProgressMonitor.INSTANCE;
-        }
         this.layerInfo = layerInfo;
-        this.parentMonitor = monitor;
+        this.parentMonitor = Optional.ofNullable(monitor).orElse(NullProgressMonitor.INSTANCE);
     }
 
     @Override

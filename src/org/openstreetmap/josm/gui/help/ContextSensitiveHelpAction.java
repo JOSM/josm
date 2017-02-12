@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
+import java.util.Optional;
 
 import javax.swing.AbstractAction;
 
@@ -27,9 +28,7 @@ public class ContextSensitiveHelpAction extends AbstractAction {
      * @param relativeHelpTopic the relative help topic
      */
     public void setHelpTopic(String relativeHelpTopic) {
-        if (relativeHelpTopic == null)
-            relativeHelpTopic = "/";
-        this.helpTopic = relativeHelpTopic;
+        helpTopic = Optional.ofNullable(relativeHelpTopic).orElse("/");
     }
 
     /**

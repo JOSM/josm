@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.AbstractAction;
@@ -159,10 +160,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         public Icon getDisplayIcon() {
             if (ico != null)
                 return ico;
-            Object o = action.getValue(Action.LARGE_ICON_KEY);
-            if (o == null)
-                o = action.getValue(Action.SMALL_ICON);
-            return (Icon) o;
+            return (Icon) Optional.ofNullable(action.getValue(Action.LARGE_ICON_KEY)).orElseGet(() -> action.getValue(Action.SMALL_ICON));
         }
 
         /**
@@ -1192,16 +1190,10 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             paramCode = action.parameters.hashCode();
         }
 
-        String tt = action.getDisplayTooltip();
-        if (tt == null) {
-            tt = "";
-        }
+        String tt = Optional.ofNullable(action.getDisplayTooltip()).orElse("");
 
         if (sc == null || paramCode != 0) {
-            String name = (String) action.getAction().getValue("toolbar");
-            if (name == null) {
-                name = action.getDisplayName();
-            }
+            String name = Optional.ofNullable((String) action.getAction().getValue("toolbar")).orElseGet(action::getDisplayName);
             if (paramCode != 0) {
                 name = name+paramCode;
             }

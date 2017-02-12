@@ -166,12 +166,7 @@ public class NodeElement extends StyleElement {
         if (sizeOnDefault != null && sizeOnDefault <= 0) {
             sizeOnDefault = null;
         }
-        Float size = getWidth(c, "symbol-size", sizeOnDefault);
-
-        if (size == null) {
-            size = 10f;
-        }
-
+        Float size = Optional.ofNullable(getWidth(c, "symbol-size", sizeOnDefault)).orElse(10f);
         if (size <= 0)
             return null;
 

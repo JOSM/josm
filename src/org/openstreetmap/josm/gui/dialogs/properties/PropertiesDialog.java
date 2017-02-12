@@ -27,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -555,11 +556,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         }
 
         // Ignore parameter as we do not want to operate always on real selection here, especially in draw mode
-        Collection<OsmPrimitive> newSel = Main.main.getInProgressSelection();
-        if (newSel == null) {
-            newSel = Collections.<OsmPrimitive>emptyList();
-        }
-
+        Collection<OsmPrimitive> newSel = Optional.ofNullable(Main.main.getInProgressSelection()).orElseGet(Collections::emptyList);
         String selectedTag;
         Relation selectedRelation = null;
         selectedTag = editHelper.getChangedKey(); // select last added or last edited key by default
@@ -615,10 +612,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
             for (OsmPrimitive ref: primitive.getReferrers(true)) {
                 if (ref instanceof Relation && !ref.isIncomplete() && !ref.isDeleted()) {
                     Relation r = (Relation) ref;
-                    MemberInfo mi = roles.get(r);
-                    if (mi == null) {
-                        mi = new MemberInfo(newSel);
-                    }
+                    MemberInfo mi = Optional.ofNullable(roles.get(r)).orElseGet(() -> new MemberInfo(newSel));
                     roles.put(r, mi);
                     int i = 1;
                     for (RelationMember m : r.getMembers()) {

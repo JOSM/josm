@@ -306,11 +306,7 @@ public class PurgeAction extends JosmAction {
     @Override
     protected void updateEnabledState() {
         DataSet ds = getLayerManager().getEditDataSet();
-        if (ds == null) {
-            setEnabled(false);
-        } else {
-            setEnabled(!ds.selectionEmpty());
-        }
+        setEnabled(ds != null && !ds.selectionEmpty());
     }
 
     @Override

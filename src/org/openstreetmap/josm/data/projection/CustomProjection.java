@@ -9,6 +9,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -21,7 +22,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.CentricDatum;
 import org.openstreetmap.josm.data.projection.datum.Datum;
 import org.openstreetmap.josm.data.projection.datum.NTV2Datum;
-import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
 import org.openstreetmap.josm.data.projection.datum.NullDatum;
 import org.openstreetmap.josm.data.projection.datum.SevenParameterDatum;
 import org.openstreetmap.josm.data.projection.datum.ThreeParameterDatum;
@@ -251,12 +251,10 @@ public class CustomProjection extends AbstractProjection {
             proj = parseProjection(parameters, ellps);
             // "utm" is a shortcut for a set of parameters
             if ("utm".equals(parameters.get(Param.proj.key))) {
-                String zoneStr = parameters.get(Param.zone.key);
-                if (zoneStr == null)
-                    throw new ProjectionConfigurationException(tr("UTM projection (''+proj=utm'') requires ''+zone=...'' parameter."));
                 Integer zone;
                 try {
-                    zone = Integer.valueOf(zoneStr);
+                    zone = Integer.valueOf(Optional.ofNullable(parameters.get(Param.zone.key)).orElseThrow(
+                            () -> new ProjectionConfigurationException(tr("UTM projection (''+proj=utm'') requires ''+zone=...'' parameter."))));
                 } catch (NumberFormatException e) {
                     zone = null;
                 }
@@ -393,12 +391,11 @@ public class CustomProjection extends AbstractProjection {
         // recursive resolution of +init includes
         String initKey = parameters.get(Param.init.key);
         if (initKey != null) {
-            String init = Projections.getInit(initKey);
-            if (init == null)
-                throw new ProjectionConfigurationException(tr("Value ''{0}'' for option +init not supported.", initKey));
             Map<String, String> initp;
             try {
-                initp = parseParameterList(init, ignoreUnknownParameter);
+                initp = parseParameterList(Optional.ofNullable(Projections.getInit(initKey)).orElseThrow(
+                        () -> new ProjectionConfigurationException(tr("Value ''{0}'' for option +init not supported.", initKey))),
+                        ignoreUnknownParameter);
                 initp = resolveInits(initp, ignoreUnknownParameter);
             } catch (ProjectionConfigurationException ex) {
                 throw new ProjectionConfigurationException(initKey+": "+ex.getMessage(), ex);
@@ -418,12 +415,8 @@ public class CustomProjection extends AbstractProjection {
     public Ellipsoid parseEllipsoid(Map<String, String> parameters) throws ProjectionConfigurationException {
         String code = parameters.get(Param.ellps.key);
         if (code != null) {
-            Ellipsoid ellipsoid = Projections.getEllipsoid(code);
-            if (ellipsoid == null) {
-                throw new ProjectionConfigurationException(tr("Ellipsoid ''{0}'' not supported.", code));
-            } else {
-                return ellipsoid;
-            }
+            return Optional.ofNullable(Projections.getEllipsoid(code)).orElseThrow(
+                () -> new ProjectionConfigurationException(tr("Ellipsoid ''{0}'' not supported.", code)));
         }
         String s = parameters.get(Param.a.key);
         if (s != null) {
@@ -464,9 +457,8 @@ public class CustomProjection extends AbstractProjection {
     public Datum parseDatum(Map<String, String> parameters, Ellipsoid ellps) throws ProjectionConfigurationException {
         String datumId = parameters.get(Param.datum.key);
         if (datumId != null) {
-            Datum datum = Projections.getDatum(datumId);
-            if (datum == null) throw new ProjectionConfigurationException(tr("Unknown datum identifier: ''{0}''", datumId));
-            return datum;
+            return Optional.ofNullable(Projections.getDatum(datumId)).orElseThrow(
+                    () -> new ProjectionConfigurationException(tr("Unknown datum identifier: ''{0}''", datumId)));
         }
         if (ellps == null) {
             if (parameters.containsKey(Param.no_defs.key))
@@ -482,10 +474,9 @@ public class CustomProjection extends AbstractProjection {
             }
             if ("null".equals(nadgridsId))
                 return new NullDatum(null, ellps);
-            NTV2GridShiftFileWrapper nadgrids = Projections.getNTV2Grid(nadgridsId);
-            if (nadgrids == null)
-                throw new ProjectionConfigurationException(tr("Grid shift file ''{0}'' for option +nadgrids not supported.", nadgridsId));
-            return new NTV2Datum(nadgridsId, null, ellps, nadgrids);
+            final String fNadgridsId = nadgridsId;
+            return new NTV2Datum(fNadgridsId, null, ellps, Optional.ofNullable(Projections.getNTV2Grid(fNadgridsId)).orElseThrow(
+                    () -> new ProjectionConfigurationException(tr("Grid shift file ''{0}'' for option +nadgrids not supported.", fNadgridsId))));
         }
 
         String towgs84 = parameters.get(Param.towgs84.key);
@@ -626,11 +617,9 @@ public class CustomProjection extends AbstractProjection {
     public static double parseDouble(Map<String, String> parameters, String parameterName) throws ProjectionConfigurationException {
         if (!parameters.containsKey(parameterName))
             throw new ProjectionConfigurationException(tr("Unknown parameter ''{0}''", parameterName));
-        String doubleStr = parameters.get(parameterName);
-        if (doubleStr == null)
-            throw new ProjectionConfigurationException(
-                    tr("Expected number argument for parameter ''{0}''", parameterName));
-        return parseDouble(doubleStr, parameterName);
+        return parseDouble(Optional.ofNullable(parameters.get(parameterName)).orElseThrow(
+                () -> new ProjectionConfigurationException(tr("Expected number argument for parameter ''{0}''", parameterName))),
+                parameterName);
     }
 
     public static double parseDouble(String doubleStr, String parameterName) throws ProjectionConfigurationException {

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Optional;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -111,10 +112,8 @@ public class NmeaReader {
     private final SimpleDateFormat rmcTimeFmtStd = new SimpleDateFormat("ddMMyyHHmmss");
 
     private Date readTime(String p) {
-        Date d = rmcTimeFmt.parse(p, new ParsePosition(0));
-        if (d == null) {
-            d = rmcTimeFmtStd.parse(p, new ParsePosition(0));
-        }
+        Date d = Optional.ofNullable(rmcTimeFmt.parse(p, new ParsePosition(0)))
+                .orElseGet(() -> rmcTimeFmtStd.parse(p, new ParsePosition(0)));
         if (d == null)
             throw new JosmRuntimeException("Date is malformed");
         return d;

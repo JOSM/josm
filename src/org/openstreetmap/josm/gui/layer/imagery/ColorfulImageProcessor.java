@@ -10,6 +10,7 @@ import java.awt.image.BufferedImageOp;
 import java.awt.image.ColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
+import java.util.Optional;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.ImageProcessor;
@@ -81,10 +82,7 @@ public class ColorfulImageProcessor implements ImageProcessor {
                 return src;
             }
 
-            BufferedImage dest = dst;
-            if (dest == null) {
-                dest = createCompatibleDestImage(src, null);
-            }
+            BufferedImage dest = Optional.ofNullable(dst).orElseGet(() -> createCompatibleDestImage(src, null));
             DataBuffer srcBuffer = src.getRaster().getDataBuffer();
             DataBuffer destBuffer = dest.getRaster().getDataBuffer();
             if (!(srcBuffer instanceof DataBufferByte) || !(destBuffer instanceof DataBufferByte)) {

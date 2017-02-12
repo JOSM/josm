@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Optional;
 
 import javax.swing.JOptionPane;
 
@@ -71,12 +72,11 @@ public class UpdateSelectionAction extends JosmAction {
      */
     public static void updatePrimitive(PrimitiveId id) {
         ensureParameterNotNull(id, "id");
-        if (Main.getLayerManager().getEditLayer() == null)
-            throw new IllegalStateException(tr("No current dataset found"));
-        OsmPrimitive primitive = Main.getLayerManager().getEditLayer().data.getPrimitiveById(id);
-        if (primitive == null)
-            throw new IllegalStateException(tr("Did not find an object with id {0} in the current dataset", id));
-        updatePrimitives(Collections.singleton(primitive));
+        updatePrimitives(Collections.singleton(Optional.ofNullable(Optional.ofNullable(
+                Main.getLayerManager().getEditLayer()).orElseThrow(
+                        () -> new IllegalStateException(tr("No current dataset found")))
+                .data.getPrimitiveById(id)).orElseThrow(
+                        () -> new IllegalStateException(tr("Did not find an object with id {0} in the current dataset", id)))));
     }
 
     /**

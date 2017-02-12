@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.io;
 
 import java.awt.BorderLayout;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
@@ -124,10 +125,7 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
         public void stateChanged(ChangeEvent e) {
             if (e.getSource() instanceof ChangesetCommentModel) {
                 String newValue = ((ChangesetCommentModel) e.getSource()).getComment();
-                String oldValue = getTagEditorValue(key);
-                if (oldValue == null) {
-                    oldValue = "";
-                }
+                String oldValue = Optional.ofNullable(getTagEditorValue(key)).orElse("");
                 if (!oldValue.equals(newValue)) {
                     setProperty(key, newValue);
                 }

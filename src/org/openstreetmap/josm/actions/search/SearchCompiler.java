@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -418,11 +419,7 @@ public class SearchCompiler {
 
         @Override
         public boolean match(Tagged osm) {
-            Boolean ret = OsmUtils.getOsmBoolean(osm.get(key));
-            if (ret == null)
-                return defaultValue;
-            else
-                return ret;
+            return Optional.ofNullable(OsmUtils.getOsmBoolean(osm.get(key))).orElse(defaultValue);
         }
 
         @Override
@@ -948,8 +945,7 @@ public class SearchCompiler {
         ExactType(String type) throws ParseError {
             this.type = OsmPrimitiveType.from(type);
             if (this.type == null)
-                throw new ParseError(tr("Unknown primitive type: {0}. Allowed values are node, way or relation",
-                        type));
+                throw new ParseError(tr("Unknown primitive type: {0}. Allowed values are node, way or relation", type));
         }
 
         @Override
@@ -1622,11 +1618,9 @@ public class SearchCompiler {
      * @throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError if search expression cannot be parsed
      */
     public Match parse() throws ParseError {
-        Match m = parseExpression();
+        Match m = Optional.ofNullable(parseExpression()).orElse(Always.INSTANCE);
         if (!tokenizer.readIfEqual(Token.EOF))
             throw new ParseError(tr("Unexpected token: {0}", tokenizer.nextToken()));
-        if (m == null)
-            m = Always.INSTANCE;
         Main.debug("Parsed search expression is {0}", m);
         return m;
     }
@@ -1757,11 +1751,7 @@ public class SearchCompiler {
     }
 
     private Match parseFactor(String errorMessage) throws ParseError {
-        Match fact = parseFactor();
-        if (fact == null)
-            throw new ParseError(errorMessage);
-        else
-            return fact;
+        return Optional.ofNullable(parseFactor()).orElseThrow(() -> new ParseError(errorMessage));
     }
 
     private static int regexFlags(boolean caseSensitive) {

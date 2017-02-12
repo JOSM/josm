@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.io;
 
 import java.util.Locale;
+import java.util.Optional;
 
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -16,11 +17,8 @@ final class StreamProgressUpdater {
     private int lastDialogUpdate;
 
     StreamProgressUpdater(long size, ProgressMonitor progressMonitor, String taskTitle) {
-        if (progressMonitor == null) {
-            progressMonitor = NullProgressMonitor.INSTANCE;
-        }
         this.size = size;
-        this.progressMonitor = progressMonitor;
+        this.progressMonitor = Optional.ofNullable(progressMonitor).orElse(NullProgressMonitor.INSTANCE);
         this.taskTitle = taskTitle;
         initProgressMonitor();
     }

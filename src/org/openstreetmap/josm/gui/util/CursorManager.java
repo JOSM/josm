@@ -5,6 +5,7 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -49,9 +50,7 @@ public class CursorManager {
      * @param reference A reference object that can be passed to the next set/reset calls to identify the caller.
      */
     public synchronized void setNewCursor(Cursor cursor, Object reference) {
-        if (reference == null) {
-            throw new NullPointerException("Cannot register a cursor that can never be removed.");
-        }
+        Objects.requireNonNull(reference, "Cannot register a cursor that can never be removed.");
         // re-insert to allow overriding.
         cursors.remove(reference);
         cursors.put(reference, cursor);

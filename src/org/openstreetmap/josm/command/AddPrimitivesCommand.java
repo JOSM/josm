@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.swing.Icon;
 
@@ -168,10 +169,8 @@ public class AddPrimitivesCommand extends Command {
 
         Collection<OsmPrimitive> prims = new HashSet<>();
         for (PrimitiveData d : data) {
-            OsmPrimitive osm = getAffectedDataSet().getPrimitiveById(d);
-            if (osm == null)
-                throw new JosmRuntimeException("No primitive found for " + d);
-            prims.add(osm);
+            prims.add(Optional.ofNullable(getAffectedDataSet().getPrimitiveById(d)).orElseThrow(
+                    () -> new JosmRuntimeException("No primitive found for " + d)));
         }
         return prims;
     }

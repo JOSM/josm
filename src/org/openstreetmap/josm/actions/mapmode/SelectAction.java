@@ -1260,8 +1260,6 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      * @return {@code o} as collection of {@code o}'s type.
      */
     protected static <T> Collection<T> asColl(T o) {
-        if (o == null)
-            return Collections.emptySet();
-        return Collections.singleton(o);
+        return o == null ? Collections.emptySet() : Collections.singleton(o);
     }
 }

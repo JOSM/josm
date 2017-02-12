@@ -10,6 +10,7 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -300,12 +301,8 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
         if (this.name != null) {
             removeColorPropertyListener();
         }
-        if (name == null) {
-            name = "";
-        }
-
         String oldValue = this.name;
-        this.name = name;
+        this.name = Optional.ofNullable(name).orElse("");
         if (!this.name.equals(oldValue)) {
             propertyChangeSupport.firePropertyChange(NAME_PROP, oldValue, this.name);
         }

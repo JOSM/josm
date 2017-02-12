@@ -8,6 +8,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.AbstractListModel;
 import javax.swing.JLabel;
@@ -173,11 +174,7 @@ public class UploadedObjectsSummaryPanel extends JPanel {
         }
 
         public void setPrimitives(List<OsmPrimitive> primitives) {
-            if (primitives == null) {
-                this.primitives = new ArrayList<>();
-            } else {
-                this.primitives = primitives;
-            }
+            this.primitives = Optional.ofNullable(primitives).orElseGet(ArrayList::new);
             fireContentsChanged(this, 0, getSize());
         }
 

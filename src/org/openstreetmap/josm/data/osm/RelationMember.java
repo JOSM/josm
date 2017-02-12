@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -132,10 +133,7 @@ public class RelationMember implements PrimitiveId {
      */
     public RelationMember(String role, OsmPrimitive member) {
         CheckParameterUtil.ensureParameterNotNull(member, "member");
-        if (role == null) {
-            role = "";
-        }
-        this.role = role;
+        this.role = Optional.ofNullable(role).orElse("");
         this.member = member;
     }
 
@@ -149,7 +147,8 @@ public class RelationMember implements PrimitiveId {
         this(other.role, other.member);
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return '"' + role + "\"=" + member;
     }
 

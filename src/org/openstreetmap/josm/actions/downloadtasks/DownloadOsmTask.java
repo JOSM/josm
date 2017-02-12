@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -269,10 +270,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
         protected void loadData(String newLayerName, Bounds bounds) {
             OsmDataLayer layer = addNewLayerIfRequired(newLayerName);
             if (layer == null) {
-                layer = getEditLayer();
-                if (layer == null) {
-                    layer = getFirstDataLayer();
-                }
+                layer = Optional.ofNullable(getEditLayer()).orElseGet(this::getFirstDataLayer);
                 layer.mergeFrom(dataSet);
                 if (zoomAfterDownload) {
                     computeBboxAndCenterScale(bounds);
