@@ -41,7 +41,7 @@ public class PasteMembersAction extends AddFromSelectionAction implements Flavor
     }
 
     private TransferSupport getSupport() {
-        return new TransferSupport(memberTable, ClipboardUtils.getClipboard().getContents(null));
+        return new TransferSupport(memberTable, ClipboardUtils.getClipboardContent());
     }
 
     @Override

@@ -59,7 +59,7 @@ public class OsmTransferHandler extends AbstractStackTransferHandler {
      * @param mPosition The position to paste at. If it is <code>null</code>, the original position will be used.
      */
     public void pasteOn(OsmDataLayer editLayer, EastNorth mPosition) {
-        Transferable transferable = ClipboardUtils.getClipboard().getContents(null);
+        Transferable transferable = ClipboardUtils.getClipboardContent();
         pasteOn(editLayer, mPosition, transferable);
     }
 
@@ -78,7 +78,7 @@ public class OsmTransferHandler extends AbstractStackTransferHandler {
      * @param primitives The primitives to paste on.
      */
     public void pasteTags(Collection<? extends OsmPrimitive> primitives) {
-        Transferable transferable = ClipboardUtils.getClipboard().getContents(null);
+        Transferable transferable = ClipboardUtils.getClipboardContent();
         importTags(new TransferSupport(Main.panel, transferable), primitives);
     }
 
