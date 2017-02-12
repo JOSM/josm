@@ -15,7 +15,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
@@ -41,11 +40,16 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
             = new BooleanProperty("display.discardable-keys", false).cached();
 
     static {
-        UIDefaults defaults = UIManager.getDefaults();
-        SELECTED_BG = new ColorProperty(marktr("Discardable key: selection Background"),
-                defaults.getColor("Table.selectionBackground")).cached();
-        NORMAL_BG = new ColorProperty(marktr("Discardable key: background"),
-                defaults.getColor("Table.background")).cached();
+        Color selectionBackground = UIManager.getColor("Table.selectionBackground");
+        if (selectionBackground == null) {
+            selectionBackground = Color.BLUE;
+        }
+        SELECTED_BG = new ColorProperty(marktr("Discardable key: selection Background"), selectionBackground).cached();
+        Color background = UIManager.getColor("Table.background");
+        if (background == null) {
+            background = Color.WHITE;
+        }
+        NORMAL_BG = new ColorProperty(marktr("Discardable key: background"), background).cached();
     }
 
     private final Collection<TableCellRenderer> customRenderer = new CopyOnWriteArrayList<>();
@@ -56,9 +60,8 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
             c.setForeground((isSelected ? SELECTED_FG : NORMAL_FG).get());
             c.setBackground((isSelected ? SELECTED_BG : NORMAL_BG).get());
         } else {
-            UIDefaults defaults = UIManager.getDefaults();
-            c.setForeground(defaults.getColor("Table."+(isSelected ? "selectionF" : "f")+"oreground"));
-            c.setBackground(defaults.getColor("Table."+(isSelected ? "selectionB" : "b")+"ackground"));
+            c.setForeground(UIManager.getColor("Table."+(isSelected ? "selectionF" : "f")+"oreground"));
+            c.setBackground(UIManager.getColor("Table."+(isSelected ? "selectionB" : "b")+"ackground"));
         }
     }
 
