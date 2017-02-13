@@ -280,7 +280,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         add(colorTypeHeatIconLabel, GBC.std().insets(5, 0, 0, 5));
         add(colorTypeHeatMapTune, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
 
-        colorTypeHeatMapTune.addPropertyChangeListener(e -> {
+        colorTypeHeatMapTune.addActionListener(e -> {
             final Dimension dim = colorTypeHeatMapTune.getPreferredSize();
             if (null != dim) {
                 // get image size of environment
