@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -113,8 +112,8 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         idOffset.put(OsmPrimitiveType.WAY, 2_400_000_000L);
         idOffset.put(OsmPrimitiveType.RELATION, 3_600_000_000L);
         try {
-            final List<NameFinder.SearchResult> results = NameFinder.queryNominatim(area);
-            final PrimitiveId osmId = results.get(0).getOsmId();
+            final PrimitiveId osmId = NameFinder.queryNominatim(area).stream().filter(
+                    x -> !OsmPrimitiveType.NODE.equals(x.getOsmId().getType())).iterator().next().getOsmId();
             return String.format("area(%d)", osmId.getUniqueId() + idOffset.get(osmId.getType()));
         } catch (IOException | NoSuchElementException | IndexOutOfBoundsException ex) {
             throw new UncheckedParseException(ex);
