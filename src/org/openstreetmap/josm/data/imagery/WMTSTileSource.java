@@ -10,12 +10,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
@@ -26,6 +28,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -147,13 +150,12 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         private final Collection<String> tileMatrixSetLinks = new ArrayList<>();
 
         Layer(Layer l) {
-            if (l != null) {
-                format = l.format;
-                name = l.name;
-                baseUrl = l.baseUrl;
-                style = l.style;
-                tileMatrixSet = new TileMatrixSet(l.tileMatrixSet);
-            }
+            Objects.requireNonNull(l);
+            format = l.format;
+            name = l.name;
+            baseUrl = l.baseUrl;
+            style = l.style;
+            tileMatrixSet = new TileMatrixSet(l.tileMatrixSet);
         }
 
         Layer() {
@@ -383,6 +385,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     private static Layer parseLayer(XMLStreamReader reader) throws XMLStreamException {
         Layer layer = new Layer();
         Stack<QName> tagStack = new Stack<>();
+        List<String> supportedMimeTypes = Arrays.asList(ImageIO.getReaderMIMETypes());
 
         for (int event = reader.getEventType();
                 reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && QN_LAYER.equals(reader.getName()));
@@ -391,7 +394,10 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                 tagStack.push(reader.getName());
                 if (tagStack.size() == 2) {
                     if (QN_FORMAT.equals(reader.getName())) {
-                        layer.format = reader.getElementText();
+                        String format = reader.getElementText();
+                        if (supportedMimeTypes.contains(format)) {
+                            layer.format = format;
+                        }
                     } else if (GetCapabilitiesParseHelper.QN_OWS_IDENTIFIER.equals(reader.getName())) {
                         layer.name = reader.getElementText();
                     } else if (QN_RESOURCE_URL.equals(reader.getName()) &&

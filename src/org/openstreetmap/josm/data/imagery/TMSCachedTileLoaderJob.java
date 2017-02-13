@@ -109,8 +109,12 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     public URL getUrl() throws IOException {
         if (url == null) {
             synchronized (this) {
-                if (url == null)
-                    url = new URL(tile.getUrl());
+                if (url == null) {
+                    String sUrl = tile.getUrl();
+                    if (!"".equals(sUrl)) {
+                        url = new URL(sUrl);
+                    }
+                }
             }
         }
         return url;
@@ -150,7 +154,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         tile.initLoading();
         try {
             super.submit(this, force);
-        } catch (IOException e) {
+        } catch (IOException | IllegalArgumentException e) {
             // if we fail to submit the job, mark tile as loaded and set error message
             Main.warn(e, false);
             tile.finishLoading();
