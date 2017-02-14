@@ -491,7 +491,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             String[] lines = textField.getText().split("\n");
             List<String> toActivate = new ArrayList<>();
             List<String> notFound = new ArrayList<>();
-            Pattern regex = Pattern.compile("^[-+\\s]*|\\s*\\(v?[\\d\\.]*\\)|[\\s]*$");
+            Pattern regex = Pattern.compile("^[-+\\*\\s]*|\\s[\\d\\s]*(\\(([vab\\.\\d]|alpha|beta)*\\))?[\\d\\s]*$");
             for (String line : lines) {
                 String name = regex.matcher(line).replaceAll("");
                 if (name.isEmpty()) {
