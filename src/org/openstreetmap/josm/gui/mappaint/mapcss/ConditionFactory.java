@@ -13,6 +13,7 @@ import java.util.function.BiFunction;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler.InDataSourceArea;
@@ -50,12 +51,18 @@ public final class ConditionFactory {
      * @param context The type of context to use.
      * @param considerValAsKey whether to consider {@code v} as another key and compare the values of key {@code k} and key {@code v}.
      * @return The new condition.
+     * @throws MapCSSException if the arguments are incorrect
      */
     public static Condition createKeyValueCondition(String k, String v, Op op, Context context, boolean considerValAsKey) {
         switch (context) {
         case PRIMITIVE:
-            if (KeyValueRegexpCondition.SUPPORTED_OPS.contains(op) && !considerValAsKey)
-                return new KeyValueRegexpCondition(k, v, op, false);
+            if (KeyValueRegexpCondition.SUPPORTED_OPS.contains(op) && !considerValAsKey) {
+                try {
+                    return new KeyValueRegexpCondition(k, v, op, false);
+                } catch (PatternSyntaxException e) {
+                    throw new MapCSSException(e);
+                }
+            }
             if (!considerValAsKey && op.equals(Op.EQ))
                 return new SimpleKeyValueCondition(k, v);
             return new KeyValueCondition(k, v, op, considerValAsKey);
@@ -338,6 +345,7 @@ public final class ConditionFactory {
          * @param v value
          * @param op operation
          * @param considerValAsKey must be false
+         * @throws PatternSyntaxException if the value syntax is invalid
          */
         public KeyValueRegexpCondition(String k, String v, Op op, boolean considerValAsKey) {
             super(k, v, op, considerValAsKey);

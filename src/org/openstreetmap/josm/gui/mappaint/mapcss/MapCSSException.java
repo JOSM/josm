@@ -1,20 +1,45 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
+/**
+ * MapCSS parsing error, with line/columnn information in error message.
+ */
 public class MapCSSException extends RuntimeException {
 
-    protected final String specialmessage;
+    /** line number at which the parse error occured */
     protected Integer line;
+    /** column number at which the parse error occured */
     protected Integer column;
 
+    /**
+     * Constructs a new {@code MapCSSException} with an explicit error message.
+     * @param specialmessage error message
+     */
     public MapCSSException(String specialmessage) {
-        this.specialmessage = specialmessage;
+        super(specialmessage);
     }
 
+    /**
+     * Constructs a new {@code MapCSSException} with a cause.
+     * @param cause the root cause
+     * @since 11562
+     */
+    public MapCSSException(Throwable cause) {
+        super(cause);
+    }
+
+    /**
+     * Sets the column number at which the parse error occured.
+     * @param column the column number at which the parse error occured
+     */
     public void setColumn(int column) {
         this.column = column;
     }
 
+    /**
+     * Sets the line number at which the parse error occured.
+     * @param line the line number at which the parse error occured
+     */
     public void setLine(int line) {
         this.line = line;
     }
@@ -22,7 +47,7 @@ public class MapCSSException extends RuntimeException {
     @Override
     public String getMessage() {
         if (line == null || column == null)
-            return specialmessage;
-        return String.format("Error at line %s, column %s: %s", line, column, specialmessage);
+            return super.getMessage();
+        return String.format("Error at line %s, column %s: %s", line, column, super.getMessage());
     }
 }
