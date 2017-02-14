@@ -491,6 +491,9 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
             String[] lines = textField.getText().split("\n");
             List<String> toActivate = new ArrayList<>();
             List<String> notFound = new ArrayList<>();
+            // This pattern matches the default list format JOSM uses for bug reports.
+            // It removes a list item mark at the beginning of the line: +, -, *
+            // It removes the version number after the plugin, like: 123, (123), (v5.7alpha3), (1b3), ...
             Pattern regex = Pattern.compile("^[-+\\*\\s]*|\\s[\\d\\s]*(\\(([vab\\.\\d]|alpha|beta)*\\))?[\\d\\s]*$");
             for (String line : lines) {
                 String name = regex.matcher(line).replaceAll("");
