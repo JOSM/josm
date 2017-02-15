@@ -118,6 +118,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         loadPreferences(); // preferences -> controls
     }
 
+    // CHECKSTYLE.OFF: ExecutableStatementCountCheck
     private void initComponents() {
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
@@ -376,6 +377,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
 
         add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
     }
+    // CHECKSTYLE.ON: ExecutableStatementCountCheck
 
     /**
      * Loads preferences to UI controls
