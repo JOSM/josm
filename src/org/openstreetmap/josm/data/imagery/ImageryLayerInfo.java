@@ -32,9 +32,15 @@ import org.xml.sax.SAXException;
 public class ImageryLayerInfo {
 
     public static final ImageryLayerInfo instance = new ImageryLayerInfo();
+    /** List of all usable layers */
     private final List<ImageryInfo> layers = new ArrayList<>();
+    /** List of layer ids of all usable layers */
     private final Map<String, ImageryInfo> layerIds = new HashMap<>();
+    /** List of all available default layers */
     private static final List<ImageryInfo> defaultLayers = new ArrayList<>();
+    /** List of all available default layers (including mirrors) */
+    private static final List<ImageryInfo> allDefaultLayers = new ArrayList<>();
+    /** List of all layer ids of available default layers (including mirrors) */
     private static final Map<String, ImageryInfo> defaultLayerIds = new HashMap<>();
 
     private static final String[] DEFAULT_LAYER_SITES = {
@@ -163,10 +169,18 @@ public class ImageryLayerInfo {
         @Override
         protected void finish() {
             defaultLayers.clear();
+            allDefaultLayers.clear();
             defaultLayers.addAll(newLayers);
+            for (ImageryInfo layer : newLayers) {
+                allDefaultLayers.add(layer);
+                for (ImageryInfo sublayer : layer.getMirrors()) {
+                    allDefaultLayers.add(sublayer);
+                }
+            }
             defaultLayerIds.clear();
             Collections.sort(defaultLayers);
-            buildIdMap(defaultLayers, defaultLayerIds);
+            Collections.sort(allDefaultLayers);
+            buildIdMap(allDefaultLayers, defaultLayerIds);
             updateEntriesFromDefaults();
             buildIdMap(layers, layerIds);
             dropOldEntries();
@@ -304,12 +318,29 @@ public class ImageryLayerInfo {
         Main.pref.putListOfStructs("imagery.entries", entries, ImageryPreferenceEntry.class);
     }
 
+    /**
+     * List of usable layers
+     * @return unmodifiable list containing usable layers
+     */
     public List<ImageryInfo> getLayers() {
         return Collections.unmodifiableList(layers);
     }
 
+    /**
+     * List of available default layers
+     * @return unmodifiable list containing available default layers
+     */
     public List<ImageryInfo> getDefaultLayers() {
         return Collections.unmodifiableList(defaultLayers);
+    }
+
+    /**
+     * List of all available default layers (including mirrors)
+     * @return unmodifiable list containing available default layers
+     * @since 11570
+     */
+    public List<ImageryInfo> getAllDefaultLayers() {
+        return Collections.unmodifiableList(allDefaultLayers);
     }
 
     public static void addLayer(ImageryInfo info) {

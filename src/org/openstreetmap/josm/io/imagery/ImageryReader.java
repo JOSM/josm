@@ -189,6 +189,7 @@ public class ImageryReader implements Closeable {
                         "terms-of-use-url",
                         "country-code",
                         "icon",
+                        "date",
                         "tile-size",
                         "valid-georeference",
                         "epsg4326to3857Supported",
@@ -356,6 +357,9 @@ public class ImageryReader implements Closeable {
                     break;
                 case "description":
                     entry.setDescription(lang, accumulator.toString());
+                    break;
+                case "date":
+                    entry.setDate(accumulator.toString());
                     break;
                 case "id":
                     entry.setId(accumulator.toString());

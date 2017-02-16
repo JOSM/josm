@@ -325,7 +325,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
             mod = activeTable.getColumnModel();
             mod.getColumn(1).setPreferredWidth(800);
-            mod.getColumn(1).setCellRenderer(new ImageryURLTableCellRenderer(layerInfo.getDefaultLayers()));
+            mod.getColumn(1).setCellRenderer(new ImageryURLTableCellRenderer(layerInfo.getAllDefaultLayers()));
             mod.getColumn(0).setPreferredWidth(200);
 
             RemoveEntryAction remove = new RemoveEntryAction();
@@ -741,17 +741,17 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
              * @return The imagery info at the given row number
              */
             public ImageryInfo getRow(int row) {
-                return layerInfo.getDefaultLayers().get(row);
+                return layerInfo.getAllDefaultLayers().get(row);
             }
 
             @Override
             public int getRowCount() {
-                return layerInfo.getDefaultLayers().size();
+                return layerInfo.getAllDefaultLayers().size();
             }
 
             @Override
             public Object getValueAt(int row, int column) {
-                ImageryInfo info = layerInfo.getDefaultLayers().get(row);
+                ImageryInfo info = layerInfo.getAllDefaultLayers().get(row);
                 switch (column) {
                 case 0:
                     return info.getCountryCode();

@@ -187,6 +187,12 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     private String termsOfUseURL;
     /** country code of the imagery (for country specific imagery) */
     private String countryCode = "";
+    /** 
+      * creation date of the imagery (in the form YYYY-MM-DD;YYYY-MM-DD, where
+      * DD and MM as well as a second date are optional)
+      * @since 11570
+      */
+    private String date;
     /** mirrors of different type for this entry */
     private List<ImageryInfo> mirrors;
     /** icon used in menu */
@@ -203,6 +209,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public static class ImageryPreferenceEntry {
         @pref String name;
+        @pref String d;
         @pref String id;
         @pref String type;
         @pref String url;
@@ -215,6 +222,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         @pref String terms_of_use_text;
         @pref String terms_of_use_url;
         @pref String country_code = "";
+        @pref String date;
         @pref int max_zoom;
         @pref int min_zoom;
         @pref String cookies;
@@ -252,6 +260,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             eula = i.eulaAcceptanceRequired;
             attribution_text = i.attributionText;
             attribution_url = i.attributionLinkURL;
+            date = i.date;
             logo_image = i.attributionImage;
             logo_url = i.attributionImageURL;
             terms_of_use_text = i.termsOfUseText;
@@ -407,6 +416,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         attributionLinkURL = e.attribution_url;
         attributionImage = e.logo_image;
         attributionImageURL = e.logo_url;
+        date = e.date;
         termsOfUseText = e.terms_of_use_text;
         termsOfUseURL = e.terms_of_use_url;
         countryCode = e.country_code;
@@ -447,6 +457,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this.termsOfUseText = i.termsOfUseText;
         this.termsOfUseURL = i.termsOfUseURL;
         this.countryCode = i.countryCode;
+        this.date = i.date;
         this.icon = i.icon;
         this.description = i.description;
         this.noTileHeaders = i.noTileHeaders;
@@ -494,6 +505,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                 Objects.equals(this.termsOfUseText, other.termsOfUseText) &&
                 Objects.equals(this.termsOfUseURL, other.termsOfUseURL) &&
                 Objects.equals(this.countryCode, other.countryCode) &&
+                Objects.equals(this.date, other.date) &&
                 Objects.equals(this.icon, other.icon) &&
                 Objects.equals(this.description, other.description) &&
                 Objects.equals(this.noTileHeaders, other.noTileHeaders) &&
@@ -830,11 +842,22 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @since 8065
      */
     public String getToolTipText() {
+        String res = getName();
+        boolean html = false;
+        String date = getDate();
+        if (date != null && !date.isEmpty()) {
+            res += "<br>" + tr("Date of imagery: {0}", date);
+            html = true;
+        }
         String desc = getDescription();
         if (desc != null && !desc.isEmpty()) {
-            return "<html>" + getName() + "<br>" + desc + "</html>";
+            res += "<br>" + desc;
+            html = true;
         }
-        return getName();
+        if (html) {
+            res = "<html>" + res + "</html>";
+        }
+        return res;
     }
 
     /**
@@ -867,6 +890,25 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
+    }
+
+    /**
+     * Returns the date information.
+     * @return The date (in the form YYYY-MM-DD;YYYY-MM-DD, where
+     * DD and MM as well as a second date are optional)
+     * @since 11570
+     */
+    public String getDate() {
+        return date;
+    }
+
+    /**
+     * Sets the date information.
+     * @param date The date information
+     * @since 11570
+     */
+    public void setDate(String date) {
+        this.date = date;
     }
 
     /**
@@ -1134,6 +1176,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     public List<ImageryInfo> getMirrors() {
        List<ImageryInfo> l = new ArrayList<>();
        if (mirrors != null) {
+           int num = 1;
            for (ImageryInfo i : mirrors) {
                ImageryInfo n = new ImageryInfo(this);
                if (i.defaultMaxZoom != 0) {
@@ -1148,7 +1191,18 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                if (i.getTileSize() != 0) {
                    n.setTileSize(i.getTileSize());
                }
+               if(n.id != null) {
+                   n.id = n.id + "_mirror"+num;
+               }
+               if(num > 1) {
+                   n.name = tr("{0} mirror server {1}", n.name, num);
+                   n.origName += " mirror server " + num;
+               } else {
+                   n.name = tr("{0} mirror server", n.name);
+                   n.origName += " mirror server";
+               }
                l.add(n);
+               ++num;
            }
        }
        return l;
