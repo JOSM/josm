@@ -323,9 +323,16 @@ class SyncEditorImageryIndex {
             }
             def j = josmUrls.get(url)
             if (!getQuality(e).equals(getQuality(j))) {
-                myprintln "  quality differs: ${getDescription(j)}"
-                myprintln "     (EII):     ${getQuality(e)}"
-                myprintln "     (JOSM):    ${getQuality(j)}"
+                myprintln "Quality differs (${getQuality(j)} != ${getQuality(e)}): ${getDescription(j)}"
+            }
+        }*/
+        /*myprintln "*** Same URL, but different dates: ***"
+        for (def url : eiiUrls.keySet()) {
+            def e = eiiUrls.get(url)
+            if (!josmUrls.containsKey(url)) continue
+            def j = josmUrls.get(url)
+            if (!getDate(e).equals(getDate(j))) {
+                myprintln "Date differs ('${getDate(j)}' != '${getDate(e)}'): ${getDescription(j)}"
             }
         }*/
         myprintln "*** Mismatching shapes: ***"
@@ -422,7 +429,7 @@ class SyncEditorImageryIndex {
                 josmIds.put(id, j);
             }
             def d = getDate(j)
-            if(d != null) {
+            if(!d.isEmpty()) {
                 def reg = (d =~ /^(\d\d\d\d)(-(\d\d)(-(\d\d))?)?(;(\d\d\d\d)(-(\d\d)(-(\d\d))?)?)?/)
                 if(reg == null || reg.count != 1) {
                     myprintln "* JOSM-Date '${d}' is strange: ${getDescription(j)}"
@@ -471,12 +478,13 @@ class SyncEditorImageryIndex {
         return e.get("properties").getString("url")
     }
     static String getDate(Object e) {
-        if (e instanceof ImageryInfo) return e.date
-        def start = e.get("properties").getString("start_date")
-        def end = e.get("properties").getString("end_date")
-        if(start != null && end != null)
+        if (e instanceof ImageryInfo) return e.date ? e.date : ""
+        def p = e.get("properties")
+        def start = p.containsKey("start_date") ? p.getString("start_date") : ""
+        def end = p.containsKey("end_date") ? p.getString("end_date") : ""
+        if(!start.isEmpty() && !end.isEmpty())
             return start+";"+end
-        else if(start != null)
+        else if(!start.isEmpty())
             return start
         else
             return end
