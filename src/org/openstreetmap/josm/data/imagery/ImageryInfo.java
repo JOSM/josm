@@ -187,7 +187,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     private String termsOfUseURL;
     /** country code of the imagery (for country specific imagery) */
     private String countryCode = "";
-    /** 
+    /**
       * creation date of the imagery (in the form YYYY-MM-DD;YYYY-MM-DD, where
       * DD and MM as well as a second date are optional)
       * @since 11570
@@ -1191,10 +1191,10 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                if (i.getTileSize() != 0) {
                    n.setTileSize(i.getTileSize());
                }
-               if(n.id != null) {
+               if (n.id != null) {
                    n.id = n.id + "_mirror"+num;
                }
-               if(num > 1) {
+               if (num > 1) {
                    n.name = tr("{0} mirror server {1}", n.name, num);
                    n.origName += " mirror server " + num;
                } else {
