@@ -210,6 +210,7 @@ class SyncEditorImageryIndex {
             }
             for (def m : e.getMirrors()) {
                 url = getUrl(m)
+                m.setName(m.getName().replaceAll(" mirror server( \\d+)?",""))
                 if (josmUrls.containsKey(url)) {
                     myprintln "+++ JOSM-Mirror-URL is not unique: "+url
                 } else {
@@ -420,6 +421,24 @@ class SyncEditorImageryIndex {
             } else {
                 josmIds.put(id, j);
             }
+            def d = getDate(j)
+            if(d != null) {
+                def reg = (d =~ /^(\d\d\d\d)(-(\d\d)(-(\d\d))?)?(;(\d\d\d\d)(-(\d\d)(-(\d\d))?)?)?/)
+                if(reg == null || reg.count != 1) {
+                    myprintln "* JOSM-Date '${d}' is strange: ${getDescription(j)}"
+                } else {
+                    try {
+                        def first = verifyDate(reg[0][1],reg[0][3],reg[0][5]);
+                        def second = verifyDate(reg[0][7],reg[0][9],reg[0][11]);
+                        if(second.compareTo(first) < 0) {
+                            myprintln "* JOSM-Date '${d}' is strange (second earlier than first): ${getDescription(j)}"
+                        }
+                    }
+                    catch (Exception e) {
+                        myprintln "* JOSM-Date '${d}' is strange (${e.getMessage()}): ${getDescription(j)}"
+                    }
+                }
+            }            
             def js = getShapes(j)
             if(js.size()) {
                 def minlat = 1000;
@@ -450,6 +469,27 @@ class SyncEditorImageryIndex {
     static String getUrl(Object e) {
         if (e instanceof ImageryInfo) return e.url
         return e.get("properties").getString("url")
+    }
+    static String getDate(Object e) {
+        if (e instanceof ImageryInfo) return e.date
+        def start = e.get("properties").getString("start_date")
+        def end = e.get("properties").getString("end_date")
+        if(start != null && end != null)
+            return start+";"+end
+        else if(start != null)
+            return start
+        else
+            return end
+    }
+    static Date verifyDate(String year, String month, String day) {
+        def date
+        if(year == null)
+            date = "3000-01-01"
+        else
+            date = year + "-" + (month == null ? "01" : month) + "-" + (day == null ? "01" : day)
+        def df = new java.text.SimpleDateFormat("yyyy-MM-dd")
+        df.setLenient(false)
+        return df.parse(date)
     }
     static String getId(Object e) {
         if (e instanceof ImageryInfo) return e.getId()

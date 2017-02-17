@@ -441,6 +441,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public ImageryInfo(ImageryInfo i) {
         super(i.name, i.url, i.id);
+        this.origName = i.origName;
+        this.langName = i.langName;
         this.defaultEntry = i.defaultEntry;
         this.cookies = i.cookies;
         this.eulaAcceptanceRequired = null;
@@ -1196,10 +1198,14 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                }
                if (num > 1) {
                    n.name = tr("{0} mirror server {1}", n.name, num);
-                   n.origName += " mirror server " + num;
+                   if(n.origName != null) {
+                       n.origName += " mirror server " + num;
+                   }
                } else {
                    n.name = tr("{0} mirror server", n.name);
-                   n.origName += " mirror server";
+                   if(n.origName != null) {
+                       n.origName += " mirror server";
+                   }
                }
                l.add(n);
                ++num;
