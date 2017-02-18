@@ -29,21 +29,18 @@ import org.openstreetmap.josm.io.imagery.ImageryReader
 class SyncEditorImageryIndex {
 
     List<ImageryInfo> josmEntries;
-    JsonArray eiiEntries;
+    JsonArray eliEntries;
 
-    def eiiUrls = new HashMap<String, JsonObject>()
+    def eliUrls = new HashMap<String, JsonObject>()
     def josmUrls = new HashMap<String, ImageryInfo>()
     def josmMirrors = new HashMap<String, ImageryInfo>()
 
-    static String eiiInputFile = 'imagery.geojson'
+    static String eliInputFile = 'imagery.geojson'
     static String josmInputFile = 'maps.xml'
     static String ignoreInputFile = 'maps_ignores.txt'
     static FileWriter outputFile = null
     static BufferedWriter outputStream = null
-    int skipCount = 0;
-    String skipColor = "greenyellow" // should never be visible
-    def skipEntries = [:]
-    def skipColors = [:]
+    def skip = [:]
 
     static def options
 
@@ -56,7 +53,7 @@ class SyncEditorImageryIndex {
         script.loadSkip()
         script.start()
         script.loadJosmEntries()
-        script.loadEIIEntries()
+        script.loadELIEntries()
         script.checkInOneButNotTheOther()
         script.checkCommonEntries()
         script.end()
@@ -74,14 +71,14 @@ class SyncEditorImageryIndex {
     static void parse_command_line_arguments(args) {
         def cli = new CliBuilder(width: 160)
         cli.o(longOpt:'output', args:1, argName: "output", "Output file, - prints to stdout (default: -)")
-        cli.e(longOpt:'eii_input', args:1, argName:"eii_input", "Input file for the editor imagery index (json). Default is $eiiInputFile (current directory).")
+        cli.e(longOpt:'eli_input', args:1, argName:"eli_input", "Input file for the editor imagery index (json). Default is $eliInputFile (current directory).")
         cli.j(longOpt:'josm_input', args:1, argName:"josm_input", "Input file for the JOSM imagery list (xml). Default is $josmInputFile (current directory).")
         cli.i(longOpt:'ignore_input', args:1, argName:"ignore_input", "Input file for the ignore list. Default is $ignoreInputFile (current directory).")
         cli.s(longOpt:'shorten', "shorten the output, so it is easier to read in a console window")
         cli.n(longOpt:'noskip', argName:"noskip", "don't skip known entries")
         cli.x(longOpt:'xhtmlbody', argName:"xhtmlbody", "create XHTML body for display in a web page")
         cli.X(longOpt:'xhtml', argName:"xhtml", "create XHTML for display in a web page")
-        cli.m(longOpt:'nomissingeii', argName:"nomissingeii", "don't show missing editor imagery index entries")
+        cli.m(longOpt:'nomissingeli', argName:"nomissingeli", "don't show missing editor imagery index entries")
         cli.h(longOpt:'help', "show this help")
         options = cli.parse(args)
 
@@ -89,8 +86,8 @@ class SyncEditorImageryIndex {
             cli.usage()
             System.exit(0)
         }
-        if (options.eii_input) {
-            eiiInputFile = options.eii_input
+        if (options.eli_input) {
+            eliInputFile = options.eli_input
         }
         if (options.josm_input) {
             josmInputFile = options.josm_input
@@ -109,14 +106,13 @@ class SyncEditorImageryIndex {
         def line
 
         while((line = fr.readLine()) != null) {
-            def res = (line =~ /^\|\| *(\d) *\|\| *(EII|Ignore) *\|\| *\{\{\{(.+)\}\}\} *\|\|/)
+            def res = (line =~ /^\|\| *(ELI|Ignore) *\|\| *\{\{\{(.+)\}\}\} *\|\|/)
             if(res.count)
             {
-                skipEntries[res[0][3]] = res[0][1] as int
-                if(res[0][2].equals("Ignore")) {
-                    skipColors[res[0][3]] = "green"
+                if(res[0][1].equals("Ignore")) {
+                    skip[res[0][2]] = "green"
                 } else {
-                    skipColors[res[0][3]] = "darkgoldenrod"
+                    skip[res[0][2]] = "darkgoldenrod"
                 }
             }
         }
@@ -132,25 +128,17 @@ class SyncEditorImageryIndex {
     }
 
     void myprintln(String s) {
-        if(skipEntries.containsKey(s)) {
-            skipCount = skipEntries.get(s)
-            skipEntries.remove(s)
-            if(skipColors.containsKey(s)) {
-                skipColor = skipColors.get(s)
-            } else {
-                skipColor = "greenyellow"
-            }
-        }
-        if(skipCount) {
-            skipCount -= 1;
+        if(skip.containsKey(s)) {
+            String color = skip.get(s)
+            skip.remove(s)
             if(options.xhtmlbody || options.xhtml) {
-                s = "<pre style=\"margin:3px;color:"+skipColor+"\">"+s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")+"</pre>"
+                s = "<pre style=\"margin:3px;color:"+color+"\">"+s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")+"</pre>"
             }
             if (!options.noskip) {
                 return;
             }
         } else if(options.xhtmlbody || options.xhtml) {
-            String color = s.startsWith("***") ? "black" : ((s.startsWith("+ ") || s.startsWith("+++ EII")) ? "blue" : "red")
+            String color = s.startsWith("***") ? "black" : ((s.startsWith("+ ") || s.startsWith("+++ ELI")) ? "blue" : "red")
             s = "<pre style=\"margin:3px;color:"+color+"\">"+s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")+"</pre>"
         }
         myprintlnfinal(s)
@@ -159,12 +147,12 @@ class SyncEditorImageryIndex {
     void start() {
         if (options.xhtml) {
             myprintlnfinal "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n"
-            myprintlnfinal "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><title>JOSM - EII differences</title></head><body>\n"
+            myprintlnfinal "<html><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><title>JOSM - ELI differences</title></head><body>\n"
         }
     }
 
     void end() {
-        for (def s: skipEntries.keySet()) {
+        for (def s: skip.keySet()) {
             myprintln "+++ Obsolete skip entry: " + s
         }
         if (options.xhtml) {
@@ -172,25 +160,25 @@ class SyncEditorImageryIndex {
         }
     }
 
-    void loadEIIEntries() {
-        FileReader fr = new FileReader(eiiInputFile)
+    void loadELIEntries() {
+        FileReader fr = new FileReader(eliInputFile)
         JsonReader jr = Json.createReader(fr)
-        eiiEntries = jr.readObject().get("features")
+        eliEntries = jr.readObject().get("features")
         jr.close()
 
-        for (def e : eiiEntries) {
+        for (def e : eliEntries) {
             def url = getUrl(e)
             if (url.contains("{z}")) {
-                myprintln "+++ EII-URL uses {z} instead of {zoom}: "+url
+                myprintln "+++ ELI-URL uses {z} instead of {zoom}: "+url
                 url = url.replace("{z}","{zoom}")
             }
-            if (eiiUrls.containsKey(url)) {
-                myprintln "+++ EII-URL is not unique: "+url
+            if (eliUrls.containsKey(url)) {
+                myprintln "+++ ELI-URL is not unique: "+url
             } else {
-                eiiUrls.put(url, e)
+                eliUrls.put(url, e)
             }
         }
-        myprintln "*** Loaded ${eiiEntries.size()} entries (EII). ***"
+        myprintln "*** Loaded ${eliEntries.size()} entries (ELI). ***"
     }
 
     void loadJosmEntries() {
@@ -234,18 +222,18 @@ class SyncEditorImageryIndex {
     }
 
     void checkInOneButNotTheOther() {
-        def l1 = inOneButNotTheOther(eiiUrls, josmUrls)
-        myprintln "*** URLs found in EII but not in JOSM (${l1.size()}): ***"
+        def l1 = inOneButNotTheOther(eliUrls, josmUrls)
+        myprintln "*** URLs found in ELI but not in JOSM (${l1.size()}): ***"
         if (!l1.isEmpty()) {
             for (def l : l1) {
                 myprintln "-" + l
             }
         }
 
-        if (options.nomissingeii)
+        if (options.nomissingeli)
             return
-        def l2 = inOneButNotTheOther(josmUrls, eiiUrls)
-        myprintln "*** URLs found in JOSM but not in EII (${l2.size()}): ***"
+        def l2 = inOneButNotTheOther(josmUrls, eliUrls)
+        myprintln "*** URLs found in JOSM but not in ELI (${l2.size()}): ***"
         if (!l2.isEmpty()) {
             for (def l : l2) {
                 myprintln "+" + l
@@ -255,84 +243,74 @@ class SyncEditorImageryIndex {
 
     void checkCommonEntries() {
         myprintln "*** Same URL, but different name: ***"
-        for (def url : eiiUrls.keySet()) {
-            def e = eiiUrls.get(url)
+        for (def url : eliUrls.keySet()) {
+            def e = eliUrls.get(url)
             if (!josmUrls.containsKey(url)) continue
             def j = josmUrls.get(url)
             if (!getName(e).equals(getName(j))) {
-                myprintln "  name differs: $url"
-                myprintln "     (EII):     ${getName(e)}"
-                myprintln "     (JOSM):    ${getName(j)}"
+                myprintln "* Name differs ('${getName(e)}' != '${getName(j)}'): $url"
             }
         }
 
         myprintln "*** Same URL, but different type: ***"
-        for (def url : eiiUrls.keySet()) {
-            def e = eiiUrls.get(url)
+        for (def url : eliUrls.keySet()) {
+            def e = eliUrls.get(url)
             if (!josmUrls.containsKey(url)) continue
             def j = josmUrls.get(url)
             if (!getType(e).equals(getType(j))) {
-                myprintln "  type differs: ${getName(j)} - $url"
-                myprintln "     (EII):     ${getType(e)}"
-                myprintln "     (JOSM):    ${getType(j)}"
+                myprintln "* Type differs (${getType(e)} != ${getType(j)}): ${getName(j)} - $url"
             }
         }
 
         myprintln "*** Same URL, but different zoom bounds: ***"
-        for (def url : eiiUrls.keySet()) {
-            def e = eiiUrls.get(url)
+        for (def url : eliUrls.keySet()) {
+            def e = eliUrls.get(url)
             if (!josmUrls.containsKey(url)) continue
             def j = josmUrls.get(url)
 
             Integer eMinZoom = getMinZoom(e)
             Integer jMinZoom = getMinZoom(j)
             if (eMinZoom != jMinZoom  && !(eMinZoom == 0 && jMinZoom == null)) {
-                myprintln "  minzoom differs: ${getDescription(j)}"
-                myprintln "     (EII):     ${eMinZoom}"
-                myprintln "     (JOSM):    ${jMinZoom}"
+                myprintln "* Minzoom differs (${eMinZoom} != ${jMinZoom}): ${getDescription(j)}"
             }
             Integer eMaxZoom = getMaxZoom(e)
             Integer jMaxZoom = getMaxZoom(j)
             if (eMaxZoom != jMaxZoom) {
-                myprintln "  maxzoom differs: ${getDescription(j)}"
-                myprintln "     (EII):     ${eMaxZoom}"
-                myprintln "     (JOSM):    ${jMaxZoom}"
+                myprintln "* Maxzoom differs (${eMaxZoom} != ${jMaxZoom}): ${getDescription(j)}"
             }
         }
 
         myprintln "*** Same URL, but different country code: ***"
-        for (def url : eiiUrls.keySet()) {
-            def e = eiiUrls.get(url)
+        for (def url : eliUrls.keySet()) {
+            def e = eliUrls.get(url)
             if (!josmUrls.containsKey(url)) continue
             def j = josmUrls.get(url)
             if (!getCountryCode(e).equals(getCountryCode(j))) {
-                myprintln "  country code differs: ${getDescription(j)}"
-                myprintln "     (EII):     ${getCountryCode(e)}"
-                myprintln "     (JOSM):    ${getCountryCode(j)}"
+                myprintln "* Country code differs (${getCountryCode(e)} != ${getCountryCode(j)}): ${getDescription(j)}"
             }
         }
         /*myprintln "*** Same URL, but different quality: ***"
-        for (def url : eiiUrls.keySet()) {
-            def e = eiiUrls.get(url)
+        for (def url : eliUrls.keySet()) {
+            def e = eliUrls.get(url)
             if (!josmUrls.containsKey(url)) {
               def q = getQuality(e)
-              if("best".equals(q)) {
-                myprintln "  quality best entry not in JOSM for ${getDescription(e)}"
+              if("eli-best".equals(q)) {
+                myprintln "- Quality best entry not in JOSM for ${getDescription(e)}"
               }
               continue
             }
             def j = josmUrls.get(url)
             if (!getQuality(e).equals(getQuality(j))) {
-                myprintln "Quality differs (${getQuality(j)} != ${getQuality(e)}): ${getDescription(j)}"
+                myprintln "* Quality differs (${getQuality(e)} != ${getQuality(j)}): ${getDescription(j)}"
             }
         }*/
         /*myprintln "*** Same URL, but different dates: ***"
-        for (def url : eiiUrls.keySet()) {
-            def e = eiiUrls.get(url)
+        for (def url : eliUrls.keySet()) {
+            def e = eliUrls.get(url)
             if (!josmUrls.containsKey(url)) continue
             def j = josmUrls.get(url)
             if (!getDate(e).equals(getDate(j))) {
-                myprintln "Date differs ('${getDate(j)}' != '${getDate(e)}'): ${getDescription(j)}"
+                myprintln "* Date differs ('${getDate(e)}' != '${getDate(j)}'): ${getDescription(j)}"
             }
         }*/
         myprintln "*** Mismatching shapes: ***"
@@ -347,14 +325,14 @@ class SyncEditorImageryIndex {
                 ++num
             }
         }
-        for (def url : eiiUrls.keySet()) {
-            def e = eiiUrls.get(url)
+        for (def url : eliUrls.keySet()) {
+            def e = eliUrls.get(url)
             def num = 1
             def s = getShapes(e)
             for (def shape : s) {
                 def p = shape.getPoints()
-                if(!p[0].equals(p[p.size()-1]) && !options.nomissingeii) {
-                    myprintln "+++ EII shape $num unclosed: ${getDescription(e)}"
+                if(!p[0].equals(p[p.size()-1]) && !options.nomissingeli) {
+                    myprintln "+++ ELI shape $num unclosed: ${getDescription(e)}"
                 }
                 ++num
             }
@@ -364,8 +342,8 @@ class SyncEditorImageryIndex {
             def j = josmUrls.get(url)
             def js = getShapes(j)
             if(!s.size() && js.size()) {
-                if(!options.nomissingeii) {
-                    myprintln "+ No EII shape: ${getDescription(j)}"
+                if(!options.nomissingeli) {
+                    myprintln "+ No ELI shape: ${getDescription(j)}"
                 }
             } else if(!js.size() && s.size()) {
                 // don't report boundary like 5 point shapes as difference
@@ -395,8 +373,8 @@ class SyncEditorImageryIndex {
             }
         }
         myprintln "*** Mismatching icons: ***"
-        for (def url : eiiUrls.keySet()) {
-            def e = eiiUrls.get(url)
+        for (def url : eliUrls.keySet()) {
+            def e = eliUrls.get(url)
             if (!josmUrls.containsKey(url)) {
                 continue
             }
@@ -404,8 +382,8 @@ class SyncEditorImageryIndex {
             def ij = getIcon(j)
             def ie = getIcon(e)
             if(ij != null && ie == null) {
-                if(!options.nomissingeii) {
-                    myprintln "+ No EII icon: ${getDescription(j)}"
+                if(!options.nomissingeli) {
+                    myprintln "+ No ELI icon: ${getDescription(j)}"
                 }
             } else if(ij == null && ie != null) {
                 myprintln "- No JOSM icon: ${getDescription(j)}"
@@ -577,7 +555,7 @@ class SyncEditorImageryIndex {
             def j = josmUrls.get(url)
             if (j != null) cc = getCountryCode(j)
             if (cc == null) {
-                def e = eiiUrls.get(url)
+                def e = eliUrls.get(url)
                 if (e != null) cc = getCountryCode(e)
             }
         }

@@ -691,8 +691,8 @@ Build-Date: ${build.tstamp}
     <target name="imageryindex" depends="init-properties">
         <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpath="${groovy.jar};tools/commons-cli-1.3.1.jar"/>
         <echo message="Checking editor imagery difference"/>
-        <groovy src="scripts/SyncEditorImageryIndex.groovy" classpath="${dist.dir}/josm-custom.jar">
-                <!--<arg value="-nomissingeii"/>-->
+        <groovy src="scripts/SyncEditorLayerIndex.groovy" classpath="${dist.dir}/josm-custom.jar">
+                <!--<arg value="-nomissingeli"/>-->
         </groovy>
     </target>
 
