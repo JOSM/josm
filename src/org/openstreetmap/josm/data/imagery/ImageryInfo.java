@@ -50,8 +50,6 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         WMS("wms"),
         /** A TMS (Tile Map Service) entry. **/
         TMS("tms"),
-        /** An HTML proxy (previously used for Yahoo imagery) entry. **/
-        HTML("html"),
         /** TMS entry for Microsoft Bing. */
         BING("bing"),
         /** TMS entry for Russian company <a href="https://wiki.openstreetmap.org/wiki/WikiProject_Russia/kosmosnimki">ScanEx</a>. **/
