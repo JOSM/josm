@@ -1233,12 +1233,12 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                }
                if (num > 1) {
                    n.name = tr("{0} mirror server {1}", n.name, num);
-                   if(n.origName != null) {
+                   if (n.origName != null) {
                        n.origName += " mirror server " + num;
                    }
                } else {
                    n.name = tr("{0} mirror server", n.name);
-                   if(n.origName != null) {
+                   if (n.origName != null) {
                        n.origName += " mirror server";
                    }
                }
