@@ -210,7 +210,7 @@ class SyncEditorImageryIndex {
             }
             for (def m : e.getMirrors()) {
                 url = getUrl(m)
-                m.setName(m.getName().replaceAll(" mirror server( \\d+)?",""))
+                m.origName = m.getOriginalName().replaceAll(" mirror server( \\d+)?","")
                 if (josmUrls.containsKey(url)) {
                     myprintln "+++ JOSM-Mirror-URL is not unique: "+url
                 } else {
