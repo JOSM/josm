@@ -563,9 +563,8 @@ class SyncEditorImageryIndex {
         return e.get("properties").getString("country_code", null)
     }
     static String getQuality(Object e) {
-        //if (e instanceof ImageryInfo) return "".equals(e.getQuality()) ? null : e.getQuality()
-        if (e instanceof ImageryInfo) return null
-        return e.get("properties").get("best") ? "best" : null
+        if (e instanceof ImageryInfo) return e.isBestMarked() ? "eli-best" : null
+        return e.get("properties").get("best") ? "eli-best" : null
     }
     static String getIcon(Object e) {
         if (e instanceof ImageryInfo) return e.getIcon()

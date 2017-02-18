@@ -153,6 +153,10 @@ public class ImageryReader implements Closeable {
                     noTileHeaders = new MultiMap<>();
                     noTileChecksums = new MultiMap<>();
                     metadataHeaders = new HashMap<>();
+                    String best = atts.getValue("eli-best");
+                    if ("true".equals(best)) {
+                        entry.setBestMarked(true);
+                    }
                 }
                 break;
             case MIRROR:

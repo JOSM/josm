@@ -660,6 +660,8 @@
 							<xs:element name="country-code" minOccurs="0" maxOccurs="1" type="tns:iso3166" />
 							<!-- A base64-encoded image that is displayed as menu/toolbar icon -->
 							<xs:element name="icon" minOccurs="0" maxOccurs="1" type="xs:string" />
+							<!-- Date in form YYYY-MM-DD;YYYY-MM-DD (each element after first year is optional -->
+							<xs:element name="date" minOccurs="0" maxOccurs="1" type="xs:string" />
 							<xs:element name="mirror" minOccurs="0">
 								<xs:complexType>
 									<xs:all>
@@ -702,6 +704,7 @@
 						</xs:choice>
 					</xs:sequence>
 					<xs:attribute name="last-check" type="xs:date" use="optional" />
+					<xs:attribute name="eli-best" type="xs:boolean" use="optional" />
 				</xs:complexType>
 			</xs:element>
 		</xs:sequence>

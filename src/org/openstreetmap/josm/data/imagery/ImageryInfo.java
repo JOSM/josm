@@ -193,11 +193,18 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
       * @since 11570
       */
     private String date;
+    /**
+      * marked as best in other editors
+      * @since 11575
+      */
+    private boolean bestMarked = false;
     /** mirrors of different type for this entry */
     private List<ImageryInfo> mirrors;
     /** icon used in menu */
     private String icon;
+    /** is the geo reference correct - don't offer offset handling */
     private boolean isGeoreferenceValid;
+    /** does the EPSG:4326 to mercator woraround work as expected */
     private boolean isEpsg4326To3857Supported;
     /** which layers should be activated by default on layer addition. **/
     private Collection<DefaultLayer> defaultLayers = Collections.emptyList();
@@ -236,6 +243,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         @pref int tileSize = -1;
         @pref Map<String, String> metadataHeaders;
         @pref boolean valid_georeference;
+        @pref boolean bestMarked;
         @pref boolean supports_epsg_4326_to_3857_conversion;
         // TODO: disabled until change of layers is implemented
         // @pref String default_layers;
@@ -261,6 +269,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             attribution_text = i.attributionText;
             attribution_url = i.attributionLinkURL;
             date = i.date;
+            bestMarked = i.bestMarked;
             logo_image = i.attributionImage;
             logo_url = i.attributionImageURL;
             terms_of_use_text = i.termsOfUseText;
@@ -417,6 +426,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         attributionImage = e.logo_image;
         attributionImageURL = e.logo_url;
         date = e.date;
+        bestMarked = e.bestMarked;
         termsOfUseText = e.terms_of_use_text;
         termsOfUseURL = e.terms_of_use_url;
         countryCode = e.country_code;
@@ -443,6 +453,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         super(i.name, i.url, i.id);
         this.origName = i.origName;
         this.langName = i.langName;
+        this.bestMarked = i.bestMarked;
         this.defaultEntry = i.defaultEntry;
         this.cookies = i.cookies;
         this.eulaAcceptanceRequired = null;
@@ -493,6 +504,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                 Objects.equals(this.name, other.name) &&
                 Objects.equals(this.id, other.id) &&
                 Objects.equals(this.url, other.url) &&
+                Objects.equals(this.bestMarked, other.bestMarked) &&
+                Objects.equals(this.isEpsg4326To3857Supported, other.isEpsg4326To3857Supported) &&
+                Objects.equals(this.isGeoreferenceValid, other.isGeoreferenceValid) &&
                 Objects.equals(this.cookies, other.cookies) &&
                 Objects.equals(this.eulaAcceptanceRequired, other.eulaAcceptanceRequired) &&
                 Objects.equals(this.imageryType, other.imageryType) &&
@@ -851,6 +865,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             res += "<br>" + tr("Date of imagery: {0}", date);
             html = true;
         }
+        if (bestMarked) {
+            res += "<br>" + tr("This imagery is marked as best in this region in other editors.");
+        }
         String desc = getDescription();
         if (desc != null && !desc.isEmpty()) {
             res += "<br>" + desc;
@@ -1153,6 +1170,24 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public void setGeoreferenceValid(boolean isGeoreferenceValid) {
         this.isGeoreferenceValid = isGeoreferenceValid;
+    }
+
+    /**
+     * Returns the status of "best" marked status in other editors.
+     * @return <code>true</code> if it is marked as best.
+     * @since 11575
+     */
+    public boolean isBestMarked() {
+        return bestMarked;
+    }
+
+    /**
+     * Sets an indicator that in other editors it is marked as best imagery
+     * @param bestMarked <code>true</code> if it is marked as best in other editors.
+     * @since 11575
+     */
+    public void setBestMarked(boolean bestMarked) {
+        this.bestMarked = bestMarked;
     }
 
     /**
