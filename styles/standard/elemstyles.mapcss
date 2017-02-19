@@ -2481,6 +2481,7 @@ node[amenity=photo_booth] {
 }
 area[amenity=toilets],
 area[amenity=shower],
+area[amenity=internet_cafe],
 area[amenity=recycling],
 area[amenity=sanitary_dump_station] {
     fill-color: amenity_light#f7efb7;
@@ -2491,6 +2492,10 @@ node[amenity=toilets] {
 }
 node[amenity=shower] { 
     icon-image: "presets/service/shower.svg";
+    set icon_z17;
+}
+node[amenity=internet_cafe] { 
+    icon-image: "presets/service/internet_cafe.svg";
     set icon_z17;
 }
 node[amenity=recycling] {

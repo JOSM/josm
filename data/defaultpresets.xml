@@ -5243,6 +5243,12 @@
             <check key="payment:telephone_cards" text="Telephone cards" />
             <preset_link preset_name="Payment Methods" />
         </item> <!-- Telephone -->
+        <item name="Internet Cafe" icon="presets/service/internet_cafe.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=internet_cafe" />
+            <space />
+            <key key="amenity" value="internet_cafe" />
+            <reference ref="name_operator_oh_wheelchair" />
+        </item> <!-- Internet Cafe -->
         <item name="Internet Access" icon="presets/service/network-wireless.svg" type="node,closedway,multipolygon,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:internet_access"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:internet_access"
