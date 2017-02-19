@@ -3040,10 +3040,20 @@ node[tourism=caravan_site] {
     icon-image: "presets/accommodation/caravan.svg";
     set icon_z17;
 }
+area[tourism=attraction]:closed {
+    fill-color: tourism#e180a2;
+}
+way[tourism=attraction] {
+    width: 2;
+    color: tourism#e180a2;
+}
+node[tourism=attraction] {
+    icon-image: "presets/sightseeing/attraction.svg";
+    set icon_z17;
+}
 area[tourism=picnic_site],
 area[tourism=viewpoint],
 area[tourism=theme_park],
-area[tourism=attraction],
 area[tourism=zoo],
 area[tourism=museum] {
     fill-color: tourism#e180a2;
@@ -3058,10 +3068,6 @@ node[tourism=viewpoint] {
 }
 node[tourism=theme_park] {
     icon-image: "presets/leisure/theme_park.svg";
-    set icon_z17;
-}
-node[tourism=attraction] {
-    icon-image: "presets/sightseeing/attraction.svg";
     set icon_z17;
 }
 node[tourism=zoo] {
