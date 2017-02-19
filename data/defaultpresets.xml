@@ -5210,6 +5210,7 @@
                 <reference ref="oh_wheelchair" />
             </optional>
         </item> <!-- Shower -->
+        <separator/>
         <item name="Post Box" icon="presets/service/post_box.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=post_box"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=post_box"
@@ -5271,6 +5272,13 @@
                 <check key="hygrometer" text="Shows humidity" />
             </optional>
         </item> <!-- Clock -->
+        <item name="Photo booth" icon="presets/service/photo_booth.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=photo_booth" />
+            <space />
+            <key key="amenity" value="photo_booth" />
+            <reference ref="name_operator_oh_wheelchair" />
+        </item> <!-- Photo booth -->
+        <separator/>
         <item name="Recycling Container" icon="presets/service/recycling/recycling_container.svg" type="node,closedway" preset_name_label="true">
            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=recycling"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=recycling"
@@ -8258,7 +8266,7 @@
               ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=vending_machine" />
         <space />
         <key key="amenity" value="vending_machine" />
-        <multiselect key="vending" text="Vending products" values="admission_tickets;animal_feed;bicycle_tube;cigarettes;condoms;drinks;elongated_coin;excrement_bags;food;milk;newspapers;parking_tickets;parcel_pickup;parcel_mail_in;photos;public_transport_plans;public_transport_tickets;SIM_cards;stamps;sweets;telephone_vouchers;toys" values_searchable="true" />
+        <multiselect key="vending" text="Vending products" values="admission_tickets;animal_feed;bicycle_tube;cigarettes;coffee;condoms;drinks;elongated_coin;excrement_bags;food;milk;newspapers;parking_tickets;parcel_pickup;parcel_mail_in;photos;public_transport_tickets;SIM_cards;stamps;sweets;telephone_vouchers;toys" values_searchable="true" />
         <text key="operator" text="Operator" />
         <text key="ref" text="Reference number" />
         <preset_link preset_name="Payment Methods" />

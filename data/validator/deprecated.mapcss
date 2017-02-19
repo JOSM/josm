@@ -1046,6 +1046,22 @@ area[landuse=pond] {
   fixAdd: "vending=animal_feed";
 }
 
+/* #14376 */
+node[vending=photos][amenity=vending_machine],
+node[vending=photo][amenity=vending_machine] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "amenity=photo_booth";
+  group: tr("deprecated tagging");
+  fixRemove: "vending";
+  fixAdd: "amenity=photo_booth";
+
+}
+node[vending=photos][amenity!=vending_machine] {
+  throwWarning: tr("{0} is deprecated", "{0.tag}");
+  suggestAlternative: "amenity=photo_booth";
+  group: tr("deprecated tagging");
+}
+
 /* #13653 */
 node[highway=emergency_access_point][phone][!emergency_telephone_code],
 way[highway=emergency_access_point][phone][!emergency_telephone_code] {

@@ -2475,6 +2475,10 @@ node[amenity=clock] {
     icon-image: "presets/service/clock.svg";
     set icon_z17;
 }
+node[amenity=photo_booth] {
+    icon-image: "presets/service/photo_booth.svg";
+    set icon_z17;
+}
 area[amenity=toilets],
 area[amenity=shower],
 area[amenity=recycling],
