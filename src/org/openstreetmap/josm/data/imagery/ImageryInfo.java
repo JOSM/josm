@@ -498,6 +498,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             return false;
         }
 
+        // CHECKSTYLE.OFF: BooleanExpressionComplexity
         return
                 Objects.equals(this.name, other.name) &&
                 Objects.equals(this.id, other.id) &&
@@ -526,6 +527,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                 Objects.equals(this.noTileChecksums, other.noTileChecksums) &&
                 Objects.equals(this.metadataHeaders, other.metadataHeaders) &&
                 Objects.equals(this.defaultLayers, other.defaultLayers);
+        // CHECKSTYLE.ON: BooleanExpressionComplexity
     }
 
     @Override

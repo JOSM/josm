@@ -267,11 +267,19 @@ public class WMSImagery {
     static boolean isImageFormatSupported(final String format) {
         return ImageIO.getImageReadersByMIMEType(format).hasNext()
                 // handles image/tiff image/tiff8 image/geotiff image/geotiff8
-                || ((format.startsWith("image/tiff") || format.startsWith("image/geotiff"))
-                        && ImageIO.getImageReadersBySuffix("tiff").hasNext())
-                || (format.startsWith("image/png") && ImageIO.getImageReadersBySuffix("png").hasNext())
-                || (format.startsWith("image/svg") && ImageIO.getImageReadersBySuffix("svg").hasNext())
-                || (format.startsWith("image/bmp") && ImageIO.getImageReadersBySuffix("bmp").hasNext());
+                || isImageFormatSupported(format, "tiff", "geotiff")
+                || isImageFormatSupported(format, "png")
+                || isImageFormatSupported(format, "svg")
+                || isImageFormatSupported(format, "bmp");
+    }
+
+    static boolean isImageFormatSupported(String format, String ... mimeFormats) {
+        for (String mime : mimeFormats) {
+            if (format.startsWith("image/" + mime)) {
+                return ImageIO.getImageReadersBySuffix(mimeFormats[0]).hasNext();
+            }
+        }
+        return false;
     }
 
     static boolean imageFormatHasTransparency(final String format) {

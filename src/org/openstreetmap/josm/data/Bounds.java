@@ -476,14 +476,21 @@ public class Bounds {
             && Double.doubleToLongBits(minLon) == Double.doubleToLongBits(maxLon);
     }
 
+    /**
+     * Determines if these bounds are out of the world.
+     * @return true if lat outside of range [-90,90] or lon outside of range [-180,180]
+     */
     public boolean isOutOfTheWorld() {
         return
-        minLat < -90 || minLat > 90 ||
-        maxLat < -90 || maxLat > 90 ||
-        minLon < -180 || minLon > 180 ||
-        maxLon < -180 || maxLon > 180;
+        !LatLon.isValidLat(minLat) ||
+        !LatLon.isValidLat(maxLat) ||
+        !LatLon.isValidLon(minLon) ||
+        !LatLon.isValidLon(maxLon);
     }
 
+    /**
+     * Clamp the bounds to be inside the world.
+     */
     public void normalize() {
         minLat = LatLon.toIntervalLat(minLat);
         maxLat = LatLon.toIntervalLat(maxLat);

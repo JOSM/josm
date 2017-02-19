@@ -56,9 +56,9 @@ public abstract class CrossingWays extends Test {
         public boolean isPrimitiveUsable(OsmPrimitive w) {
             return super.isPrimitiveUsable(w)
                     && !isProposedOrAbandoned(w)
-                    && ((w.hasKey(HIGHWAY) && !w.hasTag(HIGHWAY, "rest_area", "services"))
+                    && (isHighway(w)
                     || w.hasKey(WATERWAY)
-                    || (w.hasKey(RAILWAY) && !isSubwayOrTramOrRazed(w))
+                    || isRailway(w)
                     || isCoastline(w)
                     || isBuilding(w));
         }
@@ -237,6 +237,14 @@ public abstract class CrossingWays extends Test {
 
     static boolean isCoastline(OsmPrimitive w) {
         return w.hasTag("natural", "water", "coastline") || w.hasTag("landuse", "reservoir");
+    }
+
+    static boolean isHighway(OsmPrimitive w) {
+        return w.hasKey(HIGHWAY) && !w.hasTag(HIGHWAY, "rest_area", "services");
+    }
+
+    static boolean isRailway(OsmPrimitive w) {
+        return w.hasKey(RAILWAY) && !isSubwayOrTramOrRazed(w);
     }
 
     static boolean isSubwayOrTramOrRazed(OsmPrimitive w) {

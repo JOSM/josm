@@ -724,6 +724,17 @@ public abstract class AbstractPrimitive implements IPrimitive {
     }
 
     /**
+     * Replies true if this primitive has a tag any of the <code>keys</code>.
+     *
+     * @param keys the keys
+     * @return true, if his primitive has a tag with any of the <code>keys</code>
+     * @since 11587
+     */
+    public boolean hasKey(String ... keys) {
+        return keys != null && Arrays.stream(keys).anyMatch(this::hasKey);
+    }
+
+    /**
      * What to do, when the tags have changed by one of the tag-changing methods.
      * @param originalKeys original tags
      */

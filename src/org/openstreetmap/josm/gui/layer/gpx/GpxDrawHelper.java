@@ -1351,6 +1351,7 @@ public class GpxDrawHelper implements SoMChangeListener {
      * Check cache validity set necessary flags
      */
     private void checkCache() {
+        // CHECKSTYLE.OFF: BooleanExpressionComplexity
         if ((computeCacheMaxLineLengthUsed != maxLineLength)
                 || (computeCacheColored != colored)
                 || (computeCacheColorTracksTune != colorTracksTune)
@@ -1360,7 +1361,8 @@ public class GpxDrawHelper implements SoMChangeListener {
                 || (computeCacheHeatMapDrawPointMode != heatMapDrawPointMode)
                 || (computeCacheHeatMapDrawGain != heatMapDrawGain))
                 || (computeCacheHeatMapDrawLowerLimit != heatMapDrawLowerLimit)
-      ) {
+        ) {
+            // CHECKSTYLE.ON: BooleanExpressionComplexity
             computeCacheMaxLineLengthUsed = maxLineLength;
             computeCacheInSync = false;
             computeCacheColorUsed = neutralColor;

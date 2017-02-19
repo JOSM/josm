@@ -110,7 +110,7 @@ public abstract class UnconnectedWays extends Test {
 
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
-            return super.isPrimitiveUsable(p) && (p.hasKey("natural") || p.hasKey("landuse"));
+            return super.isPrimitiveUsable(p) && p.hasKey("natural", "landuse");
         }
     }
 
@@ -184,8 +184,7 @@ public abstract class UnconnectedWays extends Test {
                             || en.hasTag("amenity", "parking_entrance")
                             || en.hasTag("railway", "buffer_stop")
                             || en.isKeyTrue("noexit")
-                            || en.hasKey("entrance")
-                            || en.hasKey("barrier")) {
+                            || en.hasKey("entrance", "barrier")) {
                         continue;
                     }
                     // to handle intersections of 't' shapes and similar
@@ -450,7 +449,7 @@ public abstract class UnconnectedWays extends Test {
                 ) {
             ways.addAll(getWaySegments(w));
             QuadBuckets<Node> set = endnodes;
-            if (w.hasKey("highway") || w.hasKey("railway")) {
+            if (w.hasKey("highway", "railway")) {
                 set = endnodesHighway;
             }
             addNode(w.firstNode(), set);

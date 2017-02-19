@@ -80,8 +80,7 @@ public class WayConnectedToArea extends Test {
     }
 
     private static boolean isArea(OsmPrimitive p) {
-        return (p.hasKey("landuse") || p.hasKey("natural"))
-                && ElemStyles.hasAreaElemStyle(p, false);
+        return p.hasKey("landuse", "natural") && ElemStyles.hasAreaElemStyle(p, false);
     }
 
     private void addPossibleError(Way w, Node wayNode, OsmPrimitive p, OsmPrimitive area) {
