@@ -51,7 +51,7 @@ public class FileWatcher {
      * Starts the File Watcher thread.
      */
     public final void start() {
-        if (!thread.isAlive()) {
+        if (thread != null && !thread.isAlive()) {
             thread.start();
         }
     }
