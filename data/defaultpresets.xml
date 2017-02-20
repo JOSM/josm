@@ -5248,6 +5248,7 @@
             <space />
             <key key="amenity" value="internet_cafe" />
             <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
         </item> <!-- Internet Cafe -->
         <item name="Internet Access" icon="presets/service/network-wireless.svg" type="node,closedway,multipolygon,relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:internet_access"
