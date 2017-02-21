@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.validation;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -333,11 +334,11 @@ public final class OsmValidator {
                 }
             } catch (Exception e) {
                 Main.error(e);
-                JOptionPane.showMessageDialog(Main.parent,
-                        tr("Error initializing test {0}:\n {1}", test.getClass()
-                                .getSimpleName(), e),
-                                tr("Error"),
-                                JOptionPane.ERROR_MESSAGE);
+                if (!GraphicsEnvironment.isHeadless()) {
+                    JOptionPane.showMessageDialog(Main.parent,
+                            tr("Error initializing test {0}:\n {1}", test.getClass().getSimpleName(), e),
+                            tr("Error"), JOptionPane.ERROR_MESSAGE);
+                }
             }
         }
     }
