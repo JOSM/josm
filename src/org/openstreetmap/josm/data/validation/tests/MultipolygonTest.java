@@ -668,9 +668,7 @@ public class MultipolygonTest extends Test {
     private static Collection<? extends OsmPrimitive> combineRelAndPrimitives(Relation r, Collection<? extends OsmPrimitive> primitives) {
         // add multipolygon in order to let user select something and fix the error
         if (!primitives.contains(r)) {
-            // Diamond operator does not work with Java 9 here
-            @SuppressWarnings("unused")
-            List<OsmPrimitive> newPrimitives = new ArrayList<OsmPrimitive>(primitives);
+            List<OsmPrimitive> newPrimitives = new ArrayList<>(primitives);
             newPrimitives.add(0, r);
             return newPrimitives;
         } else {

@@ -402,9 +402,7 @@ public class DeleteCommand extends Command {
         if (selection == null || selection.isEmpty())
             return null;
 
-        // Diamond operator does not work with Java 9 here
-        @SuppressWarnings("unused")
-        Set<OsmPrimitive> primitivesToDelete = new HashSet<OsmPrimitive>(selection);
+        Set<OsmPrimitive> primitivesToDelete = new HashSet<>(selection);
 
         Collection<Relation> relationsToDelete = Utils.filteredCollection(primitivesToDelete, Relation.class);
         if (!relationsToDelete.isEmpty() && !silent && !confirmRelationDeletion(relationsToDelete))
