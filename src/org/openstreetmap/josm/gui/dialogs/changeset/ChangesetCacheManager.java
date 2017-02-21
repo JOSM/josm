@@ -752,7 +752,7 @@ public class ChangesetCacheManager extends JFrame {
         Main.worker.submit(() -> {
             if (task.isCanceled() || task.isFailed())
                 return;
-            setSelectedChangesets(task.getDownloadedData());
+            GuiHelper.runInEDT(() -> setSelectedChangesets(task.getDownloadedData()));
         });
     }
 }
