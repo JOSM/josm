@@ -289,7 +289,7 @@ class SyncEditorImageryIndex {
                 myprintln "* Country code differs (${getCountryCode(e)} != ${getCountryCode(j)}): ${getDescription(j)}"
             }
         }
-        /*myprintln "*** Same URL, but different quality: ***"
+        myprintln "*** Same URL, but different quality: ***"
         for (def url : eliUrls.keySet()) {
             def e = eliUrls.get(url)
             if (!josmUrls.containsKey(url)) {
@@ -303,7 +303,7 @@ class SyncEditorImageryIndex {
             if (!getQuality(e).equals(getQuality(j))) {
                 myprintln "* Quality differs (${getQuality(e)} != ${getQuality(j)}): ${getDescription(j)}"
             }
-        }*/
+        }
         /*myprintln "*** Same URL, but different dates: ***"
         for (def url : eliUrls.keySet()) {
             def e = eliUrls.get(url)
