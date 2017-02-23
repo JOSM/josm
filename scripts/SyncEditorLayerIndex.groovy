@@ -423,7 +423,7 @@ class SyncEditorImageryIndex {
                         myprintln "* JOSM-Date '${d}' is strange (${e.getMessage()}): ${getDescription(j)}"
                     }
                 }
-            }            
+            }
             def js = getShapes(j)
             if(js.size()) {
                 def minlat = 1000;
@@ -542,7 +542,8 @@ class SyncEditorImageryIndex {
     }
     static String getQuality(Object e) {
         if (e instanceof ImageryInfo) return e.isBestMarked() ? "eli-best" : null
-        return e.get("properties").get("best") ? "eli-best" : null
+        return (e.get("properties").containsKey("best")
+            && e.get("properties").getBoolean("best")) ? "eli-best" : null
     }
     static String getIcon(Object e) {
         if (e instanceof ImageryInfo) return e.getIcon()
