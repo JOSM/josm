@@ -413,7 +413,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             // Do nothing
         }
 
-        protected void alertAuthorisationFailed(OsmOAuthAuthorizationException e) {
+        protected void alertAuthorisationFailed() {
             HelpAwareOptionPane.showOptionDialog(
                     FullyAutomaticAuthorizationUI.this,
                     tr("<html>"
@@ -444,7 +444,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
             );
         }
 
-        protected void alertLoginFailed(OsmLoginFailedException e) {
+        protected void alertLoginFailed() {
             final String loginUrl = getAdvancedPropertiesPanel().getAdvancedParameters().getOsmLoginUrl();
             HelpAwareOptionPane.showOptionDialog(
                     FullyAutomaticAuthorizationUI.this,
@@ -465,9 +465,9 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
         protected void handleException(final OsmOAuthAuthorizationException e) {
             Runnable r = () -> {
                 if (e instanceof OsmLoginFailedException) {
-                    alertLoginFailed((OsmLoginFailedException) e);
+                    alertLoginFailed();
                 } else {
-                    alertAuthorisationFailed(e);
+                    alertAuthorisationFailed();
                 }
             };
             Main.error(e);

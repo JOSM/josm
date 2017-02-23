@@ -82,10 +82,9 @@ public class UploadLayerTask extends AbstractIOTask {
      * an uploaded primitive was already deleted on the server.
      *
      * @param e the exception throw by the API
-     * @param monitor a progress monitor
      * @throws OsmTransferException if we can't recover from the exception
      */
-    protected void recoverFromGoneOnServer(OsmApiPrimitiveGoneException e, ProgressMonitor monitor) throws OsmTransferException {
+    protected void recoverFromGoneOnServer(OsmApiPrimitiveGoneException e) throws OsmTransferException {
         if (!e.isKnownPrimitive()) throw e;
         OsmPrimitive p = getPrimitive(e.getPrimitiveType(), e.getPrimitiveId());
         if (p == null) throw e;
@@ -126,7 +125,7 @@ public class UploadLayerTask extends AbstractIOTask {
                     processedPrimitives.addAll(writer.getProcessedPrimitives()); // OsmPrimitive in => OsmPrimitive out
                     break;
                 } catch (OsmApiPrimitiveGoneException e) {
-                    recoverFromGoneOnServer(e, monitor);
+                    recoverFromGoneOnServer(e);
                 }
             }
             if (strategy.isCloseChangesetAfterUpload() && changeset != null && changeset.getId() > 0) {

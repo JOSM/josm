@@ -828,7 +828,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
         }
     }
 
-    protected void handlePropertyChangeFrozen(boolean oldValue, boolean newValue) {
+    protected void handlePropertyChangeFrozen(boolean newValue) {
         myEntriesTable.getSelectionModel().clearSelection();
         myEntriesTable.setEnabled(!newValue);
         theirEntriesTable.getSelectionModel().clearSelection();
@@ -852,7 +852,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(AbstractListMergeModel.FROZEN_PROP)) {
-            handlePropertyChangeFrozen((Boolean) evt.getOldValue(), (Boolean) evt.getNewValue());
+            handlePropertyChangeFrozen((Boolean) evt.getNewValue());
         }
     }
 

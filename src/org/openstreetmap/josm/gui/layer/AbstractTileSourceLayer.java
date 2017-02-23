@@ -278,10 +278,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      *
      * If the current tileLoader is an instance of OsmTileLoader, a new
      * TmsTileClearController is created and passed to the according clearCache method.
-     *
-     * @param monitor not used in this implementation - as cache clear is instaneus
      */
-    public void clearTileCache(ProgressMonitor monitor) {
+    public void clearTileCache() {
         if (tileLoader instanceof CachedTileLoader) {
             ((CachedTileLoader) tileLoader).clearCache(tileSource);
         }
@@ -620,7 +618,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             new PleaseWaitRunnable(tr("Flush tile cache")) {
                 @Override
                 protected void realRun() {
-                    clearTileCache(getProgressMonitor());
+                    clearTileCache();
                 }
 
                 @Override
