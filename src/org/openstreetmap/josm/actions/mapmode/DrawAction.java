@@ -1004,14 +1004,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     /**
-     * Adjusts the position of a node to lie on a segment (or a segment
-     * intersection).
+     * Adjusts the position of a node to lie on a segment (or a segment intersection).
      *
      * If one or more than two segments are passed, the node is adjusted
      * to lie on the first segment that is passed.
      *
-     * If two segments are passed, the node is adjusted to be at their
-     * intersection.
+     * If two segments are passed, the node is adjusted to be at their intersection.
      *
      * No action is taken if no segments are passed.
      *
@@ -1019,56 +1017,66 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * @param n the node to adjust
      */
     private static void adjustNode(Collection<Pair<Node, Node>> segs, Node n) {
-
         switch (segs.size()) {
         case 0:
             return;
         case 2:
-            // This computes the intersection between the two segments and adjusts the node position.
-            Iterator<Pair<Node, Node>> i = segs.iterator();
-            Pair<Node, Node> seg = i.next();
-            EastNorth pA = seg.a.getEastNorth();
-            EastNorth pB = seg.b.getEastNorth();
-            seg = i.next();
-            EastNorth pC = seg.a.getEastNorth();
-            EastNorth pD = seg.b.getEastNorth();
-
-            double u = det(pB.east() - pA.east(), pB.north() - pA.north(), pC.east() - pD.east(), pC.north() - pD.north());
-
-            // Check for parallel segments and do nothing if they are
-            // In practice this will probably only happen when a way has been duplicated
-
-            if (u == 0)
-                return;
-
-            // q is a number between 0 and 1
-            // It is the point in the segment where the intersection occurs
-            // if the segment is scaled to lenght 1
-
-            double q = det(pB.north() - pC.north(), pB.east() - pC.east(), pD.north() - pC.north(), pD.east() - pC.east()) / u;
-            EastNorth intersection = new EastNorth(
-                    pB.east() + q * (pA.east() - pB.east()),
-                    pB.north() + q * (pA.north() - pB.north()));
-
-
-            // only adjust to intersection if within snapToIntersectionThreshold pixel of mouse click; otherwise
-            // fall through to default action.
-            // (for semi-parallel lines, intersection might be miles away!)
-            if (Main.map.mapView.getPoint2D(n).distance(Main.map.mapView.getPoint2D(intersection)) < SNAP_TO_INTERSECTION_THRESHOLD.get()) {
-                n.setEastNorth(intersection);
-                return;
-            }
+            adjustNodeTwoSegments(segs, n);
+            break;
         default:
-            EastNorth p = n.getEastNorth();
-            seg = segs.iterator().next();
-            pA = seg.a.getEastNorth();
-            pB = seg.b.getEastNorth();
-            double a = p.distanceSq(pB);
-            double b = p.distanceSq(pA);
-            double c = pA.distanceSq(pB);
-            q = (a - b + c) / (2*c);
-            n.setEastNorth(new EastNorth(pB.east() + q * (pA.east() - pB.east()), pB.north() + q * (pA.north() - pB.north())));
+            adjustNodeDefault(segs, n);
         }
+    }
+
+    private static void adjustNodeTwoSegments(Collection<Pair<Node, Node>> segs, Node n) {
+        // This computes the intersection between the two segments and adjusts the node position.
+        Iterator<Pair<Node, Node>> i = segs.iterator();
+        Pair<Node, Node> seg = i.next();
+        EastNorth pA = seg.a.getEastNorth();
+        EastNorth pB = seg.b.getEastNorth();
+        seg = i.next();
+        EastNorth pC = seg.a.getEastNorth();
+        EastNorth pD = seg.b.getEastNorth();
+
+        double u = det(pB.east() - pA.east(), pB.north() - pA.north(), pC.east() - pD.east(), pC.north() - pD.north());
+
+        // Check for parallel segments and do nothing if they are
+        // In practice this will probably only happen when a way has been duplicated
+
+        if (u == 0)
+            return;
+
+        // q is a number between 0 and 1
+        // It is the point in the segment where the intersection occurs
+        // if the segment is scaled to length 1
+
+        double q = det(pB.north() - pC.north(), pB.east() - pC.east(), pD.north() - pC.north(), pD.east() - pC.east()) / u;
+        EastNorth intersection = new EastNorth(
+                pB.east() + q * (pA.east() - pB.east()),
+                pB.north() + q * (pA.north() - pB.north()));
+
+
+        // only adjust to intersection if within snapToIntersectionThreshold pixel of mouse click; otherwise
+        // fall through to default action.
+        // (for semi-parallel lines, intersection might be miles away!)
+        if (Main.map.mapView.getPoint2D(n).distance(Main.map.mapView.getPoint2D(intersection)) < SNAP_TO_INTERSECTION_THRESHOLD.get()) {
+            n.setEastNorth(intersection);
+            return;
+        }
+
+        adjustNodeDefault(segs, n);
+    }
+
+    private static void adjustNodeDefault(Collection<Pair<Node, Node>> segs, Node n) {
+        EastNorth p = n.getEastNorth();
+        Pair<Node, Node> seg = segs.iterator().next();
+        EastNorth pA = seg.a.getEastNorth();
+        EastNorth pB = seg.b.getEastNorth();
+        double a = p.distanceSq(pB);
+        double b = p.distanceSq(pA);
+        double c = pA.distanceSq(pB);
+        double q = (a - b + c) / (2*c);
+        n.setEastNorth(new EastNorth(pB.east() + q * (pA.east() - pB.east()), pB.north() + q * (pA.north() - pB.north())));
     }
 
     // helper for adjustNode

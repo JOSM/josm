@@ -384,6 +384,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
                     return true;
                 if (relation.getMember(i).getMember() != newPrimitive)
                     return true;
+                break;
             case UNDECIDED:
                 // FIXME: handle error
             }
