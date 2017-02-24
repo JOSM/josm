@@ -475,7 +475,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         CheckParameterUtil.ensureParameterNotNull(targetPrimitives, "targetPrimitives");
 
         final TagCollection completeWayTags = new TagCollection(tagsOfPrimitives);
-        TagConflictResolutionUtil.combineTigerTags(completeWayTags);
+        TagConflictResolutionUtil.applyAutomaticTagConflictResolution(completeWayTags);
         TagConflictResolutionUtil.normalizeTagCollectionBeforeEditing(completeWayTags, primitives);
         final TagCollection tagsToEdit = new TagCollection(completeWayTags);
         TagConflictResolutionUtil.completeTagCollectionForEditing(tagsToEdit);
