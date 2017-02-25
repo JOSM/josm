@@ -383,7 +383,7 @@ public class PlatformHookUnixoid implements PlatformHook {
      * Currently this is the case, if the dot directory already exists.
      * @return true if the dot directory should be used
      */
-    private boolean useDotDirectory() {
+    private static boolean useDotDirectory() {
         return getDotDirectory().exists();
     }
 

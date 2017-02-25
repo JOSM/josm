@@ -1668,7 +1668,7 @@ public class SearchCompiler {
         return list;
     }
 
-    private Match parseExpressionStep2(List<Object> list) {
+    private static Match parseExpressionStep2(List<Object> list) {
         Match result = null;
         for (int i = list.size() - 1; i >= 0; i--) {
             Object o = list.get(i);

@@ -1235,7 +1235,6 @@ public class GpxDrawHelper implements SoMChangeListener {
         drawHeatMapGrayMap(g, heatMapImgGray, lineWidthB > 2 ? (int) (lineWidthB*1.25f) : 1, lineWidth > 2 ? (lineWidth - 2) : 1);
     }
 
-
     /**
      * Draw a dotted heat map
      *
@@ -1244,7 +1243,7 @@ public class GpxDrawHelper implements SoMChangeListener {
      * @param listSegm        segments visible in the current scope of mv
      * @param drawSize        draw size of draw element
      */
-    private void drawHeatGrayDotMap(Graphics2D gB, MapView mv, List<WayPoint> listSegm, int drawSize) {
+    private static void drawHeatGrayDotMap(Graphics2D gB, MapView mv, List<WayPoint> listSegm, int drawSize) {
 
         // typical rendering rate -> use realtime preview instead of accurate display
         final double maxSegm = 25000, nrSegms = listSegm.size();
@@ -1288,7 +1287,8 @@ public class GpxDrawHelper implements SoMChangeListener {
      * @param rmsSizeY          RMS size of circle for Y (height)
      * @param dropRate          Pixel render drop rate
      */
-    private void drawHeatSurfaceLine(Graphics2D g, Point fromPnt, Point toPnt, int drawSize, double rmsSizeX, double rmsSizeY, double dropRate) {
+    private static void drawHeatSurfaceLine(Graphics2D g,
+            Point fromPnt, Point toPnt, int drawSize, double rmsSizeX, double rmsSizeY, double dropRate) {
 
         // collect frequently used items
         final int fromX = (int) fromPnt.getX(); final int deltaX = (int) (toPnt.getX() - fromX);
