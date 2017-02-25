@@ -276,20 +276,17 @@ public class ImportAudioAction extends AbstractAction {
             }
         }
 
-        /* we must have got at least one waypoint now */
-
+        // we must have got at least one waypoint now
         ((ArrayList<WayPoint>) waypoints).sort(Comparator.comparingDouble(o -> o.time));
 
-        firstTime = -1.0; /* this time of the first waypoint, not first trackpoint */
+        firstTime = -1.0; // this time of the first waypoint, not first trackpoint
         for (WayPoint w : waypoints) {
             if (firstTime < 0.0) {
                 firstTime = w.time;
             }
             double offset = w.time - firstTime;
             AudioMarker am = new AudioMarker(w.getCoor(), w, url, ml, w.time, offset);
-            /*
-             * timeFromAudio intended for future use to shift markers of this type on synchronization
-             */
+            // timeFromAudio intended for future use to shift markers of this type on synchronization
             if (w == wayPointFromTimeStamp) {
                 am.timeFromAudio = true;
             }
@@ -297,19 +294,13 @@ public class ImportAudioAction extends AbstractAction {
         }
 
         if (timedMarkersOmitted && !markers.timedMarkersOmitted) {
-            JOptionPane
-            .showMessageDialog(
-                    Main.parent,
-                    // CHECKSTYLE.OFF: LineLength
-                    tr("Some waypoints with timestamps from before the start of the track or after the end were omitted or moved to the start."));
-                    // CHECKSTYLE.ON: LineLength
+            JOptionPane.showMessageDialog(Main.parent,
+                tr("Some waypoints with timestamps from before the start of the track or after the end were omitted or moved to the start."));
             markers.timedMarkersOmitted = timedMarkersOmitted;
         }
         if (untimedMarkersOmitted && !markers.untimedMarkersOmitted) {
-            JOptionPane
-            .showMessageDialog(
-                    Main.parent,
-                    tr("Some waypoints which were too far from the track to sensibly estimate their time were omitted."));
+            JOptionPane.showMessageDialog(Main.parent,
+                tr("Some waypoints which were too far from the track to sensibly estimate their time were omitted."));
             markers.untimedMarkersOmitted = untimedMarkersOmitted;
         }
     }

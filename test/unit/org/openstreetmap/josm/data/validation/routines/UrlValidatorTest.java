@@ -407,7 +407,6 @@ public class UrlValidatorTest {
    public void testValidator290() {
         UrlValidator validator = new UrlValidator();
         assertTrue(validator.isValid("http://xn--h1acbxfam.idn.icann.org/"));
-//        assertTrue(validator.isValid("http://xn--e1afmkfd.xn--80akhbyknj4f"));
         // Internationalized country code top-level domains
         assertTrue(validator.isValid("http://test.xn--lgbbat1ad8j")); //Algeria
         assertTrue(validator.isValid("http://test.xn--fiqs8s")); // China
@@ -440,26 +439,6 @@ public class UrlValidatorTest {
         assertTrue(validator.isValid("http://test.xn--o3cw4h")); // Thailand
         assertTrue(validator.isValid("http://test.xn--pgbs0dh")); // Tunisia
         assertTrue(validator.isValid("http://test.xn--mgbaam7a8h")); // United Arab Emirates
-        // Proposed internationalized ccTLDs
-//        assertTrue(validator.isValid("http://test.xn--54b7fta0cc")); // Bangladesh
-//        assertTrue(validator.isValid("http://test.xn--90ae")); // Bulgaria
-//        assertTrue(validator.isValid("http://test.xn--node")); // Georgia
-//        assertTrue(validator.isValid("http://test.xn--4dbrk0ce")); // Israel
-//        assertTrue(validator.isValid("http://test.xn--mgb9awbf")); // Oman
-//        assertTrue(validator.isValid("http://test.xn--j1amh")); // Ukraine
-//        assertTrue(validator.isValid("http://test.xn--mgb2ddes")); // Yemen
-        // Test TLDs
-//        assertTrue(validator.isValid("http://test.xn--kgbechtv")); // Arabic
-//        assertTrue(validator.isValid("http://test.xn--hgbk6aj7f53bba")); // Persian
-//        assertTrue(validator.isValid("http://test.xn--0zwm56d")); // Chinese
-//        assertTrue(validator.isValid("http://test.xn--g6w251d")); // Chinese
-//        assertTrue(validator.isValid("http://test.xn--80akhbyknj4f")); // Russian
-//        assertTrue(validator.isValid("http://test.xn--11b5bs3a9aj6g")); // Hindi
-//        assertTrue(validator.isValid("http://test.xn--jxalpdlp")); // Greek
-//        assertTrue(validator.isValid("http://test.xn--9t4b11yi5a")); // Korean
-//        assertTrue(validator.isValid("http://test.xn--deba0ad")); // Yiddish
-//        assertTrue(validator.isValid("http://test.xn--zckzah")); // Japanese
-//        assertTrue(validator.isValid("http://test.xn--hlcj6aya9esc7a")); // Tamil
     }
 
    /**

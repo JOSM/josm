@@ -86,9 +86,8 @@ public class RequestHandlerTest {
     @Test
     public void testRequestParameter4() throws RequestHandlerBadRequestException {
         assertEquals(Collections.singletonMap("/?:@-._~!$'()* ,;", "/?:@-._~!$'()* ,;=="), getRequestParameter(
-                // CHECKSTYLE.OFF: LineLength
-                "http://example.com/:@-._~!$&'()*+,=;:@-._~!$&'()*+,=:@-._~!$&'()*+,==?/?:@-._~!$'()*+,;=/?:@-._~!$'()*+,;==#/?:@-._~!$&'()*+,;="));
-                // CHECKSTYLE.ON: LineLength
+            "http://example.com/:@-._~!$&'()*+,=;:@-._~!$&'()*+,=:@-._~!$&'()*+,==?/?:@-._~!$'()*+,;=/?:@-._~!$'()*+,;==#/?:@-._~!$&'()*+,;="
+        ));
     }
 
     /**

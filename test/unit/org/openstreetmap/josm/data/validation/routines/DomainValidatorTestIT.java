@@ -188,12 +188,8 @@ public class DomainValidatorTestIT {
     private static Map<String, String[]> getHtmlInfo(final File f) throws IOException {
         final Map<String, String[]> info = new HashMap<>();
 
-//        <td><span class="domain tld"><a href="/domains/root/db/ax.html">.ax</a></span></td>
         final Pattern domain = Pattern.compile(".*<a href=\"/domains/root/db/([^.]+)\\.html");
-//        <td>country-code</td>
         final Pattern type = Pattern.compile("\\s+<td>([^<]+)</td>");
-//        <!-- <td>Åland Islands<br/><span class="tld-table-so">Ålands landskapsregering</span></td> </td> -->
-//        <td>Ålands landskapsregering</td>
         final Pattern comment = Pattern.compile("\\s+<td>([^<]+)</td>");
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(f), StandardCharsets.UTF_8))) {
@@ -227,11 +223,8 @@ public class DomainValidatorTestIT {
                             com = n.group(1);
                         }
                         // Don't save unused entries
-                        if (com.contains("Not assigned") || com.contains("Retired") || typ.equals("test")) {
-    //                        System.out.println("Ignored: " + typ + " " + dom + " " +com);
-                        } else {
+                        if (!com.contains("Not assigned") && !com.contains("Retired") && !typ.equals("test")) {
                             info.put(dom.toLowerCase(Locale.ENGLISH), new String[]{typ, com});
-    //                        System.out.println("Storing: " + typ + " " + dom + " " +com);
                         }
                     } else {
                         System.err.println("Unexpected type: " + line);

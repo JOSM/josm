@@ -32,9 +32,8 @@ public class DownloadAction extends JosmAction {
      */
     public DownloadAction() {
         super(tr("Download from OSM..."), "download", tr("Download map data from the OSM server."),
-                // CHECKSTYLE.OFF: LineLength
-                Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download from OSM...")), KeyEvent.VK_DOWN, Shortcut.CTRL_SHIFT), true);
-                // CHECKSTYLE.ON: LineLength
+              Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download from OSM...")), KeyEvent.VK_DOWN, Shortcut.CTRL_SHIFT),
+              true);
         putValue("help", ht("/Action/Download"));
     }
 

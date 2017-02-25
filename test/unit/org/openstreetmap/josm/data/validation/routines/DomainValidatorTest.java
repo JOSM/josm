@@ -266,10 +266,10 @@ public class DomainValidatorTest {
             assertEquals(s, DomainValidator.unicodeToASCII(s));
         }
         // RFC3490 3.1. 1)
-//      Whenever dots are used as label separators, the following
-//      characters MUST be recognized as dots: U+002E (full stop), U+3002
-//      (ideographic full stop), U+FF0E (fullwidth full stop), U+FF61
-//      (halfwidth ideographic full stop).
+        // Whenever dots are used as label separators, the following
+        // characters MUST be recognized as dots: U+002E (full stop), U+3002
+        // (ideographic full stop), U+FF0E (fullwidth full stop), U+FF61
+        // (halfwidth ideographic full stop).
         final String[][] otherDots = {
                 {"b\u3002", "b."},
                 {"b\uFF0E", "b."},
