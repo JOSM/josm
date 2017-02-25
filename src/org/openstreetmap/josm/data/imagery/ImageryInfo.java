@@ -867,6 +867,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         }
         if (bestMarked) {
             res += "<br>" + tr("This imagery is marked as best in this region in other editors.");
+            html = true;
         }
         String desc = getDescription();
         if (desc != null && !desc.isEmpty()) {
