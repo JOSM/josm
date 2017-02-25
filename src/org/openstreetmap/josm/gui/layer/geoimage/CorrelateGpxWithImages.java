@@ -290,20 +290,20 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     data = reader.getGpxData();
                     data.storageFile = sel;
 
-                } catch (SAXException x) {
-                    Main.error(x);
+                } catch (SAXException ex) {
+                    Main.error(ex);
                     JOptionPane.showMessageDialog(
                             Main.parent,
-                            tr("Error while parsing {0}", sel.getName())+": "+x.getMessage(),
+                            tr("Error while parsing {0}", sel.getName())+": "+ex.getMessage(),
                             tr("Error"),
                             JOptionPane.ERROR_MESSAGE
                     );
                     return;
-                } catch (IOException x) {
-                    Main.error(x);
+                } catch (IOException ex) {
+                    Main.error(ex);
                     JOptionPane.showMessageDialog(
                             Main.parent,
-                            tr("Could not read \"{0}\"", sel.getName())+'\n'+x.getMessage(),
+                            tr("Could not read \"{0}\"", sel.getName())+'\n'+ex.getMessage(),
                             tr("Error"),
                             JOptionPane.ERROR_MESSAGE
                     );

@@ -601,8 +601,8 @@ public class SessionReader {
             try {
                 zipFile = new ZipFile(sessionFile, StandardCharsets.UTF_8);
                 return getZipInputStream(zipFile);
-            } catch (ZipException ze) {
-                throw new IOException(ze);
+            } catch (ZipException ex) {
+                throw new IOException(ex);
             }
         } else {
             try {

@@ -281,8 +281,8 @@ public final class ShowStatusReportAction extends JosmAction {
                     .append('=')
                     .append(paramCleanup(entry.getValue().getValue().toString())).append('\n');
             }
-        } catch (Exception x) {
-            Main.error(x);
+        } catch (Exception ex) {
+            Main.error(ex);
         }
 
         DebugTextDisplay ta = new DebugTextDisplay(text.toString());

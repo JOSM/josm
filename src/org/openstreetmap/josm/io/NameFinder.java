@@ -237,12 +237,12 @@ public final class NameFinder {
                     }
                     data.add(currentResult);
                 }
-            } catch (NumberFormatException x) {
-                Main.error(x); // SAXException does not chain correctly
-                throw new SAXException(x.getMessage(), x);
-            } catch (NullPointerException x) {
-                Main.error(x); // SAXException does not chain correctly
-                throw new SAXException(tr("Null pointer exception, possibly some missing tags."), x);
+            } catch (NumberFormatException ex) {
+                Main.error(ex); // SAXException does not chain correctly
+                throw new SAXException(ex.getMessage(), ex);
+            } catch (NullPointerException ex) {
+                Main.error(ex); // SAXException does not chain correctly
+                throw new SAXException(tr("Null pointer exception, possibly some missing tags."), ex);
             }
         }
 

@@ -154,8 +154,8 @@ public class OsmApiUrlInputPanel extends JPanel {
         if (!oldUrl.equals(newUrl)) {
             try {
                 OsmApi.getOsmApi().initialize(null);
-            } catch (OsmTransferCanceledException | OsmApiInitializationException x) {
-                Main.warn(x);
+            } catch (OsmTransferCanceledException | OsmApiInitializationException ex) {
+                Main.warn(ex);
             }
         }
     }

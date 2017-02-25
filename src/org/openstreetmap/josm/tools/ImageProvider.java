@@ -1226,9 +1226,9 @@ public class ImageProvider {
                  InputStream is = cf.getInputStream()) {
                 parser.parse(new InputSource(is));
             }
-        } catch (SAXReturnException r) {
-            Main.trace(r);
-            return r.getResult();
+        } catch (SAXReturnException e) {
+            Main.trace(e);
+            return e.getResult();
         } catch (IOException | SAXException | ParserConfigurationException e) {
             Main.warn("Parsing " + base + fn + " failed:\n" + e);
             return null;

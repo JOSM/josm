@@ -204,9 +204,9 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         try (OutputStream fo = Compression.getCompressedFileOutputStream(file)) {
             new GpxWriter(fo).write(gpxData);
             fo.flush();
-        } catch (IOException x) {
-            Main.error(x);
-            JOptionPane.showMessageDialog(Main.parent, tr("Error while exporting {0}:\n{1}", fn, x.getMessage()),
+        } catch (IOException ex) {
+            Main.error(ex);
+            JOptionPane.showMessageDialog(Main.parent, tr("Error while exporting {0}:\n{1}", fn, ex.getMessage()),
                     tr("Error"), JOptionPane.ERROR_MESSAGE);
         }
     }

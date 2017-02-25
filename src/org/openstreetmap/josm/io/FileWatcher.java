@@ -112,7 +112,7 @@ public class FileWatcher {
             WatchKey key;
             try {
                 key = watcher.take();
-            } catch (InterruptedException x) {
+            } catch (InterruptedException ex) {
                 Thread.currentThread().interrupt();
                 return;
             }

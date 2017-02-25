@@ -140,7 +140,7 @@ public class BoundingBoxSelection implements DownloadSelection {
         for (int i = 0; i < 4; i++) {
             try {
                 values[i] = Double.parseDouble(latlon[i].getText());
-            } catch (NumberFormatException x) {
+            } catch (NumberFormatException ex) {
                 return null;
             }
         }

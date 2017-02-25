@@ -16,6 +16,9 @@ JOSM Checkstyle rules
     <module name="BooleanExpressionComplexity">
       <property name="max" value="6"/>
     </module>
+    <module name="CatchParameterName">
+      <property name="format" value="^(e[1-9]?|t|ex[1-9]?|[a-z][a-z][a-zA-Z]+)$"/>
+    </module>
     <module name="FileContentsHolder"/>
     <module name="MissingDeprecated"/>
     <module name="MissingOverride"/>

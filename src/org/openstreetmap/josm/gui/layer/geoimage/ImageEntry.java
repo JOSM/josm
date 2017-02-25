@@ -451,8 +451,8 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             metadata = JpegMetadataReader.readMetadata(file);
             dirExif = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
             dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
-        } catch (CompoundException | IOException p) {
-            Main.warn(p);
+        } catch (CompoundException | IOException ex) {
+            Main.warn(ex);
             setExifCoor(null);
             setPos(null);
             return;

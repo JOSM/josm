@@ -102,9 +102,9 @@ public class RemoteControlHttpServer extends Thread {
                 @SuppressWarnings("resource")
                 Socket request = server.accept();
                 RequestProcessor.processRequest(request);
-            } catch (SocketException se) {
+            } catch (SocketException e) {
                 if (!server.isClosed()) {
-                    Main.error(se);
+                    Main.error(e);
                 } else {
                     // stop the thread automatically if server is stopped
                     return;
