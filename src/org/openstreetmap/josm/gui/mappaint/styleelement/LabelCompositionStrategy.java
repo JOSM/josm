@@ -27,11 +27,9 @@ import org.openstreetmap.josm.tools.LanguageInfo;
  *   tag whose name specified in the MapCSS style file</li>
  *
  *   <li>{@link DeriveLabelFromNameTagsCompositionStrategy} - the label is given by the value
- *   of one
- *   of the configured "name tags". The list of relevant name tags can be configured
+ *   of one of the configured "name tags". The list of relevant name tags can be configured
  *   in the JOSM preferences
- *   content of a tag whose name specified in the MapCSS style file, see the preference
- *   options <tt>mappaint.nameOrder</tt> and <tt>mappaint.nameComplementOrder</tt>.</li>
+ *   see the preference options <tt>mappaint.nameOrder</tt> and <tt>mappaint.nameComplementOrder</tt>.</li>
  * </ul>
  * @since  3987 (creation)
  * @since 10599 (functional interface)
@@ -49,6 +47,9 @@ public interface LabelCompositionStrategy {
      */
     String compose(OsmPrimitive primitive);
 
+    /**
+     * Strategy where the label is given by a static text specified in the MapCSS style file.
+     */
     class StaticLabelCompositionStrategy implements LabelCompositionStrategy {
         private final String defaultLabel;
 
@@ -84,6 +85,9 @@ public interface LabelCompositionStrategy {
         }
     }
 
+    /**
+     * Strategy where the label is given by the content of a tag whose name specified in the MapCSS style file.
+     */
     class TagLookupCompositionStrategy implements LabelCompositionStrategy {
 
         private final String defaultLabelTag;
@@ -128,6 +132,11 @@ public interface LabelCompositionStrategy {
         }
     }
 
+    /**
+     * Strategy where the label is given by the value of one of the configured "name tags".
+     * The list of relevant name tags can be configured in the JOSM preferences
+     * see the preference options <tt>mappaint.nameOrder</tt> and <tt>mappaint.nameComplementOrder</tt>
+     */
     class DeriveLabelFromNameTagsCompositionStrategy implements LabelCompositionStrategy, PreferenceChangedListener {
 
         /**

@@ -139,6 +139,11 @@ public class MapCSSTagChecker extends Test.TagTest {
          */
         Command createCommand(OsmPrimitive p, Selector matchingSelector);
 
+        /**
+         * Checks that object is either an {@link Expression} or a {@link String}.
+         * @param obj object to check
+         * @throws IllegalArgumentException if object is not an {@code Expression} or a {@code String}
+         */
         static void checkObject(final Object obj) {
             CheckParameterUtil.ensureThat(obj instanceof Expression || obj instanceof String,
                     "instance of Exception or String expected, but got " + obj);
@@ -251,6 +256,9 @@ public class MapCSSTagChecker extends Test.TagTest {
         }
     }
 
+    /**
+     * Tag check.
+     */
     public static class TagCheck implements Predicate<OsmPrimitive> {
         /** The selector of this {@code TagCheck} */
         protected final GroupedMapCSSRule rule;
