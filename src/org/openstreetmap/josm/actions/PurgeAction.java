@@ -52,8 +52,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  * about these primitives.
  *
  * This action is undo-able. In order not to break previous commands in the
- * undo buffer, we must re-add the identical object (and not semantically
- * equal ones).
+ * undo buffer, we must re-add the identical object (and not semantically equal ones).
+ *
+ * @since 3431
  */
 public class PurgeAction extends JosmAction {
 
@@ -67,8 +68,7 @@ public class PurgeAction extends JosmAction {
      */
     protected transient Set<OsmPrimitive> toPurgeChecked;
     /**
-     * Subset of toPurgeChecked. Marks primitives that remain in the
-     * dataset, but incomplete.
+     * Subset of toPurgeChecked. Marks primitives that remain in the dataset, but incomplete.
      */
     protected transient Set<OsmPrimitive> makeIncomplete;
     /**
@@ -80,11 +80,19 @@ public class PurgeAction extends JosmAction {
      * Constructs a new {@code PurgeAction}.
      */
     public PurgeAction() {
+        this(true);
+    }
+
+    /**
+     * Constructs a new {@code PurgeAction} with optional shortcut.
+     * @param addShortcut controls whether the shortcut should be registered or not
+     * @since 11611
+     */
+    public PurgeAction(boolean addShortcut) {
         /* translator note: other expressions for "purge" might be "forget", "clean", "obliterate", "prune" */
-        super(tr("Purge..."), "purge", tr("Forget objects but do not delete them on server when uploading."),
-                Shortcut.registerShortcut("system:purge", tr("Edit: {0}", tr("Purge")),
-                KeyEvent.VK_P, Shortcut.CTRL_SHIFT),
-                true);
+        super(tr("Purge..."), "purge", tr("Forget objects but do not delete them on server when uploading."), addShortcut ?
+                Shortcut.registerShortcut("system:purge", tr("Edit: {0}", tr("Purge")), KeyEvent.VK_P, Shortcut.CTRL_SHIFT)
+                : null, true);
         putValue("help", HelpUtil.ht("/Action/Purge"));
     }
 
