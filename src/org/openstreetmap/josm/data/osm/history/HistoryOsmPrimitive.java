@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm.history;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,16 +19,16 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * Represents an immutable OSM primitive in the context of a historical view on
- * OSM data.
- *
+ * Represents an immutable OSM primitive in the context of a historical view on OSM data.
+ * @since 1670
  */
-public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimitive> {
+public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryOsmPrimitive> {
 
     private long id;
     private boolean visible;
@@ -37,12 +38,6 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
     private Date timestamp;
     private long version;
     private Map<String, String> tags;
-
-    protected final void ensurePositiveLong(long value, String name) {
-        if (value <= 0) {
-            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected. Got ''{1}''.", name, value));
-        }
-    }
 
     /**
      * Constructs a new {@code HistoryOsmPrimitive}.
@@ -118,32 +113,66 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
         }
     }
 
+    /**
+     * Returns the id.
+     * @return the id
+     */
     public long getId() {
         return id;
     }
 
+    /**
+     * Returns the primitive id.
+     * @return the primitive id
+     */
     public PrimitiveId getPrimitiveId() {
         return new SimplePrimitiveId(id, getType());
     }
 
+    /**
+     * Determines if the primitive is still visible.
+     * @return {@code true} if the primitive is still visible
+     */
     public boolean isVisible() {
         return visible;
     }
 
+    /**
+     * Returns the user.
+     * @return the user
+     */
     public User getUser() {
         return user;
     }
 
+    /**
+     * Returns the changeset id.
+     * @return the changeset id
+     */
     public long getChangesetId() {
         return changesetId;
     }
 
+    /**
+     * Returns the timestamp.
+     * @return the timestamp
+     */
     public Date getTimestamp() {
         return timestamp;
     }
 
+    /**
+     * Returns the version.
+     * @return the version
+     */
     public long getVersion() {
         return version;
+    }
+
+    protected final void ensurePositiveLong(long value, String name) {
+        if (value <= 0) {
+            throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected. Got ''{1}''.", name, value));
+        }
     }
 
     public boolean matches(long id, long version) {
@@ -154,6 +183,10 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
         return this.id == id;
     }
 
+    /**
+     * Returns the primitive type.
+     * @return the primitive type
+     */
     public abstract OsmPrimitiveType getType();
 
     @Override
@@ -163,18 +196,55 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
         return Long.compare(this.version, o.version);
     }
 
-    public void put(String key, String value) {
+    @Override
+    public final void put(String key, String value) {
         tags.put(key, value);
     }
 
-    public String get(String key) {
+    @Override
+    public final String get(String key) {
         return tags.get(key);
     }
 
-    public boolean hasTag(String key) {
-        return tags.get(key) != null;
+    @Override
+    public final boolean hasKey(String key) {
+        return tags.containsKey(key);
     }
 
+    @Override
+    public final Map<String, String> getKeys() {
+        return getTags();
+    }
+
+    @Override
+    public final void setKeys(Map<String, String> keys) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void remove(String key) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final void removeAll() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public final boolean hasKeys() {
+        return !tags.isEmpty();
+    }
+
+    @Override
+    public final Collection<String> keySet() {
+        return Collections.unmodifiableSet(tags.keySet());
+    }
+
+    /**
+     * Replies the key/value map.
+     * @return the key/value map
+     */
     public Map<String, String> getTags() {
         return Collections.unmodifiableMap(tags);
     }
@@ -271,8 +341,8 @@ public abstract class HistoryOsmPrimitive implements Comparable<HistoryOsmPrimit
     @Override
     public String toString() {
         return getClass().getSimpleName() + " [version=" + version + ", id=" + id + ", visible=" + visible + ", "
-                + (timestamp != null ? "timestamp=" + timestamp : "") + ", "
-                + (user != null ? "user=" + user + ", " : "") + "changesetId="
+                + (timestamp != null ? ("timestamp=" + timestamp) : "") + ", "
+                + (user != null ? ("user=" + user + ", ") : "") + "changesetId="
                 + changesetId
                 + ']';
     }

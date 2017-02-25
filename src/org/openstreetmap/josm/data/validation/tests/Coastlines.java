@@ -250,7 +250,7 @@ public class Coastlines extends Test {
     }
 
     private static boolean isCoastline(OsmPrimitive osm) {
-        return osm instanceof Way && "coastline".equals(osm.get("natural"));
+        return osm instanceof Way && osm.hasTag("natural", "coastline");
     }
 
     @Override

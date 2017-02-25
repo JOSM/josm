@@ -604,9 +604,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
 
         public boolean hasTag(String key) {
             HistoryOsmPrimitive primitive = getPointInTime(pointInTimeType);
-            if (primitive == null)
-                return false;
-            return primitive.hasTag(key);
+            return primitive != null && primitive.hasKey(key);
         }
 
         public String getValue(String key) {
@@ -619,9 +617,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         public boolean oppositeHasTag(String key) {
             PointInTimeType opposite = pointInTimeType.opposite();
             HistoryOsmPrimitive primitive = getPointInTime(opposite);
-            if (primitive == null)
-                return false;
-            return primitive.hasTag(key);
+            return primitive != null && primitive.hasKey(key);
         }
 
         public String getOppositeValue(String key) {
@@ -635,9 +631,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         public boolean hasSameValueAsOpposite(String key) {
             String value = getValue(key);
             String oppositeValue = getOppositeValue(key);
-            if (value == null || oppositeValue == null)
-                return false;
-            return value.equals(oppositeValue);
+            return value != null && value.equals(oppositeValue);
         }
 
         public PointInTimeType getPointInTimeType() {

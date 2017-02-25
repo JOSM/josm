@@ -168,8 +168,8 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                     n = node.getName();
                 }
                 if (n == null) {
-                    String s;
-                    if ((s = node.get("addr:housename")) != null) {
+                    String s = node.get("addr:housename");
+                    if (s != null) {
                         /* I18n: name of house as parameter */
                         n = tr("House {0}", s);
                     }
@@ -249,14 +249,14 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                     n = way.get("ref");
                 }
                 if (n == null) {
-                    n = (way.get("highway") != null) ? tr("highway") :
-                            (way.get("railway") != null) ? tr("railway") :
-                                (way.get("waterway") != null) ? tr("waterway") :
-                                        (way.get("landuse") != null) ? tr("landuse") : null;
+                    n = way.hasKey("highway") ? tr("highway") :
+                        way.hasKey("railway") ? tr("railway") :
+                        way.hasKey("waterway") ? tr("waterway") :
+                        way.hasKey("landuse") ? tr("landuse") : null;
                 }
                 if (n == null) {
-                    String s;
-                    if ((s = way.get("addr:housename")) != null) {
+                    String s = way.get("addr:housename");
+                    if (s != null) {
                         /* I18n: name of house as parameter */
                         n = tr("House {0}", s);
                     }
@@ -272,7 +272,9 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                         }
                     }
                 }
-                if (n == null && way.get("building") != null) n = tr("building");
+                if (n == null && way.hasKey("building")) {
+                    n = tr("building");
+                }
                 if (n == null || n.isEmpty()) {
                     n = String.valueOf(way.getId());
                 }
@@ -406,7 +408,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     private static String getRelationTypeName(IRelation relation) {
         String name = trc("Relation type", relation.get("type"));
         if (name == null) {
-            name = (relation.get("public_transport") != null) ? tr("public transport") : null;
+            name = relation.hasKey("public_transport") ? tr("public transport") : null;
         }
         if (name == null) {
             String building = relation.get("building");
@@ -572,21 +574,21 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         }
         if (sb.length() == 0) {
             sb.append(
-                    (way.get("highway") != null) ? tr("highway") :
-                        (way.get("railway") != null) ? tr("railway") :
-                            (way.get("waterway") != null) ? tr("waterway") :
-                                (way.get("landuse") != null) ? tr("landuse") : ""
+                    way.hasKey("highway") ? tr("highway") :
+                    way.hasKey("railway") ? tr("railway") :
+                    way.hasKey("waterway") ? tr("waterway") :
+                    way.hasKey("landuse") ? tr("landuse") : ""
                     );
         }
 
-        int nodesNo = way.isClosed() ? way.getNumNodes() -1 : way.getNumNodes();
+        int nodesNo = way.isClosed() ? (way.getNumNodes() -1) : way.getNumNodes();
         String nodes = trn("{0} node", "{0} nodes", nodesNo, nodesNo);
         if (sb.length() == 0) {
             sb.append(way.getId());
         }
         /* note: length == 0 should no longer happen, but leave the bracket code
            nevertheless, who knows what future brings */
-        sb.append((sb.length() > 0) ? " ("+nodes+')' : nodes);
+        sb.append((sb.length() > 0) ? (" ("+nodes+')') : nodes);
         decorateNameWithId(sb, way);
         return sb.toString();
     }
@@ -594,8 +596,9 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     @Override
     public String format(HistoryRelation relation) {
         StringBuilder sb = new StringBuilder();
-        if (relation.get("type") != null) {
-            sb.append(relation.get("type"));
+        String type = relation.get("type");
+        if (type != null) {
+            sb.append(type);
         } else {
             sb.append(tr("relation"));
         }

@@ -28,14 +28,14 @@ final class RelationSortUtils {
     }
 
     static Direction roundaboutType(Way w) {
-        if (w != null && "roundabout".equals(w.get("junction"))) {
+        if (w != null && w.hasTag("junction", "roundabout")) {
             int nodesCount = w.getNodesCount();
             if (nodesCount > 2 && nodesCount < 200) {
                 Node n1 = w.getNode(0);
                 Node n2 = w.getNode(1);
                 Node n3 = w.getNode(2);
                 if (n1 != null && n2 != null && n3 != null && w.isClosed()) {
-                    /** do some simple determinant / cross pruduct test on the first 3 nodes
+                    /** do some simple determinant / cross product test on the first 3 nodes
                         to see, if the roundabout goes clock wise or ccw */
                     EastNorth en1 = n1.getEastNorth();
                     EastNorth en2 = n2.getEastNorth();

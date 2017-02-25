@@ -705,8 +705,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
     /**
      * Replies true, if the map of key/value pairs of this primitive is not empty.
      *
-     * @return true, if the map of key/value pairs of this primitive is not empty; false
-     *   otherwise
+     * @return true, if the map of key/value pairs of this primitive is not empty; false otherwise
      */
     @Override
     public final boolean hasKeys() {
@@ -717,8 +716,9 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * Replies true if this primitive has a tag with key <code>key</code>.
      *
      * @param key the key
-     * @return true, if his primitive has a tag with key <code>key</code>
+     * @return true, if this primitive has a tag with key <code>key</code>
      */
+    @Override
     public boolean hasKey(String key) {
         return key != null && indexOfKey(keys, key) >= 0;
     }
@@ -727,7 +727,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * Replies true if this primitive has a tag any of the <code>keys</code>.
      *
      * @param keys the keys
-     * @return true, if his primitive has a tag with any of the <code>keys</code>
+     * @return true, if this primitive has a tag with any of the <code>keys</code>
      * @since 11587
      */
     public boolean hasKey(String ... keys) {
@@ -757,10 +757,10 @@ public abstract class AbstractPrimitive implements IPrimitive {
     }
 
     /**
-     * Tests whether this primitive contains a tag consisting of {@code key} and {@code values}.
+     * Tests whether this primitive contains a tag consisting of {@code key} and {@code value}.
      * @param key the key forming the tag.
      * @param value value forming the tag.
-     * @return true iff primitive contains a tag consisting of {@code key} and {@code value}.
+     * @return true if primitive contains a tag consisting of {@code key} and {@code value}.
      */
     public boolean hasTag(String key, String value) {
         return Objects.equals(value, get(key));
@@ -780,9 +780,44 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * Tests whether this primitive contains a tag consisting of {@code key} and any of {@code values}.
      * @param key the key forming the tag.
      * @param values one or many values forming the tag.
-     * @return true iff primitive contains a tag consisting of {@code key} and any of {@code values}.
+     * @return true if primitive contains a tag consisting of {@code key} and any of {@code values}.
      */
     public boolean hasTag(String key, Collection<String> values) {
         return values.contains(get(key));
+    }
+
+    /**
+     * Tests whether this primitive contains a tag consisting of {@code key} and a value different from {@code value}.
+     * @param key the key forming the tag.
+     * @param value value not forming the tag.
+     * @return true if primitive contains a tag consisting of {@code key} and a value different from {@code value}.
+     * @since 11608
+     */
+    public boolean hasTagDifferent(String key, String value) {
+        String v = get(key);
+        return v != null && !v.equals(value);
+    }
+
+    /**
+     * Tests whether this primitive contains a tag consisting of {@code key} and none of {@code values}.
+     * @param key the key forming the tag.
+     * @param values one or many values forming the tag.
+     * @return true if primitive contains a tag consisting of {@code key} and none of {@code values}.
+     * @since 11608
+     */
+    public boolean hasTagDifferent(String key, String... values) {
+        return hasTagDifferent(key, Arrays.asList(values));
+    }
+
+    /**
+     * Tests whether this primitive contains a tag consisting of {@code key} and none of {@code values}.
+     * @param key the key forming the tag.
+     * @param values one or many values forming the tag.
+     * @return true if primitive contains a tag consisting of {@code key} and none of {@code values}.
+     * @since 11608
+     */
+    public boolean hasTagDifferent(String key, Collection<String> values) {
+        String v = get(key);
+        return v != null && !values.contains(v);
     }
 }

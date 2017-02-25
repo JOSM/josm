@@ -174,7 +174,7 @@ public class MultipolygonTest extends Test {
      */
     private void checkStyleConsistency(Relation r, Multipolygon polygon) {
         ElemStyles styles = MapPaintStyles.getStyles();
-        if (styles != null && !"boundary".equals(r.get("type"))) {
+        if (styles != null && !r.hasTag("type", "boundary")) {
             AreaElement area = ElemStyles.getAreaElemStyle(r, false);
             boolean areaStyle = area != null;
             // If area style was not found for relation then use style of ways

@@ -305,7 +305,7 @@ public abstract class UnconnectedWays extends Test {
             String highway = w.get("highway");
             this.isAbandoned = "abandoned".equals(railway) || w.isKeyTrue("disused");
             this.highway = (highway != null || railway != null) && !isAbandoned;
-            this.isBoundary = !this.highway && "administrative".equals(w.get("boundary"));
+            this.isBoundary = !this.highway && w.hasTag("boundary", "administrative");
             line = new Line2D.Double(n1.getEastNorth().east(), n1.getEastNorth().north(),
                     n2.getEastNorth().east(), n2.getEastNorth().north());
             len = line.getP1().distance(line.getP2());

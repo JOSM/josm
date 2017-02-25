@@ -34,7 +34,7 @@ public class LongSegment extends Test {
 
     @Override
     public void visit(Way w) {
-        if ("ferry".equals(w.get("route"))) {
+        if (w.hasTag("route", "ferry")) {
             return;
         }
         Double length = w.getLongestSegmentLength();

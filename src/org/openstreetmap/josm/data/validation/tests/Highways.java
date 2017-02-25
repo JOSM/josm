@@ -91,8 +91,7 @@ public class Highways extends Test {
     @Override
     public void visit(Way w) {
         if (w.isUsable()) {
-            if (w.isClosed() && w.hasKey("highway") && CLASSIFIED_HIGHWAYS.contains(w.get("highway"))
-                    && w.hasKey("junction") && "roundabout".equals(w.get("junction"))) {
+            if (w.isClosed() && w.hasTag("highway", CLASSIFIED_HIGHWAYS) && w.hasTag("junction", "roundabout")) {
                 // TODO: find out how to handle splitted roundabouts (see #12841)
                 testWrongRoundabout(w);
             }
@@ -130,9 +129,10 @@ public class Highways extends Test {
                 Boolean oneway2 = OsmUtils.getOsmBoolean(list.get(1).get("oneway"));
                 if (list.size() > 2 || oneway1 == null || oneway2 == null || !oneway1 || !oneway2) {
                     // Error when the highway tags do not match
-                    if (!w.get("highway").equals(s)) {
+                    String value = w.get("highway");
+                    if (!value.equals(s)) {
                         errors.add(TestError.builder(this, Severity.WARNING, WRONG_ROUNDABOUT_HIGHWAY)
-                                .message(tr("Incorrect roundabout (highway: {0} instead of {1})", w.get("highway"), s))
+                                .message(tr("Incorrect roundabout (highway: {0} instead of {1})", value, s))
                                 .primitives(w)
                                 .fix(() -> new ChangePropertyCommand(w, "highway", s))
                                 .build());

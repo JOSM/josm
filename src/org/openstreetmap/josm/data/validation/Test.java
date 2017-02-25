@@ -341,8 +341,7 @@ public class Test extends AbstractVisitor {
      * @return True if building key is set and different from no,entrance
      */
     protected static final boolean isBuilding(OsmPrimitive p) {
-        String v = p.get("building");
-        return v != null && !"no".equals(v) && !"entrance".equals(v);
+        return p.hasTagDifferent("building", "no", "entrance");
     }
 
     @Override
@@ -356,6 +355,6 @@ public class Test extends AbstractVisitor {
         if (obj == null || getClass() != obj.getClass()) return false;
         Test test = (Test) obj;
         return Objects.equals(name, test.name) &&
-                Objects.equals(description, test.description);
+               Objects.equals(description, test.description);
     }
 }

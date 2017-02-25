@@ -387,7 +387,7 @@ public class ElemStyles implements PreferenceChangedListener {
                     addIfNotNull(sl, LineElement.createLine(env));
                     addIfNotNull(sl, LineElement.createCasing(env));
                     addIfNotNull(sl, LineTextElement.create(env));
-                } else if ("restriction".equals(osm.get("type"))) {
+                } else if (osm.hasTag("type", "restriction")) {
                     addIfNotNull(sl, NodeElement.create(env));
                 }
             }

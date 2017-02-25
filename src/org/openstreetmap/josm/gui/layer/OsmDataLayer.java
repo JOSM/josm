@@ -664,8 +664,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
             Collection<Collection<WayPoint>> trk = new ArrayList<>();
             Map<String, Object> trkAttr = new HashMap<>();
 
-            if (w.get("name") != null) {
-                trkAttr.put("name", w.get("name"));
+            String name = w.get("name");
+            if (name != null) {
+                trkAttr.put("name", name);
             }
 
             List<WayPoint> trkseg = null;

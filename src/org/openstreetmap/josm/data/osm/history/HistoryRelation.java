@@ -14,9 +14,8 @@ import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * Represents an immutable OSM relation in the context of a historical view on
- * OSM data.
- *
+ * Represents an immutable OSM relation in the context of a historical view on OSM data.
+ * @since 1670
  */
 public class HistoryRelation extends HistoryOsmPrimitive {
 
