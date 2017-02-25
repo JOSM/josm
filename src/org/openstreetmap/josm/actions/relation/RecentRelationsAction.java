@@ -18,16 +18,11 @@ import javax.swing.KeyStroke;
 import javax.swing.plaf.basic.BasicArrowButton;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
-import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
-import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -35,24 +30,25 @@ import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * Action for accessing recent relations.
+ * @since 9668
  */
-public class RecentRelationsAction implements ActionListener, CommandQueueListener, LayerChangeListener, ActiveLayerChangeListener {
+public class RecentRelationsAction extends JosmAction implements ActionListener, CommandQueueListener {
 
     private final SideButton editButton;
     private final BasicArrowButton arrow;
     private final Shortcut shortcut;
+    private final LaunchEditorAction launchAction;
 
     /**
      * Constructs a new <code>RecentRelationsAction</code>.
      * @param editButton edit button
      */
     public RecentRelationsAction(SideButton editButton) {
+        super(RecentRelationsAction.class.getName(), null, null, null, false, true);
         this.editButton = editButton;
         arrow = editButton.createArrow(this);
         arrow.setToolTipText(tr("List of recent relations"));
         Main.main.undoRedo.addCommandQueueListener(this);
-        Main.getLayerManager().addLayerChangeListener(this);
-        Main.getLayerManager().addActiveLayerChangeListener(this);
         enableArrow();
         shortcut = Shortcut.registerShortcut(
             "relationeditor:editrecentrelation",
@@ -60,14 +56,17 @@ public class RecentRelationsAction implements ActionListener, CommandQueueListen
             KeyEvent.VK_ESCAPE,
             Shortcut.SHIFT
         );
-        Main.registerActionShortcut(new LaunchEditorAction(), shortcut);
+        launchAction = new LaunchEditorAction();
+        Main.registerActionShortcut(launchAction, shortcut);
     }
 
     /**
      * Enables arrow button.
      */
     public void enableArrow() {
-        arrow.setVisible(getLastRelation() != null);
+        if (arrow != null) {
+            arrow.setVisible(getLastRelation() != null);
+        }
     }
 
     /**
@@ -108,23 +107,14 @@ public class RecentRelationsAction implements ActionListener, CommandQueueListen
     }
 
     @Override
-    public void layerAdded(LayerAddEvent e) {
+    protected void updateEnabledState() {
         enableArrow();
     }
 
     @Override
-    public void layerRemoving(LayerRemoveEvent e) {
-        enableArrow();
-    }
-
-    @Override
-    public void layerOrderChanged(LayerOrderChangeEvent e) {
-        enableArrow();
-    }
-
-    @Override
-    public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
-        enableArrow();
+    public void destroy() {
+        Main.unregisterActionShortcut(launchAction, shortcut);
+        super.destroy();
     }
 
     /**
@@ -142,20 +132,20 @@ public class RecentRelationsAction implements ActionListener, CommandQueueListen
         }
     }
 
-    protected static class LaunchEditorAction extends AbstractAction {
+    static class LaunchEditorAction extends AbstractAction {
         @Override
         public void actionPerformed(ActionEvent e) {
             EditRelationAction.launchEditor(getLastRelation());
         }
     }
 
-    protected static class RecentRelationsPopupMenu extends JPopupMenu {
+    static class RecentRelationsPopupMenu extends JPopupMenu {
         /**
          * Constructs a new {@code RecentRelationsPopupMenu}.
          * @param recentRelations list of recent relations
          * @param keystroke key stroke for the first menu item
          */
-        public RecentRelationsPopupMenu(List<Relation> recentRelations, KeyStroke keystroke) {
+        RecentRelationsPopupMenu(List<Relation> recentRelations, KeyStroke keystroke) {
             boolean first = true;
             for (Relation relation: recentRelations) {
                 if (!isRelationListable(relation))
@@ -170,7 +160,7 @@ public class RecentRelationsAction implements ActionListener, CommandQueueListen
             }
         }
 
-        protected static void launch(Component parent, KeyStroke keystroke) {
+        static void launch(Component parent, KeyStroke keystroke) {
             Rectangle r = parent.getBounds();
             new RecentRelationsPopupMenu(getRecentRelationsOnActiveLayer(), keystroke).show(parent, r.x, r.y + r.height);
         }
@@ -179,10 +169,10 @@ public class RecentRelationsAction implements ActionListener, CommandQueueListen
     /**
      * A specialized {@link JMenuItem} for presenting one entry of the relation history
      */
-    protected static class RecentRelationsMenuItem extends JMenuItem implements ActionListener {
-        protected final transient Relation relation;
+    static class RecentRelationsMenuItem extends JMenuItem implements ActionListener {
+        private final transient Relation relation;
 
-        public RecentRelationsMenuItem(Relation relation) {
+        RecentRelationsMenuItem(Relation relation) {
             super(relation.getDisplayName(DefaultNameFormatter.getInstance()));
             this.relation = relation;
             addActionListener(this);
@@ -193,5 +183,4 @@ public class RecentRelationsAction implements ActionListener, CommandQueueListen
             EditRelationAction.launchEditor(relation);
         }
     }
-
 }
