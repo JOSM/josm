@@ -659,7 +659,7 @@
 							<xs:element name="country-code" minOccurs="0" maxOccurs="1" type="tns:iso3166" />
 							<!-- A base64-encoded image that is displayed as menu/toolbar icon -->
 							<xs:element name="icon" minOccurs="0" maxOccurs="1" type="xs:string" />
-							<!-- Date in form YYYY-MM-DD;YYYY-MM-DD (each element after first year is optional -->
+							<!-- Date in form YYYY-MM-DD;YYYY-MM-DD (each element after first year is optional, a single - marks an unknown or open timespan like -;2015) -->
 							<xs:element name="date" minOccurs="0" maxOccurs="1" type="xs:string" />
 							<xs:element name="mirror" minOccurs="0">
 								<xs:complexType>

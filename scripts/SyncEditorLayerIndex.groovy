@@ -306,11 +306,18 @@ class SyncEditorImageryIndex {
         }
         /*myprintln "*** Same URL, but different dates: ***"
         for (def url : eliUrls.keySet()) {
-            def e = eliUrls.get(url)
+            def ed = getDate(eliUrls.get(url))
             if (!josmUrls.containsKey(url)) continue
             def j = josmUrls.get(url)
-            if (!getDate(e).equals(getDate(j))) {
-                myprintln "* Date differs ('${getDate(e)}' != '${getDate(j)}'): ${getDescription(j)}"
+            def jd = getDate(j)
+            // The forms 2015;- or -;2015 or 2015;2015 are handled equal to 2015
+            String ef = ed.replaceAll("\\A-;","").replaceAll(";-\\z","").replaceAll("\\A([0-9-]+);\\1\\z","\$1");
+            if (!ed.equals(jd) && !ef.equals(jd)) {
+                String t = "'${ed}'";
+                if (!ed.equals(ef)) {
+                    t += "or '${ef}'";
+                }
+                myprintln "* Date differs (${t} != '${jd}'): ${getDescription(j)}"
             }
         }*/
         myprintln "*** Mismatching shapes: ***"
@@ -408,13 +415,13 @@ class SyncEditorImageryIndex {
             }
             def d = getDate(j)
             if(!d.isEmpty()) {
-                def reg = (d =~ /^(\d\d\d\d)(-(\d\d)(-(\d\d))?)?(;(\d\d\d\d)(-(\d\d)(-(\d\d))?)?)?/)
+                def reg = (d =~ /^(-|(\d\d\d\d)(-(\d\d)(-(\d\d))?)?)(;(-|(\d\d\d\d)(-(\d\d)(-(\d\d))?)?))?/)
                 if(reg == null || reg.count != 1) {
                     myprintln "* JOSM-Date '${d}' is strange: ${getDescription(j)}"
                 } else {
                     try {
-                        def first = verifyDate(reg[0][1],reg[0][3],reg[0][5]);
-                        def second = verifyDate(reg[0][7],reg[0][9],reg[0][11]);
+                        def first = verifyDate(reg[0][2],reg[0][4],reg[0][6]);
+                        def second = verifyDate(reg[0][9],reg[0][11],reg[0][13]);
                         if(second.compareTo(first) < 0) {
                             myprintln "* JOSM-Date '${d}' is strange (second earlier than first): ${getDescription(j)}"
                         }
@@ -463,9 +470,10 @@ class SyncEditorImageryIndex {
         if(!start.isEmpty() && !end.isEmpty())
             return start+";"+end
         else if(!start.isEmpty())
-            return start
-        else
-            return end
+            return start+";-"
+        else if(!end.isEmpty())
+            return "-;"+end
+        return "";
     }
     static Date verifyDate(String year, String month, String day) {
         def date
