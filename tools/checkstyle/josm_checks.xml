@@ -19,6 +19,7 @@ JOSM Checkstyle rules
     <module name="CatchParameterName">
       <property name="format" value="^(e[1-9]?|t|ex[1-9]?|[a-z][a-z][a-zA-Z]+)$"/>
     </module>
+    <module name="CommentsIndentation"/>
     <module name="FileContentsHolder"/>
     <module name="MissingDeprecated"/>
     <module name="MissingOverride"/>
