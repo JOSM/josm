@@ -69,7 +69,7 @@ public final class Logging {
             }
 
             @Override
-            public void publish(LogRecord record) {
+            public synchronized void publish(LogRecord record) {
                 if (!stderr.isLoggable(record)) {
                     super.publish(record);
                 }
