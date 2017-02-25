@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.swing.Icon;
 
@@ -27,12 +28,12 @@ import org.openstreetmap.josm.tools.JosmRuntimeException;
  */
 public class AddPrimitivesCommand extends Command {
 
-    private List<PrimitiveData> data = new ArrayList<>();
-    private Collection<PrimitiveData> toSelect = new ArrayList<>();
+    private List<PrimitiveData> data;
+    private Collection<PrimitiveData> toSelect;
+    private List<PrimitiveData> preExistingData;
 
     // only filled on undo
     private List<OsmPrimitive> createdPrimitives;
-    private Collection<OsmPrimitive> createdPrimitivesToSelect;
 
     /**
      * Constructs a new {@code AddPrimitivesCommand} to add data to the current edit layer.
@@ -65,35 +66,36 @@ public class AddPrimitivesCommand extends Command {
 
     private void init(List<PrimitiveData> data, List<PrimitiveData> toSelect) {
         CheckParameterUtil.ensureParameterNotNull(data, "data");
-        this.data.addAll(data);
-        if (toSelect != null) {
-            this.toSelect.addAll(toSelect);
+        this.data = new ArrayList<>(data);
+        if (toSelect == data) {
+            this.toSelect = this.data;
+        } else if (toSelect != null) {
+            this.toSelect = new ArrayList<>(toSelect);
         }
     }
 
     @Override
     public boolean executeCommand() {
-        Collection<OsmPrimitive> primitivesToSelect;
+        DataSet ds = getAffectedDataSet();
         if (createdPrimitives == null) { // first time execution
             List<OsmPrimitive> newPrimitives = new ArrayList<>(data.size());
-            primitivesToSelect = new ArrayList<>(toSelect.size());
+            preExistingData = new ArrayList<>();
 
             for (PrimitiveData pd : data) {
-                OsmPrimitive primitive = getAffectedDataSet().getPrimitiveById(pd);
+                OsmPrimitive primitive = ds.getPrimitiveById(pd);
                 boolean created = primitive == null;
-                if (created) {
+                if (primitive == null) {
                     primitive = pd.getType().newInstance(pd.getUniqueId(), true);
+                } else {
+                    preExistingData.add(primitive.save());
                 }
                 if (pd instanceof NodeData) { // Load nodes immediately because they can't be added to dataset without coordinates
                     primitive.load(pd);
                 }
                 if (created) {
-                    getAffectedDataSet().addPrimitive(primitive);
+                    ds.addPrimitive(primitive);
                 }
                 newPrimitives.add(primitive);
-                if (toSelect.contains(pd)) {
-                    primitivesToSelect.add(primitive);
-                }
             }
 
             // Then load ways and relations
@@ -107,39 +109,37 @@ public class AddPrimitivesCommand extends Command {
             // When redoing this command, we have to add the same objects, otherwise
             // a subsequent command (e.g. MoveCommand) cannot be redone.
             for (OsmPrimitive osm : createdPrimitives) {
-                getAffectedDataSet().addPrimitive(osm);
+                if (preExistingData.stream().anyMatch(pd -> pd.getUniqueId() == osm.getUniqueId())) {
+                    Optional<PrimitiveData> o = data.stream().filter(pd -> pd.getUniqueId() == osm.getUniqueId()).findAny();
+                    if (o.isPresent()) {
+                        osm.load(o.get());
+                    }
+                } else {
+                    ds.addPrimitive(osm);
+                }
             }
-            primitivesToSelect = createdPrimitivesToSelect;
         }
-
-        getAffectedDataSet().setSelected(primitivesToSelect);
+        if (toSelect != null) {
+            ds.setSelected(toSelect.stream().map(ds::getPrimitiveById).collect(Collectors.toList()));
+        }
         return true;
     }
 
     @Override public void undoCommand() {
         DataSet ds = getAffectedDataSet();
-
         if (createdPrimitives == null) {
             createdPrimitives = new ArrayList<>(data.size());
-            createdPrimitivesToSelect = new ArrayList<>(toSelect.size());
-
             for (PrimitiveData pd : data) {
                 OsmPrimitive p = ds.getPrimitiveById(pd);
                 createdPrimitives.add(p);
-                if (toSelect.contains(pd)) {
-                    createdPrimitivesToSelect.add(p);
-                }
             }
             createdPrimitives = PurgeCommand.topoSort(createdPrimitives);
-
-            for (PrimitiveData p : data) {
-                ds.removePrimitive(p);
-            }
-            data = null;
-            toSelect = null;
-
-        } else {
-            for (OsmPrimitive osm : createdPrimitives) {
+        }
+        for (OsmPrimitive osm : createdPrimitives) {
+            Optional<PrimitiveData> previous = preExistingData.stream().filter(pd -> pd.getUniqueId() == osm.getUniqueId()).findAny();
+            if (previous.isPresent()) {
+                osm.load(previous.get());
+            } else {
                 ds.removePrimitive(osm);
             }
         }
@@ -177,7 +177,7 @@ public class AddPrimitivesCommand extends Command {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), data, toSelect, createdPrimitives, createdPrimitivesToSelect);
+        return Objects.hash(super.hashCode(), data, toSelect, preExistingData, createdPrimitives);
     }
 
     @Override
@@ -188,7 +188,7 @@ public class AddPrimitivesCommand extends Command {
         AddPrimitivesCommand that = (AddPrimitivesCommand) obj;
         return Objects.equals(data, that.data) &&
                Objects.equals(toSelect, that.toSelect) &&
-               Objects.equals(createdPrimitives, that.createdPrimitives) &&
-               Objects.equals(createdPrimitivesToSelect, that.createdPrimitivesToSelect);
+               Objects.equals(preExistingData, that.preExistingData) &&
+               Objects.equals(createdPrimitives, that.createdPrimitives);
     }
 }
