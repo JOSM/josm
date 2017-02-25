@@ -51,7 +51,6 @@ public class UndoRedoHandler implements LayerChangeListener {
     public void addNoRedraw(final Command c) {
         CheckParameterUtil.ensureParameterNotNull(c, "c");
         c.executeCommand();
-        c.invalidateAffectedLayers();
         commands.add(c);
         // Limit the number of commands in the undo list.
         // Currently you have to undo the commands one by one. If
@@ -80,6 +79,7 @@ public class UndoRedoHandler implements LayerChangeListener {
             oldSelection = ds.getSelected();
         }
         addNoRedraw(c);
+        c.invalidateAffectedLayers();
         afterAdd();
 
         // the command may have changed the selection so tell the listeners about the current situation

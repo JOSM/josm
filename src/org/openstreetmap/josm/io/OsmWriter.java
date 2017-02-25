@@ -173,7 +173,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     }
 
     public void writeDataSources(DataSet ds) {
-        for (DataSource s : ds.dataSources) {
+        for (DataSource s : ds.getDataSources()) {
             out.println("  <bounds minlat='"
                     + s.bounds.getMin().latToString(CoordinateFormat.DECIMAL_DEGREES)
                     +"' minlon='"

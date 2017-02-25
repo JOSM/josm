@@ -197,7 +197,7 @@ public class OsmReader extends AbstractReader {
                 Main.info("Bbox " + copy + " is out of the world, normalized to " + bounds);
             }
             DataSource src = new DataSource(bounds, origin);
-            ds.dataSources.add(src);
+            ds.addDataSource(src);
         } else {
             throwException(tr("Missing mandatory attributes on element ''bounds''. " +
                     "Got minlon=''{0}'',minlat=''{1}'',maxlon=''{3}'',maxlat=''{4}'', origin=''{5}''.",

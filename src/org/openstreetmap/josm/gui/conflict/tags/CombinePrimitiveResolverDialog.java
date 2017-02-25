@@ -131,15 +131,21 @@ public class CombinePrimitiveResolverDialog extends JDialog {
      * @param primitive the target primitive
      */
     public void setTargetPrimitive(final OsmPrimitive primitive) {
+        setTargetPrimitive(primitive, true);
+    }
+
+    /**
+     * Sets the primitive the collection of primitives is merged or combined to.
+     *
+     * @param primitive the target primitive
+     * @param updateTitle {@code true} to call {@link #updateTitle} in EDT (can be a slow operation)
+     * @since 11626
+     */
+    private void setTargetPrimitive(final OsmPrimitive primitive, boolean updateTitle) {
         this.targetPrimitive = primitive;
-        GuiHelper.runInEDTAndWait(() -> {
-            updateTitle();
-            if (primitive instanceof Way) {
-                pnlRelationMemberConflictResolver.initForWayCombining();
-            } else if (primitive instanceof Node) {
-                pnlRelationMemberConflictResolver.initForNodeMerging();
-            }
-        });
+        if (updateTitle) {
+            GuiHelper.runInEDTAndWait(this::updateTitle);
+        }
     }
 
     protected void updateTitle() {
@@ -152,11 +158,13 @@ public class CombinePrimitiveResolverDialog extends JDialog {
                     .getDisplayName(DefaultNameFormatter.getInstance())));
             helpAction.setHelpTopic(ht("/Action/CombineWay#ResolvingConflicts"));
             getRootPane().putClientProperty("help", ht("/Action/CombineWay#ResolvingConflicts"));
+            pnlRelationMemberConflictResolver.initForWayCombining();
         } else if (targetPrimitive instanceof Node) {
             setTitle(tr("Conflicts when merging nodes - target node is ''{0}''", targetPrimitive
                     .getDisplayName(DefaultNameFormatter.getInstance())));
             helpAction.setHelpTopic(ht("/Action/MergeNodes#ResolvingConflicts"));
             getRootPane().putClientProperty("help", ht("/Action/MergeNodes#ResolvingConflicts"));
+            pnlRelationMemberConflictResolver.initForNodeMerging();
         }
     }
 
@@ -294,8 +302,17 @@ public class CombinePrimitiveResolverDialog extends JDialog {
      * Prepares the default decisions for populated tag and relation membership conflicts.
      */
     public void prepareDefaultDecisions() {
-        getTagConflictResolverModel().prepareDefaultTagDecisions();
-        getRelationMemberConflictResolverModel().prepareDefaultRelationDecisions();
+        prepareDefaultDecisions(true);
+    }
+
+    /**
+     * Prepares the default decisions for populated tag and relation membership conflicts.
+     * @param fireEvent {@code true} to call {@code fireTableDataChanged} (can be a slow operation)
+     * @since 11626
+     */
+    private void prepareDefaultDecisions(boolean fireEvent) {
+        getTagConflictResolverModel().prepareDefaultTagDecisions(fireEvent);
+        getRelationMemberConflictResolverModel().prepareDefaultRelationDecisions(fireEvent);
     }
 
     protected JPanel buildEmptyConflictsPanel() {
@@ -500,26 +517,31 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             // Build conflict resolution dialog
             final CombinePrimitiveResolverDialog dialog = CombinePrimitiveResolverDialog.getInstance();
 
-            dialog.getTagConflictResolverModel().populate(tagsToEdit, completeWayTags.getKeysWithMultipleValues());
-            dialog.getRelationMemberConflictResolverModel().populate(parentRelations, primitives);
-            dialog.prepareDefaultDecisions();
+            dialog.getTagConflictResolverModel().populate(tagsToEdit, completeWayTags.getKeysWithMultipleValues(), false);
+            dialog.getRelationMemberConflictResolverModel().populate(parentRelations, primitives, false);
+            dialog.prepareDefaultDecisions(false);
 
             // Ensure a proper title is displayed instead of a previous target (fix #7925)
             if (targetPrimitives.size() == 1) {
-                dialog.setTargetPrimitive(targetPrimitives.iterator().next());
+                dialog.setTargetPrimitive(targetPrimitives.iterator().next(), false);
             } else {
-                dialog.setTargetPrimitive(null);
+                dialog.setTargetPrimitive(null, false);
             }
 
             // Resolve tag conflicts if necessary
             if (!dialog.isResolvedCompletely()) {
+                GuiHelper.runInEDTAndWait(() -> {
+                    dialog.getTagConflictResolverModel().fireTableDataChanged();
+                    dialog.getRelationMemberConflictResolverModel().fireTableDataChanged();
+                    dialog.updateTitle();
+                });
                 dialog.setVisible(true);
                 if (!dialog.isApplied()) {
                     throw new UserCancelException();
                 }
             }
             for (OsmPrimitive i : targetPrimitives) {
-                dialog.setTargetPrimitive(i);
+                dialog.setTargetPrimitive(i, false);
                 cmds.addAll(dialog.buildResolutionCommands());
             }
         }

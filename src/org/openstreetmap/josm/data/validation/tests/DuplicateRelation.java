@@ -292,7 +292,7 @@ public class DuplicateRelation extends Test {
             }
         }
 
-        //Delete all relations in the list
+        // Delete all relations in the list
         relFix.remove(relationToKeep);
         commands.add(new DeleteCommand(relFix));
         return new SequenceCommand(tr("Delete duplicate relations"), commands);
@@ -305,19 +305,19 @@ public class DuplicateRelation extends Test {
 
         // We fix it only if there is no more than one relation that is relation member.
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
-        Set<Relation> relations = new HashSet<>();
+        Set<Relation> rels = new HashSet<>();
 
         for (OsmPrimitive osm : sel) {
             if (osm instanceof Relation) {
-                relations.add((Relation) osm);
+                rels.add((Relation) osm);
             }
         }
 
-        if (relations.size() < 2)
+        if (rels.size() < 2)
             return false;
 
         int relationsWithRelations = 0;
-        for (Relation w : relations) {
+        for (Relation w : rels) {
             List<Relation> rel = OsmPrimitive.getFilteredList(w.getReferrers(), Relation.class);
             if (!rel.isEmpty()) {
                 ++relationsWithRelations;

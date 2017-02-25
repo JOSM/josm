@@ -128,7 +128,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
             break;
         case 4: /* decision */
             d.decide((RelationMemberConflictDecisionType) value);
-            refresh();
+            refresh(false);
             break;
         default: // Do nothing
         }
@@ -158,6 +158,19 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      * @param memberPrimitives the child primitives. Empty list assumed if null.
      */
     public void populate(Collection<Relation> relations, Collection<? extends OsmPrimitive> memberPrimitives) {
+        populate(relations, memberPrimitives, true);
+    }
+
+    /**
+     * Populates the model with the relation members belonging to one of the relations in <code>relations</code>
+     * and referring to one of the primitives in <code>memberPrimitives</code>.
+     *
+     * @param relations  the parent relations. Empty list assumed if null.
+     * @param memberPrimitives the child primitives. Empty list assumed if null.
+     * @param fireEvent {@code true} to call {@code fireTableDataChanged} (can be a slow operation)
+     * @since 11626
+     */
+    void populate(Collection<Relation> relations, Collection<? extends OsmPrimitive> memberPrimitives, boolean fireEvent) {
         decisions.clear();
         relations = relations == null ? Collections.<Relation>emptyList() : relations;
         memberPrimitives = memberPrimitives == null ? new LinkedList<>() : memberPrimitives;
@@ -168,7 +181,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
         }
         this.relations = relations;
         this.primitives = memberPrimitives;
-        refresh();
+        refresh(fireEvent);
     }
 
     /**
@@ -198,7 +211,19 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      * For multiple occurrences those conditions are tested stepwise for each occurrence.
      */
     public void prepareDefaultRelationDecisions() {
+        prepareDefaultRelationDecisions(true);
+    }
 
+    /**
+     * Prepare the default decisions for the current model.
+     *
+     * Keep/delete decisions are made if every member has the same role and the members are in consecutive order within the relation.
+     * For multiple occurrences those conditions are tested stepwise for each occurrence.
+     *
+     * @param fireEvent {@code true} to call {@code fireTableDataChanged} (can be a slow operation)
+     * @since 11626
+     */
+    void prepareDefaultRelationDecisions(boolean fireEvent) {
         if (primitives.stream().allMatch(Node.class::isInstance)) {
             final Collection<OsmPrimitive> primitivesInDecisions = new HashSet<>();
             for (final RelationMemberConflictDecision i : decisions) {
@@ -255,7 +280,7 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
             }
         }
 
-        refresh();
+        refresh(fireEvent);
     }
 
     static boolean isCollectionOfConsecutiveNumbers(Collection<Integer> numbers) {
@@ -299,8 +324,20 @@ public class RelationMemberConflictResolverModel extends DefaultTableModel {
      *
      */
     public void refresh() {
+        refresh(true);
+    }
+
+    /**
+     * Refreshes the model state. Invoke this method to trigger necessary change
+     * events after an update of the model data.
+     * @param fireEvent {@code true} to call {@code fireTableDataChanged} (can be a slow operation)
+     * @since 11626
+     */
+    void refresh(boolean fireEvent) {
         updateNumConflicts();
-        GuiHelper.runInEDTAndWait(this::fireTableDataChanged);
+        if (fireEvent) {
+            GuiHelper.runInEDTAndWait(this::fireTableDataChanged);
+        }
     }
 
     /**

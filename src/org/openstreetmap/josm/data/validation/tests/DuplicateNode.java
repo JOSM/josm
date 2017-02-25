@@ -308,7 +308,6 @@ public class DuplicateNode extends Test {
      */
     @Override
     public Command fixError(TestError testError) {
-        if (!isFixable(testError)) return null;
         Collection<OsmPrimitive> sel = new LinkedList<>(testError.getPrimitives());
         Set<Node> nodes = new LinkedHashSet<>(OsmPrimitive.getFilteredList(sel, Node.class));
 

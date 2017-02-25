@@ -168,19 +168,19 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         DataSet ds = super.parseOsm(progressMonitor);
 
         // add bounds if necessary (note that Overpass API does not return bounds in the response XML)
-        if (ds != null && ds.dataSources.isEmpty() && overpassQuery.contains("{{bbox}}")) {
+        if (ds != null && ds.getDataSources().isEmpty() && overpassQuery.contains("{{bbox}}")) {
             if (crosses180th) {
                 Bounds bounds = new Bounds(lat1, lon1, lat2, 180.0);
                 DataSource src = new DataSource(bounds, getBaseUrl());
-                ds.dataSources.add(src);
+                ds.addDataSource(src);
 
                 bounds = new Bounds(lat1, -180.0, lat2, lon2);
                 src = new DataSource(bounds, getBaseUrl());
-                ds.dataSources.add(src);
+                ds.addDataSource(src);
             } else {
                 Bounds bounds = new Bounds(lat1, lon1, lat2, lon2);
                 DataSource src = new DataSource(bounds, getBaseUrl());
-                ds.dataSources.add(src);
+                ds.addDataSource(src);
             }
         }
 

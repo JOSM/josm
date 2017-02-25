@@ -405,7 +405,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
         // draw the hatched area for non-downloaded region. only draw if we're the active
         // and bounds are defined; don't draw for inactive layers or loaded GPX files etc
-        if (active && Main.pref.getBoolean("draw.data.downloaded_area", true) && !data.dataSources.isEmpty()) {
+        if (active && Main.pref.getBoolean("draw.data.downloaded_area", true) && !data.getDataSources().isEmpty()) {
             // initialize area with current viewport
             Rectangle b = mv.getBounds();
             // on some platforms viewport bounds seem to be offset from the left,
@@ -495,9 +495,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
         // copy the merged layer's data source info.
         // only add source rectangles if they are not contained in the layer already.
-        for (DataSource src : from.dataSources) {
+        for (DataSource src : from.getDataSources()) {
             if (a == null || !a.contains(src.bounds.asRect())) {
-                data.dataSources.add(src);
+                data.addDataSource(src);
             }
         }
 
@@ -845,11 +845,11 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     public boolean containsPoint(LatLon coor) {
         // we'll assume that if this has no data sources
         // that it also has no borders
-        if (this.data.dataSources.isEmpty())
+        if (this.data.getDataSources().isEmpty())
             return true;
 
         boolean layerBoundsPoint = false;
-        for (DataSource src : this.data.dataSources) {
+        for (DataSource src : this.data.getDataSources()) {
             if (src.bounds.contains(coor)) {
                 layerBoundsPoint = true;
                 break;

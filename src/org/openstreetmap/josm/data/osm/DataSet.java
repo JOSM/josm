@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,6 +25,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.ProjectionBounds;
@@ -126,6 +128,9 @@ public final class DataSet implements Data, ProjectionChangeListener {
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private final Object selectionLock = new Object();
 
+    private Area cachedDataSourceArea;
+    private List<Bounds> cachedDataSourceBounds;
+
     /**
      * Constructs a new {@code DataSet}.
      */
@@ -183,6 +188,31 @@ public final class DataSet implements Data, ProjectionChangeListener {
         } finally {
             copyFrom.getReadLock().unlock();
         }
+    }
+
+    /**
+     * Adds a new data source.
+     * @param source data source to add
+     * @return {@code true} if the collection changed as a result of the call
+     * @since 11626
+     */
+    public synchronized boolean addDataSource(DataSource source) {
+        return addDataSources(Collections.singleton(source));
+    }
+
+    /**
+     * Adds new data sources.
+     * @param sources data sources to add
+     * @return {@code true} if the collection changed as a result of the call
+     * @since 11626
+     */
+    public synchronized boolean addDataSources(Collection<DataSource> sources) {
+        boolean changed = dataSources.addAll(sources);
+        if (changed) {
+            cachedDataSourceArea = null;
+            cachedDataSourceBounds = null;
+        }
+        return changed;
     }
 
     /**
@@ -919,6 +949,22 @@ public final class DataSet implements Data, ProjectionChangeListener {
     }
 
     @Override
+    public synchronized Area getDataSourceArea() {
+        if (cachedDataSourceArea == null) {
+            cachedDataSourceArea = Data.super.getDataSourceArea();
+        }
+        return cachedDataSourceArea;
+    }
+
+    @Override
+    public synchronized List<Bounds> getDataSourceBounds() {
+        if (cachedDataSourceBounds == null) {
+            cachedDataSourceBounds = Data.super.getDataSourceBounds();
+        }
+        return Collections.unmodifiableList(cachedDataSourceBounds);
+    }
+
+    @Override
     public Collection<DataSource> getDataSources() {
         return Collections.unmodifiableCollection(dataSources);
     }
@@ -1333,11 +1379,18 @@ public final class DataSet implements Data, ProjectionChangeListener {
      * @param from The source DataSet
      * @param progressMonitor The progress monitor
      */
-    public void mergeFrom(DataSet from, ProgressMonitor progressMonitor) {
+    public synchronized void mergeFrom(DataSet from, ProgressMonitor progressMonitor) {
         if (from != null) {
             new DataSetMerger(this, from).merge(progressMonitor);
-            dataSources.addAll(from.dataSources);
-            from.dataSources.clear();
+            if (!from.dataSources.isEmpty()) {
+                if (dataSources.addAll(from.dataSources)) {
+                    cachedDataSourceArea = null;
+                    cachedDataSourceBounds = null;
+                }
+                from.dataSources.clear();
+                from.cachedDataSourceArea = null;
+                from.cachedDataSourceBounds = null;
+            }
         }
     }
 
