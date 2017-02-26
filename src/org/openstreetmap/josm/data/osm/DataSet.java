@@ -132,6 +132,11 @@ public final class DataSet implements Data, ProjectionChangeListener {
     private List<Bounds> cachedDataSourceBounds;
 
     /**
+     * All data sources of this DataSet.
+     */
+    private final Collection<DataSource> dataSources = new LinkedList<>();
+
+    /**
      * Constructs a new {@code DataSet}.
      */
     public DataSet() {
@@ -471,11 +476,6 @@ public final class DataSet implements Data, ProjectionChangeListener {
     public boolean containsRelation(Relation r) {
         return relations.contains(r);
     }
-
-    /**
-     * All data sources of this DataSet.
-     */
-    public final Collection<DataSource> dataSources = new LinkedList<>();
 
     /**
      * Returns a collection containing all primitives of the dataset.
