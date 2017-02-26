@@ -60,7 +60,7 @@ import org.openstreetmap.josm.tools.Utils;
  * store some information.
  *
  * Dataset is threadsafe - accessing Dataset simultaneously from different threads should never
- * lead to data corruption or ConccurentModificationException. However when for example one thread
+ * lead to data corruption or ConcurrentModificationException. However when for example one thread
  * removes primitive and other thread try to add another primitive referring to the removed primitive,
  * DataIntegrityException will occur.
  *
@@ -965,7 +965,7 @@ public final class DataSet implements Data, ProjectionChangeListener {
     }
 
     @Override
-    public Collection<DataSource> getDataSources() {
+    public synchronized Collection<DataSource> getDataSources() {
         return Collections.unmodifiableCollection(dataSources);
     }
 
@@ -1382,14 +1382,16 @@ public final class DataSet implements Data, ProjectionChangeListener {
     public synchronized void mergeFrom(DataSet from, ProgressMonitor progressMonitor) {
         if (from != null) {
             new DataSetMerger(this, from).merge(progressMonitor);
-            if (!from.dataSources.isEmpty()) {
-                if (dataSources.addAll(from.dataSources)) {
-                    cachedDataSourceArea = null;
-                    cachedDataSourceBounds = null;
+            synchronized (from) {
+                if (!from.dataSources.isEmpty()) {
+                    if (dataSources.addAll(from.dataSources)) {
+                        cachedDataSourceArea = null;
+                        cachedDataSourceBounds = null;
+                    }
+                    from.dataSources.clear();
+                    from.cachedDataSourceArea = null;
+                    from.cachedDataSourceBounds = null;
                 }
-                from.dataSources.clear();
-                from.cachedDataSourceArea = null;
-                from.cachedDataSourceBounds = null;
             }
         }
     }
@@ -1402,7 +1404,11 @@ public final class DataSet implements Data, ProjectionChangeListener {
         invalidateEastNorthCache();
     }
 
-    public ProjectionBounds getDataSourceBoundingBox() {
+    /**
+     * Returns the data sources bounding box.
+     * @return the data sources bounding box
+     */
+    public synchronized ProjectionBounds getDataSourceBoundingBox() {
         BoundingXYVisitor bbox = new BoundingXYVisitor();
         for (DataSource source : dataSources) {
             bbox.visit(source.bounds);
@@ -1412,5 +1418,4 @@ public final class DataSet implements Data, ProjectionChangeListener {
         }
         return null;
     }
-
 }
