@@ -56,7 +56,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -595,18 +594,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
         protected void fixError(TestError error) throws InterruptedException, InvocationTargetException {
             if (error.isFixable()) {
-                long start = System.currentTimeMillis();
                 final Command fixCommand = error.getFix();
-                long phase1 = System.currentTimeMillis() - start;
-                start = System.currentTimeMillis();
                 if (fixCommand != null) {
                     SwingUtilities.invokeAndWait(() -> Main.main.undoRedo.addNoRedraw(fixCommand));
-                    if (Main.isDebugEnabled()) {
-                        long phase2 = System.currentTimeMillis() - start;
-                        Main.debug(String.format("%s fix: %s + %s",
-                                error.getTester().getClass().getSimpleName(), Utils.getDurationString(phase1),
-                                Utils.getDurationString(phase2)));
-                    }
                 }
                 // It is wanted to ignore an error if it said fixable, even if fixCommand was null
                 // This is to fix #5764 and #5773:
