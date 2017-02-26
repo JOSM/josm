@@ -312,10 +312,24 @@ class SyncEditorImageryIndex {
             def jd = getDate(j)
             // The forms 2015;- or -;2015 or 2015;2015 are handled equal to 2015
             String ef = ed.replaceAll("\\A-;","").replaceAll(";-\\z","").replaceAll("\\A([0-9-]+);\\1\\z","\$1");
-            if (!ed.equals(jd) && !ef.equals(jd)) {
+            // ELI has a strange and inconsistent used end_date definition, so we try again with subtraction by one
+            String ed2 = ed;
+            def reg = (ed =~ /^(.*;)(\d\d\d\d)(-(\d\d)(-(\d\d))?)?$/)
+            if(reg != null && reg.count == 1) {
+                Calendar cal = Calendar.getInstance();
+                cal.set(reg[0][2] as Integer, reg[0][4] == null ? 0 : (reg[0][4] as Integer)-1, reg[0][6] == null ? 1 : reg[0][6] as Integer)
+                cal.add(Calendar.DAY_OF_MONTH, -1)
+                ed2 = cal.get(Calendar.YEAR)
+                if (reg[0][4] != null)
+                    ed2 += "-" + String.format("%02d", cal.get(Calendar.MONTH)+1)
+                if (reg[0][6] != null)
+                    ed2 += "-" + String.format("%02d", cal.get(Calendar.DAY_OF_MONTH))
+            }
+            String ef2 = ed2.replaceAll("\\A-;","").replaceAll(";-\\z","").replaceAll("\\A([0-9-]+);\\1\\z","\$1");
+            if (!ed.equals(jd) && !ef.equals(jd) && !ed2.equals(jd) && !ef2.equals(jd)) {
                 String t = "'${ed}'";
                 if (!ed.equals(ef)) {
-                    t += "or '${ef}'";
+                    t += " or '${ef}'";
                 }
                 myprintln "* Date differs (${t} != '${jd}'): ${getDescription(j)}"
             }
@@ -415,7 +429,7 @@ class SyncEditorImageryIndex {
             }
             def d = getDate(j)
             if(!d.isEmpty()) {
-                def reg = (d =~ /^(-|(\d\d\d\d)(-(\d\d)(-(\d\d))?)?)(;(-|(\d\d\d\d)(-(\d\d)(-(\d\d))?)?))?/)
+                def reg = (d =~ /^(-|(\d\d\d\d)(-(\d\d)(-(\d\d))?)?)(;(-|(\d\d\d\d)(-(\d\d)(-(\d\d))?)?))?$/)
                 if(reg == null || reg.count != 1) {
                     myprintln "* JOSM-Date '${d}' is strange: ${getDescription(j)}"
                 } else {
