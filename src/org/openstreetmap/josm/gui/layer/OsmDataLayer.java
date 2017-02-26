@@ -16,6 +16,7 @@ import java.awt.Rectangle;
 import java.awt.TexturePaint;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Area;
+import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -411,15 +412,18 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
             // on some platforms viewport bounds seem to be offset from the left,
             // over-grow it just to be sure
             b.grow(100, 100);
-            Area a = new Area(b);
+            Path2D p = new Path2D.Double();
 
-            // now successively subtract downloaded areas
+            // combine successively downloaded areas
             for (Bounds bounds : data.getDataSourceBounds()) {
                 if (bounds.isCollapsed()) {
                     continue;
                 }
-                a.subtract(mv.getState().getArea(bounds));
+                p.append(mv.getState().getArea(bounds), false);
             }
+            // subtract combined areas
+            Area a = new Area(b);
+            a.subtract(new Area(p));
 
             // paint remainder
             MapViewPoint anchor = mv.getState().getPointFor(new EastNorth(0, 0));
