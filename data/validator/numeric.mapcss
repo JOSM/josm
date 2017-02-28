@@ -22,21 +22,33 @@
   assertNoMatch: "node layer=-5";
   assertNoMatch: "node layer=0";
   assertNoMatch: "node layer=2";
-  assertNoMatch: "node layer=+5";
+  assertNoMatch: "node layer=+5"; /* this is an invalid value, but this case is already covered by the previous rule */
 }
 
 *[building:levels][building:levels !~ /^(([0-9]|[1-9][0-9]*)(\.5)?)$/],
-*[level][level !~ /^((([0-9]|-[1-9])|[1-9][0-9]*)(\.5)?)(;(([0-9]|-[1-9])|[1-9][0-9]*)(\.5)?)*$|^-0\.5$/] {
+*[level][level !~ /^((((-*[1-9]|[0-9])|-*[1-9][0-9]*)(\.5)?)|-0\.5)(;((((-*[1-9]|[0-9])|-*[1-9][0-9]*)(\.5)?)|-0\.5))*$/] { /* all numbers from -∞ to ∞ in 0.5 steps, optional multiple values seperated by a ; */
   throwWarning: tr("{0} should have numbers only with optional .5 increments", "{0.key}");
   assertMatch: "node level=one";
+  assertMatch: "node level=01";
+  assertMatch: "node level=-03";
+  assertMatch: "node level=-01.5";
+  assertMatch: "node level=2.3";
+  assertMatch: "node level=-0";
   assertNoMatch: "node level=0";
   assertNoMatch: "node level=1";
   assertNoMatch: "node level=-1";
   assertNoMatch: "node level=-0.5";
   assertNoMatch: "node level=1.5";
+  assertNoMatch: "node level=12";
+  assertNoMatch: "node level=0;1";
+  assertNoMatch: "node level=1;1.5";
+  assertNoMatch: "node level=1;0.5";
+  assertNoMatch: "node level=0;-0.5";
+  assertNoMatch: "node level=-0.5;0";
+  assertNoMatch: "node level=-1;-0.5";
   assertNoMatch: "node building:levels=1.5";
   assertMatch: "node building:levels=-1";
-  assertNoMatch: "node building:levels=0";
+  assertNoMatch: "node building:levels=0"; /* valid because there can be building:levels:underground > 0 or roof:levels > 0 */
 }
 
 *[height][height !~ /^(([0-9]+\.?[0-9]*( (m|ft))?)|([1-9][0-9]*\'((10|11|[0-9])((\.[0-9]+)?)\")?))$/] {
