@@ -49,8 +49,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * Class to manage projections.
  *
- * Use this class to query available projection or register new projections
- * from a plugin.
+ * Use this class to query available projection or register new projections from a plugin.
  */
 public final class Projections {
 
@@ -58,10 +57,16 @@ public final class Projections {
      * Class to hold information about one projection.
      */
     public static class ProjectionDefinition {
-        public String code;
-        public String name;
-        public String definition;
+        public final String code;
+        public final String name;
+        public final String definition;
 
+        /**
+         * Constructs a new {@code ProjectionDefinition}.
+         * @param code EPSG code
+         * @param name projection name
+         * @param definition projection definition (EPSG format)
+         */
         public ProjectionDefinition(String code, String name, String definition) {
             this.code = code;
             this.name = name;
@@ -140,18 +145,14 @@ public final class Projections {
                 "Potsdam Rauenberg 1950 DHDN", "potsdam",
                 Ellipsoid.Bessel1841, 598.1, 73.7, 418.2, 0.202, 0.045, -2.455, 6.7));
 
-        nadgrids.put("BETA2007.gsb", NTV2GridShiftFileWrapper.BETA2007);
-        nadgrids.put("ntf_r93_b.gsb", NTV2GridShiftFileWrapper.ntf_rgf93);
-
-        List<ProjectionDefinition> pds;
         try {
-            pds = loadProjectionDefinitions("resource://data/projection/custom-epsg");
+            inits = new LinkedHashMap<>();
+            for (ProjectionDefinition pd : loadProjectionDefinitions("resource://data/projection/custom-epsg")) {
+                inits.put(pd.code, pd);
+                loadNadgrids(pd.definition);
+            }
         } catch (IOException ex) {
             throw new JosmRuntimeException(ex);
-        }
-        inits = new LinkedHashMap<>();
-        for (ProjectionDefinition pd : pds) {
-            inits.put(pd.code, pd);
         }
 
         for (ProjectionChoice pc : ProjectionPreference.getProjectionChoices()) {
@@ -165,6 +166,23 @@ public final class Projections {
 
     private Projections() {
         // Hide default constructor for utils classes
+    }
+
+    private static void loadNadgrids(String definition) {
+        final String key = CustomProjection.Param.nadgrids.key;
+        if (definition.contains(key)) {
+            try {
+                String nadgridsId = CustomProjection.parseParameterList(definition, true).get(key);
+                if (nadgridsId.startsWith("@")) {
+                    nadgridsId = nadgridsId.substring(1);
+                }
+                if (!"null".equals(nadgridsId) && !nadgrids.containsKey(nadgridsId)) {
+                    nadgrids.put(nadgridsId, new NTV2GridShiftFileWrapper(nadgridsId));
+                }
+            } catch (ProjectionConfigurationException e) {
+                Main.trace(e);
+            }
+        }
     }
 
     /**

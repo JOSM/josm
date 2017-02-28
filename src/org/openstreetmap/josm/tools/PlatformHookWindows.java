@@ -52,6 +52,7 @@ import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.List;
@@ -570,5 +571,10 @@ public class PlatformHookWindows implements PlatformHook {
         def.add(new FontEntry("arialuni", "Arial Unicode MS", "ARIALUNI.TTF"));
 
         return def;
+    }
+
+    @Override
+    public List<File> getDefaultProj4NadshiftDirectories() {
+        return Arrays.asList(new File("C:\\PROJ\\NAD"));
     }
 }

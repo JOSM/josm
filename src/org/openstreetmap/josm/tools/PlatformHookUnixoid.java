@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import javax.swing.JOptionPane;
@@ -432,4 +433,8 @@ public class PlatformHookUnixoid implements PlatformHook {
         }
     }
 
+    @Override
+    public List<File> getDefaultProj4NadshiftDirectories() {
+        return Arrays.asList(new File("/usr/local/share/proj"), new File("/usr/share/proj"));
+    }
 }

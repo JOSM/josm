@@ -1,11 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection.datum;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.CachedFile;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
 
 /**
  * Wrapper for {@link NTV2GridShiftFile}.
@@ -14,26 +15,6 @@ import org.openstreetmap.josm.tools.JosmRuntimeException;
  * @since 5226
  */
 public class NTV2GridShiftFileWrapper {
-
-    // CHECKSTYLE.OFF: LineLength
-
-    /**
-     * Used in Germany to convert coordinates between the DHDN (<i>Deutsches Hauptdreiecksnetz</i>)
-     * and ETRS89 (<i>European Terrestrial Reference System 1989</i>) datums.
-     * @see <a href="http://crs.bkg.bund.de/crseu/crs/descrtrans/eu-descrtrans.php?crs_id=REVfREhETiAvIEdLXzM=&op_id=REVfREhETiAoQmVUQSwgMjAwNykgdG8gRVRSUzg5">
-     * Description of Transformation - DE_DHDN (BeTA, 2007) to ETRS89</a>
-     */
-    public static final NTV2GridShiftFileWrapper BETA2007 = new NTV2GridShiftFileWrapper("resource://data/projection/BETA2007.gsb");
-
-    /**
-     * Used in France to convert coordinates between the NTF (<i>Nouvelle triangulation de la France</i>)
-     * and RGF93 (<i>Réseau géodésique français 1993</i>) datums.
-     * @see <a href="http://geodesie.ign.fr/contenu/fichiers/documentation/algorithmes/notice/NT111_V1_HARMEL_TransfoNTF-RGF93_FormatGrilleNTV2.pdf">
-     * [French] Transformation de coordonnées NTF – RGF93 / Format de grille NTv2</a>
-     */
-    public static final NTV2GridShiftFileWrapper ntf_rgf93 = new NTV2GridShiftFileWrapper("resource://data/projection/ntf_r93_b.gsb");
-
-    // CHECKSTYLE.ON: LineLength
 
     private NTV2GridShiftFile instance;
     private final String gridFileName;
@@ -50,14 +31,39 @@ public class NTV2GridShiftFileWrapper {
      * Returns the actual {@link NTV2GridShiftFile} behind this wrapper.
      * The grid file is only loaded once, when first accessed.
      * @return The NTv2 grid file
+     * @throws IOException if the grid file cannot be found/loaded
      */
-    public NTV2GridShiftFile getShiftFile() {
+    public synchronized NTV2GridShiftFile getShiftFile() throws IOException {
         if (instance == null) {
-            try (CachedFile cf = new CachedFile(gridFileName); InputStream is = cf.getInputStream()) {
-                instance = new NTV2GridShiftFile();
-                instance.loadGridShiftFile(is, false);
-            } catch (IOException e) {
-                throw new JosmRuntimeException(e);
+            File grid = null;
+            // Check is the grid is installed in default PROJ.4 directories
+            for (File dir : Main.platform.getDefaultProj4NadshiftDirectories()) {
+                File file = new File(dir, gridFileName);
+                if (file.exists() && file.isFile()) {
+                    grid = file;
+                    break;
+                }
+            }
+            // If not, search into PROJ_LIB directory
+            if (grid == null) {
+                String projLib = System.getProperty("PROJ_LIB");
+                if (projLib != null && !projLib.isEmpty()) {
+                    File dir = new File(projLib);
+                    if (dir.exists() && dir.isDirectory()) {
+                        File file = new File(dir, gridFileName);
+                        if (file.exists() && file.isFile()) {
+                            grid = file;
+                        }
+                    }
+                }
+            }
+            // If not, retrieve it from JOSM website
+            String location = grid != null ? grid.getAbsolutePath() : (Main.getJOSMWebsite() + "/proj/" + gridFileName);
+            // Try to load grid file
+            try (CachedFile cf = new CachedFile(location); InputStream is = cf.getInputStream()) {
+                NTV2GridShiftFile ntv2 = new NTV2GridShiftFile();
+                ntv2.loadGridShiftFile(is, false);
+                instance = ntv2;
             }
         }
         return instance;

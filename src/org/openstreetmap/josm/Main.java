@@ -112,6 +112,7 @@ import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * Abstract class holding various static global variables and methods used in large parts of JOSM application.
@@ -522,7 +523,13 @@ public abstract class Main {
                 KeyEvent.VK_F1, Shortcut.DIRECT));
 
         // This needs to be done before RightAndLefthandTraffic::initialize is called
-        new InitializationTask(tr("Initializing internal boundaries data"), Territories::initialize).call();
+        try {
+            new InitializationTask(tr("Initializing internal boundaries data"), Territories::initialize).call();
+        } catch (JosmRuntimeException e) {
+            // Can happen if the current projection needs NTV2 grid which is not available
+            // In this case we want the user be able to change his projection
+            BugReport.intercept(e).warn();
+        }
 
         // contains several initialization tasks to be executed (in parallel) by a ExecutorService
         List<Callable<Void>> tasks = new ArrayList<>();
