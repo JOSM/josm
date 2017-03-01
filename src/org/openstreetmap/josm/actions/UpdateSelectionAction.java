@@ -72,7 +72,7 @@ public class UpdateSelectionAction extends JosmAction {
      */
     public static void updatePrimitive(PrimitiveId id) {
         ensureParameterNotNull(id, "id");
-        updatePrimitives(Collections.singleton(Optional.ofNullable(Optional.ofNullable(
+        updatePrimitives(Collections.<OsmPrimitive>singleton(Optional.ofNullable(Optional.ofNullable(
                 Main.getLayerManager().getEditLayer()).orElseThrow(
                         () -> new IllegalStateException(tr("No current dataset found")))
                 .data.getPrimitiveById(id)).orElseThrow(
