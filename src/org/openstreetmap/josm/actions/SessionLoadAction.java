@@ -137,13 +137,15 @@ public class SessionLoadAction extends DiskAccessAction {
         }
 
         private void runPostLoadTasks() {
-            for (Runnable task : postLoadTasks) {
-                if (canceled)
-                    return;
-                if (task == null) {
-                    continue;
+            if (postLoadTasks != null) {
+                for (Runnable task : postLoadTasks) {
+                    if (canceled)
+                        return;
+                    if (task == null) {
+                        continue;
+                    }
+                    task.run();
                 }
-                task.run();
             }
         }
 

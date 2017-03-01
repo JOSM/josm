@@ -255,7 +255,7 @@ public class SessionReader {
                     }
                 } else
                     throw new IOException(tr("Unsupported scheme ''{0}'' in URI ''{1}''.", uri.getScheme(), uriStr));
-            } catch (URISyntaxException e) {
+            } catch (URISyntaxException | IllegalArgumentException e) {
                 throw new IOException(e);
             }
         }
