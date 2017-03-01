@@ -3,7 +3,6 @@ package org.openstreetmap.josm.gui.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -15,7 +14,6 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -47,7 +45,6 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListen
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.ChangeNotifier;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * This is the model used by the history browser.
@@ -97,7 +94,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
      * constructor
      */
     public HistoryBrowserModel() {
-        versionTableModel = new VersionTableModel();
+        versionTableModel = new VersionTableModel(this);
         currentTagTableModel = new TagTableModel(PointInTimeType.CURRENT_POINT_IN_TIME);
         referenceTagTableModel = new TagTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME);
         referenceNodeListTableModel = new DiffTableModel();
@@ -134,7 +131,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         return history;
     }
 
-    protected boolean canShowAsLatest(OsmPrimitive primitive) {
+    private boolean canShowAsLatest(OsmPrimitive primitive) {
         if (primitive == null)
             return false;
         if (primitive.isNew() || !primitive.isUsable())
@@ -196,7 +193,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         fireModelChange();
     }
 
-    protected void fireModelChange() {
+    private void fireModelChange() {
         initNodeListTableModels();
         initMemberListTableModels();
         fireStateChanged();
@@ -213,7 +210,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         return versionTableModel;
     }
 
-    protected void initTagTableModels() {
+    private void initTagTableModels() {
         currentTagTableModel.initKeyList();
         referenceTagTableModel.initKeyList();
     }
@@ -222,7 +219,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
      * Should be called everytime either reference of current changes to update the diff.
      * TODO: Maybe rename to reflect this? eg. updateNodeListTableModels
      */
-    protected void initNodeListTableModels() {
+    private void initNodeListTableModels() {
         if (current == null || current.getType() != OsmPrimitiveType.WAY
          || reference == null || reference.getType() != OsmPrimitiveType.WAY)
             return;
@@ -233,7 +230,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         currentNodeListTableModel.setRows(diff.currentDiff, false);
     }
 
-    protected void initMemberListTableModels() {
+    private void initMemberListTableModels() {
         if (current == null || current.getType() != OsmPrimitiveType.RELATION
          || reference == null || reference.getType() != OsmPrimitiveType.RELATION)
             return;
@@ -396,160 +393,97 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
     }
 
     /**
-     * The table model for the list of versions in the current history
-     *
+     * Sets the reference point in time to the given row.
+     * @param row row number
      */
-    public final class VersionTableModel extends AbstractTableModel {
-
-        private VersionTableModel() {
-        }
-
-        @Override
-        public int getRowCount() {
-            if (history == null)
-                return 0;
-            int ret = history.getNumVersions();
+    public void setReferencePointInTime(int row) {
+        if (history == null)
+            return;
+        if (row == history.getNumVersions()) {
             if (latest != null) {
-                ret++;
+                setReferencePointInTime(latest);
             }
-            return ret;
+            return;
         }
+        if (row < 0 || row > history.getNumVersions())
+            return;
+        setReferencePointInTime(history.get(row));
+    }
 
-        @Override
-        public Object getValueAt(int row, int column) {
-            switch (column) {
-            case VersionTableColumnModel.COL_VERSION:
-                HistoryOsmPrimitive p1 = getPrimitive(row);
-                if (p1 != null)
-                    return Long.toString(p1.getVersion());
-                return null;
-            case VersionTableColumnModel.COL_REFERENCE:
-                return isReferencePointInTime(row);
-            case VersionTableColumnModel.COL_CURRENT:
-                return isCurrentPointInTime(row);
-            case VersionTableColumnModel.COL_DATE:
-                HistoryOsmPrimitive p3 = getPrimitive(row);
-                if (p3 != null && p3.getTimestamp() != null)
-                    return DateUtils.formatDateTime(p3.getTimestamp(), DateFormat.SHORT, DateFormat.SHORT);
-                return null;
-            case VersionTableColumnModel.COL_USER:
-                HistoryOsmPrimitive p4 = getPrimitive(row);
-                if (p4 != null) {
-                    User user = p4.getUser();
-                    if (user != null)
-                        return user.getName();
-                }
-                return null;
-            case VersionTableColumnModel.COL_EDITOR:
-                HistoryOsmPrimitive p5 = getPrimitive(row);
-                if (p5 != null) {
-                    Changeset cs = p5.getChangeset();
-                    if (cs != null) {
-                        return cs.get("created_by");
-                    }
-                }
-                return null;
+    /**
+     * Sets the current point in time to the given row.
+     * @param row row number
+     */
+    public void setCurrentPointInTime(int row) {
+        if (history == null)
+            return;
+        if (row == history.getNumVersions()) {
+            if (latest != null) {
+                setCurrentPointInTime(latest);
             }
+            return;
+        }
+        if (row < 0 || row > history.getNumVersions())
+            return;
+        setCurrentPointInTime(history.get(row));
+    }
+
+    /**
+     * Determines if the given row is the reference point in time.
+     * @param row row number
+     * @return {@code true} if the given row is the reference point in time
+     */
+    public boolean isReferencePointInTime(int row) {
+        if (history == null)
+            return false;
+        if (row == history.getNumVersions())
+            return latest == reference;
+        if (row < 0 || row > history.getNumVersions())
+            return false;
+        return history.get(row) == reference;
+    }
+
+    /**
+     * Determines if the given row is the current point in time.
+     * @param row row number
+     * @return {@code true} if the given row is the current point in time
+     */
+    public boolean isCurrentPointInTime(int row) {
+        if (history == null)
+            return false;
+        if (row == history.getNumVersions())
+            return latest == current;
+        if (row < 0 || row > history.getNumVersions())
+            return false;
+        return history.get(row) == current;
+    }
+
+    /**
+     * Returns the {@code HistoryPrimitive} at the given row.
+     * @param row row number
+     * @return the {@code HistoryPrimitive} at the given row
+     */
+    public HistoryOsmPrimitive getPrimitive(int row) {
+        if (history == null)
             return null;
-        }
+        return isLatest(row) ? latest : history.get(row);
+    }
 
-        @Override
-        public void setValueAt(Object aValue, int row, int column) {
-            if (!((Boolean) aValue))
-                return;
-            switch (column) {
-            case 1:
-                setReferencePointInTime(row);
-                break;
-            case 2:
-                setCurrentPointInTime(row);
-                break;
-            default:
-                return;
-            }
-            fireTableDataChanged();
-        }
+    /**
+     * Determines if the given row is the latest.
+     * @param row row number
+     * @return {@code true} if the given row is the latest
+     */
+    public boolean isLatest(int row) {
+        return row >= history.getNumVersions();
+    }
 
-        @Override
-        public boolean isCellEditable(int row, int column) {
-            return column >= 1 && column <= 2;
-        }
-
-        public void setReferencePointInTime(int row) {
-            if (history == null)
-                return;
-            if (row == history.getNumVersions()) {
-                if (latest != null) {
-                    HistoryBrowserModel.this.setReferencePointInTime(latest);
-                }
-                return;
-            }
-            if (row < 0 || row > history.getNumVersions())
-                return;
-            HistoryOsmPrimitive reference = history.get(row);
-            HistoryBrowserModel.this.setReferencePointInTime(reference);
-        }
-
-        public void setCurrentPointInTime(int row) {
-            if (history == null)
-                return;
-            if (row == history.getNumVersions()) {
-                if (latest != null) {
-                    HistoryBrowserModel.this.setCurrentPointInTime(latest);
-                }
-                return;
-            }
-            if (row < 0 || row > history.getNumVersions())
-                return;
-            HistoryOsmPrimitive current = history.get(row);
-            HistoryBrowserModel.this.setCurrentPointInTime(current);
-        }
-
-        public boolean isReferencePointInTime(int row) {
-            if (history == null)
-                return false;
-            if (row == history.getNumVersions())
-                return latest == reference;
-            if (row < 0 || row > history.getNumVersions())
-                return false;
-            HistoryOsmPrimitive p = history.get(row);
-            return p == reference;
-        }
-
-        public boolean isCurrentPointInTime(int row) {
-            if (history == null)
-                return false;
-            if (row == history.getNumVersions())
-                return latest == current;
-            if (row < 0 || row > history.getNumVersions())
-                return false;
-            HistoryOsmPrimitive p = history.get(row);
-            return p == current;
-        }
-
-        public HistoryOsmPrimitive getPrimitive(int row) {
-            if (history == null)
-                return null;
-            return isLatest(row) ? latest : history.get(row);
-        }
-
-        public boolean isLatest(int row) {
-            return row >= history.getNumVersions();
-        }
-
-        public OsmPrimitive getLatest() {
-            if (latest == null)
-                return null;
-            OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
-            if (editLayer == null)
-                return null;
-            return editLayer.data.getPrimitiveById(latest.getId(), latest.getType());
-        }
-
-        @Override
-        public int getColumnCount() {
-            return 6;
-        }
+    /**
+     * Returns the latest {@code HistoryOsmPrimitive}.
+     * @return the latest {@code HistoryOsmPrimitive}
+     */
+    public HistoryOsmPrimitive getLatest() {
+        return latest;
     }
 
     /**
@@ -557,17 +491,17 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
      * or {@link PointInTimeType#CURRENT_POINT_IN_TIME}
      *
      */
-    public class TagTableModel extends AbstractTableModel {
+    public final class TagTableModel extends AbstractTableModel {
 
         private List<String> keys;
         private final PointInTimeType pointInTimeType;
 
-        protected TagTableModel(PointInTimeType type) {
+        private TagTableModel(PointInTimeType type) {
             pointInTimeType = type;
             initKeyList();
         }
 
-        protected void initKeyList() {
+        private void initKeyList() {
             Set<String> keySet = new HashSet<>();
             if (current != null) {
                 keySet.addAll(current.getTags().keySet());
@@ -602,11 +536,21 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
             return keys.get(row);
         }
 
+        /**
+         * Determines if a tag exists for the given key.
+         * @param key tag key
+         * @return {@code true} if a tag exists for the given key
+         */
         public boolean hasTag(String key) {
             HistoryOsmPrimitive primitive = getPointInTime(pointInTimeType);
             return primitive != null && primitive.hasKey(key);
         }
 
+        /**
+         * Returns the tag value for the given key.
+         * @param key tag key
+         * @return tag value, or null
+         */
         public String getValue(String key) {
             HistoryOsmPrimitive primitive = getPointInTime(pointInTimeType);
             if (primitive == null)
@@ -614,12 +558,22 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
             return primitive.get(key);
         }
 
+        /**
+         * Determines if a tag exists in the opposite point in time for the given key.
+         * @param key tag key
+         * @return {@code true} if a tag exists for the given key
+         */
         public boolean oppositeHasTag(String key) {
             PointInTimeType opposite = pointInTimeType.opposite();
             HistoryOsmPrimitive primitive = getPointInTime(opposite);
             return primitive != null && primitive.hasKey(key);
         }
 
+        /**
+         * Returns the tag value in the opposite point in time for the given key.
+         * @param key tag key
+         * @return tag value, or null
+         */
         public String getOppositeValue(String key) {
             PointInTimeType opposite = pointInTimeType.opposite();
             HistoryOsmPrimitive primitive = getPointInTime(opposite);
@@ -628,20 +582,37 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
             return primitive.get(key);
         }
 
+        /**
+         * Determines if the tag value is the same in the opposite point in time for the given key.
+         * @param key tag key
+         * @return {@code true} if the tag value is the same in the opposite point in time for the given key
+         */
         public boolean hasSameValueAsOpposite(String key) {
             String value = getValue(key);
             String oppositeValue = getOppositeValue(key);
             return value != null && value.equals(oppositeValue);
         }
 
+        /**
+         * Returns the type of point in time.
+         * @return the type of point in time
+         */
         public PointInTimeType getPointInTimeType() {
             return pointInTimeType;
         }
 
+        /**
+         * Determines if this is the current point in time.
+         * @return {@code true} if this is the current point in time
+         */
         public boolean isCurrentPointInTime() {
             return pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME);
         }
 
+        /**
+         * Determines if this is the reference point in time.
+         * @return {@code true} if this is the reference point in time
+         */
         public boolean isReferencePointInTime() {
             return pointInTimeType.equals(PointInTimeType.REFERENCE_POINT_IN_TIME);
         }
@@ -652,6 +623,10 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         }
     }
 
+    /**
+     * Sets the latest {@code HistoryOsmPrimitive}.
+     * @param latest the latest {@code HistoryOsmPrimitive}
+     */
     protected void setLatest(HistoryOsmPrimitive latest) {
         if (latest == null) {
             if (this.current == this.latest) {
@@ -743,13 +718,13 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         if (history == null)
             return;
         OsmPrimitive primitive = event.getDataset().getPrimitiveById(history.getId(), history.getType());
-        HistoryOsmPrimitive latest;
+        HistoryOsmPrimitive newLatest;
         if (canShowAsLatest(primitive)) {
-            latest = new HistoryPrimitiveBuilder().build(primitive);
+            newLatest = new HistoryPrimitiveBuilder().build(primitive);
         } else {
-            latest = null;
+            newLatest = null;
         }
-        setLatest(latest);
+        setLatest(newLatest);
         fireModelChange();
     }
 
@@ -824,7 +799,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
             return info == null ? User.getAnonymous() : User.createOsmUser(info.getId(), info.getDisplayName());
         }
 
-        public HistoryOsmPrimitive build(OsmPrimitive primitive) {
+        HistoryOsmPrimitive build(OsmPrimitive primitive) {
             primitive.accept(this);
             return clone;
         }

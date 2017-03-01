@@ -17,7 +17,6 @@ import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.gui.history.HistoryBrowserModel.TagTableModel;
-import org.openstreetmap.josm.gui.history.HistoryBrowserModel.VersionTableModel;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;

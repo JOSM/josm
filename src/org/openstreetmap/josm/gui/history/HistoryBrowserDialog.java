@@ -103,7 +103,6 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         pnl.add(btn);
 
         btn = new JButton(closeAction);
-        final String closeHistoryBrowserDialogKey = "CloseHistoryBrowserDialog";
         btn.setName("btn.close");
         pnl.add(btn);
         InputMapUtils.addEscapeAction(getRootPane(), closeAction);
@@ -157,7 +156,7 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
             new ImageProvider("ok").getResource().attachImageIcon(this);
         }
 
-        public void run() {
+        void run() {
             getHistoryBrowser().getModel().unlinkAsListener();
             HistoryDataSet.getInstance().removeHistoryDataSetListener(HistoryBrowserDialog.this);
             HistoryBrowserDialogManager.getInstance().hide(HistoryBrowserDialog.this);
