@@ -3,14 +3,10 @@ package org.openstreetmap.josm.gui.history;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
@@ -95,8 +91,8 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
      */
     public HistoryBrowserModel() {
         versionTableModel = new VersionTableModel(this);
-        currentTagTableModel = new TagTableModel(PointInTimeType.CURRENT_POINT_IN_TIME);
-        referenceTagTableModel = new TagTableModel(PointInTimeType.REFERENCE_POINT_IN_TIME);
+        currentTagTableModel = new TagTableModel(this, PointInTimeType.CURRENT_POINT_IN_TIME);
+        referenceTagTableModel = new TagTableModel(this, PointInTimeType.REFERENCE_POINT_IN_TIME);
         referenceNodeListTableModel = new DiffTableModel();
         currentNodeListTableModel = new DiffTableModel();
         currentRelationMemberTableModel = new DiffTableModel();
@@ -481,146 +477,26 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
     /**
      * Returns the latest {@code HistoryOsmPrimitive}.
      * @return the latest {@code HistoryOsmPrimitive}
+     * @since 11646
      */
     public HistoryOsmPrimitive getLatest() {
         return latest;
     }
 
     /**
-     * The table model for the tags of the version at {@link PointInTimeType#REFERENCE_POINT_IN_TIME}
-     * or {@link PointInTimeType#CURRENT_POINT_IN_TIME}
-     *
+     * Returns the key set (union of current and reference point in type key sets).
+     * @return the key set (union of current and reference point in type key sets)
+     * @since 11647
      */
-    public final class TagTableModel extends AbstractTableModel {
-
-        private List<String> keys;
-        private final PointInTimeType pointInTimeType;
-
-        private TagTableModel(PointInTimeType type) {
-            pointInTimeType = type;
-            initKeyList();
+    public Set<String> getKeySet() {
+        Set<String> keySet = new HashSet<>();
+        if (current != null) {
+            keySet.addAll(current.getTags().keySet());
         }
-
-        private void initKeyList() {
-            Set<String> keySet = new HashSet<>();
-            if (current != null) {
-                keySet.addAll(current.getTags().keySet());
-            }
-            if (reference != null) {
-                keySet.addAll(reference.getTags().keySet());
-            }
-            keys = new ArrayList<>(keySet);
-            Collections.sort(keys);
-            fireTableDataChanged();
+        if (reference != null) {
+            keySet.addAll(reference.getTags().keySet());
         }
-
-        @Override
-        public int getRowCount() {
-            if (keys == null)
-                return 0;
-            return keys.size();
-        }
-
-        @Override
-        public Object getValueAt(int row, int column) {
-            return getKeyAt(row);
-        }
-
-        /**
-         * Get the key for the given row.
-         * @param row The row
-         * @return The key in that row.
-         * @since 10637
-         */
-        public String getKeyAt(int row) {
-            return keys.get(row);
-        }
-
-        /**
-         * Determines if a tag exists for the given key.
-         * @param key tag key
-         * @return {@code true} if a tag exists for the given key
-         */
-        public boolean hasTag(String key) {
-            HistoryOsmPrimitive primitive = getPointInTime(pointInTimeType);
-            return primitive != null && primitive.hasKey(key);
-        }
-
-        /**
-         * Returns the tag value for the given key.
-         * @param key tag key
-         * @return tag value, or null
-         */
-        public String getValue(String key) {
-            HistoryOsmPrimitive primitive = getPointInTime(pointInTimeType);
-            if (primitive == null)
-                return null;
-            return primitive.get(key);
-        }
-
-        /**
-         * Determines if a tag exists in the opposite point in time for the given key.
-         * @param key tag key
-         * @return {@code true} if a tag exists for the given key
-         */
-        public boolean oppositeHasTag(String key) {
-            PointInTimeType opposite = pointInTimeType.opposite();
-            HistoryOsmPrimitive primitive = getPointInTime(opposite);
-            return primitive != null && primitive.hasKey(key);
-        }
-
-        /**
-         * Returns the tag value in the opposite point in time for the given key.
-         * @param key tag key
-         * @return tag value, or null
-         */
-        public String getOppositeValue(String key) {
-            PointInTimeType opposite = pointInTimeType.opposite();
-            HistoryOsmPrimitive primitive = getPointInTime(opposite);
-            if (primitive == null)
-                return null;
-            return primitive.get(key);
-        }
-
-        /**
-         * Determines if the tag value is the same in the opposite point in time for the given key.
-         * @param key tag key
-         * @return {@code true} if the tag value is the same in the opposite point in time for the given key
-         */
-        public boolean hasSameValueAsOpposite(String key) {
-            String value = getValue(key);
-            String oppositeValue = getOppositeValue(key);
-            return value != null && value.equals(oppositeValue);
-        }
-
-        /**
-         * Returns the type of point in time.
-         * @return the type of point in time
-         */
-        public PointInTimeType getPointInTimeType() {
-            return pointInTimeType;
-        }
-
-        /**
-         * Determines if this is the current point in time.
-         * @return {@code true} if this is the current point in time
-         */
-        public boolean isCurrentPointInTime() {
-            return pointInTimeType.equals(PointInTimeType.CURRENT_POINT_IN_TIME);
-        }
-
-        /**
-         * Determines if this is the reference point in time.
-         * @return {@code true} if this is the reference point in time
-         */
-        public boolean isReferencePointInTime() {
-            return pointInTimeType.equals(PointInTimeType.REFERENCE_POINT_IN_TIME);
-        }
-
-        @Override
-        public int getColumnCount() {
-            return 2;
-        }
+        return keySet;
     }
 
     /**
