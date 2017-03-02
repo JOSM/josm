@@ -858,26 +858,26 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @since 8065
      */
     public String getToolTipText() {
-        String res = getName();
+        StringBuilder res = new StringBuilder(getName());
         boolean html = false;
-        String date = getDate();
-        if (date != null && !date.isEmpty()) {
-            res += "<br>" + tr("Date of imagery: {0}", date);
+        String dateStr = getDate();
+        if (dateStr != null && !dateStr.isEmpty()) {
+            res.append("<br>").append(tr("Date of imagery: {0}", dateStr));
             html = true;
         }
         if (bestMarked) {
-            res += "<br>" + tr("This imagery is marked as best in this region in other editors.");
+            res.append("<br>").append(tr("This imagery is marked as best in this region in other editors."));
             html = true;
         }
         String desc = getDescription();
         if (desc != null && !desc.isEmpty()) {
-            res += "<br>" + desc;
+            res.append("<br>").append(desc);
             html = true;
         }
         if (html) {
-            res = "<html>" + res + "</html>";
+            res.insert(0, "<html>").append("</html>");
         }
-        return res;
+        return res.toString();
     }
 
     /**

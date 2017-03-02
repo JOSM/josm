@@ -134,12 +134,12 @@ public class ReportedException extends RuntimeException {
     }
 
     private static String niceThreadName(Thread thread) {
-        String name = "Thread: " + thread.getName() + " (" + thread.getId() + ')';
+        StringBuilder name = new StringBuilder("Thread: ").append(thread.getName()).append(" (").append(thread.getId()).append(')');
         ThreadGroup threadGroup = thread.getThreadGroup();
         if (threadGroup != null) {
-            name += " of " + threadGroup.getName();
+            name.append(" of ").append(threadGroup.getName());
         }
-        return name;
+        return name.toString();
     }
 
     /**

@@ -88,16 +88,16 @@ public class AddWMSLayerPanel extends AddImageryPanel {
             } catch (WMSImagery.WMSGetCapabilitiesException ex3) {
                 String incomingData = ex3.getIncomingData().trim();
                 String title = tr("WMS Error");
-                String message = tr("Could not parse WMS layer list.");
+                StringBuilder message = new StringBuilder(tr("Could not parse WMS layer list."));
                 Main.error(ex3, "Could not parse WMS layer list. Incoming data:\n"+incomingData);
                 if ((incomingData.startsWith("<html>") || incomingData.startsWith("<HTML>"))
                   && (incomingData.endsWith("</html>") || incomingData.endsWith("</HTML>"))) {
-                    GuiHelper.notifyUserHtmlError(this, title, message, incomingData);
+                    GuiHelper.notifyUserHtmlError(this, title, message.toString(), incomingData);
                 } else {
                     if (ex3.getMessage() != null) {
-                        message += '\n' + ex3.getMessage();
+                        message.append('\n').append(ex3.getMessage());
                     }
-                    JOptionPane.showMessageDialog(getParent(), message, title, JOptionPane.ERROR_MESSAGE);
+                    JOptionPane.showMessageDialog(getParent(), message.toString(), title, JOptionPane.ERROR_MESSAGE);
                 }
             }
         });

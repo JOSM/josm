@@ -1054,10 +1054,11 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         String extension = PROPERTY_SAVE_EXTENSION.get();
         File file = getAssociatedFile();
         if (file == null && isRenamed()) {
-            String filename = Main.pref.get("lastDirectory") + '/' + getName();
-            if (!OsmImporter.FILE_FILTER.acceptName(filename))
-                filename = filename + '.' + extension;
-            file = new File(filename);
+            StringBuilder filename = new StringBuilder(Main.pref.get("lastDirectory")).append('/').append(getName());
+            if (!OsmImporter.FILE_FILTER.acceptName(filename.toString())) {
+                filename.append('.').append(extension);
+            }
+            file = new File(filename.toString());
         }
         return new FileChooserManager()
             .title(tr("Save OSM file"))
