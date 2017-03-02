@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
 import org.openstreetmap.josm.data.preferences.Setting;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.preferences.SourceEditor;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
@@ -165,7 +166,7 @@ public final class ShowStatusReportAction extends JosmAction {
         } catch (SecurityException e) {
             Main.trace(e);
         }
-        List<String> commandLineArgs = Main.getCommandLineArgs();
+        List<String> commandLineArgs = MainApplication.getCommandLineArgs();
         if (!commandLineArgs.isEmpty()) {
             text.append("Program arguments: ").append(Arrays.toString(paramCleanup(commandLineArgs).toArray())).append('\n');
         }

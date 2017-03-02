@@ -22,10 +22,13 @@ import java.security.PermissionCollection;
 import java.security.Permissions;
 import java.security.Policy;
 import java.security.cert.CertificateException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -79,6 +82,11 @@ import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
  */
 public class MainApplication extends Main {
 
+    /**
+     * Command-line arguments used to run the application.
+     */
+    private static final List<String> COMMAND_LINE_ARGS = new ArrayList<>();
+
     private MainFrame mainFrame;
 
     /**
@@ -117,6 +125,15 @@ public class MainApplication extends Main {
             mainFrame.storeState();
         }
         super.shutdown();
+    }
+
+    /**
+     * Returns the command-line arguments used to run the application.
+     * @return the command-line arguments used to run the application
+     * @since 11650
+     */
+    public static List<String> getCommandLineArgs() {
+        return Collections.unmodifiableList(COMMAND_LINE_ARGS);
     }
 
     /**
@@ -238,7 +255,7 @@ public class MainApplication extends Main {
             return;
         }
 
-        Main.COMMAND_LINE_ARGS.addAll(Arrays.asList(argArray));
+        COMMAND_LINE_ARGS.addAll(Arrays.asList(argArray));
 
         boolean skipLoadingPlugins = args.hasOption(Option.SKIP_PLUGINS);
         if (skipLoadingPlugins) {
@@ -566,10 +583,11 @@ public class MainApplication extends Main {
         }
 
         private static boolean handleNetworkErrors() {
-            boolean condition = !NETWORK_ERRORS.isEmpty();
+            Map<String, Throwable> networkErrors = Main.getNetworkErrors();
+            boolean condition = !networkErrors.isEmpty();
             if (condition) {
                 Set<String> errors = new TreeSet<>();
-                for (Throwable t : NETWORK_ERRORS.values()) {
+                for (Throwable t : networkErrors.values()) {
                     errors.add(t.toString());
                 }
                 return handleNetworkOrProxyErrors(condition, tr("Network errors occurred"),
@@ -579,7 +597,7 @@ public class MainApplication extends Main {
                                 "{1}" +
                                 "It may be due to a missing proxy configuration.<br>" +
                                 "Would you like to change your proxy settings now?",
-                                Utils.joinAsHtmlUnorderedList(NETWORK_ERRORS.keySet()),
+                                Utils.joinAsHtmlUnorderedList(networkErrors.keySet()),
                                 Utils.joinAsHtmlUnorderedList(errors)
                         ));
             }

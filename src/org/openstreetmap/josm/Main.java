@@ -20,7 +20,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -155,11 +154,6 @@ public abstract class Main {
     public static volatile Main main;
 
     /**
-     * Command-line arguments used to run the application.
-     */
-    protected static final List<String> COMMAND_LINE_ARGS = new ArrayList<>();
-
-    /**
      * The worker thread slave. This is for executing all long and intensive
      * calculations. The executed runnables are guaranteed to be executed separately
      * and sequential.
@@ -211,7 +205,7 @@ public abstract class Main {
      */
     public static final FileWatcher fileWatcher = new FileWatcher();
 
-    protected static final Map<String, Throwable> NETWORK_ERRORS = new HashMap<>();
+    private static final Map<String, Throwable> NETWORK_ERRORS = new HashMap<>();
 
     private static final Set<OnlineResource> OFFLINE_RESOURCES = EnumSet.noneOf(OnlineResource.class);
 
@@ -1380,15 +1374,6 @@ public abstract class Main {
      */
     public static Map<String, Throwable> getNetworkErrors() {
         return new HashMap<>(NETWORK_ERRORS);
-    }
-
-    /**
-     * Returns the command-line arguments used to run the application.
-     * @return the command-line arguments used to run the application
-     * @since 8356
-     */
-    public static List<String> getCommandLineArgs() {
-        return Collections.unmodifiableList(COMMAND_LINE_ARGS);
     }
 
     /**
