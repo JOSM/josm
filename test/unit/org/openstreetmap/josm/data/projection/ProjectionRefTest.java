@@ -30,11 +30,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.preferences.projection.CodeProjectionChoice;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -47,7 +49,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * run the main method of this class. For this, you need to have the cs2cs
  * program from the proj.4 library in path (or use <code>CS2CS_EXE</code> to set
  * the full path of the executable). Make sure the required *.gsb grid files
- * can be accessed, i.e. copy them from <code>data/projection</code> to <code>/usr/share/proj</code> or
+ * can be accessed, i.e. copy them from <code>data_nodist/projection</code> to <code>/usr/share/proj</code> or
  * wherever cs2cs expects them to be placed.
  *
  * The input parameter for the external library is <em>not</em> the projection code
@@ -74,6 +76,13 @@ public class ProjectionRefTest {
     }
 
     static Random rand = new SecureRandom();
+
+    /**
+     * Setup test.
+     */
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().platform();
 
     /**
      * Program entry point.
@@ -283,6 +292,10 @@ public class ProjectionRefTest {
         }
     }
 
+    /**
+     * Test projections.
+     * @throws IOException if any I/O error occurs
+     */
     @Test
     public void testProjections() throws IOException {
         StringBuilder fail = new StringBuilder();
@@ -295,27 +308,28 @@ public class ProjectionRefTest {
                 Assert.fail("unkown code: "+ref.code);
             }
             if (!ref.def.equals(def0)) {
-                Assert.fail("definitions for " + ref.code + " do not match");
-            }
-            Projection proj = Projections.getProjectionByCode(ref.code);
-            double scale = ((CustomProjection) proj).getToMeter();
-            for (Pair<LatLon, EastNorth> p : ref.data) {
-                LatLon ll = p.a;
-                EastNorth enRef = p.b;
-                enRef = new EastNorth(enRef.east() * scale, enRef.north() * scale); // convert to meter
+                fail.append("definitions for ").append(ref.code).append(" do not match\n");
+            } else {
+                Projection proj = Projections.getProjectionByCode(ref.code);
+                double scale = ((CustomProjection) proj).getToMeter();
+                for (Pair<LatLon, EastNorth> p : ref.data) {
+                    LatLon ll = p.a;
+                    EastNorth enRef = p.b;
+                    enRef = new EastNorth(enRef.east() * scale, enRef.north() * scale); // convert to meter
 
-                EastNorth en = proj.latlon2eastNorth(ll);
-                if (proj.switchXY()) {
-                    en = new EastNorth(en.north(), en.east());
-                }
-                en = new EastNorth(en.east() * scale, en.north() * scale); // convert to meter
-                final double EPSILON_EN = 1e-2; // 1cm
-                if (!isEqual(enRef, en, EPSILON_EN, true)) {
-                    String errorEN = String.format("%s (%s): Projecting latlon(%s,%s):%n" +
-                            "        expected: eastnorth(%s,%s),%n" +
-                            "        but got:  eastnorth(%s,%s)!%n",
-                            proj.toString(), proj.toCode(), ll.lat(), ll.lon(), enRef.east(), enRef.north(), en.east(), en.north());
-                    fail.append(errorEN);
+                    EastNorth en = proj.latlon2eastNorth(ll);
+                    if (proj.switchXY()) {
+                        en = new EastNorth(en.north(), en.east());
+                    }
+                    en = new EastNorth(en.east() * scale, en.north() * scale); // convert to meter
+                    final double EPSILON_EN = 1e-2; // 1cm
+                    if (!isEqual(enRef, en, EPSILON_EN, true)) {
+                        String errorEN = String.format("%s (%s): Projecting latlon(%s,%s):%n" +
+                                "        expected: eastnorth(%s,%s),%n" +
+                                "        but got:  eastnorth(%s,%s)!%n",
+                                proj.toString(), proj.toCode(), ll.lat(), ll.lon(), enRef.east(), enRef.north(), en.east(), en.north());
+                        fail.append(errorEN);
+                    }
                 }
             }
             allCodes.remove(ref.code);
