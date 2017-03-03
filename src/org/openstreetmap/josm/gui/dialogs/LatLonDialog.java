@@ -168,11 +168,14 @@ public class LatLonDialog extends ExtendedDialog {
     }
 
     public void setCoordinates(LatLon ll) {
-        latLonCoordinates = Optional.ofNullable(ll).orElse(LatLon.ZERO);
-        tfLatLon.setText(latLonCoordinates.latToString(CoordinateFormat.getDefaultFormat()) + ' ' +
-                         latLonCoordinates.lonToString(CoordinateFormat.getDefaultFormat()));
-        EastNorth en = Main.getProjection().latlon2eastNorth(latLonCoordinates);
+        LatLon llc = Optional.ofNullable(ll).orElse(LatLon.ZERO);
+        tfLatLon.setText(llc.latToString(CoordinateFormat.getDefaultFormat()) + ' ' +
+                         llc.lonToString(CoordinateFormat.getDefaultFormat()));
+        EastNorth en = Main.getProjection().latlon2eastNorth(llc);
         tfEastNorth.setText(Double.toString(en.east()) + ' ' + Double.toString(en.north()));
+        // Both latLonCoordinates and eastNorthCoordinates may have been reset to null if ll is out of the world
+        latLonCoordinates = llc;
+        eastNorthCoordinates = en;
         setOkEnabled(true);
     }
 
