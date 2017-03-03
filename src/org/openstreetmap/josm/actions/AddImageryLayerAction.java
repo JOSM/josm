@@ -63,8 +63,8 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
      * @param info The imagery info
      */
     public AddImageryLayerAction(ImageryInfo info) {
-        super(info.getMenuName(), /* ICON */"imagery_menu", tr("Add imagery layer {0}", info.getName()), null, false, false);
-        putValue("toolbar", "imagery_" + info.getToolbarName());
+        super(info.getMenuName(), /* ICON */"imagery_menu", tr("Add imagery layer {0}", info.getName()), null,
+                true, "imagery_" + info.getToolbarName(), false);
         putValue("help", ht("/Preferences/Imagery"));
         setTooltip(info.getToolTipText().replaceAll("</?html>", ""));
         this.info = info;
@@ -201,5 +201,10 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         } else {
             setEnabled(true);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "AddImageryLayerAction [info=" + info + ']';
     }
 }

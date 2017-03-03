@@ -938,6 +938,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             for (ActionDefinition actionDefinition: getDefinedActions()) {
                 selected.addElement(actionDefinition);
             }
+            actionsTreeModel.reload();
         }
 
         @Override
@@ -1076,6 +1077,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     }
 
     /**
+     * Registers an action to the toolbar preferences.
      * @param action Action to register
      * @return The parameter (for better chaining)
      */
@@ -1095,6 +1097,20 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             regactions.put(toolbar, action);
         }
         return action;
+    }
+
+    /**
+     * Unregisters an action from the toolbar preferences.
+     * @param action Action to unregister
+     * @return The removed action, or null
+     * @since 11654
+     */
+    public Action unregister(Action action) {
+        String toolbar = (String) action.getValue("toolbar");
+        if (toolbar != null) {
+            return regactions.remove(toolbar);
+        }
+        return null;
     }
 
     /**

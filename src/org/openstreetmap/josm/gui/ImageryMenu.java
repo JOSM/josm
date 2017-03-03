@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.swing.Action;
 import javax.swing.JComponent;
@@ -263,18 +264,17 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
     private final List<Object> dynamicItems = new ArrayList<>(20);
 
     /**
-     * Remove all the items in @field dynamicItems collection
+     * Remove all the items in dynamic items collection
      * @since 5803
      */
     private void removeDynamicItems() {
         for (Object item : dynamicItems) {
             if (item instanceof JMenuItem) {
+                Optional.ofNullable(((JMenuItem) item).getAction()).ifPresent(Main.toolbar::unregister);
                 remove((JMenuItem) item);
-            }
-            if (item instanceof MenuComponent) {
+            } else if (item instanceof MenuComponent) {
                 remove((MenuComponent) item);
-            }
-            if (item instanceof Component) {
+            } else if (item instanceof Component) {
                 remove((Component) item);
             }
         }
