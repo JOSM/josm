@@ -114,7 +114,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
      * @return the future representing the asynchronous task
      */
     public Future<?> download(OsmServerReader reader, boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor) {
-        return download(new DownloadTask(newLayer, reader, progressMonitor), downloadArea);
+        return download(new DownloadTask(newLayer, reader, progressMonitor, zoomAfterDownload), downloadArea);
     }
 
     protected Future<?> download(DownloadTask downloadTask, Bounds downloadArea) {

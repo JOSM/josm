@@ -80,6 +80,7 @@ public class OverpassDownloadAction extends JosmAction {
             dialog.rememberSettings();
             Bounds area = dialog.getSelectedDownloadArea();
             DownloadOsmTask task = new DownloadOsmTask();
+            task.setZoomAfterDownload(dialog.isZoomToDownloadedDataRequired());
             Future<?> future = task.download(
                     new OverpassDownloadReader(area, OverpassServerPreference.getOverpassServer(), dialog.getOverpassQuery()),
                     dialog.isNewLayerRequired(), area, null);

@@ -162,7 +162,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
             } else {
                 mergeLayer.mergeFrom(layer);
                 mergeLayer.invalidate();
-                if (Main.map != null) {
+                if (Main.map != null && zoomAfterDownload) {
                     Main.map.mapView.scheduleZoomTo(new ViewportData(layer.getViewProjectionBounds()));
                 }
                 return mergeLayer;

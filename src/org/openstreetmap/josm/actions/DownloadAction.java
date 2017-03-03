@@ -47,16 +47,19 @@ public class DownloadAction extends JosmAction {
             Bounds area = dialog.getSelectedDownloadArea();
             if (dialog.isDownloadOsmData()) {
                 DownloadOsmTask task = new DownloadOsmTask();
+                task.setZoomAfterDownload(dialog.isZoomToDownloadedDataRequired());
                 Future<?> future = task.download(dialog.isNewLayerRequired(), area, null);
                 Main.worker.submit(new PostDownloadHandler(task, future));
             }
             if (dialog.isDownloadGpxData()) {
                 DownloadGpsTask task = new DownloadGpsTask();
+                task.setZoomAfterDownload(dialog.isZoomToDownloadedDataRequired());
                 Future<?> future = task.download(dialog.isNewLayerRequired(), area, null);
                 Main.worker.submit(new PostDownloadHandler(task, future));
             }
             if (dialog.isDownloadNotes()) {
                 DownloadNotesTask task = new DownloadNotesTask();
+                task.setZoomAfterDownload(dialog.isZoomToDownloadedDataRequired());
                 Future<?> future = task.download(false, area, null);
                 Main.worker.submit(new PostDownloadHandler(task, future));
             }

@@ -62,6 +62,7 @@ public class DownloadDialog extends JDialog {
     private static final BooleanProperty DOWNLOAD_GPS = new BooleanProperty("download.gps", false);
     private static final BooleanProperty DOWNLOAD_NOTES = new BooleanProperty("download.notes", false);
     private static final BooleanProperty DOWNLOAD_NEWLAYER = new BooleanProperty("download.newlayer", false);
+    private static final BooleanProperty DOWNLOAD_ZOOMTODATA = new BooleanProperty("download.zoomtodata", true);
 
     /** the unique instance of the download dialog */
     private static DownloadDialog instance;
@@ -83,6 +84,7 @@ public class DownloadDialog extends JDialog {
     protected final JTabbedPane tpDownloadAreaSelectors = new JTabbedPane();
     protected JCheckBox cbNewLayer;
     protected JCheckBox cbStartup;
+    protected JCheckBox cbZoomToDownloadedData;
     protected final JLabel sizeCheck = new JLabel();
     protected transient Bounds currentBounds;
     protected boolean canceled;
@@ -160,8 +162,14 @@ public class DownloadDialog extends JDialog {
                         "You can open it manually from File menu or toolbar.</html>"));
         cbStartup.addActionListener(e -> DOWNLOAD_AUTORUN.put(cbStartup.isSelected()));
 
+        cbZoomToDownloadedData = new JCheckBox(tr("Zoom to downloaded data"));
+        cbZoomToDownloadedData.setToolTipText(tr("Select to zoom to entire newly downloaded data."));
+
         pnl.add(cbNewLayer, GBC.std().anchor(GBC.WEST).insets(5, 5, 5, 5));
         pnl.add(cbStartup, GBC.std().anchor(GBC.WEST).insets(15, 5, 5, 5));
+        pnl.add(cbZoomToDownloadedData, GBC.std().anchor(GBC.WEST).insets(15, 5, 5, 5));
+
+        ExpertToggleAction.addVisibilitySwitcher(cbZoomToDownloadedData);
 
         pnl.add(sizeCheck, GBC.eol().anchor(GBC.EAST).insets(5, 5, 5, 2));
 
@@ -191,6 +199,8 @@ public class DownloadDialog extends JDialog {
         InputMapUtils.addEnterActionWhenAncestor(cbDownloadOsmData, actDownload);
         InputMapUtils.addEnterActionWhenAncestor(cbDownloadNotes, actDownload);
         InputMapUtils.addEnterActionWhenAncestor(cbNewLayer, actDownload);
+        InputMapUtils.addEnterActionWhenAncestor(cbStartup, actDownload);
+        InputMapUtils.addEnterActionWhenAncestor(cbZoomToDownloadedData, actDownload);
 
         // -- cancel button
         JButton btnCancel;
@@ -338,6 +348,16 @@ public class DownloadDialog extends JDialog {
     }
 
     /**
+     * Replies true if the user requires to zoom to new downloaded data
+     *
+     * @return true if the user requires to zoom to new downloaded data
+     * @since 11658
+     */
+    public boolean isZoomToDownloadedDataRequired() {
+        return cbZoomToDownloadedData.isSelected();
+    }
+
+    /**
      * Adds a new download area selector to the download dialog
      *
      * @param selector the download are selector
@@ -366,6 +386,7 @@ public class DownloadDialog extends JDialog {
         DOWNLOAD_GPS.put(cbDownloadGpxData.isSelected());
         DOWNLOAD_NOTES.put(cbDownloadNotes.isSelected());
         DOWNLOAD_NEWLAYER.put(cbNewLayer.isSelected());
+        DOWNLOAD_ZOOMTODATA.put(cbZoomToDownloadedData.isSelected());
         if (currentBounds != null) {
             Main.pref.put("osm-download.bounds", currentBounds.encodeAsString(";"));
         }
@@ -380,6 +401,7 @@ public class DownloadDialog extends JDialog {
         cbDownloadNotes.setSelected(DOWNLOAD_NOTES.get());
         cbNewLayer.setSelected(DOWNLOAD_NEWLAYER.get());
         cbStartup.setSelected(isAutorunEnabled());
+        cbZoomToDownloadedData.setSelected(DOWNLOAD_ZOOMTODATA.get());
         int idx = Utils.clamp(DOWNLOAD_TAB.get(), 0, tpDownloadAreaSelectors.getTabCount() - 1);
         tpDownloadAreaSelectors.setSelectedIndex(idx);
 

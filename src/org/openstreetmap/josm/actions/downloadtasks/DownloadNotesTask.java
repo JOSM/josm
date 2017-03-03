@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
@@ -116,6 +117,9 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
             List<NoteLayer> noteLayers = Main.getLayerManager().getLayersOfType(NoteLayer.class);
             if (!noteLayers.isEmpty()) {
                 noteLayers.get(0).getNoteData().addNotes(notesData);
+                if (Main.map != null && zoomAfterDownload) {
+                    Main.map.mapView.scheduleZoomTo(new ViewportData(noteLayers.get(0).getViewProjectionBounds()));
+                }
             } else {
                 Main.getLayerManager().addLayer(new NoteLayer(notesData, tr("Notes")));
             }
