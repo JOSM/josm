@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.imagery.WMTSTileSource;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.AlignImageryPanel;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
+import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.imagery.WMSLayerTree;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.imagery.WMSImagery;
@@ -64,7 +65,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
      */
     public AddImageryLayerAction(ImageryInfo info) {
         super(info.getMenuName(), /* ICON */"imagery_menu", tr("Add imagery layer {0}", info.getName()), null,
-                true, "imagery_" + info.getToolbarName(), false);
+                true, ToolbarPreferences.IMAGERY_PREFIX + info.getToolbarName(), false);
         putValue("help", ht("/Preferences/Imagery"));
         setTooltip(info.getToolTipText().replaceAll("</?html>", ""));
         this.info = info;

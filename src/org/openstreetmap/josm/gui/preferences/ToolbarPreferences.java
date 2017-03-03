@@ -61,9 +61,12 @@ import javax.swing.tree.TreePath;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ActionParameter;
 import org.openstreetmap.josm.actions.AdaptableAction;
+import org.openstreetmap.josm.actions.AddImageryLayerAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.ParameterizedAction;
 import org.openstreetmap.josm.actions.ParameterizedActionDecorator;
+import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -76,6 +79,12 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class ToolbarPreferences implements PreferenceSettingFactory {
 
     private static final String EMPTY_TOOLBAR_MARKER = "<!-empty-!>";
+
+    /**
+     * The prefix for imagery toolbar entries.
+     * @since 11657
+     */
+    public static final String IMAGERY_PREFIX = "imagery_";
 
     /**
      * Action definition.
@@ -252,12 +261,27 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             }
         }
 
+        /**
+         * Loads the action definition from its toolbar name.
+         * @param actionName action toolbar name
+         * @return action definition or null
+         */
         public ActionDefinition loadAction(String actionName) {
             index = 0;
             this.s = actionName.toCharArray();
 
             String name = readTillChar('(', '{');
             Action action = actions.get(name);
+
+            if (action == null && name.startsWith(IMAGERY_PREFIX)) {
+                String imageryName = name.substring(IMAGERY_PREFIX.length());
+                for (ImageryInfo i : ImageryLayerInfo.instance.getDefaultLayers()) {
+                    if (imageryName.equalsIgnoreCase(i.getName())) {
+                        action = new AddImageryLayerAction(i);
+                        break;
+                    }
+                }
+            }
 
             if (action == null)
                 return null;
@@ -1006,7 +1030,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     } else {
                         String toolbar = (String) tb;
                         Action r = actions.get(toolbar);
-                        if (r != null && r != action && !toolbar.startsWith("imagery_")) {
+                        if (r != null && r != action && !toolbar.startsWith(IMAGERY_PREFIX)) {
                             Main.info(tr("Toolbar action {0} overwritten: {1} gets {2}",
                             toolbar, r.getClass().getName(), action.getClass().getName()));
                         }
