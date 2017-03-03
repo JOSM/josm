@@ -856,7 +856,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         /**
          * The table model for imagery offsets list
          */
-        private class OffsetsBookmarksModel extends DefaultTableModel {
+        private static class OffsetsBookmarksModel extends DefaultTableModel {
 
             /**
              * Constructs a new {@code OffsetsBookmarksModel}.
