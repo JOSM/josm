@@ -805,7 +805,6 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
     }
 
     static class OffsetBookmarksPanel extends JPanel {
-        private final transient List<OffsetBookmark> bookmarks = OffsetBookmark.allBookmarks;
         private final OffsetsBookmarksModel model = new OffsetsBookmarksModel();
 
         /**
@@ -867,29 +866,29 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             }
 
             private OffsetBookmark getRow(int row) {
-                return bookmarks.get(row);
+                return OffsetBookmark.getBookmarkByIndex(row);
             }
 
             private void addRow(OffsetBookmark i) {
-                bookmarks.add(i);
+                OffsetBookmark.addBookmark(i);
                 int p = getRowCount() - 1;
                 fireTableRowsInserted(p, p);
             }
 
             @Override
             public void removeRow(int i) {
-                bookmarks.remove(getRow(i));
+                OffsetBookmark.removeBookmark(getRow(i));
                 fireTableRowsDeleted(i, i);
             }
 
             @Override
             public int getRowCount() {
-                return bookmarks.size();
+                return OffsetBookmark.getBookmarksSize();
             }
 
             @Override
             public Object getValueAt(int row, int column) {
-                OffsetBookmark info = bookmarks.get(row);
+                OffsetBookmark info = OffsetBookmark.getBookmarkByIndex(row);
                 switch (column) {
                 case 0:
                     if (info.projectionCode == null) return "";
@@ -909,7 +908,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
             @Override
             public void setValueAt(Object o, int row, int column) {
-                OffsetBookmark info = bookmarks.get(row);
+                OffsetBookmark info = OffsetBookmark.getBookmarkByIndex(row);
                 switch (column) {
                 case 1:
                     info.layerName = o.toString();

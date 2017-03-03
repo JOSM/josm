@@ -16,7 +16,7 @@ import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 
 public class OffsetBookmark {
-    public static final List<OffsetBookmark> allBookmarks = new ArrayList<>();
+    private static final List<OffsetBookmark> allBookmarks = new ArrayList<>();
 
     public String projectionCode;
     public String layerName;
@@ -91,6 +91,56 @@ public class OffsetBookmark {
             coll.add(b.getInfoArray());
         }
         Main.pref.putArray("imagery.offsets", coll);
+    }
+
+    /**
+     * Returns all bookmarks.
+     * @return all bookmarks (unmodifiable collection)
+     * @since 11651
+     */
+    public static List<OffsetBookmark> getBookmarks() {
+        return Collections.unmodifiableList(allBookmarks);
+    }
+
+    /**
+     * Returns the number of bookmarks.
+     * @return the number of bookmarks
+     * @since 11651
+     */
+    public static int getBookmarksSize() {
+        return allBookmarks.size();
+    }
+
+    /**
+     * Adds a bookmark.
+     * @param ob bookmark to add
+     * @return {@code true}
+     * @since 11651
+     */
+    public static boolean addBookmark(OffsetBookmark ob) {
+        return allBookmarks.add(ob);
+    }
+
+    /**
+     * Removes a bookmark.
+     * @param ob bookmark to remove
+     * @return {@code true} if this list contained the specified element
+     * @since 11651
+     */
+    public static boolean removeBookmark(OffsetBookmark ob) {
+        return allBookmarks.remove(ob);
+    }
+
+    /**
+     * Returns the bookmark at the given index.
+     * @param index bookmark index
+     * @return the bookmark at the given index
+     * @throws IndexOutOfBoundsException if the index is out of range
+     *         (<tt>index &lt; 0 || index &gt;= size()</tt>)
+     * @since 11651
+     */
+    public static OffsetBookmark getBookmarkByIndex(int index) {
+        return allBookmarks.get(index);
     }
 
     public static OffsetBookmark getBookmarkByName(ImageryLayer layer, String name) {

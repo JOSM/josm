@@ -230,13 +230,14 @@ public abstract class ImageryLayer extends Layer {
 
     public JComponent getOffsetMenuItem(JComponent subMenu) {
         JMenuItem adjustMenuItem = new JMenuItem(getAdjustAction());
-        if (OffsetBookmark.allBookmarks.isEmpty()) return adjustMenuItem;
+        List<OffsetBookmark> allBookmarks = OffsetBookmark.getBookmarks();
+        if (allBookmarks.isEmpty()) return adjustMenuItem;
 
         subMenu.add(adjustMenuItem);
         subMenu.add(new JSeparator());
         boolean hasBookmarks = false;
         int menuItemHeight = 0;
-        for (OffsetBookmark b : OffsetBookmark.allBookmarks) {
+        for (OffsetBookmark b : allBookmarks) {
             if (!b.isUsable(this)) {
                 continue;
             }
