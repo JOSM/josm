@@ -492,9 +492,13 @@ public abstract class Main {
      * Constructs new {@code Main} object.
      * @see #initialize()
      */
-    public Main() {
-        main = this;
+    protected Main() {
+        setInstance(this);
         mainPanel.addMapFrameListener((o, n) -> redoUndoListener.commandChanged(0, 0));
+    }
+
+    private static void setInstance(Main instance) {
+        main = instance;
     }
 
     /**
