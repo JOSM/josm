@@ -331,7 +331,13 @@ class SyncEditorImageryIndex {
                 if (!ed.equals(ef)) {
                     t += " or '${ef}'";
                 }
-                myprintln "* Date differs (${t} != '${jd}'): ${getDescription(j)}"
+                if (jd.isEmpty()) {
+                    myprintln "- Missing JOSM date (${t}): ${getDescription(j)}"
+                } else if (t.isEmpty()) {
+                    myprintln "+ Missing ELI date ('${jd}'): ${getDescription(j)}"
+                } else {
+                    myprintln "* Date differs (${t} != '${jd}'): ${getDescription(j)}"
+                }
             }
         }
         myprintln "*** Mismatching shapes: ***"
