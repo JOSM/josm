@@ -28,7 +28,7 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
     private int[] tileXMax;
     private int[] tileYMax;
     private double[] degreesPerTile;
-    private static final float SCALE_DENOMINATOR_ZOOM_LEVEL_1 = 559082264.0287178f;
+    private static final double SCALE_DENOMINATOR_ZOOM_LEVEL_1 = 559082264.0287178d;
 
     /**
      * Constructs a new {@code AbstractWMSTileSource}.

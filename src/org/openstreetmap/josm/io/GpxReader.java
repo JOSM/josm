@@ -338,8 +338,8 @@ public class GpxReader implements GpxConstants {
                             data.put(META_EXTENSIONS, currentExtensions);
                         }
                         currentState = states.pop();
-                        break;
                     }
+                    break;
                 case "bounds":
                     // do nothing, has been parsed on startElement
                     break;
