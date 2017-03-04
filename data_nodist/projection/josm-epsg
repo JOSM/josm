@@ -77,7 +77,7 @@
 # WGS 84
 <4326> +proj=lonlat +datum=WGS84 +axis=neu +bounds=-180,-90,180,90  <>
 # Swiss Grid (Switzerland)
-<21781> +proj=somerc +lat_0=46d57'8.66" +lon_0=7d26'22.5" +x_0=600000 +y_0=200000 +ellps=bessel +towgs84=674.374,15.056,405.346 +units=m +bounds=5.7,45.7,10.6,47.9  <>
+<21781> +proj=somerc +lat_0=46d57'8.66" +lon_0=7d26'22.5" +x_0=600000 +y_0=200000 +ellps=bessel +nadgrids=CHENYX06_etrs.gsb +towgs84=674.374,15.056,405.346 +units=m +bounds=5.7,45.7,10.6,47.9  <>
 # HD72 / EOV (Hungary)
 <23700> +proj=somerc +lat_0=47.14439372222222 +lon_0=19.04857177777778 +k_0=0.99993 +x_0=650000 +y_0=200000 +ellps=GRS67 +towgs84=52.17,-71.82,-14.9 +units=m +bounds=16.1200,45.7800,22.9100,48.6000  <>
 # ETRS89 / UTM zone 28N

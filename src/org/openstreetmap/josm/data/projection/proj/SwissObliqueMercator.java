@@ -108,7 +108,7 @@ public class SwissObliqueMercator extends AbstractProj {
         // iteration to finds S and phi
         while (abs(phi - prevPhi) > EPSILON) {
             if (++iteration > 30)
-                throw new JosmRuntimeException("Two many iterations");
+                throw new JosmRuntimeException("Too many iterations");
             prevPhi = phi;
             double s = 1 / alpha * (log(tan(PI / 4 + b / 2)) - k) + ellps.e
             * log(tan(PI / 4 + asin(ellps.e * sin(phi)) / 2));

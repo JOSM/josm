@@ -60,7 +60,6 @@ This is an overview of the files and directories in the JOSM code repository:
 - data/                     data files that will be included in the JOSM jar file
     - fonts/                font files used for map rendering
     - projection/           projection files
-      - *.gsb               NTv2 grid files for projection support
       - epsg                list of projection definitions
     - *.lang                translation data
     - *.xsd                 xml schema files for validation of configuration files
@@ -77,6 +76,8 @@ This is an overview of the files and directories in the JOSM code repository:
                             (see test/unit/org/openstreetmap/josm/data/osm/FilterTest.java)
     - Join_Areas_Tests.osm  some examples to test the 'join areas' feature
     - mapcss/               sample map styles and corresponding data files for regression testing
+    - projection/           projection files
+      - *.gsb               NTv2 grid files for projection support (see CONTRIBUTION)
     - projection-reference-data.csv
                             reference data for projection tests
                             (see test/unit/org/openstreetmap/josm/data/projection/ProjectionRefTest.java)
