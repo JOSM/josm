@@ -345,8 +345,6 @@ public final class Geometry {
         CheckParameterUtil.ensureValidCoordinates(p3, "p3");
         CheckParameterUtil.ensureValidCoordinates(p4, "p4");
 
-        if (!p1.isValid()) throw new IllegalArgumentException(p1+" is invalid");
-
         // Basically, the formula from wikipedia is used:
         //  https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
         // However, large numbers lead to rounding errors (see #10286).
