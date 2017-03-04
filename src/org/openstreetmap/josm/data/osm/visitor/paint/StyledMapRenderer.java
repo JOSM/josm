@@ -38,6 +38,7 @@ import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
+import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -931,6 +932,49 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             drawPointHighlight(p.getInView(), Math.max(w, h));
         }
 
+        drawIcon(p, img, disabled, selected, member, theta, (g, r) -> {
+            Color color = getSelectionHintColor(disabled, selected);
+            g.setColor(color);
+            g.draw(r);
+        });
+    }
+
+
+    /**
+     * Draw the icon for a given area. The icon is drawn around the lat/lon center of the area.
+     * @param primitive The node
+     * @param img The icon to draw at the node position
+     * @param disabled {@code} true to render disabled version, {@code false} for the standard version
+     * @param selected {@code} true to render it as selected, {@code false} otherwise
+     * @param member {@code} true to render it as a relation member, {@code false} otherwise
+     * @param theta the angle of rotation in radians
+     */
+    public void drawAreaIcon(OsmPrimitive primitive, MapImage img, boolean disabled, boolean selected, boolean member, double theta) {
+        BBox bbox = null;
+        if (primitive instanceof Way) {
+            bbox = primitive.getBBox();
+        } else if (primitive instanceof Relation) {
+            Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, (Relation) primitive);
+            if (multipolygon != null) {
+                BBox collect = new BBox();
+                multipolygon.getOuterPolygons().forEach(p -> p.getNodes().forEach(n -> collect.add(n.getCoor())));
+                bbox = collect;
+            }
+        }
+
+        if (bbox != null && bbox.isValid()) {
+            MapViewPoint p = mapState.getPointFor(bbox.getCenter());
+            drawIcon(p, img, disabled, selected, member, theta, (g, r) -> {
+                // only draw a minor highlighting, so that users do not confuse this for a point.
+                Color color = getSelectionHintColor(disabled, selected);
+                g.setColor(color);
+                g.draw(r);
+            });
+        }
+    }
+
+    private void drawIcon(MapViewPoint p, MapImage img, boolean disabled, boolean selected, boolean member, double theta,
+            BiConsumer<Graphics2D, Rectangle2D> selectionDrawer) {
         float alpha = img.getAlphaFloat();
 
         Graphics2D temporaryGraphics = (Graphics2D) g.create();
@@ -942,21 +986,24 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         double y = Math.round(p.getInViewY());
         temporaryGraphics.translate(x, y);
         temporaryGraphics.rotate(theta);
-        int drawX = -w/2 + img.offsetX;
-        int drawY = -h/2 + img.offsetY;
+        int drawX = -img.getWidth() / 2 + img.offsetX;
+        int drawY = -img.getHeight() / 2 + img.offsetY;
         temporaryGraphics.drawImage(img.getImage(disabled), drawX, drawY, nc);
         if (selected || member) {
-            Color color;
-            if (disabled) {
-                color = inactiveColor;
-            } else if (selected) {
-                color = selectedColor;
-            } else {
-                color = relationSelectedColor;
-            }
-            temporaryGraphics.setColor(color);
-            temporaryGraphics.draw(new Rectangle2D.Double(drawX - 2, drawY - 2, w + 4, h + 4));
+            selectionDrawer.accept(temporaryGraphics, new Rectangle2D.Double(drawX - 2, drawY - 2, img.getWidth() + 4, img.getHeight() + 4));
         }
+    }
+
+    private Color getSelectionHintColor(boolean disabled, boolean selected) {
+        Color color;
+        if (disabled) {
+            color = inactiveColor;
+        } else if (selected) {
+            color = selectedColor;
+        } else {
+            color = relationSelectedColor;
+        }
+        return color;
     }
 
     /**

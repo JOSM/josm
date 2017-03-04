@@ -15,6 +15,7 @@ import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
+import org.openstreetmap.josm.gui.util.RotationAngle;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -55,7 +56,14 @@ public class AreaElement extends StyleElement {
      */
     public Float extentThreshold;
 
-    protected AreaElement(Cascade c, Color color, MapImage fillImage, Float extent, Float extentThreshold, TextLabel text) {
+    /**
+     * The icon that is displayed on the center of the area.
+     */
+    private final MapImage iconImage;
+
+    private final RotationAngle iconImageAngle;
+
+    protected AreaElement(Cascade c, Color color, MapImage fillImage, Float extent, Float extentThreshold, TextLabel text, MapImage iconImage, RotationAngle iconImageAngle) {
         super(c, 1f);
         CheckParameterUtil.ensureParameterNotNull(color);
         this.color = color;
@@ -63,6 +71,8 @@ public class AreaElement extends StyleElement {
         this.extent = extent;
         this.extentThreshold = extentThreshold;
         this.text = text;
+        this.iconImage = iconImage;
+        this.iconImageAngle = iconImageAngle;
     }
 
     /**
@@ -108,19 +118,24 @@ public class AreaElement extends StyleElement {
             }
         }
 
-        TextLabel text = null;
-        Keyword textPos = c.get(TEXT_POSITION, null, Keyword.class);
-        if (textPos == null || "center".equals(textPos.val)) {
-            text = TextLabel.create(env, PaintColors.AREA_TEXT.get(), true);
-        }
+        if (color != null) {
 
-        Float extent = c.get(FILL_EXTENT, null, float.class);
-        Float extentThreshold = c.get(FILL_EXTENT_THRESHOLD, null, float.class);
+            TextLabel text = null;
+            Keyword textPos = c.get(TEXT_POSITION, null, Keyword.class);
+            if (textPos == null || "center".equals(textPos.val)) {
+                text = TextLabel.create(env, PaintColors.AREA_TEXT.get(), true);
+            }
 
-        if (color != null)
-            return new AreaElement(c, color, fillImage, extent, extentThreshold, text);
-        else
+            Float extent = c.get(FILL_EXTENT, null, float.class);
+            Float extentThreshold = c.get(FILL_EXTENT_THRESHOLD, null, float.class);
+
+            MapImage iconImage = NodeElement.createIcon(env);
+            RotationAngle rotationAngle = NodeElement.createRotationAngle(env);
+
+            return new AreaElement(c, color, fillImage, extent, extentThreshold, text, iconImage, rotationAngle);
+        } else {
             return null;
+        }
     }
 
     @Override
@@ -141,6 +156,11 @@ public class AreaElement extends StyleElement {
                 myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
             }
             painter.drawArea((Relation) osm, myColor, fillImage, extent, extentThreshold, painter.isInactiveMode() || osm.isDisabled(), text);
+        }
+
+        if (iconImage != null && painter.isShowIcons()) {
+            painter.drawAreaIcon(osm, iconImage, painter.isInactiveMode() || osm.isDisabled(), selected, member,
+                    iconImageAngle == null ? 0.0 : iconImageAngle.getRotationAngle(osm));
         }
     }
 

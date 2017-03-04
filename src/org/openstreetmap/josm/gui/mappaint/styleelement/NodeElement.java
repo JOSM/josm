@@ -69,11 +69,30 @@ public class NodeElement extends StyleElement {
     private static NodeElement create(Environment env, float defaultMajorZindex, boolean allowDefault) {
         Cascade c = env.mc.getCascade(env.layer);
 
-        MapImage mapImage = createIcon(env, ICON_KEYS);
+        MapImage mapImage = createIcon(env);
         Symbol symbol = null;
         if (mapImage == null) {
             symbol = createSymbol(env);
         }
+
+        RotationAngle rotationAngle = createRotationAngle(env);
+
+        // optimization: if we neither have a symbol, nor a mapImage
+        // we don't have to check for the remaining style properties and we don't
+        // have to allocate a node element style.
+        if (!allowDefault && symbol == null && mapImage == null) return null;
+
+        return new NodeElement(c, mapImage, symbol, defaultMajorZindex, rotationAngle);
+    }
+
+    /**
+     * Reads the icon-rotation property and creates a rotation angle from it.
+     * @param env The environment
+     * @return The angle
+     */
+    public static RotationAngle createRotationAngle(Environment env) {
+        Cascade c = env.mc.getCascade(env.layer);
+
         RotationAngle rotationAngle = null;
         final Float angle = c.get(ICON_ROTATION, null, Float.class, true);
         if (angle != null) {
@@ -92,13 +111,11 @@ public class NodeElement extends StyleElement {
                 }
             }
         }
+        return rotationAngle;
+    }
 
-        // optimization: if we neither have a symbol, nor a mapImage
-        // we don't have to check for the remaining style properties and we don't
-        // have to allocate a node element style.
-        if (!allowDefault && symbol == null && mapImage == null) return null;
-
-        return new NodeElement(c, mapImage, symbol, defaultMajorZindex, rotationAngle);
+    public static MapImage createIcon(final Environment env) {
+        return createIcon(env, ICON_KEYS);
     }
 
     public static MapImage createIcon(final Environment env, final String ... keys) {
