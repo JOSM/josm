@@ -319,7 +319,7 @@ class SyncEditorImageryIndex {
                 Calendar cal = Calendar.getInstance();
                 cal.set(reg[0][2] as Integer, reg[0][4] == null ? 0 : (reg[0][4] as Integer)-1, reg[0][6] == null ? 1 : reg[0][6] as Integer)
                 cal.add(Calendar.DAY_OF_MONTH, -1)
-                ed2 = cal.get(Calendar.YEAR)
+                ed2 = reg[0][1] + cal.get(Calendar.YEAR)
                 if (reg[0][4] != null)
                     ed2 += "-" + String.format("%02d", cal.get(Calendar.MONTH)+1)
                 if (reg[0][6] != null)
