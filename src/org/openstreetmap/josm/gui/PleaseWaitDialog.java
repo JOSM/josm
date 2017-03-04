@@ -27,18 +27,36 @@ import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * This is a dialog that displays the progress of an action to the user.
+ */
 public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
 
     private final JProgressBar progressBar = new JProgressBar();
 
     private final JLabel currentAction = new JLabel("");
     private final JLabel customText = new JLabel("");
+    /**
+     * The direct progress access.
+     * @deprecated To be removed in mid-2017. Use {@link #updateProgress(int)}
+     */
+    @Deprecated
     public final transient BoundedRangeModel progress = progressBar.getModel();
     private JButton btnCancel;
     private JButton btnInBackground;
     /** the text area and the scroll pane for the log */
     private final JosmTextArea taLog = new JosmTextArea(5, 50);
     private final JScrollPane spLog = new JScrollPane(taLog);
+
+
+    /**
+     * Constructs a new {@code PleaseWaitDialog}.
+     * @param parent the {@code Component} from which the dialog is displayed. Can be {@code null}.
+     */
+    public PleaseWaitDialog(Component parent) {
+        super(GuiHelper.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
+        initDialog();
+    }
 
     private void initDialog() {
         setLayout(new GridBagLayout());
@@ -75,15 +93,6 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
         });
     }
 
-    /**
-     * Constructs a new {@code PleaseWaitDialog}.
-     * @param parent the {@code Component} from which the dialog is displayed. Can be {@code null}.
-     */
-    public PleaseWaitDialog(Component parent) {
-        super(GuiHelper.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
-        initDialog();
-    }
-
     @Override
     public void setIndeterminate(boolean newValue) {
         UIManager.put("ProgressBar.cycleTime", UIManager.getInt("ProgressBar.repaintInterval") * 100);
@@ -98,7 +107,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
     }
 
     /**
-     * Sets a custom text line below currentAction. Can be used to display additional information
+     * Sets a custom text line below currentAction. Can be used to display additional information.
      * @param text custom text
      */
     @Override
@@ -141,14 +150,21 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
     }
 
     /**
-     * Sets whether the cancel button is enabled or not
+     * Sets whether the cancel button is enabled or not.
      *
      * @param enabled true, if the cancel button is enabled; false otherwise
+     * @see #setCancelCallback(ActionListener)
      */
     public void setCancelEnabled(boolean enabled) {
         btnCancel.setEnabled(enabled);
     }
 
+    /**
+     * Enables / disables a button that can be pressed to run the task in background.
+     *
+     * @param value <code>true</code> iff that button should be displayed.
+     * @see #setInBackgroundCallback(ActionListener)
+     */
     public void setInBackgroundPossible(boolean value) {
         btnInBackground.setVisible(value);
     }
@@ -189,7 +205,15 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
 
     @Override
     public void updateProgress(int progress) {
-        this.progress.setValue(progress);
+        this.progressBar.setValue(progress);
         this.progressBar.repaint();
+    }
+
+    /**
+     * Sets the maximum progress value.
+     * @param progressBarMax The value that represents the rightmost point of the progress bar (100%).
+     */
+    public void setMaximumProgress(int progressBarMax) {
+        this.progressBar.setMaximum(progressBarMax);
     }
 }

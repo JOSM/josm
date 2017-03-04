@@ -190,7 +190,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
             dialog.setInBackgroundCallback(inBackgroundListener);
             dialog.setCustomText("");
             dialog.addWindowListener(windowListener);
-            dialog.progress.setMaximum(PROGRESS_BAR_MAX);
+            dialog.setMaximumProgress(PROGRESS_BAR_MAX);
             dialog.setVisible(true);
         });
     }
