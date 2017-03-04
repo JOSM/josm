@@ -40,14 +40,21 @@ sub handle_start
       {
         $datan{"de"} = "/wiki/Proposed_features/De:Hausnummern";
       }
-      while($main =~ /<bdi lang="([a-z_A-Z-]+)"(?: style="unicode-bidi:embed;unicode-bidi:-webkit-isolate;unicode-bidi:isolate")?><a href="(\/wiki\/.*?)"/g)
+      while($main =~ /<a href="(\/wiki\/[^"]+)"[^>]+><b>·<\/b> <bdi lang="([a-z_A-Z-]+)"(?: style="unicode-bidi:embed;unicode-bidi:-webkit-isolate;unicode-bidi:isolate")?>/g)
       {
-        my $lang = lc($1);
-        my $val = uri_unescape($2);
+        my $lang = lc($2);
+        my $val = uri_unescape($1);
         $lang = "$1_".uc($2) if($lang =~ /^(..)[_-](..)$/);
         $lang = "zh_CN" if $lang eq "zh-hans";
         $lang = "zh_TW" if $lang eq "zh-hant";
-        $datan{$lang} = $val;
+        if(-f "data/$lang.lang")
+        {
+          $datan{$lang} = $val;
+        }
+        else
+        {
+          print "Skip lang $lang\n";
+        }
       }
       while($main =~ /<a href="(\/wiki\/([a-zA-Z-_]):.*?)".*?&#160;&#8226;&#160;/g)
       {
