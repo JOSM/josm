@@ -212,6 +212,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
     /**
      * Sets the maximum progress value.
      * @param progressBarMax The value that represents the rightmost point of the progress bar (100%).
+     * @since 11672
      */
     public void setMaximumProgress(int progressBarMax) {
         this.progressBar.setMaximum(progressBarMax);

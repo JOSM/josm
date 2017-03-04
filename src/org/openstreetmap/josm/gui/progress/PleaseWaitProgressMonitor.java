@@ -25,6 +25,10 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     public interface ProgressMonitorDialog {
         void setVisible(boolean visible);
 
+        /**
+         * Updates the progress value to the specified progress.
+         * @param progress The progress as integer. Between 0 and {@link PleaseWaitProgressMonitor#PROGRESS_BAR_MAX}
+         */
         void updateProgress(int progress);
 
         void setCustomText(String text);
@@ -37,6 +41,9 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         void appendLogMessage(String message);
     }
 
+    /**
+     * The maximum value the progress bar that displays the current progress should have.
+     */
     public static final int PROGRESS_BAR_MAX = 10_000;
     private final Component dialogParent;
 
