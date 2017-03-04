@@ -207,17 +207,15 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="javacc" depends="init" unless="javacc.notRequired">
         <mkdir dir="${mapcss.dir}/parsergen"/>
-        <exec append="false" executable="java" failifexecutionfails="true">
-            <arg value="-cp"/>
-            <arg value="${javacc.home}/javacc.jar"/>
-            <arg value="javacc"/>
+        <java classname="javacc" fork="true" failonerror="true">
+            <classpath path="${javacc.home}/javacc.jar"/>
             <arg value="-DEBUG_PARSER=false"/>
             <arg value="-DEBUG_TOKEN_MANAGER=false"/>
             <arg value="-JDK_VERSION=1.8"/>
             <arg value="-GRAMMAR_ENCODING=UTF-8"/>
             <arg value="-OUTPUT_DIRECTORY=${mapcss.dir}/parsergen"/>
             <arg value="${mapcss.dir}/MapCSSParser.jj"/>
-        </exec>
+        </java>
     </target>
     <target name="compile" depends="init,javacc">
         <!-- COTS -->
