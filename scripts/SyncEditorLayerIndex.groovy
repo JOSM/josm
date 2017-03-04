@@ -333,10 +333,10 @@ class SyncEditorImageryIndex {
                 }
                 if (jd.isEmpty()) {
                     myprintln "- Missing JOSM date (${t}): ${getDescription(j)}"
-                } else if (t.isEmpty()) {
-                    myprintln "+ Missing ELI date ('${jd}'): ${getDescription(j)}"
-                } else {
+                } else if (!ed.isEmpty()) {
                     myprintln "* Date differs (${t} != '${jd}'): ${getDescription(j)}"
+                } else if (!options.nomissingeli) {
+                    myprintln "+ Missing ELI date ('${jd}'): ${getDescription(j)}"
                 }
             }
         }
