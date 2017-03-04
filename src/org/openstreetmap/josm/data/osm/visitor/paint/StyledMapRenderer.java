@@ -965,8 +965,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         if (bbox != null && bbox.isValid()) {
             MapViewPoint p = mapState.getPointFor(bbox.getCenter());
             drawIcon(p, img, disabled, selected, member, theta, (g, r) -> {
+                if (useStrokes) {
+                    g.setStroke(new BasicStroke(2));
+                }
                 // only draw a minor highlighting, so that users do not confuse this for a point.
                 Color color = getSelectionHintColor(disabled, selected);
+                color = new Color(color.getRed(), color.getGreen(), color.getBlue(), (int) (color.getAlpha() * .2));
                 g.setColor(color);
                 g.draw(r);
             });
