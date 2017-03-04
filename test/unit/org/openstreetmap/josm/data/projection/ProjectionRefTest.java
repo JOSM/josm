@@ -62,6 +62,7 @@ public class ProjectionRefTest {
     private static final String CS2CS_EXE = "cs2cs";
 
     private static final String REFERENCE_DATA_FILE = "data_nodist/projection/projection-reference-data";
+    private static final String PROJ_LIB_DIR = "data_nodist/projection";
 
     private static class RefEntry {
         String code;
@@ -232,6 +233,7 @@ public class ProjectionRefTest {
         def = def.replace("ntf_r93_b.gsb", "ntf_r93.gsb");
         args.addAll(Arrays.asList(def.split(" ")));
         ProcessBuilder pb = new ProcessBuilder(args);
+        pb.environment().put("PROJ_LIB", new File(PROJ_LIB_DIR).getAbsolutePath());
 
         String output;
         try {
