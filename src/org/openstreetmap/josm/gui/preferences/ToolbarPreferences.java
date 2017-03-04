@@ -1130,8 +1130,8 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
      * @since 11654
      */
     public Action unregister(Action action) {
-        String toolbar = (String) action.getValue("toolbar");
-        if (toolbar != null) {
+        Object toolbar = action.getValue("toolbar");
+        if (toolbar instanceof String) {
             return regactions.remove(toolbar);
         }
         return null;
