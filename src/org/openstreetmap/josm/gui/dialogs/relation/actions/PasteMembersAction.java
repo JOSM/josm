@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.dialogs.relation.actions;
 import java.awt.datatransfer.FlavorEvent;
 import java.awt.datatransfer.FlavorListener;
 import java.awt.event.ActionEvent;
+import java.util.Optional;
 
 import javax.swing.TransferHandler.TransferSupport;
 
@@ -41,7 +42,8 @@ public class PasteMembersAction extends AddFromSelectionAction implements Flavor
     }
 
     private TransferSupport getSupport() {
-        return new TransferSupport(memberTable, ClipboardUtils.getClipboardContent());
+        return new TransferSupport(memberTable, Optional.ofNullable(ClipboardUtils.getClipboardContent())
+                .orElseThrow(() -> new IllegalStateException("Failed to retrieve clipboard content")));
     }
 
     @Override
