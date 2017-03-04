@@ -304,7 +304,7 @@ class SyncEditorImageryIndex {
                 myprintln "* Quality differs (${getQuality(e)} != ${getQuality(j)}): ${getDescription(j)}"
             }
         }
-        /*myprintln "*** Same URL, but different dates: ***"
+        myprintln "*** Same URL, but different dates: ***"
         for (def url : eliUrls.keySet()) {
             def ed = getDate(eliUrls.get(url))
             if (!josmUrls.containsKey(url)) continue
@@ -333,7 +333,7 @@ class SyncEditorImageryIndex {
                 }
                 myprintln "* Date differs (${t} != '${jd}'): ${getDescription(j)}"
             }
-        }*/
+        }
         myprintln "*** Mismatching shapes: ***"
         for (def url : josmUrls.keySet()) {
             def j = josmUrls.get(url)
