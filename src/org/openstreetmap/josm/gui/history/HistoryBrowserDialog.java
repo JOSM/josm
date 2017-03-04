@@ -146,7 +146,9 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
 
     @Override
     public void historyDataSetCleared(HistoryDataSet source) {
-        closeAction.run();
+        if (isVisible()) {
+            closeAction.run();
+        }
     }
 
     class CloseAction extends AbstractAction {
@@ -186,7 +188,9 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
     class WindowClosingAdapter extends WindowAdapter {
         @Override
         public void windowClosing(WindowEvent e) {
-            closeAction.run();
+            if (isVisible()) {
+                closeAction.run();
+            }
         }
     }
 
