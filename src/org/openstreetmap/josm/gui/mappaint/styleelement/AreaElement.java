@@ -61,6 +61,9 @@ public class AreaElement extends StyleElement {
      */
     private final MapImage iconImage;
 
+    /**
+     * The rotation of the {@link #iconImageAngle}
+     */
     private final RotationAngle iconImageAngle;
 
     protected AreaElement(Cascade c, Color color, MapImage fillImage, Float extent, Float extentThreshold, TextLabel text, MapImage iconImage, RotationAngle iconImageAngle) {
@@ -174,17 +177,19 @@ public class AreaElement extends StyleElement {
                 Objects.equals(fillImage, that.fillImage) &&
                 Objects.equals(text, that.text) &&
                 Objects.equals(extent, that.extent) &&
-                Objects.equals(extentThreshold, that.extentThreshold);
+                Objects.equals(extentThreshold, that.extentThreshold) &&
+                Objects.equals(iconImage, that.iconImage) &&
+                Objects.equals(iconImageAngle, that.iconImageAngle);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), color, fillImage, text, extent, extentThreshold);
+        return Objects.hash(super.hashCode(), color, fillImage, text, extent, extentThreshold, iconImage, iconImageAngle);
     }
 
     @Override
     public String toString() {
         return "AreaElemStyle{" + super.toString() + "color=" + Utils.toString(color) +
-                " fillImage=[" + fillImage + "]}";
+                " fillImage=[" + fillImage + "] iconImage=[" + iconImage + "] iconImageAngle=[" + iconImageAngle + "]}";
     }
 }

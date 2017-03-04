@@ -948,6 +948,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param selected {@code} true to render it as selected, {@code false} otherwise
      * @param member {@code} true to render it as a relation member, {@code false} otherwise
      * @param theta the angle of rotation in radians
+     * @since 11670
      */
     public void drawAreaIcon(OsmPrimitive primitive, MapImage img, boolean disabled, boolean selected, boolean member, double theta) {
         BBox bbox = null;

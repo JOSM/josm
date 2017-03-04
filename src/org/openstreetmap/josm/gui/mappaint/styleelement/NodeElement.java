@@ -32,7 +32,13 @@ import org.openstreetmap.josm.tools.Utils;
  * applies for Nodes and turn restriction relations
  */
 public class NodeElement extends StyleElement {
+    /**
+     * The image that is used to display this node. May be <code>null</code>
+     */
     public final MapImage mapImage;
+    /**
+     * The angle that is used to rotate {@link #mapImage}. May be <code>null</code> to indicate no rotation.
+     */
     public final RotationAngle mapImageAngle;
     /**
      * The symbol that should be used for drawing this node.
@@ -62,6 +68,11 @@ public class NodeElement extends StyleElement {
         this.mapImageAngle = rotationAngle;
     }
 
+    /**
+     * Creates a new node element for the given Environment
+     * @param env The environment
+     * @return The node element style or <code>null</code> if the node should not be painted.
+     */
     public static NodeElement create(Environment env) {
         return create(env, 4f, false);
     }
@@ -89,6 +100,7 @@ public class NodeElement extends StyleElement {
      * Reads the icon-rotation property and creates a rotation angle from it.
      * @param env The environment
      * @return The angle
+     * @since 11670
      */
     public static RotationAngle createRotationAngle(Environment env) {
         Cascade c = env.mc.getCascade(env.layer);
@@ -114,10 +126,22 @@ public class NodeElement extends StyleElement {
         return rotationAngle;
     }
 
+    /**
+     * Create a map icon for the environment using the default keys.
+     * @param env The environment to read the icon form
+     * @return The icon or <code>null</code> if no icon is defined
+     * @since 11670
+     */
     public static MapImage createIcon(final Environment env) {
         return createIcon(env, ICON_KEYS);
     }
 
+    /**
+     * Create a map icon for the environment.
+     * @param env The environment to read the icon form
+     * @param keys The keys, indexed by the ICON_..._IDX constants.
+     * @return The icon or <code>null</code> if no icon is defined
+     */
     public static MapImage createIcon(final Environment env, final String ... keys) {
         CheckParameterUtil.ensureParameterNotNull(env, "env");
         CheckParameterUtil.ensureParameterNotNull(keys, "keys");
@@ -167,6 +191,11 @@ public class NodeElement extends StyleElement {
         return mapImage;
     }
 
+    /**
+     * Create a symbol for the environment
+     * @param env The environment to read the icon form
+     * @return The symbol.
+     */
     private static Symbol createSymbol(Environment env) {
         Cascade c = env.mc.getCascade(env.layer);
 
@@ -302,6 +331,10 @@ public class NodeElement extends StyleElement {
         painter.drawNodeSymbol(n, symbol, fillColor, strokeColor);
     }
 
+    /**
+     * Gets the selection box for this element.
+     * @return The selection box as {@link BoxProvider} object.
+     */
     public BoxProvider getBoxProvider() {
         if (mapImage != null)
             return mapImage.getBoxProvider();
