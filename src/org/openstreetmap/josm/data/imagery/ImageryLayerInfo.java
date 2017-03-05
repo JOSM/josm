@@ -272,6 +272,10 @@ public class ImageryLayerInfo {
     public void dropOldEntries() {
         List<String> drop = new ArrayList<>();
 
+        if (defaultLayerIds.isEmpty()) {
+            return;
+        }
+        
         for (Map.Entry<String, ImageryInfo> info : layerIds.entrySet()) {
             if (!defaultLayerIds.containsKey(info.getKey())) {
                 remove(info.getValue());
