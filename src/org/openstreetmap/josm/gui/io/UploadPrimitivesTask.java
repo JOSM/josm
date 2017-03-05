@@ -30,6 +30,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.ChangesetClosedException;
+import org.openstreetmap.josm.io.MessageNotifier;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiPrimitiveGoneException;
 import org.openstreetmap.josm.io.OsmServerWriter;
@@ -234,6 +235,7 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
     @Override
     protected void realRun() {
         try {
+            MessageNotifier.stop();
             uploadloop: while (true) {
                 try {
                     getProgressMonitor().subTask(
@@ -292,6 +294,10 @@ public class UploadPrimitivesTask extends AbstractUploadTask {
                 Main.info(tr("Ignoring caught exception because upload is canceled. Exception is: {0}", e.toString()));
             } else {
                 lastException = e;
+            }
+        } finally {
+            if (MessageNotifier.PROP_NOTIFIER_ENABLED.get()) {
+                MessageNotifier.start();
             }
         }
         if (uploadCanceled && processedPrimitives.isEmpty()) return;
