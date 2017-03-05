@@ -4,12 +4,16 @@ package org.openstreetmap.josm.gui.mappaint;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -17,7 +21,8 @@ import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
-import org.junit.Ignore;
+import org.junit.Assume;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,7 +69,7 @@ public class MapCSSRendererTest {
      * The different configurations of this test.
      * @return The parameters.
      */
-    @Parameters
+    @Parameters(name="{1}")
     public static Collection<Object[]> runs() {
         return Stream.of(
                 /** Tests for StyledMapRenderer#drawNodeSymbol */
@@ -73,15 +78,27 @@ public class MapCSSRendererTest {
                 /** Tests that StyledMapRenderer#drawWay respects width */
                 new TestConfig("way-width", AREA_DEFAULT)
 
-                ).map(e -> new Object[] {e})
+                ).map(e -> new Object[] {e, e.testDirectory})
                 .collect(Collectors.toList());
     }
 
     /**
      * @param testConfig The config to use for this test.
+     * @param ignored The name to print it nicely
      */
-    public MapCSSRendererTest(TestConfig testConfig) {
+    public MapCSSRendererTest(TestConfig testConfig, String ignored) {
         this.testConfig = testConfig;
+    }
+
+    /**
+     * This test only runs on OpenJDK.
+     * It is ignored for other Java versions since they differ slightly in their rendering engine.
+     * @since 11691
+     */
+    @Before
+    public void testForOpenJDK() {
+        String javaHome = System.getProperty("java.home");
+        Assume.assumeTrue(javaHome != null && javaHome.contains("openjdk"));
     }
 
     /**
@@ -89,7 +106,6 @@ public class MapCSSRendererTest {
      * @throws Exception if an error occurs
      */
     @Test
-    @Ignore("not ready")
     public void testRender() throws Exception {
         // load the data
         DataSet dataSet = testConfig.getOsmDataSet();
@@ -130,7 +146,18 @@ public class MapCSSRendererTest {
         };
         nc.zoomTo(testConfig.testArea);
         dataSet.allPrimitives().stream().forEach(n -> n.setHighlighted(n.isKeyTrue("highlight")));
-        new StyledMapRenderer(image.createGraphics(), nc, false).render(dataSet, false, testConfig.testArea);
+        Graphics2D g = image.createGraphics();
+        // Force all render hints to be defaults - do not use platform values
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
+        g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);
+        g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        new StyledMapRenderer(g, nc, false).render(dataSet, false, testConfig.testArea);
 
         BufferedImage reference = testConfig.getReference();
 
@@ -139,28 +166,56 @@ public class MapCSSRendererTest {
         assertEquals(IMAGE_SIZE, reference.getHeight());
 
         StringBuilder differences = new StringBuilder();
+        ArrayList<Point> differencePoints = new ArrayList<>();
 
         for (int y = 0; y < reference.getHeight(); y++) {
             for (int x = 0; x < reference.getWidth(); x++) {
                 int expected = reference.getRGB(x, y);
                 int result = image.getRGB(x, y);
-                if (expected != result && differences.length() < 500) {
-                    differences.append("\nDifference at ")
-                               .append(x)
-                               .append(",")
-                               .append(y)
-                               .append(": Expected ")
-                               .append(Integer.toHexString(expected))
-                               .append(" but got ")
-                               .append(Integer.toHexString(result));
+                if (!colorsAreSame(expected, result)) {
+                    differencePoints.add(new Point(x, y));
+                    if (differences.length() < 500) {
+                        differences.append("\nDifference at ")
+                        .append(x)
+                        .append(",")
+                        .append(y)
+                        .append(": Expected ")
+                        .append(Integer.toHexString(expected))
+                        .append(" but got ")
+                        .append(Integer.toHexString(result));
+                    }
                 }
             }
         }
 
-        if (differences.length() > 0) {
+        if (differencePoints.size() > 0) {
             // You can use this to debug:
             ImageIO.write(image, "png", new File(testConfig.getTestDirectory() + "/test-output.png"));
-            fail("Images for test " + testConfig.testDirectory + " differ: " + differences.toString());
+
+            // Add a nice image that highlights the differences:
+            BufferedImage diffImage = new BufferedImage(IMAGE_SIZE, IMAGE_SIZE, BufferedImage.TYPE_INT_ARGB);
+            for (Point p : differencePoints) {
+                diffImage.setRGB(p.x, p.y, 0xffff0000);
+            }
+            ImageIO.write(diffImage, "png", new File(testConfig.getTestDirectory() + "/test-differences.png"));
+
+            fail(MessageFormat.format("Images for test {1} differ at {2} points: {3}",
+                    testConfig.testDirectory, differencePoints.size(), differences.toString()));
+        }
+    }
+
+    /**
+     * Check if two colors differ
+     * @param expected
+     * @param result
+     * @return <code>true</code> if they differ.
+     */
+    private boolean colorsAreSame(int expected, int result) {
+        int expectedAlpha = expected >> 24;
+        if (expectedAlpha == 0) {
+            return (result & 0xff000000) == 0;
+        } else {
+            return expected == result;
         }
     }
 
