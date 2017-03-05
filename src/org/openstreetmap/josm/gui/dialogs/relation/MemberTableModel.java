@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.ListSelectionModel;
@@ -356,7 +357,8 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
      * @param relation relation
      */
     public void applyToRelation(Relation relation) {
-        relation.setMembers(members);
+        relation.setMembers(members.stream()
+                .filter(rm -> !rm.getMember().isDeleted()).collect(Collectors.toList()));
     }
 
     public boolean hasSameMembersAs(Relation relation) {
