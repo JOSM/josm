@@ -1683,19 +1683,8 @@
             <reference ref="optional_maxwidth" />
         </item> <!-- Bus Trap -->
         <item name="Spikes" icon="presets/barrier/spikes.svg" type="node" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Key:barrier"
-                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:barrier"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:barrier"
-                  es.href="http://wiki.openstreetmap.org/wiki/ES:Key:barrier"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:barrier"
-                  hu.href="http://wiki.openstreetmap.org/wiki/Hu:Key:barrier"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Key:barrier"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:barrier"
-                  nl.href="http://wiki.openstreetmap.org/wiki/NL:Key:barrier"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:barrier"
-                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Key:barrier"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:barrier"
-                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Key:barrier" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=spikes"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:barrier=spikes" />
             <key key="barrier" value="spikes" />
             <reference ref="barrier_5" />
         </item> <!-- Spikes -->
@@ -1897,33 +1886,15 @@
             <reference ref="general_access" />
         </item> <!-- Swing Gate -->
         <item name="Hampshire Gate" type="node" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Key:barrier"
-                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:barrier"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:barrier"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:barrier"
-                  hu.href="http://wiki.openstreetmap.org/wiki/Hu:Key:barrier"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Key:barrier"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:barrier"
-                  nl.href="http://wiki.openstreetmap.org/wiki/NL:Key:barrier"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:barrier"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:barrier"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:barrier" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=hampshire_gate"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:barrier=hampshire_gate" />
             <key key="barrier" value="hampshire_gate" />
             <reference ref="barrier_5" />
             <reference ref="optional_maxwidth" />
         </item> <!-- Hampshire Gate -->
         <item name="Bump Gate" type="node" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Key:barrier"
-                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:barrier"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:barrier"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:barrier"
-                  hu.href="http://wiki.openstreetmap.org/wiki/Hu:Key:barrier"
-                  it.href="http://wiki.openstreetmap.org/wiki/IT:Key:barrier"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:barrier"
-                  nl.href="http://wiki.openstreetmap.org/wiki/NL:Key:barrier"
-                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:barrier"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:barrier"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:barrier" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:barrier=bump_gate"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:barrier=bump_gate" />
             <key key="barrier" value="bump_gate" />
             <reference ref="barrier_5" />
             <reference ref="optional_maxwidth" />
@@ -2764,13 +2735,17 @@
             </optional>
         </item> <!-- Level Crossing -->
         <item name="Crossing" icon="presets/transport/railway/crossing.svg" type="node" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Key:crossing"
-                  bg.href="http://wiki.openstreetmap.org/wiki/Bg:Key:crossing"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:crossing"
-                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Key:crossing"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:crossing"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Key:crossing"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:crossing" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=crossing"
+                  bg.href="http://wiki.openstreetmap.org/wiki/Bg:Tag:railway=crossing"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:railway=crossing"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:railway=crossing"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:railway=crossing"
+                  fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:railway=crossing"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:railway=crossing"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=crossing"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:railway=crossing"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:railway=crossing"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:railway=crossing" />
             <key key="railway" value="crossing" />
             <optional>
                 <combo key="crossing" text="Crossing type" values="uncontrolled,traffic_signals,island,unmarked,no" />
@@ -2820,6 +2795,7 @@
         </item> <!-- Railway Signal -->
         <item name="Railway milestone" icon="presets/transport/railway/milestone.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:railway=milestone"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:railway=milestone"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:railway=milestone"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:railway=milestone" />
             <key key="railway" value="milestone" />
@@ -10027,6 +10003,7 @@
         </item> <!-- Islet -->
         <item name="Reef" icon="presets/landmark/reef.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=reef"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=reef"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=reef"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=reef" />
             <space />
