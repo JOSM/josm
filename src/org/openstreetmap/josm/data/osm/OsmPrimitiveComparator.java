@@ -68,6 +68,27 @@ public final class OsmPrimitiveComparator {
         });
     }
 
+    /**
+     * Returns a comparator ordering the primitives by type in the order RELATION, WAY, NODE
+     *
+     * @return a comparator ordering the primitives by type in the order RELATION, WAY, NODE
+     * @since 11679
+     */
+    public static Comparator<OsmPrimitive> orderingRelationsWaysNodes() {
+        return comparingInt(osm -> {
+            switch (osm.getType()) {
+                case RELATION:
+                    return 1;
+                case WAY:
+                    return 2;
+                case NODE:
+                    return 3;
+                default:
+                    throw new IllegalStateException();
+            }
+        });
+    }
+
     private static <T, R> Function<T, R> memoize(Function<T, R> base) {
         final Map<T, R> cache = new HashMap<>();
         return t -> cache.computeIfAbsent(t, base);
