@@ -1,12 +1,11 @@
 #!/usr/bin/perl
 ###########################################################################
-# Java API Compliance Checker (JAPICC) 1.8
+# Java API Compliance Checker (JAPICC) 2.1
 # A tool for checking backward compatibility of a Java library API
 #
 # Written by Andrey Ponomarenko
 #
-# Copyright (C) 2011 Institute for System Programming, RAS
-# Copyright (C) 2011-2016 Andrey Ponomarenko's ABI Laboratory
+# Copyright (C) 2011-2017 Andrey Ponomarenko's ABI Laboratory
 #
 # PLATFORMS
 # =========
@@ -39,69 +38,46 @@ use Getopt::Long;
 Getopt::Long::Configure ("posix_default", "no_ignore_case", "permute");
 use File::Path qw(mkpath rmtree);
 use File::Temp qw(tempdir);
-use File::Copy qw(copy);
-use File::Spec::Functions qw(abs2rel);
+use File::Basename qw(dirname);
 use Cwd qw(abs_path cwd);
 use Data::Dumper;
-use Digest::MD5 qw(md5_hex);
-use Config;
 
-my $TOOL_VERSION = "1.8";
-my $API_DUMP_VERSION = "2.0";
-my $API_DUMP_MAJOR = majorVersion($API_DUMP_VERSION);
+my $TOOL_VERSION = "2.1";
+my $API_DUMP_VERSION = "2.1";
+my $API_DUMP_VERSION_MIN = "2.0";
 
-my ($Help, $ShowVersion, %Descriptor, $TargetLibraryName, $CheckSeparately,
-$TestSystem, $DumpAPI, $ClassListPath, $ClientPath, $StrictCompat,
-$DumpVersion, $BinaryOnly, $TargetTitle, %TargetVersion, $SourceOnly,
-$ShortMode, $KeepInternal, $OutputReportPath, $BinaryReportPath,
-$SourceReportPath, $Debug, $Quick, $SortDump, $SkipDeprecated, $SkipClassesList,
-$ShowAccess, $AffectLimit, $JdkPath, $SkipInternalPackages, $HideTemplates,
-$HidePackages, $ShowPackages, $Minimal, $AnnotationsListPath,
-$SkipPackagesList, $OutputDumpPath, $AllAffected, $Compact,
-$SkipAnnotationsListPath, $ExternCss, $ExternJs, $SkipInternalTypes,
-$AddedAnnotations, $RemovedAnnotations, $CountMethods, %DepDump, $OldStyle);
+# Internal modules
+my $MODULES_DIR = getModules();
+push(@INC, dirname($MODULES_DIR));
 
-my $CmdName = get_filename($0);
-my $OSgroup = get_OSgroup();
-my $ORIG_DIR = cwd();
-my $TMP_DIR = tempdir(CLEANUP=>1);
-my $ARG_MAX = get_ARG_MAX();
-my $REPRODUCIBLE = 1;
-my $MD5_LEN = 8;
+# Basic modules
+my %LoadedModules = ();
+loadModule("Basic");
+loadModule("Input");
+loadModule("Path");
+loadModule("Logging");
+loadModule("Utils");
+loadModule("TypeAttr");
+loadModule("Filter");
+loadModule("SysFiles");
+loadModule("Descriptor");
+loadModule("Mangling");
 
-my %OS_Archive = (
-    "windows"=>"zip",
-    "default"=>"tar.gz"
-);
+# Rules DB
+my %RULES_PATH = (
+"Binary" => $MODULES_DIR."/RulesBin.xml",
+"Source" => $MODULES_DIR."/RulesSrc.xml");
 
-my %ERROR_CODE = (
-    # Compatible verdict
-    "Compatible"=>0,
-    "Success"=>0,
-    # Incompatible verdict
-    "Incompatible"=>1,
-    # Undifferentiated error code
-    "Error"=>2,
-    # System command is not found
-    "Not_Found"=>3,
-    # Cannot access input files
-    "Access_Error"=>4,
-    # Invalid input API dump
-    "Invalid_Dump"=>7,
-    # Incompatible version of API dump
-    "Dump_Version"=>8,
-    # Cannot find a module
-    "Module_Error"=>9
-);
+my $CmdName = getFilename($0);
 
 my %HomePage = (
     "Dev"=>"https://github.com/lvc/japi-compliance-checker",
-    "Wiki"=>"http://ispras.linuxbase.org/index.php/Java_API_Compliance_Checker"
+    "Doc"=>"https://lvc.github.io/japi-compliance-checker/"
 );
 
 my $ShortUsage = "Java API Compliance Checker (JAPICC) $TOOL_VERSION
 A tool for checking backward compatibility of a Java library API
-Copyright (C) 2016 Andrey Ponomarenko's ABI Laboratory
+Copyright (C) 2017 Andrey Ponomarenko's ABI Laboratory
 License: GNU LGPL or GNU GPL
 
 Usage: $CmdName [options]
@@ -115,100 +91,100 @@ if($#ARGV==-1)
     exit(0);
 }
 
-GetOptions("h|help!" => \$Help,
-  "v|version!" => \$ShowVersion,
-  "dumpversion!" => \$DumpVersion,
+GetOptions("h|help!" => \$In::Opt{"Help"},
+  "v|version!" => \$In::Opt{"ShowVersion"},
+  "dumpversion!" => \$In::Opt{"DumpVersion"},
 # general options
-  "l|lib|library=s" => \$TargetLibraryName,
-  "d1|old|o=s" => \$Descriptor{1}{"Path"},
-  "d2|new|n=s" => \$Descriptor{2}{"Path"},
+  "l|lib|library=s" => \$In::Opt{"TargetLib"},
+  "d1|old|o=s" => \$In::Desc{1}{"Path"},
+  "d2|new|n=s" => \$In::Desc{2}{"Path"},
 # extra options
-  "client|app=s" => \$ClientPath,
-  "binary|bin!" => \$BinaryOnly,
-  "source|src!" => \$SourceOnly,
-  "v1|version1|vnum=s" => \$TargetVersion{1},
-  "v2|version2=s" => \$TargetVersion{2},
-  "s|strict!" => \$StrictCompat,
-  "keep-internal!" => \$KeepInternal,
-  "skip-internal-packages|skip-internal=s" => \$SkipInternalPackages,
-  "skip-internal-types=s" => \$SkipInternalTypes,
-  "dump|dump-api=s" => \$DumpAPI,
-  "classes-list=s" => \$ClassListPath,
-  "annotations-list=s" => \$AnnotationsListPath,
-  "skip-annotations-list=s" => \$SkipAnnotationsListPath,
-  "skip-deprecated!" => \$SkipDeprecated,
-  "skip-classes=s" => \$SkipClassesList,
-  "skip-packages=s" => \$SkipPackagesList,
-  "short" => \$ShortMode,
-  "dump-path=s" => \$OutputDumpPath,
-  "report-path=s" => \$OutputReportPath,
-  "bin-report-path=s" => \$BinaryReportPath,
-  "src-report-path=s" => \$SourceReportPath,
-  "quick!" => \$Quick,
-  "sort!" => \$SortDump,
-  "show-access!" => \$ShowAccess,
-  "limit-affected=s" => \$AffectLimit,
-  "hide-templates!" => \$HideTemplates,
-  "show-packages!" => \$ShowPackages,
-  "compact!" => \$Compact,
-  "added-annotations!" => \$AddedAnnotations,
-  "removed-annotations!" => \$RemovedAnnotations,
-  "count-methods=s" => \$CountMethods,
-  "dep1=s" => \$DepDump{1},
-  "dep2=s" => \$DepDump{2},
-  "old-style!" => \$OldStyle,
+  "client|app=s" => \$In::Opt{"ClientPath"},
+  "binary|bin!" => \$In::Opt{"BinaryOnly"},
+  "source|src!" => \$In::Opt{"SourceOnly"},
+  "v1|version1|vnum=s" => \$In::Desc{1}{"TargetVersion"},
+  "v2|version2=s" => \$In::Desc{2}{"TargetVersion"},
+  "s|strict!" => \$In::Opt{"StrictCompat"},
+  "keep-internal!" => \$In::Opt{"KeepInternal"},
+  "skip-internal-packages|skip-internal=s" => \$In::Opt{"SkipInternalPackages"},
+  "skip-internal-types=s" => \$In::Opt{"SkipInternalTypes"},
+  "dump|dump-api=s" => \$In::Opt{"DumpAPI"},
+  "classes-list=s" => \$In::Opt{"ClassListPath"},
+  "annotations-list=s" => \$In::Opt{"AnnotationsListPath"},
+  "skip-annotations-list=s" => \$In::Opt{"SkipAnnotationsListPath"},
+  "skip-deprecated!" => \$In::Opt{"SkipDeprecated"},
+  "skip-classes=s" => \$In::Opt{"SkipClassesList"},
+  "skip-packages=s" => \$In::Opt{"SkipPackagesList"},
+  "short" => \$In::Opt{"ShortMode"},
+  "dump-path=s" => \$In::Opt{"OutputDumpPath"},
+  "report-path=s" => \$In::Opt{"OutputReportPath"},
+  "bin-report-path=s" => \$In::Opt{"BinaryReportPath"},
+  "src-report-path=s" => \$In::Opt{"SourceReportPath"},
+  "quick!" => \$In::Opt{"Quick"},
+  "sort!" => \$In::Opt{"SortDump"},
+  "show-access!" => \$In::Opt{"ShowAccess"},
+  "limit-affected=s" => \$In::Opt{"AffectLimit"},
+  "hide-templates!" => \$In::Opt{"HideTemplates"},
+  "show-packages!" => \$In::Opt{"ShowPackages"},
+  "compact!" => \$In::Opt{"Compact"},
+  "added-annotations!" => \$In::Opt{"AddedAnnotations"},
+  "removed-annotations!" => \$In::Opt{"RemovedAnnotations"},
+  "count-methods=s" => \$In::Opt{"CountMethods"},
+  "dep1=s" => \$In::Desc{1}{"DepDump"},
+  "dep2=s" => \$In::Desc{2}{"DepDump"},
+  "old-style!" => \$In::Opt{"OldStyle"},
 # other options
-  "test!" => \$TestSystem,
-  "debug!" => \$Debug,
-  "title=s" => \$TargetTitle,
-  "jdk-path=s" => \$JdkPath,
-  "external-css=s" => \$ExternCss,
-  "external-js=s" => \$ExternJs,
+  "test!" => \$In::Opt{"TestTool"},
+  "debug!" => \$In::Opt{"Debug"},
+  "title=s" => \$In::Opt{"TargetTitle"},
+  "jdk-path=s" => \$In::Opt{"JdkPath"},
+  "external-css=s" => \$In::Opt{"ExternCss"},
+  "external-js=s" => \$In::Opt{"ExternJs"},
 # deprecated
-  "minimal!" => \$Minimal,
-  "hide-packages!" => \$HidePackages,
+  "minimal!" => \$In::Opt{"Minimal"},
+  "hide-packages!" => \$In::Opt{"HidePackages"},
 # private
-  "all-affected!" => \$AllAffected
-) or ERR_MESSAGE();
+  "all-affected!" => \$In::Opt{"AllAffected"}
+) or errMsg();
 
 if(@ARGV)
 { 
     if($#ARGV==1)
     { # japi-compliance-checker OLD.jar NEW.jar
-        $Descriptor{1}{"Path"} = $ARGV[0];
-        $Descriptor{2}{"Path"} = $ARGV[1];
+        $In::Desc{1}{"Path"} = $ARGV[0];
+        $In::Desc{2}{"Path"} = $ARGV[1];
     }
     else {
-        ERR_MESSAGE();
+        errMsg();
     }
 }
 
-sub ERR_MESSAGE()
+sub errMsg()
 {
     printMsg("INFO", "\n".$ShortUsage);
-    exit($ERROR_CODE{"Error"});
+    exit(getErrorCode("Error"));
 }
 
-my $AR_EXT = getAR_EXT($OSgroup);
-
-my $HelpMessage="
+my $HelpMessage = "
 NAME:
   Java API Compliance Checker ($CmdName)
   Check backward compatibility of a Java library API
 
 DESCRIPTION:
   Java API Compliance Checker (JAPICC) is a tool for checking backward
-  binary/source compatibility of a Java library API. The tool checks classes
+  binary/source compatibility of a Java library API. The tool checks class
   declarations of old and new versions and analyzes changes that may break
-  compatibility: removed class members, added abstract methods, etc. Breakage
-  of the binary compatibility may result in crashing or incorrect behavior of
-  existing clients built with an old version of a library if they run with a
-  new one. Breakage of the source compatibility may result in recompilation
+  compatibility: removed class members, added abstract methods, etc.
+  
+  Break of the binary compatibility may result in crash or incorrect behavior
+  of existing clients built with an old library version if they run with a
+  new one. Break of the source compatibility may result in recompilation
   errors with a new library version.
 
-  JAPICC is intended for library developers and operating system maintainers
-  who are interested in ensuring backward compatibility (i.e. allow old clients
-  to run or to be recompiled with a new version of a library).
+  The tool is intended for developers of software libraries and maintainers
+  of operating systems who are interested in ensuring backward compatibility,
+  i.e. allow old clients to run or to be recompiled with newer library
+  versions.
 
   This tool is free software: you can redistribute it and/or modify it
   under the terms of the GNU LGPL or GNU GPL.
@@ -216,9 +192,10 @@ DESCRIPTION:
 USAGE:
   $CmdName [options]
 
-EXAMPLE:
+EXAMPLE 1:
   $CmdName OLD.jar NEW.jar
-    OR
+
+EXAMPLE 2:
   $CmdName -lib NAME -old OLD.xml -new NEW.xml
   OLD.xml and NEW.xml are XML-descriptors:
 
@@ -243,14 +220,14 @@ INFORMATION OPTIONS:
       Print the tool version ($TOOL_VERSION) and don't do anything else.
 
 GENERAL OPTIONS:
-  -l|-lib|-library NAME
+  -l|-library NAME
       Library name (without version).
 
-  -d1|-old|-o PATH
-      Descriptor of 1st (old) library version.
+  -old|-d1 PATH
+      Descriptor of the 1st (old) library version.
       It may be one of the following:
       
-         1. Java ARchive (*.jar)
+         1. Java archive (*.jar)
          2. XML-descriptor (VERSION.xml file):
 
               <version>
@@ -267,28 +244,27 @@ GENERAL OPTIONS:
          
          3. API dump generated by -dump option
 
-      If you are using 1, 4-6 descriptor types then you should
+      If you are using *.jar as a descriptor then you should
       specify version numbers with -v1 and -v2 options too.
+      If version numbers are not specified then the tool will
+      try to detect them automatically.
 
-      If you are using *.jar as a descriptor then the tool will try to
-      get implementation version from MANIFEST.MF file.
-
-  -d2|-new|-n PATH
-      Descriptor of 2nd (new) library version.
+  -new|-d2 PATH
+      Descriptor of the 2nd (new) library version.
 
 EXTRA OPTIONS:
   -client|-app PATH
-      This option allows to specify the client Java ARchive that should be
+      This option allows to specify the client Java archive that should be
       checked for portability to the new library version.
-      
+
   -binary|-bin
       Show \"Binary\" compatibility problems only.
       Generate report to \"bin_compat_report.html\".
-      
+
   -source|-src
       Show \"Source\" compatibility problems only.
       Generate report to \"src_compat_report.html\".
-      
+
   -v1|-version1 NUM
       Specify 1st API version outside the descriptor. This option is needed
       if you have prefered an alternative descriptor type (see -d1 option).
@@ -322,7 +298,7 @@ EXTRA OPTIONS:
   -dump|-dump-api PATH
       Dump library API to gzipped TXT format file. You can transfer it
       anywhere and pass instead of the descriptor. Also it may be used
-      for debugging the tool. Compatible dump versions: $API_DUMP_MAJOR.0<=V<=$API_DUMP_VERSION
+      for debugging the tool.
       
   -classes-list PATH
       This option allows to specify a file with a list
@@ -351,9 +327,9 @@ EXTRA OPTIONS:
       Do not list added/removed methods.
   
   -dump-path PATH
-      Specify a *.api.$AR_EXT or *.api file path where to generate an API dump.
+      Specify a *.dump file path where to generate an API dump.
       Default: 
-          abi_dumps/LIB_NAME/LIB_NAME_VERSION.api.$AR_EXT
+          api_dumps/LIB_NAME/VERSION/API.dump
 
   -report-path PATH
       Path to compatibility report.
@@ -454,156 +430,19 @@ EXIT CODES:
     0 - Compatible. The tool has run without any errors.
     non-zero - Incompatible or the tool has run with errors.
 
-MORE INFORMATION:
-    ".$HomePage{"Wiki"}."
-    ".$HomePage{"Dev"}."\n\n";
+MORE INFO:
+    ".$HomePage{"Doc"}."
+    ".$HomePage{"Dev"};
 
-sub HELP_MESSAGE()
-{ # -help
+sub helpMsg() {
     printMsg("INFO", $HelpMessage."\n");
 }
 
-my %TypeProblems_Kind=(
-    "Binary"=>{
-        "NonAbstract_Class_Added_Abstract_Method"=>"High",
-        "Abstract_Class_Added_Abstract_Method"=>"Safe",
-        "Abstract_Class_Added_Abstract_Method_Invoked_By_Others"=>"Medium",
-        "Class_Removed_Abstract_Method"=>"High",
-        "Interface_Added_Abstract_Method"=>"Safe",
-        "Interface_Added_Abstract_Method_Invoked_By_Others"=>"Medium",
-        "Interface_Removed_Abstract_Method"=>"High",
-        "Removed_Class"=>"High",
-        "Removed_Interface"=>"High",
-        "Class_Method_Became_Abstract"=>"High",
-        "Class_Method_Became_NonAbstract"=>"Low",
-        "Interface_Method_Became_NonDefault"=>"High",
-        "Interface_Method_Became_Default"=>"Safe",
-        "Added_Super_Class"=>"Low",
-        "Abstract_Class_Added_Super_Abstract_Class"=>"Safe",
-        "Abstract_Class_Added_Super_Abstract_Class_Invoked_By_Others"=>"Medium",
-        "Removed_Super_Class"=>"Medium",
-        "Changed_Super_Class"=>"Medium",
-        "Abstract_Class_Added_Super_Interface"=>"Safe",
-        "Abstract_Class_Added_Super_Interface_Invoked_By_Others"=>"Medium",
-        "Abstract_Class_Added_Super_Interface_With_Implemented_Methods"=>"Safe",
-        "Class_Removed_Super_Interface"=>"High",
-        "Interface_Added_Super_Interface"=>"Safe",
-        "Interface_Added_Super_Interface_Used_By_Others"=>"Medium",
-        "Interface_Added_Super_Constant_Interface"=>"Low",
-        "Interface_Added_Super_Interface_With_Implemented_Methods"=>"Safe",
-        "Interface_Removed_Super_Interface"=>"High",
-        "Interface_Removed_Super_Constant_Interface"=>"Safe",
-        "Class_Became_Interface"=>"High",
-        "Interface_Became_Class"=>"High",
-        "Class_Became_Final"=>"High",
-        "Class_Became_Abstract"=>"High",
-        "Class_Added_Field"=>"Safe",
-        "Interface_Added_Field"=>"Safe",
-        "Removed_NonConstant_Field"=>"High",
-        "Removed_Constant_Field"=>"Low",
-        "Renamed_Field"=>"High",
-        "Renamed_Constant_Field"=>"Low",
-        "Changed_Field_Type"=>"High",
-        "Changed_Field_Access"=>"High",
-        "Changed_Final_Field_Value"=>"Medium",
-        "Changed_Final_Version_Field_Value"=>"Low",
-        "Field_Became_Final"=>"Medium",
-        "Field_Became_NonFinal"=>"Low",
-        "NonConstant_Field_Became_Static"=>"High",
-        "NonConstant_Field_Became_NonStatic"=>"High",
-        "Class_Overridden_Method"=>"Low",
-        "Class_Method_Moved_Up_Hierarchy"=>"Low"
-    },
-    "Source"=>{
-        "NonAbstract_Class_Added_Abstract_Method"=>"High",
-        "Abstract_Class_Added_Abstract_Method"=>"High",
-        "Abstract_Class_Added_Abstract_Method_Invoked_By_Others"=>"High",
-        "Interface_Added_Abstract_Method"=>"High",
-        "Interface_Added_Abstract_Method_Invoked_By_Others"=>"High",
-        "Class_Removed_Abstract_Method"=>"High",
-        "Interface_Removed_Abstract_Method"=>"High",
-        "Removed_Class"=>"High",
-        "Removed_Interface"=>"High",
-        "Class_Method_Became_Abstract"=>"High",
-        "Class_Method_Became_NonAbstract"=>"Safe",
-        "Interface_Method_Became_NonDefault"=>"High",
-        "Interface_Method_Became_Default"=>"Safe",
-        "Added_Super_Class"=>"Low",
-        "Abstract_Class_Added_Super_Abstract_Class"=>"High",
-        "Abstract_Class_Added_Super_Abstract_Class_Invoked_By_Others"=>"High",
-        "Removed_Super_Class"=>"Medium",
-        "Changed_Super_Class"=>"Medium",
-        "Abstract_Class_Added_Super_Interface"=>"High",
-        "Abstract_Class_Added_Super_Interface_Invoked_By_Others"=>"High",
-        "Abstract_Class_Added_Super_Interface_With_Implemented_Methods"=>"Safe",
-        "Class_Removed_Super_Interface"=>"High",
-        "Interface_Added_Super_Interface"=>"High",
-        "Interface_Added_Super_Interface_Used_By_Others"=>"High",
-        "Interface_Added_Super_Constant_Interface"=>"Low",
-        "Interface_Added_Super_Interface_With_Implemented_Methods"=>"Safe",
-        "Interface_Removed_Super_Interface"=>"High",
-        "Interface_Removed_Super_Constant_Interface"=>"High",
-        "Class_Became_Interface"=>"High",
-        "Interface_Became_Class"=>"High",
-        "Class_Became_Final"=>"High",
-        "Class_Became_Abstract"=>"High",
-        "Class_Added_Field"=>"Safe",
-        "Interface_Added_Field"=>"Safe",
-        "Removed_NonConstant_Field"=>"High",
-        "Removed_Constant_Field"=>"High",
-        "Renamed_Field"=>"High",
-        "Renamed_Constant_Field"=>"High",
-        "Changed_Field_Type"=>"High",
-        "Changed_Field_Access"=>"High",
-        "Field_Became_Final"=>"Medium",
-        "Constant_Field_Became_NonStatic"=>"High",
-        "NonConstant_Field_Became_NonStatic"=>"High",
-        "Removed_Annotation"=>"High"
-    }
-);
+#Aliases
+my (%MethodInfo, %TypeInfo, %TName_Tid) = ();
 
-my %MethodProblems_Kind=(
-    "Binary"=>{
-        "Added_Method"=>"Safe",
-        "Removed_Method"=>"High",
-        "Method_Became_Static"=>"High",
-        "Method_Became_NonStatic"=>"High",
-        "NonStatic_Method_Became_Final"=>"Medium",
-        "Changed_Method_Access"=>"High",
-        "Method_Became_Synchronized"=>"Low",
-        "Method_Became_NonSynchronized"=>"Low",
-        "Method_Became_Abstract"=>"High",
-        "Method_Became_NonAbstract"=>"Low",
-        "Method_Became_NonDefault"=>"High",
-        "Method_Became_Default"=>"Safe",
-        "NonAbstract_Method_Added_Checked_Exception"=>"Low",
-        "NonAbstract_Method_Removed_Checked_Exception"=>"Low",
-        "Added_Unchecked_Exception"=>"Low",
-        "Removed_Unchecked_Exception"=>"Low",
-        "Variable_Arity_To_Array"=>"Low",# not implemented yet
-        "Changed_Method_Return_From_Void"=>"High"
-    },
-    "Source"=>{
-        "Added_Method"=>"Safe",
-        "Removed_Method"=>"High",
-        "Method_Became_Static"=>"Low",
-        "Method_Became_NonStatic"=>"High",
-        "Static_Method_Became_Final"=>"Medium",
-        "NonStatic_Method_Became_Final"=>"Medium",
-        "Changed_Method_Access"=>"High",
-        "Method_Became_Abstract"=>"High",
-        "Method_Became_NonAbstract"=>"Safe",
-        "Method_Became_NonDefault"=>"High",
-        "Method_Became_Default"=>"Safe",
-        "Abstract_Method_Added_Checked_Exception"=>"Medium",
-        "NonAbstract_Method_Added_Checked_Exception"=>"Medium",
-        "Abstract_Method_Removed_Checked_Exception"=>"Medium",
-        "NonAbstract_Method_Removed_Checked_Exception"=>"Medium"
-    }
-);
-
+#Separate checked and unchecked exceptions
 my %KnownRuntimeExceptions= map {$_=>1} (
-# To separate checked- and unchecked- exceptions
     "java.lang.AnnotationTypeMismatchException",
     "java.lang.ArithmeticException",
     "java.lang.ArrayStoreException",
@@ -655,48 +494,6 @@ my %KnownRuntimeExceptions= map {$_=>1} (
     "java.lang.WrongMethodTypeException"
 );
 
-my %Slash_Type=(
-    "default"=>"/",
-    "windows"=>"\\"
-);
-
-my $SLASH = $Slash_Type{$OSgroup}?$Slash_Type{$OSgroup}:$Slash_Type{"default"};
-
-my %OS_AddPath=(
-# this data needed if tool can't detect it automatically
-"macos"=>{
-    "bin"=>{"/Developer/usr/bin"=>1}},
-"beos"=>{
-    "bin"=>{"/boot/common/bin"=>1,"/boot/system/bin"=>1,"/boot/develop/abi"=>1}}
-);
-
-#Global variables
-my %RESULT;
-my $ExtractCounter = 0;
-my %Cache;
-my $TOP_REF = "<a class='top_ref' href='#Top'>to the top</a>";
-my %DEBUG_PATH;
-
-#Types
-my %TypeInfo;
-my $TYPE_ID = 0;
-my %CheckedTypes;
-my %TName_Tid;
-my %Class_Constructed;
-
-#Classes
-my %ClassList_User;
-my %UsedMethods_Client;
-my %UsedFields_Client;
-my %UsedClasses_Client;
-my %LibArchives;
-my %Class_Methods;
-my %Class_AbstractMethods;
-my %Class_Fields;
-my %MethodUsed;
-my %ClassMethod_AddedUsed;
-# my %FieldUsed;
-
 #java.lang.Object
 my %JavaObjectMethod = (
     
@@ -713,35 +510,38 @@ my %JavaObjectMethod = (
     "java/lang/Object.wait:(JI)V" => 1
 );
 
-#Annotations
-my %AnnotationList_User;
-my %SkipAnnotationList_User;
+#Global variables
+my %Cache;
+my %RESULT;
+my $TOP_REF = "<a class='top_ref' href='#Top'>to the top</a>";
+
+#Types
+my %CheckedTypes;
+
+#Classes
+my %LibArchives;
+my %Class_Methods;
+my %Class_AbstractMethods;
+my %Class_Fields;
+my %ClassMethod_AddedUsed;
+my %Class_Constructed;
 
 #Methods
 my %CheckedMethods;
-my %tr_name;
+my %MethodUsed;
 
 #Merging
-my %MethodInfo;
-my $Version;
 my %AddedMethod_Abstract;
 my %RemovedMethod_Abstract;
 my %ChangedReturnFromVoid;
-my %SkipClasses;
-my %SkipPackages;
-my %KeepPackages;
-my %SkippedPackage;
+my %CompatRules;
+my %IncompleteRules;
 
 #Report
 my %TypeChanges;
 
 #Recursion locks
-my @RecurSymlink;
 my @RecurTypes;
-
-#System
-my %SystemPaths;
-my %DefaultBinPaths;
 
 #Problem descriptions
 my %CompatProblems;
@@ -759,462 +559,60 @@ my $ContentDivStart = "<div id=\"CONTENT_ID\" style=\"display:none;\">\n";
 my $ContentDivEnd = "</div>\n";
 my $Content_Counter = 0;
 
-#Modes
-my $JoinReport = 1;
-my $DoubleReport = 0;
+sub getModules()
+{
+    my $TOOL_DIR = dirname($0);
+    if(not $TOOL_DIR)
+    { # patch for MS Windows
+        $TOOL_DIR = ".";
+    }
+    my @SEARCH_DIRS = (
+        # tool's directory
+        abs_path($TOOL_DIR),
+        # relative path to modules
+        abs_path($TOOL_DIR)."/../share/japi-compliance-checker",
+        # install path
+        'MODULES_INSTALL_PATH'
+    );
+    foreach my $DIR (@SEARCH_DIRS)
+    {
+        if($DIR!~/\A(\/|\w+:[\/\\])/)
+        { # relative path
+            $DIR = abs_path($TOOL_DIR)."/".$DIR;
+        }
+        if(-d $DIR."/modules") {
+            return $DIR."/modules";
+        }
+    }
+    
+    print STDERR "ERROR: can't find modules (Did you installed the tool by 'make install' command?)\n";
+    exit(9); # Module_Error
+}
 
-sub get_CmdPath($)
+sub loadModule($)
 {
     my $Name = $_[0];
-    return "" if(not $Name);
-    if(defined $Cache{"get_CmdPath"}{$Name}) {
-        return $Cache{"get_CmdPath"}{$Name};
+    if(defined $LoadedModules{$Name}) {
+        return;
     }
-    my $Path = search_Cmd($Name);
-    if(not $Path and $OSgroup eq "windows")
-    { # search for *.exe file
-        $Path=search_Cmd($Name.".exe");
-    }
-    if (not $Path) {
-        $Path=search_Cmd_Path($Name);
-    }
-    if($Path=~/\s/) {
-        $Path = "\"".$Path."\"";
-    }
-    return ($Cache{"get_CmdPath"}{$Name} = $Path);
-}
-
-sub search_Cmd($)
-{
-    my $Name = $_[0];
-    return "" if(not $Name);
-    if(defined $Cache{"search_Cmd"}{$Name}) {
-        return $Cache{"search_Cmd"}{$Name};
-    }
-    if(defined $JdkPath)
+    my $Path = $MODULES_DIR."/Internals/$Name.pm";
+    if(not -f $Path)
     {
-        if(-x $JdkPath."/".$Name) {
-            return ($Cache{"search_Cmd"}{$Name} = $JdkPath."/".$Name);
-        }
-        
-        if(-x $JdkPath."/bin/".$Name) {
-            return ($Cache{"search_Cmd"}{$Name} = $JdkPath."/bin/".$Name);
-        }
+        print STDERR "can't access \'$Path\'\n";
+        exit(2);
     }
-    if(my $DefaultPath = get_CmdPath_Default($Name)) {
-        return ($Cache{"search_Cmd"}{$Name} = $DefaultPath);
-    }
-    return ($Cache{"search_Cmd"}{$Name} = "");
+    require $Path;
+    $LoadedModules{$Name} = 1;
 }
 
-sub search_Cmd_Path($)
+sub readModule($$)
 {
-    my $Name = $_[0];
-    return "" if(not $Name);
-    
-    if(defined $Cache{"search_Cmd_Path"}{$Name}) {
-        return $Cache{"search_Cmd_Path"}{$Name};
+    my ($Module, $Name) = @_;
+    my $Path = $MODULES_DIR."/Internals/$Module/".$Name;
+    if(not -f $Path) {
+        exitStatus("Module_Error", "can't access \'$Path\'");
     }
-    
-    if(defined $SystemPaths{"bin"})
-    {
-        foreach my $Path (sort {length($a)<=>length($b)} keys(%{$SystemPaths{"bin"}}))
-        {
-            if(-f $Path."/".$Name or -f $Path."/".$Name.".exe") {
-                return ($Cache{"search_Cmd_Path"}{$Name} = joinPath($Path,$Name));
-            }
-        }
-    }
-
-    return ($Cache{"search_Cmd_Path"}{$Name} = "");
-}
-
-sub get_CmdPath_Default($)
-{ # search in PATH
-    return "" if(not $_[0]);
-    if(defined $Cache{"get_CmdPath_Default"}{$_[0]}) {
-        return $Cache{"get_CmdPath_Default"}{$_[0]};
-    }
-    return ($Cache{"get_CmdPath_Default"}{$_[0]} = get_CmdPath_Default_I($_[0]));
-}
-
-sub get_CmdPath_Default_I($)
-{ # search in PATH
-    my $Name = $_[0];
-    if($Name=~/find/)
-    { # special case: search for "find" utility
-        if(`find \"$TMP_DIR\" -maxdepth 0 2>\"$TMP_DIR/null\"`) {
-            return "find";
-        }
-    }
-    if(get_version($Name)) {
-        return $Name;
-    }
-    if($OSgroup eq "windows")
-    {
-        if(`$Name /? 2>\"$TMP_DIR/null\"`) {
-            return $Name;
-        }
-    }
-    if($Name!~/which/)
-    {
-        if(my $WhichCmd = get_CmdPath("which"))
-        {
-            if(`$WhichCmd $Name 2>\"$TMP_DIR/null\"`) {
-                return $Name;
-            }
-        }
-    }
-    foreach my $Path (sort {length($a)<=>length($b)} keys(%DefaultBinPaths))
-    {
-        if(-f $Path."/".$Name) {
-            return joinPath($Path,$Name);
-        }
-    }
-    return "";
-}
-
-sub showPos($)
-{
-    my $Number = $_[0];
-    if(not $Number) {
-        $Number = 1;
-    }
-    else {
-        $Number = int($Number)+1;
-    }
-    if($Number>3) {
-        return $Number."th";
-    }
-    elsif($Number==1) {
-        return "1st";
-    }
-    elsif($Number==2) {
-        return "2nd";
-    }
-    elsif($Number==3) {
-        return "3rd";
-    }
-    else {
-        return $Number;
-    }
-}
-
-sub getAR_EXT($)
-{
-    my $Target = $_[0];
-    if(my $Ext = $OS_Archive{$Target}) {
-        return $Ext;
-    }
-    return $OS_Archive{"default"};
-}
-
-sub readDescriptor($$)
-{
-    my ($LibVersion, $Content) = @_;
-    return if(not $LibVersion);
-    my $DName = $DumpAPI?"descriptor":"descriptor \"d$LibVersion\"";
-    if(not $Content) {
-        exitStatus("Error", "$DName is empty");
-    }
-    if($Content!~/\</) {
-        exitStatus("Error", "descriptor should be one of the following:\n  Java ARchive, XML descriptor, gzipped API dump or directory with Java ARchives.");
-    }
-    $Content=~s/\/\*(.|\n)+?\*\///g;
-    $Content=~s/<\!--(.|\n)+?-->//g;
-    $Descriptor{$LibVersion}{"Version"} = parseTag(\$Content, "version");
-    $Descriptor{$LibVersion}{"Version"} = $TargetVersion{$LibVersion} if($TargetVersion{$LibVersion});
-    if($Descriptor{$LibVersion}{"Version"} eq "") {
-        exitStatus("Error", "version in the $DName is not specified (<version> section)");
-    }
-    
-    my $DArchives = parseTag(\$Content, "archives");
-    if(not $DArchives){
-        exitStatus("Error", "Java ARchives in the $DName are not specified (<archive> section)");
-    }
-    else
-    {# append the descriptor Java ARchives list
-        if($Descriptor{$LibVersion}{"Archives"}) {
-            $Descriptor{$LibVersion}{"Archives"} .= "\n".$DArchives;
-        }
-        else {
-            $Descriptor{$LibVersion}{"Archives"} = $DArchives;
-        }
-        foreach my $Path (split(/\s*\n\s*/, $DArchives))
-        {
-            if(not -e $Path) {
-                exitStatus("Access_Error", "can't access \'$Path\'");
-            }
-        }
-    }
-    foreach my $Package (split(/\s*\n\s*/, parseTag(\$Content, "skip_packages"))) {
-        $SkipPackages{$LibVersion}{$Package} = 1;
-    }
-    foreach my $Package (split(/\s*\n\s*/, parseTag(\$Content, "packages"))) {
-        $KeepPackages{$LibVersion}{$Package} = 1;
-    }
-}
-
-sub parseTag($$)
-{
-    my ($CodeRef, $Tag) = @_;
-    return "" if(not $CodeRef or not ${$CodeRef} or not $Tag);
-    if(${$CodeRef}=~s/\<\Q$Tag\E\>((.|\n)+?)\<\/\Q$Tag\E\>//)
-    {
-        my $Content = $1;
-        $Content=~s/(\A\s+|\s+\Z)//g;
-        return $Content;
-    }
-    else {
-        return "";
-    }
-}
-
-sub ignore_path($$)
-{
-    my ($Path, $Prefix) = @_;
-    return 1 if(not $Path or not -e $Path
-    or not $Prefix or not -e $Prefix);
-    return 1 if($Path=~/\~\Z/);# skipping system backup files
-    # skipping hidden .svn, .git, .bzr, .hg and CVS directories
-    return 1 if(cut_path_prefix($Path, $Prefix)=~/(\A|[\/\\]+)(\.(svn|git|bzr|hg)|CVS)([\/\\]+|\Z)/);
-    return 0;
-}
-
-sub cut_path_prefix($$)
-{
-    my ($Path, $Prefix) = @_;
-    $Prefix=~s/[\/\\]+\Z//;
-    $Path=~s/\A\Q$Prefix\E([\/\\]+|\Z)//;
-    return $Path;
-}
-
-sub get_filename($)
-{ # much faster than basename() from File::Basename module
-    if(defined $Cache{"get_filename"}{$_[0]}) {
-        return $Cache{"get_filename"}{$_[0]};
-    }
-    if($_[0] and $_[0]=~/([^\/\\]+)[\/\\]*\Z/) {
-        return ($Cache{"get_filename"}{$_[0]}=$1);
-    }
-    return ($Cache{"get_filename"}{$_[0]}="");
-}
-
-sub get_dirname($)
-{ # much faster than dirname() from File::Basename module
-    if(defined $Cache{"get_dirname"}{$_[0]}) {
-        return $Cache{"get_dirname"}{$_[0]};
-    }
-    if($_[0] and $_[0]=~/\A(.*?)[\/\\]+[^\/\\]*[\/\\]*\Z/) {
-        return ($Cache{"get_dirname"}{$_[0]}=$1);
-    }
-    return ($Cache{"get_dirname"}{$_[0]}="");
-}
-
-sub separate_path($) {
-    return (get_dirname($_[0]), get_filename($_[0]));
-}
-
-sub joinPath($$)
-{
-    return join($SLASH, @_);
-}
-
-sub get_abs_path($)
-{ # abs_path() should NOT be called for absolute inputs
-  # because it can change them
-    my $Path = $_[0];
-    if(not is_abs($Path)) {
-        $Path = abs_path($Path);
-    }
-    return $Path;
-}
-
-sub is_abs($) {
-    return ($_[0]=~/\A(\/|\w+:[\/\\])/);
-}
-
-sub cmd_find($$$$)
-{
-    my ($Path, $Type, $Name, $MaxDepth) = @_;
-    return () if(not $Path or not -e $Path);
-    if($OSgroup eq "windows")
-    {
-        my $DirCmd = get_CmdPath("dir");
-        if(not $DirCmd) {
-            exitStatus("Not_Found", "can't find \"dir\" command");
-        }
-        $Path=~s/[\\]+\Z//;
-        $Path = get_abs_path($Path);
-        my $Cmd = $DirCmd." \"$Path\" /B /O";
-        if($MaxDepth!=1) {
-            $Cmd .= " /S";
-        }
-        if($Type eq "d") {
-            $Cmd .= " /AD";
-        }
-        my @Files = ();
-        if($Name)
-        { # FIXME: how to search file names in MS shell?
-            $Name=~s/\*/.*/g if($Name!~/\]/);
-            foreach my $File (split(/\n/, `$Cmd`))
-            {
-                if($File=~/$Name\Z/i) {
-                    push(@Files, $File);    
-                }
-            }
-        }
-        else {
-            @Files = split(/\n/, `$Cmd 2>\"$TMP_DIR/null\"`);
-        }
-        my @AbsPaths = ();
-        foreach my $File (@Files)
-        {
-            if(not is_abs($File)) {
-                $File = joinPath($Path, $File);
-            }
-            if($Type eq "f" and not -f $File)
-            { # skip dirs
-                next;
-            }
-            push(@AbsPaths, $File);
-        }
-        if($Type eq "d") {
-            push(@AbsPaths, $Path);
-        }
-        return @AbsPaths;
-    }
-    else
-    {
-        my $FindCmd = get_CmdPath("find");
-        if(not $FindCmd) {
-            exitStatus("Not_Found", "can't find a \"find\" command");
-        }
-        $Path = get_abs_path($Path);
-        if(-d $Path and -l $Path
-        and $Path!~/\/\Z/)
-        { # for directories that are symlinks
-            $Path.="/";
-        }
-        my $Cmd = $FindCmd." \"$Path\"";
-        if($MaxDepth) {
-            $Cmd .= " -maxdepth $MaxDepth";
-        }
-        if($Type) {
-            $Cmd .= " -type $Type";
-        }
-        if($Name)
-        {
-            if($Name=~/\]/) {
-                $Cmd .= " -regex \"$Name\"";
-            }
-            else {
-                $Cmd .= " -name \"$Name\"";
-            }
-        }
-        return split(/\n/, `$Cmd 2>\"$TMP_DIR/null\"`);
-    }
-}
-
-sub path_format($$)
-{ # forward slash to pass into MinGW GCC
-    my ($Path, $Fmt) = @_;
-    if($Fmt eq "windows")
-    {
-        $Path=~s/\//\\/g;
-        $Path=lc($Path);
-    }
-    else {
-        $Path=~s/\\/\//g;
-    }
-    return $Path;
-}
-
-sub unpackDump($)
-{
-    my $Path = $_[0];
-    return "" if(not $Path or not -e $Path);
-    
-    if(isDumpFile($Path)) {
-        return $Path;
-    }
-    
-    $Path = get_abs_path($Path);
-    $Path = path_format($Path, $OSgroup);
-    my ($Dir, $FileName) = separate_path($Path);
-    my $UnpackDir = $TMP_DIR."/unpack";
-    if(-d $UnpackDir) {
-        rmtree($UnpackDir);
-    }
-    mkpath($UnpackDir);
-    if($FileName=~s/\Q.zip\E\Z//g)
-    { # *.zip
-        my $UnzipCmd = get_CmdPath("unzip");
-        if(not $UnzipCmd) {
-            exitStatus("Not_Found", "can't find \"unzip\" command");
-        }
-        chdir($UnpackDir);
-        system("$UnzipCmd \"$Path\" >contents.txt");
-        if($?) {
-            exitStatus("Error", "can't extract \'$Path\'");
-        }
-        chdir($ORIG_DIR);
-        my @Contents = ();
-        foreach (split("\n", readFile("$UnpackDir/contents.txt")))
-        {
-            if(/inflating:\s*([^\s]+)/) {
-                push(@Contents, $1);
-            }
-        }
-        if(not @Contents) {
-            exitStatus("Error", "can't extract \'$Path\'");
-        }
-        return joinPath($UnpackDir, $Contents[0]);
-    }
-    elsif($FileName=~s/\Q.tar.gz\E\Z//g)
-    { # *.tar.gz
-        if($OSgroup eq "windows")
-        { # -xvzf option is not implemented in tar.exe (2003)
-          # use "gzip.exe -k -d -f" + "tar.exe -xvf" instead
-            my $TarCmd = get_CmdPath("tar");
-            if(not $TarCmd) {
-                exitStatus("Not_Found", "can't find \"tar\" command");
-            }
-            my $GzipCmd = get_CmdPath("gzip");
-            if(not $GzipCmd) {
-                exitStatus("Not_Found", "can't find \"gzip\" command");
-            }
-            chdir($UnpackDir);
-            qx/$GzipCmd -k -d -f "$Path"/; # keep input files (-k)
-            if($?) {
-                exitStatus("Error", "can't extract \'$Path\'");
-            }
-            my @Contents = qx/$TarCmd -xvf "$Dir\\$FileName.tar"/;
-            if($? or not @Contents) {
-                exitStatus("Error", "can't extract \'$Path\'");
-            }
-            chdir($ORIG_DIR);
-            unlink($Dir."/".$FileName.".tar");
-            chomp $Contents[0];
-            return joinPath($UnpackDir, $Contents[0]);
-        }
-        else
-        { # Linux, Unix, OS X
-            my $TarCmd = get_CmdPath("tar");
-            if(not $TarCmd) {
-                exitStatus("Not_Found", "can't find \"tar\" command");
-            }
-            chdir($UnpackDir);
-            my @Contents = qx/$TarCmd -xvzf "$Path" 2>&1/;
-            if($? or not @Contents) {
-                exitStatus("Error", "can't extract \'$Path\'");
-            }
-            chdir($ORIG_DIR);
-            $Contents[0]=~s/^x //; # OS X
-            chomp $Contents[0];
-            return joinPath($UnpackDir, $Contents[0]);
-        }
-    }
+    return readFile($Path);
 }
 
 sub mergeClasses()
@@ -1224,19 +622,18 @@ sub mergeClasses()
     foreach my $ClassName (keys(%{$Class_Methods{1}}))
     {
         next if(not $ClassName);
-        my $Type1_Id = $TName_Tid{1}{$ClassName};
-        my %Type1 = get_Type($Type1_Id, 1);
+        my $Type1 = getType($TName_Tid{1}{$ClassName}, 1);
         
-        if($Type1{"Type"}!~/class|interface/) {
+        if($Type1->{"Type"}!~/class|interface/) {
             next;
         }
         
-        if(defined $Type1{"Access"}
-        and $Type1{"Access"}=~/private/) {
+        if(defined $Type1->{"Access"}
+        and $Type1->{"Access"}=~/private/) {
             next;
         }
         
-        if(not classFilter(\%Type1, 1, 0)) {
+        if(not classFilter($Type1, 1, 0)) {
             next;
         }
         
@@ -1252,17 +649,17 @@ sub mergeClasses()
                 $CheckedTypes{$ClassName} = 1;
                 $CheckedMethods{$Method} = 1;
                 
-                if($Type1{"Type"} eq "class")
+                if($Type1->{"Type"} eq "class")
                 {
                     %{$CompatProblems{$Method}{"Removed_Class"}{"this"}} = (
                         "Type_Name"=>$ClassName,
-                        "Target"=>$ClassName  );
+                        "Target"=>$ClassName);
                 }
                 else
                 {
                     %{$CompatProblems{$Method}{"Removed_Interface"}{"this"}} = (
                         "Type_Name"=>$ClassName,
-                        "Target"=>$ClassName  );
+                        "Target"=>$ClassName);
                 }
                 
                 $ReportedRemoved{$ClassName} = 1;
@@ -1272,32 +669,32 @@ sub mergeClasses()
     
     foreach my $Class_Id (keys(%{$TypeInfo{1}}))
     {
-        my %Class1 = get_Type($Class_Id, 1);
+        my $Class1 = getType($Class_Id, 1);
         
-        if($Class1{"Type"}!~/class|interface/) {
+        if($Class1->{"Type"}!~/class|interface/) {
             next;
         }
         
-        if(defined $Class1{"Access"}
-        and $Class1{"Access"}=~/private/) {
+        if(defined $Class1->{"Access"}
+        and $Class1->{"Access"}=~/private/) {
             next;
         }
         
-        if(not classFilter(\%Class1, 1, 1)) {
+        if(not classFilter($Class1, 1, 1)) {
             next;
         }
         
-        my $ClassName = $Class1{"Name"};
+        my $ClassName = $Class1->{"Name"};
         
         if(my $Class2_Id = $TName_Tid{2}{$ClassName})
         { # classes and interfaces with public static fields
             if(not defined $Class_Methods{1}{$ClassName})
             {
-                my %Class2 = get_Type($Class2_Id, 2);
+                my $Class2 = getType($Class2_Id, 2);
                 
-                foreach my $Field (keys(%{$Class1{"Fields"}}))
+                foreach my $Field (keys(%{$Class1->{"Fields"}}))
                 {
-                    my $FieldInfo = $Class1{"Fields"}{$Field};
+                    my $FieldInfo = $Class1->{"Fields"}{$Field};
                     
                     my $FAccess = $FieldInfo->{"Access"};
                     if($FAccess=~/private/) {
@@ -1308,13 +705,13 @@ sub mergeClasses()
                     {
                         $CheckedTypes{$ClassName} = 1;
                         
-                        if(not defined $Class2{"Fields"}{$Field})
+                        if(not defined $Class2->{"Fields"}{$Field})
                         {
                             %{$CompatProblems{".client_method"}{"Removed_NonConstant_Field"}{$Field}}=(
                                 "Target"=>$Field,
                                 "Type_Name"=>$ClassName,
-                                "Type_Type"=>$Class1{"Type"},
-                                "Field_Type"=>get_TypeName($FieldInfo->{"Type"}, 1)  );
+                                "Type_Type"=>$Class1->{"Type"},
+                                "Field_Type"=>getTypeName($FieldInfo->{"Type"}, 1));
                         }
                     }
                 }
@@ -1322,11 +719,11 @@ sub mergeClasses()
         }
         else
         { # removed
-            if(defined $Class1{"Annotation"})
+            if(defined $Class1->{"Annotation"})
             {
                 %{$CompatProblems{".client_method"}{"Removed_Annotation"}{"this"}} = (
                     "Type_Name"=>$ClassName,
-                    "Target"=>$ClassName  );
+                    "Target"=>$ClassName);
             }
             
             if(not defined $Class_Methods{1}{$ClassName})
@@ -1334,9 +731,9 @@ sub mergeClasses()
                 # classes and interfaces with public static fields
                 if(not defined $ReportedRemoved{$ClassName})
                 {
-                    foreach my $Field (keys(%{$Class1{"Fields"}}))
+                    foreach my $Field (keys(%{$Class1->{"Fields"}}))
                     {
-                        my $FieldInfo = $Class1{"Fields"}{$Field};
+                        my $FieldInfo = $Class1->{"Fields"}{$Field};
                         
                         my $FAccess = $FieldInfo->{"Access"};
                         if($FAccess=~/private/) {
@@ -1347,17 +744,17 @@ sub mergeClasses()
                         {
                             $CheckedTypes{$ClassName} = 1;
                             
-                            if($Class1{"Type"} eq "class")
+                            if($Class1->{"Type"} eq "class")
                             {
                                 %{$CompatProblems{".client_method"}{"Removed_Class"}{"this"}} = (
                                     "Type_Name"=>$ClassName,
-                                    "Target"=>$ClassName  );
+                                    "Target"=>$ClassName);
                             }
                             else
                             {
                                 %{$CompatProblems{".client_method"}{"Removed_Interface"}{"this"}} = (
                                     "Type_Name"=>$ClassName,
-                                    "Target"=>$ClassName  );
+                                    "Target"=>$ClassName);
                             }
                         }
                     }
@@ -1404,39 +801,35 @@ sub isRecurType($$)
 
 sub pushType($$)
 {
-    my %TypeDescriptor=(
+    my %TypeDescriptor = (
         "Tid1"  => $_[0],
-        "Tid2"  => $_[1]  );
+        "Tid2"  => $_[1]);
     push(@RecurTypes, \%TypeDescriptor);
 }
 
-sub get_SFormat($)
+sub getSFormat($)
 {
     my $Name = $_[0];
     $Name=~s/\./\//g;
     return $Name;
 }
 
-sub get_PFormat($)
-{
-    my $Name = $_[0];
-    $Name=~s/\//./g;
-    return $Name;
-}
-
-sub get_ConstantValue($$)
+sub getConstantValue($$)
 {
     my ($Value, $ValueType) = @_;
-    return "" if(not $Value);
+    
+    if(not defined $Value) {
+        return undef;
+    }
+    
     if($Value eq "\@EMPTY_STRING\@") {
         return "\"\"";
     }
     elsif($ValueType eq "java.lang.String") {
         return "\"".$Value."\"";
     }
-    else {
-        return $Value;
-    }
+    
+    return $Value;
 }
 
 sub getInvoked($)
@@ -1465,12 +858,14 @@ sub mergeTypes($$)
         return $Cache{"mergeTypes"}{$Type1_Id}{$Type2_Id};
     }
     
-    my %Type1 = get_Type($Type1_Id, 1);
-    my %Type2 = get_Type($Type2_Id, 2);
     if(isRecurType($Type1_Id, $Type2_Id))
     { # do not follow to recursive declarations
         return {};
     }
+    
+    my %Type1 = %{getType($Type1_Id, 1)};
+    my %Type2 = %{getType($Type2_Id, 2)};
+    
     return {} if(not $Type1{"Name"} or not $Type2{"Name"});
     return {} if(not $Type1{"Archive"} or not $Type2{"Archive"});
     return {} if($Type1{"Name"} ne $Type2{"Name"});
@@ -1501,7 +896,7 @@ sub mergeTypes($$)
     and $Type2{"Type"} eq "interface")
     {
         %{$SubProblems{"Class_Became_Interface"}{""}}=(
-            "Type_Name"=>$Type1{"Name"}  );
+            "Type_Name"=>$Type1{"Name"});
         
         return ($Cache{"mergeTypes"}{$Type1_Id}{$Type2_Id} = \%SubProblems);
     }
@@ -1509,7 +904,7 @@ sub mergeTypes($$)
     and $Type2{"Type"} eq "class")
     {
         %{$SubProblems{"Interface_Became_Class"}{""}}=(
-            "Type_Name"=>$Type1{"Name"}  );
+            "Type_Name"=>$Type1{"Name"});
         
         return ($Cache{"mergeTypes"}{$Type1_Id}{$Type2_Id} = \%SubProblems);
     }
@@ -1518,13 +913,13 @@ sub mergeTypes($$)
     {
         %{$SubProblems{"Class_Became_Final"}{""}}=(
             "Type_Name"=>$Type1{"Name"},
-            "Target"=>$Type1{"Name"}  );
+            "Target"=>$Type1{"Name"});
     }
     if(not $Type1{"Abstract"}
     and $Type2{"Abstract"})
     {
         %{$SubProblems{"Class_Became_Abstract"}{""}}=(
-            "Type_Name"=>$Type1{"Name"}  );
+            "Type_Name"=>$Type1{"Name"});
     }
     
     pushType($Type1_Id, $Type2_Id);
@@ -1537,44 +932,44 @@ sub mergeTypes($$)
             {
                 if(my @InvokedBy = sort keys(%{$MethodUsed{2}{$AddedMethod}}))
                 {
-                    %{$SubProblems{"Abstract_Class_Added_Abstract_Method_Invoked_By_Others"}{get_SFormat($AddedMethod)}} = (
+                    %{$SubProblems{"Abstract_Class_Added_Abstract_Method_Invoked_By_Others"}{getSFormat($AddedMethod)}} = (
                         "Type_Name"=>$Type1{"Name"},
                         "Type_Type"=>$Type1{"Type"},
                         "Target"=>$AddedMethod,
-                        "InvokedBy"=>$InvokedBy[0]  );
+                        "Invoked_By"=>$InvokedBy[0]);
                 }
                 else
                 {
-                    %{$SubProblems{"Abstract_Class_Added_Abstract_Method"}{get_SFormat($AddedMethod)}} = (
+                    %{$SubProblems{"Abstract_Class_Added_Abstract_Method"}{getSFormat($AddedMethod)}} = (
                         "Type_Name"=>$Type1{"Name"},
                         "Type_Type"=>$Type1{"Type"},
-                        "Target"=>$AddedMethod  );
+                        "Target"=>$AddedMethod);
                 }
             }
             else
             {
-                %{$SubProblems{"NonAbstract_Class_Added_Abstract_Method"}{get_SFormat($AddedMethod)}} = (
+                %{$SubProblems{"NonAbstract_Class_Added_Abstract_Method"}{getSFormat($AddedMethod)}} = (
                     "Type_Name"=>$Type1{"Name"},
                     "Type_Type"=>$Type1{"Type"},
-                    "Target"=>$AddedMethod  );
+                    "Target"=>$AddedMethod);
             }
         }
         else
         {
             if(my @InvokedBy = sort keys(%{$MethodUsed{2}{$AddedMethod}}))
             {
-                %{$SubProblems{"Interface_Added_Abstract_Method_Invoked_By_Others"}{get_SFormat($AddedMethod)}} = (
+                %{$SubProblems{"Interface_Added_Abstract_Method_Invoked_By_Others"}{getSFormat($AddedMethod)}} = (
                     "Type_Name"=>$Type1{"Name"},
                     "Type_Type"=>$Type1{"Type"},
                     "Target"=>$AddedMethod,
-                    "InvokedBy"=>$InvokedBy[0]  );
+                    "Invoked_By"=>$InvokedBy[0]);
             }
             else
             {
-                %{$SubProblems{"Interface_Added_Abstract_Method"}{get_SFormat($AddedMethod)}} = (
+                %{$SubProblems{"Interface_Added_Abstract_Method"}{getSFormat($AddedMethod)}} = (
                     "Type_Name"=>$Type1{"Name"},
                     "Type_Type"=>$Type1{"Type"},
-                    "Target"=>$AddedMethod  );
+                    "Target"=>$AddedMethod);
             }
         }
     }
@@ -1582,84 +977,88 @@ sub mergeTypes($$)
     {
         if($Type1{"Type"} eq "class")
         {
-            %{$SubProblems{"Class_Removed_Abstract_Method"}{get_SFormat($RemovedMethod)}} = (
+            %{$SubProblems{"Class_Removed_Abstract_Method"}{getSFormat($RemovedMethod)}} = (
                 "Type_Name"=>$Type1{"Name"},
                 "Type_Type"=>$Type1{"Type"},
-                "Target"=>$RemovedMethod  );
+                "Target"=>$RemovedMethod);
         }
         else
         {
-            %{$SubProblems{"Interface_Removed_Abstract_Method"}{get_SFormat($RemovedMethod)}} = (
+            %{$SubProblems{"Interface_Removed_Abstract_Method"}{getSFormat($RemovedMethod)}} = (
                 "Type_Name"=>$Type1{"Name"},
                 "Type_Type"=>$Type1{"Type"},
-                "Target"=>$RemovedMethod  );
+                "Target"=>$RemovedMethod);
         }
     }
     if($Type1{"Type"} eq "class"
     and $Type2{"Type"} eq "class")
     {
-        my %SuperClass1 = get_Type($Type1{"SuperClass"}, 1);
-        my %SuperClass2 = get_Type($Type2{"SuperClass"}, 2);
-        if($SuperClass2{"Name"} ne $SuperClass1{"Name"})
+        my $SuperClass1 = getType($Type1{"SuperClass"}, 1);
+        my $SuperClass2 = getType($Type2{"SuperClass"}, 2);
+        
+        my $SuperClassName1 = $SuperClass1->{"Name"};
+        my $SuperClassName2 = $SuperClass2->{"Name"};
+        
+        if($SuperClassName2 ne $SuperClassName1)
         {
-            if($SuperClass1{"Name"} eq "java.lang.Object"
-            or not $SuperClass1{"Name"})
+            if($SuperClassName1 eq "java.lang.Object"
+            or not $SuperClassName1)
             {
               # Java 6: java.lang.Object
               # Java 7: none
-                if($SuperClass2{"Name"} ne "java.lang.Object")
+                if($SuperClassName2 ne "java.lang.Object")
                 {
-                    if($SuperClass2{"Abstract"}
+                    if($SuperClass2->{"Abstract"}
                     and $Type1{"Abstract"} and $Type2{"Abstract"}
-                    and keys(%{$Class_AbstractMethods{2}{$SuperClass2{"Name"}}}))
+                    and keys(%{$Class_AbstractMethods{2}{$SuperClassName2}}))
                     {
                         if(my ($Invoked, $InvokedBy) = getInvoked($Type1{"Name"}))
                         {
                             %{$SubProblems{"Abstract_Class_Added_Super_Abstract_Class_Invoked_By_Others"}{""}} = (
                                 "Type_Name"=>$Type1{"Name"},
-                                "Target"=>$SuperClass2{"Name"},
+                                "Target"=>$SuperClassName2,
                                 "Invoked"=>$Invoked,
-                                "InvokedBy"=>$InvokedBy  );
+                                "Invoked_By"=>$InvokedBy);
                         }
                         else
                         {
                             %{$SubProblems{"Abstract_Class_Added_Super_Abstract_Class"}{""}} = (
                                 "Type_Name"=>$Type1{"Name"},
-                                "Target"=>$SuperClass2{"Name"}  );
+                                "Target"=>$SuperClassName2);
                         }
                     }
                     else
                     {
                         %{$SubProblems{"Added_Super_Class"}{""}} = (
                             "Type_Name"=>$Type1{"Name"},
-                            "Target"=>$SuperClass2{"Name"}  );
+                            "Target"=>$SuperClassName2);
                     }
                 }
             }
-            elsif($SuperClass2{"Name"} eq "java.lang.Object"
-            or not $SuperClass2{"Name"})
+            elsif($SuperClassName2 eq "java.lang.Object"
+            or not $SuperClassName2)
             {
               # Java 6: java.lang.Object
               # Java 7: none
-                if($SuperClass1{"Name"} ne "java.lang.Object")
+                if($SuperClassName1 ne "java.lang.Object")
                 {
                     %{$SubProblems{"Removed_Super_Class"}{""}} = (
                         "Type_Name"=>$Type1{"Name"},
-                        "Target"=>$SuperClass1{"Name"}  );
+                        "Target"=>$SuperClassName1);
                 }
             }
             else
             {
                 %{$SubProblems{"Changed_Super_Class"}{""}} = (
                     "Type_Name"=>$Type1{"Name"},
-                    "Target"=>$SuperClass1{"Name"},
-                    "Old_Value"=>$SuperClass1{"Name"},
-                    "New_Value"=>$SuperClass2{"Name"}  );
+                    "Target"=>$SuperClassName1,
+                    "Old_Value"=>$SuperClassName1,
+                    "New_Value"=>$SuperClassName2);
             }
         }
     }
-    my %SuperInterfaces_Old = map {get_TypeName($_, 1) => 1} keys(%{$Type1{"SuperInterface"}});
-    my %SuperInterfaces_New = map {get_TypeName($_, 2) => 1} keys(%{$Type2{"SuperInterface"}});
+    my %SuperInterfaces_Old = map {getTypeName($_, 1) => 1} keys(%{$Type1{"SuperInterface"}});
+    my %SuperInterfaces_New = map {getTypeName($_, 2) => 1} keys(%{$Type2{"SuperInterface"}});
     foreach my $SuperInterface (keys(%SuperInterfaces_New))
     {
         if(not $SuperInterfaces_Old{$SuperInterface})
@@ -1674,33 +1073,33 @@ sub mergeTypes($$)
                 {
                     if($HaveMethods and checkDefaultImpl(2, $SuperInterface, $Type2{"Name"}))
                     {
-                        %{$SubProblems{"Interface_Added_Super_Interface_With_Implemented_Methods"}{get_SFormat($SuperInterface)}} = (
+                        %{$SubProblems{"Interface_Added_Super_Interface_With_Implemented_Methods"}{getSFormat($SuperInterface)}} = (
                             "Type_Name"=>$Type1{"Name"},
-                            "Target"=>$SuperInterface  );
+                            "Target"=>$SuperInterface);
                     }
                     else
                     {
                         if(my ($Invoked, $InvokedBy) = getInvoked($Type1{"Name"}))
                         {
-                            %{$SubProblems{"Interface_Added_Super_Interface_Used_By_Others"}{get_SFormat($SuperInterface)}} = (
+                            %{$SubProblems{"Interface_Added_Super_Interface_Used_By_Others"}{getSFormat($SuperInterface)}} = (
                                 "Type_Name"=>$Type1{"Name"},
                                 "Target"=>$SuperInterface,
                                 "Invoked"=>$Invoked,
-                                "InvokedBy"=>$InvokedBy  );
+                                "Invoked_By"=>$InvokedBy);
                         }
                         else
                         {
-                            %{$SubProblems{"Interface_Added_Super_Interface"}{get_SFormat($SuperInterface)}} = (
+                            %{$SubProblems{"Interface_Added_Super_Interface"}{getSFormat($SuperInterface)}} = (
                                 "Type_Name"=>$Type1{"Name"},
-                                "Target"=>$SuperInterface  );
+                                "Target"=>$SuperInterface);
                         }
                     }
                 }
                 elsif($HaveFields)
                 {
-                    %{$SubProblems{"Interface_Added_Super_Constant_Interface"}{get_SFormat($SuperInterface)}} = (
+                    %{$SubProblems{"Interface_Added_Super_Constant_Interface"}{getSFormat($SuperInterface)}} = (
                         "Type_Name"=>$Type2{"Name"},
-                        "Target"=>$SuperInterface  );
+                        "Target"=>$SuperInterface);
                 }
                 else
                 {
@@ -1713,25 +1112,25 @@ sub mergeTypes($$)
                 {
                     if($HaveMethods and checkDefaultImpl(2, $SuperInterface, $Type2{"Name"}))
                     {
-                        %{$SubProblems{"Abstract_Class_Added_Super_Interface_With_Implemented_Methods"}{get_SFormat($SuperInterface)}} = (
+                        %{$SubProblems{"Abstract_Class_Added_Super_Interface_With_Implemented_Methods"}{getSFormat($SuperInterface)}} = (
                             "Type_Name"=>$Type1{"Name"},
-                            "Target"=>$SuperInterface  );
+                            "Target"=>$SuperInterface);
                     }
                     else
                     {
                         if(my ($Invoked, $InvokedBy) = getInvoked($Type1{"Name"}))
                         {
-                            %{$SubProblems{"Abstract_Class_Added_Super_Interface_Invoked_By_Others"}{get_SFormat($SuperInterface)}} = (
+                            %{$SubProblems{"Abstract_Class_Added_Super_Interface_Invoked_By_Others"}{getSFormat($SuperInterface)}} = (
                                 "Type_Name"=>$Type1{"Name"},
                                 "Target"=>$SuperInterface,
                                 "Invoked"=>$Invoked,
-                                "InvokedBy"=>$InvokedBy  );
+                                "Invoked_By"=>$InvokedBy);
                         }
                         else
                         {
-                            %{$SubProblems{"Abstract_Class_Added_Super_Interface"}{get_SFormat($SuperInterface)}} = (
+                            %{$SubProblems{"Abstract_Class_Added_Super_Interface"}{getSFormat($SuperInterface)}} = (
                                 "Type_Name"=>$Type1{"Name"},
-                                "Target"=>$SuperInterface  );
+                                "Target"=>$SuperInterface);
                         }
                     }
                 }
@@ -1750,16 +1149,16 @@ sub mergeTypes($$)
                 if($HaveMethods
                 or $SuperInterface=~/\Ajava\./)
                 {
-                    %{$SubProblems{"Interface_Removed_Super_Interface"}{get_SFormat($SuperInterface)}} = (
+                    %{$SubProblems{"Interface_Removed_Super_Interface"}{getSFormat($SuperInterface)}} = (
                         "Type_Name"=>$Type1{"Name"},
                         "Type_Type"=>"interface",
-                        "Target"=>$SuperInterface  );
+                        "Target"=>$SuperInterface);
                 }
                 elsif($HaveFields)
                 {
-                    %{$SubProblems{"Interface_Removed_Super_Constant_Interface"}{get_SFormat($SuperInterface)}} = (
+                    %{$SubProblems{"Interface_Removed_Super_Constant_Interface"}{getSFormat($SuperInterface)}} = (
                         "Type_Name"=>$Type1{"Name"},
-                        "Target"=>$SuperInterface  );
+                        "Target"=>$SuperInterface);
                 }
                 else {
                     # empty interface
@@ -1767,10 +1166,10 @@ sub mergeTypes($$)
             }
             else
             {
-                %{$SubProblems{"Class_Removed_Super_Interface"}{get_SFormat($SuperInterface)}} = (
+                %{$SubProblems{"Class_Removed_Super_Interface"}{getSFormat($SuperInterface)}} = (
                     "Type_Name"=>$Type1{"Name"},
                     "Type_Type"=>"class",
-                    "Target"=>$SuperInterface  );
+                    "Target"=>$SuperInterface);
             }
         }
     }
@@ -1784,23 +1183,23 @@ sub mergeTypes($$)
         
         my $Field_Pos1 = $Type1{"Fields"}{$Field_Name}{"Pos"};
         my $FieldType1_Id = $Type1{"Fields"}{$Field_Name}{"Type"};
-        my %FieldType1 = get_Type($FieldType1_Id, 1);
+        my $FieldType1_Name = getTypeName($FieldType1_Id, 1);
         
         if(not $Type2{"Fields"}{$Field_Name})
         {# removed fields
             my $StraightPair_Name = findFieldPair($Field_Pos1, \%Type2);
             if($StraightPair_Name ne "lost" and not $Type1{"Fields"}{$StraightPair_Name}
-            and $FieldType1{"Name"} eq get_TypeName($Type2{"Fields"}{$StraightPair_Name}{"Type"}, 2))
+            and $FieldType1_Name eq getTypeName($Type2{"Fields"}{$StraightPair_Name}{"Type"}, 2))
             {
-                if(my $Constant = get_ConstantValue($Type1{"Fields"}{$Field_Name}{"Value"}, $FieldType1{"Name"}))
+                if(my $Constant = getConstantValue($Type1{"Fields"}{$Field_Name}{"Value"}, $FieldType1_Name))
                 {
                     %{$SubProblems{"Renamed_Constant_Field"}{$Field_Name}}=(
                         "Target"=>$Field_Name,
                         "Type_Name"=>$Type1{"Name"},
                         "Old_Value"=>$Field_Name,
                         "New_Value"=>$StraightPair_Name,
-                        "Field_Type"=>$FieldType1{"Name"},
-                        "Field_Value"=>$Constant  );
+                        "Field_Type"=>$FieldType1_Name,
+                        "Field_Value"=>$Constant);
                 }
                 else
                 {
@@ -1809,19 +1208,19 @@ sub mergeTypes($$)
                         "Type_Name"=>$Type1{"Name"},
                         "Old_Value"=>$Field_Name,
                         "New_Value"=>$StraightPair_Name,
-                        "Field_Type"=>$FieldType1{"Name"}  );
+                        "Field_Type"=>$FieldType1_Name);
                 }
             }
             else
             {
-                if(my $Constant = get_ConstantValue($Type1{"Fields"}{$Field_Name}{"Value"}, $FieldType1{"Name"}))
+                if(my $Constant = getConstantValue($Type1{"Fields"}{$Field_Name}{"Value"}, $FieldType1_Name))
                 { # has a compile-time constant value
                     %{$SubProblems{"Removed_Constant_Field"}{$Field_Name}}=(
                         "Target"=>$Field_Name,
                         "Type_Name"=>$Type1{"Name"},
                         "Field_Value"=>$Constant,
-                        "Field_Type"=>$FieldType1{"Name"},
-                        "Type_Type"=>$Type1{"Type"}  );
+                        "Field_Type"=>$FieldType1_Name,
+                        "Type_Type"=>$Type1{"Type"});
                 }
                 else
                 {
@@ -1829,13 +1228,14 @@ sub mergeTypes($$)
                         "Target"=>$Field_Name,
                         "Type_Name"=>$Type1{"Name"},
                         "Type_Type"=>$Type1{"Type"},
-                        "Field_Type"=>$FieldType1{"Name"}  );
+                        "Field_Type"=>$FieldType1_Name);
                 }
             }
             next;
         }
+        
         my $FieldType2_Id = $Type2{"Fields"}{$Field_Name}{"Type"};
-        my %FieldType2 = get_Type($FieldType2_Id, 2);
+        my $FieldType2_Name = getTypeName($FieldType2_Id, 2);
         
         if(not $Type1{"Fields"}{$Field_Name}{"Static"}
         and $Type2{"Fields"}{$Field_Name}{"Static"})
@@ -1844,8 +1244,8 @@ sub mergeTypes($$)
             {
                 %{$SubProblems{"NonConstant_Field_Became_Static"}{$Field_Name}}=(
                     "Target"=>$Field_Name,
-                    "Field_Type"=>$FieldType1{"Name"},
-                    "Type_Name"=>$Type1{"Name"}  );
+                    "Field_Type"=>$FieldType1_Name,
+                    "Type_Name"=>$Type1{"Name"});
             }
         }
         elsif($Type1{"Fields"}{$Field_Name}{"Static"}
@@ -1855,15 +1255,15 @@ sub mergeTypes($$)
             {
                 %{$SubProblems{"Constant_Field_Became_NonStatic"}{$Field_Name}}=(
                     "Target"=>$Field_Name,
-                    "Field_Type"=>$FieldType1{"Name"},
-                    "Type_Name"=>$Type1{"Name"}  );
+                    "Field_Type"=>$FieldType1_Name,
+                    "Type_Name"=>$Type1{"Name"});
             }
             else
             {
                 %{$SubProblems{"NonConstant_Field_Became_NonStatic"}{$Field_Name}}=(
                     "Target"=>$Field_Name,
-                    "Field_Type"=>$FieldType1{"Name"},
-                    "Type_Name"=>$Type1{"Name"}  );
+                    "Field_Type"=>$FieldType1_Name,
+                    "Type_Name"=>$Type1{"Name"});
             }
         }
         if(not $Type1{"Fields"}{$Field_Name}{"Final"}
@@ -1871,30 +1271,41 @@ sub mergeTypes($$)
         {
             %{$SubProblems{"Field_Became_Final"}{$Field_Name}}=(
                 "Target"=>$Field_Name,
-                "Field_Type"=>$FieldType1{"Name"},
-                "Type_Name"=>$Type1{"Name"}  );
+                "Field_Type"=>$FieldType1_Name,
+                "Type_Name"=>$Type1{"Name"});
         }
         elsif($Type1{"Fields"}{$Field_Name}{"Final"}
         and not $Type2{"Fields"}{$Field_Name}{"Final"})
         {
             %{$SubProblems{"Field_Became_NonFinal"}{$Field_Name}}=(
                 "Target"=>$Field_Name,
-                "Field_Type"=>$FieldType1{"Name"},
-                "Type_Name"=>$Type1{"Name"}  );
+                "Field_Type"=>$FieldType1_Name,
+                "Type_Name"=>$Type1{"Name"});
         }
         my $Access2 = $Type2{"Fields"}{$Field_Name}{"Access"};
         if($Access1 eq "public" and $Access2=~/protected|private/
         or $Access1 eq "protected" and $Access2=~/private/)
         {
-            %{$SubProblems{"Changed_Field_Access"}{$Field_Name}}=(
-                "Target"=>$Field_Name,
-                "Type_Name"=>$Type1{"Name"},
-                "Old_Value"=>$Access1,
-                "New_Value"=>$Access2  );
+            if($Access2 eq "package-private")
+            {
+                %{$SubProblems{"Changed_Field_Access_To_Package_Private"}{$Field_Name}}=(
+                    "Target"=>$Field_Name,
+                    "Type_Name"=>$Type1{"Name"},
+                    "Old_Value"=>$Access1,
+                    "New_Value"=>$Access2);
+            }
+            else
+            {
+                %{$SubProblems{"Changed_Field_Access"}{$Field_Name}}=(
+                    "Target"=>$Field_Name,
+                    "Type_Name"=>$Type1{"Name"},
+                    "Old_Value"=>$Access1,
+                    "New_Value"=>$Access2);
+            }
         }
         
-        my $Value1 = get_ConstantValue($Type1{"Fields"}{$Field_Name}{"Value"}, $FieldType1{"Name"});
-        my $Value2 = get_ConstantValue($Type2{"Fields"}{$Field_Name}{"Value"}, $FieldType2{"Name"});
+        my $Value1 = getConstantValue($Type1{"Fields"}{$Field_Name}{"Value"}, $FieldType1_Name);
+        my $Value2 = getConstantValue($Type2{"Fields"}{$Field_Name}{"Value"}, $FieldType2_Name);
         
         if($Value1 ne $Value2)
         {
@@ -1907,19 +1318,19 @@ sub mergeTypes($$)
                     {
                         %{$SubProblems{"Changed_Final_Version_Field_Value"}{$Field_Name}}=(
                             "Target"=>$Field_Name,
-                            "Field_Type"=>$FieldType1{"Name"},
+                            "Field_Type"=>$FieldType1_Name,
                             "Type_Name"=>$Type1{"Name"},
                             "Old_Value"=>$Value1,
-                            "New_Value"=>$Value2  );
+                            "New_Value"=>$Value2);
                     }
                     else
                     {
                         %{$SubProblems{"Changed_Final_Field_Value"}{$Field_Name}}=(
                             "Target"=>$Field_Name,
-                            "Field_Type"=>$FieldType1{"Name"},
+                            "Field_Type"=>$FieldType1_Name,
                             "Type_Name"=>$Type1{"Name"},
                             "Old_Value"=>$Value1,
-                            "New_Value"=>$Value2  );
+                            "New_Value"=>$Value2);
                     }
                 }
             }
@@ -1947,7 +1358,7 @@ sub mergeTypes($$)
             {
                 foreach my $Sub_SubLocation (sort {length($a)<=>length($b)} sort keys(%{$Sub_SubProblems->{$Sub_SubProblemType}}))
                 {
-                    if(not defined $AllAffected)
+                    if(not defined $In::Opt{"AllAffected"})
                     {
                         if(defined $DupProblems{$Sub_SubProblems->{$Sub_SubProblemType}{$Sub_SubLocation}}) {
                             next;
@@ -1957,7 +1368,7 @@ sub mergeTypes($$)
                     my $NewLocation = ($Sub_SubLocation)?$Field_Name.".".$Sub_SubLocation:$Field_Name;
                     $SubProblems{$Sub_SubProblemType}{$NewLocation} = $Sub_SubProblems->{$Sub_SubProblemType}{$Sub_SubLocation};
                     
-                    if(not defined $AllAffected)
+                    if(not defined $In::Opt{"AllAffected"})
                     {
                         $DupProblems{$Sub_SubProblems->{$Sub_SubProblemType}{$Sub_SubLocation}} = 1;
                     }
@@ -1974,13 +1385,13 @@ sub mergeTypes($$)
         }
         my $FieldPos2 = $Type2{"Fields"}{$Field_Name}{"Pos"};
         my $FieldType2_Id = $Type2{"Fields"}{$Field_Name}{"Type"};
-        my %FieldType2 = get_Type($FieldType2_Id, 2);
+        my $FieldType2_Name = getTypeName($FieldType2_Id, 2);
         
         if(not $Type1{"Fields"}{$Field_Name})
         {# added fields
             my $StraightPair_Name = findFieldPair($FieldPos2, \%Type1);
             if($StraightPair_Name ne "lost" and not $Type2{"Fields"}{$StraightPair_Name}
-            and get_TypeName($Type1{"Fields"}{$StraightPair_Name}{"Type"}, 1) eq $FieldType2{"Name"})
+            and getTypeName($Type1{"Fields"}{$StraightPair_Name}{"Type"}, 1) eq $FieldType2_Name)
             {
                 # Already reported as "Renamed_Field" or "Renamed_Constant_Field"
             }
@@ -1990,13 +1401,13 @@ sub mergeTypes($$)
                 {
                     %{$SubProblems{"Interface_Added_Field"}{$Field_Name}}=(
                         "Target"=>$Field_Name,
-                        "Type_Name"=>$Type1{"Name"}  );
+                        "Type_Name"=>$Type1{"Name"});
                 }
                 else
                 {
                     %{$SubProblems{"Class_Added_Field"}{$Field_Name}}=(
                         "Target"=>$Field_Name,
-                        "Type_Name"=>$Type1{"Name"}  );
+                        "Type_Name"=>$Type1{"Name"});
                 }
             }
         }
@@ -2009,13 +1420,13 @@ sub mergeTypes($$)
 sub checkDefaultImpl($$$)
 { # Check if all abstract methods of the super class have
   # default implementations in the class
-    my ($LibVersion, $SuperClassName, $ClassName) = @_;
+    my ($LVer, $SuperClassName, $ClassName) = @_;
     
-    foreach my $Method (keys(%{$Class_AbstractMethods{$LibVersion}{$SuperClassName}}))
+    foreach my $Method (keys(%{$Class_AbstractMethods{$LVer}{$SuperClassName}}))
     {
-        if(my $Overridden = findMethod_Class($Method, $ClassName, $LibVersion))
+        if(my $Overridden = findMethod_Class($Method, $ClassName, $LVer))
         {
-            if($MethodInfo{$LibVersion}{$Overridden}{"Abstract"}) {
+            if($MethodInfo{$LVer}{$Overridden}{"Abstract"}) {
                 return 0;
             }
         }
@@ -2027,389 +1438,7 @@ sub checkDefaultImpl($$$)
     return 1;
 }
 
-sub unmangle($)
-{
-    my $Name = $_[0];
-    $Name=~s!/!.!g;
-    $Name=~s!:\(!(!g;
-    $Name=~s!\).+\Z!)!g;
-    if($Name=~/\A(.+)\((.+)\)/)
-    {
-        my ($ShortName, $MangledParams) = ($1, $2);
-        my @UnmangledParams = ();
-        my ($IsArray, $Shift, $Pos, $CurParam) = (0, 0, 0, "");
-        while($Pos<length($MangledParams))
-        {
-            my $Symbol = substr($MangledParams, $Pos, 1);
-            if($Symbol eq "[")
-            { # array
-                $IsArray = 1;
-                $Pos+=1;
-            }
-            elsif($Symbol eq "L")
-            { # class
-                if(substr($MangledParams, $Pos+1)=~/\A(.+?);/) {
-                    $CurParam = $1;
-                    $Shift = length($CurParam)+2;
-                }
-                if($IsArray) {
-                    $CurParam .= "[]";
-                }
-                $Pos+=$Shift;
-                push(@UnmangledParams, $CurParam);
-                ($IsArray, $Shift, $CurParam) = (0, 0, "")
-            }
-            else
-            {
-                if($Symbol eq "C") {
-                    $CurParam = "char";
-                }
-                elsif($Symbol eq "B") {
-                    $CurParam = "byte";
-                }
-                elsif($Symbol eq "S") {
-                    $CurParam = "short";
-                }
-                elsif($Symbol eq "S") {
-                    $CurParam = "short";
-                }
-                elsif($Symbol eq "I") {
-                    $CurParam = "int";
-                }
-                elsif($Symbol eq "F") {
-                    $CurParam = "float";
-                }
-                elsif($Symbol eq "J") {
-                    $CurParam = "long";
-                }
-                elsif($Symbol eq "D") {
-                    $CurParam = "double";
-                }
-                else {
-                    printMsg("INFO", "WARNING: unmangling error");
-                }
-                if($IsArray) {
-                    $CurParam .= "[]";
-                }
-                $Pos+=1;
-                push(@UnmangledParams, $CurParam);
-                ($IsArray, $Shift, $CurParam) = (0, 0, "")
-            }
-        }
-        return $ShortName."(".join(", ", @UnmangledParams).")";
-    }
-    else {
-        return $Name;
-    }
-}
-
-sub get_TypeName($$)
-{
-    my ($TypeId, $LibVersion) = @_;
-    return $TypeInfo{$LibVersion}{$TypeId}{"Name"};
-}
-
-sub get_ShortName($$)
-{
-    my ($TypeId, $LibVersion) = @_;
-    my $TypeName = $TypeInfo{$LibVersion}{$TypeId}{"Name"};
-    $TypeName=~s/\A.*\.//g;
-    return $TypeName;
-}
-
-sub get_TypeType($$)
-{
-    my ($TypeId, $LibVersion) = @_;
-    return $TypeInfo{$LibVersion}{$TypeId}{"Type"};
-}
-
-sub get_TypeHeader($$)
-{
-    my ($TypeId, $LibVersion) = @_;
-    return $TypeInfo{$LibVersion}{$TypeId}{"Header"};
-}
-
-sub get_BaseType($$)
-{
-    my ($TypeId, $LibVersion) = @_;
-    return "" if(not $TypeId);
-    if(defined $Cache{"get_BaseType"}{$TypeId}{$LibVersion}) {
-        return %{$Cache{"get_BaseType"}{$TypeId}{$LibVersion}};
-    }
-    return "" if(not $TypeInfo{$LibVersion}{$TypeId});
-    my %Type = %{$TypeInfo{$LibVersion}{$TypeId}};
-    return %Type if(not $Type{"BaseType"});
-    %Type = get_BaseType($Type{"BaseType"}, $LibVersion);
-    $Cache{"get_BaseType"}{$TypeId}{$LibVersion} = \%Type;
-    return %Type;
-}
-
-sub get_OneStep_BaseType($$)
-{
-    my ($TypeId, $LibVersion) = @_;
-    return "" if(not $TypeId);
-    return "" if(not $TypeInfo{$LibVersion}{$TypeId});
-    my %Type = %{$TypeInfo{$LibVersion}{$TypeId}};
-    return %Type if(not $Type{"BaseType"});
-    return get_Type($Type{"BaseType"}, $LibVersion);
-}
-
-sub get_Type($$)
-{
-    my ($TypeId, $LibVersion) = @_;
-    return "" if(not $TypeId);
-    return "" if(not $TypeInfo{$LibVersion}{$TypeId});
-    return %{$TypeInfo{$LibVersion}{$TypeId}};
-}
-
-sub classFilter($$$)
-{
-    my ($Class, $LibVersion, $ClassContext) = @_;
-    
-    if(defined $Class->{"Dep"}) {
-        return 0;
-    }
-    
-    my $CName = $Class->{"Name"};
-    my $Package = $Class->{"Package"};
-    
-    if(defined $ClassListPath
-    and not defined $ClassList_User{$CName})
-    { # user defined classes
-        return 0;
-    }
-    
-    if(defined $SkipClassesList
-    and defined $SkipClasses{$CName})
-    { # user defined classes
-        return 0;
-    }
-    
-    if(skipPackage($Package, $LibVersion))
-    { # internal packages
-        return 0;
-    }
-    
-    if(skipType($CName))
-    { # internal types
-        return 0;
-    }
-    
-    if($ClassContext)
-    {
-        my @Ann = ();
-        
-        if(defined $Class->{"Annotations"}) {
-            @Ann = keys(%{$Class->{"Annotations"}});
-        }
-        
-        if(not annotationFilter(\@Ann, $LibVersion)) {
-            return 0;
-        }
-        
-        if($ClientPath)
-        {
-            if(not defined $UsedClasses_Client{$CName}) {
-                return 0;
-            }
-        }
-    }
-    
-    return 1;
-}
-
-sub annotationFilter($$)
-{
-    my ($Ann, $LibVersion) = @_;
-    
-    if(not defined $CountMethods)
-    {
-        if(defined $AddedAnnotations and $LibVersion==1) {
-            return 1;
-        }
-        
-        if(defined $RemovedAnnotations and $LibVersion==2) {
-            return 1;
-        }
-    }
-    
-    if($SkipAnnotationsListPath)
-    {
-        foreach my $Aid (@{$Ann})
-        {
-            my $AName = $TypeInfo{$LibVersion}{$Aid}{"Name"};
-            
-            if(defined $SkipAnnotationList_User{$AName}) {
-                return 0;
-            }
-        }
-    }
-    
-    if($AnnotationsListPath)
-    {
-        my $Annotated = 0;
-        
-        foreach my $Aid (@{$Ann})
-        {
-            my $AName = $TypeInfo{$LibVersion}{$Aid}{"Name"};
-            
-            if(defined $AnnotationList_User{$AName})
-            {
-                $Annotated = 1;
-                last;
-            }
-        }
-        
-        if(not $Annotated) {
-            return 0;
-        }
-    }
-    
-    return 1;
-}
-
-sub methodFilter($$)
-{
-    my ($Method, $LibVersion) = @_;
-    
-    if(defined $MethodInfo{$LibVersion}{$Method}{"Dep"}) {
-        return 0;
-    }
-    
-    if($MethodInfo{$LibVersion}{$Method}{"Access"}=~/private/)
-    { # non-public
-        return 0;
-    }
-    
-    my $ClassId = $MethodInfo{$LibVersion}{$Method}{"Class"};
-    my %Class = get_Type($ClassId, $LibVersion);
-    
-    if($Class{"Access"}=~/private/)
-    { # skip private classes
-        return 0;
-    }
-    
-    my $Package = $MethodInfo{$LibVersion}{$Method}{"Package"};
-    
-    my @Ann = ();
-    
-    if(defined $Class{"Annotations"}) {
-        @Ann = (@Ann, keys(%{$Class{"Annotations"}}));
-    }
-    
-    if(defined $MethodInfo{$LibVersion}{$Method}{"Annotations"}) {
-        @Ann = (@Ann, keys(%{$MethodInfo{$LibVersion}{$Method}{"Annotations"}}));
-    }
-    
-    if(not annotationFilter(\@Ann, $LibVersion)) {
-        return 0;
-    }
-    
-    if($ClientPath)
-    { # user defined application
-        if(not defined $UsedMethods_Client{$Method}
-        and not defined $UsedClasses_Client{$Class{"Name"}}) {
-            return 0;
-        }
-    }
-    
-    if(skipPackage($Package, $LibVersion))
-    { # internal packages
-        return 0;
-    }
-    
-    if(not classFilter(\%Class, $LibVersion, 0)) {
-        return 0;
-    }
-    
-    if(defined $SkipDeprecated)
-    {
-        if($Class{"Deprecated"})
-        { # deprecated class
-            return 0;
-        }
-        if($MethodInfo{$LibVersion}{$Method}{"Deprecated"})
-        { # deprecated method
-            return 0;
-        }
-    }
-    
-    return 1;
-}
-
-sub skipType($)
-{
-    my $TName = $_[0];
-    
-    if(defined $SkipInternalTypes)
-    {
-        if($TName=~/($SkipInternalTypes)/) {
-            return 1;
-        }
-    }
-    
-    return 0;
-}
-
-sub skipPackage($$)
-{
-    my ($Package, $LibVersion) = @_;
-    return 0 if(not $Package);
-    
-    if(defined $SkipInternalPackages)
-    {
-        if($Package=~/($SkipInternalPackages)/) {
-            return 1;
-        }
-    }
-    
-    if(defined $SkipPackages{$LibVersion})
-    {
-        foreach my $SkipPackage (keys(%{$SkipPackages{$LibVersion}}))
-        {
-            if($Package=~/\A\Q$SkipPackage\E(\.|\Z)/)
-            { # user skipped packages
-                return 1;
-            }
-        }
-    }
-    
-    if(not defined $KeepInternal)
-    {
-        my $Note = (not keys %SkippedPackage)?" (use --keep-internal option to check them)":"";
-        
-        if($Package=~/(\A|\.)(internal|impl|examples)(\.|\Z)/)
-        { # internal packages
-            if(not $SkippedPackage{$LibVersion}{$2})
-            {
-                $SkippedPackage{$LibVersion}{$2} = 1;
-                printMsg("WARNING", "skip \"$2\" packages".$Note);
-            }
-            return 1;
-        }
-    }
-    
-    if(defined $KeepPackages{$LibVersion}
-    and my @Keeped = keys(%{$KeepPackages{$LibVersion}}))
-    {
-        my $UserKeeped = 0;
-        foreach my $KeepPackage (@Keeped)
-        {
-            if($Package=~/\A\Q$KeepPackage\E(\.|\Z)/)
-            { # user keeped packages
-                $UserKeeped = 1;
-                last;
-            }
-        }
-        if(not $UserKeeped) {
-            return 1;
-        }
-    }
-    
-    return 0;
-}
-
-sub get_MSuffix($)
+sub getMSuffix($)
 {
     my $Method = $_[0];
     if($Method=~/(\(.*\))/) {
@@ -2418,7 +1447,7 @@ sub get_MSuffix($)
     return "";
 }
 
-sub get_MShort($)
+sub getMShort($)
 {
     my $Method = $_[0];
     if($Method=~/([^\.]+)\:\(/) {
@@ -2435,7 +1464,7 @@ sub findMethod($$$$)
     if($ClassId)
     {
         my @Search = ();
-        if(get_TypeType($ClassId, $ClassVersion) eq "class")
+        if(getTypeType($ClassId, $ClassVersion) eq "class")
         {
             if(my $SuperClassId = $TypeInfo{$ClassVersion}{$ClassId}{"SuperClass"}) {
                 push(@Search, $SuperClassId);
@@ -2456,7 +1485,7 @@ sub findMethod($$$$)
                 next;
             }
             
-            my $SuperName = get_TypeName($SuperId, $ClassVersion);
+            my $SuperName = getTypeName($SuperId, $ClassVersion);
             
             if(my $MethodInClass = findMethod_Class($Method, $SuperName, $ClassVersion)) {
                 return $MethodInClass;
@@ -2467,15 +1496,15 @@ sub findMethod($$$$)
         }
     }
     
-    my $TargetSuffix = get_MSuffix($Method);
-    my $TargetShortName = get_MShort($Method);
+    my $TargetSuffix = getMSuffix($Method);
+    my $TargetShortName = getMShort($Method);
     
     # search in java.lang.Object
     foreach my $C (keys(%JavaObjectMethod))
     {
-        if($TargetSuffix eq get_MSuffix($C))
+        if($TargetSuffix eq getMSuffix($C))
         {
-            if($TargetShortName eq get_MShort($C)) {
+            if($TargetShortName eq getMShort($C)) {
                 return $C;
             }
         }
@@ -2487,8 +1516,8 @@ sub findMethod($$$$)
 sub findMethod_Class($$$)
 {
     my ($Method, $ClassName, $ClassVersion) = @_;
-    my $TargetSuffix = get_MSuffix($Method);
-    my $TargetShortName = get_MShort($Method);
+    my $TargetSuffix = getMSuffix($Method);
+    my $TargetShortName = getMShort($Method);
     
     if(not defined $Class_Methods{$ClassVersion}{$ClassName}) {
         return undef;
@@ -2497,9 +1526,9 @@ sub findMethod_Class($$$)
     foreach my $Candidate (sort keys(%{$Class_Methods{$ClassVersion}{$ClassName}}))
     { # search for method with the same parameters suffix
         next if($MethodInfo{$ClassVersion}{$Candidate}{"Constructor"});
-        if($TargetSuffix eq get_MSuffix($Candidate))
+        if($TargetSuffix eq getMSuffix($Candidate))
         {
-            if($TargetShortName eq get_MShort($Candidate)) {
+            if($TargetShortName eq getMShort($Candidate)) {
                 return $Candidate;
             }
         }
@@ -2508,18 +1537,70 @@ sub findMethod_Class($$$)
     return undef;
 }
 
-sub prepareMethods($)
+sub prepareData($)
 {
-    my $LibVersion = $_[0];
-    foreach my $Method (keys(%{$MethodInfo{$LibVersion}}))
+    my $LVer = $_[0];
+    
+    if(my $MUsed = $In::API{$LVer}{"MethodUsed"})
     {
-        if($MethodInfo{$LibVersion}{$Method}{"Access"}!~/private/)
+        foreach my $M_Id (keys(%{$MUsed}))
         {
-            if($MethodInfo{$LibVersion}{$Method}{"Constructor"}) {
-                registerUsage($MethodInfo{$LibVersion}{$Method}{"Class"}, $LibVersion);
+            my $Name = $MUsed->{$M_Id}{"Name"};
+            $MethodUsed{$LVer}{$Name} = $MUsed->{$M_Id}{"Used"};
+        }
+    }
+    
+    foreach my $TypeId (keys(%{$TypeInfo{$LVer}}))
+    {
+        my $TypeAttr = $TypeInfo{$LVer}{$TypeId};
+        my $TName = $TypeAttr->{"Name"};
+        
+        $TName_Tid{$LVer}{$TName} = $TypeId;
+        
+        if(not $TypeAttr->{"Dep"})
+        {
+            if(my $Archive = $TypeAttr->{"Archive"}) {
+                $LibArchives{$LVer}{$Archive} = 1;
+            }
+        }
+        
+        foreach my $FieldName (keys(%{$TypeAttr->{"Fields"}}))
+        {
+            if($TypeAttr->{"Fields"}{$FieldName}{"Access"}=~/public|protected/) {
+                $Class_Fields{$LVer}{$TName}{$FieldName} = $TypeAttr->{"Fields"}{$FieldName}{"Type"};
+            }
+        }
+    }
+    
+    foreach my $Method (keys(%{$MethodInfo{$LVer}}))
+    {
+        my $Name = $MethodInfo{$LVer}{$Method}{"Name"};
+        $MethodInfo{$LVer}{$Name} = delete($MethodInfo{$LVer}{$Method});
+    }
+    
+    foreach my $Method (keys(%{$MethodInfo{$LVer}}))
+    {
+        my $MAttr = $MethodInfo{$LVer}{$Method};
+        
+        $MAttr->{"Signature"} = getSignature($Method, $LVer, "Full");
+        
+        if(my $ClassId = $MAttr->{"Class"}
+        and $MAttr->{"Access"}=~/public|protected/)
+        {
+            my $CName = getTypeName($ClassId, $LVer);
+            $Class_Methods{$LVer}{$CName}{$Method} = 1;
+            if($MAttr->{"Abstract"}) {
+                $Class_AbstractMethods{$LVer}{$CName}{$Method} = 1;
+            }
+        }
+        
+        if($MAttr->{"Access"}!~/private/)
+        {
+            if($MAttr->{"Constructor"}) {
+                registerUsage($MAttr->{"Class"}, $LVer);
             }
             else {
-                registerUsage($MethodInfo{$LibVersion}{$Method}{"Return"}, $LibVersion);
+                registerUsage($MAttr->{"Return"}, $LVer);
             }
         }
     }
@@ -2541,18 +1622,19 @@ sub mergeMethods()
         }
         
         my $ClassId1 = $MethodInfo{1}{$Method}{"Class"};
-        my %Class1 = get_Type($ClassId1, 1);
+        my $Class1_Name = getTypeName($ClassId1, 1);
+        my $Class1_Type = getTypeType($ClassId1, 1);
         
-        $CheckedTypes{$Class1{"Name"}} = 1;
+        $CheckedTypes{$Class1_Name} = 1;
         $CheckedMethods{$Method} = 1;
         
-        my %Class2 = get_Type($MethodInfo{2}{$Method}{"Class"}, 2);
         if(not $MethodInfo{1}{$Method}{"Static"}
-        and $Class1{"Type"} eq "class" and not $Class_Constructed{1}{$ClassId1})
+        and $Class1_Type eq "class" and not $Class_Constructed{1}{$ClassId1})
         { # class cannot be constructed or inherited by clients
           # non-static method cannot be called
             next;
         }
+        
         # checking attributes
         if(not $MethodInfo{1}{$Method}{"Static"}
         and $MethodInfo{2}{$Method}{"Static"}) {
@@ -2562,6 +1644,7 @@ sub mergeMethods()
         and not $MethodInfo{2}{$Method}{"Static"}) {
             %{$CompatProblems{$Method}{"Method_Became_NonStatic"}{""}} = ();
         }
+        
         if(not $MethodInfo{1}{$Method}{"Synchronized"}
         and $MethodInfo{2}{$Method}{"Synchronized"}) {
             %{$CompatProblems{$Method}{"Method_Became_Synchronized"}{""}} = ();
@@ -2570,6 +1653,7 @@ sub mergeMethods()
         and not $MethodInfo{2}{$Method}{"Synchronized"}) {
             %{$CompatProblems{$Method}{"Method_Became_NonSynchronized"}{""}} = ();
         }
+        
         if(not $MethodInfo{1}{$Method}{"Final"}
         and $MethodInfo{2}{$Method}{"Final"})
         {
@@ -2580,73 +1664,79 @@ sub mergeMethods()
                 %{$CompatProblems{$Method}{"NonStatic_Method_Became_Final"}{""}} = ();
             }
         }
+        
         my $Access1 = $MethodInfo{1}{$Method}{"Access"};
         my $Access2 = $MethodInfo{2}{$Method}{"Access"};
+        
         if($Access1 eq "public" and $Access2=~/protected|private/
         or $Access1 eq "protected" and $Access2=~/private/)
         {
             %{$CompatProblems{$Method}{"Changed_Method_Access"}{""}} = (
                 "Old_Value"=>$Access1,
-                "New_Value"=>$Access2  );
+                "New_Value"=>$Access2);
         }
-        if($Class1{"Type"} eq "class"
-        and $Class2{"Type"} eq "class")
+        
+        my $Class2_Type = getTypeType($MethodInfo{2}{$Method}{"Class"}, 2);
+        
+        if($Class1_Type eq "class"
+        and $Class2_Type eq "class")
         {
             if(not $MethodInfo{1}{$Method}{"Abstract"}
             and $MethodInfo{2}{$Method}{"Abstract"})
             {
                 %{$CompatProblems{$Method}{"Method_Became_Abstract"}{""}} = ();
-                %{$CompatProblems{$Method}{"Class_Method_Became_Abstract"}{"this.".get_SFormat($Method)}} = (
-                    "Type_Name"=>$Class1{"Name"},
-                    "Target"=>$Method  );
+                %{$CompatProblems{$Method}{"Class_Method_Became_Abstract"}{"this.".getSFormat($Method)}} = (
+                    "Type_Name"=>$Class1_Name,
+                    "Target"=>$Method);
             }
             elsif($MethodInfo{1}{$Method}{"Abstract"}
             and not $MethodInfo{2}{$Method}{"Abstract"})
             {
                 %{$CompatProblems{$Method}{"Method_Became_NonAbstract"}{""}} = ();
-                %{$CompatProblems{$Method}{"Class_Method_Became_NonAbstract"}{"this.".get_SFormat($Method)}} = (
-                    "Type_Name"=>$Class1{"Name"},
-                    "Target"=>$Method  );
+                %{$CompatProblems{$Method}{"Class_Method_Became_NonAbstract"}{"this.".getSFormat($Method)}} = (
+                    "Type_Name"=>$Class1_Name,
+                    "Target"=>$Method);
             }
         }
-        elsif($Class1{"Type"} eq "interface"
-        and $Class2{"Type"} eq "interface")
+        elsif($Class1_Type eq "interface"
+        and $Class2_Type eq "interface")
         {
             if(not $MethodInfo{1}{$Method}{"Abstract"}
             and $MethodInfo{2}{$Method}{"Abstract"})
             {
                 %{$CompatProblems{$Method}{"Method_Became_NonDefault"}{""}} = ();
-                %{$CompatProblems{$Method}{"Interface_Method_Became_NonDefault"}{"this.".get_SFormat($Method)}} = (
-                    "Type_Name"=>$Class1{"Name"},
-                    "Target"=>$Method  );
+                %{$CompatProblems{$Method}{"Interface_Method_Became_NonDefault"}{"this.".getSFormat($Method)}} = (
+                    "Type_Name"=>$Class1_Name,
+                    "Target"=>$Method);
             }
             elsif($MethodInfo{1}{$Method}{"Abstract"}
             and not $MethodInfo{2}{$Method}{"Abstract"})
             {
                 %{$CompatProblems{$Method}{"Method_Became_Default"}{""}} = ();
-                %{$CompatProblems{$Method}{"Interface_Method_Became_Default"}{"this.".get_SFormat($Method)}} = (
-                    "Type_Name"=>$Class1{"Name"},
-                    "Target"=>$Method  );
+                %{$CompatProblems{$Method}{"Interface_Method_Became_Default"}{"this.".getSFormat($Method)}} = (
+                    "Type_Name"=>$Class1_Name,
+                    "Target"=>$Method);
             }
         }
         
-        my %Exceptions_Old = map {get_TypeName($_, 1) => $_} keys(%{$MethodInfo{1}{$Method}{"Exceptions"}});
-        my %Exceptions_New = map {get_TypeName($_, 2) => $_} keys(%{$MethodInfo{2}{$Method}{"Exceptions"}});
+        my %Exceptions_Old = map {getTypeName($_, 1) => $_} keys(%{$MethodInfo{1}{$Method}{"Exceptions"}});
+        my %Exceptions_New = map {getTypeName($_, 2) => $_} keys(%{$MethodInfo{2}{$Method}{"Exceptions"}});
         foreach my $Exception (keys(%Exceptions_Old))
         {
             if(not $Exceptions_New{$Exception})
             {
-                my %ExceptionType = get_Type($Exceptions_Old{$Exception}, 1);
-                my $SuperClass = $ExceptionType{"SuperClass"};
+                my $EType = getType($Exceptions_Old{$Exception}, 1);
+                my $SuperClass = $EType->{"SuperClass"};
+                
                 if($KnownRuntimeExceptions{$Exception}
-                or defined $SuperClass and get_TypeName($SuperClass, 1) eq "java.lang.RuntimeException")
+                or defined $SuperClass and getTypeName($SuperClass, 1) eq "java.lang.RuntimeException")
                 {
                     if(not $MethodInfo{1}{$Method}{"Abstract"}
                     and not $MethodInfo{2}{$Method}{"Abstract"})
                     {
-                        %{$CompatProblems{$Method}{"Removed_Unchecked_Exception"}{"this.".get_SFormat($Exception)}} = (
-                            "Type_Name"=>$Class1{"Name"},
-                            "Target"=>$Exception  );
+                        %{$CompatProblems{$Method}{"Removed_Unchecked_Exception"}{"this.".getSFormat($Exception)}} = (
+                            "Type_Name"=>$Class1_Name,
+                            "Target"=>$Exception);
                     }
                 }
                 else
@@ -2654,34 +1744,36 @@ sub mergeMethods()
                     if($MethodInfo{1}{$Method}{"Abstract"}
                     and $MethodInfo{2}{$Method}{"Abstract"})
                     {
-                        %{$CompatProblems{$Method}{"Abstract_Method_Removed_Checked_Exception"}{"this.".get_SFormat($Exception)}} = (
-                            "Type_Name"=>$Class1{"Name"},
-                            "Target"=>$Exception  );
+                        %{$CompatProblems{$Method}{"Abstract_Method_Removed_Checked_Exception"}{"this.".getSFormat($Exception)}} = (
+                            "Type_Name"=>$Class1_Name,
+                            "Target"=>$Exception);
                     }
                     else
                     {
-                        %{$CompatProblems{$Method}{"NonAbstract_Method_Removed_Checked_Exception"}{"this.".get_SFormat($Exception)}} = (
-                            "Type_Name"=>$Class1{"Name"},
-                            "Target"=>$Exception  );
+                        %{$CompatProblems{$Method}{"NonAbstract_Method_Removed_Checked_Exception"}{"this.".getSFormat($Exception)}} = (
+                            "Type_Name"=>$Class1_Name,
+                            "Target"=>$Exception);
                     }
                 }
             }
         }
+        
         foreach my $Exception (keys(%Exceptions_New))
         {
             if(not $Exceptions_Old{$Exception})
             {
-                my %ExceptionType = get_Type($Exceptions_New{$Exception}, 2);
-                my $SuperClass = $ExceptionType{"SuperClass"};
+                my $EType = getType($Exceptions_New{$Exception}, 2);
+                my $SuperClass = $EType->{"SuperClass"};
+                
                 if($KnownRuntimeExceptions{$Exception}
-                or defined $SuperClass and get_TypeName($SuperClass, 2) eq "java.lang.RuntimeException")
+                or defined $SuperClass and getTypeName($SuperClass, 2) eq "java.lang.RuntimeException")
                 {
                     if(not $MethodInfo{1}{$Method}{"Abstract"}
                     and not $MethodInfo{2}{$Method}{"Abstract"})
                     {
-                        %{$CompatProblems{$Method}{"Added_Unchecked_Exception"}{"this.".get_SFormat($Exception)}} = (
-                            "Type_Name"=>$Class1{"Name"},
-                            "Target"=>$Exception  );
+                        %{$CompatProblems{$Method}{"Added_Unchecked_Exception"}{"this.".getSFormat($Exception)}} = (
+                            "Type_Name"=>$Class1_Name,
+                            "Target"=>$Exception);
                     }
                 }
                 else
@@ -2689,15 +1781,15 @@ sub mergeMethods()
                     if($MethodInfo{1}{$Method}{"Abstract"}
                     and $MethodInfo{2}{$Method}{"Abstract"})
                     {
-                        %{$CompatProblems{$Method}{"Abstract_Method_Added_Checked_Exception"}{"this.".get_SFormat($Exception)}} = (
-                            "Type_Name"=>$Class1{"Name"},
-                            "Target"=>$Exception  );
+                        %{$CompatProblems{$Method}{"Abstract_Method_Added_Checked_Exception"}{"this.".getSFormat($Exception)}} = (
+                            "Type_Name"=>$Class1_Name,
+                            "Target"=>$Exception);
                     }
                     else
                     {
-                        %{$CompatProblems{$Method}{"NonAbstract_Method_Added_Checked_Exception"}{"this.".get_SFormat($Exception)}} = (
-                            "Type_Name"=>$Class1{"Name"},
-                            "Target"=>$Exception  );
+                        %{$CompatProblems{$Method}{"NonAbstract_Method_Added_Checked_Exception"}{"this.".getSFormat($Exception)}} = (
+                            "Type_Name"=>$Class1_Name,
+                            "Target"=>$Exception);
                     }
                 }
             }
@@ -2778,28 +1870,48 @@ sub detectTypeChange($$$)
 {
     my ($Type1_Id, $Type2_Id, $Prefix) = @_;
     my %LocalProblems = ();
-    my %Type1 = get_Type($Type1_Id, 1);
-    my %Type2 = get_Type($Type2_Id, 2);
-    my %Type1_Base = ($Type1{"Type"} eq "array")?get_OneStep_BaseType($Type1_Id, 1):get_BaseType($Type1_Id, 1);
-    my %Type2_Base = ($Type2{"Type"} eq "array")?get_OneStep_BaseType($Type2_Id, 2):get_BaseType($Type2_Id, 2);
-    return () if(not $Type1{"Name"} or not $Type2{"Name"});
-    return () if(not $Type1_Base{"Name"} or not $Type2_Base{"Name"});
-    if($Type1_Base{"Name"} ne $Type2_Base{"Name"} and $Type1{"Name"} eq $Type2{"Name"})
+    
+    my $Type1 = getType($Type1_Id, 1);
+    my $Type2 = getType($Type2_Id, 2);
+    
+    my $Type1_Name = $Type1->{"Name"};
+    my $Type2_Name = $Type2->{"Name"};
+    
+    my $Type1_Base = undef;
+    my $Type2_Base = undef;
+    
+    if($Type1->{"Type"} eq "array") {
+        $Type1_Base = getOneStepBaseType($Type1_Id, 1);
+    }
+    else {
+        $Type1_Base = getBaseType($Type1_Id, 1);
+    }
+    
+    if($Type2->{"Type"} eq "array") {
+        $Type2_Base = getOneStepBaseType($Type2_Id, 2);
+    }
+    else {
+        $Type2_Base = getBaseType($Type2_Id, 2);
+    }
+    
+    return () if(not $Type1_Name or not $Type2_Name);
+    return () if(not $Type1_Base->{"Name"} or not $Type2_Base->{"Name"});
+    if($Type1_Base->{"Name"} ne $Type2_Base->{"Name"} and $Type1_Name eq $Type2_Name)
     {# base type change
         %{$LocalProblems{"Changed_".$Prefix."_BaseType"}}=(
-            "Old_Value"=>$Type1_Base{"Name"},
-            "New_Value"=>$Type2_Base{"Name"} );
+            "Old_Value"=>$Type1_Base->{"Name"},
+            "New_Value"=>$Type2_Base->{"Name"});
     }
-    elsif($Type1{"Name"} ne $Type2{"Name"})
+    elsif($Type1_Name ne $Type2_Name)
     {# type change
         %{$LocalProblems{"Changed_".$Prefix."_Type"}}=(
-            "Old_Value"=>$Type1{"Name"},
-            "New_Value"=>$Type2{"Name"} );
+            "Old_Value"=>$Type1_Name,
+            "New_Value"=>$Type2_Name);
     }
     return %LocalProblems;
 }
 
-sub htmlSpecChars($)
+sub specChars($)
 {
     my $Str = $_[0];
     if(not defined $Str
@@ -2819,41 +1931,28 @@ sub htmlSpecChars($)
     return $Str;
 }
 
-sub black_Name($$)
+sub blackName($)
+{
+    my $N = $_[0];
+    return "<span class='iname_b'>".$N."</span>";
+}
+
+sub highLight_ItalicColor($$)
 {
     my ($M, $V) = @_;
-    return "<span class='iname_b'>".highLight_Signature($M, $V)."</span>";
+    return getSignature($M, $V, "Full|HTML|Italic|Color");
 }
 
-sub black_Name_S($)
+sub getSignature($$$)
 {
-    my $Name = $_[0];
-    $Name=~s!\A(\w+)!<span class='iname_b'>$1</span>&#160;!g;
-    return $Name;
-}
-
-sub highLight_Signature($$)
-{
-    my ($M, $V) = @_;
-    return get_Signature($M, $V, "Class|HTML|Italic");
-}
-
-sub highLight_Signature_Italic_Color($$)
-{
-    my ($M, $V) = @_;
-    return get_Signature($M, $V, "Full|HTML|Italic|Color");
-}
-
-sub get_Signature($$$)
-{
-    my ($Method, $LibVersion, $Kind) = @_;
-    if(defined $Cache{"get_Signature"}{$LibVersion}{$Method}{$Kind}) {
-        return $Cache{"get_Signature"}{$LibVersion}{$Method}{$Kind};
+    my ($Method, $LVer, $Kind) = @_;
+    if(defined $Cache{"getSignature"}{$LVer}{$Method}{$Kind}) {
+        return $Cache{"getSignature"}{$LVer}{$Method}{$Kind};
     }
     
     # settings
     my ($Full, $Html, $Simple, $Italic, $Color,
-    $ShowParams, $ShowClass, $ShowAttr, $Target) = (0, 0, 0, 0, 0, 0, 0, 0, undef);
+    $ShowParams, $ShowClass, $ShowAttr, $Desc, $Target) = (0, 0, 0, 0, 0, 0, 0, 0, 0, undef);
     
     if($Kind=~/Full/) {
         $Full = 1;
@@ -2882,58 +1981,60 @@ sub get_Signature($$$)
     if($Kind=~/Attr/) {
         $ShowAttr = 1;
     }
+    if($Kind=~/Desc/) {
+        $Desc = 1;
+    }
     
-    if(not defined $MethodInfo{$LibVersion}{$Method}{"ShortName"})
+    if(not defined $MethodInfo{$LVer}{$Method}{"ShortName"})
     { # from java.lang.Object
         if($Html or $Simple) {
-            return htmlSpecChars($Method);
+            return specChars($Method);
         }
-        else
-        {
+        else {
             return $Method;
         }
     }
     
-    my $Signature = $MethodInfo{$LibVersion}{$Method}{"ShortName"};
+    my $Signature = $MethodInfo{$LVer}{$Method}{"ShortName"};
     if($Full or $ShowClass)
     {
-        my $Class = get_TypeName($MethodInfo{$LibVersion}{$Method}{"Class"}, $LibVersion);
+        my $Class = getTypeName($MethodInfo{$LVer}{$Method}{"Class"}, $LVer);
         
-        if($HideTemplates) {
+        if($In::Opt{"HideTemplates"}) {
             $Class=~s/<.*>//g;
         }
         
         if($Html) {
-            $Class = htmlSpecChars($Class);
+            $Class = specChars($Class);
         }
         
         $Signature = $Class.".".$Signature;
     }
     my @Params = ();
     
-    if(defined $MethodInfo{$LibVersion}{$Method}{"Param"})
+    if(defined $MethodInfo{$LVer}{$Method}{"Param"})
     {
         foreach my $PPos (sort {int($a)<=>int($b)}
-        keys(%{$MethodInfo{$LibVersion}{$Method}{"Param"}}))
+        keys(%{$MethodInfo{$LVer}{$Method}{"Param"}}))
         {
-            my $PTid = $MethodInfo{$LibVersion}{$Method}{"Param"}{$PPos}{"Type"};
-            if(my $PTName = get_TypeName($PTid, $LibVersion))
+            my $PTid = $MethodInfo{$LVer}{$Method}{"Param"}{$PPos}{"Type"};
+            if(my $PTName = getTypeName($PTid, $LVer))
             {
-                if($HideTemplates) {
+                if($In::Opt{"HideTemplates"}) {
                     $PTName=~s/<.*>//g;
                 }
                 
-                if(not $ShowPackages) {
+                if(not $In::Opt{"ShowPackages"}) {
                     $PTName=~s/(\A|\<\s*|\,\s*)[a-z0-9\.]+\./$1/g;
                 }
                 
                 if($Html) {
-                    $PTName = htmlSpecChars($PTName);
+                    $PTName = specChars($PTName);
                 }
                 
                 if($Full or $ShowParams)
                 {
-                    my $PName = $MethodInfo{$LibVersion}{$Method}{"Param"}{$PPos}{"Name"};
+                    my $PName = $MethodInfo{$LVer}{$Method}{"Param"}{$PPos}{"Name"};
                     
                     if($Simple) {
                         $PName = "<i>$PName</i>";
@@ -2970,7 +2071,12 @@ sub get_Signature($$$)
     if($Html and not $Simple)
     {
         $Signature .= "&#160;";
-        $Signature .= "<span class='sym_p'>";
+        if($Desc) {
+            $Signature .= "<span class='sym_pd'>";
+        }
+        else {
+            $Signature .= "<span class='sym_p'>";
+        }
         if(@Params)
         {
             foreach my $Pos (0 .. $#Params)
@@ -3012,19 +2118,19 @@ sub get_Signature($$$)
     
     if($Full or $ShowAttr)
     {
-        if($MethodInfo{$LibVersion}{$Method}{"Static"}) {
+        if($MethodInfo{$LVer}{$Method}{"Static"}) {
             $Signature .= " [static]";
         }
-        elsif($MethodInfo{$LibVersion}{$Method}{"Abstract"}) {
+        elsif($MethodInfo{$LVer}{$Method}{"Abstract"}) {
             $Signature .= " [abstract]";
         }
     }
     
     if($Full)
     {
-        if($ShowAccess)
+        if($In::Opt{"ShowAccess"})
         {
-            if(my $Access = $MethodInfo{$LibVersion}{$Method}{"Access"})
+            if(my $Access = $MethodInfo{$LVer}{$Method}{"Access"})
             {
                 if($Access ne "public") {
                     $Signature .= " [".$Access."]";
@@ -3032,32 +2138,32 @@ sub get_Signature($$$)
             }
         }
         
-        if(my $ReturnId = $MethodInfo{$LibVersion}{$Method}{"Return"})
+        if(my $ReturnId = $MethodInfo{$LVer}{$Method}{"Return"})
         {
-            my $RName = get_TypeName($ReturnId, $LibVersion);
+            my $RName = getTypeName($ReturnId, $LVer);
             
-            if($HideTemplates) {
+            if($In::Opt{"HideTemplates"}) {
                 $RName=~s/<.*>//g;
             }
             
-            if(not $ShowPackages) {
+            if(not $In::Opt{"ShowPackages"}) {
                 $RName=~s/(\A|\<\s*|\,\s*)[a-z0-9\.]+\./$1/g;
             }
             
             if($Simple) {
-                $Signature .= " <b>:</b> ".htmlSpecChars($RName);
+                $Signature .= " <b>:</b> ".specChars($RName);
             }
             elsif($Html) {
-                $Signature .= "<span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;".htmlSpecChars($RName)."</span>";
+                $Signature .= "<span class='sym_p nowrap'> &#160;<b>:</b>&#160;&#160;".specChars($RName)."</span>";
             }
             else {
                 $Signature .= " : ".$RName;
             }
         }
         
-        if(not $SkipDeprecated)
+        if(not $In::Opt{"SkipDeprecated"})
         {
-            if($MethodInfo{$LibVersion}{$Method}{"Deprecated"}) {
+            if($MethodInfo{$LVer}{$Method}{"Deprecated"}) {
                 $Signature .= " *DEPRECATED*";
             }
         }
@@ -3067,7 +2173,7 @@ sub get_Signature($$$)
     
     if($Html)
     {
-        if(not $SkipDeprecated) {
+        if(not $In::Opt{"SkipDeprecated"}) {
             $Signature=~s!(\*deprecated\*)!<span class='deprecated'>$1</span>!ig;
         }
         
@@ -3083,283 +2189,10 @@ sub get_Signature($$$)
         $Signature=~s!operator=!operator&#160;=!g;
     }
     
-    return ($Cache{"get_Signature"}{$LibVersion}{$Method}{$Kind} = $Signature);
+    return ($Cache{"getSignature"}{$LVer}{$Method}{$Kind} = $Signature);
 }
 
-sub checkJavaCompiler($)
-{ # check javac: compile simple program
-    my $Cmd = $_[0];
-    
-    if(not $Cmd) {
-        return;
-    }
-    
-    writeFile($TMP_DIR."/test_javac/Simple.java",
-    "public class Simple {
-        public Integer f;
-        public void method(Integer p) { };
-    }");
-    chdir($TMP_DIR."/test_javac");
-    system("$Cmd Simple.java 2>errors.txt");
-    chdir($ORIG_DIR);
-    if($?)
-    {
-        my $Msg = "something is going wrong with the Java compiler (javac):\n";
-        my $Err = readFile($TMP_DIR."/test_javac/errors.txt");
-        $Msg .= $Err;
-        if($Err=~/elf\/start\.S/ and $Err=~/undefined\s+reference\s+to/)
-        { # /usr/lib/gcc/i586-suse-linux/4.5/../../../crt1.o: In function _start:
-          # /usr/src/packages/BUILD/glibc-2.11.3/csu/../sysdeps/i386/elf/start.S:115: undefined reference to main
-            $Msg .= "\nDid you install a JDK-devel package?";
-        }
-        exitStatus("Error", $Msg);
-    }
-}
-
-sub runTests($$$$)
-{
-    my ($TestsPath, $PackageName, $Path_v1, $Path_v2) = @_;
-    # compile with old version of package
-    my $JavacCmd = get_CmdPath("javac");
-    if(not $JavacCmd) {
-        exitStatus("Not_Found", "can't find \"javac\" compiler");
-    }
-    my $JavaCmd = get_CmdPath("java");
-    if(not $JavaCmd) {
-        exitStatus("Not_Found", "can't find \"java\" command");
-    }
-    mkpath($TestsPath."/$PackageName/");
-    foreach my $ClassPath (cmd_find($Path_v1,"","*\.class",""))
-    {# create a compile-time package copy
-        copy($ClassPath, $TestsPath."/$PackageName/");
-    }
-    chdir($TestsPath);
-    system($JavacCmd." -g *.java");
-    chdir($ORIG_DIR);
-    foreach my $TestSrc (cmd_find($TestsPath,"","*\.java",""))
-    { # remove test source
-        unlink($TestSrc);
-    }
-    
-    my $PkgPath = $TestsPath."/".$PackageName;
-    if(-d $PkgPath) {
-        rmtree($PkgPath);
-    }
-    mkpath($PkgPath);
-    foreach my $ClassPath (cmd_find($Path_v2,"","*\.class",""))
-    {# create a run-time package copy
-        copy($ClassPath, $PkgPath."/");
-    }
-    my $TEST_REPORT = "";
-    foreach my $TestPath (cmd_find($TestsPath,"","*\.class",1))
-    {# run tests
-        my $Name = get_filename($TestPath);
-        $Name=~s/\.class\Z//g;
-        chdir($TestsPath);
-        system($JavaCmd." $Name >result.txt 2>&1");
-        chdir($ORIG_DIR);
-        my $Result = readFile($TestsPath."/result.txt");
-        unlink($TestsPath."/result.txt");
-        $TEST_REPORT .= "TEST CASE: $Name\n";
-        if($Result) {
-            $TEST_REPORT .= "RESULT: FAILED\n";
-            $TEST_REPORT .= "OUTPUT:\n$Result\n";
-        }
-        else {
-            $TEST_REPORT .= "RESULT: SUCCESS\n";
-        }
-        $TEST_REPORT .= "\n";
-    }
-    writeFile("$TestsPath/Journal.txt", $TEST_REPORT);
-    
-    if(-d $PkgPath) {
-        rmtree($PkgPath);
-    }
-}
-
-sub compileJavaLib($$$)
-{
-    my ($LibName, $BuildRoot1, $BuildRoot2) = @_;
-    my $JavacCmd = get_CmdPath("javac");
-    if(not $JavacCmd) {
-        exitStatus("Not_Found", "can't find \"javac\" compiler");
-    }
-    checkJavaCompiler($JavacCmd);
-    my $JarCmd = get_CmdPath("jar");
-    if(not $JarCmd) {
-        exitStatus("Not_Found", "can't find \"jar\" command");
-    }
-    writeFile("$BuildRoot1/MANIFEST.MF", "Implementation-Version: 1.0\n");
-    # space before value, new line
-    writeFile("$BuildRoot2/MANIFEST.MF", "Implementation-Version: 2.0\n");
-    my (%SrcDir1, %SrcDir2) = ();
-    foreach my $Path (cmd_find($BuildRoot1,"f","*.java","")) {
-        $SrcDir1{get_dirname($Path)} = 1;
-    }
-    foreach my $Path (cmd_find($BuildRoot2,"f","*.java","")) {
-        $SrcDir2{get_dirname($Path)} = 1;
-    }
-    # build classes v.1
-    foreach my $Dir (keys(%SrcDir1))
-    {
-        chdir($Dir);
-        system("$JavacCmd -g *.java");
-        chdir($ORIG_DIR);
-        if($?) {
-            exitStatus("Error", "can't compile classes v.1");
-        }
-    }
-    # create java archive v.1
-    chdir($BuildRoot1);
-    system("$JarCmd -cmf MANIFEST.MF $LibName.jar TestPackage");
-    chdir($ORIG_DIR);
-    
-    # build classes v.2
-    foreach my $Dir (keys(%SrcDir2))
-    {
-        chdir($Dir);
-        system("$JavacCmd -g *.java");
-        chdir($ORIG_DIR);
-        if($?) {
-            exitStatus("Error", "can't compile classes v.2");
-        }
-    }
-    # create java archive v.2
-    chdir($BuildRoot2);
-    system("$JarCmd -cmf MANIFEST.MF $LibName.jar TestPackage");
-    chdir($ORIG_DIR);
-    
-    foreach my $SrcPath (cmd_find($BuildRoot1,"","*\.java","")) {
-        unlink($SrcPath);
-    }
-    foreach my $SrcPath (cmd_find($BuildRoot2,"","*\.java","")) {
-        unlink($SrcPath);
-    }
-    return 1;
-}
-
-sub readLineNum($$)
-{
-    my ($Path, $Num) = @_;
-    return "" if(not $Path or not -f $Path);
-    open (FILE, $Path);
-    foreach (1 ... $Num) {
-        <FILE>;
-    }
-    my $Line = <FILE>;
-    close(FILE);
-    return $Line;
-}
-
-sub readAttributes($$)
-{
-    my ($Path, $Num) = @_;
-    return () if(not $Path or not -f $Path);
-    my %Attributes = ();
-    if(readLineNum($Path, $Num)=~/<!--\s+(.+)\s+-->/)
-    {
-        foreach my $AttrVal (split(/;/, $1))
-        {
-            if($AttrVal=~/(.+):(.+)/)
-            {
-                my ($Name, $Value) = ($1, $2);
-                $Attributes{$Name} = $Value;
-            }
-        }
-    }
-    return \%Attributes;
-}
-
-sub runChecker($$$)
-{
-    my ($LibName, $Path1, $Path2) = @_;
-    writeFile("$LibName/v1.xml", "
-        <version>
-            1.0
-        </version>
-        <archives>
-            ".get_abs_path($Path1)."
-        </archives>");
-    writeFile("$LibName/v2.xml", "
-        <version>
-            2.0
-        </version>
-        <archives>
-            ".get_abs_path($Path2)."
-        </archives>");
-    my $Cmd = "perl $0 -l $LibName $LibName/v1.xml $LibName/v2.xml";
-    if($Quick) {
-        $Cmd .= " -quick";
-    }
-    if(defined $SkipDeprecated) {
-        $Cmd .= " -skip-deprecated";
-    }
-    if(defined $OldStyle) {
-        $Cmd .= " -old-style";
-    }
-    writeFile($TMP_DIR."/skip-annotations.list", "TestPackage.Beta");
-    $Cmd .= " -skip-annotations-list ".$TMP_DIR."/skip-annotations.list";
-    if($Debug)
-    {
-        $Cmd .= " -debug";
-        printMsg("INFO", "running $Cmd");
-    }
-    system($Cmd);
-    my $Report = "compat_reports/$LibName/1.0_to_2.0/compat_report.html";
-    # Binary
-    my $BReport = readAttributes($Report, 0);
-    my $NProblems = $BReport->{"type_problems_high"}+$BReport->{"type_problems_medium"};
-    $NProblems += $BReport->{"method_problems_high"}+$BReport->{"method_problems_medium"};
-    $NProblems += $BReport->{"removed"};
-    # Source
-    my $SReport = readAttributes($Report, 1);
-    $NProblems += $SReport->{"type_problems_high"}+$SReport->{"type_problems_medium"};
-    $NProblems += $SReport->{"method_problems_high"}+$SReport->{"method_problems_medium"};
-    $NProblems += $SReport->{"removed"};
-    if($NProblems>=100) {
-        printMsg("INFO", "test result: SUCCESS ($NProblems breaks found)\n");
-    }
-    else {
-        printMsg("ERROR", "test result: FAILED ($NProblems breaks found)\n");
-    }
-}
-
-sub writeFile($$)
-{
-    my ($Path, $Content) = @_;
-    return if(not $Path);
-    if(my $Dir = get_dirname($Path)) {
-        mkpath($Dir);
-    }
-    open (FILE, ">".$Path) || die ("can't open file \'$Path\': $!\n");
-    print FILE $Content;
-    close(FILE);
-}
-
-sub readFile($)
-{
-    my $Path = $_[0];
-    return "" if(not $Path or not -f $Path);
-    open (FILE, $Path);
-    my $Content = join("", <FILE>);
-    close(FILE);
-    $Content=~s/\r//g;
-    return $Content;
-}
-
-sub appendFile($$)
-{
-    my ($Path, $Content) = @_;
-    return if(not $Path);
-    if(my $Dir = get_dirname($Path)) {
-        mkpath($Dir);
-    }
-    open(FILE, ">>".$Path) || die ("can't open file \'$Path\': $!\n");
-    print FILE $Content;
-    close(FILE);
-}
-
-sub get_Report_Header($)
+sub getReportHeader($)
 {
     my $Level = $_[0];
     my $Report_Header = "<h1>";
@@ -3372,32 +2205,32 @@ sub get_Report_Header($)
     else {
         $Report_Header .= "API compatibility";
     }
-    $Report_Header .= " report for the <span style='color:Blue;'>$TargetTitle</span> library between <span style='color:Red;'>".$Descriptor{1}{"Version"}."</span> and <span style='color:Red;'>".$Descriptor{2}{"Version"}."</span> versions";
-    if($ClientPath) {
-        $Report_Header .= " (concerning portability of the client: <span style='color:Blue;'>".get_filename($ClientPath)."</span>)";
+    $Report_Header .= " report for the <span style='color:Blue;'>".$In::Opt{"TargetTitle"}."</span> library between <span style='color:Red;'>".$In::Desc{1}{"Version"}."</span> and <span style='color:Red;'>".$In::Desc{2}{"Version"}."</span> versions";
+    if($In::Opt{"ClientPath"}) {
+        $Report_Header .= " (concerning portability of the client: <span style='color:Blue;'>".getFilename($In::Opt{"ClientPath"})."</span>)";
     }
     $Report_Header .= "</h1>\n";
     return $Report_Header;
 }
 
-sub get_SourceInfo()
+sub getSourceInfo()
 {
     my $CheckedArchives = "<a name='Checked_Archives'></a>";
-    if($OldStyle) {
-        $CheckedArchives .= "<h2>Java ARchives (".keys(%{$LibArchives{1}}).")</h2>";
+    if($In::Opt{"OldStyle"}) {
+        $CheckedArchives .= "<h2>Java Archives (".keys(%{$LibArchives{1}}).")</h2>";
     }
     else {
-        $CheckedArchives .= "<h2>Java ARchives <span class='gray'>&nbsp;".keys(%{$LibArchives{1}})."&nbsp;</span></h2>";
+        $CheckedArchives .= "<h2>Java Archives <span class='gray'>&nbsp;".keys(%{$LibArchives{1}})."&nbsp;</span></h2>";
     }
     $CheckedArchives .= "\n<hr/><div class='jar_list'>\n";
     foreach my $ArchivePath (sort {lc($a) cmp lc($b)}  keys(%{$LibArchives{1}})) {
-        $CheckedArchives .= get_filename($ArchivePath)."<br/>\n";
+        $CheckedArchives .= getFilename($ArchivePath)."<br/>\n";
     }
     $CheckedArchives .= "</div><br/>$TOP_REF<br/>\n";
     return $CheckedArchives;
 }
 
-sub get_TypeProblems_Count($$)
+sub getTypeProblemsCount($$)
 {
     my ($TargetSeverity, $Level) = @_;
     my $Type_Problems_Count = 0;
@@ -3407,9 +2240,10 @@ sub get_TypeProblems_Count($$)
         my %Kinds_Target = ();
         foreach my $Kind (sort keys(%{$TypeChanges{$Level}{$Type_Name}}))
         {
-            if($TypeProblems_Kind{$Level}{$Kind} ne $TargetSeverity) {
+            if($CompatRules{$Level}{$Kind}{"Severity"} ne $TargetSeverity) {
                 next;
             }
+            
             foreach my $Location (sort keys(%{$TypeChanges{$Level}{$Type_Name}{$Kind}}))
             {
                 my $Target = $TypeChanges{$Level}{$Type_Name}{$Kind}{$Location}{"Target"};
@@ -3427,16 +2261,16 @@ sub get_TypeProblems_Count($$)
     return $Type_Problems_Count;
 }
 
-sub show_number($)
+sub showNum($)
 {
     if($_[0])
     {
-        my $Num = cut_off_number($_[0], 2, 0);
+        my $Num = cutNum($_[0], 2, 0);
         if($Num eq "0")
         {
             foreach my $P (3 .. 7)
             {
-                $Num = cut_off_number($_[0], $P, 1);
+                $Num = cutNum($_[0], $P, 1);
                 if($Num ne "0") {
                     last;
                 }
@@ -3450,7 +2284,7 @@ sub show_number($)
     return $_[0];
 }
 
-sub cut_off_number($$$)
+sub cutNum($$$)
 {
     my ($num, $digs_to_cut, $z) = @_;
     if($num!~/\./)
@@ -3476,24 +2310,25 @@ sub cut_off_number($$$)
     return $num;
 }
 
-sub get_Summary($)
+sub getSummary($)
 {
     my $Level = $_[0];
     my ($Added, $Removed, $M_Problems_High, $M_Problems_Medium, $M_Problems_Low,
-    $T_Problems_High, $T_Problems_Medium, $T_Problems_Low, $M_Other, $T_Other) = (0,0,0,0,0,0,0,0,0,0);
+    $T_Problems_High, $T_Problems_Medium, $T_Problems_Low, $M_Other, $T_Other) = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
     
     %{$RESULT{$Level}} = (
         "Problems"=>0,
         "Warnings"=>0,
-        "Affected"=>0 );
+        "Affected"=>0);
     
     foreach my $Method (sort keys(%CompatProblems))
     {
         foreach my $Kind (sort keys(%{$CompatProblems{$Method}}))
         {
-            if(my $Severity = $MethodProblems_Kind{$Level}{$Kind})
+            if($CompatRules{$Level}{$Kind}{"Kind"} eq "Methods")
             {
-                foreach my $Location (sort keys(%{$CompatProblems{$Method}{$Kind}}))
+                my $Severity = $CompatRules{$Level}{$Kind}{"Severity"};
+                foreach my $Loc (sort keys(%{$CompatProblems{$Method}{$Kind}}))
                 {
                     if($Kind eq "Added_Method")
                     {
@@ -3530,7 +2365,7 @@ sub get_Summary($)
                         elsif($Severity eq "Low") {
                             $M_Problems_Low+=1;
                         }
-                        if(($Severity ne "Low" or $StrictCompat)
+                        if(($Severity ne "Low" or $In::Opt{"StrictCompat"})
                         and $Severity ne "Safe") {
                             $TotalAffected{$Level}{$Method} = $Severity;
                         }
@@ -3544,37 +2379,49 @@ sub get_Summary($)
     
     foreach my $Method (sort keys(%CompatProblems))
     {
-        my @Kinds = sort keys(%{$CompatProblems{$Method}});
-        foreach my $Kind (@Kinds)
+        foreach my $Kind (sort keys(%{$CompatProblems{$Method}}))
         {
-            if(my $Severity = $TypeProblems_Kind{$Level}{$Kind})
+            if($CompatRules{$Level}{$Kind}{"Kind"} eq "Types")
             {
-                my @Locs = sort {length($a)<=>length($b)} sort keys(%{$CompatProblems{$Method}{$Kind}});
-                foreach my $Location (@Locs)
+                my $Severity = $CompatRules{$Level}{$Kind}{"Severity"};
+                if(($Severity ne "Low" or $In::Opt{"StrictCompat"})
+                and $Severity ne "Safe")
                 {
-                    my $Type_Name = $CompatProblems{$Method}{$Kind}{$Location}{"Type_Name"};
-                    my $Target = $CompatProblems{$Method}{$Kind}{$Location}{"Target"};
-                    
-                    if(defined $MethodTypeIndex{$Method}{$Type_Name}{$Kind}{$Target})
-                    { # one location for one type and target
-                        next;
-                    }
-                    $MethodTypeIndex{$Method}{$Type_Name}{$Kind}{$Target} = 1;
-                    $TypeChanges{$Level}{$Type_Name}{$Kind}{$Location} = $CompatProblems{$Method}{$Kind}{$Location};
-                    
-                    if(($Severity ne "Low" or $StrictCompat)
-                    and $Severity ne "Safe")
+                    if(my $Sev = $TotalAffected{$Level}{$Method})
                     {
-                        if(my $Sev = $TotalAffected{$Level}{$Method})
-                        {
-                            if($Severity_Val{$Severity}>$Severity_Val{$Sev}) {
-                                $TotalAffected{$Level}{$Method} = $Severity;
-                            }
-                        }
-                        else {
+                        if($Severity_Val{$Severity}>$Severity_Val{$Sev}) {
                             $TotalAffected{$Level}{$Method} = $Severity;
                         }
                     }
+                    else {
+                        $TotalAffected{$Level}{$Method} = $Severity;
+                    }
+                }
+                
+                my $MK = $CompatProblems{$Method}{$Kind};
+                my (@Locs1, @Locs2) = ();
+                foreach my $Loc (sort {length($a)<=>length($b)} sort keys(%{$MK}))
+                {
+                    if(index($Loc, "retval")==0 or index($Loc, "this")==0) {
+                        push(@Locs2, $Loc);
+                    }
+                    else {
+                        push(@Locs1, $Loc);
+                    }
+                }
+                foreach my $Loc (@Locs1, @Locs2)
+                {
+                    my $Type = $MK->{$Loc}{"Type_Name"};
+                    my $Target = $MK->{$Loc}{"Target"};
+                    
+                    if(defined $MethodTypeIndex{$Method}{$Type}{$Kind}{$Target})
+                    { # one location for one type and target
+                        next;
+                    }
+                    $MethodTypeIndex{$Method}{$Type}{$Kind}{$Target} = 1;
+                    
+                    $TypeChanges{$Level}{$Type}{$Kind}{$Loc} = $MK->{$Loc};
+                    $TypeProblemsIndex{$Level}{$Type}{$Kind}{$Loc}{$Method} = 1;
                 }
             }
         }
@@ -3582,11 +2429,10 @@ sub get_Summary($)
     
     %MethodTypeIndex = (); # clear memory
     
-    
-    $T_Problems_High = get_TypeProblems_Count("High", $Level);
-    $T_Problems_Medium = get_TypeProblems_Count("Medium", $Level);
-    $T_Problems_Low = get_TypeProblems_Count("Low", $Level);
-    $T_Other = get_TypeProblems_Count("Safe", $Level);
+    $T_Problems_High = getTypeProblemsCount("High", $Level);
+    $T_Problems_Medium = getTypeProblemsCount("Medium", $Level);
+    $T_Problems_Low = getTypeProblemsCount("Low", $Level);
+    $T_Other = getTypeProblemsCount("Safe", $Level);
     
     my $SCount = keys(%CheckedMethods)-$Added;
     if($SCount)
@@ -3604,7 +2450,7 @@ sub get_Summary($)
     else {
         $RESULT{$Level}{"Affected"} = 0;
     }
-    $RESULT{$Level}{"Affected"} = show_number($RESULT{$Level}{"Affected"});
+    $RESULT{$Level}{"Affected"} = showNum($RESULT{$Level}{"Affected"});
     if($RESULT{$Level}{"Affected"}>=100) {
         $RESULT{$Level}{"Affected"} = 100;
     }
@@ -3614,11 +2460,11 @@ sub get_Summary($)
     # test info
     $TestInfo .= "<h2>Test Info</h2><hr/>\n";
     $TestInfo .= "<table class='summary'>\n";
-    $TestInfo .= "<tr><th>Library Name</th><td>$TargetTitle</td></tr>\n";
-    $TestInfo .= "<tr><th>Version #1</th><td>".$Descriptor{1}{"Version"}."</td></tr>\n";
-    $TestInfo .= "<tr><th>Version #2</th><td>".$Descriptor{2}{"Version"}."</td></tr>\n";
+    $TestInfo .= "<tr><th>Library Name</th><td>".$In::Opt{"TargetTitle"}."</td></tr>\n";
+    $TestInfo .= "<tr><th>Version #1</th><td>".$In::Desc{1}{"Version"}."</td></tr>\n";
+    $TestInfo .= "<tr><th>Version #2</th><td>".$In::Desc{2}{"Version"}."</td></tr>\n";
     
-    if($JoinReport)
+    if($In::Opt{"JoinReport"})
     {
         if($Level eq "Binary") {
             $TestInfo .= "<tr><th>Subject</th><td width='150px'>Binary Compatibility</td></tr>\n"; # Run-time
@@ -3630,8 +2476,8 @@ sub get_Summary($)
     $TestInfo .= "</table>\n";
     
     # test results
-    $TestResults .= "<h2>Test Results</h2><hr/>";
-    $TestResults .= "<table class='summary'>";
+    $TestResults .= "<h2>Test Results</h2><hr/>\n";
+    $TestResults .= "<table class='summary'>\n";
     
     my $Checked_Archives_Link = "0";
     $Checked_Archives_Link = "<a href='#Checked_Archives' style='color:Blue;'>".keys(%{$LibArchives{1}})."</a>" if(keys(%{$LibArchives{1}})>0);
@@ -3640,7 +2486,7 @@ sub get_Summary($)
     $TestResults .= "<tr><th>Total Methods / Classes</th><td>".keys(%CheckedMethods)." / ".keys(%CheckedTypes)."</td></tr>\n";
     
     $RESULT{$Level}{"Problems"} += $Removed+$M_Problems_High+$T_Problems_High+$T_Problems_Medium+$M_Problems_Medium;
-    if($StrictCompat) {
+    if($In::Opt{"StrictCompat"}) {
         $RESULT{$Level}{"Problems"}+=$T_Problems_Low+$M_Problems_Low;
     }
     else {
@@ -3651,7 +2497,7 @@ sub get_Summary($)
     $META_DATA .= $RESULT{$Level}{"Problems"}?"verdict:incompatible;":"verdict:compatible;";
     $TestResults .= "<tr><th>Compatibility</th>\n";
     
-    my $BC_Rate = show_number(100 - $RESULT{$Level}{"Affected"});
+    my $BC_Rate = showNum(100 - $RESULT{$Level}{"Affected"});
     
     if($RESULT{$Level}{"Problems"})
     {
@@ -3676,19 +2522,19 @@ sub get_Summary($)
     $META_DATA .= "affected:".$RESULT{$Level}{"Affected"}.";";# in percents
     
     # Problem Summary
-    $Problem_Summary .= "<h2>Problem Summary</h2><hr/>";
-    $Problem_Summary .= "<table class='summary'>";
-    $Problem_Summary .= "<tr><th></th><th style='text-align:center;'>Severity</th><th style='text-align:center;'>Count</th></tr>";
+    $Problem_Summary .= "<h2>Problem Summary</h2><hr/>\n";
+    $Problem_Summary .= "<table class='summary'>\n";
+    $Problem_Summary .= "<tr><th></th><th style='text-align:center;'>Severity</th><th style='text-align:center;'>Count</th></tr>\n";
     
     my $Added_Link = "0";
     if($Added>0)
     {
-        if($ShortMode) {
+        if($In::Opt{"ShortMode"}) {
             $Added_Link = $Added;
         }
         else
         {
-            if($JoinReport) {
+            if($In::Opt{"JoinReport"}) {
                 $Added_Link = "<a href='#".$Level."_Added' style='color:Blue;'>$Added</a>";
             }
             else {
@@ -3697,17 +2543,17 @@ sub get_Summary($)
         }
     }
     $META_DATA .= "added:$Added;";
-    $Problem_Summary .= "<tr><th>Added Methods</th><td>-</td><td".getStyle("M", "Added", $Added).">$Added_Link</td></tr>";
+    $Problem_Summary .= "<tr><th>Added Methods</th><td>-</td><td".getStyle("M", "Added", $Added).">$Added_Link</td></tr>\n";
     
     my $Removed_Link = "0";
     if($Removed>0)
     {
-        if($ShortMode) {
+        if($In::Opt{"ShortMode"}) {
             $Removed_Link = $Removed;
         }
         else
         {
-            if($JoinReport) {
+            if($In::Opt{"JoinReport"}) {
                 $Removed_Link = "<a href='#".$Level."_Removed' style='color:Blue;'>$Removed</a>"
             }
             else {
@@ -3717,50 +2563,50 @@ sub get_Summary($)
     }
     $META_DATA .= "removed:$Removed;";
     $Problem_Summary .= "<tr><th>Removed Methods</th>";
-    $Problem_Summary .= "<td>High</td><td".getStyle("M", "Removed", $Removed).">$Removed_Link</td></tr>";
+    $Problem_Summary .= "<td>High</td><td".getStyle("M", "Removed", $Removed).">$Removed_Link</td></tr>\n";
     
     my $TH_Link = "0";
-    $TH_Link = "<a href='#".get_Anchor("Type", $Level, "High")."' style='color:Blue;'>$T_Problems_High</a>" if($T_Problems_High>0);
+    $TH_Link = "<a href='#".getAnchor("Type", $Level, "High")."' style='color:Blue;'>$T_Problems_High</a>" if($T_Problems_High>0);
     $META_DATA .= "type_problems_high:$T_Problems_High;";
     $Problem_Summary .= "<tr><th rowspan='3'>Problems with<br/>Data Types</th>";
-    $Problem_Summary .= "<td>High</td><td".getStyle("T", "High", $T_Problems_High).">$TH_Link</td></tr>";
+    $Problem_Summary .= "<td>High</td><td".getStyle("T", "High", $T_Problems_High).">$TH_Link</td></tr>\n";
     
     my $TM_Link = "0";
-    $TM_Link = "<a href='#".get_Anchor("Type", $Level, "Medium")."' style='color:Blue;'>$T_Problems_Medium</a>" if($T_Problems_Medium>0);
+    $TM_Link = "<a href='#".getAnchor("Type", $Level, "Medium")."' style='color:Blue;'>$T_Problems_Medium</a>" if($T_Problems_Medium>0);
     $META_DATA .= "type_problems_medium:$T_Problems_Medium;";
-    $Problem_Summary .= "<tr><td>Medium</td><td".getStyle("T", "Medium", $T_Problems_Medium).">$TM_Link</td></tr>";
+    $Problem_Summary .= "<tr><td>Medium</td><td".getStyle("T", "Medium", $T_Problems_Medium).">$TM_Link</td></tr>\n";
     
     my $TL_Link = "0";
-    $TL_Link = "<a href='#".get_Anchor("Type", $Level, "Low")."' style='color:Blue;'>$T_Problems_Low</a>" if($T_Problems_Low>0);
+    $TL_Link = "<a href='#".getAnchor("Type", $Level, "Low")."' style='color:Blue;'>$T_Problems_Low</a>" if($T_Problems_Low>0);
     $META_DATA .= "type_problems_low:$T_Problems_Low;";
-    $Problem_Summary .= "<tr><td>Low</td><td".getStyle("T", "Low", $T_Problems_Low).">$TL_Link</td></tr>";
+    $Problem_Summary .= "<tr><td>Low</td><td".getStyle("T", "Low", $T_Problems_Low).">$TL_Link</td></tr>\n";
     
     my $MH_Link = "0";
-    $MH_Link = "<a href='#".get_Anchor("Method", $Level, "High")."' style='color:Blue;'>$M_Problems_High</a>" if($M_Problems_High>0);
+    $MH_Link = "<a href='#".getAnchor("Method", $Level, "High")."' style='color:Blue;'>$M_Problems_High</a>" if($M_Problems_High>0);
     $META_DATA .= "method_problems_high:$M_Problems_High;";
     $Problem_Summary .= "<tr><th rowspan='3'>Problems with<br/>Methods</th>";
-    $Problem_Summary .= "<td>High</td><td".getStyle("M", "High", $M_Problems_High).">$MH_Link</td></tr>";
+    $Problem_Summary .= "<td>High</td><td".getStyle("M", "High", $M_Problems_High).">$MH_Link</td></tr>\n";
     
     my $MM_Link = "0";
-    $MM_Link = "<a href='#".get_Anchor("Method", $Level, "Medium")."' style='color:Blue;'>$M_Problems_Medium</a>" if($M_Problems_Medium>0);
+    $MM_Link = "<a href='#".getAnchor("Method", $Level, "Medium")."' style='color:Blue;'>$M_Problems_Medium</a>" if($M_Problems_Medium>0);
     $META_DATA .= "method_problems_medium:$M_Problems_Medium;";
-    $Problem_Summary .= "<tr><td>Medium</td><td".getStyle("M", "Medium", $M_Problems_Medium).">$MM_Link</td></tr>";
+    $Problem_Summary .= "<tr><td>Medium</td><td".getStyle("M", "Medium", $M_Problems_Medium).">$MM_Link</td></tr>\n";
     
     my $ML_Link = "0";
-    $ML_Link = "<a href='#".get_Anchor("Method", $Level, "Low")."' style='color:Blue;'>$M_Problems_Low</a>" if($M_Problems_Low>0);
+    $ML_Link = "<a href='#".getAnchor("Method", $Level, "Low")."' style='color:Blue;'>$M_Problems_Low</a>" if($M_Problems_Low>0);
     $META_DATA .= "method_problems_low:$M_Problems_Low;";
-    $Problem_Summary .= "<tr><td>Low</td><td".getStyle("M", "Low", $M_Problems_Low).">$ML_Link</td></tr>";
+    $Problem_Summary .= "<tr><td>Low</td><td".getStyle("M", "Low", $M_Problems_Low).">$ML_Link</td></tr>\n";
     
     # Safe Changes
     if($T_Other)
     {
-        my $TS_Link = "<a href='#".get_Anchor("Type", $Level, "Safe")."' style='color:Blue;'>$T_Other</a>";
+        my $TS_Link = "<a href='#".getAnchor("Type", $Level, "Safe")."' style='color:Blue;'>$T_Other</a>";
         $Problem_Summary .= "<tr><th>Other Changes<br/>in Data Types</th><td>-</td><td".getStyle("T", "Safe", $T_Other).">$TS_Link</td></tr>\n";
     }
     
     if($M_Other)
     {
-        my $MS_Link = "<a href='#".get_Anchor("Method", $Level, "Safe")."' style='color:Blue;'>$M_Other</a>";
+        my $MS_Link = "<a href='#".getAnchor("Method", $Level, "Safe")."' style='color:Blue;'>$M_Other</a>";
         $Problem_Summary .= "<tr><th>Other Changes<br/>in Methods</th><td>-</td><td".getStyle("M", "Safe", $M_Other).">$MS_Link</td></tr>\n";
     }
     $META_DATA .= "checked_methods:".keys(%CheckedMethods).";";
@@ -3789,10 +2635,10 @@ sub getStyle($$$)
     return "";
 }
 
-sub get_Anchor($$$)
+sub getAnchor($$$)
 {
     my ($Kind, $Level, $Severity) = @_;
-    if($JoinReport)
+    if($In::Opt{"JoinReport"})
     {
         if($Severity eq "Safe") {
             return "Other_".$Level."_Changes_In_".$Kind."s";
@@ -3812,9 +2658,9 @@ sub get_Anchor($$$)
     }
 }
 
-sub get_Report_Added($)
+sub getReportAdded($)
 {
-    if($ShortMode) {
+    if($In::Opt{"ShortMode"}) {
         return "";
     }
     
@@ -3827,7 +2673,7 @@ sub get_Report_Added($)
             if($Kind eq "Added_Method")
             {
                 my $ArchiveName = $MethodInfo{2}{$Method}{"Archive"};
-                my $ClassName = get_ShortName($MethodInfo{2}{$Method}{"Class"}, 2);
+                my $ClassName = getShortName($MethodInfo{2}{$Method}{"Class"}, 2);
                 if($Level eq "Source")
                 {
                     if($ChangedReturnFromVoid{$Method}) {
@@ -3853,13 +2699,13 @@ sub get_Report_Added($)
             
             foreach my $NameSpace (sort keys(%NameSpace_Method))
             {
-                $ADDED_METHODS .= "<span class='jar'>$ArchiveName</span>, <span class='cname'>".htmlSpecChars($ShowClass).".class</span><br/>\n";
+                $ADDED_METHODS .= "<span class='jar'>$ArchiveName</span>, <span class='cname'>".specChars($ShowClass).".class</span><br/>\n";
                 
                 if($NameSpace) {
                     $ADDED_METHODS .= "<span class='pkg_t'>package</span> <span class='pkg'>$NameSpace</span><br/>\n";
                 }
                 
-                if($Compact) {
+                if($In::Opt{"Compact"}) {
                     $ADDED_METHODS .= "<div class='symbols'>";
                 }
                 
@@ -3870,26 +2716,26 @@ sub get_Report_Added($)
                     
                     my $Signature = undef;
                     
-                    if($Compact) {
-                        $Signature = get_Signature($Method, 2, "Full|HTML|Simple");
+                    if($In::Opt{"Compact"}) {
+                        $Signature = getSignature($Method, 2, "Full|HTML|Simple");
                     }
                     else {
-                        $Signature = highLight_Signature_Italic_Color($Method, 2);
+                        $Signature = highLight_ItalicColor($Method, 2);
                     }
                     
                     if($NameSpace) {
                         $Signature=~s/(\W|\A)\Q$NameSpace\E\.(\w)/$1$2/g;
                     }
                     
-                    if($Compact) {
+                    if($In::Opt{"Compact"}) {
                         $ADDED_METHODS .= "&nbsp;".$Signature."<br/>\n";
                     }
                     else {
-                        $ADDED_METHODS .= insertIDs($ContentSpanStart.$Signature.$ContentSpanEnd."<br/>\n".$ContentDivStart."<span class='mngl'>[mangled: <b>".htmlSpecChars($Method)."</b>]</span><br/><br/>".$ContentDivEnd."\n");
+                        $ADDED_METHODS .= insertIDs($ContentSpanStart.$Signature.$ContentSpanEnd."<br/>\n".$ContentDivStart."<span class='mngl'>".specChars($Method)."</span><br/><br/>".$ContentDivEnd."\n");
                     }
                 }
                 
-                if($Compact) {
+                if($In::Opt{"Compact"}) {
                     $ADDED_METHODS .= "</div>";
                 }
                 
@@ -3901,10 +2747,10 @@ sub get_Report_Added($)
     if($ADDED_METHODS)
     {
         my $Anchor = "<a name='Added'></a>";
-        if($JoinReport) {
+        if($In::Opt{"JoinReport"}) {
             $Anchor = "<a name='".$Level."_Added'></a>";
         }
-        if($OldStyle) {
+        if($In::Opt{"OldStyle"}) {
             $ADDED_METHODS = "<h2>Added Methods ($Added_Number)</h2><hr/>\n".$ADDED_METHODS;
         }
         else {
@@ -3915,9 +2761,9 @@ sub get_Report_Added($)
     return $ADDED_METHODS;
 }
 
-sub get_Report_Removed($)
+sub getReportRemoved($)
 {
-    if($ShortMode) {
+    if($In::Opt{"ShortMode"}) {
         return "";
     }
     
@@ -3936,7 +2782,7 @@ sub get_Report_Removed($)
                     }
                 }
                 my $ArchiveName = $MethodInfo{1}{$Method}{"Archive"};
-                my $ClassName = get_ShortName($MethodInfo{1}{$Method}{"Class"}, 1);
+                my $ClassName = getShortName($MethodInfo{1}{$Method}{"Class"}, 1);
                 $MethodRemovedFromArchiveClass{$ArchiveName}{$ClassName}{$Method} = 1;
             }
         }
@@ -3957,13 +2803,13 @@ sub get_Report_Removed($)
             
             foreach my $NameSpace (sort keys(%NameSpace_Method))
             {
-                $REMOVED_METHODS .= "<span class='jar'>$ArchiveName</span>, <span class='cname'>".htmlSpecChars($ShowClass).".class</span><br/>\n";
+                $REMOVED_METHODS .= "<span class='jar'>$ArchiveName</span>, <span class='cname'>".specChars($ShowClass).".class</span><br/>\n";
                 
                 if($NameSpace) {
                     $REMOVED_METHODS .= "<span class='pkg_t'>package</span> <span class='pkg'>$NameSpace</span><br/>\n";
                 }
                 
-                if($Compact) {
+                if($In::Opt{"Compact"}) {
                     $REMOVED_METHODS .= "<div class='symbols'>";
                 }
                 
@@ -3974,26 +2820,26 @@ sub get_Report_Removed($)
                     
                     my $Signature = undef;
                     
-                    if($Compact) {
-                        $Signature = get_Signature($Method, 1, "Full|HTML|Simple");
+                    if($In::Opt{"Compact"}) {
+                        $Signature = getSignature($Method, 1, "Full|HTML|Simple");
                     }
                     else {
-                        $Signature = highLight_Signature_Italic_Color($Method, 1);
+                        $Signature = highLight_ItalicColor($Method, 1);
                     }
                     
                     if($NameSpace) {
                         $Signature=~s/(\W|\A)\Q$NameSpace\E\.(\w)/$1$2/g;
                     }
                     
-                    if($Compact) {
+                    if($In::Opt{"Compact"}) {
                         $REMOVED_METHODS .= "&nbsp;".$Signature."<br/>\n";
                     }
                     else {
-                        $REMOVED_METHODS .= insertIDs($ContentSpanStart.$Signature.$ContentSpanEnd."<br/>\n".$ContentDivStart."<span class='mngl'>[mangled: <b>".htmlSpecChars($Method)."</b>]</span><br/><br/>".$ContentDivEnd."\n");
+                        $REMOVED_METHODS .= insertIDs($ContentSpanStart.$Signature.$ContentSpanEnd."<br/>\n".$ContentDivStart."<span class='mngl'>".specChars($Method)."</span><br/><br/>".$ContentDivEnd."\n");
                     }
                 }
                 
-                if($Compact) {
+                if($In::Opt{"Compact"}) {
                     $REMOVED_METHODS .= "</div>";
                 }
                 
@@ -4004,10 +2850,10 @@ sub get_Report_Removed($)
     if($REMOVED_METHODS)
     {
         my $Anchor = "<a name='Removed'></a><a name='Withdrawn'></a>";
-        if($JoinReport) {
+        if($In::Opt{"JoinReport"}) {
             $Anchor = "<a name='".$Level."_Removed'></a><a name='".$Level."_Withdrawn'></a>";
         }
-        if($OldStyle) {
+        if($In::Opt{"OldStyle"}) {
             $REMOVED_METHODS = "<h2>Removed Methods ($Removed_Number)</h2><hr/>\n".$REMOVED_METHODS;
         }
         else {
@@ -4018,7 +2864,152 @@ sub get_Report_Removed($)
     return $REMOVED_METHODS;
 }
 
-sub get_Report_MethodProblems($$)
+sub readRules($)
+{
+    my $Kind = $_[0];
+    if(not -f $RULES_PATH{$Kind}) {
+        exitStatus("Module_Error", "can't access \'".$RULES_PATH{$Kind}."\'");
+    }
+    my $Content = readFile($RULES_PATH{$Kind});
+    while(my $Rule = parseTag(\$Content, "rule"))
+    {
+        my $RId = parseTag(\$Rule, "id");
+        my @Properties = ("Severity", "Change", "Effect", "Overcome", "Kind");
+        foreach my $Prop (@Properties) {
+            if(my $Value = parseTag(\$Rule, lc($Prop)))
+            {
+                $Value=~s/\n[ ]*//;
+                $CompatRules{$Kind}{$RId}{$Prop} = $Value;
+            }
+        }
+        if($CompatRules{$Kind}{$RId}{"Kind"}=~/\A(Methods|Parameters)\Z/) {
+            $CompatRules{$Kind}{$RId}{"Kind"} = "Methods";
+        }
+        else { # Types, Fields
+            $CompatRules{$Kind}{$RId}{"Kind"} = "Types";
+        }
+    }
+}
+
+sub addMarkup($)
+{
+    my $Content = $_[0];
+    
+    # auto-markup
+    $Content=~s/\n[ ]*//; # spaces
+    $Content=~s!([2-9]\))!<br/>$1!g; # 1), 2), ...
+    if($Content=~/\ANOTE:/)
+    { # notes
+        $Content=~s!(NOTE):!<b>$1</b>:!g;
+    }
+    else {
+        $Content=~s!(NOTE):!<br/><br/><b>$1</b>:!g;
+    }
+    
+    my @Keywords = (
+        "static",
+        "abstract",
+        "default",
+        "final",
+        "synchronized"
+    );
+    
+    my $MKeys = join("|", @Keywords);
+    foreach (@Keywords) {
+        $MKeys .= "|non-".$_;
+    }
+    
+    $Content=~s!(became\s*)($MKeys)([^\w-]|\Z)!$1<b>$2</b>$3!ig; # intrinsic types, modifiers
+    
+    # Markdown
+    $Content=~s!\*\*([\w\-\@]+)\*\*!<b>$1</b>!ig;
+    $Content=~s!\*([\w\-]+)\*!<i>$1</i>!ig;
+    
+    return $Content;
+}
+
+sub applyMacroses($$$$$)
+{
+    my ($Level, $Kind, $Content, $Problem, $AddAttr) = @_;
+    
+    $Content = addMarkup($Content);
+    
+    # macros
+    foreach my $Attr (sort {$b cmp $a} (keys(%{$Problem}), keys(%{$AddAttr})))
+    {
+        my $Macro = "\@".lc($Attr);
+        my $Value = undef;
+        
+        if(defined $Problem->{$Attr}) {
+            $Value = $Problem->{$Attr};
+        }
+        else {
+            $Value = $AddAttr->{$Attr};
+        }
+        
+        if(not defined $Value
+        or $Value eq "") {
+            next;
+        }
+        
+        if(index($Content, $Macro)==-1) {
+            next;
+        }
+        
+        if($Attr eq "Param_Pos") {
+            $Value = showPos($Value);
+        }
+        
+        if($Attr eq "Invoked") {
+            $Value = blackName(specChars($Value));
+        }
+        elsif($Value=~/\s/) {
+            $Value = "<span class='value'>".specChars($Value)."</span>";
+        }
+        else
+        {
+            my $Fmt = "Class|HTML|Desc";
+            
+            if($Attr ne "Invoked_By")
+            {
+                if($Attr eq "Method_Short"
+                or $Kind!~/Overridden|Moved_Up/) {
+                    $Fmt = "HTML|Desc";
+                }
+            }
+            
+            if(defined $MethodInfo{1}{$Value}
+            and defined $MethodInfo{1}{$Value}{"ShortName"}) {
+                $Value = blackName(getSignature($Value, 1, $Fmt));
+            }
+            elsif(defined $MethodInfo{2}{$Value}
+            and defined $MethodInfo{2}{$Value}{"ShortName"}) {
+                $Value = blackName(getSignature($Value, 2, $Fmt));
+            }
+            else
+            {
+                $Value = specChars($Value);
+                if($Attr ne "Type_Type") {
+                    $Value = "<b>".$Value."</b>";
+                }
+            }
+        }
+        $Content=~s/\Q$Macro\E/$Value/g;
+    }
+    
+    if($Content=~/(\A|[^\@\w])(\@\w+)/)
+    {
+        if(not $IncompleteRules{$Level}{$Kind})
+        { # only one warning
+            printMsg("WARNING", "incomplete $2 in the rule \"$Kind\" (\"$Level\")");
+            $IncompleteRules{$Level}{$Kind} = 1;
+        }
+    }
+    
+    return $Content;
+}
+
+sub getReportMethodProblems($$)
 {
     my ($TargetSeverity, $Level) = @_;
     my $METHOD_PROBLEMS = "";
@@ -4027,23 +3018,26 @@ sub get_Report_MethodProblems($$)
     foreach my $Method (sort keys(%CompatProblems))
     {
         my $ArchiveName = $MethodInfo{1}{$Method}{"Archive"};
-        my $ClassName = get_ShortName($MethodInfo{1}{$Method}{"Class"}, 1);
+        my $ClassName = getShortName($MethodInfo{1}{$Method}{"Class"}, 1);
         
         foreach my $Kind (sort keys(%{$CompatProblems{$Method}}))
         {
-            if($Kind eq "Added_Method"
-            or $Kind eq "Removed_Method") {
-                next;
-            }
-            
-            if(my $Severity = $MethodProblems_Kind{$Level}{$Kind})
+            if($CompatRules{$Level}{$Kind}{"Kind"} eq "Methods")
             {
-                if($Severity ne $TargetSeverity) {
+                if($Kind eq "Added_Method"
+                or $Kind eq "Removed_Method") {
                     next;
                 }
                 
-                $MethodChanges{$Method}{$Kind} = $CompatProblems{$Method}{$Kind};
-                $ReportMap{$ArchiveName}{$ClassName}{$Method} = 1;
+                if(my $Severity = $CompatRules{$Level}{$Kind}{"Severity"})
+                {
+                    if($Severity ne $TargetSeverity) {
+                        next;
+                    }
+                    
+                    $MethodChanges{$Method}{$Kind} = $CompatProblems{$Method}{$Kind};
+                    $ReportMap{$ArchiveName}{$ClassName}{$Method} = 1;
+                }
             }
         }
     }
@@ -4062,7 +3056,7 @@ sub get_Report_MethodProblems($$)
             
             foreach my $NameSpace (sort keys(%NameSpace_Method))
             {
-                $METHOD_PROBLEMS .= "<span class='jar'>$ArchiveName</span>, <span class='cname'>".htmlSpecChars($ShowClass).".class</span><br/>\n";
+                $METHOD_PROBLEMS .= "<span class='jar'>$ArchiveName</span>, <span class='cname'>".specChars($ShowClass).".class</span><br/>\n";
                 if($NameSpace) {
                     $METHOD_PROBLEMS .= "<span class='pkg_t'>package</span> <span class='pkg'>$NameSpace</span><br/>\n";
                 }
@@ -4070,160 +3064,23 @@ sub get_Report_MethodProblems($$)
                 my @SortedMethods = sort {lc($MethodInfo{1}{$a}{"Signature"}) cmp lc($MethodInfo{1}{$b}{"Signature"})} keys(%{$NameSpace_Method{$NameSpace}});
                 foreach my $Method (@SortedMethods)
                 {
-                    my $ShortSignature = get_Signature($Method, 1, "Short");
-                    my $ClassName_Full = get_TypeName($MethodInfo{1}{$Method}{"Class"}, 1);
+                    my %AddAttr = ();
+                    
+                    $AddAttr{"Method_Short"} = $Method;
+                    $AddAttr{"Class"} = getTypeName($MethodInfo{1}{$Method}{"Class"}, 1);
+                    
                     my $METHOD_REPORT = "";
                     my $ProblemNum = 1;
                     foreach my $Kind (sort keys(%{$MethodChanges{$Method}}))
                     {
-                        foreach my $Location (sort keys(%{$MethodChanges{$Method}{$Kind}}))
+                        foreach my $Loc (sort keys(%{$MethodChanges{$Method}{$Kind}}))
                         {
-                            my %Problems = %{$MethodChanges{$Method}{$Kind}{$Location}};
+                            my $ProblemAttr = $MethodChanges{$Method}{$Kind}{$Loc};
                             
-                            my $Target = $Problems{"Target"};
-                            
-                            my ($Change, $Effect) = ("", "");
-                            my $Old_Value = htmlSpecChars($Problems{"Old_Value"});
-                            my $New_Value = htmlSpecChars($Problems{"New_Value"});
-                            
-                            if($Kind eq "Method_Became_Static")
+                            if(my $Change = applyMacroses($Level, $Kind, $CompatRules{$Level}{$Kind}{"Change"}, $ProblemAttr, \%AddAttr))
                             {
-                                $Change = "Method became <b>static</b>.\n";
-                                $Effect = "A client program may be interrupted by <b>NoSuchMethodError</b> exception.";
-                            }
-                            elsif($Kind eq "Method_Became_NonStatic")
-                            {
-                                $Change = "Method became <b>non-static</b>.\n";
-                                if($Level eq "Binary") {
-                                    $Effect = "A client program may be interrupted by <b>NoSuchMethodError</b> exception.";
-                                }
-                                else {
-                                    $Effect = "Recompilation of a client program may be terminated with the message: non-static method ".htmlSpecChars($ShortSignature)." cannot be referenced from a static context.";
-                                }
-                            }
-                            elsif($Kind eq "Changed_Method_Return_From_Void")
-                            {
-                                $Change = "Return value type has been changed from <b>void</b> to <b>".htmlSpecChars($New_Value)."</b>.\n";
-                                $Effect = "This method has been removed because the return type is part of the method signature.";
-                            }
-                            elsif($Kind eq "Static_Method_Became_Final")
-                            {# Source Only
-                                $Change = "Method became <b>final</b>.\n";
-                                $Effect = "Recompilation of a client program may be terminated with the message: ".htmlSpecChars($ShortSignature)." in client class C cannot override ".htmlSpecChars($ShortSignature)." in ".htmlSpecChars($ClassName_Full)."; overridden method is final.";
-                            }
-                            elsif($Kind eq "NonStatic_Method_Became_Final")
-                            {
-                                $Change = "Method became <b>final</b>.\n";
-                                if($Level eq "Binary") {
-                                    $Effect = "A client program trying to reimplement this method may be interrupted by <b>VerifyError</b> exception.";
-                                }
-                                else {
-                                    $Effect = "Recompilation of a client program may be terminated with the message: ".htmlSpecChars($ShortSignature)." in client class C cannot override ".htmlSpecChars($ShortSignature)." in ".htmlSpecChars($ClassName_Full)."; overridden method is final.";
-                                }
-                            }
-                            elsif($Kind eq "Method_Became_Abstract")
-                            {
-                                $Change = "Method became <b>abstract</b>.\n";
-                                if($Level eq "Binary") {
-                                    $Effect = "A client program trying to create an instance of the method's class may be interrupted by <b>InstantiationError</b> exception.";
-                                }
-                                else {
-                                    $Effect = "Recompilation of a client program may be terminated with the message: A client class C is not abstract and does not override abstract method ".htmlSpecChars($ShortSignature)." in ".htmlSpecChars($ClassName_Full).".";
-                                }
-                            }
-                            elsif($Kind eq "Method_Became_NonAbstract")
-                            {
-                                $Change = "Method became <b>non-abstract</b>.\n";
-                                if($Level eq "Binary") {
-                                    $Effect = "A client program may change behavior.";
-                                }
-                                else {
-                                    $Effect = "No effect.";
-                                }
-                            }
-                            elsif($Kind eq "Method_Became_Default")
-                            {
-                                $Change = "Method became <b>default</b>.\n";
-                                if($Level eq "Binary") {
-                                    $Effect = "No effect.";
-                                }
-                                else {
-                                    $Effect = "No effect.";
-                                }
-                            }
-                            elsif($Kind eq "Method_Became_NonDefault")
-                            {
-                                $Change = "Method became <b>non-default</b>.\n";
-                                if($Level eq "Binary") {
-                                    $Effect = "A client program trying to create an instance of a class may be interrupted by <b>AbstractMethodError</b> exception.";
-                                }
-                                else {
-                                    $Effect = "Recompilation of a client program may be terminated with the message: A client class C is not abstract and does not override abstract method ".htmlSpecChars($ShortSignature)." in ".htmlSpecChars($ClassName_Full).".";
-                                }
-                            }
-                            elsif($Kind eq "Method_Became_Synchronized")
-                            {
-                                $Change = "Method became <b>synchronized</b>.\n";
-                                $Effect = "A multi-threaded client program may change behavior.";
-                            }
-                            elsif($Kind eq "Method_Became_NonSynchronized")
-                            {
-                                $Change = "Method became <b>non-synchronized</b>.\n";
-                                $Effect = "A multi-threaded client program may change behavior.";
-                            }
-                            elsif($Kind eq "Changed_Method_Access")
-                            {
-                                $Change = "Access level has been changed from <span class='nowrap'><b>".htmlSpecChars($Old_Value)."</b></span> to <span class='nowrap'><b>".htmlSpecChars($New_Value)."</b></span>.";
-                                if($Level eq "Binary") {
-                                    $Effect = "A client program may be interrupted by <b>IllegalAccessError</b> exception.";
-                                }
-                                else {
-                                    $Effect = "Recompilation of a client program may be terminated with the message: ".htmlSpecChars($ShortSignature)." has $New_Value access in ".htmlSpecChars($ClassName_Full).".";
-                                }
-                            }
-                            elsif($Kind eq "Abstract_Method_Added_Checked_Exception")
-                            {# Source Only
-                                $Change = "Added <b>".htmlSpecChars($Target)."</b> exception thrown.\n";
-                                $Effect = "Recompilation of a client program may be terminated with the message: unreported exception ".htmlSpecChars($Target)." must be caught or declared to be thrown.";
-                            }
-                            elsif($Kind eq "NonAbstract_Method_Added_Checked_Exception")
-                            {
-                                $Change = "Added <b>".htmlSpecChars($Target)."</b> exception thrown.\n";
-                                if($Level eq "Binary") {
-                                    $Effect = "A client program may be interrupted by added exception.";
-                                }
-                                else {
-                                    $Effect = "Recompilation of a client program may be terminated with the message: unreported exception ".htmlSpecChars($Target)." must be caught or declared to be thrown.";
-                                }
-                            }
-                            elsif($Kind eq "Abstract_Method_Removed_Checked_Exception")
-                            {# Source Only
-                                $Change = "Removed <b>".htmlSpecChars($Target)."</b> exception thrown.\n";
-                                $Effect = "Recompilation of a client program may be terminated with the message: cannot override ".htmlSpecChars($ShortSignature)." in ".htmlSpecChars($ClassName_Full)."; overridden method does not throw ".htmlSpecChars($Target).".";
-                            }
-                            elsif($Kind eq "NonAbstract_Method_Removed_Checked_Exception")
-                            {
-                                $Change = "Removed <b>".htmlSpecChars($Target)."</b> exception thrown.\n";
-                                if($Level eq "Binary") {
-                                    $Effect = "A client program may change behavior because the removed exception will not be thrown any more and client will not catch and handle it.";
-                                }
-                                else {
-                                    $Effect = "Recompilation of a client program may be terminated with the message: cannot override ".htmlSpecChars($ShortSignature)." in ".htmlSpecChars($ClassName_Full)."; overridden method does not throw ".htmlSpecChars($Target).".";
-                                }
-                            }
-                            elsif($Kind eq "Added_Unchecked_Exception")
-                            {# Binary Only
-                                $Change = "Added <b>".htmlSpecChars($Target)."</b> exception thrown.\n";
-                                $Effect = "A client program may be interrupted by added exception.";
-                            }
-                            elsif($Kind eq "Removed_Unchecked_Exception")
-                            {# Binary Only
-                                $Change = "Removed <b>".htmlSpecChars($Target)."</b> exception thrown.\n";
-                                $Effect = "A client program may change behavior because the removed exception will not be thrown any more and client will not catch and handle it.";
-                            }
-                            if($Change)
-                            {
-                                $METHOD_REPORT .= "<tr><th>$ProblemNum</th><td>".$Change."</td><td>".$Effect."</td></tr>\n";
+                                my $Effect = applyMacroses($Level, $Kind, $CompatRules{$Level}{$Kind}{"Effect"}, $ProblemAttr, \%AddAttr);
+                                $METHOD_REPORT .= "<tr>\n<th>$ProblemNum</th>\n<td>".$Change."</td>\n<td>".$Effect."</td>\n</tr>\n";
                                 $ProblemNum += 1;
                                 $ProblemsNum += 1;
                             }
@@ -4232,15 +3089,15 @@ sub get_Report_MethodProblems($$)
                     $ProblemNum -= 1;
                     if($METHOD_REPORT)
                     {
-                        my $ShowMethod = highLight_Signature_Italic_Color($Method, 1);
+                        my $ShowMethod = highLight_ItalicColor($Method, 1);
                         if($NameSpace)
                         {
-                            $METHOD_REPORT = cut_Namespace($METHOD_REPORT, $NameSpace);
-                            $ShowMethod = cut_Namespace($ShowMethod, $NameSpace);
+                            $METHOD_REPORT = cutNs($METHOD_REPORT, $NameSpace);
+                            $ShowMethod = cutNs($ShowMethod, $NameSpace);
                         }
                         
                         $METHOD_PROBLEMS .= $ContentSpanStart."<span class='ext'>[+]</span> ".$ShowMethod;
-                        if($OldStyle) {
+                        if($In::Opt{"OldStyle"}) {
                             $METHOD_PROBLEMS .= " ($ProblemNum)";
                         }
                         else {
@@ -4249,8 +3106,8 @@ sub get_Report_MethodProblems($$)
                         $METHOD_PROBLEMS .= $ContentSpanEnd."<br/>\n";
                         $METHOD_PROBLEMS .= $ContentDivStart;
                         
-                        if(not $Compact) {
-                            $METHOD_PROBLEMS .= "<span class='mngl'>&#160;&#160;&#160;[mangled: <b>".htmlSpecChars($Method)."</b>]</span><br/>\n";
+                        if(not $In::Opt{"Compact"}) {
+                            $METHOD_PROBLEMS .= "<span class='mngl pleft'>".specChars($Method)."</span><br/>\n";
                         }
                         
                         $METHOD_PROBLEMS .= "<table class='ptable'><tr><th width='2%'></th><th width='47%'>Change</th><th>Effect</th></tr>$METHOD_REPORT</table><br/>$ContentDivEnd\n";
@@ -4271,22 +3128,36 @@ sub get_Report_MethodProblems($$)
         { # Safe Changes
             $Title = "Other Changes in Methods";
         }
-        if($OldStyle) {
+        if($In::Opt{"OldStyle"}) {
             $METHOD_PROBLEMS = "<h2>$Title ($ProblemsNum)</h2><hr/>\n".$METHOD_PROBLEMS;
         }
         else {
             $METHOD_PROBLEMS = "<h2>$Title <span".getStyle("M", $TargetSeverity, $ProblemsNum).">&nbsp;$ProblemsNum&nbsp;</span></h2><hr/>\n".$METHOD_PROBLEMS;
         }
-        $METHOD_PROBLEMS = "<a name='".get_Anchor("Method", $Level, $TargetSeverity)."'></a>\n".$METHOD_PROBLEMS;
+        $METHOD_PROBLEMS = "<a name='".getAnchor("Method", $Level, $TargetSeverity)."'></a>\n".$METHOD_PROBLEMS;
         $METHOD_PROBLEMS .= $TOP_REF."<br/>\n";
     }
     return $METHOD_PROBLEMS;
 }
 
-sub get_Report_TypeProblems($$)
+sub showType($$$)
+{
+    my ($Name, $Html, $LVer) = @_;
+    my $TType = $TypeInfo{$LVer}{$TName_Tid{$LVer}{$Name}}{"Type"};
+    if($Html) {
+        $Name = "<span class='ttype'>".$TType."</span> ".specChars($Name);
+    }
+    else {
+        $Name = $TType." ".$Name;
+    }
+    return $Name;
+}
+
+sub getReportTypeProblems($$)
 {
     my ($TargetSeverity, $Level) = @_;
     my $TYPE_PROBLEMS = "";
+    
     my %ReportMap = ();
     my %TypeChanges_Sev = ();
     
@@ -4296,16 +3167,14 @@ sub get_Report_TypeProblems($$)
         
         foreach my $Kind (keys(%{$TypeChanges{$Level}{$TypeName}}))
         {
-            my $Severity = $TypeProblems_Kind{$Level}{$Kind};
-            
-            if($Severity ne $TargetSeverity) {
+            if($CompatRules{$Level}{$Kind}{"Severity"} ne $TargetSeverity) {
                 next;
             }
             
-            foreach my $Location (keys(%{$TypeChanges{$Level}{$TypeName}{$Kind}}))
+            foreach my $Loc (keys(%{$TypeChanges{$Level}{$TypeName}{$Kind}}))
             {
                 $ReportMap{$ArchiveName}{$TypeName} = 1;
-                $TypeChanges_Sev{$TypeName}{$Kind}{$Location} = $TypeChanges{$Level}{$TypeName}{$Kind}{$Location};
+                $TypeChanges_Sev{$TypeName}{$Kind}{$Loc} = $TypeChanges{$Level}{$TypeName}{$Kind}{$Loc};
             }
         }
     }
@@ -4313,9 +3182,8 @@ sub get_Report_TypeProblems($$)
     my $ProblemsNum = 0;
     foreach my $ArchiveName (sort {lc($a) cmp lc($b)} keys(%ReportMap))
     {
-        my ($HEADER_REPORT, %NameSpace_Type) = ();
-        foreach my $TypeName (keys(%{$ReportMap{$ArchiveName}}))
-        {
+        my %NameSpace_Type = ();
+        foreach my $TypeName (keys(%{$ReportMap{$ArchiveName}})) {
             $NameSpace_Type{$TypeInfo{1}{$TName_Tid{1}{$TypeName}}{"Package"}}{$TypeName} = 1;
         }
         foreach my $NameSpace (sort keys(%NameSpace_Type))
@@ -4325,13 +3193,15 @@ sub get_Report_TypeProblems($$)
                 $TYPE_PROBLEMS .= "<span class='pkg_t'>package</span> <span class='pkg'>".$NameSpace."</span><br/>\n";
             }
             
-            my @SortedTypes = sort {lc($a) cmp lc($b)} keys(%{$NameSpace_Type{$NameSpace}});
+            my @SortedTypes = sort {lc(showType($a, 0, 1)) cmp lc(showType($b, 0, 1))} keys(%{$NameSpace_Type{$NameSpace}});
             foreach my $TypeName (@SortedTypes)
             {
                 my $TypeId = $TName_Tid{1}{$TypeName};
+                
                 my $ProblemNum = 1;
                 my $TYPE_REPORT = "";
                 my (%Kinds_Locations, %Kinds_Target) = ();
+                
                 foreach my $Kind (sort keys(%{$TypeChanges_Sev{$TypeName}}))
                 {
                     foreach my $Location (sort keys(%{$TypeChanges_Sev{$TypeName}{$Kind}}))
@@ -4344,477 +3214,31 @@ sub get_Report_TypeProblems($$)
                         }
                         $Kinds_Target{$Kind}{$Target} = 1;
                         
-                        my ($Change, $Effect) = ("", "");
-                        my %Problems = %{$TypeChanges_Sev{$TypeName}{$Kind}{$Location}};
+                        my %AddAttr = ();
                         
-                        my $Old_Value = $Problems{"Old_Value"};
-                        my $New_Value = $Problems{"New_Value"};
-                        my $Field_Type = $Problems{"Field_Type"};
-                        my $Field_Value = $Problems{"Field_Value"};
-                        my $Type_Type = $Problems{"Type_Type"};
+                        if($Kind=~/Method/)
+                        {
+                            if(defined $MethodInfo{1}{$Target} and $MethodInfo{1}{$Target}{"Name"})
+                            {
+                                $AddAttr{"Method_Short"} = $Target;
+                                $AddAttr{"Class"} = getTypeName($MethodInfo{1}{$Target}{"Class"}, 1);
+                            }
+                            elsif(defined $MethodInfo{2}{$Target} and $MethodInfo{2}{$Target}{"Name"})
+                            {
+                                $AddAttr{"Method_Short"} = $Target;
+                                $AddAttr{"Class"} = getTypeName($MethodInfo{2}{$Target}{"Class"}, 2);
+                            }
+                        }
                         
-                        if($Kind eq "NonAbstract_Class_Added_Abstract_Method")
+                        my $ProblemAttr = $TypeChanges_Sev{$TypeName}{$Kind}{$Location};
+                        
+                        if(my $Change = applyMacroses($Level, $Kind, $CompatRules{$Level}{$Kind}{"Change"}, $ProblemAttr, \%AddAttr))
                         {
-                            $Change = "Abstract method ".black_Name($Target, 2)." has been added to this $Type_Type.";
-                            if($Level eq "Binary") {
-                                $Effect = "This class became <b>abstract</b> and a client program may be interrupted by <b>InstantiationError</b> exception.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <b>".htmlSpecChars(get_Signature($Target, 2, "Short"))."</b> in <b>".htmlSpecChars(get_TypeName($MethodInfo{2}{$Target}{"Class"}, 2))."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Abstract_Class_Added_Abstract_Method")
-                        {
-                            $Change = "Abstract method ".black_Name($Target, 2)." has been added to this $Type_Type.";
-                            if($Level eq "Binary") {
-                                $Effect = "No effect.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <b>".htmlSpecChars(get_Signature($Target, 2, "Short"))."</b> in <b>".htmlSpecChars(get_TypeName($MethodInfo{2}{$Target}{"Class"}, 2))."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Abstract_Class_Added_Abstract_Method_Invoked_By_Others")
-                        {
-                            $Change = "Abstract method ".black_Name($Target, 2)." has been added to this $Type_Type.";
-                            if($Level eq "Binary") {
-                                $Effect = "A client program may be interrupted by <b>AbstractMethodError</b> exception. Added abstract method is called in 2nd library version by the method ".black_Name($Problems{"InvokedBy"}, 1)." and may not be implemented by old clients.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <b>".htmlSpecChars(get_Signature($Target, 2, "Short"))."</b> in <b>".htmlSpecChars(get_TypeName($MethodInfo{2}{$Target}{"Class"}, 2))."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Class_Removed_Abstract_Method"
-                        or $Kind eq "Interface_Removed_Abstract_Method")
-                        {
-                            $Change = "Abstract method ".black_Name($Target, 1)." has been removed from this $Type_Type.";
-                            if($Level eq "Binary") {
-                                $Effect = "A client program may be interrupted by <b>NoSuchMethodError</b> exception.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: cannot find method <b>".htmlSpecChars(get_Signature($Target, 1, "Short"))."</b> in $Type_Type <b>".htmlSpecChars(get_TypeName($MethodInfo{1}{$Target}{"Class"}, 1))."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Interface_Added_Abstract_Method")
-                        {
-                            $Change = "Abstract method ".black_Name($Target, 2)." has been added to this $Type_Type.";
-                            if($Level eq "Binary") {
-                                $Effect = "No effect.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <b>".htmlSpecChars(get_Signature($Target, 2, "Short"))."</b> in <b>".htmlSpecChars(get_TypeName($MethodInfo{2}{$Target}{"Class"}, 2))."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Interface_Added_Abstract_Method_Invoked_By_Others")
-                        {
-                            $Change = "Abstract method ".black_Name($Target, 2)." has been added to this $Type_Type.";
-                            if($Level eq "Binary") {
-                                $Effect = "A client program may be interrupted by <b>AbstractMethodError</b> exception. Added abstract method is called in 2nd library version by the method ".black_Name($Problems{"InvokedBy"}, 1)." and may not be implemented by old clients.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <b>".htmlSpecChars(get_Signature($Target, 2, "Short"))."</b> in <b>".htmlSpecChars(get_TypeName($MethodInfo{2}{$Target}{"Class"}, 2))."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Class_Method_Became_Abstract")
-                        {
-                            $Change = "Method ".black_Name($Target, 1)." became <b>abstract</b>.";
-                            if($Level eq "Binary") {
-                                $Effect = "A client program may be interrupted by <b>InstantiationError</b> exception.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <b>".htmlSpecChars(get_Signature($Target, 1, "Short"))."</b> in <b>".htmlSpecChars(get_TypeName($MethodInfo{1}{$Target}{"Class"}, 1))."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Class_Method_Became_NonAbstract")
-                        {
-                            $Change = "Abstract method ".black_Name($Target, 1)." became <b>non-abstract</b>.";
-                            if($Level eq "Binary") {
-                                $Effect = "Some methods in this class may change behavior.";
-                            }
-                            else {
-                                $Effect = "No effect.";
-                            }
-                        }
-                        elsif($Kind eq "Interface_Method_Became_NonDefault")
-                        {
-                            $Change = "Method ".black_Name($Target, 1)." became <b>non-default</b>.";
-                            if($Level eq "Binary") {
-                                $Effect = "A client program may be interrupted by <b>AbstractMethodError</b> exception.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method <b>".htmlSpecChars(get_Signature($Target, 1, "Short"))."</b> in <b>".htmlSpecChars(get_TypeName($MethodInfo{1}{$Target}{"Class"}, 1))."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Interface_Method_Became_Default")
-                        {
-                            $Change = "Method ".black_Name($Target, 1)." became <b>default</b>.";
-                            if($Level eq "Binary") {
-                                $Effect = "No effect.";
-                            }
-                            else {
-                                $Effect = "No effect.";
-                            }
-                        }
-                        elsif($Kind eq "Class_Overridden_Method")
-                        {
-                            $Change = "Method ".black_Name($Old_Value, 2)." has been overridden by ".black_Name($New_Value, 2);
-                            $Effect = "Method ".black_Name($New_Value, 2)." will be called instead of ".black_Name($Old_Value, 2)." in a client program.";
-                        }
-                        elsif($Kind eq "Class_Method_Moved_Up_Hierarchy")
-                        {
-                            $Change = "Method ".black_Name($Old_Value, 1)." has been moved up type hierarchy to ".black_Name($New_Value, 2);
-                            $Effect = "Method ".black_Name($New_Value, 2)." will be called instead of ".black_Name($Old_Value, 1)." in a client program.";
-                        }
-                        elsif($Kind eq "Abstract_Class_Added_Super_Interface")
-                        {
-                            $Change = "Added super-interface <b>".htmlSpecChars($Target)."</b>.";
-                            if($Level eq "Binary")
-                            {
-                                $Effect = "No effect.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method in <b>".htmlSpecChars($Target)."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Abstract_Class_Added_Super_Interface_Invoked_By_Others")
-                        {
-                            $Change = "Added super-interface <b>".htmlSpecChars($Target)."</b>.";
-                            if($Level eq "Binary") {
-                                $Effect = "If abstract methods from an added super-interface must be implemented by client then it may be interrupted by <b>AbstractMethodError</b> exception.<br/><br/>Abstract method ".black_Name_S(htmlSpecChars($Problems{"Invoked"}))." from the added super-interface is called by the method ".black_Name($Problems{"InvokedBy"}, 2)." in 2nd library version and may not be implemented by old clients.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method in <b>".htmlSpecChars($Target)."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Abstract_Class_Added_Super_Interface_With_Implemented_Methods")
-                        {
-                            $Change = "Added super-interface <b>".htmlSpecChars($Target)."</b>.";
-                            $Effect = "No effect.";
-                        }
-                        elsif($Kind eq "Interface_Added_Super_Interface")
-                        {
-                            $Change = "Added super-interface <b>".htmlSpecChars($Target)."</b>.";
-                            if($Level eq "Binary") {
-                                $Effect = "No effect.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method in <b>".htmlSpecChars($Target)."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Interface_Added_Super_Interface_Used_By_Others")
-                        {
-                            $Change = "Added super-interface <b>".htmlSpecChars($Target)."</b>.";
-                            if($Level eq "Binary")
-                            {
-                                $Effect = "If abstract methods from an added super-interface must be implemented by client then it may be interrupted by <b>AbstractMethodError</b> exception.<br/><br/>Abstract method ".black_Name_S(htmlSpecChars($Problems{"Invoked"}))." from the added super-interface is called by the method ".black_Name($Problems{"InvokedBy"}, 2)." in 2nd library version and may not be implemented by old clients.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method in <b>".htmlSpecChars($Target)."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Interface_Added_Super_Interface_With_Implemented_Methods")
-                        {
-                            $Change = "Added super-interface <b>".htmlSpecChars($Target)."</b>.";
-                            if($Level eq "Binary") {
-                                $Effect = "No effect.";
-                            }
-                            else {
-                                $Effect = "No effect.";
-                            }
-                        }
-                        elsif($Kind eq "Interface_Added_Super_Constant_Interface")
-                        {
-                            $Change = "Added super-interface <b>".htmlSpecChars($Target)."</b> containing constants only.";
-                            if($Level eq "Binary") {
-                                $Effect = "A static field from a super-interface of a client class may hide a field (with the same name) inherited from a super-class and cause <b>IncompatibleClassChangeError</b> exception.";
-                            }
-                            else {
-                                $Effect = "A static field from a super-interface of a client class may hide a field (with the same name) inherited from a super-class. Recompilation of a client class may be terminated with the message: reference to variable is ambiguous.";
-                            }
-                        }
-                        elsif($Kind eq "Interface_Removed_Super_Interface"
-                        or $Kind eq "Class_Removed_Super_Interface")
-                        {
-                            $Change = "Removed super-interface <b>".htmlSpecChars($Target)."</b>.";
-                            if($Level eq "Binary") {
-                                $Effect = "A client program may be interrupted by <b>NoSuchMethodError</b> exception.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: cannot find method in $Type_Type <b>".htmlSpecChars($TypeName)."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Interface_Removed_Super_Constant_Interface")
-                        {
-                            $Change = "Removed super-interface <b>".htmlSpecChars($Target)."</b> containing constants only.";
-                            if($Level eq "Binary") {
-                                $Effect = "No effect.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: cannot find variable in $Type_Type <b>".htmlSpecChars($TypeName)."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Added_Super_Class")
-                        {
-                            $Change = "Added super-class <b>".htmlSpecChars($Target)."</b>.";
-                            if($Level eq "Binary") {
-                                $Effect = "A static field from a super-interface of a client class may hide a field (with the same name) inherited from new super-class and cause <b>IncompatibleClassChangeError</b> exception.";
-                            }
-                            else {
-                                $Effect = "A static field from a super-interface of a client class may hide a field (with the same name) inherited from new super-class. Recompilation of a client class may be terminated with the message: reference to variable is ambiguous.";
-                            }
-                        }
-                        elsif($Kind eq "Abstract_Class_Added_Super_Abstract_Class")
-                        {
-                            $Change = "Added abstract super-class <b>".htmlSpecChars($Target)."</b>.";
-                            if($Level eq "Binary") {
-                                $Effect = "No effect.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method in <b>".htmlSpecChars($Target)."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Abstract_Class_Added_Super_Abstract_Class_Invoked_By_Others")
-                        {
-                            $Change = "Added abstract super-class <b>".htmlSpecChars($Target)."</b>.";
-                            if($Level eq "Binary") {
-                                $Effect = "If abstract methods from an added super-class must be implemented by client then it may be interrupted by <b>AbstractMethodError</b> exception.<br/><br/>Abstract method ".black_Name_S(htmlSpecChars($Problems{"Invoked"}))." from the added abstract super-class is called by the method ".black_Name($Problems{"InvokedBy"}, 2)." in 2nd library version and may not be implemented by old clients.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method in <b>".htmlSpecChars($Target)."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Removed_Super_Class")
-                        {
-                            $Change = "Removed super-class <b>".htmlSpecChars($Target)."</b>.";
-                            if($Level eq "Binary") {
-                                $Effect = "Access of a client program to the fields or methods of the old super-class may be interrupted by <b>NoSuchFieldError</b> or <b>NoSuchMethodError</b> exceptions.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: cannot find variable (or method) in <b>".htmlSpecChars($TypeName)."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Changed_Super_Class")
-                        {
-                            $Change = "Superclass has been changed from <b>".htmlSpecChars($Old_Value)."</b> to <b>".htmlSpecChars($New_Value)."</b>.";
-                            if($Level eq "Binary") {
-                                $Effect = "1) Access of a client program to the fields or methods of the old super-class may be interrupted by <b>NoSuchFieldError</b> or <b>NoSuchMethodError</b> exceptions.<br/>2) A static field from a super-interface of a client class may hide a field (with the same name) inherited from new super-class and cause <b>IncompatibleClassChangeError</b> exception.";
-                            }
-                            else {
-                                $Effect = "1) Recompilation of a client program may be terminated with the message: cannot find variable (or method) in <b>".htmlSpecChars($TypeName)."</b>.<br/>2) A static field from a super-interface of a client class may hide a field (with the same name) inherited from new super-class. Recompilation of a client class may be terminated with the message: reference to variable is ambiguous.";
-                            }
-                        }
-                        elsif($Kind eq "Class_Added_Field")
-                        {
-                            $Change = "Field <b>$Target</b> has been added to this class.";
-                            if($Level eq "Binary")
-                            {
-                                $Effect = "No effect.";
-                                # $Effect .= "<br/><b>NOTE</b>: A static field from a super-interface of a client class may hide an added field (with the same name) inherited from the super-class of a client class and cause <b>IncompatibleClassChangeError</b> exception.";
-                            }
-                            else
-                            {
-                                $Effect = "No effect.";
-                                # $Effect .= "<br/><b>NOTE</b>: A static field from a super-interface of a client class may hide an added field (with the same name) inherited from the super-class of a client class. Recompilation of a client class may be terminated with the message: reference to <b>$Target</b> is ambiguous.";
-                            }
-                        }
-                        elsif($Kind eq "Interface_Added_Field")
-                        {
-                            $Change = "Field <b>$Target</b> has been added to this interface.";
-                            if($Level eq "Binary") {
-                                $Effect = "No effect.<br/><b>NOTE</b>: An added static field from a super-interface of a client class may hide a field (with the same name) inherited from the super-class of a client class and cause <b>IncompatibleClassChangeError</b> exception.";
-                            }
-                            else {
-                                $Effect = "No effect.<br/><b>NOTE</b>: An added static field from a super-interface of a client class may hide a field (with the same name) inherited from the super-class of a client class. Recompilation of a client class may be terminated with the message: reference to <b>$Target</b> is ambiguous.";
-                            }
-                        }
-                        elsif($Kind eq "Renamed_Field")
-                        {
-                            $Change = "Field <b>$Target</b> has been renamed to <b>".htmlSpecChars($New_Value)."</b>.";
-                            if($Level eq "Binary") {
-                                $Effect = "A client program may be interrupted by <b>NoSuchFieldError</b> exception.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: cannot find variable <b>$Target</b> in <b>".htmlSpecChars($TypeName)."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Renamed_Constant_Field")
-                        {
-                            if($Level eq "Binary") {
-                                $Change = "Field <b>$Target</b> (".htmlSpecChars($Field_Type).") with the compile-time constant value <b>$Field_Value</b> has been renamed to <b>".htmlSpecChars($New_Value)."</b>.";
-                                $Effect = "A client program may change behavior.";
-                            }
-                            else {
-                                $Change = "Field <b>$Target</b> has been renamed to <b>".htmlSpecChars($New_Value)."</b>.";
-                                $Effect = "Recompilation of a client program may be terminated with the message: cannot find variable <b>$Target</b> in <b>".htmlSpecChars($TypeName)."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Removed_NonConstant_Field")
-                        {
-                            $Change = "Field <b>$Target</b> of type ".htmlSpecChars($Field_Type)." has been removed from this $Type_Type.";
-                            if($Level eq "Binary") {
-                                $Effect = "A client program may be interrupted by <b>NoSuchFieldError</b> exception.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: cannot find variable <b>$Target</b> in <b>".htmlSpecChars($TypeName)."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Removed_Constant_Field")
-                        {
-                            $Change = "Field <b>$Target</b> (".htmlSpecChars($Field_Type).") with the compile-time constant value <b>$Field_Value</b> has been removed from this $Type_Type.";
-                            if($Level eq "Binary") {
-                                $Effect = "A client program may change behavior.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: cannot find variable <b>$Target</b> in <b>".htmlSpecChars($TypeName)."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Changed_Field_Type")
-                        {
-                            $Change = "Type of field <b>$Target</b> has been changed from <span class='nowrap'><b>".htmlSpecChars($Old_Value)."</b></span> to <span class='nowrap'><b>".htmlSpecChars($New_Value)."</b></span>.";
-                            if($Level eq "Binary") {
-                                $Effect = "A client program may be interrupted by <b>NoSuchFieldError</b> exception.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: incompatible types, found: <b>".htmlSpecChars($Old_Value)."</b>, required: <b>".htmlSpecChars($New_Value)."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Changed_Field_Access")
-                        {
-                            $Change = "Access level of field <b>$Target</b> has been changed from <span class='nowrap'><b>$Old_Value</b></span> to <span class='nowrap'><b>$New_Value</b></span>.";
-                            if($Level eq "Binary") {
-                                $Effect = "A client program may be interrupted by <b>IllegalAccessError</b> exception.";
-                            }
-                            else
-                            {
-                                if($New_Value eq "package-private") {
-                                    $Effect = "Recompilation of a client program may be terminated with the message: <b>$Target</b> is not public in <b>".htmlSpecChars($TypeName)."</b>; cannot be accessed from outside package.";
-                                }
-                                else {
-                                    $Effect = "Recompilation of a client program may be terminated with the message: <b>$Target</b> has <b>$New_Value</b> access in <b>".htmlSpecChars($TypeName)."</b>.";
-                                }
-                            }
-                        }
-                        elsif($Kind eq "Changed_Final_Field_Value")
-                        { # Binary Only
-                            $Change = "Value of final field <b>$Target</b> (<b>$Field_Type</b>) has been changed from <span class='nowrap'><b>".htmlSpecChars($Old_Value)."</b></span> to <span class='nowrap'><b>".htmlSpecChars($New_Value)."</b></span>.";
-                            $Effect = "Old value of the field will be inlined to the client code at compile-time and will be used instead of a new one.";
-                        }
-                        elsif($Kind eq "Changed_Final_Version_Field_Value")
-                        { # Binary Only
-                            $Change = "Value of final field <b>$Target</b> (<b>$Field_Type</b>) has been changed from <span class='nowrap'><b>".htmlSpecChars($Old_Value)."</b></span> to <span class='nowrap'><b>".htmlSpecChars($New_Value)."</b></span>.";
-                            $Effect = "Old value of the field will be inlined to the client code at compile-time and will be used instead of a new one.";
-                        }
-                        elsif($Kind eq "Field_Became_Final")
-                        {
-                            $Change = "Field <b>$Target</b> became <b>final</b>.";
-                            if($Level eq "Binary") {
-                                $Effect = "A client program may be interrupted by <b>IllegalAccessError</b> exception when attempt to assign new values to the field.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: cannot assign a value to final variable $Target.";
-                            }
-                        }
-                        elsif($Kind eq "Field_Became_NonFinal")
-                        { # Binary Only
-                            $Change = "Field <b>$Target</b> became <b>non-final</b>.";
-                            $Effect = "Old value of the field will be inlined to the client code at compile-time and will be used instead of a new one.";
-                        }
-                        elsif($Kind eq "NonConstant_Field_Became_Static")
-                        { # Binary Only
-                            $Change = "Non-final field <b>$Target</b> became <b>static</b>.";
-                            $Effect = "A client program may be interrupted by <b>IncompatibleClassChangeError</b> exception.";
-                        }
-                        elsif($Kind eq "NonConstant_Field_Became_NonStatic")
-                        {
-                            if($Level eq "Binary") {
-                                $Change = "Non-constant field <b>$Target</b> became <b>non-static</b>.";
-                                $Effect = "A client program may be interrupted by <b>IncompatibleClassChangeError</b> exception.";
-                            }
-                            else {
-                                $Change = "Field <b>$Target</b> became <b>non-static</b>.";
-                                $Effect = "Recompilation of a client program may be terminated with the message: non-static variable <b>$Target</b> cannot be referenced from a static context.";
-                            }
-                        }
-                        elsif($Kind eq "Constant_Field_Became_NonStatic")
-                        { # Source Only
-                            $Change = "Field <b>$Target</b> became <b>non-static</b>.";
-                            $Effect = "Recompilation of a client program may be terminated with the message: non-static variable <b>$Target</b> cannot be referenced from a static context.";
-                        }
-                        elsif($Kind eq "Class_Became_Interface")
-                        {
-                            $Change = "This <b>class</b> became <b>interface</b>.";
-                            if($Level eq "Binary") {
-                                $Effect = "A client program may be interrupted by <b>IncompatibleClassChangeError</b> or <b>InstantiationError</b> exception dependent on the usage of this class.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: <b>".htmlSpecChars($TypeName)."</b> is abstract; cannot be instantiated.";
-                            }
-                        }
-                        elsif($Kind eq "Interface_Became_Class")
-                        {
-                            $Change = "This <b>interface</b> became <b>class</b>.";
-                            if($Level eq "Binary") {
-                                $Effect = "A client program may be interrupted by <b>IncompatibleClassChangeError</b> exception.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: interface expected.";
-                            }
-                        }
-                        elsif($Kind eq "Class_Became_Final")
-                        {
-                            $Change = "This class became <b>final</b>.";
-                            if($Level eq "Binary") {
-                                $Effect = "A client program may be interrupted by <b>VerifyError</b> exception.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: cannot inherit from final <b>".htmlSpecChars($TypeName)."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Class_Became_Abstract")
-                        {
-                            $Change = "This class became <b>abstract</b>.";
-                            if($Level eq "Binary") {
-                                $Effect = "A client program may be interrupted by <b>InstantiationError</b> exception.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: <b>".htmlSpecChars($TypeName)."</b> is abstract; cannot be instantiated.";
-                            }
-                        }
-                        elsif($Kind eq "Removed_Class")
-                        {
-                            $Change = "This class has been removed.";
-                            if($Level eq "Binary") {
-                                $Effect = "A client program may be interrupted by <b>NoClassDefFoundError</b> exception.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: cannot find class <b>".htmlSpecChars($TypeName)."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Removed_Interface")
-                        {
-                            $Change = "This interface has been removed.";
-                            if($Level eq "Binary") {
-                                $Effect = "A client program may be interrupted by <b>NoClassDefFoundError</b> exception.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the message: cannot find class <b>".htmlSpecChars($TypeName)."</b>.";
-                            }
-                        }
-                        elsif($Kind eq "Removed_Annotation")
-                        {
-                            $Change = "This annotation type has been removed.";
-                            if($Level eq "Binary") {
-                                $Effect = "No effect.";
-                            }
-                            else {
-                                $Effect = "Recompilation of a client program may be terminated with the error message: cannot find symbol <b>\@".htmlSpecChars($TypeName)."</b>.";
-                            }
-                        }
-                        if($Change)
-                        {
-                            $TYPE_REPORT .= "<tr><th>$ProblemNum</th><td>".$Change."</td><td>".$Effect."</td></tr>\n";
+                            my $Effect = applyMacroses($Level, $Kind, $CompatRules{$Level}{$Kind}{"Effect"}, $ProblemAttr, \%AddAttr);
+                            
+                            $TYPE_REPORT .= "<tr>\n<th>$ProblemNum</th>\n<td>".$Change."</td>\n<td>".$Effect."</td>\n</tr>\n";
                             $ProblemNum += 1;
                             $ProblemsNum += 1;
-                            $Kinds_Locations{$Kind}{$Location} = 1;
                         }
                     }
                 }
@@ -4826,16 +3250,16 @@ sub get_Report_TypeProblems($$)
                         $Affected = getAffectedMethods($Level, $TypeName, \%Kinds_Locations);
                     }
                     
-                    my $ShowType = $TypeName;
+                    my $ShowType = showType($TypeName, 1, 1);
                     if($NameSpace)
                     {
-                        $TYPE_REPORT = cut_Namespace($TYPE_REPORT, $NameSpace);
-                        $ShowType = cut_Namespace($ShowType, $NameSpace);
-                        $Affected = cut_Namespace($Affected, $NameSpace);
+                        $TYPE_REPORT = cutNs($TYPE_REPORT, $NameSpace);
+                        $ShowType = cutNs($ShowType, $NameSpace);
+                        $Affected = cutNs($Affected, $NameSpace);
                     }
                     
-                    $TYPE_PROBLEMS .= $ContentSpanStart."<span class='ext'>[+]</span> ".htmlSpecChars($ShowType);
-                    if($OldStyle) {
+                    $TYPE_PROBLEMS .= $ContentSpanStart."<span class='ext'>[+]</span> ".$ShowType;
+                    if($In::Opt{"OldStyle"}) {
                         $TYPE_PROBLEMS .= " ($ProblemNum)";
                     }
                     else {
@@ -4860,19 +3284,19 @@ sub get_Report_TypeProblems($$)
         { # Safe Changes
             $Title = "Other Changes in Data Types";
         }
-        if($OldStyle) {
+        if($In::Opt{"OldStyle"}) {
             $TYPE_PROBLEMS = "<h2>$Title ($ProblemsNum)</h2><hr/>\n".$TYPE_PROBLEMS;
         }
         else {
             $TYPE_PROBLEMS = "<h2>$Title <span".getStyle("T", $TargetSeverity, $ProblemsNum).">&nbsp;$ProblemsNum&nbsp;</span></h2><hr/>\n".$TYPE_PROBLEMS;
         }
-        $TYPE_PROBLEMS = "<a name='".get_Anchor("Type", $Level, $TargetSeverity)."'></a>\n".$TYPE_PROBLEMS;
+        $TYPE_PROBLEMS = "<a name='".getAnchor("Type", $Level, $TargetSeverity)."'></a>\n".$TYPE_PROBLEMS;
         $TYPE_PROBLEMS .= $TOP_REF."<br/>\n";
     }
     return $TYPE_PROBLEMS;
 }
 
-sub cut_Namespace($$)
+sub cutNs($$)
 {
     my ($N, $Ns) = @_;
     $N=~s/(\W|\A)\Q$Ns\E\.(\w)/$1$2/g;
@@ -4884,72 +3308,41 @@ sub getAffectedMethods($$$)
     my ($Level, $Target_TypeName, $Kinds_Locations) = @_;
     
     my $LIMIT = 10;
-    if(defined $AffectLimit) {
-        $LIMIT = $AffectLimit;
-    }
-    
-    my @Kinds = sort keys(%{$Kinds_Locations});
-    my %KLocs = ();
-    foreach my $Kind (@Kinds)
-    {
-        my @Locs = sort {$a=~/retval/ cmp $b=~/retval/} sort {length($a)<=>length($b)} sort keys(%{$Kinds_Locations->{$Kind}});
-        $KLocs{$Kind} = \@Locs;
-    }
-    
-    my %SymLocKind = ();
-    foreach my $Method (sort keys(%{$TypeProblemsIndex{$Target_TypeName}}))
-    {
-        if($Method eq ".client_method") {
-            next;
-        }
-        
-        foreach my $Kind (@Kinds)
-        {
-            foreach my $Loc (@{$KLocs{$Kind}})
-            {
-                if(not defined $CompatProblems{$Method}{$Kind}{$Loc}) {
-                    next;
-                }
-                
-                my $Type_Name = $CompatProblems{$Method}{$Kind}{$Loc}{"Type_Name"};
-                if($Type_Name ne $Target_TypeName) {
-                    next;
-                }
-                
-                $SymLocKind{$Method}{$Loc}{$Kind} = 1;
-                last;
-            }
-        }
-    }
-    
-    %KLocs = (); # clear
-    
-    if(not keys(%SymLocKind)) {
-        return "";
+    if(defined $In::Opt{"AffectLimit"}) {
+        $LIMIT = $In::Opt{"AffectLimit"};
     }
     
     my %SymSel = ();
-    my $Num = 0;
-    foreach my $Method (sort keys(%SymLocKind))
+    
+    foreach my $Kind (sort keys(%{$Kinds_Locations}))
     {
-        LOOP: foreach my $Loc (sort {$a=~/retval/ cmp $b=~/retval/} sort {length($a)<=>length($b)} sort keys(%{$SymLocKind{$Method}}))
+        my @Locs = sort {(index($a, "retval")!=-1) cmp (index($b, "retval")!=-1)} sort {length($a)<=>length($b)} sort keys(%{$Kinds_Locations->{$Kind}});
+        
+        foreach my $Loc (@Locs)
         {
-            foreach my $Kind (sort keys(%{$SymLocKind{$Method}{$Loc}}))
+            foreach my $Method (keys(%{$TypeProblemsIndex{$Level}{$Target_TypeName}{$Kind}{$Loc}}))
             {
-                $SymSel{$Method}{"Loc"} = $Loc;
-                $SymSel{$Method}{"Kind"} = $Kind;
-                last LOOP;
+                if($Method eq ".client_method") {
+                    next;
+                }
+                
+                if(not defined $SymSel{$Method})
+                {
+                    $SymSel{$Method}{"Kind"} = $Kind;
+                    $SymSel{$Method}{"Loc"} = $Loc;
+                }
             }
-        }
-        
-        $Num += 1;
-        
-        if($Num>=$LIMIT) {
-            last;
         }
     }
     
+    my $Total = keys(%SymSel);
+    
+    if(not $Total) {
+        return "";
+    }
+    
     my $Affected = "";
+    my $SNum = 0;
     
     foreach my $Method (sort {lc($a) cmp lc($b)} keys(%SymSel))
     {
@@ -4960,24 +3353,27 @@ sub getAffectedMethods($$$)
         my $PName = getParamName($Loc);
         my $Pos = getParamPos($PName, $Method, 1);
         
-        $Affected .= "<span class='iname_a'>".get_Signature($Method, 1, "HTML|Italic|Param|Class|Target=".$Pos)."</span><br/>";
+        $Affected .= "<span class='iname_a'>".getSignature($Method, 1, "HTML|Italic|Param|Class|Target=".$Pos)."</span><br/>";
         $Affected .= "<div class='affect'>".$Desc."</div>\n";
+        
+        if(++$SNum>=$LIMIT) {
+            last;
+        }
     }
     
-    if(keys(%SymLocKind)>$LIMIT) {
+    if($Total>$LIMIT) {
         $Affected .= " <b>...</b>\n<br/>\n"; # and others ...
     }
     
     $Affected = "<div class='affected'>".$Affected."</div>";
     if($Affected)
     {
-        my $Num = keys(%SymLocKind);
-        my $Per = show_number($Num*100/keys(%CheckedMethods));
+        my $Per = showNum($Total*100/keys(%CheckedMethods));
         $Affected =  $ContentDivStart.$Affected.$ContentDivEnd;
-        $Affected =  $ContentSpanStart_Affected."[+] affected methods: $Num ($Per\%)".$ContentSpanEnd.$Affected;
+        $Affected =  $ContentSpanStart_Affected."[+] affected methods: $Total ($Per\%)".$ContentSpanEnd.$Affected;
     }
     
-    return ($Affected);
+    return $Affected;
 }
 
 sub getAffectDesc($$$$)
@@ -4990,22 +3386,22 @@ sub getAffectDesc($$$$)
     
     $Location=~s/\.[^.]+?\Z//;
     
-    my %TypeAttr = get_Type($MethodInfo{1}{$Method}{"Class"}, 1);
-    my $Type_Type = $TypeAttr{"Type"};
+    my $TypeAttr = getType($MethodInfo{1}{$Method}{"Class"}, 1);
+    my $Type_Type = $TypeAttr->{"Type"};
     
     my $ABSTRACT_M = $MethodInfo{1}{$Method}{"Abstract"}?" abstract":"";
-    my $ABSTRACT_C = $TypeAttr{"Abstract"}?" abstract":"";
+    my $ABSTRACT_C = $TypeAttr->{"Abstract"}?" abstract":"";
     my $METHOD_TYPE = $MethodInfo{1}{$Method}{"Constructor"}?"constructor":"method";
     
     if($Kind eq "Class_Overridden_Method" or $Kind eq "Class_Method_Moved_Up_Hierarchy") {
-        return "Method '".highLight_Signature($New_Value, 2)."' will be called instead of this method in a client program.";
+        return "Method '".getSignature($New_Value, 2, "Class|HTML|Italic")."' will be called instead of this method in a client program.";
     }
-    elsif($TypeProblems_Kind{$Level}{$Kind})
+    elsif($CompatRules{$Level}{$Kind}{"Kind"} eq "Types")
     {
         my %MInfo = %{$MethodInfo{1}{$Method}};
         
         if($Location eq "this") {
-            return "This$ABSTRACT_M $METHOD_TYPE is from \'".htmlSpecChars($Type_Name)."\'$ABSTRACT_C $Type_Type.";
+            return "This$ABSTRACT_M $METHOD_TYPE is from \'".specChars($Type_Name)."\'$ABSTRACT_C $Type_Type.";
         }
         
         my $TypeID = undef;
@@ -5013,7 +3409,7 @@ sub getAffectDesc($$$$)
         if($Location=~/retval/)
         { # return value
             if($Location=~/\./) {
-                push(@Sentence_Parts, "Field \'".htmlSpecChars($Location)."\' in return value");
+                push(@Sentence_Parts, "Field \'".specChars($Location)."\' in the return value");
             }
             else {
                 push(@Sentence_Parts, "Return value");
@@ -5023,7 +3419,7 @@ sub getAffectDesc($$$$)
         }
         elsif($Location=~/this/)
         { # "this" reference
-            push(@Sentence_Parts, "Field \'".htmlSpecChars($Location)."\' in the object");
+            push(@Sentence_Parts, "Field \'".specChars($Location)."\' in the object");
             
             $TypeID = $MInfo{"Class"};
         }
@@ -5033,7 +3429,7 @@ sub getAffectDesc($$$$)
             my $PPos = getParamPos($PName, $Method, 1);
             
             if($Location=~/\./) {
-                push(@Sentence_Parts, "Field \'".htmlSpecChars($Location)."\' in ".showPos($PPos)." parameter");
+                push(@Sentence_Parts, "Field \'".specChars($Location)."\' in ".showPos($PPos)." parameter");
             }
             else {
                 push(@Sentence_Parts, showPos($PPos)." parameter");
@@ -5057,10 +3453,10 @@ sub getAffectDesc($$$$)
         }
         
         if($TypeInfo{1}{$TypeID_Problem}{"Name"} eq $Type_Name) {
-            push(@Sentence_Parts, "has type \'".htmlSpecChars($Type_Name)."\'.");
+            push(@Sentence_Parts, "is of type \'".specChars($Type_Name)."\'.");
         }
         else {
-            push(@Sentence_Parts, "has base type \'".htmlSpecChars($Type_Name)."\'.");
+            push(@Sentence_Parts, "has base type \'".specChars($Type_Name)."\'.");
         }
     }
     return join(" ", @Sentence_Parts);
@@ -5068,12 +3464,12 @@ sub getAffectDesc($$$$)
 
 sub getParamPos($$$)
 {
-    my ($Name, $Method, $LibVersion) = @_;
+    my ($Name, $Method, $LVer) = @_;
     
-    if(defined $MethodInfo{$LibVersion}{$Method}
-    and defined $MethodInfo{$LibVersion}{$Method}{"Param"})
+    if(defined $MethodInfo{$LVer}{$Method}
+    and defined $MethodInfo{$LVer}{$Method}{"Param"})
     {
-        my $Info = $MethodInfo{$LibVersion}{$Method};
+        my $Info = $MethodInfo{$LVer}{$Method};
         foreach (keys(%{$Info->{"Param"}}))
         {
             if($Info->{"Param"}{$_}{"Name"} eq $Name)
@@ -5095,19 +3491,19 @@ sub getParamName($)
 
 sub getFieldType($$$)
 {
-    my ($Location, $TypeId, $LibVersion) = @_;
+    my ($Location, $TypeId, $LVer) = @_;
     
     my @Fields = split(/\./, $Location);
     
     foreach my $Name (@Fields)
     {
-        my %Info = get_BaseType($TypeId, $LibVersion);
+        my $TInfo = getBaseType($TypeId, $LVer);
         
-        foreach my $N (keys(%{$Info{"Fields"}}))
+        foreach my $N (keys(%{$TInfo->{"Fields"}}))
         {
             if($N eq $Name)
             {
-                $TypeId = $Info{"Fields"}{$N}{"Type"};
+                $TypeId = $TInfo->{"Fields"}{$N}{"Type"};
                 last;
             }
         }
@@ -5123,377 +3519,47 @@ sub writeReport($$)
     writeFile($RPath, $Report);
 }
 
-sub getRelPath($$)
-{
-    my ($A, $B) = @_;
-    return abs2rel($A, get_dirname($B));
-}
-
 sub createReport()
 {
-    if($JoinReport)
-    { # --stdout
+    if($In::Opt{"JoinReport"}) {
         writeReport("Join", getReport("Join"));
     }
-    elsif($DoubleReport)
+    elsif($In::Opt{"DoubleReport"})
     { # default
         writeReport("Binary", getReport("Binary"));
         writeReport("Source", getReport("Source"));
     }
-    elsif($BinaryOnly)
+    elsif($In::Opt{"BinaryOnly"})
     { # --binary
         writeReport("Binary", getReport("Binary"));
     }
-    elsif($SourceOnly)
+    elsif($In::Opt{"SourceOnly"})
     { # --source
         writeReport("Source", getReport("Source"));
     }
 }
 
-sub getCssStyles()
+sub getCssStyles($)
 {
-    my $CssStyles = "
-    body {
-        font-family:Arial, sans-serif;
-        background-color:White;
-        color:Black;
-    }
-    hr {
-        color:Black;
-        background-color:Black;
-        height:1px;
-        border:0;
-    }
-    h1 {
-        margin-bottom:0px;
-        padding-bottom:0px;
-        font-size:1.625em;
-    }
-    h2 {
-        margin-bottom:0px;
-        padding-bottom:0px;
-        font-size:1.25em;
-        white-space:nowrap;
-    }
-    div.symbols {
-        color:#003E69;
-    }
-    div.symbols i {
-        color:Brown;
-    }
-    span.section {
-        font-weight:bold;
-        cursor:pointer;
-        color:#003E69;
-        white-space:nowrap;
-        margin-left:5px;
-    }
-    span:hover.section {
-        color:#336699;
-    }
-    span.sect_aff {
-        cursor:pointer;
-        margin-left:7px;
-        padding-left:15px;
-        font-size:0.875em;
-        color:#cc3300;
-    }
-    span.ext {
-        font-weight:100;
-    }
-    span.jar {
-        color:#cc3300;
-        font-size:0.875em;
-        font-weight:bold;
-    }
-    div.jar_list {
-        padding-left:5px;
-        font-size:0.94em;
-    }
-    span.pkg_t {
-        color:#408080;
-        font-size:0.875em;
-    }
-    span.pkg {
-        color:#408080;
-        font-size:0.875em;
-        font-weight:bold;
-    }
-    span.cname {
-        color:Green;
-        font-size:0.875em;
-        font-weight:bold;
-    }
-    span.iname_b {
-        font-weight:bold;
-        font-size:1.1em;
-    }
-    span.iname_a {
-        color:#333333;
-        font-weight:bold;
-        font-size:0.94em;
-    }
-    span.sym_p {
-        font-weight:normal;
-        white-space:normal;
-    }
-    span.sym_p span {
-        white-space:nowrap;
-    }
-    span.attr {
-        color:Black;
-        font-weight:100;
-    }
-    span.deprecated {
-        color:Red;
-        font-weight:bold;
-        font-family:Monaco, monospace;
-    }
-    div.affect {
-        padding-left:15px;
-        padding-bottom:10px;
-        font-size:0.87em;
-        font-style:italic;
-        line-height:0.75em;
-    }
-    div.affected {
-        padding-left:30px;
-        padding-top:10px;
-    }
-    table.ptable {
-        border-collapse:collapse;
-        border:1px outset black;
-        line-height:1em;
-        margin-left:15px;
-        margin-top:3px;
-        margin-bottom:3px;
-        width:900px;
-    }
-    table.ptable td {
-        border:1px solid Gray;
-        padding: 3px;
-        font-size:0.875em;
-        text-align:left;
-        vertical-align:top;
-    }
-    table.ptable th {
-        background-color:#eeeeee;
-        font-weight:bold;
-        color:#333333;
-        font-family:Verdana, Arial;
-        font-size:0.875em;
-        border:1px solid Gray;
-        text-align:center;
-        vertical-align:top;
-        white-space:nowrap;
-        padding: 3px;
-    }
-    table.summary {
-        border-collapse:collapse;
-        border:1px outset black;
-    }
-    table.summary th {
-        background-color:#eeeeee;
-        font-weight:100;
-        text-align:left;
-        font-size:0.94em;
-        white-space:nowrap;
-        border:1px inset Gray;
-        padding: 3px;
-    }
-    table.summary td {
-        text-align:right;
-        white-space:nowrap;
-        border:1px inset Gray;
-        padding: 3px 5px 3px 10px;
-    }
-    span.mngl {
-        padding-left:15px;
-        font-size:0.875em;
-        cursor:text;
-        color:#444444;
-    }
-    span.color_p {
-        font-style:italic;
-        color:Brown;
-    }
-    span.param {
-        font-style:italic;
-    }
-    span.focus_p {
-        font-style:italic;
-        background-color:#DCDCDC;
-    }
-    span.nowrap {
-        white-space:nowrap;
-    }
-    .passed {
-        background-color:#CCFFCC;
-        font-weight:100;
-    }
-    .warning {
-        background-color:#F4F4AF;
-        font-weight:100;
-    }
-    .failed {
-        background-color:#FFCCCC;
-        font-weight:100;
-    }
-    .new {
-        background-color:#C6DEFF;
-        font-weight:100;
-    }
+    my $Level = $_[0];
     
-    .compatible {
-        background-color:#CCFFCC;
-        font-weight:100;
-    }
-    .almost_compatible {
-        background-color:#FFDAA3;
-        font-weight:100;
-    }
-    .incompatible {
-        background-color:#FFCCCC;
-        font-weight:100;
-    }
-    .gray {
-        background-color:#DCDCDC;
-        font-weight:100;
-    }
+    my $CssStyles = readModule("Css", "Report.css");
     
-    .top_ref {
-        font-size:0.69em;
-    }
-    .footer {
-        font-size:0.75em;
-    }";
-    
-    if($JoinReport or $ExternCss)
-    {
-        $CssStyles .= "
-    .tabset {
-        float:left;
-    }
-    a.tab {
-        border:1px solid Black;
-        float:left;
-        margin:0px 5px -1px 0px;
-        padding:3px 5px 3px 5px;
-        position:relative;
-        font-size:0.875em;
-        background-color:#DDD;
-        text-decoration:none;
-        color:Black;
-    }
-    a.disabled:hover
-    {
-        color:Black;
-        background:#EEE;
-    }
-    a.active:hover
-    {
-        color:Black;
-        background:White;
-    }
-    a.active {
-        border-bottom-color:White;
-        background-color:White;
-    }
-    div.tab {
-        border-top:1px solid Black;
-        padding:0px;
-        width:100%;
-        clear:both;
-    }";
+    if($Level eq "Join" or $In::Opt{"ExternCss"}) {
+        $CssStyles .= readModule("Css", "Tabs.css");
     }
     
     return $CssStyles;
 }
 
-sub getJsScript()
+sub getJsScript($)
 {
-    my $JScripts = "
-    function sC(header, id)
-    {
-        e = document.getElementById(id);
-        if(e.style.display == 'none')
-        {
-            e.style.display = 'block';
-            e.style.visibility = 'visible';
-            header.innerHTML = header.innerHTML.replace(/\\\[[^0-9 ]\\\]/gi,\"[&minus;]\");
-        }
-        else
-        {
-            e.style.display = 'none';
-            e.style.visibility = 'hidden';
-            header.innerHTML = header.innerHTML.replace(/\\\[[^0-9 ]\\\]/gi,\"[+]\");
-        }
-    }";
+    my $Level = $_[0];
     
-    if($JoinReport or $ExternJs)
-    {
-        $JScripts .= "
-    function initTabs()
-    {
-        var url = window.location.href;
-        if(url.indexOf('_Source_')!=-1 || url.indexOf('#Source')!=-1)
-        {
-            var tab1 = document.getElementById('BinaryID');
-            var tab2 = document.getElementById('SourceID');
-            tab1.className='tab disabled';
-            tab2.className='tab active';
-        }
-        var sets = document.getElementsByTagName('div');
-        for (var i = 0; i < sets.length; i++)
-        {
-            if (sets[i].className.indexOf('tabset') != -1)
-            {
-                var tabs = [];
-                var links = sets[i].getElementsByTagName('a');
-                for (var j = 0; j < links.length; j++)
-                {
-                    if (links[j].className.indexOf('tab') != -1)
-                    {
-                        tabs.push(links[j]);
-                        links[j].tabs = tabs;
-                        var tab = document.getElementById(links[j].href.substr(links[j].href.indexOf('#') + 1));
-                        //reset all tabs on start
-                        if (tab)
-                        {
-                            if (links[j].className.indexOf('active')!=-1) {
-                                tab.style.display = 'block';
-                            }
-                            else {
-                                tab.style.display = 'none';
-                            }
-                        }
-                        links[j].onclick = function()
-                        {
-                            var tab = document.getElementById(this.href.substr(this.href.indexOf('#') + 1));
-                            if (tab)
-                            {
-                                //reset all tabs before change
-                                for (var k = 0; k < this.tabs.length; k++)
-                                {
-                                    document.getElementById(this.tabs[k].href.substr(this.tabs[k].href.indexOf('#') + 1)).style.display = 'none';
-                                    this.tabs[k].className = this.tabs[k].className.replace('active', 'disabled');
-                                }
-                                this.className = 'tab active';
-                                tab.style.display = 'block';
-                                // window.location.hash = this.id.replace('ID', '');
-                                return false;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        if(url.indexOf('#')!=-1) {
-            location.href=location.href;
-        }
-    }
-    if (window.addEventListener) window.addEventListener('load', initTabs, false);
-    else if (window.attachEvent) window.attachEvent('onload', initTabs);";
+    my $JScripts = readModule("Js", "Sections.js");
+    
+    if($Level eq "Join" or $In::Opt{"ExternJs"}) {
+        $JScripts .= readModule("Js", "Tabs.js");
     }
     
     return $JScripts;
@@ -5503,52 +3569,55 @@ sub getReport($)
 {
     my $Level = $_[0];
     
-    my $CssStyles = getCssStyles();
-    my $JScripts = getJsScript();
+    my $CssStyles = getCssStyles($Level);
+    my $JScripts = getJsScript($Level);
     
-    if(defined $ExternCss)
-    {
-        $CssStyles=~s/\n    /\n/g;
-        writeFile($ExternCss, $CssStyles);
+    if(defined $In::Opt{"ExternCss"}) {
+        writeFile($In::Opt{"ExternCss"}, $CssStyles);
     }
     
-    if(defined $ExternJs)
-    {
-        $JScripts=~s/\n    /\n/g;
-        writeFile($ExternJs, $JScripts);
+    if(defined $In::Opt{"ExternJs"}) {
+        writeFile($In::Opt{"ExternJs"}, $JScripts);
     }
     
     if($Level eq "Join")
     {
-        my $Title = "$TargetTitle: ".$Descriptor{1}{"Version"}." to ".$Descriptor{2}{"Version"}." compatibility report";
-        my $Keywords = "$TargetTitle, compatibility";
-        my $Description = "Compatibility report for the $TargetTitle library between ".$Descriptor{1}{"Version"}." and ".$Descriptor{2}{"Version"}." versions";
-        my ($BSummary, $BMetaData) = get_Summary("Binary");
-        my ($SSummary, $SMetaData) = get_Summary("Source");
+        my $Title = $In::Opt{"TargetTitle"}.": ".$In::Desc{1}{"Version"}." to ".$In::Desc{2}{"Version"}." compatibility report";
+        my $Keywords = $In::Opt{"TargetTitle"}.", compatibility";
+        my $Description = "Compatibility report for the ".$In::Opt{"TargetTitle"}." library between ".$In::Desc{1}{"Version"}." and ".$In::Desc{2}{"Version"}." versions";
+        
+        my ($BSummary, $BMetaData) = getSummary("Binary");
+        my ($SSummary, $SMetaData) = getSummary("Source");
+        
         my $Report = "<!-\- $BMetaData -\->\n<!-\- $SMetaData -\->\n".composeHTML_Head($Level, $Title, $Keywords, $Description, $CssStyles, $JScripts)."<body><a name='Source'></a><a name='Binary'></a><a name='Top'></a>";
-        $Report .= get_Report_Header("Join")."
-        <br/><div class='tabset'>
-        <a id='BinaryID' href='#BinaryTab' class='tab active'>Binary<br/>Compatibility</a>
-        <a id='SourceID' href='#SourceTab' style='margin-left:3px' class='tab disabled'>Source<br/>Compatibility</a>
-        </div>";
-        $Report .= "<div id='BinaryTab' class='tab'>\n$BSummary\n".get_Report_Added("Binary").get_Report_Removed("Binary").get_Report_Problems("High", "Binary").get_Report_Problems("Medium", "Binary").get_Report_Problems("Low", "Binary").get_Report_Problems("Safe", "Binary").get_SourceInfo()."<br/><br/><br/></div>";
-        $Report .= "<div id='SourceTab' class='tab'>\n$SSummary\n".get_Report_Added("Source").get_Report_Removed("Source").get_Report_Problems("High", "Source").get_Report_Problems("Medium", "Source").get_Report_Problems("Low", "Source").get_Report_Problems("Safe", "Source").get_SourceInfo()."<br/><br/><br/></div>";
+        
+        $Report .= getReportHeader("Join");
+        $Report .= "<br/><div class='tabset'>\n";
+        $Report .= "<a id='BinaryID' href='#BinaryTab' class='tab active'>Binary<br/>Compatibility</a>\n";
+        $Report .= "<a id='SourceID' href='#SourceTab' style='margin-left:3px' class='tab disabled'>Source<br/>Compatibility</a>\n";
+        $Report .= "</div>\n";
+        
+        $Report .= "<div id='BinaryTab' class='tab'>\n$BSummary\n".getReportAdded("Binary").getReportRemoved("Binary").getReportProblems("High", "Binary").getReportProblems("Medium", "Binary").getReportProblems("Low", "Binary").getReportProblems("Safe", "Binary").getSourceInfo()."<br/><br/><br/></div>";
+        
+        $Report .= "<div id='SourceTab' class='tab'>\n$SSummary\n".getReportAdded("Source").getReportRemoved("Source").getReportProblems("High", "Source").getReportProblems("Medium", "Source").getReportProblems("Low", "Source").getReportProblems("Safe", "Source").getSourceInfo()."<br/><br/><br/></div>";
+        
         $Report .= getReportFooter();
         $Report .= "\n</body></html>";
         return $Report;
     }
     else
     {
-        my ($Summary, $MetaData) = get_Summary($Level);
-        my $Title = "$TargetTitle: ".$Descriptor{1}{"Version"}." to ".$Descriptor{2}{"Version"}." ".lc($Level)." compatibility report";
-        my $Keywords = "$TargetTitle, ".lc($Level).", compatibility";
-        my $Description = "$Level compatibility report for the $TargetTitle library between ".$Descriptor{1}{"Version"}." and ".$Descriptor{2}{"Version"}." versions";
+        my ($Summary, $MetaData) = getSummary($Level);
+        
+        my $Title = $In::Opt{"TargetTitle"}.": ".$In::Desc{1}{"Version"}." to ".$In::Desc{2}{"Version"}." ".lc($Level)." compatibility report";
+        my $Keywords = $In::Opt{"TargetTitle"}.", ".lc($Level).", compatibility";
+        my $Description = "$Level compatibility report for the ".$In::Opt{"TargetTitle"}." library between ".$In::Desc{1}{"Version"}." and ".$In::Desc{2}{"Version"}." versions";
         
         my $Report = "<!-\- $MetaData -\->\n".composeHTML_Head($Level, $Title, $Keywords, $Description, $CssStyles, $JScripts)."<body><a name='Top'></a>";
-        $Report .= get_Report_Header($Level)."\n".$Summary."\n";
-        $Report .= get_Report_Added($Level).get_Report_Removed($Level);
-        $Report .= get_Report_Problems("High", $Level).get_Report_Problems("Medium", $Level).get_Report_Problems("Low", $Level).get_Report_Problems("Safe", $Level);
-        $Report .= get_SourceInfo()."<br/><br/><br/>\n";
+        $Report .= getReportHeader($Level)."\n".$Summary."\n";
+        $Report .= getReportAdded($Level).getReportRemoved($Level);
+        $Report .= getReportProblems("High", $Level).getReportProblems("Medium", $Level).getReportProblems("Low", $Level).getReportProblems("Safe", $Level);
+        $Report .= getSourceInfo()."<br/><br/><br/>\n";
         $Report .= getReportFooter();
         $Report .= "\n</body></html>";
         return $Report;
@@ -5566,16 +3635,16 @@ sub getReportFooter()
     return $Footer;
 }
 
-sub get_Report_Problems($$)
+sub getReportProblems($$)
 {
     my ($Priority, $Level) = @_;
-    my $Report = get_Report_TypeProblems($Priority, $Level);
-    if(my $MProblems = get_Report_MethodProblems($Priority, $Level)) {
+    my $Report = getReportTypeProblems($Priority, $Level);
+    if(my $MProblems = getReportMethodProblems($Priority, $Level)) {
         $Report .= $MProblems;
     }
     if($Report)
     {
-        if($JoinReport)
+        if($In::Opt{"JoinReport"})
         {
             if($Priority eq "Safe") {
                 $Report = "<a name=\'Other_".$Level."_Changes\'></a>".$Report;
@@ -5610,27 +3679,25 @@ sub composeHTML_Head($$$$$$)
     
     my $RPath = getReportPath($Level);
     
-    if(defined $ExternCss) {
-        $Head .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".getRelPath($ExternCss, $RPath)."\" />\n";
+    if(defined $In::Opt{"ExternCss"}) {
+        $Head .= "<link rel=\"stylesheet\" type=\"text/css\" href=\"".getRelPath($In::Opt{"ExternCss"}, $RPath)."\" />\n";
     }
     
-    if(defined $ExternJs) {
-        $Head .= "<script type=\"text/javascript\" src=\"".getRelPath($ExternJs, $RPath)."\"></script>\n";
+    if(defined $In::Opt{"ExternJs"}) {
+        $Head .= "<script type=\"text/javascript\" src=\"".getRelPath($In::Opt{"ExternJs"}, $RPath)."\"></script>\n";
     }
     
     $Head .= "<title>$Title</title>\n";
     
-    if(not defined $ExternCss) {
+    if(not defined $In::Opt{"ExternCss"}) {
         $Head .= "<style type=\"text/css\">\n$Styles\n</style>\n";
     }
     
-    if(not defined $ExternJs) {
+    if(not defined $In::Opt{"ExternJs"}) {
         $Head .= "<script type=\"text/javascript\" language=\"JavaScript\">\n<!--\n$Scripts\n-->\n</script>\n";
     }
     
     $Head .= "</head>\n";
-    
-    $Head=~s/\n    /\n/g;
     
     return $Head;
 }
@@ -5651,2175 +3718,24 @@ sub insertIDs($)
     return $Text;
 }
 
-sub readArchives($)
-{
-    my $LibVersion = $_[0];
-    my @ArchivePaths = getArchives($LibVersion);
-    if($#ArchivePaths==-1) {
-        exitStatus("Error", "Java ARchives are not found in ".$Descriptor{$LibVersion}{"Version"});
-    }
-    printMsg("INFO", "reading classes ".$Descriptor{$LibVersion}{"Version"}." ...");
-    $TYPE_ID = 0;
-    
-    foreach my $ArchivePath (sort {length($a)<=>length($b)} @ArchivePaths) {
-        readArchive($LibVersion, $ArchivePath);
-    }
-    foreach my $TName (keys(%{$TName_Tid{$LibVersion}}))
-    {
-        my $Tid = $TName_Tid{$LibVersion}{$TName};
-        if(not $TypeInfo{$LibVersion}{$Tid}{"Type"})
-        {
-            if($TName=~/\A(void|boolean|char|byte|short|int|float|long|double)\Z/) {
-                $TypeInfo{$LibVersion}{$Tid}{"Type"} = "primitive";
-            }
-            else {
-                $TypeInfo{$LibVersion}{$Tid}{"Type"} = "class";
-            }
-        }
-    }
-    
-    foreach my $Method (keys(%{$MethodInfo{$LibVersion}}))
-    {
-        $MethodInfo{$LibVersion}{$Method}{"Signature"} = get_Signature($Method, $LibVersion, "Full");
-        $tr_name{$Method} = get_TypeName($MethodInfo{$LibVersion}{$Method}{"Class"}, $LibVersion).".".get_Signature($Method, $LibVersion, "Short");
-    }
-}
-
-sub testSystem()
-{
-    printMsg("INFO", "\nverifying detectable Java library changes");
-    
-    my $LibName = "libsample_java";
-    if(-d $LibName) {
-        rmtree($LibName);
-    }
-    
-    my $PackageName = "TestPackage";
-    my $Path_v1 = "$LibName/$PackageName.v1/$PackageName";
-    mkpath($Path_v1);
-    
-    my $Path_v2 = "$LibName/$PackageName.v2/$PackageName";
-    mkpath($Path_v2);
-    
-    my $TestsPath = "$LibName/Tests";
-    mkpath($TestsPath);
-    
-    # FirstCheckedException
-    my $FirstCheckedException = "package $PackageName;
-    public class FirstCheckedException extends Exception {
-    }";
-    writeFile($Path_v1."/FirstCheckedException.java", $FirstCheckedException);
-    writeFile($Path_v2."/FirstCheckedException.java", $FirstCheckedException);
-    
-    # SecondCheckedException
-    my $SecondCheckedException = "package $PackageName;
-    public class SecondCheckedException extends Exception {
-    }";
-    writeFile($Path_v1."/SecondCheckedException.java", $SecondCheckedException);
-    writeFile($Path_v2."/SecondCheckedException.java", $SecondCheckedException);
-    
-    # FirstUncheckedException
-    my $FirstUncheckedException = "package $PackageName;
-    public class FirstUncheckedException extends RuntimeException {
-    }";
-    writeFile($Path_v1."/FirstUncheckedException.java", $FirstUncheckedException);
-    writeFile($Path_v2."/FirstUncheckedException.java", $FirstUncheckedException);
-    
-    # SecondUncheckedException
-    my $SecondUncheckedException = "package $PackageName;
-    public class SecondUncheckedException extends RuntimeException {
-    }";
-    writeFile($Path_v1."/SecondUncheckedException.java", $SecondUncheckedException);
-    writeFile($Path_v2."/SecondUncheckedException.java", $SecondUncheckedException);
-    
-    # BaseAbstractClass
-    my $BaseAbstractClass = "package $PackageName;
-    public abstract class BaseAbstractClass {
-        public Integer field;
-        public Integer someMethod(Integer param) { return param; }
-        public abstract Integer abstractMethod(Integer param);
-    }";
-    writeFile($Path_v1."/BaseAbstractClass.java", $BaseAbstractClass);
-    writeFile($Path_v2."/BaseAbstractClass.java", $BaseAbstractClass);
-    
-    # Removed_Annotation
-    writeFile($Path_v1."/RemovedAnnotation.java",
-    "package $PackageName;
-    public \@interface RemovedAnnotation {
-    }");
-    
-    # Beta Annotation
-    writeFile($Path_v1."/Beta.java",
-    "package $PackageName;
-    public \@interface Beta {
-    }");
-    
-    writeFile($Path_v2."/Beta.java",
-    "package $PackageName;
-    public \@interface Beta {
-    }");
-    
-    # BaseClass
-    my $BaseClass = "package $PackageName;
-    public class BaseClass {
-        public Integer field;
-        public Integer method(Integer param) { return param; }
-    }";
-    writeFile($Path_v1."/BaseClass.java", $BaseClass);
-    writeFile($Path_v2."/BaseClass.java", $BaseClass);
-    
-    # BaseClass2
-    my $BaseClass2 = "package $PackageName;
-    public class BaseClass2 {
-        public Integer field2;
-        public Integer method2(Integer param) { return param; }
-    }";
-    writeFile($Path_v1."/BaseClass2.java", $BaseClass2);
-    writeFile($Path_v2."/BaseClass2.java", $BaseClass2);
-    
-    # BaseInterface
-    my $BaseInterface = "package $PackageName;
-    public interface BaseInterface {
-        public Integer field = 100;
-        public Integer method(Integer param);
-    }";
-    writeFile($Path_v1."/BaseInterface.java", $BaseInterface);
-    writeFile($Path_v2."/BaseInterface.java", $BaseInterface);
-    
-    # BaseInterface2
-    my $BaseInterface2 = "package $PackageName;
-    public interface BaseInterface2 {
-        public Integer field2 = 100;
-        public Integer method2(Integer param);
-    }";
-    writeFile($Path_v1."/BaseInterface2.java", $BaseInterface2);
-    writeFile($Path_v2."/BaseInterface2.java", $BaseInterface2);
-    
-    # BaseConstantInterface
-    my $BaseConstantInterface = "package $PackageName;
-    public interface BaseConstantInterface {
-        public Integer CONSTANT = 10;
-        public Integer CONSTANT2 = 100;
-    }";
-    writeFile($Path_v1."/BaseConstantInterface.java", $BaseConstantInterface);
-    writeFile($Path_v2."/BaseConstantInterface.java", $BaseConstantInterface);
-    
-    # Removed_Method (Beta method)
-    writeFile($Path_v1."/RemovedBetaMethod.java",
-    "package $PackageName;
-    public class RemovedBetaMethod
-    {
-        \@Beta
-        public Integer someMethod() {
-            return 0;
-        }
-    }");
-    writeFile($Path_v2."/RemovedBetaMethod.java",
-    "package $PackageName;
-    public class RemovedBetaMethod {
-    }");
-    
-    # Removed_Method (from Beta class)
-    writeFile($Path_v1."/RemovedMethodFromBetaClass.java",
-    "package $PackageName;
-    \@Beta
-    public class RemovedMethodFromBetaClass
-    {
-        public Integer someMethod() {
-            return 0;
-        }
-    }");
-    writeFile($Path_v2."/RemovedMethodFromBetaClass.java",
-    "package $PackageName;
-    \@Beta
-    public class RemovedMethodFromBetaClass {
-    }");
-    
-    # Removed_Class (Beta)
-    writeFile($Path_v1."/RemovedBetaClass.java",
-    "package $PackageName;
-    \@Beta
-    public class RemovedBetaClass
-    {
-        public Integer someMethod() {
-            return 0;
-        }
-    }");
-    
-    # Abstract_Method_Added_Checked_Exception
-    writeFile($Path_v1."/AbstractMethodAddedCheckedException.java",
-    "package $PackageName;
-    public abstract class AbstractMethodAddedCheckedException {
-        public abstract Integer someMethod() throws FirstCheckedException;
-    }");
-    writeFile($Path_v2."/AbstractMethodAddedCheckedException.java",
-    "package $PackageName;
-    public abstract class AbstractMethodAddedCheckedException {
-        public abstract Integer someMethod() throws FirstCheckedException, SecondCheckedException;
-    }");
-    
-    # Abstract_Method_Removed_Checked_Exception
-    writeFile($Path_v1."/AbstractMethodRemovedCheckedException.java",
-    "package $PackageName;
-    public abstract class AbstractMethodRemovedCheckedException {
-        public abstract Integer someMethod() throws FirstCheckedException, SecondCheckedException;
-    }");
-    writeFile($Path_v2."/AbstractMethodRemovedCheckedException.java",
-    "package $PackageName;
-    public abstract class AbstractMethodRemovedCheckedException {
-        public abstract Integer someMethod() throws FirstCheckedException;
-    }");
-    
-    # NonAbstract_Method_Added_Checked_Exception
-    writeFile($Path_v1."/NonAbstractMethodAddedCheckedException.java",
-    "package $PackageName;
-    public class NonAbstractMethodAddedCheckedException {
-        public Integer someMethod() throws FirstCheckedException {
-            return 10;
-        }
-    }");
-    writeFile($Path_v2."/NonAbstractMethodAddedCheckedException.java",
-    "package $PackageName;
-    public class NonAbstractMethodAddedCheckedException {
-        public Integer someMethod() throws FirstCheckedException, SecondCheckedException {
-            return 10;
-        }
-    }");
-    
-    # NonAbstract_Method_Removed_Checked_Exception
-    writeFile($Path_v1."/NonAbstractMethodRemovedCheckedException.java",
-    "package $PackageName;
-    public class NonAbstractMethodRemovedCheckedException {
-        public Integer someMethod() throws FirstCheckedException, SecondCheckedException {
-            return 10;
-        }
-    }");
-    writeFile($Path_v2."/NonAbstractMethodRemovedCheckedException.java",
-    "package $PackageName;
-    public class NonAbstractMethodRemovedCheckedException {
-        public Integer someMethod() throws FirstCheckedException {
-            return 10;
-        }
-    }");
-    
-    # Added_Unchecked_Exception
-    writeFile($Path_v1."/AddedUncheckedException.java",
-    "package $PackageName;
-    public class AddedUncheckedException {
-        public Integer someMethod() throws FirstUncheckedException {
-            return 10;
-        }
-    }");
-    writeFile($Path_v2."/AddedUncheckedException.java",
-    "package $PackageName;
-    public class AddedUncheckedException {
-        public Integer someMethod() throws FirstUncheckedException, SecondUncheckedException, NullPointerException {
-            return 10;
-        }
-    }");
-    
-    # Removed_Unchecked_Exception
-    writeFile($Path_v1."/RemovedUncheckedException.java",
-    "package $PackageName;
-    public class RemovedUncheckedException {
-        public Integer someMethod() throws FirstUncheckedException, SecondUncheckedException, NullPointerException {
-            return 10;
-        }
-    }");
-    writeFile($Path_v2."/RemovedUncheckedException.java",
-    "package $PackageName;
-    public class RemovedUncheckedException {
-        public Integer someMethod() throws FirstUncheckedException {
-            return 10;
-        }
-    }");
-    
-    # Changed_Method_Return_From_Void
-    writeFile($Path_v1."/ChangedMethodReturnFromVoid.java",
-    "package $PackageName;
-    public class ChangedMethodReturnFromVoid {
-        public void changedMethod(Integer param1, String[] param2) { }
-    }");
-    writeFile($Path_v2."/ChangedMethodReturnFromVoid.java",
-    "package $PackageName;
-    public class ChangedMethodReturnFromVoid {
-        public Integer changedMethod(Integer param1, String[] param2){
-            return param1;
-        }
-    }");
-    
-    # Added_Method
-    writeFile($Path_v1."/AddedMethod.java",
-    "package $PackageName;
-    public class AddedMethod {
-        public Integer field = 100;
-    }");
-    writeFile($Path_v2."/AddedMethod.java",
-    "package $PackageName;
-    public class AddedMethod {
-        public Integer field = 100;
-        public Integer addedMethod(Integer param1, String[] param2) { return param1; }
-        public static String[] addedStaticMethod(String[] param) { return param; }
-    }");
-    
-    # Added_Method (Constructor)
-    writeFile($Path_v1."/AddedConstructor.java",
-    "package $PackageName;
-    public class AddedConstructor {
-        public Integer field = 100;
-    }");
-    writeFile($Path_v2."/AddedConstructor.java",
-    "package $PackageName;
-    public class AddedConstructor {
-        public Integer field = 100;
-        public AddedConstructor() { }
-        public AddedConstructor(Integer x, String y) { }
-    }");
-    
-    # Class_Added_Field
-    writeFile($Path_v1."/ClassAddedField.java",
-    "package $PackageName;
-    public class ClassAddedField {
-        public Integer otherField;
-    }");
-    writeFile($Path_v2."/ClassAddedField.java",
-    "package $PackageName;
-    public class ClassAddedField {
-        public Integer addedField;
-        public Integer otherField;
-    }");
-    
-    # Interface_Added_Field
-    writeFile($Path_v1."/InterfaceAddedField.java",
-    "package $PackageName;
-    public interface InterfaceAddedField {
-        public Integer method();
-    }");
-    writeFile($Path_v2."/InterfaceAddedField.java",
-    "package $PackageName;
-    public interface InterfaceAddedField {
-        public Integer addedField = 100;
-        public Integer method();
-    }");
-    
-    # Removed_NonConstant_Field (Class)
-    writeFile($Path_v1."/ClassRemovedField.java",
-    "package $PackageName;
-    public class ClassRemovedField {
-        public Integer removedField;
-        public Integer otherField;
-    }");
-    writeFile($Path_v2."/ClassRemovedField.java",
-    "package $PackageName;
-    public class ClassRemovedField {
-        public Integer otherField;
-    }");
-    
-    writeFile($TestsPath."/Test_ClassRemovedField.java",
-    "import $PackageName.*;
-    public class Test_ClassRemovedField {
-        public static void main(String[] args) {
-            ClassRemovedField X = new ClassRemovedField();
-            Integer Copy = X.removedField;
-        }
-    }");
-    
-    writeFile($TestsPath."/Test_RemovedAnnotation.java",
-    "import $PackageName.*;
-    public class Test_RemovedAnnotation {
-        public static void main(String[] args) {
-            testMethod();
-        }
-        
-        \@RemovedAnnotation
-        static void testMethod() {
-        }
-    }");
-    
-    # Removed_Constant_Field (Interface)
-    writeFile($Path_v1."/InterfaceRemovedConstantField.java",
-    "package $PackageName;
-    public interface InterfaceRemovedConstantField {
-        public String someMethod();
-        public int removedField_Int = 1000;
-        public String removedField_Str = \"Value\";
-    }");
-    writeFile($Path_v2."/InterfaceRemovedConstantField.java",
-    "package $PackageName;
-    public interface InterfaceRemovedConstantField {
-        public String someMethod();
-    }");
-    
-    # Removed_NonConstant_Field (Interface)
-    writeFile($Path_v1."/InterfaceRemovedField.java",
-    "package $PackageName;
-    public interface InterfaceRemovedField {
-        public String someMethod();
-        public BaseClass removedField = new BaseClass();
-    }");
-    writeFile($Path_v2."/InterfaceRemovedField.java",
-    "package $PackageName;
-    public interface InterfaceRemovedField {
-        public String someMethod();
-    }");
-    
-    # Renamed_Field
-    writeFile($Path_v1."/RenamedField.java",
-    "package $PackageName;
-    public class RenamedField {
-        public String oldName;
-    }");
-    writeFile($Path_v2."/RenamedField.java",
-    "package $PackageName;
-    public class RenamedField {
-        public String newName;
-    }");
-    
-    # Renamed_Constant_Field
-    writeFile($Path_v1."/RenamedConstantField.java",
-    "package $PackageName;
-    public class RenamedConstantField {
-        public final String oldName = \"Value\";
-    }");
-    writeFile($Path_v2."/RenamedConstantField.java",
-    "package $PackageName;
-    public class RenamedConstantField {
-        public final String newName = \"Value\";
-    }");
-    
-    # Changed_Field_Type
-    writeFile($Path_v1."/ChangedFieldType.java",
-    "package $PackageName;
-    public class ChangedFieldType {
-        public String fieldName;
-    }");
-    writeFile($Path_v2."/ChangedFieldType.java",
-    "package $PackageName;
-    public class ChangedFieldType {
-        public Integer fieldName;
-    }");
-    
-    # Changed_Field_Access
-    writeFile($Path_v1."/ChangedFieldAccess.java",
-    "package $PackageName;
-    public class ChangedFieldAccess {
-        public String fieldName;
-    }");
-    writeFile($Path_v2."/ChangedFieldAccess.java",
-    "package $PackageName;
-    public class ChangedFieldAccess {
-        private String fieldName;
-    }");
-    
-    # Changed_Final_Field_Value
-    writeFile($Path_v1."/ChangedFinalFieldValue.java",
-    "package $PackageName;
-    public class ChangedFinalFieldValue {
-        public final int field = 1;
-        public final String field2 = \" \";
-    }");
-    writeFile($Path_v2."/ChangedFinalFieldValue.java",
-    "package $PackageName;
-    public class ChangedFinalFieldValue {
-        public final int field = 2;
-        public final String field2 = \"newValue\";
-    }");
-    
-    # NonConstant_Field_Became_Static
-    writeFile($Path_v1."/NonConstantFieldBecameStatic.java",
-    "package $PackageName;
-    public class NonConstantFieldBecameStatic {
-        public String fieldName;
-    }");
-    writeFile($Path_v2."/NonConstantFieldBecameStatic.java",
-    "package $PackageName;
-    public class NonConstantFieldBecameStatic {
-        public static String fieldName;
-    }");
-    
-    # NonConstant_Field_Became_NonStatic
-    writeFile($Path_v1."/NonConstantFieldBecameNonStatic.java",
-    "package $PackageName;
-    public class NonConstantFieldBecameNonStatic {
-        public static String fieldName;
-    }");
-    writeFile($Path_v2."/NonConstantFieldBecameNonStatic.java",
-    "package $PackageName;
-    public class NonConstantFieldBecameNonStatic {
-        public String fieldName;
-    }");
-    
-    # Constant_Field_Became_NonStatic
-    writeFile($Path_v1."/ConstantFieldBecameNonStatic.java",
-    "package $PackageName;
-    public class ConstantFieldBecameNonStatic {
-        public final static String fieldName = \"Value\";
-    }");
-    writeFile($Path_v2."/ConstantFieldBecameNonStatic.java",
-    "package $PackageName;
-    public class ConstantFieldBecameNonStatic {
-        public final String fieldName = \"Value\";
-    }");
-    
-    # Field_Became_Final
-    writeFile($Path_v1."/FieldBecameFinal.java",
-    "package $PackageName;
-    public class FieldBecameFinal {
-        public String fieldName;
-    }");
-    writeFile($Path_v2."/FieldBecameFinal.java",
-    "package $PackageName;
-    public class FieldBecameFinal {
-        public final String fieldName = \"Value\";
-    }");
-    
-    # Field_Became_NonFinal
-    writeFile($Path_v1."/FieldBecameNonFinal.java",
-    "package $PackageName;
-    public class FieldBecameNonFinal {
-        public final String fieldName = \"Value\";
-    }");
-    writeFile($Path_v2."/FieldBecameNonFinal.java",
-    "package $PackageName;
-    public class FieldBecameNonFinal {
-        public String fieldName;
-    }");
-    
-    # Removed_Method
-    writeFile($Path_v1."/RemovedMethod.java",
-    "package $PackageName;
-    public class RemovedMethod {
-        public Integer field = 100;
-        public Integer removedMethod(Integer param1, String param2) { return param1; }
-        public static Integer removedStaticMethod(Integer param) { return param; }
-    }");
-    writeFile($Path_v2."/RemovedMethod.java",
-    "package $PackageName;
-    public class RemovedMethod {
-        public Integer field = 100;
-    }");
-    
-    # Removed_Method (move up to java.lang.Object)
-    writeFile($Path_v1."/MoveUpToJavaLangObject.java",
-    "package $PackageName;
-    public class MoveUpToJavaLangObject extends java.lang.Object {
-        public int hashCode() { return 0; }
-    }");
-    writeFile($Path_v2."/MoveUpToJavaLangObject.java",
-    "package $PackageName;
-    public class MoveUpToJavaLangObject extends java.lang.Object {
-    }");
-    
-    writeFile($TestsPath."/Test_MoveUpToJavaLangObject.java",
-    "import $PackageName.*;
-    public class Test_MoveUpToJavaLangObject {
-        public static void main(String[] args) {
-            MoveUpToJavaLangObject X = new MoveUpToJavaLangObject();
-            int R = X.hashCode();
-        }
-    }");
-    
-    # Removed_Method (Deprecated)
-    writeFile($Path_v1."/RemovedDeprecatedMethod.java",
-    "package $PackageName;
-    public class RemovedDeprecatedMethod {
-        public Integer field = 100;
-        public Integer otherMethod(Integer param) { return param; }
-        \@Deprecated
-        public Integer removedMethod(Integer param1, String param2) { return param1; }
-    }");
-    writeFile($Path_v2."/RemovedDeprecatedMethod.java",
-    "package $PackageName;
-    public class RemovedDeprecatedMethod {
-        public Integer field = 100;
-        public Integer otherMethod(Integer param) { return param; }
-    }");
-    
-    # Interface_Removed_Abstract_Method
-    writeFile($Path_v1."/InterfaceRemovedAbstractMethod.java",
-    "package $PackageName;
-    public interface InterfaceRemovedAbstractMethod extends BaseInterface, BaseInterface2 {
-        public void removedMethod(Integer param1, java.io.ObjectOutput param2);
-        public void someMethod(Integer param);
-    }");
-    writeFile($Path_v2."/InterfaceRemovedAbstractMethod.java",
-    "package $PackageName;
-    public interface InterfaceRemovedAbstractMethod extends BaseInterface, BaseInterface2 {
-        public void someMethod(Integer param);
-    }");
-    
-    # Interface_Added_Abstract_Method
-    writeFile($Path_v1."/InterfaceAddedAbstractMethod.java",
-    "package $PackageName;
-    public interface InterfaceAddedAbstractMethod extends BaseInterface, BaseInterface2 {
-        public void someMethod(Integer param);
-    }");
-    writeFile($Path_v2."/InterfaceAddedAbstractMethod.java",
-    "package $PackageName;
-    public interface InterfaceAddedAbstractMethod extends BaseInterface, BaseInterface2 {
-        public void someMethod(Integer param);
-        public Integer addedMethod(Integer param);
-    }");
-    
-    # Interface_Added_Default_Method
-    writeFile($Path_v1."/InterfaceAddedDefaultMethod.java",
-    "package $PackageName;
-    public interface InterfaceAddedDefaultMethod {
-        public void someMethod(Integer param);
-    }");
-    writeFile($Path_v2."/InterfaceAddedDefaultMethod.java",
-    "package $PackageName;
-    public interface InterfaceAddedDefaultMethod {
-        public void someMethod(Integer param);
-        default Integer addedMethod(Integer param) { return 0; }
-    }");
-    
-    # Method_Became_NonDefault
-    writeFile($Path_v1."/MethodBecameNonDefault.java",
-    "package $PackageName;
-    public interface MethodBecameNonDefault {
-        default Integer someMethod(Integer param) { return 0; }
-    }");
-    writeFile($Path_v2."/MethodBecameNonDefault.java",
-    "package $PackageName;
-    public interface MethodBecameNonDefault {
-        public Integer someMethod(Integer param);
-    }");
-    
-    writeFile($TestsPath."/Test_MethodBecameNonDefault.java",
-    "import $PackageName.*;
-    class Class_MethodBecameNonDefault implements MethodBecameNonDefault {
-    };
-    
-    public class Test_MethodBecameNonDefault
-    {
-        public static void main(String[] args)
-        {
-            Class_MethodBecameNonDefault Obj = new Class_MethodBecameNonDefault();
-            Integer Res = Obj.someMethod(0);
-        }
-    }");
-    
-    # Variable_Arity_To_Array
-    writeFile($Path_v1."/VariableArityToArray.java",
-    "package $PackageName;
-    public class VariableArityToArray {
-        public void someMethod(Integer x, String... y) { };
-    }");
-    writeFile($Path_v2."/VariableArityToArray.java",
-    "package $PackageName;
-    public class VariableArityToArray {
-        public void someMethod(Integer x, String[] y) { };
-    }");
-    
-    # Class_Became_Interface
-    writeFile($Path_v1."/ClassBecameInterface.java",
-    "package $PackageName;
-    public class ClassBecameInterface extends BaseClass {
-        public Integer someMethod(Integer param) {
-            return param;
-        }
-    }");
-    writeFile($Path_v2."/ClassBecameInterface.java",
-    "package $PackageName;
-    public interface ClassBecameInterface extends BaseInterface, BaseInterface2 {
-        public Integer someMethod(Integer param);
-    }");
-    
-    # Added_Super_Class
-    writeFile($Path_v1."/AddedSuperClass.java",
-    "package $PackageName;
-    public class AddedSuperClass {
-        public Integer someMethod(Integer param) {
-            return param;
-        }
-    }");
-    writeFile($Path_v2."/AddedSuperClass.java",
-    "package $PackageName;
-    public class AddedSuperClass extends BaseClass {
-        public Integer someMethod(Integer param) {
-            return param;
-        }
-    }");
-    
-    # Abstract_Class_Added_Super_Abstract_Class
-    writeFile($Path_v1."/AbstractClassAddedSuperAbstractClass.java",
-    "package $PackageName;
-    public abstract class AbstractClassAddedSuperAbstractClass {
-        public Integer someMethod(Integer param) {
-            return param;
-        }
-    }");
-    writeFile($Path_v2."/AbstractClassAddedSuperAbstractClass.java",
-    "package $PackageName;
-    public abstract class AbstractClassAddedSuperAbstractClass extends BaseAbstractClass {
-        public Integer someMethod(Integer param) {
-            return param;
-        }
-    }");
-    
-    # Removed_Super_Class
-    writeFile($Path_v1."/RemovedSuperClass.java",
-    "package $PackageName;
-    public class RemovedSuperClass extends BaseClass {
-        public Integer someMethod(Integer param) {
-            return param;
-        }
-    }");
-    writeFile($Path_v2."/RemovedSuperClass.java",
-    "package $PackageName;
-    public class RemovedSuperClass {
-        public Integer someMethod(Integer param) {
-            return param;
-        }
-    }");
-    
-    # Changed_Super_Class
-    writeFile($Path_v1."/ChangedSuperClass.java",
-    "package $PackageName;
-    public class ChangedSuperClass extends BaseClass {
-        public Integer someMethod(Integer param) {
-            return param;
-        }
-    }");
-    writeFile($Path_v2."/ChangedSuperClass.java",
-    "package $PackageName;
-    public class ChangedSuperClass extends BaseClass2 {
-        public Integer someMethod(Integer param) {
-            return param;
-        }
-    }");
-    
-    # Abstract_Class_Added_Super_Interface
-    writeFile($Path_v1."/AbstractClassAddedSuperInterface.java",
-    "package $PackageName;
-    public abstract class AbstractClassAddedSuperInterface implements BaseInterface {
-        public Integer method(Integer param) {
-            return param;
-        }
-    }");
-    writeFile($Path_v2."/AbstractClassAddedSuperInterface.java",
-    "package $PackageName;
-    public abstract class AbstractClassAddedSuperInterface implements BaseInterface, BaseInterface2 {
-        public Integer method(Integer param) {
-            return param;
-        }
-    }");
-    
-    # Abstract_Class_Added_Super_Interface_With_Implemented_Methods
-    writeFile($Path_v1."/AbstractClassAddedSuperInterfaceWithImplementedMethods.java",
-    "package $PackageName;
-    public abstract class AbstractClassAddedSuperInterfaceWithImplementedMethods implements BaseInterface {
-        public Integer method(Integer param) {
-            return param;
-        }
-        public Integer method2(Integer param) {
-            return param;
-        }
-    }");
-    writeFile($Path_v2."/AbstractClassAddedSuperInterfaceWithImplementedMethods.java",
-    "package $PackageName;
-    public abstract class AbstractClassAddedSuperInterfaceWithImplementedMethods implements BaseInterface, BaseInterface2 {
-        public Integer method(Integer param) {
-            return param;
-        }
-        public Integer method2(Integer param) {
-            return param;
-        }
-    }");
-    
-    # Class_Removed_Super_Interface
-    writeFile($Path_v1."/ClassRemovedSuperInterface.java",
-    "package $PackageName;
-    public class ClassRemovedSuperInterface implements BaseInterface, BaseInterface2 {
-        public Integer method(Integer param) {
-            return param;
-        }
-        public Integer method2(Integer param) {
-            return param;
-        }
-    }");
-    writeFile($Path_v2."/ClassRemovedSuperInterface.java",
-    "package $PackageName;
-    public class ClassRemovedSuperInterface implements BaseInterface {
-        public Integer method(Integer param) {
-            return param;
-        }
-        public Integer method2(Integer param) {
-            return param;
-        }
-    }");
-    
-    writeFile($TestsPath."/Test_ClassRemovedSuperInterface.java",
-    "import $PackageName.*;
-    public class Test_ClassRemovedSuperInterface
-    {
-        public static void main(String[] args)
-        {
-            ClassRemovedSuperInterface Obj = new ClassRemovedSuperInterface();
-            Integer Res = Obj.method2(0);
-        }
-    }");
-    
-    # Interface_Added_Super_Interface
-    writeFile($Path_v1."/InterfaceAddedSuperInterface.java",
-    "package $PackageName;
-    public interface InterfaceAddedSuperInterface extends BaseInterface {
-        public Integer someMethod(Integer param);
-    }");
-    writeFile($Path_v2."/InterfaceAddedSuperInterface.java",
-    "package $PackageName;
-    public interface InterfaceAddedSuperInterface extends BaseInterface, BaseInterface2 {
-        public Integer someMethod(Integer param);
-    }");
-    
-    # Interface_Added_Super_Constant_Interface
-    writeFile($Path_v1."/InterfaceAddedSuperConstantInterface.java",
-    "package $PackageName;
-    public interface InterfaceAddedSuperConstantInterface extends BaseInterface {
-        public Integer someMethod(Integer param);
-    }");
-    writeFile($Path_v2."/InterfaceAddedSuperConstantInterface.java",
-    "package $PackageName;
-    public interface InterfaceAddedSuperConstantInterface extends BaseInterface, BaseConstantInterface {
-        public Integer someMethod(Integer param);
-    }");
-    
-    # Interface_Removed_Super_Interface
-    writeFile($Path_v1."/InterfaceRemovedSuperInterface.java",
-    "package $PackageName;
-    public interface InterfaceRemovedSuperInterface extends BaseInterface, BaseInterface2 {
-        public Integer someMethod(Integer param);
-    }");
-    writeFile($Path_v2."/InterfaceRemovedSuperInterface.java",
-    "package $PackageName;
-    public interface InterfaceRemovedSuperInterface extends BaseInterface {
-        public Integer someMethod(Integer param);
-    }");
-    
-    # Interface_Removed_Super_Constant_Interface
-    writeFile($Path_v1."/InterfaceRemovedSuperConstantInterface.java",
-    "package $PackageName;
-    public interface InterfaceRemovedSuperConstantInterface extends BaseInterface, BaseConstantInterface {
-        public Integer someMethod(Integer param);
-    }");
-    writeFile($Path_v2."/InterfaceRemovedSuperConstantInterface.java",
-    "package $PackageName;
-    public interface InterfaceRemovedSuperConstantInterface extends BaseInterface {
-        public Integer someMethod(Integer param);
-    }");
-    
-    # Interface_Became_Class
-    writeFile($Path_v1."/InterfaceBecameClass.java",
-    "package $PackageName;
-    public interface InterfaceBecameClass extends BaseInterface, BaseInterface2 {
-        public Integer someMethod(Integer param);
-    }");
-    writeFile($Path_v2."/InterfaceBecameClass.java",
-    "package $PackageName;
-    public class InterfaceBecameClass extends BaseClass {
-        public Integer someMethod(Integer param) {
-            return param;
-        }
-    }");
-    
-    # Removed_Class
-    writeFile($Path_v1."/RemovedClass.java",
-    "package $PackageName;
-    public class RemovedClass extends BaseClass {
-        public Integer someMethod(Integer param){
-            return param;
-        }
-    }");
-    
-    # Removed_Class (w/o methods)
-    writeFile($Path_v1."/RemovedFieldClass.java",
-    "package $PackageName;
-    public class RemovedFieldClass {
-        public Integer field;
-    }");
-    
-    writeFile($TestsPath."/Test_RemovedFieldClass.java",
-    "import $PackageName.*;
-    public class Test_RemovedFieldClass extends RemovedFieldClass
-    {
-        public static void main(String[] args)
-        {
-            RemovedFieldClass X = new RemovedFieldClass();
-            Integer Copy = X.field;
-        }
-    }");
-    
-    # Removed_Class (with static fields, private constructor)
-    writeFile($Path_v1."/RemovedClassWithStaticField.java",
-    "package $PackageName;
-    public class RemovedClassWithStaticField
-    {
-        private RemovedClassWithStaticField(){}
-        public static Integer cnt = 0;
-    }");
-    
-    writeFile($TestsPath."/Test_RemovedClassWithStaticField.java",
-    "import $PackageName.*;
-    public class Test_RemovedClassWithStaticField
-    {
-        public static void main(String[] args)
-        {
-            Integer Copy = RemovedClassWithStaticField.cnt;
-        }
-    }");
-    
-    # Removed_Field (static field, private constructor)
-    writeFile($Path_v1."/RemovedStaticFieldFromClassWithPrivateCtor.java",
-    "package $PackageName;
-    public class RemovedStaticFieldFromClassWithPrivateCtor
-    {
-        private RemovedStaticFieldFromClassWithPrivateCtor(){}
-        public static Integer cnt = 0;
-    }");
-    
-    writeFile($Path_v2."/RemovedStaticFieldFromClassWithPrivateCtor.java",
-    "package $PackageName;
-    public class RemovedStaticFieldFromClassWithPrivateCtor
-    {
-        private RemovedStaticFieldFromClassWithPrivateCtor(){}
-    }");
-    
-    writeFile($TestsPath."/Test_RemovedStaticFieldFromClassWithPrivateCtor.java",
-    "import $PackageName.*;
-    public class Test_RemovedStaticFieldFromClassWithPrivateCtor
-    {
-        public static void main(String[] args)
-        {
-            Integer Copy = RemovedStaticFieldFromClassWithPrivateCtor.cnt;
-        }
-    }");
-    
-    # Removed_Constant_Field
-    writeFile($Path_v1."/ClassRemovedStaticConstantField.java",
-    "package $PackageName;
-    public class ClassRemovedStaticConstantField
-    {
-        public static int removedField_Int = 1000;
-        public static String removedField_Str = \"Value\";
-    }");
-    writeFile($Path_v2."/ClassRemovedStaticConstantField.java",
-    "package $PackageName;
-    public class ClassRemovedStaticConstantField {
-    }");
-    
-    writeFile($TestsPath."/Test_ClassRemovedStaticConstantField.java",
-    "import $PackageName.*;
-    public class Test_ClassRemovedStaticConstantField
-    {
-        public static void main(String[] args)
-        {
-            Integer Copy = ClassRemovedStaticConstantField.removedField_Int;
-        }
-    }");
-    
-    # Removed_Class (Deprecated)
-    writeFile($Path_v1."/RemovedDeprecatedClass.java",
-    "package $PackageName;
-    \@Deprecated
-    public class RemovedDeprecatedClass {
-        public Integer someMethod(Integer param){
-            return param;
-        }
-    }");
-    
-    # Removed_Interface
-    writeFile($Path_v1."/RemovedInterface.java",
-    "package $PackageName;
-    public interface RemovedInterface extends BaseInterface, BaseInterface2 {
-        public Integer someMethod(Integer param);
-    }");
-    
-    # NonAbstract_Class_Added_Abstract_Method
-    writeFile($Path_v1."/NonAbstractClassAddedAbstractMethod.java",
-    "package $PackageName;
-    public class NonAbstractClassAddedAbstractMethod {
-        public Integer someMethod(Integer param1, String[] param2) {
-            return param1;
-        };
-    }");
-    writeFile($Path_v2."/NonAbstractClassAddedAbstractMethod.java",
-    "package $PackageName;
-    public abstract class NonAbstractClassAddedAbstractMethod {
-        public Integer someMethod(Integer param1, String[] param2) {
-            return param1;
-        };
-        public abstract Integer addedMethod(Integer param);
-    }");
-    
-    # Abstract_Class_Added_Abstract_Method
-    writeFile($Path_v1."/AbstractClassAddedAbstractMethod.java",
-    "package $PackageName;
-    public abstract class AbstractClassAddedAbstractMethod {
-        public Integer someMethod(Integer param1, String[] param2) {
-            return param1;
-        };
-    }");
-    writeFile($Path_v2."/AbstractClassAddedAbstractMethod.java",
-    "package $PackageName;
-    public abstract class AbstractClassAddedAbstractMethod {
-        public Integer someMethod(Integer param1, String[] param2) {
-            return param1;
-        };
-        public abstract Integer addedMethod(Integer param);
-    }");
-    
-    # Class_Became_Abstract
-    writeFile($Path_v1."/ClassBecameAbstract.java",
-    "package $PackageName;
-    public class ClassBecameAbstract {
-        public Integer someMethod(Integer param1, String[] param2) {
-            return param1;
-        };
-    }");
-    writeFile($Path_v2."/ClassBecameAbstract.java",
-    "package $PackageName;
-    public abstract class ClassBecameAbstract {
-        public Integer someMethod(Integer param1, String[] param2) {
-            return param1;
-        };
-        public abstract Integer addedMethod(Integer param);
-    }");
-    
-    # Class_Became_Final
-    writeFile($Path_v1."/ClassBecameFinal.java",
-    "package $PackageName;
-    public class ClassBecameFinal {
-        public Integer someMethod(Integer param1, String[] param2) {
-            return param1;
-        };
-    }");
-    writeFile($Path_v2."/ClassBecameFinal.java",
-    "package $PackageName;
-    public final class ClassBecameFinal {
-        public Integer someMethod(Integer param1, String[] param2) {
-            return param1;
-        };
-    }");
-    
-    # Class_Removed_Abstract_Method
-    writeFile($Path_v1."/ClassRemovedAbstractMethod.java",
-    "package $PackageName;
-    public abstract class ClassRemovedAbstractMethod {
-        public Integer someMethod(Integer param1, String[] param2) {
-            return param1;
-        };
-        public abstract Integer removedMethod(Integer param);
-    }");
-    writeFile($Path_v2."/ClassRemovedAbstractMethod.java",
-    "package $PackageName;
-    public abstract class ClassRemovedAbstractMethod {
-        public Integer someMethod(Integer param1, String[] param2) {
-            return param1;
-        };
-    }");
-    
-    # Class_Method_Became_Abstract
-    writeFile($Path_v1."/ClassMethodBecameAbstract.java",
-    "package $PackageName;
-    public abstract class ClassMethodBecameAbstract {
-        public Integer someMethod(Integer param1, String[] param2) {
-            return param1;
-        };
-        public Integer someMethod(Integer param){
-            return param;
-        };
-    }");
-    writeFile($Path_v2."/ClassMethodBecameAbstract.java",
-    "package $PackageName;
-    public abstract class ClassMethodBecameAbstract {
-        public Integer someMethod(Integer param1, String[] param2) {
-            return param1;
-        };
-        public abstract Integer someMethod(Integer param);
-    }");
-    
-    # Class_Method_Became_NonAbstract
-    writeFile($Path_v1."/ClassMethodBecameNonAbstract.java",
-    "package $PackageName;
-    public abstract class ClassMethodBecameNonAbstract {
-        public Integer someMethod(Integer param1, String[] param2) {
-            return param1;
-        };
-        public abstract Integer someMethod(Integer param);
-    }");
-    writeFile($Path_v2."/ClassMethodBecameNonAbstract.java",
-    "package $PackageName;
-    public abstract class ClassMethodBecameNonAbstract {
-        public Integer someMethod(Integer param1, String[] param2) {
-            return param1;
-        };
-        public Integer someMethod(Integer param){
-            return param;
-        };
-    }");
-    
-    # Method_Became_Static
-    writeFile($Path_v1."/MethodBecameStatic.java",
-    "package $PackageName;
-    public class MethodBecameStatic {
-        public Integer someMethod(Integer param) {
-            return param;
-        };
-    }");
-    writeFile($Path_v2."/MethodBecameStatic.java",
-    "package $PackageName;
-    public class MethodBecameStatic {
-        public static Integer someMethod(Integer param) {
-            return param;
-        };
-    }");
-    
-    # Method_Became_NonStatic
-    writeFile($Path_v1."/MethodBecameNonStatic.java",
-    "package $PackageName;
-    public class MethodBecameNonStatic {
-        public static Integer someMethod(Integer param) {
-            return param;
-        };
-    }");
-    writeFile($Path_v2."/MethodBecameNonStatic.java",
-    "package $PackageName;
-    public class MethodBecameNonStatic {
-        public Integer someMethod(Integer param) {
-            return param;
-        };
-    }");
-    
-    # Static_Method_Became_Final
-    writeFile($Path_v1."/StaticMethodBecameFinal.java",
-    "package $PackageName;
-    public class StaticMethodBecameFinal {
-        public static Integer someMethod(Integer param) {
-            return param;
-        };
-    }");
-    writeFile($Path_v2."/StaticMethodBecameFinal.java",
-    "package $PackageName;
-    public class StaticMethodBecameFinal {
-        public static final Integer someMethod(Integer param) {
-            return param;
-        };
-    }");
-    
-    # NonStatic_Method_Became_Final
-    writeFile($Path_v1."/NonStaticMethodBecameFinal.java",
-    "package $PackageName;
-    public class NonStaticMethodBecameFinal {
-        public Integer someMethod(Integer param) {
-            return param;
-        };
-    }");
-    writeFile($Path_v2."/NonStaticMethodBecameFinal.java",
-    "package $PackageName;
-    public class NonStaticMethodBecameFinal {
-        public final Integer someMethod(Integer param) {
-            return param;
-        };
-    }");
-    
-    # Method_Became_Abstract
-    writeFile($Path_v1."/MethodBecameAbstract.java",
-    "package $PackageName;
-    public abstract class MethodBecameAbstract {
-        public Integer someMethod(Integer param) {
-            return param;
-        };
-    }");
-    writeFile($Path_v2."/MethodBecameAbstract.java",
-    "package $PackageName;
-    public abstract class MethodBecameAbstract {
-        public abstract Integer someMethod(Integer param);
-    }");
-    
-    # Method_Became_NonAbstract
-    writeFile($Path_v1."/MethodBecameNonAbstract.java",
-    "package $PackageName;
-    public abstract class MethodBecameNonAbstract {
-        public abstract Integer someMethod(Integer param);
-    }");
-    writeFile($Path_v2."/MethodBecameNonAbstract.java",
-    "package $PackageName;
-    public abstract class MethodBecameNonAbstract {
-        public Integer someMethod(Integer param) {
-            return param;
-        };
-    }");
-    
-    # Changed_Method_Access
-    writeFile($Path_v1."/ChangedMethodAccess.java",
-    "package $PackageName;
-    public class ChangedMethodAccess {
-        public Integer someMethod(Integer param) {
-            return param;
-        };
-    }");
-    writeFile($Path_v2."/ChangedMethodAccess.java",
-    "package $PackageName;
-    public class ChangedMethodAccess {
-        protected Integer someMethod(Integer param) {
-            return param;
-        };
-    }");
-    
-    # Method_Became_Synchronized
-    writeFile($Path_v1."/MethodBecameSynchronized.java",
-    "package $PackageName;
-    public class MethodBecameSynchronized {
-        public Integer someMethod(Integer param) {
-            return param;
-        };
-    }");
-    writeFile($Path_v2."/MethodBecameSynchronized.java",
-    "package $PackageName;
-    public class MethodBecameSynchronized {
-        public synchronized Integer someMethod(Integer param) {
-            return param;
-        };
-    }");
-    
-    # Method_Became_NonSynchronized
-    writeFile($Path_v1."/MethodBecameNonSynchronized.java",
-    "package $PackageName;
-    public class MethodBecameNonSynchronized {
-        public synchronized Integer someMethod(Integer param) {
-            return param;
-        };
-    }");
-    writeFile($Path_v2."/MethodBecameNonSynchronized.java",
-    "package $PackageName;
-    public class MethodBecameNonSynchronized {
-        public Integer someMethod(Integer param) {
-            return param;
-        };
-    }");
-    
-    # Class_Overridden_Method
-    writeFile($Path_v1."/OverriddenMethod.java",
-    "package $PackageName;
-    public class OverriddenMethod extends BaseClass {
-        public Integer someMethod(Integer param) { return param; }
-    }");
-    writeFile($Path_v2."/OverriddenMethod.java",
-    "package $PackageName;
-    public class OverriddenMethod extends BaseClass {
-        public Integer someMethod(Integer param) { return param; }
-        public Integer method(Integer param) { return 2*param; }
-    }");
-    
-    # Class_Method_Moved_Up_Hierarchy
-    writeFile($Path_v1."/ClassMethodMovedUpHierarchy.java",
-    "package $PackageName;
-    public class ClassMethodMovedUpHierarchy extends BaseClass {
-        public Integer someMethod(Integer param) { return param; }
-        public Integer method(Integer param) { return 2*param; }
-    }");
-    writeFile($Path_v2."/ClassMethodMovedUpHierarchy.java",
-    "package $PackageName;
-    public class ClassMethodMovedUpHierarchy extends BaseClass {
-        public Integer someMethod(Integer param) { return param; }
-    }");
-    
-    # Class_Method_Moved_Up_Hierarchy (Interface Method) - should not be reported
-    writeFile($Path_v1."/InterfaceMethodMovedUpHierarchy.java",
-    "package $PackageName;
-    public interface InterfaceMethodMovedUpHierarchy extends BaseInterface {
-        public Integer method(Integer param);
-        public Integer method2(Integer param);
-    }");
-    writeFile($Path_v2."/InterfaceMethodMovedUpHierarchy.java",
-    "package $PackageName;
-    public interface InterfaceMethodMovedUpHierarchy extends BaseInterface {
-        public Integer method2(Integer param);
-    }");
-    
-    # Class_Method_Moved_Up_Hierarchy (Abstract Method) - should not be reported
-    writeFile($Path_v1."/AbstractMethodMovedUpHierarchy.java",
-    "package $PackageName;
-    public abstract class AbstractMethodMovedUpHierarchy implements BaseInterface {
-        public abstract Integer method(Integer param);
-        public abstract Integer method2(Integer param);
-    }");
-    writeFile($Path_v2."/AbstractMethodMovedUpHierarchy.java",
-    "package $PackageName;
-    public abstract class AbstractMethodMovedUpHierarchy implements BaseInterface {
-        public abstract Integer method2(Integer param);
-    }");
-    
-    # Use
-    writeFile($Path_v1."/Use.java",
-    "package $PackageName;
-    public class Use
-    {
-        public FieldBecameFinal field;
-        public void someMethod(FieldBecameFinal[] param) { };
-        public void someMethod(Use param) { };
-        public Integer someMethod(AbstractClassAddedSuperAbstractClass param) {
-            return 0;
-        }
-        public Integer someMethod(AbstractClassAddedAbstractMethod param) {
-            return 0;
-        }
-        public Integer someMethod(InterfaceAddedAbstractMethod param) {
-            return 0;
-        }
-        public Integer someMethod(InterfaceAddedSuperInterface param) {
-            return 0;
-        }
-        public Integer someMethod(AbstractClassAddedSuperInterface param) {
-            return 0;
-        }
-        public Integer someMethod(AbstractClassAddedSuperInterfaceWithImplementedMethods param) {
-            return 0;
-        }
-    }");
-    writeFile($Path_v2."/Use.java",
-    "package $PackageName;
-    public class Use
-    {
-        public FieldBecameFinal field;
-        public void someMethod(FieldBecameFinal[] param) { };
-        public void someMethod(Use param) { };
-        public Integer someMethod(AbstractClassAddedSuperAbstractClass param) {
-            return param.abstractMethod(100)+param.field;
-        }
-        public Integer someMethod(AbstractClassAddedAbstractMethod param) {
-            return param.addedMethod(100);
-        }
-        public Integer someMethod(InterfaceAddedAbstractMethod param) {
-            return param.addedMethod(100);
-        }
-        public Integer someMethod(InterfaceAddedSuperInterface param) {
-            return param.method2(100);
-        }
-        public Integer someMethod(AbstractClassAddedSuperInterface param) {
-            return param.method2(100);
-        }
-        public Integer someMethod(AbstractClassAddedSuperInterfaceWithImplementedMethods param) {
-            return param.method2(100);
-        }
-    }");
-    
-    # Added_Package
-    writeFile($Path_v2."/AddedPackage/AddedPackageClass.java",
-    "package $PackageName.AddedPackage;
-    public class AddedPackageClass {
-        public Integer field;
-        public void someMethod(Integer param) { };
-    }");
-    
-    # Removed_Package
-    writeFile($Path_v1."/RemovedPackage/RemovedPackageClass.java",
-    "package $PackageName.RemovedPackage;
-    public class RemovedPackageClass {
-        public Integer field;
-        public void someMethod(Integer param) { };
-    }");
-    my $BuildRoot1 = get_dirname($Path_v1);
-    my $BuildRoot2 = get_dirname($Path_v2);
-    if(compileJavaLib($LibName, $BuildRoot1, $BuildRoot2))
-    {
-        runTests($TestsPath, $PackageName, $BuildRoot1, $BuildRoot2);
-        runChecker($LibName, $BuildRoot1, $BuildRoot2);
-    }
-}
-
-sub readArchive($$)
-{ # 1, 2 - library, 0 - client
-    my ($LibVersion, $Path) = @_;
-    return if(not $Path or not -e $Path);
-    
-    if($LibVersion)
-    {
-        my $ArchiveName = get_filename($Path);
-        $LibArchives{$LibVersion}{$ArchiveName} = 1;
-    }
-    
-    $Path = get_abs_path($Path);
-    my $JarCmd = get_CmdPath("jar");
-    if(not $JarCmd) {
-        exitStatus("Not_Found", "can't find \"jar\" command");
-    }
-    my $ExtractPath = joinPath($TMP_DIR, $ExtractCounter);
-    if(-d $ExtractPath) {
-        rmtree($ExtractPath);
-    }
-    mkpath($ExtractPath);
-    chdir($ExtractPath);
-    system($JarCmd." -xf \"$Path\"");
-    if($?) {
-        exitStatus("Error", "can't extract \'$Path\'");
-    }
-    chdir($ORIG_DIR);
-    my @Classes = ();
-    foreach my $ClassPath (cmd_find($ExtractPath,"","*\.class",""))
-    {
-        if($OSgroup ne "windows") {
-            $ClassPath=~s/\.class\Z//g;
-        }
-        
-        my $ClassName = get_filename($ClassPath);
-        if($ClassName=~/\$\d/) {
-            next;
-        }
-        $ClassPath = cut_path_prefix($ClassPath, $ExtractPath); # javap decompiler accepts relative paths only
-        
-        my $ClassDir = get_dirname($ClassPath);
-        if($ClassDir=~/\./)
-        { # jaxb-osgi.jar/1.0/org/apache
-            next;
-        }
-        
-        my $Package = get_PFormat($ClassDir);
-        if($LibVersion)
-        {
-            if(skipPackage($Package, $LibVersion))
-            { # internal packages
-                next;
-            }
-        }
-        
-        $ClassName=~s/\$/./g; # real name for GlyphView$GlyphPainter is GlyphView.GlyphPainter
-        push(@Classes, $ClassPath);
-    }
-    
-    if($#Classes!=-1)
-    {
-        foreach my $PartRef (divideArray(\@Classes))
-        {
-            if($LibVersion) {
-                readClasses($PartRef, $LibVersion, get_filename($Path));
-            }
-            else {
-                readClasses_Usage($PartRef);
-            }
-        }
-    }
-    
-    $ExtractCounter+=1;
-    
-    if($LibVersion)
-    {
-        foreach my $SubArchive (cmd_find($ExtractPath,"","*\.jar",""))
-        { # recursive step
-            readArchive($LibVersion, $SubArchive);
-        }
-    }
-    
-    rmtree($ExtractPath);
-}
-
-sub native_path($)
-{
-    my $Path = $_[0];
-    if($OSgroup eq "windows") {
-        $Path=~s/[\/\\]+/\\/g;
-    }
-    return $Path;
-}
-
-sub divideArray($)
-{
-    my $ArrRef = $_[0];
-    return () if(not $ArrRef);
-    my @Array = @{$ArrRef};
-    return () if($#{$ArrRef}==-1);
-    
-    my @Res = ();
-    my $Sub = [];
-    my $Len = 0;
-    
-    foreach my $Pos (0 .. $#{$ArrRef})
-    {
-        my $Arg = $ArrRef->[$Pos];
-        my $Arg_L = length($Arg) + 1; # space
-        if($Len < $ARG_MAX - 250)
-        {
-            push(@{$Sub}, $Arg);
-            $Len += $Arg_L;
-        }
-        else
-        {
-            push(@Res, $Sub);
-            
-            $Sub = [$Arg];
-            $Len = $Arg_L;
-        }
-    }
-    
-    if($#{$Sub}!=-1) {
-        push(@Res, $Sub);
-    }
-    
-    return @Res;
-}
-
-sub registerType($$)
-{
-    my ($TName, $LibVersion) = @_;
-    
-    if(not $TName) {
-        return 0;
-    }
-    
-    $TName=~s/#/./g;
-    if($TName_Tid{$LibVersion}{$TName}) {
-        return $TName_Tid{$LibVersion}{$TName};
-    }
-    
-    if(not $TName_Tid{$LibVersion}{$TName})
-    {
-        my $ID = undef;
-        if($REPRODUCIBLE) {
-            $ID = getMd5($TName);
-        }
-        else {
-            $ID = ++$TYPE_ID;
-        }
-        $TName_Tid{$LibVersion}{$TName} = "$ID";
-    }
-    
-    my $Tid = $TName_Tid{$LibVersion}{$TName};
-    $TypeInfo{$LibVersion}{$Tid}{"Name"} = $TName;
-    if($TName=~/(.+)\[\]\Z/)
-    {
-        if(my $BaseTypeId = registerType($1, $LibVersion))
-        {
-            $TypeInfo{$LibVersion}{$Tid}{"BaseType"} = $BaseTypeId;
-            $TypeInfo{$LibVersion}{$Tid}{"Type"} = "array";
-        }
-    }
-    
-    return $Tid;
-}
-
-sub readClasses_Usage($)
-{
-    my $Paths = $_[0];
-    return () if(not $Paths);
-    
-    my $JavapCmd = get_CmdPath("javap");
-    if(not $JavapCmd) {
-        exitStatus("Not_Found", "can't find \"javap\" command");
-    }
-    
-    my $Input = join(" ", @{$Paths});
-    if($OSgroup ne "windows")
-    { # on unix ensure that the system does not try and interpret the $, by escaping it
-        $Input=~s/\$/\\\$/g;
-    }
-    
-    chdir($TMP_DIR."/".$ExtractCounter);
-    open(CONTENT, "$JavapCmd -c -private $Input 2>\"$TMP_DIR/warn\" |");
-    while(<CONTENT>)
-    {
-        if(/\/\/\s*(Method|InterfaceMethod)\s+(.+)\Z/)
-        {
-            my $M = $2;
-            $UsedMethods_Client{$M} = 1;
-            
-            if($M=~/\A(.*)+\.\w+\:\(/)
-            {
-                my $C = $1;
-                $C=~s/\//./g;
-                $UsedClasses_Client{$C} = 1;
-            }
-        }
-        elsif(/\/\/\s*Field\s+(.+)\Z/)
-        {
-            my $FieldName = $1;
-            if(/\s+(putfield|getfield|getstatic|putstatic)\s+/) {
-                $UsedFields_Client{$FieldName} = $1;
-            }
-        }
-        elsif(/ ([^\s]+) [^: ]+\(([^()]+)\)/)
-        {
-            my ($Ret, $Params) = ($1, $2);
-            
-            $Ret=~s/\[\]//g; # quals
-            $UsedClasses_Client{$Ret} = 1;
-            
-            foreach my $Param (split(/\s*,\s*/, $Params))
-            {
-                $Param=~s/\[\]//g; # quals
-                $UsedClasses_Client{$Param} = 1;
-            }
-        }
-        elsif(/ class /)
-        {
-            if(/extends ([^\s{]+)/)
-            {
-                foreach my $Class (split(/\s*,\s*/, $1)) {
-                    $UsedClasses_Client{$Class} = 1;
-                }
-            }
-            
-            if(/implements ([^\s{]+)/)
-            {
-                foreach my $Interface (split(/\s*,\s*/, $1)) {
-                    $UsedClasses_Client{$Interface} = 1;
-                }
-            }
-        }
-    }
-    close(CONTENT);
-    chdir($ORIG_DIR);
-}
-
-sub readClasses($$$)
-{
-    my ($Paths, $LibVersion, $ArchiveName) = @_;
-    return if(not $Paths or not $LibVersion or not $ArchiveName);
-    
-    my $JavapCmd = get_CmdPath("javap");
-    if(not $JavapCmd) {
-        exitStatus("Not_Found", "can't find \"javap\" command");
-    }
-    
-    my $Input = join(" ", @{$Paths});
-    if($OSgroup ne "windows")
-    { # on unix ensure that the system does not try and interpret the $, by escaping it
-        $Input=~s/\$/\\\$/g;
-    }
-    
-    my $Output = $TMP_DIR."/class-dump.txt";
-    if(-e $Output) {
-        unlink($Output);
-    }
-    
-    my $Cmd = "$JavapCmd -s -private";
-    if(not $Quick) {
-        $Cmd .= " -c -verbose";
-    }
-    
-    chdir($TMP_DIR."/".$ExtractCounter);
-    system($Cmd." ".$Input." >\"$Output\" 2>\"$TMP_DIR/warn\"");
-    chdir($ORIG_DIR);
-    
-    if(not -e $Output) {
-        exitStatus("Error", "internal error in parser, try to reduce ARG_MAX");
-    }
-    if($Debug) {
-        appendFile($DEBUG_PATH{$LibVersion}."/class-dump.txt", readFile($Output));
-    }
-    
-    # ! private info should be processed
-    open(CONTENT, "$TMP_DIR/class-dump.txt");
-    my @Content = <CONTENT>;
-    close(CONTENT);
-    
-    my (%TypeAttr, $CurrentMethod, $CurrentPackage, $CurrentClass) = ();
-    my ($InParamTable, $InExceptionTable, $InCode) = (0, 0, 0);
-    
-    my $InAnnotations = undef;
-    my $InAnnotations_Class = undef;
-    my $InAnnotations_Method = undef;
-    my %AnnotationName = ();
-    my %AnnotationNum = (); # support for Java 7
-    
-    my ($ParamPos, $FieldPos, $LineNum) = (0, 0, 0);
-    while($LineNum<=$#Content)
-    {
-        my $LINE = $Content[$LineNum++];
-        my $LINE_N = $Content[$LineNum];
-        
-        if($LINE=~/\A\s*(?:const|AnnotationDefault|Compiled|Source|Constant)/) {
-            next;
-        }
-        
-        if($LINE=~/\sof\s|\sline \d+:|\[\s*class|= \[|\$[\d\$\(:\.;]| class\$|[\.\/]\$|\._\d|\$eq/)
-        { # artificial methods and code
-            next;
-        }
-        
-        if($LINE=~/ (\w+\$|)\w+\$\w+[\(:]/) {
-            next;
-        }
-        
-        # $LINE=~s/ \$(\w)/ $1/g;
-        # $LINE_N=~s/ \$(\w)/ $1/g;
-        
-        if(not $InParamTable)
-        {
-            if($LINE=~/ \$/) {
-                next;
-            }
-        }
-        
-        $LINE=~s/\$([\> ]|\Z)/$1/g;
-        $LINE_N=~s/\$([\> ]|\Z)/$1/g;
-        
-        if($LINE eq "\n" or $LINE eq "}\n")
-        {
-            $CurrentMethod = undef;
-            $InCode = 0;
-            $InAnnotations_Method = 0;
-            $InParamTable = 0;
-        }
-        
-        if($LINE eq "}\n") {
-            $InAnnotations_Class = 1;
-        }
-        
-        if($LINE=~/\A\s*#(\d+)/)
-        { # Constant pool
-            my $CNum = $1;
-            if($LINE=~/\s+([^ ]+?);/)
-            {
-                my $AName = $1;
-                $AName=~s/\AL//;
-                $AName=~s/\$/./g;
-                $AName=~s/\//./g;
-                
-                $AnnotationName{$CNum} = $AName;
-                
-                if(defined $AnnotationNum{$CNum})
-                { # support for Java 7
-                    if($InAnnotations_Class) {
-                        $TypeAttr{"Annotations"}{registerType($AName, $LibVersion)} = 1;
-                    }
-                    delete($AnnotationNum{$CNum});
-                }
-            }
-            
-            next;
-        }
-        
-        # Java 7: templates
-        if(index($LINE, "<")!=-1)
-        { # <T extends java.lang.Object>
-          # <KEYIN extends java.lang.Object ...
-            if($LINE=~/<[A-Z\d\?]+ /i)
-            {
-                while($LINE=~/<([A-Z\d\?]+ .*?)>( |\Z)/i)
-                {
-                    my $Str = $1;
-                    my @Prms = ();
-                    foreach my $P (separate_Params($Str, 0, 0))
-                    {
-                        $P=~s/\A([A-Z\d\?]+) .*\Z/$1/ig;
-                        push(@Prms, $P);
-                    }
-                    my $Str_N = join(", ", @Prms);
-                    $LINE=~s/\Q$Str\E/$Str_N/g;
-                }
-            }
-        }
-        
-        $LINE=~s/\s*,\s*/,/g;
-        $LINE=~s/\$/#/g;
-        
-        if(index($LINE, "LocalVariableTable")!=-1) {
-            $InParamTable += 1;
-        }
-        elsif($LINE=~/Exception\s+table/) {
-            $InExceptionTable = 1;
-        }
-        elsif($LINE=~/\A\s*Code:/)
-        {
-            $InCode += 1;
-            $InAnnotations = undef;
-        }
-        elsif($LINE=~/\A\s*\d+:\s*(.*)\Z/)
-        { # read Code
-            if($InCode==1)
-            {
-                if($CurrentMethod)
-                {
-                    if(index($LINE, "invoke")!=-1)
-                    {
-                        if($LINE=~/ invoke(\w+) .* \/\/\s*(Method|InterfaceMethod)\s+(.+)\Z/)
-                        { # 3:   invokevirtual   #2; //Method "[Lcom/sleepycat/je/Database#DbState;".clone:()Ljava/lang/Object;
-                            my ($InvokeType, $InvokedName) = ($1, $3);
-                            
-                            if($InvokedName!~/\A(\w+:|java\/(lang|util|io)\/)/
-                            and index($InvokedName, '"<init>":')!=0)
-                            {
-                                $InvokedName=~s/#/\$/g;
-                                $MethodUsed{$LibVersion}{$InvokedName}{$CurrentMethod} = $InvokeType;
-                            }
-                        }
-                    }
-                    # elsif($LINE=~/ (getstatic|putstatic) .* \/\/\s*Field\s+(.+)\Z/)
-                    # {
-                    #     my $UsedFieldName = $2;
-                    #     $FieldUsed{$LibVersion}{$UsedFieldName}{$CurrentMethod} = 1;
-                    # }
-                }
-            }
-            elsif(defined $InAnnotations)
-            {
-                if($LINE=~/\A\s*\d+\:\s*#(\d+)/)
-                {
-                    if(my $AName = $AnnotationName{$1})
-                    {
-                        if($InAnnotations_Class) {
-                            $TypeAttr{"Annotations"}{registerType($AName, $LibVersion)} = 1;
-                        }
-                        elsif($InAnnotations_Method) {
-                            $MethodInfo{$LibVersion}{$CurrentMethod}{"Annotations"}{registerType($AName, $LibVersion)} = 1;
-                        }
-                    }
-                    else
-                    { # suport for Java 7
-                        $AnnotationNum{$1} = 1;
-                    }
-                }
-            }
-        }
-        elsif($CurrentMethod and $InParamTable==1 and $LINE=~/\A\s+0\s+\d+\s+\d+\s+(\#?)(\w+)/)
-        { # read parameter names from LocalVariableTable
-            my $Art = $1;
-            my $PName = $2;
-            
-            if(($PName ne "this" or $Art) and $PName=~/[a-z]/i)
-            {
-                if($CurrentMethod)
-                {
-                    if(defined $MethodInfo{$LibVersion}{$CurrentMethod}
-                    and defined $MethodInfo{$LibVersion}{$CurrentMethod}{"Param"}
-                    and defined $MethodInfo{$LibVersion}{$CurrentMethod}{"Param"}{$ParamPos}
-                    and defined $MethodInfo{$LibVersion}{$CurrentMethod}{"Param"}{$ParamPos}{"Type"})
-                    {
-                        $MethodInfo{$LibVersion}{$CurrentMethod}{"Param"}{$ParamPos}{"Name"} = $PName;
-                        $ParamPos++;
-                    }
-                }
-            }
-        }
-        elsif($CurrentClass and $LINE=~/(\A|\s+)([^\s]+)\s+([^\s]+)\s*\((.*)\)\s*(throws\s*([^\s]+)|)\s*;\Z/)
-        { # attributes of methods and constructors
-            my (%MethodAttr, $ParamsLine, $Exceptions) = ();
-            
-            $InParamTable = 0; # read the first local variable table
-            $InCode = 0; # read the first code
-            $InAnnotations_Method = 1;
-            $InAnnotations_Class = 0;
-            
-            ($MethodAttr{"Return"}, $MethodAttr{"ShortName"}, $ParamsLine, $Exceptions) = ($2, $3, $4, $6);
-            $MethodAttr{"ShortName"}=~s/#/./g;
-            
-            if($Exceptions)
-            {
-                foreach my $E (split(/,/, $Exceptions)) {
-                    $MethodAttr{"Exceptions"}{registerType($E, $LibVersion)} = 1;
-                }
-            }
-            if($LINE=~/(\A|\s+)(public|protected|private)\s+/) {
-                $MethodAttr{"Access"} = $2;
-            }
-            else {
-                $MethodAttr{"Access"} = "package-private";
-            }
-            $MethodAttr{"Class"} = registerType($TypeAttr{"Name"}, $LibVersion);
-            if($MethodAttr{"ShortName"}=~/\A(|(.+)\.)\Q$CurrentClass\E\Z/)
-            {
-                if($2)
-                {
-                    $MethodAttr{"Package"} = $2;
-                    $CurrentPackage = $MethodAttr{"Package"};
-                    $MethodAttr{"ShortName"} = $CurrentClass;
-                }
-                $MethodAttr{"Constructor"} = 1;
-                delete($MethodAttr{"Return"});
-            }
-            else
-            {
-                $MethodAttr{"Return"} = registerType($MethodAttr{"Return"}, $LibVersion);
-            }
-            
-            my @Params = separate_Params($ParamsLine, 0, 1);
-            
-            $ParamPos = 0;
-            foreach my $ParamTName (@Params)
-            {
-                %{$MethodAttr{"Param"}{$ParamPos}} = ("Type"=>registerType($ParamTName, $LibVersion), "Name"=>"p".($ParamPos+1));
-                $ParamPos++;
-            }
-            $ParamPos = 0;
-            if(not $MethodAttr{"Constructor"})
-            { # methods
-                if($CurrentPackage) {
-                    $MethodAttr{"Package"} = $CurrentPackage;
-                }
-                if($LINE=~/(\A|\s+)abstract\s+/) {
-                    $MethodAttr{"Abstract"} = 1;
-                }
-                if($LINE=~/(\A|\s+)final\s+/) {
-                    $MethodAttr{"Final"} = 1;
-                }
-                if($LINE=~/(\A|\s+)static\s+/) {
-                    $MethodAttr{"Static"} = 1;
-                }
-                if($LINE=~/(\A|\s+)native\s+/) {
-                    $MethodAttr{"Native"} = 1;
-                }
-                if($LINE=~/(\A|\s+)synchronized\s+/) {
-                    $MethodAttr{"Synchronized"} = 1;
-                }
-            }
-            
-            # read the Signature
-            if($LINE_N=~/(Signature|descriptor):\s*(.+)\Z/i)
-            { # create run-time unique name ( java/io/PrintStream.println (Ljava/lang/String;)V )
-                if($MethodAttr{"Constructor"}) {
-                    $CurrentMethod = $CurrentClass.".\"<init>\":".$2;
-                }
-                else {
-                    $CurrentMethod = $CurrentClass.".".$MethodAttr{"ShortName"}.":".$2;
-                }
-                if(my $PackageName = get_SFormat($CurrentPackage)) {
-                    $CurrentMethod = $PackageName."/".$CurrentMethod;
-                }
-                
-                $LineNum++;
-            }
-            else {
-                exitStatus("Error", "internal error - can't read method signature");
-            }
-            
-            $MethodAttr{"Archive"} = $ArchiveName;
-            if($CurrentMethod)
-            {
-                %{$MethodInfo{$LibVersion}{$CurrentMethod}} = %MethodAttr;
-                if($MethodAttr{"Access"}=~/public|protected/)
-                {
-                    $Class_Methods{$LibVersion}{$TypeAttr{"Name"}}{$CurrentMethod} = 1;
-                    if($MethodAttr{"Abstract"}) {
-                        $Class_AbstractMethods{$LibVersion}{$TypeAttr{"Name"}}{$CurrentMethod} = 1;
-                    }
-                }
-            }
-        }
-        elsif($CurrentClass and $LINE=~/(\A|\s+)([^\s]+)\s+(\w+);\Z/)
-        { # fields
-            my ($TName, $FName) = ($2, $3);
-            $TypeAttr{"Fields"}{$FName}{"Type"} = registerType($TName, $LibVersion);
-            if($LINE=~/(\A|\s+)final\s+/) {
-                $TypeAttr{"Fields"}{$FName}{"Final"} = 1;
-            }
-            if($LINE=~/(\A|\s+)static\s+/) {
-                $TypeAttr{"Fields"}{$FName}{"Static"} = 1;
-            }
-            if($LINE=~/(\A|\s+)transient\s+/) {
-                $TypeAttr{"Fields"}{$FName}{"Transient"} = 1;
-            }
-            if($LINE=~/(\A|\s+)volatile\s+/) {
-                $TypeAttr{"Fields"}{$FName}{"Volatile"} = 1;
-            }
-            if($LINE=~/(\A|\s+)(public|protected|private)\s+/) {
-                $TypeAttr{"Fields"}{$FName}{"Access"} = $2;
-            }
-            else {
-                $TypeAttr{"Fields"}{$FName}{"Access"} = "package-private";
-            }
-            if($TypeAttr{"Fields"}{$FName}{"Access"}!~/private/) {
-                $Class_Fields{$LibVersion}{$TypeAttr{"Name"}}{$FName}=$TypeAttr{"Fields"}{$FName}{"Type"};
-            }
-            $TypeAttr{"Fields"}{$FName}{"Pos"} = $FieldPos++;
-            
-            # read the Signature
-            if($Content[$LineNum++]=~/(Signature|descriptor):\s*(.+)\Z/i)
-            {
-                my $FSignature = $2;
-                if(my $PackageName = get_SFormat($CurrentPackage)) {
-                    $TypeAttr{"Fields"}{$FName}{"Mangled"} = $PackageName."/".$CurrentClass.".".$FName.":".$FSignature;
-                }
-            }
-            if($Content[$LineNum]=~/flags:/i)
-            { # flags: ACC_PUBLIC, ACC_STATIC, ACC_FINAL, ACC_ANNOTATION
-                $LineNum++;
-            }
-            
-            # read the Value
-            if($Content[$LineNum]=~/Constant\s*value:\s*([^\s]+)\s(.*)\Z/i)
-            {
-              # Java 6: Constant value: ...
-              # Java 7: ConstantValue: ...
-                $LineNum+=1;
-                my ($TName, $Value) = ($1, $2);
-                if($Value)
-                {
-                    if($Value=~s/Deprecated:\s*true\Z//g) {
-                        # deprecated values: ?
-                    }
-                    $TypeAttr{"Fields"}{$FName}{"Value"} = $Value;
-                }
-                elsif($TName eq "String") {
-                    $TypeAttr{"Fields"}{$FName}{"Value"} = "\@EMPTY_STRING\@";
-                }
-            }
-        }
-        elsif($LINE=~/(\A|\s+)(class|interface)\s+([^\s\{]+)(\s+|\{|\Z)/)
-        { # properties of classes and interfaces
-            if($TypeAttr{"Name"})
-            { # register previous
-                %{$TypeInfo{$LibVersion}{registerType($TypeAttr{"Name"}, $LibVersion)}} = %TypeAttr;
-            }
-            
-            %TypeAttr = ("Type"=>$2, "Name"=>$3); # reset previous class
-            %AnnotationName = (); # reset annotations of the class
-            %AnnotationNum = (); # support for Java 7
-            $InAnnotations_Class = 1;
-            
-            $FieldPos = 0; # reset field position
-            $CurrentMethod = ""; # reset current method
-            $TypeAttr{"Archive"} = $ArchiveName;
-            if($TypeAttr{"Name"}=~/\A(.+)\.([^.]+)\Z/)
-            {
-                $CurrentClass = $2;
-                $TypeAttr{"Package"} = $1;
-                $CurrentPackage = $TypeAttr{"Package"};
-            }
-            else
-            {
-                $CurrentClass = $TypeAttr{"Name"};
-                $CurrentPackage = "";
-            }
-            if($CurrentClass=~s/#/./g)
-            { # javax.swing.text.GlyphView.GlyphPainter <=> GlyphView$GlyphPainter
-                $TypeAttr{"Name"}=~s/#/./g;
-            }
-            if($LINE=~/(\A|\s+)(public|protected|private)\s+/) {
-                $TypeAttr{"Access"} = $2;
-            }
-            else {
-                $TypeAttr{"Access"} = "package-private";
-            }
-            if($LINE=~/\s+extends\s+([^\s\{]+)/)
-            {
-                my $Extended = $1;
-                
-                if($TypeAttr{"Type"} eq "class")
-                {
-                    if($Extended ne $CurrentPackage.".".$CurrentClass) {
-                        $TypeAttr{"SuperClass"} = registerType($Extended, $LibVersion);
-                    }
-                }
-                elsif($TypeAttr{"Type"} eq "interface")
-                {
-                    my @Elems = separate_Params($Extended, 0, 0);
-                    foreach my $SuperInterface (@Elems)
-                    {
-                        if($SuperInterface ne $CurrentPackage.".".$CurrentClass) {
-                            $TypeAttr{"SuperInterface"}{registerType($SuperInterface, $LibVersion)} = 1;
-                        }
-                        
-                        if($SuperInterface eq "java.lang.annotation.Annotation") {
-                            $TypeAttr{"Annotation"} = 1;
-                        }
-                    }
-                }
-            }
-            if($LINE=~/\s+implements\s+([^\s\{]+)/)
-            {
-                my $Implemented = $1;
-                my @Elems = separate_Params($Implemented, 0, 0);
-                
-                foreach my $SuperInterface (@Elems) {
-                    $TypeAttr{"SuperInterface"}{registerType($SuperInterface, $LibVersion)} = 1;
-                }
-            }
-            if($LINE=~/(\A|\s+)abstract\s+/) {
-                $TypeAttr{"Abstract"} = 1;
-            }
-            if($LINE=~/(\A|\s+)final\s+/) {
-                $TypeAttr{"Final"} = 1;
-            }
-            if($LINE=~/(\A|\s+)static\s+/) {
-                $TypeAttr{"Static"} = 1;
-            }
-        }
-        elsif(index($LINE, "Deprecated: true")!=-1
-        or index($LINE, "Deprecated: length")!=-1)
-        { # deprecated method or class
-            if($CurrentMethod) {
-                $MethodInfo{$LibVersion}{$CurrentMethod}{"Deprecated"} = 1;
-            }
-            elsif($CurrentClass) {
-                $TypeAttr{"Deprecated"} = 1;
-            }
-        }
-        elsif(index($LINE, "RuntimeInvisibleAnnotations")!=-1
-        or index($LINE, "RuntimeVisibleAnnotations")!=-1)
-        {
-            $InAnnotations = 1;
-            $InCode = 0;
-        }
-        elsif(defined $InAnnotations and index($LINE, "InnerClasses")!=-1) {
-            $InAnnotations = undef;
-        }
-        else
-        {
-            # unparsed
-        }
-    }
-    if($TypeAttr{"Name"})
-    { # register last
-        %{$TypeInfo{$LibVersion}{registerType($TypeAttr{"Name"}, $LibVersion)}} = %TypeAttr;
-    }
-}
-
-sub separate_Params($$$)
-{
-    my ($Params, $Comma, $Sp) = @_;
-    my @Parts = ();
-    my %B = ( "("=>0, "<"=>0, ")"=>0, ">"=>0 );
-    my $Part = 0;
-    foreach my $Pos (0 .. length($Params) - 1)
-    {
-        my $S = substr($Params, $Pos, 1);
-        if(defined $B{$S}) {
-            $B{$S} += 1;
-        }
-        if($S eq "," and
-        $B{"("}==$B{")"} and $B{"<"}==$B{">"})
-        {
-            if($Comma)
-            { # include comma
-                $Parts[$Part] .= $S;
-            }
-            $Part += 1;
-        }
-        else {
-            $Parts[$Part] .= $S;
-        }
-    }
-    if(not $Sp)
-    { # remove spaces
-        foreach (@Parts)
-        {
-            s/\A //g;
-            s/ \Z//g;
-        }
-    }
-    return @Parts;
-}
-
 sub registerUsage($$)
 {
-    my ($TypeId, $LibVersion) = @_;
-    $Class_Constructed{$LibVersion}{$TypeId} = 1;
-    if(my $BaseId = $TypeInfo{$LibVersion}{$TypeId}{"BaseType"}) {
-        $Class_Constructed{$LibVersion}{$BaseId} = 1;
+    my ($TypeId, $LVer) = @_;
+    $Class_Constructed{$LVer}{$TypeId} = 1;
+    if(my $BaseId = $TypeInfo{$LVer}{$TypeId}{"BaseType"}) {
+        $Class_Constructed{$LVer}{$BaseId} = 1;
     }
 }
 
 sub checkVoidMethod($)
 {
     my $Method = $_[0];
-    return "" if(not $Method);
+    
     if($Method=~s/\)(.+)\Z/\)V/g) {
         return $Method;
     }
-    else {
-        return "";
-    }
+    
+    return undef;
 }
 
 sub detectAdded()
@@ -7833,33 +3749,33 @@ sub detectAdded()
             }
             
             my $ClassId = $MethodInfo{2}{$Method}{"Class"};
-            my %Class = get_Type($ClassId, 2);
+            my $CName = getTypeName($ClassId, 2);
             
-            $CheckedTypes{$Class{"Name"}} = 1;
+            $CheckedTypes{$CName} = 1;
             $CheckedMethods{$Method} = 1;
             
             if(not $MethodInfo{2}{$Method}{"Constructor"}
-            and my $Overridden = findMethod($Method, 2, $Class{"Name"}, 2))
+            and my $Overridden = findMethod($Method, 2, $CName, 2))
             {
                 if(defined $MethodInfo{1}{$Overridden}
-                and get_TypeType($ClassId, 2) eq "class" and $TName_Tid{1}{$Class{"Name"}})
+                and getTypeType($ClassId, 2) eq "class" and $TName_Tid{1}{$CName})
                 { # class should exist in previous version
-                    %{$CompatProblems{$Overridden}{"Class_Overridden_Method"}{"this.".get_SFormat($Method)}}=(
-                        "Type_Name"=>$Class{"Name"},
+                    %{$CompatProblems{$Overridden}{"Class_Overridden_Method"}{"this.".getSFormat($Method)}}=(
+                        "Type_Name"=>$CName,
                         "Target"=>$MethodInfo{2}{$Method}{"Signature"},
                         "Old_Value"=>$Overridden,
-                        "New_Value"=>$Method  );
+                        "New_Value"=>$Method);
                 }
             }
             if($MethodInfo{2}{$Method}{"Abstract"}) {
-                $AddedMethod_Abstract{$Class{"Name"}}{$Method} = 1;
+                $AddedMethod_Abstract{$CName}{$Method} = 1;
             }
             
             %{$CompatProblems{$Method}{"Added_Method"}{""}}=();
             
             if(not $MethodInfo{2}{$Method}{"Constructor"})
             {
-                if(get_TypeName($MethodInfo{2}{$Method}{"Return"}, 2) ne "void"
+                if(getTypeName($MethodInfo{2}{$Method}{"Return"}, 2) ne "void"
                 and my $VoidMethod = checkVoidMethod($Method))
                 {
                     if(defined $MethodInfo{1}{$VoidMethod})
@@ -7868,7 +3784,7 @@ sub detectAdded()
                         $ChangedReturnFromVoid{$Method} = 1;
                         
                         %{$CompatProblems{$VoidMethod}{"Changed_Method_Return_From_Void"}{""}}=(
-                            "New_Value"=>get_TypeName($MethodInfo{2}{$Method}{"Return"}, 2)
+                            "New_Value"=>getTypeName($MethodInfo{2}{$Method}{"Return"}, 2)
                         );
                     }
                 }
@@ -7888,28 +3804,28 @@ sub detectRemoved()
             }
             
             my $ClassId = $MethodInfo{1}{$Method}{"Class"};
-            my %Class = get_Type($ClassId, 1);
+            my $CName = getTypeName($ClassId, 1);
             
-            $CheckedTypes{$Class{"Name"}} = 1;
+            $CheckedTypes{$CName} = 1;
             $CheckedMethods{$Method} = 1;
             
             if(not $MethodInfo{1}{$Method}{"Constructor"}
-            and my $MovedUp = findMethod($Method, 1, $Class{"Name"}, 2))
+            and my $MovedUp = findMethod($Method, 1, $CName, 2))
             {
-                if(get_TypeType($ClassId, 1) eq "class"
-                and not $MethodInfo{1}{$Method}{"Abstract"} and $TName_Tid{2}{$Class{"Name"}})
+                if(getTypeType($ClassId, 1) eq "class"
+                and not $MethodInfo{1}{$Method}{"Abstract"} and $TName_Tid{2}{$CName})
                 {# class should exist in newer version
-                    %{$CompatProblems{$Method}{"Class_Method_Moved_Up_Hierarchy"}{"this.".get_SFormat($MovedUp)}}=(
-                        "Type_Name"=>$Class{"Name"},
+                    %{$CompatProblems{$Method}{"Class_Method_Moved_Up_Hierarchy"}{"this.".getSFormat($MovedUp)}}=(
+                        "Type_Name"=>$CName,
                         "Target"=>$MethodInfo{2}{$MovedUp}{"Signature"},
                         "Old_Value"=>$Method,
-                        "New_Value"=>$MovedUp  );
+                        "New_Value"=>$MovedUp);
                 }
             }
             else
             {
                 if($MethodInfo{1}{$Method}{"Abstract"}) {
-                    $RemovedMethod_Abstract{$Class{"Name"}}{$Method} = 1;
+                    $RemovedMethod_Abstract{$CName}{$Method} = 1;
                 }
                 %{$CompatProblems{$Method}{"Removed_Method"}{""}}=();
             }
@@ -7917,314 +3833,124 @@ sub detectRemoved()
     }
 }
 
-sub getArchives($)
-{
-    my $LibVersion = $_[0];
-    my @Paths = ();
-    foreach my $Path (split(/\s*\n\s*/, $Descriptor{$LibVersion}{"Archives"}))
-    {
-        if(not -e $Path) {
-            exitStatus("Access_Error", "can't access \'$Path\'");
-        }
-        foreach (getArchivePaths($Path, $LibVersion)) {
-            push(@Paths, $_);
-        }
-    }
-    return @Paths;
-}
-
 sub getArchivePaths($$)
 {
-    my ($Dest, $LibVersion) = @_;
+    my ($Dest, $LVer) = @_;
     if(-f $Dest) {
         return ($Dest);
     }
     elsif(-d $Dest)
     {
         $Dest=~s/[\/\\]+\Z//g;
-        my @AllClasses = ();
-        foreach my $Path (cmd_find($Dest,"","*\.jar",""))
+        next if(not $Dest);
+        
+        my @Archives = ();
+        foreach my $Path (cmdFind($Dest, "", "*\\.jar"))
         {
-            next if(ignore_path($Path, $Dest));
-            push(@AllClasses, resolve_symlink($Path));
+            next if(ignorePath($Path, $Dest));
+            push(@Archives, realpath_F($Path));
         }
-        return @AllClasses;
+        return @Archives;
     }
     return ();
 }
 
-sub isCyclical($$)
-{
+sub isCyclical($$) {
     return (grep {$_ eq $_[1]} @{$_[0]});
 }
 
-sub read_symlink($)
+sub mergeAPIs($$)
 {
-    my $Path = $_[0];
-    return "" if(not $Path or not -f $Path);
-    return $Cache{"read_symlink"}{$Path} if(defined $Cache{"read_symlink"}{$Path});
-    if(my $ReadlinkCmd = get_CmdPath("readlink"))
+    my ($LVer, $Dep) = @_;
+    
+    foreach my $TId (keys(%{$Dep->{"TypeInfo"}}))
     {
-        my $Res = `$ReadlinkCmd -n \"$Path\"`;
-        return ($Cache{"read_symlink"}{$Path} = $Res);
+        $TypeInfo{$LVer}{$TId} = $Dep->{"TypeInfo"}{$TId};
+        $TypeInfo{$LVer}{$TId}{"Dep"} = 1;
     }
-    elsif(my $FileCmd = get_CmdPath("file"))
+    
+    my $MInfo = $Dep->{"MethodInfo"};
+    foreach my $M_Id (keys(%{$MInfo}))
     {
-        my $Info = `$FileCmd \"$Path\"`;
-        if($Info=~/symbolic\s+link\s+to\s+['`"]*([\w\d\.\-\/\\]+)['`"]*/i) {
-            return ($Cache{"read_symlink"}{$Path} = $1);
+        if(my $Name = $MInfo->{$M_Id}{"Name"})
+        {
+            $MethodInfo{$LVer}{$Name} = $MInfo->{$M_Id};
+            $MethodInfo{$LVer}{$Name}{"Dep"} = 1;
         }
     }
-    return ($Cache{"read_symlink"}{$Path} = "");
 }
 
-sub resolve_symlink($)
+sub readAPIDump($$$)
 {
-    my $Path = $_[0];
-    return "" if(not $Path or not -f $Path);
-    return $Path if(isCyclical(\@RecurSymlink, $Path));
-    push(@RecurSymlink, $Path);
-    if(-l $Path and my $Redirect=read_symlink($Path))
-    {
-        if(is_abs($Redirect))
-        {
-            my $Res = resolve_symlink($Redirect);
-            pop(@RecurSymlink);
-            return $Res;
-        }
-        elsif($Redirect=~/\.\.[\/\\]/)
-        {
-            $Redirect = joinPath(get_dirname($Path),$Redirect);
-            while($Redirect=~s&(/|\\)[^\/\\]+(\/|\\)\.\.(\/|\\)&$1&){};
-            my $Res = resolve_symlink($Redirect);
-            pop(@RecurSymlink);
-            return $Res;
-        }
-        elsif(-f get_dirname($Path)."/".$Redirect)
-        {
-            my $Res = resolve_symlink(joinPath(get_dirname($Path),$Redirect));
-            pop(@RecurSymlink);
-            return $Res;
-        }
-        return $Path;
+    my ($LVer, $Path, $Subj) = @_;
+    
+    if(not $In::Opt{"CountMethods"}) {
+        printMsg("INFO", "Reading API dump ($LVer) ...");
+    }
+    
+    my $FilePath = "";
+    if(isDump_U($Path))
+    { # input *.dump
+        $FilePath = $Path;
     }
     else
-    {
-        pop(@RecurSymlink);
-        return $Path;
+    { # input *.dump.tar.gz
+        $FilePath = unpackDump($Path);
+        if(not isDump_U($FilePath)) {
+            exitStatus("Invalid_Dump", "specified API dump \'$Path\' is not valid, try to recreate it");
+        }
     }
-}
-
-sub cmpVersions($$)
-{# compare two version strings in dotted-numeric format
-    my ($V1, $V2) = @_;
-    return 0 if($V1 eq $V2);
-    my @V1Parts = split(/\./, $V1);
-    my @V2Parts = split(/\./, $V2);
-    for (my $i = 0; $i <= $#V1Parts && $i <= $#V2Parts; $i++) {
-        return -1 if(int($V1Parts[$i]) < int($V2Parts[$i]));
-        return 1 if(int($V1Parts[$i]) > int($V2Parts[$i]));
-    }
-    return -1 if($#V1Parts < $#V2Parts);
-    return 1 if($#V1Parts > $#V2Parts);
-    return 0;
-}
-
-sub majorVersion($)
-{
-    my $Version = $_[0];
-    return 0 if(not $Version);
-    my @VParts = split(/\./, $Version);
-    return $VParts[0];
-}
-
-sub isDump($)
-{
-    if($_[0]=~/\A(.+)\.(api|dump|apidump)(\Q.tar.gz\E|\Q.zip\E|)\Z/)
-    { # returns a name of package
-        return $1;
-    }
-    return 0;
-}
-
-sub isDumpFile($)
-{
-    if($_[0]=~/\.(api|dump|apidump)\Z/)
-    {
-        return 1;
-    }
-    return 0;
-}
-
-sub read_API_Dump($$$)
-{
-    my ($LibVersion, $Path, $Subj) = @_;
-    return if(not $LibVersion or not -e $Path);
     
-    my $FilePath = unpackDump($Path);
-    if(not isDumpFile($FilePath)) {
-        exitStatus("Invalid_Dump", "specified API dump \'$Path\' is not valid, try to recreate it");
+    my $APIRef = {};
+    
+    open(DUMP, $FilePath);
+    local $/ = undef;
+    my $Content = <DUMP>;
+    close(DUMP);
+    
+    if(getDirname($FilePath) eq $In::Opt{"Tmp"}."/unpack")
+    { # remove temp file
+        unlink($FilePath);
     }
-    my $Content = readFile($FilePath);
-    rmtree($TMP_DIR."/unpack");
     
     if($Content!~/};\s*\Z/) {
         exitStatus("Invalid_Dump", "specified API dump \'$Path\' is not valid, try to recreate it");
     }
-    my $APIDump = eval($Content);
-    if(not $APIDump) {
+    
+    $APIRef = eval($Content);
+    
+    if(not $APIRef) {
         exitStatus("Error", "internal error - eval() procedure seem to not working correctly, try to remove 'use strict' and try again");
     }
-    my $DumpVersion = $APIDump->{"API_DUMP_VERSION"};
-    if(majorVersion($DumpVersion) ne $API_DUMP_MAJOR)
-    { # compatible with the dumps of the same major version
-        exitStatus("Dump_Version", "incompatible version $DumpVersion of specified API dump (allowed only $API_DUMP_MAJOR.0<=V<=$API_DUMP_MAJOR.9)");
-    }
     
-    if(defined $TypeInfo{$LibVersion})
+    my $APIVer = $APIRef->{"API_DUMP_VERSION"};
+    
+    if($APIVer)
     {
-        foreach my $TId (keys(%{$APIDump->{"TypeInfo"}}))
-        {
-            $TypeInfo{$LibVersion}{$TId} = $APIDump->{"TypeInfo"}{$TId};
+        if(cmpVersions($APIVer, $API_DUMP_VERSION)>0)
+        { # future formats
+            exitStatus("Dump_Version", "the versions of the API dump is newer than version of the tool");
         }
     }
-    else {
-        $TypeInfo{$LibVersion} = $APIDump->{"TypeInfo"};
+    
+    if(cmpVersions($APIVer, $API_DUMP_VERSION_MIN)<0) {
+        exitStatus("Dump_Version", "the version of the API dump is too old and unsupported anymore, please regenerate it");
     }
     
-    foreach my $TypeId (keys(%{$APIDump->{"TypeInfo"}}))
+    if($Subj ne "Dep")
     {
-        my %TypeAttr = %{$TypeInfo{$LibVersion}{$TypeId}};
-        $TName_Tid{$LibVersion}{$TypeAttr{"Name"}} = $TypeId;
-        
-        if($Subj ne "Dep")
-        {
-            if(my $Archive = $TypeAttr{"Archive"}) {
-                $LibArchives{$LibVersion}{$Archive} = 1;
-            }
-        }
-        
-        foreach my $FieldName (keys(%{$TypeAttr{"Fields"}}))
-        {
-            if($TypeAttr{"Fields"}{$FieldName}{"Access"}=~/public|protected/) {
-                $Class_Fields{$LibVersion}{$TypeAttr{"Name"}}{$FieldName} = $TypeAttr{"Fields"}{$FieldName}{"Type"};
-            }
-        }
-        
-        if($Subj eq "Dep") {
-            $TypeInfo{$LibVersion}{$TypeId}{"Dep"} = 1;
-        }
-    }
-    my $MInfo = $APIDump->{"MethodInfo"};
-    foreach my $M_Id (keys(%{$MInfo}))
-    {
-        my $Name = $MInfo->{$M_Id}{"Name"};
-        $MethodInfo{$LibVersion}{$Name} = $MInfo->{$M_Id};
-        
-        if($Subj eq "Dep") {
-            $MethodInfo{$LibVersion}{$Name}{"Dep"} = 1;
-        }
+        $In::Desc{$LVer}{"Version"} = $APIRef->{"LibraryVersion"};
+        $In::Desc{$LVer}{"Dump"} = 1;
     }
     
-    my $MUsed = $APIDump->{"MethodUsed"};
-    foreach my $M_Id (keys(%{$MUsed}))
-    {
-        my $Name = $MUsed->{$M_Id}{"Name"};
-        $MethodUsed{$LibVersion}{$Name} = $MUsed->{$M_Id}{"Used"};
-    }
-    
-    foreach my $Method (keys(%{$MethodInfo{$LibVersion}}))
-    {
-        if(my $ClassId = $MethodInfo{$LibVersion}{$Method}{"Class"}
-        and $MethodInfo{$LibVersion}{$Method}{"Access"}=~/public|protected/)
-        {
-            $Class_Methods{$LibVersion}{get_TypeName($ClassId, $LibVersion)}{$Method} = 1;
-            if($MethodInfo{$LibVersion}{$Method}{"Abstract"}) {
-                $Class_AbstractMethods{$LibVersion}{get_TypeName($ClassId, $LibVersion)}{$Method} = 1;
-            }
-        }
-    }
-    
-    # $FieldUsed{$LibVersion} = $APIDump->{"FieldUsed"};
-    
-    if(keys(%{$LibArchives{$LibVersion}})) {
-        $Descriptor{$LibVersion}{"Archives"} = "OK";
-    }
-    $Descriptor{$LibVersion}{"Version"} = $APIDump->{"LibraryVersion"};
-    $Descriptor{$LibVersion}{"Dump"} = 1;
-}
-
-sub createDescriptor($$)
-{
-    my ($LibVersion, $Path) = @_;
-    return if(not $LibVersion or not $Path or not -e $Path);
-    
-    if(isDump($Path))
-    { # API dump
-        read_API_Dump($LibVersion, $Path, "Main");
-    }
-    else
-    {
-        if(-d $Path or $Path=~/\.jar\Z/)
-        {
-            readDescriptor($LibVersion,"
-              <version>
-                  ".$TargetVersion{$LibVersion}."
-              </version>
-              
-              <archives>
-                  $Path
-              </archives>");
-        }
-        else
-        { # standard XML descriptor
-            readDescriptor($LibVersion, readFile($Path));
-        }
-    }
-    
-    if(my $Dep = $DepDump{$LibVersion}) {
-        read_API_Dump($LibVersion, $Dep, "Dep");
-    }
-}
-
-sub get_version($)
-{
-    my $Cmd = $_[0];
-    return "" if(not $Cmd);
-    my $Version = `$Cmd --version 2>\"$TMP_DIR/null\"`;
-    return $Version;
-}
-
-sub get_depth($)
-{
-    if(defined $Cache{"get_depth"}{$_[0]}) {
-        return $Cache{"get_depth"}{$_[0]}
-    }
-    return ($Cache{"get_depth"}{$_[0]} = ($_[0]=~tr![\/\\]|\:\:!!));
-}
-
-sub show_time_interval($)
-{
-    my $Interval = $_[0];
-    my $Hr = int($Interval/3600);
-    my $Min = int($Interval/60)-$Hr*60;
-    my $Sec = $Interval-$Hr*3600-$Min*60;
-    if($Hr) {
-        return "$Hr hr, $Min min, $Sec sec";
-    }
-    elsif($Min) {
-        return "$Min min, $Sec sec";
-    }
-    else {
-        return "$Sec sec";
-    }
+    return $APIRef;
 }
 
 sub checkVersionNum($$)
 {
-    my ($LibVersion, $Path) = @_;
+    my ($LVer, $Path) = @_;
     
-    if($TargetVersion{$LibVersion}) {
+    if($In::Desc{$LVer}{"TargetVersion"}) {
         return;
     }
     
@@ -8235,11 +3961,11 @@ sub checkVersionNum($$)
     my $Ver = undef;
     
     if(not defined $Ver) {
-        $Ver = getManifestVersion(get_abs_path($Path));
+        $Ver = getManifestVersion(getAbsPath($Path));
     }
     
     if(not defined $Ver) {
-        $Ver = getPkgVersion(get_filename($Path));
+        $Ver = getPkgVersion(getFilename($Path));
     }
     
     if(not defined $Ver) {
@@ -8248,13 +3974,13 @@ sub checkVersionNum($$)
     
     if(not defined $Ver)
     {
-        if($DumpAPI)
+        if($In::Opt{"DumpAPI"})
         {
             $Ver = "XYZ";
         }
         else
         {
-            if($LibVersion==1) {
+            if($LVer==1) {
                 $Ver = "X";
             }
             else {
@@ -8263,13 +3989,13 @@ sub checkVersionNum($$)
         }
     }
     
-    $TargetVersion{$LibVersion} = $Ver;
+    $In::Desc{$LVer}{"TargetVersion"} = $Ver;
     
-    if($DumpAPI) {
+    if($In::Opt{"DumpAPI"}) {
         printMsg("WARNING", "set version number to $Ver (use -vnum option to change it)");
     }
     else {
-        printMsg("WARNING", "set #$LibVersion version number to $Ver (use --v$LibVersion=NUM option to change it)");
+        printMsg("WARNING", "set #$LVer version number to $Ver (use --v$LVer=NUM option to change it)");
     }
 }
 
@@ -8277,21 +4003,26 @@ sub getManifestVersion($)
 {
     my $Path = $_[0];
     
-    if(not $Path or not -e $Path) {
-        return undef;
-    }
-    
-    my $JarCmd = get_CmdPath("jar");
+    my $JarCmd = getCmdPath("jar");
     if(not $JarCmd) {
         exitStatus("Not_Found", "can't find \"jar\" command");
     }
-    chdir($TMP_DIR);
+    
+    my $TmpDir = $In::Opt{"Tmp"};
+    
+    chdir($TmpDir);
     system($JarCmd." -xf \"$Path\" META-INF 2>null");
-    chdir($ORIG_DIR);
-    if(my $Content = readFile("$TMP_DIR/META-INF/MANIFEST.MF"))
+    chdir($In::Opt{"OrigDir"});
+    
+    my $Manifest = $TmpDir."/META-INF/MANIFEST.MF";
+    
+    if(-f $Manifest)
     {
-        if($Content=~/(\A|\s)Implementation\-Version:\s*(.+)(\s|\Z)/i) {
-            return $2;
+        if(my $Content = readFile($Manifest))
+        {
+            if($Content=~/(\A|\s)Implementation\-Version:\s*(.+)(\s|\Z)/i) {
+                return $2;
+            }
         }
     }
     return undef;
@@ -8336,41 +4067,7 @@ sub getPkgVersion($)
     return (undef, undef);
 }
 
-sub get_OSgroup()
-{
-    if($Config{"osname"}=~/macos|darwin|rhapsody/i) {
-        return "macos";
-    }
-    elsif($Config{"osname"}=~/freebsd|openbsd|netbsd/i) {
-        return "bsd";
-    }
-    elsif($Config{"osname"}=~/haiku|beos/i) {
-        return "beos";
-    }
-    elsif($Config{"osname"}=~/symbian|epoc/i) {
-        return "symbian";
-    }
-    elsif($Config{"osname"}=~/win/i) {
-        return "windows";
-    }
-    else {
-        return $Config{"osname"};
-    }
-}
-
-sub get_ARG_MAX()
-{
-    if($OSgroup eq "windows") {
-        return 1990; # 8191, 2047
-    }
-    else
-    { # Linux
-      # TODO: set max possible value (~131000)
-        return 32767;
-    }
-}
-
-sub dump_sorting($)
+sub dumpSorting($)
 {
     my $Hash = $_[0];
     return [] if(not $Hash);
@@ -8386,175 +4083,84 @@ sub dump_sorting($)
     }
 }
 
-sub detect_bin_default_paths()
-{
-    my $EnvPaths = $ENV{"PATH"};
-    if($OSgroup eq "beos") {
-        $EnvPaths.=":".$ENV{"BETOOLS"};
-    }
-    elsif($OSgroup eq "windows"
-    and my $JHome = $ENV{"JAVA_HOME"}) {
-        $EnvPaths.=";$JHome\\bin";
-    }
-    my $Sep = ($OSgroup eq "windows")?";":":|;";
-    foreach my $Path (sort {length($a)<=>length($b)} split(/$Sep/, $EnvPaths))
-    {
-        $Path=~s/[\/\\]+\Z//g;
-        next if(not $Path);
-        $DefaultBinPaths{$Path} = 1;
-    }
-}
-
-sub detect_default_paths()
-{
-    if(keys(%SystemPaths))
-    {# run once
-        return;
-    }
-    
-    foreach my $Type (keys(%{$OS_AddPath{$OSgroup}}))
-    {# additional search paths
-        foreach my $Path (keys(%{$OS_AddPath{$OSgroup}{$Type}}))
-        {
-            next if(not -d $Path);
-            $SystemPaths{$Type}{$Path} = $OS_AddPath{$OSgroup}{$Type}{$Path};
-        }
-    }
-    if($OSgroup ne "windows")
-    {
-        foreach my $Type ("include", "lib", "bin")
-        {# autodetecting system "devel" directories
-            foreach my $Path (cmd_find("/","d","*$Type*",1)) {
-                $SystemPaths{$Type}{$Path} = 1;
-            }
-            if(-d "/usr") {
-                foreach my $Path (cmd_find("/usr","d","*$Type*",1)) {
-                    $SystemPaths{$Type}{$Path} = 1;
-                }
-            }
-        }
-    }
-    detect_bin_default_paths();
-    foreach my $Path (keys(%DefaultBinPaths)) {
-        $SystemPaths{"bin"}{$Path} = $DefaultBinPaths{$Path};
-    }
-    
-    if(not $TestSystem)
-    {
-        if(my $JavacCmd = get_CmdPath("javac"))
-        {
-            if(my $Ver = `$JavacCmd -version 2>&1`)
-            {
-                if($Ver=~/javac\s+(.+)/) {
-                    printMsg("INFO", "using Java ".$1);
-                }
-            }
-        }
-    }
-}
-
-sub exitStatus($$)
-{
-    my ($Code, $Msg) = @_;
-    print STDERR "ERROR: ". $Msg."\n";
-    exit($ERROR_CODE{$Code});
-}
-
-sub printMsg($$)
-{
-    my ($Type, $Msg) = @_;
-    if($Type!~/\AINFO/) {
-        $Msg = $Type.": ".$Msg;
-    }
-    if($Type!~/_C\Z/) {
-        $Msg .= "\n";
-    }
-    if($Type eq "ERROR") {
-        print STDERR $Msg;
-    }
-    else {
-        print $Msg;
-    }
-}
-
 sub printStatMsg($)
 {
     my $Level = $_[0];
-    printMsg("INFO", "total ".lc($Level)." compatibility problems: ".$RESULT{$Level}{"Problems"}.", warnings: ".$RESULT{$Level}{"Warnings"});
+    printMsg("INFO", "Total ".lc($Level)." compatibility problems: ".$RESULT{$Level}{"Problems"}.", warnings: ".$RESULT{$Level}{"Warnings"});
 }
 
 sub printReport()
 {
-    printMsg("INFO", "creating compatibility report ...");
+    printMsg("INFO", "Creating compatibility report ...");
     createReport();
-    if($JoinReport or $DoubleReport)
+    if($In::Opt{"JoinReport"} or $In::Opt{"DoubleReport"})
     {
         if($RESULT{"Binary"}{"Problems"}
         or $RESULT{"Source"}{"Problems"})
         {
-            printMsg("INFO", "binary compatibility: ".(100-$RESULT{"Binary"}{"Affected"})."\%");
-            printMsg("INFO", "source compatibility: ".(100-$RESULT{"Source"}{"Affected"})."\%");
+            printMsg("INFO", "Binary compatibility: ".(100-$RESULT{"Binary"}{"Affected"})."\%");
+            printMsg("INFO", "Source compatibility: ".(100-$RESULT{"Source"}{"Affected"})."\%");
         }
         else
         {
-            printMsg("INFO", "binary compatibility: 100\%");
-            printMsg("INFO", "source compatibility: 100\%");
+            printMsg("INFO", "Binary compatibility: 100\%");
+            printMsg("INFO", "Source compatibility: 100\%");
         }
         printStatMsg("Binary");
         printStatMsg("Source");
     }
-    elsif($BinaryOnly)
+    elsif($In::Opt{"BinaryOnly"})
     {
         if($RESULT{"Binary"}{"Problems"}) {
-            printMsg("INFO", "binary compatibility: ".(100-$RESULT{"Binary"}{"Affected"})."\%");
+            printMsg("INFO", "Binary compatibility: ".(100-$RESULT{"Binary"}{"Affected"})."\%");
         }
         else {
-            printMsg("INFO", "binary compatibility: 100\%");
+            printMsg("INFO", "Binary compatibility: 100\%");
         }
         printStatMsg("Binary");
     }
-    elsif($SourceOnly)
+    elsif($In::Opt{"SourceOnly"})
     {
         if($RESULT{"Source"}{"Problems"}) {
-            printMsg("INFO", "source compatibility: ".(100-$RESULT{"Source"}{"Affected"})."\%");
+            printMsg("INFO", "Source compatibility: ".(100-$RESULT{"Source"}{"Affected"})."\%");
         }
         else {
-            printMsg("INFO", "source compatibility: 100\%");
+            printMsg("INFO", "Source compatibility: 100\%");
         }
         printStatMsg("Source");
     }
-    if($JoinReport)
+    if($In::Opt{"JoinReport"})
     {
-        printMsg("INFO", "report: ".getReportPath("Join"));
+        printMsg("INFO", "Report: ".getReportPath("Join"));
     }
-    elsif($DoubleReport)
+    elsif($In::Opt{"DoubleReport"})
     { # default
-        printMsg("INFO", "report (BC): ".getReportPath("Binary"));
-        printMsg("INFO", "report (SC): ".getReportPath("Source"));
+        printMsg("INFO", "Report (BC): ".getReportPath("Binary"));
+        printMsg("INFO", "Report (SC): ".getReportPath("Source"));
     }
-    elsif($BinaryOnly)
+    elsif($In::Opt{"BinaryOnly"})
     { # --binary
-        printMsg("INFO", "report: ".getReportPath("Binary"));
+        printMsg("INFO", "Report: ".getReportPath("Binary"));
     }
-    elsif($SourceOnly)
+    elsif($In::Opt{"SourceOnly"})
     { # --source
-        printMsg("INFO", "report: ".getReportPath("Source"));
+        printMsg("INFO", "Report: ".getReportPath("Source"));
     }
 }
 
 sub getReportPath($)
 {
     my $Level = $_[0];
-    my $Dir = "compat_reports/$TargetLibraryName/".$Descriptor{1}{"Version"}."_to_".$Descriptor{2}{"Version"};
+    my $Dir = "compat_reports/".$In::Opt{"TargetLib"}."/".$In::Desc{1}{"Version"}."_to_".$In::Desc{2}{"Version"};
     if($Level eq "Binary")
     {
-        if($BinaryReportPath)
+        if($In::Opt{"BinaryReportPath"})
         { # --bin-report-path
-            return $BinaryReportPath;
+            return $In::Opt{"BinaryReportPath"};
         }
-        elsif($OutputReportPath)
+        elsif($In::Opt{"OutputReportPath"})
         { # --report-path
-            return $OutputReportPath;
+            return $In::Opt{"OutputReportPath"};
         }
         else
         { # default
@@ -8563,13 +4169,13 @@ sub getReportPath($)
     }
     elsif($Level eq "Source")
     {
-        if($SourceReportPath)
+        if($In::Opt{"SourceReportPath"})
         { # --src-report-path
-            return $SourceReportPath;
+            return $In::Opt{"SourceReportPath"};
         }
-        elsif($OutputReportPath)
+        elsif($In::Opt{"OutputReportPath"})
         { # --report-path
-            return $OutputReportPath;
+            return $In::Opt{"OutputReportPath"};
         }
         else
         { # default
@@ -8578,9 +4184,9 @@ sub getReportPath($)
     }
     else
     {
-        if($OutputReportPath)
+        if($In::Opt{"OutputReportPath"})
         { # --report-path
-            return $OutputReportPath;
+            return $In::Opt{"OutputReportPath"};
         }
         else
         { # default
@@ -8589,15 +4195,92 @@ sub getReportPath($)
     }
 }
 
-sub initLogging($)
+sub unpackDump($)
 {
-    my $LibVersion = $_[0];
-    if($Debug)
-    { # debug directory
-        $DEBUG_PATH{$LibVersion} = "debug/$TargetLibraryName/".$Descriptor{$LibVersion}{"Version"};
-        
-        if(-d $DEBUG_PATH{$LibVersion}) {
-            rmtree($DEBUG_PATH{$LibVersion});
+    my $Path = $_[0];
+    
+    if(isDump_U($Path)) {
+        return $Path;
+    }
+    
+    my $TmpDir = $In::Opt{"Tmp"};
+    
+    $Path = getAbsPath($Path);
+    $Path = pathFmt($Path);
+    
+    my ($Dir, $FileName) = sepPath($Path);
+    my $UnpackDir = $TmpDir."/unpack";
+    if(-d $UnpackDir) {
+        rmtree($UnpackDir);
+    }
+    mkpath($UnpackDir);
+    
+    if($FileName=~s/\Q.zip\E\Z//g)
+    { # *.zip
+        my $UnzipCmd = getCmdPath("unzip");
+        if(not $UnzipCmd) {
+            exitStatus("Not_Found", "can't find \"unzip\" command");
+        }
+        chdir($UnpackDir);
+        system("$UnzipCmd \"$Path\" >contents.txt");
+        if($?) {
+            exitStatus("Error", "can't extract \'$Path\'");
+        }
+        chdir($In::Opt{"OrigDir"});
+        my @Contents = ();
+        foreach (split("\n", readFile("$UnpackDir/contents.txt")))
+        {
+            if(/inflating:\s*([^\s]+)/) {
+                push(@Contents, $1);
+            }
+        }
+        if(not @Contents) {
+            exitStatus("Error", "can't extract \'$Path\'");
+        }
+        return join_P($UnpackDir, $Contents[0]);
+    }
+    elsif($FileName=~s/\Q.tar.gz\E\Z//g)
+    { # *.tar.gz
+        if($In::Opt{"OS"} eq "windows")
+        { # -xvzf option is not implemented in tar.exe (2003)
+          # use "gzip.exe -k -d -f" + "tar.exe -xvf" instead
+            my $TarCmd = getCmdPath("tar");
+            if(not $TarCmd) {
+                exitStatus("Not_Found", "can't find \"tar\" command");
+            }
+            my $GzipCmd = getCmdPath("gzip");
+            if(not $GzipCmd) {
+                exitStatus("Not_Found", "can't find \"gzip\" command");
+            }
+            chdir($UnpackDir);
+            qx/$GzipCmd -k -d -f "$Path"/; # keep input files (-k)
+            if($?) {
+                exitStatus("Error", "can't extract \'$Path\'");
+            }
+            my @Contents = qx/$TarCmd -xvf "$Dir\\$FileName.tar"/;
+            if($? or not @Contents) {
+                exitStatus("Error", "can't extract \'$Path\'");
+            }
+            chdir($In::Opt{"OrigDir"});
+            unlink($Dir."/".$FileName.".tar");
+            chomp $Contents[0];
+            return join_P($UnpackDir, $Contents[0]);
+        }
+        else
+        { # Linux, Unix, OS X
+            my $TarCmd = getCmdPath("tar");
+            if(not $TarCmd) {
+                exitStatus("Not_Found", "can't find \"tar\" command");
+            }
+            chdir($UnpackDir);
+            my @Contents = qx/$TarCmd -xvzf "$Path" 2>&1/;
+            if($? or not @Contents) {
+                exitStatus("Error", "can't extract \'$Path\'");
+            }
+            chdir($In::Opt{"OrigDir"});
+            $Contents[0]=~s/^x //; # OS X
+            chomp $Contents[0];
+            return join_P($UnpackDir, $Contents[0]);
         }
     }
 }
@@ -8608,37 +4291,36 @@ sub createArchive($$)
     if(not $To) {
         $To = ".";
     }
-    if(not $Path or not -e $Path
-    or not -d $To) {
-        return "";
-    }
-    my ($From, $Name) = separate_path($Path);
-    if($OSgroup eq "windows")
+    
+    my $TmpDir = $In::Opt{"Tmp"};
+    
+    my ($From, $Name) = sepPath($Path);
+    if($In::Opt{"OS"} eq "windows")
     { # *.zip
-        my $ZipCmd = get_CmdPath("zip");
+        my $ZipCmd = getCmdPath("zip");
         if(not $ZipCmd) {
             exitStatus("Not_Found", "can't find \"zip\"");
         }
         my $Pkg = $To."/".$Name.".zip";
         unlink($Pkg);
         chdir($To);
-        system("$ZipCmd -j \"$Name.zip\" \"$Path\" >\"$TMP_DIR/null\"");
+        system("$ZipCmd -j \"$Name.zip\" \"$Path\" >\"$TmpDir/null\"");
         if($?)
         { # cannot allocate memory (or other problems with "zip")
             unlink($Path);
             exitStatus("Error", "can't pack the API dump: ".$!);
         }
-        chdir($ORIG_DIR);
+        chdir($In::Opt{"OrigDir"});
         unlink($Path);
         return $Pkg;
     }
     else
     { # *.tar.gz
-        my $TarCmd = get_CmdPath("tar");
+        my $TarCmd = getCmdPath("tar");
         if(not $TarCmd) {
             exitStatus("Not_Found", "can't find \"tar\"");
         }
-        my $GzipCmd = get_CmdPath("gzip");
+        my $GzipCmd = getCmdPath("gzip");
         if(not $GzipCmd) {
             exitStatus("Not_Found", "can't find \"gzip\"");
         }
@@ -8651,366 +4333,208 @@ sub createArchive($$)
             unlink($Path);
             exitStatus("Error", "can't pack the API dump: ".$!);
         }
-        chdir($ORIG_DIR);
+        chdir($In::Opt{"OrigDir"});
         unlink($Path);
         return $To."/".$Name.".tar.gz";
     }
 }
 
-sub getMd5(@)
+sub initAliases($)
 {
-    my $Md5 = md5_hex(@_);
-    return substr($Md5, 0, $MD5_LEN);
+    my $LVer = $_[0];
+    
+    initAPI($LVer);
+    
+    $MethodInfo{$LVer} = $In::API{$LVer}{"MethodInfo"};
+    $TypeInfo{$LVer} = $In::API{$LVer}{"TypeInfo"};
+    $TName_Tid{$LVer} = $In::API{$LVer}{"TName_Tid"};
+    
+    initAliases_TypeAttr($LVer);
 }
 
-sub scenario()
+sub createAPIFile($$)
 {
-    if($BinaryOnly and $SourceOnly)
-    { # both --binary and --source
-      # is the default mode
-        $DoubleReport = 1;
-        $JoinReport = 0;
-        $BinaryOnly = 0;
-        $SourceOnly = 0;
-        if($OutputReportPath)
-        { # --report-path
-            $DoubleReport = 0;
-            $JoinReport = 1;
-        }
-    }
-    elsif($BinaryOnly or $SourceOnly)
-    { # --binary or --source
-        $DoubleReport = 0;
-        $JoinReport = 0;
-    }
-    if(defined $Help)
-    {
-        HELP_MESSAGE();
-        exit(0);
-    }
-    if(defined $ShowVersion)
-    {
-        printMsg("INFO", "Java API Compliance Checker (JAPICC) $TOOL_VERSION\nCopyright (C) 2016 Andrey Ponomarenko's ABI Laboratory\nLicense: LGPL or GPL <http://www.gnu.org/licenses/>\nThis program is free software: you can redistribute it and/or modify it.\n\nWritten by Andrey Ponomarenko.");
-        exit(0);
-    }
-    if(defined $DumpVersion)
-    {
-        printMsg("INFO", $TOOL_VERSION);
-        exit(0);
-    }
-    $Data::Dumper::Sortkeys = 1;
+    my ($LVer, $DescPath) = @_;
     
-    # FIXME: can't pass \&dump_sorting - cause a segfault sometimes
-    if($SortDump)
-    {
-        $Data::Dumper::Useperl = 1;
-        $Data::Dumper::Sortkeys = \&dump_sorting;
+    if(not -e $DescPath) {
+        exitStatus("Access_Error", "can't access \'$DescPath\'");
     }
     
-    if(defined $TestSystem)
-    {
-        detect_default_paths();
-        testSystem();
-        exit(0);
-    }
+    detectDefaultPaths("bin", "java");
     
-    if(defined $ShortMode)
+    if(isDump($DescPath))
     {
-        if(not defined $AffectLimit) {
-            $AffectLimit = 10;
-        }
-    }
-    
-    if(not $TargetLibraryName and not $CountMethods)
-    {
-        if($DumpAPI)
-        {
-            if($DumpAPI=~/\.jar\Z/)
-            { # short usage
-                my ($Name, $Version) = getPkgVersion(get_filename($DumpAPI));
-                if($Name and $Version ne "")
-                {
-                    $TargetLibraryName = $Name;
-                    if(not $TargetVersion{1}) {
-                        $TargetVersion{1} = $Version;
-                    }
-                }
-            }
-        }
-        else
-        {
-            if($Descriptor{1}{"Path"}=~/\.jar\Z/ and $Descriptor{2}{"Path"}=~/\.jar\Z/)
-            { # short usage
-                my ($Name1, $Version1) = getPkgVersion(get_filename($Descriptor{1}{"Path"}));
-                my ($Name2, $Version2) = getPkgVersion(get_filename($Descriptor{2}{"Path"}));
-                
-                if($Name1 and $Version1 ne ""
-                and $Version2 ne "")
-                {
-                    $TargetLibraryName = $Name1;
-                    if(not $TargetVersion{1}) {
-                        $TargetVersion{1} = $Version1;
-                    }
-                    if(not $TargetVersion{2}) {
-                        $TargetVersion{2} = $Version2;
-                    }
-                }
-            }
-        }
+        $In::API{$LVer} = readAPIDump($LVer, $DescPath, "Main");
+        initAliases($LVer);
         
-        if(not $TargetLibraryName) {
-            exitStatus("Error", "library name is not selected (option --lib=NAME)");
+        if(my $V = $In::Desc{$LVer}{"TargetVersion"}) {
+            $In::Desc{$LVer}{"Version"} = $V;
+        }
+        else {
+            $In::Desc{$LVer}{"Version"} = $In::API{$LVer}{"LibraryVersion"};
         }
     }
     else
-    { # validate library name
-        if($TargetLibraryName=~/[\*\/\\]/) {
-            exitStatus("Error", "\"\\\", \"\/\" and \"*\" symbols are not allowed in the library name");
-        }
-    }
-    if(not $TargetTitle) {
-        $TargetTitle = $TargetLibraryName;
-    }
-    if($ClassListPath)
     {
-        if(not -f $ClassListPath) {
-            exitStatus("Access_Error", "can't access file \'$ClassListPath\'");
-        }
-        foreach my $Class (split(/\n/, readFile($ClassListPath)))
-        {
-            $Class=~s/\//./g;
-            $ClassList_User{$Class} = 1;
-        }
-    }
-    if($AnnotationsListPath)
-    {
-        if(not -f $AnnotationsListPath) {
-            exitStatus("Access_Error", "can't access file \'$AnnotationsListPath\'");
-        }
-        foreach my $Annotation (split(/\n/, readFile($AnnotationsListPath)))
-        {
-            $AnnotationList_User{$Annotation} = 1;
-        }
-    }
-    if($SkipAnnotationsListPath)
-    {
-        if(not -f $SkipAnnotationsListPath) {
-            exitStatus("Access_Error", "can't access file \'$SkipAnnotationsListPath\'");
-        }
-        foreach my $Annotation (split(/\n/, readFile($SkipAnnotationsListPath)))
-        {
-            $SkipAnnotationList_User{$Annotation} = 1;
-        }
-    }
-    if($SkipClassesList)
-    {
-        if(not -f $SkipClassesList) {
-            exitStatus("Access_Error", "can't access file \'$SkipClassesList\'");
-        }
-        foreach my $Class (split(/\n/, readFile($SkipClassesList)))
-        {
-            $Class=~s/\//./g;
-            $SkipClasses{$Class} = 1;
-        }
-    }
-    if($SkipPackagesList)
-    {
-        if(not -f $SkipPackagesList) {
-            exitStatus("Access_Error", "can't access file \'$SkipPackagesList\'");
-        }
-        foreach my $Package (split(/\n/, readFile($SkipPackagesList)))
-        {
-            $SkipPackages{1}{$Package} = 1;
-            $SkipPackages{2}{$Package} = 1;
-        }
-    }
-    if($ClientPath)
-    {
-        if($ClientPath=~/\.class\Z/) {
-            exitStatus("Error", "input file is not a java archive");
-        }
+        loadModule("APIDump");
+    
+        checkVersionNum($LVer, $DescPath);
+        readDesc(createDesc($DescPath, $LVer), $LVer);
         
-        if(-f $ClientPath)
-        {
-            detect_default_paths();
-            readArchive(0, $ClientPath)
-        }
-        else {
-            exitStatus("Access_Error", "can't access file \'$ClientPath\'");
-        }
+        initLogging($LVer);
+        
+        createAPIDump($LVer);
     }
     
-    if($CountMethods)
-    {
-        if(not -e $CountMethods) {
-            exitStatus("Access_Error", "can't access \'$CountMethods\'");
-        }
-        
-        read_API_Dump(1, $CountMethods, "Main");
-        
-        my $Count = 0;
-        foreach my $Method (keys(%{$MethodInfo{1}})) {
-            $Count += methodFilter($Method, 1);
-        }
-        
-        printMsg("INFO", $Count);
-        exit(0);
+    if(my $Dep = $In::Desc{$LVer}{"DepDump"}) {
+        mergeAPIs($LVer, readAPIDump($LVer, $Dep, "Dep"));
     }
     
-    if($DumpAPI)
+    printMsg("INFO", "Creating library API dump ...");
+    
+    $In::API{$LVer}{"API_DUMP_VERSION"} = $API_DUMP_VERSION;
+    $In::API{$LVer}{"JAPI_COMPLIANCE_CHECKER_VERSION"} = $TOOL_VERSION;
+    
+    foreach ("TName_Tid") {
+        delete($In::API{$LVer}{$_});
+    }
+    
+    my $DumpPath = "api_dumps/".$In::Opt{"TargetLib"}."/".$In::Desc{$LVer}{"Version"}."/API.dump";
+    if($In::Opt{"OutputDumpPath"})
+    { # user defined path
+        $DumpPath = $In::Opt{"OutputDumpPath"};
+    }
+    
+    my $ArExt = $In::Opt{"Ar"};
+    my $Archive = ($DumpPath=~s/\Q.$ArExt\E\Z//g);
+    
+    if($Archive)
     {
-        if(not -e $DumpAPI) {
-            exitStatus("Access_Error", "can't access \'$DumpAPI\'");
-        }
-        
-        detect_default_paths();
-        checkVersionNum(1, $DumpAPI);
-        
-        my $TarCmd = get_CmdPath("tar");
+        my $TarCmd = getCmdPath("tar");
         if(not $TarCmd) {
             exitStatus("Not_Found", "can't find \"tar\"");
         }
-        my $GzipCmd = get_CmdPath("gzip");
+        my $GzipCmd = getCmdPath("gzip");
         if(not $GzipCmd) {
             exitStatus("Not_Found", "can't find \"gzip\"");
         }
-        createDescriptor(1, $DumpAPI);
-        if(not $Descriptor{1}{"Archives"}) {
-            exitStatus("Error", "descriptor does not contain Java ARchives");
-        }
-        
-        initLogging(1);
-        readArchives(1);
-        
-        printMsg("INFO", "creating library API dump ...");
-        if(not keys(%{$MethodInfo{1}})) {
-            printMsg("WARNING", "empty dump");
-        }
-        
-        my $MInfo = {};
-        my $MNum = 0;
-        foreach my $Method (sort keys(%{$MethodInfo{1}}))
-        {
-            my $MId = $MNum;
-            if($REPRODUCIBLE) {
-                $MId = getMd5($Method);
-            }
-            $MInfo->{$MId} = $MethodInfo{1}{$Method};
-            $MInfo->{$MId}{"Name"} = $Method;
-            
-            $MNum+=1;
-        }
-        
-        my $MUsed = {};
-        $MNum = 0;
-        foreach my $Inv (sort keys(%{$MethodUsed{1}}))
-        {
-            my $MId = $MNum;
-            if($REPRODUCIBLE) {
-                $MId = getMd5($Inv);
-            }
-            
-            $MUsed->{$MId}{"Name"} = $Inv;
-            $MUsed->{$MId}{"Used"} = $MethodUsed{1}{$Inv};
-            
-            $MNum+=1;
-        }
-        
-        my %API = (
-            "MethodInfo" => $MInfo,
-            "TypeInfo" => $TypeInfo{1},
-            "MethodUsed" => $MUsed,
-            # "FieldUsed" => $FieldUsed{1},
-            "LibraryVersion" => $Descriptor{1}{"Version"},
-            "LibraryName" => $TargetLibraryName,
-            "Language" => "Java",
-            "API_DUMP_VERSION" => $API_DUMP_VERSION,
-            "JAPI_COMPLIANCE_CHECKER_VERSION" => $TOOL_VERSION
-        );
-        
-        my $DumpPath = "api_dumps/$TargetLibraryName/".$TargetLibraryName."_".$Descriptor{1}{"Version"}.".api.".$AR_EXT;
-        if($OutputDumpPath)
-        { # user defined path
-            $DumpPath = $OutputDumpPath;
-        }
-        
-        my $Archive = ($DumpPath=~s/\Q.$AR_EXT\E\Z//g);
-        
-        my ($DDir, $DName) = separate_path($DumpPath);
-        my $DPath = $TMP_DIR."/".$DName;
-        if(not $Archive) {
-            $DPath = $DumpPath;
-        }
-        
-        mkpath($DDir);
-        
-        open(DUMP, ">", $DPath) || die ("can't open file \'$DPath\': $!\n");
-        print DUMP Dumper(\%API);
-        close(DUMP);
-        
-        if(not -s $DPath) {
-            exitStatus("Error", "can't create API dump because something is going wrong with the Data::Dumper module");
-        }
-        
-        if($Archive) {
-            $DumpPath = createArchive($DPath, $DDir);
-        }
-        
-        if($OutputDumpPath) {
-            printMsg("INFO", "dump path: $OutputDumpPath");
-        }
-        else {
-            printMsg("INFO", "dump path: $DumpPath");
-        }
-        exit(0);
     }
-    if(not $Descriptor{1}{"Path"}) {
+    
+    my ($DDir, $DName) = sepPath($DumpPath);
+    my $DPath = $In::Opt{"Tmp"}."/".$DName;
+    if(not $Archive) {
+        $DPath = $DumpPath;
+    }
+    
+    mkpath($DDir);
+    
+    open(DUMP, ">", $DPath) || die ("can't open file \'$DPath\': $!\n");
+    print DUMP Dumper($In::API{$LVer});
+    close(DUMP);
+    
+    if(not -s $DPath) {
+        exitStatus("Error", "can't create API dump because something is going wrong with the Data::Dumper module");
+    }
+    
+    if($Archive) {
+        $DumpPath = createArchive($DPath, $DDir);
+    }
+    
+    if($In::Opt{"OutputDumpPath"}) {
+        printMsg("INFO", "Dump path: ".$In::Opt{"OutputDumpPath"});
+    }
+    else {
+        printMsg("INFO", "Dump path: $DumpPath");
+    }
+    exit(0);
+}
+
+sub compareInit()
+{
+    if(not $In::Desc{1}{"Path"}) {
         exitStatus("Error", "-old option is not specified");
     }
-    if(not -e $Descriptor{1}{"Path"}) {
-        exitStatus("Access_Error", "can't access \'".$Descriptor{1}{"Path"}."\'");
+    if(not -e $In::Desc{1}{"Path"}) {
+        exitStatus("Access_Error", "can't access \'".$In::Desc{1}{"Path"}."\'");
     }
-    if(not $Descriptor{2}{"Path"}) {
+    if(not $In::Desc{2}{"Path"}) {
         exitStatus("Error", "-new option is not specified");
     }
-    if(not -e $Descriptor{2}{"Path"}) {
-        exitStatus("Access_Error", "can't access \'".$Descriptor{2}{"Path"}."\'");
+    if(not -e $In::Desc{2}{"Path"}) {
+        exitStatus("Access_Error", "can't access \'".$In::Desc{2}{"Path"}."\'");
     }
     
-    if($Quick)
+    if($In::Opt{"Quick"})
     {
-        $TypeProblems_Kind{"Binary"}{"Interface_Added_Super_Interface"} = "Low";
-        $TypeProblems_Kind{"Binary"}{"Abstract_Class_Added_Super_Abstract_Class"} = "Low";
-        $TypeProblems_Kind{"Binary"}{"Abstract_Class_Added_Super_Interface"} = "Low";
-        $TypeProblems_Kind{"Binary"}{"Abstract_Class_Added_Abstract_Method"} = "Low";
-        $TypeProblems_Kind{"Binary"}{"Interface_Added_Abstract_Method"} = "Low";
+        $CompatRules{"Binary"}{"Interface_Added_Super_Interface"}{"Severity"} = "Low";
+        $CompatRules{"Binary"}{"Abstract_Class_Added_Super_Abstract_Class"}{"Severity"} = "Low";
+        $CompatRules{"Binary"}{"Abstract_Class_Added_Super_Interface"}{"Severity"} = "Low";
+        $CompatRules{"Binary"}{"Abstract_Class_Added_Abstract_Method"}{"Severity"} = "Low";
+        $CompatRules{"Binary"}{"Interface_Added_Abstract_Method"}{"Severity"} = "Low";
     }
     
-    detect_default_paths();
+    printMsg("INFO", "Preparing, please wait ...");
     
-    checkVersionNum(1, $Descriptor{1}{"Path"});
-    checkVersionNum(2, $Descriptor{2}{"Path"});
+    detectDefaultPaths("bin", undef);
     
-    createDescriptor(1, $Descriptor{1}{"Path"});
-    createDescriptor(2, $Descriptor{2}{"Path"});
+    if(isDump($In::Desc{1}{"Path"}))
+    {
+        $In::API{1} = readAPIDump(1, $In::Desc{1}{"Path"}, "Main");
+        initAliases(1);
+        
+        if(my $V = $In::Desc{1}{"TargetVersion"}) {
+            $In::Desc{1}{"Version"} = $V;
+        }
+        else {
+            $In::Desc{1}{"Version"} = $In::API{1}{"LibraryVersion"};
+        }
+    }
+    else
+    {
+        loadModule("APIDump");
+        
+        checkVersionNum(1, $In::Desc{1}{"Path"});
+        readDesc(createDesc($In::Desc{1}{"Path"}, 1), 1);
+        
+        initLogging(1);
+        detectDefaultPaths(undef, "java");
+        createAPIDump(1);
+    }
     
-    if(not $Descriptor{1}{"Archives"}) {
-        exitStatus("Error", "descriptor d1 does not contain Java ARchives");
+    if(my $Dep = $In::Desc{1}{"DepDump"}) {
+        mergeAPIs(1, readAPIDump(1, $Dep, "Dep"));
     }
-    if(not $Descriptor{2}{"Archives"}) {
-        exitStatus("Error", "descriptor d2 does not contain Java ARchives");
-    }
-    initLogging(1);
-    initLogging(2);
     
-    if($Descriptor{1}{"Archives"}
-    and not $Descriptor{1}{"Dump"}) {
-        readArchives(1);
+    if(isDump($In::Desc{2}{"Path"}))
+    {
+        $In::API{2} = readAPIDump(2, $In::Desc{2}{"Path"}, "Main");
+        initAliases(2);
+        
+        if(my $V = $In::Desc{2}{"TargetVersion"}) {
+            $In::Desc{2}{"Version"} = $V;
+        }
+        else {
+            $In::Desc{2}{"Version"} = $In::API{2}{"LibraryVersion"};
+        }
     }
-    if($Descriptor{2}{"Archives"}
-    and not $Descriptor{2}{"Dump"}) {
-        readArchives(2);
+    else
+    {
+        loadModule("APIDump");
+        
+        checkVersionNum(2, $In::Desc{2}{"Path"});
+        readDesc(createDesc($In::Desc{2}{"Path"}, 2), 2);
+        
+        initLogging(2);
+        detectDefaultPaths(undef, "java");
+        createAPIDump(2);
     }
+    
+    if(my $Dep = $In::Desc{2}{"DepDump"}) {
+        mergeAPIs(2, readAPIDump(2, $Dep, "Dep"));
+    }
+    
+    prepareData(1);
+    prepareData(2);
     
     foreach my $Inv (keys(%{$MethodUsed{2}}))
     {
@@ -9058,37 +4582,241 @@ sub scenario()
             delete($ClassMethod_AddedUsed{$ClassName});
         }
     }
+}
+
+sub scenario()
+{
+    setTarget("default");
     
-    prepareMethods(1);
-    prepareMethods(2);
+    initAliases(1);
+    initAliases(2);
+    
+    $In::Opt{"OrigDir"} = cwd();
+    $In::Opt{"Tmp"} = tempdir(CLEANUP=>1);
+    $In::Opt{"Reproducible"} = 1;
+    
+    $In::Opt{"JoinReport"} = 1;
+    $In::Opt{"DoubleReport"} = 0;
+    
+    if($In::Opt{"BinaryOnly"} and $In::Opt{"SourceOnly"})
+    { # both --binary and --source
+      # is the default mode
+        $In::Opt{"DoubleReport"} = 1;
+        $In::Opt{"JoinReport"} = 0;
+        $In::Opt{"BinaryOnly"} = 0;
+        $In::Opt{"SourceOnly"} = 0;
+        if($In::Opt{"OutputReportPath"})
+        { # --report-path
+            $In::Opt{"DoubleReport"} = 0;
+            $In::Opt{"JoinReport"} = 1;
+        }
+    }
+    elsif($In::Opt{"BinaryOnly"} or $In::Opt{"SourceOnly"})
+    { # --binary or --source
+        $In::Opt{"DoubleReport"} = 0;
+        $In::Opt{"JoinReport"} = 0;
+    }
+    if(defined $In::Opt{"Help"})
+    {
+        helpMsg();
+        exit(0);
+    }
+    if(defined $In::Opt{"ShowVersion"})
+    {
+        printMsg("INFO", "Java API Compliance Checker (JAPICC) $TOOL_VERSION\nCopyright (C) 2017 Andrey Ponomarenko's ABI Laboratory\nLicense: LGPL or GPL <http://www.gnu.org/licenses/>\nThis program is free software: you can redistribute it and/or modify it.\n\nWritten by Andrey Ponomarenko.");
+        exit(0);
+    }
+    if(defined $In::Opt{"DumpVersion"})
+    {
+        printMsg("INFO", $TOOL_VERSION);
+        exit(0);
+    }
+    $Data::Dumper::Sortkeys = 1;
+    
+    # FIXME: can't pass \&dumpSorting - cause a segfault sometimes
+    if($In::Opt{"SortDump"})
+    {
+        $Data::Dumper::Useperl = 1;
+        $Data::Dumper::Sortkeys = \&dumpSorting;
+    }
+    
+    if(defined $In::Opt{"TestTool"})
+    {
+        detectDefaultPaths("bin", "java");
+        loadModule("RegTests");
+        testTool();
+        exit(0);
+    }
+    
+    if(defined $In::Opt{"ShortMode"})
+    {
+        if(not defined $In::Opt{"AffectLimit"}) {
+            $In::Opt{"AffectLimit"} = 10;
+        }
+    }
+    
+    if(not $In::Opt{"TargetLib"} and not $In::Opt{"CountMethods"})
+    {
+        if($In::Opt{"DumpAPI"})
+        {
+            if($In::Opt{"DumpAPI"}=~/\.jar\Z/)
+            { # short usage
+                my ($Name, $Version) = getPkgVersion(getFilename($In::Opt{"DumpAPI"}));
+                if($Name and $Version ne "")
+                {
+                    $In::Opt{"TargetLib"} = $Name;
+                    if(not $In::Desc{1}{"TargetVersion"}) {
+                        $In::Desc{1}{"TargetVersion"} = $Version;
+                    }
+                }
+            }
+        }
+        else
+        {
+            if($In::Desc{1}{"Path"}=~/\.jar\Z/ and $In::Desc{2}{"Path"}=~/\.jar\Z/)
+            { # short usage
+                my ($Name1, $Version1) = getPkgVersion(getFilename($In::Desc{1}{"Path"}));
+                my ($Name2, $Version2) = getPkgVersion(getFilename($In::Desc{2}{"Path"}));
+                
+                if($Name1 and $Version1 ne ""
+                and $Version2 ne "")
+                {
+                    $In::Opt{"TargetLib"} = $Name1;
+                    if(not $In::Desc{1}{"TargetVersion"}) {
+                        $In::Desc{1}{"TargetVersion"} = $Version1;
+                    }
+                    if(not $In::Desc{2}{"TargetVersion"}) {
+                        $In::Desc{2}{"TargetVersion"} = $Version2;
+                    }
+                }
+            }
+        }
+        
+        if(not $In::Opt{"TargetLib"}) {
+            exitStatus("Error", "library name is not selected (option --lib=NAME)");
+        }
+    }
+    else
+    { # validate library name
+        if($In::Opt{"TargetLib"}=~/[\*\/\\]/) {
+            exitStatus("Error", "\"\\\", \"\/\" and \"*\" symbols are not allowed in the library name");
+        }
+    }
+    if(not $In::Opt{"TargetTitle"}) {
+        $In::Opt{"TargetTitle"} = $In::Opt{"TargetLib"};
+    }
+    if(my $ClassListPath = $In::Opt{"ClassListPath"})
+    {
+        if(not -f $ClassListPath) {
+            exitStatus("Access_Error", "can't access file \'$ClassListPath\'");
+        }
+        foreach my $Class (split(/\n/, readFile($ClassListPath)))
+        {
+            $Class=~s/\//./g;
+            $In::Opt{"ClassList_User"}{$Class} = 1;
+        }
+    }
+    if(my $AnnotationsListPath = $In::Opt{"AnnotationsListPath"})
+    {
+        if(not -f $AnnotationsListPath) {
+            exitStatus("Access_Error", "can't access file \'$AnnotationsListPath\'");
+        }
+        foreach my $Annotation (split(/\n/, readFile($AnnotationsListPath)))
+        {
+            $In::Opt{"AnnotationList_User"}{$Annotation} = 1;
+        }
+    }
+    if(my $SkipAnnotationsListPath = $In::Opt{"SkipAnnotationsListPath"})
+    {
+        if(not -f $SkipAnnotationsListPath) {
+            exitStatus("Access_Error", "can't access file \'$SkipAnnotationsListPath\'");
+        }
+        foreach my $Annotation (split(/\n/, readFile($SkipAnnotationsListPath)))
+        {
+            $In::Opt{"SkipAnnotationList_User"}{$Annotation} = 1;
+        }
+    }
+    if(my $SkipClassesList = $In::Opt{"SkipClassesList"})
+    {
+        if(not -f $SkipClassesList) {
+            exitStatus("Access_Error", "can't access file \'$SkipClassesList\'");
+        }
+        foreach my $Class (split(/\n/, readFile($SkipClassesList)))
+        {
+            $Class=~s/\//./g;
+            $In::Opt{"SkipClasses"}{$Class} = 1;
+        }
+    }
+    if(my $SkipPackagesList = $In::Opt{"SkipPackagesList"})
+    {
+        if(not -f $SkipPackagesList) {
+            exitStatus("Access_Error", "can't access file \'$SkipPackagesList\'");
+        }
+        foreach my $Package (split(/\n/, readFile($SkipPackagesList)))
+        {
+            $In::Desc{1}{"SkipPackages"}{$Package} = 1;
+            $In::Desc{2}{"SkipPackages"}{$Package} = 1;
+        }
+    }
+    if(my $ClientPath = $In::Opt{"ClientPath"})
+    {
+        if($ClientPath=~/\.class\Z/) {
+            exitStatus("Error", "input file is not a java archive");
+        }
+        
+        if(-f $ClientPath)
+        {
+            detectDefaultPaths("bin", undef);
+            readArchive(0, $ClientPath)
+        }
+        else {
+            exitStatus("Access_Error", "can't access file \'$ClientPath\'");
+        }
+    }
+    
+    if(my $DPath = $In::Opt{"CountMethods"})
+    {
+        if(not -e $DPath) {
+            exitStatus("Access_Error", "can't access \'$DPath\'");
+        }
+        
+        $In::API{1} = readAPIDump(1, $DPath, "Main");
+        initAliases(1);
+        
+        my $Count = 0;
+        foreach my $Method (keys(%{$MethodInfo{1}})) {
+            $Count += methodFilter($Method, 1);
+        }
+        
+        printMsg("INFO", $Count);
+        exit(0);
+    }
+    
+    if($In::Opt{"DumpAPI"})
+    {
+        createAPIFile(1, $In::Opt{"DumpAPI"});
+        exit(0);
+    }
+    
+    compareInit();
+    
+    readRules("Binary");
+    readRules("Source");
     
     detectAdded();
     detectRemoved();
     
-    printMsg("INFO", "comparing classes ...");
+    printMsg("INFO", "Comparing classes ...");
     mergeClasses();
     mergeMethods();
-    
-    foreach my $M (keys(%CompatProblems))
-    {
-        foreach my $K (keys(%{$CompatProblems{$M}}))
-        {
-            foreach my $L (keys(%{$CompatProblems{$M}{$K}}))
-            {
-                if(my $T = $CompatProblems{$M}{$K}{$L}{"Type_Name"}) {
-                    $TypeProblemsIndex{$T}{$M} = 1;
-                }
-            }
-        }
-    }
     
     printReport();
     
     if($RESULT{"Source"}{"Problems"} + $RESULT{"Binary"}{"Problems"}) {
-        exit($ERROR_CODE{"Incompatible"});
+        exit(getErrorCode("Incompatible"));
     }
     else {
-        exit($ERROR_CODE{"Compatible"});
+        exit(getErrorCode("Compatible"));
     }
 }
 

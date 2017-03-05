@@ -1,0 +1,1233 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rules version="1.0">
+
+<rule>
+    <id>
+        Method_Became_Static
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Method became static.
+    </change>
+    <effect>
+        A client program may be interrupted by **NoSuchMethodError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Method_Became_NonStatic
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Method became non-static.
+    </change>
+    <effect>
+        A client program may be interrupted by **NoSuchMethodError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Changed_Method_Return_From_Void
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Return value type has been changed from **void** to @new_value.
+    </change>
+    <effect>
+        This method has been removed because the return type is part of the method signature.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        NonStatic_Method_Became_Final
+    </id>
+    <severity>
+        Medium
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Method became final.
+    </change>
+    <effect>
+        A client program trying to reimplement this method may be interrupted by **VerifyError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Method_Became_Abstract
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Method became abstract.
+    </change>
+    <effect>
+        A client program trying to create an instance of the method's class may be interrupted by **InstantiationError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Method_Became_NonAbstract
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Method became non-abstract.
+    </change>
+    <effect>
+        A client program may change behavior.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Method_Became_Default
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Method became default.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Method_Became_NonDefault
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Method became non-default.
+    </change>
+    <effect>
+        A client program trying to create an instance of a class may be interrupted by **AbstractMethodError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Method_Became_Synchronized
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Method became synchronized.
+    </change>
+    <effect>
+        A multi-threaded client program may change behavior.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Method_Became_NonSynchronized
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Method became non-synchronized.
+    </change>
+    <effect>
+        A multi-threaded client program may change behavior.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Changed_Method_Access
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Access level has been changed from @old_value to @new_value.
+    </change>
+    <effect>
+        A client program may be interrupted by **IllegalAccessError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        NonAbstract_Method_Added_Checked_Exception
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Added @target exception thrown.
+    </change>
+    <effect>
+        A client program may be interrupted by added exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        NonAbstract_Method_Removed_Checked_Exception
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Removed @target exception thrown.
+    </change>
+    <effect>
+        A client program may change behavior because the removed exception will not be thrown any more and client will not catch and handle it.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Added_Unchecked_Exception
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Added @target exception thrown.
+    </change>
+    <effect>
+        A client program may be interrupted by added exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Removed_Unchecked_Exception
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Removed @target exception thrown.
+    </change>
+    <effect>
+        A client program may change behavior because the removed exception will not be thrown any more and client will not catch and handle it.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Added_Method
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Methods
+    </kind>
+</rule>
+
+<rule>
+    <id>
+        Removed_Method
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Methods
+    </kind>
+</rule>
+
+<rule>
+    <id>
+        Variable_Arity_To_Array
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Methods
+    </kind>
+</rule>
+
+<rule>
+    <id>
+        NonAbstract_Class_Added_Abstract_Method
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Abstract method @target has been added to this class.
+    </change>
+    <effect>
+        This class became abstract and a client program may be interrupted by **InstantiationError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Abstract_Class_Added_Abstract_Method
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Abstract method @target has been added to this class.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Abstract_Class_Added_Abstract_Method_Invoked_By_Others
+    </id>
+    <severity>
+        Medium
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Abstract method @target has been added to this class.
+    </change>
+    <effect>
+        A client program may be interrupted by **AbstractMethodError** exception. Added abstract method is called in 2nd library version by the method @invoked_by and may not be implemented by old clients.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Removed_Abstract_Method
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Abstract method @target has been removed from this class.
+    </change>
+    <effect>
+        A client program may be interrupted by **NoSuchMethodError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Removed_Abstract_Method
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Abstract method @target has been removed from this interface.
+    </change>
+    <effect>
+        A client program may be interrupted by **NoSuchMethodError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Added_Abstract_Method
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Abstract method @target has been added to this interface.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Added_Abstract_Method_Invoked_By_Others
+    </id>
+    <severity>
+        Medium
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Abstract method @target has been added to this interface.
+    </change>
+    <effect>
+        A client program may be interrupted by **AbstractMethodError** exception. Added abstract method is called in 2nd library version by the method @invoked_by and may not be implemented by old clients.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Method_Became_Abstract
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Method @target became abstract.
+    </change>
+    <effect>
+        A client program may be interrupted by **InstantiationError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Method_Became_NonAbstract
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Abstract method @target became non-abstract.
+    </change>
+    <effect>
+        Some methods in this class may change behavior.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Method_Became_NonDefault
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Method @target became non-default.
+    </change>
+    <effect>
+        A client program may be interrupted by **AbstractMethodError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Method_Became_Default
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Method @target became default.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Overridden_Method
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Method @old_value has been overridden by @new_value.
+    </change>
+    <effect>
+        Method @new_value will be called instead of @old_value in a client program.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Method_Moved_Up_Hierarchy
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Method @old_value has been moved up type hierarchy to @new_value.
+    </change>
+    <effect>
+        Method @new_value will be called instead of @old_value in a client program.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Abstract_Class_Added_Super_Interface
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added super-interface @target.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Abstract_Class_Added_Super_Interface_Invoked_By_Others
+    </id>
+    <severity>
+        Medium
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added super-interface @target.
+    </change>
+    <effect>
+        If abstract methods from an added super-interface must be implemented by client then it may be interrupted by **AbstractMethodError** exception.
+        
+        NOTE: Abstract method @invoked from the added super-interface is called by the method @invoked_by in 2nd library version and may not be implemented by old clients.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Abstract_Class_Added_Super_Interface_With_Implemented_Methods
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added super-interface @target.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Added_Super_Interface
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added super-interface @target.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Added_Super_Interface_Used_By_Others
+    </id>
+    <severity>
+        Medium
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added super-interface @target.
+    </change>
+    <effect>
+        If abstract methods from an added super-interface must be implemented by client then it may be interrupted by **AbstractMethodError** exception.
+        
+        NOTE: Abstract method @invoked from the added super-interface is called by the method @invoked_by in 2nd library version and may not be implemented by old clients.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Added_Super_Interface_With_Implemented_Methods
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added super-interface @target.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Added_Super_Constant_Interface
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added super-interface @target containing constants only.
+    </change>
+    <effect>
+        A static field from a super-interface of a client class may hide a field (with the same name) inherited from a super-class and cause **IncompatibleClassChangeError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Removed_Super_Interface
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Removed super-interface @target.
+    </change>
+    <effect>
+        A client program may be interrupted by **NoSuchMethodError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Removed_Super_Interface
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Removed super-interface @target.
+    </change>
+    <effect>
+        A client program may be interrupted by **NoSuchMethodError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Removed_Super_Constant_Interface
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Removed super-interface @target containing constants only.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Added_Super_Class
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added super-class @target.
+    </change>
+    <effect>
+        A static field from a super-interface of a client class may hide a field (with the same name) inherited from new super-class and cause **IncompatibleClassChangeError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Abstract_Class_Added_Super_Abstract_Class
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added abstract super-class @target.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Abstract_Class_Added_Super_Abstract_Class_Invoked_By_Others
+    </id>
+    <severity>
+        Medium
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added abstract super-class @target.
+    </change>
+    <effect>
+        If abstract methods from an added super-class must be implemented by client then it may be interrupted by **AbstractMethodError** exception. Abstract method @invoked from the added abstract super-class is called by the method @invoked_by in 2nd library version and may not be implemented by old clients.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Removed_Super_Class
+    </id>
+    <severity>
+        Medium
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Removed super-class @target.
+    </change>
+    <effect>
+        Access of a client program to the fields or methods of the old super-class may be interrupted by **NoSuchFieldError** or **NoSuchMethodError** exceptions.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Changed_Super_Class
+    </id>
+    <severity>
+        Medium
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Superclass has been changed from @old_value to @new_value.
+    </change>
+    <effect>
+        1) Access of a client program to the fields or methods of the old super-class may be interrupted by **NoSuchFieldError** or **NoSuchMethodError** exceptions.
+        2) A static field from a super-interface of a client class may hide a field (with the same name) inherited from new super-class and cause **IncompatibleClassChangeError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Added_Field
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target has been added to this class.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Added_Field_Non_Safe
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target has been added to this class.
+    </change>
+    <effect>
+        NOTE: A static field from a super-interface of a client class may hide an added field (with the same name) inherited from the super-class of a client class and cause **IncompatibleClassChangeError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Added_Field
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target has been added to this interface.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Added_Field_Non_Safe
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target has been added to this interface.
+    </change>
+    <effect>
+        NOTE: An added static field from a super-interface of a client class may hide a field (with the same name) inherited from the super-class of a client class and cause **IncompatibleClassChangeError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Renamed_Field
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target has been renamed to @new_value.
+    </change>
+    <effect>
+        A client program may be interrupted by **NoSuchFieldError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Renamed_Constant_Field
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target of type @field_type with the compile-time constant value @field_value has been renamed to @new_value.
+    </change>
+    <effect>
+        A client program may change behavior.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Removed_NonConstant_Field
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target of type @field_type has been removed from this @type_type.
+    </change>
+    <effect>
+        A client program may be interrupted by **NoSuchFieldError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Removed_Constant_Field
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target of type @field_type with the compile-time constant value @field_value has been removed from this @type_type.
+    </change>
+    <effect>
+        A client program may change behavior.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Changed_Field_Type
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Type of field @target has been changed from @old_value to @new_value.
+    </change>
+    <effect>
+        A client program may be interrupted by **NoSuchFieldError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Changed_Field_Access
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Access level of field @target has been changed from @old_value to @new_value.
+    </change>
+    <effect>
+        A client program may be interrupted by **IllegalAccessError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Changed_Field_Access_To_Package_Private
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Access level of field @target has been changed from @old_value to @new_value.
+    </change>
+    <effect>
+        A client program may be interrupted by **IllegalAccessError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Changed_Final_Field_Value
+    </id>
+    <severity>
+        Medium
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Value of final field @target of type @field_type has been changed from @old_value to @new_value.
+    </change>
+    <effect>
+        Old value of the field will be inlined to the client code at compile-time and will be used instead of a new one.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Changed_Final_Version_Field_Value
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Value of final field @target of type @field_type has been changed from @old_value to @new_value.
+    </change>
+    <effect>
+        Old value of the field will be inlined to the client code at compile-time and will be used instead of a new one.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Field_Became_Final
+    </id>
+    <severity>
+        Medium
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target became final.
+    </change>
+    <effect>
+        A client program may be interrupted by **IllegalAccessError** exception when attempts to assign new value to the field.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Field_Became_NonFinal
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target became non-final.
+    </change>
+    <effect>
+        Old value of the field will be inlined to the client code at compile-time and will be used instead of a new one.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        NonConstant_Field_Became_Static
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Non-final field @target became static.
+    </change>
+    <effect>
+        A client program may be interrupted by **IncompatibleClassChangeError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        NonConstant_Field_Became_NonStatic
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Non-constant field @target became non-static.
+    </change>
+    <effect>
+        A client program may be interrupted by **IncompatibleClassChangeError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Became_Interface
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        This **class** became **interface**.
+    </change>
+    <effect>
+        A client program may be interrupted by **IncompatibleClassChangeError** or **InstantiationError** exception dependent on the usage of this class.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Became_Class
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        This **interface** became **class**.
+    </change>
+    <effect>
+        A client program may be interrupted by **IncompatibleClassChangeError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Became_Final
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        This class became final.
+    </change>
+    <effect>
+        A client program may be interrupted by **VerifyError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Became_Abstract
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        This class became abstract.
+    </change>
+    <effect>
+        A client program may be interrupted by **InstantiationError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Removed_Class
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        This class has been removed.
+    </change>
+    <effect>
+        A client program may be interrupted by **NoClassDefFoundError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Removed_Interface
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        This interface has been removed.
+    </change>
+    <effect>
+        A client program may be interrupted by **NoClassDefFoundError** exception.
+    </effect>
+</rule>
+
+</rules>
