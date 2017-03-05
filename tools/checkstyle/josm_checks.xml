@@ -62,7 +62,9 @@ JOSM Checkstyle rules
     <module name="EmptyForInitializerPad"/>
     <module name="EmptyForIteratorPad"/>
     <module name="NoWhitespaceAfter"/>
-    <module name="NoWhitespaceBefore"/>
+    <module name="NoWhitespaceBefore">
+    	<property name="tokens" value="COMMA, SEMI, POST_INC, POST_DEC"/>
+    </module>
     <module name="SingleSpaceSeparator"/>
     <module name="MethodParamPad"/>
     <module name="ParenPad"/>

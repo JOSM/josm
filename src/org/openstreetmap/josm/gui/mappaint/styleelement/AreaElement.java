@@ -66,7 +66,8 @@ public class AreaElement extends StyleElement {
      */
     private final RotationAngle iconImageAngle;
 
-    protected AreaElement(Cascade c, Color color, MapImage fillImage, Float extent, Float extentThreshold, TextLabel text, MapImage iconImage, RotationAngle iconImageAngle) {
+    protected AreaElement(Cascade c, Color color, MapImage fillImage,Float extent,
+            Float extentThreshold, TextLabel text, MapImage iconImage, RotationAngle iconImageAngle) {
         super(c, 1f);
         CheckParameterUtil.ensureParameterNotNull(color);
         this.color = color;
