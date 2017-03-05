@@ -69,14 +69,23 @@ public class MapCSSRendererTest {
      * The different configurations of this test.
      * @return The parameters.
      */
-    @Parameters(name="{1}")
+    @Parameters(name = "{1}")
     public static Collection<Object[]> runs() {
         return Stream.of(
                 /** Tests for StyledMapRenderer#drawNodeSymbol */
                 new TestConfig("node-shapes", AREA_DEFAULT),
 
+                /** Text for nodes */
+                new TestConfig("node-text", AREA_DEFAULT),
+
                 /** Tests that StyledMapRenderer#drawWay respects width */
-                new TestConfig("way-width", AREA_DEFAULT)
+                new TestConfig("way-width", AREA_DEFAULT),
+
+                /** Tests the way color property, including alpha */
+                new TestConfig("way-color", AREA_DEFAULT),
+
+                /** Tests dashed ways. */
+                new TestConfig("way-dashes", AREA_DEFAULT)
 
                 ).map(e -> new Object[] {e, e.testDirectory})
                 .collect(Collectors.toList());
@@ -146,6 +155,7 @@ public class MapCSSRendererTest {
         };
         nc.zoomTo(testConfig.testArea);
         dataSet.allPrimitives().stream().forEach(n -> n.setHighlighted(n.isKeyTrue("highlight")));
+        dataSet.allPrimitives().stream().filter(n -> n.isKeyTrue("disabled")).forEach(n -> n.setDisabledState(false));
         Graphics2D g = image.createGraphics();
         // Force all render hints to be defaults - do not use platform values
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -206,16 +216,16 @@ public class MapCSSRendererTest {
 
     /**
      * Check if two colors differ
-     * @param expected
-     * @param result
+     * @param expected The expected color
+     * @param actual The actual color
      * @return <code>true</code> if they differ.
      */
-    private boolean colorsAreSame(int expected, int result) {
+    private boolean colorsAreSame(int expected, int actual) {
         int expectedAlpha = expected >> 24;
         if (expectedAlpha == 0) {
-            return (result & 0xff000000) == 0;
+            return actual >> 24 == 0;
         } else {
-            return expected == result;
+            return expected == actual;
         }
     }
 
