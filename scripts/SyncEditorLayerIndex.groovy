@@ -4,7 +4,7 @@
  * The goal is to keep both lists in sync.
  *
  * The editor imagery index project (https://github.com/osmlab/editor-imagery-index)
- * provides also a version in the JOSM format, but the JSON is the original source
+ * provides also a version in the JOSM format, but the GEOJSON is the original source
  * format, so we read that.
  *
  * How to run:
@@ -71,7 +71,7 @@ class SyncEditorImageryIndex {
     static void parse_command_line_arguments(args) {
         def cli = new CliBuilder(width: 160)
         cli.o(longOpt:'output', args:1, argName: "output", "Output file, - prints to stdout (default: -)")
-        cli.e(longOpt:'eli_input', args:1, argName:"eli_input", "Input file for the editor imagery index (json). Default is $eliInputFile (current directory).")
+        cli.e(longOpt:'eli_input', args:1, argName:"eli_input", "Input file for the editor imagery index (geojson). Default is $eliInputFile (current directory).")
         cli.j(longOpt:'josm_input', args:1, argName:"josm_input", "Input file for the JOSM imagery list (xml). Default is $josmInputFile (current directory).")
         cli.i(longOpt:'ignore_input', args:1, argName:"ignore_input", "Input file for the ignore list. Default is $ignoreInputFile (current directory).")
         cli.s(longOpt:'shorten', "shorten the output, so it is easier to read in a console window")
