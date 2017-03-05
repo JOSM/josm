@@ -294,6 +294,19 @@ public final class Utils {
     }
 
     /**
+     * Multiply the alpha value of the given color with the factor. The alpha value is clamped to 0..255
+     * @param color The color
+     * @param alphaFactor The factor to multiply alpha with.
+     * @return The new color.
+     * @since 11692
+     */
+    public static Color alphaMultiply(Color color, float alphaFactor) {
+        int alpha = Utils.colorFloat2int(Utils.colorInt2float(color.getAlpha()) * alphaFactor);
+        alpha = clamp(alpha, 0, 255);
+        return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
+    }
+
+    /**
      * Returns the complementary color of {@code clr}.
      * @param clr the color to complement
      * @return the complementary color of {@code clr}
