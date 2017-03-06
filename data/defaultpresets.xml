@@ -729,6 +729,7 @@
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=living_street"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=living_street"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=living_street"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=living_street"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:highway=living_street"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:highway=living_street"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:highway=living_street"
@@ -1559,12 +1560,14 @@
         </item> <!-- Speed Camera -->
         <item name="Traffic Mirror" icon="presets/vehicle/traffic_mirror.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=traffic_mirror"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:highway=traffic_mirror"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=traffic_mirror"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:highway=traffic_mirror" />
             <key key="highway" value="traffic_mirror" />
         </item> <!-- Traffic Mirror -->
         <item name="Highway milestone" icon="presets/vehicle/milestone.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=milestone"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:highway=milestone"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=milestone"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:highway=milestone"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:highway=milestone"
@@ -2078,6 +2081,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:waterway=ditch"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:waterway=ditch"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=ditch"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:waterway=ditch"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:waterway=ditch"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:waterway=ditch"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:waterway=ditch"
@@ -4111,7 +4115,16 @@
             <reference ref="link_contact_address_payment" />
         </item> <!-- Cafe -->
         <item name="Ice cream" icon="presets/food/ice_cream.svg" type="node,closedway,multipolygon" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:ice_cream" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=ice_cream"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:amenity=ice_cream"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=ice_cream"
+                  el.href="http://wiki.openstreetmap.org/wiki/El:Tag:amenity=ice_cream"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=ice_cream"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:amenity=ice_cream"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=ice_cream"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=ice_cream"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:amenity=ice_cream"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=ice_cream" />
             <space />
             <key key="amenity" value="ice_cream" />
             <reference ref="name_operator" />
