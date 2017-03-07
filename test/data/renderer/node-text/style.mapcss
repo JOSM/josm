@@ -8,6 +8,7 @@ node[test] {
 	symbol-size: 5;
 	symbol-fill-color: #8888ff;
 	text-color: red;
+	font-family: DejaVu Sans;
 	_match: regexp_match("n(.+)", tag("test"));
 	text: eval(concat("Test ", get(prop("_match"),1)));
 }

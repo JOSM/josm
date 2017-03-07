@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.awt.Graphics2D;
+import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -16,6 +17,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -76,7 +78,7 @@ public class MapCSSRendererTest {
                 new TestConfig("node-shapes", AREA_DEFAULT),
 
                 /** Text for nodes */
-                new TestConfig("node-text", AREA_DEFAULT),
+                new TestConfig("node-text", AREA_DEFAULT).usesFont("DejaVu Sans"),
 
                 /** Tests that StyledMapRenderer#drawWay respects width */
                 new TestConfig("way-width", AREA_DEFAULT),
@@ -107,7 +109,12 @@ public class MapCSSRendererTest {
     @Before
     public void testForOpenJDK() {
         String javaHome = System.getProperty("java.home");
-        Assume.assumeTrue(javaHome != null && javaHome.contains("openjdk"));
+        Assume.assumeTrue("Test requires openJDK", javaHome != null && javaHome.contains("openjdk"));
+
+        List<String> fonts = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
+        for(String font : testConfig.fonts) {
+            Assume.assumeTrue("Test requires font: " + font, fonts.contains(font));
+        }
     }
 
     /**
@@ -232,10 +239,16 @@ public class MapCSSRendererTest {
     private static class TestConfig {
         private final String testDirectory;
         private final Bounds testArea;
+        private final ArrayList<String> fonts = new ArrayList<>();
 
         TestConfig(String testDirectory, Bounds testArea) {
             this.testDirectory = testDirectory;
             this.testArea = testArea;
+        }
+
+        public TestConfig usesFont(String string) {
+            this.fonts.add(string);
+            return this;
         }
 
         public BufferedImage getReference() throws IOException {
