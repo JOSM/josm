@@ -120,6 +120,7 @@ public class ImageryLayerInfo {
         private final List<ImageryInfo> newLayers = new ArrayList<>();
         private ImageryReader reader;
         private boolean canceled;
+        private boolean loadError;
 
         DefaultEntryLoader(boolean clearCache, boolean fastFail) {
             super(tr("Update default entries"));
@@ -160,8 +161,10 @@ public class ImageryLayerInfo {
                 Collection<ImageryInfo> result = reader.parse();
                 newLayers.addAll(result);
             } catch (IOException ex) {
+                loadError = true;
                 Main.error(ex, false);
             } catch (SAXException ex) {
+                loadError = true;
                 Main.error(ex);
             }
         }
@@ -183,7 +186,9 @@ public class ImageryLayerInfo {
             buildIdMap(allDefaultLayers, defaultLayerIds);
             updateEntriesFromDefaults();
             buildIdMap(layers, layerIds);
-            dropOldEntries();
+            if (!loadError && !defaultLayerIds.isEmpty()) {
+                dropOldEntries();
+            }
         }
     }
 
@@ -272,10 +277,6 @@ public class ImageryLayerInfo {
     public void dropOldEntries() {
         List<String> drop = new ArrayList<>();
 
-        if (defaultLayerIds.isEmpty()) {
-            return;
-        }
-        
         for (Map.Entry<String, ImageryInfo> info : layerIds.entrySet()) {
             if (!defaultLayerIds.containsKey(info.getKey())) {
                 remove(info.getValue());
