@@ -91,6 +91,12 @@ public class MapCSSRendererTest {
                 /** Tests dashed ways. */
                 new TestConfig("way-dashes", AREA_DEFAULT),
 
+                /** Tests fill-color property */
+                new TestConfig("area-fill-color", AREA_DEFAULT),
+
+                /** Tests the fill-image property. */
+                new TestConfig("area-fill-image", AREA_DEFAULT),
+
                 /** Tests if all styles are sorted correctly. Tests {@link StyleRecord#compareTo(StyleRecord)} */
                 new TestConfig("order", AREA_DEFAULT)
 
