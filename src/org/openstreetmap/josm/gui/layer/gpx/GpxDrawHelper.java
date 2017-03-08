@@ -293,7 +293,7 @@ public class GpxDrawHelper implements SoMChangeListener {
         heatMapDrawLowerLimit = Main.pref.getInteger("draw.rawgps.heatmap.lower-limit", spec, 0);
 
         // shrink to range
-        heatMapDrawGain = Math.min(Math.max(-10, heatMapDrawGain), 10);
+        heatMapDrawGain = Utils.clamp(heatMapDrawGain, -10, 10);
 
         neutralColor = getColor(layerName, true);
         velocityScale.setNoDataColor(neutralColor);
@@ -731,7 +731,7 @@ public class GpxDrawHelper implements SoMChangeListener {
         // 2nd. determine current scale factors -------------------------------
 
         // adjust global settings
-        final int globalLineWidth = Math.min(Math.max(lineWidth, 1), 20);
+        final int globalLineWidth = Utils.clamp(lineWidth, 1, 20);
 
         // cache scale of view
         final double zoomScale = mv.getDist100Pixel() / 50.0f;
@@ -1156,7 +1156,7 @@ public class GpxDrawHelper implements SoMChangeListener {
         final double zoomScale = mv.getDist100Pixel() / 50.0f;
 
         // adjust global settings ( zero = default line width )
-        final int globalLineWidth = (0 == lineWidth) ? 1 : Math.min(Math.max(lineWidth, 1), 20);
+        final int globalLineWidth = (0 == lineWidth) ? 1 : Utils.clamp(lineWidth, 1, 20);
 
         // 1st setup virtual paint area ----------------------------------------
 

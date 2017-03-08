@@ -183,7 +183,7 @@ public class NodeElement extends StyleElement {
         mapImage.offsetX = Math.round(offsetXF);
         mapImage.offsetY = Math.round(offsetYF);
 
-        mapImage.alpha = Math.min(255, Math.max(0, Main.pref.getInteger("mappaint.icon-image-alpha", 255)));
+        mapImage.alpha = Utils.clamp(Main.pref.getInteger("mappaint.icon-image-alpha", 255), 0, 255);
         Integer pAlpha = Utils.colorFloat2int(c.get(keys[ICON_OPACITY_IDX], null, float.class));
         if (pAlpha != null) {
             mapImage.alpha = pAlpha;
