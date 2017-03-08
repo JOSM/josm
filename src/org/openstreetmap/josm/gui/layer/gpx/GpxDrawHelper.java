@@ -739,7 +739,7 @@ public class GpxDrawHelper implements SoMChangeListener {
         // 3rd. determine current paint parameters -----------------------------
 
         // alpha value is based on zoom and line with combined with global layer alpha
-        float theLineAlpha = Math.min(Math.max((0.50f/(float) zoomScale)/(globalLineWidth + 1), 0.01f), 0.50f) * layerAlpha;
+        float theLineAlpha = (float) Utils.clamp((0.50 / zoomScale) / (globalLineWidth + 1), 0.01, 0.50) * layerAlpha;
         final int theLineWith = (int) (lineWidth / zoomScale) + 1;
 
         // 4th setup virtual paint area ----------------------------------------
@@ -1191,15 +1191,15 @@ public class GpxDrawHelper implements SoMChangeListener {
         int lineWidthF = lineWidthB > 2 ? (globalLineWidth - 1) : 0;
 
         // global alpha adjustment
-        float lineAlpha = Math.min(Math.max((0.40f/(float) zoomScale)/(globalLineWidth+1), 0.01f), 0.40f);
+        float lineAlpha = (float) Utils.clamp((0.40 / zoomScale) / (globalLineWidth + 1), 0.01, 0.40);
 
         // adjust 0.15 .. 1.85
         float scaleAlpha = 1.0f + ((heatMapDrawGain/10.0f) * 0.85f);
 
         // add to calculated values
-        float lineAlphaBPoint = Math.max(Math.min(((lineAlpha * 0.65f) * scaleAlpha), 0.90f), 0.001f);
-        float lineAlphaBLine = Math.max(Math.min(((lineAlpha * 1.00f) * scaleAlpha), 0.90f), 0.001f);
-        float lineAlphaFLine = Math.max(Math.min(((lineAlpha / 1.50f) * scaleAlpha), 0.90f), 0.001f);
+        float lineAlphaBPoint = (float) Utils.clamp((lineAlpha * 0.65) * scaleAlpha, 0.001, 0.90);
+        float lineAlphaBLine = (float) Utils.clamp((lineAlpha * 1.00) * scaleAlpha, 0.001, 0.90);
+        float lineAlphaFLine = (float) Utils.clamp((lineAlpha / 1.50) * scaleAlpha, 0.001, 0.90);
 
         // 3rd Calculate the heat map data by draw GPX traces with alpha value ----------
 
