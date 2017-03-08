@@ -33,6 +33,7 @@ import org.junit.runners.Parameterized.Parameters;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
@@ -69,6 +70,7 @@ public class MapCSSRendererTest {
 
     /**
      * The different configurations of this test.
+     *
      * @return The parameters.
      */
     @Parameters(name = "{1}")
@@ -87,7 +89,10 @@ public class MapCSSRendererTest {
                 new TestConfig("way-color", AREA_DEFAULT),
 
                 /** Tests dashed ways. */
-                new TestConfig("way-dashes", AREA_DEFAULT)
+                new TestConfig("way-dashes", AREA_DEFAULT),
+
+                /** Tests if all styles are sorted correctly. Tests {@link StyleRecord#compareTo(StyleRecord)} */
+                new TestConfig("order", AREA_DEFAULT)
 
                 ).map(e -> new Object[] {e, e.testDirectory})
                 .collect(Collectors.toList());
@@ -112,7 +117,7 @@ public class MapCSSRendererTest {
         Assume.assumeTrue("Test requires openJDK", javaHome != null && javaHome.contains("openjdk"));
 
         List<String> fonts = Arrays.asList(GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
-        for(String font : testConfig.fonts) {
+        for (String font : testConfig.fonts) {
             Assume.assumeTrue("Test requires font: " + font, fonts.contains(font));
         }
     }
@@ -137,6 +142,8 @@ public class MapCSSRendererTest {
                 fail("Failed to load style file. Errors: " + source.getErrors());
             }
             MapPaintStyles.getStyles().setStyleSources(Arrays.asList(source));
+            MapPaintStyles.fireMapPaintSylesUpdated();
+            MapPaintStyles.getStyles().clearCached();
 
         } finally {
             MapCSSStyleSource.STYLE_SOURCE_LOCK.writeLock().unlock();
@@ -161,8 +168,9 @@ public class MapCSSRendererTest {
             }
         };
         nc.zoomTo(testConfig.testArea);
-        dataSet.allPrimitives().stream().forEach(n -> n.setHighlighted(n.isKeyTrue("highlight")));
-        dataSet.allPrimitives().stream().filter(n -> n.isKeyTrue("disabled")).forEach(n -> n.setDisabledState(false));
+        dataSet.allPrimitives().stream().forEach(this::loadPrimitiveStyle);
+        dataSet.setSelected(dataSet.allPrimitives().stream().filter(n -> n.isKeyTrue("selected")).collect(Collectors.toList()));
+
         Graphics2D g = image.createGraphics();
         // Force all render hints to be defaults - do not use platform values
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -216,8 +224,15 @@ public class MapCSSRendererTest {
             }
             ImageIO.write(diffImage, "png", new File(testConfig.getTestDirectory() + "/test-differences.png"));
 
-            fail(MessageFormat.format("Images for test {1} differ at {2} points: {3}",
+            fail(MessageFormat.format("Images for test {0} differ at {1} points: {2}",
                     testConfig.testDirectory, differencePoints.size(), differences.toString()));
+        }
+    }
+
+    private void loadPrimitiveStyle(OsmPrimitive n) {
+        n.setHighlighted(n.isKeyTrue("highlight"));
+        if (n.isKeyTrue("disabled")) {
+            n.setDisabledState(false);
         }
     }
 
