@@ -11,6 +11,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
@@ -23,6 +24,11 @@ import org.openstreetmap.josm.tools.Utils;
  * This is the style that defines how an area is filled.
  */
 public class AreaElement extends StyleElement {
+
+    /**
+     * The default opacity for the fill. For historical reasons in range 0.255.
+     */
+    private static final IntegerProperty DEFAULT_FILL_ALPHA = new IntegerProperty("mappaint.fillalpha", 50);
 
     /**
      * If fillImage == null, color is the fill-color, otherwise
@@ -97,7 +103,7 @@ public class AreaElement extends StyleElement {
                     fillImage.getWidth() / 2, fillImage.getHeight() / 2)
             );
 
-            fillImage.alpha = Math.min(255, Math.max(0, Main.pref.getInteger("mappaint.fill-image-alpha", 255)));
+            fillImage.alpha = Utils.clamp(Main.pref.getInteger("mappaint.fill-image-alpha", 255), 0, 255);
             Integer pAlpha = Utils.colorFloat2int(c.get(FILL_OPACITY, null, float.class));
             if (pAlpha != null) {
                 fillImage.alpha = pAlpha;
@@ -105,20 +111,9 @@ public class AreaElement extends StyleElement {
         } else {
             color = c.get(FILL_COLOR, null, Color.class);
             if (color != null) {
-                int alpha = color.getAlpha();
-                if (alpha == 255) {
-                    // Assume alpha value has not been specified by the user if
-                    // is set to fully opaque. Use default value in this case.
-                    // It is not an ideal solution, but a little tricky to get this
-                    // right, especially as named map colors can be changed in
-                    // the preference GUI and written to the preferences file.
-                    alpha = Math.min(255, Math.max(0, Main.pref.getInteger("mappaint.fillalpha", 50)));
-                }
-                Integer pAlpha = Utils.colorFloat2int(c.get(FILL_OPACITY, null, float.class));
-                if (pAlpha != null) {
-                    alpha = pAlpha;
-                }
-                color = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
+                float defaultOpacity = Utils.colorInt2float(DEFAULT_FILL_ALPHA.get());
+                float opacity = c.get(FILL_OPACITY, defaultOpacity, Float.class);
+                color = Utils.alphaMultiply(color, opacity);
             }
         }
 
