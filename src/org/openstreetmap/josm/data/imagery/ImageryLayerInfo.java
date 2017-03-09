@@ -230,14 +230,16 @@ public class ImageryLayerInfo {
             if (def.isDefaultEntry()) {
                 boolean isKnownDefault = false;
                 for (String entry : knownDefaults) {
-                    if (isSimilar(entry, def.getId())) {
+                    if (entry.equals(def.getId())) {
                         isKnownDefault = true;
                         newKnownDefaults.add(entry);
                         knownDefaults.remove(entry);
                         break;
                     } else if (isSimilar(entry, def.getUrl())) {
                         isKnownDefault = true;
-                        newKnownDefaults.add(def.getId());
+                        if (def.getId() != null) {
+                            newKnownDefaults.add(def.getId());
+                        }
                         knownDefaults.remove(entry);
                         break;
                     }
@@ -246,14 +248,14 @@ public class ImageryLayerInfo {
                 if (!isKnownDefault) {
                     if (def.getId() != null) {
                         newKnownDefaults.add(def.getId());
-                    } else {
-                        newKnownDefaults.add(def.getUrl());
-                    }
-                    for (ImageryInfo i : layers) {
-                        if (isSimilar(def, i)) {
-                            isInUserList = true;
-                            break;
+                        for (ImageryInfo i : layers) {
+                            if (isSimilar(def, i)) {
+                                isInUserList = true;
+                                break;
+                            }
                         }
+                    } else {
+                        Main.error("Default imagery ''{0}'' has no id. Skipping.", def.getName());
                     }
                 }
                 if (!isKnownDefault && !isInUserList) {
