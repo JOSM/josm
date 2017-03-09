@@ -184,7 +184,7 @@ public class ImageryLayerInfo {
             Collections.sort(defaultLayers);
             Collections.sort(allDefaultLayers);
             buildIdMap(allDefaultLayers, defaultLayerIds);
-            updateEntriesFromDefaults();
+            updateEntriesFromDefaults(!loadError);
             buildIdMap(layers, layerIds);
             if (!loadError && !defaultLayerIds.isEmpty()) {
                 dropOldEntries();
@@ -218,24 +218,37 @@ public class ImageryLayerInfo {
 
     /**
      * Update user entries according to the list of default entries.
+     * @param dropold if <code>true</code> old entries should be removed
+     * @since 11706
      */
-    public void updateEntriesFromDefaults() {
+    public void updateEntriesFromDefaults(boolean dropold) {
         // add new default entries to the user selection
         boolean changed = false;
-        Collection<String> knownDefaults = Main.pref.getCollection("imagery.layers.default");
-        Collection<String> newKnownDefaults = new TreeSet<>(knownDefaults);
+        Collection<String> knownDefaults = new TreeSet<>(Main.pref.getCollection("imagery.layers.default"));
+        Collection<String> newKnownDefaults = new TreeSet<>();
         for (ImageryInfo def : defaultLayers) {
             if (def.isDefaultEntry()) {
                 boolean isKnownDefault = false;
-                for (String url : knownDefaults) {
-                    if (isSimilar(url, def.getUrl())) {
+                for (String entry : knownDefaults) {
+                    if (isSimilar(entry, def.getId())) {
                         isKnownDefault = true;
+                        newKnownDefaults.add(entry);
+                        knownDefaults.remove(entry);
+                        break;
+                    } else if (isSimilar(entry, def.getUrl())) {
+                        isKnownDefault = true;
+                        newKnownDefaults.add(def.getId());
+                        knownDefaults.remove(entry);
                         break;
                     }
                 }
                 boolean isInUserList = false;
                 if (!isKnownDefault) {
-                    newKnownDefaults.add(def.getUrl());
+                    if (def.getId() != null) {
+                        newKnownDefaults.add(def.getId());
+                    } else {
+                        newKnownDefaults.add(def.getUrl());
+                    }
                     for (ImageryInfo i : layers) {
                         if (isSimilar(def, i)) {
                             isInUserList = true;
@@ -248,6 +261,9 @@ public class ImageryLayerInfo {
                     changed = true;
                 }
             }
+        }
+        if (!dropold && !knownDefaults.isEmpty()) {
+            newKnownDefaults.addAll(knownDefaults);
         }
         Main.pref.putCollection("imagery.layers.default", newKnownDefaults);
 
