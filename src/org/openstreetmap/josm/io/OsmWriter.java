@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSet.UploadPolicy;
 import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.IRelation;
@@ -74,16 +75,16 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     }
 
     public void header() {
-        header(null);
+        header(UploadPolicy.NORMAL);
     }
 
-    public void header(Boolean upload) {
+    public void header(UploadPolicy upload) {
         out.println("<?xml version='1.0' encoding='UTF-8'?>");
         out.print("<osm version='");
         out.print(version);
-        if (upload != null) {
+        if (upload != null && upload != UploadPolicy.NORMAL) {
             out.print("' upload='");
-            out.print(upload);
+            out.print(upload.getXmlFlag());
         }
         out.println("' generator='JOSM'>");
     }
@@ -113,7 +114,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     }
 
     public void writeLayer(OsmDataLayer layer) {
-        header(!layer.isUploadDiscouraged());
+        header(layer.data.getUploadPolicy());
         writeDataSources(layer.data);
         writeContent(layer.data);
         footer();

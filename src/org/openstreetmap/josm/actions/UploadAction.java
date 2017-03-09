@@ -140,7 +140,8 @@ public class UploadAction extends JosmAction {
      */
     @Override
     protected void updateEnabledState() {
-        setEnabled(getLayerManager().getEditLayer() != null);
+        OsmDataLayer editLayer = getLayerManager().getEditLayer();
+        setEnabled(editLayer != null && editLayer.isUploadable());
     }
 
     public static boolean checkPreUploadConditions(AbstractModifiableLayer layer) {

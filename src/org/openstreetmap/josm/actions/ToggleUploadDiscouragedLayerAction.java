@@ -31,6 +31,7 @@ public class ToggleUploadDiscouragedLayerAction extends AbstractAction implement
     public ToggleUploadDiscouragedLayerAction(OsmDataLayer layer) {
         super(tr("Discourage upload"), ImageProvider.get("no_upload"));
         this.layer = layer;
+        setEnabled(layer.isUploadable());
     }
 
     @Override
@@ -42,7 +43,7 @@ public class ToggleUploadDiscouragedLayerAction extends AbstractAction implement
     @Override
     public Component createMenuComponent() {
         JCheckBoxMenuItem item = new JCheckBoxMenuItem(this);
-        item.setSelected(layer.isUploadDiscouraged());
+        item.setSelected(layer.isUploadDiscouraged() || !layer.isUploadable());
         return item;
     }
 

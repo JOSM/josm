@@ -99,6 +99,46 @@ import org.openstreetmap.josm.tools.Utils;
 public final class DataSet implements Data, ProjectionChangeListener {
 
     /**
+     * Upload policy.
+     *
+     * Determines if upload to the OSM server is intended, discouraged, or
+     * disabled / blocked.
+     */
+    public enum UploadPolicy {
+        /**
+         * Normal dataset, upload intended.
+         */
+        NORMAL("true"),
+        /**
+         * Upload discouraged, for example when using or distributing a private dataset.
+         */
+        DISCOURAGED("false"),
+        /**
+         * Upload blocked.
+         * Upload options completely disabled. Intended for special cases
+         * where a warning dialog is not enough, see #12731.
+         *
+         * For the user, it shouldn't be too easy to disable this flag.
+         */
+        BLOCKED("never");
+
+        String xml_flag;
+
+        private UploadPolicy(String xml_flag) {
+            this.xml_flag = xml_flag;
+        }
+
+        /**
+         * Get the corresponding value of the <code>upload='...'</code> XML-attribute
+         * in the .osm file.
+         * @return value of the <code>upload</code> attribute
+         */
+        public String getXmlFlag() {
+            return xml_flag;
+        }
+    };
+
+    /**
      * Maximum number of events that can be fired between beginUpdate/endUpdate to be send as single events (ie without DatasetChangedEvent)
      */
     private static final int MAX_SINGLE_EVENTS = 30;
@@ -123,7 +163,7 @@ public final class DataSet implements Data, ProjectionChangeListener {
 
     private int highlightUpdateCount;
 
-    private boolean uploadDiscouraged;
+    private UploadPolicy uploadPolicy;
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private final Object selectionLock = new Object();
@@ -299,21 +339,46 @@ public final class DataSet implements Data, ProjectionChangeListener {
     }
 
     /**
-     * Determines if upload is being discouraged (i.e. this dataset contains private data which should not be uploaded)
+     * Determines if upload is being discouraged.
+     * (i.e. this dataset contains private data which should not be uploaded)
      * @return {@code true} if upload is being discouraged, {@code false} otherwise
      * @see #setUploadDiscouraged
+     * @deprecated use {@link #getUploadPolicy()}
      */
+    @Deprecated
     public boolean isUploadDiscouraged() {
-        return uploadDiscouraged;
+        return uploadPolicy == UploadPolicy.DISCOURAGED || uploadPolicy == UploadPolicy.BLOCKED;
     }
 
     /**
      * Sets the "upload discouraged" flag.
      * @param uploadDiscouraged {@code true} if this dataset contains private data which should not be uploaded
      * @see #isUploadDiscouraged
+     * @deprecated use {@link #setUploadPolicy(UploadPolicy)}
      */
+    @Deprecated
     public void setUploadDiscouraged(boolean uploadDiscouraged) {
-        this.uploadDiscouraged = uploadDiscouraged;
+        if (uploadPolicy != UploadPolicy.BLOCKED) {
+            this.uploadPolicy = uploadDiscouraged ? UploadPolicy.DISCOURAGED : UploadPolicy.NORMAL;
+        }
+    }
+
+    /**
+     * Get the upload policy.
+     * @return the upload policy
+     * @see #setUploadPolicy(UploadPolicy)
+     */
+    public UploadPolicy getUploadPolicy() {
+        return this.uploadPolicy;
+    }
+
+    /**
+     * Sets the upload policy.
+     * @param uploadPolicy the upload policy
+     * @see #getUploadPolicy()
+     */
+    public void setUploadPolicy(UploadPolicy uploadPolicy) {
+        this.uploadPolicy = uploadPolicy;
     }
 
     /**

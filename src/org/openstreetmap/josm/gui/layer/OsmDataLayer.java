@@ -62,6 +62,7 @@ import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSet.UploadPolicy;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
 import org.openstreetmap.josm.data.osm.IPrimitive;
@@ -386,7 +387,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     @Override
     public Icon getIcon() {
         ImageProvider base = getBaseIconProvider().setMaxSize(ImageSizes.LAYER);
-        if (isUploadDiscouraged()) {
+        if (isUploadDiscouraged() || data.getUploadPolicy() == UploadPolicy.BLOCKED) {
             base.addOverlay(new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1.0, 1.0));
         }
         return base.get();
@@ -602,6 +603,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
                 GBC.eop().insets(15, 0, 0, 0));
         if (isUploadDiscouraged()) {
             p.add(new JLabel(tr("Upload is discouraged")), GBC.eop().insets(15, 0, 0, 0));
+        }
+        if (data.getUploadPolicy() == UploadPolicy.BLOCKED) {
+            p.add(new JLabel(tr("Upload is blocked")), GBC.eop().insets(15, 0, 0, 0));
         }
 
         return p;
@@ -873,12 +877,12 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
     @Override
     public boolean isUploadable() {
-        return true;
+        return data.getUploadPolicy() != UploadPolicy.BLOCKED;
     }
 
     @Override
     public boolean requiresUploadToServer() {
-        return requiresUploadToServer;
+        return isUploadable() && requiresUploadToServer;
     }
 
     @Override
@@ -967,9 +971,14 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
          // change listener and already got notified.
     }
 
+    /**
+     * Determines if upload is being discouraged.
+     * (i.e. this dataset contains private data which should not be uploaded)
+     * @return {@code true} if upload is being discouraged, {@code false} otherwise
+     */
     @Override
     public final boolean isUploadDiscouraged() {
-        return data.isUploadDiscouraged();
+        return data.getUploadPolicy() == UploadPolicy.DISCOURAGED;
     }
 
     /**
@@ -978,8 +987,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      * This feature allows to use "private" data layers.
      */
     public final void setUploadDiscouraged(boolean uploadDiscouraged) {
-        if (uploadDiscouraged ^ isUploadDiscouraged()) {
-            data.setUploadDiscouraged(uploadDiscouraged);
+        if (data.getUploadPolicy() != UploadPolicy.BLOCKED &&
+                uploadDiscouraged ^ isUploadDiscouraged()) {
+            data.setUploadPolicy(uploadDiscouraged ? UploadPolicy.DISCOURAGED : UploadPolicy.NORMAL);
             for (LayerStateChangeListener l : layerStateChangeListeners) {
                 l.uploadDiscouragedChanged(this, uploadDiscouraged);
             }
