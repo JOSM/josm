@@ -988,7 +988,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      */
     public final void setUploadDiscouraged(boolean uploadDiscouraged) {
         if (data.getUploadPolicy() != UploadPolicy.BLOCKED &&
-                uploadDiscouraged ^ isUploadDiscouraged()) {
+                (uploadDiscouraged ^ isUploadDiscouraged())) {
             data.setUploadPolicy(uploadDiscouraged ? UploadPolicy.DISCOURAGED : UploadPolicy.NORMAL);
             for (LayerStateChangeListener l : layerStateChangeListeners) {
                 l.uploadDiscouragedChanged(this, uploadDiscouraged);

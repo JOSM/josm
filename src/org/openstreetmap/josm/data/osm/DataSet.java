@@ -122,7 +122,7 @@ public final class DataSet implements Data, ProjectionChangeListener {
          */
         BLOCKED("never");
 
-        String xml_flag;
+        final String xml_flag;
 
         private UploadPolicy(String xml_flag) {
             this.xml_flag = xml_flag;
