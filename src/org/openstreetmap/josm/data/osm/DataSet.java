@@ -122,10 +122,10 @@ public final class DataSet implements Data, ProjectionChangeListener {
          */
         BLOCKED("never");
 
-        final String xml_flag;
+        final String xmlFlag;
 
-        private UploadPolicy(String xml_flag) {
-            this.xml_flag = xml_flag;
+        UploadPolicy(String xmlFlag) {
+            this.xmlFlag = xmlFlag;
         }
 
         /**
@@ -134,9 +134,9 @@ public final class DataSet implements Data, ProjectionChangeListener {
          * @return value of the <code>upload</code> attribute
          */
         public String getXmlFlag() {
-            return xml_flag;
+            return xmlFlag;
         }
-    };
+    }
 
     /**
      * Maximum number of events that can be fired between beginUpdate/endUpdate to be send as single events (ie without DatasetChangedEvent)
