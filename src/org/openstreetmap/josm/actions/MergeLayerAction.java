@@ -100,8 +100,13 @@ public class MergeLayerAction extends AbstractMergeAction {
                 if (sourceLayer == null) {
                     setEnabled(false);
                 } else {
-                    final List<Layer> possibleMergeTargets = LayerListDialog.getInstance().getModel().getPossibleMergeTargets(sourceLayer);
-                    setEnabled(!possibleMergeTargets.isEmpty());
+                    try {
+                        setEnabled(!LayerListDialog.getInstance().getModel().getPossibleMergeTargets(sourceLayer).isEmpty());
+                    } catch (IllegalStateException e) {
+                        // May occur when destroying last layer / exiting JOSM, see #14476
+                        setEnabled(false);
+                        Main.error(e);
+                    }
                 }
         });
     }
