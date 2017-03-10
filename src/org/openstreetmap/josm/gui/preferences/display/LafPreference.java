@@ -25,6 +25,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.MapMover;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
@@ -43,6 +44,12 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * Look-and-feel preferences.
  */
 public class LafPreference implements SubPreferenceSetting {
+
+    /**
+     * Look-and-feel property.
+     * @since 11713
+     */
+    public static final StringProperty LAF = new StringProperty("laf", Main.platform.getDefaultStyle());
 
     static final class LafListCellRenderer implements ListCellRenderer<LookAndFeelInfo> {
         private final DefaultListCellRenderer def = new DefaultListCellRenderer();
@@ -99,7 +106,7 @@ public class LafPreference implements SubPreferenceSetting {
             }
         }
 
-        String laf = Main.pref.get("laf", Main.platform.getDefaultStyle());
+        String laf = LAF.get();
         for (int i = 0; i < lafCombo.getItemCount(); ++i) {
             if (lafCombo.getItemAt(i).getClassName().equals(laf)) {
                 lafCombo.setSelectedIndex(i);
@@ -202,7 +209,7 @@ public class LafPreference implements SubPreferenceSetting {
         MapMover.PROP_ZOOM_REVERSE_WHEEL.put(zoomReverseWheel.isSelected());
         NavigatableComponent.PROP_ZOOM_INTERMEDIATE_STEPS.put(zoomIntermediateSteps.isSelected());
         NavigatableComponent.PROP_ZOOM_RATIO.put(Math.pow(2, 1/(double) spinZoomRatio.getModel().getValue()));
-        mod |= Main.pref.put("laf", ((LookAndFeelInfo) lafCombo.getSelectedItem()).getClassName());
+        mod |= LAF.put(((LookAndFeelInfo) lafCombo.getSelectedItem()).getClassName());
         return mod;
     }
 

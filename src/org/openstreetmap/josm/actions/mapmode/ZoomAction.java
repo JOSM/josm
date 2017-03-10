@@ -43,7 +43,7 @@ public class ZoomAction extends MapMode implements SelectionEnded {
     public ZoomAction(MapFrame mapFrame) {
         super(tr("Zoom"), "zoom", tr("Zoom and move map"),
                 Shortcut.registerShortcut("mapmode:zoom", tr("Mode: {0}", tr("Zoom")), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE),
-                mapFrame, ImageProvider.getCursor("normal", "zoom"));
+                ImageProvider.getCursor("normal", "zoom"));
         selectionManager = new SelectionManager(this, true, mapFrame.mapView);
     }
 

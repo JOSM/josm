@@ -11,7 +11,7 @@ import org.openstreetmap.josm.gui.MapView;
 
 class MapViewMock extends MapView {
     MapViewMock() {
-        super(Main.getLayerManager(), null, null);
+        super(Main.getLayerManager(), null);
     }
 
     @Override

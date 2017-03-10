@@ -45,6 +45,11 @@
             <pathelement path="${groovy.jar}"/>
             <pathelement path="tools/findbugs/annotations.jar"/>
         </path>
+        <path id="pmd.classpath">
+            <fileset dir="${base.dir}/tools/pmd/">
+                <include name="*.jar"/>
+            </fileset>
+        </path>
     </target>
 
     <!--
@@ -755,6 +760,23 @@ Build-Date: ${build.tstamp}
             <class location="${dist.dir}/josm-custom.jar" />
         </findbugs>
     </target>
+
+    <target name="pmd" depends="init-properties">
+        <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpath="${toString:pmd.classpath}"/>
+        <pmd shortFilenames="true" encoding="UTF-8">
+            <sourceLanguage name="java" version="1.8" />
+            <ruleset>${base.dir}/tools/pmd/josm-ruleset.xml</ruleset>
+            <formatter type="text" toConsole="true" />
+            <formatter type="xml" toFile="pmd-josm.xml">
+                <param name="encoding" value="UTF-8" />
+            </formatter>
+            <fileset dir="${src.dir}">
+                <include name="org/openstreetmap/josm/**/*.java"/>
+                <exclude name="org/openstreetmap/josm/gui/mappaint/mapcss/parsergen/*.java" />
+            </fileset>
+        </pmd>
+    </target>
+
     <target name="run" depends="dist">
         <java jar="${dist.dir}/josm-custom.jar" fork="true">
             <arg value="--set=expert=true"/>

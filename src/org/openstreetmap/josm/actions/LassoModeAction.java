@@ -21,7 +21,6 @@ public class LassoModeAction extends MapMode {
         super(tr("Lasso Mode"),
                 /* ICON(mapmode/) */ "rope",
                 tr("Lasso selection mode: select objects within a hand-drawn region"),
-                null,
                 ImageProvider.getCursor("normal", "rope"));
     }
 

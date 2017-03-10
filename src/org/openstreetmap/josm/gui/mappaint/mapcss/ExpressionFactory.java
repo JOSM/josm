@@ -57,7 +57,7 @@ public final class ExpressionFactory {
      */
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
-    static @interface NullableArguments {}
+    @interface NullableArguments {}
 
     private static final List<Method> arrayFunctions = new ArrayList<>();
     private static final List<Method> parameterFunctions = new ArrayList<>();

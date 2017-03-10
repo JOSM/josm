@@ -37,7 +37,7 @@ public class AddNoteActionTest {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
             Main.getLayerManager().addLayer(layer);
-            AddNoteAction mapMode = new AddNoteAction(Main.map, new NoteData(Collections.<Note>emptyList()));
+            AddNoteAction mapMode = new AddNoteAction(new NoteData(Collections.<Note>emptyList()));
             MapMode oldMapMode = Main.map.mapMode;
             assertTrue(Main.map.selectMapMode(mapMode));
             assertEquals(mapMode, Main.map.mapMode);

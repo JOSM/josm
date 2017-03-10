@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import javax.swing.AbstractAction;
-import javax.swing.JPanel;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.josm.Main;
@@ -37,7 +36,9 @@ public class MapMover extends MouseAdapter implements Destroyable {
 
     public static final BooleanProperty PROP_ZOOM_REVERSE_WHEEL = new BooleanProperty("zoom.reverse-wheel", false);
 
-    private static final JMapViewerUpdater jMapViewerUpdater = new JMapViewerUpdater();
+    static {
+        new JMapViewerUpdater();
+    }
 
     private static class JMapViewerUpdater implements PreferenceChangedListener {
 
@@ -116,9 +117,9 @@ public class MapMover extends MouseAdapter implements Destroyable {
     /**
      * Constructs a new {@code MapMover}.
      * @param navComp the navigatable component
-     * @param contentPane Ignored. The main action map is used.
+     * @since 11713
      */
-    public MapMover(NavigatableComponent navComp, JPanel contentPane) {
+    public MapMover(NavigatableComponent navComp) {
         this.nc = navComp;
         nc.addMouseListener(this);
         nc.addMouseMotionListener(this);

@@ -52,9 +52,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
      * @param layer The imagery layer
      */
     public ImageryAdjustAction(AbstractTileSourceLayer<?> layer) {
-        super(tr("New offset"), "adjustimg",
-                tr("Adjust the position of this imagery layer"), Main.map,
-                cursor);
+        super(tr("New offset"), "adjustimg", tr("Adjust the position of this imagery layer"), cursor);
         putValue("toolbar", Boolean.FALSE);
         this.layer = layer;
     }

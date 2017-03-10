@@ -182,15 +182,15 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
 
     /**
      * Constructs a new {@code MapFrame}.
-     * @param contentPane Ignored. Main content pane is used.
      * @param viewportData the initial viewport of the map. Can be null, then
      * the viewport is derived from the layer data.
+     * @since 11713
      */
-    public MapFrame(JPanel contentPane, ViewportData viewportData) {
+    public MapFrame(ViewportData viewportData) {
         setSize(400, 400);
         setLayout(new BorderLayout());
 
-        mapView = new MapView(Main.getLayerManager(), contentPane, viewportData);
+        mapView = new MapView(Main.getLayerManager(), viewportData);
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
 
@@ -227,17 +227,17 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         // toolBarActions, map mode buttons
         mapModeSelect = new SelectAction(this);
         mapModeSelectLasso = new LassoModeAction();
-        mapModeDraw = new DrawAction(this);
+        mapModeDraw = new DrawAction();
         mapModeZoom = new ZoomAction(this);
 
         addMapMode(new IconToggleButton(mapModeSelect));
         addMapMode(new IconToggleButton(mapModeSelectLasso, true));
         addMapMode(new IconToggleButton(mapModeDraw));
         addMapMode(new IconToggleButton(mapModeZoom, true));
-        addMapMode(new IconToggleButton(new DeleteAction(this), true));
+        addMapMode(new IconToggleButton(new DeleteAction(), true));
         addMapMode(new IconToggleButton(new ParallelWayAction(this), true));
-        addMapMode(new IconToggleButton(new ExtrudeAction(this), true));
-        addMapMode(new IconToggleButton(new ImproveWayAccuracyAction(Main.map), false));
+        addMapMode(new IconToggleButton(new ExtrudeAction(), true));
+        addMapMode(new IconToggleButton(new ImproveWayAccuracyAction(), false));
         toolBarActionsGroup.setSelected(allMapModeButtons.get(0).getModel(), true);
         toolBarActions.setFloatable(false);
 

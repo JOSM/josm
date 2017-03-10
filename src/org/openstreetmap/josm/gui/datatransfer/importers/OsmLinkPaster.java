@@ -13,7 +13,6 @@ import javax.swing.TransferHandler.TransferSupport;
 import org.openstreetmap.josm.actions.OpenLocationAction;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
@@ -34,7 +33,6 @@ public class OsmLinkPaster extends AbstractOsmDataPaster {
         }
     }
 
-    private static final BooleanProperty PASTE_REFERRERS = new BooleanProperty("paste.url.download-referrers", true);
     private static final String OSM_SERVER = "^https?\\://(\\w+\\.)?(osm|openstreetmap)\\.org/";
 
     /**
@@ -67,7 +65,7 @@ public class OsmLinkPaster extends AbstractOsmDataPaster {
         return false;
     }
 
-    protected static LatLon parseLatLon(String transferData) {
+    static LatLon parseLatLon(String transferData) {
         Matcher matcher = Pattern
                 .compile(OSM_SERVER + "#map=(?<zoom>\\d+)/(?<lat>-?\\d+\\.\\d+)/(?<lon>-?\\d+\\.\\d+)$")
                 .matcher(transferData);

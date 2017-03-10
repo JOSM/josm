@@ -38,7 +38,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.data.preferences.AbstractProperty;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapViewState;
@@ -205,10 +204,9 @@ public class GpxDrawHelper implements SoMChangeListener {
     /**
      * Constructs a new {@code GpxDrawHelper}.
      * @param gpxData GPX data
-     * @param abstractProperty The color to draw with
-     * @since 10824
+     * @since 11713
      */
-    public GpxDrawHelper(GpxData gpxData, AbstractProperty<Color> abstractProperty) {
+    public GpxDrawHelper(GpxData gpxData) {
         data = gpxData;
         setupColors();
     }

@@ -81,6 +81,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
+import org.openstreetmap.josm.gui.preferences.display.LafPreference;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
@@ -764,7 +765,7 @@ public abstract class Main {
         ProjectionPreference.setProjection();
 
         String defaultlaf = platform.getDefaultStyle();
-        String laf = Main.pref.get("laf", defaultlaf);
+        String laf = LafPreference.LAF.get();
         try {
             UIManager.setLookAndFeel(laf);
         } catch (final NoClassDefFoundError | ClassNotFoundException e) {
@@ -786,16 +787,16 @@ public abstract class Main {
                     warn(ex, "Cannot set Look and Feel: " + laf + ": "+ex.getMessage());
                 } catch (UnsupportedLookAndFeelException ex) {
                     info("Look and Feel not supported: " + laf);
-                    Main.pref.put("laf", defaultlaf);
+                    LafPreference.LAF.put(defaultlaf);
                     trace(ex);
                 }
             } else {
                 info("Look and Feel not found: " + laf);
-                Main.pref.put("laf", defaultlaf);
+                LafPreference.LAF.put(defaultlaf);
             }
         } catch (UnsupportedLookAndFeelException e) {
             info("Look and Feel not supported: " + laf);
-            Main.pref.put("laf", defaultlaf);
+            LafPreference.LAF.put(defaultlaf);
             trace(e);
         } catch (InstantiationException | IllegalAccessException e) {
             error(e);

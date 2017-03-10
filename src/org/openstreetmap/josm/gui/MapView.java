@@ -236,8 +236,21 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      * @param viewportData the initial viewport of the map. Can be null, then
      * the viewport is derived from the layer data.
      * @since 10279
+     * @deprecated use {@link #MapView(MainLayerManager, ViewportData)} instead
      */
+    @Deprecated
     public MapView(MainLayerManager layerManager, final JPanel contentPane, final ViewportData viewportData) {
+        this(layerManager, viewportData);
+    }
+
+    /**
+     * Constructs a new {@code MapView}.
+     * @param layerManager The layers to display.
+     * @param viewportData the initial viewport of the map. Can be null, then
+     * the viewport is derived from the layer data.
+     * @since 11713
+     */
+    public MapView(MainLayerManager layerManager, final ViewportData viewportData) {
         this.layerManager = layerManager;
         initialViewport = viewportData;
         layerManager.addLayerChangeListener(this, true);
@@ -248,12 +261,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             @Override
             public void componentResized(ComponentEvent e) {
                 removeComponentListener(this);
-
-                mapMover = new MapMover(MapView.this, contentPane);
+                mapMover = new MapMover(MapView.this);
             }
         });
 
-        // listend to selection changes to redraw the map
+        // listens to selection changes to redraw the map
         DataSet.addSelectionListener(repaintSelectionChangedListener);
 
         //store the last mouse action

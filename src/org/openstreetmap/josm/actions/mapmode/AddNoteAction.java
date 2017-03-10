@@ -12,7 +12,6 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.NoteData;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.NoteInputDialog;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
@@ -29,13 +28,12 @@ public class AddNoteAction extends MapMode implements KeyPressReleaseListener {
 
     /**
      * Construct a new map mode.
-     * @param mapFrame Map frame to pass to the superconstructor
      * @param data Note data container. Must not be null
+     * @since 11713
      */
-    public AddNoteAction(MapFrame mapFrame, NoteData data) {
-        super(tr("Add a new Note"), "addnote",
-            tr("Add note mode"),
-            mapFrame, ImageProvider.getCursor("crosshair", "create_note"));
+    public AddNoteAction(NoteData data) {
+        super(tr("Add a new Note"), "addnote", tr("Add note mode"),
+            ImageProvider.getCursor("crosshair", "create_note"));
         CheckParameterUtil.ensureParameterNotNull(data, "data");
         noteData = data;
     }

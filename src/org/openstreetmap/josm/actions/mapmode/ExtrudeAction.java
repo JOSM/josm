@@ -44,7 +44,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.MainMenu;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.draw.SymbolShape;
@@ -209,12 +208,11 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
     /**
      * Creates a new ExtrudeAction
-     * @param mapFrame The MapFrame this action belongs to.
+     * @since 11713
      */
-    public ExtrudeAction(MapFrame mapFrame) {
+    public ExtrudeAction() {
         super(tr("Extrude"), /* ICON(mapmode/) */ "extrude/extrude", tr("Create areas"),
                 Shortcut.registerShortcut("mapmode:extrude", tr("Mode: {0}", tr("Extrude")), KeyEvent.VK_X, Shortcut.DIRECT),
-                mapFrame,
                 ImageProvider.getCursor("normal", "rectangle"));
         putValue("help", ht("/Action/Extrude"));
         cursorCreateNew = ImageProvider.getCursor("normal", "rectangle_plus");

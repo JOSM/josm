@@ -83,7 +83,7 @@ public class MainPanel extends JPanel {
     }
 
     private MapFrame createNewMapFrame() {
-        MapFrame mapFrame = new MapFrame(null, null);
+        MapFrame mapFrame = new MapFrame(null);
         // Required by many components.
         Main.map = mapFrame;
 

@@ -293,7 +293,7 @@ public class ChangesetCacheManager extends JFrame {
         actCloseSelectedChangesetsAction = new CloseSelectedChangesetsAction(model);
         actDownloadSelectedChangesets = new DownloadSelectedChangesetsAction(model);
         actDownloadSelectedContent = new DownloadSelectedChangesetContentAction(model);
-        actDownloadSelectedChangesetObjects = new DownloadSelectedChangesetObjectsAction(model);
+        actDownloadSelectedChangesetObjects = new DownloadSelectedChangesetObjectsAction();
 
         cp.add(buildToolbarPanel(), BorderLayout.NORTH);
         cp.add(buildContentPanel(), BorderLayout.CENTER);
@@ -555,7 +555,7 @@ public class ChangesetCacheManager extends JFrame {
      */
     private class DownloadSelectedChangesetObjectsAction extends AbstractAction implements ListSelectionListener {
 
-        DownloadSelectedChangesetObjectsAction(ChangesetCacheManagerModel model) {
+        DownloadSelectedChangesetObjectsAction() {
             putValue(NAME, tr("Download changed objects"));
             new ImageProvider("downloadprimitive").getResource().attachImageIcon(this);
             putValue(SHORT_DESCRIPTION, tr("Download the current version of the changed objects in the selected changesets"));

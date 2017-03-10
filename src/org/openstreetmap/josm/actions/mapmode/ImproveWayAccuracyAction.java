@@ -39,7 +39,6 @@ import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.StrokeProperty;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.draw.SymbolShape;
@@ -110,14 +109,14 @@ public class ImproveWayAccuracyAction extends MapMode implements
 
     /**
      * Constructs a new {@code ImproveWayAccuracyAction}.
-     * @param mapFrame Map frame
+     * @since 11713
      */
-    public ImproveWayAccuracyAction(MapFrame mapFrame) {
+    public ImproveWayAccuracyAction() {
         super(tr("Improve Way Accuracy"), "improvewayaccuracy",
                 tr("Improve Way Accuracy mode"),
                 Shortcut.registerShortcut("mapmode:ImproveWayAccuracy",
                 tr("Mode: {0}", tr("Improve Way Accuracy")),
-                KeyEvent.VK_W, Shortcut.DIRECT), mapFrame, Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                KeyEvent.VK_W, Shortcut.DIRECT), Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
         readPreferences();
     }

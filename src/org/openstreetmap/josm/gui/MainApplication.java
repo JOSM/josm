@@ -292,7 +292,7 @@ public class MainApplication extends Main {
         WindowGeometry geometry = WindowGeometry.mainWindow("gui.geometry",
                 args.getSingle(Option.GEOMETRY).orElse(null),
                 !args.hasOption(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
-        final MainFrame mainFrame = new MainFrame(contentPanePrivate, mainPanel, geometry);
+        final MainFrame mainFrame = new MainFrame(contentPanePrivate, geometry);
         Main.parent = mainFrame;
 
         if (args.hasOption(Option.LOAD_PREFERENCES)) {

@@ -53,7 +53,6 @@ import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.StrokeProperty;
 import org.openstreetmap.josm.gui.MainMenu;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.NavigatableComponent;
@@ -155,12 +154,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     /**
      * Constructs a new {@code DrawAction}.
-     * @param mapFrame Map frame
+     * @since 11713
      */
-    public DrawAction(MapFrame mapFrame) {
+    public DrawAction() {
         super(tr("Draw"), "node/autonode", tr("Draw nodes"),
                 Shortcut.registerShortcut("mapmode:draw", tr("Mode: {0}", tr("Draw")), KeyEvent.VK_A, Shortcut.DIRECT),
-                mapFrame, ImageProvider.getCursor("crosshair", null));
+                ImageProvider.getCursor("crosshair", null));
 
         snappingShortcut = Shortcut.registerShortcut("mapmode:drawanglesnapping",
                 tr("Mode: Draw Angle snapping"), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
