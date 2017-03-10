@@ -118,7 +118,7 @@ public class MapCSSRendererTest {
      * @since 11691
      */
     @Before
-    public void testForOpenJDK() {
+    public void forOpenJDK() {
         String javaHome = System.getProperty("java.home");
         Assume.assumeTrue("Test requires openJDK", javaHome != null && javaHome.contains("openjdk"));
 
