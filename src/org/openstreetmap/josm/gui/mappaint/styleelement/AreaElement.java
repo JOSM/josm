@@ -9,12 +9,10 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
-import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
-import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.gui.util.RotationAngle;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -119,15 +117,11 @@ public class AreaElement extends StyleElement {
             }
         }
 
-        TextLabel text = null;
-        Keyword textPos = c.get(TEXT_POSITION, null, Keyword.class);
-        if (textPos == null || "center".equals(textPos.val)) {
-            text = TextLabel.create(env, PaintColors.AREA_TEXT.get(), true);
-        }
+        TextLabel text = null; // <- text is handled by TextElement
         MapImage iconImage = NodeElement.createIcon(env);
         RotationAngle rotationAngle = NodeElement.createRotationAngle(env);
 
-        if (iconImage != null || text != null) {
+        if (iconImage != null) {
             // fake a transparent color.
             color = new Color(0, 0, 0, 0);
         }

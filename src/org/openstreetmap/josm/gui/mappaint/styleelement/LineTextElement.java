@@ -12,6 +12,11 @@ import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 
+/**
+ * A text that is only on the line
+ * @deprecated since 11722. To be removed summer 2017
+ */
+@Deprecated
 public class LineTextElement extends StyleElement {
 
     private final TextLabel text;

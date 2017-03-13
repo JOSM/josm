@@ -25,10 +25,10 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.styleelement.AreaElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.LineElement;
-import org.openstreetmap.josm.gui.mappaint.styleelement.LineTextElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.RepeatImageElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
+import org.openstreetmap.josm.gui.mappaint.styleelement.TextElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.TextLabel;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Pair;
@@ -365,13 +365,18 @@ public class ElemStyles implements PreferenceChangedListener {
             }
             env.layer = e.getKey();
             if (osm instanceof Way) {
-                addIfNotNull(sl, AreaElement.create(env));
+                AreaElement areaStyle = AreaElement.create(env);
+                addIfNotNull(sl, areaStyle);
                 addIfNotNull(sl, RepeatImageElement.create(env));
                 addIfNotNull(sl, LineElement.createLine(env));
                 addIfNotNull(sl, LineElement.createLeftCasing(env));
                 addIfNotNull(sl, LineElement.createRightCasing(env));
                 addIfNotNull(sl, LineElement.createCasing(env));
-                addIfNotNull(sl, LineTextElement.create(env));
+                addIfNotNull(sl, TextElement.create(env));
+                if (areaStyle != null) {
+                    //TODO: Warn about this, or even remove it completely
+                    addIfNotNull(sl, TextElement.createForContent(env));
+                }
             } else if (osm instanceof Node) {
                 NodeElement nodeStyle = NodeElement.create(env);
                 if (nodeStyle != null) {
@@ -382,11 +387,16 @@ public class ElemStyles implements PreferenceChangedListener {
                 }
             } else if (osm instanceof Relation) {
                 if (((Relation) osm).isMultipolygon()) {
-                    addIfNotNull(sl, AreaElement.create(env));
+                    AreaElement areaStyle = AreaElement.create(env);
+                    addIfNotNull(sl, areaStyle);
                     addIfNotNull(sl, RepeatImageElement.create(env));
                     addIfNotNull(sl, LineElement.createLine(env));
                     addIfNotNull(sl, LineElement.createCasing(env));
-                    addIfNotNull(sl, LineTextElement.create(env));
+                    addIfNotNull(sl, TextElement.create(env));
+                    if (areaStyle != null) {
+                        //TODO: Warn about this, or even remove it completely
+                        addIfNotNull(sl, TextElement.createForContent(env));
+                    }
                 } else if (osm.hasTag("type", "restriction")) {
                     addIfNotNull(sl, NodeElement.create(env));
                 }

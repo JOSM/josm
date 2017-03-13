@@ -14,6 +14,7 @@ import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy.DeriveLabelFromNameTagsCompositionStrategy;
 import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy.StaticLabelCompositionStrategy;
 import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy.TagLookupCompositionStrategy;
+import org.openstreetmap.josm.gui.mappaint.styleelement.PositionForAreaStrategy.CompletelyInsideAreaStrategy;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -55,6 +56,11 @@ public class TextLabel implements StyleKeys {
     public Color haloColor;
 
     /**
+     * The position strategy for this text label.
+     */
+    private final PositionForAreaStrategy labelPositionSteategy;
+
+    /**
      * Creates a new text element
      *
      * @param strategy the strategy indicating how the text is composed for a specific {@link OsmPrimitive} to be rendered.
@@ -65,17 +71,35 @@ public class TextLabel implements StyleKeys {
      * @param color the color to be used. Must not be null
      * @param haloRadius halo radius
      * @param haloColor halo color
+     * @deprecated since 11722, To be removed in mid-2017
      */
+    @Deprecated
     public TextLabel(LabelCompositionStrategy strategy, Font font, int xOffset, int yOffset, Color color, Float haloRadius, Color haloColor) {
-        CheckParameterUtil.ensureParameterNotNull(font);
-        CheckParameterUtil.ensureParameterNotNull(color);
-        labelCompositionStrategy = strategy;
-        this.font = font;
+        this(strategy, font, xOffset, yOffset, color, haloRadius, haloColor, new CompletelyInsideAreaStrategy());
+    }
+
+    /**
+     * Creates a new text element
+     *
+     * @param strategy the strategy indicating how the text is composed for a specific {@link OsmPrimitive} to be rendered.
+     * If null, no label is rendered.
+     * @param font the font to be used. Must not be null.
+     * @param xOffset x offset
+     * @param yOffset y offset
+     * @param color the color to be used. Must not be null
+     * @param haloRadius halo radius
+     * @param haloColor halo color
+     * @param labelPositionSteategy The position in the area.
+     */
+    protected TextLabel(LabelCompositionStrategy strategy, Font font, int xOffset, int yOffset, Color color, Float haloRadius, Color haloColor, PositionForAreaStrategy labelPositionSteategy) {
+        this.labelCompositionStrategy = strategy;
+        this.font = Objects.requireNonNull(font, "font");
         this.xOffset = xOffset;
         this.yOffset = yOffset;
-        this.color = color;
+        this.color = Objects.requireNonNull(color, "color");
         this.haloRadius = haloRadius;
         this.haloColor = haloColor;
+        this.labelPositionSteategy = Objects.requireNonNull(labelPositionSteategy, "labelPositionSteategy");
     }
 
     /**
@@ -91,6 +115,24 @@ public class TextLabel implements StyleKeys {
         this.color = other.color;
         this.haloColor = other.haloColor;
         this.haloRadius = other.haloRadius;
+        this.labelPositionSteategy = other.labelPositionSteategy;
+    }
+
+    /**
+     * Copy constructor that changes the position strategy.
+     *
+     * @param other the other element.
+     * @param labelPositionSteategy the position
+     */
+    private TextLabel(TextLabel other, PositionForAreaStrategy labelPositionSteategy) {
+        this.labelCompositionStrategy = other.labelCompositionStrategy;
+        this.font = other.font;
+        this.xOffset = other.xOffset;
+        this.yOffset = other.yOffset;
+        this.color = other.color;
+        this.haloColor = other.haloColor;
+        this.haloRadius = other.haloRadius;
+        this.labelPositionSteategy = labelPositionSteategy;
     }
 
     /**
@@ -176,7 +218,10 @@ public class TextLabel implements StyleKeys {
             haloColor = Utils.alphaMultiply(haloColor, haloAlphaFactor);
         }
 
-        return new TextLabel(strategy, font, (int) xOffset, -(int) yOffset, color, haloRadius, haloColor);
+        Keyword positionKeyword = c.get(AreaElement.TEXT_POSITION, null, Keyword.class);
+        PositionForAreaStrategy position = PositionForAreaStrategy.forKeyword(positionKeyword);
+
+        return new TextLabel(strategy, font, (int) xOffset, -(int) yOffset, color, haloRadius, haloColor, position);
     }
 
     /**
@@ -189,6 +234,19 @@ public class TextLabel implements StyleKeys {
     public String getString(OsmPrimitive osm) {
         if (labelCompositionStrategy == null) return null;
         return labelCompositionStrategy.compose(osm);
+    }
+
+    /**
+     * Gets the strategy that defines where to place the label.
+     * @return The strategy. Never null.
+     * @since 11722
+     */
+    public PositionForAreaStrategy getLabelPositionSteategy() {
+        return labelPositionSteategy;
+    }
+
+    public TextLabel withPosition(PositionForAreaStrategy labelPositionSteategy) {
+        return new TextLabel(this, labelPositionSteategy);
     }
 
     @Override
