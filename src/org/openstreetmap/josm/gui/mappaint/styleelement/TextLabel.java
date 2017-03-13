@@ -58,7 +58,7 @@ public class TextLabel implements StyleKeys {
     /**
      * The position strategy for this text label.
      */
-    private final PositionForAreaStrategy labelPositionSteategy;
+    private final PositionForAreaStrategy labelPositionStrategy;
 
     /**
      * Creates a new text element
@@ -89,9 +89,10 @@ public class TextLabel implements StyleKeys {
      * @param color the color to be used. Must not be null
      * @param haloRadius halo radius
      * @param haloColor halo color
-     * @param labelPositionSteategy The position in the area.
+     * @param labelPositionStrategy The position in the area.
      */
-    protected TextLabel(LabelCompositionStrategy strategy, Font font, int xOffset, int yOffset, Color color, Float haloRadius, Color haloColor, PositionForAreaStrategy labelPositionSteategy) {
+    protected TextLabel(LabelCompositionStrategy strategy, Font font, int xOffset, int yOffset, Color color, Float haloRadius,
+            Color haloColor, PositionForAreaStrategy labelPositionStrategy) {
         this.labelCompositionStrategy = strategy;
         this.font = Objects.requireNonNull(font, "font");
         this.xOffset = xOffset;
@@ -99,7 +100,7 @@ public class TextLabel implements StyleKeys {
         this.color = Objects.requireNonNull(color, "color");
         this.haloRadius = haloRadius;
         this.haloColor = haloColor;
-        this.labelPositionSteategy = Objects.requireNonNull(labelPositionSteategy, "labelPositionSteategy");
+        this.labelPositionStrategy = Objects.requireNonNull(labelPositionStrategy, "labelPositionStrategy");
     }
 
     /**
@@ -115,16 +116,16 @@ public class TextLabel implements StyleKeys {
         this.color = other.color;
         this.haloColor = other.haloColor;
         this.haloRadius = other.haloRadius;
-        this.labelPositionSteategy = other.labelPositionSteategy;
+        this.labelPositionStrategy = other.labelPositionStrategy;
     }
 
     /**
      * Copy constructor that changes the position strategy.
      *
      * @param other the other element.
-     * @param labelPositionSteategy the position
+     * @param labelPositionStrategy the position
      */
-    private TextLabel(TextLabel other, PositionForAreaStrategy labelPositionSteategy) {
+    private TextLabel(TextLabel other, PositionForAreaStrategy labelPositionStrategy) {
         this.labelCompositionStrategy = other.labelCompositionStrategy;
         this.font = other.font;
         this.xOffset = other.xOffset;
@@ -132,7 +133,7 @@ public class TextLabel implements StyleKeys {
         this.color = other.color;
         this.haloColor = other.haloColor;
         this.haloRadius = other.haloRadius;
-        this.labelPositionSteategy = labelPositionSteategy;
+        this.labelPositionStrategy = labelPositionStrategy;
     }
 
     /**
@@ -241,12 +242,12 @@ public class TextLabel implements StyleKeys {
      * @return The strategy. Never null.
      * @since 11722
      */
-    public PositionForAreaStrategy getLabelPositionSteategy() {
-        return labelPositionSteategy;
+    public PositionForAreaStrategy getLabelPositionStrategy() {
+        return labelPositionStrategy;
     }
 
-    public TextLabel withPosition(PositionForAreaStrategy labelPositionSteategy) {
-        return new TextLabel(this, labelPositionSteategy);
+    public TextLabel withPosition(PositionForAreaStrategy labelPositionStrategy) {
+        return new TextLabel(this, labelPositionStrategy);
     }
 
     @Override

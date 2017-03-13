@@ -32,7 +32,7 @@ public interface PositionForAreaStrategy {
      * @return The strategy or line if none was specified.
      * @since 11722
      */
-    public static PositionForAreaStrategy forKeyword(Keyword keyword) {
+    static PositionForAreaStrategy forKeyword(Keyword keyword) {
         return forKeyword(keyword, LINE);
     }
 
@@ -43,7 +43,7 @@ public interface PositionForAreaStrategy {
      * @return The strategy or line if none was specified.
      * @since 11722
      */
-    public static PositionForAreaStrategy forKeyword(Keyword keyword, PositionForAreaStrategy defaultStrategy) {
+    static PositionForAreaStrategy forKeyword(Keyword keyword, PositionForAreaStrategy defaultStrategy) {
         if (keyword == null) {
             return defaultStrategy;
         }
@@ -64,20 +64,20 @@ public interface PositionForAreaStrategy {
      *
      * @since 11722
      */
-    public static PositionForAreaStrategy LINE = new OnLineStrategy();
+    PositionForAreaStrategy LINE = new OnLineStrategy();
 
     /**
      * Places the label / icon so that it is completely inside the area.
      *
      * @since 11722
      */
-    public static PositionForAreaStrategy INSIDE = new CompletelyInsideAreaStrategy();
+    PositionForAreaStrategy INSIDE = new CompletelyInsideAreaStrategy();
 
     /**
      * Places the label / icon so that is is on the area.
      * @since 11722
      */
-    public static PositionForAreaStrategy PARTIALY_INSIDE = new PartialyInsideAreaStrategy();
+    PositionForAreaStrategy PARTIALY_INSIDE = new PartialyInsideAreaStrategy();
 
     /**
      * Places the label onto the line.
@@ -95,7 +95,7 @@ public interface PositionForAreaStrategy {
         public boolean supportsGlyphVector() {
             return true;
         }
-    };
+    }
 
     /**
      * Places the label / icon so that it is completely inside the area.
@@ -147,9 +147,16 @@ public interface PositionForAreaStrategy {
             // |  4  C  2  |
             // |  8  3  7  |
             // +-----------+
-            Rectangle[] candidates = new Rectangle[] { new Rectangle(x2, y1, nbw, nbh), new Rectangle(x3, y2, nbw, nbh),
-                    new Rectangle(x2, y3, nbw, nbh), new Rectangle(x1, y2, nbw, nbh), new Rectangle(x1, y1, nbw, nbh),
-                    new Rectangle(x3, y1, nbw, nbh), new Rectangle(x3, y3, nbw, nbh), new Rectangle(x1, y3, nbw, nbh) };
+            Rectangle[] candidates = new Rectangle[] {
+                    new Rectangle(x2, y1, nbw, nbh),
+                    new Rectangle(x3, y2, nbw, nbh),
+                    new Rectangle(x2, y3, nbw, nbh),
+                    new Rectangle(x1, y2, nbw, nbh),
+                    new Rectangle(x1, y1, nbw, nbh),
+                    new Rectangle(x3, y1, nbw, nbh),
+                    new Rectangle(x3, y3, nbw, nbh),
+                    new Rectangle(x1, y3, nbw, nbh)
+            };
             // Dumb algorithm to find a better placement. We could surely find a smarter one but it should
             // solve most of building issues with only few calculations (8 at most)
             for (int i = 0; i < candidates.length; i++) {
@@ -175,7 +182,7 @@ public interface PositionForAreaStrategy {
      * The center of that place should be in the area, but the icon / label may overlap on the edges.
      * @since 11722
      */
-    public class PartialyInsideAreaStrategy extends CompletelyInsideAreaStrategy {
+    class PartialyInsideAreaStrategy extends CompletelyInsideAreaStrategy {
         @Override
         public Rectangle2D findLabelPlacement(Shape area, Rectangle2D nb) {
             Rectangle2D inside = super.findLabelPlacement(area, nb);

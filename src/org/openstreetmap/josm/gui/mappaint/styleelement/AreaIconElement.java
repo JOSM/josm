@@ -13,7 +13,7 @@ import org.openstreetmap.josm.gui.util.RotationAngle;
 /**
  * This class defines how an icon is rendered onto the area.
  * @author Michael Zangl
- * @since 11729
+ * @since 11730
  */
 public class AreaIconElement extends StyleElement {
     /**
@@ -31,7 +31,7 @@ public class AreaIconElement extends StyleElement {
      */
     private final PositionForAreaStrategy iconPosition = PositionForAreaStrategy.PARTIALY_INSIDE;
 
-    private AreaIconElement(Cascade c, MapImage iconImage, RotationAngle iconImageAngle) {
+    protected AreaIconElement(Cascade c, MapImage iconImage, RotationAngle iconImageAngle) {
         super(c, 4.8f);
         this.iconImage = Objects.requireNonNull(iconImage, "iconImage");
         this.iconImageAngle = Objects.requireNonNull(iconImageAngle, "iconImageAngle");

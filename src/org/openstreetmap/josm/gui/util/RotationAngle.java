@@ -21,7 +21,7 @@ public interface RotationAngle {
     /**
      * The rotation along a way.
      */
-    static final class WayDirectionRotationAngle implements RotationAngle {
+    final class WayDirectionRotationAngle implements RotationAngle {
         @Override
         public double getRotationAngle(OsmPrimitive p) {
             if (!(p instanceof Node)) {
@@ -70,7 +70,7 @@ public interface RotationAngle {
     /**
      * A static rotation
      */
-    static final class StaticRotationAngle implements RotationAngle {
+    final class StaticRotationAngle implements RotationAngle {
         private final double angle;
 
         private StaticRotationAngle(double angle) {
@@ -120,7 +120,7 @@ public interface RotationAngle {
      * A no-rotation angle that always returns 0.
      * @since 11726
      */
-    static RotationAngle NO_ROTATION = new StaticRotationAngle(0);
+    RotationAngle NO_ROTATION = new StaticRotationAngle(0);
 
     /**
      * Calculates the rotation angle depending on the primitive to be displayed.

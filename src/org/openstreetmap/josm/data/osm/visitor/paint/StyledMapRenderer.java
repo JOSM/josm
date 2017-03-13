@@ -463,7 +463,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             FontMetrics fontMetrics = g.getFontMetrics(orderFont); // if slow, use cache
             Rectangle2D nb = fontMetrics.getStringBounds(name, g); // if slow, approximate by strlen()*maxcharbounds(font)
 
-            Rectangle2D centeredNBounds = text.getLabelPositionSteategy().findLabelPlacement(area, nb);
+            Rectangle2D centeredNBounds = text.getLabelPositionStrategy().findLabelPlacement(area, nb);
             if (centeredNBounds != null) {
                 Font defaultFont = g.getFont();
                 int x = (int) (centeredNBounds.getMinX() - nb.getMinX());
@@ -750,7 +750,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param iconPosition Where to place the icon.
      * @since 11670
      */
-    public void drawAreaIcon(OsmPrimitive osm, MapImage img, boolean disabled, boolean selected, boolean member, double theta, PositionForAreaStrategy iconPosition) {
+    public void drawAreaIcon(OsmPrimitive osm, MapImage img, boolean disabled, boolean selected, boolean member, double theta,
+            PositionForAreaStrategy iconPosition) {
         Rectangle2D.Double iconRect = new Rectangle2D.Double(-img.getWidth() / 2.0, -img.getHeight() / 2.0, img.getWidth(), img.getHeight());
 
         forEachPolygon(osm, path -> {
@@ -1111,7 +1112,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @since 11722
      */
     public void drawText(OsmPrimitive osm, TextLabel text) {
-        PositionForAreaStrategy position = text.getLabelPositionSteategy();
+        PositionForAreaStrategy position = text.getLabelPositionStrategy();
         if (position.supportsGlyphVector()) {
             if (osm instanceof Way) {
                 // we might allow this for the outline of relations as well.

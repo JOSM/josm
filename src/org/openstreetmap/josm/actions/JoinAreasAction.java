@@ -938,7 +938,7 @@ public class JoinAreasAction extends JosmAction {
             double xRay = x.applyAsDouble(rayFrom);
             double yRay = y.applyAsDouble(rayFrom);
 
-            for(Way part : parts) {
+            for (Way part : parts) {
                 // intersect against all way segments
                 for (int i = 0; i < part.getNodesCount() - 1; i++) {
                     EastNorth n1 = part.getNode(i).getEastNorth();
