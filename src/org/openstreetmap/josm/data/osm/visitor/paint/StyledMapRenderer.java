@@ -456,7 +456,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             // abort if we can't compose the label to be rendered
             if (text.labelCompositionStrategy == null) return;
             String name = text.labelCompositionStrategy.compose(osm);
-            if (name == null) return;
+            if (name == null || name.isEmpty()) return;
 
             Rectangle pb = area.getBounds();
             FontMetrics fontMetrics = g.getFontMetrics(orderFont); // if slow, use cache
