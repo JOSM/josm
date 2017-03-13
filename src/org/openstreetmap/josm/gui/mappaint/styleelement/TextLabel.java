@@ -24,16 +24,34 @@ import org.openstreetmap.josm.tools.Utils;
 public class TextLabel implements StyleKeys {
     public static final LabelCompositionStrategy AUTO_LABEL_COMPOSITION_STRATEGY = new DeriveLabelFromNameTagsCompositionStrategy();
 
-    /** the strategy for building the actual label value for a given a {@link OsmPrimitive}.
+    /**
+     * The strategy for building the actual label value for a given a {@link OsmPrimitive}.
      * Check for null before accessing.
      */
     public LabelCompositionStrategy labelCompositionStrategy;
-    /** the font to be used when rendering*/
+    /**
+     * the font to be used when rendering
+     */
     public Font font;
+    /**
+     * The x offset of the text.
+     */
     public int xOffset;
+    /**
+     * The y offset of the text.
+     */
     public int yOffset;
+    /**
+     * The color to draw the text in, includes alpha.
+     */
     public Color color;
+    /**
+     * The radius of the halo effect.
+     */
     public Float haloRadius;
+    /**
+     * The color of the halo effect.
+     */
     public Color haloColor;
 
     /**
