@@ -117,6 +117,12 @@ public interface RotationAngle {
     }
 
     /**
+     * A no-rotation angle that always returns 0.
+     * @since 11726
+     */
+    static RotationAngle NO_ROTATION = new StaticRotationAngle(0);
+
+    /**
      * Calculates the rotation angle depending on the primitive to be displayed.
      * @param p primitive
      * @return rotation angle

@@ -65,7 +65,7 @@ public class NodeElement extends StyleElement {
         super(c, defaultMajorZindex);
         this.mapImage = mapImage;
         this.symbol = symbol;
-        this.mapImageAngle = rotationAngle;
+        this.mapImageAngle = Objects.requireNonNull(rotationAngle, "rotationAngle");
     }
 
     /**
@@ -105,7 +105,7 @@ public class NodeElement extends StyleElement {
     public static RotationAngle createRotationAngle(Environment env) {
         Cascade c = env.mc.getCascade(env.layer);
 
-        RotationAngle rotationAngle = null;
+        RotationAngle rotationAngle = RotationAngle.NO_ROTATION;
         final Float angle = c.get(ICON_ROTATION, null, Float.class, true);
         if (angle != null) {
             rotationAngle = RotationAngle.buildStaticRotation(angle);

@@ -47,13 +47,12 @@ public class JoinAreasActionTest {
             DataSet ds = OsmReader.parseDataSet(is, null);
             Layer layer = new OsmDataLayer(ds, null, null);
             Main.getLayerManager().addLayer(layer);
-            // FIXME enable this test after we fix the bug. Test disabled for now
-            // try {
-            //     new JoinAreasAction().join(ds.getWays());
-            // } finally {
-            // Ensure we clean the place before leaving, even if test fails.
-            Main.getLayerManager().removeLayer(layer);
-            // }
+            try {
+                new JoinAreasAction().join(ds.getWays());
+            } finally {
+                // Ensure we clean the place before leaving, even if test fails.
+                Main.getLayerManager().removeLayer(layer);
+            }
         }
     }
 
@@ -76,7 +75,7 @@ public class JoinAreasActionTest {
 
                 Main.main.menu.joinAreas.join(Utils.filteredCollection(found, Way.class));
 
-                Collection<OsmPrimitive> found2 = SearchAction.searchAndReturn("type:way ref="+ref, SearchAction.SearchMode.replace);
+                Collection<OsmPrimitive> found2 = SearchAction.searchAndReturn("type:relation ref="+ref, SearchAction.SearchMode.replace);
                 assertEquals(1, found2.size());
                 System.out.println(" ==> OK");
             }

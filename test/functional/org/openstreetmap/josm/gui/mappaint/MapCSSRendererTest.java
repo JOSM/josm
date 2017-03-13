@@ -97,6 +97,9 @@ public class MapCSSRendererTest {
                 /** Tests the fill-image property. */
                 new TestConfig("area-fill-image", AREA_DEFAULT),
 
+                /** Tests area label drawing/placement */
+                new TestConfig("area-text", AREA_DEFAULT),
+
                 /** Tests if all styles are sorted correctly. Tests {@link StyleRecord#compareTo(StyleRecord)} */
                 new TestConfig("order", AREA_DEFAULT)
 

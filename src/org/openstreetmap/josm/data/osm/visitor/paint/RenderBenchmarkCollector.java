@@ -36,7 +36,7 @@ public class RenderBenchmarkCollector {
 
     /**
      * Notified when the renderer method starts drawing
-     * @param allStyleElems All the elements that are painted.
+     * @param allStyleElems All the elements that are painted. Unsorted
      * @return <code>true</code> if the renderer should continue to render
      */
     public boolean renderDraw(List<StyleRecord> allStyleElems) {
