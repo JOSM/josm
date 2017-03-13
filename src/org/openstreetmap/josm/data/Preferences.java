@@ -1531,12 +1531,11 @@ public class Preferences {
     private void migrateOldColorKeys() {
         settingsMap.keySet().stream()
                 .filter(key -> key.startsWith("color."))
-                .map(key -> {
+                .flatMap(key -> {
                     final String newKey = ColorProperty.getColorKey(key.substring("color.".length()));
-                    return new AbstractMap.SimpleImmutableEntry<>(key, newKey);
-                })
-                .filter(entry -> {
-                    return !entry.getKey().equals(entry.getValue()) && !settingsMap.containsKey(entry.getValue());
+                    return key.equals(newKey) || settingsMap.containsKey(newKey)
+                            ? Stream.empty()
+                            : Stream.of(new AbstractMap.SimpleImmutableEntry<>(key, newKey));
                 })
                 .collect(Collectors.toList()) // to avoid ConcurrentModificationException
                 .forEach(entry -> {
