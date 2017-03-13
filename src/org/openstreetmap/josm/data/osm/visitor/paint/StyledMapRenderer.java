@@ -38,6 +38,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -739,30 +740,26 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
 
     /**
-     * Draw the icon for a given area. The icon is drawn around the lat/lon center of the area.
-     * @param primitive The node
-     * @param img The icon to draw at the node position
+     * Draw the icon for a given area. Normally, the icon is drawn around the center of the area.
+     * @param osm The primitive to draw the icon for
+     * @param img The icon to draw
      * @param disabled {@code} true to render disabled version, {@code false} for the standard version
      * @param selected {@code} true to render it as selected, {@code false} otherwise
      * @param member {@code} true to render it as a relation member, {@code false} otherwise
      * @param theta the angle of rotation in radians
+     * @param iconPosition Where to place the icon.
      * @since 11670
      */
-    public void drawAreaIcon(OsmPrimitive primitive, MapImage img, boolean disabled, boolean selected, boolean member, double theta) {
-        BBox bbox = null;
-        if (primitive instanceof Way) {
-            bbox = primitive.getBBox();
-        } else if (primitive instanceof Relation) {
-            Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, (Relation) primitive);
-            if (multipolygon != null) {
-                BBox collect = new BBox();
-                multipolygon.getOuterPolygons().forEach(p -> p.getNodes().forEach(n -> collect.add(n.getCoor())));
-                bbox = collect;
-            }
-        }
+    public void drawAreaIcon(OsmPrimitive osm, MapImage img, boolean disabled, boolean selected, boolean member, double theta, PositionForAreaStrategy iconPosition) {
+        Rectangle2D.Double iconRect = new Rectangle2D.Double(-img.getWidth() / 2.0, -img.getHeight() / 2.0, img.getWidth(), img.getHeight());
 
-        if (bbox != null && bbox.isValid()) {
-            MapViewPoint p = mapState.getPointFor(bbox.getCenter());
+        forEachPolygon(osm, path -> {
+            Shape area = path.createTransformedShape(mapState.getAffineTransform());
+            Rectangle2D placement = iconPosition.findLabelPlacement(area, iconRect);
+            if (placement == null) {
+                return;
+            }
+            MapViewPoint p = mapState.getForView(placement.getCenterX(), placement.getCenterY());
             drawIcon(p, img, disabled, selected, member, theta, (g, r) -> {
                 if (useStrokes) {
                     g.setStroke(new BasicStroke(2));
@@ -773,7 +770,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 g.setColor(color);
                 g.draw(r);
             });
-        }
+        });
     }
 
     private void drawIcon(MapViewPoint p, MapImage img, boolean disabled, boolean selected, boolean member, double theta,
@@ -1121,14 +1118,23 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 drawTextOnPath((Way) osm, text);
             }
         } else {
-            if (osm instanceof Way) {
-                drawAreaText(osm, text, getPath((Way) osm));
-            } else if (osm instanceof Relation) {
-                Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, (Relation) osm);
-                if (!multipolygon.getOuterWays().isEmpty()) {
-                    for (PolyData pd : multipolygon.getCombinedPolygons()) {
-                        drawAreaText(osm, text, pd.get());
-                    }
+            forEachPolygon(osm, path -> drawAreaText(osm, text, path));
+        }
+    }
+
+    /**
+     * Calls a consumer for each path of the area shape-
+     * @param osm A way or a multipolygon
+     * @param consumer The consumer to call.
+     */
+    private void forEachPolygon(OsmPrimitive osm, Consumer<Path2D.Double> consumer) {
+        if (osm instanceof Way) {
+            consumer.accept(getPath((Way) osm));
+        } else if (osm instanceof Relation) {
+            Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, (Relation) osm);
+            if (!multipolygon.getOuterWays().isEmpty()) {
+                for (PolyData pd : multipolygon.getCombinedPolygons()) {
+                    consumer.accept(pd.get());
                 }
             }
         }

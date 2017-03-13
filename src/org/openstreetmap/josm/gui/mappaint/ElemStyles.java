@@ -23,6 +23,7 @@ import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.DividedScale.RangeViolatedError;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.styleelement.AreaElement;
+import org.openstreetmap.josm.gui.mappaint.styleelement.AreaIconElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.LineElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement;
@@ -372,6 +373,7 @@ public class ElemStyles implements PreferenceChangedListener {
                 addIfNotNull(sl, LineElement.createLeftCasing(env));
                 addIfNotNull(sl, LineElement.createRightCasing(env));
                 addIfNotNull(sl, LineElement.createCasing(env));
+                addIfNotNull(sl, AreaIconElement.create(env));
                 addIfNotNull(sl, TextElement.create(env));
                 if (areaStyle != null) {
                     //TODO: Warn about this, or even remove it completely
@@ -392,6 +394,7 @@ public class ElemStyles implements PreferenceChangedListener {
                     addIfNotNull(sl, RepeatImageElement.create(env));
                     addIfNotNull(sl, LineElement.createLine(env));
                     addIfNotNull(sl, LineElement.createCasing(env));
+                    addIfNotNull(sl, AreaIconElement.create(env));
                     addIfNotNull(sl, TextElement.create(env));
                     if (areaStyle != null) {
                         //TODO: Warn about this, or even remove it completely

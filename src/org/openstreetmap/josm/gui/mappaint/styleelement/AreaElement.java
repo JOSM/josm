@@ -14,7 +14,6 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
-import org.openstreetmap.josm.gui.util.RotationAngle;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -43,8 +42,10 @@ public class AreaElement extends StyleElement {
 
     /**
      * The text that should be written on this area.
+     * @deprecated Use {@link TextElement} instead.
      */
-    public TextLabel text;
+    @Deprecated
+    public TextLabel text = null;
 
     /**
      * Fill the area only partially from the borders
@@ -62,27 +63,13 @@ public class AreaElement extends StyleElement {
      */
     public Float extentThreshold;
 
-    /**
-     * The icon that is displayed on the center of the area.
-     */
-    private final MapImage iconImage;
-
-    /**
-     * The rotation of the {@link #iconImageAngle}
-     */
-    private final RotationAngle iconImageAngle;
-
-    protected AreaElement(Cascade c, Color color, MapImage fillImage, Float extent,
-            Float extentThreshold, TextLabel text, MapImage iconImage, RotationAngle iconImageAngle) {
+    protected AreaElement(Cascade c, Color color, MapImage fillImage, Float extent, Float extentThreshold) {
         super(c, 1f);
         CheckParameterUtil.ensureParameterNotNull(color);
         this.color = color;
         this.fillImage = fillImage;
         this.extent = extent;
         this.extentThreshold = extentThreshold;
-        this.text = text;
-        this.iconImage = iconImage;
-        this.iconImageAngle = iconImageAngle;
     }
 
     /**
@@ -117,20 +104,11 @@ public class AreaElement extends StyleElement {
             }
         }
 
-        TextLabel text = null; // <- text is handled by TextElement
-        MapImage iconImage = NodeElement.createIcon(env);
-        RotationAngle rotationAngle = NodeElement.createRotationAngle(env);
-
-        if (iconImage != null) {
-            // fake a transparent color.
-            color = new Color(0, 0, 0, 0);
-        }
-
         if (color != null) {
             Float extent = c.get(FILL_EXTENT, null, float.class);
             Float extentThreshold = c.get(FILL_EXTENT_THRESHOLD, null, float.class);
 
-            return new AreaElement(c, color, fillImage, extent, extentThreshold, text, iconImage, rotationAngle);
+            return new AreaElement(c, color, fillImage, extent, extentThreshold);
         } else {
             return null;
         }
@@ -155,11 +133,6 @@ public class AreaElement extends StyleElement {
             }
             painter.drawArea((Relation) osm, myColor, fillImage, extent, extentThreshold, painter.isInactiveMode() || osm.isDisabled(), text);
         }
-
-        if (iconImage != null && painter.isShowIcons()) {
-            painter.drawAreaIcon(osm, iconImage, painter.isInactiveMode() || osm.isDisabled(), selected, member,
-                    iconImageAngle == null ? 0.0 : iconImageAngle.getRotationAngle(osm));
-        }
     }
 
     @Override
@@ -170,21 +143,18 @@ public class AreaElement extends StyleElement {
         AreaElement that = (AreaElement) obj;
         return Objects.equals(color, that.color) &&
                 Objects.equals(fillImage, that.fillImage) &&
-                Objects.equals(text, that.text) &&
                 Objects.equals(extent, that.extent) &&
-                Objects.equals(extentThreshold, that.extentThreshold) &&
-                Objects.equals(iconImage, that.iconImage) &&
-                Objects.equals(iconImageAngle, that.iconImageAngle);
+                Objects.equals(extentThreshold, that.extentThreshold);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), color, fillImage, text, extent, extentThreshold, iconImage, iconImageAngle);
+        return Objects.hash(super.hashCode(), color, fillImage, extent, extentThreshold);
     }
 
     @Override
     public String toString() {
         return "AreaElemStyle{" + super.toString() + "color=" + Utils.toString(color) +
-                " fillImage=[" + fillImage + "] iconImage=[" + iconImage + "] iconImageAngle=[" + iconImageAngle + "]}";
+                " fillImage=[" + fillImage + "] extent=[" + extent + "] extentThreshold=[" + extentThreshold + "]}";
     }
 }
