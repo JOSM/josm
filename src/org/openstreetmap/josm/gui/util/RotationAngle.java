@@ -19,6 +19,104 @@ import org.openstreetmap.josm.tools.Utils;
 public interface RotationAngle {
 
     /**
+     * The rotation along a way.
+     */
+    static final class WayDirectionRotationAngle implements RotationAngle {
+        @Override
+        public double getRotationAngle(OsmPrimitive p) {
+            if (!(p instanceof Node)) {
+                return 0;
+            }
+            final Node n = (Node) p;
+            final SubclassFilteredCollection<OsmPrimitive, Way> ways = Utils.filteredCollection(n.getReferrers(), Way.class);
+            if (ways.isEmpty()) {
+                return 0;
+            }
+            final Way w = ways.iterator().next();
+            final int idx = w.getNodes().indexOf(n);
+            if (idx == 0) {
+                return -Geometry.getSegmentAngle(n.getEastNorth(), w.getNode(idx + 1).getEastNorth());
+            } else {
+                return -Geometry.getSegmentAngle(w.getNode(idx - 1).getEastNorth(), n.getEastNorth());
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "way-direction";
+        }
+
+        @Override
+        public int hashCode() {
+            return 1;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            return true;
+        }
+
+    }
+
+    /**
+     * A static rotation
+     */
+    static final class StaticRotationAngle implements RotationAngle {
+        private final double angle;
+
+        private StaticRotationAngle(double angle) {
+            this.angle = angle;
+        }
+
+        @Override
+        public double getRotationAngle(OsmPrimitive p) {
+            return angle;
+        }
+
+        @Override
+        public String toString() {
+            return angle + "rad";
+        }
+
+        @Override
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            long temp;
+            temp = Double.doubleToLongBits(angle);
+            result = prime * result + (int) (temp ^ (temp >>> 32));
+            return result;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            StaticRotationAngle other = (StaticRotationAngle) obj;
+            if (Double.doubleToLongBits(angle) != Double.doubleToLongBits(other.angle)) {
+                return false;
+            }
+            return true;
+        }
+    }
+
+    /**
      * Calculates the rotation angle depending on the primitive to be displayed.
      * @param p primitive
      * @return rotation angle
@@ -31,17 +129,7 @@ public interface RotationAngle {
      * @return rotation angle
      */
     static RotationAngle buildStaticRotation(final double angle) {
-        return new RotationAngle() {
-            @Override
-            public double getRotationAngle(OsmPrimitive p) {
-                return angle;
-            }
-
-            @Override
-            public String toString() {
-                return angle + "rad";
-            }
-        };
+        return new StaticRotationAngle(angle);
     }
 
     /**
@@ -101,30 +189,6 @@ public interface RotationAngle {
      * @return rotation angle
      */
     static RotationAngle buildWayDirectionRotation() {
-        return new RotationAngle() {
-            @Override
-            public double getRotationAngle(OsmPrimitive p) {
-                if (!(p instanceof Node)) {
-                    return 0;
-                }
-                final Node n = (Node) p;
-                final SubclassFilteredCollection<OsmPrimitive, Way> ways = Utils.filteredCollection(n.getReferrers(), Way.class);
-                if (ways.isEmpty()) {
-                    return 0;
-                }
-                final Way w = ways.iterator().next();
-                final int idx = w.getNodes().indexOf(n);
-                if (idx == 0) {
-                    return -Geometry.getSegmentAngle(n.getEastNorth(), w.getNode(idx + 1).getEastNorth());
-                } else {
-                    return -Geometry.getSegmentAngle(w.getNode(idx - 1).getEastNorth(), n.getEastNorth());
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "way-direction";
-            }
-        };
+        return new WayDirectionRotationAngle();
     }
 }
