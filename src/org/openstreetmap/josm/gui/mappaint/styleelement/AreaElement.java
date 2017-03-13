@@ -34,7 +34,7 @@ public class AreaElement extends StyleElement {
      * If fillImage == null, color is the fill-color, otherwise
      * an arbitrary color value sampled from the fillImage.
      *
-     * The color may be fully transparent to indicate that the are should not be filled.
+     * The color may be fully transparent to indicate that the area should not be filled.
      */
     public Color color;
 
