@@ -32,7 +32,9 @@ public class AreaElement extends StyleElement {
 
     /**
      * If fillImage == null, color is the fill-color, otherwise
-     * an arbitrary color value sampled from the fillImage
+     * an arbitrary color value sampled from the fillImage.
+     *
+     * The color may be fully transparent to indicate that the are should not be filled.
      */
     public Color color;
 
@@ -117,19 +119,22 @@ public class AreaElement extends StyleElement {
             }
         }
 
+        TextLabel text = null;
+        Keyword textPos = c.get(TEXT_POSITION, null, Keyword.class);
+        if (textPos == null || "center".equals(textPos.val)) {
+            text = TextLabel.create(env, PaintColors.AREA_TEXT.get(), true);
+        }
+        MapImage iconImage = NodeElement.createIcon(env);
+        RotationAngle rotationAngle = NodeElement.createRotationAngle(env);
+
+        if (iconImage != null || text != null) {
+            // fake a transparent color.
+            color = new Color(0, 0, 0, 0);
+        }
+
         if (color != null) {
-
-            TextLabel text = null;
-            Keyword textPos = c.get(TEXT_POSITION, null, Keyword.class);
-            if (textPos == null || "center".equals(textPos.val)) {
-                text = TextLabel.create(env, PaintColors.AREA_TEXT.get(), true);
-            }
-
             Float extent = c.get(FILL_EXTENT, null, float.class);
             Float extentThreshold = c.get(FILL_EXTENT_THRESHOLD, null, float.class);
-
-            MapImage iconImage = NodeElement.createIcon(env);
-            RotationAngle rotationAngle = NodeElement.createRotationAngle(env);
 
             return new AreaElement(c, color, fillImage, extent, extentThreshold, text, iconImage, rotationAngle);
         } else {
