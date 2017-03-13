@@ -14,7 +14,7 @@ import org.openstreetmap.josm.gui.mappaint.Keyword;
 /**
  * The text that is drawn for a way/area. It may be drawn along the outline or onto the way.
  *
- * @since 11720
+ * @since 11722
  */
 public class TextElement extends StyleElement {
 
