@@ -9,7 +9,7 @@ import org.openstreetmap.josm.gui.mappaint.Keyword;
 
 /**
  * This strategy defines how to place a label or icon inside the area.
- * @since 11720
+ * @since 11722
  */
 public interface PositionForAreaStrategy {
     /**
@@ -30,7 +30,7 @@ public interface PositionForAreaStrategy {
      * Gets a strategy for the given keyword.
      * @param keyword The text position keyword.
      * @return The strategy or line if none was specified.
-     * @since 11720
+     * @since 11722
      */
     public static PositionForAreaStrategy forKeyword(Keyword keyword) {
         return forKeyword(keyword, LINE);
@@ -41,7 +41,7 @@ public interface PositionForAreaStrategy {
      * @param keyword The text position keyword.
      * @param defaultStrategy The default if no strategy was recognized.
      * @return The strategy or line if none was specified.
-     * @since 11720
+     * @since 11722
      */
     public static PositionForAreaStrategy forKeyword(Keyword keyword, PositionForAreaStrategy defaultStrategy) {
         if (keyword == null) {
@@ -62,27 +62,27 @@ public interface PositionForAreaStrategy {
     /**
      * Places the label onto the line.
      *
-     * @since 11720
+     * @since 11722
      */
     public static PositionForAreaStrategy LINE = new OnLineStrategy();
 
     /**
      * Places the label / icon so that it is completely inside the area.
      *
-     * @since 11720
+     * @since 11722
      */
     public static PositionForAreaStrategy INSIDE = new CompletelyInsideAreaStrategy();
 
     /**
      * Places the label / icon so that is is on the area.
-     * @since 11720
+     * @since 11722
      */
     public static PositionForAreaStrategy PARTIALY_INSIDE = new PartialyInsideAreaStrategy();
 
     /**
      * Places the label onto the line.
      *
-     * @since 11720
+     * @since 11722
      */
     class OnLineStrategy implements PositionForAreaStrategy {
         @Override
@@ -100,7 +100,7 @@ public interface PositionForAreaStrategy {
     /**
      * Places the label / icon so that it is completely inside the area.
      *
-     * @since 11720
+     * @since 11722
      */
     class CompletelyInsideAreaStrategy implements PositionForAreaStrategy {
 
@@ -173,7 +173,7 @@ public interface PositionForAreaStrategy {
      * A strategy that places the label / icon so that is is on the area.
      *
      * The center of that place should be in the area, but the icon / label may overlap on the edges.
-     * @since 11720
+     * @since 11722
      */
     public class PartialyInsideAreaStrategy extends CompletelyInsideAreaStrategy {
         @Override
