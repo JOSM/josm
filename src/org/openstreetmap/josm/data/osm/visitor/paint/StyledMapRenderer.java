@@ -402,7 +402,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         Shape area = path.createTransformedShape(mapState.getAffineTransform());
 
-        if (!isOutlineOnly) {
+        if (color.getAlpha() == 0) {
+            // skip drawing
+        } else if (!isOutlineOnly) {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
             if (fillImage == null) {
                 if (isInactiveMode) {
@@ -458,73 +460,91 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             String name = text.labelCompositionStrategy.compose(osm);
             if (name == null || name.isEmpty()) return;
 
-            Rectangle pb = area.getBounds();
             FontMetrics fontMetrics = g.getFontMetrics(orderFont); // if slow, use cache
             Rectangle2D nb = fontMetrics.getStringBounds(name, g); // if slow, approximate by strlen()*maxcharbounds(font)
 
-            // Using the Centroid is Nicer for buildings like: +--------+
-            // but this needs to be fast.  As most houses are  |   42   |
-            // boxes anyway, the center of the bounding box    +---++---+
-            // will have to do.                                    ++
-            // Centroids are not optimal either, just imagine a U-shaped house.
-
-            // quick check to see if label box is smaller than primitive box
-            if (pb.width >= nb.getWidth() && pb.height >= nb.getHeight()) {
-
-                final double w = pb.width - nb.getWidth();
-                final double h = pb.height - nb.getHeight();
-
-                final int x2 = pb.x + (int) (w/2.0);
-                final int y2 = pb.y + (int) (h/2.0);
-
-                final int nbw = (int) nb.getWidth();
-                final int nbh = (int) nb.getHeight();
-
-                Rectangle centeredNBounds = new Rectangle(x2, y2, nbw, nbh);
-
-                // slower check to see if label is displayed inside primitive shape
-                boolean labelOK = area.contains(centeredNBounds);
-                if (!labelOK) {
-                    // if center position (C) is not inside osm shape, try naively some other positions as follows:
-                    // CHECKSTYLE.OFF: SingleSpaceSeparator
-                    final int x1 = pb.x + (int)   (w/4.0);
-                    final int x3 = pb.x + (int) (3*w/4.0);
-                    final int y1 = pb.y + (int)   (h/4.0);
-                    final int y3 = pb.y + (int) (3*h/4.0);
-                    // CHECKSTYLE.ON: SingleSpaceSeparator
-                    // +-----------+
-                    // |  5  1  6  |
-                    // |  4  C  2  |
-                    // |  8  3  7  |
-                    // +-----------+
-                    Rectangle[] candidates = new Rectangle[] {
-                            new Rectangle(x2, y1, nbw, nbh),
-                            new Rectangle(x3, y2, nbw, nbh),
-                            new Rectangle(x2, y3, nbw, nbh),
-                            new Rectangle(x1, y2, nbw, nbh),
-                            new Rectangle(x1, y1, nbw, nbh),
-                            new Rectangle(x3, y1, nbw, nbh),
-                            new Rectangle(x3, y3, nbw, nbh),
-                            new Rectangle(x1, y3, nbw, nbh)
-                    };
-                    // Dumb algorithm to find a better placement. We could surely find a smarter one but it should
-                    // solve most of building issues with only few calculations (8 at most)
-                    for (int i = 0; i < candidates.length && !labelOK; i++) {
-                        centeredNBounds = candidates[i];
-                        labelOK = area.contains(centeredNBounds);
-                    }
-                }
-                if (labelOK) {
-                    Font defaultFont = g.getFont();
-                    int x = (int) (centeredNBounds.getMinX() - nb.getMinX());
-                    int y = (int) (centeredNBounds.getMinY() - nb.getMinY());
-                    displayText(null, name, x, y, osm.isDisabled(), text);
-                    g.setFont(defaultFont);
-                } else if (Main.isTraceEnabled()) {
-                    Main.trace("Couldn't find a correct label placement for "+osm+" / "+name);
-                }
+            Rectangle centeredNBounds = findLabelPlacement(area, nb);
+            if (centeredNBounds != null) {
+                Font defaultFont = g.getFont();
+                int x = (int) (centeredNBounds.getMinX() - nb.getMinX());
+                int y = (int) (centeredNBounds.getMinY() - nb.getMinY());
+                displayText(null, name, x, y, osm.isDisabled(), text);
+                g.setFont(defaultFont);
+            } else if (Main.isTraceEnabled()) {
+                Main.trace("Couldn't find a correct label placement for "+osm+" / "+name);
             }
         }
+    }
+
+    /**
+     * Finds the correct position of a label / icon inside the area.
+     * @param area The area to search in
+     * @param nb The bounding box of the thing we are searching a place for.
+     * @return The position as rectangle with the same dimension as nb. <code>null</code> if none was found.
+     */
+    private Rectangle findLabelPlacement(Shape area, Rectangle2D nb) {
+        // Using the Centroid is Nicer for buildings like: +--------+
+        // but this needs to be fast.  As most houses are  |   42   |
+        // boxes anyway, the center of the bounding box    +---++---+
+        // will have to do.                                    ++
+        // Centroids are not optimal either, just imagine a U-shaped house.
+
+        Rectangle pb = area.getBounds();
+
+        // quick check to see if label box is smaller than primitive box
+        if (pb.width < nb.getWidth() || pb.height < nb.getHeight()) {
+            return null;
+        }
+
+        final double w = pb.width - nb.getWidth();
+        final double h = pb.height - nb.getHeight();
+
+        final int x2 = pb.x + (int) (w/2.0);
+        final int y2 = pb.y + (int) (h/2.0);
+
+        final int nbw = (int) nb.getWidth();
+        final int nbh = (int) nb.getHeight();
+
+        Rectangle centeredNBounds = new Rectangle(x2, y2, nbw, nbh);
+
+        // slower check to see if label is displayed inside primitive shape
+        if (area.contains(centeredNBounds)) {
+            return centeredNBounds;
+        }
+
+        // if center position (C) is not inside osm shape, try naively some other positions as follows:
+        // CHECKSTYLE.OFF: SingleSpaceSeparator
+        final int x1 = pb.x + (int)   (w/4.0);
+        final int x3 = pb.x + (int) (3*w/4.0);
+        final int y1 = pb.y + (int)   (h/4.0);
+        final int y3 = pb.y + (int) (3*h/4.0);
+        // CHECKSTYLE.ON: SingleSpaceSeparator
+        // +-----------+
+        // |  5  1  6  |
+        // |  4  C  2  |
+        // |  8  3  7  |
+        // +-----------+
+        Rectangle[] candidates = new Rectangle[] {
+                new Rectangle(x2, y1, nbw, nbh),
+                new Rectangle(x3, y2, nbw, nbh),
+                new Rectangle(x2, y3, nbw, nbh),
+                new Rectangle(x1, y2, nbw, nbh),
+                new Rectangle(x1, y1, nbw, nbh),
+                new Rectangle(x3, y1, nbw, nbh),
+                new Rectangle(x3, y3, nbw, nbh),
+                new Rectangle(x1, y3, nbw, nbh)
+        };
+        // Dumb algorithm to find a better placement. We could surely find a smarter one but it should
+        // solve most of building issues with only few calculations (8 at most)
+        for (int i = 0; i < candidates.length; i++) {
+            centeredNBounds = candidates[i];
+            if (area.contains(centeredNBounds)) {
+                return centeredNBounds;
+            }
+        }
+
+        // none found
+        return null;
     }
 
     /**
