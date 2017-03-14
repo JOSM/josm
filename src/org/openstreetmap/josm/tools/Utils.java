@@ -1511,7 +1511,7 @@ public final class Utils {
      */
     public static double clamp(double val, double min, double max) {
         if (min > max) {
-            throw new IllegalArgumentException(MessageFormat.format("Parameter min ({0}) cannot be greather than max ({1})", min, max));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter min ({0}) cannot be greater than max ({1})", min, max));
         } else if (val < min) {
             return min;
         } else if (val > max) {
@@ -1532,7 +1532,7 @@ public final class Utils {
      */
     public static int clamp(int val, int min, int max) {
         if (min > max) {
-            throw new IllegalArgumentException(MessageFormat.format("Parameter min ({0}) cannot be greather than max ({1})", min, max));
+            throw new IllegalArgumentException(MessageFormat.format("Parameter min ({0}) cannot be greater than max ({1})", min, max));
         } else if (val < min) {
             return min;
         } else if (val > max) {
