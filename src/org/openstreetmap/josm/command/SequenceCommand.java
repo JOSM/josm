@@ -72,17 +72,17 @@ public class SequenceCommand extends Command {
     }
 
     protected final void undoCommands(int start) {
-        // We probably aborted this halfway though the
-        // execution sequence because of a sub-command
-        // error.  We already undid the sub-commands.
-        if (!sequenceComplete)
-            return;
         for (int i = start; i >= 0; --i) {
             sequence[i].undoCommand();
         }
     }
 
     @Override public void undoCommand() {
+        // We probably aborted this halfway though the
+        // execution sequence because of a sub-command
+        // error.  We already undid the sub-commands.
+        if (!sequenceComplete)
+            return;
         undoCommands(sequence.length-1);
     }
 
