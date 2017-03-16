@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,8 +20,12 @@ import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.io.UpdatePrimitivesTask;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -271,12 +277,46 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
             OsmDataLayer layer = addNewLayerIfRequired(newLayerName);
             if (layer == null) {
                 layer = Optional.ofNullable(getEditLayer()).orElseGet(this::getFirstDataLayer);
+                Collection<OsmPrimitive> primitivesToUpdate = searchPrimitivesToUpdate(bounds, layer.data);
                 layer.mergeFrom(dataSet);
                 if (zoomAfterDownload) {
                     computeBboxAndCenterScale(bounds);
                 }
+                if (!primitivesToUpdate.isEmpty()) {
+                    Main.worker.submit(new UpdatePrimitivesTask(layer, primitivesToUpdate));
+                }
                 layer.onPostDownloadFromServer();
             }
+        }
+
+        /**
+         * Look for primitives deleted on server (thus absent from downloaded data)
+         * but still present in existing data layer
+         * @param b download bounds
+         * @param ds existing data set
+         * @return the primitives to update
+         */
+        private Collection<OsmPrimitive> searchPrimitivesToUpdate(Bounds b, DataSet ds) {
+            Collection<OsmPrimitive> col = new ArrayList<>();
+            ds.searchNodes(b.toBBox()).stream().filter(n -> !n.isNew() && !dataSet.containsNode(n)).forEachOrdered(col::add);
+            if (!col.isEmpty()) {
+                Set<Way> ways = new HashSet<>();
+                Set<Relation> rels = new HashSet<>();
+                for (OsmPrimitive n : col) {
+                    for (OsmPrimitive ref : n.getReferrers()) {
+                        if (ref.isNew()) {
+                            continue;
+                        } else if (ref instanceof Way) {
+                            ways.add((Way) ref);
+                        } else if (ref instanceof Relation) {
+                            rels.add((Relation) ref);
+                        }
+                    }
+                }
+                ways.stream().filter(w -> !dataSet.containsWay(w)).forEachOrdered(col::add);
+                rels.stream().filter(r -> !dataSet.containsRelation(r)).forEachOrdered(col::add);
+            }
+            return col;
         }
     }
 
