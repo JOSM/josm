@@ -98,6 +98,41 @@ public class SequenceCommandTest {
     }
 
     /**
+     * Test {@link SequenceCommand#executeCommand()} rollback if case of subcommand failure.
+     */
+    @Test
+    public void testExecuteRollback() {
+        TestCommand command1 = new TestCommand(null);
+        FailingCommand command2 = new FailingCommand();
+        TestCommand command3 = new TestCommand(null);
+        SequenceCommand command = new SequenceCommand("seq", Arrays.<Command>asList(command1, command2, command3));
+        assertFalse(command.executeCommand());
+        assertFalse(command1.executed);
+        // Don't check command2 executed state as it's possible but not necessary to undo failed commands
+        assertFalse(command3.executed);
+        command.undoCommand();
+    }
+
+    /**
+     * Test {@link SequenceCommand#executeCommand()} with continueOnError = true
+     */
+    @Test
+    public void testContinueOnErrors() {
+        TestCommand command1 = new TestCommand(null);
+        FailingCommand command2 = new FailingCommand();
+        TestCommand command3 = new TestCommand(null);
+        SequenceCommand command = new SequenceCommand("seq", Arrays.<Command>asList(command1, command2, command3));
+        command.continueOnError = true;
+        assertTrue(command.executeCommand());
+        assertTrue(command1.executed);
+        assertTrue(command3.executed);
+        command.undoCommand();
+        assertFalse(command1.executed);
+        // Don't check command2 executed state as it's possible but not necessary to undo failed commands
+        assertFalse(command3.executed);
+    }
+
+    /**
      * Test {@link SequenceCommand#undoCommand()}
      */
     @Test
@@ -228,4 +263,30 @@ public class SequenceCommandTest {
         }
 
     }
+
+    private static class FailingCommand extends TestCommand {
+
+        FailingCommand() {
+            super(null);
+        }
+
+        @Override
+        public boolean executeCommand() {
+            executed = true;
+            return false;
+        }
+
+        @Override
+        public void undoCommand() {
+            assertTrue("Cannot undo without execute", executed);
+            executed = false;
+        }
+
+        @Override
+        public String toString() {
+            return "FailingCommand";
+        }
+
+    }
+
 }
