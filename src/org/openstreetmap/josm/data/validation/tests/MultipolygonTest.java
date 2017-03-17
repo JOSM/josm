@@ -203,9 +203,7 @@ public class MultipolygonTest extends Test {
 
             if (area != null) {
                 for (Way wInner : polygon.getInnerWays()) {
-                    AreaElement areaInner = ElemStyles.getAreaElemStyle(wInner, false);
-
-                    if (areaInner != null && area.equals(areaInner)) {
+                    if (area.equals(ElemStyles.getAreaElemStyle(wInner, false))) {
                         errors.add(TestError.builder(this, Severity.OTHER, INNER_STYLE_MISMATCH)
                                 .message(tr("With the currently used mappaint style the style for inner way equals the multipolygon style"))
                                 .primitives(Arrays.asList(r, wInner))

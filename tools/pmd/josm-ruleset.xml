@@ -21,12 +21,28 @@
   	<exclude name="LocalVariableCouldBeFinal"/>
   	<exclude name="MethodArgumentCouldBeFinal"/>
   </rule>
-  <rule ref="rulesets/java/strictexception.xml"/>
-  <rule ref="rulesets/java/strings.xml"/>
-  <rule ref="rulesets/java/typeresolution.xml"/>
+  <rule ref="rulesets/java/strictexception.xml"/> -->
+  <rule ref="rulesets/java/strings.xml">
+  	<exclude name="AvoidDuplicateLiterals"/>
+  	<exclude name="ConsecutiveLiteralAppends"/>
+  	<exclude name="AvoidStringBufferField"/>
+  	<exclude name="StringToString"/>
+  	<exclude name="UselessStringValueOf"/>
+  </rule>
+  <rule ref="rulesets/java/typeresolution.xml">
+  	<exclude name="LooseCoupling"/>
+  	<exclude name="SignatureDeclareThrowsException"/>
+  </rule>
+  <rule ref="rulesets/java/typeresolution.xml/SignatureDeclareThrowsException">
+    <properties>
+        <property name="violationSuppressXPath" value="//MethodDeclaration/../Annotation/MarkerAnnotation/Name[@Image='Override']"/>
+        <property name="IgnoreJUnitCompletely" value="true"/>
+    </properties>
+  </rule>
   <rule ref="rulesets/java/unnecessary.xml">
   	<exclude name="UselessParentheses"/>
-  </rule> -->
+  	<exclude name="UselessOverridingMethod"/>
+  </rule>
   <rule ref="rulesets/java/unusedcode.xml">
   	<exclude name="UnusedFormalParameter"/>
   </rule>

@@ -41,7 +41,7 @@ public class MergeLayerAction extends AbstractMergeAction {
         final Layer targetLayer = askTargetLayer(targetLayers);
         if (targetLayer == null)
             return;
-        final Object actionName = MergeLayerAction.this.getValue(NAME);
+        final Object actionName = getValue(NAME);
         Main.worker.submit(() -> {
                 final long start = System.currentTimeMillis();
                 boolean layerMerged = false;

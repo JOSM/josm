@@ -238,7 +238,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
      * @return true if the user with name <code>username</code> is the current user
      */
     public boolean isCurrentUser(String username) {
-        return username != null && this.userName != null && this.userName.equals(username);
+        return this.userName != null && this.userName.equals(username);
     }
 
     /**

@@ -227,7 +227,7 @@ public class ReportedException extends RuntimeException {
 
     private static String makeCollectionNice(Collection<?> value) {
         int lines = 0;
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(32);
         for (Object e : value) {
             str.append("\n    - ");
             if (lines <= MAX_COLLECTION_ENTRIES) {
@@ -245,7 +245,7 @@ public class ReportedException extends RuntimeException {
     @Override
     public String toString() {
         return "ReportedException [thread=" + caughtOnThread + ", exception=" + getCause()
-                + ", methodWarningFrom=" + methodWarningFrom + "]";
+                + ", methodWarningFrom=" + methodWarningFrom + ']';
     }
 
     /**
