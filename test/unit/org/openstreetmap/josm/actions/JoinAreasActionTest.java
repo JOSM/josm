@@ -93,7 +93,12 @@ public class JoinAreasActionTest {
         }
     }
 
+    /**
+     * Non-regression test which checks example files in data_nodist
+     * @throws Exception if an error occurs
+     */
     @Test
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void testExamples() throws Exception {
         DataSet dsToJoin, dsExpected;
         try (InputStream is = new FileInputStream("data_nodist/Join_Areas_Tests.osm")) {
