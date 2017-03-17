@@ -1506,7 +1506,7 @@ public final class Utils {
      * @param min minimum value
      * @param max maximum value
      * @return the value
-     * @throws IllegalArgumentException if min > max
+     * @throws IllegalArgumentException if {@code min > max}
      * @since 10805
      */
     public static double clamp(double val, double min, double max) {
@@ -1527,7 +1527,7 @@ public final class Utils {
      * @param min minimum value
      * @param max maximum value
      * @return the value
-     * @throws IllegalArgumentException if min > max
+     * @throws IllegalArgumentException if {@code min > max}
      * @since 11055
      */
     public static int clamp(int val, int min, int max) {
