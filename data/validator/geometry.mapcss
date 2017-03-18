@@ -289,9 +289,9 @@ way[waterway=~/^(stream|ditch|river|drain)$/]!:closed >[index=-1] node[natural!=
   throwWarning: tr("Waterway ends without a connection to another waterway or the direction of the waterway is wrong.");
 }
 
-/* #10717 */
-way[natural=coastline] ∈ area[natural=water],
-way[natural=coastline] ∈ area[waterway=riverbank] {
+/* #10717, #14535 */
+way:closed[natural=coastline] ∈ area[natural=water],
+way:closed[natural=coastline] ∈ area[waterway=riverbank] {
   throwError: tr("Coastline inside {1}", "{0.tag}");
 }
 
