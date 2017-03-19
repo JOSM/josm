@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -41,10 +42,33 @@ public final class ExifReader {
      */
     public static Date readTime(File filename) {
         try {
-            Metadata metadata = JpegMetadataReader.readMetadata(filename);
-            String dateStr = null;
+            final Metadata metadata = JpegMetadataReader.readMetadata(filename);
+            return readTime(metadata);
+        } catch (JpegProcessingException | IOException e) {
+            Main.error(e);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the date/time from the given JPEG file.
+     * @param metadata The EXIF metadata
+     * @return The date/time read in the EXIF section, or {@code null} if not found
+     * @since 11745
+     */
+    public static Date readTime(Metadata metadata) {
+        try {
+            String dateTimeOrig = null;
             String dateTime = null;
-            String subSeconds = null;
+            String dateTimeDig = null;
+            String subSecOrig = null;
+            String subSec = null;
+            String subSecDig = null;
+            // The date fields are preferred in this order: DATETIME_ORIGINAL
+            // (0x9003), DATETIME (0x0132), DATETIME_DIGITIZED (0x9004).  Some
+            // cameras store the fields in the wrong directory, so all
+            // directories are searched.  Assume that the order of the fields
+            // in the directories is random.
             for (Directory dirIt : metadata.getDirectories()) {
                 if (!(dirIt instanceof ExifDirectoryBase)) {
                     continue;
@@ -52,23 +76,33 @@ public final class ExifReader {
                 for (Tag tag : dirIt.getTags()) {
                     if (tag.getTagType() == ExifSubIFDDirectory.TAG_DATETIME_ORIGINAL /* 0x9003 */ &&
                             !tag.getDescription().matches("\\[[0-9]+ .+\\]")) {
-                        // prefer DATETIME_ORIGINAL
-                        dateStr = tag.getDescription();
-                    }
-                    if (tag.getTagType() == ExifIFD0Directory.TAG_DATETIME /* 0x0132 */) {
-                        // prefer DATETIME over DATETIME_DIGITIZED
+                        dateTimeOrig = tag.getDescription();
+                    } else if (tag.getTagType() == ExifIFD0Directory.TAG_DATETIME /* 0x0132 */) {
                         dateTime = tag.getDescription();
-                    }
-                    if (tag.getTagType() == ExifSubIFDDirectory.TAG_DATETIME_DIGITIZED /* 0x9004 */ && dateTime == null) {
-                        dateTime = tag.getDescription();
-                    }
-                    if (tag.getTagType() == ExifIFD0Directory.TAG_SUBSECOND_TIME_ORIGINAL) {
-                        subSeconds = tag.getDescription();
+                    } else if (tag.getTagType() == ExifSubIFDDirectory.TAG_DATETIME_DIGITIZED /* 0x9004 */) {
+                        dateTimeDig = tag.getDescription();
+                    } else if (tag.getTagType() == ExifSubIFDDirectory.TAG_SUBSECOND_TIME_ORIGINAL /* 0x9291 */) {
+                        subSecOrig = tag.getDescription();
+                    } else if (tag.getTagType() == ExifSubIFDDirectory.TAG_SUBSECOND_TIME /* 0x9290 */) {
+                        subSec = tag.getDescription();
+                    } else if (tag.getTagType() == ExifSubIFDDirectory.TAG_SUBSECOND_TIME_DIGITIZED /* 0x9292 */) {
+                        subSecDig = tag.getDescription();
                     }
                 }
             }
-            if (dateStr == null) {
+            String dateStr = null;
+            String subSeconds = null;
+            if (dateTimeOrig != null) {
+                // prefer TAG_DATETIME_ORIGINAL
+                dateStr = dateTimeOrig;
+                subSeconds = subSecOrig;
+            } else if (dateTime != null) {
+                // TAG_DATETIME is second choice, see #14209
                 dateStr = dateTime;
+                subSeconds = subSec;
+            } else if (dateTimeDig != null) {
+                dateStr = dateTimeDig;
+                subSeconds = subSecDig;
             }
             if (dateStr != null) {
                 dateStr = dateStr.replace('/', ':'); // workaround for HTC Sensation bug, see #7228
@@ -83,7 +117,7 @@ public final class ExifReader {
                 }
                 return date;
             }
-        } catch (UncheckedParseException | JpegProcessingException | IOException e) {
+        } catch (UncheckedParseException e) {
             Main.error(e);
         }
         return null;
@@ -153,7 +187,7 @@ public final class ExifReader {
      * Returns the direction of the given JPEG file.
      * @param filename The JPEG file to read
      * @return The direction of the image when it was captures (in degrees between 0.0 and 359.99),
-     * or {@code null} if missing or if {@code dirGps} is null
+     * or {@code null} if not found
      * @since 6209
      */
     public static Double readDirection(File filename) {
@@ -170,7 +204,7 @@ public final class ExifReader {
     /**
      * Returns the direction of the given EXIF GPS directory.
      * @param dirGps The EXIF GPS directory
-     * @return The direction of the image when it was captures (in degrees between 0.0 and 359.99),
+     * @return The direction of the image when it was captured (in degrees between 0.0 and 359.99),
      * or {@code null} if missing or if {@code dirGps} is null
      * @since 6209
      */
@@ -205,6 +239,89 @@ public final class ExifReader {
             value = dirGps.getDouble(gpsTag);
         }
         return value;
+    }
+
+    /**
+     * Returns the speed of the given JPEG file.
+     * @param filename The JPEG file to read
+     * @return The speed of the camera when the image was captured (in km/h),
+     *         or {@code null} if not found
+     * @since 11745
+     */
+    public static Double readSpeed(File filename) {
+        try {
+            final Metadata metadata = JpegMetadataReader.readMetadata(filename);
+            final GpsDirectory dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+            return readSpeed(dirGps);
+        } catch (JpegProcessingException | IOException e) {
+            Main.error(e);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the speed of the given EXIF GPS directory.
+     * @param dirGps The EXIF GPS directory
+     * @return The speed of the camera when the image was captured (in km/h),
+     *         or {@code null} if missing or if {@code dirGps} is null
+     * @since 11745
+     */
+    public static Double readSpeed(GpsDirectory dirGps) {
+        if (dirGps != null) {
+            Double speed = dirGps.getDoubleObject(GpsDirectory.TAG_SPEED);
+            if (speed != null) {
+                final String speedRef = dirGps.getString(GpsDirectory.TAG_SPEED_REF);
+                if ("M".equalsIgnoreCase(speedRef)) {
+                    // miles per hour
+                    speed *= SystemOfMeasurement.IMPERIAL.bValue / 1000;
+                } else if ("N".equalsIgnoreCase(speedRef)) {
+                    // knots == nautical miles per hour
+                    speed *= SystemOfMeasurement.NAUTICAL_MILE.bValue / 1000;
+                }
+                // default is K (km/h)
+                return speed;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the elevation of the given JPEG file.
+     * @param filename The JPEG file to read
+     * @return The elevation of the camera when the image was captured (in m),
+     *         or {@code null} if not found
+     * @since 11745
+     */
+    public static Double readElevation(File filename) {
+        try {
+            final Metadata metadata = JpegMetadataReader.readMetadata(filename);
+            final GpsDirectory dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
+            return readElevation(dirGps);
+        } catch (JpegProcessingException | IOException e) {
+            Main.error(e);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the elevation of the given EXIF GPS directory.
+     * @param dirGps The EXIF GPS directory
+     * @return The elevation of the camera when the image was captured (in m),
+     *         or {@code null} if missing or if {@code dirGps} is null
+     * @since 11745
+     */
+    public static Double readElevation(GpsDirectory dirGps) {
+        if (dirGps != null) {
+            Double ele = dirGps.getDoubleObject(GpsDirectory.TAG_ALTITUDE);
+            if (ele != null) {
+                final Integer d = dirGps.getInteger(GpsDirectory.TAG_ALTITUDE_REF);
+                if (d != null && d.intValue() == 1) {
+                    ele *= -1;
+                }
+                return ele;
+            }
+        }
+        return null;
     }
 
     /**

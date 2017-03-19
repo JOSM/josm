@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.Date;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.ExifReader;
@@ -431,32 +430,32 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
     public void extractExif() {
 
         Metadata metadata;
-        Directory dirExif;
-        GpsDirectory dirGps;
 
         if (file == null) {
+            return;
+        }
+
+        try {
+            metadata = JpegMetadataReader.readMetadata(file);
+        } catch (CompoundException | IOException ex) {
+            Main.error(ex);
+            setExifTime(null);
+            setExifCoor(null);
+            setPos(null);
             return;
         }
 
         // Changed to silently cope with no time info in exif. One case
         // of person having time that couldn't be parsed, but valid GPS info
         try {
-            setExifTime(ExifReader.readTime(file));
+            setExifTime(ExifReader.readTime(metadata));
         } catch (RuntimeException ex) {
             Main.warn(ex);
             setExifTime(null);
         }
 
-        try {
-            metadata = JpegMetadataReader.readMetadata(file);
-            dirExif = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-            dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
-        } catch (CompoundException | IOException ex) {
-            Main.warn(ex);
-            setExifCoor(null);
-            setPos(null);
-            return;
-        }
+        final Directory dirExif = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
+        final GpsDirectory dirGps = metadata.getFirstDirectoryOfType(GpsDirectory.class);
 
         try {
             if (dirExif != null) {
@@ -473,38 +472,20 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             return;
         }
 
-        try {
-            double speed = dirGps.getDouble(GpsDirectory.TAG_SPEED);
-            String speedRef = dirGps.getString(GpsDirectory.TAG_SPEED_REF);
-            if ("M".equalsIgnoreCase(speedRef)) {
-                // miles per hour
-                speed *= SystemOfMeasurement.IMPERIAL.bValue / 1000;
-            } else if ("N".equalsIgnoreCase(speedRef)) {
-                // knots == nautical miles per hour
-                speed *= SystemOfMeasurement.NAUTICAL_MILE.bValue / 1000;
-            }
-            // default is K (km/h)
+        final Double speed = ExifReader.readSpeed(dirGps);
+        if (speed != null) {
             setSpeed(speed);
-        } catch (MetadataException ex) {
-            Main.debug(ex);
         }
 
-        try {
-            double ele = dirGps.getDouble(GpsDirectory.TAG_ALTITUDE);
-            int d = dirGps.getInt(GpsDirectory.TAG_ALTITUDE_REF);
-            if (d == 1) {
-                ele *= -1;
-            }
+        final Double ele = ExifReader.readElevation(dirGps);
+        if (ele != null) {
             setElevation(ele);
-        } catch (MetadataException ex) {
-            Main.debug(ex);
         }
 
         try {
-            LatLon latlon = ExifReader.readLatLon(dirGps);
+            final LatLon latlon = ExifReader.readLatLon(dirGps);
             setExifCoor(latlon);
             setPos(getExifCoor());
-
         } catch (MetadataException | IndexOutOfBoundsException ex) { // (other exceptions, e.g. #5271)
             Main.error("Error reading EXIF from file: " + ex);
             setExifCoor(null);
@@ -512,7 +493,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         }
 
         try {
-            Double direction = ExifReader.readDirection(dirGps);
+            final Double direction = ExifReader.readDirection(dirGps);
             if (direction != null) {
                 setExifImgDir(direction);
             }

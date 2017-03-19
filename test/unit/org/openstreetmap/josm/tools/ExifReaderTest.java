@@ -116,6 +116,22 @@ public class ExifReaderTest {
     }
 
     /**
+     * Test speed extraction
+     */
+    @Test
+    public void testReadSpeed() {
+        assertEquals(Double.valueOf(12.3), ExifReader.readSpeed(new File("data_nodist/exif-example_speed_ele.jpg")));
+    }
+
+    /**
+     * Test elevation extraction
+     */
+    @Test
+    public void testReadElevation() {
+        assertEquals(Double.valueOf(23.4), ExifReader.readElevation(new File("data_nodist/exif-example_speed_ele.jpg")));
+    }
+
+    /**
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/11685">#11685</a>
      * @throws IOException if an error occurs during reading
      */
