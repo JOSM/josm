@@ -11,6 +11,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.ExifReader;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.lang.CompoundException;
@@ -449,7 +450,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         // of person having time that couldn't be parsed, but valid GPS info
         try {
             setExifTime(ExifReader.readTime(metadata));
-        } catch (RuntimeException ex) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException ex) {
             Main.warn(ex);
             setExifTime(null);
         }

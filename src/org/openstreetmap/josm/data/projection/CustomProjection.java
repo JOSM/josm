@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.projection.proj.IScaleFactorProvider;
 import org.openstreetmap.josm.data.projection.proj.Mercator;
 import org.openstreetmap.josm.data.projection.proj.Proj;
 import org.openstreetmap.josm.data.projection.proj.ProjParameters;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
@@ -830,7 +831,7 @@ public class CustomProjection extends AbstractProjection {
                             polesEN.put(p, enPole);
                         }
                     }
-                } catch (RuntimeException e) {
+                } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
                     Main.error(e);
                 }
             }

@@ -65,7 +65,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         SwingUtilities.invokeLater(() -> {
             try {
                 runnable.run();
-            } catch (RuntimeException e) {
+            } catch (RuntimeException e) { // NOPMD
                 throw BugReport.intercept(e).put("monitor", this);
             }
         });

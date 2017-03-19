@@ -193,7 +193,7 @@ public class WindowGeometry {
                     tr("Preference with key ''{0}'' does not provide an int value for ''{1}''. Got {2}. " +
                        "Cannot restore window geometry from preferences.",
                             preferenceKey, field, v), e);
-        } catch (RuntimeException e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             throw new WindowGeometryException(
                     tr("Failed to parse field ''{1}'' in preference with key ''{0}''. Exception was: {2}. " +
                        "Cannot restore window geometry from preferences.",

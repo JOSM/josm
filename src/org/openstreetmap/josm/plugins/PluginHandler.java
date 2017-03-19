@@ -724,7 +724,7 @@ public final class PluginHandler {
                 msg = tr("<html>Could not load plugin {0} because the plugin<br>main class ''{1}'' was not found.<br>"
                         + "Delete from preferences?</html>", plugin.name, plugin.className);
             }
-        } catch (RuntimeException e) {
+        } catch (RuntimeException e) { // NOPMD
             pluginLoadingExceptions.put(plugin.name, e);
             Main.error(e);
         }
@@ -822,7 +822,7 @@ public final class PluginHandler {
             ReadLocalPluginInformationTask task = new ReadLocalPluginInformationTask(monitor);
             try {
                 task.run();
-            } catch (RuntimeException e) {
+            } catch (RuntimeException e) { // NOPMD
                 Main.error(e);
                 return null;
             }
@@ -1000,7 +1000,7 @@ public final class PluginHandler {
                     final Collection<String> pluginsWantedName = Utils.transform(pluginsWanted, piw -> piw.name);
                     plugins = SubclassFilteredCollection.filter(plugins, pi -> pluginsWantedName.contains(pi.name));
                 }
-            } catch (RuntimeException e) {
+            } catch (RuntimeException e) { // NOPMD
                 Main.warn(tr("Failed to download plugin information list"));
                 Main.error(e);
                 // don't abort in case of error, continue with downloading plugins below
@@ -1045,7 +1045,7 @@ public final class PluginHandler {
 
                 try {
                     pluginDownloadTask.run();
-                } catch (RuntimeException e) {
+                } catch (RuntimeException e) { // NOPMD
                     Main.error(e);
                     alertFailedPluginUpdate(parent, pluginsToUpdate);
                     return plugins;

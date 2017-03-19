@@ -125,7 +125,7 @@ public final class BugReport implements Serializable {
         if (isIncludeStatusReport()) {
             try {
                 out.println(ShowStatusReportAction.getReportHeader());
-            } catch (RuntimeException e) {
+            } catch (RuntimeException e) { // NOPMD
                 out.println("Could not generate status report: " + e.getMessage());
             }
         }

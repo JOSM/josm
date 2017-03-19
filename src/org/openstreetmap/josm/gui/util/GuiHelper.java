@@ -158,7 +158,7 @@ public final class GuiHelper {
         if (SwingUtilities.isEventDispatchThread()) {
             try {
                 return callable.call();
-            } catch (Exception e) {
+            } catch (Exception e) { // NOPMD
                 Main.error(e);
                 return null;
             }

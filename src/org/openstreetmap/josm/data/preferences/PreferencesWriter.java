@@ -87,7 +87,7 @@ public class PreferencesWriter extends XmlWriter implements SettingVisitor {
         } else if (defaults) {
             addDefaults();
         } else {
-            throw new NullPointerException();
+            throw new IllegalArgumentException(setting.toString());
         }
     }
 
@@ -104,7 +104,7 @@ public class PreferencesWriter extends XmlWriter implements SettingVisitor {
         } else if (defaults) {
             addDefaults();
         } else {
-            throw new NullPointerException();
+            throw new IllegalArgumentException(setting.toString());
         }
     }
 
@@ -125,7 +125,7 @@ public class PreferencesWriter extends XmlWriter implements SettingVisitor {
         } else if (defaults) {
             addDefaults();
         } else {
-            throw new NullPointerException();
+            throw new IllegalArgumentException(setting.toString());
         }
     }
 
@@ -146,7 +146,7 @@ public class PreferencesWriter extends XmlWriter implements SettingVisitor {
         } else if (defaults) {
             addDefaults();
         } else {
-            throw new NullPointerException();
+            throw new IllegalArgumentException(setting.toString());
         }
     }
 }

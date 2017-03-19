@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
@@ -403,7 +404,7 @@ public class LayerManager {
         for (LayerChangeListener l : layerChangeListeners) {
             try {
                 l.layerAdded(e);
-            } catch (RuntimeException t) {
+            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException t) {
                 throw BugReport.intercept(t).put("listener", l).put("event", e);
             }
         }
@@ -420,7 +421,7 @@ public class LayerManager {
         for (LayerChangeListener l : layerChangeListeners) {
             try {
                 l.layerRemoving(e);
-            } catch (RuntimeException t) {
+            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException t) {
                 throw BugReport.intercept(t).put("listener", l).put("event", e).put("layer", layer);
             }
         }
@@ -433,7 +434,7 @@ public class LayerManager {
         for (LayerChangeListener l : layerChangeListeners) {
             try {
                 l.layerOrderChanged(e);
-            } catch (RuntimeException t) {
+            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException t) {
                 throw BugReport.intercept(t).put("listener", l).put("event", e);
             }
         }

@@ -70,6 +70,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
 import org.openstreetmap.josm.tools.AudioPlayer;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
@@ -353,7 +354,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
                 repaint();
             }
-        } catch (RuntimeException t) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException t) {
             throw BugReport.intercept(t).put("layer", e.getAddedLayer());
         }
     }
@@ -452,7 +453,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             }
             painter.paint(paintGraphics);
             g.setPaintMode();
-        } catch (RuntimeException t) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException t) {
             BugReport.intercept(t).put("layer", layer).warn();
         }
     }
@@ -466,7 +467,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             if (!prepareToDraw()) {
                 return;
             }
-        } catch (RuntimeException e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             BugReport.intercept(e).put("center", this::getCenter).warn();
             return;
         }
@@ -536,14 +537,14 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
         try {
             drawTemporaryLayers(tempG, getLatLonBounds(g.getClipBounds()));
-        } catch (RuntimeException e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             BugReport.intercept(e).put("temporaryLayers", temporaryLayers).warn();
         }
 
         // draw world borders
         try {
             drawWorldBorders(tempG);
-        } catch (RuntimeException e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             // getProjection() needs to be inside lambda to catch errors.
             BugReport.intercept(e).put("bounds", () -> getProjection().getWorldBoundsLatLon()).warn();
         }
@@ -592,7 +593,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             for (MapViewPaintable mvp : temporaryLayers) {
                 try {
                     mvp.paint(tempG, this, box);
-                } catch (RuntimeException e) {
+                } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
                     throw BugReport.intercept(e).put("mvp", mvp);
                 }
             }

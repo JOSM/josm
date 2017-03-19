@@ -232,7 +232,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
                 if (PROP_NOTIFICATION.get() && !layersInfo.isEmpty()) {
                     GuiHelper.runInEDT(this::displayNotification);
                 }
-            } catch (RuntimeException t) {
+            } catch (RuntimeException t) { // NOPMD
                 // Don't let exception stop time thread
                 Main.error("Autosave failed:");
                 Main.error(t);

@@ -1126,7 +1126,7 @@ public class JoinAreasAction extends JosmAction {
             while ((startWay = traverser.startNewWay()) != null) {
                 findBoundaryPolygonsStartingWith(discardedResult, traverser, result, startWay);
             }
-        } catch (Throwable t) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException t) {
             throw BugReport.intercept(t).put("traverser", traverser);
         }
 
@@ -1182,7 +1182,7 @@ public class JoinAreasAction extends JosmAction {
                     path.add(nextWay);
                 }
             }
-        } catch (Throwable t) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException t) {
             throw BugReport.intercept(t).put("path", path);
         }
     }

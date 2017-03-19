@@ -598,7 +598,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                     setSelectedIndex(index);
                 } catch (SecurityException ex) {
                     Main.error(ex);
-                } catch (RuntimeException ex) {
+                } catch (RuntimeException ex) { // NOPMD
                     // allow to change most settings even if e.g. a plugin fails
                     BugReportExceptionHandler.handleException(ex);
                 } finally {
@@ -615,7 +615,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                 sps.addGui(this);
             } catch (SecurityException ex) {
                 Main.error(ex);
-            } catch (RuntimeException ex) {
+            } catch (RuntimeException ex) { // NOPMD
                 BugReportExceptionHandler.handleException(ex);
             } finally {
                 settingsInitialized.add(sps);

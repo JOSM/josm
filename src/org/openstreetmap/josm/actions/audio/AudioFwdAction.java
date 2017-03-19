@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -35,7 +36,7 @@ public class AudioFwdAction extends JosmAction {
                 + Main.pref.getDouble("audio.forwardbackamount", 10.0));
             else
                 MarkerLayer.playAudio();
-        } catch (Exception ex) {
+        } catch (IOException | InterruptedException ex) {
             AudioPlayer.audioMalfunction(ex);
         }
     }

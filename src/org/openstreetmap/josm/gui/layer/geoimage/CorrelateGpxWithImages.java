@@ -82,6 +82,7 @@ import org.openstreetmap.josm.io.JpgImporter;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
@@ -933,7 +934,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 sldMinutes.setValue((int) (timezoneOffsetPair.b.getSeconds() / 60));
                 final long deciSeconds = timezoneOffsetPair.b.getMilliseconds() / 100;
                 sldSeconds.setValue((int) (deciSeconds % 60));
-            } catch (RuntimeException e) {
+            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
                 Main.warn(e);
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("An error occurred while trying to match the photos to the GPX track."

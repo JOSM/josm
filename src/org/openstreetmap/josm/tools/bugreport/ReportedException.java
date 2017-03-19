@@ -65,7 +65,7 @@ public class ReportedException extends RuntimeException {
         methodWarningFrom = BugReport.getCallingMethod(2);
         try {
             BugReportQueue.getInstance().submit(this);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException e) { // NOPMD
             e.printStackTrace();
         }
     }
@@ -217,7 +217,7 @@ public class ReportedException extends RuntimeException {
             } else {
                 string = value.toString();
             }
-        } catch (RuntimeException t) {
+        } catch (RuntimeException t) { // NOPMD
             Main.warn(t);
             string = "<Error calling toString()>";
         }

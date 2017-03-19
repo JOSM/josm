@@ -240,7 +240,7 @@ public final class NameFinder {
             } catch (NumberFormatException ex) {
                 Main.error(ex); // SAXException does not chain correctly
                 throw new SAXException(ex.getMessage(), ex);
-            } catch (NullPointerException ex) {
+            } catch (NullPointerException ex) { // NOPMD
                 Main.error(ex); // SAXException does not chain correctly
                 throw new SAXException(tr("Null pointer exception, possibly some missing tags."), ex);
             }

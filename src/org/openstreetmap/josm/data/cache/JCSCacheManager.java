@@ -181,7 +181,7 @@ public final class JCSCacheManager {
                 }
             } catch (IOException e) {
                 throw e;
-            } catch (Exception e) {
+            } catch (Exception e) { // NOPMD
                 throw new IOException(e);
             }
         }

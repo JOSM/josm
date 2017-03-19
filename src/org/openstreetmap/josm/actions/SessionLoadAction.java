@@ -30,6 +30,7 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.session.SessionImporter;
 import org.openstreetmap.josm.io.session.SessionReader;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -177,7 +178,7 @@ public class SessionLoadAction extends DiskAccessAction {
                 handleException(tr("Data Error"), e);
             } catch (IOException e) {
                 handleException(tr("IO Error"), e);
-            } catch (RuntimeException e) {
+            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
                 cancel();
                 throw e;
             }

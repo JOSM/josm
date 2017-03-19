@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
@@ -144,7 +145,7 @@ public final class MapViewState implements Serializable {
     private static Point findTopLeftOnScreen(JComponent position) {
         try {
             return position.getLocationOnScreen();
-        } catch (RuntimeException e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             throw BugReport.intercept(e).put("position", position).put("parent", position::getParent);
         }
     }
@@ -196,7 +197,7 @@ public final class MapViewState implements Serializable {
     public MapViewPoint getPointFor(Node node) {
         try {
             return getPointFor(node.getEastNorth(getProjection()));
-        } catch (RuntimeException e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             throw BugReport.intercept(e).put("node", node);
         }
     }

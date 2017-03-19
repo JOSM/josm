@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -114,7 +115,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                 if (isCanceled()) return;
                 // Let's load all required history
                 Main.worker.submit(new HistoryLoaderAndListener(toLoad));
-            } catch (Exception e) {
+            } catch (RejectedExecutionException e) {
                 rememberException(e);
                 setFailed(true);
             }

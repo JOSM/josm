@@ -85,6 +85,7 @@ import org.openstreetmap.josm.tools.CompositeList;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.AreaAndPerimeter;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
@@ -1734,7 +1735,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     acceptDrawable(osm);
                 }
                 return output;
-            } catch (RuntimeException e) {
+            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
                 throw BugReport.intercept(e).put("input-size", input.size()).put("output-size", output.size());
             } finally {
                 MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
@@ -1746,7 +1747,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 if (osm.isDrawable()) {
                     osm.accept(this);
                 }
-            } catch (RuntimeException e) {
+            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
                 throw BugReport.intercept(e).put("osm", osm);
             }
         }
@@ -1854,7 +1855,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             drawVirtualNodes(data, bbox);
 
             benchmark.renderDone();
-        } catch (RuntimeException e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             throw BugReport.intercept(e)
                     .put("data", data)
                     .put("circum", circum)
@@ -1869,7 +1870,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     private void paintRecord(StyleRecord record) {
         try {
             record.paintPrimitive(paintSettings, this);
-        } catch (RuntimeException e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             throw BugReport.intercept(e).put("record", record);
         }
     }

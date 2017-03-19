@@ -8,6 +8,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -211,7 +212,7 @@ public class DatasetConsistencyTest {
                 writer.println((errorCount - MAX_ERRORS) + " more...");
             }
 
-        } catch (RuntimeException e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             writer.println("Exception during dataset integrity test:");
             e.printStackTrace(writer);
             Main.warn(e);

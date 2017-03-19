@@ -81,7 +81,7 @@ public final class OsmUrlToBounds {
                         parseDouble(map, "lon"),
                         z == null ? 18 : Integer.parseInt(z));
             }
-        } catch (NumberFormatException | NullPointerException | ArrayIndexOutOfBoundsException ex) {
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
             Main.error(ex);
         }
         return b;

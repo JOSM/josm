@@ -13,6 +13,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.gui.datatransfer.importers.AbstractOsmDataPaster;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
@@ -57,7 +58,7 @@ public abstract class AbstractStackTransferHandler extends TransferHandler {
                     }
                 } catch (UnsupportedFlavorException | IOException e) {
                     Main.warn(e);
-                } catch (RuntimeException e) {
+                } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
                     BugReport.intercept(e).put("paster", df).put("flavors", support::getDataFlavors).warn();
                 }
             }

@@ -57,7 +57,7 @@ public final class AudioPlayer extends Thread {
         /*
          * Called to execute the commands in the other thread
          */
-        protected void play(URL url, double offset, double speed) throws Exception {
+        protected void play(URL url, double offset, double speed) throws InterruptedException, IOException {
             this.url = url;
             this.offset = offset;
             this.speed = speed;
@@ -66,19 +66,19 @@ public final class AudioPlayer extends Thread {
             send();
         }
 
-        protected void pause() throws Exception {
+        protected void pause() throws InterruptedException, IOException {
             command = Command.PAUSE;
             send();
         }
 
-        private void send() throws Exception {
+        private void send() throws InterruptedException, IOException {
             result = Result.WAITING;
             interrupt();
             while (result == Result.WAITING) {
                 sleep(10);
             }
             if (result == Result.FAILED)
-                throw exception;
+                throw new IOException(exception);
         }
 
         private void possiblyInterrupt() throws InterruptedException {
@@ -120,9 +120,10 @@ public final class AudioPlayer extends Thread {
      * Plays a WAV audio file from the beginning. See also the variant which doesn't
      * start at the beginning of the stream
      * @param url The resource to play, which must be a WAV file or stream
-     * @throws Exception audio fault exception, e.g. can't open stream, unhandleable audio format
+     * @throws InterruptedException thread interrupted
+     * @throws IOException audio fault exception, e.g. can't open stream, unhandleable audio format
      */
-    public static void play(URL url) throws Exception {
+    public static void play(URL url) throws InterruptedException, IOException {
         AudioPlayer instance = AudioPlayer.getInstance();
         if (instance != null)
             instance.command.play(url, 0.0, 1.0);
@@ -132,9 +133,10 @@ public final class AudioPlayer extends Thread {
      * Plays a WAV audio file from a specified position.
      * @param url The resource to play, which must be a WAV file or stream
      * @param seconds The number of seconds into the audio to start playing
-     * @throws Exception audio fault exception, e.g. can't open stream, unhandleable audio format
+     * @throws InterruptedException thread interrupted
+     * @throws IOException audio fault exception, e.g. can't open stream, unhandleable audio format
      */
-    public static void play(URL url, double seconds) throws Exception {
+    public static void play(URL url, double seconds) throws InterruptedException, IOException {
         AudioPlayer instance = AudioPlayer.getInstance();
         if (instance != null)
             instance.command.play(url, seconds, 1.0);
@@ -145,9 +147,10 @@ public final class AudioPlayer extends Thread {
      * @param url The resource to play, which must be a WAV file or stream
      * @param seconds The number of seconds into the audio to start playing
      * @param speed Rate at which audio playes (1.0 = real time, &gt; 1 is faster)
-     * @throws Exception audio fault exception, e.g. can't open stream,  unhandleable audio format
+     * @throws InterruptedException thread interrupted
+     * @throws IOException audio fault exception, e.g. can't open stream,  unhandleable audio format
      */
-    public static void play(URL url, double seconds, double speed) throws Exception {
+    public static void play(URL url, double seconds, double speed) throws InterruptedException, IOException {
         AudioPlayer instance = AudioPlayer.getInstance();
         if (instance != null)
             instance.command.play(url, seconds, speed);
@@ -155,9 +158,10 @@ public final class AudioPlayer extends Thread {
 
     /**
      * Pauses the currently playing audio stream. Does nothing if nothing playing.
-     * @throws Exception audio fault exception, e.g. can't open stream,  unhandleable audio format
+     * @throws InterruptedException thread interrupted
+     * @throws IOException audio fault exception, e.g. can't open stream,  unhandleable audio format
      */
-    public static void pause() throws Exception {
+    public static void pause() throws InterruptedException, IOException {
         AudioPlayer instance = AudioPlayer.getInstance();
         if (instance != null)
             instance.command.pause();
@@ -219,7 +223,7 @@ public final class AudioPlayer extends Thread {
         try {
             audioPlayer = new AudioPlayer();
             return audioPlayer;
-        } catch (RuntimeException ex) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException ex) {
             Main.error(ex);
             return null;
         }
@@ -232,7 +236,7 @@ public final class AudioPlayer extends Thread {
         if (audioPlayer != null) {
             try {
                 pause();
-            } catch (Exception e) {
+            } catch (InterruptedException | IOException e) {
                 Main.warn(e);
             }
             audioPlayer.playingUrl = null;

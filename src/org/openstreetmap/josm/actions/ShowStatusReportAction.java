@@ -268,22 +268,18 @@ public final class ShowStatusReportAction extends JosmAction {
         StringBuilder text = new StringBuilder();
         String reportHeader = getReportHeader();
         text.append(reportHeader);
-        try {
-            Map<String, Setting<?>> settings = Main.pref.getAllSettings();
-            Set<String> keys = new HashSet<>(settings.keySet());
-            for (String key : keys) {
-                // Remove sensitive information from status report
-                if (key.startsWith("marker.show") || key.contains("username") || key.contains("password") || key.contains("access-token")) {
-                    settings.remove(key);
-                }
+        Map<String, Setting<?>> settings = Main.pref.getAllSettings();
+        Set<String> keys = new HashSet<>(settings.keySet());
+        for (String key : keys) {
+            // Remove sensitive information from status report
+            if (key.startsWith("marker.show") || key.contains("username") || key.contains("password") || key.contains("access-token")) {
+                settings.remove(key);
             }
-            for (Entry<String, Setting<?>> entry : settings.entrySet()) {
-                text.append(paramCleanup(entry.getKey()))
-                    .append('=')
-                    .append(paramCleanup(entry.getValue().getValue().toString())).append('\n');
-            }
-        } catch (Exception ex) {
-            Main.error(ex);
+        }
+        for (Entry<String, Setting<?>> entry : settings.entrySet()) {
+            text.append(paramCleanup(entry.getKey()))
+                .append('=')
+                .append(paramCleanup(entry.getValue().getValue().toString())).append('\n');
         }
 
         DebugTextDisplay ta = new DebugTextDisplay(text.toString());

@@ -1419,7 +1419,8 @@ public class Preferences {
                 Field field = Toolkit.class.getDeclaredField("resources");
                 Utils.setObjectsAccessible(field);
                 field.set(null, ResourceBundle.getBundle("sun.awt.resources.awt"));
-            } catch (ReflectiveOperationException | RuntimeException e) {
+            } catch (ReflectiveOperationException | RuntimeException e) { // NOPMD
+                // Catch RuntimeException in order to catch InaccessibleObjectException, new in Java 9
                 Main.warn(e);
             }
         }

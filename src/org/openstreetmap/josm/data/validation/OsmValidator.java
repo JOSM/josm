@@ -332,7 +332,7 @@ public final class OsmValidator {
                 if (test.enabled) {
                     test.initialize();
                 }
-            } catch (Exception e) {
+            } catch (Exception e) { // NOPMD
                 Main.error(e);
                 if (!GraphicsEnvironment.isHeadless()) {
                     JOptionPane.showMessageDialog(Main.parent,

@@ -1077,7 +1077,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
         if (thread != null) {
             try {
                 thread.interrupt();
-            } catch (RuntimeException e) {
+            } catch (SecurityException e) {
                 Main.error(e);
             }
         }

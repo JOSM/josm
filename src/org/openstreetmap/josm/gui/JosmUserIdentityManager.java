@@ -19,6 +19,7 @@ import org.openstreetmap.josm.io.OsmServerUserInfoReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 
 /**
  * JosmUserIdentityManager is a global object which keeps track of what JOSM knows about
@@ -65,7 +66,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
                     !Main.isOffline(OnlineResource.OSM_API)) {
                 try {
                     instance.initFromOAuth();
-                } catch (RuntimeException e) {
+                } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
                     Main.error(e);
                     // Fall back to preferences if OAuth identification fails for any reason
                     instance.initFromPreferences();

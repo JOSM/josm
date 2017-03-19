@@ -45,6 +45,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 public class MemberTableModel extends AbstractTableModel
@@ -807,7 +808,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
                 connectionType = wayConnectionTypeCalculator.updateLinks(members);
             }
             return connectionType.get(i);
-        } catch (RuntimeException e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             throw BugReport.intercept(e).put("i", i).put("members", members).put("relation", relation);
         }
     }

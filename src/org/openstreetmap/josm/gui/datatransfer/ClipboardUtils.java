@@ -115,7 +115,7 @@ public final class ClipboardUtils {
                             + " while getting clipboard content");
                     Thread.currentThread().interrupt();
                 }
-            } catch (NullPointerException e) {
+            } catch (NullPointerException e) { // NOPMD
                 // JDK-6322854: On Linux/X11, NPE can happen for unknown reasons, on all versions of Java
                 Main.error(e);
             }

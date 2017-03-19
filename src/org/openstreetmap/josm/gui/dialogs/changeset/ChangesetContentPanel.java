@@ -53,6 +53,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
 /**
@@ -234,7 +235,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                         }
                         GuiHelper.runInEDT(() -> HistoryBrowserDialogManager.getInstance().show(h));
                     }
-                } catch (final RuntimeException e) {
+                } catch (final JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
                     GuiHelper.runInEDT(() -> BugReportExceptionHandler.handleException(e));
                 }
             }

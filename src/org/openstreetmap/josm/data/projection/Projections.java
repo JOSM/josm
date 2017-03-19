@@ -337,7 +337,7 @@ public final class Projections {
             pc.setPreferences(pref);
             try {
                 proj = pc.getProjection();
-            } catch (RuntimeException e) {
+            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
                 Main.warn(e, "Unable to get projection "+code+" with "+pc+':');
             }
         }

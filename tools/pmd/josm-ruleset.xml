@@ -20,8 +20,11 @@
   <rule ref="rulesets/java/optimizations.xml">
   	<exclude name="LocalVariableCouldBeFinal"/>
   	<exclude name="MethodArgumentCouldBeFinal"/>
+  </rule>-->
+  <rule ref="rulesets/java/strictexception.xml">
+  	<exclude name="ExceptionAsFlowControl"/>
+  	<exclude name="AvoidRethrowingException"/>
   </rule>
-  <rule ref="rulesets/java/strictexception.xml"/> -->
   <rule ref="rulesets/java/strings.xml">
   	<exclude name="AvoidDuplicateLiterals"/>
   	<exclude name="ConsecutiveLiteralAppends"/>
