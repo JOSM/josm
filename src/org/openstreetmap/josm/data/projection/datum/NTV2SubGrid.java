@@ -280,7 +280,7 @@ public class NTV2SubGrid implements Serializable {
      * Set an array of Sub Grids of this sub grid
      * @param subGrid subgrids
      */
-    public void setSubGridArray(NTV2SubGrid ... subGrid) {
+    public void setSubGridArray(NTV2SubGrid... subGrid) {
         this.subGrid = Utils.copyArray(subGrid);
     }
 

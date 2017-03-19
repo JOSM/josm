@@ -142,7 +142,7 @@ public class NodeElement extends StyleElement {
      * @param keys The keys, indexed by the ICON_..._IDX constants.
      * @return The icon or <code>null</code> if no icon is defined
      */
-    public static MapImage createIcon(final Environment env, final String ... keys) {
+    public static MapImage createIcon(final Environment env, final String... keys) {
         CheckParameterUtil.ensureParameterNotNull(env, "env");
         CheckParameterUtil.ensureParameterNotNull(keys, "keys");
 

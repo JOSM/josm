@@ -547,7 +547,7 @@ public class ChangesetDialog extends ToggleDialog {
     }
 
     class ChangesetDialogPopup extends ListPopupMenu {
-        ChangesetDialogPopup(JList<?> ... lists) {
+        ChangesetDialogPopup(JList<?>... lists) {
             super(lists);
             add(selectObjectsAction);
             addSeparator();

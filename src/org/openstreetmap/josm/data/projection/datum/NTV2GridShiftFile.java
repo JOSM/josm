@@ -166,7 +166,7 @@ public class NTV2GridShiftFile implements Serializable {
      * @param subGrid an array of all Sub Grids
      * @return an array of top level Sub Grids with lower level Sub Grids set.
      */
-    private static NTV2SubGrid[] createSubGridTree(NTV2SubGrid ... subGrid) {
+    private static NTV2SubGrid[] createSubGridTree(NTV2SubGrid... subGrid) {
         int topLevelCount = 0;
         Map<String, List<NTV2SubGrid>> subGridMap = new HashMap<>();
         for (int i = 0; i < subGrid.length; i++) {

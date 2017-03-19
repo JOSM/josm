@@ -15,7 +15,7 @@ public class ListPopupMenu extends JPopupMenu {
 
     private final JList<?>[] lists;
 
-    public ListPopupMenu(JList<?> ... lists) {
+    public ListPopupMenu(JList<?>... lists) {
         this.lists = lists;
     }
 

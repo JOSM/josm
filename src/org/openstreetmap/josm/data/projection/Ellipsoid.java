@@ -321,7 +321,7 @@ public final class Ellipsoid {
      * @param xyz the coordinates in meters (X, Y, Z)
      * @return The corresponding latitude and longitude in degrees
      */
-    public LatLon cart2LatLon(double ... xyz) {
+    public LatLon cart2LatLon(double... xyz) {
         return cart2LatLon(xyz, 1e-11);
     }
 

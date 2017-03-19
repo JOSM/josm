@@ -246,7 +246,7 @@ class DrawSnapHelper {
      * Save the snap angles
      * @param angles The angles
      */
-    public void saveAngles(String ... angles) {
+    public void saveAngles(String... angles) {
         Main.pref.putCollection(DRAW_ANGLESNAP_ANGLES, Arrays.asList(angles));
     }
 

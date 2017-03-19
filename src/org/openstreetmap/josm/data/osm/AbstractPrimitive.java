@@ -730,7 +730,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * @return true, if this primitive has a tag with any of the <code>keys</code>
      * @since 11587
      */
-    public boolean hasKey(String ... keys) {
+    public boolean hasKey(String... keys) {
         return keys != null && Arrays.stream(keys).anyMatch(this::hasKey);
     }
 

@@ -49,7 +49,7 @@ public class RelationMember implements PrimitiveId {
      * @return True if role is in the given list
      * @since 6305
      */
-    public boolean hasRole(String ... roles) {
+    public boolean hasRole(String... roles) {
         return Arrays.asList(roles).contains(role);
     }
 

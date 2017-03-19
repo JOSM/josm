@@ -185,7 +185,7 @@ public class Bounds {
      * @param coords exactly 4 values: min lat, min lon, max lat, max lon
      * @throws IllegalArgumentException if coords does not contain 4 double values
      */
-    public Bounds(double ... coords) {
+    public Bounds(double... coords) {
         this(coords, true);
     }
 

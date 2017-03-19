@@ -348,7 +348,7 @@ public final class Utils {
      * @return A copy of the original array, or {@code null} if {@code array} is null
      * @since 7436
      */
-    public static int[] copyArray(int ... array) {
+    public static int[] copyArray(int... array) {
         if (array != null) {
             return Arrays.copyOf(array, array.length);
         }

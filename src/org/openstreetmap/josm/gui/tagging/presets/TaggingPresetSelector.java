@@ -124,7 +124,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
             }
         }
 
-        private static int isMatching(Collection<String> values, String ... searchString) {
+        private static int isMatching(Collection<String> values, String... searchString) {
             int sum = 0;
             for (String word: searchString) {
                 boolean found = false;
@@ -148,15 +148,15 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
             return sum;
         }
 
-        int isMatchingGroup(String ... words) {
+        int isMatchingGroup(String... words) {
             return isMatching(groups, words);
         }
 
-        int isMatchingName(String ... words) {
+        int isMatchingName(String... words) {
             return isMatching(names, words);
         }
 
-        int isMatchingTags(String ... words) {
+        int isMatchingTags(String... words) {
             return isMatching(tags, words);
         }
 

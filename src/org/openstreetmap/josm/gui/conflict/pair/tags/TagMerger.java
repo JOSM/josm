@@ -237,7 +237,7 @@ public class TagMerger extends JPanel implements IConflictResolver {
         return model;
     }
 
-    private void selectNextConflict(int ... rows) {
+    private void selectNextConflict(int... rows) {
         int max = rows[0];
         for (int row: rows) {
             if (row > max) {

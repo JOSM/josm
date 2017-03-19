@@ -755,7 +755,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         }
     }
 
-    private static void addIntegerIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String ... osmKeys) {
+    private static void addIntegerIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String... osmKeys) {
         List<String> possibleKeys = new ArrayList<>(Arrays.asList(osmKeys));
         possibleKeys.add(0, gpxKey);
         for (String key : possibleKeys) {
@@ -776,7 +776,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         }
     }
 
-    private static void addDoubleIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String ... osmKeys) {
+    private static void addDoubleIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String... osmKeys) {
         List<String> possibleKeys = new ArrayList<>(Arrays.asList(osmKeys));
         possibleKeys.add(0, gpxKey);
         for (String key : possibleKeys) {
@@ -796,7 +796,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         }
     }
 
-    private static void addStringIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String ... osmKeys) {
+    private static void addStringIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String... osmKeys) {
         List<String> possibleKeys = new ArrayList<>(Arrays.asList(osmKeys));
         possibleKeys.add(0, gpxKey);
         for (String key : possibleKeys) {

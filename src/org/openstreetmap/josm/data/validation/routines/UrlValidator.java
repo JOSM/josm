@@ -217,7 +217,7 @@ public class UrlValidator extends AbstractValidator {
      *        be specified. Setting the ALLOW_ALL_SCHEMES option will
      *        ignore the contents of schemes.
      */
-    public UrlValidator(String ... schemes) {
+    public UrlValidator(String... schemes) {
         this(schemes, 0L);
     }
 

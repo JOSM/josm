@@ -63,7 +63,7 @@ class TwoColumnDiff {
     private final Object[] current;
     boolean referenceReversed;
 
-    TwoColumnDiff(Object[] reference, Object ... current) {
+    TwoColumnDiff(Object[] reference, Object... current) {
         this.reference = Utils.copyArray(reference);
         this.current = Utils.copyArray(current);
         referenceDiff = new ArrayList<>();

@@ -544,7 +544,7 @@ public class TagEditHelper {
         protected AutoCompletingComboBox keys;
         protected AutoCompletingComboBox values;
 
-        AbstractTagsDialog(Component parent, String title, String ... buttonTexts) {
+        AbstractTagsDialog(Component parent, String title, String... buttonTexts) {
             super(parent, title, buttonTexts);
             addMouseListener(new PopupMenuLauncher(popupMenu));
         }

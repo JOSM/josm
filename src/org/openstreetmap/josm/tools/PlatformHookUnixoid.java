@@ -115,7 +115,7 @@ public class PlatformHookUnixoid implements PlatformHook {
      * @return The package name and package version if it can be identified, null otherwise
      * @since 7314
      */
-    public static String getPackageDetails(String ... packageNames) {
+    public static String getPackageDetails(String... packageNames) {
         try {
             // CHECKSTYLE.OFF: SingleSpaceSeparator
             boolean dpkg = Paths.get("/usr/bin/dpkg-query").toFile().exists();
