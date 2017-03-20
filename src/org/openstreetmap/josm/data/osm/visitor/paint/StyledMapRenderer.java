@@ -497,7 +497,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         MapViewPoint p = mapState.getPointFor(n);
         TextLabel text = bs.text;
         String s = text.labelCompositionStrategy.compose(n);
-        if (s == null) return;
+        if (s == null || s.isEmpty()) return;
 
         Font defaultFont = g.getFont();
         g.setFont(text.font);
