@@ -518,7 +518,7 @@ public class CompressorStreamFactory implements CompressorStreamProvider {
             }
 
             if (LZ4_FRAMED.equalsIgnoreCase(name)) {
-                return new FramedLZ4CompressorInputStream(in);
+                return new FramedLZ4CompressorInputStream(in, actualDecompressConcatenated);
             }
 
         } catch (final IOException e) {

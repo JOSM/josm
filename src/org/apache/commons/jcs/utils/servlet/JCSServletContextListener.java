@@ -19,13 +19,12 @@ package org.apache.commons.jcs.utils.servlet;
  * under the License.
  */
 
-import org.apache.commons.jcs.access.exception.CacheException;
-import org.apache.commons.jcs.engine.control.CompositeCacheManager;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+
+import org.apache.commons.jcs.JCS;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 /**
  * If you add this to the context listeners section of your web.xml file, this will shutdown JCS
@@ -56,32 +55,25 @@ public class JCSServletContextListener
     @Override
     public void contextInitialized( ServletContextEvent arg0 )
     {
-        if ( log.isInfoEnabled() )
+        if ( log.isDebugEnabled() )
         {
-            log.info( "contextInitialized" );
+            log.debug( "contextInitialized" );
         }
     }
 
     /**
-     * This gets the singleton instance of the CompositeCacheManager and calls shutdown.
+     * Shutdown JCS.
      * <p>
      * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
      */
     @Override
     public void contextDestroyed( ServletContextEvent arg0 )
     {
-        if ( log.isInfoEnabled() )
+        if ( log.isDebugEnabled() )
         {
-            log.info( "contextDestroyed, shutting down JCS." );
+            log.debug( "contextDestroyed, shutting down JCS." );
         }
 
-        try
-        {
-            CompositeCacheManager.getInstance().shutDown();
-        }
-        catch (CacheException e)
-        {
-            log.error( "Could not retrieve cache manager instance", e );
-        }
+        JCS.shutdown();
     }
 }

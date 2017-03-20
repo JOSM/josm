@@ -22,63 +22,152 @@ package org.apache.commons.compress.compressors.lz77support;
  * Parameters of the {@link LZ77Compressor compressor}.
  */
 public final class Parameters {
-    public static final int TRUE_MIN_MATCH_LENGTH = LZ77Compressor.NUMBER_OF_BYTES_IN_HASH;
-    private final int windowSize, minMatchLength, maxMatchLength, maxOffset, maxLiteralLength;
+    /**
+     * The hard-coded absolute minimal length of a back-reference.
+     */
+    public static final int TRUE_MIN_BACK_REFERENCE_LENGTH = LZ77Compressor.NUMBER_OF_BYTES_IN_HASH;
 
     /**
-     * Initializes the compressor's parameters with a
-     * <code>minMatchLength</code> of 3 and <code>max*Length</code>
+     * Initializes the builder for the compressor's parameters with a
+     * <code>minBackReferenceLength</code> of 3 and <code>max*Length</code>
      * equal to <code>windowSize - 1</code>.
      *
+     * <p>It is recommended to not use this method directly but rather
+     * tune a pre-configured builder created by a format specific
+     * factory like {@link
+     * org.apache.commons.compress.compressors.snappy.SnappyCompressorOutputStream#createParameterBuilder}.</p>
+     *
      * @param windowSize the size of the sliding window - this
-     * determines the maximum offset a back-reference can take.
-     * @throws IllegalArgumentException if <code>windowSize</code>
-     * is smaller than <code>minMatchLength</code>.
+     * determines the maximum offset a back-reference can take. Must
+     * be a power of two.
+     * @throws IllegalArgumentException if windowSize is not a power of two.
      */
-    public Parameters(int windowSize) {
-        this(windowSize, TRUE_MIN_MATCH_LENGTH, windowSize - 1, windowSize - 1, windowSize);
+    public static Builder builder(int windowSize) {
+        return new Builder(windowSize);
     }
 
     /**
-     * Initializes the compressor's parameters.
-     *
-     * @param windowSize the size of the sliding window, must be a
-     * power of two - this determines the maximum offset a
-     * back-reference can take.
-     * @param minMatchLength the minimal length of a match found. A
-     * true minimum of 3 is hard-coded inside of this implemention
-     * but bigger lengths can be configured.
-     * @param maxMatchLength maximal length of a match found. A value
-     * smaller than <code>minMatchLength</code> as well as values
-     * bigger than <code>windowSize - 1</code> are interpreted as
-     * <code>windowSize - 1</code>.
-     * @param maxOffset maximal offset of a back-reference. A
-     * non-positive value as well as values bigger than
-     * <code>windowSize - 1</code> are interpreted as <code>windowSize
-     * - 1</code>.
-     * @param maxLiteralLength maximal length of a literal
-     * block. Negative numbers and 0 as well as values bigger than
-     * <code>windowSize</code> are interpreted as
-     * <code>windowSize</code>.
-     * @throws IllegalArgumentException if <code>windowSize</code> is
-     * smaller than <code>minMatchLength</code> or not a power of two.
+     * Builder for {@link Parameters} instances.
      */
-    public Parameters(int windowSize, int minMatchLength, int maxMatchLength,
-                      int maxOffset, int maxLiteralLength) {
-        this.minMatchLength = Math.max(TRUE_MIN_MATCH_LENGTH, minMatchLength);
-        if (windowSize < this.minMatchLength) {
-            throw new IllegalArgumentException("windowSize must be at least as big as minMatchLength");
+    public static class Builder {
+        private final int windowSize;
+        private int minBackReferenceLength, maxBackReferenceLength, maxOffset, maxLiteralLength;
+
+        private Builder(int windowSize) {
+            if (windowSize < 2 || !isPowerOfTwo(windowSize)) {
+                throw new IllegalArgumentException("windowSize must be a power of two");
+            }
+            this.windowSize = windowSize;
+            minBackReferenceLength = TRUE_MIN_BACK_REFERENCE_LENGTH;
+            maxBackReferenceLength = windowSize - 1;
+            maxOffset = windowSize - 1;
+            maxLiteralLength = windowSize;
         }
-        if (!isPowerOfTwo(windowSize)) {
-            throw new IllegalArgumentException("windowSize must be a power of two");
+
+        /**
+         * Sets the mininal length of a back-reference.
+         *
+         * <p>Ensures <code>maxBackReferenceLength</code> is not
+         * smaller than <code>minBackReferenceLength</code>.
+         *
+         * <p>It is recommended to not use this method directly but
+         * rather tune a pre-configured builder created by a format
+         * specific factory like {@link
+         * org.apache.commons.compress.compressors.snappy.SnappyCompressorOutputStream#createParameterBuilder}.</p>
+         *
+         * @param minBackReferenceLength the minimal length of a back-reference found. A
+         * true minimum of 3 is hard-coded inside of this implemention
+         * but bigger lengths can be configured.
+         * @throws IllegalArgumentException if <code>windowSize</code>
+         * is smaller than <code>minBackReferenceLength</code>.
+         */
+        public Builder withMinBackReferenceLength(int minBackReferenceLength) {
+            this.minBackReferenceLength = Math.max(TRUE_MIN_BACK_REFERENCE_LENGTH, minBackReferenceLength);
+            if (windowSize < this.minBackReferenceLength) {
+                throw new IllegalArgumentException("minBackReferenceLength can't be bigger than windowSize");
+            }
+            if (maxBackReferenceLength < this.minBackReferenceLength) {
+                maxBackReferenceLength = this.minBackReferenceLength;
+            }
+            return this;
         }
+
+        /**
+         * Sets the maximal length of a back-reference.
+         *
+         * <p>It is recommended to not use this method directly but
+         * rather tune a pre-configured builder created by a format
+         * specific factory like {@link
+         * org.apache.commons.compress.compressors.snappy.SnappyCompressorOutputStream#createParameterBuilder}.</p>
+         *
+         * @param maxBackReferenceLength maximal length of a
+         * back-reference found. A value smaller than
+         * <code>minBackReferenceLength</code> is interpreted as
+         * <code>minBackReferenceLength</code>. <code>maxBackReferenceLength</code>
+         * is capped at <code>windowSize - 1</code>.
+         */
+        public Builder withMaxBackReferenceLength(int maxBackReferenceLength) {
+            this.maxBackReferenceLength = maxBackReferenceLength < minBackReferenceLength ? minBackReferenceLength
+                : Math.min(maxBackReferenceLength, windowSize - 1);
+            return this;
+        }
+
+        /**
+         * Sets the maximal offset of a back-reference.
+         *
+         * <p>It is recommended to not use this method directly but
+         * rather tune a pre-configured builder created by a format
+         * specific factory like {@link
+         * org.apache.commons.compress.compressors.snappy.SnappyCompressorOutputStream#createParameterBuilder}.</p>
+         *
+         * @param maxOffset maximal offset of a back-reference. A
+         * non-positive value as well as values bigger than
+         * <code>windowSize - 1</code> are interpreted as <code>windowSize
+         * - 1</code>.
+         */
+        public Builder withMaxOffset(int maxOffset) {
+            this.maxOffset = maxOffset < 1 ? windowSize - 1 : Math.min(maxOffset, windowSize - 1);
+            return this;
+        }
+
+        /**
+         * Sets the maximal length of a literal block.
+         *
+         * <p>It is recommended to not use this method directly but
+         * rather tune a pre-configured builder created by a format
+         * specific factory like {@link
+         * org.apache.commons.compress.compressors.snappy.SnappyCompressorOutputStream#createParameterBuilder}.</p>
+         *
+         * @param maxLiteralLength maximal length of a literal
+         * block. Negative numbers and 0 as well as values bigger than
+         * <code>windowSize</code> are interpreted as
+         * <code>windowSize</code>.
+         */
+        public Builder withMaxLiteralLength(int maxLiteralLength) {
+            this.maxLiteralLength = maxLiteralLength < 1 ? windowSize
+                : Math.min(maxLiteralLength, windowSize);
+            return this;
+        }
+
+        /**
+         * Creates the {@link Parameters} instance.
+         * @return the configured {@link Parameters} instance.
+         */
+        public Parameters build() {
+            return new Parameters(windowSize, minBackReferenceLength, maxBackReferenceLength,
+                maxOffset, maxLiteralLength);
+        }
+    }
+
+    private final int windowSize, minBackReferenceLength, maxBackReferenceLength, maxOffset, maxLiteralLength;
+
+    private Parameters(int windowSize, int minBackReferenceLength, int maxBackReferenceLength, int maxOffset,
+        int maxLiteralLength) {
         this.windowSize = windowSize;
-        int limit = windowSize - 1;
-        this.maxOffset = maxOffset < 1 ? limit : Math.min(maxOffset, limit);
-        this.maxMatchLength = maxMatchLength < this.minMatchLength ? limit
-            : Math.min(maxMatchLength, limit);
-        this.maxLiteralLength = maxLiteralLength < 1 ? windowSize
-            : Math.min(maxLiteralLength, windowSize);
+        this.minBackReferenceLength = minBackReferenceLength;
+        this.maxBackReferenceLength = maxBackReferenceLength;
+        this.maxOffset = maxOffset;
+        this.maxLiteralLength = maxLiteralLength;
     }
 
     /**
@@ -90,22 +179,22 @@ public final class Parameters {
         return windowSize;
     }
     /**
-     * Gets the minimal length of a match found.
-     * @return the minimal length of a match found
+     * Gets the minimal length of a back-reference found.
+     * @return the minimal length of a back-reference found
      */
-    public int getMinMatchLength() {
-        return minMatchLength;
+    public int getMinBackReferenceLength() {
+        return minBackReferenceLength;
     }
     /**
-     * Gets the maximal length of a match found.
-     * @return the maximal length of a match found
+     * Gets the maximal length of a back-reference found.
+     * @return the maximal length of a back-reference found
      */
-    public int getMaxMatchLength() {
-        return maxMatchLength;
+    public int getMaxBackReferenceLength() {
+        return maxBackReferenceLength;
     }
     /**
-     * Gets the maximal offset of a match found.
-     * @return the maximal offset of a match found
+     * Gets the maximal offset of a back-reference found.
+     * @return the maximal offset of a back-reference found
      */
     public int getMaxOffset() {
         return maxOffset;

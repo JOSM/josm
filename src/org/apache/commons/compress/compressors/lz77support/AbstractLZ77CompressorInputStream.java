@@ -31,7 +31,44 @@ import org.apache.commons.compress.utils.IOUtils;
  *
  * <p>Assumes the stream consists of blocks of literal data and
  * back-references (called copies) in any order. Of course the first
- * block must be a literal block for the scheme to work.</p>
+ * block must be a literal block for the scheme to work - unless the
+ * {@link #prefill prefill} method has been used to provide initial
+ * data that is never returned by {@link #read read} but only used for
+ * back-references.</p>
+ *
+ * <p>Subclasses must override the three-arg {@link #read read} method
+ * as the no-arg version delegates to it and the default
+ * implementation delegates to the no-arg version, leading to infinite
+ * mutual recursion and a {@code StackOverflowError} otherwise.</p>
+ *
+ * <p>The contract for subclasses' {@code read} implementation is:</p>
+ * <ul>
+ *
+ *  <li>keep track of the current state of the stream. Is it inside a
+ *  literal block or a back-reference or in-between blocks?</li>
+ *
+ *  <li>Use {@link #readOneByte} to access the underlying stream
+ *  directly.</li>
+ *
+ *  <li>If a new literal block starts, use {@link #startLiteral} to
+ *  tell this class about it and read the literal data using {@link
+ *  #readLiteral} until it returns {@code 0}. {@link
+ *  #hasMoreDataInBlock} will return {@code false} before the next
+ *  call to {@link #readLiteral} would return {@code 0}.</li>
+ *
+ *  <li>If a new back-reference starts, use {@link #startBackReference} to
+ *  tell this class about it and read the literal data using {@link
+ *  #readBackReference} until it returns {@code 0}. {@link
+ *  #hasMoreDataInBlock} will return {@code false} before the next
+ *  call to {@link #readBackReference} would return {@code 0}.</li>
+ *
+ *  <li>If the end of the stream has been reached, return {@code -1}
+ *  as this class' methods will never do so themselves.</li>
+ *
+ * </ul>
+ *
+ * <p>{@link #readOneByte} and {@link #readLiteral} update the counter
+ * for bytes read.</p>
  *
  * @since 1.14
  */
@@ -40,10 +77,17 @@ public abstract class AbstractLZ77CompressorInputStream extends CompressorInputS
     /** Size of the window - must be bigger than the biggest offset expected. */
     private final int windowSize;
 
-    /** Buffer to write decompressed bytes to for back-references */
+    /**
+     * Buffer to write decompressed bytes to for back-references, will
+     * be three times windowSize big.
+     *
+     * <p>Three times so we can slide the whole buffer a windowSize to
+     * the left once we've read twice windowSize and still have enough
+     * data inside of it to satisfy back-references.</p>
+     */
     private final byte[] buf;
 
-    /** One behind the index of the last byte in the buffer that was written */
+    /** One behind the index of the last byte in the buffer that was written, i.e. the next position to write to */
     private int writeIndex;
 
     /** Index of the next byte to be read. */
@@ -120,6 +164,29 @@ public abstract class AbstractLZ77CompressorInputStream extends CompressorInputS
     }
 
     /**
+     * Adds some initial data to fill the window with.
+     *
+     * <p>This is used if the stream has been cut into blocks and
+     * back-references of one block may refer to data of the previous
+     * block(s). One such example is the LZ4 frame format using block
+     * dependency.</p>
+     *
+     * @param data the data to fill the window with.
+     * @throws IllegalStateException if the stream has already started to read data
+     */
+    public void prefill(byte[] data) {
+        if (writeIndex != 0) {
+            throw new IllegalStateException("the stream has already been read from, can't prefill anymore");
+        }
+        // we don't need more data than the big offset could refer to, so cap it
+        int len = Math.min(windowSize, data.length);
+        // we need the last data as we are dealing with *back*-references
+        System.arraycopy(data, data.length - len, buf, 0, len);
+        writeIndex += len;
+        readIndex += len;
+    }
+
+    /**
      * Used by subclasses to signal the next block contains the given
      * amount of literal data.
      * @param length the length of the block
@@ -156,8 +223,9 @@ public abstract class AbstractLZ77CompressorInputStream extends CompressorInputS
     }
 
     private void tryToReadLiteral(int bytesToRead) throws IOException {
-        final int reallyTryToRead = (int) Math.min(Math.min(bytesToRead, bytesRemaining),
-                                                   buf.length - writeIndex);
+        // min of "what is still inside the literal", "what does the user want" and "how muc can fit into the buffer"
+        final int reallyTryToRead = Math.min((int) Math.min(bytesToRead, bytesRemaining),
+                                             buf.length - writeIndex);
         final int bytesRead = reallyTryToRead > 0
             ? IOUtils.readFully(in, buf, writeIndex, reallyTryToRead)
             : 0 /* happens for bytesRemaining == 0 */;
@@ -190,7 +258,7 @@ public abstract class AbstractLZ77CompressorInputStream extends CompressorInputS
 
     /**
      * Used by subclasses to signal the next block contains a back-reference with the given coordinates.
-     * @param the offset of the back-reference
+     * @param offset the offset of the back-reference
      * @param length the length of the back-reference
      */
     protected final void startBackReference(int offset, long length) {
@@ -217,8 +285,8 @@ public abstract class AbstractLZ77CompressorInputStream extends CompressorInputS
     private void tryToCopy(int bytesToCopy) {
         // this will fit into the buffer without sliding and not
         // require more than is available inside the back-reference
-        int copy = (int) Math.min(Math.min(bytesToCopy, bytesRemaining),
-                                  buf.length - writeIndex);
+        int copy = Math.min((int) Math.min(bytesToCopy, bytesRemaining),
+                            buf.length - writeIndex);
         if (copy == 0) {
             // NOP
         } else if (backReferenceOffset == 1) { // pretty common special case
@@ -229,6 +297,9 @@ public abstract class AbstractLZ77CompressorInputStream extends CompressorInputS
             System.arraycopy(buf, writeIndex - backReferenceOffset, buf, writeIndex, copy);
             writeIndex += copy;
         } else {
+            // back-reference overlaps with the bytes created from it
+            // like go back two bytes and then copy six (by copying
+            // the last two bytes three time).
             final int fullRots = copy / backReferenceOffset;
             for (int i = 0; i < fullRots; i++) {
                 System.arraycopy(buf, writeIndex - backReferenceOffset, buf, writeIndex, backReferenceOffset);

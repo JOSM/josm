@@ -130,6 +130,22 @@ public abstract class JCS
     }
 
     /**
+     * Shut down the cache manager and set the instance to null
+     */
+    public static void shutdown()
+    {
+        synchronized ( JCS.class )
+        {
+            if ( cacheMgr != null && cacheMgr.isInitialized())
+            {
+            	cacheMgr.shutDown();
+            }
+
+            cacheMgr = null;
+        }
+    }
+
+    /**
      * Helper method which checks to make sure the cacheMgr class field is set, and if not requests
      * an instance from CacheManagerFactory.
      *

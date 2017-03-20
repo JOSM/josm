@@ -82,7 +82,7 @@ public class SnappyCompressorOutputStream extends CompressorOutputStream {
      */
     public SnappyCompressorOutputStream(final OutputStream os, final long uncompressedSize, final int blockSize)
         throws IOException {
-        this(os, uncompressedSize, createParams(blockSize));
+        this(os, uncompressedSize, createParameterBuilder(blockSize).build());
     }
 
     /**
@@ -262,11 +262,18 @@ public class SnappyCompressorOutputStream extends CompressorOutputStream {
     // Snappy stores the match length in six bits of the tag
     private static final int MAX_MATCH_LENGTH = 64;
 
-    // package private for tests
-    static Parameters createParams(int blockSize) {
+    /**
+     * Returns a builder correctly configured for the Snappy algorithm using the gven block size.
+     * @param blockSize the block size.
+     */
+    public static Parameters.Builder createParameterBuilder(int blockSize) {
         // the max offset and max literal length defined by the format
         // are 2^32 - 1 and 2^32 respectively - with blockSize being
         // an integer we will never exceed that
-        return new Parameters(blockSize, MIN_MATCH_LENGTH, MAX_MATCH_LENGTH, blockSize, blockSize);
+        return Parameters.builder(blockSize)
+            .withMinBackReferenceLength(MIN_MATCH_LENGTH)
+            .withMaxBackReferenceLength(MAX_MATCH_LENGTH)
+            .withMaxOffset(blockSize)
+            .withMaxLiteralLength(blockSize);
     }
 }

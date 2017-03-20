@@ -26,8 +26,12 @@ package org.apache.commons.compress.compressors.bzip2;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteOrder;
+import java.util.Arrays;
 
 import org.apache.commons.compress.compressors.CompressorInputStream;
+import org.apache.commons.compress.utils.BitInputStream;
+import org.apache.commons.compress.utils.CloseShieldFilterInputStream;
 
 /**
  * An input stream that decompresses from the BZip2 format to be read as any other stream.
@@ -55,13 +59,11 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
 
     private boolean blockRandomised;
 
-    private int bsBuff;
-    private int bsLive;
     private final CRC crc = new CRC();
 
     private int nInUse;
 
-    private InputStream in;
+    private BitInputStream bin;
     private final boolean decompressConcatenated;
 
     private static final int EOF = 0;
@@ -125,7 +127,8 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
      *             if {@code in == null}, the stream content is malformed, or an I/O error occurs.
      */
     public BZip2CompressorInputStream(final InputStream in, final boolean decompressConcatenated) throws IOException {
-        this.in = in;
+        this.bin = new BitInputStream(in == System.in ? new CloseShieldFilterInputStream(in) : in,
+            ByteOrder.BIG_ENDIAN);
         this.decompressConcatenated = decompressConcatenated;
 
         init(true);
@@ -134,7 +137,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
 
     @Override
     public int read() throws IOException {
-        if (this.in != null) {
+        if (this.bin != null) {
             final int r = read0();
             count(r < 0 ? -1 : 1);
             return r;
@@ -160,7 +163,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
             throw new IndexOutOfBoundsException("offs(" + offs + ") + len("
                                                 + len + ") > dest.length(" + dest.length + ").");
         }
-        if (this.in == null) {
+        if (this.bin == null) {
             throw new IOException("stream closed");
         }
         if (len == 0) {
@@ -225,17 +228,26 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         }
     }
 
+    private int readNextByte(BitInputStream in) throws IOException {
+        long b = in.readBits(8);
+        return (int) b;
+    }
+
     private boolean init(final boolean isFirstStream) throws IOException {
-        if (null == in) {
+        if (null == bin) {
             throw new IOException("No InputStream");
         }
 
-        final int magic0 = this.in.read();
+        if (!isFirstStream) {
+            bin.clearBitCache();
+        }
+
+        final int magic0 = readNextByte(this.bin);
         if (magic0 == -1 && !isFirstStream) {
             return false;
         }
-        final int magic1 = this.in.read();
-        final int magic2 = this.in.read();
+        final int magic1 = readNextByte(this.bin);
+        final int magic2 = readNextByte(this.bin);
 
         if (magic0 != 'B' || magic1 != 'Z' || magic2 != 'h') {
             throw new IOException(isFirstStream
@@ -243,20 +255,20 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
                     : "Garbage after a valid BZip2 stream");
         }
 
-        final int blockSize = this.in.read();
+        final int blockSize = readNextByte(this.bin);
         if ((blockSize < '1') || (blockSize > '9')) {
             throw new IOException("BZip2 block size is invalid");
         }
 
         this.blockSize100k = blockSize - '0';
 
-        this.bsLive = 0;
         this.computedCombinedCRC = 0;
 
         return true;
     }
 
     private void initBlock() throws IOException {
+        BitInputStream bin = this.bin;
         char magic0;
         char magic1;
         char magic2;
@@ -266,12 +278,12 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
 
         while (true) {
             // Get the block magic bytes.
-            magic0 = bsGetUByte();
-            magic1 = bsGetUByte();
-            magic2 = bsGetUByte();
-            magic3 = bsGetUByte();
-            magic4 = bsGetUByte();
-            magic5 = bsGetUByte();
+            magic0 = bsGetUByte(bin);
+            magic1 = bsGetUByte(bin);
+            magic2 = bsGetUByte(bin);
+            magic3 = bsGetUByte(bin);
+            magic4 = bsGetUByte(bin);
+            magic5 = bsGetUByte(bin);
 
             // If isn't end of stream magic, break out of the loop.
             if (magic0 != 0x17 || magic1 != 0x72 || magic2 != 0x45
@@ -297,8 +309,8 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
             this.currentState = EOF;
             throw new IOException("bad block header");
         }
-        this.storedBlockCRC = bsGetInt();
-        this.blockRandomised = bsR(1) == 1;
+        this.storedBlockCRC = bsGetInt(bin);
+        this.blockRandomised = bsR(bin, 1) == 1;
 
         /**
          * Allocate data here instead in constructor, so we do not allocate
@@ -335,7 +347,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
     }
 
     private boolean complete() throws IOException {
-        this.storedCombinedCRC = bsGetInt();
+        this.storedCombinedCRC = bsGetInt(bin);
         this.currentState = EOF;
         this.data = null;
 
@@ -350,53 +362,41 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
 
     @Override
     public void close() throws IOException {
-        final InputStream inShadow = this.in;
+        final BitInputStream inShadow = this.bin;
         if (inShadow != null) {
             try {
-                if (inShadow != System.in) {
-                    inShadow.close();
-                }
+                inShadow.close();
             } finally {
                 this.data = null;
-                this.in = null;
+                this.bin = null;
             }
         }
     }
 
-    private int bsR(final int n) throws IOException {
-        int bsLiveShadow = this.bsLive;
-        int bsBuffShadow = this.bsBuff;
-
-        if (bsLiveShadow < n) {
-            final InputStream inShadow = this.in;
-            do {
-                final int thech = inShadow.read();
-
-                if (thech < 0) {
-                    throw new IOException("unexpected end of stream");
-                }
-
-                bsBuffShadow = (bsBuffShadow << 8) | thech;
-                bsLiveShadow += 8;
-            } while (bsLiveShadow < n);
-
-            this.bsBuff = bsBuffShadow;
+    /**
+     * read bits from the input stream
+     * @param n the number of bits to read, must not exceed 32?
+     * @return
+     * @throws IOException
+     */
+    private static int bsR(BitInputStream bin, final int n) throws IOException {
+        long thech = bin.readBits(n);
+        if (thech < 0) {
+            throw new IOException("unexpected end of stream");
         }
-
-        this.bsLive = bsLiveShadow - n;
-        return (bsBuffShadow >> (bsLiveShadow - n)) & ((1 << n) - 1);
+        return (int) thech;
     }
 
-    private boolean bsGetBit() throws IOException {
-        return bsR(1) != 0;
+    private static boolean bsGetBit(BitInputStream bin) throws IOException {
+        return bsR(bin, 1) != 0;
     }
 
-    private char bsGetUByte() throws IOException {
-        return (char) bsR(8);
+    private static char bsGetUByte(BitInputStream bin) throws IOException {
+        return (char) bsR(bin, 8);
     }
 
-    private int bsGetInt() throws IOException {
-        return (((((bsR(8) << 8) | bsR(8)) << 8) | bsR(8)) << 8) | bsR(8);
+    private static int bsGetInt(BitInputStream bin) throws IOException {
+        return (int) bsR(bin, 32);
     }
 
     /**
@@ -441,6 +441,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
     }
 
     private void recvDecodingTables() throws IOException {
+        final BitInputStream bin = this.bin;
         final Data dataShadow = this.data;
         final boolean[] inUse = dataShadow.inUse;
         final byte[] pos = dataShadow.recvDecodingTables_pos;
@@ -451,20 +452,17 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
 
         /* Receive the mapping table */
         for (int i = 0; i < 16; i++) {
-            if (bsGetBit()) {
+            if (bsGetBit(bin)) {
                 inUse16 |= 1 << i;
             }
         }
 
-        for (int i = 256; --i >= 0;) {
-            inUse[i] = false;
-        }
-
+        Arrays.fill(inUse, false);
         for (int i = 0; i < 16; i++) {
             if ((inUse16 & (1 << i)) != 0) {
                 final int i16 = i << 4;
                 for (int j = 0; j < 16; j++) {
-                    if (bsGetBit()) {
+                    if (bsGetBit(bin)) {
                         inUse[i16 + j] = true;
                     }
                 }
@@ -473,14 +471,13 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
 
         makeMaps();
         final int alphaSize = this.nInUse + 2;
-
         /* Now the selectors */
-        final int nGroups = bsR(3);
-        final int nSelectors = bsR(15);
+        final int nGroups = bsR(bin, 3);
+        final int nSelectors = bsR(bin, 15);
 
         for (int i = 0; i < nSelectors; i++) {
             int j = 0;
-            while (bsGetBit()) {
+            while (bsGetBit(bin)) {
                 j++;
             }
             selectorMtf[i] = (byte) j;
@@ -507,11 +504,11 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
 
         /* Now the coding tables */
         for (int t = 0; t < nGroups; t++) {
-            int curr = bsR(5);
+            int curr = bsR(bin, 5);
             final char[] len_t = len[t];
             for (int i = 0; i < alphaSize; i++) {
-                while (bsGetBit()) {
-                    curr += bsGetBit() ? -1 : 1;
+                while (bsGetBit(bin)) {
+                    curr += bsGetBit(bin) ? -1 : 1;
                 }
                 len_t[i] = (char) curr;
             }
@@ -553,10 +550,10 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
     }
 
     private void getAndMoveToFrontDecode() throws IOException {
-        this.origPtr = bsR(24);
+        final BitInputStream bin = this.bin;
+        this.origPtr = bsR(bin, 24);
         recvDecodingTables();
 
-        final InputStream inShadow = this.in;
         final Data dataShadow = this.data;
         final byte[] ll8 = dataShadow.ll8;
         final int[] unzftab = dataShadow.unzftab;
@@ -583,8 +580,6 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
         int groupPos = G_SIZE - 1;
         final int eob = this.nInUse + 1;
         int nextSym = getAndMoveToFrontDecode0(0);
-        int bsBuffShadow = this.bsBuff;
-        int bsLiveShadow = this.bsLive;
         int lastShadow = -1;
         int zt = selector[groupNo] & 0xff;
         int[] base_zt = base[zt];
@@ -617,37 +612,10 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
                     }
 
                     int zn = minLens_zt;
-
-                    // Inlined:
-                    // int zvec = bsR(zn);
-                    while (bsLiveShadow < zn) {
-                        final int thech = inShadow.read();
-                        if (thech >= 0) {
-                            bsBuffShadow = (bsBuffShadow << 8) | thech;
-                            bsLiveShadow += 8;
-                            continue;
-                        }
-                        throw new IOException("unexpected end of stream");
-                    }
-                    int zvec = (bsBuffShadow >> (bsLiveShadow - zn))
-                        & ((1 << zn) - 1);
-                    bsLiveShadow -= zn;
-
-                    while (zvec > limit_zt[zn]) {
+                    int zvec = (int) bsR(bin, zn);
+                    while(zvec > limit_zt[zn]) {
                         zn++;
-                        while (bsLiveShadow < 1) {
-                            final int thech = inShadow.read();
-                            if (thech >= 0) {
-                                bsBuffShadow = (bsBuffShadow << 8) | thech;
-                                bsLiveShadow += 8;
-                                continue;
-                            }
-                            throw new IOException(
-                                                  "unexpected end of stream");
-                        }
-                        bsLiveShadow--;
-                        zvec = (zvec << 1)
-                            | ((bsBuffShadow >> bsLiveShadow) & 1);
+                        zvec = (zvec << 1) | bsR(bin, 1);
                     }
                     nextSym = perm_zt[zvec - base_zt[zn]];
                 }
@@ -698,73 +666,28 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
                 }
 
                 int zn = minLens_zt;
-
-                // Inlined:
-                // int zvec = bsR(zn);
-                while (bsLiveShadow < zn) {
-                    final int thech = inShadow.read();
-                    if (thech >= 0) {
-                        bsBuffShadow = (bsBuffShadow << 8) | thech;
-                        bsLiveShadow += 8;
-                        continue;
-                    }
-                    throw new IOException("unexpected end of stream");
-                }
-                int zvec = (bsBuffShadow >> (bsLiveShadow - zn))
-                    & ((1 << zn) - 1);
-                bsLiveShadow -= zn;
-
-                while (zvec > limit_zt[zn]) {
+                int zvec = (int) bsR(bin, zn);
+                while(zvec > limit_zt[zn]) {
                     zn++;
-                    while (bsLiveShadow < 1) {
-                        final int thech = inShadow.read();
-                        if (thech >= 0) {
-                            bsBuffShadow = (bsBuffShadow << 8) | thech;
-                            bsLiveShadow += 8;
-                            continue;
-                        }
-                        throw new IOException("unexpected end of stream");
-                    }
-                    bsLiveShadow--;
-                    zvec = (zvec << 1) | ((bsBuffShadow >> bsLiveShadow) & 1);
+                    zvec = (zvec << 1) | (int) bsR(bin, 1);
                 }
                 nextSym = perm_zt[zvec - base_zt[zn]];
             }
         }
 
         this.last = lastShadow;
-        this.bsLive = bsLiveShadow;
-        this.bsBuff = bsBuffShadow;
     }
 
     private int getAndMoveToFrontDecode0(final int groupNo) throws IOException {
-        final InputStream inShadow = this.in;
         final Data dataShadow = this.data;
         final int zt = dataShadow.selector[groupNo] & 0xff;
         final int[] limit_zt = dataShadow.limit[zt];
         int zn = dataShadow.minLens[zt];
-        int zvec = bsR(zn);
-        int bsLiveShadow = this.bsLive;
-        int bsBuffShadow = this.bsBuff;
-
+        int zvec = bsR(bin, zn);
         while (zvec > limit_zt[zn]) {
             zn++;
-            while (bsLiveShadow < 1) {
-                final int thech = inShadow.read();
-
-                if (thech >= 0) {
-                    bsBuffShadow = (bsBuffShadow << 8) | thech;
-                    bsLiveShadow += 8;
-                    continue;
-                }
-                throw new IOException("unexpected end of stream");
-            }
-            bsLiveShadow--;
-            zvec = (zvec << 1) | ((bsBuffShadow >> bsLiveShadow) & 1);
+            zvec = (zvec << 1) | (int) bsR(bin, 1);
         }
-
-        this.bsLive = bsLiveShadow;
-        this.bsBuff = bsBuffShadow;
 
         return dataShadow.perm[zt][zvec - dataShadow.base[zt][zn]];
     }
