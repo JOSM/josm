@@ -8,6 +8,8 @@ import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.styleelement.placement.PartiallyInsideAreaStrategy;
+import org.openstreetmap.josm.gui.mappaint.styleelement.placement.PositionForAreaStrategy;
 import org.openstreetmap.josm.gui.util.RotationAngle;
 
 /**
@@ -29,7 +31,7 @@ public class AreaIconElement extends StyleElement {
     /**
      * The position of the icon inside the area.
      */
-    private final PositionForAreaStrategy iconPosition = PositionForAreaStrategy.PARTIALY_INSIDE;
+    private final PositionForAreaStrategy iconPosition = PartiallyInsideAreaStrategy.INSTANCE;
 
     protected AreaIconElement(Cascade c, MapImage iconImage, RotationAngle iconImageAngle) {
         super(c, 4.8f);

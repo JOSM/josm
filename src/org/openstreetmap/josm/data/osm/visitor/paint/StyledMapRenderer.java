@@ -28,7 +28,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -40,7 +39,6 @@ import java.util.concurrent.RecursiveTask;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import javax.swing.AbstractButton;
 import javax.swing.FocusManager;
@@ -65,6 +63,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.draw.MapViewPath;
+import org.openstreetmap.josm.gui.draw.MapViewPositionAndRotation;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.StyleElementList;
@@ -75,12 +74,12 @@ import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.Horizonta
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.VerticalTextAlignment;
 import org.openstreetmap.josm.gui.mappaint.styleelement.MapImage;
 import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement;
-import org.openstreetmap.josm.gui.mappaint.styleelement.PositionForAreaStrategy;
 import org.openstreetmap.josm.gui.mappaint.styleelement.RepeatImageElement.LineImageAlignment;
 import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.Symbol;
 import org.openstreetmap.josm.gui.mappaint.styleelement.TextElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.TextLabel;
+import org.openstreetmap.josm.gui.mappaint.styleelement.placement.PositionForAreaStrategy;
 import org.openstreetmap.josm.tools.CompositeList;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.AreaAndPerimeter;
@@ -339,52 +338,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     }
 
     /**
-     * Displays text at specified position including its halo, if applicable.
-     *
-     * @param gv Text's glyphs to display. If {@code null}, use text from {@code s} instead.
-     * @param s text to display if {@code gv} is {@code null}
-     * @param x X position
-     * @param y Y position
-     * @param disabled {@code true} if element is disabled (filtered out)
-     * @param text text style to use
-     */
-    private void displayText(GlyphVector gv, String s, int x, int y, boolean disabled, TextLabel text) {
-        if (gv == null && s.isEmpty()) return;
-        if (isInactiveMode || disabled) {
-            g.setColor(inactiveColor);
-            if (gv != null) {
-                g.drawGlyphVector(gv, x, y);
-            } else {
-                g.setFont(text.font);
-                g.drawString(s, x, y);
-            }
-        } else if (text.haloRadius != null) {
-            g.setStroke(new BasicStroke(2*text.haloRadius, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
-            g.setColor(text.haloColor);
-            Shape textOutline;
-            if (gv == null) {
-                FontRenderContext frc = g.getFontRenderContext();
-                TextLayout tl = new TextLayout(s, text.font, frc);
-                textOutline = tl.getOutline(AffineTransform.getTranslateInstance(x, y));
-            } else {
-                textOutline = gv.getOutline(x, y);
-            }
-            g.draw(textOutline);
-            g.setStroke(new BasicStroke());
-            g.setColor(text.color);
-            g.fill(textOutline);
-        } else {
-            g.setColor(text.color);
-            if (gv != null) {
-                g.drawGlyphVector(gv, x, y);
-            } else {
-                g.setFont(text.font);
-                g.drawString(s, x, y);
-            }
-        }
-    }
-
-    /**
      * Worker function for drawing areas.
      *
      * @param osm the primitive
@@ -399,12 +352,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param pfClip clipping area for partial fill (only needed for unclosed
      * polygons)
      * @param disabled If this should be drawn with a special disabled style.
-     * @param text The text to write on the area.
+     * @param text Ignored. Use {@link #drawText(OsmPrimitive, TextLabel)} instead.
      */
-    protected void drawArea(OsmPrimitive osm, Path2D.Double path, Color color,
+    protected void drawArea(OsmPrimitive osm, MapViewPath path, Color color,
             MapImage fillImage, Float extent, Path2D.Double pfClip, boolean disabled, TextLabel text) {
         if (!isOutlineOnly && color.getAlpha() != 0) {
-            Shape area = path.createTransformedShape(mapState.getAffineTransform());
+            Shape area = path;
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
             if (fillImage == null) {
                 if (isInactiveMode) {
@@ -449,32 +402,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             }
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialiasing);
         }
-
-        drawAreaText(osm, text, path);
-    }
-
-    private void drawAreaText(OsmPrimitive osm, TextLabel text, Path2D.Double path) {
-        if (text != null && isShowNames() && isAreaVisible(path)) {
-            // abort if we can't compose the label to be rendered
-            if (text.labelCompositionStrategy == null) return;
-            String name = text.labelCompositionStrategy.compose(osm);
-            if (name == null || name.isEmpty()) return;
-
-            Shape area = path.createTransformedShape(mapState.getAffineTransform());
-            FontMetrics fontMetrics = g.getFontMetrics(orderFont); // if slow, use cache
-            Rectangle2D nb = fontMetrics.getStringBounds(name, g); // if slow, approximate by strlen()*maxcharbounds(font)
-
-            Rectangle2D centeredNBounds = text.getLabelPositionStrategy().findLabelPlacement(area, nb);
-            if (centeredNBounds != null) {
-                Font defaultFont = g.getFont();
-                int x = (int) (centeredNBounds.getMinX() - nb.getMinX());
-                int y = (int) (centeredNBounds.getMinY() - nb.getMinY());
-                displayText(null, name, x, y, osm.isDisabled(), text);
-                g.setFont(defaultFont);
-            } else if (Main.isTraceEnabled()) {
-                Main.trace("Couldn't find a correct label placement for "+osm+" / "+name);
-            }
-        }
     }
 
     /**
@@ -494,7 +421,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, r);
         if (!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
             for (PolyData pd : multipolygon.getCombinedPolygons()) {
-                Path2D.Double p = pd.get();
+                MapViewPath p = new MapViewPath(mapState);
+                p.appendFromEastNorth(pd.get());
+                p.setWindingRule(Path2D.WIND_EVEN_ODD);
                 Path2D.Double pfClip = null;
                 if (!isAreaVisible(p)) {
                     continue;
@@ -573,8 +502,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         Font defaultFont = g.getFont();
         g.setFont(text.font);
 
-        int x = (int) (Math.round(p.getInViewX()) + text.xOffset);
-        int y = (int) (Math.round(p.getInViewY()) + text.yOffset);
+        FontRenderContext frc = g.getFontRenderContext();
+        Rectangle2D bounds = text.font.getStringBounds(s, frc);
+
+        double x = Math.round(p.getInViewX()) + text.xOffset + bounds.getCenterX();
+        double y = Math.round(p.getInViewY()) + text.yOffset + bounds.getCenterY();
         /**
          *
          *       left-above __center-above___ right-above
@@ -590,8 +522,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         if (bs.hAlign == HorizontalTextAlignment.RIGHT) {
             x += box.x + box.width + 2;
         } else {
-            FontRenderContext frc = g.getFontRenderContext();
-            Rectangle2D bounds = text.font.getStringBounds(s, frc);
             int textWidth = (int) bounds.getWidth();
             if (bs.hAlign == HorizontalTextAlignment.CENTER) {
                 x -= textWidth / 2;
@@ -603,7 +533,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         if (bs.vAlign == VerticalTextAlignment.BOTTOM) {
             y += box.y + box.height;
         } else {
-            FontRenderContext frc = g.getFontRenderContext();
             LineMetrics metrics = text.font.getLineMetrics(s, frc);
             if (bs.vAlign == VerticalTextAlignment.ABOVE) {
                 y -= -box.y + (int) metrics.getDescent();
@@ -615,7 +544,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 y += box.y + box.height + (int) metrics.getAscent() + 2;
             } else throw new AssertionError();
         }
-        displayText(null, s, x, y, n.isDisabled(), text);
+
+        displayText(n, text, s, bounds, new MapViewPositionAndRotation(mapState.getForView(x, y), 0));
         g.setFont(defaultFont);
     }
 
@@ -756,13 +686,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         Rectangle2D.Double iconRect = new Rectangle2D.Double(-img.getWidth() / 2.0, -img.getHeight() / 2.0, img.getWidth(), img.getHeight());
 
         forEachPolygon(osm, path -> {
-            Shape area = path.createTransformedShape(mapState.getAffineTransform());
-            Rectangle2D placement = iconPosition.findLabelPlacement(area, iconRect);
+            MapViewPositionAndRotation placement = iconPosition.findLabelPlacement(path, iconRect);
             if (placement == null) {
                 return;
             }
-            MapViewPoint p = mapState.getForView(placement.getCenterX(), placement.getCenterY());
-            drawIcon(p, img, disabled, selected, member, theta, (g, r) -> {
+            MapViewPoint p = placement.getPoint();
+            drawIcon(p, img, disabled, selected, member, theta + placement.getRotation(), (g, r) -> {
                 if (useStrokes) {
                     g.setStroke(new BasicStroke(2));
                 }
@@ -1070,57 +999,88 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     }
 
     /**
-     * A half segment that can be used to place text on it. Used in the drawTextOnPath algorithm.
-     * @author Michael Zangl
-     */
-    private static class HalfSegment {
-        /**
-         * start point of half segment (as length along the way)
-         */
-        final double start;
-        /**
-         * end point of half segment (as length along the way)
-         */
-        final double end;
-        /**
-         * quality factor (off screen / partly on screen / fully on screen)
-         */
-        final double quality;
-
-        /**
-         * Create a new half segment
-         * @param start The start along the way
-         * @param end The end of the segment
-         * @param quality A quality factor.
-         */
-        HalfSegment(double start, double end, double quality) {
-            super();
-            this.start = start;
-            this.end = end;
-            this.quality = quality;
-        }
-
-        @Override
-        public String toString() {
-            return "HalfSegment [start=" + start + ", end=" + end + ", quality=" + quality + "]";
-        }
-    }
-
-    /**
      * Draws a text for the given primitive
      * @param osm The primitive to draw the text for
      * @param text The text definition (font/position/.../text content) to draw.
      * @since 11722
      */
     public void drawText(OsmPrimitive osm, TextLabel text) {
-        PositionForAreaStrategy position = text.getLabelPositionStrategy();
-        if (position.supportsGlyphVector()) {
-            if (osm instanceof Way) {
-                // we might allow this for the outline of relations as well.
-                drawTextOnPath((Way) osm, text);
+        if (!isShowNames()) {
+            return;
+        }
+        String name = text.getString(osm);
+        if (name == null || name.isEmpty()) {
+            return;
+        }
+
+        FontMetrics fontMetrics = g.getFontMetrics(text.font); // if slow, use cache
+        Rectangle2D nb = fontMetrics.getStringBounds(name, g); // if slow, approximate by strlen()*maxcharbounds(font)
+
+        Font defaultFont = g.getFont();
+        forEachPolygon(osm, path -> {
+            //TODO: Ignore areas that are out of bounds.
+            PositionForAreaStrategy position = text.getLabelPositionStrategy();
+            MapViewPositionAndRotation center = text.getLabelPositionStrategy().findLabelPlacement(path, nb);
+            if (center != null) {
+                displayText(osm, text, name, nb, center);
+            } else if (position.supportsGlyphVector()) {
+                List<GlyphVector> gvs = Utils.getGlyphVectorsBidi(name, text.font, g.getFontRenderContext());
+
+                List<GlyphVector> translatedGvs = position.generateGlyphVectors(path, nb, gvs, isGlyphVectorDoubleTranslationBug(text.font));
+                displayText(() -> translatedGvs.forEach(gv -> g.drawGlyphVector(gv, 0, 0)),
+                        () -> translatedGvs.stream().collect(
+                        		() -> new Path2D.Double(),
+                        		(p, gv) -> p.append(gv.getOutline(0, 0), false),
+                        		(p1, p2) -> p1.append(p2, false)),
+                        osm.isDisabled(), text);
+            } else if (Main.isTraceEnabled()) {
+                Main.trace("Couldn't find a correct label placement for " + osm + " / " + name);
             }
+        });
+        g.setFont(defaultFont);
+    }
+
+    private void displayText(OsmPrimitive osm, TextLabel text, String name, Rectangle2D nb,
+            MapViewPositionAndRotation center) {
+        AffineTransform at = AffineTransform.getTranslateInstance(center.getPoint().getInViewX(), center.getPoint().getInViewY());
+        at.rotate(center.getRotation());
+        at.translate(-nb.getCenterX(), -nb.getCenterY());
+        displayText(() -> {
+            AffineTransform defaultTransform = g.getTransform();
+            g.setTransform(at);
+            g.setFont(text.font);
+            g.drawString(name, 0, 0);
+            g.setTransform(defaultTransform);
+        }, () -> {
+            FontRenderContext frc = g.getFontRenderContext();
+            TextLayout tl = new TextLayout(name, text.font, frc);
+            return tl.getOutline(at);
+        }, osm.isDisabled(), text);
+    }
+
+    /**
+     * Displays text at specified position including its halo, if applicable.
+     *
+     * @param fill The function that fills the text
+     * @param outline The function to draw the outline
+     * @param disabled {@code true} if element is disabled (filtered out)
+     * @param text text style to use
+     */
+    private void displayText(Runnable fill, Supplier<Shape> outline, boolean disabled, TextLabel text) {
+        if (isInactiveMode || disabled) {
+            g.setColor(inactiveColor);
+            fill.run();
+        } else if (text.haloRadius != null) {
+            g.setStroke(new BasicStroke(2*text.haloRadius, BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND));
+            g.setColor(text.haloColor);
+            Shape textOutline = outline.get();
+            g.draw(textOutline);
+            g.setStroke(new BasicStroke());
+            g.setColor(text.color);
+            g.fill(textOutline);
         } else {
-            forEachPolygon(osm, path -> drawAreaText(osm, text, path));
+            g.setColor(text.color);
+            fill.run();
         }
     }
 
@@ -1129,14 +1089,16 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param osm A way or a multipolygon
      * @param consumer The consumer to call.
      */
-    private void forEachPolygon(OsmPrimitive osm, Consumer<Path2D.Double> consumer) {
+    private void forEachPolygon(OsmPrimitive osm, Consumer<MapViewPath> consumer) {
         if (osm instanceof Way) {
             consumer.accept(getPath((Way) osm));
         } else if (osm instanceof Relation) {
             Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, (Relation) osm);
             if (!multipolygon.getOuterWays().isEmpty()) {
                 for (PolyData pd : multipolygon.getCombinedPolygons()) {
-                    consumer.accept(pd.get());
+                    MapViewPath path = new MapViewPath(mapState);
+                    path.appendFromEastNorth(pd.get());
+                    consumer.accept(path);
                 }
             }
         }
@@ -1146,148 +1108,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * Draws a text along a given way.
      * @param way The way to draw the text on.
      * @param text The text definition (font/.../text content) to draw.
+     * @deprecated Use {@link #drawText(OsmPrimitive, TextLabel)} instead.
      */
+    @Deprecated
     public void drawTextOnPath(Way way, TextLabel text) {
-        if (way == null || text == null)
-            return;
-        String name = text.getString(way);
-        if (name == null || name.isEmpty())
-            return;
-
-        FontMetrics fontMetrics = g.getFontMetrics(text.font);
-        Rectangle2D rec = fontMetrics.getStringBounds(name, g);
-
-        Rectangle bounds = g.getClipBounds();
-
-        List<MapViewPoint> points = way.getNodes().stream().map(mapState::getPointFor).collect(Collectors.toList());
-
-        // find half segments that are long enough to draw text on (don't draw text over the cross hair in the center of each segment)
-        List<HalfSegment> longHalfSegment = new ArrayList<>();
-
-        double pathLength = computePath(2 * (rec.getWidth() + 4), bounds, points, longHalfSegment);
-
-        if (rec.getWidth() > pathLength)
-            return;
-
-        double t1, t2;
-
-        if (!longHalfSegment.isEmpty()) {
-            // find the segment with the best quality. If there are several with best quality, the one close to the center is prefered.
-            Optional<HalfSegment> besto = longHalfSegment.stream().max(
-                    Comparator.comparingDouble(segment ->
-                        segment.quality - 1e-5 * Math.abs(0.5 * (segment.end + segment.start) - 0.5 * pathLength)
-                    ));
-            if (!besto.isPresent())
-                throw new IllegalStateException("Unable to find the segment with the best quality for " + way);
-            HalfSegment best = besto.get();
-            double remaining = best.end - best.start - rec.getWidth(); // total space left and right from the text
-            // The space left and right of the text should be distributed 20% - 80% (towards the center),
-            // but the smaller space should not be less than 7 px.
-            // However, if the total remaining space is less than 14 px, then distribute it evenly.
-            double smallerSpace = Math.min(Math.max(0.2 * remaining, 7), 0.5 * remaining);
-            if ((best.end + best.start)/2 < pathLength/2) {
-                t2 = best.end - smallerSpace;
-                t1 = t2 - rec.getWidth();
-            } else {
-                t1 = best.start + smallerSpace;
-                t2 = t1 + rec.getWidth();
-            }
-        } else {
-            // doesn't fit into one half-segment -> just put it in the center of the way
-            t1 = pathLength/2 - rec.getWidth()/2;
-            t2 = pathLength/2 + rec.getWidth()/2;
-        }
-        t1 /= pathLength;
-        t2 /= pathLength;
-
-        double[] p1 = pointAt(t1, points, pathLength);
-        double[] p2 = pointAt(t2, points, pathLength);
-
-        if (p1 == null || p2 == null)
-            return;
-
-        double angleOffset;
-        double offsetSign;
-        double tStart;
-
-        if (p1[0] < p2[0] &&
-                p1[2] < Math.PI/2 &&
-                p1[2] > -Math.PI/2) {
-            angleOffset = 0;
-            offsetSign = 1;
-            tStart = t1;
-        } else {
-            angleOffset = Math.PI;
-            offsetSign = -1;
-            tStart = t2;
-        }
-
-        List<GlyphVector> gvs = Utils.getGlyphVectorsBidi(name, text.font, g.getFontRenderContext());
-        double gvOffset = 0;
-        for (GlyphVector gv : gvs) {
-            double gvWidth = gv.getLogicalBounds().getBounds2D().getWidth();
-            for (int i = 0; i < gv.getNumGlyphs(); ++i) {
-                Rectangle2D rect = gv.getGlyphLogicalBounds(i).getBounds2D();
-                double t = tStart + offsetSign * (gvOffset + rect.getX() + rect.getWidth()/2) / pathLength;
-                double[] p = pointAt(t, points, pathLength);
-                if (p != null) {
-                    AffineTransform trfm = AffineTransform.getTranslateInstance(p[0] - rect.getX(), p[1]);
-                    trfm.rotate(p[2]+angleOffset);
-                    double off = -rect.getY() - rect.getHeight()/2 + text.yOffset;
-                    trfm.translate(-rect.getWidth()/2, off);
-                    if (isGlyphVectorDoubleTranslationBug(text.font)) {
-                        // scale the translation components by one half
-                        AffineTransform tmp = AffineTransform.getTranslateInstance(-0.5 * trfm.getTranslateX(), -0.5 * trfm.getTranslateY());
-                        tmp.concatenate(trfm);
-                        trfm = tmp;
-                    }
-                    gv.setGlyphTransform(i, trfm);
-                }
-            }
-            displayText(gv, null, 0, 0, way.isDisabled(), text);
-            gvOffset += gvWidth;
-        }
-    }
-
-    private static double computePath(double minSegmentLength, Rectangle bounds, List<MapViewPoint> points,
-            List<HalfSegment> longHalfSegment) {
-        MapViewPoint lastPoint = points.get(0);
-        double pathLength = 0;
-        for (MapViewPoint p : points.subList(1, points.size())) {
-            double segmentLength = p.distanceToInView(lastPoint);
-            if (segmentLength > minSegmentLength) {
-                Point2D center = new Point2D.Double((lastPoint.getInViewX() + p.getInViewX())/2, (lastPoint.getInViewY() + p.getInViewY())/2);
-                double q = computeQuality(bounds, lastPoint, center);
-                // prefer the first one for quality equality.
-                longHalfSegment.add(new HalfSegment(pathLength, pathLength + segmentLength / 2, q));
-
-                q = 0;
-                if (bounds != null) {
-                    if (bounds.contains(center) && bounds.contains(p.getInView())) {
-                        q = 2;
-                    } else if (bounds.contains(center) || bounds.contains(p.getInView())) {
-                        q = 1;
-                    }
-                }
-                longHalfSegment.add(new HalfSegment(pathLength + segmentLength / 2, pathLength + segmentLength, q));
-            }
-            pathLength += segmentLength;
-            lastPoint = p;
-        }
-        return pathLength;
-    }
-
-    private static double computeQuality(Rectangle bounds, MapViewPoint p1, Point2D p2) {
-        double q = 0;
-        if (bounds != null) {
-            if (bounds.contains(p1.getInView())) {
-                q += 1;
-            }
-            if (bounds.contains(p2)) {
-                q += 1;
-            }
-        }
-        return q;
+        // NOP.
     }
 
     /**
@@ -1483,22 +1308,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         highlightStep = Main.pref.getInteger("mappaint.highlight.step", 4);
     }
 
-    private static Path2D.Double getPath(Way w) {
-        Path2D.Double path = new Path2D.Double();
-        boolean initial = true;
-        for (Node n : w.getNodes()) {
-            EastNorth p = n.getEastNorth();
-            if (p != null) {
-                if (initial) {
-                    path.moveTo(p.getX(), p.getY());
-                    initial = false;
-                } else {
-                    path.lineTo(p.getX(), p.getY());
-                }
-            }
-        }
+    private MapViewPath getPath(Way w) {
+        MapViewPath path = new MapViewPath(mapState);
         if (w.isClosed()) {
-            path.closePath();
+            path.appendClosed(w.getNodes(), false);
+        } else {
+            path.append(w.getNodes(), false);
         }
         return path;
     }
@@ -1630,30 +1445,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
     public boolean isShowNames() {
         return showNames;
-    }
-
-    private static double[] pointAt(double t, List<MapViewPoint> poly, double pathLength) {
-        double totalLen = t * pathLength;
-        double curLen = 0;
-        double dx, dy;
-        double segLen;
-
-        // Yes, it is inefficient to iterate from the beginning for each glyph.
-        // Can be optimized if it turns out to be slow.
-        for (int i = 1; i < poly.size(); ++i) {
-            dx = poly.get(i).getInViewX() - poly.get(i - 1).getInViewX();
-            dy = poly.get(i).getInViewY() - poly.get(i - 1).getInViewY();
-            segLen = Math.sqrt(dx*dx + dy*dy);
-            if (totalLen > curLen + segLen) {
-                curLen += segLen;
-                continue;
-            }
-            return new double[] {
-                    poly.get(i - 1).getInViewX() + (totalLen - curLen) / segLen * dx,
-                    poly.get(i - 1).getInViewY() + (totalLen - curLen) / segLen * dy,
-                    Math.atan2(dy, dx)};
-        }
-        return null;
     }
 
     /**

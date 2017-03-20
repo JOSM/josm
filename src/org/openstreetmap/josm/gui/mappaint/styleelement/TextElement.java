@@ -10,6 +10,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
+import org.openstreetmap.josm.gui.mappaint.styleelement.placement.CompletelyInsideAreaStrategy;
 
 /**
  * The text that is drawn for a way/area. It may be drawn along the outline or onto the way.
@@ -57,7 +58,7 @@ public class TextElement extends StyleElement {
         if (text == null) {
             return null;
         }
-        return new TextElement(c, text.withPosition(PositionForAreaStrategy.INSIDE));
+        return new TextElement(c, text.withPosition(CompletelyInsideAreaStrategy.INSTANCE));
     }
 
     @Override

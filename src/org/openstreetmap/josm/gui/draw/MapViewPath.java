@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.draw;
 import java.awt.BasicStroke;
 import java.awt.Shape;
 import java.awt.Stroke;
+import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -40,6 +41,15 @@ public class MapViewPath extends MapPath2D {
      */
     public MapViewPath(MapViewState state) {
         this.state = state;
+    }
+
+    /**
+     * Gets the map view state this path is used for.
+     * @return The state.
+     * @since 11748
+     */
+    public MapViewState getMapViewState() {
+        return state;
     }
 
     /**
@@ -170,6 +180,42 @@ public class MapViewPath extends MapPath2D {
     }
 
     /**
+     * Converts a path in east/north coordinates to view space.
+     * @param path The path
+     * @since 11748
+     */
+    public void appendFromEastNorth(Path2D.Double path) {
+        new AbstractPathVisitor() {
+            @Override
+            void visitMoveTo(double x, double y) {
+                moveTo(new EastNorth(x, y));
+            }
+
+            @Override
+            void visitLineTo(double x, double y) {
+                lineTo(new EastNorth(x, y));
+            }
+
+            @Override
+            void visitClose() {
+                closePath();
+            }
+        }.visit(path);
+    }
+
+    /**
+     * Visits all segments of this path.
+     * @param consumer The consumer to send path segments to
+     * @return the total line length
+     * @since 11748
+     */
+    public double visitLine(PathSegmentConsumer consumer) {
+        LineVisitor visitor = new LineVisitor(consumer);
+        visitor.visit(this);
+        return visitor.inLineOffset;
+    }
+
+    /**
      * Compute a line that is similar to the current path expect for that parts outside the screen are skipped using moveTo commands.
      *
      * The line is computed in a way that dashes stay in their place when moving the view.
@@ -228,6 +274,14 @@ public class MapViewPath extends MapPath2D {
             .visit(this);
     }
 
+    /**
+     * Gets the length of the way in visual space.
+     * @return The length.
+     * @since 11748
+     */
+    public double getLength() {
+        return visitLine((inLineOffset, start, end, startIsOldEnd) -> { });
+    }
 
     /**
      * This class is used to visit the segments of this path.
@@ -245,15 +299,100 @@ public class MapViewPath extends MapPath2D {
          * @param startIsOldEnd If the start point equals the last end point.
          */
         void addLineBetween(double inLineOffset, MapViewPoint start, MapViewPoint end, boolean startIsOldEnd);
-
     }
 
-    private class ClampingPathVisitor {
+    private abstract static class AbstractPathVisitor {
+        /**
+         * Append a path to this one. The path is clipped to the current view.
+         * @param path The iterator
+         * @return true if adding the path was successful.
+         */
+        public boolean visit(Path2D.Double path) {
+            double[] coords = new double[8];
+            PathIterator it = path.getPathIterator(null);
+            while (!it.isDone()) {
+                int type = it.currentSegment(coords);
+                switch (type) {
+                case PathIterator.SEG_CLOSE:
+                    visitClose();
+                    break;
+                case PathIterator.SEG_LINETO:
+                    visitLineTo(coords[0], coords[1]);
+                    break;
+                case PathIterator.SEG_MOVETO:
+                    visitMoveTo(coords[0], coords[1]);
+                    break;
+                default:
+                    // cannot handle this shape - this should be very rare and not happening in OSM draw code.
+                    return false;
+                }
+                it.next();
+            }
+            return true;
+        }
+
+        abstract void visitClose();
+
+        abstract void visitMoveTo(double x, double y);
+
+        abstract void visitLineTo(double x, double y);
+    }
+
+    private abstract class AbstractMapPathVisitor extends AbstractPathVisitor {
+        private MapViewPoint lastMoveTo;
+
+        @Override
+        void visitMoveTo(double x, double y) {
+            MapViewPoint move = state.getForView(x, y);
+            lastMoveTo = move;
+            visitMoveTo(move);
+        }
+
+        abstract void visitMoveTo(MapViewPoint p);
+
+        @Override
+        void visitLineTo(double x, double y) {
+            visitLineTo(state.getForView(x, y));
+        }
+
+        abstract void visitLineTo(MapViewPoint p);
+
+        @Override
+        void visitClose() {
+            visitLineTo(lastMoveTo);
+        }
+    }
+
+    private final class LineVisitor extends AbstractMapPathVisitor {
+        private final PathSegmentConsumer consumer;
+        private MapViewPoint last;
+        private double inLineOffset = 0;
+        private boolean startIsOldEnd = false;
+
+        LineVisitor(PathSegmentConsumer consumer) {
+            this.consumer = consumer;
+        }
+
+        @Override
+        void visitMoveTo(MapViewPoint p) {
+            last = p;
+            startIsOldEnd = false;
+        }
+
+        @Override
+        void visitLineTo(MapViewPoint p) {
+            consumer.addLineBetween(inLineOffset, last, p, startIsOldEnd);
+            inLineOffset += last.distanceToInView(p);
+            last = p;
+            startIsOldEnd = true;
+        }
+    }
+
+    private class ClampingPathVisitor extends AbstractMapPathVisitor {
         private final MapViewRectangle clip;
         private final PathSegmentConsumer consumer;
         protected double strokeProgress;
         private final double strokeLength;
-        private MapViewPoint lastMoveTo;
 
         private MapViewPoint cursor;
         private boolean cursorIsActive;
@@ -272,51 +411,14 @@ public class MapViewPath extends MapPath2D {
             this.consumer = consumer;
         }
 
-        /**
-         * Append a path to this one. The path is clipped to the current view.
-         * @param mapViewPath The iterator
-         * @return true if adding the path was successful.
-         */
-        public boolean visit(MapViewPath mapViewPath) {
-            double[] coords = new double[8];
-            PathIterator it = mapViewPath.getPathIterator(null);
-            while (!it.isDone()) {
-                int type = it.currentSegment(coords);
-                switch (type) {
-                case PathIterator.SEG_CLOSE:
-                    visitClose();
-                    break;
-                case PathIterator.SEG_LINETO:
-                    visitLineTo(coords[0], coords[1]);
-                    break;
-                case PathIterator.SEG_MOVETO:
-                    visitMoveTo(coords[0], coords[1]);
-                    break;
-                default:
-                    // cannot handle this shape - this should be very rare. We let Java2D do the clipping.
-                    return false;
-                }
-                it.next();
-            }
-            return true;
-        }
-
-        void visitClose() {
-            drawLineTo(lastMoveTo);
-        }
-
-        void visitMoveTo(double x, double y) {
-            MapViewPoint point = state.getForView(x, y);
-            lastMoveTo = point;
+        @Override
+        void visitMoveTo(MapViewPoint point) {
             cursor = point;
             cursorIsActive = false;
         }
 
-        void visitLineTo(double x, double y) {
-            drawLineTo(state.getForView(x, y));
-        }
-
-        private void drawLineTo(MapViewPoint next) {
+        @Override
+        void visitLineTo(MapViewPoint next) {
             MapViewPoint entry = clip.getLineEntry(cursor, next);
             if (entry != null) {
                 MapViewPoint exit = clip.getLineEntry(next, cursor);
@@ -347,4 +449,5 @@ public class MapViewPath extends MapPath2D {
             return entry.interpolate(originalStart, offset / distance);
         }
     }
+
 }

@@ -14,7 +14,8 @@ import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy.DeriveLabelFromNameTagsCompositionStrategy;
 import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy.StaticLabelCompositionStrategy;
 import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy.TagLookupCompositionStrategy;
-import org.openstreetmap.josm.gui.mappaint.styleelement.PositionForAreaStrategy.CompletelyInsideAreaStrategy;
+import org.openstreetmap.josm.gui.mappaint.styleelement.placement.CompletelyInsideAreaStrategy;
+import org.openstreetmap.josm.gui.mappaint.styleelement.placement.PositionForAreaStrategy;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 
