@@ -609,7 +609,7 @@ public class HelpBrowser extends JDialog implements IHelpBrowser {
         public void hyperlinkUpdate(HyperlinkEvent e) {
             if (e.getEventType() != HyperlinkEvent.EventType.ACTIVATED)
                 return;
-            if (e.getURL() == null || e.getURL().toString().startsWith(url+'#')) {
+            if (e.getURL() == null || e.getURL().toExternalForm().startsWith(url+'#')) {
                 // Probably hyperlink event on a an A-element with a href consisting of a fragment only, i.e. "#ALocalFragment".
                 String fragment = getUrlFragment(e);
                 if (fragment != null) {
@@ -632,11 +632,11 @@ public class HelpBrowser extends JDialog implements IHelpBrowser {
                             null /* no help context */
                     );
                 }
-            } else if (e.getURL().toString().endsWith("action=edit")) {
-                OpenBrowser.displayUrl(e.getURL().toString());
+            } else if (e.getURL().toExternalForm().endsWith("action=edit")) {
+                OpenBrowser.displayUrl(e.getURL().toExternalForm());
             } else {
-                url = e.getURL().toString();
-                openUrl(e.getURL().toString());
+                url = e.getURL().toExternalForm();
+                openUrl(url);
             }
         }
     }

@@ -25,6 +25,10 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     public interface ProgressMonitorDialog {
         void setVisible(boolean visible);
 
+        /**
+         * Updates the progress value to the specified progress.
+         * @param progress The progress as integer. Between 0 and {@link PleaseWaitProgressMonitor#PROGRESS_BAR_MAX}
+         */
         void updateProgress(int progress);
 
         void setCustomText(String text);
@@ -37,6 +41,9 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         void appendLogMessage(String message);
     }
 
+    /**
+     * The maximum value the progress bar that displays the current progress should have.
+     */
     public static final int PROGRESS_BAR_MAX = 10_000;
     private final Component dialogParent;
 
@@ -58,7 +65,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         SwingUtilities.invokeLater(() -> {
             try {
                 runnable.run();
-            } catch (RuntimeException e) {
+            } catch (RuntimeException e) { // NOPMD
                 throw BugReport.intercept(e).put("monitor", this);
             }
         });
@@ -190,7 +197,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
             dialog.setInBackgroundCallback(inBackgroundListener);
             dialog.setCustomText("");
             dialog.addWindowListener(windowListener);
-            dialog.progress.setMaximum(PROGRESS_BAR_MAX);
+            dialog.setMaximumProgress(PROGRESS_BAR_MAX);
             dialog.setVisible(true);
         });
     }

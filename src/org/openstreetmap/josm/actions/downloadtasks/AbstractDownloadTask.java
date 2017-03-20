@@ -16,6 +16,7 @@ public abstract class AbstractDownloadTask<T> implements DownloadTask {
     private boolean canceled;
     private boolean failed;
     protected T downloadedData;
+    protected boolean zoomAfterDownload = true;
 
     /**
      * Constructs a new {@code AbstractDownloadTask}.
@@ -74,6 +75,15 @@ public abstract class AbstractDownloadTask<T> implements DownloadTask {
      */
     public final T getDownloadedData() {
         return downloadedData;
+    }
+
+    /**
+     * Sets whether the map view will zoom to download area after download
+     * @param zoomAfterDownload if true, the map view will zoom to download area after download
+     * @since 11658
+     */
+    public final void setZoomAfterDownload(boolean zoomAfterDownload) {
+        this.zoomAfterDownload = zoomAfterDownload;
     }
 
     @Override

@@ -7,6 +7,7 @@ import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.Optional;
 
 import javax.swing.SwingUtilities;
 
@@ -61,11 +62,7 @@ public class HelpAction extends JosmAction {
                 Point mouse = Main.parent.getMousePosition();
                 topic = HelpUtil.getContextSpecificHelpTopic(SwingUtilities.getDeepestComponentAt(Main.parent, mouse.x, mouse.y));
             }
-            if (topic == null) {
-                HelpBrowser.setUrlForHelpTopic("/");
-            } else {
-                HelpBrowser.setUrlForHelpTopic(topic);
-            }
+            HelpBrowser.setUrlForHelpTopic(Optional.ofNullable(topic).orElse("/"));
         } else {
             HelpBrowser.setUrlForHelpTopic("/");
         }

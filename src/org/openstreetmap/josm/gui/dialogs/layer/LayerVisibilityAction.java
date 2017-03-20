@@ -213,8 +213,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
             setValue(Utils.clamp((int) destinationValue, getMinimum(), getMaximum()));
         }
 
-        protected void applyValueToLayer(T layer) {
-        }
+        abstract void applyValueToLayer(T layer);
 
         protected double getRealValue() {
             return convertToRealValue(getValue());

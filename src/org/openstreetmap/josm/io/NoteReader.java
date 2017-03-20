@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -109,21 +110,11 @@ public class NoteReader {
                 thisNote.setCreatedAt(DateUtils.fromString(attrs.getValue("created_at")));
                 break;
             case "comment":
-                String uidStr = attrs.getValue("uid");
-                if (uidStr == null) {
-                    commentUid = 0;
-                } else {
-                    commentUid = Long.parseLong(uidStr);
-                }
+                commentUid = Long.parseLong(Optional.ofNullable(attrs.getValue("uid")).orElse("0"));
                 commentUsername = attrs.getValue("user");
                 noteAction = Action.valueOf(attrs.getValue("action").toUpperCase(Locale.ENGLISH));
                 commentCreateDate = DateUtils.fromString(attrs.getValue("timestamp"));
-                String isNew = attrs.getValue("is_new");
-                if (isNew == null) {
-                    commentIsNew = false;
-                } else {
-                    commentIsNew = Boolean.parseBoolean(isNew);
-                }
+                commentIsNew = Boolean.parseBoolean(Optional.ofNullable(attrs.getValue("is_new")).orElse("false"));
                 break;
             default: // Do nothing
             }

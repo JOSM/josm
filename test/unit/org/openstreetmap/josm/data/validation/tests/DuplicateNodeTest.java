@@ -30,7 +30,7 @@ public class DuplicateNodeTest {
 
     private static final DuplicateNode TEST = new DuplicateNode();
 
-    private static void doTest(int code, Tag ... tags) {
+    private static void doTest(int code, Tag... tags) {
         performTest(code, buildDataSet(tags), true);
     }
 

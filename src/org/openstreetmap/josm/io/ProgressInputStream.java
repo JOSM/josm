@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLConnection;
+import java.util.Optional;
 
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -30,10 +31,8 @@ public class ProgressInputStream extends InputStream {
      */
     public ProgressInputStream(InputStream in, long size, ProgressMonitor progressMonitor) {
         CheckParameterUtil.ensureParameterNotNull(in, "in");
-        if (progressMonitor == null) {
-            progressMonitor = NullProgressMonitor.INSTANCE;
-        }
-        this.updater = new StreamProgressUpdater(size, progressMonitor, tr("Downloading data..."));
+        this.updater = new StreamProgressUpdater(size,
+                Optional.ofNullable(progressMonitor).orElse(NullProgressMonitor.INSTANCE), tr("Downloading data..."));
         this.in = in;
     }
 

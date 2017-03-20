@@ -175,6 +175,45 @@ public class AddPrimitivesCommandTest {
     }
 
     /**
+     * Tests if the undo command does not remove
+     * data ignored by by the add command because they where already existing.
+     */
+    @Test
+    public void testUndoIgnoresExisting() {
+        OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
+        Main.getLayerManager().addLayer(layer1);
+
+        List<PrimitiveData> testData = createTestData();
+
+        assertTrue(new AddPrimitivesCommand(testData).executeCommand());
+        assertEquals(2, layer1.data.getNodes().size());
+        assertEquals(1, layer1.data.getWays().size());
+
+        testData.set(2, createTestNode(7));
+
+        AddPrimitivesCommand command = new AddPrimitivesCommand(testData);
+
+        assertTrue(command.executeCommand());
+
+        assertEquals(3, layer1.data.getNodes().size());
+        assertEquals(1, layer1.data.getWays().size());
+
+        for (int i = 0; i < 2; i++) {
+            // Needs to work multiple times.
+            command.undoCommand();
+
+            assertEquals(2, layer1.data.getNodes().size());
+            assertEquals(1, layer1.data.getWays().size());
+
+            // redo
+            assertTrue(command.executeCommand());
+
+            assertEquals(3, layer1.data.getNodes().size());
+            assertEquals(1, layer1.data.getWays().size());
+        }
+    }
+
+    /**
      * Test {@link AddCommand#getParticipatingPrimitives()}
      */
     @Test

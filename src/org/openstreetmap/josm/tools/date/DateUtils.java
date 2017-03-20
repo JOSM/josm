@@ -49,12 +49,15 @@ public final class DateUtils {
         DatatypeFactory fact = null;
         try {
             fact = DatatypeFactory.newInstance();
-        } catch (DatatypeConfigurationException ce) {
-            Main.error(ce);
+        } catch (DatatypeConfigurationException e) {
+            Main.error(e);
         }
         XML_DATE = fact;
     }
 
+    /**
+     * Constructs a new {@code DateUtils}.
+     */
     protected DateUtils() {
         // Hide default constructor for utils classes
     }

@@ -32,7 +32,7 @@ public enum ComparePairType {
     private final String displayName;
     private final ListRole[] participatingRoles;
 
-    ComparePairType(String displayName, ListRole ... participatingRoles) {
+    ComparePairType(String displayName, ListRole... participatingRoles) {
         this.displayName = displayName;
         this.participatingRoles = Utils.copyArray(participatingRoles);
     }

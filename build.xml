@@ -25,7 +25,7 @@
         <property name="proj-build.dir" location="${base.dir}/build2"/>
         <property name="epsg.output" location="${base.dir}/data/projection/custom-epsg"/>
         <property name="groovy.jar" location="${base.dir}/tools/groovy-all-2.4.8.jar"/>
-        <property name="error_prone_ant.jar" location="${base.dir}/tools/error_prone_ant-2.0.15.jar"/>
+        <property name="error_prone_ant.jar" location="${base.dir}/tools/error_prone_ant-2.0.18.jar"/>
         <property name="javac.compiler" value="com.google.errorprone.ErrorProneAntCompilerAdapter" />
         <!-- build parameter: compression level (ant -Dclevel=N)
                  N ranges from 0 (no compression) to 9 (maximum compression)
@@ -44,6 +44,11 @@
             <pathelement path="${dist.dir}/josm-custom.jar"/>
             <pathelement path="${groovy.jar}"/>
             <pathelement path="tools/findbugs/annotations.jar"/>
+        </path>
+        <path id="pmd.classpath">
+            <fileset dir="${base.dir}/tools/pmd/">
+                <include name="*.jar"/>
+            </fileset>
         </path>
     </target>
 
@@ -207,17 +212,15 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="javacc" depends="init" unless="javacc.notRequired">
         <mkdir dir="${mapcss.dir}/parsergen"/>
-        <exec append="false" executable="java" failifexecutionfails="true">
-            <arg value="-cp"/>
-            <arg value="${javacc.home}/javacc.jar"/>
-            <arg value="javacc"/>
+        <java classname="javacc" fork="true" failonerror="true">
+            <classpath path="${javacc.home}/javacc.jar"/>
             <arg value="-DEBUG_PARSER=false"/>
             <arg value="-DEBUG_TOKEN_MANAGER=false"/>
             <arg value="-JDK_VERSION=1.8"/>
             <arg value="-GRAMMAR_ENCODING=UTF-8"/>
             <arg value="-OUTPUT_DIRECTORY=${mapcss.dir}/parsergen"/>
             <arg value="${mapcss.dir}/MapCSSParser.jj"/>
-        </exec>
+        </java>
     </target>
     <target name="compile" depends="init,javacc">
         <!-- COTS -->
@@ -240,6 +243,7 @@ Build-Date: ${build.tstamp}
             <exclude name="org/apache/commons/compress/compressors/pack200/**"/>
             <exclude name="org/apache/commons/compress/compressors/snappy/**"/>
             <exclude name="org/apache/commons/compress/compressors/z/**"/>
+            <exclude name="org/apache/commons/compress/utils/ArchiveUtils.java"/>
             <exclude name="org/apache/commons/jcs/JCS.java"/>
             <exclude name="org/apache/commons/jcs/access/GroupCacheAccess.java"/>
             <exclude name="org/apache/commons/jcs/access/PartitionedCacheAccess.java"/>
@@ -311,6 +315,9 @@ Build-Date: ${build.tstamp}
             <compilerarg value="-XDignore.symbol.file"/>
             <compilerarg value="-Xep:ReferenceEquality:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
             <compilerarg value="-Xep:ImmutableEnumChecker:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
+            <compilerarg value="-Xep:FutureReturnValueIgnored:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
+            <compilerarg value="-Xep:FloatingPointLiteralPrecision:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
+            <compilerarg value="-Xep:ShortCircuitBoolean:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
             <compilerarg line="-Xmaxwarns 1000"/>
         </javac>
 
@@ -339,6 +346,10 @@ Build-Date: ${build.tstamp}
             <link href="http://docs.oracle.com/javase/8/docs/api"/>
             <doctitle><![CDATA[<h2>JOSM - Javadoc</h2>]]></doctitle>
             <bottom><![CDATA[<a href="https://josm.openstreetmap.de/">JOSM</a>]]></bottom>
+            <arg value="--add-exports" if:set="isJava9" />
+            <arg value="java.base/sun.security.util=ALL-UNNAMED" if:set="isJava9" />
+            <arg value="--add-exports" if:set="isJava9" />
+            <arg value="java.base/sun.security.x509=ALL-UNNAMED" if:set="isJava9" />
         </javadoc>
     </target>
     <target name="clean" depends="init-properties">
@@ -690,8 +701,8 @@ Build-Date: ${build.tstamp}
     <target name="imageryindex" depends="init-properties">
         <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpath="${groovy.jar};tools/commons-cli-1.3.1.jar"/>
         <echo message="Checking editor imagery difference"/>
-        <groovy src="scripts/SyncEditorImageryIndex.groovy" classpath="${dist.dir}/josm-custom.jar">
-                <!--<arg value="-nomissingeii"/>-->
+        <groovy src="scripts/SyncEditorLayerIndex.groovy" classpath="${dist.dir}/josm-custom.jar">
+                <arg value="-noskip"/>
         </groovy>
     </target>
 
@@ -719,11 +730,12 @@ Build-Date: ${build.tstamp}
 
     <target name="checkstyle" depends="init-properties">
         <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
-             classpath="tools/checkstyle/checkstyle-7.4-all.jar"/>
+             classpath="tools/checkstyle/checkstyle-all.jar"/>
         <checkstyle config="tools/checkstyle/josm_checks.xml">
             <fileset dir="${base.dir}/src/org/openstreetmap/josm" includes="**/*.java"
                 excludes="gui/mappaint/mapcss/parsergen/*.java"/>
             <fileset dir="${base.dir}/test" includes="**/*.java"/>
+            <formatter type="plain"/>
             <formatter type="xml" toFile="checkstyle-josm.xml"/>
         </checkstyle>
     </target>
@@ -748,6 +760,23 @@ Build-Date: ${build.tstamp}
             <class location="${dist.dir}/josm-custom.jar" />
         </findbugs>
     </target>
+
+    <target name="pmd" depends="init-properties">
+        <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpath="${toString:pmd.classpath}"/>
+        <pmd shortFilenames="true" encoding="UTF-8">
+            <sourceLanguage name="java" version="1.8" />
+            <ruleset>${base.dir}/tools/pmd/josm-ruleset.xml</ruleset>
+            <formatter type="text" toConsole="true" />
+            <formatter type="xml" toFile="pmd-josm.xml">
+                <param name="encoding" value="UTF-8" />
+            </formatter>
+            <fileset dir="${src.dir}">
+                <include name="org/openstreetmap/josm/**/*.java"/>
+                <exclude name="org/openstreetmap/josm/gui/mappaint/mapcss/parsergen/*.java" />
+            </fileset>
+        </pmd>
+    </target>
+
     <target name="run" depends="dist">
         <java jar="${dist.dir}/josm-custom.jar" fork="true">
             <arg value="--set=expert=true"/>

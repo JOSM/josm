@@ -50,13 +50,11 @@ if [ -n "$2" ]; then
   # 2 arguments: for Ant build.xml and Jenkins CI
   export VERSION=$1
   export JOSM_BUILD="no"
-  export WEBKIT_DOWNLOAD="yes"
   export JOSM_FILE=$2
 elif [ -n "$1" ]; then
   # 1 argument: for official JOSM server
   export VERSION=$1
   export JOSM_BUILD="no"
-  export WEBKIT_DOWNLOAD="no"
   export JOSM_FILE="/home/josm/www/download/josm-tested.jar"
 else
   # no argument: for everyone else
@@ -67,23 +65,10 @@ else
   #export VERSION=custom-${svnrevision}
   export VERSION=`echo ${svncorerevision} | sed -e 's/M//g' -e 's/S//g' -e 's/P//g'`
   export JOSM_BUILD="yes"
-  export WEBKIT_DOWNLOAD="yes"
   export JOSM_FILE="..\dist\josm-custom.jar"
 fi
 
 echo "Creating Windows Installer for josm-$VERSION"
-
-echo 
-echo "##################################################################"
-echo "### Download and unzip the webkit stuff"
-if [ "x$WEBKIT_DOWNLOAD" == "xyes" ]; then
-    wget --continue --timestamping http://josm.openstreetmap.de/download/windows/webkit-image.zip
-else
-    if ! [ -f webkit-image.zip ]; then
-      ln -s /home/josm/www/download/windows/webkit-image.zip .
-    fi
-fi
-unzip -o webkit-image.zip
 
 echo 
 echo "##################################################################"

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.mappaint;
 
 import java.util.Arrays;
+import java.util.Optional;
 
 import org.openstreetmap.josm.data.osm.Storage;
 import org.openstreetmap.josm.tools.Pair;
@@ -43,11 +44,7 @@ public final class StyleCache {
         StyleCache s = new StyleCache(this);
 
         int idx = getIndex(selected);
-        DividedScale<StyleElementList> ds = s.states[idx];
-        if (ds == null) {
-            ds = new DividedScale<>();
-        }
-        s.states[idx] = ds.put(o, r);
+        s.states[idx] = Optional.ofNullable(s.states[idx]).orElseGet(DividedScale::new).put(o, r);
         return s.intern();
     }
 

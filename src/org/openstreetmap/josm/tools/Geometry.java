@@ -87,7 +87,7 @@ public final class Geometry {
         }
 
         OsmDataLayer layer = Main.getLayerManager().getEditLayer();
-        DataSet dataset = ways.iterator().next().getDataSet();
+        DataSet dataset = ways.get(0).getDataSet();
 
         //iterate over all way pairs and introduce the intersections
         Comparator<Node> coordsComparator = new NodePositionComparator();
@@ -344,8 +344,6 @@ public final class Geometry {
         CheckParameterUtil.ensureValidCoordinates(p2, "p2");
         CheckParameterUtil.ensureValidCoordinates(p3, "p3");
         CheckParameterUtil.ensureValidCoordinates(p4, "p4");
-
-        if (!p1.isValid()) throw new IllegalArgumentException(p1+" is invalid");
 
         // Basically, the formula from wikipedia is used:
         //  https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection

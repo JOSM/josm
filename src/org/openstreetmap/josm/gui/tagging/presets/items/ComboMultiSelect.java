@@ -157,7 +157,7 @@ public abstract class ComboMultiSelect extends KeyedItem {
     protected static class ConcatenatingJList extends JList<PresetListEntry> {
         private final String delimiter;
 
-        protected ConcatenatingJList(String del, PresetListEntry ... o) {
+        protected ConcatenatingJList(String del, PresetListEntry... o) {
             super(o);
             delimiter = del;
         }
@@ -507,11 +507,8 @@ public abstract class ComboMultiSelect extends KeyedItem {
     @Override
     public void addCommands(List<Tag> changedTags) {
         Object obj = getSelectedItem();
-        String display = (obj == null) ? null : obj.toString();
+        String display = obj == null ? getDisplayIfNull() : obj.toString();
         String value = null;
-        if (display == null) {
-            display = getDisplayIfNull();
-        }
 
         if (display != null) {
             for (Entry<String, PresetListEntry> entry : lhm.entrySet()) {

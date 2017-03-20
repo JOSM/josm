@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.xml.sax.SAXException;
 
 /**
@@ -113,7 +114,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
             throw new OsmTransferException(e);
         } catch (OsmTransferException e) {
             throw e;
-        } catch (RuntimeException e) {
+        } catch (JosmRuntimeException | IllegalStateException e) {
             if (cancel)
                 return null;
             throw e;

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.imagery;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -13,6 +14,7 @@ import org.openstreetmap.gui.jmapviewer.tilesources.TileSourceInfo;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CacheCustomContent;
+import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.xml.sax.InputSource;
 
@@ -56,6 +58,16 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
             final String r = HttpClient.create(u).connect().fetchContent();
             Main.info("Successfully loaded Bing attribution data.");
             return r.getBytes("UTF-8");
+        }
+
+        @Override
+        protected void checkOfflineAccess() {
+            try {
+                String attributionUrl = getAttributionUrl().toExternalForm();
+                OnlineResource.ALL.checkOfflineAccess(attributionUrl, attributionUrl);
+            } catch (MalformedURLException e) {
+                Main.error(e);
+            }
         }
     }
 

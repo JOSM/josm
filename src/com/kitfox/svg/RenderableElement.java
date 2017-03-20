@@ -72,6 +72,7 @@ abstract public class RenderableElement extends TransformableElement
         super(id, parent);
     }
 
+    @Override
     protected void build() throws SVGException
     {
         super.build();
@@ -95,9 +96,9 @@ abstract public class RenderableElement extends TransformableElement
 
     abstract public void render(Graphics2D g) throws SVGException;
 
-    abstract void pick(Point2D point, boolean boundingBox, List retVec) throws SVGException;
+    abstract void pick(Point2D point, boolean boundingBox, List<List<SVGElement>> retVec) throws SVGException;
 
-    abstract void pick(Rectangle2D pickArea, AffineTransform ltw, boolean boundingBox, List retVec) throws SVGException;
+    abstract void pick(Rectangle2D pickArea, AffineTransform ltw, boolean boundingBox, List<List<SVGElement>> retVec) throws SVGException;
 
     abstract public Rectangle2D getBoundingBox() throws SVGException;
     /*

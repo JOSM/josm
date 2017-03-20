@@ -405,6 +405,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             attributes.setError(e);
             LOG.log(Level.WARNING, "JCS - Exception during download {0}", getUrlNoException());
             Main.warn(e);
+            Thread.currentThread().interrupt();
         }
         LOG.log(Level.WARNING, "JCS - Silent failure during download: {0}", getUrlNoException());
         return false;

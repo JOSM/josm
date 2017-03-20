@@ -1177,6 +1177,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @return true if this primitive and other are equal with respect to their technical attributes
      */
     public boolean hasEqualTechnicalAttributes(OsmPrimitive other) {
+        // CHECKSTYLE.OFF: BooleanExpressionComplexity
         return other != null
             && timestamp == other.timestamp
             && version == other.version
@@ -1185,6 +1186,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
             && isModified() == other.isModified()
             && isVisible() == other.isVisible()
             && Objects.equals(user, other.user);
+        // CHECKSTYLE.ON: BooleanExpressionComplexity
     }
 
     /**
@@ -1350,14 +1352,13 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * @since 6491
      */
     public final boolean hasAreaTags() {
-        return hasKey("landuse")
-                || "yes".equals(get("area"))
-                || "riverbank".equals(get("waterway"))
-                || hasKey("natural")
-                || hasKey("amenity")
-                || hasKey("leisure")
-                || hasKey("building")
-                || hasKey("building:part");
+        return hasKey("landuse", "amenity", "building", "building:part")
+                || hasTag("area", "yes")
+                || hasTag("waterway", "riverbank")
+                || hasTagDifferent("leisure", "picnic_table", "slipway", "firepit")
+                || hasTag("natural", "water", "wood", "scrub", "wetland", "grassland", "heath", "rock", "bare_rock",
+                                     "sand", "beach", "scree", "bay", "glacier", "shingle", "fell", "reef", "stone",
+                                     "mud", "landslide", "sinkhole", "crevasse", "desert");
     }
 
     /**

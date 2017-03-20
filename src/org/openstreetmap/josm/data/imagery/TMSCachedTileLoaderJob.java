@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -89,11 +90,8 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     public String getCacheKey() {
         if (tile != null) {
             TileSource tileSource = tile.getTileSource();
-            String tsName = tileSource.getName();
-            if (tsName == null) {
-                tsName = "";
-            }
-            return tsName.replace(':', '_') + ':' + tileSource.getTileId(tile.getZoom(), tile.getXtile(), tile.getYtile());
+            return Optional.ofNullable(tileSource.getName()).orElse("").replace(':', '_') + ':'
+                    + tileSource.getTileId(tile.getZoom(), tile.getXtile(), tile.getYtile());
         }
         return null;
     }
@@ -111,8 +109,12 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     public URL getUrl() throws IOException {
         if (url == null) {
             synchronized (this) {
-                if (url == null)
-                    url = new URL(tile.getUrl());
+                if (url == null) {
+                    String sUrl = tile.getUrl();
+                    if (!"".equals(sUrl)) {
+                        url = new URL(sUrl);
+                    }
+                }
             }
         }
         return url;
@@ -152,7 +154,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         tile.initLoading();
         try {
             super.submit(this, force);
-        } catch (IOException e) {
+        } catch (IOException | IllegalArgumentException e) {
             // if we fail to submit the job, mark tile as loaded and set error message
             Main.warn(e, false);
             tile.finishLoading();

@@ -35,12 +35,10 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.StrokeProperty;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.draw.SymbolShape;
@@ -111,14 +109,14 @@ public class ImproveWayAccuracyAction extends MapMode implements
 
     /**
      * Constructs a new {@code ImproveWayAccuracyAction}.
-     * @param mapFrame Map frame
+     * @since 11713
      */
-    public ImproveWayAccuracyAction(MapFrame mapFrame) {
+    public ImproveWayAccuracyAction() {
         super(tr("Improve Way Accuracy"), "improvewayaccuracy",
                 tr("Improve Way Accuracy mode"),
                 Shortcut.registerShortcut("mapmode:ImproveWayAccuracy",
                 tr("Mode: {0}", tr("Improve Way Accuracy")),
-                KeyEvent.VK_W, Shortcut.DIRECT), mapFrame, Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+                KeyEvent.VK_W, Shortcut.DIRECT), Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 
         readPreferences();
     }
@@ -154,9 +152,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
 
     @Override
     protected void readPreferences() {
-        guideColor = new ColorProperty(marktr("improve way accuracy helper line"), (Color) null).get();
-        if (guideColor == null)
-            guideColor = PaintColors.HIGHLIGHT.get();
+        guideColor = new ColorProperty(marktr("improve way accuracy helper line"), Color.RED).get();
     }
 
     @Override

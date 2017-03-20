@@ -11,6 +11,7 @@ import java.awt.geom.Point2D.Double;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.Optional;
 
 import javax.swing.JComponent;
 
@@ -25,6 +26,7 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
@@ -143,7 +145,7 @@ public final class MapViewState implements Serializable {
     private static Point findTopLeftOnScreen(JComponent position) {
         try {
             return position.getLocationOnScreen();
-        } catch (RuntimeException e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             throw BugReport.intercept(e).put("position", position).put("parent", position::getParent);
         }
     }
@@ -195,7 +197,7 @@ public final class MapViewState implements Serializable {
     public MapViewPoint getPointFor(Node node) {
         try {
             return getPointFor(node.getEastNorth(getProjection()));
-        } catch (RuntimeException e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             throw BugReport.intercept(e).put("node", node);
         }
     }
@@ -375,10 +377,8 @@ public final class MapViewState implements Serializable {
     }
 
     private static EastNorth calculateDefaultCenter() {
-        Bounds b = DownloadDialog.getSavedDownloadBounds();
-        if (b == null) {
-            b = Main.getProjection().getWorldBoundsLatLon();
-        }
+        Bounds b = Optional.ofNullable(DownloadDialog.getSavedDownloadBounds()).orElseGet(
+                () -> Main.getProjection().getWorldBoundsLatLon());
         return Main.getProjection().latlon2eastNorth(b.getCenter());
     }
 

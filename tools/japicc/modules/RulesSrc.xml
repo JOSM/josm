@@ -1,0 +1,1109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rules version="1.0">
+
+<rule>
+    <id>
+        Method_Became_Static
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Method became **static**.
+    </change>
+    <effect>
+        A client program may be interrupted by **NoSuchMethodError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Method_Became_NonStatic
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Method became non-static.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: non-static method @method_short cannot be referenced from a static context.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Static_Method_Became_Final
+    </id>
+    <severity>
+        Medium
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Method became final.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: @method_short in client class C cannot override @method_short in @class; overridden method is final.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        NonStatic_Method_Became_Final
+    </id>
+    <severity>
+        Medium
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Method became final.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: @method_short in client class C cannot override @method_short in @class; overridden method is final.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Method_Became_Abstract
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Method became abstract.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: A client class C is not abstract and does not override abstract method @method_short in @class.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Method_Became_NonAbstract
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Method became non-abstract.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Method_Became_Default
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Method became default.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Method_Became_NonDefault
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Method became non-default.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: A client class C is not abstract and does not override abstract method @method_short in @class.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Changed_Method_Access
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Access level has been changed from @old_value to @new_value.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: @method_short has @new_value access in @class.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Abstract_Method_Added_Checked_Exception
+    </id>
+    <severity>
+        Medium
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Added @target exception thrown.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: unreported exception @target must be caught or declared to be thrown.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        NonAbstract_Method_Added_Checked_Exception
+    </id>
+    <severity>
+        Medium
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Added @target exception thrown.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: unreported exception @target must be caught or declared to be thrown.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Abstract_Method_Removed_Checked_Exception
+    </id>
+    <severity>
+        Medium
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Removed @target exception thrown.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: cannot override @method_short in @class; overridden method does not throw @target.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        NonAbstract_Method_Removed_Checked_Exception
+    </id>
+    <severity>
+        Medium
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Removed @target exception thrown.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: cannot override @method_short in @class; overridden method does not throw @target.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Added_Method
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Methods
+    </kind>
+</rule>
+
+<rule>
+    <id>
+        Removed_Method
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Methods
+    </kind>
+</rule>
+
+<rule>
+    <id>
+        NonAbstract_Class_Added_Abstract_Method
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Abstract method @target has been added to this @type_type.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method @method_short in @class.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Abstract_Class_Added_Abstract_Method
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Abstract method @target has been added to this @type_type.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method @method_short in @class.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Abstract_Class_Added_Abstract_Method_Invoked_By_Others
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Abstract method @target has been added to this @type_type.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method @method_short in @class.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Removed_Abstract_Method
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Abstract method @target has been removed from this @type_type.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: cannot find method @method_short in @type_type @class.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Removed_Abstract_Method
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Abstract method @target has been removed from this @type_type.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: cannot find method @method_short in @type_type @class.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Added_Abstract_Method
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Abstract method @target has been added to this @type_type.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method @method_short in @class.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Added_Abstract_Method_Invoked_By_Others
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Abstract method @target has been added to this @type_type.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method @method_short in @class.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Method_Became_Abstract
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Method @target became abstract.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method @method_short in @class.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Method_Became_NonAbstract
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Abstract method @target became non-abstract.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Method_Became_NonDefault
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Method @target became non-default.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method @method_short in @class.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Method_Became_Default
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Method @target became default.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Abstract_Class_Added_Super_Interface
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added super-interface @target.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method in @target.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Abstract_Class_Added_Super_Interface_Invoked_By_Others
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added super-interface @target.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method in @target.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Abstract_Class_Added_Super_Interface_With_Implemented_Methods
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added super-interface @target.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Added_Super_Interface
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added super-interface @target.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method in @target.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Added_Super_Interface_Used_By_Others
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added super-interface @target.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method in @target.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Added_Super_Interface_With_Implemented_Methods
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added super-interface @target.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Added_Super_Constant_Interface
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added super-interface @target containing constants only.
+    </change>
+    <effect>
+        A static field from a super-interface of a client class may hide a field (with the same name) inherited from a super-class. Recompilation of a client class may be terminated with the message: reference to variable is ambiguous.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Removed_Super_Interface
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Removed super-interface @target.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: cannot find method in @type_type @type_name.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Removed_Super_Interface
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Removed super-interface @target.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: cannot find method in @type_type @type_name.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Removed_Super_Constant_Interface
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Removed super-interface @target containing constants only.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: cannot find variable in interface @type_name.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Added_Super_Class
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added super-class @target.
+    </change>
+    <effect>
+        A static field from a super-interface of a client class may hide a field (with the same name) inherited from new super-class. Recompilation of a client class may be terminated with the message: reference to variable is ambiguous.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Abstract_Class_Added_Super_Abstract_Class
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added abstract super-class @target.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method in @target.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Abstract_Class_Added_Super_Abstract_Class_Invoked_By_Others
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Added abstract super-class @target.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: a client class C is not abstract and does not override abstract method in @target.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Removed_Super_Class
+    </id>
+    <severity>
+        Medium
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Removed super-class @target.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: cannot find variable (or method) in @type_name.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Changed_Super_Class
+    </id>
+    <severity>
+        Medium
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        Superclass has been changed from @old_value to @new_value.
+    </change>
+    <effect>
+        1) Recompilation of a client program may be terminated with the message: cannot find variable (or method) in @type_name.
+        2) A static field from a super-interface of a client class may hide a field (with the same name) inherited from new super-class. Recompilation of a client class may be terminated with the message: reference to variable is ambiguous.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Added_Field
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target has been added to this class.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Added_Field_Non_Safe
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target has been added to this class.
+    </change>
+    <effect>
+        NOTE: A static field from a super-interface of a client class may hide an added field (with the same name) inherited from the super-class of a client class. Recompilation of a client class may be terminated with the message: reference to @target is ambiguous.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Added_Field
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target has been added to this interface.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Added_Field_Non_Safe
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target has been added to this interface.
+    </change>
+    <effect>
+        NOTE: An added static field from a super-interface of a client class may hide a field (with the same name) inherited from the super-class of a client class. Recompilation of a client class may be terminated with the message: reference to @target is ambiguous.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Renamed_Field
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target has been renamed to @new_value.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: cannot find variable @target in @type_name.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Renamed_Constant_Field
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target has been renamed to @new_value.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: cannot find variable @target in @type_name.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Removed_NonConstant_Field
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target of type @field_type has been removed from this @type_type.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: cannot find variable @target in @type_name.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Removed_Constant_Field
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target of type @field_type with the compile-time constant value @field_value has been removed from this @type_type.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: cannot find variable @target in @type_name.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Changed_Field_Type
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Type of field @target has been changed from @old_value to @new_value.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: incompatible types, found: @old_value, required: @new_value.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Changed_Field_Access
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Access level of field @target has been changed from @old_value to @new_value.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: @target has @new_value access in @type_name.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Changed_Field_Access_To_Package_Private
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Access level of field @target has been changed from @old_value to @new_value.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: @target is not public in @type_name; cannot be accessed from outside package.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Field_Became_Final
+    </id>
+    <severity>
+        Medium
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target became final.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: cannot assign a value to final variable @target.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        NonConstant_Field_Became_NonStatic
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target became non-static.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: non-static variable @target cannot be referenced from a static context.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Constant_Field_Became_NonStatic
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Fields
+    </kind>
+    <change>
+        Field @target became non-static.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: non-static variable @target cannot be referenced from a static context.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Became_Interface
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        This **class** became **interface**.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: @type_name is abstract; cannot be instantiated.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Became_Class
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        This **interface** became **class**.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: interface expected.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Became_Final
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        This class became final.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: cannot inherit from final @type_name.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Became_Abstract
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        This class became abstract.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: @type_name is abstract; cannot be instantiated.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Removed_Class
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        This class has been removed.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: cannot find class @type_name.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Removed_Interface
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        This interface has been removed.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the message: cannot find class @type_name.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Removed_Annotation
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        This annotation type has been removed.
+    </change>
+    <effect>
+        Recompilation of a client program may be terminated with the error message: cannot find symbol **@**@type_name.
+    </effect>
+</rule>
+
+</rules>

@@ -270,10 +270,10 @@ public class TagChecker extends TagTest {
             for (TaggingPreset p : presets) {
                 for (TaggingPresetItem i : p.data) {
                     if (i instanceof KeyedItem) {
-                        addPresetValue(p, (KeyedItem) i);
+                        addPresetValue((KeyedItem) i);
                     } else if (i instanceof CheckGroup) {
                         for (Check c : ((CheckGroup) i).checks) {
-                            addPresetValue(p, c);
+                            addPresetValue(c);
                         }
                     }
                 }
@@ -281,15 +281,11 @@ public class TagChecker extends TagTest {
         }
     }
 
-    private static void addPresetValue(TaggingPreset p, KeyedItem ky) {
+    private static void addPresetValue(KeyedItem ky) {
         Collection<String> values = ky.getValues();
         if (ky.key != null && values != null) {
-            try {
-                presetsValueData.putAll(ky.key, values);
-                harmonizedKeys.put(harmonizeKey(ky.key), ky.key);
-            } catch (NullPointerException e) {
-                Main.error(e, p+": Unable to initialize "+ky+'.');
-            }
+            presetsValueData.putAll(ky.key, values);
+            harmonizedKeys.put(harmonizeKey(ky.key), ky.key);
         }
     }
 
@@ -542,13 +538,11 @@ public class TagChecker extends TagTest {
     }
 
     private static String harmonizeKey(String key) {
-        key = key.toLowerCase(Locale.ENGLISH).replace('-', '_').replace(':', '_').replace(' ', '_');
-        return Utils.strip(key, "-_;:,");
+        return Utils.strip(key.toLowerCase(Locale.ENGLISH).replace('-', '_').replace(':', '_').replace(' ', '_'), "-_;:,");
     }
 
     private static String harmonizeValue(String value) {
-        value = value.toLowerCase(Locale.ENGLISH).replace('-', '_').replace(' ', '_');
-        return Utils.strip(value, "-_;:,");
+        return Utils.strip(value.toLowerCase(Locale.ENGLISH).replace('-', '_').replace(' ', '_'), "-_;:,");
     }
 
     @Override

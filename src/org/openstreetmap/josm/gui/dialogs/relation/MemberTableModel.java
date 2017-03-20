@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import javax.swing.DefaultListSelectionModel;
 import javax.swing.ListSelectionModel;
@@ -44,6 +45,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 public class MemberTableModel extends AbstractTableModel
@@ -254,7 +256,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         return members.get(idx).getMember();
     }
 
-    public void moveUp(int ... selectedRows) {
+    public void moveUp(int... selectedRows) {
         if (!canMoveUp(selectedRows))
             return;
 
@@ -277,7 +279,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         fireMakeMemberVisible(selectedRows[0] - 1);
     }
 
-    public void moveDown(int ... selectedRows) {
+    public void moveDown(int... selectedRows) {
         if (!canMoveDown(selectedRows))
             return;
 
@@ -302,7 +304,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         fireMakeMemberVisible(selectedRows[0] + 1);
     }
 
-    public void remove(int ... selectedRows) {
+    public void remove(int... selectedRows) {
         if (!canRemove(selectedRows))
             return;
         int offset = 0;
@@ -316,21 +318,21 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
         fireTableDataChanged();
     }
 
-    public boolean canMoveUp(int ... rows) {
+    public boolean canMoveUp(int... rows) {
         if (rows == null || rows.length == 0)
             return false;
         Arrays.sort(rows);
         return rows[0] > 0 && !members.isEmpty();
     }
 
-    public boolean canMoveDown(int ... rows) {
+    public boolean canMoveDown(int... rows) {
         if (rows == null || rows.length == 0)
             return false;
         Arrays.sort(rows);
         return !members.isEmpty() && rows[rows.length - 1] < members.size() - 1;
     }
 
-    public boolean canRemove(int ... rows) {
+    public boolean canRemove(int... rows) {
         if (rows == null || rows.length == 0)
             return false;
         return true;
@@ -356,7 +358,8 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
      * @param relation relation
      */
     public void applyToRelation(Relation relation) {
-        relation.setMembers(members);
+        relation.setMembers(members.stream()
+                .filter(rm -> !rm.getMember().isDeleted()).collect(Collectors.toList()));
     }
 
     public boolean hasSameMembersAs(Relation relation) {
@@ -805,7 +808,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
                 connectionType = wayConnectionTypeCalculator.updateLinks(members);
             }
             return connectionType.get(i);
-        } catch (RuntimeException e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             throw BugReport.intercept(e).put("i", i).put("members", members).put("relation", relation);
         }
     }

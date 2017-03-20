@@ -341,7 +341,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             return false;
         }
 
-        public void selectPrimitivesOwnedBy(int ... rows) {
+        public void selectPrimitivesOwnedBy(int... rows) {
             Set<User> users = new HashSet<>();
             for (int index: rows) {
                 users.add(data.get(index).user);
@@ -356,7 +356,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
             Main.getLayerManager().getEditDataSet().setSelected(byUser);
         }
 
-        public List<User> getSelectedUsers(int ... rows) {
+        public List<User> getSelectedUsers(int... rows) {
             List<User> ret = new LinkedList<>();
             if (rows == null || rows.length == 0)
                 return ret;

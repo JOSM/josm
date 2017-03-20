@@ -325,7 +325,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
             mod = activeTable.getColumnModel();
             mod.getColumn(1).setPreferredWidth(800);
-            mod.getColumn(1).setCellRenderer(new ImageryURLTableCellRenderer(layerInfo.getDefaultLayers()));
+            mod.getColumn(1).setCellRenderer(new ImageryURLTableCellRenderer(layerInfo.getAllDefaultLayers()));
             mod.getColumn(0).setPreferredWidth(200);
 
             RemoveEntryAction remove = new RemoveEntryAction();
@@ -741,17 +741,17 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
              * @return The imagery info at the given row number
              */
             public ImageryInfo getRow(int row) {
-                return layerInfo.getDefaultLayers().get(row);
+                return layerInfo.getAllDefaultLayers().get(row);
             }
 
             @Override
             public int getRowCount() {
-                return layerInfo.getDefaultLayers().size();
+                return layerInfo.getAllDefaultLayers().size();
             }
 
             @Override
             public Object getValueAt(int row, int column) {
-                ImageryInfo info = layerInfo.getDefaultLayers().get(row);
+                ImageryInfo info = layerInfo.getAllDefaultLayers().get(row);
                 switch (column) {
                 case 0:
                     return info.getCountryCode();
@@ -805,7 +805,6 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
     }
 
     static class OffsetBookmarksPanel extends JPanel {
-        private final transient List<OffsetBookmark> bookmarks = OffsetBookmark.allBookmarks;
         private final OffsetsBookmarksModel model = new OffsetsBookmarksModel();
 
         /**
@@ -857,7 +856,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         /**
          * The table model for imagery offsets list
          */
-        private class OffsetsBookmarksModel extends DefaultTableModel {
+        private static class OffsetsBookmarksModel extends DefaultTableModel {
 
             /**
              * Constructs a new {@code OffsetsBookmarksModel}.
@@ -867,29 +866,29 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             }
 
             private OffsetBookmark getRow(int row) {
-                return bookmarks.get(row);
+                return OffsetBookmark.getBookmarkByIndex(row);
             }
 
             private void addRow(OffsetBookmark i) {
-                bookmarks.add(i);
+                OffsetBookmark.addBookmark(i);
                 int p = getRowCount() - 1;
                 fireTableRowsInserted(p, p);
             }
 
             @Override
             public void removeRow(int i) {
-                bookmarks.remove(getRow(i));
+                OffsetBookmark.removeBookmark(getRow(i));
                 fireTableRowsDeleted(i, i);
             }
 
             @Override
             public int getRowCount() {
-                return bookmarks.size();
+                return OffsetBookmark.getBookmarksSize();
             }
 
             @Override
             public Object getValueAt(int row, int column) {
-                OffsetBookmark info = bookmarks.get(row);
+                OffsetBookmark info = OffsetBookmark.getBookmarkByIndex(row);
                 switch (column) {
                 case 0:
                     if (info.projectionCode == null) return "";
@@ -909,7 +908,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
             @Override
             public void setValueAt(Object o, int row, int column) {
-                OffsetBookmark info = bookmarks.get(row);
+                OffsetBookmark info = OffsetBookmark.getBookmarkByIndex(row);
                 switch (column) {
                 case 1:
                     info.layerName = o.toString();
@@ -939,7 +938,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
      * Initializes imagery preferences.
      */
     public static void initialize() {
-        ImageryLayerInfo.instance.load(true);
+        ImageryLayerInfo.instance.load(false);
         OffsetBookmark.loadBookmarks();
         Main.main.menu.imageryMenu.refreshImageryMenu();
         Main.main.menu.imageryMenu.refreshOffsetMenu();

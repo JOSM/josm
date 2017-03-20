@@ -110,7 +110,7 @@ public abstract class UnconnectedWays extends Test {
 
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
-            return super.isPrimitiveUsable(p) && (p.hasKey("natural") || p.hasKey("landuse"));
+            return super.isPrimitiveUsable(p) && p.hasKey("natural", "landuse");
         }
     }
 
@@ -184,8 +184,7 @@ public abstract class UnconnectedWays extends Test {
                             || en.hasTag("amenity", "parking_entrance")
                             || en.hasTag("railway", "buffer_stop")
                             || en.isKeyTrue("noexit")
-                            || en.hasKey("entrance")
-                            || en.hasKey("barrier")) {
+                            || en.hasKey("entrance", "barrier")) {
                         continue;
                     }
                     // to handle intersections of 't' shapes and similar
@@ -306,7 +305,7 @@ public abstract class UnconnectedWays extends Test {
             String highway = w.get("highway");
             this.isAbandoned = "abandoned".equals(railway) || w.isKeyTrue("disused");
             this.highway = (highway != null || railway != null) && !isAbandoned;
-            this.isBoundary = !this.highway && "administrative".equals(w.get("boundary"));
+            this.isBoundary = !this.highway && w.hasTag("boundary", "administrative");
             line = new Line2D.Double(n1.getEastNorth().east(), n1.getEastNorth().north(),
                     n2.getEastNorth().east(), n2.getEastNorth().north());
             len = line.getP1().distance(line.getP2());
@@ -443,14 +442,17 @@ public abstract class UnconnectedWays extends Test {
 
     @Override
     public void visit(Way w) {
-        if (w.getNodesCount() > 0 // do not consider empty ways
-                && !w.hasKey("addr:interpolation") // ignore addr:interpolation ways as they are not physical features and most of
-                                                   // the time very near the associated highway, which is perfectly normal, see #9332
-                && !w.hasTag("highway", "platform") && !w.hasTag("railway", "platform") // similarly for public transport platforms
+        // do not consider empty ways
+        if (w.getNodesCount() > 0
+                // ignore addr:interpolation ways as they are not physical features and most of
+                // the time very near the associated highway, which is perfectly normal, see #9332
+                && !w.hasKey("addr:interpolation")
+                // similarly for public transport platforms
+                && !w.hasTag("highway", "platform") && !w.hasTag("railway", "platform")
                 ) {
             ways.addAll(getWaySegments(w));
             QuadBuckets<Node> set = endnodes;
-            if (w.hasKey("highway") || w.hasKey("railway")) {
+            if (w.hasKey("highway", "railway")) {
                 set = endnodesHighway;
             }
             addNode(w.firstNode(), set);

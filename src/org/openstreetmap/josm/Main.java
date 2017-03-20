@@ -20,7 +20,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -82,6 +81,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
+import org.openstreetmap.josm.gui.preferences.display.LafPreference;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
@@ -112,6 +112,7 @@ import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * Abstract class holding various static global variables and methods used in large parts of JOSM application.
@@ -152,11 +153,6 @@ public abstract class Main {
      * Global application.
      */
     public static volatile Main main;
-
-    /**
-     * Command-line arguments used to run the application.
-     */
-    protected static final List<String> COMMAND_LINE_ARGS = new ArrayList<>();
 
     /**
      * The worker thread slave. This is for executing all long and intensive
@@ -210,7 +206,7 @@ public abstract class Main {
      */
     public static final FileWatcher fileWatcher = new FileWatcher();
 
-    protected static final Map<String, Throwable> NETWORK_ERRORS = new HashMap<>();
+    private static final Map<String, Throwable> NETWORK_ERRORS = new HashMap<>();
 
     private static final Set<OnlineResource> OFFLINE_RESOURCES = EnumSet.noneOf(OnlineResource.class);
 
@@ -497,9 +493,13 @@ public abstract class Main {
      * Constructs new {@code Main} object.
      * @see #initialize()
      */
-    public Main() {
-        main = this;
+    protected Main() {
+        setInstance(this);
         mainPanel.addMapFrameListener((o, n) -> redoUndoListener.commandChanged(0, 0));
+    }
+
+    private static void setInstance(Main instance) {
+        main = instance;
     }
 
     /**
@@ -522,7 +522,13 @@ public abstract class Main {
                 KeyEvent.VK_F1, Shortcut.DIRECT));
 
         // This needs to be done before RightAndLefthandTraffic::initialize is called
-        new InitializationTask(tr("Initializing internal boundaries data"), Territories::initialize).call();
+        try {
+            new InitializationTask(tr("Initializing internal boundaries data"), Territories::initialize).call();
+        } catch (JosmRuntimeException e) {
+            // Can happen if the current projection needs NTV2 grid which is not available
+            // In this case we want the user be able to change his projection
+            BugReport.intercept(e).warn();
+        }
 
         // contains several initialization tasks to be executed (in parallel) by a ExecutorService
         List<Callable<Void>> tasks = new ArrayList<>();
@@ -579,9 +585,7 @@ public abstract class Main {
      * Called once at startup to initialize the main window content.
      * Should set {@link #menu}
      */
-    protected void initializeMainWindow() {
-        // can be implementd by subclasses
-    }
+    protected abstract void initializeMainWindow();
 
     private static class InitializationTask implements Callable<Void> {
 
@@ -761,7 +765,7 @@ public abstract class Main {
         ProjectionPreference.setProjection();
 
         String defaultlaf = platform.getDefaultStyle();
-        String laf = Main.pref.get("laf", defaultlaf);
+        String laf = LafPreference.LAF.get();
         try {
             UIManager.setLookAndFeel(laf);
         } catch (final NoClassDefFoundError | ClassNotFoundException e) {
@@ -783,16 +787,16 @@ public abstract class Main {
                     warn(ex, "Cannot set Look and Feel: " + laf + ": "+ex.getMessage());
                 } catch (UnsupportedLookAndFeelException ex) {
                     info("Look and Feel not supported: " + laf);
-                    Main.pref.put("laf", defaultlaf);
+                    LafPreference.LAF.put(defaultlaf);
                     trace(ex);
                 }
             } else {
                 info("Look and Feel not found: " + laf);
-                Main.pref.put("laf", defaultlaf);
+                LafPreference.LAF.put(defaultlaf);
             }
         } catch (UnsupportedLookAndFeelException e) {
             info("Look and Feel not supported: " + laf);
-            Main.pref.put("laf", defaultlaf);
+            LafPreference.LAF.put(defaultlaf);
             trace(e);
         } catch (InstantiationException | IllegalAccessException e) {
             error(e);
@@ -1375,15 +1379,6 @@ public abstract class Main {
      */
     public static Map<String, Throwable> getNetworkErrors() {
         return new HashMap<>(NETWORK_ERRORS);
-    }
-
-    /**
-     * Returns the command-line arguments used to run the application.
-     * @return the command-line arguments used to run the application
-     * @since 8356
-     */
-    public static List<String> getCommandLineArgs() {
-        return Collections.unmodifiableList(COMMAND_LINE_ARGS);
     }
 
     /**

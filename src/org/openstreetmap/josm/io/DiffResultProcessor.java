@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -60,10 +61,7 @@ public class DiffResultProcessor {
      * assumes an empty collection.
      */
     public DiffResultProcessor(Collection<? extends OsmPrimitive> primitives) {
-        if (primitives == null) {
-            primitives = Collections.emptyList();
-        }
-        this.primitives = primitives;
+        this.primitives = Optional.ofNullable(primitives).orElseGet(Collections::emptyList);
         this.processed = new HashSet<>();
     }
 

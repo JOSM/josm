@@ -5,6 +5,7 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.util.Arrays;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
@@ -356,11 +357,7 @@ public class LineElement extends StyleElement {
                 }
                 if (casingWidth == null)
                     return null;
-                width = getWidth(c, WIDTH, getWidth(cDef, WIDTH, null));
-                if (width == null) {
-                    width = 0f;
-                }
-                width += 2 * casingWidth;
+                width = Optional.ofNullable(getWidth(c, WIDTH, getWidth(cDef, WIDTH, null))).orElse(0f) + 2 * casingWidth;
                 break;
             case LEFT_CASING:
             case RIGHT_CASING:
@@ -377,10 +374,7 @@ public class LineElement extends StyleElement {
         if (realWidth > 0 && MapPaintSettings.INSTANCE.isUseRealWidth()) {
 
             /* if we have a "width" tag, try use it */
-            String widthTag = env.osm.get("width");
-            if (widthTag == null) {
-                widthTag = env.osm.get("est_width");
-            }
+            String widthTag = Optional.ofNullable(env.osm.get("width")).orElseGet(() -> env.osm.get("est_width"));
             if (widthTag != null) {
                 try {
                     realWidth = Float.parseFloat(widthTag);

@@ -33,7 +33,7 @@ public class DeleteActionTest {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
             Main.getLayerManager().addLayer(layer);
-            DeleteAction mapMode = new DeleteAction(Main.map);
+            DeleteAction mapMode = new DeleteAction();
             MapMode oldMapMode = Main.map.mapMode;
             assertTrue(Main.map.selectMapMode(mapMode));
             assertEquals(mapMode, Main.map.mapMode);

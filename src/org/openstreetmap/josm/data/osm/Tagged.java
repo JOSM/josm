@@ -3,10 +3,11 @@ package org.openstreetmap.josm.data.osm;
 
 import java.util.Collection;
 import java.util.Map;
+
 /**
  * Objects implement Tagged if they provide a map of key/value pairs.
  *
- *
+ * @since 2115
  */
 // FIXME: better naming? setTags(), getTags(), getKeys() instead of keySet() ?
 //
@@ -64,6 +65,17 @@ public interface Tagged {
      * @return true, if there is at least one key/value pair; false, otherwise
      */
     boolean hasKeys();
+
+    /**
+     * Replies true if there is a tag with key <code>key</code>.
+     *
+     * @param key the key
+     * @return true, if there is a tag with key <code>key</code>
+     * @since 11608
+     */
+    default boolean hasKey(String key) {
+        return get(key) != null;
+    }
 
     /**
      * Replies the set of keys

@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.swing.JLabel;
@@ -53,10 +54,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
     private boolean displayErrMsg;
 
     protected final void init(Collection<String> sites, boolean displayErrMsg) {
-        this.sites = sites;
-        if (sites == null) {
-            this.sites = Collections.emptySet();
-        }
+        this.sites = Optional.ofNullable(sites).orElseGet(Collections::emptySet);
         this.availablePlugins = new LinkedList<>();
         this.displayErrMsg = displayErrMsg;
     }

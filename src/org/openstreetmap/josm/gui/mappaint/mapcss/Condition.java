@@ -39,7 +39,7 @@ public interface Condition {
      * @since 10674
      */
     @FunctionalInterface
-    public interface ToTagConvertable {
+    interface ToTagConvertable {
         /**
          * Converts the current condition to a tag
          * @param primitive A primitive to use as context. May be ignored.

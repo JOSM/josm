@@ -71,7 +71,7 @@ public interface MapViewPaintable {
      * @author Michael Zangl
      * @since 10458
      */
-    public interface LayerPainter {
+    interface LayerPainter {
 
         /**
          * Paints the given layer.

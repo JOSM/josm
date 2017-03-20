@@ -1,5 +1,4 @@
 // License: GPL. For details, see LICENSE file.
-
 package org.openstreetmap.josm.gui.widgets;
 
 import java.awt.Color;
@@ -18,10 +17,9 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 /**
- *
  * Class based on:  http://www.camick.com/java/source/ButtonColumn.java
  * https://tips4java.wordpress.com/2009/07/12/table-button-column/
- *
+ * @since 10536
  */
 public class ButtonColumn extends AbstractCellEditor implements TableCellRenderer, TableCellEditor, ActionListener {
     private final Action action;
@@ -37,11 +35,15 @@ public class ButtonColumn extends AbstractCellEditor implements TableCellRendere
         this(null);
     }
 
+    /**
+     * Constructs a new {@code ButtonColumn}.
+     * @param action action
+     * @param buttonName button name
+     */
     public ButtonColumn(Action action, String buttonName) {
         this(action);
         this.buttonName = buttonName;
     }
-
 
     /**
      * Creates a column that is rendered as a button
@@ -115,5 +117,4 @@ public class ButtonColumn extends AbstractCellEditor implements TableCellRendere
         }
         return renderButton;
     }
-
 }

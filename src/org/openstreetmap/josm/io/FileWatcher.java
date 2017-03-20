@@ -51,7 +51,7 @@ public class FileWatcher {
      * Starts the File Watcher thread.
      */
     public final void start() {
-        if (!thread.isAlive()) {
+        if (thread != null && !thread.isAlive()) {
             thread.start();
         }
     }
@@ -112,7 +112,8 @@ public class FileWatcher {
             WatchKey key;
             try {
                 key = watcher.take();
-            } catch (InterruptedException x) {
+            } catch (InterruptedException ex) {
+                Thread.currentThread().interrupt();
                 return;
             }
 

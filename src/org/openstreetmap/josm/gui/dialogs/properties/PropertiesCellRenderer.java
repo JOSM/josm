@@ -11,11 +11,11 @@ import java.awt.Font;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
@@ -41,11 +41,10 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
             = new BooleanProperty("display.discardable-keys", false).cached();
 
     static {
-        UIDefaults defaults = UIManager.getDefaults();
         SELECTED_BG = new ColorProperty(marktr("Discardable key: selection Background"),
-                defaults.getColor("Table.selectionBackground")).cached();
+                Optional.ofNullable(UIManager.getColor("Table.selectionBackground")).orElse(Color.BLUE)).cached();
         NORMAL_BG = new ColorProperty(marktr("Discardable key: background"),
-                defaults.getColor("Table.background")).cached();
+                Optional.ofNullable(UIManager.getColor("Table.background")).orElse(Color.WHITE)).cached();
     }
 
     private final Collection<TableCellRenderer> customRenderer = new CopyOnWriteArrayList<>();
@@ -56,9 +55,8 @@ public class PropertiesCellRenderer extends DefaultTableCellRenderer {
             c.setForeground((isSelected ? SELECTED_FG : NORMAL_FG).get());
             c.setBackground((isSelected ? SELECTED_BG : NORMAL_BG).get());
         } else {
-            UIDefaults defaults = UIManager.getDefaults();
-            c.setForeground(defaults.getColor("Table."+(isSelected ? "selectionF" : "f")+"oreground"));
-            c.setBackground(defaults.getColor("Table."+(isSelected ? "selectionB" : "b")+"ackground"));
+            c.setForeground(UIManager.getColor("Table."+(isSelected ? "selectionF" : "f")+"oreground"));
+            c.setBackground(UIManager.getColor("Table."+(isSelected ? "selectionB" : "b")+"ackground"));
         }
     }
 

@@ -92,11 +92,13 @@ public class SVGRoot extends Group
     {
     }
 
+    @Override
     public String getTagName()
     {
         return TAG_NAME;
     }
     
+    @Override
     public void build() throws SVGException
     {
         super.build();
@@ -162,6 +164,7 @@ public class SVGRoot extends Group
         return (text.indexOf(find) != -1);
     }
 
+    @Override
     public SVGRoot getRoot()
     {
         return this;
@@ -261,9 +264,17 @@ public class SVGRoot extends Group
     public void renderToViewport(Graphics2D g) throws SVGException
     {
         prepareViewport();
-
+        
         Rectangle targetViewport = g.getClipBounds();
+//
+//        if (targetViewport == null)
+//        {
+//            Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+//            targetViewport = new Rectangle(0, 0, size.width, size.height);
+//        }
+//        clipRect.setRect(targetViewport);
 
+        
         Rectangle deviceViewport = diagram.getDeviceViewport();
         if (width != null && height != null)
         {
@@ -293,6 +304,8 @@ public class SVGRoot extends Group
         }
         else
         {
+//            Dimension size = Toolkit.getDefaultToolkit().getScreenSize();
+//            targetViewport = new Rectangle(0, 0, size.width, size.height);
             targetViewport = new Rectangle(deviceViewport);
         }
         clipRect.setRect(targetViewport);
@@ -318,7 +331,8 @@ public class SVGRoot extends Group
         g.setTransform(cachedXform);
     }
 
-    public void pick(Rectangle2D pickArea, AffineTransform ltw, boolean boundingBox, List retVec) throws SVGException
+    @Override
+    public void pick(Rectangle2D pickArea, AffineTransform ltw, boolean boundingBox, List<List<SVGElement>> retVec) throws SVGException
     {
         if (viewXform != null)
         {
@@ -329,7 +343,8 @@ public class SVGRoot extends Group
         super.pick(pickArea, ltw, boundingBox, retVec);
     }
     
-    public void pick(Point2D point, boolean boundingBox, List retVec) throws SVGException
+    @Override
+    public void pick(Point2D point, boolean boundingBox, List<List<SVGElement>> retVec) throws SVGException
     {
         Point2D xPoint = new Point2D.Double(point.getX(), point.getY());
         if (viewXform != null)
@@ -346,12 +361,14 @@ public class SVGRoot extends Group
         super.pick(xPoint, boundingBox, retVec);
     }
 
+    @Override
     public Shape getShape()
     {
         Shape shape = super.getShape();
         return viewXform.createTransformedShape(shape);
     }
 
+    @Override
     public Rectangle2D getBoundingBox() throws SVGException
     {
         Rectangle2D bbox = super.getBoundingBox();
@@ -380,6 +397,7 @@ public class SVGRoot extends Group
      * @return - true if this node has changed state as a result of the time
      * update
      */
+    @Override
     public boolean updateTime(double curTime) throws SVGException
     {
         boolean changeState = super.updateTime(curTime);

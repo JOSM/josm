@@ -10,6 +10,7 @@ import java.awt.Insets;
 import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.swing.ButtonGroup;
 import javax.swing.JLabel;
@@ -172,28 +173,18 @@ public class PluginUpdatePolicyPanel extends JPanel {
      * Loads the relevant preference values from the JOSM preferences
      */
     public final void initFromPreferences() {
-        String pref = Main.pref.get("pluginmanager.version-based-update.policy", "ask");
-        Policy p = Policy.fromPreferenceValue(pref);
-        if (p == null) {
-            p = Policy.ASK;
-        }
-        rbVersionBasedUpatePolicy.get(p).setSelected(true);
+        rbVersionBasedUpatePolicy.get(Optional.ofNullable(Policy.fromPreferenceValue(
+                Main.pref.get("pluginmanager.version-based-update.policy", "ask"))).orElse(Policy.ASK)).setSelected(true);
+        rbTimeBasedUpatePolicy.get(Optional.ofNullable(Policy.fromPreferenceValue(
+                Main.pref.get("pluginmanager.time-based-update.policy", "ask"))).orElse(Policy.ASK)).setSelected(true);
 
-        pref = Main.pref.get("pluginmanager.time-based-update.policy", "ask");
-        p = Policy.fromPreferenceValue(pref);
-        if (p == null) {
-            p = Policy.ASK;
-        }
-        rbTimeBasedUpatePolicy.get(p).setSelected(true);
-
-        pref = Main.pref.get("pluginmanager.warntime", null);
+        String pref = Main.pref.get("pluginmanager.warntime", null);
         int days = 0;
         if (pref != null) {
             // remove legacy preference
             Main.pref.put("pluginmanager.warntime", null);
-            pref = pref.trim();
             try {
-                days = Integer.parseInt(pref);
+                days = Integer.parseInt(pref.trim());
             } catch (NumberFormatException e) {
                 // ignore - load from preference pluginmanager.time-based-update.interval
                 Main.trace(e);

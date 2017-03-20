@@ -240,13 +240,18 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
             case SW_INDEX:
                 if (nw != null)
                     return nw;
+                if (se != null)
+                    return se;
+                return ne;
             case NW_INDEX:
                 if (se != null)
                     return se;
+                return ne;
             case SE_INDEX:
                 return ne;
+            default:
+                return null;
             }
-            return null;
         }
 
         QBLevel<T> nextNode() {

@@ -788,9 +788,7 @@ public class ImageProvider {
             if (name == null)
                 return null;
 
-            String prefix = "";
-            if (isDisabled)
-                prefix = "dis:"+prefix;
+            String prefix = isDisabled ? "dis:" : "";
             if (name.startsWith("data:")) {
                 String url = name;
                 ImageResource ir = cache.get(prefix+url);
@@ -1226,9 +1224,9 @@ public class ImageProvider {
                  InputStream is = cf.getInputStream()) {
                 parser.parse(new InputSource(is));
             }
-        } catch (SAXReturnException r) {
-            Main.trace(r);
-            return r.getResult();
+        } catch (SAXReturnException e) {
+            Main.trace(e);
+            return e.getResult();
         } catch (IOException | SAXException | ParserConfigurationException e) {
             Main.warn("Parsing " + base + fn + " failed:\n" + e);
             return null;
@@ -1796,7 +1794,7 @@ public class ImageProvider {
         return null;
     }
 
-    private static Color parseRGB(String ... s) {
+    private static Color parseRGB(String... s) {
         int[] rgb = new int[3];
         try {
             for (int i = 0; i < 3; i++) {

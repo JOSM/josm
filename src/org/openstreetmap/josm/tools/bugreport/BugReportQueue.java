@@ -81,6 +81,7 @@ public class BugReportQueue {
                 }
             } catch (InterruptedException e) {
                 displayFor(BugReport.intercept(e));
+                Thread.currentThread().interrupt();
             }
         }
     }

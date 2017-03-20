@@ -46,7 +46,6 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.net.URI;
-import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -76,6 +75,7 @@ public class PatternSVG extends FillElement
     {
     }
 
+    @Override
     public String getTagName()
     {
         return TAG_NAME;
@@ -85,11 +85,13 @@ public class PatternSVG extends FillElement
      * Called after the start element but before the end element to indicate
      * each child tag that has been processed
      */
+    @Override
     public void loaderAddChild(SVGLoaderHelper helper, SVGElement child) throws SVGElementException
     {
         super.loaderAddChild(helper, child);
     }
 
+    @Override
     protected void build() throws SVGException
     {
         super.build();
@@ -226,9 +228,7 @@ public class PatternSVG extends FillElement
         g.setClip(0, 0, tileWidth, tileHeight);
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        for (Iterator it = children.iterator(); it.hasNext();)
-        {
-            SVGElement ele = (SVGElement) it.next();
+        for (SVGElement ele : children) {
             if (ele instanceof RenderableElement)
             {
                 AffineTransform xform = new AffineTransform();
@@ -263,6 +263,7 @@ public class PatternSVG extends FillElement
         }
     }
 
+    @Override
     public Paint getPaint(Rectangle2D bounds, AffineTransform xform)
     {
         return texPaint;
@@ -275,6 +276,7 @@ public class PatternSVG extends FillElement
      * @return - true if this node has changed state as a result of the time
      * update
      */
+    @Override
     public boolean updateTime(double curTime) throws SVGException
     {
         //Patterns don't change state

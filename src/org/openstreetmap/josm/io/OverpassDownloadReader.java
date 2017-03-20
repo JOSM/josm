@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.EnumMap;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -113,10 +112,10 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         idOffset.put(OsmPrimitiveType.WAY, 2_400_000_000L);
         idOffset.put(OsmPrimitiveType.RELATION, 3_600_000_000L);
         try {
-            final List<NameFinder.SearchResult> results = NameFinder.queryNominatim(area);
-            final PrimitiveId osmId = results.iterator().next().getOsmId();
+            final PrimitiveId osmId = NameFinder.queryNominatim(area).stream().filter(
+                    x -> !OsmPrimitiveType.NODE.equals(x.getOsmId().getType())).iterator().next().getOsmId();
             return String.format("area(%d)", osmId.getUniqueId() + idOffset.get(osmId.getType()));
-        } catch (IOException | NoSuchElementException ex) {
+        } catch (IOException | NoSuchElementException | IndexOutOfBoundsException ex) {
             throw new UncheckedParseException(ex);
         }
     }
@@ -169,19 +168,19 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         DataSet ds = super.parseOsm(progressMonitor);
 
         // add bounds if necessary (note that Overpass API does not return bounds in the response XML)
-        if (ds != null && ds.dataSources.isEmpty() && overpassQuery.contains("{{bbox}}")) {
+        if (ds != null && ds.getDataSources().isEmpty() && overpassQuery.contains("{{bbox}}")) {
             if (crosses180th) {
                 Bounds bounds = new Bounds(lat1, lon1, lat2, 180.0);
                 DataSource src = new DataSource(bounds, getBaseUrl());
-                ds.dataSources.add(src);
+                ds.addDataSource(src);
 
                 bounds = new Bounds(lat1, -180.0, lat2, lon2);
                 src = new DataSource(bounds, getBaseUrl());
-                ds.dataSources.add(src);
+                ds.addDataSource(src);
             } else {
                 Bounds bounds = new Bounds(lat1, lon1, lat2, lon2);
                 DataSource src = new DataSource(bounds, getBaseUrl());
-                ds.dataSources.add(src);
+                ds.addDataSource(src);
             }
         }
 

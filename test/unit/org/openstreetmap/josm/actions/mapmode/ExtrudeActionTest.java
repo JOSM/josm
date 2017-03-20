@@ -33,7 +33,7 @@ public class ExtrudeActionTest {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
             Main.getLayerManager().addLayer(layer);
-            ExtrudeAction mapMode = new ExtrudeAction(Main.map);
+            ExtrudeAction mapMode = new ExtrudeAction();
             MapMode oldMapMode = Main.map.mapMode;
             assertTrue(Main.map.selectMapMode(mapMode));
             assertEquals(mapMode, Main.map.mapMode);

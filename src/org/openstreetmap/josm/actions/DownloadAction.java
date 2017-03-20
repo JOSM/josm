@@ -32,9 +32,8 @@ public class DownloadAction extends JosmAction {
      */
     public DownloadAction() {
         super(tr("Download from OSM..."), "download", tr("Download map data from the OSM server."),
-                // CHECKSTYLE.OFF: LineLength
-                Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download from OSM...")), KeyEvent.VK_DOWN, Shortcut.CTRL_SHIFT), true);
-                // CHECKSTYLE.ON: LineLength
+              Shortcut.registerShortcut("file:download", tr("File: {0}", tr("Download from OSM...")), KeyEvent.VK_DOWN, Shortcut.CTRL_SHIFT),
+              true);
         putValue("help", ht("/Action/Download"));
     }
 
@@ -48,16 +47,19 @@ public class DownloadAction extends JosmAction {
             Bounds area = dialog.getSelectedDownloadArea();
             if (dialog.isDownloadOsmData()) {
                 DownloadOsmTask task = new DownloadOsmTask();
+                task.setZoomAfterDownload(dialog.isZoomToDownloadedDataRequired());
                 Future<?> future = task.download(dialog.isNewLayerRequired(), area, null);
                 Main.worker.submit(new PostDownloadHandler(task, future));
             }
             if (dialog.isDownloadGpxData()) {
                 DownloadGpsTask task = new DownloadGpsTask();
+                task.setZoomAfterDownload(dialog.isZoomToDownloadedDataRequired());
                 Future<?> future = task.download(dialog.isNewLayerRequired(), area, null);
                 Main.worker.submit(new PostDownloadHandler(task, future));
             }
             if (dialog.isDownloadNotes()) {
                 DownloadNotesTask task = new DownloadNotesTask();
+                task.setZoomAfterDownload(dialog.isZoomToDownloadedDataRequired());
                 Future<?> future = task.download(false, area, null);
                 Main.worker.submit(new PostDownloadHandler(task, future));
             }

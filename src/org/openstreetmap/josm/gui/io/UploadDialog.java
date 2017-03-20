@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import javax.swing.AbstractAction;
@@ -342,10 +343,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
      * @return the current changeset
      */
     public Changeset getChangeset() {
-        Changeset cs = pnlChangesetManagement.getSelectedChangeset();
-        if (cs == null) {
-            cs = new Changeset();
-        }
+        Changeset cs = Optional.ofNullable(pnlChangesetManagement.getSelectedChangeset()).orElseGet(Changeset::new);
         cs.setKeys(pnlTagSettings.getTags(false));
         return cs;
     }

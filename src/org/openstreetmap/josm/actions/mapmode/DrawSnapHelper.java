@@ -166,14 +166,10 @@ class DrawSnapHelper {
 
     private static final class AnglePopupMenu extends JPopupMenu {
 
-        private final JCheckBoxMenuItem repeatedCb;
-        private final JCheckBoxMenuItem helperCb;
-        private final JCheckBoxMenuItem projectionCb;
-
         private AnglePopupMenu(final DrawSnapHelper snapHelper) {
-            repeatedCb = new JCheckBoxMenuItem(new RepeatedAction(snapHelper));
-            helperCb = new JCheckBoxMenuItem(new HelperAction(snapHelper));
-            projectionCb = new JCheckBoxMenuItem(new ProjectionAction(snapHelper));
+            JCheckBoxMenuItem repeatedCb = new JCheckBoxMenuItem(new RepeatedAction(snapHelper));
+            JCheckBoxMenuItem helperCb = new JCheckBoxMenuItem(new HelperAction(snapHelper));
+            JCheckBoxMenuItem projectionCb = new JCheckBoxMenuItem(new ProjectionAction(snapHelper));
 
             helperCb.setState(DrawAction.DRAW_CONSTRUCTION_GEOMETRY.get());
             projectionCb.setState(DrawAction.SNAP_TO_PROJECTIONS.get());
@@ -250,7 +246,7 @@ class DrawSnapHelper {
      * Save the snap angles
      * @param angles The angles
      */
-    public void saveAngles(String ... angles) {
+    public void saveAngles(String... angles) {
         Main.pref.putCollection(DRAW_ANGLESNAP_ANGLES, Arrays.asList(angles));
     }
 

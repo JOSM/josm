@@ -524,6 +524,7 @@ public class ChangesetDialog extends ToggleDialog {
                         future.get();
                     } catch (InterruptedException e1) {
                         Main.warn(e1, "InterruptedException in ChangesetDialog while downloading changeset header");
+                        Thread.currentThread().interrupt();
                     } catch (ExecutionException e2) {
                         Main.error(e2);
                         BugReportExceptionHandler.handleException(e2.getCause());
@@ -546,7 +547,7 @@ public class ChangesetDialog extends ToggleDialog {
     }
 
     class ChangesetDialogPopup extends ListPopupMenu {
-        ChangesetDialogPopup(JList<?> ... lists) {
+        ChangesetDialogPopup(JList<?>... lists) {
             super(lists);
             add(selectObjectsAction);
             addSeparator();

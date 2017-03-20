@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TimeZone;
 
 import javax.swing.ImageIcon;
@@ -195,12 +196,8 @@ public class Marker implements TemplateEngineDataProvider {
             }
 
             URL url = uriToUrl(uri, relativePath);
-
             String urlStr = url == null ? "" : url.toString();
-            String symbolName = wpt.getString("symbol");
-            if (symbolName == null) {
-                symbolName = wpt.getString(GpxConstants.PT_SYM);
-            }
+            String symbolName = Optional.ofNullable(wpt.getString("symbol")).orElseGet(() -> wpt.getString(GpxConstants.PT_SYM));
             // text marker is returned in every case, see #10208
             final Marker marker = new Marker(wpt.getCoor(), wpt, symbolName, parentLayer, time, offset);
             if (url == null) {

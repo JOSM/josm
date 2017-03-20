@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -172,11 +173,8 @@ public class PreferencesReader {
                     if (defaults && isNil()) {
                         setting = new StringSetting(null);
                     } else {
-                        String value = parser.getAttributeValue(null, "value");
-                        if (value == null) {
-                            throw new XMLStreamException(tr("value expected"), parser.getLocation());
-                        }
-                        setting = new StringSetting(value);
+                        setting = new StringSetting(Optional.ofNullable(parser.getAttributeValue(null, "value"))
+                                .orElseThrow(() -> new XMLStreamException(tr("value expected"), parser.getLocation())));
                     }
                     if (defaults) {
                         setting.setTime(Math.round(Double.parseDouble(parser.getAttributeValue(null, "time"))));

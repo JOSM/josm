@@ -14,9 +14,8 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * Represents an immutable OSM way in the context of a historical view on
- * OSM data.
- *
+ * Represents an immutable OSM way in the context of a historical view on OSM data.
+ * @since 1670
  */
 public class HistoryWay extends HistoryOsmPrimitive {
 

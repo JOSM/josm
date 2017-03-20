@@ -164,8 +164,7 @@ public class PowerLines extends Test {
      * @return {@code true} if power key is set and equal to possible values
      */
     private static boolean isPowerIn(OsmPrimitive p, Collection<String> values) {
-        String v = p.get("power");
-        return v != null && values != null && values.contains(v);
+        return p.hasTag("power", values);
     }
 
     /**
@@ -175,7 +174,6 @@ public class PowerLines extends Test {
      * @return {@code true} if power key is set and equal to possible values
      */
     private static boolean isBuildingIn(OsmPrimitive p, Collection<String> values) {
-        String v = p.get("building");
-        return v != null && values != null && values.contains(v);
+        return p.hasTag("building", values);
     }
 }

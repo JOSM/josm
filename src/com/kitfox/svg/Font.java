@@ -58,7 +58,7 @@ public class Font extends SVGElement
     int vertAdvY = -1;  //Defaults to one 'em'.  See font-face
     FontFace fontFace = null;
     MissingGlyph missingGlyph = null;
-    final HashMap glyphs = new HashMap();
+    final HashMap<String, SVGElement> glyphs = new HashMap<>();
 
     /**
      * Creates a new instance of Font
@@ -67,6 +67,7 @@ public class Font extends SVGElement
     {
     }
 
+    @Override
     public String getTagName()
     {
         return TAG_NAME;
@@ -76,6 +77,7 @@ public class Font extends SVGElement
      * Called after the start element but before the end element to indicate
      * each child tag that has been processed
      */
+    @Override
     public void loaderAddChild(SVGLoaderHelper helper, SVGElement child) throws SVGElementException
     {
         super.loaderAddChild(helper, child);
@@ -92,6 +94,7 @@ public class Font extends SVGElement
         }
     }
 
+    @Override
     public void loaderEndElement(SVGLoaderHelper helper) throws SVGParseException
     {
         super.loaderEndElement(helper);
@@ -101,6 +104,7 @@ public class Font extends SVGElement
         helper.universe.registerFont(this);
     }
 
+    @Override
     protected void build() throws SVGException
     {
         super.build();
@@ -210,6 +214,7 @@ public class Font extends SVGElement
      * @return - true if this node has changed state as a result of the time
      * update
      */
+    @Override
     public boolean updateTime(double curTime) throws SVGException
     {
         //Fonts can't change

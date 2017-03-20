@@ -221,7 +221,7 @@ public class BugReportDialog extends JDialog {
                 }
                 current = current.getParent();
             }
-        } catch (RuntimeException e) {
+        } catch (RuntimeException e) { // NOPMD
             BugReport.intercept(e).put("current", current).warn();
         }
         return null;

@@ -32,7 +32,13 @@ import org.openstreetmap.josm.tools.Utils;
  * applies for Nodes and turn restriction relations
  */
 public class NodeElement extends StyleElement {
+    /**
+     * The image that is used to display this node. May be <code>null</code>
+     */
     public final MapImage mapImage;
+    /**
+     * The angle that is used to rotate {@link #mapImage}. May be <code>null</code> to indicate no rotation.
+     */
     public final RotationAngle mapImageAngle;
     /**
      * The symbol that should be used for drawing this node.
@@ -59,9 +65,14 @@ public class NodeElement extends StyleElement {
         super(c, defaultMajorZindex);
         this.mapImage = mapImage;
         this.symbol = symbol;
-        this.mapImageAngle = rotationAngle;
+        this.mapImageAngle = Objects.requireNonNull(rotationAngle, "rotationAngle");
     }
 
+    /**
+     * Creates a new node element for the given Environment
+     * @param env The environment
+     * @return The node element style or <code>null</code> if the node should not be painted.
+     */
     public static NodeElement create(Environment env) {
         return create(env, 4f, false);
     }
@@ -69,12 +80,32 @@ public class NodeElement extends StyleElement {
     private static NodeElement create(Environment env, float defaultMajorZindex, boolean allowDefault) {
         Cascade c = env.mc.getCascade(env.layer);
 
-        MapImage mapImage = createIcon(env, ICON_KEYS);
+        MapImage mapImage = createIcon(env);
         Symbol symbol = null;
         if (mapImage == null) {
             symbol = createSymbol(env);
         }
-        RotationAngle rotationAngle = null;
+
+        RotationAngle rotationAngle = createRotationAngle(env);
+
+        // optimization: if we neither have a symbol, nor a mapImage
+        // we don't have to check for the remaining style properties and we don't
+        // have to allocate a node element style.
+        if (!allowDefault && symbol == null && mapImage == null) return null;
+
+        return new NodeElement(c, mapImage, symbol, defaultMajorZindex, rotationAngle);
+    }
+
+    /**
+     * Reads the icon-rotation property and creates a rotation angle from it.
+     * @param env The environment
+     * @return The angle
+     * @since 11670
+     */
+    public static RotationAngle createRotationAngle(Environment env) {
+        Cascade c = env.mc.getCascade(env.layer);
+
+        RotationAngle rotationAngle = RotationAngle.NO_ROTATION;
         final Float angle = c.get(ICON_ROTATION, null, Float.class, true);
         if (angle != null) {
             rotationAngle = RotationAngle.buildStaticRotation(angle);
@@ -92,16 +123,26 @@ public class NodeElement extends StyleElement {
                 }
             }
         }
-
-        // optimization: if we neither have a symbol, nor a mapImage
-        // we don't have to check for the remaining style properties and we don't
-        // have to allocate a node element style.
-        if (!allowDefault && symbol == null && mapImage == null) return null;
-
-        return new NodeElement(c, mapImage, symbol, defaultMajorZindex, rotationAngle);
+        return rotationAngle;
     }
 
-    public static MapImage createIcon(final Environment env, final String ... keys) {
+    /**
+     * Create a map icon for the environment using the default keys.
+     * @param env The environment to read the icon form
+     * @return The icon or <code>null</code> if no icon is defined
+     * @since 11670
+     */
+    public static MapImage createIcon(final Environment env) {
+        return createIcon(env, ICON_KEYS);
+    }
+
+    /**
+     * Create a map icon for the environment.
+     * @param env The environment to read the icon form
+     * @param keys The keys, indexed by the ICON_..._IDX constants.
+     * @return The icon or <code>null</code> if no icon is defined
+     */
+    public static MapImage createIcon(final Environment env, final String... keys) {
         CheckParameterUtil.ensureParameterNotNull(env, "env");
         CheckParameterUtil.ensureParameterNotNull(keys, "keys");
 
@@ -142,7 +183,7 @@ public class NodeElement extends StyleElement {
         mapImage.offsetX = Math.round(offsetXF);
         mapImage.offsetY = Math.round(offsetYF);
 
-        mapImage.alpha = Math.min(255, Math.max(0, Main.pref.getInteger("mappaint.icon-image-alpha", 255)));
+        mapImage.alpha = Utils.clamp(Main.pref.getInteger("mappaint.icon-image-alpha", 255), 0, 255);
         Integer pAlpha = Utils.colorFloat2int(c.get(keys[ICON_OPACITY_IDX], null, float.class));
         if (pAlpha != null) {
             mapImage.alpha = pAlpha;
@@ -150,6 +191,11 @@ public class NodeElement extends StyleElement {
         return mapImage;
     }
 
+    /**
+     * Create a symbol for the environment
+     * @param env The environment to read the icon form
+     * @return The symbol.
+     */
     private static Symbol createSymbol(Environment env) {
         Cascade c = env.mc.getCascade(env.layer);
 
@@ -166,12 +212,7 @@ public class NodeElement extends StyleElement {
         if (sizeOnDefault != null && sizeOnDefault <= 0) {
             sizeOnDefault = null;
         }
-        Float size = getWidth(c, "symbol-size", sizeOnDefault);
-
-        if (size == null) {
-            size = 10f;
-        }
-
+        Float size = Optional.ofNullable(getWidth(c, "symbol-size", sizeOnDefault)).orElse(10f);
         if (size <= 0)
             return null;
 
@@ -290,6 +331,10 @@ public class NodeElement extends StyleElement {
         painter.drawNodeSymbol(n, symbol, fillColor, strokeColor);
     }
 
+    /**
+     * Gets the selection box for this element.
+     * @return The selection box as {@link BoxProvider} object.
+     */
     public BoxProvider getBoxProvider() {
         if (mapImage != null)
             return mapImage.getBoxProvider();

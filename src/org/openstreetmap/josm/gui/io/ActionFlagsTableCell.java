@@ -39,8 +39,6 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
     private final JCheckBox[] checkBoxes = new JCheckBox[2];
     private final transient CellEditorSupport cellEditorSupport = new CellEditorSupport(this);
 
-    private final transient ActionListener al = e -> cellEditorSupport.fireEditingStopped();
-
     /**
      * Constructs a new {@code ActionFlagsTableCell}.
      */
@@ -49,6 +47,7 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
         checkBoxes[1] = new JCheckBox(tr("Save"));
         setLayout(new GridBagLayout());
 
+        ActionListener al = e -> cellEditorSupport.fireEditingStopped();
         ActionMap am = getActionMap();
         for (final JCheckBox b : checkBoxes) {
             b.setPreferredSize(new Dimension(b.getPreferredSize().width, 19));

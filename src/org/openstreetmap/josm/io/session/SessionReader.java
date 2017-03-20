@@ -255,7 +255,7 @@ public class SessionReader {
                     }
                 } else
                     throw new IOException(tr("Unsupported scheme ''{0}'' in URI ''{1}''.", uri.getScheme(), uriStr));
-            } catch (URISyntaxException e) {
+            } catch (URISyntaxException | IllegalArgumentException e) {
                 throw new IOException(e);
             }
         }
@@ -601,8 +601,8 @@ public class SessionReader {
             try {
                 zipFile = new ZipFile(sessionFile, StandardCharsets.UTF_8);
                 return getZipInputStream(zipFile);
-            } catch (ZipException ze) {
-                throw new IOException(ze);
+            } catch (ZipException ex) {
+                throw new IOException(ex);
             }
         } else {
             try {

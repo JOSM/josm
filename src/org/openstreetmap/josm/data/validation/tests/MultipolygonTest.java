@@ -174,7 +174,7 @@ public class MultipolygonTest extends Test {
      */
     private void checkStyleConsistency(Relation r, Multipolygon polygon) {
         ElemStyles styles = MapPaintStyles.getStyles();
-        if (styles != null && !"boundary".equals(r.get("type"))) {
+        if (styles != null && !r.hasTag("type", "boundary")) {
             AreaElement area = ElemStyles.getAreaElemStyle(r, false);
             boolean areaStyle = area != null;
             // If area style was not found for relation then use style of ways
@@ -203,9 +203,7 @@ public class MultipolygonTest extends Test {
 
             if (area != null) {
                 for (Way wInner : polygon.getInnerWays()) {
-                    AreaElement areaInner = ElemStyles.getAreaElemStyle(wInner, false);
-
-                    if (areaInner != null && area.equals(areaInner)) {
+                    if (area.equals(ElemStyles.getAreaElemStyle(wInner, false))) {
                         errors.add(TestError.builder(this, Severity.OTHER, INNER_STYLE_MISMATCH)
                                 .message(tr("With the currently used mappaint style the style for inner way equals the multipolygon style"))
                                 .primitives(Arrays.asList(r, wInner))
@@ -668,9 +666,7 @@ public class MultipolygonTest extends Test {
     private static Collection<? extends OsmPrimitive> combineRelAndPrimitives(Relation r, Collection<? extends OsmPrimitive> primitives) {
         // add multipolygon in order to let user select something and fix the error
         if (!primitives.contains(r)) {
-            // Diamond operator does not work with Java 9 here
-            @SuppressWarnings("unused")
-            List<OsmPrimitive> newPrimitives = new ArrayList<OsmPrimitive>(primitives);
+            List<OsmPrimitive> newPrimitives = new ArrayList<>(primitives);
             newPrimitives.add(0, r);
             return newPrimitives;
         } else {

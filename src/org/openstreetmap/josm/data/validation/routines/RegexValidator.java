@@ -101,7 +101,7 @@ public class RegexValidator extends AbstractValidator {
      * @param regexs The set of regular expressions this validator will
      * validate against
      */
-    public RegexValidator(String ... regexs) {
+    public RegexValidator(String... regexs) {
         this(regexs, true);
     }
 

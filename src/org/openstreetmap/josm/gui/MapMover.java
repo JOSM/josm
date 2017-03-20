@@ -11,9 +11,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import javax.swing.AbstractAction;
-import javax.swing.JPanel;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.josm.Main;
@@ -36,7 +36,9 @@ public class MapMover extends MouseAdapter implements Destroyable {
 
     public static final BooleanProperty PROP_ZOOM_REVERSE_WHEEL = new BooleanProperty("zoom.reverse-wheel", false);
 
-    private static final JMapViewerUpdater jMapViewerUpdater = new JMapViewerUpdater();
+    static {
+        new JMapViewerUpdater();
+    }
 
     private static class JMapViewerUpdater implements PreferenceChangedListener {
 
@@ -72,12 +74,10 @@ public class MapMover extends MouseAdapter implements Destroyable {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (".".equals(action) || ",".equals(action)) {
-                Point mouse = nc.getMousePosition();
-                if (mouse == null)
-                    mouse = new Point((int) nc.getBounds().getCenterX(), (int) nc.getBounds().getCenterY());
-                MouseWheelEvent we = new MouseWheelEvent(nc, e.getID(), e.getWhen(), e.getModifiers(), mouse.x, mouse.y, 0, false,
-                        MouseWheelEvent.WHEEL_UNIT_SCROLL, 1, ",".equals(action) ? -1 : 1);
-                mouseWheelMoved(we);
+                Point mouse = Optional.ofNullable(nc.getMousePosition()).orElseGet(
+                    () -> new Point((int) nc.getBounds().getCenterX(), (int) nc.getBounds().getCenterY()));
+                mouseWheelMoved(new MouseWheelEvent(nc, e.getID(), e.getWhen(), e.getModifiers(), mouse.x, mouse.y, 0, false,
+                        MouseWheelEvent.WHEEL_UNIT_SCROLL, 1, ",".equals(action) ? -1 : 1));
             } else {
                 EastNorth center = nc.getCenter();
                 EastNorth newcenter = nc.getEastNorth(nc.getWidth()/2+nc.getWidth()/5, nc.getHeight()/2+nc.getHeight()/5);
@@ -117,9 +117,9 @@ public class MapMover extends MouseAdapter implements Destroyable {
     /**
      * Constructs a new {@code MapMover}.
      * @param navComp the navigatable component
-     * @param contentPane Ignored. The main action map is used.
+     * @since 11713
      */
-    public MapMover(NavigatableComponent navComp, JPanel contentPane) {
+    public MapMover(NavigatableComponent navComp) {
         this.nc = navComp;
         nc.addMouseListener(this);
         nc.addMouseMotionListener(this);

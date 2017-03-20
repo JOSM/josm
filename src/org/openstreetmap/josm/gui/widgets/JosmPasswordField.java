@@ -124,7 +124,7 @@ public class JosmPasswordField extends JPasswordField implements FocusListener {
                 public void actionPerformed(ActionEvent e) {
                     try {
                         pasteAction.actionPerformed(e);
-                    } catch (NullPointerException npe) {
+                    } catch (NullPointerException npe) { // NOPMD
                         Main.error(npe, "NullPointerException occured because of JDK bug 6322854. "
                                 +"Copy/Paste operation has not been performed. Please complain to Oracle: "+
                                 "https://bugs.openjdk.java.net/browse/JDK-6322854");

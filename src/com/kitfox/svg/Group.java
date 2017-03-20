@@ -65,6 +65,7 @@ public class Group extends ShapeElement
     {
     }
 
+    @Override
     public String getTagName()
     {
         return TAG_NAME;
@@ -74,6 +75,7 @@ public class Group extends ShapeElement
      * Called after the start element but before the end element to indicate
      * each child tag that has been processed
      */
+    @Override
     public void loaderAddChild(SVGLoaderHelper helper, SVGElement child) throws SVGElementException
     {
         super.loaderAddChild(helper, child);
@@ -97,7 +99,8 @@ public class Group extends ShapeElement
         return true;
     }
 
-    void pick(Point2D point, boolean boundingBox, List retVec) throws SVGException
+    @Override
+    void pick(Point2D point, boolean boundingBox, List<List<SVGElement>> retVec) throws SVGException
     {
         Point2D xPoint = new Point2D.Double(point.getX(), point.getY());
         if (xform != null)
@@ -112,9 +115,7 @@ public class Group extends ShapeElement
         }
 
 
-        for (Iterator it = children.iterator(); it.hasNext();)
-        {
-            SVGElement ele = (SVGElement) it.next();
+        for (SVGElement ele : children) {
             if (ele instanceof RenderableElement)
             {
                 RenderableElement rendEle = (RenderableElement) ele;
@@ -124,7 +125,8 @@ public class Group extends ShapeElement
         }
     }
 
-    void pick(Rectangle2D pickArea, AffineTransform ltw, boolean boundingBox, List retVec) throws SVGException
+    @Override
+    void pick(Rectangle2D pickArea, AffineTransform ltw, boolean boundingBox, List<List<SVGElement>> retVec) throws SVGException
     {
         if (xform != null)
         {
@@ -133,9 +135,7 @@ public class Group extends ShapeElement
         }
 
 
-        for (Iterator it = children.iterator(); it.hasNext();)
-        {
-            SVGElement ele = (SVGElement) it.next();
+        for (SVGElement ele : children) {
             if (ele instanceof RenderableElement)
             {
                 RenderableElement rendEle = (RenderableElement) ele;
@@ -145,6 +145,7 @@ public class Group extends ShapeElement
         }
     }
 
+    @Override
     public void render(Graphics2D g) throws SVGException
     {
         //Don't process if not visible
@@ -168,7 +169,7 @@ public class Group extends ShapeElement
 
         beginLayer(g);
 
-        Iterator it = children.iterator();
+        Iterator<SVGElement> it = children.iterator();
 
 //        try
 //        {
@@ -184,7 +185,7 @@ public class Group extends ShapeElement
         Shape clip = g.getClip();
         while (it.hasNext())
         {
-            SVGElement ele = (SVGElement) it.next();
+            SVGElement ele = it.next();
             if (ele instanceof RenderableElement)
             {
                 RenderableElement rendEle = (RenderableElement) ele;
@@ -211,6 +212,7 @@ public class Group extends ShapeElement
     /**
      * Retrieves the cached bounding box of this group
      */
+    @Override
     public Shape getShape()
     {
         if (cachedShape == null)
@@ -224,10 +226,7 @@ public class Group extends ShapeElement
     {
         Area retShape = new Area();
 
-        for (Iterator it = children.iterator(); it.hasNext();)
-        {
-            SVGElement ele = (SVGElement) it.next();
-
+        for (SVGElement ele : children) {
             if (ele instanceof ShapeElement)
             {
                 ShapeElement shpEle = (ShapeElement) ele;
@@ -245,6 +244,7 @@ public class Group extends ShapeElement
     /**
      * Retrieves the cached bounding box of this group
      */
+    @Override
     public Rectangle2D getBoundingBox() throws SVGException
     {
         if (boundingBox == null)
@@ -261,13 +261,9 @@ public class Group extends ShapeElement
      */
     public void calcBoundingBox() throws SVGException
     {
-//        Rectangle2D retRect = new Rectangle2D.Float();
         Rectangle2D retRect = null;
 
-        for (Iterator it = children.iterator(); it.hasNext();)
-        {
-            SVGElement ele = (SVGElement) it.next();
-
+        for (SVGElement ele : children) {
             if (ele instanceof RenderableElement)
             {
                 RenderableElement rendEle = (RenderableElement) ele;
@@ -303,15 +299,16 @@ public class Group extends ShapeElement
         boundingBox = boundsToParent(retRect);
     }
 
+    @Override
     public boolean updateTime(double curTime) throws SVGException
     {
         boolean changeState = super.updateTime(curTime);
-        Iterator it = children.iterator();
+        Iterator<SVGElement> it = children.iterator();
 
         //Distribute message to all members of this group
         while (it.hasNext())
         {
-            SVGElement ele = (SVGElement) it.next();
+            SVGElement ele = it.next();
             boolean updateVal = ele.updateTime(curTime);
 
             changeState = changeState || updateVal;

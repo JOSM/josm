@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 import javax.swing.JCheckBox;
@@ -148,11 +149,7 @@ public class Test extends AbstractVisitor {
      * @param progressMonitor  the progress monitor
      */
     public void startTest(ProgressMonitor progressMonitor) {
-        if (progressMonitor == null) {
-            this.progressMonitor = NullProgressMonitor.INSTANCE;
-        } else {
-            this.progressMonitor = progressMonitor;
-        }
+        this.progressMonitor = Optional.ofNullable(progressMonitor).orElse(NullProgressMonitor.INSTANCE);
         String startMessage = tr("Running test {0}", name);
         this.progressMonitor.beginTask(startMessage);
         Main.debug(startMessage);
@@ -344,8 +341,7 @@ public class Test extends AbstractVisitor {
      * @return True if building key is set and different from no,entrance
      */
     protected static final boolean isBuilding(OsmPrimitive p) {
-        String v = p.get("building");
-        return v != null && !"no".equals(v) && !"entrance".equals(v);
+        return p.hasTagDifferent("building", "no", "entrance");
     }
 
     @Override
@@ -359,6 +355,6 @@ public class Test extends AbstractVisitor {
         if (obj == null || getClass() != obj.getClass()) return false;
         Test test = (Test) obj;
         return Objects.equals(name, test.name) &&
-                Objects.equals(description, test.description);
+               Objects.equals(description, test.description);
     }
 }

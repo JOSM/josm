@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
 import org.openstreetmap.josm.data.preferences.Setting;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.preferences.SourceEditor;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
@@ -165,7 +166,7 @@ public final class ShowStatusReportAction extends JosmAction {
         } catch (SecurityException e) {
             Main.trace(e);
         }
-        List<String> commandLineArgs = Main.getCommandLineArgs();
+        List<String> commandLineArgs = MainApplication.getCommandLineArgs();
         if (!commandLineArgs.isEmpty()) {
             text.append("Program arguments: ").append(Arrays.toString(paramCleanup(commandLineArgs).toArray())).append('\n');
         }
@@ -267,22 +268,18 @@ public final class ShowStatusReportAction extends JosmAction {
         StringBuilder text = new StringBuilder();
         String reportHeader = getReportHeader();
         text.append(reportHeader);
-        try {
-            Map<String, Setting<?>> settings = Main.pref.getAllSettings();
-            Set<String> keys = new HashSet<>(settings.keySet());
-            for (String key : keys) {
-                // Remove sensitive information from status report
-                if (key.startsWith("marker.show") || key.contains("username") || key.contains("password") || key.contains("access-token")) {
-                    settings.remove(key);
-                }
+        Map<String, Setting<?>> settings = Main.pref.getAllSettings();
+        Set<String> keys = new HashSet<>(settings.keySet());
+        for (String key : keys) {
+            // Remove sensitive information from status report
+            if (key.startsWith("marker.show") || key.contains("username") || key.contains("password") || key.contains("access-token")) {
+                settings.remove(key);
             }
-            for (Entry<String, Setting<?>> entry : settings.entrySet()) {
-                text.append(paramCleanup(entry.getKey()))
-                    .append('=')
-                    .append(paramCleanup(entry.getValue().getValue().toString())).append('\n');
-            }
-        } catch (Exception x) {
-            Main.error(x);
+        }
+        for (Entry<String, Setting<?>> entry : settings.entrySet()) {
+            text.append(paramCleanup(entry.getKey()))
+                .append('=')
+                .append(paramCleanup(entry.getValue().getValue().toString())).append('\n');
         }
 
         DebugTextDisplay ta = new DebugTextDisplay(text.toString());

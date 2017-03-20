@@ -194,8 +194,8 @@ public class JumpToAction extends JosmAction {
             double dlon = Double.parseDouble(lon.getText());
             double zoomLvl = Double.parseDouble(zm.getText());
             url.setText(OsmUrlToBounds.getURL(dlat, dlon, (int) zoomLvl));
-        } catch (NumberFormatException x) {
-            Main.debug(x.getMessage());
+        } catch (NumberFormatException e) {
+            Main.debug(e.getMessage());
         }
     }
 

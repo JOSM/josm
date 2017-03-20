@@ -182,60 +182,64 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
 
     @Override
     public double[] invproject(double x, double y) {
-        final double lambda, phi;
         switch (mode) {
             case EQUATORIAL: // Fall through
-            case OBLIQUE: {
-                x /= dd;
-                y *= dd;
-                final double rho = Math.hypot(x, y);
-                if (rho < FINE_EPSILON) {
-                    lambda = 0.0;
-                    phi = latitudeOfOrigin;
-                } else {
-                    double sCe, cCe, ab;
-                    sCe = 2.0 * Math.asin(0.5 * rho / rq);
-                    cCe = Math.cos(sCe);
-                    sCe = Math.sin(sCe);
-                    x *= sCe;
-                    if (mode == Mode.OBLIQUE) {
-                        ab = cCe * sinb1 + y * sCe * cosb1 / rho;
-                        y = rho * cosb1 * cCe - y * sinb1 * sCe;
-                    } else {
-                        ab = y * sCe / rho;
-                        y = rho * cCe;
-                    }
-                    lambda = Math.atan2(x, y);
-                    phi = authlat(Math.asin(ab));
-                }
-                break;
-            }
-            case NORTH_POLE: {
-                y = -y;
-                // Fall through
-            }
-            case SOUTH_POLE: {
-                final double q = x*x + y*y;
-                if (q == 0) {
-                    lambda = 0.;
-                    phi = latitudeOfOrigin;
-                } else {
-                    double ab = 1.0 - q / qp;
-                    if (mode == Mode.SOUTH_POLE) {
-                        ab = -ab;
-                    }
-                    lambda = Math.atan2(x, y);
-                    phi = authlat(Math.asin(ab));
-                }
-                break;
-            }
-            default: {
+            case OBLIQUE:
+                return invprojectEO(x, y);
+            case NORTH_POLE:
+                return invprojectNS(x, -y);
+            case SOUTH_POLE:
+                return invprojectNS(x, y);
+            default:
                 throw new AssertionError(mode);
+        }
+    }
+
+    private double[] invprojectEO(double x, double y) {
+        final double lambda;
+        final double phi;
+        x /= dd;
+        y *= dd;
+        final double rho = Math.hypot(x, y);
+        if (rho < FINE_EPSILON) {
+            lambda = 0.0;
+            phi = latitudeOfOrigin;
+        } else {
+            final double ab;
+            double sCe = 2.0 * Math.asin(0.5 * rho / rq);
+            double cCe = Math.cos(sCe);
+            sCe = Math.sin(sCe);
+            x *= sCe;
+            if (mode == Mode.OBLIQUE) {
+                ab = cCe * sinb1 + y * sCe * cosb1 / rho;
+                y = rho * cosb1 * cCe - y * sinb1 * sCe;
+            } else {
+                ab = y * sCe / rho;
+                y = rho * cCe;
             }
+            lambda = Math.atan2(x, y);
+            phi = authlat(Math.asin(ab));
         }
         return new double[] {phi, lambda};
     }
 
+    private double[] invprojectNS(double x, double y) {
+        final double lambda;
+        final double phi;
+        final double q = x*x + y*y;
+        if (q == 0) {
+            lambda = 0.;
+            phi = latitudeOfOrigin;
+        } else {
+            double ab = 1.0 - q / qp;
+            if (mode == Mode.SOUTH_POLE) {
+                ab = -ab;
+            }
+            lambda = Math.atan2(x, y);
+            phi = authlat(Math.asin(ab));
+        }
+        return new double[] {phi, lambda};
+    }
 
     /**
      * Calculates <var>q</var>, Snyder equation (3-12)

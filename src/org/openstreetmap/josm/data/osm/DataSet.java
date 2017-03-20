@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.geom.Area;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -24,6 +25,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.ProjectionBounds;
@@ -58,7 +60,7 @@ import org.openstreetmap.josm.tools.Utils;
  * store some information.
  *
  * Dataset is threadsafe - accessing Dataset simultaneously from different threads should never
- * lead to data corruption or ConccurentModificationException. However when for example one thread
+ * lead to data corruption or ConcurrentModificationException. However when for example one thread
  * removes primitive and other thread try to add another primitive referring to the removed primitive,
  * DataIntegrityException will occur.
  *
@@ -97,6 +99,46 @@ import org.openstreetmap.josm.tools.Utils;
 public final class DataSet implements Data, ProjectionChangeListener {
 
     /**
+     * Upload policy.
+     *
+     * Determines if upload to the OSM server is intended, discouraged, or
+     * disabled / blocked.
+     */
+    public enum UploadPolicy {
+        /**
+         * Normal dataset, upload intended.
+         */
+        NORMAL("true"),
+        /**
+         * Upload discouraged, for example when using or distributing a private dataset.
+         */
+        DISCOURAGED("false"),
+        /**
+         * Upload blocked.
+         * Upload options completely disabled. Intended for special cases
+         * where a warning dialog is not enough, see #12731.
+         *
+         * For the user, it shouldn't be too easy to disable this flag.
+         */
+        BLOCKED("never");
+
+        final String xmlFlag;
+
+        UploadPolicy(String xmlFlag) {
+            this.xmlFlag = xmlFlag;
+        }
+
+        /**
+         * Get the corresponding value of the <code>upload='...'</code> XML-attribute
+         * in the .osm file.
+         * @return value of the <code>upload</code> attribute
+         */
+        public String getXmlFlag() {
+            return xmlFlag;
+        }
+    }
+
+    /**
      * Maximum number of events that can be fired between beginUpdate/endUpdate to be send as single events (ie without DatasetChangedEvent)
      */
     private static final int MAX_SINGLE_EVENTS = 30;
@@ -121,10 +163,18 @@ public final class DataSet implements Data, ProjectionChangeListener {
 
     private int highlightUpdateCount;
 
-    private boolean uploadDiscouraged;
+    private UploadPolicy uploadPolicy;
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private final Object selectionLock = new Object();
+
+    private Area cachedDataSourceArea;
+    private List<Bounds> cachedDataSourceBounds;
+
+    /**
+     * All data sources of this DataSet.
+     */
+    private final Collection<DataSource> dataSources = new LinkedList<>();
 
     /**
      * Constructs a new {@code DataSet}.
@@ -183,6 +233,31 @@ public final class DataSet implements Data, ProjectionChangeListener {
         } finally {
             copyFrom.getReadLock().unlock();
         }
+    }
+
+    /**
+     * Adds a new data source.
+     * @param source data source to add
+     * @return {@code true} if the collection changed as a result of the call
+     * @since 11626
+     */
+    public synchronized boolean addDataSource(DataSource source) {
+        return addDataSources(Collections.singleton(source));
+    }
+
+    /**
+     * Adds new data sources.
+     * @param sources data sources to add
+     * @return {@code true} if the collection changed as a result of the call
+     * @since 11626
+     */
+    public synchronized boolean addDataSources(Collection<DataSource> sources) {
+        boolean changed = dataSources.addAll(sources);
+        if (changed) {
+            cachedDataSourceArea = null;
+            cachedDataSourceBounds = null;
+        }
+        return changed;
     }
 
     /**
@@ -264,21 +339,46 @@ public final class DataSet implements Data, ProjectionChangeListener {
     }
 
     /**
-     * Determines if upload is being discouraged (i.e. this dataset contains private data which should not be uploaded)
+     * Determines if upload is being discouraged.
+     * (i.e. this dataset contains private data which should not be uploaded)
      * @return {@code true} if upload is being discouraged, {@code false} otherwise
      * @see #setUploadDiscouraged
+     * @deprecated use {@link #getUploadPolicy()}
      */
+    @Deprecated
     public boolean isUploadDiscouraged() {
-        return uploadDiscouraged;
+        return uploadPolicy == UploadPolicy.DISCOURAGED || uploadPolicy == UploadPolicy.BLOCKED;
     }
 
     /**
      * Sets the "upload discouraged" flag.
      * @param uploadDiscouraged {@code true} if this dataset contains private data which should not be uploaded
      * @see #isUploadDiscouraged
+     * @deprecated use {@link #setUploadPolicy(UploadPolicy)}
      */
+    @Deprecated
     public void setUploadDiscouraged(boolean uploadDiscouraged) {
-        this.uploadDiscouraged = uploadDiscouraged;
+        if (uploadPolicy != UploadPolicy.BLOCKED) {
+            this.uploadPolicy = uploadDiscouraged ? UploadPolicy.DISCOURAGED : UploadPolicy.NORMAL;
+        }
+    }
+
+    /**
+     * Get the upload policy.
+     * @return the upload policy
+     * @see #setUploadPolicy(UploadPolicy)
+     */
+    public UploadPolicy getUploadPolicy() {
+        return this.uploadPolicy;
+    }
+
+    /**
+     * Sets the upload policy.
+     * @param uploadPolicy the upload policy
+     * @see #getUploadPolicy()
+     */
+    public void setUploadPolicy(UploadPolicy uploadPolicy) {
+        this.uploadPolicy = uploadPolicy;
     }
 
     /**
@@ -441,11 +541,6 @@ public final class DataSet implements Data, ProjectionChangeListener {
     public boolean containsRelation(Relation r) {
         return relations.contains(r);
     }
-
-    /**
-     * All data sources of this DataSet.
-     */
-    public final Collection<DataSource> dataSources = new LinkedList<>();
 
     /**
      * Returns a collection containing all primitives of the dataset.
@@ -919,7 +1014,23 @@ public final class DataSet implements Data, ProjectionChangeListener {
     }
 
     @Override
-    public Collection<DataSource> getDataSources() {
+    public synchronized Area getDataSourceArea() {
+        if (cachedDataSourceArea == null) {
+            cachedDataSourceArea = Data.super.getDataSourceArea();
+        }
+        return cachedDataSourceArea;
+    }
+
+    @Override
+    public synchronized List<Bounds> getDataSourceBounds() {
+        if (cachedDataSourceBounds == null) {
+            cachedDataSourceBounds = Data.super.getDataSourceBounds();
+        }
+        return Collections.unmodifiableList(cachedDataSourceBounds);
+    }
+
+    @Override
+    public synchronized Collection<DataSource> getDataSources() {
         return Collections.unmodifiableCollection(dataSources);
     }
 
@@ -1333,11 +1444,20 @@ public final class DataSet implements Data, ProjectionChangeListener {
      * @param from The source DataSet
      * @param progressMonitor The progress monitor
      */
-    public void mergeFrom(DataSet from, ProgressMonitor progressMonitor) {
+    public synchronized void mergeFrom(DataSet from, ProgressMonitor progressMonitor) {
         if (from != null) {
             new DataSetMerger(this, from).merge(progressMonitor);
-            dataSources.addAll(from.dataSources);
-            from.dataSources.clear();
+            synchronized (from) {
+                if (!from.dataSources.isEmpty()) {
+                    if (dataSources.addAll(from.dataSources)) {
+                        cachedDataSourceArea = null;
+                        cachedDataSourceBounds = null;
+                    }
+                    from.dataSources.clear();
+                    from.cachedDataSourceArea = null;
+                    from.cachedDataSourceBounds = null;
+                }
+            }
         }
     }
 
@@ -1349,7 +1469,11 @@ public final class DataSet implements Data, ProjectionChangeListener {
         invalidateEastNorthCache();
     }
 
-    public ProjectionBounds getDataSourceBoundingBox() {
+    /**
+     * Returns the data sources bounding box.
+     * @return the data sources bounding box
+     */
+    public synchronized ProjectionBounds getDataSourceBoundingBox() {
         BoundingXYVisitor bbox = new BoundingXYVisitor();
         for (DataSource source : dataSources) {
             bbox.visit(source.bounds);
@@ -1359,5 +1483,4 @@ public final class DataSet implements Data, ProjectionChangeListener {
         }
         return null;
     }
-
 }

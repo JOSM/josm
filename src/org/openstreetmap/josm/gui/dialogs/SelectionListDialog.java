@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -659,7 +660,10 @@ public class SelectionListDialog extends ToggleDialog {
         public synchronized void sort() {
             if (selection.size() <= Main.pref.getInteger("selection.no_sort_above", 100_000)) {
                 boolean quick = selection.size() > Main.pref.getInteger("selection.fast_sort_above", 10_000);
-                selection.sort(OsmPrimitiveComparator.orderingWaysRelationsNodes().thenComparing(quick
+                Comparator<OsmPrimitive> c = Main.pref.getBoolean("selection.sort_relations_before_ways", true)
+                        ? OsmPrimitiveComparator.orderingRelationsWaysNodes()
+                        : OsmPrimitiveComparator.orderingWaysRelationsNodes();
+                selection.sort(c.thenComparing(quick
                         ? OsmPrimitiveComparator.comparingUniqueId()
                         : OsmPrimitiveComparator.comparingNames()));
             }

@@ -69,10 +69,7 @@ public class ImmutableGpxTrack extends WithAttributes implements GpxTrack {
 
     @Override
     public Bounds getBounds() {
-        if (bounds == null)
-            return null;
-        else
-            return new Bounds(bounds);
+        return bounds == null ? null : new Bounds(bounds);
     }
 
     @Override

@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -164,7 +165,7 @@ public class RestartAction extends JosmAction {
             }
         }
         // finally add program arguments
-        cmd.addAll(Main.getCommandLineArgs());
+        cmd.addAll(MainApplication.getCommandLineArgs());
         return cmd;
     }
 

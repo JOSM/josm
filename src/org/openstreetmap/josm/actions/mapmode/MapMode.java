@@ -10,12 +10,12 @@ import java.awt.event.MouseMotionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
-import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 
 /**
  * A class implementing MapMode is able to be selected as an mode for map editing.
@@ -35,10 +35,10 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
      * @param iconName icon filename in {@code mapmode} directory
      * @param tooltip  a longer description of the action that will be displayed in the tooltip.
      * @param shortcut a ready-created shortcut object or null if you don't want a shortcut.
-     * @param mapFrame unused but kept for plugin compatibility. Can be {@code null}
      * @param cursor cursor displayed when map mode is active
+     * @since 11713
      */
-    public MapMode(String name, String iconName, String tooltip, Shortcut shortcut, MapFrame mapFrame, Cursor cursor) {
+    public MapMode(String name, String iconName, String tooltip, Shortcut shortcut, Cursor cursor) {
         super(name, "mapmode/"+iconName, tooltip, shortcut, false);
         this.cursor = cursor;
         putValue("active", Boolean.FALSE);
@@ -49,14 +49,43 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
      * @param name the action's text
      * @param iconName icon filename in {@code mapmode} directory
      * @param tooltip  a longer description of the action that will be displayed in the tooltip.
-     * @param mapFrame unused but kept for plugin compatibility. Can be {@code null}
      * @param cursor cursor displayed when map mode is active
+     * @since 11713
      */
-    public MapMode(String name, String iconName, String tooltip, MapFrame mapFrame, Cursor cursor) {
+    public MapMode(String name, String iconName, String tooltip, Cursor cursor) {
         putValue(NAME, name);
         new ImageProvider("mapmode", iconName).getResource().attachImageIcon(this);
         putValue(SHORT_DESCRIPTION, tooltip);
         this.cursor = cursor;
+    }
+
+    /**
+     * Constructor for mapmodes without a menu
+     * @param name the action's text
+     * @param iconName icon filename in {@code mapmode} directory
+     * @param tooltip  a longer description of the action that will be displayed in the tooltip.
+     * @param shortcut a ready-created shortcut object or null if you don't want a shortcut.
+     * @param mapFrame unused but kept for plugin compatibility. Can be {@code null}
+     * @param cursor cursor displayed when map mode is active
+     * @deprecated use {@link #MapMode(String, String, String, Shortcut, Cursor) instead}
+     */
+    @Deprecated
+    public MapMode(String name, String iconName, String tooltip, Shortcut shortcut, MapFrame mapFrame, Cursor cursor) {
+        this(name, iconName, tooltip, shortcut, cursor);
+    }
+
+    /**
+     * Constructor for mapmodes with a menu (no shortcut will be registered)
+     * @param name the action's text
+     * @param iconName icon filename in {@code mapmode} directory
+     * @param tooltip  a longer description of the action that will be displayed in the tooltip.
+     * @param mapFrame unused but kept for plugin compatibility. Can be {@code null}
+     * @param cursor cursor displayed when map mode is active
+     * @deprecated use {@link #MapMode(String, String, String, Cursor) instead}
+     */
+    @Deprecated
+    public MapMode(String name, String iconName, String tooltip, MapFrame mapFrame, Cursor cursor) {
+        this(name, iconName, tooltip, cursor);
     }
 
     /**

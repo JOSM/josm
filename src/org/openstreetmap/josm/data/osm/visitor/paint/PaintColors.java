@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 
 import java.awt.Color;
 import java.util.List;
+import java.util.Optional;
 
 import org.openstreetmap.josm.data.preferences.CachingProperty;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
@@ -78,6 +79,10 @@ public enum PaintColors {
         return property.get();
     }
 
+    /**
+     * Returns the background color.
+     * @return the background color
+     */
     public static Color getBackgroundColor() {
         if (backgroundColorCache != null)
             return backgroundColorCache;
@@ -91,11 +96,7 @@ public enum PaintColors {
                 backgroundColorCache = backgroundColorOverride;
             }
         }
-        if (backgroundColorCache == null) {
-            return BACKGROUND.get();
-        } else {
-            return backgroundColorCache;
-        }
+        return Optional.ofNullable(backgroundColorCache).orElseGet(BACKGROUND::get);
     }
 
     /**

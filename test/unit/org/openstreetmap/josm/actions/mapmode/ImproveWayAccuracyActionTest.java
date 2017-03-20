@@ -33,7 +33,7 @@ public class ImproveWayAccuracyActionTest {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
             Main.getLayerManager().addLayer(layer);
-            ImproveWayAccuracyAction mapMode = new ImproveWayAccuracyAction(Main.map);
+            ImproveWayAccuracyAction mapMode = new ImproveWayAccuracyAction();
             MapMode oldMapMode = Main.map.mapMode;
             assertTrue(Main.map.selectMapMode(mapMode));
             assertEquals(mapMode, Main.map.mapMode);

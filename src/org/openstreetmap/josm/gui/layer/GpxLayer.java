@@ -88,7 +88,7 @@ public class GpxLayer extends Layer {
     public GpxLayer(GpxData d, String name, boolean isLocal) {
         super(d.getString(GpxConstants.META_NAME));
         data = d;
-        drawHelper = new GpxDrawHelper(data, getColorProperty());
+        drawHelper = new GpxDrawHelper(data);
         SystemOfMeasurement.addSoMChangeListener(drawHelper);
         ensureTrackVisibilityLength();
         setName(name);

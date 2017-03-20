@@ -14,7 +14,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -218,11 +217,7 @@ public class AutoCompletionManager implements DataSetListener {
         if (item instanceof KeyedItem) {
             KeyedItem ki = (KeyedItem) item;
             if (ki.key != null && ki.getValues() != null) {
-                try {
-                    PRESET_TAG_CACHE.putAll(ki.key, ki.getValues());
-                } catch (NullPointerException e) {
-                    Main.error(e, p + ": Unable to cache " + ki);
-                }
+                PRESET_TAG_CACHE.putAll(ki.key, ki.getValues());
             }
         } else if (item instanceof Roles) {
             Roles r = (Roles) item;

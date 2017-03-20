@@ -134,10 +134,9 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
     public HistoryLoadTask add(Collection<? extends OsmPrimitive> primitives) {
         CheckParameterUtil.ensureParameterNotNull(primitives, "primitives");
         for (OsmPrimitive primitive: primitives) {
-            if (primitive == null) {
-                continue;
+            if (primitive != null) {
+                add(primitive);
             }
-            add(primitive);
         }
         return this;
     }

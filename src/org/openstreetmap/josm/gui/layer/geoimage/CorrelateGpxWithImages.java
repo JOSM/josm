@@ -36,6 +36,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
@@ -81,6 +82,7 @@ import org.openstreetmap.josm.io.JpgImporter;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
@@ -269,7 +271,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
                 for (int i = gpxLst.size() - 1; i >= 0; i--) {
                     GpxDataWrapper wrapper = gpxLst.get(i);
-                    if (wrapper.file != null && sel.equals(wrapper.file)) {
+                    if (sel.equals(wrapper.file)) {
                         cbGpx.setSelectedIndex(i);
                         if (!sel.getName().equals(wrapper.name)) {
                             JOptionPane.showMessageDialog(
@@ -289,20 +291,20 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     data = reader.getGpxData();
                     data.storageFile = sel;
 
-                } catch (SAXException x) {
-                    Main.error(x);
+                } catch (SAXException ex) {
+                    Main.error(ex);
                     JOptionPane.showMessageDialog(
                             Main.parent,
-                            tr("Error while parsing {0}", sel.getName())+": "+x.getMessage(),
+                            tr("Error while parsing {0}", sel.getName())+": "+ex.getMessage(),
                             tr("Error"),
                             JOptionPane.ERROR_MESSAGE
                     );
                     return;
-                } catch (IOException x) {
-                    Main.error(x);
+                } catch (IOException ex) {
+                    Main.error(ex);
                     JOptionPane.showMessageDialog(
                             Main.parent,
-                            tr("Could not read \"{0}\"", sel.getName())+'\n'+x.getMessage(),
+                            tr("Could not read \"{0}\"", sel.getName())+'\n'+ex.getMessage(),
                             tr("Error"),
                             JOptionPane.ERROR_MESSAGE
                     );
@@ -580,12 +582,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         JPanel panelTf = new JPanel(new GridBagLayout());
 
-        String prefTimezone = Main.pref.get("geoimage.timezone", "0:00");
-        if (prefTimezone == null) {
-            prefTimezone = "0:00";
-        }
         try {
-            timezone = Timezone.parseTimezone(prefTimezone);
+            timezone = Timezone.parseTimezone(Optional.ofNullable(Main.pref.get("geoimage.timezone", "0:00")).orElse("0:00"));
         } catch (ParseException e) {
             timezone = Timezone.ZERO;
         }
@@ -936,7 +934,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 sldMinutes.setValue((int) (timezoneOffsetPair.b.getSeconds() / 60));
                 final long deciSeconds = timezoneOffsetPair.b.getMilliseconds() / 100;
                 sldSeconds.setValue((int) (deciSeconds % 60));
-            } catch (RuntimeException e) {
+            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
                 Main.warn(e);
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("An error occurred while trying to match the photos to the GPX track."

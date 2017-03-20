@@ -84,7 +84,7 @@ public abstract class AbstractPasteAction extends JosmAction implements FlavorLi
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        doPaste(e, ClipboardUtils.getClipboard().getContents(null));
+        doPaste(e, ClipboardUtils.getClipboardContent());
     }
 
     protected void doPaste(ActionEvent e, Transferable contents) {

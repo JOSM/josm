@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -91,25 +92,19 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
     }
 
     /**
-     * Register the relation editor for a relation managed by a
-     * {@link OsmDataLayer}.
+     * Register the relation editor for a relation managed by a {@link OsmDataLayer}.
      *
      * @param layer the layer
      * @param relation the relation
      * @param editor the editor
      */
     public void register(OsmDataLayer layer, Relation relation, RelationEditor editor) {
-        if (relation == null) {
-            relation = new Relation();
-        }
-        DialogContext context = new DialogContext(layer, relation);
-        openDialogs.put(context, editor);
+        openDialogs.put(new DialogContext(layer, Optional.ofNullable(relation).orElseGet(Relation::new)), editor);
         editor.addWindowListener(this);
     }
 
     public void updateContext(OsmDataLayer layer, Relation relation, RelationEditor editor) {
         // lookup the entry for editor and remove it
-        //
         for (Iterator<Entry<DialogContext, RelationEditor>> it = openDialogs.entrySet().iterator(); it.hasNext();) {
             Entry<DialogContext, RelationEditor> entry = it.next();
             if (Objects.equals(entry.getValue(), editor)) {
@@ -118,9 +113,7 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
             }
         }
         // don't add a window listener. Editor is already known to the relation dialog manager
-        //
-        DialogContext context = new DialogContext(layer, relation);
-        openDialogs.put(context, editor);
+        openDialogs.put(new DialogContext(layer, relation), editor);
     }
 
     /**

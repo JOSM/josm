@@ -49,11 +49,13 @@ public class Hkern extends SVGElement
     String u2;
     int k;
 
+    @Override
     public String getTagName()
     {
         return TAG_NAME;
     }
 
+    @Override
     protected void build() throws SVGException
     {
         super.build();
@@ -78,6 +80,7 @@ public class Hkern extends SVGElement
         }
     }
 
+    @Override
     public boolean updateTime(double curTime) throws SVGException
     {
         //Fonts can't change

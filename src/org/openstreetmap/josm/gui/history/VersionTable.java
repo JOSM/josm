@@ -57,6 +57,9 @@ public class VersionTable extends JTable implements ChangeListener {
         this.model = model;
     }
 
+    /**
+     * Builds the table.
+     */
     protected void build() {
         getTableHeader().setFont(getTableHeader().getFont().deriveFont(9f));
         setRowSelectionAllowed(false);
@@ -107,10 +110,6 @@ public class VersionTable extends JTable implements ChangeListener {
         super.scrollRectToVisible(new Rectangle(0, aRect.y, aRect.width, aRect.height));
     }
 
-    protected HistoryBrowserModel.VersionTableModel getVersionTableModel() {
-        return (HistoryBrowserModel.VersionTableModel) getModel();
-    }
-
     @Override
     public void stateChanged(ChangeEvent e) {
         repaint();
@@ -128,18 +127,17 @@ public class VersionTable extends JTable implements ChangeListener {
                 int row = rowAtPoint(e.getPoint());
                 int col = columnAtPoint(e.getPoint());
                 if (row >= 0 && (col == VersionTableColumnModel.COL_DATE || col == VersionTableColumnModel.COL_USER)) {
-                    model.getVersionTableModel().setCurrentPointInTime(row);
-                    model.getVersionTableModel().setReferencePointInTime(Math.max(0, row - 1));
+                    model.setCurrentPointInTime(row);
+                    model.setReferencePointInTime(Math.max(0, row - 1));
                 }
             }
         }
 
         @Override
         protected int checkTableSelection(JTable table, Point p) {
-            HistoryBrowserModel.VersionTableModel tableModel = getVersionTableModel();
             int row = rowAtPoint(p);
-            if (row > -1 && !tableModel.isLatest(row)) {
-                popupMenu.prepare(tableModel.getPrimitive(row));
+            if (row > -1 && !model.isLatest(row)) {
+                popupMenu.prepare(model.getPrimitive(row));
             }
             return row;
         }
@@ -314,8 +312,7 @@ public class VersionTable extends JTable implements ChangeListener {
             setHorizontalAlignment(hAlignment);
         }
 
-        // for unit tests
-        private AlignedRenderer() {
+        AlignedRenderer() {
             this(SwingConstants.LEFT);
         }
 

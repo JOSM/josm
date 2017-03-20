@@ -26,6 +26,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.WindowGeometry;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
@@ -223,7 +224,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
                     }
                     SwingUtilities.invokeLater(() -> show(h));
                 }
-            } catch (final RuntimeException e) {
+            } catch (final JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
                 BugReportExceptionHandler.handleException(e);
             }
         };

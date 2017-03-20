@@ -32,8 +32,7 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
         setOpaque(true);
     }
 
-    protected void setBackgroundReadable(String key, HistoryBrowserModel.TagTableModel model, boolean isSelected, boolean hasFocus,
-            boolean isValue) {
+    protected void setBackgroundReadable(String key, TagTableModel model, boolean isSelected, boolean hasFocus, boolean isValue) {
         Color bgColor = UIManager.getColor("Table.background");
         if ((!model.hasTag(key) && model.isCurrentPointInTime())
                 || (!model.oppositeHasTag(key) && model.isReferencePointInTime())) {
@@ -63,7 +62,7 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
             return this;
 
         String key = (String) value;
-        HistoryBrowserModel.TagTableModel model = getTagTableModel(table);
+        TagTableModel model = getTagTableModel(table);
 
         String text = "";
         if (model.hasTag(key)) {
@@ -86,7 +85,7 @@ public class TagTableCellRenderer extends JLabel implements TableCellRenderer {
         return this;
     }
 
-    protected HistoryBrowserModel.TagTableModel getTagTableModel(JTable table) {
-        return (HistoryBrowserModel.TagTableModel) table.getModel();
+    protected TagTableModel getTagTableModel(JTable table) {
+        return (TagTableModel) table.getModel();
     }
 }

@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSet.UploadPolicy;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -138,7 +139,12 @@ public class OsmReader extends AbstractReader {
         ds.setVersion(v);
         String upload = parser.getAttributeValue(null, "upload");
         if (upload != null) {
-            ds.setUploadDiscouraged(!Boolean.parseBoolean(upload));
+            for (UploadPolicy policy : UploadPolicy.values()) {
+                if (policy.getXmlFlag().equalsIgnoreCase(upload)) {
+                    ds.setUploadPolicy(policy);
+                    break;
+                }
+            }
         }
         String generator = parser.getAttributeValue(null, "generator");
         Long uploadChangesetId = null;
@@ -197,7 +203,7 @@ public class OsmReader extends AbstractReader {
                 Main.info("Bbox " + copy + " is out of the world, normalized to " + bounds);
             }
             DataSource src = new DataSource(bounds, origin);
-            ds.dataSources.add(src);
+            ds.addDataSource(src);
         } else {
             throwException(tr("Missing mandatory attributes on element ''bounds''. " +
                     "Got minlon=''{0}'',minlat=''{1}'',maxlon=''{3}'',maxlat=''{4}'', origin=''{5}''.",

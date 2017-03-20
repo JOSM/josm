@@ -1,0 +1,30 @@
+canvas {
+    default-points: false;
+    default-lines: false;
+}
+
+way[test] {
+	width: 5;
+}
+
+way[test=style5] {
+	color: red;
+}
+
+way[test=style4] {
+	color: #1220ad;
+}
+
+way[test=style3] {
+	color: #1220ad80;
+}
+
+way[test=style2] {
+	color: #12ad20;
+	opacity: .5;
+}
+
+way[test=style1] {
+	color: rgba(0.0, 1.0, 0.0, 0.8);
+	opacity: .8;
+}

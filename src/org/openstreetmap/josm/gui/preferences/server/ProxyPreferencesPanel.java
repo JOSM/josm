@@ -17,6 +17,7 @@ import java.net.ProxySelector;
 import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -321,11 +322,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
      * Initializes the panel with the values from the preferences
      */
     public final void initFromPreferences() {
-        String policy = Main.pref.get(PROXY_POLICY, null);
-        ProxyPolicy pp = ProxyPolicy.fromName(policy);
-        if (pp == null) {
-            pp = ProxyPolicy.NO_PROXY;
-        }
+        ProxyPolicy pp = Optional.ofNullable(ProxyPolicy.fromName(Main.pref.get(PROXY_POLICY, null))).orElse(ProxyPolicy.NO_PROXY);
         rbProxyPolicy.get(pp).setSelected(true);
         String value = Main.pref.get("proxy.host", null);
         if (value != null) {
@@ -418,10 +415,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
                 break;
             }
         }
-        if (policy == null) {
-            policy = ProxyPolicy.NO_PROXY;
-        }
-        Main.pref.put(PROXY_POLICY, policy.getName());
+        Main.pref.put(PROXY_POLICY, Optional.ofNullable(policy).orElse(ProxyPolicy.NO_PROXY).getName());
         Main.pref.put(PROXY_HTTP_HOST, tfProxyHttpHost.getText());
         Main.pref.put(PROXY_HTTP_PORT, tfProxyHttpPort.getText());
         Main.pref.put(PROXY_SOCKS_HOST, tfProxySocksHost.getText());

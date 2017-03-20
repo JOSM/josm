@@ -16,6 +16,7 @@ import java.awt.Rectangle;
 import java.awt.TexturePaint;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Area;
+import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -61,6 +62,7 @@ import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSet.UploadPolicy;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
 import org.openstreetmap.josm.data.osm.IPrimitive;
@@ -385,7 +387,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     @Override
     public Icon getIcon() {
         ImageProvider base = getBaseIconProvider().setMaxSize(ImageSizes.LAYER);
-        if (isUploadDiscouraged()) {
+        if (isUploadDiscouraged() || data.getUploadPolicy() == UploadPolicy.BLOCKED) {
             base.addOverlay(new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1.0, 1.0));
         }
         return base.get();
@@ -405,21 +407,24 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
         // draw the hatched area for non-downloaded region. only draw if we're the active
         // and bounds are defined; don't draw for inactive layers or loaded GPX files etc
-        if (active && Main.pref.getBoolean("draw.data.downloaded_area", true) && !data.dataSources.isEmpty()) {
+        if (active && Main.pref.getBoolean("draw.data.downloaded_area", true) && !data.getDataSources().isEmpty()) {
             // initialize area with current viewport
             Rectangle b = mv.getBounds();
             // on some platforms viewport bounds seem to be offset from the left,
             // over-grow it just to be sure
             b.grow(100, 100);
-            Area a = new Area(b);
+            Path2D p = new Path2D.Double();
 
-            // now successively subtract downloaded areas
+            // combine successively downloaded areas
             for (Bounds bounds : data.getDataSourceBounds()) {
                 if (bounds.isCollapsed()) {
                     continue;
                 }
-                a.subtract(mv.getState().getArea(bounds));
+                p.append(mv.getState().getArea(bounds), false);
             }
+            // subtract combined areas
+            Area a = new Area(b);
+            a.subtract(new Area(p));
 
             // paint remainder
             MapViewPoint anchor = mv.getState().getPointFor(new EastNorth(0, 0));
@@ -495,9 +500,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
         // copy the merged layer's data source info.
         // only add source rectangles if they are not contained in the layer already.
-        for (DataSource src : from.dataSources) {
+        for (DataSource src : from.getDataSources()) {
             if (a == null || !a.contains(src.bounds.asRect())) {
-                data.dataSources.add(src);
+                data.addDataSource(src);
             }
         }
 
@@ -599,6 +604,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         if (isUploadDiscouraged()) {
             p.add(new JLabel(tr("Upload is discouraged")), GBC.eop().insets(15, 0, 0, 0));
         }
+        if (data.getUploadPolicy() == UploadPolicy.BLOCKED) {
+            p.add(new JLabel(tr("Upload is blocked")), GBC.eop().insets(15, 0, 0, 0));
+        }
 
         return p;
     }
@@ -664,8 +672,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
             Collection<Collection<WayPoint>> trk = new ArrayList<>();
             Map<String, Object> trkAttr = new HashMap<>();
 
-            if (w.get("name") != null) {
-                trkAttr.put("name", w.get("name"));
+            String name = w.get("name");
+            if (name != null) {
+                trkAttr.put("name", name);
             }
 
             List<WayPoint> trkseg = null;
@@ -746,7 +755,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         }
     }
 
-    private static void addIntegerIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String ... osmKeys) {
+    private static void addIntegerIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String... osmKeys) {
         List<String> possibleKeys = new ArrayList<>(Arrays.asList(osmKeys));
         possibleKeys.add(0, gpxKey);
         for (String key : possibleKeys) {
@@ -767,7 +776,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         }
     }
 
-    private static void addDoubleIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String ... osmKeys) {
+    private static void addDoubleIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String... osmKeys) {
         List<String> possibleKeys = new ArrayList<>(Arrays.asList(osmKeys));
         possibleKeys.add(0, gpxKey);
         for (String key : possibleKeys) {
@@ -787,7 +796,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         }
     }
 
-    private static void addStringIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String ... osmKeys) {
+    private static void addStringIfPresent(WayPoint wpt, OsmPrimitive p, String gpxKey, String... osmKeys) {
         List<String> possibleKeys = new ArrayList<>(Arrays.asList(osmKeys));
         possibleKeys.add(0, gpxKey);
         for (String key : possibleKeys) {
@@ -844,11 +853,11 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     public boolean containsPoint(LatLon coor) {
         // we'll assume that if this has no data sources
         // that it also has no borders
-        if (this.data.dataSources.isEmpty())
+        if (this.data.getDataSources().isEmpty())
             return true;
 
         boolean layerBoundsPoint = false;
-        for (DataSource src : this.data.dataSources) {
+        for (DataSource src : this.data.getDataSources()) {
             if (src.bounds.contains(coor)) {
                 layerBoundsPoint = true;
                 break;
@@ -868,12 +877,12 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
     @Override
     public boolean isUploadable() {
-        return true;
+        return data.getUploadPolicy() != UploadPolicy.BLOCKED;
     }
 
     @Override
     public boolean requiresUploadToServer() {
-        return requiresUploadToServer;
+        return isUploadable() && requiresUploadToServer;
     }
 
     @Override
@@ -962,9 +971,14 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
          // change listener and already got notified.
     }
 
+    /**
+     * Determines if upload is being discouraged.
+     * (i.e. this dataset contains private data which should not be uploaded)
+     * @return {@code true} if upload is being discouraged, {@code false} otherwise
+     */
     @Override
     public final boolean isUploadDiscouraged() {
-        return data.isUploadDiscouraged();
+        return data.getUploadPolicy() == UploadPolicy.DISCOURAGED;
     }
 
     /**
@@ -973,8 +987,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      * This feature allows to use "private" data layers.
      */
     public final void setUploadDiscouraged(boolean uploadDiscouraged) {
-        if (uploadDiscouraged ^ isUploadDiscouraged()) {
-            data.setUploadDiscouraged(uploadDiscouraged);
+        if (data.getUploadPolicy() != UploadPolicy.BLOCKED &&
+                (uploadDiscouraged ^ isUploadDiscouraged())) {
+            data.setUploadPolicy(uploadDiscouraged ? UploadPolicy.DISCOURAGED : UploadPolicy.NORMAL);
             for (LayerStateChangeListener l : layerStateChangeListeners) {
                 l.uploadDiscouragedChanged(this, uploadDiscouraged);
             }
@@ -1049,10 +1064,11 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         String extension = PROPERTY_SAVE_EXTENSION.get();
         File file = getAssociatedFile();
         if (file == null && isRenamed()) {
-            String filename = Main.pref.get("lastDirectory") + '/' + getName();
-            if (!OsmImporter.FILE_FILTER.acceptName(filename))
-                filename = filename + '.' + extension;
-            file = new File(filename);
+            StringBuilder filename = new StringBuilder(Main.pref.get("lastDirectory")).append('/').append(getName());
+            if (!OsmImporter.FILE_FILTER.acceptName(filename.toString())) {
+                filename.append('.').append(extension);
+            }
+            file = new File(filename.toString());
         }
         return new FileChooserManager()
             .title(tr("Save OSM file"))

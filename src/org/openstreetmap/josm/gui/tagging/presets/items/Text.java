@@ -140,7 +140,7 @@ public class Text extends KeyedItem {
                     if (auto_increment_selected == buttonvalue) aibutton.setSelected(true);
                     aibutton.addActionListener(e -> auto_increment_selected = buttonvalue);
                     pnl.add(aibutton, GBC.std());
-                } catch (ParseException x) {
+                } catch (ParseException ex) {
                     Main.error("Cannot parse auto-increment value of '" + ai + "' into an integer");
                 }
             }

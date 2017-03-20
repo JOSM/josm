@@ -108,7 +108,7 @@ public class CommonSettingsPanel extends JPanel {
         this.btnFadeColor.setBackground(colFadeColor);
         this.btnFadeColor.setText(ColorHelper.color2html(colFadeColor));
         this.fadeAmount.setValue(ImageryLayer.PROP_FADE_AMOUNT.get());
-        this.sharpen.setSelectedIndex(Math.max(0, Math.min(2, ImageryLayer.PROP_SHARPEN_LEVEL.get())));
+        this.sharpen.setSelectedIndex(Utils.clamp(ImageryLayer.PROP_SHARPEN_LEVEL.get(), 0, 2));
         this.tilecacheDir.setText(CachedTileLoaderFactory.PROP_TILECACHE_DIR.get());
         this.maxElementsOnDisk.setValue(AbstractCachedTileSourceLayer.MAX_DISK_CACHE_SIZE.get());
         this.tilesZoom.setValue(AbstractTileSourceLayer.ZOOM_OFFSET.get());

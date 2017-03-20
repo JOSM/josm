@@ -89,9 +89,9 @@ public class OverlappingWays extends Test {
                 int area = 0;
 
                 for (WaySegment ws : duplicated) {
-                    if (ws.way.get("highway") != null) {
+                    if (ws.way.hasKey("highway")) {
                         highway++;
-                    } else if (ws.way.get("railway") != null) {
+                    } else if (ws.way.hasKey("railway")) {
                         railway++;
                     }
                     Boolean ar = OsmUtils.getOsmBoolean(ws.way.get("area"));
@@ -106,10 +106,8 @@ public class OverlappingWays extends Test {
                     prims.add(ws.way);
                     currentWays.add(ws.way);
                 }
-                /* These ways not seen before
-                 * If two or more of the overlapping ways are
-                 * highways or railways mark a separate error
-                 */
+                // These ways not seen before
+                // If two or more of the overlapping ways are highways or railways mark a separate error
                 if ((highlight = seenWays.get(currentWays)) == null) {
                     String errortype;
                     int type;

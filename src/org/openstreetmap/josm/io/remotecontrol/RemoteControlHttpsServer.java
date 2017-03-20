@@ -416,9 +416,9 @@ public class RemoteControlHttpsServer extends Thread {
                     Main.trace("SSL socket - Session: "+sslSocket.getSession());
                 }
                 RequestProcessor.processRequest(request);
-            } catch (SocketException se) {
+            } catch (SocketException e) {
                 if (!server.isClosed()) {
-                    Main.error(se);
+                    Main.error(e);
                 }
             } catch (IOException ioe) {
                 Main.error(ioe);

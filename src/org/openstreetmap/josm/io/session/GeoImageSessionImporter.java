@@ -105,7 +105,7 @@ public class GeoImageSessionImporter implements SessionLayerImporter {
                         Double.parseDouble(attrElem.getAttribute("lon"))));
                 break;
             case "exif-image-direction":
-                entry.setExifImgDir(Double.parseDouble(attrElem.getTextContent()));
+                entry.setExifImgDir(Double.valueOf(attrElem.getTextContent()));
                 break;
             case "is-new-gps-data":
                 if (Boolean.parseBoolean(attrElem.getTextContent())) {

@@ -130,7 +130,7 @@ public class ExtendedDialog extends JDialog {
      * @param title        The text that will be shown in the window titlebar
      * @param buttonTexts  String Array of the text that will appear on the buttons. The first button is the default one.
      */
-    public ExtendedDialog(Component parent, String title, String ... buttonTexts) {
+    public ExtendedDialog(Component parent, String title, String... buttonTexts) {
         this(parent, title, buttonTexts, true, true);
     }
 
@@ -177,7 +177,7 @@ public class ExtendedDialog extends JDialog {
      * @param buttonIcons The button icons
      * @return {@code this}
      */
-    public ExtendedDialog setButtonIcons(Icon ... buttonIcons) {
+    public ExtendedDialog setButtonIcons(Icon... buttonIcons) {
         this.bIcons = Utils.copyArray(buttonIcons);
         return this;
     }
@@ -187,7 +187,7 @@ public class ExtendedDialog extends JDialog {
      * @param buttonIcons The button icon names
      * @return {@code this}
      */
-    public ExtendedDialog setButtonIcons(String ... buttonIcons) {
+    public ExtendedDialog setButtonIcons(String... buttonIcons) {
         bIcons = new Icon[buttonIcons.length];
         for (int i = 0; i < buttonIcons.length; ++i) {
             bIcons[i] = ImageProvider.get(buttonIcons[i]);
@@ -202,7 +202,7 @@ public class ExtendedDialog extends JDialog {
      * @param toolTipTexts the tool tip texts. Ignored, if null.
      * @return {@code this}
      */
-    public ExtendedDialog setToolTipTexts(String ... toolTipTexts) {
+    public ExtendedDialog setToolTipTexts(String... toolTipTexts) {
         this.bToolTipTexts = Utils.copyArray(toolTipTexts);
         return this;
     }

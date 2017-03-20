@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.openstreetmap.josm.Main;
@@ -67,10 +68,7 @@ public class PreferencesWriter extends XmlWriter implements SettingVisitor {
 
     private void addTime(Setting<?> setting) {
         if (defaults) {
-            Long time = setting.getTime();
-            if (time == null)
-                throw new IllegalStateException();
-            out.write("' time='" + time);
+            out.write("' time='" + Optional.ofNullable(setting.getTime()).orElseThrow(IllegalStateException::new));
         }
     }
 
@@ -89,7 +87,7 @@ public class PreferencesWriter extends XmlWriter implements SettingVisitor {
         } else if (defaults) {
             addDefaults();
         } else {
-            throw new NullPointerException();
+            throw new IllegalArgumentException(setting.toString());
         }
     }
 
@@ -106,7 +104,7 @@ public class PreferencesWriter extends XmlWriter implements SettingVisitor {
         } else if (defaults) {
             addDefaults();
         } else {
-            throw new NullPointerException();
+            throw new IllegalArgumentException(setting.toString());
         }
     }
 
@@ -127,7 +125,7 @@ public class PreferencesWriter extends XmlWriter implements SettingVisitor {
         } else if (defaults) {
             addDefaults();
         } else {
-            throw new NullPointerException();
+            throw new IllegalArgumentException(setting.toString());
         }
     }
 
@@ -148,7 +146,7 @@ public class PreferencesWriter extends XmlWriter implements SettingVisitor {
         } else if (defaults) {
             addDefaults();
         } else {
-            throw new NullPointerException();
+            throw new IllegalArgumentException(setting.toString());
         }
     }
 }

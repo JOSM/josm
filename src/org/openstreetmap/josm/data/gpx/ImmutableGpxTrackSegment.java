@@ -53,10 +53,7 @@ public class ImmutableGpxTrackSegment implements GpxTrackSegment {
 
     @Override
     public Bounds getBounds() {
-        if (bounds == null)
-            return null;
-        else
-            return new Bounds(bounds);
+        return bounds == null ? null : new Bounds(bounds);
     }
 
     @Override

@@ -8,6 +8,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.util.List;
 
 /**
  * This interface allows platform (operating system) dependent code
@@ -171,4 +172,11 @@ public interface PlatformHook {
      * @since 7834
      */
     File getDefaultUserDataDirectory();
+
+    /**
+     * Returns the list of platform-dependent default datum shifting directories for the PROJ.4 library.
+     * @return the list of platform-dependent default datum shifting directories for the PROJ.4 library
+     * @since 11642
+     */
+    List<File> getDefaultProj4NadshiftDirectories();
 }

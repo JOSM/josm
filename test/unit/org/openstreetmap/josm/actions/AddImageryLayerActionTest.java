@@ -34,7 +34,7 @@ public final class AddImageryLayerActionTest {
      */
     @Test
     public void testEnabledState() {
-        assertTrue(new AddImageryLayerAction(new ImageryInfo()).isEnabled());
+        assertTrue(new AddImageryLayerAction(new ImageryInfo("foo")).isEnabled());
         assertTrue(new AddImageryLayerAction(new ImageryInfo("foo_tms", "http://bar", "tms", null, null)).isEnabled());
         assertTrue(new AddImageryLayerAction(new ImageryInfo("foo_bing", "http://bar", "bing", null, null)).isEnabled());
         assertTrue(new AddImageryLayerAction(new ImageryInfo("foo_scanex", "http://bar", "scanex", null, null)).isEnabled());
@@ -70,7 +70,7 @@ public final class AddImageryLayerActionTest {
     public void testActionPerformedDisabled() {
         assertTrue(Main.getLayerManager().getLayersOfType(TMSLayer.class).isEmpty());
         try {
-            new AddImageryLayerAction(new ImageryInfo()).actionPerformed(null);
+            new AddImageryLayerAction(new ImageryInfo("foo")).actionPerformed(null);
         } catch (IllegalArgumentException expected) {
             assertEquals("Parameter 'info.url' must not be null", expected.getMessage());
         }

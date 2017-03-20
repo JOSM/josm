@@ -103,13 +103,13 @@ public final class RightAndLefthandTraffic {
             w.removeAll();
         }
         // Purge all other ways and relations so dataset only contains lefthand traffic data
-        new PurgeAction().getPurgeCommand(toPurge).executeCommand();
+        new PurgeAction(false).getPurgeCommand(toPurge).executeCommand();
         // Combine adjacent countries into a single polygon
         Collection<Way> optimizedWays = new ArrayList<>();
         List<Multipolygon> areas = JoinAreasAction.collectMultipolygons(ways);
         if (areas != null) {
             try {
-                JoinAreasResult result = new JoinAreasAction().joinAreas(areas);
+                JoinAreasResult result = new JoinAreasAction(false).joinAreas(areas);
                 if (result.hasChanges()) {
                     for (Multipolygon mp : result.getPolygons()) {
                         optimizedWays.add(mp.getOuterWay());
@@ -156,7 +156,7 @@ public final class RightAndLefthandTraffic {
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
              OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, ds.getVersion())
             ) {
-            w.header(Boolean.FALSE);
+            w.header(DataSet.UploadPolicy.DISCOURAGED);
             w.writeContent(ds);
             w.footer();
         } catch (IOException ex) {

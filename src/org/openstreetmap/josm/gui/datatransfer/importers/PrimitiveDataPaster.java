@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
@@ -76,7 +77,7 @@ public final class PrimitiveDataPaster extends AbstractOsmDataPaster {
                 } else if (data instanceof RelationData) {
                     updateMembers(newIds, data);
                 }
-            } catch (RuntimeException e) {
+            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
                 throw BugReport.intercept(e).put("data", data);
             }
         }

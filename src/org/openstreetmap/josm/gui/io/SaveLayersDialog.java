@@ -526,7 +526,6 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
         private final ProgressMonitor monitor;
         private final ExecutorService worker;
         private boolean canceled;
-        private Future<?> currentFuture;
         private AbstractIOTask currentTask;
 
         public SaveAndUploadTask(SaveLayersModel model, ProgressMonitor monitor) {
@@ -564,10 +563,9 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     model.setUploadState(layer, UploadOrSaveState.FAILED);
                     continue;
                 }
-                currentFuture = worker.submit(currentTask);
+                Future<?> currentFuture = worker.submit(currentTask);
                 try {
                     // wait for the asynchronous task to complete
-                    //
                     currentFuture.get();
                 } catch (CancellationException e) {
                     Main.trace(e);
@@ -587,7 +585,6 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     model.setUploadState(layer, UploadOrSaveState.OK);
                 }
                 currentTask = null;
-                currentFuture = null;
             }
         }
 
@@ -605,7 +602,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     layerInfo.setDoCheckSaveConditions(false);
                 }
                 currentTask = new SaveLayerTask(layerInfo, monitor);
-                currentFuture = worker.submit(currentTask);
+                Future<?> currentFuture = worker.submit(currentTask);
 
                 try {
                     // wait for the asynchronous task to complete
@@ -631,7 +628,6 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.OK);
                 }
                 this.currentTask = null;
-                this.currentFuture = null;
             }
         }
 

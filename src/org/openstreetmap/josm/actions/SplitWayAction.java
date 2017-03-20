@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -212,7 +213,9 @@ public class SplitWayAction extends JosmAction {
             if (wayToKeep != null) {
                 final SplitWayResult result = doSplitWay(getLayerManager().getEditLayer(), selectedWay, wayToKeep, newWays, sel);
                 Main.main.undoRedo.add(result.getCommand());
-                getLayerManager().getEditDataSet().setSelected(result.getNewSelection());
+                if (!result.getNewSelection().isEmpty()) {
+                    getLayerManager().getEditDataSet().setSelected(result.getNewSelection());
+                }
             }
         }
     }
@@ -291,7 +294,9 @@ public class SplitWayAction extends JosmAction {
                 SplitWayResult result = doSplitWay(Main.getLayerManager().getEditLayer(),
                         selectedWay, list.getSelectedValue(), newWays, selection);
                 Main.main.undoRedo.add(result.getCommand());
-                Main.getLayerManager().getEditDataSet().setSelected(result.getNewSelection());
+                if (!result.getNewSelection().isEmpty()) {
+                    Main.getLayerManager().getEditDataSet().setSelected(result.getNewSelection());
+                }
             }
         }
     }
@@ -537,17 +542,21 @@ public class SplitWayAction extends JosmAction {
         Collection<String> nowarnroles = Main.pref.getCollection("way.split.roles.nowarn",
                 Arrays.asList("outer", "inner", "forward", "backward", "north", "south", "east", "west"));
 
+        final boolean isMapModeDraw = Main.map != null && Main.map.mapMode == Main.map.mapModeDraw;
+
         // Change the original way
         final Way changedWay = new Way(way);
         changedWay.setNodes(wayToKeep.getNodes());
         commandList.add(layer != null ? new ChangeCommand(layer, way, changedWay) : new ChangeCommand(way.getDataSet(), way, changedWay));
-        if (!newSelection.contains(way)) {
+        if (!isMapModeDraw && !newSelection.contains(way)) {
             newSelection.add(way);
         }
         final int indexOfWayToKeep = newWays.indexOf(wayToKeep);
         newWays.remove(wayToKeep);
 
-        newSelection.addAll(newWays);
+        if (!isMapModeDraw) {
+            newSelection.addAll(newWays);
+        }
         for (Way wayToAdd : newWays) {
             commandList.add(layer != null ? new AddCommand(layer, wayToAdd) : new AddCommand(way.getDataSet(), wayToAdd));
         }
@@ -561,10 +570,7 @@ public class SplitWayAction extends JosmAction {
                 continue;
             }
             Relation c = null;
-            String type = r.get("type");
-            if (type == null) {
-                type = "";
-            }
+            String type = Optional.ofNullable(r.get("type")).orElse("");
 
             int ic = 0;
             int ir = 0;

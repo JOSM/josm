@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data;
 
 import java.awt.geom.Area;
+import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -76,12 +77,12 @@ public class DataSource {
         if (dataSources == null || dataSources.isEmpty()) {
             return null;
         }
-        Area a = new Area();
+        Path2D.Double p = new Path2D.Double();
         for (DataSource source : dataSources) {
             // create area from data bounds
-            a.add(new Area(source.bounds.asRect()));
+            p.append(source.bounds.asRect(), false);
         }
-        return a;
+        return new Area(p);
     }
 
     /**

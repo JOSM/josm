@@ -92,9 +92,9 @@ public class ChangePropertyKeyCommand extends Command {
         if (!super.executeCommand())
             return false; // save old
         for (OsmPrimitive osm : objects) {
-            if (osm.hasKey(key) || osm.hasKey(newKey)) {
+            String oldValue = osm.get(key);
+            if (oldValue != null || osm.hasKey(newKey)) {
                 osm.setModified(true);
-                String oldValue = osm.get(key);
                 osm.put(newKey, oldValue);
                 osm.remove(key);
             }

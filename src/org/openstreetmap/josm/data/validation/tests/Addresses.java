@@ -62,7 +62,7 @@ public class Addresses extends Test {
             Severity level;
             // warning level only if several relations have different names, see #10945
             final String name = list.get(0).get("name");
-            if (name == null || SubclassFilteredCollection.filter(list, r -> name.equals(r.get("name"))).size() < list.size()) {
+            if (name == null || SubclassFilteredCollection.filter(list, r -> r.hasTag("name", name)).size() < list.size()) {
                 level = Severity.WARNING;
             } else {
                 level = Severity.OTHER;
@@ -146,7 +146,7 @@ public class Addresses extends Test {
                     if (p instanceof Way) {
                         street.add((Way) p);
                     }
-                    if (relationName != null && p.hasKey("name") && !relationName.equals(p.get("name"))) {
+                    if (relationName != null && p.hasTagDifferent("name", relationName)) {
                         if (wrongStreetNames.isEmpty()) {
                             wrongStreetNames.add(r);
                         }

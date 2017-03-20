@@ -273,7 +273,7 @@ public final class MapPaintStyles {
         if (Main.pref.getBoolean("mappaint.auto_reload_local_styles", true) && source.isLocal()) {
             try {
                 Main.fileWatcher.registerStyleSource(source);
-            } catch (IOException e) {
+            } catch (IOException | IllegalStateException e) {
                 Main.error(e);
             }
         }

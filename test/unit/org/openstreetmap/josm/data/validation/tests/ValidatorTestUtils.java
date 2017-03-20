@@ -33,7 +33,7 @@ public final class ValidatorTestUtils {
 
     static <T extends OsmPrimitive> void testSampleFile(String sampleFile,
             Function<DataSet, Iterable<T>> provider, Predicate<String> namePredicate,
-            Test ... tests) throws Exception {
+            Test... tests) throws Exception {
         try (InputStream is = new FileInputStream(sampleFile)) {
             for (T t: provider.apply(OsmReader.parseDataSet(is, null))) {
                 String name = DefaultNameFormatter.getInstance().format(t);

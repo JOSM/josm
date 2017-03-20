@@ -153,6 +153,10 @@ public class ImageryReader implements Closeable {
                     noTileHeaders = new MultiMap<>();
                     noTileChecksums = new MultiMap<>();
                     metadataHeaders = new HashMap<>();
+                    String best = atts.getValue("eli-best");
+                    if ("true".equals(best)) {
+                        entry.setBestMarked(true);
+                    }
                 }
                 break;
             case MIRROR:
@@ -189,6 +193,7 @@ public class ImageryReader implements Closeable {
                         "terms-of-use-url",
                         "country-code",
                         "icon",
+                        "date",
                         "tile-size",
                         "valid-georeference",
                         "epsg4326to3857Supported",
@@ -357,6 +362,9 @@ public class ImageryReader implements Closeable {
                 case "description":
                     entry.setDescription(lang, accumulator.toString());
                     break;
+                case "date":
+                    entry.setDate(accumulator.toString());
+                    break;
                 case "id":
                     entry.setId(accumulator.toString());
                     break;
@@ -447,10 +455,10 @@ public class ImageryReader implements Closeable {
                     }
                     break;
                 case "valid-georeference":
-                    entry.setGeoreferenceValid(Boolean.valueOf(accumulator.toString()));
+                    entry.setGeoreferenceValid(Boolean.parseBoolean(accumulator.toString()));
                     break;
                 case "epsg4326to3857Supported":
-                    entry.setEpsg4326To3857Supported(Boolean.valueOf(accumulator.toString()));
+                    entry.setEpsg4326To3857Supported(Boolean.parseBoolean(accumulator.toString()));
                     break;
                 default: // Do nothing
                 }

@@ -109,7 +109,6 @@ public class MapScaler extends JComponent implements Helpful, Accessible {
     private static final class TickMarks {
 
         private final double dist100Pixel;
-        private final double lineDistance;
         /**
          * Distance in meters between two ticks.
          */
@@ -124,7 +123,7 @@ public class MapScaler extends JComponent implements Helpful, Accessible {
          */
         TickMarks(double dist100Pixel, int width) {
             this.dist100Pixel = dist100Pixel;
-            lineDistance = dist100Pixel * width / 100;
+            double lineDistance = dist100Pixel * width / 100;
 
             double log10 = Math.log(lineDistance) / Math.log(10);
             double spacingLog10 = Math.pow(10, Math.floor(log10));

@@ -3,11 +3,14 @@ package org.openstreetmap.josm.gui.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.Optional;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 
 /**
  * SaveLayerTask saves the data managed by an {@link org.openstreetmap.josm.gui.layer.AbstractModifiableLayer} to the
@@ -37,11 +40,8 @@ public class SaveLayerTask extends AbstractIOTask {
      */
     protected SaveLayerTask(SaveLayerInfo layerInfo, ProgressMonitor monitor) {
         CheckParameterUtil.ensureParameterNotNull(layerInfo, "layerInfo");
-        if (monitor == null) {
-            monitor = NullProgressMonitor.INSTANCE;
-        }
         this.layerInfo = layerInfo;
-        this.parentMonitor = monitor;
+        this.parentMonitor = Optional.ofNullable(monitor).orElse(NullProgressMonitor.INSTANCE);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class SaveLayerTask extends AbstractIOTask {
             if (!isCanceled()) {
                 layerInfo.getLayer().onPostSaveToFile();
             }
-        } catch (RuntimeException e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             Main.error(e);
             setLastException(e);
         }

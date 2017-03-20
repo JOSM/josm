@@ -15,7 +15,7 @@ import java.util.logging.Logger;
  */
 public class StyleSheet
 {
-    HashMap ruleMap = new HashMap();
+    HashMap<StyleSheetRule, String> ruleMap = new HashMap<>();
 
     public static StyleSheet parseSheet(String src)
     {

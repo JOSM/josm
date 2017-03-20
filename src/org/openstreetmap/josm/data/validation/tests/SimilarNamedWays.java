@@ -252,7 +252,7 @@ public class SimilarNamedWays extends Test {
         private final Pattern regExpr;
         private final String replacement;
 
-        public SynonymRule(String replacement, String ... words) {
+        public SynonymRule(String replacement, String... words) {
             this.replacement = replacement.toLowerCase(Locale.ENGLISH);
             this.words = words;
 

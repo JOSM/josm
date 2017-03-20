@@ -37,9 +37,7 @@ public abstract class AbstractProperty<T> {
         public boolean equals(Object obj) {
             if (this == obj)
                 return true;
-            if (obj == null)
-                return false;
-            if (getClass() != obj.getClass())
+            if (obj == null || getClass() != obj.getClass())
                 return false;
             @SuppressWarnings("unchecked")
             PreferenceChangedListenerAdapter other = (PreferenceChangedListenerAdapter) obj;
@@ -284,9 +282,7 @@ public abstract class AbstractProperty<T> {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
+        if (obj == null || getClass() != obj.getClass())
             return false;
         AbstractProperty<?> other = (AbstractProperty<?>) obj;
         if (key == null) {

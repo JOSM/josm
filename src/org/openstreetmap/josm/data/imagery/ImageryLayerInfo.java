@@ -32,9 +32,15 @@ import org.xml.sax.SAXException;
 public class ImageryLayerInfo {
 
     public static final ImageryLayerInfo instance = new ImageryLayerInfo();
+    /** List of all usable layers */
     private final List<ImageryInfo> layers = new ArrayList<>();
+    /** List of layer ids of all usable layers */
     private final Map<String, ImageryInfo> layerIds = new HashMap<>();
+    /** List of all available default layers */
     private static final List<ImageryInfo> defaultLayers = new ArrayList<>();
+    /** List of all available default layers (including mirrors) */
+    private static final List<ImageryInfo> allDefaultLayers = new ArrayList<>();
+    /** List of all layer ids of available default layers (including mirrors) */
     private static final Map<String, ImageryInfo> defaultLayerIds = new HashMap<>();
 
     private static final String[] DEFAULT_LAYER_SITES = {
@@ -114,6 +120,7 @@ public class ImageryLayerInfo {
         private final List<ImageryInfo> newLayers = new ArrayList<>();
         private ImageryReader reader;
         private boolean canceled;
+        private boolean loadError;
 
         DefaultEntryLoader(boolean clearCache, boolean fastFail) {
             super(tr("Update default entries"));
@@ -154,8 +161,10 @@ public class ImageryLayerInfo {
                 Collection<ImageryInfo> result = reader.parse();
                 newLayers.addAll(result);
             } catch (IOException ex) {
+                loadError = true;
                 Main.error(ex, false);
             } catch (SAXException ex) {
+                loadError = true;
                 Main.error(ex);
             }
         }
@@ -163,12 +172,23 @@ public class ImageryLayerInfo {
         @Override
         protected void finish() {
             defaultLayers.clear();
+            allDefaultLayers.clear();
             defaultLayers.addAll(newLayers);
+            for (ImageryInfo layer : newLayers) {
+                allDefaultLayers.add(layer);
+                for (ImageryInfo sublayer : layer.getMirrors()) {
+                    allDefaultLayers.add(sublayer);
+                }
+            }
             defaultLayerIds.clear();
             Collections.sort(defaultLayers);
-            buildIdMap(defaultLayers, defaultLayerIds);
-            updateEntriesFromDefaults();
+            Collections.sort(allDefaultLayers);
+            buildIdMap(allDefaultLayers, defaultLayerIds);
+            updateEntriesFromDefaults(!loadError);
             buildIdMap(layers, layerIds);
+            if (!loadError && !defaultLayerIds.isEmpty()) {
+                dropOldEntries();
+            }
         }
     }
 
@@ -198,29 +218,44 @@ public class ImageryLayerInfo {
 
     /**
      * Update user entries according to the list of default entries.
+     * @param dropold if <code>true</code> old entries should be removed
+     * @since 11706
      */
-    public void updateEntriesFromDefaults() {
+    public void updateEntriesFromDefaults(boolean dropold) {
         // add new default entries to the user selection
         boolean changed = false;
-        Collection<String> knownDefaults = Main.pref.getCollection("imagery.layers.default");
-        Collection<String> newKnownDefaults = new TreeSet<>(knownDefaults);
+        Collection<String> knownDefaults = new TreeSet<>(Main.pref.getCollection("imagery.layers.default"));
+        Collection<String> newKnownDefaults = new TreeSet<>();
         for (ImageryInfo def : defaultLayers) {
             if (def.isDefaultEntry()) {
                 boolean isKnownDefault = false;
-                for (String url : knownDefaults) {
-                    if (isSimilar(url, def.getUrl())) {
+                for (String entry : knownDefaults) {
+                    if (entry.equals(def.getId())) {
                         isKnownDefault = true;
+                        newKnownDefaults.add(entry);
+                        knownDefaults.remove(entry);
+                        break;
+                    } else if (isSimilar(entry, def.getUrl())) {
+                        isKnownDefault = true;
+                        if (def.getId() != null) {
+                            newKnownDefaults.add(def.getId());
+                        }
+                        knownDefaults.remove(entry);
                         break;
                     }
                 }
                 boolean isInUserList = false;
                 if (!isKnownDefault) {
-                    newKnownDefaults.add(def.getUrl());
-                    for (ImageryInfo i : layers) {
-                        if (isSimilar(def, i)) {
-                            isInUserList = true;
-                            break;
+                    if (def.getId() != null) {
+                        newKnownDefaults.add(def.getId());
+                        for (ImageryInfo i : layers) {
+                            if (isSimilar(def, i)) {
+                                isInUserList = true;
+                                break;
+                            }
                         }
+                    } else {
+                        Main.error("Default imagery ''{0}'' has no id. Skipping.", def.getName());
                     }
                 }
                 if (!isKnownDefault && !isInUserList) {
@@ -229,29 +264,10 @@ public class ImageryLayerInfo {
                 }
             }
         }
-        Main.pref.putCollection("imagery.layers.default", newKnownDefaults);
-
-        // Add ids to user entries without id.
-        // Only do this the first time for each id, so the user can have
-        // custom entries that don't get updated automatically
-        Collection<String> addedIds = Main.pref.getCollection("imagery.layers.addedIds");
-        Collection<String> newAddedIds = new TreeSet<>(addedIds);
-        for (ImageryInfo info : layers) {
-            for (ImageryInfo def : defaultLayers) {
-                if (isSimilar(def, info) && def.getId() != null && !addedIds.contains(def.getId())) {
-                    if (!defaultLayerIds.containsKey(def.getId())) {
-                        // ignore ids used more than once (have been purged from the map)
-                        continue;
-                    }
-                    newAddedIds.add(def.getId());
-                    if (info.getId() == null) {
-                        info.setId(def.getId());
-                        changed = true;
-                    }
-                }
-            }
+        if (!dropold && !knownDefaults.isEmpty()) {
+            newKnownDefaults.addAll(knownDefaults);
         }
-        Main.pref.putCollection("imagery.layers.addedIds", newAddedIds);
+        Main.pref.putCollection("imagery.layers.default", newKnownDefaults);
 
         // automatically update user entries with same id as a default entry
         for (int i = 0; i < layers.size(); i++) {
@@ -262,11 +278,35 @@ public class ImageryLayerInfo {
             ImageryInfo matchingDefault = defaultLayerIds.get(info.getId());
             if (matchingDefault != null && !matchingDefault.equalsPref(info)) {
                 layers.set(i, matchingDefault);
+                Main.info(tr("Update imagery ''{0}''", info.getName()));
                 changed = true;
             }
         }
 
         if (changed) {
+            save();
+        }
+    }
+
+    /**
+     * Drop entries with Id which do no longer exist (removed from defaults).
+     * @since 11527
+     */
+    public void dropOldEntries() {
+        List<String> drop = new ArrayList<>();
+
+        for (Map.Entry<String, ImageryInfo> info : layerIds.entrySet()) {
+            if (!defaultLayerIds.containsKey(info.getKey())) {
+                remove(info.getValue());
+                drop.add(info.getKey());
+                Main.info(tr("Drop old imagery ''{0}''", info.getValue().getName()));
+            }
+        }
+
+        if (!drop.isEmpty()) {
+            for (String id : drop) {
+                layerIds.remove(id);
+            }
             save();
         }
     }
@@ -301,12 +341,29 @@ public class ImageryLayerInfo {
         Main.pref.putListOfStructs("imagery.entries", entries, ImageryPreferenceEntry.class);
     }
 
+    /**
+     * List of usable layers
+     * @return unmodifiable list containing usable layers
+     */
     public List<ImageryInfo> getLayers() {
         return Collections.unmodifiableList(layers);
     }
 
+    /**
+     * List of available default layers
+     * @return unmodifiable list containing available default layers
+     */
     public List<ImageryInfo> getDefaultLayers() {
         return Collections.unmodifiableList(defaultLayers);
+    }
+
+    /**
+     * List of all available default layers (including mirrors)
+     * @return unmodifiable list containing available default layers
+     * @since 11570
+     */
+    public List<ImageryInfo> getAllDefaultLayers() {
+        return Collections.unmodifiableList(allDefaultLayers);
     }
 
     public static void addLayer(ImageryInfo info) {

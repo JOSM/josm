@@ -23,7 +23,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -90,8 +89,7 @@ public final class CustomConfigurator {
      * @param s message to log
      */
     public static void log(String s) {
-        summary.append(s);
-        summary.append('\n');
+        summary.append(s).append('\n');
     }
 
     /**
@@ -101,8 +99,7 @@ public final class CustomConfigurator {
      * @since 10469
      */
     public static void log(Exception e, String s) {
-        summary.append(s + ' ' + Main.getErrorMessage(e));
-        summary.append('\n');
+        summary.append(s).append(' ').append(Main.getErrorMessage(e)).append('\n');
     }
 
     /**
@@ -378,6 +375,7 @@ public final class CustomConfigurator {
                     while (busy) CustomConfigurator.class.wait();
                 } catch (InterruptedException ex) {
                     Main.warn(ex, "InterruptedException while reading local plugin information");
+                    Thread.currentThread().interrupt();
                 }
 
                 SwingUtilities.invokeLater(() -> {
@@ -1025,11 +1023,11 @@ public final class CustomConfigurator {
         @SuppressWarnings("unchecked")
         Map<String, String> stringMap = (Map<String, String>) engine.get("stringMap");
         @SuppressWarnings("unchecked")
-        Map<String, List<String>> listMap = (SortedMap<String, List<String>>) engine.get("listMap");
+        Map<String, List<String>> listMap = (Map<String, List<String>>) engine.get("listMap");
         @SuppressWarnings("unchecked")
-        Map<String, List<Collection<String>>> listlistMap = (SortedMap<String, List<Collection<String>>>) engine.get("listlistMap");
+        Map<String, List<Collection<String>>> listlistMap = (Map<String, List<Collection<String>>>) engine.get("listlistMap");
         @SuppressWarnings("unchecked")
-        Map<String, List<Map<String, String>>> listmapMap = (SortedMap<String, List<Map<String, String>>>) engine.get("listmapMap");
+        Map<String, List<Map<String, String>>> listmapMap = (Map<String, List<Map<String, String>>>) engine.get("listmapMap");
 
         tmpPref.settingsMap.clear();
 

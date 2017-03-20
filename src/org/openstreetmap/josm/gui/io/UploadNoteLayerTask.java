@@ -3,6 +3,8 @@ package org.openstreetmap.josm.gui.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.util.Optional;
+
 import org.openstreetmap.josm.actions.upload.UploadNotesTask;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -28,11 +30,8 @@ public class UploadNoteLayerTask extends AbstractIOTask {
      */
     public UploadNoteLayerTask(NoteLayer layer, ProgressMonitor monitor) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
-        if (monitor == null) {
-            monitor = NullProgressMonitor.INSTANCE;
-        }
         this.layer = layer;
-        this.monitor = monitor;
+        this.monitor = Optional.ofNullable(monitor).orElse(NullProgressMonitor.INSTANCE);
     }
 
     @Override

@@ -348,8 +348,8 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
                     }
 
                     oldMousePos = ms.mousePos;
-                } catch (ConcurrentModificationException x) {
-                    Main.warn(x);
+                } catch (ConcurrentModificationException ex) {
+                    Main.warn(ex);
                 } finally {
                     if (ds != null) {
                         if (isAtOldPosition && middleMouseDown) {
@@ -406,13 +406,14 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
                         }
 
                         EventQueue.invokeAndWait(new CollectorWorker(ms));
-                    } catch (InterruptedException e) {
-                        // Occurs frequently during JOSM shutdown, log set to trace only
-                        Main.trace("InterruptedException in "+MapStatus.class.getSimpleName());
                     } catch (InvocationTargetException e) {
                         Main.warn(e);
                     }
                 }
+            } catch (InterruptedException e) {
+                // Occurs frequently during JOSM shutdown, log set to trace only
+                Main.trace("InterruptedException in "+MapStatus.class.getSimpleName());
+                Thread.currentThread().interrupt();
             } finally {
                 unregisterListeners();
             }
@@ -1076,7 +1077,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
         if (thread != null) {
             try {
                 thread.interrupt();
-            } catch (RuntimeException e) {
+            } catch (SecurityException e) {
                 Main.error(e);
             }
         }

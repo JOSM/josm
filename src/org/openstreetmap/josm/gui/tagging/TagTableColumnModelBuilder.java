@@ -25,7 +25,7 @@ public class TagTableColumnModelBuilder {
      * @see TableColumn#setHeaderValue
      * @see TableColumn#setCellRenderer
      */
-    public TagTableColumnModelBuilder(TableCellRenderer renderer, String ... headerValues) {
+    public TagTableColumnModelBuilder(TableCellRenderer renderer, String... headerValues) {
         CheckParameterUtil.ensureParameterNotNull(headerValues, "headerValues");
         for (int i = 0; i < headerValues.length; i++) {
             TableColumn col = new TableColumn(i);
@@ -43,7 +43,7 @@ public class TagTableColumnModelBuilder {
      * @return {@code this}
      * @see TableColumn#setWidth
      */
-    public TagTableColumnModelBuilder setWidth(int width, int ... indexes) {
+    public TagTableColumnModelBuilder setWidth(int width, int... indexes) {
         for (int i : indexes) {
             model.getColumn(i).setWidth(width);
         }
@@ -57,7 +57,7 @@ public class TagTableColumnModelBuilder {
      * @return {@code this}
      * @see TableColumn#setPreferredWidth
      */
-    public TagTableColumnModelBuilder setPreferredWidth(int width, int ... indexes) {
+    public TagTableColumnModelBuilder setPreferredWidth(int width, int... indexes) {
         for (int i : indexes) {
             model.getColumn(i).setPreferredWidth(width);
         }
@@ -71,7 +71,7 @@ public class TagTableColumnModelBuilder {
      * @return {@code this}
      * @see TableColumn#setMaxWidth
      */
-    public TagTableColumnModelBuilder setMaxWidth(int width, int ... indexes) {
+    public TagTableColumnModelBuilder setMaxWidth(int width, int... indexes) {
         for (int i : indexes) {
             model.getColumn(i).setMaxWidth(width);
         }
@@ -85,7 +85,7 @@ public class TagTableColumnModelBuilder {
      * @return {@code this}
      * @see TableColumn#setCellEditor
      */
-    public TagTableColumnModelBuilder setCellEditor(TableCellEditor editor, int ... indexes) {
+    public TagTableColumnModelBuilder setCellEditor(TableCellEditor editor, int... indexes) {
         for (int i : indexes) {
             model.getColumn(i).setCellEditor(editor);
         }

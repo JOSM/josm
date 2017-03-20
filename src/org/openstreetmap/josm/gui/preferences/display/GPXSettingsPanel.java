@@ -6,9 +6,12 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionListener;
+import java.util.Enumeration;
 
+import javax.swing.AbstractButton;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ButtonGroup;
@@ -17,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSlider;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
@@ -62,11 +66,16 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
     private final JRadioButton colorTypeGlobal = new JRadioButton(tr("Use global settings"));
     private final JosmComboBox<String> colorTypeVelocityTune = new JosmComboBox<>(new String[] {tr("Car"), tr("Bicycle"), tr("Foot")});
     private final JosmComboBox<String> colorTypeHeatMapTune = new JosmComboBox<>(new String[] {
-        trc("Heat map", "User"),
+        trc("Heat map", "User Normal"),
+        trc("Heat map", "User Light"),
+        trc("Heat map", "Traffic Lights"),
         trc("Heat map", "Inferno"),
         trc("Heat map", "Viridis"),
         trc("Heat map", "Wood"),
         trc("Heat map", "Heat")});
+    private final JCheckBox colorTypeHeatMapPoints = new JCheckBox(tr("Use points instead of lines for heat map"));
+    private final JSlider colorTypeHeatMapGain = new JSlider();
+    private final JSlider colorTypeHeatMapLowerLimit = new JSlider();
     private final JCheckBox makeAutoMarkers = new JCheckBox(tr("Create markers when reading GPX"));
     private final JCheckBox drawGpsArrows = new JCheckBox(tr("Draw Direction Arrows"));
     private final JCheckBox drawGpsArrowsFast = new JCheckBox(tr("Fast drawing (looks uglier)"));
@@ -109,6 +118,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         loadPreferences(); // preferences -> controls
     }
 
+    // CHECKSTYLE.OFF: ExecutableStatementCountCheck
     private void initComponents() {
         setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
@@ -237,18 +247,6 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         colorGroup.add(colorTypeTime);
         colorGroup.add(colorTypeHeatMap);
 
-        colorTypeVelocity.addChangeListener(e -> {
-            colorTypeVelocityTune.setEnabled(colorTypeVelocity.isSelected());
-            colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected());
-        });
-
-        colorTypeHeatMap.addChangeListener(e -> {
-            colorTypeHeatMapTune.setEnabled(colorTypeHeatMap.isSelected());
-            colorDynamic.setEnabled(false);
-        });
-
-        colorTypeDilution.addChangeListener(e -> colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected()));
-
         colorTypeNone.setToolTipText(tr("All points and track segments will have the same color. Can be customized in Layer Manager."));
         colorTypeVelocity.setToolTipText(tr("Colors points and track segments by velocity."));
         colorTypeDirection.setToolTipText(tr("Colors points and track segments by direction."));
@@ -279,16 +277,66 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         add(colorTypeHeatIconLabel, GBC.std().insets(5, 0, 0, 5));
         add(colorTypeHeatMapTune, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
 
-        colorTypeHeatMapTune.addPropertyChangeListener(e -> {
-            // get image size of environment
-            final int iconSize = (int) colorTypeHeatMapTune.getPreferredSize().getHeight();
-            // ask the GPX draw for the correct color of that layer
-            final Color color = GpxDrawHelper.DEFAULT_COLOR.getChildColor(layerName != null ? layerName : "").get();
-            colorTypeHeatIconLabel.setIcon(GpxDrawHelper.getColorMapImageIcon(color, colorTypeHeatMapTune.getSelectedIndex(), iconSize));
+        JLabel colorTypeHeatMapGainLabel = new JLabel(tr("Overlay gain adjustment"));
+        JLabel colorTypeHeatMapLowerLimitLabel = new JLabel(tr("Lower limit of visibility"));
+        add(colorTypeHeatMapGainLabel, GBC.std().insets(80, 0, 0, 0));
+        add(colorTypeHeatMapGain, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
+        add(colorTypeHeatMapLowerLimitLabel, GBC.std().insets(80, 0, 0, 0));
+        add(colorTypeHeatMapLowerLimit, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 0, 0, 5));
+        add(colorTypeHeatMapPoints, GBC.eol().insets(60, 0, 0, 0));
+
+        colorTypeHeatMapGain.setToolTipText(tr("Adjust the gain of overlay blending."));
+        colorTypeHeatMapGain.setOrientation(JSlider.HORIZONTAL);
+        colorTypeHeatMapGain.setPaintLabels(true);
+        colorTypeHeatMapGain.setMinimum(-10);
+        colorTypeHeatMapGain.setMaximum(+10);
+        colorTypeHeatMapGain.setMinorTickSpacing(1);
+        colorTypeHeatMapGain.setMajorTickSpacing(5);
+
+        colorTypeHeatMapLowerLimit.setToolTipText(tr("Draw all GPX traces that exceed this threshold."));
+        colorTypeHeatMapLowerLimit.setOrientation(JSlider.HORIZONTAL);
+        colorTypeHeatMapLowerLimit.setMinimum(0);
+        colorTypeHeatMapLowerLimit.setMaximum(254);
+        colorTypeHeatMapLowerLimit.setPaintLabels(true);
+        colorTypeHeatMapLowerLimit.setMinorTickSpacing(10);
+        colorTypeHeatMapLowerLimit.setMajorTickSpacing(100);
+
+        colorTypeHeatMapPoints.setToolTipText(tr("Render engine uses points with simulated position error instead of lines. "));
+
+        // iterate over the buttons, add change listener to any change event
+        for (Enumeration<AbstractButton> button = colorGroup.getElements(); button.hasMoreElements();) {
+            (button.nextElement()).addChangeListener(e -> {
+                colorTypeVelocityTune.setEnabled(colorTypeVelocity.isSelected());
+                colorTypeHeatMapTune.setEnabled(colorTypeHeatMap.isSelected());
+                colorTypeHeatMapPoints.setEnabled(colorTypeHeatMap.isSelected());
+                colorTypeHeatMapGain.setEnabled(colorTypeHeatMap.isSelected());
+                colorTypeHeatMapLowerLimit.setEnabled(colorTypeHeatMap.isSelected());
+                colorTypeHeatMapGainLabel.setEnabled(colorTypeHeatMap.isSelected());
+                colorTypeHeatMapLowerLimitLabel.setEnabled(colorTypeHeatMap.isSelected());
+                colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected());
+            });
+        }
+
+        colorTypeHeatMapTune.addActionListener(e -> {
+            final Dimension dim = colorTypeHeatMapTune.getPreferredSize();
+            if (null != dim) {
+                // get image size of environment
+                final int iconSize = (int) dim.getHeight();
+                final Color color;
+                // ask the GPX draw for the correct color of that layer ( if there is one )
+                if (null != layerName) {
+                    color = GpxDrawHelper.DEFAULT_COLOR.getChildColor(layerName).get();
+                } else {
+                    color = GpxDrawHelper.DEFAULT_COLOR.getDefaultValue();
+                }
+                colorTypeHeatIconLabel.setIcon(GpxDrawHelper.getColorMapImageIcon(color, colorTypeHeatMapTune.getSelectedIndex(), iconSize));
+            }
         });
 
         ExpertToggleAction.addVisibilitySwitcher(colorTypeDirection);
         ExpertToggleAction.addVisibilitySwitcher(colorTypeDilution);
+        ExpertToggleAction.addVisibilitySwitcher(colorTypeHeatMapLowerLimit);
+        ExpertToggleAction.addVisibilitySwitcher(colorTypeHeatMapLowerLimitLabel);
 
         colorDynamic.setToolTipText(tr("Colors points and track segments by data limits."));
         add(colorDynamic, GBC.eop().insets(40, 0, 0, 0));
@@ -329,6 +377,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
 
         add(Box.createVerticalGlue(), GBC.eol().fill(GBC.BOTH));
     }
+    // CHECKSTYLE.ON: ExecutableStatementCountCheck
 
     /**
      * Loads preferences to UI controls
@@ -368,6 +417,9 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             colorTypeGlobal.setSelected(true);
             colorDynamic.setSelected(false);
             colorDynamic.setEnabled(false);
+            colorTypeHeatMapPoints.setSelected(false);
+            colorTypeHeatMapGain.setValue(0);
+            colorTypeHeatMapLowerLimit.setValue(0);
         } else {
             int colorType = Main.pref.getInteger("draw.rawgps.colors", layerName, 0);
             switch (colorType) {
@@ -381,13 +433,11 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             }
             int ccts = Main.pref.getInteger("draw.rawgps.colorTracksTune", layerName, 45);
             colorTypeVelocityTune.setSelectedIndex(ccts == 10 ? 2 : (ccts == 20 ? 1 : 0));
-            colorTypeVelocityTune.setEnabled(colorTypeVelocity.isSelected() && colorTypeVelocity.isEnabled());
-
             colorTypeHeatMapTune.setSelectedIndex(Main.pref.getInteger("draw.rawgps.heatmap.colormap", layerName, 0));
-            colorTypeHeatMapTune.setEnabled(colorTypeHeatMap.isSelected() && colorTypeHeatMap.isEnabled());
-
             colorDynamic.setSelected(Main.pref.getBoolean("draw.rawgps.colors.dynamic", layerName, false));
-            colorDynamic.setEnabled(colorTypeVelocity.isSelected() || colorTypeDilution.isSelected());
+            colorTypeHeatMapPoints.setSelected(Main.pref.getBoolean("draw.rawgps.heatmap.use-points", layerName, false));
+            colorTypeHeatMapGain.setValue(Main.pref.getInteger("draw.rawgps.heatmap.gain", layerName, 0));
+            colorTypeHeatMapLowerLimit.setValue(Main.pref.getInteger("draw.rawgps.heatmap.lower-limit", layerName, 0));
         }
     }
 
@@ -458,8 +508,10 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         Main.pref.put("draw.rawgps.colors.dynamic"+layerNameDot, colorDynamic.isSelected());
         int ccti = colorTypeVelocityTune.getSelectedIndex();
         Main.pref.putInteger("draw.rawgps.colorTracksTune"+layerNameDot, ccti == 2 ? 10 : (ccti == 1 ? 20 : 45));
-
         Main.pref.putInteger("draw.rawgps.heatmap.colormap"+layerNameDot, colorTypeHeatMapTune.getSelectedIndex());
+        Main.pref.put("draw.rawgps.heatmap.use-points"+layerNameDot, colorTypeHeatMapPoints.isSelected());
+        Main.pref.putInteger("draw.rawgps.heatmap.gain"+layerNameDot, colorTypeHeatMapGain.getValue());
+        Main.pref.putInteger("draw.rawgps.heatmap.lower-limit"+layerNameDot, colorTypeHeatMapLowerLimit.getValue());
 
         return false;
     }

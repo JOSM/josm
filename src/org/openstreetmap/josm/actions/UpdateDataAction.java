@@ -50,7 +50,7 @@ public class UpdateDataAction extends JosmAction {
             return;
 
         List<Area> areas = new ArrayList<>();
-        for (DataSource ds : editLayer.data.dataSources) {
+        for (DataSource ds : editLayer.data.getDataSources()) {
             areas.add(new Area(ds.bounds.asRect()));
         }
 

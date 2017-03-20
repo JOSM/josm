@@ -181,7 +181,6 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
     public SelectAction(MapFrame mapFrame) {
         super(tr("Select"), "move/move", tr("Select, move, scale and rotate objects"),
                 Shortcut.registerShortcut("mapmode:select", tr("Mode: {0}", tr("Select")), KeyEvent.VK_S, Shortcut.DIRECT),
-                mapFrame,
                 ImageProvider.getCursor("normal", "selection"));
         mv = mapFrame.mapView;
         putValue("help", ht("/Action/Select"));
@@ -1260,8 +1259,6 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      * @return {@code o} as collection of {@code o}'s type.
      */
     protected static <T> Collection<T> asColl(T o) {
-        if (o == null)
-            return Collections.emptySet();
-        return Collections.singleton(o);
+        return o == null ? Collections.emptySet() : Collections.singleton(o);
     }
 }

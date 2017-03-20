@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 import java.util.jar.Attributes;
 import java.util.jar.JarInputStream;
@@ -198,10 +199,7 @@ public class PluginInformation {
         String lang = LanguageInfo.getLanguageCodeManifest();
         Attributes attr = manifest.getMainAttributes();
         className = attr.getValue("Plugin-Class");
-        String s = attr.getValue(lang+"Plugin-Link");
-        if (s == null) {
-            s = attr.getValue("Plugin-Link");
-        }
+        String s = Optional.ofNullable(attr.getValue(lang+"Plugin-Link")).orElseGet(() -> attr.getValue("Plugin-Link"));
         if (s != null && !Utils.isValidUrl(s)) {
             Main.info(tr("Invalid URL ''{0}'' in plugin {1}", s, name));
             s = null;

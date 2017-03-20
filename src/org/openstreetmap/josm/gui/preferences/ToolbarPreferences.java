@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.AbstractAction;
@@ -60,9 +61,12 @@ import javax.swing.tree.TreePath;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ActionParameter;
 import org.openstreetmap.josm.actions.AdaptableAction;
+import org.openstreetmap.josm.actions.AddImageryLayerAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.ParameterizedAction;
 import org.openstreetmap.josm.actions.ParameterizedActionDecorator;
+import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -75,6 +79,12 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class ToolbarPreferences implements PreferenceSettingFactory {
 
     private static final String EMPTY_TOOLBAR_MARKER = "<!-empty-!>";
+
+    /**
+     * The prefix for imagery toolbar entries.
+     * @since 11657
+     */
+    public static final String IMAGERY_PREFIX = "imagery_";
 
     /**
      * Action definition.
@@ -159,10 +169,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         public Icon getDisplayIcon() {
             if (ico != null)
                 return ico;
-            Object o = action.getValue(Action.LARGE_ICON_KEY);
-            if (o == null)
-                o = action.getValue(Action.SMALL_ICON);
-            return (Icon) o;
+            return (Icon) Optional.ofNullable(action.getValue(Action.LARGE_ICON_KEY)).orElseGet(() -> action.getValue(Action.SMALL_ICON));
         }
 
         /**
@@ -254,12 +261,27 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             }
         }
 
+        /**
+         * Loads the action definition from its toolbar name.
+         * @param actionName action toolbar name
+         * @return action definition or null
+         */
         public ActionDefinition loadAction(String actionName) {
             index = 0;
             this.s = actionName.toCharArray();
 
             String name = readTillChar('(', '{');
             Action action = actions.get(name);
+
+            if (action == null && name.startsWith(IMAGERY_PREFIX)) {
+                String imageryName = name.substring(IMAGERY_PREFIX.length());
+                for (ImageryInfo i : ImageryLayerInfo.instance.getDefaultLayers()) {
+                    if (imageryName.equalsIgnoreCase(i.getName())) {
+                        action = new AddImageryLayerAction(i);
+                        break;
+                    }
+                }
+            }
 
             if (action == null)
                 return null;
@@ -940,6 +962,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             for (ActionDefinition actionDefinition: getDefinedActions()) {
                 selected.addElement(actionDefinition);
             }
+            actionsTreeModel.reload();
         }
 
         @Override
@@ -1007,7 +1030,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     } else {
                         String toolbar = (String) tb;
                         Action r = actions.get(toolbar);
-                        if (r != null && r != action && !toolbar.startsWith("imagery_")) {
+                        if (r != null && r != action && !toolbar.startsWith(IMAGERY_PREFIX)) {
                             Main.info(tr("Toolbar action {0} overwritten: {1} gets {2}",
                             toolbar, r.getClass().getName(), action.getClass().getName()));
                         }
@@ -1078,6 +1101,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     }
 
     /**
+     * Registers an action to the toolbar preferences.
      * @param action Action to register
      * @return The parameter (for better chaining)
      */
@@ -1097,6 +1121,20 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             regactions.put(toolbar, action);
         }
         return action;
+    }
+
+    /**
+     * Unregisters an action from the toolbar preferences.
+     * @param action Action to unregister
+     * @return The removed action, or null
+     * @since 11654
+     */
+    public Action unregister(Action action) {
+        Object toolbar = action.getValue("toolbar");
+        if (toolbar instanceof String) {
+            return regactions.remove(toolbar);
+        }
+        return null;
     }
 
     /**
@@ -1192,16 +1230,10 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             paramCode = action.parameters.hashCode();
         }
 
-        String tt = action.getDisplayTooltip();
-        if (tt == null) {
-            tt = "";
-        }
+        String tt = Optional.ofNullable(action.getDisplayTooltip()).orElse("");
 
         if (sc == null || paramCode != 0) {
-            String name = (String) action.getAction().getValue("toolbar");
-            if (name == null) {
-                name = action.getDisplayName();
-            }
+            String name = Optional.ofNullable((String) action.getAction().getValue("toolbar")).orElseGet(action::getDisplayName);
             if (paramCode != 0) {
                 name = name+paramCode;
             }

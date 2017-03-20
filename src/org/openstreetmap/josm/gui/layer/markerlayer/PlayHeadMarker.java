@@ -8,6 +8,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.IOException;
 
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
@@ -97,7 +98,7 @@ public final class PlayHeadMarker extends Marker {
         if (wasPlaying) {
             try {
                 AudioPlayer.pause();
-            } catch (Exception ex) {
+            } catch (IOException | InterruptedException ex) {
                 AudioPlayer.audioMalfunction(ex);
             }
         }
@@ -111,7 +112,7 @@ public final class PlayHeadMarker extends Marker {
         if (!wasPlaying || reset) {
             try {
                 AudioPlayer.pause();
-            } catch (Exception ex) {
+            } catch (IOException | InterruptedException ex) {
                 AudioPlayer.audioMalfunction(ex);
             }
         }

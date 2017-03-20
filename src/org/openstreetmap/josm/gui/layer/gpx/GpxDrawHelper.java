@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.ImageIcon;
 
@@ -37,7 +38,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.data.preferences.AbstractProperty;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapViewState;
@@ -95,6 +95,9 @@ public class GpxDrawHelper implements SoMChangeListener {
     private ColorMode computeCacheColored;
     private int computeCacheColorTracksTune;
     private int computeCacheHeatMapDrawColorTableIdx;
+    private boolean computeCacheHeatMapDrawPointMode;
+    private int computeCacheHeatMapDrawGain;
+    private int computeCacheHeatMapDrawLowerLimit;
 
     //// Color-related fields
     /** Mode of the line coloring **/
@@ -134,6 +137,12 @@ public class GpxDrawHelper implements SoMChangeListener {
     private boolean heatMapDrawExtraLine;
     // used index for color table (parameter)
     private int heatMapDrawColorTableIdx;
+    // use point or line draw mode
+    private boolean heatMapDrawPointMode;
+    // extra gain > 0 or < 0 attenuation, 0 = default
+    private int heatMapDrawGain;
+    // do not draw elements with value lower than this limit
+    private int heatMapDrawLowerLimit;
 
     // normal buffered image and draw object (cached)
     private BufferedImage heatMapImgGray;
@@ -155,7 +164,7 @@ public class GpxDrawHelper implements SoMChangeListener {
     private static Color[] heatMapLutColorJosmRed2Blue = createColorFromResource("red2blue");
 
     // user defined heatmap color
-    private Color[] heatMapLutColor = createColorLut(Color.BLACK, Color.WHITE);
+    private Color[] heatMapLutColor = createColorLut(0, Color.BLACK, Color.WHITE);
 
     private void setupColors() {
         hdopAlpha = Main.pref.getInteger("hdop.color.alpha", -1);
@@ -195,10 +204,9 @@ public class GpxDrawHelper implements SoMChangeListener {
     /**
      * Constructs a new {@code GpxDrawHelper}.
      * @param gpxData GPX data
-     * @param abstractProperty The color to draw with
-     * @since 10824
+     * @since 11713
      */
-    public GpxDrawHelper(GpxData gpxData, AbstractProperty<Color> abstractProperty) {
+    public GpxDrawHelper(GpxData gpxData) {
         data = gpxData;
         setupColors();
     }
@@ -277,7 +285,13 @@ public class GpxDrawHelper implements SoMChangeListener {
         // get heatmap parameters
         heatMapEnabled = Main.pref.getBoolean("draw.rawgps.heatmap.enabled", spec, false);
         heatMapDrawExtraLine = Main.pref.getBoolean("draw.rawgps.heatmap.line-extra", spec, false);
-        heatMapDrawColorTableIdx = Main.pref.getInteger("draw.rawgps.heatmap.colormap", specName(layerName), 0);
+        heatMapDrawColorTableIdx = Main.pref.getInteger("draw.rawgps.heatmap.colormap", spec, 0);
+        heatMapDrawPointMode = Main.pref.getBoolean("draw.rawgps.heatmap.use-points", spec, false);
+        heatMapDrawGain = Main.pref.getInteger("draw.rawgps.heatmap.gain", spec, 0);
+        heatMapDrawLowerLimit = Main.pref.getInteger("draw.rawgps.heatmap.lower-limit", spec, 0);
+
+        // shrink to range
+        heatMapDrawGain = Utils.clamp(heatMapDrawGain, -10, 10);
 
         neutralColor = getColor(layerName, true);
         velocityScale.setNoDataColor(neutralColor);
@@ -513,8 +527,9 @@ public class GpxDrawHelper implements SoMChangeListener {
         // heat mode
         if (ColorMode.HEATMAP == colored) {
 
-            // generate and get new user color map
-            heatMapLutColor = selectColorMap(neutralColor != null ? neutralColor : Color.WHITE, heatMapDrawColorTableIdx);
+            // get new user color map and refresh visibility level
+            heatMapLutColor = createColorLut(heatMapDrawLowerLimit,
+                                             selectColorMap(neutralColor != null ? neutralColor : Color.WHITE, heatMapDrawColorTableIdx));
 
             // force redraw of image
             heatMapMapViewState = null;
@@ -714,7 +729,7 @@ public class GpxDrawHelper implements SoMChangeListener {
         // 2nd. determine current scale factors -------------------------------
 
         // adjust global settings
-        final int globalLineWidth = Math.min(Math.max(lineWidth, 1), 20);
+        final int globalLineWidth = Utils.clamp(lineWidth, 1, 20);
 
         // cache scale of view
         final double zoomScale = mv.getDist100Pixel() / 50.0f;
@@ -722,7 +737,7 @@ public class GpxDrawHelper implements SoMChangeListener {
         // 3rd. determine current paint parameters -----------------------------
 
         // alpha value is based on zoom and line with combined with global layer alpha
-        float theLineAlpha = Math.min(Math.max((0.50f/(float) zoomScale)/(globalLineWidth + 1), 0.01f), 0.50f) * layerAlpha;
+        float theLineAlpha = (float) Utils.clamp((0.50 / zoomScale) / (globalLineWidth + 1), 0.01, 0.50) * layerAlpha;
         final int theLineWith = (int) (lineWidth / zoomScale) + 1;
 
         // 4th setup virtual paint area ----------------------------------------
@@ -794,11 +809,12 @@ public class GpxDrawHelper implements SoMChangeListener {
     }
 
     /**
-     * Creates a linear distributed colormap by linear blending between colors
+     * Creates a distributed colormap by linear blending between colors
+     * @param lowerLimit lower limit for first visible color
      * @param colors 1..n colors
      * @return array of Color objects
      */
-    protected static Color[] createColorLut(Color... colors) {
+    protected static Color[] createColorLut(int lowerLimit, Color... colors) {
 
         // number of lookup entries
         final int tableSize = 256;
@@ -824,10 +840,10 @@ public class GpxDrawHelper implements SoMChangeListener {
             Color c = new Color(pixel[0]);
 
             // smooth alpha like sin curve
-            int alpha = (int) (Math.sin(i * mapTo90Deg) * 255);
+            int alpha = (i > lowerLimit) ? (int) (Math.sin((i-lowerLimit) * mapTo90Deg) * 255) : 0;
 
             // alpha with pre-offset, first color -> full transparent
-            alpha = i > 0 ? (10 + alpha) : 0;
+            alpha = alpha > 0 ? (20 + alpha) : 0;
 
             // shrink to maximum bound
             if (alpha > 255) {
@@ -915,7 +931,7 @@ public class GpxDrawHelper implements SoMChangeListener {
             colorList.add(darkerColor(lastColor, 0.950f));
         }
 
-        return createColorLut(colorList.toArray(new Color[ colorList.size() ]));
+        return createColorLut(0, colorList.toArray(new Color[ colorList.size() ]));
     }
 
     /**
@@ -927,24 +943,35 @@ public class GpxDrawHelper implements SoMChangeListener {
      */
     protected static Color[] selectColorMap(Color userColor, int tableIdx) {
 
+        // generate new user color map ( dark, user color, white )
+        Color[] userColor1 = createColorLut(0, userColor.darker(), userColor, userColor.brighter(), Color.WHITE);
+
+        // generate new user color map ( white -> color )
+        Color[] userColor2 = createColorLut(0, Color.WHITE, Color.WHITE, userColor);
+
         // generate new user color map
-        Color[] nextUserColor = createColorLut(Color.BLACK, userColor.darker(),
-                                               userColor, userColor.brighter(), Color.WHITE);
+        Color[] colorTrafficLights = createColorLut(0, Color.WHITE, Color.GREEN.darker(), Color.YELLOW, Color.RED);
 
         // decide what, keep order is sync with setting on GUI
         Color[][] lut = {
-                nextUserColor,
+                userColor1,
+                userColor2,
+                colorTrafficLights,
                 heatMapLutColorJosmInferno,
                 heatMapLutColorJosmViridis,
                 heatMapLutColorJosmBrown2Green,
                 heatMapLutColorJosmRed2Blue
         };
 
+        // default case
+        Color[] nextUserColor = userColor1;
+
         // select by index
         if (tableIdx < lut.length) {
             nextUserColor = lut[ tableIdx ];
         }
 
+        // adjust color map
         return nextUserColor;
     }
 
@@ -970,9 +997,9 @@ public class GpxDrawHelper implements SoMChangeListener {
      * @param backComp        composite use to draw background objects
      * @param backStroke      stroke use to draw background objects
      */
-    private void drawHeatGrayMap(Graphics2D gB, MapView mv, List<WayPoint> listSegm,
-                                 Composite foreComp, Stroke foreStroke,
-                                 Composite backComp, Stroke backStroke) {
+    private void drawHeatGrayLineMap(Graphics2D gB, MapView mv, List<WayPoint> listSegm,
+                                     Composite foreComp, Stroke foreStroke,
+                                     Composite backComp, Stroke backStroke) {
 
         // draw foreground
         boolean drawForeground = foreComp != null && foreStroke != null;
@@ -1036,7 +1063,7 @@ public class GpxDrawHelper implements SoMChangeListener {
         final int maxPixelY = imgGray.getHeight();
 
         // always full or outlines at big samples rasters
-        final boolean drawOutlines = (outlineWidth > 0) && ((0 == sampleRaster) || (sampleRaster > 8));
+        final boolean drawOutlines = (outlineWidth > 0) && ((0 == sampleRaster) || (sampleRaster > 10));
 
         // backup stroke
         final Stroke oldStroke = g.getStroke();
@@ -1127,7 +1154,7 @@ public class GpxDrawHelper implements SoMChangeListener {
         final double zoomScale = mv.getDist100Pixel() / 50.0f;
 
         // adjust global settings ( zero = default line width )
-        final int globalLineWidth = (0 == lineWidth) ? 1 : Math.min(Math.max(lineWidth, 1), 20);
+        final int globalLineWidth = (0 == lineWidth) ? 1 : Utils.clamp(lineWidth, 1, 20);
 
         // 1st setup virtual paint area ----------------------------------------
 
@@ -1142,6 +1169,15 @@ public class GpxDrawHelper implements SoMChangeListener {
             heatMapGraph2d.setBackground(new Color(0, 0, 0, 255));
             heatMapGraph2d.setColor(Color.WHITE);
 
+            // fast draw ( maybe help or not )
+            heatMapGraph2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
+            heatMapGraph2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
+            heatMapGraph2d.setRenderingHint(RenderingHints.KEY_ALPHA_INTERPOLATION, RenderingHints.VALUE_ALPHA_INTERPOLATION_SPEED);
+            heatMapGraph2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_DISABLE);
+            heatMapGraph2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+            heatMapGraph2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+            heatMapGraph2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+
             // cache it
             heatMapCacheScreenBounds = screenBounds;
         }
@@ -1149,14 +1185,25 @@ public class GpxDrawHelper implements SoMChangeListener {
         // 2nd. determine current scale factors -------------------------------
 
         // the line width (foreground: draw extra small footprint line of track)
-        final int lineWidthB = (int) Math.max(1.5f * (globalLineWidth / zoomScale) + 1, 2);
-        final int lineWidthF = lineWidthB > 2 ? (globalLineWidth - 1) : 0;
+        int lineWidthB = (int) Math.max(1.5f * (globalLineWidth / zoomScale) + 1, 2);
+        int lineWidthF = lineWidthB > 2 ? (globalLineWidth - 1) : 0;
+
+        // global alpha adjustment
+        float lineAlpha = (float) Utils.clamp((0.40 / zoomScale) / (globalLineWidth + 1), 0.01, 0.40);
+
+        // adjust 0.15 .. 1.85
+        float scaleAlpha = 1.0f + ((heatMapDrawGain/10.0f) * 0.85f);
+
+        // add to calculated values
+        float lineAlphaBPoint = (float) Utils.clamp((lineAlpha * 0.65) * scaleAlpha, 0.001, 0.90);
+        float lineAlphaBLine = (float) Utils.clamp((lineAlpha * 1.00) * scaleAlpha, 0.001, 0.90);
+        float lineAlphaFLine = (float) Utils.clamp((lineAlpha / 1.50) * scaleAlpha, 0.001, 0.90);
+
+        // 3rd Calculate the heat map data by draw GPX traces with alpha value ----------
 
         // recalculation of image needed
         final boolean imageRecalc = !mapViewState.equalsInWindow(heatMapMapViewState) ||
                                     heatMapCacheLineWith != globalLineWidth;
-
-        // 3rd Calculate the heat map data by draw GPX traces with alpha value ----------
 
         // need re-generation of gray image ?
         if (imageSetup || imageRecalc) {
@@ -1164,24 +1211,126 @@ public class GpxDrawHelper implements SoMChangeListener {
             // clear background
             heatMapGraph2d.clearRect(0, 0, heatMapImgGray.getWidth(), heatMapImgGray.getHeight());
 
-            // alpha combines both values, therefore the foreground shall be lighter
-            final float lineAlphaB = Math.min(Math.max((0.40f/(float) zoomScale)/(globalLineWidth + 1), 0.01f), 0.40f);
-            final float lineAlphaF = lineAlphaB / 1.5f;
+            // point or line blending
+            if (heatMapDrawPointMode) {
+                heatMapGraph2d.setComposite(AlphaComposite.SrcOver.derive(lineAlphaBPoint));
+                drawHeatGrayDotMap(heatMapGraph2d, mv, visibleSegments, lineWidthB);
 
-            // derive draw parameters and draw
-            drawHeatGrayMap(heatMapGraph2d, mv, visibleSegments,
-                            lineWidthF > 1 ? AlphaComposite.SrcOver.derive(lineAlphaF) : null,
-                            new BasicStroke(lineWidthF, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND),
-                            AlphaComposite.SrcOver.derive(lineAlphaB),
-                            new BasicStroke(lineWidthB, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            } else {
+                drawHeatGrayLineMap(heatMapGraph2d, mv, visibleSegments,
+                                    lineWidthF > 1 ? AlphaComposite.SrcOver.derive(lineAlphaFLine) : null,
+                                    new BasicStroke(lineWidthF, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND),
+                                    AlphaComposite.SrcOver.derive(lineAlphaBLine),
+                                    new BasicStroke(lineWidthB, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+            }
 
-            // remember draw parameters
+            // remember draw parameter
             heatMapMapViewState = mapViewState;
             heatMapCacheLineWith = globalLineWidth;
         }
 
         // 4th. Draw data on target layer, map data via color lookup table --------------
-        drawHeatMapGrayMap(g, heatMapImgGray, lineWidthB > 2 ? (lineWidthB / 2) : 1, lineWidth > 2 ? (lineWidth - 2) : 1);
+        drawHeatMapGrayMap(g, heatMapImgGray, lineWidthB > 2 ? (int) (lineWidthB*1.25f) : 1, lineWidth > 2 ? (lineWidth - 2) : 1);
+    }
+
+    /**
+     * Draw a dotted heat map
+     *
+     * @param gB              the common draw object to use
+     * @param mv              the meta data to current displayed area
+     * @param listSegm        segments visible in the current scope of mv
+     * @param drawSize        draw size of draw element
+     */
+    private static void drawHeatGrayDotMap(Graphics2D gB, MapView mv, List<WayPoint> listSegm, int drawSize) {
+
+        // typical rendering rate -> use realtime preview instead of accurate display
+        final double maxSegm = 25000, nrSegms = listSegm.size();
+
+        // determine random drop rate
+        final double randomDrop = Math.min(nrSegms > maxSegm ? (nrSegms - maxSegm) / nrSegms : 0, 0.70f);
+
+        // http://www.nstb.tc.faa.gov/reports/PAN94_0716.pdf#page=22
+        // Global Average Position Domain Accuracy, typical -> not worst case !
+        // < 4.218 m Vertical
+        // < 2.168 m Horizontal
+        final double pixelRmsX = (100 / mv.getDist100Pixel()) * 2.168;
+        final double pixelRmsY = (100 / mv.getDist100Pixel()) * 4.218;
+
+        Point lastPnt = null;
+
+        // for all points, draw single lines
+        for (WayPoint trkPnt : listSegm) {
+
+            // get transformed coordinates
+            final Point paintPnt = mv.getPoint(trkPnt.getEastNorth());
+
+            // end of line segment or end of list reached
+            if (trkPnt.drawLine && null != lastPnt) {
+                drawHeatSurfaceLine(gB, paintPnt, lastPnt, drawSize, pixelRmsX, pixelRmsY, randomDrop);
+            }
+
+            // remember
+            lastPnt = paintPnt;
+        }
+    }
+
+    /**
+     * Draw a dotted surface line
+     *
+     * @param g                 the common draw object to use
+     * @param fromPnt           start point
+     * @param toPnt             end point
+     * @param drawSize          size of draw elements
+     * @param rmsSizeX          RMS size of circle for X (width)
+     * @param rmsSizeY          RMS size of circle for Y (height)
+     * @param dropRate          Pixel render drop rate
+     */
+    private static void drawHeatSurfaceLine(Graphics2D g,
+            Point fromPnt, Point toPnt, int drawSize, double rmsSizeX, double rmsSizeY, double dropRate) {
+
+        // collect frequently used items
+        final int fromX = (int) fromPnt.getX(); final int deltaX = (int) (toPnt.getX() - fromX);
+        final int fromY = (int) fromPnt.getY(); final int deltaY = (int) (toPnt.getY() - fromY);
+
+        // use same random values for each point
+        final Random heatMapRandom = new Random(fromX+fromY+deltaX+deltaY);
+
+        // cache distance between start and end point
+        final int dist = (int) Math.abs(fromPnt.distance(toPnt));
+
+        // number of increment ( fill wide distance tracks )
+        double scaleStep = Math.max(1.0f / dist, dist > 100 ? 0.10f : 0.20f);
+
+        // number of additional random points
+        int rounds = Math.min(drawSize/2, 1)+1;
+
+        // decrease random noise at high drop rate ( more accurate draw of fewer points )
+        rmsSizeX *= (1.0d - dropRate);
+        rmsSizeY *= (1.0d - dropRate);
+
+        double scaleVal = 0;
+
+        // interpolate line draw ( needs separate point instead of line )
+        while (scaleVal < (1.0d-0.0001d)) {
+
+            // get position
+            final double pntX = fromX + scaleVal * deltaX;
+            final double pntY = fromY + scaleVal * deltaY;
+
+            // add random distribution around sampled point
+            for (int k = 0; k < rounds; k++) {
+
+                // add error distribution, first point with less error
+                int x = (int) (pntX + heatMapRandom.nextGaussian() * (k > 0 ? rmsSizeX : rmsSizeX/4));
+                int y = (int) (pntY + heatMapRandom.nextGaussian() * (k > 0 ? rmsSizeY : rmsSizeY/4));
+
+                // draw it, even drop is requested
+                if (heatMapRandom.nextDouble() >= dropRate) {
+                    g.fillRect(x-drawSize, y-drawSize, drawSize, drawSize);
+                }
+            }
+            scaleVal += scaleStep;
+        }
     }
 
     /**
@@ -1200,13 +1349,18 @@ public class GpxDrawHelper implements SoMChangeListener {
      * Check cache validity set necessary flags
      */
     private void checkCache() {
+        // CHECKSTYLE.OFF: BooleanExpressionComplexity
         if ((computeCacheMaxLineLengthUsed != maxLineLength)
                 || (computeCacheColored != colored)
                 || (computeCacheColorTracksTune != colorTracksTune)
                 || (computeCacheColorDynamic != colorModeDynamic)
                 || (computeCacheHeatMapDrawColorTableIdx != heatMapDrawColorTableIdx)
-                || (!neutralColor.equals(computeCacheColorUsed))
-      ) {
+                || (!neutralColor.equals(computeCacheColorUsed)
+                || (computeCacheHeatMapDrawPointMode != heatMapDrawPointMode)
+                || (computeCacheHeatMapDrawGain != heatMapDrawGain))
+                || (computeCacheHeatMapDrawLowerLimit != heatMapDrawLowerLimit)
+        ) {
+            // CHECKSTYLE.ON: BooleanExpressionComplexity
             computeCacheMaxLineLengthUsed = maxLineLength;
             computeCacheInSync = false;
             computeCacheColorUsed = neutralColor;
@@ -1214,6 +1368,9 @@ public class GpxDrawHelper implements SoMChangeListener {
             computeCacheColorTracksTune = colorTracksTune;
             computeCacheColorDynamic = colorModeDynamic;
             computeCacheHeatMapDrawColorTableIdx = heatMapDrawColorTableIdx;
+            computeCacheHeatMapDrawPointMode = heatMapDrawPointMode;
+            computeCacheHeatMapDrawGain = heatMapDrawGain;
+            computeCacheHeatMapDrawLowerLimit = heatMapDrawLowerLimit;
         }
     }
 

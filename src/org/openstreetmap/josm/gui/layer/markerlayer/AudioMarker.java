@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.layer.markerlayer;
 
 import java.awt.event.ActionEvent;
+import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
 
@@ -57,7 +58,7 @@ public class AudioMarker extends ButtonMarker {
 
             AudioPlayer.play(audioUrl, offset + syncOffset + after);
             recentlyPlayedMarker = this;
-        } catch (Exception e) {
+        } catch (IOException | InterruptedException e) {
             AudioPlayer.audioMalfunction(e);
         }
     }

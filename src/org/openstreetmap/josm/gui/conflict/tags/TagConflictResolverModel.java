@@ -72,6 +72,15 @@ public class TagConflictResolverModel extends DefaultTableModel {
      *
      */
     public void rebuild() {
+        rebuild(true);
+    }
+
+    /**
+     * initializes the model from the current tags
+     * @param fireEvent {@code true} to call {@code fireTableDataChanged} (can be a slow operation)
+     * @since 11626
+     */
+    void rebuild(boolean fireEvent) {
         if (tags == null) return;
         for (String key: tags.getKeys()) {
             MultiValueResolutionDecision decision = new MultiValueResolutionDecision(tags.getTagsFor(key));
@@ -101,7 +110,9 @@ public class TagConflictResolverModel extends DefaultTableModel {
         displayedKeys.addAll(keys);
         refreshNumConflicts();
         sort();
-        GuiHelper.runInEDTAndWait(this::fireTableDataChanged);
+        if (fireEvent) {
+            GuiHelper.runInEDTAndWait(this::fireTableDataChanged);
+        }
     }
 
     /**
@@ -112,6 +123,19 @@ public class TagConflictResolverModel extends DefaultTableModel {
      * @throws IllegalArgumentException if tags is null
      */
     public void populate(TagCollection tags, Set<String> keysWithConflicts) {
+        populate(tags, keysWithConflicts, true);
+    }
+
+    /**
+     * Populates the model with the tags for which conflicts are to be resolved.
+     *
+     * @param tags  the tag collection with the tags. Must not be null.
+     * @param keysWithConflicts the set of tag keys with conflicts
+     * @param fireEvent {@code true} to call {@code fireTableDataChanged} (can be a slow operation)
+     * @throws IllegalArgumentException if tags is null
+     * @since 11626
+     */
+    void populate(TagCollection tags, Set<String> keysWithConflicts, boolean fireEvent) {
         CheckParameterUtil.ensureParameterNotNull(tags, "tags");
         this.tags = tags;
         displayedKeys = new ArrayList<>();
@@ -119,7 +143,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
             this.keysWithConflicts.addAll(keysWithConflicts);
         }
         decisions = new HashMap<>();
-        rebuild();
+        rebuild(fireEvent);
     }
 
     /**
@@ -249,6 +273,15 @@ public class TagConflictResolverModel extends DefaultTableModel {
      *
      */
     public void prepareDefaultTagDecisions() {
+        prepareDefaultTagDecisions(true);
+    }
+
+    /**
+     * Prepare the default decisions for the current model
+     * @param fireEvent {@code true} to call {@code fireTableDataChanged} (can be a slow operation)
+     * @since 11626
+     */
+    void prepareDefaultTagDecisions(boolean fireEvent) {
         for (MultiValueResolutionDecision decision: decisions.values()) {
             List<String> values = decision.getValues();
             values.remove("");
@@ -259,7 +292,7 @@ public class TagConflictResolverModel extends DefaultTableModel {
             }
             // else: Do not suggest to keep all values in order to reduce the wrong usage of semicolon values, see #9104!
         }
-        rebuild();
+        rebuild(fireEvent);
     }
 
     /**

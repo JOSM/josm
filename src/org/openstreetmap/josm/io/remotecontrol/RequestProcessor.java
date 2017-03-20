@@ -474,13 +474,13 @@ public class RequestProcessor extends Thread {
             if (sample.getUsage() != null && !sample.getUsage().isEmpty()) {
                 usage.append(" &mdash; <i>").append(sample.getUsage()).append("</i>");
             }
-            if (mandatory != null) {
+            if (mandatory != null && mandatory.length > 0) {
                 usage.append("<br/>mandatory parameters: ").append(Utils.join(", ", Arrays.asList(mandatory)));
             }
-            if (optional != null) {
+            if (optional != null && optional.length > 0) {
                 usage.append("<br/>optional parameters: ").append(Utils.join(", ", Arrays.asList(optional)));
             }
-            if (examples != null) {
+            if (examples != null && examples.length > 0) {
                 usage.append("<br/>examples: ");
                 for (String ex: examples) {
                     usage.append("<br/> <a href=\"http://localhost:8111").append(ex).append("\">").append(ex).append("</a>");

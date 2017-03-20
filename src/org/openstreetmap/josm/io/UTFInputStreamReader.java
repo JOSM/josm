@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PushbackInputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Optional;
 
 /**
  * Detects the different UTF encodings from byte order mark.
@@ -66,10 +67,6 @@ public final class UTFInputStreamReader extends InputStreamReader {
         } else if (unread < -1) {
             pushbackStream.unread(bom, 0, 0);
         }
-
-        if (encoding == null) {
-            encoding = "UTF-8";
-        }
-        return new UTFInputStreamReader(pushbackStream, encoding);
+        return new UTFInputStreamReader(pushbackStream, Optional.ofNullable(encoding).orElse("UTF-8"));
     }
 }

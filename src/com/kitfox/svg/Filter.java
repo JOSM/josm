@@ -3,16 +3,16 @@
  * Copyright (c) 2004, Mark McKay
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or 
+ * Redistribution and use in source and binary forms, with or
  * without modification, are permitted provided that the following
  * conditions are met:
  *
- *   - Redistributions of source code must retain the above 
+ *   - Redistributions of source code must retain the above
  *     copyright notice, this list of conditions and the following
  *     disclaimer.
  *   - Redistributions in binary form must reproduce the above
  *     copyright notice, this list of conditions and the following
- *     disclaimer in the documentation and/or other materials 
+ *     disclaimer in the documentation and/or other materials
  *     provided with the distribution.
  *
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -26,8 +26,8 @@
  * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
  * STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
- * OF THE POSSIBILITY OF SUCH DAMAGE. 
- * 
+ * OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  * Mark McKay can be contacted at mark@kitfox.com.  Salamander and other
  * projects can be found at http://www.kitfox.com
  *
@@ -35,11 +35,12 @@
  */
 package com.kitfox.svg;
 
-import com.kitfox.svg.xml.StyleAttribute;
 import java.awt.geom.Point2D;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+
+import com.kitfox.svg.xml.StyleAttribute;
 
 /**
  * @author Mark McKay
@@ -61,7 +62,7 @@ public class Filter extends SVGElement
     float height = 1f;
     Point2D filterRes = new Point2D.Double();
     URL href = null;
-    final ArrayList filterEffects = new ArrayList();
+    final ArrayList<SVGElement> filterEffects = new ArrayList<>();
 
     /**
      * Creates a new instance of FillElement
@@ -70,11 +71,13 @@ public class Filter extends SVGElement
     {
     }
 
+    @Override
     public String getTagName()
     {
         return TAG_NAME;
     }
 
+    @Override
     protected void build() throws SVGException
     {
         super.build();
@@ -160,6 +163,7 @@ public class Filter extends SVGElement
         return height;
     }
 
+    @Override
     public boolean updateTime(double curTime) throws SVGException
     {
 //        if (trackManager.getNumTracks() == 0) return false;

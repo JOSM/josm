@@ -9,11 +9,10 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
-import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
-import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
@@ -24,8 +23,15 @@ import org.openstreetmap.josm.tools.Utils;
 public class AreaElement extends StyleElement {
 
     /**
+     * The default opacity for the fill. For historical reasons in range 0.255.
+     */
+    private static final IntegerProperty DEFAULT_FILL_ALPHA = new IntegerProperty("mappaint.fillalpha", 50);
+
+    /**
      * If fillImage == null, color is the fill-color, otherwise
-     * an arbitrary color value sampled from the fillImage
+     * an arbitrary color value sampled from the fillImage.
+     *
+     * The color may be fully transparent to indicate that the area should not be filled.
      */
     public Color color;
 
@@ -36,8 +42,10 @@ public class AreaElement extends StyleElement {
 
     /**
      * The text that should be written on this area.
+     * @deprecated Use {@link TextElement} instead.
      */
-    public TextLabel text;
+    @Deprecated
+    public TextLabel text = null;
 
     /**
      * Fill the area only partially from the borders
@@ -55,14 +63,13 @@ public class AreaElement extends StyleElement {
      */
     public Float extentThreshold;
 
-    protected AreaElement(Cascade c, Color color, MapImage fillImage, Float extent, Float extentThreshold, TextLabel text) {
+    protected AreaElement(Cascade c, Color color, MapImage fillImage, Float extent, Float extentThreshold) {
         super(c, 1f);
         CheckParameterUtil.ensureParameterNotNull(color);
         this.color = color;
         this.fillImage = fillImage;
         this.extent = extent;
         this.extentThreshold = extentThreshold;
-        this.text = text;
     }
 
     /**
@@ -83,7 +90,7 @@ public class AreaElement extends StyleElement {
                     fillImage.getWidth() / 2, fillImage.getHeight() / 2)
             );
 
-            fillImage.alpha = Math.min(255, Math.max(0, Main.pref.getInteger("mappaint.fill-image-alpha", 255)));
+            fillImage.alpha = Utils.clamp(Main.pref.getInteger("mappaint.fill-image-alpha", 255), 0, 255);
             Integer pAlpha = Utils.colorFloat2int(c.get(FILL_OPACITY, null, float.class));
             if (pAlpha != null) {
                 fillImage.alpha = pAlpha;
@@ -91,36 +98,20 @@ public class AreaElement extends StyleElement {
         } else {
             color = c.get(FILL_COLOR, null, Color.class);
             if (color != null) {
-                int alpha = color.getAlpha();
-                if (alpha == 255) {
-                    // Assume alpha value has not been specified by the user if
-                    // is set to fully opaque. Use default value in this case.
-                    // It is not an ideal solution, but a little tricky to get this
-                    // right, especially as named map colors can be changed in
-                    // the preference GUI and written to the preferences file.
-                    alpha = Math.min(255, Math.max(0, Main.pref.getInteger("mappaint.fillalpha", 50)));
-                }
-                Integer pAlpha = Utils.colorFloat2int(c.get(FILL_OPACITY, null, float.class));
-                if (pAlpha != null) {
-                    alpha = pAlpha;
-                }
-                color = new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
+                float defaultOpacity = Utils.colorInt2float(DEFAULT_FILL_ALPHA.get());
+                float opacity = c.get(FILL_OPACITY, defaultOpacity, Float.class);
+                color = Utils.alphaMultiply(color, opacity);
             }
         }
 
-        TextLabel text = null;
-        Keyword textPos = c.get(TEXT_POSITION, null, Keyword.class);
-        if (textPos == null || "center".equals(textPos.val)) {
-            text = TextLabel.create(env, PaintColors.AREA_TEXT.get(), true);
-        }
+        if (color != null) {
+            Float extent = c.get(FILL_EXTENT, null, float.class);
+            Float extentThreshold = c.get(FILL_EXTENT_THRESHOLD, null, float.class);
 
-        Float extent = c.get(FILL_EXTENT, null, float.class);
-        Float extentThreshold = c.get(FILL_EXTENT_THRESHOLD, null, float.class);
-
-        if (color != null)
-            return new AreaElement(c, color, fillImage, extent, extentThreshold, text);
-        else
+            return new AreaElement(c, color, fillImage, extent, extentThreshold);
+        } else {
             return null;
+        }
     }
 
     @Override
@@ -152,19 +143,18 @@ public class AreaElement extends StyleElement {
         AreaElement that = (AreaElement) obj;
         return Objects.equals(color, that.color) &&
                 Objects.equals(fillImage, that.fillImage) &&
-                Objects.equals(text, that.text) &&
                 Objects.equals(extent, that.extent) &&
                 Objects.equals(extentThreshold, that.extentThreshold);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), color, fillImage, text, extent, extentThreshold);
+        return Objects.hash(super.hashCode(), color, fillImage, extent, extentThreshold);
     }
 
     @Override
     public String toString() {
         return "AreaElemStyle{" + super.toString() + "color=" + Utils.toString(color) +
-                " fillImage=[" + fillImage + "]}";
+                " fillImage=[" + fillImage + "] extent=[" + extent + "] extentThreshold=[" + extentThreshold + "]}";
     }
 }

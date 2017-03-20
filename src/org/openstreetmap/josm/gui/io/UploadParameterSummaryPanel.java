@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.BorderLayout;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Optional;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -44,11 +45,9 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
         if (selectedChangeset == null || selectedChangeset.isNew()) {
             msg.append(tr("Objects are uploaded to a <strong>new changeset</strong>."));
         } else {
-            String uploadComment = selectedChangeset.get("comment") == null ?
-                    "" : selectedChangeset.get("comment");
             msg.append(tr("Objects are uploaded to the <strong>open changeset</strong> {0} with upload comment ''{1}''.",
                     selectedChangeset.getId(),
-                    uploadComment
+                    Optional.ofNullable(selectedChangeset.get("comment")).orElse("")
             ));
         }
         msg.append(' ');

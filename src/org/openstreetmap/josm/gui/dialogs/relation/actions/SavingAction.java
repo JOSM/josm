@@ -104,8 +104,10 @@ abstract class SavingAction extends AbstractRelationEditorAction {
         Relation editedRelation = new Relation(editor.getRelation());
         tagEditorModel.applyToPrimitive(editedRelation);
         memberTableModel.applyToRelation(editedRelation);
-        Main.main.undoRedo.add(new ChangeCommand(editor.getRelation(), editedRelation));
-        layer.data.fireSelectionChanged();
+        if (!editedRelation.hasEqualSemanticAttributes(editor.getRelation(), false)) {
+            Main.main.undoRedo.add(new ChangeCommand(editor.getRelation(), editedRelation));
+            layer.data.fireSelectionChanged();
+        }
     }
 
     protected boolean confirmClosingBecauseOfDirtyState() {

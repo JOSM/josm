@@ -11,6 +11,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
+import java.util.Optional;
 
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
@@ -167,13 +168,14 @@ public class LatLonDialog extends ExtendedDialog {
     }
 
     public void setCoordinates(LatLon ll) {
-        if (ll == null) {
-            ll = LatLon.ZERO;
-        }
-        this.latLonCoordinates = ll;
-        tfLatLon.setText(ll.latToString(CoordinateFormat.getDefaultFormat()) + ' ' + ll.lonToString(CoordinateFormat.getDefaultFormat()));
-        EastNorth en = Main.getProjection().latlon2eastNorth(ll);
+        LatLon llc = Optional.ofNullable(ll).orElse(LatLon.ZERO);
+        tfLatLon.setText(llc.latToString(CoordinateFormat.getDefaultFormat()) + ' ' +
+                         llc.lonToString(CoordinateFormat.getDefaultFormat()));
+        EastNorth en = Main.getProjection().latlon2eastNorth(llc);
         tfEastNorth.setText(Double.toString(en.east()) + ' ' + Double.toString(en.north()));
+        // Both latLonCoordinates and eastNorthCoordinates may have been reset to null if ll is out of the world
+        latLonCoordinates = llc;
+        eastNorthCoordinates = en;
         setOkEnabled(true);
     }
 

@@ -343,7 +343,7 @@ public class GpxData extends WithAttributes implements Data {
      * @return an Iterable object, which iterates over all track segments and
      * over all routes
      */
-    public Iterable<Collection<WayPoint>> getLinesIterable(final boolean ... trackVisibility) {
+    public Iterable<Collection<WayPoint>> getLinesIterable(final boolean... trackVisibility) {
         return () -> new LinesIterator(this, trackVisibility);
     }
 
@@ -396,7 +396,7 @@ public class GpxData extends WithAttributes implements Data {
          * @param trackVisibility An array indicating which tracks should be
          * included in the iteration. Can be null, then all tracks are included.
          */
-        public LinesIterator(GpxData data, boolean ... trackVisibility) {
+        public LinesIterator(GpxData data, boolean... trackVisibility) {
             itTracks = data.tracks.iterator();
             idxTracks = -1;
             itRoutes = data.routes.iterator();

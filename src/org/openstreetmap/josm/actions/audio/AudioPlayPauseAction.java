@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.net.URL;
 
 import org.openstreetmap.josm.actions.JosmAction;
@@ -52,7 +53,7 @@ public class AudioPlayPauseAction extends JosmAction {
                     MarkerLayer.playAudio();
                 }
             }
-        } catch (Exception ex) {
+        } catch (IOException | InterruptedException ex) {
             AudioPlayer.audioMalfunction(ex);
         }
     }

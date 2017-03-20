@@ -14,6 +14,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Optional;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -361,13 +362,6 @@ public final class ExceptionUtil {
      */
     public static String explainGenericOsmApiException(OsmApiException e) {
         Main.error(e);
-        String errMsg = e.getErrorHeader();
-        if (errMsg == null) {
-            errMsg = e.getErrorBody();
-        }
-        if (errMsg == null) {
-            errMsg = tr("no error message available");
-        }
         return tr("<html>"
                 + "Communication with the OSM server ''{0}''failed. The server replied<br>"
                 + "the following error code and the following error message:<br>"
@@ -376,7 +370,8 @@ public final class ExceptionUtil {
                 + "</html>",
                 getUrlFromException(e),
                 e.getResponseCode(),
-                errMsg
+                Optional.ofNullable(Optional.ofNullable(e.getErrorHeader()).orElseGet(e::getErrorBody))
+                    .orElse(tr("no error message available"))
         );
     }
 

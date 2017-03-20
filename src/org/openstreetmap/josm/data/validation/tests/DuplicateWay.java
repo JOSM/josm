@@ -248,23 +248,23 @@ public class DuplicateWay extends Test {
     @Override
     public Command fixError(TestError testError) {
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
-        Set<Way> ways = new HashSet<>();
+        Set<Way> wayz = new HashSet<>();
 
         for (OsmPrimitive osm : sel) {
             if (osm instanceof Way && !osm.isDeleted()) {
-                ways.add((Way) osm);
+                wayz.add((Way) osm);
             }
         }
 
-        if (ways.size() < 2)
+        if (wayz.size() < 2)
             return null;
 
         long idToKeep = 0;
-        Way wayToKeep = ways.iterator().next();
+        Way wayToKeep = wayz.iterator().next();
         // Find the way that is member of one or more relations. (If any)
         Way wayWithRelations = null;
         List<Relation> relations = null;
-        for (Way w : ways) {
+        for (Way w : wayz) {
             List<Relation> rel = OsmPrimitive.getFilteredList(w.getReferrers(), Relation.class);
             if (!rel.isEmpty()) {
                 if (wayWithRelations != null)
@@ -283,7 +283,7 @@ public class DuplicateWay extends Test {
         Collection<Command> commands = new LinkedList<>();
 
         // Fix relations.
-        if (wayWithRelations != null && wayToKeep != wayWithRelations) {
+        if (wayWithRelations != null && relations != null && wayToKeep != wayWithRelations) {
             for (Relation rel : relations) {
                 Relation newRel = new Relation(rel);
                 for (int i = 0; i < newRel.getMembers().size(); ++i) {
@@ -296,10 +296,10 @@ public class DuplicateWay extends Test {
             }
         }
 
-        //Delete all ways in the list
-        //Note: nodes are not deleted, these can be detected and deleted at next pass
-        ways.remove(wayToKeep);
-        commands.add(new DeleteCommand(ways));
+        // Delete all ways in the list
+        // Note: nodes are not deleted, these can be detected and deleted at next pass
+        wayz.remove(wayToKeep);
+        commands.add(new DeleteCommand(wayz));
         return new SequenceCommand(tr("Delete duplicate ways"), commands);
     }
 
@@ -308,24 +308,24 @@ public class DuplicateWay extends Test {
         if (!(testError.getTester() instanceof DuplicateWay))
             return false;
 
-        //Do not automatically fix same ways with different tags
+        // Do not automatically fix same ways with different tags
         if (testError.getCode() != DUPLICATE_WAY) return false;
 
         // We fix it only if there is no more than one way that is relation member.
         Collection<? extends OsmPrimitive> sel = testError.getPrimitives();
-        Set<Way> ways = new HashSet<>();
+        Set<Way> wayz = new HashSet<>();
 
         for (OsmPrimitive osm : sel) {
             if (osm instanceof Way) {
-                ways.add((Way) osm);
+                wayz.add((Way) osm);
             }
         }
 
-        if (ways.size() < 2)
+        if (wayz.size() < 2)
             return false;
 
         int waysWithRelations = 0;
-        for (Way w : ways) {
+        for (Way w : wayz) {
             List<Relation> rel = OsmPrimitive.getFilteredList(w.getReferrers(), Relation.class);
             if (!rel.isEmpty()) {
                 ++waysWithRelations;

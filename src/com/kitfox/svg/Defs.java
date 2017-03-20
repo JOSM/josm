@@ -35,8 +35,6 @@
  */
 package com.kitfox.svg;
 
-import java.util.Iterator;
-
 /**
  * @author Mark McKay
  * @author <a href="mailto:mark@kitfox.com">Mark McKay</a>
@@ -53,6 +51,7 @@ public class Defs extends TransformableElement
     {
     }
 
+    @Override
     public String getTagName()
     {
         return TAG_NAME;
@@ -62,6 +61,7 @@ public class Defs extends TransformableElement
      * Called after the start element but before the end element to indicate
      * each child tag that has been processed
      */
+    @Override
     public void loaderAddChild(SVGLoaderHelper helper, SVGElement child) throws SVGElementException
     {
         super.loaderAddChild(helper, child);
@@ -69,12 +69,11 @@ public class Defs extends TransformableElement
 //        members.add(child);
     }
 
+    @Override
     public boolean updateTime(double curTime) throws SVGException
     {
         boolean stateChange = false;
-        for (Iterator it = children.iterator(); it.hasNext();)
-        {
-            SVGElement ele = (SVGElement) it.next();
+        for (SVGElement ele : children) {
             stateChange = stateChange || ele.updateTime(curTime);
         }
 

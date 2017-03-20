@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -48,7 +49,7 @@ public class TagMap extends AbstractMap<String, String> implements Serializable 
          * Create a new {@link TagEntryInterator}
          * @param tags The tags array. It is never changed but should also not be changed by you.
          */
-        TagEntryInterator(String ... tags) {
+        TagEntryInterator(String... tags) {
             super();
             this.tags = tags;
         }
@@ -87,7 +88,7 @@ public class TagMap extends AbstractMap<String, String> implements Serializable 
          * Create a new {@link TagEntrySet}
          * @param tags The tags array. It is never changed but should also not be changed by you.
          */
-        TagEntrySet(String ... tags) {
+        TagEntrySet(String... tags) {
             super();
             this.tags = tags;
         }
@@ -140,7 +141,7 @@ public class TagMap extends AbstractMap<String, String> implements Serializable 
      * The array that is passed as parameter may not be modified after passing it to this map.
      * @param tags The tags array. It is not modified by this map.
      */
-    public TagMap(String ... tags) {
+    public TagMap(String... tags) {
         if (tags == null || tags.length == 0) {
             this.tags = EMPTY_TAGS;
         } else {
@@ -192,12 +193,8 @@ public class TagMap extends AbstractMap<String, String> implements Serializable 
 
     @Override
     public synchronized String put(String key, String value) {
-        if (key == null) {
-            throw new NullPointerException();
-        }
-        if (value == null) {
-            throw new NullPointerException();
-        }
+        Objects.requireNonNull(key);
+        Objects.requireNonNull(value);
         int index = indexOfKey(tags, key);
         int newTagArrayLength = tags.length;
         if (index < 0) {

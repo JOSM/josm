@@ -85,8 +85,6 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     /** Last selected element */
     private DefaultMutableTreeNode lastSelectedNode;
 
-    private transient OsmDataLayer linkedLayer;
-
     /**
      * Constructor
      */

@@ -12,7 +12,6 @@ import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.datatransfer.TagTransferable;
 import org.openstreetmap.josm.gui.datatransfer.data.TagTransferData;
-import org.openstreetmap.josm.gui.history.HistoryBrowserModel.TagTableModel;
 
 /**
  * This transfer handler allows to select and copy tags from a table with the {@link TagTableColumnModel}.

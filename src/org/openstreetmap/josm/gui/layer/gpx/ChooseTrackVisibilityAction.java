@@ -16,6 +16,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.swing.AbstractAction;
 import javax.swing.JComponent;
@@ -110,11 +111,11 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         int i = 0;
         for (GpxTrack trk : layer.data.tracks) {
             Map<String, Object> attr = trk.getAttributes();
-            String name = (String) (attr.containsKey(GpxConstants.GPX_NAME) ? attr.get(GpxConstants.GPX_NAME) : "");
-            String desc = (String) (attr.containsKey(GpxConstants.GPX_DESC) ? attr.get(GpxConstants.GPX_DESC) : "");
+            String name = (String) Optional.ofNullable(attr.get(GpxConstants.GPX_NAME)).orElse("");
+            String desc = (String) Optional.ofNullable(attr.get(GpxConstants.GPX_DESC)).orElse("");
             String time = GpxLayer.getTimespanForTrack(trk);
             TrackLength length = new TrackLength(trk.length());
-            String url = (String) (attr.containsKey("url") ? attr.get("url") : "");
+            String url = (String) Optional.ofNullable(attr.get("url")).orElse("");
             tracks[i] = new Object[]{name, desc, time, length, url};
             i++;
         }

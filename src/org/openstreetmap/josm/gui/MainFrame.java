@@ -54,16 +54,16 @@ public class MainFrame extends JFrame {
      * Create a new main window.
      */
     public MainFrame() {
-        this(new JPanel(), new MainPanel(Main.getLayerManager()), new WindowGeometry(new Rectangle(10, 10, 500, 500)));
+        this(new JPanel(), new WindowGeometry(new Rectangle(10, 10, 500, 500)));
     }
 
     /**
      * Create a new main window. The parameters will be removed in the future.
      * @param contentPanePrivate The content
-     * @param mainPanel The main panel.
      * @param geometry The inital geometry to use.
+     * @since 11713
      */
-    public MainFrame(Container contentPanePrivate, MainPanel mainPanel, WindowGeometry geometry) {
+    public MainFrame(Container contentPanePrivate, WindowGeometry geometry) {
         super();
         this.geometry = geometry;
         setContentPane(contentPanePrivate);

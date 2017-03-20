@@ -47,7 +47,7 @@ public class TurnrestrictionTest extends Test {
 
     @Override
     public void visit(Relation r) {
-        if (!"restriction".equals(r.get("type")))
+        if (!r.hasTag("type", "restriction"))
             return;
 
         Way fromWay = null;
@@ -223,7 +223,7 @@ public class TurnrestrictionTest extends Test {
     }
 
     private static boolean isFullOneway(Way w) {
-        return w.isOneway() != 0 && !"no".equals(w.get("oneway:bicycle"));
+        return w.isOneway() != 0 && !w.hasTag("oneway:bicycle", "no");
     }
 
     private void checkIfConnected(Way previous, Way current, String msg, int code) {

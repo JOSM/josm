@@ -21,7 +21,6 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationDialogManager;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
@@ -88,19 +87,19 @@ public class DeleteAction extends MapMode implements ModifierListener {
 
     /**
      * Construct a new DeleteAction. Mnemonic is the delete - key.
-     * @param mapFrame The frame this action belongs to.
+     * @since 11713
      */
-    public DeleteAction(MapFrame mapFrame) {
+    public DeleteAction() {
         super(tr("Delete Mode"),
                 "delete",
                 tr("Delete nodes or ways."),
                 Shortcut.registerShortcut("mapmode:delete", tr("Mode: {0}", tr("Delete")),
                 KeyEvent.VK_DELETE, Shortcut.CTRL),
-                mapFrame,
                 ImageProvider.getCursor("normal", "delete"));
     }
 
-    @Override public void enterMode() {
+    @Override
+    public void enterMode() {
         super.enterMode();
         if (!isEnabled())
             return;

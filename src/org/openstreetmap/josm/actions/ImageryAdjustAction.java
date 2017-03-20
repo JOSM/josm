@@ -52,9 +52,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
      * @param layer The imagery layer
      */
     public ImageryAdjustAction(AbstractTileSourceLayer<?> layer) {
-        super(tr("New offset"), "adjustimg",
-                tr("Adjust the position of this imagery layer"), Main.map,
-                cursor);
+        super(tr("New offset"), "adjustimg", tr("Adjust the position of this imagery layer"), cursor);
         putValue("toolbar", Boolean.FALSE);
         this.layer = layer;
     }
@@ -69,8 +67,17 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         }
         old = layer.getDisplaySettings().getDisplacement();
         addListeners();
-        offsetDialog = new ImageryOffsetDialog();
+        showOffsetDialog(new ImageryOffsetDialog());
+    }
+
+    private static void showOffsetDialog(ImageryOffsetDialog dlg) {
+        offsetDialog = dlg;
         offsetDialog.setVisible(true);
+    }
+
+    private static void hideOffsetDialog() {
+        offsetDialog.setVisible(false);
+        offsetDialog = null;
     }
 
     protected void addListeners() {
@@ -90,9 +97,8 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             if (layer != null) {
                 layer.getDisplaySettings().setDisplacement(old);
             }
-            offsetDialog.setVisible(false);
+            hideOffsetDialog();
             // do not restore old mode here - this is called when the new mode is already known.
-            offsetDialog = null;
         }
         removeListeners();
     }

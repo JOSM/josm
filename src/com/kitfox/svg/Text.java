@@ -43,8 +43,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Iterator;
+import java.io.Serializable;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,7 +63,7 @@ public class Text extends ShapeElement
     String fontFamily;
     float fontSize;
     //List of strings and tspans containing the content of this node
-    LinkedList content = new LinkedList();
+    LinkedList<Serializable> content = new LinkedList<>();
     Shape textShape;
     public static final int TXAN_START = 0;
     public static final int TXAN_MIDDLE = 1;
@@ -97,6 +98,7 @@ public class Text extends ShapeElement
     {
     }
 
+    @Override
     public String getTagName()
     {
         return TAG_NAME;
@@ -121,7 +123,7 @@ public class Text extends ShapeElement
         build();
     }
 
-    public java.util.List getContent()
+    public List<Serializable> getContent()
     {
         return content;
     }
@@ -130,6 +132,7 @@ public class Text extends ShapeElement
      * Called after the start element but before the end element to indicate
      * each child tag that has been processed
      */
+    @Override
     public void loaderAddChild(SVGLoaderHelper helper, SVGElement child) throws SVGElementException
     {
         super.loaderAddChild(helper, child);
@@ -140,6 +143,7 @@ public class Text extends ShapeElement
     /**
      * Called during load process to add text scanned within a tag
      */
+    @Override
     public void loaderAddText(SVGLoaderHelper helper, String text)
     {
         Matcher matchWs = Pattern.compile("\\s*").matcher(text);
@@ -149,6 +153,7 @@ public class Text extends ShapeElement
         }
     }
 
+    @Override
     public void build() throws SVGException
     {
         super.build();
@@ -272,7 +277,7 @@ public class Text extends ShapeElement
                 break;
             }
         }
-
+        
         if (font == null)
         {
             font = new FontSystem(fontFamily, fontStyle, fontWeight, (int)fontSize);
@@ -285,10 +290,7 @@ public class Text extends ShapeElement
 
         AffineTransform xform = new AffineTransform();
 
-        for (Iterator it = content.iterator(); it.hasNext();)
-        {
-            Object obj = it.next();
-
+        for (Serializable obj : content) {
             if (obj instanceof String)
             {
                 String text = (String) obj;
@@ -450,6 +452,7 @@ public class Text extends ShapeElement
 //        }
 //    }
 
+    @Override
     public void render(Graphics2D g) throws SVGException
     {
         beginLayer(g);
@@ -457,11 +460,13 @@ public class Text extends ShapeElement
         finishLayer(g);
     }
 
+    @Override
     public Shape getShape()
     {
         return shapeToParent(textShape);
     }
 
+    @Override
     public Rectangle2D getBoundingBox() throws SVGException
     {
         return boundsToParent(includeStrokeInBounds(textShape.getBounds2D()));
@@ -474,6 +479,7 @@ public class Text extends ShapeElement
      * @return - true if this node has changed state as a result of the time
      * update
      */
+    @Override
     public boolean updateTime(double curTime) throws SVGException
     {
 //        if (trackManager.getNumTracks() == 0) return false;

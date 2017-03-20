@@ -355,7 +355,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
 
         @Override
         public String toString() {
-            return "LayerChangeAdapter [" + JosmAction.this.toString() + ']';
+            return "LayerChangeAdapter [" + JosmAction.this + ']';
         }
     }
 
@@ -370,7 +370,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
 
         @Override
         public String toString() {
-            return "ActiveLayerChangeAdapter [" + JosmAction.this.toString() + ']';
+            return "ActiveLayerChangeAdapter [" + JosmAction.this + ']';
         }
     }
 
@@ -385,7 +385,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
 
         @Override
         public String toString() {
-            return "SelectionChangeAdapter [" + JosmAction.this.toString() + ']';
+            return "SelectionChangeAdapter [" + JosmAction.this + ']';
         }
     }
 }

@@ -40,8 +40,6 @@ import com.kitfox.svg.xml.StyleAttribute;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.font.FontRenderContext;
-import java.awt.font.GlyphMetrics;
-import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
@@ -72,6 +70,7 @@ public class Tspan extends ShapeElement
     {
     }
 
+    @Override
     public String getTagName()
     {
         return TAG_NAME;
@@ -124,11 +123,13 @@ public class Tspan extends ShapeElement
     /**
      * Called during load process to add text scanned within a tag
      */
+    @Override
     public void loaderAddText(SVGLoaderHelper helper, String text)
     {
         this.text += text;
     }
 
+    @Override
     protected void build() throws SVGException
     {
         super.build();
@@ -339,6 +340,7 @@ public class Tspan extends ShapeElement
 //        cursor.setLocation(cursorX, cursorY);
 //    }
 
+    @Override
     public void render(Graphics2D g) throws SVGException
     {
         float cursorX = 0;
@@ -432,7 +434,6 @@ public class Tspan extends ShapeElement
         float cursorX = 0;
         float cursorY = 0;
     
-        int posPtr = 1;
         FontRenderContext frc = g.getFontRenderContext();
 
         Shape textShape = font.createGlyphVector(frc, text).getOutline(cursorX, cursorY);
@@ -441,12 +442,14 @@ public class Tspan extends ShapeElement
         cursorX += (float) rect.getWidth();
     }
 
+    @Override
     public Shape getShape()
     {
         return null;
         //return shapeToParent(tspanShape);
     }
 
+    @Override
     public Rectangle2D getBoundingBox()
     {
         return null;
@@ -460,6 +463,7 @@ public class Tspan extends ShapeElement
      * @return - true if this node has changed state as a result of the time
      * update
      */
+    @Override
     public boolean updateTime(double curTime) throws SVGException
     {
         //Tspan does not change

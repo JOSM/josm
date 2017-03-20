@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
@@ -121,12 +122,8 @@ public class MultiValueResolutionDecision {
      * @param value the new vlaue
      */
     public void setNew(String value) {
-        if (value == null) {
-            value = "";
-        }
-        this.value = value;
+        this.value = Optional.ofNullable(value).orElse("");
         this.type = MultiValueDecisionType.KEEP_ONE;
-
     }
 
     /**

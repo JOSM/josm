@@ -5,15 +5,25 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.BeforeClass;
-import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 public class SwissGridTest {
     private static final String SWISS_EPSG_CODE = "EPSG:21781";
     private boolean debug = false;
+
+    /**
+     * Setup test.
+     */
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().platform();
 
     /**
      * Setup test.
@@ -27,7 +37,7 @@ public class SwissGridTest {
     // CHECKSTYLE.OFF: SingleSpaceSeparator
 
     /**
-     * source: http://www.swisstopo.admin.ch/internet/swisstopo/en/home/topics/survey/sys/refsys/switzerland.parsysrelated1.37696.downloadList.97912.DownloadFile.tmp/swissprojectionen.pdf
+     * source: https://www.swisstopo.admin.ch/content/swisstopo-internet/en/topics/survey/reference-systems/projections/_jcr_content/contentPar/tabs/items/dokumente_publikatio/tabPar/downloadlist/downloadItems/463_1459341821844.download/refsyse.pdf
      */
     ProjData[] data = {
             new ProjData("Zimmerwald",     d(7, 27, 54.983506), d(46, 52, 37.540562), 947.149, 602030.680, 191775.030, 897.915),
@@ -55,7 +65,6 @@ public class SwissGridTest {
         }
     }
 
-    private static final double EPSILON_APPROX = 1.5;
     private static final double EPSILON_ACCURATE = 0.05;
 
     private void projReferenceTest(final double epsilon) {
@@ -71,14 +80,7 @@ public class SwissGridTest {
     }
 
     @Test
-    public void testProjReferenceTestApprox() {
-        projReferenceTest(EPSILON_APPROX);
-    }
-
-    @Test
-    @Ignore("high accuracy of epsilon=" + EPSILON_ACCURATE + " is not met")
     public void testProjReferenceTestAccurate() {
-        // TODO make this test pass
         projReferenceTest(EPSILON_ACCURATE);
     }
 
@@ -89,24 +91,24 @@ public class SwissGridTest {
         if (debug) {
             System.out.println(en);
         }
-        assertTrue("Lausanne", Math.abs(en.east() - 533111.69) < 0.1);
-        assertTrue("Lausanne", Math.abs(en.north() - 152227.85) < 0.1);
+        assertTrue("Lausanne", Math.abs(en.east() - 533112.13) < 0.1);
+        assertTrue("Lausanne", Math.abs(en.north() - 152227.35) < 0.1);
 
         ll = new LatLon(47.78, 8.58);
         en = Main.getProjection().latlon2eastNorth(ll);
         if (debug) {
             System.out.println(en);
         }
-        assertTrue("Schafouse", Math.abs(en.east() - 685544.16) < 0.1);
-        assertTrue("Schafouse", Math.abs(en.north() - 292782.91) < 0.1);
+        assertTrue("Schafouse", Math.abs(en.east() - 685542.97) < 0.1);
+        assertTrue("Schafouse", Math.abs(en.north() - 292783.21) < 0.1);
 
         ll = new LatLon(46.58, 10.48);
         en = Main.getProjection().latlon2eastNorth(ll);
         if (debug) {
             System.out.println(en);
         }
-        assertTrue("Grinson", Math.abs(en.east() - 833068.04) < 0.1);
-        assertTrue("Grinson", Math.abs(en.north() - 163265.39) < 0.1);
+        assertTrue("Grinson", Math.abs(en.east() - 833066.95) < 0.1);
+        assertTrue("Grinson", Math.abs(en.north() - 163265.32) < 0.1);
 
         ll = new LatLon(46.0 + 57.0 / 60 + 3.89813884505 / 3600, 7.0 + 26.0 / 60 + 19.076595154147 / 3600);
         en = Main.getProjection().latlon2eastNorth(ll);
@@ -116,7 +118,8 @@ public class SwissGridTest {
         assertTrue("Berne", Math.abs(en.east() - 600000.0) < 0.1);
         assertTrue("Berne", Math.abs(en.north() - 200000.0) < 0.1);
 
-        ll = new LatLon(46.0 + 2.0 / 60 + 38.87 / 3600, 8.0 + 43.0 / 60 + 49.79 / 3600);
+        // http://geodesy.geo.admin.ch/reframe/lv03towgs84?easting=700000&northing=100000
+        ll = new LatLon(46.04412093223244, 8.730497366167727);
         en = Main.getProjection().latlon2eastNorth(ll);
         if (debug) {
             System.out.println(en);
@@ -127,7 +130,7 @@ public class SwissGridTest {
 
     @Test
     public void testBeastNorth2latlon() {
-        EastNorth en = new EastNorth(533111.69, 152227.85);
+        EastNorth en = new EastNorth(533112.13, 152227.35);
         LatLon ll = Main.getProjection().eastNorth2latlon(en);
         if (debug) {
             System.out.println(ll);
@@ -135,7 +138,7 @@ public class SwissGridTest {
         assertTrue("Lausanne", Math.abs(ll.lat() - 46.518) < 0.00001);
         assertTrue("Lausanne", Math.abs(ll.lon() - 6.567) < 0.00001);
 
-        en = new EastNorth(685544.16, 292782.91);
+        en = new EastNorth(685542.97, 292783.21);
         ll = Main.getProjection().eastNorth2latlon(en);
         if (debug) {
             System.out.println(ll);
@@ -143,7 +146,7 @@ public class SwissGridTest {
         assertTrue("Schafouse", Math.abs(ll.lat() - 47.78) < 0.00001);
         assertTrue("Schafouse", Math.abs(ll.lon() - 8.58) < 0.00001);
 
-        en = new EastNorth(833068.04, 163265.39);
+        en = new EastNorth(833066.95, 163265.32);
         ll = Main.getProjection().eastNorth2latlon(en);
         if (debug) {
             System.out.println(ll);
@@ -159,13 +162,14 @@ public class SwissGridTest {
         assertTrue("Berne", Math.abs(ll.lat() - (46.0 + 57.0 / 60 + 3.89813884505 / 3600)) < 0.00001);
         assertTrue("Berne", Math.abs(ll.lon() - (7.0 + 26.0 / 60 + 19.076595154147 / 3600)) < 0.00001);
 
+        // http://geodesy.geo.admin.ch/reframe/lv03towgs84?easting=700000&northing=100000
         en = new EastNorth(700000.0, 100000.0);
         ll = Main.getProjection().eastNorth2latlon(en);
         if (debug) {
             System.out.println(ll);
         }
-        assertTrue("Ref", Math.abs(ll.lat() - (46.0 + 2.0 / 60 + 38.87 / 3600)) < 0.00001);
-        assertTrue("Ref", Math.abs(ll.lon() - (8.0 + 43.0 / 60 + 49.79 / 3600)) < 0.00001);
+        assertTrue("Ref", Math.abs(ll.lat() - 46.04412093223244) < 0.00001);
+        assertTrue("Ref", Math.abs(ll.lon() - 8.730497366167727) < 0.00001);
     }
 
     /**

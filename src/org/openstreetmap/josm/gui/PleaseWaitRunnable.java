@@ -14,6 +14,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor.CancelListener;
 import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 import org.xml.sax.SAXException;
 
@@ -111,7 +112,7 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
                     EventQueue.invokeAndWait(this::afterFinish);
                 }
             }
-        } catch (final RuntimeException |
+        } catch (final JosmRuntimeException | IllegalArgumentException | IllegalStateException |
                 OsmTransferException | IOException | SAXException | InvocationTargetException | InterruptedException e) {
             if (!ignoreException) {
                 // Exception has to thrown in EDT to be shown to user

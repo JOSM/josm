@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -263,10 +264,8 @@ public final class Relation extends OsmPrimitive implements IRelation {
 
             List<RelationMember> newMembers = new ArrayList<>();
             for (RelationMemberData member : relationData.getMembers()) {
-                OsmPrimitive primitive = getDataSet().getPrimitiveById(member);
-                if (primitive == null)
-                    throw new AssertionError("Data consistency problem - relation with missing member detected");
-                newMembers.add(new RelationMember(member.getRole(), primitive));
+                newMembers.add(new RelationMember(member.getRole(), Optional.ofNullable(getDataSet().getPrimitiveById(member))
+                        .orElseThrow(() -> new AssertionError("Data consistency problem - relation with missing member detected"))));
             }
             setMembers(newMembers);
         } finally {

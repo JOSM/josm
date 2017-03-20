@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import javax.swing.JOptionPane;
@@ -114,7 +115,7 @@ public class PlatformHookUnixoid implements PlatformHook {
      * @return The package name and package version if it can be identified, null otherwise
      * @since 7314
      */
-    public static String getPackageDetails(String ... packageNames) {
+    public static String getPackageDetails(String... packageNames) {
         try {
             // CHECKSTYLE.OFF: SingleSpaceSeparator
             boolean dpkg = Paths.get("/usr/bin/dpkg-query").toFile().exists();
@@ -383,7 +384,7 @@ public class PlatformHookUnixoid implements PlatformHook {
      * Currently this is the case, if the dot directory already exists.
      * @return true if the dot directory should be used
      */
-    private boolean useDotDirectory() {
+    private static boolean useDotDirectory() {
         return getDotDirectory().exists();
     }
 
@@ -432,4 +433,8 @@ public class PlatformHookUnixoid implements PlatformHook {
         }
     }
 
+    @Override
+    public List<File> getDefaultProj4NadshiftDirectories() {
+        return Arrays.asList(new File("/usr/local/share/proj"), new File("/usr/share/proj"));
+    }
 }

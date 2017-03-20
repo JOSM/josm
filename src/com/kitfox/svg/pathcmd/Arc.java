@@ -76,6 +76,7 @@ public class Arc extends PathCommand
     }
 
 //    public void appendPath(ExtendedGeneralPath path, BuildHistory hist)
+    @Override
     public void appendPath(GeneralPath path, BuildHistory hist)
     {
         float offx = isRelative ? hist.lastPoint.x : 0f;
@@ -90,6 +91,7 @@ public class Arc extends PathCommand
         hist.setLastKnot(x + offx, y + offy);
     }
 
+    @Override
     public int getNumKnotsAdded()
     {
         return 6;
@@ -256,6 +258,7 @@ public class Arc extends PathCommand
         return arc;
     }
 
+    @Override
     public String toString()
     {
         return "A " + rx + " " + ry

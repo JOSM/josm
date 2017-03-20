@@ -136,10 +136,10 @@ public class AutoScaleAction extends JosmAction {
     /**
      * Constructs a new {@code AutoScaleAction}.
      * @param mode The autoscale mode (one of {@link AutoScaleAction#MODES})
-     * @param marker Used only to differentiate from default constructor
+     * @param marker Must be set to false. Used only to differentiate from default constructor
      */
     private AutoScaleAction(String mode, boolean marker) {
-        super(false);
+        super(marker);
         this.mode = mode;
     }
 

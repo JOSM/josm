@@ -38,7 +38,6 @@ package com.kitfox.svg;
 import com.kitfox.svg.xml.StyleAttribute;
 import java.awt.Shape;
 import java.awt.geom.Area;
-import java.util.Iterator;
 
 /**
  * @author Mark McKay
@@ -59,6 +58,7 @@ public class ClipPath extends SVGElement
     {
     }
 
+    @Override
     public String getTagName()
     {
         return TAG_NAME;
@@ -68,11 +68,13 @@ public class ClipPath extends SVGElement
      * Called after the start element but before the end element to indicate
      * each child tag that has been processed
      */
+    @Override
     public void loaderAddChild(SVGLoaderHelper helper, SVGElement child) throws SVGElementException
     {
         super.loaderAddChild(helper, child);
     }
 
+    @Override
     protected void build() throws SVGException
     {
         super.build();
@@ -102,9 +104,8 @@ public class ClipPath extends SVGElement
         }
 
         Area clipArea = null;
-        for (Iterator it = children.iterator(); it.hasNext();)
-        {
-            ShapeElement se = (ShapeElement) it.next();
+        for (SVGElement svgElement : children) {
+            ShapeElement se = (ShapeElement) svgElement;
 
             if (clipArea == null)
             {
@@ -135,6 +136,7 @@ public class ClipPath extends SVGElement
      * update
      * @throws com.kitfox.svg.SVGException
      */
+    @Override
     public boolean updateTime(double curTime) throws SVGException
     {
         //Get current values for parameters

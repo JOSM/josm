@@ -188,10 +188,14 @@ public class RelationListDialog extends ToggleDialog
 
     @Override
     public void destroy() {
+        recentRelationsAction.destroy();
         model.clear();
         super.destroy();
     }
 
+    /**
+     * Enable the "recent relations" dropdown menu next to edit button.
+     */
     public void enableRecentRelations() {
         recentRelationsAction.enableArrow();
     }

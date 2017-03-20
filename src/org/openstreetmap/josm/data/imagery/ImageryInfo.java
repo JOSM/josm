@@ -50,8 +50,6 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         WMS("wms"),
         /** A TMS (Tile Map Service) entry. **/
         TMS("tms"),
-        /** An HTML proxy (previously used for Yahoo imagery) entry. **/
-        HTML("html"),
         /** TMS entry for Microsoft Bing. */
         BING("bing"),
         /** TMS entry for Russian company <a href="https://wiki.openstreetmap.org/wiki/WikiProject_Russia/kosmosnimki">ScanEx</a>. **/
@@ -187,11 +185,24 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     private String termsOfUseURL;
     /** country code of the imagery (for country specific imagery) */
     private String countryCode = "";
+    /**
+      * creation date of the imagery (in the form YYYY-MM-DD;YYYY-MM-DD, where
+      * DD and MM as well as a second date are optional)
+      * @since 11570
+      */
+    private String date;
+    /**
+      * marked as best in other editors
+      * @since 11575
+      */
+    private boolean bestMarked = false;
     /** mirrors of different type for this entry */
     private List<ImageryInfo> mirrors;
     /** icon used in menu */
     private String icon;
+    /** is the geo reference correct - don't offer offset handling */
     private boolean isGeoreferenceValid;
+    /** does the EPSG:4326 to mercator woraround work as expected */
     private boolean isEpsg4326To3857Supported;
     /** which layers should be activated by default on layer addition. **/
     private Collection<DefaultLayer> defaultLayers = Collections.emptyList();
@@ -203,6 +214,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public static class ImageryPreferenceEntry {
         @pref String name;
+        @pref String d;
         @pref String id;
         @pref String type;
         @pref String url;
@@ -215,6 +227,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         @pref String terms_of_use_text;
         @pref String terms_of_use_url;
         @pref String country_code = "";
+        @pref String date;
         @pref int max_zoom;
         @pref int min_zoom;
         @pref String cookies;
@@ -228,6 +241,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         @pref int tileSize = -1;
         @pref Map<String, String> metadataHeaders;
         @pref boolean valid_georeference;
+        @pref boolean bestMarked;
         @pref boolean supports_epsg_4326_to_3857_conversion;
         // TODO: disabled until change of layers is implemented
         // @pref String default_layers;
@@ -252,6 +266,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             eula = i.eulaAcceptanceRequired;
             attribution_text = i.attributionText;
             attribution_url = i.attributionLinkURL;
+            date = i.date;
+            bestMarked = i.bestMarked;
             logo_image = i.attributionImage;
             logo_url = i.attributionImageURL;
             terms_of_use_text = i.termsOfUseText;
@@ -407,6 +423,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         attributionLinkURL = e.attribution_url;
         attributionImage = e.logo_image;
         attributionImageURL = e.logo_url;
+        date = e.date;
+        bestMarked = e.bestMarked;
         termsOfUseText = e.terms_of_use_text;
         termsOfUseURL = e.terms_of_use_url;
         countryCode = e.country_code;
@@ -431,6 +449,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public ImageryInfo(ImageryInfo i) {
         super(i.name, i.url, i.id);
+        this.origName = i.origName;
+        this.langName = i.langName;
+        this.bestMarked = i.bestMarked;
         this.defaultEntry = i.defaultEntry;
         this.cookies = i.cookies;
         this.eulaAcceptanceRequired = null;
@@ -447,6 +468,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this.termsOfUseText = i.termsOfUseText;
         this.termsOfUseURL = i.termsOfUseURL;
         this.countryCode = i.countryCode;
+        this.date = i.date;
         this.icon = i.icon;
         this.description = i.description;
         this.noTileHeaders = i.noTileHeaders;
@@ -476,10 +498,14 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             return false;
         }
 
+        // CHECKSTYLE.OFF: BooleanExpressionComplexity
         return
                 Objects.equals(this.name, other.name) &&
                 Objects.equals(this.id, other.id) &&
                 Objects.equals(this.url, other.url) &&
+                Objects.equals(this.bestMarked, other.bestMarked) &&
+                Objects.equals(this.isEpsg4326To3857Supported, other.isEpsg4326To3857Supported) &&
+                Objects.equals(this.isGeoreferenceValid, other.isGeoreferenceValid) &&
                 Objects.equals(this.cookies, other.cookies) &&
                 Objects.equals(this.eulaAcceptanceRequired, other.eulaAcceptanceRequired) &&
                 Objects.equals(this.imageryType, other.imageryType) &&
@@ -494,12 +520,14 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                 Objects.equals(this.termsOfUseText, other.termsOfUseText) &&
                 Objects.equals(this.termsOfUseURL, other.termsOfUseURL) &&
                 Objects.equals(this.countryCode, other.countryCode) &&
+                Objects.equals(this.date, other.date) &&
                 Objects.equals(this.icon, other.icon) &&
                 Objects.equals(this.description, other.description) &&
                 Objects.equals(this.noTileHeaders, other.noTileHeaders) &&
                 Objects.equals(this.noTileChecksums, other.noTileChecksums) &&
                 Objects.equals(this.metadataHeaders, other.metadataHeaders) &&
                 Objects.equals(this.defaultLayers, other.defaultLayers);
+        // CHECKSTYLE.ON: BooleanExpressionComplexity
     }
 
     @Override
@@ -830,11 +858,26 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @since 8065
      */
     public String getToolTipText() {
+        StringBuilder res = new StringBuilder(getName());
+        boolean html = false;
+        String dateStr = getDate();
+        if (dateStr != null && !dateStr.isEmpty()) {
+            res.append("<br>").append(tr("Date of imagery: {0}", dateStr));
+            html = true;
+        }
+        if (bestMarked) {
+            res.append("<br>").append(tr("This imagery is marked as best in this region in other editors."));
+            html = true;
+        }
         String desc = getDescription();
         if (desc != null && !desc.isEmpty()) {
-            return "<html>" + getName() + "<br>" + desc + "</html>";
+            res.append("<br>").append(desc);
+            html = true;
         }
-        return getName();
+        if (html) {
+            res.insert(0, "<html>").append("</html>");
+        }
+        return res.toString();
     }
 
     /**
@@ -867,6 +910,25 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public void setCountryCode(String countryCode) {
         this.countryCode = countryCode;
+    }
+
+    /**
+     * Returns the date information.
+     * @return The date (in the form YYYY-MM-DD;YYYY-MM-DD, where
+     * DD and MM as well as a second date are optional)
+     * @since 11570
+     */
+    public String getDate() {
+        return date;
+    }
+
+    /**
+     * Sets the date information.
+     * @param date The date information
+     * @since 11570
+     */
+    public void setDate(String date) {
+        this.date = date;
     }
 
     /**
@@ -1032,7 +1094,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @since 9613
      */
     public void setNoTileHeaders(MultiMap<String, String> noTileHeaders) {
-       if (noTileHeaders == null) {
+       if (noTileHeaders == null || noTileHeaders.isEmpty()) {
            this.noTileHeaders = null;
        } else {
             this.noTileHeaders = noTileHeaders.toMap();
@@ -1052,7 +1114,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @since 9613
      */
     public void setNoTileChecksums(MultiMap<String, String> noTileChecksums) {
-        if (noTileChecksums == null) {
+        if (noTileChecksums == null || noTileChecksums.isEmpty()) {
             this.noTileChecksums = null;
         } else {
             this.noTileChecksums = noTileChecksums.toMap();
@@ -1072,7 +1134,11 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      * @since 8418
      */
     public void setMetadataHeaders(Map<String, String> metadataHeaders) {
-        this.metadataHeaders = metadataHeaders;
+        if (metadataHeaders == null || metadataHeaders.isEmpty()) {
+            this.metadataHeaders = null;
+        } else {
+            this.metadataHeaders = metadataHeaders;
+        }
     }
 
     /**
@@ -1108,6 +1174,24 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     }
 
     /**
+     * Returns the status of "best" marked status in other editors.
+     * @return <code>true</code> if it is marked as best.
+     * @since 11575
+     */
+    public boolean isBestMarked() {
+        return bestMarked;
+    }
+
+    /**
+     * Sets an indicator that in other editors it is marked as best imagery
+     * @param bestMarked <code>true</code> if it is marked as best in other editors.
+     * @since 11575
+     */
+    public void setBestMarked(boolean bestMarked) {
+        this.bestMarked = bestMarked;
+    }
+
+    /**
      * Adds a mirror entry. Mirror entries are completed with the data from the master entry
      * and only describe another method to access identical data.
      *
@@ -1130,6 +1214,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     public List<ImageryInfo> getMirrors() {
        List<ImageryInfo> l = new ArrayList<>();
        if (mirrors != null) {
+           int num = 1;
            for (ImageryInfo i : mirrors) {
                ImageryInfo n = new ImageryInfo(this);
                if (i.defaultMaxZoom != 0) {
@@ -1144,7 +1229,22 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                if (i.getTileSize() != 0) {
                    n.setTileSize(i.getTileSize());
                }
+               if (n.id != null) {
+                   n.id = n.id + "_mirror"+num;
+               }
+               if (num > 1) {
+                   n.name = tr("{0} mirror server {1}", n.name, num);
+                   if (n.origName != null) {
+                       n.origName += " mirror server " + num;
+                   }
+               } else {
+                   n.name = tr("{0} mirror server", n.name);
+                   if (n.origName != null) {
+                       n.origName += " mirror server";
+                   }
+               }
                l.add(n);
+               ++num;
            }
        }
        return l;

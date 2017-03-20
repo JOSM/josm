@@ -55,7 +55,7 @@ public class OpenLocationAction extends JosmAction {
     /**
      * true if the URL needs to be opened in a new layer, false otherwise
      */
-    private static final BooleanProperty USE_NEW_LAYER = new BooleanProperty("download.newlayer", true);
+    private static final BooleanProperty USE_NEW_LAYER = new BooleanProperty("download.newlayer", false);
     protected final transient List<Class<? extends DownloadTask>> downloadTasks;
 
     static class WhichTasksToPerformDialog extends ExtendedDialog {

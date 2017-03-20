@@ -164,7 +164,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
             if (css.title != null && !css.title.isEmpty()) {
                 return css.title;
             }
-        } catch (RuntimeException ignore) {
+        } catch (RuntimeException ignore) { // NOPMD
             Main.debug(ignore);
         }
         return null;

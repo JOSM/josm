@@ -38,8 +38,6 @@ package com.kitfox.svg.xml;
 
 import org.w3c.dom.*;
 import java.net.*;
-import java.util.*;
-import java.lang.reflect.*;
 
 /**
  * @author Mark McKay

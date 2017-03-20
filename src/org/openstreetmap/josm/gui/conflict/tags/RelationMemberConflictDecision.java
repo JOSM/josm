@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.gui.conflict.tags.RelationMemberConflictDec
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Objects;
+import java.util.Optional;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -57,10 +58,7 @@ public class RelationMemberConflictDecision {
     }
 
     public void decide(RelationMemberConflictDecisionType decision) {
-        if (decision == null) {
-            decision = UNDECIDED;
-        }
-        this.decision = decision;
+        this.decision = Optional.ofNullable(decision).orElse(UNDECIDED);
     }
 
     public boolean isDecided() {

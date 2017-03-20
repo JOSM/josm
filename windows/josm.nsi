@@ -300,21 +300,6 @@ File "../../dist/turnrestrictions.jar"
 StrCpy $plugins "$plugins<entry value='turnrestrictions'/>"
 SectionEnd
 
-Section $(JOSM_SEC_WMS) SecWMS
-;-------------------------------------------
-SectionIn 1 2
-SetShellVarContext current
-SetOutPath $INSTDIR\imageformats
-File "webkit-image\imageformats\qjpeg4.dll"
-SetOutPath $INSTDIR
-File "webkit-image\mingwm10.dll"
-File "webkit-image\QtCore4.dll"
-File "webkit-image\QtGui4.dll"
-File "webkit-image\QtNetwork4.dll"
-File "webkit-image\QtWebKit4.dll"
-File "webkit-image\webkit-image.exe"
-SectionEnd
-
 SectionGroupEnd	; "Plugins"
 
 Section $(JOSM_SEC_STARTMENU) SecStartMenu
@@ -455,7 +440,6 @@ SectionEnd
   !insertmacro MUI_DESCRIPTION_TEXT ${SecJosm} $(JOSM_SECDESC_JOSM)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecPluginsGroup} $(JOSM_SECDESC_PLUGINS_GROUP)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecTurnrestrictionsPlugin} $(JOSM_SECDESC_TURNRESTRICTIONS_PLUGIN)
-  !insertmacro MUI_DESCRIPTION_TEXT ${SecWMS} $(JOSM_SECDESC_WMS)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecStartMenu} $(JOSM_SECDESC_STARTMENU)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecDesktopIcon} $(JOSM_SECDESC_DESKTOP_ICON)
   !insertmacro MUI_DESCRIPTION_TEXT ${SecQuickLaunchIcon} $(JOSM_SECDESC_QUICKLAUNCH_ICON) 

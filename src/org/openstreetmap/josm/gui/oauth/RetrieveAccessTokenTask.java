@@ -65,7 +65,7 @@ public class RetrieveAccessTokenTask extends PleaseWaitRunnable {
     @Override
     protected void finish() { /* not used in this task */}
 
-    protected void alertRetrievingAccessTokenFailed(OsmOAuthAuthorizationException e) {
+    protected void alertRetrievingAccessTokenFailed() {
         HelpAwareOptionPane.showOptionDialog(
                 parent,
                 tr(
@@ -90,7 +90,7 @@ public class RetrieveAccessTokenTask extends PleaseWaitRunnable {
             return;
         } catch (final OsmOAuthAuthorizationException e) {
             Main.error(e);
-            GuiHelper.runInEDT(() -> alertRetrievingAccessTokenFailed(e));
+            GuiHelper.runInEDT(this::alertRetrievingAccessTokenFailed);
             accessToken = null;
         } finally {
             synchronized (this) {

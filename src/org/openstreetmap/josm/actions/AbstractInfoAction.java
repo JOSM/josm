@@ -69,7 +69,6 @@ public abstract class AbstractInfoAction extends JosmAction {
                 "You are about to launch {0} browser windows.<br>"
                         + "This may both clutter your screen with browser windows<br>"
                         + "and take some time to finish.", numBrowsers, numBrowsers);
-        msg = "<html>" + msg + "</html>";
         ButtonSpec[] spec = new ButtonSpec[] {
                 new ButtonSpec(
                         tr("Continue"),
@@ -87,7 +86,7 @@ public abstract class AbstractInfoAction extends JosmAction {
         };
         return 0 == HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
-                msg,
+                new StringBuilder(msg).insert(0, "<html>").append("</html>").toString(),
                 tr("Warning"),
                 JOptionPane.WARNING_MESSAGE,
                 null,

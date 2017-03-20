@@ -9,9 +9,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.User;
 
 /**
- * Represents an immutable OSM node in the context of a historical view on
- * OSM data.
- *
+ * Represents an immutable OSM node in the context of a historical view on OSM data.
+ * @since 1670
  */
 public class HistoryNode extends HistoryOsmPrimitive {
 

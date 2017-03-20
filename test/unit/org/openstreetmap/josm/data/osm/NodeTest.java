@@ -34,7 +34,7 @@ public class NodeTest {
     @Test
     public void testTicket12060() {
         DataSet ds = new DataSet();
-        ds.dataSources.add(new DataSource(new Bounds(LatLon.ZERO), null));
+        ds.addDataSource(new DataSource(new Bounds(LatLon.ZERO), null));
         Node n = new Node(1, 1);
         n.setCoor(LatLon.ZERO);
         ds.addPrimitive(n);

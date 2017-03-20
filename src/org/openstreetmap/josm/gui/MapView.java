@@ -70,6 +70,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
 import org.openstreetmap.josm.tools.AudioPlayer;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
@@ -236,8 +237,21 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      * @param viewportData the initial viewport of the map. Can be null, then
      * the viewport is derived from the layer data.
      * @since 10279
+     * @deprecated use {@link #MapView(MainLayerManager, ViewportData)} instead
      */
+    @Deprecated
     public MapView(MainLayerManager layerManager, final JPanel contentPane, final ViewportData viewportData) {
+        this(layerManager, viewportData);
+    }
+
+    /**
+     * Constructs a new {@code MapView}.
+     * @param layerManager The layers to display.
+     * @param viewportData the initial viewport of the map. Can be null, then
+     * the viewport is derived from the layer data.
+     * @since 11713
+     */
+    public MapView(MainLayerManager layerManager, final ViewportData viewportData) {
         this.layerManager = layerManager;
         initialViewport = viewportData;
         layerManager.addLayerChangeListener(this, true);
@@ -248,12 +262,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             @Override
             public void componentResized(ComponentEvent e) {
                 removeComponentListener(this);
-
-                mapMover = new MapMover(MapView.this, contentPane);
+                mapMover = new MapMover(MapView.this);
             }
         });
 
-        // listend to selection changes to redraw the map
+        // listens to selection changes to redraw the map
         DataSet.addSelectionListener(repaintSelectionChangedListener);
 
         //store the last mouse action
@@ -341,7 +354,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
                 repaint();
             }
-        } catch (RuntimeException t) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException t) {
             throw BugReport.intercept(t).put("layer", e.getAddedLayer());
         }
     }
@@ -440,7 +453,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             }
             painter.paint(paintGraphics);
             g.setPaintMode();
-        } catch (RuntimeException t) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException t) {
             BugReport.intercept(t).put("layer", layer).warn();
         }
     }
@@ -454,7 +467,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             if (!prepareToDraw()) {
                 return;
             }
-        } catch (RuntimeException e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             BugReport.intercept(e).put("center", this::getCenter).warn();
             return;
         }
@@ -524,14 +537,14 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
         try {
             drawTemporaryLayers(tempG, getLatLonBounds(g.getClipBounds()));
-        } catch (RuntimeException e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             BugReport.intercept(e).put("temporaryLayers", temporaryLayers).warn();
         }
 
         // draw world borders
         try {
             drawWorldBorders(tempG);
-        } catch (RuntimeException e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             // getProjection() needs to be inside lambda to catch errors.
             BugReport.intercept(e).put("bounds", () -> getProjection().getWorldBoundsLatLon()).warn();
         }
@@ -580,7 +593,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             for (MapViewPaintable mvp : temporaryLayers) {
                 try {
                     mvp.paint(tempG, this, box);
-                } catch (RuntimeException e) {
+                } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
                     throw BugReport.intercept(e).put("mvp", mvp);
                 }
             }

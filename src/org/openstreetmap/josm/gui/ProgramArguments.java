@@ -102,7 +102,7 @@ public class ProgramArguments {
      * @param args The args passed to main.
      * @since 10936
      */
-    public ProgramArguments(String ... args) {
+    public ProgramArguments(String... args) {
         Stream.of(Option.values()).forEach(o -> argMap.put(o, new ArrayList<>()));
         buildCommandLineArgumentMap(args);
     }
@@ -111,7 +111,7 @@ public class ProgramArguments {
      * Builds the command-line argument map.
      * @param args command-line arguments array
      */
-    private void buildCommandLineArgumentMap(String ... args) {
+    private void buildCommandLineArgumentMap(String... args) {
         LongOpt[] los = Stream.of(Option.values()).map(Option::toLongOpt).toArray(i -> new LongOpt[i]);
 
         Getopt g = new Getopt("JOSM", args, "hv", los);
@@ -214,7 +214,7 @@ public class ProgramArguments {
         return map;
     }
 
-    private static String getValue(String ... kv) {
+    private static String getValue(String... kv) {
         if (kv.length < 2) {
             return "";
         } else if ("null".equals(kv[1])) {

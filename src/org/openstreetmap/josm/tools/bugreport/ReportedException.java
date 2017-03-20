@@ -65,7 +65,7 @@ public class ReportedException extends RuntimeException {
         methodWarningFrom = BugReport.getCallingMethod(2);
         try {
             BugReportQueue.getInstance().submit(this);
-        } catch (RuntimeException e) {
+        } catch (RuntimeException e) { // NOPMD
             e.printStackTrace();
         }
     }
@@ -134,12 +134,12 @@ public class ReportedException extends RuntimeException {
     }
 
     private static String niceThreadName(Thread thread) {
-        String name = "Thread: " + thread.getName() + " (" + thread.getId() + ')';
+        StringBuilder name = new StringBuilder("Thread: ").append(thread.getName()).append(" (").append(thread.getId()).append(')');
         ThreadGroup threadGroup = thread.getThreadGroup();
         if (threadGroup != null) {
-            name += " of " + threadGroup.getName();
+            name.append(" of ").append(threadGroup.getName());
         }
-        return name;
+        return name.toString();
     }
 
     /**
@@ -217,7 +217,7 @@ public class ReportedException extends RuntimeException {
             } else {
                 string = value.toString();
             }
-        } catch (RuntimeException t) {
+        } catch (RuntimeException t) { // NOPMD
             Main.warn(t);
             string = "<Error calling toString()>";
         }
@@ -227,7 +227,7 @@ public class ReportedException extends RuntimeException {
 
     private static String makeCollectionNice(Collection<?> value) {
         int lines = 0;
-        StringBuilder str = new StringBuilder();
+        StringBuilder str = new StringBuilder(32);
         for (Object e : value) {
             str.append("\n    - ");
             if (lines <= MAX_COLLECTION_ENTRIES) {
@@ -245,7 +245,7 @@ public class ReportedException extends RuntimeException {
     @Override
     public String toString() {
         return "ReportedException [thread=" + caughtOnThread + ", exception=" + getCause()
-                + ", methodWarningFrom=" + methodWarningFrom + "]";
+                + ", methodWarningFrom=" + methodWarningFrom + ']';
     }
 
     /**

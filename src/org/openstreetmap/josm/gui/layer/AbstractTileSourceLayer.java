@@ -278,10 +278,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      *
      * If the current tileLoader is an instance of OsmTileLoader, a new
      * TmsTileClearController is created and passed to the according clearCache method.
-     *
-     * @param monitor not used in this implementation - as cache clear is instaneus
      */
-    public void clearTileCache(ProgressMonitor monitor) {
+    public void clearTileCache() {
         if (tileLoader instanceof CachedTileLoader) {
             ((CachedTileLoader) tileLoader).clearCache(tileSource);
         }
@@ -620,7 +618,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             new PleaseWaitRunnable(tr("Flush tile cache")) {
                 @Override
                 protected void realRun() {
-                    clearTileCache(getProgressMonitor());
+                    clearTileCache();
                 }
 
                 @Override
@@ -1235,7 +1233,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         int yCursor = -1;
         if (Main.isDebugEnabled()) {
             if (yCursor < t.getYtile()) {
-                if (t.getYtile() % 32 == 31) {
+                if (Math.abs(t.getYtile() % 32) == 31) {
                     g.fillRect(0, y - 1, mv.getWidth(), 3);
                 } else {
                     g.drawLine(0, y, mv.getWidth(), y);
@@ -1433,18 +1431,20 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         List<Tile> allTiles = ts.allExistingTiles();
         TileSetInfo result = new TileSetInfo();
         result.hasLoadingTiles = allTiles.size() < ts.size();
+        result.hasAllLoadedTiles = true;
         for (Tile t : allTiles) {
             if ("no-tile".equals(t.getValue("tile-info"))) {
                 result.hasOverzoomedTiles = true;
             }
-            result.hasAllLoadedTiles &= t.isLoaded();
-
             if (t.isLoaded()) {
                 if (!t.hasError()) {
                     result.hasVisibleTiles = true;
                 }
-            } else if (t.isLoading()) {
-                result.hasLoadingTiles = true;
+            } else {
+                result.hasAllLoadedTiles = false;
+                if (t.isLoading()) {
+                    result.hasLoadingTiles = true;
+                }
             }
         }
         return result;

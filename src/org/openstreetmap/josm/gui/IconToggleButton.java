@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Optional;
 
 import javax.swing.Action;
 import javax.swing.Icon;
@@ -151,10 +152,7 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
 
     @Override
     public Icon getIcon() {
-        Object o = getSafeActionValue(Action.LARGE_ICON_KEY);
-        if (o == null)
-            o = getSafeActionValue(Action.SMALL_ICON);
-        return (Icon) o;
+        return (Icon) Optional.ofNullable(getSafeActionValue(Action.LARGE_ICON_KEY)).orElseGet(() -> getSafeActionValue(Action.SMALL_ICON));
     }
 
     @Override

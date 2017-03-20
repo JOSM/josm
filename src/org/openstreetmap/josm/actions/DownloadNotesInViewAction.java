@@ -24,10 +24,18 @@ public final class DownloadNotesInViewAction extends JosmAction {
                 "dialogs/notes/download_in_view", true);
     }
 
+    /**
+     * Constructs a new {@code DownloadNotesInViewAction} with note icon.
+     * @return a new {@code DownloadNotesInViewAction} with note icon
+     */
     public static DownloadNotesInViewAction newActionWithNoteIcon() {
         return new DownloadNotesInViewAction("dialogs/notes/note_open");
     }
 
+    /**
+     * Constructs a new {@code DownloadNotesInViewAction} with download icon.
+     * @return a new {@code DownloadNotesInViewAction} with download icon
+     */
     public static DownloadNotesInViewAction newActionWithDownloadIcon() {
         return new DownloadNotesInViewAction("download");
     }
@@ -36,6 +44,7 @@ public final class DownloadNotesInViewAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         final Bounds bounds = Main.map.mapView.getRealBounds();
         DownloadNotesTask task = new DownloadNotesTask();
+        task.setZoomAfterDownload(false);
         Future<?> future = task.download(false, bounds, null);
         Main.worker.submit(new PostDownloadHandler(task, future));
     }
