@@ -279,8 +279,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     private boolean showIcons;
     private boolean isOutlineOnly;
 
-    private Font orderFont;
-
     private boolean leftHandTraffic;
     private Object antialiasing;
 
@@ -1268,7 +1266,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         showNames = paintSettings.getShowNamesDistance() > circum;
         showIcons = paintSettings.getShowIconsDistance() > circum;
         isOutlineOnly = paintSettings.isOutlineOnly();
-        orderFont = new Font(Main.pref.get("mappaint.font", "Droid Sans"), Font.PLAIN, Main.pref.getInteger("mappaint.fontsize", 8));
 
         antialiasing = Main.pref.getBoolean("mappaint.use-antialiasing", true) ?
                         RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF;
