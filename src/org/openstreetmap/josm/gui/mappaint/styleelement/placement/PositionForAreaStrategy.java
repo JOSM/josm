@@ -43,7 +43,7 @@ public interface PositionForAreaStrategy {
      */
     default List<GlyphVector> generateGlyphVectors(
             MapViewPath path, Rectangle2D nb, List<GlyphVector> gvs, boolean isDoubleTranslationBug) {
-        throw new UnsupportedOperationException("Single glyph transofrmation is not supported by this implementation");
+        throw new UnsupportedOperationException("Single glyph transformation is not supported by this implementation");
     }
 
     /**

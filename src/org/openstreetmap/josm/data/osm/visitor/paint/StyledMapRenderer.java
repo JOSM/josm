@@ -1018,7 +1018,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         forEachPolygon(osm, path -> {
             //TODO: Ignore areas that are out of bounds.
             PositionForAreaStrategy position = text.getLabelPositionStrategy();
-            MapViewPositionAndRotation center = text.getLabelPositionStrategy().findLabelPlacement(path, nb);
+            MapViewPositionAndRotation center = position.findLabelPlacement(path, nb);
             if (center != null) {
                 displayText(osm, text, name, nb, center);
             } else if (position.supportsGlyphVector()) {
