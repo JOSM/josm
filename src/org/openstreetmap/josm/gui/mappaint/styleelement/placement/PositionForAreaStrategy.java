@@ -38,11 +38,12 @@ public interface PositionForAreaStrategy {
      * @param gvs The glyph vectors for the text. May be modified
      * @param isDoubleTranslationBug <code>true</code> to fix a glyph placement bug.
      *
-     * @return The glyph vectors. Or <code>null</code> if the text could not be transformed.
+     * @return The glyph vectors.
+     * @throws UnsupportedOperationException if {@link #supportsGlyphVector()} returns false
      */
     default List<GlyphVector> generateGlyphVectors(
             MapViewPath path, Rectangle2D nb, List<GlyphVector> gvs, boolean isDoubleTranslationBug) {
-        return null;
+        throw new UnsupportedOperationException("Single glyph transofrmation is not supported by this implementation");
     }
 
     /**
