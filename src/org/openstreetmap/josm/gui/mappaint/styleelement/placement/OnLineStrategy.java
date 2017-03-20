@@ -84,7 +84,7 @@ public class OnLineStrategy implements PositionForAreaStrategy {
                 middleOffset + (doRotateText ? 1 : -1) * nb.getWidth() / 2, doRotateText);
 
         // Order the glyphs along the line to ensure that they are drawn corretly.
-        Collections.sort(offsetGlyphs, Comparator.comparing(e -> e.offset));
+        Collections.sort(offsetGlyphs, Comparator.comparing(OffsetGlyph::getOffset));
 
         // Now translate all glyphs. This will modify the glyphs stored in gvs.
         path.visitLine(new GlyphRotatingVisitor(offsetGlyphs, isDoubleTranslationBug));
@@ -318,11 +318,14 @@ public class OnLineStrategy implements PositionForAreaStrategy {
             return glyph.getGlyphLogicalBounds(glyphIndex).getBounds2D();
         }
 
+        private double getOffset() {
+            return offset;
+        }
+
         @Override
         public String toString() {
             return "OffsetGlyph [offset=" + offset + ", preRotate=" + preRotate + ", glyphIndex=" + glyphIndex + "]";
         }
-
     }
 
     private static double theta(MapViewPoint start, MapViewPoint end) {
