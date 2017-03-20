@@ -48,7 +48,7 @@ public class OnLineStrategy implements PositionForAreaStrategy {
         }).orElse(null);
     }
 
-    private double upsideTheta(HalfSegment best) {
+    private static double upsideTheta(HalfSegment best) {
         double theta = theta(best.start, best.end);
         if (theta < -Math.PI / 2) {
             return theta + Math.PI;
@@ -67,17 +67,26 @@ public class OnLineStrategy implements PositionForAreaStrategy {
     @Override
     public List<GlyphVector> generateGlyphVectors(MapViewPath path, Rectangle2D nb, List<GlyphVector> gvs,
             boolean isDoubleTranslationBug) {
+        // Find the position on the way the font should be placed.
+        // If none is found, use the middle of the way.
         double middleOffset = findOptimalWayPosition(nb, path).map(segment -> segment.offset)
                 .orElse(path.getLength() / 2);
 
+        // Check that segment of the way. Compute in which direction the text should be rendered.
+        // It is rendered in a way that ensures that at least 50% of the text are rotated with the right side up.
         UpsideComputingVisitor upside = new UpsideComputingVisitor(middleOffset - nb.getWidth() / 2,
                 middleOffset + nb.getWidth() / 2);
         path.visitLine(upside);
+        boolean doRotateText = upside.shouldRotateText();
 
-        boolean doRotateText = upside.shouldMirrorText();
+        // Compute the list of glyphs to draw, along with their offset on the current line.
         List<OffsetGlyph> offsetGlyphs = computeOffsetGlyphs(gvs,
                 middleOffset + (doRotateText ? 1 : -1) * nb.getWidth() / 2, doRotateText);
 
+        // Order the glyphs along the line to ensure that they are drawn corretly.
+        Collections.sort(offsetGlyphs, Comparator.comparing(e -> e.offset));
+
+        // Now translate all glyphs. This will modify the glyphs stored in gvs.
         path.visitLine(new GlyphRotatingVisitor(offsetGlyphs, isDoubleTranslationBug));
         return gvs;
     }
@@ -99,11 +108,10 @@ public class OnLineStrategy implements PositionForAreaStrategy {
                     .forEach(offsetGlyphs::add);
             offset += (rotateText ? -1 : 1) + gv.getLogicalBounds().getBounds2D().getWidth();
         }
-        Collections.sort(offsetGlyphs, Comparator.comparing(e -> e.offset));
         return offsetGlyphs;
     }
 
-    private Optional<HalfSegment> findOptimalWayPosition(Rectangle2D rect, MapViewPath path) {
+    private static Optional<HalfSegment> findOptimalWayPosition(Rectangle2D rect, MapViewPath path) {
         // find half segments that are long enough to draw text on (don't draw text over the cross hair in the center of each segment)
         List<HalfSegment> longHalfSegment = new ArrayList<>();
         double minSegmentLength = 2 * (rect.getWidth() + 4);
@@ -191,8 +199,8 @@ public class OnLineStrategy implements PositionForAreaStrategy {
         private final double startOffset;
         private final double endOffset;
 
-        private double upsideUpLines = 0;
-        private double upsideDownLines = 0;
+        private double upsideUpLines;
+        private double upsideDownLines;
 
         UpsideComputingVisitor(double startOffset, double endOffset) {
             super();
@@ -222,7 +230,11 @@ public class OnLineStrategy implements PositionForAreaStrategy {
             }
         }
 
-        public boolean shouldMirrorText() {
+        /**
+         * Check if the text should be rotated by 180°
+         * @return if the text should be rotated.
+         */
+        boolean shouldRotateText() {
             return upsideUpLines < upsideDownLines;
         }
     }
@@ -235,6 +247,11 @@ public class OnLineStrategy implements PositionForAreaStrategy {
         private final boolean isDoubleTranslationBug;
         private OffsetGlyph next;
 
+        /**
+         * Create a new {@link GlyphRotatingVisitor}
+         * @param gvs The glyphs to draw. Sorted along the line
+         * @param isDoubleTranslationBug true to fix a double translation bug.
+         */
         GlyphRotatingVisitor(List<OffsetGlyph> gvs, boolean isDoubleTranslationBug) {
             this.isDoubleTranslationBug = isDoubleTranslationBug;
             this.gvs = gvs.iterator();
