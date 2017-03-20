@@ -831,6 +831,56 @@ public final class ExpressionFactory {
         }
 
         /**
+         * Converts string {@code s} to uppercase.
+         * @param s The source string
+         * @return The resulting string
+         * @see String#toUpperCase(Locale)
+         * @since 11756
+         */
+        public static String upper(String s) {
+            return s == null ? null : s.toUpperCase(Locale.ENGLISH);
+        }
+
+        /**
+         * Converts string {@code s} to lowercase.
+         * @param s The source string
+         * @return The resulting string
+         * @see String#toLowerCase(Locale)
+         * @since 11756
+         */
+        public static String lower(String s) {
+            return s == null ? null : s.toLowerCase(Locale.ENGLISH);
+        }
+
+        /**
+         * Trim whitespaces from the string {@code s}.
+         * @param s The source string
+         * @return The resulting string
+         * @see Utils#strip
+         * @since 11756
+         */
+        public static String trim(String s) {
+            return Utils.strip(s);
+        }
+
+        /**
+         * Percent-decode a string. (See https://en.wikipedia.org/wiki/Percent-encoding)
+         * This is especially useful for wikipedia titles
+         * @param s url-encoded string
+         * @return the decoded string, or original in case of an error
+         * @since 11756
+         */
+        public static String URL_decode(String s) {
+            if (s == null) return null;
+            try {
+                return Utils.decodeUrl(s);
+            } catch (IllegalStateException e) {
+                Main.debug(e);
+                return s;
+            }
+        }
+
+        /**
          * Percent-encode a string. (See https://en.wikipedia.org/wiki/Percent-encoding)
          * This is especially useful for data urls, e.g.
          * <code>concat("data:image/svg+xml,", URL_encode("&lt;svg&gt;...&lt;/svg&gt;"));</code>
