@@ -89,7 +89,7 @@ public class OnLineStrategy implements PositionForAreaStrategy {
      * @param rotateText Rotate the text by 180°
      * @return The list of glyphs.
      */
-    private List<OffsetGlyph> computeOffsetGlyphs(List<GlyphVector> gvs, double startOffset, boolean rotateText) {
+    private static List<OffsetGlyph> computeOffsetGlyphs(List<GlyphVector> gvs, double startOffset, boolean rotateText) {
         double offset = startOffset;
         ArrayList<OffsetGlyph> offsetGlyphs = new ArrayList<>();
         for (GlyphVector gv : gvs) {
@@ -186,7 +186,7 @@ public class OnLineStrategy implements PositionForAreaStrategy {
      * A visitor that computes the side of the way that is the upper one for each segment and computes the dominant upper side of the way.
      * This is used to always place at least 50% of the text correctly.
      */
-    private class UpsideComputingVisitor implements PathSegmentConsumer {
+    private static class UpsideComputingVisitor implements PathSegmentConsumer {
 
         private final double startOffset;
         private final double endOffset;
