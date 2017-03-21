@@ -379,11 +379,11 @@ public class NodeElement extends StyleElement {
         if (mapImage != null) {
             s.append(" icon=[" + mapImage + ']');
         }
+        if (mapImage != null && mapImageAngle != null) {
+            s.append(" mapImageAngle=[" + mapImageAngle + ']');
+        }
         if (symbol != null) {
             s.append(" symbol=[" + symbol + ']');
-        }
-        if (mapImageAngle != null) {
-            s.append(" mapImageAngle=[" + mapImageAngle + ']');
         }
         s.append('}');
         return s.toString();
