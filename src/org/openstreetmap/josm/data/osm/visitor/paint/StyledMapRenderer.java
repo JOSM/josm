@@ -60,6 +60,10 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
+import org.openstreetmap.josm.data.preferences.AbstractProperty;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.draw.MapViewPath;
@@ -262,14 +266,33 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     private static final double PHI = Math.toRadians(20);
     private static final double cosPHI = Math.cos(PHI);
     private static final double sinPHI = Math.sin(PHI);
+    /**
+     * If we should use left hand traffic.
+     */
+    private static final AbstractProperty<Boolean> PREFERENCE_LEFT_HAND_TRAFFIC
+            = new BooleanProperty("mappaint.lefthandtraffic", false).cached();
+    /**
+     * Indicates that the renderer should enable anti-aliasing
+     * @since 11758
+     */
+    public static final AbstractProperty<Boolean> PREFERENCE_ANTIALIASING_USE
+            = new BooleanProperty("mappaint.use-antialiasing", true).cached();
+    /**
+     * The mode that is used for anti-aliasing
+     * @since 11758
+     */
+    public static final AbstractProperty<String> PREFERENCE_TEXT_ANTIALIASING
+            = new StringProperty("mappaint.text-antialiasing", "default").cached();
+
+    /**
+     * The line with to use for highlighting
+     */
+    private static final AbstractProperty<Integer> HIGHLIGHT_LINE_WIDTH = new IntegerProperty("mappaint.highlight.width", 4).cached();
+    private static final AbstractProperty<Integer> HIGHLIGHT_POINT_RADIUS = new IntegerProperty("mappaint.highlight.radius", 7).cached();
+    private static final AbstractProperty<Integer> WIDER_HIGHLIGHT = new IntegerProperty("mappaint.highlight.bigger-increment", 5).cached();
+    private static final AbstractProperty<Integer> HIGHLIGHT_STEP = new IntegerProperty("mappaint.highlight.step", 4).cached();
 
     private Collection<WaySegment> highlightWaySegments;
-
-    // highlight customization fields
-    private int highlightLineWidth;
-    private int highlightPointRadius;
-    private int widerHighlight;
-    private int highlightStep;
 
     //flag that activate wider highlight mode
     private boolean useWiderHighlight;
@@ -782,7 +805,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
     /**
      * highlights a given GeneralPath using the settings from BasicStroke to match the line's
-     * style. Width of the highlight is hard coded.
+     * style. Width of the highlight can be changed by user preferences
      * @param path path to draw
      * @param line line style
      */
@@ -790,12 +813,15 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         if (path == null)
             return;
         g.setColor(highlightColorTransparent);
-        float w = line.getLineWidth() + highlightLineWidth;
-        if (useWiderHighlight) w += widerHighlight;
+        float w = line.getLineWidth() + HIGHLIGHT_LINE_WIDTH.get();
+        if (useWiderHighlight) {
+            w += WIDER_HIGHLIGHT.get();
+        }
+        int step = Math.max(HIGHLIGHT_STEP.get(), 1);
         while (w >= line.getLineWidth()) {
             g.setStroke(new BasicStroke(w, line.getEndCap(), line.getLineJoin(), line.getMiterLimit()));
             g.draw(path);
-            w -= highlightStep;
+            w -= step;
         }
     }
 
@@ -807,12 +833,15 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      */
     private void drawPointHighlight(Point2D p, int size) {
         g.setColor(highlightColorTransparent);
-        int s = size + highlightPointRadius;
-        if (useWiderHighlight) s += widerHighlight;
+        int s = size + HIGHLIGHT_POINT_RADIUS.get();
+        if (useWiderHighlight) {
+            s += WIDER_HIGHLIGHT.get();
+        }
+        int step = Math.max(HIGHLIGHT_STEP.get(), 1);
         while (s >= size) {
             int r = (int) Math.floor(s/2d);
             g.fill(new RoundRectangle2D.Double(p.getX()-r, p.getY()-r, s, s, r, r));
-            s -= highlightStep;
+            s -= step;
         }
     }
 
@@ -1040,9 +1069,16 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
     private void displayText(OsmPrimitive osm, TextLabel text, String name, Rectangle2D nb,
             MapViewPositionAndRotation center) {
-        AffineTransform at = AffineTransform.getTranslateInstance(center.getPoint().getInViewX(), center.getPoint().getInViewY());
-        at.rotate(center.getRotation());
-        at.translate(-nb.getCenterX(), -nb.getCenterY());
+        AffineTransform at = new AffineTransform();
+        if (Math.abs(center.getRotation()) < .01) {
+            // Explicitly no rotation: move to full pixels.
+            at.setToTranslation(Math.round(center.getPoint().getInViewX() - nb.getCenterX()),
+                    Math.round(center.getPoint().getInViewY() - nb.getCenterY()));
+        } else {
+            at.setToTranslation(center.getPoint().getInViewX(), center.getPoint().getInViewY());
+            at.rotate(center.getRotation());
+            at.translate(-nb.getCenterX(), -nb.getCenterY());
+        }
         displayText(() -> {
             AffineTransform defaultTransform = g.getTransform();
             g.setTransform(at);
@@ -1260,19 +1296,19 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         circum = nc.getDist100Pixel();
         scale = nc.getScale();
 
-        leftHandTraffic = Main.pref.getBoolean("mappaint.lefthandtraffic", false);
+        leftHandTraffic = PREFERENCE_LEFT_HAND_TRAFFIC.get();
 
         useStrokes = paintSettings.getUseStrokesDistance() > circum;
         showNames = paintSettings.getShowNamesDistance() > circum;
         showIcons = paintSettings.getShowIconsDistance() > circum;
         isOutlineOnly = paintSettings.isOutlineOnly();
 
-        antialiasing = Main.pref.getBoolean("mappaint.use-antialiasing", true) ?
+        antialiasing = PREFERENCE_ANTIALIASING_USE.get() ?
                         RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF;
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, antialiasing);
 
         Object textAntialiasing;
-        switch (Main.pref.get("mappaint.text-antialiasing", "default")) {
+        switch (PREFERENCE_TEXT_ANTIALIASING.get()) {
             case "on":
                 textAntialiasing = RenderingHints.VALUE_TEXT_ANTIALIAS_ON;
                 break;
@@ -1298,11 +1334,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 textAntialiasing = RenderingHints.VALUE_TEXT_ANTIALIAS_DEFAULT;
         }
         g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, textAntialiasing);
-
-        highlightLineWidth = Main.pref.getInteger("mappaint.highlight.width", 4);
-        highlightPointRadius = Main.pref.getInteger("mappaint.highlight.radius", 7);
-        widerHighlight = Main.pref.getInteger("mappaint.highlight.bigger-increment", 5);
-        highlightStep = Main.pref.getInteger("mappaint.highlight.step", 4);
     }
 
     private MapViewPath getPath(Way w) {
