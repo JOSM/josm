@@ -472,6 +472,16 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             return;
         }
 
+        try {
+            drawMapContent(g);
+        } catch (RuntimeException e) {
+            throw BugReport.intercept(e).put("visibleLayers", layerManager::getVisibleLayersInZOrder)
+                    .put("temporaryLayers", temporaryLayers);
+        }
+        super.paint(g);
+    }
+
+    private void drawMapContent(Graphics g) {
         List<Layer> visibleLayers = layerManager.getVisibleLayersInZOrder();
 
         int nonChangedLayersCount = 0;
@@ -585,7 +595,6 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             // But the application seems to work fine after, so let's just log the error
             Main.error(e);
         }
-        super.paint(g);
     }
 
     private void drawTemporaryLayers(Graphics2D tempG, Bounds box) {
