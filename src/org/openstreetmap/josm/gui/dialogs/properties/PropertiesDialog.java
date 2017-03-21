@@ -989,7 +989,8 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
                     // gap found
                     nextKeyIndex++;
                 }
-                nextKey = editHelper.getDataKey(nextKeyIndex);
+                // We use unfiltered indexes here. So don't use getDataKey()
+                nextKey = (String) tagData.getValueAt(nextKeyIndex, 0);
             }
 
             Collection<OsmPrimitive> sel = Main.main.getInProgressSelection();
