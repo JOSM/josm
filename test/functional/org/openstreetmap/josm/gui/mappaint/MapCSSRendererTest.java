@@ -100,6 +100,9 @@ public class MapCSSRendererTest {
                 /** Tests area label drawing/placement */
                 new TestConfig("area-text", AREA_DEFAULT),
 
+                /** Tests area icon drawing/placement */
+                new TestConfig("area-icon", AREA_DEFAULT),
+
                 /** Tests if all styles are sorted correctly. Tests {@link StyleRecord#compareTo(StyleRecord)} */
                 new TestConfig("order", AREA_DEFAULT)
 
@@ -137,6 +140,10 @@ public class MapCSSRendererTest {
      */
     @Test
     public void testRender() throws Exception {
+        // Force reset of preferences
+        StyledMapRenderer.PREFERENCE_ANTIALIASING_USE.put(true);
+        StyledMapRenderer.PREFERENCE_TEXT_ANTIALIASING.put("gasp");
+
         // load the data
         DataSet dataSet = testConfig.getOsmDataSet();
 

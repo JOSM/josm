@@ -4,13 +4,15 @@ canvas {
 }
 
 area[test] {
-	text: "name";
-	text-color: blue;
-	text-position: center;
+	icon-image: "info.png";
 	color: red;
 	width: 1;
 }
 
 area[test=H] {
-	text: eval("");
+	icon-position: inside;
+}
+
+area[test=I] {
+	icon-position: line;
 }
