@@ -8,6 +8,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
+import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.styleelement.placement.PartiallyInsideAreaStrategy;
 import org.openstreetmap.josm.gui.mappaint.styleelement.placement.PositionForAreaStrategy;
 import org.openstreetmap.josm.gui.util.RotationAngle;
@@ -31,12 +32,13 @@ public class AreaIconElement extends StyleElement {
     /**
      * The position of the icon inside the area.
      */
-    private final PositionForAreaStrategy iconPosition = PartiallyInsideAreaStrategy.INSTANCE;
+    private final PositionForAreaStrategy iconPosition;
 
-    protected AreaIconElement(Cascade c, MapImage iconImage, RotationAngle iconImageAngle) {
+    protected AreaIconElement(Cascade c, MapImage iconImage, RotationAngle iconImageAngle, PositionForAreaStrategy iconPosition) {
         super(c, 4.8f);
         this.iconImage = Objects.requireNonNull(iconImage, "iconImage");
         this.iconImageAngle = Objects.requireNonNull(iconImageAngle, "iconImageAngle");
+        this.iconPosition = Objects.requireNonNull(iconPosition, "iconPosition");
     }
 
     @Override
@@ -58,8 +60,10 @@ public class AreaIconElement extends StyleElement {
         MapImage iconImage = NodeElement.createIcon(env);
         if (iconImage != null) {
             RotationAngle rotationAngle = NodeElement.createRotationAngle(env);
+            Keyword positionKeyword = c.get(AreaElement.ICON_POSITION, null, Keyword.class);
+            PositionForAreaStrategy position = PositionForAreaStrategy.forKeyword(positionKeyword, PartiallyInsideAreaStrategy.INSTANCE);
 
-            return new AreaIconElement(c, iconImage, rotationAngle);
+            return new AreaIconElement(c, iconImage, rotationAngle, position);
         } else {
             return null;
         }
