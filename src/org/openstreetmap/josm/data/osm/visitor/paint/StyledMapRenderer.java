@@ -73,6 +73,7 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.StyleElementList;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.styleelement.AreaElement;
+import org.openstreetmap.josm.gui.mappaint.styleelement.AreaIconElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.HorizontalTextAlignment;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.VerticalTextAlignment;
@@ -1132,6 +1133,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 for (PolyData pd : multipolygon.getCombinedPolygons()) {
                     MapViewPath path = new MapViewPath(mapState);
                     path.appendFromEastNorth(pd.get());
+                    path.setWindingRule(MapViewPath.WIND_EVEN_ODD);
                     consumer.accept(path);
                 }
             }
@@ -1601,7 +1603,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         public void add(Relation osm, int flags) {
             StyleElementList sl = styles.get(osm, circum, nc);
             for (StyleElement s : sl) {
-                if (drawMultipolygon && drawArea && s instanceof AreaElement && (flags & FLAG_DISABLED) == 0) {
+                if (drawMultipolygon && drawArea && (s instanceof AreaElement || s instanceof AreaIconElement) && (flags & FLAG_DISABLED) == 0) {
                     output.add(new StyleRecord(s, osm, flags));
                 } else if (drawMultipolygon && drawArea && s instanceof TextElement) {
                     output.add(new StyleRecord(s, osm, flags));
@@ -1614,10 +1616,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         public void add(Way osm, int flags) {
             StyleElementList sl = styles.get(osm, circum, nc);
             for (StyleElement s : sl) {
-                if (!(drawArea && (flags & FLAG_DISABLED) == 0) && s instanceof AreaElement) {
-                    continue;
+                if ((drawArea && (flags & FLAG_DISABLED) == 0) || !(s instanceof AreaElement)) {
+                    output.add(new StyleRecord(s, osm, flags));
                 }
-                output.add(new StyleRecord(s, osm, flags));
             }
         }
     }
