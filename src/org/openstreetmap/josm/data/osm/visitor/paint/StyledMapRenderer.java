@@ -442,13 +442,13 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, r);
         if (!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
             for (PolyData pd : multipolygon.getCombinedPolygons()) {
+                if (!isAreaVisible(pd.get())) {
+                    continue;
+                }
                 MapViewPath p = new MapViewPath(mapState);
                 p.appendFromEastNorth(pd.get());
                 p.setWindingRule(Path2D.WIND_EVEN_ODD);
                 Path2D.Double pfClip = null;
-                if (!isAreaVisible(p)) {
-                    continue;
-                }
                 if (extent != null) {
                     if (!usePartialFill(pd.getAreaAndPerimeter(null), extent, extentThreshold)) {
                         extent = null;
