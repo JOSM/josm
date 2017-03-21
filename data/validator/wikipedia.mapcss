@@ -118,7 +118,7 @@
 
 /* Detect invalid wikidata tags */
 *[wikidata][wikidata !~ /^Q[1-9][0-9]{0,8}$/] {
-  throwError: tr("wikidata tag must be in Qnnnn format, where n is a digit'");
+  throwError: tr("wikidata tag must be in Qnnnn format, where n is a digit");
   assertMatch: "node wikidata=a";
   assertMatch: "node wikidata=Q";
   assertMatch: "node wikidata=Q0";
