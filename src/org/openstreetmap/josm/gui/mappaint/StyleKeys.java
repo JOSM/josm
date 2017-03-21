@@ -24,6 +24,10 @@ public interface StyleKeys {
     String ICON_OPACITY = "icon-opacity";
     String ICON_ROTATION = "icon-rotation";
     String ICON_WIDTH = "icon-width";
+    /**
+     * Position of icons on area.
+     */
+    String ICON_POSITION = "icon-position";
     String LINECAP = "linecap";
     String LINEJOIN = "linejoin";
     String MAJOR_Z_INDEX = "major-z-index";
