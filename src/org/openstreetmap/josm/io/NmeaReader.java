@@ -414,7 +414,7 @@ public class NmeaReader {
             }
             return true;
 
-        } catch (IllegalArgumentException | IndexOutOfBoundsException ex) {
+        } catch (IllegalArgumentException | IndexOutOfBoundsException | IllegalDataException ex) {
             // out of bounds and such
             Main.debug(ex);
             ps.malformed++;
