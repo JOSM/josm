@@ -954,7 +954,7 @@ public class JoinAreasAction extends JosmAction {
                     double y1 = y.applyAsDouble(n1);
                     double y2 = y.applyAsDouble(n2);
 
-                    if (!(y1 <= yRay && yRay < y2 || y2 <= yRay && yRay < y1)) {
+                    if (!((y1 <= yRay && yRay < y2) || (y2 <= yRay && yRay < y1))) {
                         // No intersection, since segment is above/below ray
                         continue;
                     }
