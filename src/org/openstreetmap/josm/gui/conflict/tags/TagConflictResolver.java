@@ -30,9 +30,11 @@ public class TagConflictResolver extends JPanel {
 
     /**
      * Constructs a new {@code TagConflictResolver}.
+     * @param model tag conflict resolver model
+     * @since 11772
      */
-    public TagConflictResolver() {
-        this.model = new TagConflictResolverModel();
+    public TagConflictResolver(TagConflictResolverModel model) {
+        this.model = model;
         build();
     }
 

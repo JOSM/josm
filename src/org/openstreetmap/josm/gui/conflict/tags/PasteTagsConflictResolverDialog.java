@@ -57,7 +57,7 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
         RESOLVING_TYPED_TAGCOLLECTIONS
     }
 
-    private final TagConflictResolver allPrimitivesResolver = new TagConflictResolver();
+    private final TagConflictResolverModel model = new TagConflictResolverModel();
     private final transient Map<OsmPrimitiveType, TagConflictResolver> resolvers = new EnumMap<>(OsmPrimitiveType.class);
     private final JTabbedPane tpResolvers = new JTabbedPane();
     private Mode mode;
@@ -80,8 +80,9 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
     protected final void build() {
         setTitle(tr("Conflicts in pasted tags"));
         for (OsmPrimitiveType type: OsmPrimitiveType.dataValues()) {
-            resolvers.put(type, new TagConflictResolver());
-            resolvers.get(type).getModel().addPropertyChangeListener(this);
+            TagConflictResolverModel tagModel = new TagConflictResolverModel();
+            resolvers.put(type, new TagConflictResolver(tagModel));
+            tagModel.addPropertyChangeListener(this);
         }
         getContentPane().setLayout(new GridBagLayout());
         mode = null;
@@ -105,7 +106,6 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
         gc.weighty = 0.0;
         getContentPane().add(buildButtonPanel(), gc);
         InputMapUtils.addEscapeAction(getRootPane(), new CancelAction());
-
     }
 
     protected JPanel buildButtonPanel() {
@@ -113,7 +113,7 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
 
         // -- apply button
         ApplyAction applyAction = new ApplyAction();
-        allPrimitivesResolver.getModel().addPropertyChangeListener(applyAction);
+        model.addPropertyChangeListener(applyAction);
         for (TagConflictResolver r : resolvers.values()) {
             r.getModel().addPropertyChangeListener(applyAction);
         }
@@ -140,10 +140,11 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
      * @param targetStatistics histogram of paste targets, number of primitives of each type in the paste target
      */
     protected void initResolver(OsmPrimitiveType type, TagCollection tc, Map<OsmPrimitiveType, Integer> targetStatistics) {
-        resolvers.get(type).getModel().populate(tc, tc.getKeysWithMultipleValues());
-        resolvers.get(type).getModel().prepareDefaultTagDecisions();
+        TagConflictResolver resolver = resolvers.get(type);
+        resolver.getModel().populate(tc, tc.getKeysWithMultipleValues());
+        resolver.getModel().prepareDefaultTagDecisions();
         if (!tc.isEmpty() && targetStatistics.get(type) != null && targetStatistics.get(type) > 0) {
-            tpResolvers.add(PANE_TITLES.get(type), resolvers.get(type));
+            tpResolvers.add(PANE_TITLES.get(type), resolver);
         }
     }
 
@@ -163,12 +164,12 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
 
         // init the resolver
         //
-        allPrimitivesResolver.getModel().populate(tagsForAllPrimitives, tagsForAllPrimitives.getKeysWithMultipleValues());
-        allPrimitivesResolver.getModel().prepareDefaultTagDecisions();
+        model.populate(tagsForAllPrimitives, tagsForAllPrimitives.getKeysWithMultipleValues());
+        model.prepareDefaultTagDecisions();
 
         // prepare the dialog with one tag resolver
         pnlTagResolver.removeAll();
-        pnlTagResolver.add(allPrimitivesResolver, BorderLayout.CENTER);
+        pnlTagResolver.add(new TagConflictResolver(model), BorderLayout.CENTER);
 
         statisticsModel.reset();
         StatisticsInfo info = new StatisticsInfo();
@@ -296,7 +297,7 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
             if (mode == null) {
                 setEnabled(false);
             } else if (mode.equals(Mode.RESOLVING_ONE_TAGCOLLECTION_ONLY)) {
-                setEnabled(allPrimitivesResolver.getModel().isResolvedCompletely());
+                setEnabled(model.isResolvedCompletely());
             } else {
                 setEnabled(resolvers.values().stream().allMatch(val -> val.getModel().isResolvedCompletely()));
             }
@@ -328,7 +329,7 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
      * @return conflict resolution
      */
     public TagCollection getResolution() {
-        return allPrimitivesResolver.getModel().getResolution();
+        return model.getResolution();
     }
 
     public TagCollection getResolution(OsmPrimitiveType type) {
@@ -339,10 +340,10 @@ public class PasteTagsConflictResolverDialog extends JDialog implements Property
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getPropertyName().equals(TagConflictResolverModel.NUM_CONFLICTS_PROP)) {
-            TagConflictResolverModel model = (TagConflictResolverModel) evt.getSource();
+            TagConflictResolverModel tagModel = (TagConflictResolverModel) evt.getSource();
             for (int i = 0; i < tpResolvers.getTabCount(); i++) {
                 TagConflictResolver resolver = (TagConflictResolver) tpResolvers.getComponentAt(i);
-                if (model == resolver.getModel()) {
+                if (tagModel == resolver.getModel()) {
                     tpResolvers.setIconAt(i,
                             (Integer) evt.getNewValue() == 0 ? iconResolved : iconUnresolved
                     );

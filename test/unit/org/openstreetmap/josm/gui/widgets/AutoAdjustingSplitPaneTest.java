@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.conflict.tags;
+package org.openstreetmap.josm.gui.widgets;
 
 import static org.junit.Assert.assertEquals;
 
@@ -9,15 +9,14 @@ import javax.swing.JSplitPane;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog.AutoAdjustingSplitPane;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Unit tests of {@link CombinePrimitiveResolverDialog} class.
+ * Unit tests of {@link AutoAdjustingSplitPane} class.
  */
-public class CombinePrimitiveResolverDialogTest {
+public class AutoAdjustingSplitPaneTest {
 
     /**
      * Setup test.
@@ -27,11 +26,11 @@ public class CombinePrimitiveResolverDialogTest {
     public JOSMTestRules test = new JOSMTestRules();
 
     /**
-     * Unit test of {@link CombinePrimitiveResolverDialog.AutoAdjustingSplitPane} class.
+     * Unit test of {@link AutoAdjustingSplitPane} class.
      */
     @Test
     public void testAutoAdjustingSplitPane() {
-        AutoAdjustingSplitPane pane = new CombinePrimitiveResolverDialog.AutoAdjustingSplitPane(JSplitPane.VERTICAL_SPLIT);
+        AutoAdjustingSplitPane pane = new AutoAdjustingSplitPane(JSplitPane.VERTICAL_SPLIT);
         assertEquals(-1, pane.getDividerLocation());
         assertEquals(0, pane.getHeight());
         pane.propertyChange(new PropertyChangeEvent(this, null, null, null));
