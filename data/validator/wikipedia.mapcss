@@ -129,7 +129,7 @@
 
 /* Wikipedia without wikidata */
 *[wikipedia][!wikidata] {
-  throwWarning: tr("wikipedia tag is set, but there is no wikidata tag. Wikipedia plugin might help with wikidata id lookups");
+  throwOther: tr("wikipedia tag is set, but there is no wikidata tag. Wikipedia plugin might help with wikidata id lookups");
   assertMatch: "node wikipedia=a";
   assertNoMatch: "node wikipedia=a wikidata=Q123";
   assertNoMatch: "node wikidata=Q1";
