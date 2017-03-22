@@ -11,8 +11,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.ActionEvent;
-import java.awt.event.HierarchyBoundsListener;
-import java.awt.event.HierarchyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
@@ -34,7 +32,6 @@ import javax.swing.JSplitPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
-import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -46,6 +43,7 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.AutoAdjustingSplitPane;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
@@ -61,16 +59,13 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  *
  * Prior to {@link #launchIfNecessary}, the following usage sequence was needed:
  *
- * There is a singleton instance of this dialog which can be retrieved using
- * {@link #getInstance()}.
- *
  * The dialog uses two models: one  for resolving tag conflicts, the other
  * for resolving conflicts in relation memberships. For both models there are accessors,
  * i.e {@link #getTagConflictResolverModel()} and {@link #getRelationMemberConflictResolverModel()}.
  *
  * Models have to be <strong>populated</strong> before the dialog is launched. Example:
  * <pre>
- *    CombinePrimitiveResolverDialog dialog = CombinePrimitiveResolverDialog.getInstance();
+ *    CombinePrimitiveResolverDialog dialog = new CombinePrimitiveResolverDialog(Main.parent);
  *    dialog.getTagConflictResolverModel().populate(aTagCollection);
  *    dialog.getRelationMemberConflictResolverModel().populate(aRelationLinkCollection);
  *    dialog.prepareDefaultDecisions();
@@ -86,26 +81,12 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  */
 public class CombinePrimitiveResolverDialog extends JDialog {
 
-    /** the unique instance of the dialog */
-    private static CombinePrimitiveResolverDialog instance;
-
-    /**
-     * Replies the unique instance of the dialog
-     *
-     * @return the unique instance of the dialog
-     * @deprecated use {@link #launchIfNecessary} instead.
-     */
-    @Deprecated
-    public static synchronized CombinePrimitiveResolverDialog getInstance() {
-        if (instance == null) {
-            GuiHelper.runInEDTAndWait(() -> instance = new CombinePrimitiveResolverDialog(Main.parent));
-        }
-        return instance;
-    }
-
     private AutoAdjustingSplitPane spTagConflictTypes;
-    private TagConflictResolver pnlTagConflictResolver;
+    private final TagConflictResolverModel modelTagConflictResolver;
+    protected TagConflictResolver pnlTagConflictResolver;
+    private final RelationMemberConflictResolverModel modelRelConflictResolver;
     protected RelationMemberConflictResolver pnlRelationMemberConflictResolver;
+    private final CombinePrimitiveResolver primitiveResolver;
     private boolean applied;
     private JPanel pnlButtons;
     protected transient OsmPrimitive targetPrimitive;
@@ -116,12 +97,36 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     private JButton btnApply;
 
     /**
-     * Replies the target primitive the collection of primitives is merged
-     * or combined to.
+     * Constructs a new {@code CombinePrimitiveResolverDialog}.
+     * @param parent The parent component in which this dialog will be displayed.
+     */
+    public CombinePrimitiveResolverDialog(Component parent) {
+        this(parent, new TagConflictResolverModel(), new RelationMemberConflictResolverModel());
+    }
+
+    /**
+     * Constructs a new {@code CombinePrimitiveResolverDialog}.
+     * @param parent The parent component in which this dialog will be displayed.
+     * @param tagModel tag conflict resolver model
+     * @param relModel relation member conflict resolver model
+     * @since 11772
+     */
+    public CombinePrimitiveResolverDialog(Component parent,
+            TagConflictResolverModel tagModel, RelationMemberConflictResolverModel relModel) {
+        super(GuiHelper.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
+        this.modelTagConflictResolver = tagModel;
+        this.modelRelConflictResolver = relModel;
+        this.primitiveResolver = new CombinePrimitiveResolver(tagModel, relModel);
+        build();
+    }
+
+    /**
+     * Replies the target primitive the collection of primitives is merged or combined to.
      *
      * @return the target primitive
+     * @since 11772 (naming)
      */
-    public OsmPrimitive getTargetPrimitmive() {
+    public OsmPrimitive getTargetPrimitive() {
         return targetPrimitive;
     }
 
@@ -148,6 +153,9 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         }
     }
 
+    /**
+     * Updates the dialog title.
+     */
     protected void updateTitle() {
         if (targetPrimitive == null) {
             setTitle(tr("Conflicts when combining primitives"));
@@ -168,6 +176,9 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         }
     }
 
+    /**
+     * Builds the components.
+     */
     protected final void build() {
         getContentPane().setLayout(new BorderLayout());
         updateTitle();
@@ -181,27 +192,43 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         InputMapUtils.addEscapeAction(getRootPane(), new CancelAction());
     }
 
+    /**
+     * Builds the tag conflict resolver panel.
+     * @return the tag conflict resolver panel
+     */
     protected JPanel buildTagConflictResolverPanel() {
-        pnlTagConflictResolver = new TagConflictResolver();
+        pnlTagConflictResolver = new TagConflictResolver(modelTagConflictResolver);
         return pnlTagConflictResolver;
     }
 
+    /**
+     * Builds the relation member conflict resolver panel.
+     * @return the relation member conflict resolver panel
+     */
     protected JPanel buildRelationMemberConflictResolverPanel() {
-        pnlRelationMemberConflictResolver = new RelationMemberConflictResolver(new RelationMemberConflictResolverModel());
+        pnlRelationMemberConflictResolver = new RelationMemberConflictResolver(modelRelConflictResolver);
         return pnlRelationMemberConflictResolver;
     }
 
+    /**
+     * Builds the "Apply" action.
+     * @return the "Apply" action
+     */
     protected ApplyAction buildApplyAction() {
         return new ApplyAction();
     }
 
+    /**
+     * Builds the button panel.
+     * @return the button panel
+     */
     protected JPanel buildButtonPanel() {
         JPanel pnl = new JPanel(new FlowLayout(FlowLayout.CENTER));
 
         // -- apply button
         ApplyAction applyAction = buildApplyAction();
-        pnlTagConflictResolver.getModel().addPropertyChangeListener(applyAction);
-        pnlRelationMemberConflictResolver.getModel().addPropertyChangeListener(applyAction);
+        modelTagConflictResolver.addPropertyChangeListener(applyAction);
+        modelRelConflictResolver.addPropertyChangeListener(applyAction);
         btnApply = new JButton(applyAction);
         btnApply.setFocusable(true);
         pnl.add(btnApply);
@@ -218,20 +245,11 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     }
 
     /**
-     * Constructs a new {@code CombinePrimitiveResolverDialog}.
-     * @param parent The parent component in which this dialog will be displayed.
-     */
-    public CombinePrimitiveResolverDialog(Component parent) {
-        super(GuiHelper.getFrameForComponent(parent), ModalityType.DOCUMENT_MODAL);
-        build();
-    }
-
-    /**
      * Replies the tag conflict resolver model.
      * @return The tag conflict resolver model.
      */
     public TagConflictResolverModel getTagConflictResolverModel() {
-        return pnlTagConflictResolver.getModel();
+        return modelTagConflictResolver;
     }
 
     /**
@@ -239,7 +257,7 @@ public class CombinePrimitiveResolverDialog extends JDialog {
      * @return The relation membership conflict resolver model.
      */
     public RelationMemberConflictResolverModel getRelationMemberConflictResolverModel() {
-        return pnlRelationMemberConflictResolver.getModel();
+        return modelRelConflictResolver;
     }
 
     /**
@@ -248,25 +266,18 @@ public class CombinePrimitiveResolverDialog extends JDialog {
      * @return true if all tag and relation member conflicts have been decided; false otherwise
      */
     public boolean isResolvedCompletely() {
-        return getTagConflictResolverModel().isResolvedCompletely()
-                && getRelationMemberConflictResolverModel().isResolvedCompletely();
+        return modelTagConflictResolver.isResolvedCompletely()
+            && modelRelConflictResolver.isResolvedCompletely();
     }
 
+    /**
+     * Builds the list of tag change commands.
+     * @param primitive target primitive
+     * @param tc all resolutions
+     * @return the list of tag change commands
+     */
     protected List<Command> buildTagChangeCommand(OsmPrimitive primitive, TagCollection tc) {
-        List<Command> cmds = new LinkedList<>();
-        for (String key : tc.getKeys()) {
-            if (tc.hasUniqueEmptyValue(key)) {
-                if (primitive.get(key) != null) {
-                    cmds.add(new ChangePropertyCommand(primitive, key, null));
-                }
-            } else {
-                String value = tc.getJoinedValues(key);
-                if (!value.equals(primitive.get(key))) {
-                    cmds.add(new ChangePropertyCommand(primitive, key, value));
-                }
-            }
-        }
-        return cmds;
+        return primitiveResolver.buildTagChangeCommand(primitive, tc);
     }
 
     /**
@@ -274,23 +285,8 @@ public class CombinePrimitiveResolverDialog extends JDialog {
      * @return The list of {@link Command commands} needed to apply resolution choices.
      */
     public List<Command> buildResolutionCommands() {
-        List<Command> cmds = new LinkedList<>();
-
-        TagCollection allResolutions = getTagConflictResolverModel().getAllResolutions();
-        if (!allResolutions.isEmpty()) {
-            cmds.addAll(buildTagChangeCommand(targetPrimitive, allResolutions));
-        }
-        for (String p : OsmPrimitive.getDiscardableKeys()) {
-            if (targetPrimitive.get(p) != null) {
-                cmds.add(new ChangePropertyCommand(targetPrimitive, p, null));
-            }
-        }
-
-        if (getRelationMemberConflictResolverModel().getNumDecisions() > 0) {
-            cmds.addAll(getRelationMemberConflictResolverModel().buildResolutionCommands(targetPrimitive));
-        }
-
-        Command cmd = pnlRelationMemberConflictResolver.buildTagApplyCommands(getRelationMemberConflictResolverModel()
+        List<Command> cmds = primitiveResolver.buildResolutionCommands(targetPrimitive);
+        Command cmd = pnlRelationMemberConflictResolver.buildTagApplyCommands(modelRelConflictResolver
                 .getModifiedRelations(targetPrimitive));
         if (cmd != null) {
             cmds.add(cmd);
@@ -311,30 +307,35 @@ public class CombinePrimitiveResolverDialog extends JDialog {
      * @since 11626
      */
     private void prepareDefaultDecisions(boolean fireEvent) {
-        getTagConflictResolverModel().prepareDefaultTagDecisions(fireEvent);
-        getRelationMemberConflictResolverModel().prepareDefaultRelationDecisions(fireEvent);
+        modelTagConflictResolver.prepareDefaultTagDecisions(fireEvent);
+        modelRelConflictResolver.prepareDefaultRelationDecisions(fireEvent);
     }
 
+    /**
+     * Builds empty conflicts panel.
+     * @return empty conflicts panel
+     */
     protected JPanel buildEmptyConflictsPanel() {
         JPanel pnl = new JPanel(new BorderLayout());
         pnl.add(new JLabel(tr("No conflicts to resolve")));
         return pnl;
     }
 
+    /**
+     * Prepares GUI before conflict resolution starts.
+     */
     protected void prepareGUIBeforeConflictResolutionStarts() {
-        RelationMemberConflictResolverModel relModel = getRelationMemberConflictResolverModel();
-        TagConflictResolverModel tagModel = getTagConflictResolverModel();
         getContentPane().removeAll();
 
-        if (relModel.getNumDecisions() > 0 && tagModel.getNumDecisions() > 0) {
+        if (modelRelConflictResolver.getNumDecisions() > 0 && modelTagConflictResolver.getNumDecisions() > 0) {
             // display both, the dialog for resolving relation conflicts and for resolving tag conflicts
             spTagConflictTypes.setTopComponent(pnlTagConflictResolver);
             spTagConflictTypes.setBottomComponent(pnlRelationMemberConflictResolver);
             getContentPane().add(spTagConflictTypes, BorderLayout.CENTER);
-        } else if (relModel.getNumDecisions() > 0) {
+        } else if (modelRelConflictResolver.getNumDecisions() > 0) {
             // relation conflicts only
             getContentPane().add(pnlRelationMemberConflictResolver, BorderLayout.CENTER);
-        } else if (tagModel.getNumDecisions() > 0) {
+        } else if (modelTagConflictResolver.getNumDecisions() > 0) {
             // tag conflicts only
             getContentPane().add(pnlTagConflictResolver, BorderLayout.CENTER);
         } else {
@@ -347,6 +348,10 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         pnlRelationMemberConflictResolver.prepareForEditing();
     }
 
+    /**
+     * Sets whether this dialog has been closed with "Apply".
+     * @param applied {@code true} if this dialog has been closed with "Apply"
+     */
     protected void setApplied(boolean applied) {
         this.applied = applied;
     }
@@ -374,9 +379,15 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         super.setVisible(visible);
     }
 
-    class CancelAction extends AbstractAction {
+    /**
+     * Cancel action.
+     */
+    protected class CancelAction extends AbstractAction {
 
-        CancelAction() {
+        /**
+         * Constructs a new {@code CancelAction}.
+         */
+        public CancelAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Cancel conflict resolution"));
             putValue(Action.NAME, tr("Cancel"));
             new ImageProvider("cancel").getResource().attachImageIcon(this);
@@ -389,8 +400,14 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         }
     }
 
+    /**
+     * Apply action.
+     */
     protected class ApplyAction extends AbstractAction implements PropertyChangeListener {
 
+        /**
+         * Constructs a new {@code ApplyAction}.
+         */
         public ApplyAction() {
             putValue(Action.SHORT_DESCRIPTION, tr("Apply resolved conflicts"));
             putValue(Action.NAME, tr("Apply"));
@@ -405,9 +422,12 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             pnlTagConflictResolver.rememberPreferences();
         }
 
+        /**
+         * Updates enabled state.
+         */
         protected final void updateEnabledState() {
-            setEnabled(pnlTagConflictResolver.getModel().getNumConflicts() == 0
-                    && pnlRelationMemberConflictResolver.getModel().getNumConflicts() == 0);
+            setEnabled(modelTagConflictResolver.isResolvedCompletely()
+                    && modelRelConflictResolver.isResolvedCompletely());
         }
 
         @Override
@@ -422,8 +442,8 @@ public class CombinePrimitiveResolverDialog extends JDialog {
     }
 
     private void adjustDividerLocation() {
-        int numTagDecisions = getTagConflictResolverModel().getNumDecisions();
-        int numRelationDecisions = getRelationMemberConflictResolverModel().getNumDecisions();
+        int numTagDecisions = modelTagConflictResolver.getNumDecisions();
+        int numRelationDecisions = modelRelConflictResolver.getNumDecisions();
         if (numTagDecisions > 0 && numRelationDecisions > 0) {
             double nTop = 1.0 + numTagDecisions;
             double nBottom = 2.5 + numRelationDecisions;
@@ -435,36 +455,6 @@ public class CombinePrimitiveResolverDialog extends JDialog {
         @Override
         public void windowOpened(WindowEvent e) {
             adjustDividerLocation();
-        }
-    }
-
-    static class AutoAdjustingSplitPane extends JSplitPane implements PropertyChangeListener, HierarchyBoundsListener {
-        private double dividerLocation;
-
-        AutoAdjustingSplitPane(int newOrientation) {
-            super(newOrientation);
-            addPropertyChangeListener(JSplitPane.DIVIDER_LOCATION_PROPERTY, this);
-            addHierarchyBoundsListener(this);
-        }
-
-        @Override
-        public void ancestorResized(HierarchyEvent e) {
-            setDividerLocation((int) (dividerLocation * getHeight()));
-        }
-
-        @Override
-        public void ancestorMoved(HierarchyEvent e) {
-            // do nothing
-        }
-
-        @Override
-        public void propertyChange(PropertyChangeEvent evt) {
-            if (JSplitPane.DIVIDER_LOCATION_PROPERTY.equals(evt.getPropertyName())) {
-                int newVal = (Integer) evt.getNewValue();
-                if (getHeight() != 0) {
-                    dividerLocation = (double) newVal / (double) getHeight();
-                }
-            }
         }
     }
 
@@ -511,15 +501,25 @@ public class CombinePrimitiveResolverDialog extends JDialog {
             }
         }
 
-        List<Command> cmds = new LinkedList<>();
+        final List<Command> cmds = new LinkedList<>();
 
-        if (!GraphicsEnvironment.isHeadless()) {
+        final TagConflictResolverModel tagModel = new TagConflictResolverModel();
+        final RelationMemberConflictResolverModel relModel = new RelationMemberConflictResolverModel();
+
+        tagModel.populate(tagsToEdit, completeWayTags.getKeysWithMultipleValues(), false);
+        relModel.populate(parentRelations, primitives, false);
+        tagModel.prepareDefaultTagDecisions(false);
+        relModel.prepareDefaultRelationDecisions(false);
+
+        if (tagModel.isResolvedCompletely() && relModel.isResolvedCompletely()) {
+            // Build commands without need of dialog
+            CombinePrimitiveResolver resolver = new CombinePrimitiveResolver(tagModel, relModel);
+            for (OsmPrimitive i : targetPrimitives) {
+                cmds.addAll(resolver.buildResolutionCommands(i));
+            }
+        } else if (!GraphicsEnvironment.isHeadless()) {
             // Build conflict resolution dialog
-            final CombinePrimitiveResolverDialog dialog = CombinePrimitiveResolverDialog.getInstance();
-
-            dialog.getTagConflictResolverModel().populate(tagsToEdit, completeWayTags.getKeysWithMultipleValues(), false);
-            dialog.getRelationMemberConflictResolverModel().populate(parentRelations, primitives, false);
-            dialog.prepareDefaultDecisions(false);
+            final CombinePrimitiveResolverDialog dialog = new CombinePrimitiveResolverDialog(Main.parent, tagModel, relModel);
 
             // Ensure a proper title is displayed instead of a previous target (fix #7925)
             if (targetPrimitives.size() == 1) {
@@ -528,18 +528,18 @@ public class CombinePrimitiveResolverDialog extends JDialog {
                 dialog.setTargetPrimitive(null, false);
             }
 
-            // Resolve tag conflicts if necessary
-            if (!dialog.isResolvedCompletely()) {
-                GuiHelper.runInEDTAndWait(() -> {
-                    dialog.getTagConflictResolverModel().fireTableDataChanged();
-                    dialog.getRelationMemberConflictResolverModel().fireTableDataChanged();
-                    dialog.updateTitle();
-                });
-                dialog.setVisible(true);
-                if (!dialog.isApplied()) {
-                    throw new UserCancelException();
-                }
+            // Resolve tag conflicts
+            GuiHelper.runInEDTAndWait(() -> {
+                tagModel.fireTableDataChanged();
+                relModel.fireTableDataChanged();
+                dialog.updateTitle();
+            });
+            dialog.setVisible(true);
+            if (!dialog.isApplied()) {
+                throw new UserCancelException();
             }
+
+            // Build commands
             for (OsmPrimitive i : targetPrimitives) {
                 dialog.setTargetPrimitive(i, false);
                 cmds.addAll(dialog.buildResolutionCommands());
