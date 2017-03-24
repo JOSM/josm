@@ -355,7 +355,10 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                 event = reader.next()) {
             if (event == XMLStreamReader.START_ELEMENT) {
                 if (QN_LAYER.equals(reader.getName())) {
-                    layers.add(parseLayer(reader));
+                    Layer l = parseLayer(reader);
+                    if (l != null) {
+                        layers.add(l);
+                    }
                 }
                 if (QN_TILEMATRIXSET.equals(reader.getName())) {
                     TileMatrixSet entry = parseTileMatrixSet(reader);
@@ -386,6 +389,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         Layer layer = new Layer();
         Stack<QName> tagStack = new Stack<>();
         List<String> supportedMimeTypes = Arrays.asList(ImageIO.getReaderMIMETypes());
+        Collection<String> unsupportedFormats = new ArrayList<>();
 
         for (int event = reader.getEventType();
                 reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT && QN_LAYER.equals(reader.getName()));
@@ -397,6 +401,8 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                         String format = reader.getElementText();
                         if (supportedMimeTypes.contains(format)) {
                             layer.format = format;
+                        } else {
+                            unsupportedFormats.add(format);
                         }
                     } else if (GetCapabilitiesParseHelper.QN_OWS_IDENTIFIER.equals(reader.getName())) {
                         layer.name = reader.getElementText();
@@ -427,6 +433,13 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         }
         if (layer.style == null) {
             layer.style = "";
+        }
+        if (layer.format == null) {
+            // no format found - it's mandatory parameter - can't use this layer
+            Main.warn(tr("Can''t use layer {0} because no supported formats where found. Layer is available in formats: {1}",
+                    layer.name,
+                    String.join(", ", unsupportedFormats)));
+            return null;
         }
         return layer;
     }
