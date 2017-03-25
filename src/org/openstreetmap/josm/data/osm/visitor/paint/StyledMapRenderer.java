@@ -440,7 +440,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param text The text to write on the area.
      */
     public void drawArea(Relation r, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled, TextLabel text) {
-        Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, r);
+        Multipolygon multipolygon = MultipolygonCache.getInstance().get(r);
         if (!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
             for (PolyData pd : multipolygon.getCombinedPolygons()) {
                 if (!isAreaVisible(pd.get())) {
@@ -1128,7 +1128,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         if (osm instanceof Way) {
             consumer.accept(getPath((Way) osm));
         } else if (osm instanceof Relation) {
-            Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, (Relation) osm);
+            Multipolygon multipolygon = MultipolygonCache.getInstance().get((Relation) osm);
             if (!multipolygon.getOuterWays().isEmpty()) {
                 for (PolyData pd : multipolygon.getCombinedPolygons()) {
                     MapViewPath path = new MapViewPath(mapState);

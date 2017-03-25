@@ -15,7 +15,6 @@ import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler.InDataSourceArea;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -740,7 +739,7 @@ public final class ConditionFactory {
         static boolean unclosed_multipolygon(Environment e) { // NO_UCD (unused code)
             return e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon() &&
                     !e.osm.isIncomplete() && !((Relation) e.osm).hasIncompleteMembers() &&
-                    !MultipolygonCache.getInstance().get(Main.map.mapView, (Relation) e.osm).getOpenEnds().isEmpty();
+                    !MultipolygonCache.getInstance().get((Relation) e.osm).getOpenEnds().isEmpty();
         }
 
         private static final Predicate<OsmPrimitive> IN_DOWNLOADED_AREA = new InDataSourceArea(false);
@@ -767,7 +766,7 @@ public final class ConditionFactory {
             if (e.osm instanceof Way && ((Way) e.osm).isClosed())
                 return true;
             if (e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon())
-                return MultipolygonCache.getInstance().get(Main.map.mapView, (Relation) e.osm).getOpenEnds().isEmpty();
+                return MultipolygonCache.getInstance().get((Relation) e.osm).getOpenEnds().isEmpty();
             return false;
         }
 

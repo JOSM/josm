@@ -87,6 +87,10 @@ public class ElemStyles implements PreferenceChangedListener {
         });
     }
 
+    /**
+     * Returns the list of style sources.
+     * @return the list of style sources
+     */
     public List<StyleSource> getStyleSources() {
         return Collections.<StyleSource>unmodifiableList(styleSources);
     }
@@ -217,7 +221,7 @@ public class ElemStyles implements PreferenceChangedListener {
                 if (!drawMultipolygon || !r.isMultipolygon() || !r.isUsable()) {
                     continue;
                 }
-                Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, r);
+                Multipolygon multipolygon = MultipolygonCache.getInstance().get(r);
 
                 if (multipolygon.getOuterWays().contains(osm)) {
                     boolean hasIndependentLineStyle = false;
@@ -285,7 +289,7 @@ public class ElemStyles implements PreferenceChangedListener {
                 if (!drawMultipolygon || !ref.isMultipolygon() || !ref.isUsable()) {
                     continue;
                 }
-                final Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, ref);
+                final Multipolygon multipolygon = MultipolygonCache.getInstance().get(ref);
 
                 if (multipolygon.getInnerWays().contains(osm)) {
                     p = generateStyles(osm, scale, false);
@@ -319,7 +323,7 @@ public class ElemStyles implements PreferenceChangedListener {
             if (drawMultipolygon && ((Relation) osm).isMultipolygon()
                     && !Utils.exists(p.a, AreaElement.class) && Main.pref.getBoolean("multipolygon.deprecated.outerstyle", true)) {
                 // look at outer ways to find area style
-                Multipolygon multipolygon = MultipolygonCache.getInstance().get(nc, (Relation) osm);
+                Multipolygon multipolygon = MultipolygonCache.getInstance().get((Relation) osm);
                 for (Way w : multipolygon.getOuterWays()) {
                     Pair<StyleElementList, Range> wayStyles = generateStyles(w, scale, false);
                     p.b = Range.cut(p.b, wayStyles.b);

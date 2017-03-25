@@ -8,7 +8,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -28,6 +27,7 @@ import org.openstreetmap.josm.tools.Geometry;
  */
 public class PowerLines extends Test {
 
+    /** Test identifier */
     protected static final int POWER_LINES = 2501;
 
     /** Values for {@code power} key interpreted as power lines */
@@ -105,7 +105,7 @@ public class PowerLines extends Test {
             if (station instanceof Way) {
                 nodesLists.add(((Way) station).getNodes());
             } else if (station instanceof Relation) {
-                Multipolygon polygon = MultipolygonCache.getInstance().get(Main.map.mapView, (Relation) station);
+                Multipolygon polygon = MultipolygonCache.getInstance().get((Relation) station);
                 if (polygon != null) {
                     for (JoinedWay outer : Multipolygon.joinWays(polygon.getOuterWays())) {
                         nodesLists.add(outer.getNodes());
