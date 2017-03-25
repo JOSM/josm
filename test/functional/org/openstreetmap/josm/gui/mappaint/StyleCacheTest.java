@@ -10,8 +10,11 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.IdentityHashMap;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
@@ -20,11 +23,15 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Pair;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Test {@link StyleCache}.
@@ -40,28 +47,55 @@ public class StyleCacheTest {
     private static DataSet dsCity;
     private static DataSet dsCity2;
 
+    /**
+     * The test rules used for this test.
+     */
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences().platform().projection();
+
+    /**
+     * Load the test data that is required.
+     * @throws Exception
+     */
     @BeforeClass
     public static void load() throws Exception {
-        JOSMFixture.createPerformanceTestFixture().init(true);
         img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
-        g = (Graphics2D) img.getGraphics();
-        g.setClip(0, 0, IMG_WIDTH, IMG_WIDTH);
-        g.setColor(Color.BLACK);
-        g.fillRect(0, 0, IMG_WIDTH, IMG_WIDTH);
-        nc = Main.map.mapView;
-        nc.setBounds(0, 0, IMG_WIDTH, IMG_HEIGHT);
 
-        MapPaintStyles.readFromPreferences();
         try (
             InputStream fisC = Compression.getUncompressedFileInputStream(new File("data_nodist/neubrandenburg.osm.bz2"));
         ) {
             dsCity = OsmReader.parseDataSet(fisC, NullProgressMonitor.INSTANCE);
         }
-        try (
-            InputStream fisC = Compression.getUncompressedFileInputStream(new File("data_nodist/neubrandenburg.osm.bz2"));
-        ) {
-            dsCity2 = OsmReader.parseDataSet(fisC, NullProgressMonitor.INSTANCE);
-        }
+        dsCity2 = new DataSet(dsCity);
+    }
+
+    /**
+     * Free the memory allocated for this test.
+     * <p>
+     * Since we are running junit in non-forked mode, we don't know when this test will not be referenced any more.
+     */
+    @AfterClass
+    public static void unload() {
+        g = null;
+        img = null;
+        nc = null;
+        dsCity = null;
+        dsCity2 = null;
+    }
+
+    /**
+     * Create the temporary graphics
+     */
+    @Before
+    public void loadGraphicComponents() {
+        g = (Graphics2D) img.getGraphics();
+        g.setClip(0, 0, IMG_WIDTH, IMG_WIDTH);
+        g.setColor(Color.BLACK);
+        g.fillRect(0, 0, IMG_WIDTH, IMG_WIDTH);
+        nc = new MapView(Main.getLayerManager(), null);
+        nc.setBounds(0, 0, IMG_WIDTH, IMG_HEIGHT);
+        MapPaintStyles.readFromPreferences();
     }
 
     /**
@@ -78,6 +112,9 @@ public class StyleCacheTest {
      */
     @Test
     public void testStyleCacheInternPool() {
+        // This can be removed if there was no dependency on Main.map in some MapCSS conditions. See #14572
+        JOSMFixture.createFunctionalTestFixture().init(true);
+
         Bounds bounds = new Bounds(53.56, 13.25, 53.57, 13.26);
         Rendering visitor = new StyledMapRenderer(g, nc, false);
         nc.zoomTo(bounds);
@@ -104,6 +141,9 @@ public class StyleCacheTest {
      */
     @Test
     public void testStyleCacheInternPool2() {
+        // This can be removed if there was no dependency on Main.map in some MapCSS conditions. See #14572
+        JOSMFixture.createFunctionalTestFixture().init(true);
+
         Bounds bounds = new Bounds(53.56, 13.25, 53.57, 13.26);
         Rendering visitor = new StyledMapRenderer(g, nc, false);
         nc.zoomTo(bounds);
