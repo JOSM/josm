@@ -56,7 +56,7 @@ public class StyleCacheTest {
 
     /**
      * Load the test data that is required.
-     * @throws Exception It an error occurred during load.
+     * @throws Exception If an error occurred during load.
      */
     @BeforeClass
     public static void load() throws Exception {
