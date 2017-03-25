@@ -244,7 +244,7 @@ public interface Selector {
                 @Override
                 public void visit(Relation r) {
                     if (left.matches(e.withPrimitive(r))) {
-                        final List<Node> openEnds = MultipolygonCache.getInstance().get(Main.map.mapView, r).getOpenEnds();
+                        final List<Node> openEnds = MultipolygonCache.getInstance().get(r).getOpenEnds();
                         final int openEndIndex = openEnds.indexOf(e.osm);
                         if (openEndIndex >= 0) {
                             e.parent = r;

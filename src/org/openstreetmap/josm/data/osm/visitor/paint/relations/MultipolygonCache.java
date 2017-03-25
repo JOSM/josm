@@ -27,7 +27,6 @@ import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
-import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
@@ -42,7 +41,7 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
 
     private static final MultipolygonCache INSTANCE = new MultipolygonCache();
 
-    private final Map<NavigatableComponent, Map<DataSet, Map<Relation, Multipolygon>>> cache;
+    private final Map<DataSet, Map<Relation, Multipolygon>> cache;
 
     private final Collection<PolyData> selectedPolyData;
 
@@ -64,33 +63,28 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
 
     /**
      * Gets a multipolygon from cache.
-     * @param nc The navigatable component
      * @param r The multipolygon relation
      * @return A multipolygon object for the given relation, or {@code null}
+     * @since 11779
      */
-    public Multipolygon get(NavigatableComponent nc, Relation r) {
-        return get(nc, r, false);
+    public Multipolygon get(Relation r) {
+        return get(r, false);
     }
 
     /**
      * Gets a multipolygon from cache.
-     * @param nc The navigatable component
      * @param r The multipolygon relation
      * @param forceRefresh if {@code true}, a new object will be created even of present in cache
      * @return A multipolygon object for the given relation, or {@code null}
+     * @since 11779
      */
-    public Multipolygon get(NavigatableComponent nc, Relation r, boolean forceRefresh) {
+    public Multipolygon get(Relation r, boolean forceRefresh) {
         Multipolygon multipolygon = null;
-        if (nc != null && r != null) {
-            Map<DataSet, Map<Relation, Multipolygon>> map1 = cache.get(nc);
-            if (map1 == null) {
-                map1 = new ConcurrentHashMap<>();
-                cache.put(nc, map1);
-            }
-            Map<Relation, Multipolygon> map2 = map1.get(r.getDataSet());
+        if (r != null) {
+            Map<Relation, Multipolygon> map2 = cache.get(r.getDataSet());
             if (map2 == null) {
                 map2 = new ConcurrentHashMap<>();
-                map1.put(r.getDataSet(), map2);
+                cache.put(r.getDataSet(), map2);
             }
             multipolygon = map2.get(r);
             if (multipolygon == null || forceRefresh) {
@@ -107,26 +101,13 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
     }
 
     /**
-     * Clears the cache for the given navigatable component.
-     * @param nc the navigatable component
-     */
-    public void clear(NavigatableComponent nc) {
-        Map<DataSet, Map<Relation, Multipolygon>> map = cache.remove(nc);
-        if (map != null) {
-            map.clear();
-        }
-    }
-
-    /**
      * Clears the cache for the given dataset.
      * @param ds the data set
      */
     public void clear(DataSet ds) {
-        for (Map<DataSet, Map<Relation, Multipolygon>> map1 : cache.values()) {
-            Map<Relation, Multipolygon> map2 = map1.remove(ds);
-            if (map2 != null) {
-                map2.clear();
-            }
+        Map<Relation, Multipolygon> map2 = cache.remove(ds);
+        if (map2 != null) {
+            map2.clear();
         }
     }
 
@@ -139,11 +120,9 @@ public final class MultipolygonCache implements DataSetListener, LayerChangeList
 
     private Collection<Map<Relation, Multipolygon>> getMapsFor(DataSet ds) {
         List<Map<Relation, Multipolygon>> result = new ArrayList<>();
-        for (Map<DataSet, Map<Relation, Multipolygon>> map : cache.values()) {
-            Map<Relation, Multipolygon> map2 = map.get(ds);
-            if (map2 != null) {
-                result.add(map2);
-            }
+        Map<Relation, Multipolygon> map2 = cache.get(ds);
+        if (map2 != null) {
+            result.add(map2);
         }
         return result;
     }

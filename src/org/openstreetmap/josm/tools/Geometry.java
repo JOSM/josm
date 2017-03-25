@@ -532,7 +532,7 @@ public final class Geometry {
     public static Area getAreaLatLon(Relation multipolygon) {
         final Multipolygon mp = Main.map == null || Main.map.mapView == null
                 ? new Multipolygon(multipolygon)
-                : MultipolygonCache.getInstance().get(Main.map.mapView, multipolygon);
+                : MultipolygonCache.getInstance().get(multipolygon);
         Path2D path = new Path2D.Double();
         path.setWindingRule(Path2D.WIND_EVEN_ODD);
         for (Multipolygon.PolyData pd : mp.getCombinedPolygons()) {
@@ -672,7 +672,7 @@ public final class Geometry {
         double area = 0.0;
         final Multipolygon mp = Main.map == null || Main.map.mapView == null
                 ? new Multipolygon(multipolygon)
-                : MultipolygonCache.getInstance().get(Main.map.mapView, multipolygon);
+                : MultipolygonCache.getInstance().get(multipolygon);
         for (Multipolygon.PolyData pd : mp.getCombinedPolygons()) {
             area += pd.getAreaAndPerimeter(Projections.getProjectionByCode("EPSG:54008")).getArea();
         }

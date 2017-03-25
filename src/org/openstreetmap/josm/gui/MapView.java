@@ -749,7 +749,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         layerManager.removeActiveLayerChangeListener(this);
         Main.pref.removePreferenceChangeListener(this);
         DataSet.removeSelectionListener(repaintSelectionChangedListener);
-        MultipolygonCache.getInstance().clear(this);
+        MultipolygonCache.getInstance().clear();
         if (mapMover != null) {
             mapMover.destroy();
         }
