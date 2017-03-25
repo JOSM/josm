@@ -342,9 +342,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             } else {
                 registeredLayers.put(layer, painter);
 
-                ProjectionBounds viewProjectionBounds = layer.getViewProjectionBounds();
-                if (viewProjectionBounds != null) {
-                    scheduleZoomTo(new ViewportData(viewProjectionBounds));
+                if (e.isZoomRequired()) {
+                    ProjectionBounds viewProjectionBounds = layer.getViewProjectionBounds();
+                    if (viewProjectionBounds != null) {
+                        scheduleZoomTo(new ViewportData(viewProjectionBounds));
+                    }
                 }
 
                 layer.addPropertyChangeListener(this);

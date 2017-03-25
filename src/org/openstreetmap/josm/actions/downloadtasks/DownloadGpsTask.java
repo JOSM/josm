@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Bounds.ParseMethod;
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
@@ -38,6 +39,7 @@ import org.xml.sax.SAXException;
 public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
 
     private DownloadTask downloadTask;
+    private GpxLayer gpxLayer;
 
     private static final String PATTERN_TRACE_ID = "https?://.*(osm|openstreetmap).org/trace/\\p{Digit}+/data";
     private static final String PATTERN_USER_TRACE_ID = "https?://.*(osm|openstreetmap).org/user/[^/]+/traces/(\\p{Digit}+)";
@@ -113,6 +115,11 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
         }
     }
 
+    @Override
+    public ProjectionBounds getDownloadProjectionBounds() {
+        return gpxLayer != null ? gpxLayer.getViewProjectionBounds() : null;
+    }
+
     class DownloadTask extends PleaseWaitRunnable {
         private final OsmServerReader reader;
         private GpxData rawData;
@@ -129,8 +136,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
             try {
                 if (isCanceled())
                     return;
-                ProgressMonitor subMonitor = progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false);
-                rawData = reader.parseRawGps(subMonitor);
+                rawData = reader.parseRawGps(progressMonitor.createSubTaskMonitor(ProgressMonitor.ALL_TICKS, false));
             } catch (OsmTransferException e) {
                 if (isCanceled())
                     return;
@@ -148,7 +154,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
             GpxImporterData layers = GpxImporter.loadLayers(rawData, reader.isGpxParsedProperly(), name,
                     tr("Markers from {0}", name));
 
-            GpxLayer gpxLayer = addOrMergeLayer(layers.getGpxLayer(), findGpxMergeLayer());
+            gpxLayer = addOrMergeLayer(layers.getGpxLayer(), findGpxMergeLayer());
             addOrMergeLayer(layers.getMarkerLayer(), findMarkerMergeLayer(gpxLayer));
 
             layers.getPostLayerTask().run();
@@ -157,12 +163,12 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
         private <L extends Layer> L addOrMergeLayer(L layer, L mergeLayer) {
             if (layer == null) return null;
             if (newLayer || mergeLayer == null) {
-                Main.getLayerManager().addLayer(layer);
+                Main.getLayerManager().addLayer(layer, zoomAfterDownload);
                 return layer;
             } else {
                 mergeLayer.mergeFrom(layer);
                 mergeLayer.invalidate();
-                if (Main.map != null && zoomAfterDownload) {
+                if (Main.map != null && zoomAfterDownload && layer instanceof GpxLayer) {
                     Main.map.mapView.scheduleZoomTo(new ViewportData(layer.getViewProjectionBounds()));
                 }
                 return mergeLayer;

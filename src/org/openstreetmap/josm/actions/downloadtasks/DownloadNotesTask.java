@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.NoteData;
@@ -39,6 +40,7 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
     public static final IntegerProperty DAYS_CLOSED = new IntegerProperty("osm.notes.daysClosed", 7);
 
     private DownloadTask downloadTask;
+    private NoteLayer noteLayer;
 
     /**
      * Download a specific note by its id.
@@ -95,6 +97,11 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
         return true;
     }
 
+    @Override
+    public ProjectionBounds getDownloadProjectionBounds() {
+        return noteLayer != null ? noteLayer.getViewProjectionBounds() : null;
+    }
+
     abstract class DownloadTask extends PleaseWaitRunnable {
         protected OsmServerReader reader;
         protected List<Note> notesData;
@@ -116,12 +123,13 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
 
             List<NoteLayer> noteLayers = Main.getLayerManager().getLayersOfType(NoteLayer.class);
             if (!noteLayers.isEmpty()) {
-                noteLayers.get(0).getNoteData().addNotes(notesData);
+                noteLayer = noteLayers.get(0);
+                noteLayer.getNoteData().addNotes(notesData);
                 if (Main.map != null && zoomAfterDownload) {
-                    Main.map.mapView.scheduleZoomTo(new ViewportData(noteLayers.get(0).getViewProjectionBounds()));
+                    Main.map.mapView.scheduleZoomTo(new ViewportData(noteLayer.getViewProjectionBounds()));
                 }
             } else {
-                Main.getLayerManager().addLayer(new NoteLayer(notesData, tr("Notes")));
+                Main.getLayerManager().addLayer(new NoteLayer(notesData, tr("Notes")), zoomAfterDownload);
             }
         }
 

@@ -4,6 +4,7 @@ package org.openstreetmap.josm.actions.downloadtasks;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.io.XmlWriter;
 
 /**
@@ -168,5 +169,14 @@ public abstract class AbstractDownloadTask<T> implements DownloadTask {
     @Override
     public String[] getPatterns() {
         return new String[]{};
+    }
+
+    /**
+     * Returns the projection bounds of downloaded data.
+     * @return the projection bounds of downloaded data or {@code null}
+     * @since 11774
+     */
+    public ProjectionBounds getDownloadProjectionBounds() {
+        return null;
     }
 }

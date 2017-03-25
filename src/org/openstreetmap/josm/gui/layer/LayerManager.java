@@ -70,6 +70,10 @@ public class LayerManager {
             this.source = source;
         }
 
+        /**
+         * Returns the {@code LayerManager} at the origin of this event.
+         * @return the {@code LayerManager} at the origin of this event
+         */
         public LayerManager getSource() {
             return source;
         }
@@ -81,10 +85,12 @@ public class LayerManager {
      */
     public static class LayerAddEvent extends LayerManagerEvent {
         private final Layer addedLayer;
+        private final boolean requiresZoom;
 
-        LayerAddEvent(LayerManager source, Layer addedLayer) {
+        LayerAddEvent(LayerManager source, Layer addedLayer, boolean requiresZoom) {
             super(source);
             this.addedLayer = addedLayer;
+            this.requiresZoom = requiresZoom;
         }
 
         /**
@@ -93,6 +99,15 @@ public class LayerManager {
          */
         public Layer getAddedLayer() {
             return addedLayer;
+        }
+
+        /**
+         * Determines if an initial zoom is required.
+         * @return {@code true} if a zoom is required when this layer is added
+         * @since 11774
+         */
+        public final boolean isZoomRequired() {
+            return requiresZoom;
         }
 
         @Override
@@ -181,16 +196,25 @@ public class LayerManager {
     private final List<LayerChangeListener> layerChangeListeners = new CopyOnWriteArrayList<>();
 
     /**
-     * Add a layer. The layer will be added at a given position.
+     * Add a layer. The layer will be added at a given position and the mapview zoomed at its projection bounds.
      * @param layer The layer to add
      */
     public void addLayer(final Layer layer) {
-        // we force this on to the EDT Thread to make events fire from there.
-        // The synchronization lock needs to be held by the EDT.
-        GuiHelper.runInEDTAndWaitWithException(() -> realAddLayer(layer));
+        addLayer(layer, true);
     }
 
-    protected synchronized void realAddLayer(Layer layer) {
+    /**
+     * Add a layer. The layer will be added at a given position.
+     * @param layer The layer to add
+     * @param initialZoom whether if the mapview must be zoomed at layer projection bounds
+     */
+    public void addLayer(final Layer layer, final boolean initialZoom) {
+        // we force this on to the EDT Thread to make events fire from there.
+        // The synchronization lock needs to be held by the EDT.
+        GuiHelper.runInEDTAndWaitWithException(() -> realAddLayer(layer, initialZoom));
+    }
+
+    protected synchronized void realAddLayer(Layer layer, boolean initialZoom) {
         if (containsLayer(layer)) {
             throw new IllegalArgumentException("Cannot add a layer twice: " + layer);
         }
@@ -198,7 +222,7 @@ public class LayerManager {
         int position = positionStrategy.getPosition(this);
         checkPosition(position);
         insertLayerAt(layer, position);
-        fireLayerAdded(layer);
+        fireLayerAdded(layer, initialZoom);
         if (Main.map != null) {
             layer.hookUpMapView(); // needs to be after fireLayerAdded
         }
@@ -365,7 +389,7 @@ public class LayerManager {
         layerChangeListeners.add(listener);
         if (fireAdd) {
             for (Layer l : getLayers()) {
-                listener.layerAdded(new LayerAddEvent(this, l));
+                listener.layerAdded(new LayerAddEvent(this, l, true));
             }
         }
     }
@@ -398,9 +422,9 @@ public class LayerManager {
         }
     }
 
-    private void fireLayerAdded(Layer layer) {
+    private void fireLayerAdded(Layer layer, boolean initialZoom) {
         GuiHelper.assertCallFromEdt();
-        LayerAddEvent e = new LayerAddEvent(this, layer);
+        LayerAddEvent e = new LayerAddEvent(this, layer, initialZoom);
         for (LayerChangeListener l : layerChangeListeners) {
             try {
                 l.layerAdded(e);
