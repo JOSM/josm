@@ -14,6 +14,7 @@ import org.junit.runners.model.Statement;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
@@ -43,6 +44,7 @@ public class JOSMTestRules implements TestRule {
     private boolean useProjection;
     private boolean commands;
     private boolean allowMemoryManagerLeaks;
+    private boolean useMapStyles;
 
     /**
      * Disable the default timeout for this test. Use with care.
@@ -155,6 +157,17 @@ public class JOSMTestRules implements TestRule {
         return this;
     }
 
+    /**
+     * Use map styles in this test.
+     * @return this instance, for easy chaining
+     * @since 11777
+     */
+    public JOSMTestRules mapStyles() {
+        preferences();
+        useMapStyles = true;
+        return this;
+    }
+
     @Override
     public Statement apply(Statement base, Description description) {
         Statement statement = base;
@@ -232,6 +245,11 @@ public class JOSMTestRules implements TestRule {
         // Set Platform
         if (platform) {
             Main.determinePlatformHook();
+        }
+
+        if (useMapStyles) {
+            // Reset the map paint styles.
+            MapPaintStyles.readFromPreferences();
         }
 
         if (commands) {

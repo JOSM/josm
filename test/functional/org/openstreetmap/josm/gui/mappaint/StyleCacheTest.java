@@ -52,11 +52,11 @@ public class StyleCacheTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().platform().projection();
+    public JOSMTestRules test = new JOSMTestRules().preferences().platform().projection().mapStyles();
 
     /**
      * Load the test data that is required.
-     * @throws Exception
+     * @throws Exception It an error occurred during load.
      */
     @BeforeClass
     public static void load() throws Exception {
@@ -95,7 +95,6 @@ public class StyleCacheTest {
         g.fillRect(0, 0, IMG_WIDTH, IMG_WIDTH);
         nc = new MapView(Main.getLayerManager(), null);
         nc.setBounds(0, 0, IMG_WIDTH, IMG_HEIGHT);
-        MapPaintStyles.readFromPreferences();
     }
 
     /**
