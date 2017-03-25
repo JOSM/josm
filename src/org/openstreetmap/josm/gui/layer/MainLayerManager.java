@@ -241,14 +241,14 @@ public class MainLayerManager extends LayerManager {
     }
 
     @Override
-    protected synchronized void realAddLayer(Layer layer) {
+    protected synchronized void realAddLayer(Layer layer, boolean initialZoom) {
         if (getLayers().isEmpty()) {
             LayerAvailabilityEvent e = new LayerAvailabilityEvent(this, true);
             for (LayerAvailabilityListener l : layerAvailabilityListeners) {
                 l.beforeFirstLayerAdded(e);
             }
         }
-        super.realAddLayer(layer);
+        super.realAddLayer(layer, initialZoom);
 
         // update the active layer automatically.
         if (layer instanceof OsmDataLayer || activeLayer == null) {

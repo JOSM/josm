@@ -18,6 +18,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.ProjectionBounds;
+import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -174,6 +175,11 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
         return true;
     }
 
+    @Override
+    public ProjectionBounds getDownloadProjectionBounds() {
+        return downloadTask != null ? downloadTask.computeBbox(currentBounds) : null;
+    }
+
     /**
      * Superclass of internal download task.
      * @since 7636
@@ -252,13 +258,6 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
             return v.getBounds();
         }
 
-        protected void computeBboxAndCenterScale(Bounds bounds) {
-            ProjectionBounds pb = computeBbox(bounds);
-            BoundingXYVisitor v = new BoundingXYVisitor();
-            v.visit(pb);
-            Main.map.mapView.zoomTo(v);
-        }
-
         protected OsmDataLayer addNewLayerIfRequired(String newLayerName) {
             int numDataLayers = getNumDataLayers();
             if (newLayer || numDataLayers == 0 || (numDataLayers > 1 && getEditLayer() == null)) {
@@ -267,7 +266,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                 //
                 final OsmDataLayer layer = createNewLayer(newLayerName);
                 if (Main.main != null)
-                    Main.getLayerManager().addLayer(layer);
+                    Main.getLayerManager().addLayer(layer, zoomAfterDownload);
                 return layer;
             }
             return null;
@@ -279,8 +278,8 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                 layer = Optional.ofNullable(getEditLayer()).orElseGet(this::getFirstDataLayer);
                 Collection<OsmPrimitive> primitivesToUpdate = searchPrimitivesToUpdate(bounds, layer.data);
                 layer.mergeFrom(dataSet);
-                if (zoomAfterDownload) {
-                    computeBboxAndCenterScale(bounds);
+                if (Main.map != null && zoomAfterDownload) {
+                    Main.map.mapView.zoomTo(new ViewportData(computeBbox(bounds)));
                 }
                 if (!primitivesToUpdate.isEmpty()) {
                     Main.worker.submit(new UpdatePrimitivesTask(layer, primitivesToUpdate));

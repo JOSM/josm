@@ -96,6 +96,26 @@ public class ProjectionBounds {
     }
 
     /**
+     * Extends bounds to include bounds {@code b}.
+     * @param b bounds to include
+     * @since 11774
+     */
+    public void extend(ProjectionBounds b) {
+        if (b.minEast < minEast) {
+            minEast = b.minEast;
+        }
+        if (b.maxEast > maxEast) {
+            maxEast = b.maxEast;
+        }
+        if (b.minNorth < minNorth) {
+            minNorth = b.minNorth;
+        }
+        if (b.maxNorth > maxNorth) {
+            maxNorth = b.maxNorth;
+        }
+    }
+
+    /**
      * Returns the center east/north.
      * @return the center east/north
      */

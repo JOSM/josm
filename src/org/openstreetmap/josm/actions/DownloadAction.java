@@ -6,15 +6,23 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.downloadtasks.AbstractDownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.ProjectionBounds;
+import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
+import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -44,24 +52,59 @@ public class DownloadAction extends JosmAction {
         dialog.setVisible(true);
         if (!dialog.isCanceled()) {
             dialog.rememberSettings();
-            Bounds area = dialog.getSelectedDownloadArea();
+            final Bounds area = dialog.getSelectedDownloadArea();
+            final boolean zoom = dialog.isZoomToDownloadedDataRequired();
+            final List<Pair<AbstractDownloadTask<?>, Future<?>>> tasks = new ArrayList<>();
             if (dialog.isDownloadOsmData()) {
                 DownloadOsmTask task = new DownloadOsmTask();
-                task.setZoomAfterDownload(dialog.isZoomToDownloadedDataRequired());
+                task.setZoomAfterDownload(zoom && !dialog.isDownloadGpxData() && !dialog.isDownloadNotes());
                 Future<?> future = task.download(dialog.isNewLayerRequired(), area, null);
                 Main.worker.submit(new PostDownloadHandler(task, future));
+                if (zoom) {
+                    tasks.add(new Pair<>(task, future));
+                }
             }
             if (dialog.isDownloadGpxData()) {
                 DownloadGpsTask task = new DownloadGpsTask();
-                task.setZoomAfterDownload(dialog.isZoomToDownloadedDataRequired());
+                task.setZoomAfterDownload(zoom && !dialog.isDownloadOsmData() && !dialog.isDownloadNotes());
                 Future<?> future = task.download(dialog.isNewLayerRequired(), area, null);
                 Main.worker.submit(new PostDownloadHandler(task, future));
+                if (zoom) {
+                    tasks.add(new Pair<>(task, future));
+                }
             }
             if (dialog.isDownloadNotes()) {
                 DownloadNotesTask task = new DownloadNotesTask();
-                task.setZoomAfterDownload(dialog.isZoomToDownloadedDataRequired());
+                task.setZoomAfterDownload(zoom && !dialog.isDownloadOsmData() && !dialog.isDownloadGpxData());
                 Future<?> future = task.download(false, area, null);
                 Main.worker.submit(new PostDownloadHandler(task, future));
+                if (zoom) {
+                    tasks.add(new Pair<>(task, future));
+                }
+            }
+            if (zoom && tasks.size() > 1) {
+                Main.worker.submit(() -> {
+                    ProjectionBounds bounds = null;
+                    // Wait for completion of download jobs
+                    for (Pair<AbstractDownloadTask<?>, Future<?>> p : tasks) {
+                        try {
+                            p.b.get();
+                            ProjectionBounds b = p.a.getDownloadProjectionBounds();
+                            if (bounds == null) {
+                                bounds = b;
+                            } else if (b != null) {
+                                bounds.extend(b);
+                            }
+                        } catch (InterruptedException | ExecutionException ex) {
+                            Main.warn(ex);
+                        }
+                    }
+                    // Zoom to the larger download bounds
+                    if (Main.map != null && bounds != null) {
+                        final ProjectionBounds pb = bounds;
+                        GuiHelper.runInEDTAndWait(() -> Main.map.mapView.zoomTo(new ViewportData(pb)));
+                    }
+                });
             }
         }
     }
