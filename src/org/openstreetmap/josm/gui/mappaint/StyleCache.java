@@ -48,6 +48,12 @@ public final class StyleCache {
         return s.intern();
     }
 
+    /**
+     * Get the style for a specific style. Returns the range as well.
+     * @param scale The current scale
+     * @param selected true to get the state for a selected element,
+     * @return The style and the range it is valid for.
+     */
     public Pair<StyleElementList, Range> getWithRange(double scale, boolean selected) {
         int idx = getIndex(selected);
         if (states[idx] == null) {
@@ -84,6 +90,14 @@ public final class StyleCache {
      */
     private StyleCache intern() {
         return internPool.putUnique(this);
+    }
+
+    /**
+     * Clears the style cache. This should only be used for testing.
+     * It may be removed some day and replaced by a WeakReference implementation that automatically forgets old entries.
+     */
+    static void clearStyleCachePool() {
+        internPool.clear();
     }
 
     /**

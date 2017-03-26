@@ -253,6 +253,9 @@ public final class MapPaintStyles {
         return dirs;
     }
 
+    /**
+     * Reloads all styles from the preferences.
+     */
     public static void readFromPreferences() {
         styles.clear();
 
