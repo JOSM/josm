@@ -52,6 +52,7 @@ public final class Parameters {
     public static class Builder {
         private final int windowSize;
         private int minBackReferenceLength, maxBackReferenceLength, maxOffset, maxLiteralLength;
+        private Integer niceBackReferenceLength, maxCandidates;
 
         private Builder(int windowSize) {
             if (windowSize < 2 || !isPowerOfTwo(windowSize)) {
@@ -150,24 +151,78 @@ public final class Parameters {
         }
 
         /**
+         * Sets the "nice length" of a back-reference.
+         *
+         * <p>When a back-references if this size has been found, stop searching for longer back-references.</p>
+         *
+         * <p>This settings can be used to tune the tradeoff between compression speed and compression ratio.</p>
+         */
+        public Builder withNiceBackReferenceLength(int niceLen) {
+            niceBackReferenceLength = niceLen;
+            return this;
+        }
+
+        /**
+         * Sets the maximum number of back-reference candidates that should be consulted.
+         *
+         * <p>This settings can be used to tune the tradeoff between compression speed and compression ratio.</p>
+         */
+        public Builder withMaxNumberOfCandidates(int maxCandidates) {
+            this.maxCandidates = maxCandidates;
+            return this;
+        }
+
+        /**
+         * Changes the default setting for "nice back-reference length" and "maximum number of candidates" for improved
+         * compression speed at the cost of compression ratio.
+         *
+         * <p>Use this method after configuring "maximum back-reference length".</p>
+         */
+        public Builder tunedForSpeed() {
+            niceBackReferenceLength = Math.max(minBackReferenceLength, maxBackReferenceLength / 8);
+            maxCandidates = Math.max(32, windowSize / 1024);
+            return this;
+        }
+
+        /**
+         * Changes the default setting for "nice back-reference length" and "maximum number of candidates" for improved
+         * compression ratio at the cost of compression speed.
+         *
+         * <p>Use this method after configuring "maximum back-reference length".</p>
+         */
+        public Builder tunedForCompressionRatio() {
+            niceBackReferenceLength = maxBackReferenceLength;
+            maxCandidates = Math.max(32, windowSize / 16);
+            return this;
+        }
+
+        /**
          * Creates the {@link Parameters} instance.
          * @return the configured {@link Parameters} instance.
          */
         public Parameters build() {
+            // default settings tuned for a compromise of good compression and acceptable speed
+            int niceLen = niceBackReferenceLength != null ? niceBackReferenceLength
+                : Math.max(minBackReferenceLength, maxBackReferenceLength / 2);
+            int candidates = maxCandidates != null ? maxCandidates : Math.max(256, windowSize / 128);
+
             return new Parameters(windowSize, minBackReferenceLength, maxBackReferenceLength,
-                maxOffset, maxLiteralLength);
+                maxOffset, maxLiteralLength, niceLen, candidates);
         }
     }
 
-    private final int windowSize, minBackReferenceLength, maxBackReferenceLength, maxOffset, maxLiteralLength;
+    private final int windowSize, minBackReferenceLength, maxBackReferenceLength, maxOffset, maxLiteralLength,
+        niceBackReferenceLength, maxCandidates;
 
     private Parameters(int windowSize, int minBackReferenceLength, int maxBackReferenceLength, int maxOffset,
-        int maxLiteralLength) {
+        int maxLiteralLength, int niceBackReferenceLength, int maxCandidates) {
         this.windowSize = windowSize;
         this.minBackReferenceLength = minBackReferenceLength;
         this.maxBackReferenceLength = maxBackReferenceLength;
         this.maxOffset = maxOffset;
         this.maxLiteralLength = maxLiteralLength;
+        this.niceBackReferenceLength = niceBackReferenceLength;
+        this.maxCandidates = maxCandidates;
     }
 
     /**
@@ -205,6 +260,20 @@ public final class Parameters {
      */
     public int getMaxLiteralLength() {
         return maxLiteralLength;
+    }
+
+    /**
+     * Gets the length of a back-reference that is considered nice enough to stop searching for longer ones.
+     */
+    public int getNiceBackReferenceLength() {
+        return niceBackReferenceLength;
+    }
+
+    /**
+     * Gets the maximum number of back-reference candidates to consider.
+     */
+    public int getMaxCandidates() {
+        return maxCandidates;
     }
 
     private static final boolean isPowerOfTwo(int x) {

@@ -479,7 +479,9 @@ public class LZ77Compressor {
         int longestMatchLength = minLength - 1;
         final int maxPossibleLength = Math.min(params.getMaxBackReferenceLength(), lookahead);
         final int minIndex = Math.max(0, currentPosition - params.getMaxOffset());
-        while (matchHead >= minIndex) {
+        final int niceBackReferenceLength = Math.min(maxPossibleLength, params.getNiceBackReferenceLength());
+        final int maxCandidates = params.getMaxCandidates();
+        for (int candidates = 0; candidates < maxCandidates && matchHead >= minIndex; candidates++) {
             int currentLength = 0;
             for (int i = 0; i < maxPossibleLength; i++) {
                 if (window[matchHead + i] != window[currentPosition + i]) {
@@ -490,7 +492,7 @@ public class LZ77Compressor {
             if (currentLength > longestMatchLength) {
                 longestMatchLength = currentLength;
                 matchStart = matchHead;
-                if (currentLength == maxPossibleLength) {
+                if (currentLength >= niceBackReferenceLength) {
                     // no need to search any further
                     break;
                 }
