@@ -88,6 +88,7 @@ public class FramedLZ4CompressorOutputStream extends CompressorOutputStream {
     public static class Parameters {
         private final BlockSize blockSize;
         private final boolean withContentChecksum, withBlockChecksum, withBlockDependency;
+        private final org.apache.commons.compress.compressors.lz77support.Parameters lz77params;
 
         /**
          * The default parameters of 4M block size, enabled content
@@ -107,6 +108,16 @@ public class FramedLZ4CompressorOutputStream extends CompressorOutputStream {
             this(blockSize, true, false, false);
         }
         /**
+         * Sets up custom a custom block size for the LZ4 stream but
+         * otherwise uses the defaults of enabled content checksum,
+         * disabled block checksums and independent blocks.
+         * @param blockSize the size of a single block.
+         */
+        public Parameters(BlockSize blockSize,
+            org.apache.commons.compress.compressors.lz77support.Parameters lz77params) {
+            this(blockSize, true, false, false, lz77params);
+        }
+        /**
          * Sets up custom parameters for the LZ4 stream.
          * @param blockSize the size of a single block.
          * @param withContentChecksum whether to write a content checksum
@@ -120,10 +131,33 @@ public class FramedLZ4CompressorOutputStream extends CompressorOutputStream {
          */
         public Parameters(BlockSize blockSize, boolean withContentChecksum, boolean withBlockChecksum,
             boolean withBlockDependency) {
+            this(blockSize, withContentChecksum, withBlockChecksum, withBlockDependency,
+                 BlockLZ4CompressorOutputStream.createParameterBuilder().build());
+        }
+
+        /**
+         * Sets up custom parameters for the LZ4 stream.
+         * @param blockSize the size of a single block.
+         * @param withContentChecksum whether to write a content checksum
+         * @param withBlockChecksum whether to write a block checksum.
+         * Note that block checksums are not supported by the lz4
+         * command line utility
+         * @param withBlockDependency whether a block may depend on
+         * the content of a previous block. Enabling this may improve
+         * compression ratio but makes it impossible to decompress the
+         * output in parallel.
+         * @param lz77 parameters parameters used to fine-tune
+         * compression, in particular to balance compression ration vs
+         * compression speed.
+         */
+        public Parameters(BlockSize blockSize, boolean withContentChecksum, boolean withBlockChecksum,
+                boolean withBlockDependency,
+                org.apache.commons.compress.compressors.lz77support.Parameters lz77params) {
             this.blockSize = blockSize;
             this.withContentChecksum = withContentChecksum;
             this.withBlockChecksum = withBlockChecksum;
             this.withBlockDependency = withBlockDependency;
+            this.lz77params = lz77params;
         }
 
         @Override
@@ -231,7 +265,7 @@ public class FramedLZ4CompressorOutputStream extends CompressorOutputStream {
     private void flushBlock() throws IOException {
         final boolean withBlockDependency = params.withBlockDependency;
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (BlockLZ4CompressorOutputStream o = new BlockLZ4CompressorOutputStream(baos)) {
+        try (BlockLZ4CompressorOutputStream o = new BlockLZ4CompressorOutputStream(baos, params.lz77params)) {
             if (withBlockDependency) {
                 o.prefill(blockDependencyBuffer, blockDependencyBuffer.length - collectedBlockDependencyBytes,
                     collectedBlockDependencyBytes);
