@@ -16,7 +16,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -52,7 +51,7 @@ public class StyleCacheTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().platform().projection().mapStyles();
+    public JOSMTestRules test = new JOSMTestRules().preferences().platform().projection().mapStyles().timeout(60000);
 
     /**
      * Load the test data that is required.
@@ -111,9 +110,7 @@ public class StyleCacheTest {
      */
     @Test
     public void testStyleCacheInternPool() {
-        // This can be removed if there was no dependency on Main.map in some MapCSS conditions. See #14572
-        JOSMFixture.createFunctionalTestFixture().init(true);
-
+        StyleCache.clearStyleCachePool();
         Bounds bounds = new Bounds(53.56, 13.25, 53.57, 13.26);
         Rendering visitor = new StyledMapRenderer(g, nc, false);
         nc.zoomTo(bounds);
@@ -140,9 +137,7 @@ public class StyleCacheTest {
      */
     @Test
     public void testStyleCacheInternPool2() {
-        // This can be removed if there was no dependency on Main.map in some MapCSS conditions. See #14572
-        JOSMFixture.createFunctionalTestFixture().init(true);
-
+        StyleCache.clearStyleCachePool();
         Bounds bounds = new Bounds(53.56, 13.25, 53.57, 13.26);
         Rendering visitor = new StyledMapRenderer(g, nc, false);
         nc.zoomTo(bounds);
