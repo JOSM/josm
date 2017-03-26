@@ -157,7 +157,7 @@ public class MultipolygonTest extends Test {
             }
         }
         errors.add(TestError.builder(this, Severity.WARNING, MISSING_OUTER_WAY)
-                .message(tr("No outer way for multipolygon"))
+                .message(r.isBoundary() ? tr("No outer way for boundary") : tr("No outer way for multipolygon"))
                 .primitives(r)
                 .build());
     }
@@ -174,7 +174,7 @@ public class MultipolygonTest extends Test {
      */
     private void checkStyleConsistency(Relation r, Multipolygon polygon) {
         ElemStyles styles = MapPaintStyles.getStyles();
-        if (styles != null && !r.hasTag("type", "boundary")) {
+        if (styles != null && !r.isBoundary()) {
             AreaElement area = ElemStyles.getAreaElemStyle(r, false);
             boolean areaStyle = area != null;
             // If area style was not found for relation then use style of ways
@@ -192,7 +192,7 @@ public class MultipolygonTest extends Test {
                             .build());
                 } else {
                     /* old style multipolygon - solve: copy tags from outer way to multipolygon */
-                    errors.add(TestError.builder(this, Severity.WARNING, NO_STYLE_POLYGON)
+                    errors.add(TestError.builder(this, Severity.ERROR, NO_STYLE_POLYGON)
                             .message(trn("Multipolygon relation should be tagged with area tags and not the outer way",
                                     "Multipolygon relation should be tagged with area tags and not the outer ways",
                                     polygon.getOuterWays().size()))
@@ -223,7 +223,7 @@ public class MultipolygonTest extends Test {
                                     .highlight(wOuter)
                                     .build());
                         } else if (areaStyle) { /* style on outer way of multipolygon, but equal to polygon */
-                            errors.add(TestError.builder(this, Severity.WARNING, OUTER_STYLE)
+                            errors.add(TestError.builder(this, Severity.ERROR, OUTER_STYLE)
                                     .message(tr("Area style on outer way"))
                                     .primitives(Arrays.asList(r, wOuter))
                                     .highlight(wOuter)
@@ -249,7 +249,7 @@ public class MultipolygonTest extends Test {
 
         List<Node> openNodes = polygon.getOpenEnds();
         if (!openNodes.isEmpty()) {
-            errors.add(TestError.builder(this, Severity.WARNING, NON_CLOSED_WAY)
+            errors.add(TestError.builder(this, Severity.ERROR, NON_CLOSED_WAY)
                     .message(tr("Multipolygon is not closed"))
                     .primitives(combineRelAndPrimitives(r, openNodes))
                     .highlight(openNodes)
@@ -466,7 +466,7 @@ public class MultipolygonTest extends Test {
             for (long wayId : pol.outerWay.getWayIds()) {
                 RelationMember member = wayMap.get(wayId);
                 if (!member.getRole().equals(calculatedRole)) {
-                    errors.add(TestError.builder(this, Severity.WARNING, WRONG_MEMBER_ROLE)
+                    errors.add(TestError.builder(this, Severity.ERROR, WRONG_MEMBER_ROLE)
                             .message(RelationChecker.ROLE_VERIF_PROBLEM_MSG,
                                     marktr("Role for ''{0}'' should be ''{1}''"),
                                     member.getMember().getDisplayName(DefaultNameFormatter.getInstance()),
@@ -476,7 +476,7 @@ public class MultipolygonTest extends Test {
                             .build());
                     if (pol.level == 0 && "inner".equals(member.getRole())) {
                         // maybe only add this error if we found an outer ring with correct role(s) ?
-                        errors.add(TestError.builder(this, Severity.WARNING, INNER_WAY_OUTSIDE)
+                        errors.add(TestError.builder(this, Severity.ERROR, INNER_WAY_OUTSIDE)
                                 .message(tr("Multipolygon inner way is outside"))
                                 .primitives(Arrays.asList(r, member.getMember()))
                                 .highlight(member.getMember())
@@ -563,7 +563,7 @@ public class MultipolygonTest extends Test {
                         String msg = loop == 0 ? tr("Intersection between multipolygon ways")
                                 : samePoly ? tr("Multipolygon ring contains segments twice")
                                         : tr("Multipolygon outer way shares segment(s) with other ring");
-                        errors.add(TestError.builder(this, Severity.WARNING, CROSSING_WAYS)
+                        errors.add(TestError.builder(this, Severity.ERROR, CROSSING_WAYS)
                                 .message(msg)
                                 .primitives(Arrays.asList(r, ways.get(0), ways.get(1)))
                                 .highlightWaySegments(entry.getValue())
@@ -653,9 +653,9 @@ public class MultipolygonTest extends Test {
                             .build());
                 }
             } else {
-                if (!rm.hasRole("admin_centre", "label", "subarea", "land_area")) {
+                if (!r.isBoundary() || !rm.hasRole("admin_centre", "label", "subarea", "land_area")) {
                     errors.add(TestError.builder(this, Severity.WARNING, WRONG_MEMBER_TYPE)
-                            .message(tr("Non-Way in multipolygon"))
+                            .message(r.isBoundary() ? tr("Non-Way in boundary") : tr("Non-Way in multipolygon"))
                             .primitives(Arrays.asList(r, rm.getMember()))
                             .build());
                 }
