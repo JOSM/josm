@@ -121,15 +121,15 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
                 Main.debug("Notes downloaded: " + notesData.size());
             }
 
+            noteLayer = new NoteLayer(notesData, tr("Notes"));
             List<NoteLayer> noteLayers = Main.getLayerManager().getLayersOfType(NoteLayer.class);
             if (!noteLayers.isEmpty()) {
-                noteLayer = noteLayers.get(0);
-                noteLayer.getNoteData().addNotes(notesData);
+                noteLayers.get(0).getNoteData().addNotes(notesData);
                 if (Main.map != null && zoomAfterDownload) {
                     Main.map.mapView.scheduleZoomTo(new ViewportData(noteLayer.getViewProjectionBounds()));
                 }
             } else {
-                Main.getLayerManager().addLayer(new NoteLayer(notesData, tr("Notes")), zoomAfterDownload);
+                Main.getLayerManager().addLayer(noteLayer, zoomAfterDownload);
             }
         }
 
