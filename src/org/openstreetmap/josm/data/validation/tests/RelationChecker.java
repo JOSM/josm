@@ -305,11 +305,10 @@ public class RelationChecker extends Test {
         }
         // verify unwanted members
         for (String key : map.keySet()) {
-            if (!allroles.containsKey(key)) {
+            if (!allroles.containsKey(key) && !"network".equals(n.get("type")) && !"bicycle".equals(n.get("route"))) {
                 String templates = allroles.keySet().stream().collect(Collectors.joining("/"));
 
                 if (!key.isEmpty()) {
-
                     errors.add(TestError.builder(this, Severity.WARNING, ROLE_UNKNOWN)
                             .message(ROLE_VERIF_PROBLEM_MSG, marktr("Role ''{0}'' unknown in templates ''{1}''"), key, templates)
                             .primitives(n)
