@@ -154,7 +154,8 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
             GpxImporterData layers = GpxImporter.loadLayers(rawData, reader.isGpxParsedProperly(), name,
                     tr("Markers from {0}", name));
 
-            gpxLayer = addOrMergeLayer(layers.getGpxLayer(), findGpxMergeLayer());
+            gpxLayer = layers.getGpxLayer();
+            addOrMergeLayer(gpxLayer, findGpxMergeLayer());
             addOrMergeLayer(layers.getMarkerLayer(), findMarkerMergeLayer(gpxLayer));
 
             layers.getPostLayerTask().run();
