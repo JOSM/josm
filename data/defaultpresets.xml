@@ -7684,6 +7684,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:historic=archaeological_site" />
             <space />
             <key key="historic" value="archaeological_site" />
+            <combo key="site_type" text="Type" values="tumulus,megalith,fortification,settlement,necropolis,city" />
             <reference ref="name_oh_wheelchair" />
         </item> <!-- Archaeological Site -->
         <item name="Battlefield" icon="presets/sightseeing/battlefield.svg" type="node,closedway,multipolygon" preset_name_label="true">
