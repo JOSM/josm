@@ -262,7 +262,6 @@ public class ColorPreference implements SubPreferenceSetting {
         MarkerLayer.getGenericColor();
         GpxDrawHelper.getGenericColor();
         OsmDataLayer.getOutsideColor();
-        ImageryLayer.getFadeColor();
         MapScaler.getColor();
         MapStatus.getColors();
         ConflictDialog.getColor();

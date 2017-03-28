@@ -1109,11 +1109,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 imgXoffset, imgYoffset,
                 imgXend, imgYend,
                 this);
-        if (PROP_FADE_AMOUNT.get() != 0) {
-            // dimm by painting opaque rect...
-            g.setColor(getFadeColorWithAlpha());
-            ((Graphics2D) g).fill(target);
-        }
     }
 
     private List<Tile> paintTileImages(Graphics g, TileSet ts) {
