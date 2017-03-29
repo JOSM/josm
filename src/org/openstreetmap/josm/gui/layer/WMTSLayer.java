@@ -74,7 +74,8 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer<WMTSTileSource> imp
         if (scaleList == null) {
             return getMaxZoomLvl();
         }
-        Scale snap = scaleList.getSnapScale(Main.map.mapView.getScale(), false);
+        double displayScale = Main.map.mapView.getScale() * Main.getProjection().getMetersPerUnit(); // meter per pixel
+        Scale snap = scaleList.getSnapScale(displayScale, false);
         return Math.max(
                 getMinZoomLvl(),
                 Math.min(
