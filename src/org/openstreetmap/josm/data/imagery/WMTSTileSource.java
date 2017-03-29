@@ -24,6 +24,7 @@ import java.util.SortedSet;
 import java.util.Stack;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -577,6 +578,11 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                 currentLayer != null ? new WMTSDefaultLayer(currentLayer.name, currentLayer.tileMatrixSet.identifier) : defaultLayer,
                 proj.toCode());
 
+        if (candidates.size() > 1 && defaultLayer != null) {
+            candidates = candidates.stream()
+                    .filter(t -> t.tileMatrixSet.identifier.equals(defaultLayer.getTileMatrixSet()))
+                    .collect(Collectors.toList());
+        }
         if (candidates.size() == 1) {
             Layer newLayer = candidates.iterator().next();
             if (newLayer != null) {
