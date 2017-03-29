@@ -609,8 +609,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         if (this.layers != null) {
             for (Layer layer: this.layers) {
                 if ((searchLayer == null || (// if it's null, then accept all layers
-                        searchLayer.getLayerName().equals(layer.name) &&
-                        searchLayer.getTileMatrixSet().equals(layer.tileMatrixSet.identifier)))
+                        searchLayer.getLayerName().equals(layer.name)))
                         && (projectionCode == null || // if it's null, then accept any projection
                         projectionCode.equals(layer.tileMatrixSet.crs))) {
                     ret.add(layer);
