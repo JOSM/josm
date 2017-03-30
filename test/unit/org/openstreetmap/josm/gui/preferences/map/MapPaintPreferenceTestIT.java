@@ -56,6 +56,8 @@ public class MapPaintPreferenceTestIT {
         ImageProvider.clearCache();
         Collection<ExtendedSourceEntry> sources = new MapPaintPreference.MapPaintSourceEditor()
                 .loadAndGetAvailableSources();
+        // Drop everything from yopaseopor, too many errors
+        sources.removeIf(x -> x.url.contains("yopaseopor/"));
         assertFalse(sources.isEmpty());
         Map<String, Collection<Throwable>> allErrors = new HashMap<>();
         Map<String, Collection<String>> allWarnings = new HashMap<>();
@@ -88,8 +90,7 @@ public class MapPaintPreferenceTestIT {
                     if (!errors.isEmpty()) {
                         allErrors.put(source.url, errors);
                     }
-                    if (!warnings.isEmpty() && !source.url.contains("yopaseopor/")) {
-                        // ignore https://github.com/yopaseopor/traffic_signs_style_JOSM because of far too frequent missing icons errors
+                    if (!warnings.isEmpty()) {
                         allWarnings.put(source.url, warnings);
                     }
                 } else if (!source.url.contains("www.freietonne.de")) {
