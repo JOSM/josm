@@ -247,11 +247,15 @@ public class SessionWriter {
                 List<Integer> depsInt = new ArrayList<>();
                 for (Layer depLayer : deps) {
                     int depIndex = layers.indexOf(depLayer);
-                    if (depIndex == -1)
-                        throw new AssertionError();
-                    depsInt.add(depIndex+1);
+                    if (depIndex == -1) {
+                        Main.warn("Unable to find " + depLayer);
+                    } else {
+                        depsInt.add(depIndex+1);
+                    }
                 }
-                el.setAttribute("depends", Utils.join(",", depsInt));
+                if (!depsInt.isEmpty()) {
+                    el.setAttribute("depends", Utils.join(",", depsInt));
+                }
             }
             layersEl.appendChild(el);
         }
