@@ -402,7 +402,7 @@ public final class Node extends OsmPrimitive implements INode {
         if (otherNodes.contains(this)) {
             return true;
         }
-        if (hops > 0) {
+        if (hops > 0 && visited != null) {
             visited.add(this);
             for (final Way w : Utils.filteredCollection(this.getReferrers(), Way.class)) {
                 for (final Node n : w.getNodes()) {

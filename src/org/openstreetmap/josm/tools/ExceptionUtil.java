@@ -14,6 +14,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
@@ -656,6 +657,7 @@ public final class ExceptionUtil {
      * @return The HTML formatted error message to display
      */
     public static String explainOsmTransferException(OsmTransferException e) {
+        Objects.requireNonNull(e, "e");
         if (getNestedException(e, SecurityException.class) != null)
             return explainSecurityException(e);
         if (getNestedException(e, SocketException.class) != null)

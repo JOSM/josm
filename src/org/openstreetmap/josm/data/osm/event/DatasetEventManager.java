@@ -85,7 +85,9 @@ public class DatasetEventManager implements ActiveLayerChangeListener, Listener 
                 }
 
                 // Fire consolidated event
-                fireConsolidatedEvents(inEDTListeners, consolidatedEvent);
+                if (consolidatedEvent != null) {
+                    fireConsolidatedEvents(inEDTListeners, consolidatedEvent);
+                }
             }
         }
     }
