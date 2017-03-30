@@ -1,0 +1,46 @@
+name: josm
+version: 0.git
+summary: Editor for OpenStreetMap
+description: |
+ JOSM is an editor for OpenStreetMap (OSM) written in Java.
+ The current version supports stand alone GPX tracks, GPX track data
+ from OSM database and existing nodes, line segments and metadata tags
+ from the OSM database.
+ 
+ OpenStreetMap is a project aimed squarely at creating and providing
+ free geographic data such as street maps to anyone who wants them.
+ The project was started because most maps you think of as free actually
+ have legal or technical restrictions on their use, holding back people
+ from using them in creative, productive or unexpected ways.
+confinement: strict
+grade: stable
+icon: linux/tested/usr/share/icons/hicolor/128x128/apps/josm.png
+
+apps:
+ josm:
+   command: josm-launch
+   desktop: josm.desktop
+   plugs: [unity7, network, home]
+
+parts:
+    local:
+        plugin: ant
+        ant-properties:
+            dist.dir: $SNAPCRAFT_PART_INSTALL
+        source: .
+        install: |
+            cp -a linux/tested/usr/share/applications/josm.desktop $SNAPCRAFT_PART_INSTALL/
+            cat<<'EOF' > $SNAPCRAFT_PART_INSTALL/josm-launch
+            #!/bin/sh
+            # ensure font-config is happy
+            export XDG_DATA_HOME=$SNAP/usr/share
+            export FONTCONFIG_PATH=$SNAP/etc/fonts/config.d
+            export FONTCONFIG_FILE=$SNAP/etc/fonts/fonts.conf
+            export HOME=$SNAP_USER_DATA
+            # ensure java is happy as well
+            export JRE_HOME=$SNAP/usr/lib/jvm/default-java/jre
+            export JAVA_HOME=$SNAP/usr/lib/jvm/default-java/jre
+            java -Duser.home=$SNAP_USER_DATA -jar $SNAP/josm-custom.jar
+            EOF
+            chmod +x $SNAPCRAFT_PART_INSTALL/josm-launch
+          
