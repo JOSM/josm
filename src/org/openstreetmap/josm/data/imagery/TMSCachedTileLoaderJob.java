@@ -183,14 +183,16 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                 switch(result) {
                 case SUCCESS:
                     handleNoTileAtZoom();
-                    int httpStatusCode = attributes.getResponseCode();
-                    if (httpStatusCode >= 400 && !isNoTileAtZoom()) {
-                        if (attributes.getErrorMessage() == null) {
-                            tile.setError(tr("HTTP error {0} when loading tiles", httpStatusCode));
-                        } else {
-                            tile.setError(tr("Error downloading tiles: {0}", attributes.getErrorMessage()));
+                    if (attributes != null) {
+                        int httpStatusCode = attributes.getResponseCode();
+                        if (httpStatusCode >= 400 && !isNoTileAtZoom()) {
+                            if (attributes.getErrorMessage() == null) {
+                                tile.setError(tr("HTTP error {0} when loading tiles", httpStatusCode));
+                            } else {
+                                tile.setError(tr("Error downloading tiles: {0}", attributes.getErrorMessage()));
+                            }
+                            status = false;
                         }
-                        status = false;
                     }
                     status &= tryLoadTileImage(object); //try to keep returned image as background
                     break;
