@@ -196,10 +196,17 @@ public class TagEditHelper {
         return tagData.getValueAt(tagTable.convertRowIndexToModel(viewRow), 0).toString();
     }
 
+    /**
+     * Determines if the given tag key is already used (by all selected primitives, not just some of them)
+     * @param key the key to check
+     * @return {@code true} if the key is used by all selected primitives (key not unset for at least one primitive)
+     */
+    @SuppressWarnings("unchecked")
     private boolean containsDataKey(String key) {
         return IntStream.range(0, tagData.getRowCount())
-                .mapToObj(i -> tagData.getValueAt(i, 0) /* sic! do not use getDataKey*/)
-                .anyMatch(key::equals);
+                .filter(i -> key.equals(tagData.getValueAt(i, 0)) /* sic! do not use getDataKey*/
+                    && !((Map<String, Integer>) tagData.getValueAt(i, 1)).containsKey("") /* sic! do not use getDataValues*/)
+                .findAny().isPresent();
     }
 
     /**
@@ -865,7 +872,7 @@ public class TagEditHelper {
             destroyActions();
             for (int i = 0; i < tags.size() && count < tagsToShow; i++) {
                 final Tag t = tags.get(i);
-                boolean keyExists = keyExists(t);
+                boolean keyExists = containsDataKey(t.getKey());
                 if (keyExists && PROPERTY_RECENT_EXISTING.get() == RecentExisting.HIDE)
                     continue;
                 count++;
@@ -1071,10 +1078,6 @@ public class TagEditHelper {
 
         public void undoAllTagsAdding() {
             Main.main.undoRedo.undo(commandCount);
-        }
-
-        private boolean keyExists(final Tag t) {
-            return valueCount.containsKey(t.getKey());
         }
 
         private void refreshRecentTags() {
