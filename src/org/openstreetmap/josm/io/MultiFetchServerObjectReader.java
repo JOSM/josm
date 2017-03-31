@@ -210,13 +210,12 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
      * @return this
      */
     public MultiFetchServerObjectReader append(OsmPrimitive primitive) {
-        if (primitive != null) {
-            switch (OsmPrimitiveType.from(primitive)) {
-                case NODE: return appendNode((Node) primitive);
-                case WAY: return appendWay((Way) primitive);
-                case RELATION: return appendRelation((Relation) primitive);
-                default: break;
-            }
+        if (primitive instanceof Node) {
+            return appendNode((Node) primitive);
+        } else if (primitive instanceof Way) {
+            return appendWay((Way) primitive);
+        } else if (primitive instanceof Relation) {
+            return appendRelation((Relation) primitive);
         }
         return this;
     }

@@ -32,16 +32,17 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 public class LayerListTransferHandler extends TransferHandler {
     @Override
     public int getSourceActions(JComponent c) {
-        // we know that the source is a layer list, so don't check c.
-        LayerListModel tableModel = (LayerListModel) ((JTable) c).getModel();
-        if (tableModel.getSelectedLayers().isEmpty()) {
-            return 0;
+        if (c instanceof JTable) {
+            LayerListModel tableModel = (LayerListModel) ((JTable) c).getModel();
+            if (!tableModel.getSelectedLayers().isEmpty()) {
+                int actions = MOVE;
+                if (onlyDataLayersSelected(tableModel)) {
+                    actions |= COPY;
+                }
+                return actions /* soon: | LINK*/;
+            }
         }
-        int actions = MOVE;
-        if (onlyDataLayersSelected(tableModel)) {
-            actions |= COPY;
-        }
-        return actions /* soon: | LINK*/;
+        return NONE;
     }
 
     private static boolean onlyDataLayersSelected(LayerListModel tableModel) {
@@ -55,8 +56,11 @@ public class LayerListTransferHandler extends TransferHandler {
 
     @Override
     protected Transferable createTransferable(JComponent c) {
-        LayerListModel tableModel = (LayerListModel) ((JTable) c).getModel();
-        return new LayerTransferable(tableModel.getLayerManager(), tableModel.getSelectedLayers());
+        if (c instanceof JTable) {
+            LayerListModel tableModel = (LayerListModel) ((JTable) c).getModel();
+            return new LayerTransferable(tableModel.getLayerManager(), tableModel.getSelectedLayers());
+        }
+        return null;
     }
 
     @Override
