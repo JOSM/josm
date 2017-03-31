@@ -407,7 +407,8 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     private static Layer parseLayer(XMLStreamReader reader) throws XMLStreamException {
         Layer layer = new Layer();
         Stack<QName> tagStack = new Stack<>();
-        List<String> supportedMimeTypes = Arrays.asList(ImageIO.getReaderMIMETypes());
+        List<String> supportedMimeTypes = new ArrayList<>(Arrays.asList(ImageIO.getReaderMIMETypes()));
+        supportedMimeTypes.add("image/jpgpng");         // used by ESRI
         Collection<String> unsupportedFormats = new ArrayList<>();
 
         for (int event = reader.getEventType();
