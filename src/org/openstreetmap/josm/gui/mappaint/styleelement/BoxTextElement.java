@@ -107,11 +107,6 @@ public class BoxTextElement extends StyleElement {
     }
 
     /**
-     * A rectangle with size 0x0
-     */
-    public static final Rectangle ZERO_BOX = new Rectangle(0, 0, 0, 0);
-
-    /**
      * The default style a simple node should use for it's text
      */
     public static final BoxTextElement SIMPLE_NODE_TEXT_ELEMSTYLE;
@@ -137,11 +132,6 @@ public class BoxTextElement extends StyleElement {
      * The text this element should display.
      */
     public TextLabel text;
-    // Either boxProvider or box is not null. If boxProvider is different from
-    // null, this means, that the box can still change in future, otherwise
-    // it is fixed.
-    protected BoxProvider boxProvider;
-    protected Rectangle box;
     /**
      * The {@link HorizontalTextAlignment} for this text.
      */
@@ -150,17 +140,17 @@ public class BoxTextElement extends StyleElement {
      * The {@link VerticalTextAlignment} for this text.
      */
     public VerticalTextAlignment vAlign;
+    protected BoxProvider boxProvider;
 
     /**
      * Create a new {@link BoxTextElement}
      * @param c The current cascade
      * @param text The text to display
      * @param boxProvider The box provider to use
-     * @param box The initial box to use.
      * @param hAlign The {@link HorizontalTextAlignment}
      * @param vAlign The {@link VerticalTextAlignment}
      */
-    public BoxTextElement(Cascade c, TextLabel text, BoxProvider boxProvider, Rectangle box,
+    public BoxTextElement(Cascade c, TextLabel text, BoxProvider boxProvider,
             HorizontalTextAlignment hAlign, VerticalTextAlignment vAlign) {
         super(c, 5f);
         CheckParameterUtil.ensureParameterNotNull(text);
@@ -168,39 +158,17 @@ public class BoxTextElement extends StyleElement {
         CheckParameterUtil.ensureParameterNotNull(vAlign);
         this.text = text;
         this.boxProvider = boxProvider;
-        this.box = box == null ? ZERO_BOX : box;
         this.hAlign = hAlign;
         this.vAlign = vAlign;
-    }
-
-    /**
-     * Create a new {@link BoxTextElement} with a dynamic box
-     * @param env The MapCSS environment
-     * @param boxProvider The box provider that computes the box.
-     * @return A new {@link BoxTextElement} or <code>null</code> if the creation failed.
-     */
-    public static BoxTextElement create(Environment env, BoxProvider boxProvider) {
-        return create(env, boxProvider, null);
-    }
-
-    /**
-     * Create a new {@link BoxTextElement} with a fixed box
-     * @param env The MapCSS environment
-     * @param box The box
-     * @return A new {@link BoxTextElement} or <code>null</code> if the creation failed.
-     */
-    public static BoxTextElement create(Environment env, Rectangle box) {
-        return create(env, null, box);
     }
 
     /**
      * Create a new {@link BoxTextElement} with a boxprovider and a box.
      * @param env The MapCSS environment
      * @param boxProvider The box provider.
-     * @param box The box. Only considered if boxProvider is null.
      * @return A new {@link BoxTextElement} or <code>null</code> if the creation failed.
      */
-    public static BoxTextElement create(Environment env, BoxProvider boxProvider, Rectangle box) {
+    public static BoxTextElement create(Environment env, BoxProvider boxProvider) {
         initDefaultParameters();
 
         TextLabel text = TextLabel.create(env, defaultTextColorCache, false);
@@ -243,7 +211,7 @@ public class BoxTextElement extends StyleElement {
                 vAlign = VerticalTextAlignment.BOTTOM;
         }
 
-        return new BoxTextElement(c, text, boxProvider, box, hAlign, vAlign);
+        return new BoxTextElement(c, text, boxProvider, hAlign, vAlign);
     }
 
     /**
@@ -251,15 +219,7 @@ public class BoxTextElement extends StyleElement {
      * @return The box.
      */
     public Rectangle getBox() {
-        if (boxProvider != null) {
-            BoxProviderResult result = boxProvider.get();
-            if (!result.isTemporary()) {
-                box = result.getBox();
-                boxProvider = null;
-            }
-            return result.getBox();
-        }
-        return box;
+        return boxProvider.get().getBox();
     }
 
     private static void initDefaultParameters() {
@@ -284,18 +244,17 @@ public class BoxTextElement extends StyleElement {
         return hAlign == that.hAlign &&
                vAlign == that.vAlign &&
                Objects.equals(text, that.text) &&
-               Objects.equals(boxProvider, that.boxProvider) &&
-               Objects.equals(box, that.box);
+               Objects.equals(boxProvider, that.boxProvider);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), text, boxProvider, box, hAlign, vAlign);
+        return Objects.hash(super.hashCode(), text, boxProvider, hAlign, vAlign);
     }
 
     @Override
     public String toString() {
-        return "BoxTextElemStyle{" + super.toString() + ' ' + text.toStringImpl()
-                + " box=" + box + " hAlign=" + hAlign + " vAlign=" + vAlign + '}';
+        return "BoxTextElement{" + super.toString() + ' ' + text.toStringImpl()
+                + " box=" + getBox() + " hAlign=" + hAlign + " vAlign=" + vAlign + '}';
     }
 }
