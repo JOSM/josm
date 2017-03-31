@@ -36,7 +36,6 @@ import org.openstreetmap.josm.gui.MapScaler;
 import org.openstreetmap.josm.gui.MapStatus;
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
-import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.gpx.GpxDrawHelper;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;

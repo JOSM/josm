@@ -476,7 +476,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
         try {
             drawMapContent(g);
-        } catch (RuntimeException e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             throw BugReport.intercept(e).put("visibleLayers", layerManager::getVisibleLayersInZOrder)
                     .put("temporaryLayers", temporaryLayers);
         }
