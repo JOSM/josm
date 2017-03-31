@@ -537,7 +537,7 @@ public class ElemStyles implements PreferenceChangedListener {
      * @return {@code true} if primitive has only an AreaElement
      * @since 7486
      */
-    public static boolean hasOnlyAreaElemStyle(OsmPrimitive p) {
+    public static boolean hasOnlyAreaOrTextStyleElements(OsmPrimitive p) {
         MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
         try {
             if (MapPaintStyles.getStyles() == null)
@@ -547,7 +547,7 @@ public class ElemStyles implements PreferenceChangedListener {
                 return false;
             }
             for (StyleElement s : styles) {
-                if (!(s instanceof AreaElement)) {
+                if (!(s instanceof AreaElement || s instanceof TextElement)) {
                     return false;
                 }
             }
