@@ -122,6 +122,12 @@ public class StyleCacheTest {
             if (internPoolSize == null) {
                 internPoolSize = newInternPoolSize;
             } else {
+                if (internPoolSize != newInternPoolSize) {
+                    System.err.println("style sources:");
+                    for (StyleSource s : MapPaintStyles.getStyles().getStyleSources()) {
+                        System.err.println(s.url + " active:" + s.active);
+                    }
+                }
                 assertEquals("intern pool size", internPoolSize.intValue(), newInternPoolSize);
             }
         }
