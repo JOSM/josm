@@ -28,6 +28,7 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
     private boolean ignoreException;
     private final String title;
 
+    /** progress monitor */
     protected final ProgressMonitor progressMonitor;
 
     /**
@@ -112,7 +113,7 @@ public abstract class PleaseWaitRunnable implements Runnable, CancelListener {
                     EventQueue.invokeAndWait(this::afterFinish);
                 }
             }
-        } catch (final JosmRuntimeException | IllegalArgumentException | IllegalStateException |
+        } catch (final JosmRuntimeException | IllegalArgumentException | IllegalStateException | UnsupportedOperationException |
                 OsmTransferException | IOException | SAXException | InvocationTargetException | InterruptedException e) {
             if (!ignoreException) {
                 // Exception has to thrown in EDT to be shown to user
