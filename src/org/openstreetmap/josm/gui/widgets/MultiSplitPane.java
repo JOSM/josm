@@ -157,7 +157,7 @@ public class MultiSplitPane extends JPanel {
     private class DefaultDividerPainter implements DividerPainter {
         @Override
         public void paint(Graphics g, Divider divider) {
-            if ((divider == activeDivider()) && !isContinuousLayout()) {
+            if (g instanceof Graphics2D && divider == activeDivider() && !isContinuousLayout()) {
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setColor(Color.black);
                 g2d.fill(divider.getBounds());

@@ -230,22 +230,20 @@ public class AutoScaleAction extends JosmAction {
     }
 
     private BoundingXYVisitor getBoundingBox() {
-        BoundingXYVisitor v = "problem".equals(mode) ? new ValidatorBoundingXYVisitor() : new BoundingXYVisitor();
-
         switch (mode) {
         case "problem":
-            return modeProblem((ValidatorBoundingXYVisitor) v);
+            return modeProblem(new ValidatorBoundingXYVisitor());
         case "data":
-            return modeData(v);
+            return modeData(new BoundingXYVisitor());
         case "layer":
-            return modeLayer(v);
+            return modeLayer(new BoundingXYVisitor());
         case "selection":
         case "conflict":
-            return modeSelectionOrConflict(v);
+            return modeSelectionOrConflict(new BoundingXYVisitor());
         case "download":
-            return modeDownload(v);
+            return modeDownload(new BoundingXYVisitor());
         default:
-            return v;
+            return new BoundingXYVisitor();
         }
     }
 

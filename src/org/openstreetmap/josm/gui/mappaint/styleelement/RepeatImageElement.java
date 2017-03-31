@@ -80,8 +80,10 @@ public class RepeatImageElement extends StyleElement {
     @Override
     public void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, StyledMapRenderer painter,
             boolean selected, boolean outermember, boolean member) {
-        Way w = (Way) primitive;
-        painter.drawRepeatImage(w, pattern, painter.isInactiveMode() || w.isDisabled(), offset, spacing, phase, align);
+        if (primitive instanceof Way) {
+            Way w = (Way) primitive;
+            painter.drawRepeatImage(w, pattern, painter.isInactiveMode() || w.isDisabled(), offset, spacing, phase, align);
+        }
     }
 
     @Override

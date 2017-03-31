@@ -22,7 +22,7 @@ import org.openstreetmap.josm.data.osm.Way;
 
 public class ContextSwitchTemplate implements TemplateEntry {
 
-    private static final TemplateEngineDataProvider EMTPY_PROVIDER = new TemplateEngineDataProvider() {
+    private static final TemplateEngineDataProvider EMPTY_PROVIDER = new TemplateEngineDataProvider() {
         @Override
         public Object getTemplateValue(String name, boolean special) {
             return null;
@@ -257,21 +257,23 @@ public class ContextSwitchTemplate implements TemplateEntry {
 
     @Override
     public void appendText(StringBuilder result, TemplateEngineDataProvider dataProvider) {
-        List<OsmPrimitive> primitives = context.getPrimitives((OsmPrimitive) dataProvider);
-        if (primitives != null && !primitives.isEmpty()) {
-            template.appendText(result, primitives.get(0));
-        } else {
-            template.appendText(result, EMTPY_PROVIDER);
+        if (dataProvider instanceof OsmPrimitive) {
+            List<OsmPrimitive> primitives = context.getPrimitives((OsmPrimitive) dataProvider);
+            if (primitives != null && !primitives.isEmpty()) {
+                template.appendText(result, primitives.get(0));
+            }
         }
+        template.appendText(result, EMPTY_PROVIDER);
     }
 
     @Override
     public boolean isValid(TemplateEngineDataProvider dataProvider) {
-        List<OsmPrimitive> primitives = context.getPrimitives((OsmPrimitive) dataProvider);
-        if (primitives != null && !primitives.isEmpty())
-            return template.isValid(primitives.get(0));
-        else
-            return false;
+        if (dataProvider instanceof OsmPrimitive) {
+            List<OsmPrimitive> primitives = context.getPrimitives((OsmPrimitive) dataProvider);
+            if (primitives != null && !primitives.isEmpty()) {
+                return template.isValid(primitives.get(0));
+            }
+        }
+        return false;
     }
-
 }

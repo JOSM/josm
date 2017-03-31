@@ -202,6 +202,9 @@ public final class DNSName implements GeneralNameInterface {
         else if (inputName.getType() != NAME_DNS)
             constraintType = NAME_DIFF_TYPE;
         else {
+            if (!(inputName instanceof DNSName)) {
+                throw new IllegalArgumentException("inputName: " + inputName);
+            }
             String inName =
                 (((DNSName) inputName).getName()).toLowerCase(Locale.ENGLISH);
             String thisName = name.toLowerCase(Locale.ENGLISH);
