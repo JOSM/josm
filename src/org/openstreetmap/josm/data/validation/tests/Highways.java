@@ -258,8 +258,10 @@ public class Highways extends Test {
                         .primitives(p)
                         .build());
             }
-            // TODO: Check coherence of context against maxspeed
-            // TODO: Check coherence of context against highway
+            if (testContextHighway) {
+                // TODO: Check coherence of context against maxspeed
+                // TODO: Check coherence of context against highway
+            }
         }
     }
 }
