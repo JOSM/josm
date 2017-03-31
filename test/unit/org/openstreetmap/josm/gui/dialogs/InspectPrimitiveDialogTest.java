@@ -106,7 +106,7 @@ public class InspectPrimitiveDialogTest {
                 "> skipping \"Potlatch 2\" (not active)\n" +
                 "\n" +
                 "List of generated Styles:\n" +
-                " * NodeElemStyle{z_idx=[4.95/0.0/0.0]  symbol=[symbolShape=SQUARE size=6 stroke=java.awt.BasicStroke strokeColor=java.awt.Color[r=255,g=0,b=0] fillColor=java.awt.Color[r=255,g=0,b=0]]}\n" +
+                " * NodeElement{z_idx=[4.95/0.0/0.0]  symbol=[symbolShape=SQUARE size=6 stroke=java.awt.BasicStroke strokeColor=java.awt.Color[r=255,g=0,b=0] fillColor=java.awt.Color[r=255,g=0,b=0]]}\n" +
                 "\n" +
                 "\n";
         // CHECKSTYLE.ON: LineLength
@@ -118,7 +118,8 @@ public class InspectPrimitiveDialogTest {
             n.setUser(User.getAnonymous());
             ds.addPrimitive(n);
             ds.addSelected(n);
-            assertEquals(baseText, InspectPrimitiveDialog.buildMapPaintText().replaceAll("@(\\p{XDigit})+", ""));
+            String text = InspectPrimitiveDialog.buildMapPaintText().replaceAll("@(\\p{XDigit})+", "");
+            assertEquals(baseText, text);
             n = new Node(LatLon.ZERO);
             n.setUser(User.getAnonymous());
             ds.addPrimitive(n);
