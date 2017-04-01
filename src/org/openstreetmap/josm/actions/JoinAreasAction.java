@@ -10,25 +10,15 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
-import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
-import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.function.ToDoubleFunction;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.swing.JOptionPane;
 
@@ -59,7 +49,6 @@ import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.UserCancelException;
 import org.openstreetmap.josm.tools.Utils;
-import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * Join Areas (i.e. closed ways and multipolygons).
@@ -191,11 +180,6 @@ public class JoinAreasAction extends JosmAction {
             return insideToTheRight == that.insideToTheRight &&
                     Objects.equals(way, that.way);
         }
-
-        @Override
-        public String toString() {
-            return "WayInPolygon [way=" + way + ", insideToTheRight=" + insideToTheRight + "]";
-        }
     }
 
     /**
@@ -257,7 +241,7 @@ public class JoinAreasAction extends JosmAction {
     private static class WayTraverser {
 
         /** Set of {@link WayInPolygon} to be joined by walk algorithm */
-        private final List<WayInPolygon> availableWays;
+        private final Set<WayInPolygon> availableWays;
         /** Current state of walk algorithm */
         private WayInPolygon lastWay;
         /** Direction of current way */
@@ -267,7 +251,7 @@ public class JoinAreasAction extends JosmAction {
          * @param ways available ways
          */
         WayTraverser(Collection<WayInPolygon> ways) {
-            availableWays = new ArrayList<>(ways);
+            availableWays = new HashSet<>(ways);
             lastWay = null;
         }
 
@@ -359,32 +343,49 @@ public class JoinAreasAction extends JosmAction {
 
             double headAngle = Math.atan2(headNode.getEastNorth().east() - prevNode.getEastNorth().east(),
                     headNode.getEastNorth().north() - prevNode.getEastNorth().north());
+            double bestAngle = 0;
 
-            // Pairs of (way, nextNode)
-            lastWay = Stream.concat(
-                availableWays.stream()
-                    .filter(way -> way.way.firstNode().equals(headNode) && way.insideToTheRight)
-                    .map(way -> new Pair<>(way, way.way.getNode(1))),
-                availableWays.stream()
-                    .filter(way -> way.way.lastNode().equals(headNode) && !way.insideToTheRight)
-                    .map(way -> new Pair<>(way, way.way.getNode(way.way.getNodesCount() - 2))))
+            //find best next way
+            WayInPolygon bestWay = null;
+            boolean bestWayReverse = false;
 
-                // now find the way with the best angle
-                .min(Comparator.comparingDouble(wayAndNext -> {
-                    Node nextNode = wayAndNext.b;
-                    if (nextNode == prevNode) {
-                        // we always prefer going back.
-                        return Double.POSITIVE_INFINITY;
-                    }
-                    double angle = Math.atan2(nextNode.getEastNorth().east() - headNode.getEastNorth().east(),
-                            nextNode.getEastNorth().north() - headNode.getEastNorth().north()) - headAngle;
-                    if (angle > Math.PI)
-                        angle -= 2*Math.PI;
-                    if (angle <= -Math.PI)
-                        angle += 2*Math.PI;
-                    return angle;
-                })).map(wayAndNext -> wayAndNext.a).orElse(null);
-            lastWayReverse = lastWay != null && !lastWay.insideToTheRight;
+            for (WayInPolygon way : availableWays) {
+                Node nextNode;
+
+                // Check for a connected way
+                if (way.way.firstNode().equals(headNode) && way.insideToTheRight) {
+                    nextNode = way.way.getNode(1);
+                } else if (way.way.lastNode().equals(headNode) && !way.insideToTheRight) {
+                    nextNode = way.way.getNode(way.way.getNodesCount() - 2);
+                } else {
+                    continue;
+                }
+
+                if (nextNode == prevNode) {
+                    // go back
+                    lastWay = way;
+                    lastWayReverse = !way.insideToTheRight;
+                    return lastWay;
+                }
+
+                double angle = Math.atan2(nextNode.getEastNorth().east() - headNode.getEastNorth().east(),
+                        nextNode.getEastNorth().north() - headNode.getEastNorth().north()) - headAngle;
+                if (angle > Math.PI)
+                    angle -= 2*Math.PI;
+                if (angle <= -Math.PI)
+                    angle += 2*Math.PI;
+
+                // Now we have a valid candidate way, is it better than the previous one ?
+                if (bestWay == null || angle > bestAngle) {
+                    //the new way is better
+                    bestWay = way;
+                    bestWayReverse = !way.insideToTheRight;
+                    bestAngle = angle;
+                }
+            }
+
+            lastWay = bestWay;
+            lastWayReverse = bestWayReverse;
             return lastWay;
         }
 
@@ -426,12 +427,6 @@ public class JoinAreasAction extends JosmAction {
             }
 
             return comingToHead ? mostLeft : null;
-        }
-
-        @Override
-        public String toString() {
-            return "WayTraverser [availableWays=" + availableWays + ", lastWay=" + lastWay + ", lastWayReverse="
-                    + lastWayReverse + "]";
         }
     }
 
@@ -595,68 +590,6 @@ public class JoinAreasAction extends JosmAction {
         return !nodes.isEmpty();
     }
 
-    private static class DuplicateWayCollectorAccu {
-           private List<Way> currentWays = new ArrayList<>();
-           private List<Way> duplicatesFound = new ArrayList<>();
-
-           private void add(Way way) {
-               List<Node> wayNodes = way.getNodes();
-               List<Node> wayNodesReversed = way.getNodes();
-               Collections.reverse(wayNodesReversed);
-               Optional<Way> duplicate = currentWays.stream()
-                   .filter(current -> current.getNodes().equals(wayNodes) || current.getNodes().equals(wayNodesReversed))
-                   .findFirst();
-               if (duplicate.isPresent()) {
-                   currentWays.remove(duplicate.get());
-                   duplicatesFound.add(duplicate.get());
-                   duplicatesFound.add(way);
-               } else {
-                   currentWays.add(way);
-               }
-           }
-
-           private DuplicateWayCollectorAccu combine(DuplicateWayCollectorAccu a2) {
-               duplicatesFound.addAll(a2.duplicatesFound);
-               a2.currentWays.forEach(this::add);
-               return this;
-           }
-    }
-
-    /**
-     * A collector that collects to a list of duplicated way pairs.
-     *
-     * It does not scale well (O(n²)), but the data base should be small enough to make this efficient.
-     *
-     * @author Michael Zangl
-     */
-    private static class DuplicateWayCollector implements Collector<Way, DuplicateWayCollectorAccu, List<Way>> {
-        @Override
-        public Supplier<DuplicateWayCollectorAccu> supplier() {
-            return DuplicateWayCollectorAccu::new;
-        }
-
-        @Override
-        public BiConsumer<DuplicateWayCollectorAccu, Way> accumulator() {
-            return DuplicateWayCollectorAccu::add;
-        }
-
-        @Override
-        public BinaryOperator<DuplicateWayCollectorAccu> combiner() {
-            return DuplicateWayCollectorAccu::combine;
-        }
-
-        @Override
-        public Function<DuplicateWayCollectorAccu, List<Way>> finisher() {
-            return a -> a.duplicatesFound;
-        }
-
-        @Override
-        public Set<Collector.Characteristics> characteristics() {
-            return EnumSet.of(Collector.Characteristics.UNORDERED);
-        }
-
-    }
-
     /**
      * Will join two or more overlapping areas
      * @param areas list of areas to join
@@ -708,23 +641,18 @@ public class JoinAreasAction extends JosmAction {
 
         List<WayInPolygon> preparedWays = new ArrayList<>();
 
-        // Split the nodes on the
-        List<Way> splitOuterWays = outerStartingWays.stream()
-                .flatMap(way -> splitWayOnNodes(way, nodes).stream()).collect(Collectors.toList());
-        List<Way> splitInnerWays = innerStartingWays.stream()
-                .flatMap(way -> splitWayOnNodes(way, nodes).stream()).collect(Collectors.toList());
+        for (Way way : outerStartingWays) {
+            List<Way> splitWays = splitWayOnNodes(way, nodes);
+            preparedWays.addAll(markWayInsideSide(splitWays, false));
+        }
 
-        // remove duplicate ways (A->B->C and C->B->A)
-        List<Way> duplicates = Stream.concat(splitOuterWays.stream(), splitInnerWays.stream()).collect(new DuplicateWayCollector());
-
-        splitOuterWays.removeAll(duplicates);
-        splitInnerWays.removeAll(duplicates);
-
-        preparedWays.addAll(markWayInsideSide(splitOuterWays, false));
-        preparedWays.addAll(markWayInsideSide(splitInnerWays, true));
+        for (Way way : innerStartingWays) {
+            List<Way> splitWays = splitWayOnNodes(way, nodes);
+            preparedWays.addAll(markWayInsideSide(splitWays, true));
+        }
 
         // Find boundary ways
-        List<Way> discardedWays = new ArrayList<>(duplicates);
+        List<Way> discardedWays = new ArrayList<>();
         List<AssembledPolygon> boundaries = findBoundaryPolygons(preparedWays, discardedWays);
 
         //find polygons
@@ -910,63 +838,168 @@ public class JoinAreasAction extends JosmAction {
      * @throws IllegalArgumentException if parts is empty or not circular
      */
     private static List<WayInPolygon> markWayInsideSide(List<Way> parts, boolean isInner) {
-        // the data is prepared so that all ways are split at possible intersection points.
-        // To find out which side of the way the outer side is, we can follow a ray starting anywhere at the way in any direction.
-        // Computation is done in East/North space.
-        // We use a ray at a fixed yRay coordinate that ends at xRay;
-        // we need to make sure this ray does not go into the same direction the way is going.
-        // This is done by rotating by 90° if we need to.
 
-        return parts.stream().map(way -> {
-            int intersections = 0;
-            // Use some random start point on the way
-            EastNorth rayNode1 = way.getNode(0).getEastNorth();
-            EastNorth rayNode2 = way.getNode(1).getEastNorth();
-            EastNorth rayFrom = rayNode1.getCenter(rayNode2);
+        //prepare next map
+        Map<Way, Way> nextWayMap = new HashMap<>();
 
-            // Now find the x/y mapping function. We need to ensure that rayNode1->rayNode2 is not parallel to our x axis.
-            ToDoubleFunction<EastNorth> x;
-            ToDoubleFunction<EastNorth> y;
-            if (Math.abs(rayNode1.east() - rayNode2.east()) < Math.abs(rayNode1.north() - rayNode2.north())) {
-                x = en -> en.east();
-                y = en -> en.north();
-            } else {
-                x = en -> -en.north();
-                y = en -> en.east();
+        for (int pos = 0; pos < parts.size(); pos++) {
+
+            if (!parts.get(pos).lastNode().equals(parts.get((pos + 1) % parts.size()).firstNode()))
+                throw new IllegalArgumentException("Way not circular");
+
+            nextWayMap.put(parts.get(pos), parts.get((pos + 1) % parts.size()));
+        }
+
+        //find the node with minimum y - it's guaranteed to be outer. (What about the south pole?)
+        Way topWay = null;
+        Node topNode = null;
+        int topIndex = 0;
+        double minY = Double.POSITIVE_INFINITY;
+
+        for (Way way : parts) {
+            for (int pos = 0; pos < way.getNodesCount(); pos++) {
+                Node node = way.getNode(pos);
+
+                if (node.getEastNorth().getY() < minY) {
+                    minY = node.getEastNorth().getY();
+                    topWay = way;
+                    topNode = node;
+                    topIndex = pos;
+                }
+            }
+        }
+
+        if (topWay == null || topNode == null) {
+            throw new IllegalArgumentException();
+        }
+
+        //get the upper way and it's orientation.
+
+        boolean wayClockwise; // orientation of the top way.
+
+        if (topNode.equals(topWay.firstNode()) || topNode.equals(topWay.lastNode())) {
+            Node headNode; // the node at junction
+            Node prevNode; // last node from previous path
+
+            //node is in split point - find the outermost way from this point
+
+            headNode = topNode;
+            //make a fake node that is downwards from head node (smaller Y). It will be a division point between paths.
+            prevNode = new Node(new EastNorth(headNode.getEastNorth().getX(), headNode.getEastNorth().getY() - 1e5));
+
+            topWay = null;
+            wayClockwise = false;
+            Node bestWayNextNode = null;
+
+            for (Way way : parts) {
+                if (way.firstNode().equals(headNode)) {
+                    Node nextNode = way.getNode(1);
+
+                    if (topWay == null || !Geometry.isToTheRightSideOfLine(prevNode, headNode, bestWayNextNode, nextNode)) {
+                        //the new way is better
+                        topWay = way;
+                        wayClockwise = true;
+                        bestWayNextNode = nextNode;
+                    }
+                }
+
+                if (way.lastNode().equals(headNode)) {
+                    //end adjacent to headNode
+                    Node nextNode = way.getNode(way.getNodesCount() - 2);
+
+                    if (topWay == null || !Geometry.isToTheRightSideOfLine(prevNode, headNode, bestWayNextNode, nextNode)) {
+                        //the new way is better
+                        topWay = way;
+                        wayClockwise = false;
+                        bestWayNextNode = nextNode;
+                    }
+                }
+            }
+        } else {
+            //node is inside way - pick the clockwise going end.
+            Node prev = topWay.getNode(topIndex - 1);
+            Node next = topWay.getNode(topIndex + 1);
+
+            //there will be no parallel segments in the middle of way, so all fine.
+            wayClockwise = Geometry.angleIsClockwise(prev, topNode, next);
+        }
+
+        Way curWay = topWay;
+        boolean curWayInsideToTheRight = wayClockwise ^ isInner;
+        List<WayInPolygon> result = new ArrayList<>();
+
+        //iterate till full circle is reached
+        while (curWay != null) {
+
+            //add cur way
+            WayInPolygon resultWay = new WayInPolygon(curWay, curWayInsideToTheRight);
+            result.add(resultWay);
+
+            //process next way
+            Way nextWay = nextWayMap.get(curWay);
+            Node prevNode = curWay.getNode(curWay.getNodesCount() - 2);
+            Node headNode = curWay.lastNode();
+            Node nextNode = nextWay.getNode(1);
+
+            if (nextWay == topWay) {
+                //full loop traversed - all done.
+                break;
             }
 
-            double xRay = x.applyAsDouble(rayFrom);
-            double yRay = y.applyAsDouble(rayFrom);
+            //find intersecting segments
+            // the intersections will look like this:
+            //
+            //                       ^
+            //                       |
+            //                       X wayBNode
+            //                       |
+            //                  wayB |
+            //                       |
+            //             curWay    |       nextWay
+            //----X----------------->X----------------------X---->
+            //    prevNode           ^headNode              nextNode
+            //                       |
+            //                       |
+            //                  wayA |
+            //                       |
+            //                       X wayANode
+            //                       |
 
-            for (Way part : parts) {
-                // intersect against all way segments
-                for (int i = 0; i < part.getNodesCount() - 1; i++) {
-                    EastNorth n1 = part.getNode(i).getEastNorth();
-                    EastNorth n2 = part.getNode(i + 1).getEastNorth();
-                    if ((rayNode1.equals(n1) && rayNode2.equals(n2)) || (rayNode2.equals(n1) && rayNode1.equals(n2))) {
-                        // This is the segment we are starting the ray from.
-                        // We ignore this to avoid rounding errors.
-                        continue;
-                    }
+            int intersectionCount = 0;
 
-                    double x1 = x.applyAsDouble(n1);
-                    double x2 = x.applyAsDouble(n2);
-                    double y1 = y.applyAsDouble(n1);
-                    double y2 = y.applyAsDouble(n2);
+            for (Way wayA : parts) {
 
-                    if (!((y1 <= yRay && yRay < y2) || (y2 <= yRay && yRay < y1))) {
-                        // No intersection, since segment is above/below ray
-                        continue;
-                    }
-                    double xIntersect = x1 + (x2 - x1) * (yRay - y1) / (y2 - y1);
-                    if (xIntersect < xRay) {
-                        intersections++;
+                if (wayA == curWay) {
+                    continue;
+                }
+
+                if (wayA.lastNode().equals(headNode)) {
+
+                    Way wayB = nextWayMap.get(wayA);
+
+                    //test if wayA is opposite wayB relative to curWay and nextWay
+
+                    Node wayANode = wayA.getNode(wayA.getNodesCount() - 2);
+                    Node wayBNode = wayB.getNode(1);
+
+                    boolean wayAToTheRight = Geometry.isToTheRightSideOfLine(prevNode, headNode, nextNode, wayANode);
+                    boolean wayBToTheRight = Geometry.isToTheRightSideOfLine(prevNode, headNode, nextNode, wayBNode);
+
+                    if (wayAToTheRight != wayBToTheRight) {
+                        intersectionCount++;
                     }
                 }
             }
 
-            return new WayInPolygon(way, (intersections % 2 == 0) ^ isInner ^ (y.applyAsDouble(rayNode1) > yRay));
-        }).collect(Collectors.toList());
+            //if odd number of crossings, invert orientation
+            if (intersectionCount % 2 != 0) {
+                curWayInsideToTheRight = !curWayInsideToTheRight;
+            }
+
+            curWay = nextWay;
+        }
+
+        return result;
     }
 
     /**
@@ -1115,43 +1148,35 @@ public class JoinAreasAction extends JosmAction {
         // In multigonWays collection, some way are just a point (i.e. way like nodeA-nodeA)
         // This seems to appear when is apply over invalid way like #9911 test-case
         // Remove all of these way to make the next work.
-        List<WayInPolygon> cleanMultigonWays = multigonWays.stream()
-                .filter(way -> way.way.getNodesCount() != 2 || !way.way.isClosed())
-                .collect(Collectors.toList());
+        List<WayInPolygon> cleanMultigonWays = new ArrayList<>();
+        for (WayInPolygon way: multigonWays) {
+            if (way.way.getNodesCount() != 2 || !way.way.isClosed())
+                cleanMultigonWays.add(way);
+        }
+
         WayTraverser traverser = new WayTraverser(cleanMultigonWays);
         List<AssembledPolygon> result = new ArrayList<>();
 
-        try {
-            WayInPolygon startWay;
-            while ((startWay = traverser.startNewWay()) != null) {
-                findBoundaryPolygonsStartingWith(discardedResult, traverser, result, startWay);
-            }
-        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException t) {
-            throw BugReport.intercept(t).put("traverser", traverser);
-        }
-
-        return fixTouchingPolygons(result);
-    }
-
-    private static void findBoundaryPolygonsStartingWith(List<Way> discardedResult, WayTraverser traverser, List<AssembledPolygon> result,
-            WayInPolygon startWay) {
-        List<WayInPolygon> path = new ArrayList<>();
-        List<WayInPolygon> startWays = new ArrayList<>();
-        try {
+        WayInPolygon startWay;
+        while ((startWay = traverser.startNewWay()) != null) {
+            List<WayInPolygon> path = new ArrayList<>();
+            List<WayInPolygon> startWays = new ArrayList<>();
             path.add(startWay);
             while (true) {
-                WayInPolygon leftComing = traverser.leftComingWay();
-                if (leftComing != null && !startWays.contains(leftComing)) {
+                WayInPolygon leftComing;
+                while ((leftComing = traverser.leftComingWay()) != null) {
+                    if (startWays.contains(leftComing))
+                        break;
                     // Need restart traverser walk
                     path.clear();
                     path.add(leftComing);
                     traverser.setStartWay(leftComing);
                     startWays.add(leftComing);
+                    break;
                 }
                 WayInPolygon nextWay = traverser.walk();
-                if (nextWay == null) {
-                    throw new JosmRuntimeException("Join areas internal error: traverser could not find a next way.");
-                }
+                if (nextWay == null)
+                    throw new JosmRuntimeException("Join areas internal error.");
                 if (path.get(0) == nextWay) {
                     // path is closed -> stop here
                     AssembledPolygon ring = new AssembledPolygon(path);
@@ -1182,9 +1207,9 @@ public class JoinAreasAction extends JosmAction {
                     path.add(nextWay);
                 }
             }
-        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException t) {
-            throw BugReport.intercept(t).put("path", path);
         }
+
+        return fixTouchingPolygons(result);
     }
 
     /**
