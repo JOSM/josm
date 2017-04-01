@@ -245,6 +245,12 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             Layer selectedLayer = layers.get(index).getValue().get(0);
             return new WMTSDefaultLayer(selectedLayer.identifier, selectedLayer.tileMatrixSet.identifier);
         }
+
+        private static List<Entry<String, List<Layer>>> groupLayersByNameAndTileMatrixSet(Collection<Layer> layers) {
+            Map<String, List<Layer>> layerByName = layers.stream().collect(
+                    Collectors.groupingBy(x -> x.identifier + '\u001c' + x.tileMatrixSet.identifier));
+            return layerByName.entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toList());
+        }
     }
 
     private final Map<String, String> headers = new ConcurrentHashMap<>();
@@ -257,7 +263,6 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     private ScaleList nativeScaleList;
 
     private final WMTSDefaultLayer defaultLayer;
-
 
     /**
      * Creates a tile source based on imagery info
@@ -312,12 +317,6 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         }
         matcher.appendTail(output);
         return output.toString();
-    }
-
-    private static List<Entry<String, List<Layer>>> groupLayersByNameAndTileMatrixSet(Collection<Layer> layers) {
-        Map<String, List<Layer>> layerByName = layers.stream().collect(
-                Collectors.groupingBy(x -> x.identifier + '\u001c' + x.tileMatrixSet.identifier));
-        return layerByName.entrySet().stream().sorted(Map.Entry.comparingByKey()).collect(Collectors.toList());
     }
 
     /**
