@@ -408,6 +408,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         Stack<QName> tagStack = new Stack<>();
         List<String> supportedMimeTypes = new ArrayList<>(Arrays.asList(ImageIO.getReaderMIMETypes()));
         supportedMimeTypes.add("image/jpgpng");         // used by ESRI
+        supportedMimeTypes.add("image/png8");           // used by geoserver
         Collection<String> unsupportedFormats = new ArrayList<>();
 
         for (int event = reader.getEventType();
