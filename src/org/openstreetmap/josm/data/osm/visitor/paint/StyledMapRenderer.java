@@ -362,7 +362,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     /**
      * Worker function for drawing areas.
      *
-     * @param osm the primitive
      * @param path the path object for the area that should be drawn; in case
      * of multipolygons, this can path can be a complex shape with one outer
      * polygon and one or more inner polygons
@@ -376,7 +375,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param disabled If this should be drawn with a special disabled style.
      * @param text Ignored. Use {@link #drawText(OsmPrimitive, TextLabel)} instead.
      */
-    protected void drawArea(OsmPrimitive osm, MapViewPath path, Color color,
+    protected void drawArea(MapViewPath path, Color color,
             MapImage fillImage, Float extent, Path2D.Double pfClip, boolean disabled, TextLabel text) {
         if (!isOutlineOnly && color.getAlpha() != 0) {
             Shape area = path;
@@ -457,7 +456,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                         pfClip = getPFClip(pd, extent * scale);
                     }
                 }
-                drawArea(r, p,
+                drawArea(p,
                         pd.isSelected() ? paintSettings.getRelationSelectedColor(color.getAlpha()) : color,
                         fillImage, extent, pfClip, disabled, text);
             }
@@ -486,7 +485,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 pfClip = getPFClip(w, extent * scale);
             }
         }
-        drawArea(w, getPath(w), color, fillImage, extent, pfClip, disabled, text);
+        drawArea(getPath(w), color, fillImage, extent, pfClip, disabled, text);
     }
 
     /**
