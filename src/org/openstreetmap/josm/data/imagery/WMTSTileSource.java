@@ -191,7 +191,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                             case 0:
                                 return SelectLayerDialog.this.layers.get(rowIndex).getValue()
                                         .stream()
-                                        .map(x -> x.getUserTitle())
+                                        .map(Layer::getUserTitle)
                                         .collect(Collectors.joining(", ")); //this should be only one
                             case 1:
                                 return SelectLayerDialog.this.layers.get(rowIndex).getValue()
