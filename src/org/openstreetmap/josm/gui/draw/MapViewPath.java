@@ -366,8 +366,8 @@ public class MapViewPath extends MapPath2D {
     private final class LineVisitor extends AbstractMapPathVisitor {
         private final PathSegmentConsumer consumer;
         private MapViewPoint last;
-        private double inLineOffset = 0;
-        private boolean startIsOldEnd = false;
+        private double inLineOffset;
+        private boolean startIsOldEnd;
 
         LineVisitor(PathSegmentConsumer consumer) {
             this.consumer = consumer;
