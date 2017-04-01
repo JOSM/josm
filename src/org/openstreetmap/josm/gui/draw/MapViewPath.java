@@ -14,7 +14,6 @@ import org.openstreetmap.josm.gui.MapViewState;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
 
-
 /**
  * This is a version of a java Path2D that allows you to add points to it by simply giving their east/north, lat/lon or node coordinates.
  * <p>
@@ -185,19 +184,19 @@ public class MapViewPath extends MapPath2D {
      * @since 11748
      */
     public void appendFromEastNorth(Path2D.Double path) {
-        new AbstractPathVisitor() {
+        new PathVisitor() {
             @Override
-            void visitMoveTo(double x, double y) {
+            public void visitMoveTo(double x, double y) {
                 moveTo(new EastNorth(x, y));
             }
 
             @Override
-            void visitLineTo(double x, double y) {
+            public void visitLineTo(double x, double y) {
                 lineTo(new EastNorth(x, y));
             }
 
             @Override
-            void visitClose() {
+            public void visitClose() {
                 closePath();
             }
         }.visit(path);
@@ -301,13 +300,13 @@ public class MapViewPath extends MapPath2D {
         void addLineBetween(double inLineOffset, MapViewPoint start, MapViewPoint end, boolean startIsOldEnd);
     }
 
-    private abstract static class AbstractPathVisitor {
+    private interface PathVisitor {
         /**
          * Append a path to this one. The path is clipped to the current view.
          * @param path The iterator
          * @return true if adding the path was successful.
          */
-        public boolean visit(Path2D.Double path) {
+        default boolean visit(Path2D.Double path) {
             double[] coords = new double[8];
             PathIterator it = path.getPathIterator(null);
             while (!it.isDone()) {
@@ -331,18 +330,18 @@ public class MapViewPath extends MapPath2D {
             return true;
         }
 
-        abstract void visitClose();
+        void visitClose();
 
-        abstract void visitMoveTo(double x, double y);
+        void visitMoveTo(double x, double y);
 
-        abstract void visitLineTo(double x, double y);
+        void visitLineTo(double x, double y);
     }
 
-    private abstract class AbstractMapPathVisitor extends AbstractPathVisitor {
+    private abstract class AbstractMapPathVisitor implements PathVisitor {
         private MapViewPoint lastMoveTo;
 
         @Override
-        void visitMoveTo(double x, double y) {
+        public void visitMoveTo(double x, double y) {
             MapViewPoint move = state.getForView(x, y);
             lastMoveTo = move;
             visitMoveTo(move);
@@ -351,14 +350,14 @@ public class MapViewPath extends MapPath2D {
         abstract void visitMoveTo(MapViewPoint p);
 
         @Override
-        void visitLineTo(double x, double y) {
+        public void visitLineTo(double x, double y) {
             visitLineTo(state.getForView(x, y));
         }
 
         abstract void visitLineTo(MapViewPoint p);
 
         @Override
-        void visitClose() {
+        public void visitClose() {
             visitLineTo(lastMoveTo);
         }
     }
