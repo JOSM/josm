@@ -619,7 +619,8 @@
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:highway=tertiary"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=tertiary"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:highway=tertiary"
-                  vi.href="http://wiki.openstreetmap.org/wiki/Vi:Tag:highway=tertiary" />
+                  vi.href="http://wiki.openstreetmap.org/wiki/Vi:Tag:highway=tertiary"
+                  zh_CN.href="http://wiki.openstreetmap.org/wiki/Zh-hans:Tag:highway=tertiary" />
             <space />
             <key key="highway" value="tertiary" />
             <text key="ref" text="Reference" />
@@ -2083,6 +2084,7 @@
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:waterway=ditch"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:waterway=ditch"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:waterway=ditch"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:waterway=ditch"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:waterway=ditch"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:waterway=ditch"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:waterway=ditch"
@@ -2317,6 +2319,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=coastline"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=coastline"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=coastline"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:natural=coastline"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:natural=coastline"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=coastline"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:natural=coastline"
@@ -2348,6 +2351,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=wetland"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=wetland"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=wetland"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:natural=wetland"
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:natural=wetland"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:natural=wetland"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:natural=wetland"
@@ -2401,6 +2405,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=bay"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=bay"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=bay"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:natural=bay"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=bay"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=bay"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:natural=bay"
@@ -3594,6 +3599,7 @@
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:amenity=bus_station"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=bus_station"
                   el.href="http://wiki.openstreetmap.org/wiki/El:Tag:amenity=bus_station"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=bus_station"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=bus_station"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:amenity=bus_station"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=bus_station" />
@@ -4601,6 +4607,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=fishing"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:leisure=fishing"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:leisure=fishing"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:leisure=fishing"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:leisure=fishing"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:leisure=fishing"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=fishing" />
@@ -4693,6 +4700,7 @@
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:tourism=museum"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:tourism=museum"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:tourism=museum"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:tourism=museum"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:tourism=museum"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:tourism=museum"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:tourism=museum"
@@ -5170,6 +5178,7 @@
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:amenity=driving_school"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=driving_school"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:amenity=driving_school"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:amenity=driving_school"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:amenity=driving_school"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:amenity=driving_school"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:amenity=driving_school" />
@@ -6234,6 +6243,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=climbing"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:sport=climbing"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:sport=climbing"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:sport=climbing"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:sport=climbing" />
             <space />
             <key key="sport" value="climbing" />
@@ -6604,6 +6614,7 @@
     <group name="Man Made" icon="presets/landmark/works.svg">
         <item name="Building" icon="presets/landmark/building.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:building"
+                  bg.href="http://wiki.openstreetmap.org/wiki/Bg:Key:building"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:building"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:building"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Key:building"
@@ -6790,6 +6801,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=storage_tank"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=storage_tank"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=storage_tank"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:man_made=storage_tank"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=storage_tank"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:man_made=storage_tank"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=storage_tank" />
@@ -6829,6 +6841,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=mineshaft"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=mineshaft"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=mineshaft"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:man_made=mineshaft"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=mineshaft"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:man_made=mineshaft"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=mineshaft" />
@@ -8033,6 +8046,7 @@
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:organic"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Key:organic"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Key:organic"
+                  it.href="http://wiki.openstreetmap.org/wiki/IT:Key:organic"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:organic" />
             <space />
             <combo text="Organic/Bio" key="organic" values="only,yes,no" match="key" />
@@ -9961,6 +9975,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=cliff"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=cliff"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=cliff"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:natural=cliff"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:natural=cliff"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=cliff"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=cliff"
@@ -10191,6 +10206,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:natural=scrub"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:natural=scrub"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:natural=scrub"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:natural=scrub"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:natural=scrub"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=scrub"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=scrub"
@@ -10303,6 +10319,7 @@
                   ca.href="http://wiki.openstreetmap.org/wiki/Ca:Tag:landuse=farmland"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=farmland"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=farmland"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:landuse=farmland"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:landuse=farmland"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=farmland"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:landuse=farmland" />
