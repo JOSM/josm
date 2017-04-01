@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.notes;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -23,6 +24,43 @@ public class Note {
         /** Note is closed */
         CLOSED
     }
+
+    /**
+     * Sorts notes in the following order:
+     * 1) Open notes
+     * 2) Closed notes
+     * 3) New notes
+     * Within each subgroup it sorts by ID
+     */
+    public static final Comparator<Note> DEFAULT_COMPARATOR = (n1, n2) -> {
+        if (n1.getId() < 0 && n2.getId() > 0) {
+            return 1;
+        }
+        if (n1.getId() > 0 && n2.getId() < 0) {
+            return -1;
+        }
+        if (n1.getState() == State.CLOSED && n2.getState() == State.OPEN) {
+            return 1;
+        }
+        if (n1.getState() == State.OPEN && n2.getState() == State.CLOSED) {
+            return -1;
+        }
+        return Long.compare(Math.abs(n1.getId()), Math.abs(n2.getId()));
+    };
+
+    /** Sorts notes strictly by creation date */
+    public static final Comparator<Note> DATE_COMPARATOR = (n1, n2) -> n1.createdAt.compareTo(n2.createdAt);
+
+    /** Sorts notes by user, then creation date */
+    public static final Comparator<Note> USER_COMPARATOR = (n1, n2) -> {
+        String n1User = n1.getFirstComment().getUser().getName();
+        String n2User = n2.getFirstComment().getUser().getName();
+        return n1User.equals(n2User) ? DATE_COMPARATOR.compare(n1, n2) : n1User.compareTo(n2User);
+    };
+
+    /** Sorts notes by the last modified date */
+    public static final Comparator<Note> LAST_ACTION_COMPARATOR =
+            (n1, n2) -> NoteComment.DATE_COMPARATOR.compare(n1.getLastComment(), n2.getLastComment());
 
     private long id;
     private LatLon latLon;
@@ -59,7 +97,7 @@ public class Note {
 
     /** @return Date that this note was submitted */
     public Date getCreatedAt() {
-        return createdAt;
+        return cloneDate(createdAt);
     }
 
     /**
@@ -67,12 +105,12 @@ public class Note {
      * @param createdAt date at which this note has been created
      */
     public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+        this.createdAt = cloneDate(createdAt);
     }
 
     /** @return Date that this note was closed. Null if it is still open. */
     public Date getClosedAt() {
-        return closedAt;
+        return cloneDate(closedAt);
     }
 
     /**
@@ -80,7 +118,7 @@ public class Note {
      * @param closedAt date at which this note has been closed
      */
     public void setClosedAt(Date closedAt) {
-        this.closedAt = closedAt;
+        this.closedAt = cloneDate(closedAt);
     }
 
     /** @return The open or closed state of this note */
@@ -99,6 +137,15 @@ public class Note {
     /** @return An ordered list of comments associated with this note */
     public List<NoteComment> getComments() {
         return comments;
+    }
+
+    /**
+     * Returns the last comment, or {@code null}.
+     * @return the last comment, or {@code null}
+     * @since 11821
+     */
+    public NoteComment getLastComment() {
+        return comments.isEmpty() ? null : comments.get(comments.size()-1);
     }
 
     /**
@@ -124,7 +171,7 @@ public class Note {
      */
     public void updateWith(Note note) {
         this.comments = note.comments;
-        this.createdAt = note.createdAt;
+        this.createdAt = cloneDate(note.createdAt);
         this.id = note.id;
         this.state = note.state;
         this.latLon = note.latLon;
@@ -148,5 +195,14 @@ public class Note {
     @Override
     public String toString() {
         return tr("Note") + ' ' + id + ": " + getFirstComment();
+    }
+
+    /**
+     * Null-safe date cloning method.
+     * @param d date to clone, or null
+     * @return cloned date, or null
+     */
+    static Date cloneDate(Date d) {
+        return d != null ? (Date) d.clone() : null;
     }
 }

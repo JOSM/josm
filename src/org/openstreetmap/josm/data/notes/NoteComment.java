@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.notes;
 
+import java.util.Comparator;
 import java.util.Date;
 
 import org.openstreetmap.josm.data.osm.User;
@@ -37,6 +38,9 @@ public class NoteComment {
         HIDDEN
     }
 
+    /** Sorts note comments strictly by creation date */
+    public static final Comparator<NoteComment> DATE_COMPARATOR = (n1, n2) -> n1.commentTimestamp.compareTo(n2.commentTimestamp);
+
     /**
      * @param createDate The time at which this comment was added
      * @param user JOSM User object of the user who created the comment
@@ -47,7 +51,7 @@ public class NoteComment {
     public NoteComment(Date createDate, User user, String commentText, Action action, boolean isNew) {
         this.text = commentText;
         this.user = user;
-        this.commentTimestamp = createDate;
+        this.commentTimestamp = Note.cloneDate(createDate);
         this.action = action;
         this.isNew = isNew;
     }
@@ -64,7 +68,7 @@ public class NoteComment {
 
     /** @return The time at which this comment was created */
     public Date getCommentTimestamp() {
-        return commentTimestamp;
+        return Note.cloneDate(commentTimestamp);
     }
 
     /** @return the action associated with this note */

@@ -14,7 +14,6 @@ import javax.swing.JRadioButton;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.notes.Note;
-import org.openstreetmap.josm.data.osm.NoteData;
 
 /**
  * A dialog to allow the user to choose a sorting method for the list of notes
@@ -42,13 +41,13 @@ public class NoteSortDialog extends ExtendedDialog {
      */
     public void showSortDialog(Comparator<Note> currentSortMode) {
         JLabel label = new JLabel(tr("Select note sorting method"));
-        if (currentSortMode == NoteData.DEFAULT_COMPARATOR) {
+        if (currentSortMode == Note.DEFAULT_COMPARATOR) {
             defaultSort.setSelected(true);
-        } else if (currentSortMode == NoteData.DATE_COMPARATOR) {
+        } else if (currentSortMode == Note.DATE_COMPARATOR) {
             dateSort.setSelected(true);
-        } else if (currentSortMode == NoteData.USER_COMPARATOR) {
+        } else if (currentSortMode == Note.USER_COMPARATOR) {
             userSort.setSelected(true);
-        } else if (currentSortMode == NoteData.LAST_ACTION_COMPARATOR) {
+        } else if (currentSortMode == Note.LAST_ACTION_COMPARATOR) {
             lastActionSort.setSelected(true);
         } else {
             Main.warn("sort mode not recognized");
@@ -76,13 +75,13 @@ public class NoteSortDialog extends ExtendedDialog {
     /** @return Note comparator that the user has selected */
     public Comparator<Note> getSelectedComparator() {
         if (dateSort.isSelected()) {
-            return NoteData.DATE_COMPARATOR;
+            return Note.DATE_COMPARATOR;
         } else if (userSort.isSelected()) {
-            return NoteData.USER_COMPARATOR;
+            return Note.USER_COMPARATOR;
         } else if (lastActionSort.isSelected()) {
-            return NoteData.LAST_ACTION_COMPARATOR;
+            return Note.LAST_ACTION_COMPARATOR;
         } else {
-            return NoteData.DEFAULT_COMPARATOR;
+            return Note.DEFAULT_COMPARATOR;
         }
     }
 }
