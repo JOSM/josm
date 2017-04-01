@@ -85,7 +85,7 @@ public class CompletelyInsideAreaStrategy implements PositionForAreaStrategy {
         return null;
     }
 
-    private MapViewPositionAndRotation centerOf(MapViewState mapViewState, Rectangle centeredNBounds) {
+    private static MapViewPositionAndRotation centerOf(MapViewState mapViewState, Rectangle centeredNBounds) {
         return new MapViewPositionAndRotation(
                 mapViewState.getForView(centeredNBounds.getCenterX(), centeredNBounds.getCenterY()), 0);
     }

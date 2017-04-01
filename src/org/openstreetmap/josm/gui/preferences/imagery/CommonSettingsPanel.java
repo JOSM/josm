@@ -113,7 +113,7 @@ public class CommonSettingsPanel extends JPanel {
         return restartRequired;
     }
 
-    private void removeCacheFiles(String path) {
+    private static void removeCacheFiles(String path) {
         File directory = new File(path);
         File[] cacheFiles = directory.listFiles((FilenameFilter) (dir, name) -> name.endsWith(".data") || name.endsWith(".key"));
         JCSCacheManager.shutdown(); // shutdown Cache - so files can by safely deleted

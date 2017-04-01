@@ -865,7 +865,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 setColumnIdentifiers(new String[] {tr("Projection"), tr("Layer"), tr("Name"), tr("Easting"), tr("Northing")});
             }
 
-            private OffsetBookmark getRow(int row) {
+            private static OffsetBookmark getRow(int row) {
                 return OffsetBookmark.getBookmarkByIndex(row);
             }
 
