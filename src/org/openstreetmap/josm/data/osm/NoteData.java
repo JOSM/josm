@@ -25,50 +25,7 @@ public class NoteData {
 
     private final Storage<Note> noteList;
     private Note selectedNote;
-    private Comparator<Note> comparator = DEFAULT_COMPARATOR;
-
-    /**
-     * Sorts notes in the following order:
-     * 1) Open notes
-     * 2) Closed notes
-     * 3) New notes
-     * Within each subgroup it sorts by ID
-     */
-    public static final Comparator<Note> DEFAULT_COMPARATOR = (n1, n2) -> {
-        if (n1.getId() < 0 && n2.getId() > 0) {
-            return 1;
-        }
-        if (n1.getId() > 0 && n2.getId() < 0) {
-            return -1;
-        }
-        if (n1.getState() == State.CLOSED && n2.getState() == State.OPEN) {
-            return 1;
-        }
-        if (n1.getState() == State.OPEN && n2.getState() == State.CLOSED) {
-            return -1;
-        }
-        return Long.compare(Math.abs(n1.getId()), Math.abs(n2.getId()));
-    };
-
-    /** Sorts notes strictly by creation date */
-    public static final Comparator<Note> DATE_COMPARATOR = (n1, n2) -> n1.getCreatedAt().compareTo(n2.getCreatedAt());
-
-    /** Sorts notes by user, then creation date */
-    public static final Comparator<Note> USER_COMPARATOR = (n1, n2) -> {
-        String n1User = n1.getFirstComment().getUser().getName();
-        String n2User = n2.getFirstComment().getUser().getName();
-        if (n1User.equals(n2User)) {
-            return n1.getCreatedAt().compareTo(n2.getCreatedAt());
-        }
-        return n1.getFirstComment().getUser().getName().compareTo(n2.getFirstComment().getUser().getName());
-    };
-
-    /** Sorts notes by the last modified date */
-    public static final Comparator<Note> LAST_ACTION_COMPARATOR = (n1, n2) -> {
-        Date n1Date = n1.getComments().get(n1.getComments().size()-1).getCommentTimestamp();
-        Date n2Date = n2.getComments().get(n2.getComments().size()-1).getCommentTimestamp();
-        return n1Date.compareTo(n2Date);
-    };
+    private Comparator<Note> comparator = Note.DEFAULT_COMPARATOR;
 
     /**
      * Construct a new note container with a given list of notes
