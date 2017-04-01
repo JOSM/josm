@@ -186,7 +186,7 @@ public class OnLineStrategy implements PositionForAreaStrategy {
 
         @Override
         public String toString() {
-            return "HalfSegment [start=" + start + ", end=" + end + ", quality=" + quality + "]";
+            return "HalfSegment [start=" + start + ", end=" + end + ", quality=" + quality + ']';
         }
     }
 
@@ -314,17 +314,17 @@ public class OnLineStrategy implements PositionForAreaStrategy {
             this.offset = offset + (rotateText ? -1 : 1) * (rect.getX() + rect.getWidth() / 2);
         }
 
-        private Rectangle2D getBounds() {
+        Rectangle2D getBounds() {
             return glyph.getGlyphLogicalBounds(glyphIndex).getBounds2D();
         }
 
-        private double getOffset() {
+        double getOffset() {
             return offset;
         }
 
         @Override
         public String toString() {
-            return "OffsetGlyph [offset=" + offset + ", preRotate=" + preRotate + ", glyphIndex=" + glyphIndex + "]";
+            return "OffsetGlyph [offset=" + offset + ", preRotate=" + preRotate + ", glyphIndex=" + glyphIndex + ']';
         }
     }
 
