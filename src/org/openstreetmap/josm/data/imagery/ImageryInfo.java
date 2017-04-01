@@ -195,7 +195,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
       * marked as best in other editors
       * @since 11575
       */
-    private boolean bestMarked = false;
+    private boolean bestMarked;
     /** mirrors of different type for this entry */
     private List<ImageryInfo> mirrors;
     /** icon used in menu */

@@ -45,7 +45,7 @@ public class AreaElement extends StyleElement {
      * @deprecated Use {@link TextElement} instead.
      */
     @Deprecated
-    public TextLabel text = null;
+    public TextLabel text;
 
     /**
      * Fill the area only partially from the borders
