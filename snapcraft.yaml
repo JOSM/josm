@@ -13,7 +13,7 @@ description: |
  have legal or technical restrictions on their use, holding back people
  from using them in creative, productive or unexpected ways.
 confinement: strict
-grade: stable
+grade: devel
 icon: linux/tested/usr/share/icons/hicolor/128x128/apps/josm.png
 
 apps:
