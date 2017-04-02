@@ -52,7 +52,8 @@ public final class Parameters {
     public static class Builder {
         private final int windowSize;
         private int minBackReferenceLength, maxBackReferenceLength, maxOffset, maxLiteralLength;
-        private Integer niceBackReferenceLength, maxCandidates;
+        private Integer niceBackReferenceLength, maxCandidates, lazyThreshold;
+        private Boolean lazyMatches;
 
         private Builder(int windowSize) {
             if (windowSize < 2 || !isPowerOfTwo(windowSize)) {
@@ -173,6 +174,30 @@ public final class Parameters {
         }
 
         /**
+         * Sets whether lazy matching should be performed.
+         *
+         * <p>Lazy matching means that after a back-reference for a certain position has been found the compressor will
+         * try to find a longer match for the next position.</p>
+         *
+         * <p>Lazy matching is enabled by default and disabled when tuning for speed.</p>
+         */
+        public Builder withLazyMatching(boolean lazy) {
+            lazyMatches = lazy;
+            return this;
+        }
+
+        /**
+         * Sets the threshold for lazy matching.
+         *
+         * <p>Even if lazy matching is enabled it will not be performed if the length of the back-reference found for
+         * the current position is longer than this value.</p>
+         */
+        public Builder withLazyThreshold(int threshold) {
+            lazyThreshold = threshold;
+            return this;
+        }
+
+        /**
          * Changes the default setting for "nice back-reference length" and "maximum number of candidates" for improved
          * compression speed at the cost of compression ratio.
          *
@@ -181,6 +206,8 @@ public final class Parameters {
         public Builder tunedForSpeed() {
             niceBackReferenceLength = Math.max(minBackReferenceLength, maxBackReferenceLength / 8);
             maxCandidates = Math.max(32, windowSize / 1024);
+            lazyMatches = false;
+            lazyThreshold = minBackReferenceLength;
             return this;
         }
 
@@ -191,8 +218,9 @@ public final class Parameters {
          * <p>Use this method after configuring "maximum back-reference length".</p>
          */
         public Builder tunedForCompressionRatio() {
-            niceBackReferenceLength = maxBackReferenceLength;
+            niceBackReferenceLength = lazyThreshold = maxBackReferenceLength;
             maxCandidates = Math.max(32, windowSize / 16);
+            lazyMatches = true;
             return this;
         }
 
@@ -205,17 +233,21 @@ public final class Parameters {
             int niceLen = niceBackReferenceLength != null ? niceBackReferenceLength
                 : Math.max(minBackReferenceLength, maxBackReferenceLength / 2);
             int candidates = maxCandidates != null ? maxCandidates : Math.max(256, windowSize / 128);
+            boolean lazy = lazyMatches != null ? lazyMatches : true;
+            int threshold = lazy ? (lazyThreshold != null ? lazyThreshold : niceLen) : minBackReferenceLength;
 
             return new Parameters(windowSize, minBackReferenceLength, maxBackReferenceLength,
-                maxOffset, maxLiteralLength, niceLen, candidates);
+                maxOffset, maxLiteralLength, niceLen, candidates, lazy, threshold);
         }
     }
 
     private final int windowSize, minBackReferenceLength, maxBackReferenceLength, maxOffset, maxLiteralLength,
-        niceBackReferenceLength, maxCandidates;
+        niceBackReferenceLength, maxCandidates, lazyThreshold;
+    private final boolean lazyMatching;
 
     private Parameters(int windowSize, int minBackReferenceLength, int maxBackReferenceLength, int maxOffset,
-        int maxLiteralLength, int niceBackReferenceLength, int maxCandidates) {
+            int maxLiteralLength, int niceBackReferenceLength, int maxCandidates, boolean lazyMatching,
+            int lazyThreshold) {
         this.windowSize = windowSize;
         this.minBackReferenceLength = minBackReferenceLength;
         this.maxBackReferenceLength = maxBackReferenceLength;
@@ -223,6 +255,8 @@ public final class Parameters {
         this.maxLiteralLength = maxLiteralLength;
         this.niceBackReferenceLength = niceBackReferenceLength;
         this.maxCandidates = maxCandidates;
+        this.lazyMatching = lazyMatching;
+        this.lazyThreshold = lazyThreshold;
     }
 
     /**
@@ -274,6 +308,20 @@ public final class Parameters {
      */
     public int getMaxCandidates() {
         return maxCandidates;
+    }
+
+    /**
+     * Gets whether to perform lazy matching.
+     */
+    public boolean getLazyMatching() {
+        return lazyMatching;
+    }
+
+    /**
+     * Gets the threshold for lazy matching.
+     */
+    public int getLazyMatchingThreshold() {
+        return lazyThreshold;
     }
 
     private static final boolean isPowerOfTwo(int x) {

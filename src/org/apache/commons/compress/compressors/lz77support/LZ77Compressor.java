@@ -394,6 +394,8 @@ public class LZ77Compressor {
 
     private void compress() throws IOException {
         final int minMatch = params.getMinBackReferenceLength();
+        final boolean lazy = params.getLazyMatching();
+        final int lazyThreshold = params.getLazyMatchingThreshold();
 
         while (lookahead >= minMatch) {
             catchUpMissedInserts();
@@ -402,6 +404,11 @@ public class LZ77Compressor {
             if (hashHead != NO_MATCH && hashHead - currentPosition <= params.getMaxOffset()) {
                 // sets matchStart as a side effect
                 matchLength = longestMatch(hashHead);
+
+                if (lazy && matchLength <= lazyThreshold && lookahead > minMatch) {
+                    // try to find a longer match using the next position
+                    matchLength = longestMatchForNextPosition(matchLength);
+                }
             }
             if (matchLength >= minMatch) {
                 if (blockStart != currentPosition) {
@@ -439,6 +446,31 @@ public class LZ77Compressor {
         prev[pos & wMask] = hashHead;
         head[insertHash] = pos;
         return hashHead;
+    }
+
+    private int longestMatchForNextPosition(final int prevMatchLength) {
+        // save a bunch of values to restore them if the next match isn't better than the current one
+        final int prevMatchStart = matchStart;
+        final int prevInsertHash = insertHash;
+
+        lookahead--;
+        currentPosition++;
+        int hashHead = insertString(currentPosition);
+        final int prevHashHead = prev[currentPosition & wMask];
+        int matchLength = longestMatch(hashHead);
+
+        if (matchLength <= prevMatchLength) {
+            // use the first match, as the next one isn't any better
+            matchLength = prevMatchLength;
+            matchStart = prevMatchStart;
+
+            // restore modified values
+            head[insertHash] = prevHashHead;
+            insertHash = prevInsertHash;
+            currentPosition--;
+            lookahead++;
+        }
+        return matchLength;
     }
 
     private void insertStringsInMatch(int matchLength) {
