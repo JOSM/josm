@@ -1,6 +1,6 @@
 
  StdUtils plug-in for NSIS
- Copyright (C) 2004-2013 LoRd_MuldeR <mulder2@gmx.de>
+ Copyright (C) 2004-2016 LoRd_MuldeR <mulder2@gmx.de>
 
  This library is free software; you can redistribute it and/or
  modify it under the terms of the GNU Lesser General Public

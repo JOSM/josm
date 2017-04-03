@@ -1,6 +1,6 @@
 #################################################################################
 # StdUtils plug-in for NSIS
-# Copyright (C) 2004-2014 LoRd_MuldeR <MuldeR2@GMX.de>
+# Copyright (C) 2004-2016 LoRd_MuldeR <MuldeR2@GMX.de>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,10 @@
 # http://www.gnu.org/licenses/lgpl-2.1.txt
 #################################################################################
 
+# DEVELOPER NOTES:
+# - Please see "https://github.com/lordmulder/stdutils/" for news and updates!
+# - Please see "Docs\StdUtils\StdUtils.html" for detailed function descriptions!
+# - Please see "Examples\StdUtils\StdUtilsTest.nsi" for usage examples!
 
 #################################################################################
 # FUNCTION DECLARTIONS
@@ -42,19 +46,30 @@
 !define StdUtils.TrimStrLeft      '!insertmacro _StdUtils_TrimStrLeft'   #Remove whitspaces from string, left side only
 !define StdUtils.TrimStrRight     '!insertmacro _StdUtils_TrimStrRight'  #Remove whitspaces from string, right side only
 !define StdUtils.RevStr           '!insertmacro _StdUtils_RevStr'        #Reverse a string, e.g. "reverse me" <-> "em esrever"
+!define StdUtils.ValidFileName    '!insertmacro _StdUtils_ValidFileName' #Test whether string is a valid file name - no paths allowed
+!define StdUtils.ValidPathSpec    '!insertmacro _StdUtils_ValidPathSpec' #Test whether string is a valid full(!) path specification
 !define StdUtils.SHFileMove       '!insertmacro _StdUtils_SHFileMove'    #SHFileOperation(), using the FO_MOVE operation
 !define StdUtils.SHFileCopy       '!insertmacro _StdUtils_SHFileCopy'    #SHFileOperation(), using the FO_COPY operation
+!define StdUtils.AppendToFile     '!insertmacro _StdUtils_AppendToFile'  #Append contents of an existing file to another file
 !define StdUtils.ExecShellAsUser  '!insertmacro _StdUtils_ExecShlUser'   #ShellExecute() as NON-elevated user from elevated installer
 !define StdUtils.InvokeShellVerb  '!insertmacro _StdUtils_InvkeShlVrb'   #Invokes a "shell verb", e.g. for pinning items to the taskbar
 !define StdUtils.ExecShellWaitEx  '!insertmacro _StdUtils_ExecShlWaitEx' #ShellExecuteEx(), returns the handle of the new process
 !define StdUtils.WaitForProcEx    '!insertmacro _StdUtils_WaitForProcEx' #WaitForSingleObject(), e.g. to wait for a running process
 !define StdUtils.GetParameter     '!insertmacro _StdUtils_GetParameter'  #Get the value of a specific command-line option
+!define StdUtils.TestParameter    '!insertmacro _StdUtils_TestParameter' #Test whether a specific command-line option has been set
+!define StdUtils.ParameterCnt     '!insertmacro _StdUtils_ParameterCnt'  #Get number of command-line tokens, similar to argc in main()
+!define StdUtils.ParameterStr     '!insertmacro _StdUtils_ParameterStr'  #Get the n-th command-line token, similar to argv[i] in main()
 !define StdUtils.GetAllParameters '!insertmacro _StdUtils_GetAllParams'  #Get complete command-line, but without executable name
 !define StdUtils.GetRealOSVersion '!insertmacro _StdUtils_GetRealOSVer'  #Get the *real* Windows version number, even on Windows 8.1+
 !define StdUtils.GetRealOSBuildNo '!insertmacro _StdUtils_GetRealOSBld'  #Get the *real* Windows build number, even on Windows 8.1+
 !define StdUtils.GetRealOSName    '!insertmacro _StdUtils_GetRealOSStr'  #Get the *real* Windows version, as a "friendly" name
+!define StdUtils.GetOSEdition     '!insertmacro _StdUtils_GetOSEdition'  #Get the Windows edition, i.e. "workstation" or "server"
 !define StdUtils.VerifyOSVersion  '!insertmacro _StdUtils_VrfyRealOSVer' #Compare *real* operating system to an expected version number
 !define StdUtils.VerifyOSBuildNo  '!insertmacro _StdUtils_VrfyRealOSBld' #Compare *real* operating system to an expected build number
+!define StdUtils.HashText         '!insertmacro _StdUtils_HashText'      #Compute hash from text string (CRC32, MD5, SHA1/2/3, BLAKE2)
+!define StdUtils.HashFile         '!insertmacro _StdUtils_HashFile'      #Compute hash from file (CRC32, MD5, SHA1/2/3, BLAKE2)
+!define StdUtils.TimerCreate      '!insertmacro _StdUtils_TimerCreate'   #Create a new event-timer that will be triggered periodically
+!define StdUtils.TimerDestroy     '!insertmacro _StdUtils_TimerDestroy'  #Destroy a running timer created with TimerCreate()
 !define StdUtils.GetLibVersion    '!insertmacro _StdUtils_GetLibVersion' #Get the current StdUtils library version (for debugging)
 !define StdUtils.SetVerbose       '!insertmacro _StdUtils_SetVerbose'    #Enable or disable "verbose" mode (for debugging)
 
@@ -185,6 +200,18 @@
 	pop ${var}
 !macroend
 
+!macro _StdUtils_ValidFileName out test
+	push '${test}'
+	StdUtils::ValidFileName /NOUNLOAD
+	pop ${out}
+!macroend
+
+!macro _StdUtils_ValidPathSpec out test
+	push '${test}'
+	StdUtils::ValidPathSpec /NOUNLOAD
+	pop ${out}
+!macroend
+
 !macro _StdUtils_SHFileMove out from to hwnd
 	push '${from}'
 	push '${to}'
@@ -198,6 +225,15 @@
 	push '${to}'
 	push ${hwnd}
 	StdUtils::SHFileCopy /NOUNLOAD
+	pop ${out}
+!macroend
+
+!macro _StdUtils_AppendToFile out from dest offset maxlen
+	push '${from}'
+	push '${dest}'
+	push ${offset}
+	push ${maxlen}
+	StdUtils::AppendToFile /NOUNLOAD
 	pop ${out}
 !macroend
 
@@ -239,6 +275,23 @@
 	pop ${out}
 !macroend
 
+!macro _StdUtils_TestParameter out name
+	push '${name}'
+	StdUtils::TestParameter /NOUNLOAD
+	pop ${out}
+!macroend
+
+!macro _StdUtils_ParameterCnt out
+	StdUtils::ParameterCnt /NOUNLOAD
+	pop ${out}
+!macroend
+
+!macro _StdUtils_ParameterStr out index
+	push ${index}
+	StdUtils::ParameterStr /NOUNLOAD
+	pop ${out}
+!macroend
+
 !macro _StdUtils_GetAllParams out truncate
 	push '${truncate}'
 	StdUtils::GetAllParameters /NOUNLOAD
@@ -276,6 +329,39 @@
 	pop ${out}
 !macroend
 
+!macro _StdUtils_GetOSEdition out
+	StdUtils::GetOsEdition /NOUNLOAD
+	pop ${out}
+!macroend
+
+!macro _StdUtils_HashText out type text
+	push '${type}'
+	push '${text}'
+	StdUtils::HashText /NOUNLOAD
+	pop ${out}
+!macroend
+
+!macro _StdUtils_HashFile out type file
+	push '${type}'
+	push '${file}'
+	StdUtils::HashFile /NOUNLOAD
+	pop ${out}
+!macroend
+
+!macro _StdUtils_TimerCreate out callback interval
+	GetFunctionAddress ${out} ${callback}
+	push ${out}
+	push ${interval}
+	StdUtils::TimerCreate /NOUNLOAD
+	pop ${out}
+!macroend
+
+!macro _StdUtils_TimerDestroy out timer_id
+	push ${timer_id}
+	StdUtils::TimerDestroy /NOUNLOAD
+	pop ${out}
+!macroend
+
 !macro _StdUtils_GetLibVersion out_ver out_tst
 	StdUtils::GetLibVersion /NOUNLOAD
 	pop ${out_ver}
@@ -295,7 +381,7 @@
 # MAGIC NUMBERS
 #################################################################################
 
-!define StdUtils.Const.ISV_PinToTaskbar 5386
-!define StdUtils.Const.ISV_UnpinFromTaskbar 5387
-!define StdUtils.Const.ISV_PinToStartmenu 5381
-!define StdUtils.Const.ISV_UnpinFromStartmenu 5382
+!define StdUtils.Const.ShellVerb.PinToTaskbar     0
+!define StdUtils.Const.ShellVerb.UnpinFromTaskbar 1
+!define StdUtils.Const.ShellVerb.PinToStart       2
+!define StdUtils.Const.ShellVerb.UnpinFromStart   3

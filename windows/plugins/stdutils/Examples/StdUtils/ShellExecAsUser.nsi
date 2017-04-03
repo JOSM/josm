@@ -22,6 +22,13 @@ Section
 SectionEnd
 
 Section
+	DetailPrint 'ExecShellAsUser: "$SYSDIR\mspaint666.exe"'
+	Sleep 1000
+	${StdUtils.ExecShellAsUser} $0 "$SYSDIR\mspaint666.exe" "open" "" ;launch a *non-elevated* instance of MS Paint
+	DetailPrint "Result: $0" ;expected result is "ok" on UAC-enabled systems or "fallback" otherwise. Failure indicated by "error" or "timeout".
+SectionEnd
+
+Section
 	DetailPrint 'ExecShellAsUser: "$SYSDIR\mspaint.exe"'
 	Sleep 1000
 	${StdUtils.ExecShellAsUser} $0 "$SYSDIR\mspaint.exe" "open" "" ;launch a *non-elevated* instance of MS Paint
