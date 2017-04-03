@@ -3,9 +3,11 @@ package org.openstreetmap.josm.data.imagery;
 
 import java.awt.Point;
 
+import org.openstreetmap.gui.jmapviewer.Projected;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
+import org.openstreetmap.gui.jmapviewer.interfaces.IProjected;
 import org.openstreetmap.gui.jmapviewer.tilesources.TMSTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.TileSourceInfo;
 import org.openstreetmap.josm.Main;
@@ -181,4 +183,19 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
         return degreesPerTile[zoom];
     }
 
+    @Override
+    public IProjected tileXYtoProjected(int x, int y, int zoom) {
+        EastNorth en = getTileEastNorth(x, y, zoom);
+        return new Projected(en.east(), en.north());
+    }
+
+    @Override
+    public TileXY projectedToTileXY(IProjected p, int zoom) {
+        return eastNorthToTileXY(new EastNorth(p.getEast(), p.getNorth()), zoom);
+    }
+
+    @Override
+    public String getServerCRS() {
+        return Main.getProjection().toCode();
+    }
 }
