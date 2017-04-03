@@ -39,12 +39,16 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.openstreetmap.gui.jmapviewer.Coordinate;
+import org.openstreetmap.gui.jmapviewer.Projected;
 import org.openstreetmap.gui.jmapviewer.Tile;
+import org.openstreetmap.gui.jmapviewer.TileRange;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
+import org.openstreetmap.gui.jmapviewer.interfaces.IProjected;
 import org.openstreetmap.gui.jmapviewer.interfaces.TemplatedTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -907,4 +911,72 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         return nativeScaleList;
     }
 
+    @Override
+    public IProjected tileXYtoProjected(int x, int y, int zoom) {
+        TileMatrix matrix = getTileMatrix(zoom);
+        if (matrix == null) {
+            return new Projected(0, 0);
+        }
+        double scale = matrix.scaleDenominator * this.crsScale;
+        return new Projected(
+                matrix.topLeftCorner.east() + x * scale,
+                matrix.topLeftCorner.north() - y * scale);
+    }
+
+    @Override
+    public TileXY projectedToTileXY(IProjected projected, int zoom) {
+        TileMatrix matrix = getTileMatrix(zoom);
+        if (matrix == null) {
+            return new TileXY(0, 0);
+        }
+        double scale = matrix.scaleDenominator * this.crsScale;
+        return new TileXY(
+                (projected.getEast() - matrix.topLeftCorner.east()) / scale,
+                -(projected.getNorth() - matrix.topLeftCorner.north()) / scale);
+    }
+
+    private ProjectionBounds getTileProjectionBounds(Tile tile) {
+        ProjectionBounds pb = new ProjectionBounds(new EastNorth(
+                this.tileXYtoProjected(tile.getXtile(), tile.getYtile(), tile.getZoom())));
+        pb.extend(new EastNorth(this.tileXYtoProjected(tile.getXtile() + 1, tile.getYtile() + 1, tile.getZoom())));
+        return pb;
+    }
+
+    @Override
+    public boolean isInside(Tile inner, Tile outer) {
+        ProjectionBounds pbInner = getTileProjectionBounds(inner);
+        ProjectionBounds pbOuter = getTileProjectionBounds(outer);
+        // a little tolerance, for when inner tile touches the border of the
+        // outer tile
+        double epsilon = 1e-7 * (pbOuter.maxEast - pbOuter.minEast);
+        return pbOuter.minEast <= pbInner.minEast + epsilon &&
+                pbOuter.minNorth <= pbInner.minNorth + epsilon &&
+                pbOuter.maxEast >= pbInner.maxEast - epsilon &&
+                pbOuter.maxNorth >= pbInner.maxNorth - epsilon;
+    }
+
+    @Override
+    public TileRange getCoveringTileRange(Tile tile, int newZoom) {
+        TileMatrix matrixNew = getTileMatrix(newZoom);
+        if (matrixNew == null) {
+            return new TileRange(new TileXY(0, 0), new TileXY(0, 0), newZoom);
+        }
+        IProjected p0 = tileXYtoProjected(tile.getXtile(), tile.getYtile(), tile.getZoom());
+        IProjected p1 = tileXYtoProjected(tile.getXtile() + 1, tile.getYtile() + 1, tile.getZoom());
+        TileXY tMin = projectedToTileXY(p0, newZoom);
+        TileXY tMax = projectedToTileXY(p1, newZoom);
+        // shrink the target tile a little, so we don't get neighboring tiles, that
+        // share an edge, but don't actually cover the target tile
+        double epsilon = 1e-7 * (tMax.getX() - tMin.getX());
+        int minX = (int) Math.floor(tMin.getX() + epsilon);
+        int minY = (int) Math.floor(tMin.getY() + epsilon);
+        int maxX = (int) Math.ceil(tMax.getX() - epsilon) - 1;
+        int maxY = (int) Math.ceil(tMax.getY() - epsilon) - 1;
+        return new TileRange(new TileXY(minX, minY), new TileXY(maxX, maxY), newZoom);
+    }
+
+    @Override
+    public String getServerCRS() {
+        return Main.getProjection().toCode();
+    }
 }
