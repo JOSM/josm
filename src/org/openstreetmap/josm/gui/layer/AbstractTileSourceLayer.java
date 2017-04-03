@@ -1160,10 +1160,15 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             img = applyImageProcessors((BufferedImage) img);
 
             Rectangle2D sourceRect = coordinateConverter.getRectangleForTile(tile);
-            if (!sourceRect.intersects(borderRect)) {
+            Rectangle2D clipRect;
+            if (tileSource.isInside(tile, border)) {
+                clipRect = null;
+            } else if (tileSource.isInside(border, tile)) {
+                clipRect = borderRect;
+            } else {
                 continue;
             }
-            drawImageInside(g, img, sourceRect, borderRect);
+            drawImageInside(g, img, sourceRect, clipRect);
         }
         return missedTiles;
     }
@@ -1267,6 +1272,11 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
         protected TileSet(TileXY t1, TileXY t2, int zoom) {
             super(t1, t2, zoom);
+            sanitize();
+        }
+
+        protected TileSet(TileRange range) {
+            super(range);
             sanitize();
         }
 
@@ -1589,9 +1599,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                     newlyMissedTiles.add(missed);
                     continue;
                 }
-                Tile t2 = tempCornerTile(missed);
-                TileSet ts2 = getTileSet(getShiftedLatLon(tileSource.tileXYToLatLon(missed)),
-                                         getShiftedLatLon(tileSource.tileXYToLatLon(t2)), newzoom);
+                TileSet ts2 = new TileSet(tileSource.getCoveringTileRange(missed, newzoom));
                 // Instantiating large TileSets is expensive. If there are no loaded tiles, don't bother even trying.
                 if (ts2.allLoadedTiles().isEmpty()) {
                     newlyMissedTiles.add(missed);
