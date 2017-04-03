@@ -2,10 +2,11 @@ name: josm
 version: 0.git
 summary: Editor for OpenStreetMap
 description: |
- JOSM is an editor for OpenStreetMap (OSM) written in Java.
- The current version supports stand alone GPX tracks, GPX track data
- from OSM database and existing nodes, line segments and metadata tags
- from the OSM database.
+ JOSM is an extensible editor for ​OpenStreetMap (OSM) written in Java.
+ It supports loading GPX tracks, background imagery and OSM data from
+ local sources as well as from online sources and allows to edit the
+ OSM data (nodes, ways and relations) and their metadata tags.
+ JOSM is open source and licensed under GPL​.
  
  OpenStreetMap is a project aimed squarely at creating and providing
  free geographic data such as street maps to anyone who wants them.
