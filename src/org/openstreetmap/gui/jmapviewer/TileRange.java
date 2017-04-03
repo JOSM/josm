@@ -22,6 +22,14 @@ public class TileRange {
         this.zoom = zoom;
     }
 
+    public TileRange(TileRange r) {
+        minX = r.minX;
+        minY = r.minY;
+        maxX = r.maxX;
+        maxY = r.maxY;
+        zoom = r.zoom;
+    }
+
     protected double tilesSpanned() {
         return Math.sqrt(1.0 * this.size());
     }
