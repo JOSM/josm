@@ -11,7 +11,8 @@ public class TilePosition {
     private final int x;
     private final int y;
     private final int zoom;
-    TilePosition(int x, int y, int zoom) {
+
+    public TilePosition(int x, int y, int zoom) {
         this.x = x;
         this.y = y;
         this.zoom = zoom;

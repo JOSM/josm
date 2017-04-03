@@ -41,6 +41,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
@@ -60,6 +61,7 @@ import org.openstreetmap.gui.jmapviewer.AttributionSupport;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.Tile;
+import org.openstreetmap.gui.jmapviewer.TileRange;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.CachedTileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
@@ -92,7 +94,6 @@ import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings.FilterChangeListener;
 import org.openstreetmap.josm.gui.layer.imagery.TileCoordinateConverter;
 import org.openstreetmap.josm.gui.layer.imagery.TilePosition;
-import org.openstreetmap.josm.gui.layer.imagery.TileRange;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings.DisplaySettingsChangeEvent;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings.DisplaySettingsChangeListener;
@@ -1319,12 +1320,17 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             return tilePositions().map(mapper).filter(Objects::nonNull).collect(Collectors.toList());
         }
 
-        @Override
+        /**
+         * Gets a stream of all tile positions in this set
+         * @return A stream of all positions
+         */
         public Stream<TilePosition> tilePositions() {
-            if (this.insane()) {
+            if (zoom == 0 || this.insane()) {
                 return Stream.empty(); // Tileset is either empty or too large
             } else {
-                return super.tilePositions();
+                return IntStream.rangeClosed(minX, maxX).mapToObj(
+                        x -> IntStream.rangeClosed(minY, maxY).mapToObj(y -> new TilePosition(x, y, zoom))
+                        ).flatMap(Function.identity());
             }
         }
 
