@@ -934,19 +934,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         return true;
     }
 
-    /*
-     * We use these for quick, hackish calculations. They are temporary only and intentionally not inserted into the tileCache.
-     */
-    private Tile tempCornerTile(Tile t) {
-        int x = t.getXtile() + 1;
-        int y = t.getYtile() + 1;
-        int zoom = t.getZoom();
-        Tile tile = getTile(x, y, zoom);
-        if (tile != null)
-            return tile;
-        return new Tile(tileSource, x, y, zoom);
-    }
-
     private Tile getOrCreateTile(TilePosition tilePosition) {
         return getOrCreateTile(tilePosition.getX(), tilePosition.getY(), tilePosition.getZoom());
     }
@@ -956,10 +943,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         if (tile == null) {
             tile = new Tile(tileSource, x, y, zoom);
             tileCache.addTile(tile);
-        }
-
-        if (!tile.isLoaded()) {
-            tile.loadPlaceholderFromCache(tileCache);
         }
         return tile;
     }
@@ -1116,8 +1099,17 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         Object paintMutex = new Object();
         List<TilePosition> missed = Collections.synchronizedList(new ArrayList<>());
         ts.visitTiles(tile -> {
-            Image img = getLoadedTileImage(tile);
-            if (img == null) {
+            boolean miss = false;
+            Image img = null;
+            if (!tile.isLoaded() || tile.hasError()) {
+                miss = true;
+            } else {
+                img = getLoadedTileImage(tile);
+                if (img == null) {
+                    miss = true;
+                }
+            }
+            if (miss) {
                 missed.add(new TilePosition(tile));
                 return;
             }
@@ -1147,11 +1139,17 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         // ts.allExistingTiles() by default will only return already-existing tiles.
         // However, we need to return *all* tiles to the callers, so force creation here.
         for (Tile tile : ts.allTilesCreate()) {
-            Image img = getLoadedTileImage(tile);
-            if (img == null || tile.hasError()) {
-                if (Main.isDebugEnabled()) {
-                    Main.debug("missed tile: " + tile);
+            boolean miss = false;
+            Image img = null;
+            if (!tile.isLoaded()|| tile.hasError()) {
+                miss = true;
+            } else {
+                img = getLoadedTileImage(tile);
+                if (img == null) {
+                    miss = true;
                 }
+            }
+            if (miss) {
                 missedTiles.add(tile);
                 continue;
             }
