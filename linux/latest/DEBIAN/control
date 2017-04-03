@@ -5,7 +5,8 @@ Maintainer: josm developers <josm-dev@openstreetmap.org>
 Homepage: https://josm.openstreetmap.de
 Priority: extra
 Architecture: all
-Depends: openjdk-8-jre | java8-runtime
+Depends: openjdk-8-jre | java8-runtime,
+         proj-data
 Description: Editor for OpenStreetMap (daily development snapshot)
  JOSM is an editor for OpenStreetMap (OSM) written in Java.
   The current version supports stand alone GPX tracks, GPX track data
