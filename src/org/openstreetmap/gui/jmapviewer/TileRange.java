@@ -14,7 +14,7 @@ public class TileRange {
     protected TileRange() {
     }
 
-    protected TileRange(TileXY t1, TileXY t2, int zoom) {
+    public TileRange(TileXY t1, TileXY t2, int zoom) {
         minX = (int) Math.floor(Math.min(t1.getX(), t2.getX()));
         minY = (int) Math.floor(Math.min(t1.getY(), t2.getY()));
         maxX = (int) Math.ceil(Math.max(t1.getX(), t2.getX()));

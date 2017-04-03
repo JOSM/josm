@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.Tile;
+import org.openstreetmap.gui.jmapviewer.TileRange;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 
 /**
@@ -209,4 +210,55 @@ public interface TileSource extends Attributed {
      * @return tile metadata
      */
     Map<String, String> getMetadata(Map<String, List<String>> headers);
+
+    /**
+     * Convert tile indeces (x/y/zoom) into projected coordinates of the tile origin.
+     * @param x x tile index
+     * @param y z tile index
+     * @param zoom zoom level
+     * @return projected coordinates of the tile origin
+     */
+    IProjected tileXYtoProjected(int x, int y, int zoom);
+
+    /**
+     * Convert projected coordinates to tile indices.
+     * @param p projected coordinates
+     * @param zoom zoom level
+     * @return corresponding tile index x/y (floating point, truncate to integer
+     * for tile index)
+     */
+    TileXY projectedToTileXY(IProjected p, int zoom);
+
+    /**
+     * Check if one tile is inside another tile.
+     * @param inner the tile that is suspected to be inside the other tile
+     * @param outer the tile that might contain the first tile
+     * @return true if first tile is inside second tile (or both are identical),
+     * false otherwise
+     */
+    boolean isInside(Tile inner, Tile outer);
+
+    /**
+     * Returns a range of tiles, that cover a given tile, which is
+     * usually at a different zoom level.
+     *
+     * In standard tile layout, 4 tiles cover a tile one zoom lower, 16 tiles
+     * cover a tile 2 zoom levels below etc.
+     * If the zoom level of the covering tiles is greater or equal, a single
+     * tile suffices.
+     *
+     * @param tile the tile to cover
+     * @param newZoom zoom level of the covering tiles
+     * @return TileRange of all covering tiles at zoom <code>newZoom</code>
+     */
+    TileRange getCoveringTileRange(Tile tile, int newZoom);
+
+    /**
+     * Get content reference system for this tile source.
+     *
+     * E.g. "EPSG:3857" for Google-Mercator.
+     * @return code for the content reference system in use
+     */
+    String getServerCRS();
+
 }
