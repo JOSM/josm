@@ -111,7 +111,9 @@ public class NavigatableComponentTest {
     public void testZoomToLatLon() {
         component.zoomTo(new LatLon(10, 10));
         Point2D shouldBeCenter = component.getPoint2D(new LatLon(10, 10));
-        assertThat(shouldBeCenter, CustomMatchers.is(new Point2D.Double(WIDTH / 2, HEIGHT / 2)));
+        // center may move 0.5 pixels for alignment, see {@link NavigatableComponent#zoomTo(EastNorth, double, boolean)}
+        assertEquals(shouldBeCenter.getX(), WIDTH / 2., 0.5);
+        assertEquals(shouldBeCenter.getY(), HEIGHT / 2., 0.5);
     }
 
     /**
@@ -125,10 +127,10 @@ public class NavigatableComponentTest {
         // zoomToFactor(double)
         component.zoomToFactor(0.5);
         assertEquals(initialScale / 2, component.getScale(), 0.00000001);
-        assertEquals(center, component.getCenter());
+        assertThat(component.getCenter(), CustomMatchers.is(center));
         component.zoomToFactor(2);
         assertEquals(initialScale, component.getScale(), 0.00000001);
-        assertEquals(center, component.getCenter());
+        assertThat(component.getCenter(), CustomMatchers.is(center));
 
         // zoomToFactor(EastNorth, double)
         EastNorth newCenter = new EastNorth(10, 20);
