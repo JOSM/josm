@@ -863,7 +863,6 @@ public class MultipolygonTest extends Test {
                     }
                 }
                 if (useIntersectionTest) {
-                    Main.warn("using complex test ");
                     PolygonIntersection res = Geometry.polygonIntersection(inner.getNodes(), outerCandidate.getNodes());
                     if (res == PolygonIntersection.FIRST_INSIDE_SECOND)
                         innerCandidates.add(inner);

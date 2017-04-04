@@ -4467,12 +4467,9 @@
     <member type='way' ref='-33493' role='inner' />
     <member type='way' ref='-33495' role='inner' />
     <member type='way' ref='-33491' role='outer' />
+    <tag k='josm_error_codes' v='1617' />
     <tag k='landuse' v='farmland' />
     <tag k='name' v='08/07 - u-shape inner filled with other inner, sharing all nodes with it' />
-    <tag k='type' v='multipolygon' />
-  </relation>
-  <relation id='-33665' action='modify' visible='true'>
-    <tag k='landuse' v='farmland' />
     <tag k='type' v='multipolygon' />
   </relation>
 </osm>
