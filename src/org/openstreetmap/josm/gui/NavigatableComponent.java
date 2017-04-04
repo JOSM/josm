@@ -623,6 +623,23 @@ public class NavigatableComponent extends JComponent implements Helpful {
         // snap scale to imagery if needed
         newScale = scaleRound(newScale);
 
+        // Align to the pixel grid:
+        // This is a sub-pixel correction to ensure consistent drawing at a certain scale.
+        // For example take 2 nodes, that have a distance of exactly 2.6 pixels.
+        // Depending on the offset, the distance in rounded or truncated integer
+        // pixels will be 2 or 3. It is preferable to have a consistent distance
+        // and not switch back and forth as the viewport moves. This can be achieved by
+        // locking an arbitrary point to integer pixel coordinates. (Here the EastNorth
+        // origin is used as reference point.)
+        // Note that the normal right mouse button drag moves the map by integer pixel
+        // values, so it is not an issue in this case. It only shows when zooming
+        // in & back out, etc.
+        MapViewState mvs = getState().usingScale(newScale).movedTo(state.getCenterAtPixel(), newCenter);
+        Point2D enOrigin = mvs.getPointFor(new EastNorth(0, 0)).getInView();
+        Point2D enOriginAligned = new Point2D.Double(Math.round(enOrigin.getX()), Math.round(enOrigin.getY()));
+        EastNorth enShift = mvs.getForView(enOriginAligned.getX(), enOriginAligned.getY()).getEastNorth();
+        newCenter = newCenter.subtract(enShift);
+
         if (!newCenter.equals(getCenter()) || !Utils.equalsEpsilon(getScale(), newScale)) {
             if (!initial) {
                 pushZoomUndo(getCenter(), getScale());
