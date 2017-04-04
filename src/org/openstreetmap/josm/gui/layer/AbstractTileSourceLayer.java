@@ -1141,7 +1141,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         for (Tile tile : ts.allTilesCreate()) {
             boolean miss = false;
             Image img = null;
-            if (!tile.isLoaded()|| tile.hasError()) {
+            if (!tile.isLoaded() || tile.hasError()) {
                 miss = true;
             } else {
                 img = getLoadedTileImage(tile);
