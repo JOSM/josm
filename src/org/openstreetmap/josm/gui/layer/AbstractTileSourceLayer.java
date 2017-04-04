@@ -1578,7 +1578,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         g.setColor(Color.DARK_GRAY);
 
         List<Tile> missedTiles = this.paintTileImages(g, ts);
-        int[] otherZooms = {-1, 1, -2, 2, -3, -4, -5};
+        int[] otherZooms = {1, 2, -1, -2, -3, -4, -5};
         for (int zoomOffset : otherZooms) {
             if (!getDisplaySettings().isAutoZoom()) {
                 break;
