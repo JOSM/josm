@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -291,13 +292,15 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
         /**
          * Look for primitives deleted on server (thus absent from downloaded data)
          * but still present in existing data layer
-         * @param b download bounds
+         * @param bounds download bounds
          * @param ds existing data set
          * @return the primitives to update
          */
-        private Collection<OsmPrimitive> searchPrimitivesToUpdate(Bounds b, DataSet ds) {
+        private Collection<OsmPrimitive> searchPrimitivesToUpdate(Bounds bounds, DataSet ds) {
+            if (bounds == null)
+                return Collections.EMPTY_SET;
             Collection<OsmPrimitive> col = new ArrayList<>();
-            ds.searchNodes(b.toBBox()).stream().filter(n -> !n.isNew() && !dataSet.containsNode(n)).forEachOrdered(col::add);
+            ds.searchNodes(bounds.toBBox()).stream().filter(n -> !n.isNew() && !dataSet.containsNode(n)).forEachOrdered(col::add);
             if (!col.isEmpty()) {
                 Set<Way> ways = new HashSet<>();
                 Set<Relation> rels = new HashSet<>();
