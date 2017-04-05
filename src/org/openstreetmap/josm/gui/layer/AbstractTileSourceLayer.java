@@ -12,10 +12,12 @@ import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Shape;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -24,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,6 +64,7 @@ import org.openstreetmap.gui.jmapviewer.AttributionSupport;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
 import org.openstreetmap.gui.jmapviewer.Tile;
+import org.openstreetmap.gui.jmapviewer.TileAnchor;
 import org.openstreetmap.gui.jmapviewer.TileRange;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.CachedTileLoader;
@@ -1043,68 +1047,51 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      * @param tile the Tile for which the image should be returned
      * @return  the image of the tile or null.
      */
-    private Image getLoadedTileImage(Tile tile) {
-        Image img = tile.getImage();
+    private BufferedImage getLoadedTileImage(Tile tile) {
+        BufferedImage img = tile.getImage();
         if (!imageLoaded(img))
             return null;
         return img;
     }
 
-    // 'source' is the pixel coordinates for the area that the img is capable of filling in.
-    // However, we probably only want a portion of it.
-    //
-    // 'border' is the screen cordinates that need to be drawn. We must not draw outside of it.
-    private void drawImageInside(Graphics g, Image sourceImg, Rectangle2D source, Rectangle2D border) {
-        Rectangle2D target = source;
-
-        // If a border is specified, only draw the intersection if what we have combined with what we are supposed to draw.
-        if (border != null) {
-            target = source.createIntersection(border);
-            if (Main.isDebugEnabled()) {
-                Main.debug("source: " + source + "\nborder: " + border + "\nintersection: " + target);
-            }
+    /**
+     * Draw a tile image on screen.
+     * @param g the Graphics2D
+     * @param toDrawImg tile image
+     * @param anchorImage tile anchor in image coordinates
+     * @param anchorScreen tile anchor in screen coordinates
+     * @param clip clipping region in screen coordinates (can be null)
+     */
+    private void drawImageInside(Graphics2D g, BufferedImage toDrawImg, TileAnchor anchorImage, TileAnchor anchorScreen, Shape clip) {
+        AffineTransform imageToScreen = anchorImage.convert(anchorScreen);
+        Point2D screen0 = imageToScreen.transform(new Point.Double(0, 0), null);
+        Point2D screen1 = imageToScreen.transform(new Point.Double(toDrawImg.getWidth(), toDrawImg.getHeight()), null);
+        Shape oldClip = null;
+        if (clip != null) {
+            oldClip = g.getClip();
+            g.clip(clip);
         }
-
-        // All of the rectangles are in screen coordinates. We need to how these correlate to the sourceImg pixels.
-        // We could avoid doing this by scaling the image up to the 'source' size, but this should be cheaper.
-        //
-        // In some projections, x any y are scaled differently enough to
-        // cause a pixel or two of fudge.  Calculate them separately.
-        double imageYScaling = sourceImg.getHeight(this) / source.getHeight();
-        double imageXScaling = sourceImg.getWidth(this) / source.getWidth();
-
-        // How many pixels into the 'source' rectangle are we drawing?
-        double screenXoffset = target.getX() - source.getX();
-        double screenYoffset = target.getY() - source.getY();
-        // And how many pixels into the image itself does that correlate to?
-        int imgXoffset = (int) (screenXoffset * imageXScaling + 0.5);
-        int imgYoffset = (int) (screenYoffset * imageYScaling + 0.5);
-        // Now calculate the other corner of the image that we need
-        // by scaling the 'target' rectangle's dimensions.
-        int imgXend = imgXoffset + (int) (target.getWidth() * imageXScaling + 0.5);
-        int imgYend = imgYoffset + (int) (target.getHeight() * imageYScaling + 0.5);
-
-        if (Main.isDebugEnabled()) {
-            Main.debug("drawing image into target rect: " + target);
+        g.drawImage(toDrawImg, (int) Math.round(screen0.getX()), (int) Math.round(screen0.getY()),
+                (int) Math.round(screen1.getX() - screen0.getX()), (int) Math.round(screen1.getY() - screen0.getY()), this);
+        if (clip != null) {
+            g.setClip(oldClip);
         }
-        g.drawImage(sourceImg,
-                (int) target.getX(), (int) target.getY(),
-                (int) target.getMaxX(), (int) target.getMaxY(),
-                imgXoffset, imgYoffset,
-                imgXend, imgYend,
-                this);
     }
 
-    private List<Tile> paintTileImages(Graphics g, TileSet ts) {
+    private List<Tile> paintTileImages(Graphics2D g, TileSet ts) {
         Object paintMutex = new Object();
         List<TilePosition> missed = Collections.synchronizedList(new ArrayList<>());
         ts.visitTiles(tile -> {
             boolean miss = false;
-            Image img = null;
+            BufferedImage img = null;
+            TileAnchor anchorImage = null;
             if (!tile.isLoaded() || tile.hasError()) {
                 miss = true;
             } else {
-                img = getLoadedTileImage(tile);
+                synchronized (tile) {
+                    img = getLoadedTileImage(tile);
+                    anchorImage = tile.getAnchor();
+                }
                 if (img == null) {
                     miss = true;
                 }
@@ -1114,10 +1101,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 return;
             }
             img = applyImageProcessors((BufferedImage) img);
-            Rectangle2D sourceRect = coordinateConverter.getRectangleForTile(tile);
+            TileAnchor anchorScreen = coordinateConverter.getScreenAnchorForTile(tile);
             synchronized (paintMutex) {
                 //cannot paint in parallel
-                drawImageInside(g, img, sourceRect, null);
+                drawImageInside(g, img, anchorImage, anchorScreen, null);
             }
         }, missed::add);
 
@@ -1131,20 +1118,24 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     // The "border" tile tells us the boundaries of where we may drawn.
     // It will not be from the zoom level that is being drawn currently.
     // If drawing the displayZoomLevel, border is null and we draw the entire tile set.
-    private List<Tile> paintTileImages(Graphics g, TileSet ts, int zoom, Tile border) {
+    private List<Tile> paintTileImages(Graphics2D g, TileSet ts, int zoom, Tile border) {
         if (zoom <= 0) return Collections.emptyList();
-        Rectangle2D borderRect = coordinateConverter.getRectangleForTile(border);
+        Shape borderClip = coordinateConverter.getScreenQuadrilateralForTile(border);
         List<Tile> missedTiles = new LinkedList<>();
         // The callers of this code *require* that we return any tiles that we do not draw in missedTiles.
         // ts.allExistingTiles() by default will only return already-existing tiles.
         // However, we need to return *all* tiles to the callers, so force creation here.
         for (Tile tile : ts.allTilesCreate()) {
             boolean miss = false;
-            Image img = null;
+            BufferedImage img = null;
+            TileAnchor anchorImage = null;
             if (!tile.isLoaded() || tile.hasError()) {
                 miss = true;
             } else {
-                img = getLoadedTileImage(tile);
+               synchronized (tile) {
+                    img = getLoadedTileImage(tile);
+                    anchorImage = tile.getAnchor();
+                }
                 if (img == null) {
                     miss = true;
                 }
@@ -1157,16 +1148,16 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             // applying all filters to this layer
             img = applyImageProcessors((BufferedImage) img);
 
-            Rectangle2D sourceRect = coordinateConverter.getRectangleForTile(tile);
-            Rectangle2D clipRect;
+            Shape clip;
             if (tileSource.isInside(tile, border)) {
-                clipRect = null;
+                clip = null;
             } else if (tileSource.isInside(border, tile)) {
-                clipRect = borderRect;
+                clip = borderClip;
             } else {
                 continue;
             }
-            drawImageInside(g, img, sourceRect, clipRect);
+            TileAnchor anchorScreen = coordinateConverter.getScreenAnchorForTile(tile);
+            drawImageInside(g, img, anchorImage, anchorScreen, clip);
         }
         return missedTiles;
     }
