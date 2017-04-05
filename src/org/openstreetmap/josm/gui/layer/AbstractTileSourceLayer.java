@@ -1189,11 +1189,11 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
     }
 
-    private void paintTileText(TileSet ts, Tile tile, Graphics g, MapView mv, int zoom, Tile t) {
+    private void paintTileText(Tile tile, Graphics g, MapView mv) {
         if (tile == null) {
             return;
         }
-        Point2D p = coordinateConverter.getPixelForTile(t);
+        Point2D p = coordinateConverter.getPixelForTile(tile);
         int fontHeight = g.getFontMetrics().getHeight();
         int x = (int) p.getX();
         int y = (int) p.getY();
@@ -1222,8 +1222,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         int xCursor = -1;
         int yCursor = -1;
         if (Main.isDebugEnabled()) {
-            if (yCursor < t.getYtile()) {
-                if (Math.abs(t.getYtile() % 32) == 31) {
+            if (yCursor < tile.getYtile()) {
+                if (Math.abs(tile.getYtile() % 32) == 31) {
                     g.fillRect(0, y - 1, mv.getWidth(), 3);
                 } else {
                     g.drawLine(0, y, mv.getWidth(), y);
@@ -1231,8 +1231,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 //yCursor = t.getYtile();
             }
             // This draws the vertical lines for the entire column. Only draw them for the top tile in the column.
-            if (xCursor < t.getXtile()) {
-                if (t.getXtile() % 32 == 0) {
+            if (xCursor < tile.getXtile()) {
+                if (tile.getXtile() % 32 == 0) {
                     // level 7 tile boundary
                     g.fillRect(x - 1, 0, 3, mv.getHeight());
                 } else {
@@ -1609,7 +1609,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
         // The current zoom tileset should have all of its tiles due to the loadAllTiles(), unless it to tooLarge()
         for (Tile t : ts.allExistingTiles()) {
-            this.paintTileText(ts, t, g, mv, displayZoomLevel, t);
+            this.paintTileText(t, g, mv);
         }
 
         EastNorth min = pb.getMin();
