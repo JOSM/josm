@@ -70,6 +70,7 @@ import org.openstreetmap.gui.jmapviewer.TileRange;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.CachedTileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
+import org.openstreetmap.gui.jmapviewer.interfaces.IProjected;
 import org.openstreetmap.gui.jmapviewer.interfaces.TemplatedTileSource;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileCache;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
@@ -1399,10 +1400,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      * @return the tile set
      */
     protected TileSet getTileSet(ProjectionBounds bounds, int zoom) {
-        EastNorth topLeftUnshifted = coordinateConverter.shiftDisplayToServer(bounds.getMin());
-        EastNorth botRightUnshifted = coordinateConverter.shiftDisplayToServer(bounds.getMax());
-        TileXY t1 = tileSource.projectedToTileXY(topLeftUnshifted.toProjected(), zoom);
-        TileXY t2 = tileSource.projectedToTileXY(botRightUnshifted.toProjected(), zoom);
+        IProjected topLeftUnshifted = coordinateConverter.shiftDisplayToServer(bounds.getMin());
+        IProjected botRightUnshifted = coordinateConverter.shiftDisplayToServer(bounds.getMax());
+        TileXY t1 = tileSource.projectedToTileXY(topLeftUnshifted, zoom);
+        TileXY t2 = tileSource.projectedToTileXY(botRightUnshifted, zoom);
         return new TileSet(t1, t2, zoom);
     }
 
