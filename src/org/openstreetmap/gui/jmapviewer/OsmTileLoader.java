@@ -79,11 +79,6 @@ public class OsmTileLoader implements TileLoader {
         }
 
         @Override
-        public Tile getTile() {
-            return tile;
-        }
-
-        @Override
         public void submit() {
             submit(false);
         }
