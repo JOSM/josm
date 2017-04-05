@@ -82,11 +82,6 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     }
 
     @Override
-    public Tile getTile() {
-        return getCachedTile();
-    }
-
-    @Override
     public String getCacheKey() {
         if (tile != null) {
             TileSource tileSource = tile.getTileSource();
@@ -259,53 +254,6 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             ret.setExpirationTime(now + MAXIMUM_EXPIRES.get());
         }
         return ret;
-    }
-
-    /**
-     * Method for getting the tile from cache only, without trying to reach remote resource
-     * @return tile or null, if nothing (useful) was found in cache
-     */
-    public Tile getCachedTile() {
-        BufferedImageCacheEntry data = get();
-        if (isObjectLoadable() && isCacheElementValid()) {
-            try {
-                // set tile metadata
-                if (this.attributes != null) {
-                    for (Entry<String, String> e: this.attributes.getMetadata().entrySet()) {
-                        tile.putValue(e.getKey(), e.getValue());
-                    }
-                }
-
-                if (data != null) {
-                    if (data.getImage() != null) {
-                        tile.setImage(data.getImage());
-                        tile.finishLoading();
-                    } else {
-                        // we had some data, but we didn't get any image. Malformed image?
-                        tile.setError(tr("Could not load image from tile server"));
-                    }
-                }
-                if (isNoTileAtZoom()) {
-                    handleNoTileAtZoom();
-                    tile.finishLoading();
-                }
-                if (attributes != null && attributes.getResponseCode() >= 400) {
-                    if (attributes.getErrorMessage() == null) {
-                        tile.setError(tr("HTTP error {0} when loading tiles", attributes.getResponseCode()));
-                    } else {
-                        tile.setError(tr("Error downloading tiles: {0}", attributes.getErrorMessage()));
-                    }
-                }
-                return tile;
-            } catch (IOException e) {
-                LOG.log(Level.WARNING, "JCS TMS - error loading object for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
-                Main.warn(e);
-                return null;
-            }
-
-        } else {
-            return tile;
-        }
     }
 
     private boolean handleNoTileAtZoom() {
