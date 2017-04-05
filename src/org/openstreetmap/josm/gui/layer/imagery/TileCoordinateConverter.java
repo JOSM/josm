@@ -53,10 +53,10 @@ public class TileCoordinateConverter {
      * Apply reverse shift to EastNorth coordinate.
      *
      * @param en EastNorth coordinate representing a pixel on screen
-     * @return EastNorth coordinate as it would e.g. be sent to a WMS server
+     * @return IProjected coordinate as it would e.g. be sent to a WMS server
      */
-    public EastNorth shiftDisplayToServer(EastNorth en) {
-        return en.subtract(settings.getDisplacement());
+    public IProjected shiftDisplayToServer(EastNorth en) {
+        return en.subtract(settings.getDisplacement()).toProjected();
     }
 
     /**
