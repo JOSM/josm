@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.coor;
 
+import org.openstreetmap.gui.jmapviewer.Projected;
 import org.openstreetmap.gui.jmapviewer.interfaces.IProjected;
 
 /**
@@ -178,6 +179,10 @@ public class EastNorth extends Coordinate {
         double ny = -sinPhi * x + cosPhi * y + pivot.north();
         // CHECKSTYLE.ON: SingleSpaceSeparator
         return new EastNorth(nx, ny);
+    }
+
+    public IProjected toProjected() {
+        return new Projected(east(), north());
     }
 
     @Override

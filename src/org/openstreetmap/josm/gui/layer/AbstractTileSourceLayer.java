@@ -63,6 +63,7 @@ import javax.swing.Timer;
 import org.openstreetmap.gui.jmapviewer.AttributionSupport;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
+import org.openstreetmap.gui.jmapviewer.Projected;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.TileAnchor;
 import org.openstreetmap.gui.jmapviewer.TileRange;
@@ -983,7 +984,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     private TileSet getVisibleTileSet() {
         ProjectionBounds bounds = Main.map.mapView.getState().getViewArea().getProjectionBounds();
-        return getTileSet(bounds.getMin(), bounds.getMax(), currentZoomLevel);
+        return getTileSet(bounds, currentZoomLevel);
     }
 
     protected void loadAllTiles(boolean force) {
@@ -1257,7 +1258,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     private final TileSet nullTileSet = new TileSet();
 
-    private class TileSet extends TileRange {
+    protected class TileSet extends TileRange {
 
         protected TileSet(TileXY t1, TileXY t2, int zoom) {
             super(t1, t2, zoom);
@@ -1393,30 +1394,15 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     /**
      * Create a TileSet by EastNorth bbox taking a layer shift in account
-     * @param topLeft top-left lat/lon
-     * @param botRight bottom-right lat/lon
+     * @param bounds the EastNorth bounds
      * @param zoom zoom level
      * @return the tile set
-     * @since 10651
      */
-    protected TileSet getTileSet(EastNorth topLeft, EastNorth botRight, int zoom) {
-        return getTileSet(getShiftedLatLon(topLeft), getShiftedLatLon(botRight), zoom);
-    }
-
-    /**
-     * Create a TileSet by known LatLon bbox without layer shift correction
-     * @param topLeft top-left lat/lon
-     * @param botRight bottom-right lat/lon
-     * @param zoom zoom level
-     * @return the tile set
-     * @since 10651
-     */
-    protected TileSet getTileSet(LatLon topLeft, LatLon botRight, int zoom) {
-        if (zoom == 0)
-            return new TileSet();
-
-        TileXY t1 = tileSource.latLonToTileXY(topLeft.toCoordinate(), zoom);
-        TileXY t2 = tileSource.latLonToTileXY(botRight.toCoordinate(), zoom);
+    protected TileSet getTileSet(ProjectionBounds bounds, int zoom) {
+        EastNorth topLeftUnshifted = coordinateConverter.shiftDisplayToServer(bounds.getMin());
+        EastNorth botRightUnshifted = coordinateConverter.shiftDisplayToServer(bounds.getMax());
+        TileXY t1 = tileSource.projectedToTileXY(topLeftUnshifted.toProjected(), zoom);
+        TileXY t2 = tileSource.projectedToTileXY(botRightUnshifted.toProjected(), zoom);
         return new TileSet(t1, t2, zoom);
     }
 
@@ -1471,7 +1457,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             synchronized (tileSets) {
                 TileSet ts = tileSets[zoom-minZoom];
                 if (ts == null) {
-                    ts = AbstractTileSourceLayer.this.getTileSet(bounds.getMin(), bounds.getMax(), zoom);
+                    ts = AbstractTileSourceLayer.this.getTileSet(bounds, zoom);
                     tileSets[zoom-minZoom] = ts;
                 }
                 return ts;
@@ -1656,11 +1642,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         if (Main.isDebugEnabled()) {
             Main.debug("getTileForPixelpos("+px+", "+py+')');
         }
-        MapView mv = Main.map.mapView;
         Point clicked = new Point(px, py);
-        EastNorth topLeft = mv.getEastNorth(0, 0);
-        EastNorth botRight = mv.getEastNorth(mv.getWidth(), mv.getHeight());
-        TileSet ts = getTileSet(topLeft, botRight, currentZoomLevel);
+        TileSet ts = getVisibleTileSet();
 
         if (!ts.tooLarge()) {
             ts.loadAllTiles(false); // make sure there are tile objects for all tiles

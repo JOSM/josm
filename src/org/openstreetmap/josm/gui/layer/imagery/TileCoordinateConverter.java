@@ -50,6 +50,16 @@ public class TileCoordinateConverter {
     }
 
     /**
+     * Apply reverse shift to EastNorth coordinate.
+     *
+     * @param en EastNorth coordinate representing a pixel on screen
+     * @return EastNorth coordinate as it would e.g. be sent to a WMS server
+     */
+    public EastNorth shiftDisplayToServer(EastNorth en) {
+        return en.subtract(settings.getDisplacement());
+    }
+
+    /**
      * Gets the projecting instance to use to convert between latlon and eastnorth coordinates.
      * @return The {@link Projecting} instance.
      */
