@@ -67,7 +67,7 @@ public class FramedLZ4CompressorOutputStream extends CompressorOutputStream {
         /** Block size of 1M */
         M1(1024 * 1024, 6),
         /** Block size of 4M */
-        M4(1024 * 1024, 7);
+        M4(4096 * 1024, 7);
 
         private final int size, index;
         private BlockSize(int size, int index) {
