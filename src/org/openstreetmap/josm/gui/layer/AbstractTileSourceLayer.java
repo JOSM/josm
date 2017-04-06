@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,9 +62,7 @@ import javax.swing.Timer;
 import org.openstreetmap.gui.jmapviewer.AttributionSupport;
 import org.openstreetmap.gui.jmapviewer.MemoryTileCache;
 import org.openstreetmap.gui.jmapviewer.OsmTileLoader;
-import org.openstreetmap.gui.jmapviewer.Projected;
 import org.openstreetmap.gui.jmapviewer.Tile;
-import org.openstreetmap.gui.jmapviewer.TileAnchor;
 import org.openstreetmap.gui.jmapviewer.TileRange;
 import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.CachedTileLoader;
@@ -98,6 +95,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings.FilterChangeListener;
+import org.openstreetmap.josm.gui.layer.imagery.TileAnchor;
 import org.openstreetmap.josm.gui.layer.imagery.TileCoordinateConverter;
 import org.openstreetmap.josm.gui.layer.imagery.TilePosition;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
@@ -1086,14 +1084,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         ts.visitTiles(tile -> {
             boolean miss = false;
             BufferedImage img = null;
-            TileAnchor anchorImage = null;
             if (!tile.isLoaded() || tile.hasError()) {
                 miss = true;
             } else {
-                synchronized (tile) {
-                    img = getLoadedTileImage(tile);
-                    anchorImage = tile.getAnchor();
-                }
+                img = getLoadedTileImage(tile);
                 if (img == null) {
                     miss = true;
                 }
@@ -1102,6 +1096,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 missed.add(new TilePosition(tile));
                 return;
             }
+            TileAnchor anchorImage = new TileAnchor(
+                    new Point.Double(0, 0),
+                    new Point.Double(img.getWidth(), img.getHeight()));
             img = applyImageProcessors((BufferedImage) img);
             TileAnchor anchorScreen = coordinateConverter.getScreenAnchorForTile(tile);
             synchronized (paintMutex) {
@@ -1130,14 +1127,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         for (Tile tile : ts.allTilesCreate()) {
             boolean miss = false;
             BufferedImage img = null;
-            TileAnchor anchorImage = null;
             if (!tile.isLoaded() || tile.hasError()) {
                 miss = true;
             } else {
-               synchronized (tile) {
-                    img = getLoadedTileImage(tile);
-                    anchorImage = tile.getAnchor();
-                }
+                img = getLoadedTileImage(tile);
                 if (img == null) {
                     miss = true;
                 }
@@ -1146,6 +1139,9 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 missedTiles.add(tile);
                 continue;
             }
+            TileAnchor anchorImage = new TileAnchor(
+                    new Point.Double(0, 0),
+                    new Point.Double(img.getWidth(), img.getHeight()));
 
             // applying all filters to this layer
             img = applyImageProcessors((BufferedImage) img);
