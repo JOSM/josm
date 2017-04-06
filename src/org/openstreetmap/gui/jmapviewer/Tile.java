@@ -40,7 +40,6 @@ public class Tile {
     protected int ytile;
     protected int zoom;
     protected BufferedImage image;
-    protected TileAnchor anchor;
     protected String key;
     protected volatile boolean loaded; // field accessed by multiple threads without any monitors, needs to be volatile
     protected volatile boolean loading;
@@ -240,25 +239,8 @@ public class Tile {
         return image;
     }
 
-    /**
-     * Get the position of the tile inside the image.
-     * @return the position of the tile inside the image
-     * @see #getImage()
-     */
-    public TileAnchor getAnchor() {
-        return anchor;
-    }
-
-    public final synchronized void setImage(BufferedImage image) {
-        if (image == null) {
-            this.image = null;
-            this.anchor = null;
-        } else {
-            this.image = image;
-            this.anchor = new TileAnchor(
-                    new Point.Double(0, 0),
-                    new Point.Double(image.getWidth(), image.getHeight()));
-        }
+    public final void setImage(BufferedImage image) {
+        this.image = image;
     }
 
     public void loadImage(InputStream input) throws IOException {
