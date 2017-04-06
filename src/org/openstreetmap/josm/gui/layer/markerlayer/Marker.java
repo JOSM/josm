@@ -177,10 +177,9 @@ public class Marker implements TemplateEngineDataProvider {
 
     /**
      * Plugins can add their Marker creation stuff at the bottom or top of this list
-     * (depending on whether they want to override default behaviour or just add new
-     * stuff).
+     * (depending on whether they want to override default behaviour or just add new stuff).
      */
-    public static final List<MarkerProducers> markerProducers = new LinkedList<>();
+    private static final List<MarkerProducers> markerProducers = new LinkedList<>();
 
     // Add one Marker specifying the default behaviour.
     static {
@@ -219,6 +218,24 @@ public class Marker implements TemplateEngineDataProvider {
                 return Arrays.asList(marker, new WebMarker(wpt.getCoor(), url, parentLayer, time, offset));
             }
         });
+    }
+
+    /**
+     * Add a new marker producers at the end of the JOSM list.
+     * @param mp a new marker producers
+     * @since 11850
+     */
+    public static void appendMarkerProducer(MarkerProducers mp) {
+        markerProducers.add(mp);
+    }
+
+    /**
+     * Add a new marker producers at the beginning of the JOSM list.
+     * @param mp a new marker producers
+     * @since 11850
+     */
+    public static void prependMarkerProducer(MarkerProducers mp) {
+        markerProducers.add(0, mp);
     }
 
     private static URL uriToUrl(String uri, File relativePath) {
