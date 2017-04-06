@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Abstract superclass of relation saving actions (OK, Apply, Cancel).
@@ -151,8 +152,8 @@ abstract class SavingAction extends AbstractRelationEditorAction {
                 tr("<html>Layer ''{0}'' already has a conflict for object<br>"
                         + "''{1}''.<br>"
                         + "Please resolve this conflict first, then try again.</html>",
-                        layer.getName(),
-                        editor.getRelation().getDisplayName(DefaultNameFormatter.getInstance())
+                        Utils.escapeReservedCharactersHTML(layer.getName()),
+                        Utils.escapeReservedCharactersHTML(editor.getRelation().getDisplayName(DefaultNameFormatter.getInstance()))
                 ),
                 tr("Double conflict"),
                 JOptionPane.WARNING_MESSAGE

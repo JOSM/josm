@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Command used to add a new conflict.
@@ -40,8 +41,8 @@ public class ConflictAddCommand extends Command {
                 tr("<html>Layer ''{0}'' already has a conflict for object<br>"
                         + "''{1}''.<br>"
                         + "This conflict cannot be added.</html>",
-                        getLayer().getName(),
-                        conflict.getMy().getDisplayName(DefaultNameFormatter.getInstance())
+                        Utils.escapeReservedCharactersHTML(getLayer().getName()),
+                        Utils.escapeReservedCharactersHTML(conflict.getMy().getDisplayName(DefaultNameFormatter.getInstance()))
                 ),
                 tr("Double conflict"),
                 JOptionPane.ERROR_MESSAGE

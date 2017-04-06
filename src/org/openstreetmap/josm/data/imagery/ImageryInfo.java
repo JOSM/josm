@@ -34,6 +34,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.MultiMap;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Class that stores info about an image background layer.
@@ -871,7 +872,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         }
         String desc = getDescription();
         if (desc != null && !desc.isEmpty()) {
-            res.append("<br>").append(desc);
+            res.append("<br>").append(Utils.escapeReservedCharactersHTML(desc));
             html = true;
         }
         if (html) {

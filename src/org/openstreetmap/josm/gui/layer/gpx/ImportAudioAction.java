@@ -70,7 +70,7 @@ public class ImportAudioAction extends AbstractAction {
     private static void warnCantImportIntoServerLayer(GpxLayer layer) {
         String msg = tr("<html>The data in the GPX layer ''{0}'' has been downloaded from the server.<br>" +
                 "Because its way points do not include a timestamp we cannot correlate them with audio data.</html>",
-                layer.getName());
+                Utils.escapeReservedCharactersHTML(layer.getName()));
         HelpAwareOptionPane.showOptionDialog(Main.parent, msg, tr("Import not possible"),
                 JOptionPane.WARNING_MESSAGE, ht("/Action/ImportAudio#CantImportIntoGpxLayerFromServer"));
     }

@@ -87,7 +87,7 @@ public class PluginCheckBox extends JCheckBox implements ActionListener {
           .append(trn("Plugin {0} is still required by this plugin:",
                 "Plugin {0} is still required by these {1} plugins:",
                 otherPlugins.size(),
-                plugin,
+                Utils.escapeReservedCharactersHTML(plugin),
                 otherPlugins.size()))
           .append(Utils.joinAsHtmlUnorderedList(otherPlugins))
           .append("</html>");

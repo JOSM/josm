@@ -506,7 +506,9 @@ public class SessionReader {
                         CancelOrContinueDialog dialog = new CancelOrContinueDialog();
                         dialog.show(
                                 tr("Error loading layer"),
-                                tr("<html>Could not load layer {0} ''{1}''.<br>Error is:<br>{2}</html>", idx, name, exception.getMessage()),
+                                tr("<html>Could not load layer {0} ''{1}''.<br>Error is:<br>{2}</html>", idx,
+                                        Utils.escapeReservedCharactersHTML(name),
+                                        Utils.escapeReservedCharactersHTML(exception.getMessage())),
                                 JOptionPane.ERROR_MESSAGE,
                                 progressMonitor
                                 );

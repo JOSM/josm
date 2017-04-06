@@ -78,6 +78,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A component that manages some status information display about the map.
@@ -586,7 +587,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
          */
         private JLabel popupBuildPrimitiveLabels(final OsmPrimitive osm) {
             final StringBuilder text = new StringBuilder(32);
-            String name = osm.getDisplayName(DefaultNameFormatter.getInstance());
+            String name = Utils.escapeReservedCharactersHTML(osm.getDisplayName(DefaultNameFormatter.getInstance()));
             if (osm.isNewOrUndeleted() || osm.isModified()) {
                 name = "<i><b>"+ name + "*</b></i>";
             }
@@ -600,7 +601,8 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
             }
 
             if (osm.getUser() != null) {
-                text.append(" [").append(tr("User:")).append(' ').append(osm.getUser().getName()).append(']');
+                text.append(" [").append(tr("User:")).append(' ')
+                    .append(Utils.escapeReservedCharactersHTML(osm.getUser().getName())).append(']');
             }
 
             for (String key : osm.keySet()) {

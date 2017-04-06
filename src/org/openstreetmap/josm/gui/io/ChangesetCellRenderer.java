@@ -14,6 +14,7 @@ import javax.swing.UIManager;
 
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -41,7 +42,8 @@ public class ChangesetCellRenderer extends JLabel implements ListCellRenderer<Ch
         }
         String comment = cs.get("comment");
         if (comment != null) {
-            sb.append("<strong>").append(tr("Changeset comment:")).append("</strong>").append(comment).append("<br>");
+            sb.append("<strong>").append(tr("Changeset comment:")).append("</strong>")
+              .append(Utils.escapeReservedCharactersHTML(comment)).append("<br>");
         }
         return sb.toString();
     }

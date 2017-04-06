@@ -50,6 +50,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.gpx.ConvertToDataLayerAction;
 import org.openstreetmap.josm.tools.AudioPlayer;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A layer holding markers.
@@ -246,7 +247,8 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     }
 
     @Override public Object getInfoComponent() {
-        return "<html>"+trn("{0} consists of {1} marker", "{0} consists of {1} markers", data.size(), getName(), data.size()) + "</html>";
+        return "<html>"+trn("{0} consists of {1} marker", "{0} consists of {1} markers",
+                data.size(), Utils.escapeReservedCharactersHTML(getName()), data.size()) + "</html>";
     }
 
     @Override public Action[] getMenuEntries() {

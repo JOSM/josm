@@ -17,6 +17,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Merge the currently selected objects into another layer.
@@ -89,7 +90,9 @@ public class MergeSelectionAction extends AbstractMergeAction {
                         "<b>This is not the recommended way of merging such data</b>.<br />"+
                         "You should instead check and merge each object, <b>one by one</b>.<br /><br />"+
                         "Are you sure you want to continue?",
-                        getLayerManager().getEditLayer().getName(), targetLayer.getName(), targetLayer.getName())+
+                        Utils.escapeReservedCharactersHTML(getLayerManager().getEditLayer().getName()),
+                        Utils.escapeReservedCharactersHTML(targetLayer.getName()),
+                        Utils.escapeReservedCharactersHTML(targetLayer.getName()))+
                 "</html>",
                 ImageProvider.get("dialogs", "mergedown"), tr("Ignore this hint and merge anyway"));
     }

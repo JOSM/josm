@@ -552,7 +552,8 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
     public void projectionChanged(Projection oldValue, Projection newValue) {
         if (!isProjectionSupported(newValue)) {
             final String message = "<html><body><p>" +
-                    tr("The layer {0} does not support the new projection {1}.", getName(), newValue.toCode()) + "</p>" +
+                    tr("The layer {0} does not support the new projection {1}.",
+                            Utils.escapeReservedCharactersHTML(getName()), newValue.toCode()) + "</p>" +
                     "<p style='width: 450px;'>" + tr("Supported projections are: {0}", nameSupportedProjections()) + "</p>" +
                     tr("Change the projection again or remove the layer.");
 

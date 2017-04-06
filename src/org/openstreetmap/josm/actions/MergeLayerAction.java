@@ -129,7 +129,10 @@ public class MergeLayerAction extends AbstractMergeAction {
                         "Merging them will result to enforce the stricter policy (upload discouraged) to ''{1}''.<br /><br />"+
                         "<b>This is not the recommended way of merging such data</b>.<br />"+
                         "You should instead check and merge each object, one by one, by using ''<i>Merge selection</i>''.<br /><br />"+
-                        "Are you sure you want to continue?", sourceLayer.getName(), targetLayer.getName(), targetLayer.getName())+
+                        "Are you sure you want to continue?",
+                        Utils.escapeReservedCharactersHTML(sourceLayer.getName()),
+                        Utils.escapeReservedCharactersHTML(targetLayer.getName()),
+                        Utils.escapeReservedCharactersHTML(targetLayer.getName()))+
                 "</html>",
                 ImageProvider.get("dialogs", "mergedown"), tr("Ignore this hint and merge anyway"));
     }

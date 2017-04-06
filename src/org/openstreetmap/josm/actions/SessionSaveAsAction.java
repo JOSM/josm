@@ -169,7 +169,8 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
             Main.error(ex);
             HelpAwareOptionPane.showMessageDialogInEDT(
                     Main.parent,
-                    tr("<html>Could not save session file ''{0}''.<br>Error is:<br>{1}</html>", file.getName(), ex.getMessage()),
+                    tr("<html>Could not save session file ''{0}''.<br>Error is:<br>{1}</html>",
+                            file.getName(), Utils.escapeReservedCharactersHTML(ex.getMessage())),
                     tr("IO Error"),
                     JOptionPane.ERROR_MESSAGE,
                     null

@@ -66,7 +66,9 @@ public class FilterTableModel extends AbstractTableModel {
                 Main.error(e);
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        tr("<html>Error in filter <code>{0}</code>:<br>{1}", Utils.shortenString(filter.text, 80), e.getMessage()),
+                        tr("<html>Error in filter <code>{0}</code>:<br>{1}",
+                                Utils.escapeReservedCharactersHTML(Utils.shortenString(filter.text, 80)),
+                                Utils.escapeReservedCharactersHTML(e.getMessage())),
                         tr("Error in filter"),
                         JOptionPane.ERROR_MESSAGE);
                 filter.enable = false;

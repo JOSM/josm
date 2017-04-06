@@ -274,7 +274,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
             StringBuilder sb = new StringBuilder();
             sb.append("<html>");
             if (errorMessages.size() == 1) {
-                sb.append(errorMessages.iterator().next());
+                sb.append(Utils.escapeReservedCharactersHTML(errorMessages.iterator().next()));
             } else {
                 sb.append(Utils.joinAsHtmlUnorderedList(errorMessages));
             }

@@ -49,6 +49,7 @@ import org.openstreetmap.josm.io.auth.CredentialsAgent;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -455,7 +456,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                             + "Please check username and password and try again."
                             +"</html>",
                             loginUrl,
-                            getOsmUserName()),
+                            Utils.escapeReservedCharactersHTML(getOsmUserName())),
                     tr("OAuth authorization failed"),
                     JOptionPane.ERROR_MESSAGE,
                     HelpUtil.ht("/Dialog/OAuthAuthorisationWizard#FullyAutomaticProcessFailed")

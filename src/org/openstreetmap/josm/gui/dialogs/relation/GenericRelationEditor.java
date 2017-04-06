@@ -97,6 +97,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -871,7 +872,7 @@ public class GenericRelationEditor extends RelationEditor {
                 + "the object ''{0}''<br>"
                 + "<br>"
                 + "Do you really want to add another relation member?</html>",
-                primitive.getDisplayName(DefaultNameFormatter.getInstance())
+                Utils.escapeReservedCharactersHTML(primitive.getDisplayName(DefaultNameFormatter.getInstance()))
             );
         int ret = ConditionalOptionPaneUtil.showOptionDialog(
                 "add_primitive_to_relation",
@@ -905,7 +906,7 @@ public class GenericRelationEditor extends RelationEditor {
                 + "<br>"
                 + "This creates circular references and is therefore discouraged.<br>"
                 + "Skipping relation ''{0}''.</html>",
-                primitive.getDisplayName(DefaultNameFormatter.getInstance()));
+                Utils.escapeReservedCharactersHTML(primitive.getDisplayName(DefaultNameFormatter.getInstance())));
         JOptionPane.showMessageDialog(
                 Main.parent,
                 msg,

@@ -28,6 +28,7 @@ import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.history.VersionInfoPanel;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This class represents a UI component for resolving conflicts in some properties of {@link OsmPrimitive}.
@@ -314,7 +315,7 @@ public class PropertiesMerger extends JPanel implements ChangeListener, IConflic
             return tr("(none)");
         StringBuilder str = new StringBuilder("<html>");
         for (OsmPrimitive r: referrers) {
-            str.append(r.getDisplayName(DefaultNameFormatter.getInstance())).append("<br>");
+            str.append(Utils.escapeReservedCharactersHTML(r.getDisplayName(DefaultNameFormatter.getInstance()))).append("<br>");
         }
         str.append("</html>");
         return str.toString();

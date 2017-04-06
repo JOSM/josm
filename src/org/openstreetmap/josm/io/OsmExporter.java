@@ -93,7 +93,8 @@ public class OsmExporter extends FileExporter {
             Main.error(e);
             JOptionPane.showMessageDialog(
                     Main.parent,
-                    tr("<html>An error occurred while saving.<br>Error is:<br>{0}</html>", e.getMessage()),
+                    tr("<html>An error occurred while saving.<br>Error is:<br>{0}</html>",
+                            Utils.escapeReservedCharactersHTML(e.getMessage())),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE
             );
@@ -107,7 +108,8 @@ public class OsmExporter extends FileExporter {
                 Main.error(e2);
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        tr("<html>An error occurred while restoring backup file.<br>Error is:<br>{0}</html>", e2.getMessage()),
+                        tr("<html>An error occurred while restoring backup file.<br>Error is:<br>{0}</html>",
+                                Utils.escapeReservedCharactersHTML(e2.getMessage())),
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
                 );

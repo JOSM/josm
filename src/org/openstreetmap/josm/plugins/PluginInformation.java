@@ -297,7 +297,7 @@ public class PluginInformation {
     public String getDescriptionAsHtml() {
         StringBuilder sb = new StringBuilder(128);
         sb.append("<html><body>")
-          .append(description == null ? tr("no description available") : description);
+          .append(description == null ? tr("no description available") : Utils.escapeReservedCharactersHTML(description));
         if (link != null) {
             sb.append(" <a href=\"").append(link).append("\">").append(tr("More info...")).append("</a>");
         }
