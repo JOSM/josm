@@ -54,6 +54,7 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
 /**
@@ -198,7 +199,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                         "<html>None of the selected objects is available in the current<br>"
                         + "edit layer ''{0}''.</html>",
                         primitives.size(),
-                        Main.getLayerManager().getEditLayer().getName()
+                        Utils.escapeReservedCharactersHTML(Main.getLayerManager().getEditLayer().getName())
                 ),
                 title, JOptionPane.WARNING_MESSAGE, helpTopic
         );

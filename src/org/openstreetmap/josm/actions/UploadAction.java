@@ -28,6 +28,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Action that opens a connection to the osm server and uploads all changes.
@@ -153,7 +154,7 @@ public class UploadAction extends JosmAction {
         HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
                 tr("<html>The data to be uploaded participates in unresolved conflicts of layer ''{0}''.<br>"
-                        + "You have to resolve them first.</html>", layer.getName()
+                        + "You have to resolve them first.</html>", Utils.escapeReservedCharactersHTML(layer.getName())
                 ),
                 tr("Warning"),
                 JOptionPane.WARNING_MESSAGE,
@@ -172,7 +173,7 @@ public class UploadAction extends JosmAction {
                 tr("You are about to upload data from the layer ''{0}''.<br /><br />"+
                     "Sending data from this layer is <b>strongly discouraged</b>. If you continue,<br />"+
                     "it may require you subsequently have to revert your changes, or force other contributors to.<br /><br />"+
-                    "Are you sure you want to continue?", layer.getName())+
+                    "Are you sure you want to continue?", Utils.escapeReservedCharactersHTML(layer.getName()))+
                 "</html>",
                 ImageProvider.get("upload"), tr("Ignore this hint and upload anyway"));
     }

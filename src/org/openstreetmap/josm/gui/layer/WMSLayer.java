@@ -30,6 +30,7 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This is a layer that grabs the current screen from an WMS server. The data
@@ -137,7 +138,8 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
 
         if (!isProjectionSupported(newValue)) {
             String message =
-                    "<html><body><p>" + tr("The layer {0} does not support the new projection {1}.", getName(), newValue.toCode()) +
+                    "<html><body><p>" + tr("The layer {0} does not support the new projection {1}.",
+                            Utils.escapeReservedCharactersHTML(getName()), newValue.toCode()) +
                     "<p style='width: 450px; position: absolute; margin: 0px;'>" +
                             tr("Supported projections are: {0}", nameSupportedProjections()) + "</p>" +
                     "<p>" + tr("Change the projection again or remove the layer.");

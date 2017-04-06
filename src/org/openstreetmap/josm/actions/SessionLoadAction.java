@@ -189,7 +189,7 @@ public class SessionLoadAction extends DiskAccessAction {
             HelpAwareOptionPane.showMessageDialogInEDT(
                     Main.parent,
                     tr("<html>Could not load session file ''{0}''.<br>Error is:<br>{1}</html>",
-                            uri != null ? uri : file.getName(), e.getMessage()),
+                            uri != null ? uri : file.getName(), Utils.escapeReservedCharactersHTML(e.getMessage())),
                     dialogTitle,
                     JOptionPane.ERROR_MESSAGE,
                     null

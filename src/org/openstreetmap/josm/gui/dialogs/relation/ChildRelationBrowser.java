@@ -45,6 +45,7 @@ import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -346,7 +347,7 @@ public class ChildRelationBrowser extends JPanel {
             String message = tr("<html>The child relation<br>"
                     + "{0}<br>"
                     + "is deleted on the server. It cannot be loaded</html>",
-                    r.getDisplayName(DefaultNameFormatter.getInstance())
+                    Utils.escapeReservedCharactersHTML(r.getDisplayName(DefaultNameFormatter.getInstance()))
             );
 
             JOptionPane.showMessageDialog(

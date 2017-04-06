@@ -38,6 +38,7 @@ import org.openstreetmap.josm.io.FileImporter;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
 /**
@@ -181,7 +182,7 @@ public class OpenFileAction extends DiskAccessAction {
                         "Cannot open {0} files with the file importer ''{1}''.",
                         files.size(),
                         files.size(),
-                        importer.filter.getDescription()
+                        Utils.escapeReservedCharactersHTML(importer.filter.getDescription())
                     )
             ).append("<br><ul>");
             for (File f: files) {

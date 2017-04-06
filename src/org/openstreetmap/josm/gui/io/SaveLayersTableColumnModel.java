@@ -15,6 +15,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 
 class SaveLayersTableColumnModel extends DefaultTableColumnModel {
     /** small renderer class that handles the "should be uploaded/saved" texts. */
@@ -41,18 +42,19 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
             StringBuilder sb = new StringBuilder(24);
             sb.append("<html>");
             if (info != null) {
+                String htmlInfoName = Utils.escapeReservedCharactersHTML(info.getName());
                 if (info.getLayer().requiresUploadToServer() && !info.getLayer().isUploadDiscouraged()) {
                     panel.add(needsUpload, defaultCellStyle);
-                    sb.append(tr("Layer ''{0}'' has modifications which should be uploaded to the server.", info.getName()));
+                    sb.append(tr("Layer ''{0}'' has modifications which should be uploaded to the server.", htmlInfoName));
 
                 } else {
                     if (info.isUploadable()) {
                         panel.add(pnlEmpty, defaultCellStyle);
                     }
                     if (info.getLayer().requiresUploadToServer()) {
-                        sb.append(tr("Layer ''{0}'' has modifications which are discouraged to be uploaded.", info.getName()));
+                        sb.append(tr("Layer ''{0}'' has modifications which are discouraged to be uploaded.", htmlInfoName));
                     } else {
-                        sb.append(tr("Layer ''{0}'' has no modifications to be uploaded.", info.getName()));
+                        sb.append(tr("Layer ''{0}'' has no modifications to be uploaded.", htmlInfoName));
                     }
                 }
                 sb.append("<br/>");
@@ -60,12 +62,12 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
                 if (info.getLayer().requiresSaveToFile()) {
                     panel.add(needsSave, defaultCellStyle);
                     sb.append(tr("Layer ''{0}'' has modifications which should be saved to its associated file ''{1}''.",
-                            info.getName(), info.getFile().toString()));
+                            htmlInfoName, info.getFile().toString()));
                 } else {
                     if (info.isSavable()) {
                         panel.add(pnlEmpty, defaultCellStyle);
                     }
-                    sb.append(tr("Layer ''{0}'' has no modifications to be saved.", info.getName()));
+                    sb.append(tr("Layer ''{0}'' has no modifications to be saved.", htmlInfoName));
                 }
             }
             sb.append("</html>");

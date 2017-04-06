@@ -15,6 +15,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Abstract file importer.
@@ -107,7 +108,8 @@ public abstract class FileImporter implements Comparable<FileImporter> {
         Main.error(e);
         HelpAwareOptionPane.showMessageDialogInEDT(
                 Main.parent,
-                tr("<html>Could not read file ''{0}''.<br>Error is:<br>{1}</html>", f.getName(), e.getMessage()),
+                tr("<html>Could not read file ''{0}''.<br>Error is:<br>{1}</html>",
+                        f.getName(), Utils.escapeReservedCharactersHTML(e.getMessage())),
                 tr("Error"),
                 JOptionPane.ERROR_MESSAGE, null
         );
@@ -137,7 +139,7 @@ public abstract class FileImporter implements Comparable<FileImporter> {
             Main.error(e);
             HelpAwareOptionPane.showMessageDialogInEDT(
                     Main.parent,
-                    tr("<html>Could not read files.<br>Error is:<br>{0}</html>", e.getMessage()),
+                    tr("<html>Could not read files.<br>Error is:<br>{0}</html>", Utils.escapeReservedCharactersHTML(e.getMessage())),
                     tr("Error"),
                     JOptionPane.ERROR_MESSAGE, null
             );

@@ -42,6 +42,7 @@ import org.openstreetmap.josm.gui.tagging.presets.items.Space;
 import org.openstreetmap.josm.gui.tagging.presets.items.Text;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlObjectParser;
 import org.xml.sax.SAXException;
 
@@ -376,7 +377,8 @@ public final class TaggingPresetReader {
                 Main.error(source);
                 JOptionPane.showMessageDialog(
                         Main.parent,
-                        "<html>" + tr("Error parsing {0}: ", source) + "<br><br><table width=600>" + e.getMessage() + "</table></html>",
+                        "<html>" + tr("Error parsing {0}: ", source) + "<br><br><table width=600>" +
+                                Utils.escapeReservedCharactersHTML(e.getMessage()) + "</table></html>",
                         tr("Error"),
                         JOptionPane.ERROR_MESSAGE
                         );

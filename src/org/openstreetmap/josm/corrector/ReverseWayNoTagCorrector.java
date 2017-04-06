@@ -85,7 +85,7 @@ public final class ReverseWayNoTagCorrector {
                 + "<br/> whose semantic meaning of these tags are defined by its direction:<br/>{1}"
                 + "Do you really want to change the way direction, thus its semantic meaning?</html>",
                 tags.size(),
-                way.getDisplayName(DefaultNameFormatter.getInstance()),
+                Utils.escapeReservedCharactersHTML(way.getDisplayName(DefaultNameFormatter.getInstance())),
                 Utils.joinAsHtmlUnorderedList(tags)
             );
         int ret = ConditionalOptionPaneUtil.showOptionDialog(

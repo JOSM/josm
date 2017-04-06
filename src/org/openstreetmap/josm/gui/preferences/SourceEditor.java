@@ -825,7 +825,7 @@ public abstract class SourceEditor extends JPanel {
         }
 
         private static void appendRow(StringBuilder s, String th, String td) {
-            s.append("<tr><th>").append(th).append("</th><td>").append(td).append("</td</tr>");
+            s.append("<tr><th>").append(th).append("</th><td>").append(Utils.escapeReservedCharactersHTML(td)).append("</td</tr>");
         }
 
         /**
@@ -1620,7 +1620,7 @@ public abstract class SourceEditor extends JPanel {
                 return null;
             StringBuilder s = new StringBuilder(128).append("<html><b>");
             if (entry.title != null) {
-                s.append(entry.title).append("</b> <span color=\"gray\">");
+                s.append(Utils.escapeReservedCharactersHTML(entry.title)).append("</b> <span color=\"gray\">");
             }
             s.append(entry.url);
             if (entry.title != null) {

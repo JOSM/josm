@@ -146,7 +146,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
                         + "</html>",
                         token.getKey(),
                         apiUrl,
-                        userInfo.getDisplayName(),
+                        Utils.escapeReservedCharactersHTML(userInfo.getDisplayName()),
                         userInfo.getId()
                 ),
                 tr("Success"),

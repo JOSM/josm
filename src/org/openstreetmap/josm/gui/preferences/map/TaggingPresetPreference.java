@@ -34,6 +34,7 @@ import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -88,22 +89,22 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
                             if (canLoad) {
                                 errorMessage = tr("<html>Tagging preset source {0} can be loaded but it contains errors. " +
                                         "Do you really want to use it?<br><br><table width=600>Error is: [{1}:{2}] {3}</table></html>",
-                                        source, e.getLineNumber(), e.getColumnNumber(), e.getMessage());
+                                        source, e.getLineNumber(), e.getColumnNumber(), Utils.escapeReservedCharactersHTML(e.getMessage()));
                             } else {
                                 errorMessage = tr("<html>Unable to parse tagging preset source: {0}. " +
                                         "Do you really want to use it?<br><br><table width=400>Error is: [{1}:{2}] {3}</table></html>",
-                                        source, e.getLineNumber(), e.getColumnNumber(), e.getMessage());
+                                        source, e.getLineNumber(), e.getColumnNumber(), Utils.escapeReservedCharactersHTML(e.getMessage()));
                             }
                             Main.warn(e, errorMessage);
                         } catch (SAXException e) {
                             if (canLoad) {
                                 errorMessage = tr("<html>Tagging preset source {0} can be loaded but it contains errors. " +
                                         "Do you really want to use it?<br><br><table width=600>Error is: {1}</table></html>",
-                                        source, e.getMessage());
+                                        source, Utils.escapeReservedCharactersHTML(e.getMessage()));
                             } else {
                                 errorMessage = tr("<html>Unable to parse tagging preset source: {0}. " +
                                         "Do you really want to use it?<br><br><table width=600>Error is: {1}</table></html>",
-                                        source, e.getMessage());
+                                        source, Utils.escapeReservedCharactersHTML(e.getMessage()));
                             }
                             Main.warn(e, errorMessage);
                         }

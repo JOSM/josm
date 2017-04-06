@@ -349,7 +349,8 @@ public final class PluginHandler {
             }
             String msg = tr("<html>Loading of the plugin \"{0}\" was requested."
                     + "<br>This plugin is no longer developed and very likely will produce errors."
-                    +"<br>It should be disabled.<br>Delete from preferences?</html>", unmaintained);
+                    +"<br>It should be disabled.<br>Delete from preferences?</html>",
+                    Utils.escapeReservedCharactersHTML(unmaintained));
             if (confirmDisablePlugin(parent, msg, unmaintained)) {
                 Main.pref.removeFromCollection("plugins", unmaintained);
                 plugins.remove(unmaintained);
@@ -505,7 +506,7 @@ public final class PluginHandler {
           .append(trn("Plugin {0} requires a plugin which was not found. The missing plugin is:",
                 "Plugin {0} requires {1} plugins which were not found. The missing plugins are:",
                 missingRequiredPlugin.size(),
-                plugin,
+                Utils.escapeReservedCharactersHTML(plugin),
                 missingRequiredPlugin.size()))
           .append(Utils.joinAsHtmlUnorderedList(missingRequiredPlugin))
           .append("</html>");
@@ -722,7 +723,7 @@ public final class PluginHandler {
             Main.error(e);
             if (e.getCause() instanceof ClassNotFoundException) {
                 msg = tr("<html>Could not load plugin {0} because the plugin<br>main class ''{1}'' was not found.<br>"
-                        + "Delete from preferences?</html>", plugin.name, plugin.className);
+                        + "Delete from preferences?</html>", Utils.escapeReservedCharactersHTML(plugin.name), plugin.className);
             }
         } catch (RuntimeException e) { // NOPMD
             pluginLoadingExceptions.put(plugin.name, e);
@@ -918,7 +919,7 @@ public final class PluginHandler {
                 plugins.size()))
           .append("<ul>");
         for (PluginInformation pi: plugins) {
-            sb.append("<li>").append(pi.name).append("</li>");
+            sb.append("<li>").append(Utils.escapeReservedCharactersHTML(pi.name)).append("</li>");
         }
         sb.append("</ul>")
           .append(trn(
@@ -1269,10 +1270,12 @@ public final class PluginHandler {
 
         final StringBuilder msg = new StringBuilder(256);
         msg.append("<html>")
-           .append(tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.", plugin.getPluginInformation().name))
+           .append(tr("An unexpected exception occurred that may have come from the ''{0}'' plugin.",
+                   Utils.escapeReservedCharactersHTML(plugin.getPluginInformation().name)))
            .append("<br>");
         if (plugin.getPluginInformation().author != null) {
-            msg.append(tr("According to the information within the plugin, the author is {0}.", plugin.getPluginInformation().author))
+            msg.append(tr("According to the information within the plugin, the author is {0}.",
+                    Utils.escapeReservedCharactersHTML(plugin.getPluginInformation().author)))
                .append("<br>");
         }
         msg.append(tr("Try updating to the newest version of this plugin before reporting a bug."))

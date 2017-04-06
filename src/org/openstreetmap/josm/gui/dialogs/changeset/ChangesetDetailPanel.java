@@ -42,6 +42,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -339,7 +340,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
                     tr("<html>None of the objects in the content of changeset {0} is available in the current<br>"
                             + "edit layer ''{1}''.</html>",
                             currentChangeset.getId(),
-                            Main.getLayerManager().getEditLayer().getName()
+                            Utils.escapeReservedCharactersHTML(Main.getLayerManager().getEditLayer().getName())
                     ),
                     tr("Nothing to select"),
                     JOptionPane.WARNING_MESSAGE,
