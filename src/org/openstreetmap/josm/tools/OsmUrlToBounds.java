@@ -77,12 +77,11 @@ public final class OsmUrlToBounds {
                 b = new Bounds(minlat, minlon, maxlat, maxlon);
             } else {
                 String z = map.get("zoom");
-                b = positionToBounds(parseDouble(map, "lat"),
-                        parseDouble(map, "lon"),
+                b = positionToBounds(parseDouble(map, "lat"), parseDouble(map, "lon"),
                         z == null ? 18 : Integer.parseInt(z));
             }
-        } catch (NumberFormatException | ArrayIndexOutOfBoundsException ex) {
-            Main.error(ex);
+        } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException ex) {
+            Main.error(ex, url);
         }
         return b;
     }
@@ -131,7 +130,9 @@ public final class OsmUrlToBounds {
     private static double parseDouble(Map<String, String> map, String key) {
         if (map.containsKey(key))
             return Double.parseDouble(map.get(key));
-        return Double.parseDouble(map.get('m'+key));
+        if (map.containsKey('m'+key))
+            return Double.parseDouble(map.get('m'+key));
+        throw new IllegalArgumentException(map.toString() + " does not contain " + key);
     }
 
     private static final char[] SHORTLINK_CHARS = {
