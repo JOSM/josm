@@ -298,7 +298,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
          */
         private Collection<OsmPrimitive> searchPrimitivesToUpdate(Bounds bounds, DataSet ds) {
             if (bounds == null)
-                return Collections.EMPTY_SET;
+                return Collections.emptySet();
             Collection<OsmPrimitive> col = new ArrayList<>();
             ds.searchNodes(bounds.toBBox()).stream().filter(n -> !n.isNew() && !dataSet.containsNode(n)).forEachOrdered(col::add);
             if (!col.isEmpty()) {
