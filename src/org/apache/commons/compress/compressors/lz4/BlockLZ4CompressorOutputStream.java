@@ -264,9 +264,9 @@ public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
                 copyOffset = blockOffset + block.length - offsetRemaining;
                 copyLen = Math.min(lengthRemaining, block.length - copyOffset);
             } else {
-                // offsetRemaining is negative and points into the expanded bytes
+                // offsetRemaining is negative or 0 and points into the expanded bytes
                 block = expanded;
-                copyOffset = writeOffset  + offsetRemaining;
+                copyOffset = -offsetRemaining;
                 copyLen = Math.min(lengthRemaining, writeOffset + offsetRemaining);
             }
             System.arraycopy(block, copyOffset, expanded, writeOffset, copyLen);
@@ -385,14 +385,12 @@ public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
         }
         Pair splitCandidate = lastPairs.get(0);
         int stillNeeded = MIN_OFFSET_OF_LAST_BACK_REFERENCE - toExpand;
-        if (splitCandidate.hasBackReference()
-            && splitCandidate.backReferenceLength() >= MIN_BACK_REFERENCE_LENGTH + stillNeeded) {
+        int brLen = splitCandidate.hasBackReference() ? splitCandidate.backReferenceLength() : 0;
+        if (splitCandidate.hasBackReference() && brLen >= MIN_BACK_REFERENCE_LENGTH + stillNeeded) {
             replacement.prependLiteral(expand(toExpand + stillNeeded, stillNeeded));
-            pairs.add(splitCandidate.splitWithNewBackReferenceLengthOf(splitCandidate.backReferenceLength()
-                - stillNeeded));
+            pairs.add(splitCandidate.splitWithNewBackReferenceLengthOf(brLen - stillNeeded));
         } else {
             if (splitCandidate.hasBackReference()) {
-                int brLen = splitCandidate.backReferenceLength();
                 replacement.prependLiteral(expand(toExpand + brLen, brLen));
             }
             splitCandidate.prependTo(replacement);
@@ -487,9 +485,9 @@ public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
             return brLength;
         }
         private void prependTo(Pair other) {
-            Iterator<byte[]> litsBackwards = literals.descendingIterator();
-            while (litsBackwards.hasNext()) {
-                other.prependLiteral(litsBackwards.next());
+            Iterator<byte[]> listBackwards = literals.descendingIterator();
+            while (listBackwards.hasNext()) {
+                other.prependLiteral(listBackwards.next());
             }
         }
         private Pair splitWithNewBackReferenceLengthOf(int newBackReferenceLength) {
