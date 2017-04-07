@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 /**
- * Compare and analyse the differences of the editor imagery index and the JOSM imagery list.
+ * Compare and analyse the differences of the editor layer index and the JOSM imagery list.
  * The goal is to keep both lists in sync.
  *
- * The editor imagery index project (https://github.com/osmlab/editor-imagery-index)
+ * The editor layer index project (https://github.com/osmlab/editor-layer-index)
  * provides also a version in the JOSM format, but the GEOJSON is the original source
  * format, so we read that.
  *
@@ -12,7 +12,7 @@
  *
  * Main JOSM binary needs to be in classpath, e.g.
  *
- * $ groovy -cp ../dist/josm-custom.jar SyncEditorImageryIndex.groovy
+ * $ groovy -cp ../dist/josm-custom.jar SyncEditorLayerIndex.groovy
  *
  * Add option "-h" to show the available command line flags.
  */
@@ -20,13 +20,12 @@ import javax.json.Json
 import javax.json.JsonArray
 import javax.json.JsonObject
 import javax.json.JsonReader
-import javax.json.JsonValue
 
 import org.openstreetmap.josm.data.imagery.ImageryInfo
 import org.openstreetmap.josm.data.imagery.Shape
 import org.openstreetmap.josm.io.imagery.ImageryReader
 
-class SyncEditorImageryIndex {
+class SyncEditorLayerIndex {
 
     List<ImageryInfo> josmEntries;
     JsonArray eliEntries;
@@ -49,7 +48,7 @@ class SyncEditorImageryIndex {
      */
     static main(def args) {
         parse_command_line_arguments(args)
-        def script = new SyncEditorImageryIndex()
+        def script = new SyncEditorLayerIndex()
         script.loadSkip()
         script.start()
         script.loadJosmEntries()
@@ -71,14 +70,14 @@ class SyncEditorImageryIndex {
     static void parse_command_line_arguments(args) {
         def cli = new CliBuilder(width: 160)
         cli.o(longOpt:'output', args:1, argName: "output", "Output file, - prints to stdout (default: -)")
-        cli.e(longOpt:'eli_input', args:1, argName:"eli_input", "Input file for the editor imagery index (geojson). Default is $eliInputFile (current directory).")
+        cli.e(longOpt:'eli_input', args:1, argName:"eli_input", "Input file for the editor layer index (geojson). Default is $eliInputFile (current directory).")
         cli.j(longOpt:'josm_input', args:1, argName:"josm_input", "Input file for the JOSM imagery list (xml). Default is $josmInputFile (current directory).")
         cli.i(longOpt:'ignore_input', args:1, argName:"ignore_input", "Input file for the ignore list. Default is $ignoreInputFile (current directory).")
         cli.s(longOpt:'shorten', "shorten the output, so it is easier to read in a console window")
         cli.n(longOpt:'noskip', argName:"noskip", "don't skip known entries")
         cli.x(longOpt:'xhtmlbody', argName:"xhtmlbody", "create XHTML body for display in a web page")
         cli.X(longOpt:'xhtml', argName:"xhtml", "create XHTML for display in a web page")
-        cli.m(longOpt:'nomissingeli', argName:"nomissingeli", "don't show missing editor imagery index entries")
+        cli.m(longOpt:'nomissingeli', argName:"nomissingeli", "don't show missing editor layer index entries")
         cli.h(longOpt:'help', "show this help")
         options = cli.parse(args)
 
@@ -497,10 +496,11 @@ class SyncEditorImageryIndex {
     }
     static Date verifyDate(String year, String month, String day) {
         def date
-        if(year == null)
+        if(year == null) {
             date = "3000-01-01"
-        else
+        } else {
             date = year + "-" + (month == null ? "01" : month) + "-" + (day == null ? "01" : day)
+        }
         def df = new java.text.SimpleDateFormat("yyyy-MM-dd")
         df.setLenient(false)
         return df.parse(date)
