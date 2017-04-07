@@ -42,13 +42,14 @@ public final class ValUtil {
         List<List<Way>> cells = new ArrayList<>(2);
         Set<Point2D> cellNodes = new HashSet<>();
         Point2D cell;
+        double griddetail = OsmValidator.getGridDetail();
 
         // First, round coordinates
         // CHECKSTYLE.OFF: SingleSpaceSeparator
-        long x0 = Math.round(n1.getEastNorth().east()  * OsmValidator.griddetail);
-        long y0 = Math.round(n1.getEastNorth().north() * OsmValidator.griddetail);
-        long x1 = Math.round(n2.getEastNorth().east()  * OsmValidator.griddetail);
-        long y1 = Math.round(n2.getEastNorth().north() * OsmValidator.griddetail);
+        long x0 = Math.round(n1.getEastNorth().east()  * griddetail);
+        long y0 = Math.round(n1.getEastNorth().north() * griddetail);
+        long x1 = Math.round(n2.getEastNorth().east()  * griddetail);
+        long y1 = Math.round(n2.getEastNorth().north() * griddetail);
         // CHECKSTYLE.ON: SingleSpaceSeparator
 
         // Start of the way
@@ -75,10 +76,10 @@ public final class ValUtil {
 
         // Then floor coordinates, in case the way is in the border of the cell.
         // CHECKSTYLE.OFF: SingleSpaceSeparator
-        x0 = (long) Math.floor(n1.getEastNorth().east()  * OsmValidator.griddetail);
-        y0 = (long) Math.floor(n1.getEastNorth().north() * OsmValidator.griddetail);
-        x1 = (long) Math.floor(n2.getEastNorth().east()  * OsmValidator.griddetail);
-        y1 = (long) Math.floor(n2.getEastNorth().north() * OsmValidator.griddetail);
+        x0 = (long) Math.floor(n1.getEastNorth().east()  * griddetail);
+        y0 = (long) Math.floor(n1.getEastNorth().north() * griddetail);
+        x1 = (long) Math.floor(n2.getEastNorth().east()  * griddetail);
+        y1 = (long) Math.floor(n2.getEastNorth().north() * griddetail);
         // CHECKSTYLE.ON: SingleSpaceSeparator
 
         // Start of the way
