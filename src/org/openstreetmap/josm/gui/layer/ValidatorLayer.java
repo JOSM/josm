@@ -161,7 +161,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
         if (e.getRemovedLayer() instanceof OsmDataLayer && e.getSource().getLayersOfType(OsmDataLayer.class).size() <= 1) {
             e.scheduleRemoval(Collections.singleton(this));
         } else if (e.getRemovedLayer() == this) {
-            OsmValidator.errorLayer = null;
+            OsmValidator.resetErrorLayer();
         }
     }
 

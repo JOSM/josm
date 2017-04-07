@@ -74,13 +74,13 @@ public final class OsmValidator {
         // Hide default constructor for utilities classes
     }
 
-    public static volatile ValidatorLayer errorLayer;
+    private static volatile ValidatorLayer errorLayer;
 
     /** The validate action */
     public static final ValidateAction validateAction = new ValidateAction();
 
     /** Grid detail, multiplier of east,north values for valuable cell sizing */
-    public static double griddetail;
+    private static double griddetail;
 
     private static final Collection<String> ignoredErrors = new TreeSet<>();
 
@@ -214,6 +214,9 @@ public final class OsmValidator {
         }
     }
 
+    /**
+     * Initializes error layer.
+     */
     public static synchronized void initializeErrorLayer() {
         if (!ValidatorPreference.PREF_LAYER.get())
             return;
@@ -221,6 +224,14 @@ public final class OsmValidator {
             errorLayer = new ValidatorLayer();
             Main.getLayerManager().addLayer(errorLayer);
         }
+    }
+
+    /**
+     * Resets error layer.
+     * @since 11852
+     */
+    public static synchronized void resetErrorLayer() {
+        errorLayer = null;
     }
 
     /**
@@ -302,6 +313,15 @@ public final class OsmValidator {
         } else {
             OsmValidator.griddetail = 1.0;
         }
+    }
+
+    /**
+     * Returns grid detail, multiplier of east,north values for valuable cell sizing
+     * @return grid detail
+     * @since 11852
+     */
+    public static double getGridDetail() {
+        return griddetail;
     }
 
     private static boolean testsInitialized;
