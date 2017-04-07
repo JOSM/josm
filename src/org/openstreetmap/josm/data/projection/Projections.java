@@ -83,11 +83,11 @@ public final class Projections {
      *
      * should be compatible to PROJ.4
      */
-    static final Map<String, ProjFactory> projs = new HashMap<>();
-    static final Map<String, Ellipsoid> ellipsoids = new HashMap<>();
-    static final Map<String, Datum> datums = new HashMap<>();
-    static final Map<String, NTV2GridShiftFileWrapper> nadgrids = new HashMap<>();
-    static final Map<String, ProjectionDefinition> inits;
+    private static final Map<String, ProjFactory> projs = new HashMap<>();
+    private static final Map<String, Ellipsoid> ellipsoids = new HashMap<>();
+    private static final Map<String, Datum> datums = new HashMap<>();
+    private static final Map<String, NTV2GridShiftFileWrapper> nadgrids = new HashMap<>();
+    private static final Map<String, ProjectionDefinition> inits;
 
     static {
         registerBaseProjection("aea", AlbersEqualArea.class, "core");
