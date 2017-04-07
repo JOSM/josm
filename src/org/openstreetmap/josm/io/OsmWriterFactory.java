@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.io;
 
 import java.io.PrintWriter;
+import java.util.Objects;
 
 /**
  * This factory is called by everyone who needs an OsmWriter object,
@@ -16,7 +17,15 @@ import java.io.PrintWriter;
  */
 public class OsmWriterFactory {
 
-    public static volatile OsmWriterFactory theFactory;
+    private static volatile OsmWriterFactory theFactory;
+
+    /**
+     * Creates new {@code OsmWriter}.
+     * @param out print writer
+     * @param osmConform if {@code true}, prevents modification attributes to be written to the common part
+     * @param version OSM API version (0.6)
+     * @return new {@code OsmWriter}
+     */
     public static OsmWriter createOsmWriter(PrintWriter out, boolean osmConform, String version) {
         // pre-set factory with this default implementation; can still be overwritten
         // later. note that the default factory may already be used for constructing
@@ -27,6 +36,22 @@ public class OsmWriterFactory {
         return theFactory.createOsmWriterImpl(out, osmConform, version);
     }
 
+    /**
+     * Sets the default factory.
+     * @param factory new default factory
+     * @since 11851
+     */
+    public static void setDefaultFactory(OsmWriterFactory factory) {
+        theFactory = Objects.requireNonNull(factory);
+    }
+
+    /**
+     * Creates new {@code OsmWriter}.
+     * @param out print writer
+     * @param osmConform if {@code true}, prevents modification attributes to be written to the common part
+     * @param version OSM API version (0.6)
+     * @return new {@code OsmWriter}
+     */
     protected OsmWriter createOsmWriterImpl(PrintWriter out, boolean osmConform, String version) {
         return new OsmWriter(out, osmConform, version);
     }
