@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.layer.imagery;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+
 import org.openstreetmap.gui.jmapviewer.interfaces.IProjected;
 
 /**
@@ -21,6 +22,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.IProjected;
  *   <li>projected coordinates (east / north)</li>
  *   <li>screen pixel coordinates</li>
  * </ul>
+ * @since 11846
  */
 public class TileAnchor {
 
@@ -52,7 +54,7 @@ public class TileAnchor {
 
     @Override
     public String toString() {
-        return "TileAnchor{" + tileOrigin.toString() + "; " + nextTileOrigin.toString() + "}";
+        return "TileAnchor{" + tileOrigin + "; " + nextTileOrigin + '}';
     }
 
     /**
