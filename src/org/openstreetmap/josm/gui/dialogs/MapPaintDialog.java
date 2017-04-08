@@ -14,7 +14,6 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -506,11 +505,8 @@ public class MapPaintDialog extends ToggleDialog {
                 getProgressMonitor().indeterminateSubTask(
                         tr("Save style ''{0}'' as ''{1}''", s.getDisplayString(), file.getPath()));
                 try {
-                    InputStream in = s.getSourceInputStream();
-                    try (InputStream bis = new BufferedInputStream(in)) {
-                        Files.copy(bis, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                    } finally {
-                        s.closeSourceInputStream(in);
+                    try (InputStream in = s.getSourceInputStream()) {
+                        Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     }
                 } catch (IOException e) {
                     Main.warn(e);

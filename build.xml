@@ -720,7 +720,7 @@ Build-Date: ${build.tstamp}
             <arg value="--unlink"/>
         </exec>
         <exec append="false" executable="wget" failifexecutionfails="true">
-            <arg value="https://raw.githubusercontent.com/osmlab/editor-imagery-index/gh-pages/imagery.geojson"/>
+            <arg value="https://raw.githubusercontent.com/osmlab/editor-layer-index/gh-pages/imagery.geojson"/>
             <arg value="-O"/>
             <arg value="imagery.geojson"/>
             <arg value="--unlink"/>

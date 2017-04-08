@@ -3,7 +3,6 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
@@ -482,8 +481,8 @@ public class CachedFile implements Closeable {
             } else if (con.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
                 throw new IOException(tr("The requested URL {0} was not found", urlStr));
             }
-            try (InputStream bis = new BufferedInputStream(con.getContent())) {
-                Files.copy(bis, destDirFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            try (InputStream is = con.getContent()) {
+                Files.copy(is, destDirFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
             activeConnection = null;
             localFile = new File(destDir, localPath);
