@@ -75,7 +75,7 @@ public class Tile {
         this.xtile = xtile;
         this.ytile = ytile;
         this.zoom = zoom;
-        this.setImage(image);
+        this.image = image;
         this.key = getTileKey(source, xtile, ytile, zoom);
     }
 
@@ -239,7 +239,7 @@ public class Tile {
         return image;
     }
 
-    public final void setImage(BufferedImage image) {
+    public void setImage(BufferedImage image) {
         this.image = image;
     }
 
@@ -302,7 +302,17 @@ public class Tile {
 
     @Override
     public String toString() {
-        return "Tile " + key;
+        StringBuilder sb = new StringBuilder("Tile ").append(key);
+        if (loading) {
+            sb.append(" [LOADING...]");
+        }
+        if (loaded) {
+            sb.append(" [loaded]");
+        }
+        if (error) {
+            sb.append(" [ERROR]");
+        }
+        return sb.toString();
     }
 
     /**
