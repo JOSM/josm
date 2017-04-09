@@ -637,7 +637,12 @@ public class NavigatableComponent extends JComponent implements Helpful {
         MapViewState mvs = getState().usingScale(newScale);
         mvs = mvs.movedTo(mvs.getCenter(), newCenter);
         Point2D enOrigin = mvs.getPointFor(new EastNorth(0, 0)).getInView();
-        Point2D enOriginAligned = new Point2D.Double(Math.round(enOrigin.getX()), Math.round(enOrigin.getY()));
+        // as a result of the alignment, it is common to round "half integer" values
+        // like 1.49999, which is numerically unstable; add small epsilon to resolve this
+        double EPSILON = 1e-3;
+        Point2D enOriginAligned = new Point2D.Double(
+                Math.round(enOrigin.getX()) + EPSILON,
+                Math.round(enOrigin.getY()) + EPSILON);
         EastNorth enShift = mvs.getForView(enOriginAligned.getX(), enOriginAligned.getY()).getEastNorth();
         newCenter = newCenter.subtract(enShift);
 

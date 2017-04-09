@@ -18,6 +18,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TemplatedTileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -53,9 +54,10 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
     /**
      * Creates a tile source based on imagery info
      * @param info imagery info
+     * @param tileProjection the tile projection
      */
-    public TemplatedWMSTileSource(ImageryInfo info) {
-        super(info);
+    public TemplatedWMSTileSource(ImageryInfo info, Projection tileProjection) {
+        super(info, tileProjection);
         this.serverProjections = new TreeSet<>(info.getServerProjections());
         handleTemplate();
         initProjection();
@@ -68,7 +70,7 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
 
     @Override
     public String getTileUrl(int zoom, int tilex, int tiley) {
-        String myProjCode = Main.getProjection().toCode();
+        String myProjCode = getServerCRS();
 
         EastNorth nw = getTileEastNorth(tilex, tiley, zoom);
         EastNorth se = getTileEastNorth(tilex + 1, tiley + 1, zoom);
@@ -78,16 +80,6 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
 
         double s = se.getY();
         double e = se.getX();
-
-        if (!serverProjections.contains(myProjCode) && serverProjections.contains("EPSG:4326") && "EPSG:3857".equals(myProjCode)) {
-            LatLon swll = Main.getProjection().eastNorth2latlon(new EastNorth(w, s));
-            LatLon nell = Main.getProjection().eastNorth2latlon(new EastNorth(e, n));
-            myProjCode = "EPSG:4326";
-            s = swll.lat();
-            w = swll.lon();
-            n = nell.lat();
-            e = nell.lon();
-        }
 
         if ("EPSG:4326".equals(myProjCode) && !serverProjections.contains(myProjCode) && serverProjections.contains("CRS:84")) {
             myProjCode = "CRS:84";

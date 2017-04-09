@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.gui.layer;
 
 import java.io.IOException;
-import java.util.Set;
+import java.util.Collection;
 
 import org.apache.commons.jcs.access.CacheAccess;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.imagery.WMSCachedTileLoader;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * WMTS layer based on AbstractTileSourceLayer. Overrides few methods to align WMTS to Tile based computations
@@ -74,15 +75,13 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer<WMTSTileSource> imp
         if (scaleList == null) {
             return getMaxZoomLvl();
         }
-        double displayScale = Main.map.mapView.getScale() * Main.getProjection().getMetersPerUnit(); // meter per pixel
+        double displayScale = Main.map.mapView.getScale();
+        if (coordinateConverter.requiresReprojection()) {
+            displayScale *= Main.getProjection().getMetersPerUnit();
+        }
         Scale snap = scaleList.getSnapScale(displayScale, false);
-        return Math.max(
-                getMinZoomLvl(),
-                Math.min(
-                        snap != null ? snap.getIndex() : getMaxZoomLvl(),
-                        getMaxZoomLvl()
-                        )
-                );
+        return Utils.clamp(snap != null ? snap.getIndex() : getMaxZoomLvl(),
+                getMinZoomLvl(), getMaxZoomLvl());
     }
 
     @Override
@@ -91,18 +90,8 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer<WMTSTileSource> imp
     }
 
     @Override
-    public boolean isProjectionSupported(Projection proj) {
-        Set<String> supportedProjections = tileSource.getSupportedProjections();
-        return supportedProjections.contains(proj.toCode());
-    }
-
-    @Override
-    public String nameSupportedProjections() {
-        StringBuilder ret = new StringBuilder();
-        for (String e: tileSource.getSupportedProjections()) {
-            ret.append(e).append(", ");
-        }
-        return ret.length() > 2 ? ret.substring(0, ret.length()-2) : ret.toString();
+    public Collection<String> getNativeProjections() {
+        return tileSource.getSupportedProjections();
     }
 
     @Override

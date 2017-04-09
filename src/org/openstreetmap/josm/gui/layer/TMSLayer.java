@@ -5,6 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.jcs.access.CacheAccess;
 import org.openstreetmap.gui.jmapviewer.OsmMercator;
@@ -78,13 +80,8 @@ public class TMSLayer extends AbstractCachedTileSourceLayer<TMSTileSource> imple
     }
 
     @Override
-    public final boolean isProjectionSupported(Projection proj) {
-        return "EPSG:3857".equals(proj.toCode()) || "EPSG:4326".equals(proj.toCode());
-    }
-
-    @Override
-    public final String nameSupportedProjections() {
-        return tr("EPSG:4326 and Mercator projection are supported");
+    public Collection<String> getNativeProjections() {
+        return Collections.singletonList("EPSG:3857");
     }
 
     /**
@@ -160,4 +157,4 @@ public class TMSLayer extends AbstractCachedTileSourceLayer<TMSTileSource> imple
         }
         return new ScaleList(scales);
     }
- }
+}

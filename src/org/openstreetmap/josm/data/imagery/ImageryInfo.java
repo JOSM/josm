@@ -203,8 +203,6 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     private String icon;
     /** is the geo reference correct - don't offer offset handling */
     private boolean isGeoreferenceValid;
-    /** does the EPSG:4326 to mercator woraround work as expected */
-    private boolean isEpsg4326To3857Supported;
     /** which layers should be activated by default on layer addition. **/
     private Collection<DefaultLayer> defaultLayers = Collections.emptyList();
     // when adding a field, also adapt the ImageryInfo(ImageryInfo)
@@ -243,7 +241,6 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         @pref Map<String, String> metadataHeaders;
         @pref boolean valid_georeference;
         @pref boolean bestMarked;
-        @pref boolean supports_epsg_4326_to_3857_conversion;
         // TODO: disabled until change of layers is implemented
         // @pref String default_layers;
 
@@ -308,7 +305,6 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
             tileSize = i.getTileSize();
 
             valid_georeference = i.isGeoreferenceValid();
-            supports_epsg_4326_to_3857_conversion = i.isEpsg4326To3857Supported();
             // TODO disabled until change of layers is implemented
             // default_layers = i.defaultLayers.stream().collect(Collectors.joining(","));
         }
@@ -438,7 +434,6 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         }
         setTileSize(e.tileSize);
         metadataHeaders = e.metadataHeaders;
-        isEpsg4326To3857Supported = e.supports_epsg_4326_to_3857_conversion;
         isGeoreferenceValid = e.valid_georeference;
         // TODO disabled until change of layers is implemented
         // defaultLayers = Arrays.asList(e.default_layers.split(","));
@@ -475,7 +470,6 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         this.noTileHeaders = i.noTileHeaders;
         this.noTileChecksums = i.noTileChecksums;
         this.metadataHeaders = i.metadataHeaders;
-        this.isEpsg4326To3857Supported = i.isEpsg4326To3857Supported;
         this.isGeoreferenceValid = i.isGeoreferenceValid;
         this.defaultLayers = i.defaultLayers;
     }
@@ -505,7 +499,6 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                 Objects.equals(this.id, other.id) &&
                 Objects.equals(this.url, other.url) &&
                 Objects.equals(this.bestMarked, other.bestMarked) &&
-                Objects.equals(this.isEpsg4326To3857Supported, other.isEpsg4326To3857Supported) &&
                 Objects.equals(this.isGeoreferenceValid, other.isGeoreferenceValid) &&
                 Objects.equals(this.cookies, other.cookies) &&
                 Objects.equals(this.eulaAcceptanceRequired, other.eulaAcceptanceRequired) &&
@@ -1140,22 +1133,6 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         } else {
             this.metadataHeaders = metadataHeaders;
         }
-    }
-
-    /**
-     * Gets the flag if epsg 4326 to 3857 is supported
-     * @return The flag.
-     */
-    public boolean isEpsg4326To3857Supported() {
-        return isEpsg4326To3857Supported;
-    }
-
-    /**
-     * Sets the flag that epsg 4326 to 3857 is supported
-     * @param isEpsg4326To3857Supported The flag.
-     */
-    public void setEpsg4326To3857Supported(boolean isEpsg4326To3857Supported) {
-        this.isEpsg4326To3857Supported = isEpsg4326To3857Supported;
     }
 
     /**

@@ -10,7 +10,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.IProjected;
 import org.openstreetmap.gui.jmapviewer.tilesources.TMSTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.TileSourceInfo;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -31,13 +30,16 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
     private int[] tileYMax;
     private double[] degreesPerTile;
     private static final float SCALE_DENOMINATOR_ZOOM_LEVEL_1 = 559082264.0287178f;
+    private Projection tileProjection;
 
     /**
      * Constructs a new {@code AbstractWMSTileSource}.
      * @param info tile source info
+     * @param tileProjection the tile projection
      */
-    public AbstractWMSTileSource(TileSourceInfo info) {
+    public AbstractWMSTileSource(TileSourceInfo info, Projection tileProjection) {
         super(info);
+        this.tileProjection = tileProjection;
     }
 
     private void initAnchorPosition(Projection proj) {
@@ -47,11 +49,20 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
         this.anchorPosition = new EastNorth(min.east(), max.north());
     }
 
+    public void setTileProjection(Projection tileProjection) {
+        this.tileProjection = tileProjection;
+        initProjection();
+    }
+
+    public Projection getTileProjection() {
+        return this.tileProjection;
+    }
+
     /**
      * Initializes class with current projection in JOSM. This call is needed every time projection changes.
      */
     public void initProjection() {
-        initProjection(Main.getProjection());
+        initProjection(this.tileProjection);
     }
 
     /**
@@ -98,7 +109,7 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
 
     @Override
     public ICoordinate tileXYToLatLon(int x, int y, int zoom) {
-        return Main.getProjection().eastNorth2latlon(getTileEastNorth(x, y, zoom)).toCoordinate();
+        return tileProjection.eastNorth2latlon(getTileEastNorth(x, y, zoom)).toCoordinate();
     }
 
     private TileXY eastNorthToTileXY(EastNorth enPoint, int zoom) {
@@ -111,7 +122,7 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
 
     @Override
     public TileXY latLonToTileXY(double lat, double lon, int zoom) {
-        EastNorth enPoint = Main.getProjection().latlon2eastNorth(new LatLon(lat, lon));
+        EastNorth enPoint = tileProjection.latlon2eastNorth(new LatLon(lat, lon));
         return eastNorthToTileXY(enPoint, zoom);
     }
 
@@ -143,7 +154,7 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
     @Override
     public Point latLonToXY(double lat, double lon, int zoom) {
         double scale = getDegreesPerTile(zoom) / getTileSize();
-        EastNorth point = Main.getProjection().latlon2eastNorth(new LatLon(lat, lon));
+        EastNorth point = tileProjection.latlon2eastNorth(new LatLon(lat, lon));
         return new Point(
                 (int) Math.round((point.east() - anchorPosition.east()) / scale),
                 (int) Math.round((anchorPosition.north() - point.north()) / scale)
@@ -163,12 +174,11 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
     @Override
     public ICoordinate xyToLatLon(int x, int y, int zoom) {
         double scale = getDegreesPerTile(zoom) / getTileSize();
-        Projection proj = Main.getProjection();
         EastNorth ret = new EastNorth(
                 anchorPosition.east() + x * scale,
                 anchorPosition.north() - y * scale
                 );
-        return proj.eastNorth2latlon(ret).toCoordinate();
+        return tileProjection.eastNorth2latlon(ret).toCoordinate();
     }
 
     protected EastNorth getTileEastNorth(int x, int y, int z) {
@@ -196,6 +206,6 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
 
     @Override
     public String getServerCRS() {
-        return Main.getProjection().toCode();
+        return this.tileProjection.toCode();
     }
 }

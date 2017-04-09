@@ -86,6 +86,22 @@ public interface Projection extends Projecting {
     Bounds getLatLonBoundsBox(ProjectionBounds pb);
 
     /**
+     * Get a box in east/north space of this projection, that fully contains an
+     * east/north box of another projection.
+     *
+     * Reprojecting a rectangular box from one projection to another may distort/rotate
+     * the shape of the box, so in general one needs to walk along the boundary
+     * in small steps to get a reliable result.
+     *
+     * This is an approximate method.
+     *
+     * @param box the east/north box given in projection <code>boxProjection</code>
+     * @param boxProjection the projection of <code>box</code>
+     * @return an east/north box in this projection, containing the given box
+     */
+    ProjectionBounds getEastNorthBoundsBox(ProjectionBounds box, Projection boxProjection);
+
+    /**
      * Get the number of meters per unit of this projection. This more
      * defines the scale of the map, than real conversion of unit to meters
      * as this value is more less correct only along certain lines of true scale.
