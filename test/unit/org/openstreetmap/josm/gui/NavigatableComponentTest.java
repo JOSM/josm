@@ -7,10 +7,13 @@ import static org.junit.Assert.assertThat;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
+import java.util.Objects;
 
 import javax.swing.JPanel;
 
 import org.CustomMatchers;
+import org.hamcrest.CustomTypeSafeMatcher;
+import org.hamcrest.Matcher;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -111,7 +114,7 @@ public class NavigatableComponentTest {
     public void testZoomToLatLon() {
         component.zoomTo(new LatLon(10, 10));
         Point2D shouldBeCenter = component.getPoint2D(new LatLon(10, 10));
-        // center may move 0.5 pixels for alignment, see {@link NavigatableComponent#zoomTo(EastNorth, double, boolean)}
+        // 0.5 pixel tolerance, see isAfterZoom
         assertEquals(shouldBeCenter.getX(), WIDTH / 2., 0.5);
         assertEquals(shouldBeCenter.getY(), HEIGHT / 2., 0.5);
     }
@@ -127,19 +130,19 @@ public class NavigatableComponentTest {
         // zoomToFactor(double)
         component.zoomToFactor(0.5);
         assertEquals(initialScale / 2, component.getScale(), 0.00000001);
-        assertThat(component.getCenter(), CustomMatchers.is(center));
+        assertThat(component.getCenter(), isAfterZoom(center, component.getScale()));
         component.zoomToFactor(2);
         assertEquals(initialScale, component.getScale(), 0.00000001);
-        assertThat(component.getCenter(), CustomMatchers.is(center));
+        assertThat(component.getCenter(), isAfterZoom(center, component.getScale()));
 
         // zoomToFactor(EastNorth, double)
         EastNorth newCenter = new EastNorth(10, 20);
         component.zoomToFactor(newCenter, 0.5);
         assertEquals(initialScale / 2, component.getScale(), 0.00000001);
-        assertEquals(newCenter, component.getCenter());
+        assertThat(component.getCenter(), isAfterZoom(newCenter, component.getScale()));
         component.zoomToFactor(newCenter, 2);
         assertEquals(initialScale, component.getScale(), 0.00000001);
-        assertEquals(newCenter, component.getCenter());
+        assertThat(component.getCenter(), isAfterZoom(newCenter, component.getScale()));
     }
 
     /**
@@ -167,17 +170,17 @@ public class NavigatableComponentTest {
 
         component.zoomToFactor(0, 0, 0.5);
         assertEquals(initialScale / 2, component.getScale(), 0.00000001);
-        assertThat(component.getEastNorth(0, 0), CustomMatchers.is(testPoint1));
+        assertThat(component.getEastNorth(0, 0), isAfterZoom(testPoint1, component.getScale()));
         component.zoomToFactor(0, 0, 2);
         assertEquals(initialScale, component.getScale(), 0.00000001);
-        assertThat(component.getEastNorth(0, 0), CustomMatchers.is(testPoint1));
+        assertThat(component.getEastNorth(0, 0), isAfterZoom(testPoint1, component.getScale()));
 
         component.zoomToFactor(200, 150, 0.5);
         assertEquals(initialScale / 2, component.getScale(), 0.00000001);
-        assertThat(component.getEastNorth(200, 150), CustomMatchers.is(testPoint2));
+        assertThat(component.getEastNorth(200, 150), isAfterZoom(testPoint2, component.getScale()));
         component.zoomToFactor(200, 150, 2);
         assertEquals(initialScale, component.getScale(), 0.00000001);
-        assertThat(component.getEastNorth(200, 150), CustomMatchers.is(testPoint2));
+        assertThat(component.getEastNorth(200, 150), isAfterZoom(testPoint2, component.getScale()));
 
     }
 
@@ -203,6 +206,26 @@ public class NavigatableComponentTest {
 
         assertThat(bounds.getMin(), CustomMatchers.is(component.getLatLon(0, HEIGHT)));
         assertThat(bounds.getMax(), CustomMatchers.is(component.getLatLon(WIDTH, 0)));
+    }
+
+    /**
+     * Check that EastNorth is the same as expected after zooming the NavigatableComponent.
+     *
+     * Adds tolerance of 0.5 pixel for pixel grid alignment, see
+     * {@link NavigatableComponent#zoomTo(EastNorth, double, boolean)}
+     * @param expected expected
+     * @param scale current scale
+     * @return Matcher object
+     */
+    private Matcher<EastNorth> isAfterZoom(EastNorth expected, double scale) {
+        return new CustomTypeSafeMatcher<EastNorth>(Objects.toString(expected)) {
+            @Override
+            protected boolean matchesSafely(EastNorth actual) {
+                // compare pixels (east/north divided by scale)
+                return Math.abs((expected.getX() - actual.getX()) / scale) <= 0.5
+                        && Math.abs((expected.getY() - actual.getY()) / scale) <= 0.5;
+            }
+        };
     }
 
 }
