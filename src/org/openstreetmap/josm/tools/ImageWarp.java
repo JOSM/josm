@@ -11,13 +11,14 @@ import java.awt.image.BufferedImage;
  * Image warping algorithm.
  *
  * Deforms an image geometrically according to a given transformation formula.
+ * @since 11858
  */
 public class ImageWarp {
 
     /**
      * Transformation that translates the pixel coordinates.
      */
-    public static interface PointTransform {
+    public interface PointTransform {
         Point2D transform(Point2D pt);
     }
 
