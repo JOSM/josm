@@ -17,13 +17,17 @@ import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 
 /**
  * This is the table model for the content of a changeset.
- *
+ * @since 2689
  */
 public class ChangesetContentTableModel extends AbstractTableModel {
 
     private final transient List<ChangesetContentEntry> data = new ArrayList<>();
     private final DefaultListSelectionModel selectionModel;
 
+    /**
+     * Constructs a new {@code ChangesetContentTableModel}.
+     * @param selectionModel selection model
+     */
     public ChangesetContentTableModel(DefaultListSelectionModel selectionModel) {
         this.selectionModel = selectionModel;
     }
@@ -37,6 +41,10 @@ public class ChangesetContentTableModel extends AbstractTableModel {
         return selectionModel.getMinSelectionIndex() >= 0;
     }
 
+    /**
+     * Selects a single item by its index.
+     * @param row index
+     */
     public void setSelectedByIdx(int row) {
         selectionModel.setSelectionInterval(row, row);
     }
@@ -49,6 +57,10 @@ public class ChangesetContentTableModel extends AbstractTableModel {
         return selectionModel;
     }
 
+    /**
+     * Returns the selected history primitives.
+     * @return the selected history primitives
+     */
     public Set<HistoryOsmPrimitive> getSelectedPrimitives() {
         Set<HistoryOsmPrimitive> ret = new HashSet<>();
         for (int i = 0; i < data.size(); i++) {
@@ -77,6 +89,9 @@ public class ChangesetContentTableModel extends AbstractTableModel {
         fireTableDataChanged();
     }
 
+    /**
+     * Sort data.
+     */
     protected void sort() {
         data.sort((c1, c2) -> {
                 if (c1.getModificationType().equals(c2.getModificationType())) {
@@ -129,7 +144,6 @@ public class ChangesetContentTableModel extends AbstractTableModel {
     /**
      * The type used internally to keep information about {@link HistoryOsmPrimitive}
      * with their {@link ChangesetModificationType}.
-     *
      */
     private static class ChangesetContentEntry implements ChangesetDataSetEntry {
         private final ChangesetModificationType modificationType;

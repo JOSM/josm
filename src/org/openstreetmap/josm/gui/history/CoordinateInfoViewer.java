@@ -230,8 +230,8 @@ public class CoordinateInfoViewer extends JPanel {
 
         protected final Pair<LatLon, LatLon> getCoordinates() {
             HistoryOsmPrimitive p = getPrimitive();
-            HistoryOsmPrimitive opposite = getOppositePrimitive();
             if (!(p instanceof HistoryNode)) return null;
+            HistoryOsmPrimitive opposite = getOppositePrimitive();
             if (!(opposite instanceof HistoryNode)) return null;
             HistoryNode node = (HistoryNode) p;
             HistoryNode oppositeNode = (HistoryNode) opposite;

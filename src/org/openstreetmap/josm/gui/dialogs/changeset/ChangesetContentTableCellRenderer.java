@@ -16,6 +16,10 @@ import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
  */
 public class ChangesetContentTableCellRenderer extends AbstractCellRenderer {
 
+    /**
+     * Renders primitive modification type.
+     * @param type modification type
+     */
     protected void renderModificationType(ChangesetModificationType type) {
         switch(type) {
         case CREATED: setText(tr("Created")); break;
@@ -34,12 +38,10 @@ public class ChangesetContentTableCellRenderer extends AbstractCellRenderer {
         renderColors(isSelected);
         switch(column) {
         case 0:
-            ChangesetModificationType type = (ChangesetModificationType) value;
-            renderModificationType(type);
+            renderModificationType((ChangesetModificationType) value);
             break;
         case 1:
-            HistoryOsmPrimitive primitive = (HistoryOsmPrimitive) value;
-            renderId(primitive.getId());
+            renderId(((HistoryOsmPrimitive) value).getId());
             break;
         default:
             /* do nothing */

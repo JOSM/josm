@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Represents a single changeset in JOSM. For now its only used during
@@ -176,7 +177,7 @@ public final class Changeset implements Tagged {
      * @return the changeset creation date
      */
     public Date getCreatedAt() {
-        return createdAt;
+        return DateUtils.cloneDate(createdAt);
     }
 
     /**
@@ -184,7 +185,7 @@ public final class Changeset implements Tagged {
      * @param createdAt changeset creation date
      */
     public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
+        this.createdAt = DateUtils.cloneDate(createdAt);
     }
 
     /**
@@ -192,7 +193,7 @@ public final class Changeset implements Tagged {
      * @return the changeset closure date
      */
     public Date getClosedAt() {
-        return closedAt;
+        return DateUtils.cloneDate(closedAt);
     }
 
     /**
@@ -200,7 +201,7 @@ public final class Changeset implements Tagged {
      * @param closedAt changeset closure date
      */
     public void setClosedAt(Date closedAt) {
-        this.closedAt = closedAt;
+        this.closedAt = DateUtils.cloneDate(closedAt);
     }
 
     /**
@@ -425,8 +426,8 @@ public final class Changeset implements Tagged {
         if (id != other.id)
             return;
         this.user = other.user;
-        this.createdAt = other.createdAt;
-        this.closedAt = other.closedAt;
+        this.createdAt = DateUtils.cloneDate(other.createdAt);
+        this.closedAt = DateUtils.cloneDate(other.closedAt);
         this.open = other.open;
         this.min = other.min;
         this.max = other.max;

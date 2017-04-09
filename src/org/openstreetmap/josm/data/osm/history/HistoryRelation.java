@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -139,5 +140,17 @@ public class HistoryRelation extends HistoryOsmPrimitive {
     @Override
     public String getDisplayName(HistoryNameFormatter formatter) {
         return formatter.format(this);
+    }
+
+    /**
+     * Fills the relation attributes with values from this history.
+     * @param data relation data to fill
+     * @return filled relation data
+     * @since 11878
+     */
+    public RelationData fillPrimitiveData(RelationData data) {
+        super.fillPrimitiveCommonData(data);
+        data.setMembers(members);
+        return data;
     }
 }

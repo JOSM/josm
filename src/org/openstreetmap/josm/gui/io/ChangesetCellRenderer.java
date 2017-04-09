@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.text.DateFormat;
+import java.util.Date;
 
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -36,9 +37,10 @@ public class ChangesetCellRenderer extends JLabel implements ListCellRenderer<Ch
     protected String buildToolTipText(Changeset cs) {
         StringBuilder sb = new StringBuilder(64);
         sb.append("<html><strong>").append(tr("Changeset id:")).append("</strong>").append(cs.getId()).append("<br>");
-        if (cs.getCreatedAt() != null) {
+        Date createdDate = cs.getCreatedAt();
+        if (createdDate != null) {
             sb.append("<strong>").append(tr("Created at:")).append("</strong>").append(
-                    DateUtils.formatDateTime(cs.getCreatedAt(), DateFormat.SHORT, DateFormat.SHORT)).append("<br>");
+                    DateUtils.formatDateTime(createdDate, DateFormat.SHORT, DateFormat.SHORT)).append("<br>");
         }
         String comment = cs.get("comment");
         if (comment != null) {

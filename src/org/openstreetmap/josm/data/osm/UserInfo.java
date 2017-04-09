@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Public user information.
@@ -72,7 +73,7 @@ public class UserInfo {
      * @return the user account creation date
      */
     public Date getAccountCreated() {
-        return accountCreated;
+        return DateUtils.cloneDate(accountCreated);
     }
 
     /**
@@ -80,7 +81,7 @@ public class UserInfo {
      * @param accountCreated user account creation date
      */
     public void setAccountCreated(Date accountCreated) {
-        this.accountCreated = accountCreated;
+        this.accountCreated = DateUtils.cloneDate(accountCreated);
     }
 
     /**

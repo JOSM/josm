@@ -16,15 +16,33 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class ChangesetDataSet {
 
+    /**
+     * Type of primitive modification.
+     */
     public enum ChangesetModificationType {
+        /** The primitive has been created */
         CREATED,
+        /** The primitive has been updated */
         UPDATED,
+        /** The primitive has been deleted */
         DELETED
     }
 
+    /**
+     * An entry in the changeset dataset.
+     */
     public interface ChangesetDataSetEntry {
+
+        /**
+         * Returns the type of modification.
+         * @return the type of modification
+         */
         ChangesetModificationType getModificationType();
 
+        /**
+         * Returns the affected history primitive.
+         * @return the affected history primitive
+         */
         HistoryOsmPrimitive getPrimitive();
     }
 
@@ -132,18 +150,21 @@ public class ChangesetDataSet {
     }
 
     /**
-     * Replies the {@link HistoryOsmPrimitive} with id <code>id</code> from this
-     * dataset. null, if there is no such primitive in the data set.
+     * Replies the {@link HistoryOsmPrimitive} with id <code>id</code> from this dataset.
+     * null, if there is no such primitive in the data set.
      *
      * @param id the id
-     * @return  the {@link HistoryOsmPrimitive} with id <code>id</code> from this
-     * dataset
+     * @return the {@link HistoryOsmPrimitive} with id <code>id</code> from this dataset
      */
     public HistoryOsmPrimitive getPrimitive(PrimitiveId id) {
         if (id == null) return null;
         return primitives.get(id);
     }
 
+    /**
+     * Returns an iterator over dataset entries.
+     * @return an iterator over dataset entries
+     */
     public Iterator<ChangesetDataSetEntry> iterator() {
         return new DefaultIterator();
     }
@@ -183,9 +204,7 @@ public class ChangesetDataSet {
         @Override
         public ChangesetDataSetEntry next() {
             Entry<PrimitiveId, ChangesetModificationType> next = typeIterator.next();
-            ChangesetModificationType type = next.getValue();
-            HistoryOsmPrimitive primitive = primitives.get(next.getKey());
-            return new DefaultChangesetDataSetEntry(type, primitive);
+            return new DefaultChangesetDataSetEntry(next.getValue(), primitives.get(next.getKey()));
         }
 
         @Override

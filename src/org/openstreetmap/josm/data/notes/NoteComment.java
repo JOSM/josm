@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.Date;
 
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Represents a comment made on a note. All notes have at least on comment
@@ -51,7 +52,7 @@ public class NoteComment {
     public NoteComment(Date createDate, User user, String commentText, Action action, boolean isNew) {
         this.text = commentText;
         this.user = user;
-        this.commentTimestamp = Note.cloneDate(createDate);
+        this.commentTimestamp = DateUtils.cloneDate(createDate);
         this.action = action;
         this.isNew = isNew;
     }
@@ -68,7 +69,7 @@ public class NoteComment {
 
     /** @return The time at which this comment was created */
     public Date getCommentTimestamp() {
-        return Note.cloneDate(commentTimestamp);
+        return DateUtils.cloneDate(commentTimestamp);
     }
 
     /** @return the action associated with this note */

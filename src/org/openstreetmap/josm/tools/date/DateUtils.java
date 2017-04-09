@@ -162,6 +162,16 @@ public final class DateUtils {
         return DateTimeFormatter.ISO_OFFSET_DATE_TIME.format(temporal);
     }
 
+    /**
+     * Null-safe date cloning method.
+     * @param d date to clone, or null
+     * @return cloned date, or null
+     * @since 11878
+     */
+    public static Date cloneDate(Date d) {
+        return d != null ? (Date) d.clone() : null;
+    }
+
     private static boolean checkLayout(String text, String pattern) {
         if (text.length() != pattern.length())
             return false;

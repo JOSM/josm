@@ -7,6 +7,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -241,11 +242,13 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
             out.print(" user='"+ XmlWriter.encode(cs.getUser().getName()) +'\'');
             out.print(" uid='"+cs.getUser().getId() +'\'');
         }
-        if (cs.getCreatedAt() != null) {
-            out.print(" created_at='"+DateUtils.fromDate(cs.getCreatedAt()) +'\'');
+        Date createdDate = cs.getCreatedAt();
+        if (createdDate != null) {
+            out.print(" created_at='"+DateUtils.fromDate(createdDate) +'\'');
         }
-        if (cs.getClosedAt() != null) {
-            out.print(" closed_at='"+DateUtils.fromDate(cs.getClosedAt()) +'\'');
+        Date closedDate = cs.getClosedAt();
+        if (closedDate != null) {
+            out.print(" closed_at='"+DateUtils.fromDate(closedDate) +'\'');
         }
         out.print(" open='"+ (cs.isOpen() ? "true" : "false") +'\'');
         if (cs.getMin() != null) {

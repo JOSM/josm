@@ -183,7 +183,7 @@ public class ChangesetQuery {
      */
     public ChangesetQuery closedAfter(Date d) {
         CheckParameterUtil.ensureParameterNotNull(d, "d");
-        this.closedAfter = d;
+        this.closedAfter = DateUtils.cloneDate(d);
         return this;
     }
 
@@ -201,8 +201,8 @@ public class ChangesetQuery {
     public ChangesetQuery closedAfterAndCreatedBefore(Date closedAfter, Date createdBefore) {
         CheckParameterUtil.ensureParameterNotNull(closedAfter, "closedAfter");
         CheckParameterUtil.ensureParameterNotNull(createdBefore, "createdBefore");
-        this.closedAfter = closedAfter;
-        this.createdBefore = createdBefore;
+        this.closedAfter = DateUtils.cloneDate(closedAfter);
+        this.createdBefore = DateUtils.cloneDate(createdBefore);
         return this;
     }
 

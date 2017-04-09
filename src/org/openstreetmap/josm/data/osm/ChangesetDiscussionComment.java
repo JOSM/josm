@@ -3,6 +3,8 @@ package org.openstreetmap.josm.data.osm;
 
 import java.util.Date;
 
+import org.openstreetmap.josm.tools.date.DateUtils;
+
 /**
  * A comment in a public changeset discussion.
  * @since 7704
@@ -22,7 +24,7 @@ public class ChangesetDiscussionComment {
      * @param user the user who posted the comment
      */
     public ChangesetDiscussionComment(Date date, User user) {
-        this.date = date;
+        this.date = DateUtils.cloneDate(date);
         this.user = user;
     }
 
@@ -47,7 +49,7 @@ public class ChangesetDiscussionComment {
      * @return date this comment was posted at
      */
     public final Date getDate() {
-        return date;
+        return DateUtils.cloneDate(date);
     }
 
     /**

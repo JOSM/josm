@@ -12,10 +12,12 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
@@ -23,6 +25,7 @@ import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * Represents an immutable OSM primitive in the context of a historical view on OSM data.
@@ -84,8 +87,8 @@ public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryO
         this.visible = visible;
         this.user = user;
         this.changesetId = changesetId;
-        this.timestamp = timestamp;
-        tags = new HashMap<>();
+        this.timestamp = DateUtils.cloneDate(timestamp);
+        this.tags = new HashMap<>();
     }
 
     /**
@@ -158,7 +161,7 @@ public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryO
      * @return the timestamp
      */
     public Date getTimestamp() {
-        return timestamp;
+        return DateUtils.cloneDate(timestamp);
     }
 
     /**
@@ -169,16 +172,33 @@ public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryO
         return version;
     }
 
+    /**
+     * Checks that value is positive.
+     * @param value value to check
+     * @param name parameter name for error message
+     * @throws IllegalArgumentException if {@code value <= 0}
+     */
     protected final void ensurePositiveLong(long value, String name) {
         if (value <= 0) {
             throw new IllegalArgumentException(MessageFormat.format("Parameter ''{0}'' > 0 expected. Got ''{1}''.", name, value));
         }
     }
 
+    /**
+     * Determines if this history matches given id and version.
+     * @param id Primitive identifier
+     * @param version Primitive version
+     * @return {@code true} if this history matches given id and version
+     */
     public boolean matches(long id, long version) {
         return this.id == id && this.version == version;
     }
 
+    /**
+     * Determines if this history matches given id.
+     * @param id Primitive identifier
+     * @return {@code true} if this history matches given id
+     */
     public boolean matches(long id) {
         return this.id == id;
     }
@@ -324,6 +344,22 @@ public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryO
         return getName();
     }
 
+    /**
+     * Fills the attributes common to all primitives with values from this history.
+     * @param data primitive data to fill
+     */
+    protected void fillPrimitiveCommonData(PrimitiveData data) {
+        data.setUser(user);
+        try {
+            data.setVisible(visible);
+        } catch (IllegalStateException e) {
+            Main.error(e, "Cannot change visibility for "+data+':');
+        }
+        data.setTimestamp(timestamp);
+        data.setKeys(tags);
+        data.setOsmId(id, (int) version);
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(id, version);
@@ -334,8 +370,7 @@ public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryO
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         HistoryOsmPrimitive that = (HistoryOsmPrimitive) obj;
-        return id == that.id &&
-                version == that.version;
+        return id == that.id && version == that.version;
     }
 
     @Override
