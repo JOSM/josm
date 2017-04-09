@@ -121,8 +121,7 @@ public class SequenceCommandTest {
         TestCommand command1 = new TestCommand(null);
         FailingCommand command2 = new FailingCommand();
         TestCommand command3 = new TestCommand(null);
-        SequenceCommand command = new SequenceCommand("seq", Arrays.<Command>asList(command1, command2, command3));
-        command.continueOnError = true;
+        SequenceCommand command = new SequenceCommand("seq", Arrays.<Command>asList(command1, command2, command3), true);
         assertTrue(command.executeCommand());
         assertTrue(command1.executed);
         assertTrue(command3.executed);
