@@ -117,8 +117,10 @@ public class CommonSettingsPanel extends JPanel {
         File directory = new File(path);
         File[] cacheFiles = directory.listFiles((FilenameFilter) (dir, name) -> name.endsWith(".data") || name.endsWith(".key"));
         JCSCacheManager.shutdown(); // shutdown Cache - so files can by safely deleted
-        for (File cacheFile: cacheFiles) {
-            Utils.deleteFile(cacheFile);
+        if (cacheFiles != null) {
+            for (File cacheFile: cacheFiles) {
+                Utils.deleteFile(cacheFile);
+            }
         }
     }
 }

@@ -19,6 +19,9 @@
 		<Bug pattern="SE_TRANSIENT_FIELD_NOT_RESTORED" />
 	</Match>
 	<Match>
+		<Bug pattern="UI_INHERITANCE_UNSAFE_GETRESOURCE" />
+	</Match>
+	<Match>
 		<Bug pattern="UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR" />
 	</Match>
 
