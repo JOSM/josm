@@ -6,9 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.Objects;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.imagery.WMSCachedTileLoader;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -54,7 +55,7 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
 
     private static final String CACHE_REGION_NAME = "WMS";
 
-    private final Set<String> supportedProjections;
+    private final List<String> serverProjections;
 
     /**
      * Constructs a new {@code WMSLayer}.
@@ -65,7 +66,7 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
         CheckParameterUtil.ensureThat(info.getImageryType() == ImageryType.WMS, "ImageryType is WMS");
         CheckParameterUtil.ensureParameterNotNull(info.getUrl(), "info.url");
         TemplatedWMSTileSource.checkUrl(info.getUrl());
-        this.supportedProjections = new TreeSet<>(info.getServerProjections());
+        this.serverProjections = new ArrayList<>(info.getServerProjections());
     }
 
     @Override
@@ -86,7 +87,8 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
 
     @Override
     protected AbstractWMSTileSource getTileSource() {
-        AbstractWMSTileSource tileSource = new TemplatedWMSTileSource(info);
+        AbstractWMSTileSource tileSource = new TemplatedWMSTileSource(
+                info, chooseProjection(Main.getProjection()));
         info.setAttribution(tileSource);
         return tileSource;
     }
@@ -111,51 +113,33 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
     }
 
     @Override
-    public boolean isProjectionSupported(Projection proj) {
-        return supportedProjections == null || supportedProjections.isEmpty() || supportedProjections.contains(proj.toCode()) ||
-                (info.isEpsg4326To3857Supported() && supportedProjections.contains("EPSG:4326")
-                        && "EPSG:3857".equals(Main.getProjection().toCode()));
-    }
-
-    @Override
-    public String nameSupportedProjections() {
-        StringBuilder ret = new StringBuilder();
-        for (String e: supportedProjections) {
-            ret.append(e).append(", ");
-        }
-        String appendix = "";
-
-        if (isReprojectionPossible()) {
-            appendix = ". <p>" + tr("JOSM will use EPSG:4326 to query the server, but results may vary "
-                    + "depending on the WMS server") + "</p>";
-        }
-        return ret.substring(0, ret.length()-2) + appendix;
+    public Collection<String> getNativeProjections() {
+        return serverProjections;
     }
 
     @Override
     public void projectionChanged(Projection oldValue, Projection newValue) {
-        // do not call super - we need custom warning dialog
-
-        if (!isProjectionSupported(newValue)) {
-            String message =
-                    "<html><body><p>" + tr("The layer {0} does not support the new projection {1}.",
-                            Utils.escapeReservedCharactersHTML(getName()), newValue.toCode()) +
-                    "<p style='width: 450px; position: absolute; margin: 0px;'>" +
-                            tr("Supported projections are: {0}", nameSupportedProjections()) + "</p>" +
-                    "<p>" + tr("Change the projection again or remove the layer.");
-
-            ExtendedDialog warningDialog = new ExtendedDialog(Main.parent, tr("Warning"), new String[]{tr("OK")}).
-                    setContent(message).
-                    setIcon(JOptionPane.WARNING_MESSAGE);
-
-            if (isReprojectionPossible()) {
-                warningDialog.toggleEnable("imagery.wms.projectionSupportWarnings." + tileSource.getBaseUrl());
-            }
-            warningDialog.showDialog();
+        Projection tileProjection = chooseProjection(newValue);
+        if (!Objects.equals(tileSource.getTileProjection(), tileProjection)) {
+            tileSource.setTileProjection(tileProjection);
         }
+    }
 
-        if (!newValue.equals(oldValue)) {
-            tileSource.initProjection(newValue);
+    private Projection chooseProjection(Projection requested) {
+        if (serverProjections.contains(requested.toCode())) {
+            return requested;
+        } else {
+            for (String code : serverProjections) {
+                Projection proj = Projections.getProjectionByCode(code);
+                if (proj != null) {
+                    Main.info(tr("Reprojecting layer {0} from {1} to {2}. For best image quality and performance,"
+                            + " switch to one of the supported projections: {3}",
+                            getName(), proj.toCode(), Main.getProjection().toCode(), Utils.join(", ", getNativeProjections())));
+                    return proj;
+                }
+            }
+            Main.warn(tr("Unable to find supported projection for layer {0}. Using {1}.", getName(), requested.toCode()));
+            return requested;
         }
     }
 
@@ -174,9 +158,5 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
      */
     public static CacheAccess<String, BufferedImageCacheEntry> getCache() {
         return AbstractCachedTileSourceLayer.getCache(CACHE_REGION_NAME);
-    }
-
-    private boolean isReprojectionPossible() {
-        return supportedProjections.contains("EPSG:4326") && "EPSG:3857".equals(Main.getProjection().toCode());
     }
 }

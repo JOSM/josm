@@ -874,4 +874,19 @@ public class CustomProjection extends AbstractProjection {
         }
         return result;
     }
+
+    @Override
+    public ProjectionBounds getEastNorthBoundsBox(ProjectionBounds box, Projection boxProjection) {
+        final int n = 8;
+        ProjectionBounds result = null;
+        for (int i = 0; i < 4*n; i++) {
+            EastNorth en = latlon2eastNorth(boxProjection.eastNorth2latlon(getPointAlong(i, n, box)));
+            if (result == null) {
+                result = new ProjectionBounds(en);
+            } else {
+                result.extend(en);
+            }
+        }
+        return result;
+    }
 }

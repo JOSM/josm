@@ -7,7 +7,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 
 /**
@@ -39,7 +38,7 @@ public class WMSCachedTileLoaderJob extends TMSCachedTileLoaderJob {
         // include projection in cache key, as with different projections different response will be returned from server
         String key = super.getCacheKey();
         if (key != null) {
-            return key + Main.getProjection().toCode();
+            return key + tile.getSource().getServerCRS();
         }
         return null;
     }

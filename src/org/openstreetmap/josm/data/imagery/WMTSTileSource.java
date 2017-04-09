@@ -13,13 +13,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.Stack;
 import java.util.TreeSet;
@@ -61,7 +60,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * Tile Source handling WMS providers
+ * Tile Source handling WMTS providers
  *
  * @author Wiktor Niesiobędzki
  * @since 8526
@@ -267,6 +266,8 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     private ScaleList nativeScaleList;
 
     private final WMTSDefaultLayer defaultLayer;
+
+    private Projection tileProjection;
 
     /**
      * Creates a tile source based on imagery info
@@ -597,36 +598,45 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
      * @param proj projection to be used by this TileSource
      */
     public void initProjection(Projection proj) {
-        // getLayers will return only layers matching the name, if the user already choose the layer
-        // so we will not ask the user again to chose the layer, if he just changes projection
-        Collection<Layer> candidates = getLayers(
-                currentLayer != null ? new WMTSDefaultLayer(currentLayer.identifier, currentLayer.tileMatrixSet.identifier) : defaultLayer,
-                proj.toCode());
-
-        if (candidates.size() > 1 && defaultLayer != null) {
-            candidates = candidates.stream()
-                    .filter(t -> t.tileMatrixSet.identifier.equals(defaultLayer.getTileMatrixSet()))
-                    .collect(Collectors.toList());
-        }
-        if (candidates.size() == 1) {
-            Layer newLayer = candidates.iterator().next();
-            if (newLayer != null) {
-                this.currentTileMatrixSet = newLayer.tileMatrixSet;
-                this.currentLayer = newLayer;
-                Collection<Double> scales = new ArrayList<>(currentTileMatrixSet.tileMatrix.size());
-                for (TileMatrix tileMatrix : currentTileMatrixSet.tileMatrix) {
-                    scales.add(tileMatrix.scaleDenominator * 0.28e-03);
+        if (proj.equals(tileProjection))
+            return;
+        List<Layer> matchingLayers = layers.stream().filter(
+                l -> l.identifier.equals(defaultLayer.layerName) && l.tileMatrixSet.crs.equals(proj.toCode()))
+                .collect(Collectors.toList());
+        if (matchingLayers.size() > 1) {
+            this.currentLayer = matchingLayers.stream().filter(
+                    l -> l.tileMatrixSet.identifier.equals(defaultLayer.getTileMatrixSet()))
+                    .findFirst().orElse(null);
+            this.tileProjection = proj;
+        } else if (matchingLayers.size() == 1) {
+            this.currentLayer = matchingLayers.get(0);
+            this.tileProjection = proj;
+        } else {
+            // no tile matrix sets with current projection
+            if (this.currentLayer == null) {
+                this.tileProjection = null;
+                for (Layer layer : layers) {
+                    if (!layer.identifier.equals(defaultLayer.layerName)) {
+                        continue;
+                    }
+                    Projection pr = Projections.getProjectionByCode(layer.tileMatrixSet.crs);
+                    if (pr != null) {
+                        this.currentLayer = layer;
+                        this.tileProjection = pr;
+                        break;
+                    }
                 }
-                this.nativeScaleList = new ScaleList(scales);
-            }
-        } else if (candidates.size() > 1) {
-            Main.warn("More than one layer WMTS available: {0} for projection {1} and name {2}. Do not know which to process",
-                    candidates.stream().map(x -> x.getUserTitle() + ": " + x.tileMatrixSet.identifier).collect(Collectors.joining(", ")),
-                    proj.toCode(),
-                    currentLayer != null ? currentLayer.getUserTitle() : defaultLayer
-                    );
+                if (this.currentLayer == null)
+                    return;
+            } // else: keep currentLayer and tileProjection as is
         }
-        this.crsScale = getTileSize() * 0.28e-03 / proj.getMetersPerUnit();
+        this.currentTileMatrixSet = this.currentLayer.tileMatrixSet;
+        Collection<Double> scales = new ArrayList<>(currentTileMatrixSet.tileMatrix.size());
+        for (TileMatrix tileMatrix : currentTileMatrixSet.tileMatrix) {
+            scales.add(tileMatrix.scaleDenominator * 0.28e-03);
+        }
+        this.nativeScaleList = new ScaleList(scales);
+        this.crsScale = getTileSize() * 0.28e-03 / this.tileProjection.getMetersPerUnit();
     }
 
     /**
@@ -654,7 +664,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     public int getTileSize() {
         // no support for non-square tiles (tileHeight != tileWidth)
         // and for different tile sizes at different zoom levels
-        Collection<Layer> projLayers = getLayers(null, Main.getProjection().toCode());
+        Collection<Layer> projLayers = getLayers(null, tileProjection.toCode());
         if (!projLayers.isEmpty()) {
             return projLayers.iterator().next().tileMatrixSet.tileMatrix.get(0).tileHeight;
         }
@@ -735,11 +745,11 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     public ICoordinate tileXYToLatLon(int x, int y, int zoom) {
         TileMatrix matrix = getTileMatrix(zoom);
         if (matrix == null) {
-            return Main.getProjection().getWorldBoundsLatLon().getCenter().toCoordinate();
+            return tileProjection.getWorldBoundsLatLon().getCenter().toCoordinate();
         }
         double scale = matrix.scaleDenominator * this.crsScale;
         EastNorth ret = new EastNorth(matrix.topLeftCorner.east() + x * scale, matrix.topLeftCorner.north() - y * scale);
-        return Main.getProjection().eastNorth2latlon(ret).toCoordinate();
+        return tileProjection.eastNorth2latlon(ret).toCoordinate();
     }
 
     @Override
@@ -749,8 +759,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             return new TileXY(0, 0);
         }
 
-        Projection proj = Main.getProjection();
-        EastNorth enPoint = proj.latlon2eastNorth(new LatLon(lat, lon));
+        EastNorth enPoint = tileProjection.latlon2eastNorth(new LatLon(lat, lon));
         double scale = matrix.scaleDenominator * this.crsScale;
         return new TileXY(
                 (enPoint.east() - matrix.topLeftCorner.east()) / scale,
@@ -765,12 +774,12 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
     @Override
     public int getTileXMax(int zoom) {
-        return getTileXMax(zoom, Main.getProjection());
+        return getTileXMax(zoom, tileProjection);
     }
 
     @Override
     public int getTileYMax(int zoom) {
-        return getTileYMax(zoom, Main.getProjection());
+        return getTileYMax(zoom, tileProjection);
     }
 
     @Override
@@ -780,7 +789,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             return new Point(0, 0);
         }
         double scale = matrix.scaleDenominator * this.crsScale;
-        EastNorth point = Main.getProjection().latlon2eastNorth(new LatLon(lat, lon));
+        EastNorth point = tileProjection.latlon2eastNorth(new LatLon(lat, lon));
         return new Point(
                     (int) Math.round((point.east() - matrix.topLeftCorner.east()) / scale),
                     (int) Math.round((matrix.topLeftCorner.north() - point.north()) / scale)
@@ -804,12 +813,11 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             return new Coordinate(0, 0);
         }
         double scale = matrix.scaleDenominator * this.crsScale;
-        Projection proj = Main.getProjection();
         EastNorth ret = new EastNorth(
                 matrix.topLeftCorner.east() + x * scale,
                 matrix.topLeftCorner.north() - y * scale
                 );
-        LatLon ll = proj.eastNorth2latlon(ret);
+        LatLon ll = tileProjection.eastNorth2latlon(ret);
         return new Coordinate(ll.lat(), ll.lon());
     }
 
@@ -856,8 +864,8 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     /**
      * @return set of projection codes that this TileSource supports
      */
-    public Set<String> getSupportedProjections() {
-        Set<String> ret = new HashSet<>();
+    public Collection<String> getSupportedProjections() {
+        Collection<String> ret = new LinkedHashSet<>();
         if (currentLayer == null) {
             for (Layer layer: this.layers) {
                 ret.add(layer.tileMatrixSet.crs);
@@ -909,6 +917,10 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
      */
     public ScaleList getNativeScales() {
         return nativeScaleList;
+    }
+
+    public Projection getTileProjection() {
+        return tileProjection;
     }
 
     @Override
@@ -977,6 +989,6 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
     @Override
     public String getServerCRS() {
-        return Main.getProjection().toCode();
+        return tileProjection.toCode();
     }
 }

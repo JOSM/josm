@@ -11,6 +11,7 @@ import org.openstreetmap.gui.jmapviewer.TileXY;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.interfaces.IProjected;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projecting;
@@ -84,13 +85,30 @@ public class TileCoordinateConverter {
      * @return The position.
      */
     public Point2D getPixelForTile(Tile tile) {
-        return this.getPixelForTile(tile.getXtile(), tile.getYtile(), tile.getZoom());
+        return getPixelForTile(tile.getXtile(), tile.getYtile(), tile.getZoom());
+    }
+
+    /**
+     * Convert screen pixel coordinate to tile position at certain zoom level.
+     * @param sx x coordinate (screen pixel)
+     * @param sy y coordinate (screen pixel)
+     * @param zoom zoom level
+     * @return the tile
+     */
+    public TileXY getTileforPixel(int sx, int sy, int zoom) {
+        if (requiresReprojection()) {
+            LatLon ll = getProjecting().eastNorth2latlonClamped(mapView.getEastNorth(sx, sy));
+            return tileSource.latLonToTileXY(ll.toCoordinate(), zoom);
+        } else {
+            IProjected p = shiftDisplayToServer(mapView.getEastNorth(sx, sy));
+            return tileSource.projectedToTileXY(p, zoom);
+        }
     }
 
     /**
      * Gets the position of the tile inside the map view.
      * @param tile The tile
-     * @return The positon.
+     * @return The positon as a rectangle in screen coordinates
      */
     public Rectangle2D getRectangleForTile(Tile tile) {
         ICoordinate c1 = tile.getTileSource().tileXYToLatLon(tile);
@@ -129,11 +147,18 @@ public class TileCoordinateConverter {
      * @return average number of screen pixels per tile pixel
      */
     public double getScaleFactor(int zoom) {
-        LatLon topLeft = mapView.getLatLon(0, 0);
-        LatLon botRight = mapView.getLatLon(mapView.getWidth(), mapView.getHeight());
-        TileXY t1 = tileSource.latLonToTileXY(topLeft.toCoordinate(), zoom);
-        TileXY t2 = tileSource.latLonToTileXY(botRight.toCoordinate(), zoom);
-
+        TileXY t1, t2;
+        if (requiresReprojection()) {
+            LatLon topLeft = mapView.getLatLon(0, 0);
+            LatLon botRight = mapView.getLatLon(mapView.getWidth(), mapView.getHeight());
+            t1 = tileSource.latLonToTileXY(topLeft.toCoordinate(), zoom);
+            t2 = tileSource.latLonToTileXY(botRight.toCoordinate(), zoom);
+        }  else {
+            EastNorth topLeftEN = mapView.getEastNorth(0, 0);
+            EastNorth botRightEN = mapView.getEastNorth(mapView.getWidth(), mapView.getHeight());
+            t1 = tileSource.projectedToTileXY(topLeftEN.toProjected(), zoom);
+            t2 = tileSource.projectedToTileXY(botRightEN.toProjected(), zoom);
+        }
         int screenPixels = mapView.getWidth()*mapView.getHeight();
         double tilePixels = Math.abs((t2.getY()-t1.getY())*(t2.getX()-t1.getX())*tileSource.getTileSize()*tileSource.getTileSize());
         if (screenPixels == 0 || tilePixels == 0) return 1;
@@ -146,8 +171,22 @@ public class TileCoordinateConverter {
      * @return position of the tile in screen coordinates
      */
     public TileAnchor getScreenAnchorForTile(Tile tile) {
-        IProjected p1 = tileSource.tileXYtoProjected(tile.getXtile(), tile.getYtile(), tile.getZoom());
-        IProjected p2 = tileSource.tileXYtoProjected(tile.getXtile() + 1, tile.getYtile() + 1, tile.getZoom());
-        return new TileAnchor(pos(p1).getInView(), pos(p2).getInView());
+        if (requiresReprojection()) {
+            ICoordinate c1 = tile.getTileSource().tileXYToLatLon(tile);
+            ICoordinate c2 = tile.getTileSource().tileXYToLatLon(tile.getXtile() + 1, tile.getYtile() + 1, tile.getZoom());
+            return new TileAnchor(pos(c1).getInView(), pos(c2).getInView());
+        } else {
+            IProjected p1 = tileSource.tileXYtoProjected(tile.getXtile(), tile.getYtile(), tile.getZoom());
+            IProjected p2 = tileSource.tileXYtoProjected(tile.getXtile() + 1, tile.getYtile() + 1, tile.getZoom());
+            return new TileAnchor(pos(p1).getInView(), pos(p2).getInView());
+        }
+    }
+
+    /**
+     * Return true if tiles need to be reprojected from server projection to display projection.
+     * @return true if tiles need to be reprojected from server projection to display projection
+     */
+    public boolean requiresReprojection() {
+        return !tileSource.getServerCRS().equals(Main.getProjection().toCode());
     }
 }
