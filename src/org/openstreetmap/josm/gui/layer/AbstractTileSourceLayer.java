@@ -1202,8 +1202,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     private TileAnchor getAnchor(Tile tile, BufferedImage image) {
         if (tile instanceof ReprojectionTile) {
             return ((ReprojectionTile) tile).getAnchor();
-        } else {
+        } else if (image != null) {
             return new TileAnchor(new Point.Double(0, 0), new Point.Double(image.getWidth(), image.getHeight()));
+        } else {
+            return null;
         }
     }
 

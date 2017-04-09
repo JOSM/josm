@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 
 import java.awt.Component;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -36,7 +38,6 @@ import org.openstreetmap.josm.gui.MenuScroller;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.tools.GBC;
-import static org.openstreetmap.josm.tools.I18n.tr;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.Utils;
@@ -148,7 +149,7 @@ public abstract class ImageryLayer extends Layer {
     @Override
     public void mergeFrom(Layer from) {
     }
-    
+
     public abstract Collection<String> getNativeProjections();
 
     @Override
@@ -158,7 +159,7 @@ public abstract class ImageryLayer extends Layer {
         if (info != null) {
             List<List<String>> content = new ArrayList<>();
             content.add(Arrays.asList(tr("Name"), info.getName()));
-            content.add(Arrays.asList(tr("Type"), info.getImageryType().getTypeString().toUpperCase()));
+            content.add(Arrays.asList(tr("Type"), info.getImageryType().getTypeString().toUpperCase(Locale.ENGLISH)));
             content.add(Arrays.asList(tr("URL"), info.getUrl()));
             content.add(Arrays.asList(tr("Id"), info.getId() == null ? "-" : info.getId()));
             if (info.getMinZoom() != 0) {
