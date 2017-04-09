@@ -27,7 +27,20 @@ public class SequenceCommand extends Command {
     private boolean sequenceComplete;
     private final String name;
     /** Determines if the sequence execution should continue after one of its commands fails. */
-    public boolean continueOnError;
+    protected final boolean continueOnError;
+
+    /**
+     * Create the command by specifying the list of commands to execute.
+     * @param name The description text
+     * @param sequenz The sequence that should be executed
+     * @param continueOnError Determines if the sequence execution should continue after one of its commands fails
+     * @since 11874
+     */
+    public SequenceCommand(String name, Collection<Command> sequenz, boolean continueOnError) {
+        this.name = name;
+        this.sequence = sequenz.toArray(new Command[sequenz.size()]);
+        this.continueOnError = continueOnError;
+    }
 
     /**
      * Create the command by specifying the list of commands to execute.
@@ -35,9 +48,7 @@ public class SequenceCommand extends Command {
      * @param sequenz The sequence that should be executed.
      */
     public SequenceCommand(String name, Collection<Command> sequenz) {
-        super();
-        this.name = name;
-        this.sequence = sequenz.toArray(new Command[sequenz.size()]);
+        this(name, sequenz, false);
     }
 
     /**
