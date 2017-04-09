@@ -281,7 +281,17 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
         this.baseUrl = GetCapabilitiesParseHelper.normalizeCapabilitiesUrl(handleTemplate(info.getUrl()));
         this.layers = getCapabilities();
-        this.defaultLayer = info.getDefaultLayers().isEmpty() ? null : (WMTSDefaultLayer) info.getDefaultLayers().iterator().next();
+        if (info.getDefaultLayers().isEmpty()) {
+            Main.warn(tr("No default layer selected, choosing first layer."));
+            if (!layers.isEmpty()) {
+                Layer first = layers.iterator().next();
+                this.defaultLayer = new WMTSDefaultLayer(first.identifier, first.tileMatrixSet.identifier);
+            } else {
+                this.defaultLayer = null;
+            }
+        } else {
+            this.defaultLayer = (WMTSDefaultLayer) info.getDefaultLayers().iterator().next();
+        }
         if (this.layers.isEmpty())
             throw new IllegalArgumentException(tr("No layers defined by getCapabilities document: {0}", info.getUrl()));
     }
