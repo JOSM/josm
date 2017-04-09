@@ -10,6 +10,9 @@
 		<Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS" />
 	</Match>
 	<Match>
+		<Bug pattern="NM_CONFUSING" />
+	</Match>
+	<Match>
 		<Bug pattern="RV_RETURN_VALUE_IGNORED_BAD_PRACTICE" />
 	</Match>
 	<Match>
