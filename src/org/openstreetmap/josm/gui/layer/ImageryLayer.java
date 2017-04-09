@@ -11,7 +11,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.BufferedImageOp;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
@@ -150,8 +149,6 @@ public abstract class ImageryLayer extends Layer {
     public void mergeFrom(Layer from) {
     }
 
-    public abstract Collection<String> getNativeProjections();
-
     @Override
     public Object getInfoComponent() {
         JPanel panel = new JPanel(new GridBagLayout());
@@ -171,7 +168,6 @@ public abstract class ImageryLayer extends Layer {
             if (info.getDescription() != null) {
                 content.add(Arrays.asList(tr("Description"), info.getDescription()));
             }
-            content.add(Arrays.asList(tr("Native projections"), Utils.join(", ", getNativeProjections())));
             for (List<String> entry: content) {
                 panel.add(new JLabel(entry.get(0) + ':'), GBC.std());
                 panel.add(GBC.glue(5, 0), GBC.std());
