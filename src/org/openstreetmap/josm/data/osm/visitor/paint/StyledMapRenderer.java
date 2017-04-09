@@ -320,11 +320,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      */
     public StyledMapRenderer(Graphics2D g, NavigatableComponent nc, boolean isInactiveMode) {
         super(g, nc, isInactiveMode);
-
-        if (nc != null) {
-            Component focusOwner = FocusManager.getCurrentManager().getFocusOwner();
-            useWiderHighlight = !(focusOwner instanceof AbstractButton || focusOwner == nc);
-        }
+        Component focusOwner = FocusManager.getCurrentManager().getFocusOwner();
+        useWiderHighlight = !(focusOwner instanceof AbstractButton || focusOwner == nc);
     }
 
     private void displaySegments(MapViewPath path, Path2D orientationArrows, Path2D onewayArrows, Path2D onewayArrowsCasing,
