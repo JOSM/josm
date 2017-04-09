@@ -228,7 +228,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     /**
      * Get projections this imagery layer supports natively.
-     * 
+     *
      * For example projection of tiles that are downloaded from a server. Layer
      * may support even more projections (by reprojecting the tiles), but with a
      * certain loss in image quality and performance.
@@ -1295,10 +1295,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     private ICoordinate getShiftedCoord(EastNorth en) {
         return getShiftedLatLon(en).toCoordinate();
-    }
-
-    private LatLon getShiftedLatLon(ICoordinate latLon) {
-        return getShiftedLatLon(Main.getProjection().latlon2eastNorth(new LatLon(latLon)));
     }
 
     private final TileSet nullTileSet = new TileSet();
