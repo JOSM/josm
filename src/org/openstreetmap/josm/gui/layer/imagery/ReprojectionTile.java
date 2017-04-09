@@ -17,6 +17,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Tile class that stores a reprojected version of the original tile.
+ * @since 11858
  */
 public class ReprojectionTile extends Tile {
 
@@ -24,6 +25,13 @@ public class ReprojectionTile extends Tile {
     private double nativeScale;
     protected boolean maxZoomReached;
 
+    /**
+     * Constructs a new {@code ReprojectionTile}.
+     * @param source sourec tile
+     * @param xtile X coordinate
+     * @param ytile Y coordinate
+     * @param zoom zoom level
+     */
     public ReprojectionTile(TileSource source, int xtile, int ytile, int zoom) {
         super(source, xtile, ytile, zoom);
     }
@@ -49,7 +57,7 @@ public class ReprojectionTile extends Tile {
             return false;
         return true;
     }
-    
+
     @Override
     public void setImage(BufferedImage image) {
         if (image == null) {
@@ -99,7 +107,7 @@ public class ReprojectionTile extends Tile {
 
         Dimension dim = getDimension(pbTargetAligned, scaleMapView);
         Integer scaleFix = limitScale(source.getTileSize(), Math.sqrt(dim.getWidth() * dim.getHeight()));
-        double scale = scaleFix == null ? scaleMapView : scaleMapView * scaleFix;
+        double scale = scaleFix == null ? scaleMapView : (scaleMapView * scaleFix);
 
         ImageWarp.PointTransform pointTransform = pt -> {
             EastNorth target = new EastNorth(pbTargetAligned.minEast + (pt.getX()) * scale,
@@ -152,16 +160,16 @@ public class ReprojectionTile extends Tile {
      * still be scaled up by at least a factor of 2.
      */
     protected Integer limitScale(double lenOrig, double lenNow) {
-        double LIMIT = 3;
-        if (lenNow > LIMIT * lenOrig) {
-            int n = (int) Math.ceil((Math.log(lenNow) - Math.log(LIMIT * lenOrig)) / Math.log(2));
+        final double limit = 3;
+        if (lenNow > limit * lenOrig) {
+            int n = (int) Math.ceil((Math.log(lenNow) - Math.log(limit * lenOrig)) / Math.log(2));
             int f = 1 << n;
             double lenNowFixed = lenNow / f;
-            if (!(lenNowFixed <= LIMIT * lenOrig)) throw new AssertionError();
-            if (!(lenNowFixed > LIMIT * lenOrig / 2)) throw  new AssertionError();
+            if (lenNowFixed > limit * lenOrig) throw new AssertionError();
+            if (lenNowFixed <= limit * lenOrig / 2) throw new AssertionError();
             return f;
         }
-        if (lenNow > LIMIT * lenOrig / 2)
+        if (lenNow > limit * lenOrig / 2)
             return 1;
         return null;
     }
