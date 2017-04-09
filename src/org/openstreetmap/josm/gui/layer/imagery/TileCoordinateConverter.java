@@ -153,7 +153,7 @@ public class TileCoordinateConverter {
             LatLon botRight = mapView.getLatLon(mapView.getWidth(), mapView.getHeight());
             t1 = tileSource.latLonToTileXY(topLeft.toCoordinate(), zoom);
             t2 = tileSource.latLonToTileXY(botRight.toCoordinate(), zoom);
-        }  else {
+        } else {
             EastNorth topLeftEN = mapView.getEastNorth(0, 0);
             EastNorth botRightEN = mapView.getEastNorth(mapView.getWidth(), mapView.getHeight());
             t1 = tileSource.projectedToTileXY(topLeftEN.toProjected(), zoom);
