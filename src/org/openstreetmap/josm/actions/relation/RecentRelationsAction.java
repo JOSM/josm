@@ -32,7 +32,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * Action for accessing recent relations.
  * @since 9668
  */
-public class RecentRelationsAction extends JosmAction implements ActionListener, CommandQueueListener {
+public class RecentRelationsAction extends JosmAction implements CommandQueueListener {
 
     private final SideButton editButton;
     private final BasicArrowButton arrow;
