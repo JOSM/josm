@@ -1075,7 +1075,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         return img;
     }
 
-     /**
+    /**
      * Draw a tile image on screen.
      * @param g the Graphics2D
      * @param toDrawImg tile image
@@ -1183,7 +1183,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             }
 
             // applying all filters to this layer
-            img = applyImageProcessors((BufferedImage) img);
+            img = applyImageProcessors(img);
 
             Shape clip;
             if (tileSource.isInside(tile, border)) {

@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 import org.openstreetmap.gui.jmapviewer.interfaces.TemplatedTileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
