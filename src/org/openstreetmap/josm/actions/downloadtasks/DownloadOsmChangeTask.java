@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Future;
@@ -24,7 +23,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.RelationData;
-import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
@@ -79,10 +77,18 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
         return Main.worker.submit(downloadTask);
     }
 
+    /**
+     * OsmChange download task.
+     */
     protected class DownloadTask extends DownloadOsmTask.DownloadTask {
 
-        public DownloadTask(boolean newLayer, OsmServerReader reader,
-                ProgressMonitor progressMonitor) {
+        /**
+         * Constructs a new {@code DownloadTask}.
+         * @param newLayer if {@code true}, force download to a new layer
+         * @param reader OSM data reader
+         * @param progressMonitor progress monitor
+         */
+        public DownloadTask(boolean newLayer, OsmServerReader reader, ProgressMonitor progressMonitor) {
             super(newLayer, reader, progressMonitor);
         }
 
@@ -153,15 +159,12 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
 
                         switch (p.getType()) {
                         case NODE:
-                            data = new NodeData();
-                            ((NodeData) data).setCoor(((HistoryNode) hp).getCoords());
+                            data = ((HistoryNode) hp).fillPrimitiveData(new NodeData());
                             break;
                         case WAY:
-                            data = new WayData();
-                            List<Long> nodeIds = ((HistoryWay) hp).getNodes();
-                            ((WayData) data).setNodes(nodeIds);
+                            data = ((HistoryWay) hp).fillPrimitiveData(new WayData());
                             // Find incomplete nodes to load at next run
-                            for (Long nodeId : nodeIds) {
+                            for (Long nodeId : ((HistoryWay) hp).getNodes()) {
                                 if (p.getDataSet().getPrimitiveById(nodeId, OsmPrimitiveType.NODE) == null) {
                                     Node n = new Node(nodeId);
                                     p.getDataSet().addPrimitive(n);
@@ -170,22 +173,10 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                             }
                             break;
                         case RELATION:
-                            data = new RelationData();
-                            List<RelationMemberData> members = ((HistoryRelation) hp).getMembers();
-                            ((RelationData) data).setMembers(members);
+                            data = ((HistoryRelation) hp).fillPrimitiveData(new RelationData());
                             break;
                         default: throw new AssertionError("Unknown primitive type");
                         }
-
-                        data.setUser(hp.getUser());
-                        try {
-                            data.setVisible(hp.isVisible());
-                        } catch (IllegalStateException e) {
-                            Main.error(e, "Cannot change visibility for "+p+':');
-                        }
-                        data.setTimestamp(hp.getTimestamp());
-                        data.setKeys(hp.getTags());
-                        data.setOsmId(hp.getId(), (int) hp.getVersion());
 
                         // Load the history data
                         try {

@@ -11,6 +11,7 @@ import java.util.List;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -141,5 +142,17 @@ public class HistoryWay extends HistoryOsmPrimitive {
     @Override
     public String getDisplayName(HistoryNameFormatter formatter) {
         return formatter.format(this);
+    }
+
+    /**
+     * Fills the way attributes with values from this history.
+     * @param data way data to fill
+     * @return filled way data
+     * @since 11878
+     */
+    public WayData fillPrimitiveData(WayData data) {
+        super.fillPrimitiveCommonData(data);
+        data.setNodes(nodeIds);
+        return data;
     }
 }

@@ -5,6 +5,7 @@ import java.util.Date;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.NodeData;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.User;
 
@@ -87,5 +88,17 @@ public class HistoryNode extends HistoryOsmPrimitive {
     @Override
     public String getDisplayName(HistoryNameFormatter formatter) {
         return formatter.format(this);
+    }
+
+    /**
+     * Fills the node attributes with values from this history.
+     * @param data node data to fill
+     * @return filled node data
+     * @since 11878
+     */
+    public NodeData fillPrimitiveData(NodeData data) {
+        super.fillPrimitiveCommonData(data);
+        data.setCoor(coords);
+        return data;
     }
 }

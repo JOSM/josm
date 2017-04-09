@@ -6,6 +6,10 @@ import java.util.List;
 
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 
+/**
+ * Relation data.
+ * @since 2284
+ */
 public class RelationData extends PrimitiveData implements IRelation {
 
     private static final long serialVersionUID = 1163664954890478565L;
@@ -27,10 +31,18 @@ public class RelationData extends PrimitiveData implements IRelation {
         members.addAll(data.members);
     }
 
+    /**
+     * Returns relation members.
+     * @return relation members
+     */
     public List<RelationMemberData> getMembers() {
         return members;
     }
 
+    /**
+     * Sets relation members.
+     * @param memberData relation members
+     */
     public void setMembers(List<RelationMemberData> memberData) {
         members = new ArrayList<>(memberData);
     }

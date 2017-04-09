@@ -90,16 +90,16 @@ public class DateEditorWithSlider extends JPanel {
     }
 
     public void setRange(Date dateMin, Date dateMax) {
-        this.dateMin = dateMin;
-        this.dateMax = dateMax;
+        this.dateMin = DateUtils.cloneDate(dateMin);
+        this.dateMax = DateUtils.cloneDate(dateMax);
     }
 
     public void setDate(Date date) {
-        spinner.setValue(date);
+        spinner.setValue(DateUtils.cloneDate(date));
     }
 
     public Date getDate() {
-        return (Date) spinner.getValue();
+        return DateUtils.cloneDate((Date) spinner.getValue());
     }
 
     public void addDateListener(ChangeListener l) {

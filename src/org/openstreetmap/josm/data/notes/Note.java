@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * A map note. It always has at least one comment since a comment is required to create a note on osm.org.
@@ -97,7 +98,7 @@ public class Note {
 
     /** @return Date that this note was submitted */
     public Date getCreatedAt() {
-        return cloneDate(createdAt);
+        return DateUtils.cloneDate(createdAt);
     }
 
     /**
@@ -105,12 +106,12 @@ public class Note {
      * @param createdAt date at which this note has been created
      */
     public void setCreatedAt(Date createdAt) {
-        this.createdAt = cloneDate(createdAt);
+        this.createdAt = DateUtils.cloneDate(createdAt);
     }
 
     /** @return Date that this note was closed. Null if it is still open. */
     public Date getClosedAt() {
-        return cloneDate(closedAt);
+        return DateUtils.cloneDate(closedAt);
     }
 
     /**
@@ -118,7 +119,7 @@ public class Note {
      * @param closedAt date at which this note has been closed
      */
     public void setClosedAt(Date closedAt) {
-        this.closedAt = cloneDate(closedAt);
+        this.closedAt = DateUtils.cloneDate(closedAt);
     }
 
     /** @return The open or closed state of this note */
@@ -171,7 +172,7 @@ public class Note {
      */
     public void updateWith(Note note) {
         this.comments = note.comments;
-        this.createdAt = cloneDate(note.createdAt);
+        this.createdAt = DateUtils.cloneDate(note.createdAt);
         this.id = note.id;
         this.state = note.state;
         this.latLon = note.latLon;
@@ -195,14 +196,5 @@ public class Note {
     @Override
     public String toString() {
         return tr("Note") + ' ' + id + ": " + getFirstComment();
-    }
-
-    /**
-     * Null-safe date cloning method.
-     * @param d date to clone, or null
-     * @return cloned date, or null
-     */
-    static Date cloneDate(Date d) {
-        return d != null ? (Date) d.clone() : null;
     }
 }

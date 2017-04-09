@@ -120,7 +120,7 @@ public class ChangesetClosedException extends OsmTransferException {
         super("");
         this.source = source == null ? Source.UNSPECIFIED : source;
         this.changesetId = changesetId;
-        this.closedOn = closedOn;
+        this.closedOn = DateUtils.cloneDate(closedOn);
     }
 
     /**
@@ -138,7 +138,7 @@ public class ChangesetClosedException extends OsmTransferException {
      * @return the date the changeset was closed. May be null if the date isn't known.
      */
     public Date getClosedOn() {
-        return closedOn;
+        return DateUtils.cloneDate(closedOn);
     }
 
     /**

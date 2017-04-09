@@ -13,6 +13,7 @@ import java.net.CookieHandler;
 import java.net.CookieManager;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -557,7 +558,7 @@ public final class HttpClient {
      * @return {@code this}
      */
     public HttpClient setRequestBody(byte[] requestBody) {
-        this.requestBody = requestBody;
+        this.requestBody = Arrays.copyOf(requestBody, requestBody.length);
         return this;
     }
 

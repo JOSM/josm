@@ -16,6 +16,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -237,8 +238,10 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         tfUser.setText(msg);
         DateFormat sdf = DateUtils.getDateTimeFormat(DateFormat.SHORT, DateFormat.SHORT);
 
-        tfCreatedOn.setText(cs.getCreatedAt() == null ? "" : sdf.format(cs.getCreatedAt()));
-        tfClosedOn.setText(cs.getClosedAt() == null ? "" : sdf.format(cs.getClosedAt()));
+        Date createdDate = cs.getCreatedAt();
+        Date closedDate = cs.getClosedAt();
+        tfCreatedOn.setText(createdDate == null ? "" : sdf.format(createdDate));
+        tfClosedOn.setText(closedDate == null ? "" : sdf.format(closedDate));
     }
 
     /**

@@ -74,6 +74,13 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
         return builder.toString();
     }
 
+    /**
+     * Returns a filtered list for a given primitive type.
+     * @param <T> primitive type
+     * @param list list to filter
+     * @param type primitive type
+     * @return a filtered list for given primitive type
+     */
     @SuppressWarnings("unchecked")
     public static <T extends PrimitiveData> List<T> getFilteredList(Collection<T> list, OsmPrimitiveType type) {
         List<T> ret = new ArrayList<>();

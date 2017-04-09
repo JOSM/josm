@@ -52,9 +52,9 @@ public class ChangesetDataSetTest {
 
         // object with various items and modification types, fetch for CREATED
         // => list containing only the CREATED item
-        HistoryOsmPrimitive prim1 = new HistoryNode(1, 1, true, User.getAnonymous(), 1, new Date(), LatLon.ZERO);
-        HistoryOsmPrimitive prim2 = new HistoryNode(2, 1, true, User.createLocalUser("test"), 1, new Date(), LatLon.NORTH_POLE);
-        HistoryOsmPrimitive prim3 = new HistoryNode(3, 1, true, User.getAnonymous(), 1, new Date(), LatLon.SOUTH_POLE);
+        HistoryNode prim1 = new HistoryNode(1, 1, true, User.getAnonymous(), 1, new Date(), LatLon.ZERO);
+        HistoryNode prim2 = new HistoryNode(2, 1, true, User.createLocalUser("test"), 1, new Date(), LatLon.NORTH_POLE);
+        HistoryNode prim3 = new HistoryNode(3, 1, true, User.getAnonymous(), 1, new Date(), LatLon.SOUTH_POLE);
         cds.put(prim1, ChangesetModificationType.CREATED);
         cds.put(prim2, ChangesetModificationType.DELETED);
         cds.put(prim3, ChangesetModificationType.UPDATED);
