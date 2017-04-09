@@ -232,8 +232,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      * For example projection of tiles that are downloaded from a server. Layer
      * may support even more projections (by reprojecting the tiles), but with a
      * certain loss in image quality and performance.
-     * @return projections this imagery layer supports natively; null if
-     * layer is projection agnostic.
+     * @return projections this imagery layer supports natively; null if layer is projection agnostic.
      */
     public abstract Collection<String> getNativeProjections();
 
@@ -694,7 +693,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     public void hookUpMapView() {
         // this needs to be here and not in constructor to allow empty TileSource class construction using SessionWriter
         initializeIfRequired();
-
         super.hookUpMapView();
     }
 
