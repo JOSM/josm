@@ -3,6 +3,7 @@ package org;
 
 import java.awt.geom.Point2D;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.function.Predicate;
 
 import org.hamcrest.CustomTypeSafeMatcher;
@@ -87,7 +88,7 @@ public final class CustomMatchers {
      * @return matcher for a point at a given location
      */
     public static Matcher<? super Point2D> is(final Point2D expected) {
-        return new CustomTypeSafeMatcher<Point2D>("the same Point2D") {
+        return new CustomTypeSafeMatcher<Point2D>(Objects.toString(expected)) {
             @Override
             protected boolean matchesSafely(Point2D actual) {
                 return expected.distance(actual) <= 0.0000001;
@@ -101,7 +102,7 @@ public final class CustomMatchers {
      * @return matcher for a point at a given location
      */
     public static Matcher<? super LatLon> is(final LatLon expected) {
-        return new CustomTypeSafeMatcher<LatLon>("the same LatLon") {
+        return new CustomTypeSafeMatcher<LatLon>(Objects.toString(expected)) {
             @Override
             protected boolean matchesSafely(LatLon actual) {
                 return Math.abs(expected.getX() - actual.getX()) <= LatLon.MAX_SERVER_PRECISION
@@ -116,7 +117,7 @@ public final class CustomMatchers {
      * @return matcher for a point at a given location
      */
     public static Matcher<? super EastNorth> is(final EastNorth expected) {
-        return new CustomTypeSafeMatcher<EastNorth>("the same EastNorth") {
+        return new CustomTypeSafeMatcher<EastNorth>(Objects.toString(expected)) {
             @Override
             protected boolean matchesSafely(EastNorth actual) {
                 return Math.abs(expected.getX() - actual.getX()) <= LatLon.MAX_SERVER_PRECISION
