@@ -29,6 +29,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -226,6 +227,17 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     protected abstract TileLoaderFactory getTileLoaderFactory();
 
     /**
+     * Get projections this imagery layer supports natively.
+     * 
+     * For example projection of tiles that are downloaded from a server. Layer
+     * may support even more projections (by reprojecting the tiles), but with a
+     * certain loss in image quality and performance.
+     * @return projections this imagery layer supports natively; null if
+     * layer is projection agnostic.
+     */
+    public abstract Collection<String> getNativeProjections();
+
+    /**
      * Creates and returns a new {@link TileSource} instance depending on {@link #info} specified in the constructor.
      *
      * @return TileSource for specified ImageryInfo
@@ -348,6 +360,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     public Object getInfoComponent() {
         JPanel panel = (JPanel) super.getInfoComponent();
         List<List<String>> content = new ArrayList<>();
+        Collection<String> nativeProjections = getNativeProjections();
+        if (nativeProjections != null) {
+            content.add(Arrays.asList(tr("Native projections"), Utils.join(", ", getNativeProjections())));
+        }
         EastNorth offset = getDisplaySettings().getDisplacement();
         if (offset.distanceSq(0, 0) > 1e-10) {
             content.add(Arrays.asList(tr("Offset"), offset.east() + ";" + offset.north()));
