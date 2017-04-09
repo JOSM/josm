@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.CustomProjection;
+import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -24,8 +25,8 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  */
 public class TemplatedWMSTileSourceTest {
 
-    private ImageryInfo testImageryWMS = new ImageryInfo("test imagery", "http://localhost", "wms", null, null);
-    private ImageryInfo testImageryTMS = new ImageryInfo("test imagery", "http://localhost", "tms", null, null);
+    private final ImageryInfo testImageryWMS = new ImageryInfo("test imagery", "http://localhost", "wms", null, null);
+    private final ImageryInfo testImageryTMS = new ImageryInfo("test imagery", "http://localhost", "tms", null, null);
 
     /**
      * Setup test.
@@ -39,8 +40,9 @@ public class TemplatedWMSTileSourceTest {
      */
     @Test
     public void testEPSG3857() {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
-        TemplatedWMSTileSource source = new TemplatedWMSTileSource(testImageryWMS);
+        Projection projection = Projections.getProjectionByCode("EPSG:3857");
+        Main.setProjection(projection);
+        TemplatedWMSTileSource source = new TemplatedWMSTileSource(testImageryWMS, projection);
         verifyMercatorTile(source, 0, 0, 1);
         verifyMercatorTile(source, 0, 0, 2);
         verifyMercatorTile(source, 0, 1, 2);
@@ -63,8 +65,9 @@ public class TemplatedWMSTileSourceTest {
      */
     @Test
     public void testEPSG4326() {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:4326"));
-        TemplatedWMSTileSource source = getSource();
+        Projection projection = Projections.getProjectionByCode("EPSG:4326");
+        Main.setProjection(projection);
+        TemplatedWMSTileSource source = getSource(projection);
 
         verifyLocation(source, new LatLon(53.5937132, 19.5652017));
         verifyLocation(source, new LatLon(53.501565692302854, 18.54455233898721));
@@ -78,8 +81,9 @@ public class TemplatedWMSTileSourceTest {
      */
     @Test
     public void testEPSG4326widebounds() {
-        Main.setProjection(new CustomProjection("+proj=lonlat +datum=WGS84 +axis=neu +bounds=-180,53,180,54"));
-        TemplatedWMSTileSource source = getSource();
+        Projection projection = new CustomProjection("+proj=lonlat +datum=WGS84 +axis=neu +bounds=-180,53,180,54");
+        Main.setProjection(projection);
+        TemplatedWMSTileSource source = getSource(projection);
 
         verifyLocation(source, new LatLon(53.5937132, 19.5652017));
         verifyLocation(source, new LatLon(53.501565692302854, 18.54455233898721));
@@ -90,8 +94,9 @@ public class TemplatedWMSTileSourceTest {
      */
     @Test
     public void testEPSG4326narrowbounds() {
-        Main.setProjection(new CustomProjection("+proj=lonlat +datum=WGS84 +axis=neu +bounds=18,-90,20,90"));
-        TemplatedWMSTileSource source = getSource();
+        Projection projection = new CustomProjection("+proj=lonlat +datum=WGS84 +axis=neu +bounds=18,-90,20,90");
+        Main.setProjection(projection);
+        TemplatedWMSTileSource source = getSource(projection);
 
         verifyLocation(source, new LatLon(53.5937132, 19.5652017));
         verifyLocation(source, new LatLon(53.501565692302854, 18.54455233898721));
@@ -102,8 +107,9 @@ public class TemplatedWMSTileSourceTest {
      */
     @Test
     public void testEPSG2180() {
-        Main.setProjection(Projections.getProjectionByCode("EPSG:2180"));
-        TemplatedWMSTileSource source = getSource();
+        Projection projection = Projections.getProjectionByCode("EPSG:2180");
+        Main.setProjection(projection);
+        TemplatedWMSTileSource source = getSource(projection);
 
         verifyLocation(source, new LatLon(53.5937132, 19.5652017));
         verifyLocation(source, new LatLon(53.501565692302854, 18.54455233898721));
@@ -118,10 +124,11 @@ public class TemplatedWMSTileSourceTest {
      */
     @Test
     public void testEPSG3006withbounds() {
-        Main.setProjection(
+        Projection projection =
                 new CustomProjection("+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 "
-                        + "+units=m +no_defs +axis=neu +wmssrs=EPSG:3006 +bounds=10.5700,55.2000,24.1800,69.1000 "));
-        TemplatedWMSTileSource source = getSource();
+                        + "+units=m +no_defs +axis=neu +wmssrs=EPSG:3006 +bounds=10.5700,55.2000,24.1800,69.1000 ");
+        Main.setProjection(projection);
+        TemplatedWMSTileSource source = getSource(projection);
 
         verifyTileSquarness(source, 0, 1, 4);
         verifyLocation(source, new LatLon(60, 18.1), 3);
@@ -133,10 +140,11 @@ public class TemplatedWMSTileSourceTest {
      */
     @Test
     public void testEPSG3006withoutbounds() {
-        Main.setProjection(
+        Projection projection =
                 new CustomProjection("+proj=utm +zone=33 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 "
-                        + "+units=m +no_defs +axis=neu +wmssrs=EPSG:3006"));
-        TemplatedWMSTileSource source = getSource();
+                        + "+units=m +no_defs +axis=neu +wmssrs=EPSG:3006");
+        Main.setProjection(projection);
+        TemplatedWMSTileSource source = getSource(projection);
 
         verifyTileSquarness(source, 0, 1, 4);
         verifyLocation(source, new LatLon(60, 18.1), 3);
@@ -235,7 +243,7 @@ public class TemplatedWMSTileSourceTest {
         assertEquals(x_size, Math.abs(t1.getX() - t2.getX()), x_size * 1e-05);
     }
 
-    private TemplatedWMSTileSource getSource() {
-        return new TemplatedWMSTileSource(testImageryWMS);
+    private TemplatedWMSTileSource getSource(Projection projection) {
+        return new TemplatedWMSTileSource(testImageryWMS, projection);
     }
 }
