@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Use this class if you want to cache and store a single file that gets updated regularly.
@@ -135,7 +136,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
      * @return Returns the data
      * @throws T if an error occurs
      */
-    public byte[] updateForce() throws T {
+    private byte[] updateForce() throws T {
         this.data = updateData();
         saveToDisk();
         Main.pref.putInteger("cache." + ident, (int) (TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())));
@@ -161,7 +162,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
         if (data == null) {
             loadFromDisk();
         }
-        return data;
+        return Utils.copyArray(data);
     }
 
     /**
