@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -37,12 +38,19 @@ public class MergeLayerAction extends AbstractMergeAction {
         putValue("help", ht("/Action/MergeLayer"));
     }
 
-    protected void doMerge(List<Layer> targetLayers, final Collection<Layer> sourceLayers) {
+    /**
+     * Submits merge of layers.
+     * @param targetLayers possible target layers
+     * @param sourceLayers source layers
+     * @return a Future representing pending completion of the merge task, or {@code null}
+     * @since 11885 (return type)
+     */
+    protected Future<?> doMerge(List<Layer> targetLayers, final Collection<Layer> sourceLayers) {
         final Layer targetLayer = askTargetLayer(targetLayers);
         if (targetLayer == null)
-            return;
+            return null;
         final Object actionName = getValue(NAME);
-        Main.worker.submit(() -> {
+        return Main.worker.submit(() -> {
                 final long start = System.currentTimeMillis();
                 boolean layerMerged = false;
                 for (final Layer sourceLayer: sourceLayers) {
@@ -68,24 +76,28 @@ public class MergeLayerAction extends AbstractMergeAction {
     /**
      * Merges a list of layers together.
      * @param sourceLayers The layers to merge
+     * @return a Future representing pending completion of the merge task, or {@code null}
+     * @since 11885 (return type)
      */
-    public void merge(List<Layer> sourceLayers) {
-        doMerge(sourceLayers, sourceLayers);
+    public Future<?> merge(List<Layer> sourceLayers) {
+        return doMerge(sourceLayers, sourceLayers);
     }
 
     /**
      * Merges the given source layer with another one, determined at runtime.
      * @param sourceLayer The source layer to merge
+     * @return a Future representing pending completion of the merge task, or {@code null}
+     * @since 11885 (return type)
      */
-    public void merge(Layer sourceLayer) {
+    public Future<?> merge(Layer sourceLayer) {
         if (sourceLayer == null)
-            return;
+            return null;
         List<Layer> targetLayers = LayerListDialog.getInstance().getModel().getPossibleMergeTargets(sourceLayer);
         if (targetLayers.isEmpty()) {
             warnNoTargetLayersForSourceLayer(sourceLayer);
-            return;
+            return null;
         }
-        doMerge(targetLayers, Collections.singleton(sourceLayer));
+        return doMerge(targetLayers, Collections.singleton(sourceLayer));
     }
 
     @Override
@@ -111,8 +123,12 @@ public class MergeLayerAction extends AbstractMergeAction {
         });
     }
 
+    /**
+     * Returns the source layer.
+     * @return the source layer
+     */
     protected Layer getSourceLayer() {
-        return Main.map != null ? Main.getLayerManager().getActiveLayer() : null;
+        return Main.getLayerManager().getActiveLayer();
     }
 
     /**

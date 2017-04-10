@@ -242,7 +242,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         toolBarActions.setFloatable(false);
 
         // toolBarToggles, toggle dialog buttons
-        LayerListDialog.createInstance(this);
+        LayerListDialog.createInstance(mapView.getLayerManager());
         propertiesDialog = new PropertiesDialog();
         selectionListDialog = new SelectionListDialog();
         relationListDialog = new RelationListDialog();

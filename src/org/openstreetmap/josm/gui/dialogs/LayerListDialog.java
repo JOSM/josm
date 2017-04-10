@@ -43,7 +43,6 @@ import javax.swing.table.TableModel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.MergeLayerAction;
 import org.openstreetmap.josm.data.preferences.AbstractProperty;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.layer.ActivateLayerAction;
@@ -89,14 +88,15 @@ public class LayerListDialog extends ToggleDialog {
     private static volatile LayerListDialog instance;
 
     /**
-     * Creates the instance of the dialog. It's connected to the map frame <code>mapFrame</code>
+     * Creates the instance of the dialog. It's connected to the layer manager
      *
-     * @param mapFrame the map frame
+     * @param layerManager the layer manager
+     * @since 11885 (signature)
      */
-    public static void createInstance(MapFrame mapFrame) {
+    public static void createInstance(MainLayerManager layerManager) {
         if (instance != null)
             throw new IllegalStateException("Dialog was already created");
-        instance = new LayerListDialog(mapFrame);
+        instance = new LayerListDialog(layerManager);
     }
 
     /**
@@ -104,7 +104,7 @@ public class LayerListDialog extends ToggleDialog {
      *
      * @return the instance of the dialog
      * @throws IllegalStateException if the dialog is not created yet
-     * @see #createInstance(MapFrame)
+     * @see #createInstance(MainLayerManager)
      */
     public static LayerListDialog getInstance() {
         if (instance == null)
@@ -163,15 +163,7 @@ public class LayerListDialog extends ToggleDialog {
     }
 
     /**
-     * Creates a layer list and attach it to the given mapView.
-     * @param mapFrame map frame
-     */
-    protected LayerListDialog(MapFrame mapFrame) {
-        this(mapFrame.mapView.getLayerManager());
-    }
-
-    /**
-     * Creates a layer list and attach it to the given mapView.
+     * Creates a layer list and attach it to the given layer manager.
      * @param layerManager The layer manager this list is for
      * @since 10467
      */

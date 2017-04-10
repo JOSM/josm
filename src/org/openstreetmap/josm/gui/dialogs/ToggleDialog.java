@@ -264,9 +264,11 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
      * @since 10467
      */
     protected void registerInWindowMenu() {
-        windowMenuItem = MainMenu.addWithCheckbox(Main.main.menu.windowMenu,
-                (JosmAction) getToggleAction(),
-                MainMenu.WINDOW_MENU_GROUP.TOGGLE_DIALOG);
+        if (Main.main != null) {
+            windowMenuItem = MainMenu.addWithCheckbox(Main.main.menu.windowMenu,
+                    (JosmAction) getToggleAction(),
+                    MainMenu.WINDOW_MENU_GROUP.TOGGLE_DIALOG);
+        }
     }
 
     /**
@@ -328,7 +330,9 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         }
         // toggling the selected value in order to enforce PropertyChangeEvents
         setIsShowing(true);
-        windowMenuItem.setState(true);
+        if (windowMenuItem != null) {
+            windowMenuItem.setState(true);
+        }
         toggleAction.putValue("selected", Boolean.FALSE);
         toggleAction.putValue("selected", Boolean.TRUE);
     }
@@ -373,7 +377,9 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
     public void hideDialog() {
         closeDetachedDialog();
         this.setVisible(false);
-        windowMenuItem.setState(false);
+        if (windowMenuItem != null) {
+            windowMenuItem.setState(false);
+        }
         setIsShowing(false);
         toggleAction.putValue("selected", Boolean.FALSE);
     }
@@ -455,7 +461,9 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         if (isShowing) {
             hideNotify();
         }
-        Main.main.menu.windowMenu.remove(windowMenuItem);
+        if (Main.main != null) {
+            Main.main.menu.windowMenu.remove(windowMenuItem);
+        }
         Toolkit.getDefaultToolkit().removeAWTEventListener(this);
         Main.pref.removePreferenceChangeListener(this);
         destroyComponents(this, false);
