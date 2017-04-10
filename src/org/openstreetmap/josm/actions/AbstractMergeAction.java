@@ -9,7 +9,6 @@ import java.awt.GridBagLayout;
 import java.util.List;
 
 import javax.swing.DefaultListCellRenderer;
-import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -23,11 +22,14 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * Abstract superclass of different "Merge" actions.
+ * @since 1890
+ */
 public abstract class AbstractMergeAction extends JosmAction {
 
     /**
      * the list cell renderer used to render layer list entries
-     *
      */
     public static class LayerListCellRenderer extends DefaultListCellRenderer {
 
@@ -35,8 +37,7 @@ public abstract class AbstractMergeAction extends JosmAction {
         public Component getListCellRendererComponent(JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
             Layer layer = (Layer) value;
             JLabel label = (JLabel) super.getListCellRendererComponent(list, layer.getName(), index, isSelected, cellHasFocus);
-            Icon icon = layer.getIcon();
-            label.setIcon(icon);
+            label.setIcon(layer.getIcon());
             label.setToolTipText(layer.getToolTipText());
             return label;
         }
@@ -44,20 +45,44 @@ public abstract class AbstractMergeAction extends JosmAction {
 
     /**
      * Constructs a new {@code AbstractMergeAction}.
+     * @param name the action's text as displayed on the menu (if it is added to a menu)
+     * @param iconName the filename of the icon to use
+     * @param tooltip  a longer description of the action that will be displayed in the tooltip. Please note
+     *           that html is not supported for menu actions on some platforms.
+     * @param shortcut a ready-created shortcut object or null if you don't want a shortcut. But you always
+     *            do want a shortcut, remember you can always register it with group=none, so you
+     *            won't be assigned a shortcut unless the user configures one. If you pass null here,
+     *            the user CANNOT configure a shortcut for your action.
+     * @param register register this action for the toolbar preferences?
      */
-    public AbstractMergeAction() {
-        super();
-    }
-
     public AbstractMergeAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean register) {
         super(name, iconName, tooltip, shortcut, register);
     }
 
+    /**
+     * Constructs a new {@code AbstractMergeAction}.
+     * @param name the action's text as displayed on the menu (if it is added to a menu)
+     * @param iconName the filename of the icon to use
+     * @param tooltip  a longer description of the action that will be displayed in the tooltip. Please note
+     *           that html is not supported for menu actions on some platforms.
+     * @param shortcut a ready-created shortcut object or null if you don't want a shortcut. But you always
+     *            do want a shortcut, remember you can always register it with group=none, so you
+     *            won't be assigned a shortcut unless the user configures one. If you pass null here,
+     *            the user CANNOT configure a shortcut for your action.
+     * @param register register this action for the toolbar preferences?
+     * @param toolbar identifier for the toolbar preferences. The iconName is used, if this parameter is null
+     * @param installAdapters false, if you don't want to install layer changed and selection changed adapters
+     */
     public AbstractMergeAction(String name, String iconName, String tooltip, Shortcut shortcut,
     boolean register, String toolbar, boolean installAdapters) {
         super(name, iconName, tooltip, shortcut, register, toolbar, installAdapters);
     }
 
+    /**
+     * Ask user to choose the target layer.
+     * @param targetLayers list of candidate target layers.
+     * @return the chosen layer
+     */
     protected static Layer askTargetLayer(List<Layer> targetLayers) {
         return askTargetLayer(targetLayers.toArray(new Layer[targetLayers.size()]),
                 tr("Please select the target layer."),
@@ -98,10 +123,15 @@ public abstract class AbstractMergeAction extends JosmAction {
         return (T) layerList.getSelectedItem();
     }
 
+    /**
+     * Warns user when there no layers the source layer could be merged to.
+     * @param sourceLayer source layer
+     */
     protected void warnNoTargetLayersForSourceLayer(Layer sourceLayer) {
-        JOptionPane.showMessageDialog(Main.parent,
-                tr("<html>There are no layers the source layer<br>''{0}''<br>could be merged to.</html>",
-                        Utils.escapeReservedCharactersHTML(sourceLayer.getName())),
-                tr("No target layers"), JOptionPane.WARNING_MESSAGE);
+        String message = tr("<html>There are no layers the source layer<br>''{0}''<br>could be merged to.</html>",
+                Utils.escapeReservedCharactersHTML(sourceLayer.getName()));
+        if (!GraphicsEnvironment.isHeadless()) {
+            JOptionPane.showMessageDialog(Main.parent, message, tr("No target layers"), JOptionPane.WARNING_MESSAGE);
+        }
     }
 }
