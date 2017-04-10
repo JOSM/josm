@@ -67,6 +67,16 @@ public class ReprojectionTile extends Tile {
         }
     }
 
+    /**
+     * Invalidate tile - mark it as not loaded.
+     */
+    public synchronized void invalidate() {
+        this.loaded = false;
+        this.loading = false;
+        this.error = false;
+        this.error_message = null;
+    }
+
     private synchronized void reset() {
         this.image = null;
         this.anchor = null;

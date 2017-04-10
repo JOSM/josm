@@ -1152,7 +1152,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 // reprojected to the target scale. The original tile image should
                 // still be in disk cache, so this is fairly cheap.
                 if (((ReprojectionTile) tile).needsUpdate(Main.map.mapView.getScale())) {
-                    loadTile(tile, true);
+                    ((ReprojectionTile) tile).invalidate();
+                    loadTile(tile, false);
                 }
             }
 
