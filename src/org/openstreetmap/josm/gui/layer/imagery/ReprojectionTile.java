@@ -110,20 +110,20 @@ public class ReprojectionTile extends Tile {
         double scale = scaleFix == null ? scaleMapView : (scaleMapView * scaleFix);
 
         ImageWarp.PointTransform pointTransform = pt -> {
-            EastNorth target = new EastNorth(pbTargetAligned.minEast + (pt.getX()) * scale,
-                    pbTargetAligned.maxNorth - (pt.getY()) * scale);
+            EastNorth target = new EastNorth(pbTargetAligned.minEast + pt.getX() * scale,
+                    pbTargetAligned.maxNorth - pt.getY() * scale);
             EastNorth sourceEN = projServer.latlon2eastNorth(projCurrent.eastNorth2latlon(target));
-            double x2 = source.getTileSize() *
+            double x = source.getTileSize() *
                     (sourceEN.east() - pbServer.minEast) / (pbServer.maxEast - pbServer.minEast);
-            double y2 = source.getTileSize() *
+            double y = source.getTileSize() *
                     (pbServer.maxNorth - sourceEN.north()) / (pbServer.maxNorth - pbServer.minNorth);
-            return new Point2D.Double(x2, y2);
+            return new Point2D.Double(x, y);
         };
 
         // pixel coordinates of tile origin and opposite tile corner inside the target image
         // (tile may be deformed / rotated by reprojection)
-        EastNorth en00Current = projCurrent.latlon2eastNorth(projServer.eastNorth2latlon(new EastNorth(en00Server.getX(), en00Server.getY())));
-        EastNorth en11Current = projCurrent.latlon2eastNorth(projServer.eastNorth2latlon(new EastNorth(en11Server.getX(), en11Server.getY())));
+        EastNorth en00Current = projCurrent.latlon2eastNorth(projServer.eastNorth2latlon(en00Server));
+        EastNorth en11Current = projCurrent.latlon2eastNorth(projServer.eastNorth2latlon(en11Server));
         Point2D p00Img = new Point2D.Double(
                 (en00Current.east() - pbTargetAligned.minEast) / scale,
                 (pbTargetAligned.maxNorth - en00Current.north()) / scale);
