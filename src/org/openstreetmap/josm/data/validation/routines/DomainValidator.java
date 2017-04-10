@@ -2013,7 +2013,7 @@ public final class DomainValidator extends AbstractValidator {
         }
         try {
             final String ascii = IDN.toASCII(input);
-            if (IDNBUGHOLDER.IDN_TOASCII_PRESERVES_TRAILING_DOTS) {
+            if (IdnBugHolder.IDN_TOASCII_PRESERVES_TRAILING_DOTS) {
                 return ascii;
             }
             final int length = input.length();
@@ -2041,7 +2041,7 @@ public final class DomainValidator extends AbstractValidator {
         }
     }
 
-    private static class IDNBUGHOLDER {
+    private static class IdnBugHolder {
         private static boolean keepsTrailingDot() {
             final String input = "a."; // must be a valid name
             return input.equals(IDN.toASCII(input));
