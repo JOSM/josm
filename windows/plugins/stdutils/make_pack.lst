@@ -1,0 +1,13 @@
+﻿*.zip
+*.7z
+*.rar
+*.old
+*.suo
+*.sdf
+*.exe
+*.vcxproj.user
+*.opensdf
+*\obj\*
+*\ipch\*
+make_pack.lst
+make_pack.bat
