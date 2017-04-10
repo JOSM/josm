@@ -8,8 +8,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -32,7 +30,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
@@ -72,6 +69,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.gui.widgets.ScrollableTable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.MultikeyActionsHandler;
@@ -1095,7 +1093,7 @@ public class LayerListDialog extends ToggleDialog {
     /**
      * This component displays a list of layers and provides the methods needed by {@link LayerListModel}.
      */
-    static class LayerList extends JTable {
+    static class LayerList extends ScrollableTable {
 
         LayerList(LayerListModel dataModel) {
             super(dataModel);
@@ -1105,16 +1103,6 @@ public class LayerListDialog extends ToggleDialog {
             }
             setDropMode(DropMode.INSERT_ROWS);
             setTransferHandler(new LayerListTransferHandler());
-        }
-
-        public void scrollToVisible(int row, int col) {
-            if (!(getParent() instanceof JViewport))
-                return;
-            JViewport viewport = (JViewport) getParent();
-            Rectangle rect = getCellRect(row, col, true);
-            Point pt = viewport.getViewPosition();
-            rect.setLocation(rect.x - pt.x, rect.y - pt.y);
-            viewport.scrollRectToVisible(rect);
         }
 
         @Override

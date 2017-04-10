@@ -290,7 +290,12 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                 this.defaultLayer = null;
             }
         } else {
-            this.defaultLayer = (WMTSDefaultLayer) info.getDefaultLayers().iterator().next();
+            DefaultLayer defLayer = info.getDefaultLayers().iterator().next();
+            if (defLayer instanceof WMTSDefaultLayer) {
+                this.defaultLayer = (WMTSDefaultLayer) defLayer;
+            } else {
+                this.defaultLayer = null;
+            }
         }
         if (this.layers.isEmpty())
             throw new IllegalArgumentException(tr("No layers defined by getCapabilities document: {0}", info.getUrl()));

@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -16,6 +17,7 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.BorderFactory;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -56,9 +58,11 @@ public class SplashScreen extends JFrame implements ChangeListener {
         setUndecorated(true);
 
         // Add a nice border to the main splash screen
-        JPanel contentPane = (JPanel) this.getContentPane();
+        Container contentPane = this.getContentPane();
         Border margin = new EtchedBorder(1, Color.white, Color.gray);
-        contentPane.setBorder(margin);
+        if (contentPane instanceof JComponent) {
+            ((JComponent) contentPane).setBorder(margin);
+        }
 
         // Add a margin from the border to the content
         JPanel innerContentPane = new JPanel(new GridBagLayout());

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs.relation;
 
 import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.HashMap;
@@ -193,11 +194,14 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
 
     @Override
     public void windowClosed(WindowEvent e) {
-        RelationEditor editor = (RelationEditor) e.getWindow();
-        for (Iterator<Entry<DialogContext, RelationEditor>> it = openDialogs.entrySet().iterator(); it.hasNext();) {
-            if (editor.equals(it.next().getValue())) {
-                it.remove();
-                break;
+        Window w = e.getWindow();
+        if (w instanceof RelationEditor) {
+            RelationEditor editor = (RelationEditor) w;
+            for (Iterator<Entry<DialogContext, RelationEditor>> it = openDialogs.entrySet().iterator(); it.hasNext();) {
+                if (editor.equals(it.next().getValue())) {
+                    it.remove();
+                    break;
+                }
             }
         }
     }
