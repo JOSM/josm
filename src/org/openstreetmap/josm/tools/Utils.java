@@ -356,6 +356,19 @@ public final class Utils {
     }
 
     /**
+     * Copies the given array. Unlike {@link Arrays#copyOf}, this method is null-safe.
+     * @param array The array to copy
+     * @return A copy of the original array, or {@code null} if {@code array} is null
+     * @since 11879
+     */
+    public static byte[] copyArray(byte... array) {
+        if (array != null) {
+            return Arrays.copyOf(array, array.length);
+        }
+        return array;
+    }
+
+    /**
      * Simple file copy function that will overwrite the target file.
      * @param in The source file
      * @param out The destination file

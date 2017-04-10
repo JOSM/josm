@@ -9,7 +9,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Enumeration of the possible comparison pairs
- *
+ * @since 1650
  */
 public enum ComparePairType {
 
@@ -47,12 +47,10 @@ public enum ComparePairType {
     }
 
     /**
-     * replies true, if <code>role</code> is participating in this comparison
-     * pair
+     * replies true, if <code>role</code> is participating in this comparison pair
      *
      * @param role  the list role
-     * @return true, if <code>role</code> is participating in this comparison
-     * pair; false, otherwise
+     * @return true, if <code>role</code> is participating in this comparison pair; false, otherwise
      */
     public boolean isParticipatingIn(ListRole role) {
         for (ListRole r: participatingRoles) {
@@ -62,18 +60,16 @@ public enum ComparePairType {
     }
 
     /**
-     * replies the pair of {@link ListRole}s participating in this comparison
-     * pair
+     * replies the pair of {@link ListRole}s participating in this comparison pair
      *
      * @return  the pair of list roles
      */
     public ListRole[] getParticipatingRoles() {
-        return participatingRoles;
+        return Utils.copyArray(participatingRoles);
     }
 
     /**
-     * replies the opposite role of <code>role</code> participating in this comparison
-     * pair
+     * replies the opposite role of <code>role</code> participating in this comparison pair
      *
      * @param role one of the two roles in this pair
      * @return the opposite role

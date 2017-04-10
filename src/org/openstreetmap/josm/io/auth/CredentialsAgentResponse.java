@@ -39,7 +39,7 @@ public class CredentialsAgentResponse {
      * @return The password in plain text
      */
     public char[] getPassword() {
-        return password;
+        return Utils.copyArray(password);
     }
 
     /**
