@@ -60,7 +60,12 @@ public class MemberTransferHandler extends TransferHandler {
     private static int computeInsertionRow(TransferSupport support, MemberTable destination) {
         final int insertRow;
         if (support.isDrop()) {
-            insertRow = ((JTable.DropLocation) support.getDropLocation()).getRow();
+            DropLocation dl = support.getDropLocation();
+            if (dl instanceof JTable.DropLocation) {
+                insertRow = ((JTable.DropLocation) dl).getRow();
+            } else {
+                insertRow = 0;
+            }
         } else {
             int selection = destination.getSelectedRow();
             if (selection < 0) {

@@ -91,8 +91,12 @@ public class LayerListTransferHandler extends TransferHandler {
 
             int dropLocation;
             if (support.isDrop()) {
-                JTable.DropLocation dl = (JTable.DropLocation) support.getDropLocation();
-                dropLocation = dl.getRow();
+                DropLocation dl = support.getDropLocation();
+                if (dl instanceof JTable.DropLocation) {
+                    dropLocation = ((JTable.DropLocation) dl).getRow();
+                } else {
+                    dropLocation = 0;
+                }
             } else {
                 dropLocation = layers.getLayers().get(0).getDefaultLayerPosition().getPosition(layers.getManager());
             }
