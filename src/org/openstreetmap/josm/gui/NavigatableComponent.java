@@ -639,10 +639,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
         Point2D enOrigin = mvs.getPointFor(new EastNorth(0, 0)).getInView();
         // as a result of the alignment, it is common to round "half integer" values
         // like 1.49999, which is numerically unstable; add small epsilon to resolve this
-        double EPSILON = 1e-3;
+        final double epsilon = 1e-3;
         Point2D enOriginAligned = new Point2D.Double(
-                Math.round(enOrigin.getX()) + EPSILON,
-                Math.round(enOrigin.getY()) + EPSILON);
+                Math.round(enOrigin.getX()) + epsilon,
+                Math.round(enOrigin.getY()) + epsilon);
         EastNorth enShift = mvs.getForView(enOriginAligned.getX(), enOriginAligned.getY()).getEastNorth();
         newCenter = newCenter.subtract(enShift);
 
