@@ -68,20 +68,20 @@ import org.apache.commons.compress.utils.Sets;
  * Example (Compressing a file):
  * 
  * <pre>
- * final OutputStream out = new FileOutputStream(output);
+ * final OutputStream out = Files.newOutputStream(output.toPath());
  * CompressorOutputStream cos = new CompressorStreamFactory()
  *         .createCompressorOutputStream(CompressorStreamFactory.BZIP2, out);
- * IOUtils.copy(new FileInputStream(input), cos);
+ * IOUtils.copy(Files.newInputStream(input.toPath()), cos);
  * cos.close();
  * </pre>
  * 
  * Example (Decompressing a file):
  * 
  * <pre>
- * final InputStream is = new FileInputStream(input);
+ * final InputStream is = Files.newInputStream(input.toPath());
  * CompressorInputStream in = new CompressorStreamFactory().createCompressorInputStream(CompressorStreamFactory.BZIP2,
  *         is);
- * IOUtils.copy(in, new FileOutputStream(output));
+ * IOUtils.copy(in, Files.newOutputStream(output.toPath()));
  * in.close();
  * </pre>
  * 
