@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<osm version='0.6' upload='true' generator='JOSM'>
+<osm version='0.6' upload='never' generator='JOSM'>
   <node id='-136' action='modify' visible='true' lat='0.012919043857859922' lon='-0.02396592658039119'>
     <tag k='leisure' v='playground' />
     <tag k='name' v='playground' />
