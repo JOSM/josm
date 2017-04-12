@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -60,8 +61,8 @@ public class SearchNotesDownloadAction extends JosmAction {
             return;
         }
 
-        String searchTerm = searchTermBox.getText();
-        if (searchTerm == null || searchTerm.trim().isEmpty()) {
+        String searchTerm = Optional.ofNullable(searchTermBox.getText()).orElse("").trim();
+        if (searchTerm.isEmpty()) {
             Notification notification = new Notification(tr("You must enter a search term"));
             notification.setIcon(JOptionPane.WARNING_MESSAGE);
             notification.show();

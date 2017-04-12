@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Properties;
 
 import org.openstreetmap.josm.Main;
@@ -13,7 +14,7 @@ import org.openstreetmap.josm.tools.LanguageInfo;
 
 /**
  * Provides basic information about the currently used JOSM build.
- *
+ * @since 2358
  */
 public class Version {
     /** constant to indicate that the current build isn't assigned a JOSM version number */
@@ -60,9 +61,8 @@ public class Version {
         } catch (IOException e) {
             Main.warn(e, tr("Error reading revision info from revision file: {0}", e.getMessage()));
         }
-        String value = properties.getProperty("Revision");
-        if (value != null) {
-            value = value.trim();
+        String value = Optional.ofNullable(properties.getProperty("Revision")).orElse("").trim();
+        if (!value.isEmpty()) {
             try {
                 version = Integer.parseInt(value);
             } catch (NumberFormatException e) {
@@ -82,19 +82,12 @@ public class Version {
 
         // is this a local build ?
         //
-        isLocalBuild = false;
-        value = properties.getProperty("Is-Local-Build");
-        if (value != null && "true".equalsIgnoreCase(value.trim())) {
-            isLocalBuild = true;
-        }
+        isLocalBuild = "true".equalsIgnoreCase(
+                Optional.ofNullable(properties.getProperty("Is-Local-Build")).orElse("").trim());
 
         // is this a specific build ?
         //
-        buildName = null;
-        value = properties.getProperty("Build-Name");
-        if (value != null && !value.trim().isEmpty()) {
-            buildName = value.trim();
-        }
+        buildName = Optional.ofNullable(properties.getProperty("Build-Name")).orElse("").trim();
 
         // the revision info
         //

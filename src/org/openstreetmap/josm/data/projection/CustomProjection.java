@@ -343,12 +343,13 @@ public class CustomProjection extends AbstractProjection {
      */
     public static Map<String, String> parseParameterList(String pref, boolean ignoreUnknownParameter) throws ProjectionConfigurationException {
         Map<String, String> parameters = new HashMap<>();
-        if (pref.trim().isEmpty()) {
+        String trimmedPref = pref.trim();
+        if (trimmedPref.isEmpty()) {
             return parameters;
         }
 
         Pattern keyPattern = Pattern.compile("\\+(?<key>[a-zA-Z0-9_]+)(=(?<value>.*))?");
-        String[] parts = Utils.WHITE_SPACES_PATTERN.split(pref.trim());
+        String[] parts = Utils.WHITE_SPACES_PATTERN.split(trimmedPref);
         for (String part : parts) {
             Matcher m = keyPattern.matcher(part);
             if (m.matches()) {
@@ -487,6 +488,13 @@ public class CustomProjection extends AbstractProjection {
         return new NullDatum(null, ellps);
     }
 
+    /**
+     * Parse {@code towgs84} parameter.
+     * @param paramList List of parameter arguments (expected: 3 or 7)
+     * @param ellps ellipsoid
+     * @return parsed datum ({@link ThreeParameterDatum} or {@link SevenParameterDatum})
+     * @throws ProjectionConfigurationException if the arguments cannot be parsed
+     */
     public Datum parseToWGS84(String paramList, Ellipsoid ellps) throws ProjectionConfigurationException {
         String[] numStr = paramList.split(",");
 

@@ -23,6 +23,7 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -427,12 +428,7 @@ public class UrlValidator extends AbstractValidator {
             }
         }
 
-        String extra = authorityMatcher.group(PARSE_AUTHORITY_EXTRA);
-        if (extra != null && !extra.trim().isEmpty()) {
-            return false;
-        }
-
-        return true;
+        return Optional.ofNullable(authorityMatcher.group(PARSE_AUTHORITY_EXTRA)).orElse("").trim().isEmpty();
     }
 
     /**

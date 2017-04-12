@@ -196,7 +196,7 @@ public class OpeningHourTest extends Test.TagTest {
      */
     public List<OpeningHoursTestError> checkOpeningHourSyntax(final String key, final String value, CheckMode mode,
             boolean ignoreOtherSeverity, String locale) {
-        if (ENGINE == null || value == null || value.trim().isEmpty()) {
+        if (ENGINE == null || value == null || value.isEmpty()) {
             return Collections.emptyList();
         }
         final List<OpeningHoursTestError> errors = new ArrayList<>();
