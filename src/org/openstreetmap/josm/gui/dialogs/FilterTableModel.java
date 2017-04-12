@@ -275,19 +275,19 @@ public class FilterTableModel extends AbstractTableModel {
         return classes[column];
     }
 
+    /**
+     * Determines if a cell is enabled.
+     * @param row row index
+     * @param column column index
+     * @return {@code true} if the cell at (row, column) is enabled
+     */
     public boolean isCellEnabled(int row, int column) {
-        if (!filters.get(row).enable && column != 0)
-            return false;
-        return true;
+        return filters.get(row).enable || column == 0;
     }
 
     @Override
     public boolean isCellEditable(int row, int column) {
-        if (!filters.get(row).enable && column != 0)
-            return false;
-        if (column < 4)
-            return true;
-        return false;
+        return column < 4 && isCellEnabled(row, column);
     }
 
     @Override

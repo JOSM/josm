@@ -372,11 +372,7 @@ public class UrlValidator extends AbstractValidator {
             return false;
         }
 
-        if (isOff(ALLOW_ALL_SCHEMES) && !allowedSchemes.contains(scheme.toLowerCase(Locale.ENGLISH))) {
-            return false;
-        }
-
-        return true;
+        return isOn(ALLOW_ALL_SCHEMES) || allowedSchemes.contains(scheme.toLowerCase(Locale.ENGLISH));
     }
 
     /**
@@ -457,12 +453,7 @@ public class UrlValidator extends AbstractValidator {
             return false;
         }
 
-        int slash2Count = countToken("//", path);
-        if (slash2Count > 0 && isOff(ALLOW_2_SLASHES)) {
-            return false;
-        }
-
-        return true;
+        return isOn(ALLOW_2_SLASHES) || countToken("//", path) <= 0;
     }
 
     /**

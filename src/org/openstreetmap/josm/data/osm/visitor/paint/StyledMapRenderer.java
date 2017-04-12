@@ -1453,14 +1453,15 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         Rectangle2D bounds = area.getBounds2D();
         if (bounds.isEmpty()) return false;
         MapViewPoint p = mapState.getPointFor(new EastNorth(bounds.getX(), bounds.getY()));
-        if (p.getInViewX() > mapState.getViewWidth()) return false;
-        if (p.getInViewY() < 0) return false;
+        if (p.getInViewY() < 0 || p.getInViewX() > mapState.getViewWidth()) return false;
         p = mapState.getPointFor(new EastNorth(bounds.getX() + bounds.getWidth(), bounds.getY() + bounds.getHeight()));
-        if (p.getInViewX() < 0) return false;
-        if (p.getInViewY() > mapState.getViewHeight()) return false;
-        return true;
+        return p.getInViewX() >= 0 && p.getInViewY() <= mapState.getViewHeight();
     }
 
+    /**
+     * Determines if the paint visitor shall render OSM objects such that they look inactive.
+     * @return {@code true} if the paint visitor shall render OSM objects such that they look inactive
+     */
     public boolean isInactiveMode() {
         return isInactiveMode;
     }

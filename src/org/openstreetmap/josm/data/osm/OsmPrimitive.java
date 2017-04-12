@@ -1151,9 +1151,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     boolean hasEqualSemanticFlags(final OsmPrimitive other) {
         if (!isNew() && id != other.id)
             return false;
-        if (isIncomplete() ^ other.isIncomplete()) // exclusive or operator for performance (see #7159)
-            return false;
-        return true;
+        return !(isIncomplete() ^ other.isIncomplete()); // exclusive or operator for performance (see #7159)
     }
 
     boolean hasEqualSemanticAttributes(final OsmPrimitive other, final boolean testInterestingTagsOnly) {

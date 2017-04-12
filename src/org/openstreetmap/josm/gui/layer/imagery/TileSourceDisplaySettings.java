@@ -294,18 +294,12 @@ public class TileSourceDisplaySettings {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
+        if (obj == null || getClass() != obj.getClass())
             return false;
         TileSourceDisplaySettings other = (TileSourceDisplaySettings) obj;
-        if (autoLoad != other.autoLoad)
-            return false;
-        if (autoZoom != other.autoZoom)
-            return false;
-        if (showErrors != other.showErrors)
-            return false;
-        return true;
+        return autoLoad == other.autoLoad
+            && autoZoom == other.autoZoom
+            && showErrors == other.showErrors;
     }
 
     @Override

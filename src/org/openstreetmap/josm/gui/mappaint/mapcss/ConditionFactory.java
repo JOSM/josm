@@ -624,9 +624,7 @@ public final class ConditionFactory {
         static boolean closed(Environment e) { // NO_UCD (unused code)
             if (e.osm instanceof Way && ((Way) e.osm).isClosed())
                 return true;
-            if (e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon())
-                return true;
-            return false;
+            return e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon();
         }
 
         /**

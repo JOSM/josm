@@ -25,6 +25,10 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
     public boolean drawLine;
     public int dir;
 
+    /**
+     * Constructs a new {@code WayPoint} from an existing one.
+     * @param p existing waypoint
+     */
     public WayPoint(WayPoint p) {
         attr.putAll(p.attr);
         lat = p.lat;
@@ -37,6 +41,10 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
         dir = p.dir;
     }
 
+    /**
+     * Constructs a new {@code WayPoint} from lat/lon coordinates.
+     * @param ll lat/lon coordinates
+     */
     public WayPoint(LatLon ll) {
         lat = ll.lat();
         lon = ll.lon();
@@ -63,6 +71,10 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
         this.north = Double.NaN;
     }
 
+    /**
+     * Returns the waypoint coordinates.
+     * @return the waypoint coordinates
+     */
     public final LatLon getCoor() {
         return new LatLon(lat, lon);
     }
@@ -137,6 +149,10 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
         return Double.compare(time, w.time);
     }
 
+    /**
+     * Returns the waypoint time.
+     * @return the waypoint time
+     */
     public Date getTime() {
         return new Date((long) (time * 1000));
     }
@@ -176,17 +192,11 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
+        if (obj == null || !super.equals(obj) || getClass() != obj.getClass())
             return false;
         WayPoint other = (WayPoint) obj;
-        if (Double.doubleToLongBits(lat) != Double.doubleToLongBits(other.lat))
-            return false;
-        if (Double.doubleToLongBits(lon) != Double.doubleToLongBits(other.lon))
-            return false;
-        if (Double.doubleToLongBits(time) != Double.doubleToLongBits(other.time))
-            return false;
-        return true;
+        return Double.doubleToLongBits(lat) == Double.doubleToLongBits(other.lat)
+            && Double.doubleToLongBits(lon) == Double.doubleToLongBits(other.lon)
+            && Double.doubleToLongBits(time) == Double.doubleToLongBits(other.time);
     }
 }

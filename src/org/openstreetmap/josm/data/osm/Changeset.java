@@ -379,10 +379,7 @@ public final class Changeset implements Tagged {
                 return false;
         } else if (!user.equals(other.user))
             return false;
-        if (commentsCount != other.commentsCount) {
-            return false;
-        }
-        return true;
+        return commentsCount == other.commentsCount;
     }
 
     @Override

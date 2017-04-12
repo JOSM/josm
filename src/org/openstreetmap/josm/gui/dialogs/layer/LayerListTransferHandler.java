@@ -73,12 +73,8 @@ public class LayerListTransferHandler extends TransferHandler {
             return false;
         }
 
-        if (support.getDropAction() == LINK) {
-            // cannot link yet.
-            return false;
-        }
-
-        return true;
+        // cannot link yet.
+        return support.getDropAction() != LINK;
     }
 
     @Override

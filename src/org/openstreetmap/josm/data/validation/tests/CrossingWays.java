@@ -83,10 +83,7 @@ public abstract class CrossingWays extends Test {
              || (w2.hasTag(WATERWAY, "river", "stream", "canal", "drain", "ditch") && w1.hasTag(WATERWAY, "riverbank"))) {
                 return true;
             }
-            if (isProposedOrAbandoned(w2)) {
-                return true;
-            }
-            return false;
+            return isProposedOrAbandoned(w2);
         }
 
         @Override
@@ -159,10 +156,7 @@ public abstract class CrossingWays extends Test {
 
         @Override
         boolean ignoreWaySegmentCombination(Way w1, Way w2) {
-            if (!Objects.equals(getLayer(w1), getLayer(w2))) {
-                return true;
-            }
-            return false;
+            return !Objects.equals(getLayer(w1), getLayer(w2));
         }
 
         @Override

@@ -151,15 +151,11 @@ public class BoundingBoxSelectionPanel extends JPanel {
 
         @Override
         public boolean isValid() {
-            double value = 0;
             try {
-                value = Double.parseDouble(getComponent().getText());
+                return LatLon.isValidLat(Double.parseDouble(getComponent().getText()));
             } catch (NumberFormatException ex) {
                 return false;
             }
-            if (!LatLon.isValidLat(value))
-                return false;
-            return true;
         }
     }
 
@@ -191,15 +187,11 @@ public class BoundingBoxSelectionPanel extends JPanel {
 
         @Override
         public boolean isValid() {
-            double value = 0;
             try {
-                value = Double.parseDouble(getComponent().getText());
+                return LatLon.isValidLon(Double.parseDouble(getComponent().getText()));
             } catch (NumberFormatException ex) {
                 return false;
             }
-            if (!LatLon.isValidLon(value))
-                return false;
-            return true;
         }
     }
 

@@ -605,9 +605,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser {
             } catch (NumberFormatException e) {
                 return false;
             }
-            if (tileIndex < 0 || tileIndex >= Math.pow(2, zoomLevel)) return false;
-
-            return true;
+            return tileIndex >= 0 && tileIndex < Math.pow(2, zoomLevel);
         }
 
         @Override

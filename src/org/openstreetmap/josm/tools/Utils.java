@@ -1191,9 +1191,7 @@ public final class Utils {
      * @since 7356
      */
     public static boolean isLocalUrl(String url) {
-        if (url == null || url.startsWith("http://") || url.startsWith("https://") || url.startsWith("resource://"))
-            return false;
-        return true;
+        return url != null && !url.startsWith("http://") && !url.startsWith("https://") && !url.startsWith("resource://");
     }
 
     /**

@@ -56,15 +56,8 @@ public interface RotationAngle {
             if (this == obj) {
                 return true;
             }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            return true;
+            return obj != null && getClass() == obj.getClass();
         }
-
     }
 
     /**
@@ -91,8 +84,7 @@ public interface RotationAngle {
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            long temp;
-            temp = Double.doubleToLongBits(angle);
+            long temp = Double.doubleToLongBits(angle);
             result = prime * result + (int) (temp ^ (temp >>> 32));
             return result;
         }
@@ -102,17 +94,11 @@ public interface RotationAngle {
             if (this == obj) {
                 return true;
             }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
+            if (obj == null || getClass() != obj.getClass()) {
                 return false;
             }
             StaticRotationAngle other = (StaticRotationAngle) obj;
-            if (Double.doubleToLongBits(angle) != Double.doubleToLongBits(other.angle)) {
-                return false;
-            }
-            return true;
+            return Double.doubleToLongBits(angle) == Double.doubleToLongBits(other.angle);
         }
     }
 

@@ -429,9 +429,7 @@ public class PluginInformation {
         if (this.downloadlink == null) return false;
         if (this.version == null && referenceVersion != null)
             return true;
-        if (this.version != null && !this.version.equals(referenceVersion))
-            return true;
-        return false;
+        return this.version != null && !this.version.equals(referenceVersion);
     }
 
     /**

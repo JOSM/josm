@@ -1070,9 +1070,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         if (i == null)
             return false;
         int status = Toolkit.getDefaultToolkit().checkImage(i, -1, -1, this);
-        if ((status & ALLBITS) != 0)
-            return true;
-        return false;
+        return (status & ALLBITS) != 0;
     }
 
     /**

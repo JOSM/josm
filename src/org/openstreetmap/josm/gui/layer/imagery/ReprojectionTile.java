@@ -52,10 +52,8 @@ public class ReprojectionTile extends Tile {
     public boolean needsUpdate(double currentScale) {
         if (Utils.equalsEpsilon(nativeScale, currentScale))
             return false;
-        if (maxZoomReached && currentScale < nativeScale)
-            // zoomed in even more - max zoom already reached, so no update
-            return false;
-        return true;
+        // zoomed in even more - max zoom already reached, so no update
+        return !maxZoomReached || currentScale >= nativeScale;
     }
 
     @Override
