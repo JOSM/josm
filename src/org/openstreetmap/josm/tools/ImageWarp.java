@@ -118,26 +118,23 @@ public class ImageWarp {
         return x + margin >= xMin && x - margin <= xMax;
     }
 
+    private static int clamp(int i, int max) {
+        if (i < 0) {
+            return 0;
+        } else if (i >= max) {
+            return max - 1;
+        } else {
+            return i;
+        }
+    }
+
     private static Color getColor(int x, int y, BufferedImage img) {
         // border strategy: continue with the color of the outermost pixel,
         // but change alpha component to fully translucent
-        boolean transparent = false;
-        if (x < 0) {
-            x = 0;
-            transparent = true;
-        } else if (x >= img.getWidth()) {
-            x = img.getWidth() - 1;
-            transparent = true;
-        }
-        if (y < 0) {
-            y = 0;
-            transparent = true;
-        } else if (y >= img.getHeight()) {
-            y = img.getHeight() - 1;
-            transparent = true;
-        }
-        Color clr = new Color(img.getRGB(x, y));
-        if (!transparent)
+        int a = clamp(x, img.getWidth());
+        int b = clamp(y, img.getHeight());
+        Color clr = new Color(img.getRGB(a, b));
+        if (a == x && b == y)
             return clr;
         // keep color components, but set transparency to 0
         // (the idea is that border fades out and mixes with next tile)

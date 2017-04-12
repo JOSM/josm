@@ -1443,14 +1443,13 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             return new TileSet();
         TileXY t1, t2;
         if (coordinateConverter.requiresReprojection()) {
-            Projection projCurrent = Main.getProjection();
             Projection projServer = Projections.getProjectionByCode(tileSource.getServerCRS());
-            bounds = new ProjectionBounds(
+            ProjectionBounds projBounds = new ProjectionBounds(
                     new EastNorth(coordinateConverter.shiftDisplayToServer(bounds.getMin())),
                     new EastNorth(coordinateConverter.shiftDisplayToServer(bounds.getMax())));
-            bounds = projServer.getEastNorthBoundsBox(bounds, projCurrent);
-            t1 = tileSource.projectedToTileXY(bounds.getMin().toProjected(), zoom);
-            t2 = tileSource.projectedToTileXY(bounds.getMax().toProjected(), zoom);
+            ProjectionBounds bbox = projServer.getEastNorthBoundsBox(projBounds, Main.getProjection());
+            t1 = tileSource.projectedToTileXY(bbox.getMin().toProjected(), zoom);
+            t2 = tileSource.projectedToTileXY(bbox.getMax().toProjected(), zoom);
         } else {
             IProjected topLeftUnshifted = coordinateConverter.shiftDisplayToServer(bounds.getMin());
             IProjected botRightUnshifted = coordinateConverter.shiftDisplayToServer(bounds.getMax());
