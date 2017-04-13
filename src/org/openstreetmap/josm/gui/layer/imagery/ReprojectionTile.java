@@ -45,14 +45,28 @@ public class ReprojectionTile extends Tile {
         return anchor;
     }
 
+    /**
+     * Get the scale that was used for reprojecting the tile.
+     *
+     * This is not necessarily the mapview scale, but may be
+     * adjusted to avoid excessively large cache image.
+     * @return the scale that was used for reprojecting the tile
+     */
     public double getNativeScale() {
         return nativeScale;
     }
 
+    /**
+     * Check if it is necessary to refresh the cache to match the current mapview
+     * scale and get optimized image quality.
+     *
+     * When the maximum zoom is exceeded, this method will generally return false.
+     * @param currentScale the current mapview scale
+     * @return true if the tile should be reprojected again from the source image.
+     */
     public boolean needsUpdate(double currentScale) {
         if (Utils.equalsEpsilon(nativeScale, currentScale))
             return false;
-        // zoomed in even more - max zoom already reached, so no update
         return !maxZoomReached || currentScale >= nativeScale;
     }
 
@@ -106,16 +120,10 @@ public class ReprojectionTile extends Tile {
         // find east-north rectangle in current projection, that will fully contain the tile
         ProjectionBounds pbTarget = projCurrent.getEastNorthBoundsBox(pbServer, projServer);
 
-        // add margin and align to pixel grid
-        double minEast = Math.floor(pbTarget.minEast / scaleMapView - margin) * scaleMapView;
-        double minNorth = -Math.floor(-(pbTarget.minNorth / scaleMapView - margin)) * scaleMapView;
-        double maxEast = Math.ceil(pbTarget.maxEast / scaleMapView + margin) * scaleMapView;
-        double maxNorth = -Math.ceil(-(pbTarget.maxNorth / scaleMapView + margin)) * scaleMapView;
-        ProjectionBounds pbTargetAligned = new ProjectionBounds(minEast, minNorth, maxEast, maxNorth);
-
-        Dimension dim = getDimension(pbTargetAligned, scaleMapView);
+        Dimension dim = getDimension(pbMarginAndAlign(pbTarget, scaleMapView, margin), scaleMapView);
         Integer scaleFix = limitScale(source.getTileSize(), Math.sqrt(dim.getWidth() * dim.getHeight()));
         double scale = scaleFix == null ? scaleMapView : (scaleMapView * scaleFix);
+        ProjectionBounds pbTargetAligned = pbMarginAndAlign(pbTarget, scale, margin);
 
         ImageWarp.PointTransform pointTransform = pt -> {
             EastNorth target = new EastNorth(pbTargetAligned.minEast + pt.getX() * scale,
@@ -150,6 +158,16 @@ public class ReprojectionTile extends Tile {
         }
     }
 
+    // add margin and align to pixel grid
+    private ProjectionBounds pbMarginAndAlign(ProjectionBounds box, double scale, double margin) {
+        double minEast = Math.floor(box.minEast / scale - margin) * scale;
+        double minNorth = -Math.floor(-(box.minNorth / scale - margin)) * scale;
+        double maxEast = Math.ceil(box.maxEast / scale + margin) * scale;
+        double maxNorth = -Math.ceil(-(box.maxNorth / scale + margin)) * scale;
+        return new ProjectionBounds(minEast, minNorth, maxEast, maxNorth);
+    }
+
+    // dimension in pixel
     private Dimension getDimension(ProjectionBounds bounds, double scale) {
         return new Dimension(
                 (int) Math.round((bounds.maxEast - bounds.minEast) / scale),
