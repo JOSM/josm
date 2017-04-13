@@ -516,7 +516,7 @@ public abstract class Main {
         undoRedo.addCommandQueueListener(redoUndoListener);
 
         // creating toolbar
-        contentPanePrivate.add(toolbar.control, BorderLayout.NORTH);
+        GuiHelper.runInEDTAndWait(() -> contentPanePrivate.add(toolbar.control, BorderLayout.NORTH));
 
         registerActionShortcut(menu.help, Shortcut.registerShortcut("system:help", tr("Help"),
                 KeyEvent.VK_F1, Shortcut.DIRECT));
@@ -574,11 +574,11 @@ public abstract class Main {
         FeatureAdapter.registerTranslationAdapter(I18n.getTranslationAdapter());
         FeatureAdapter.registerLoggingAdapter(name -> Logging.getLogger());
 
-        new InitializationTask(tr("Updating user interface"), () -> {
+        new InitializationTask(tr("Updating user interface"), () -> GuiHelper.runInEDTAndWait(() -> {
             toolbar.refreshToolbarControl();
             toolbar.control.updateUI();
             contentPanePrivate.updateUI();
-        }).call();
+        })).call();
     }
 
     /**
