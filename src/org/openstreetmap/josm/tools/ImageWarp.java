@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -71,38 +70,34 @@ public class ImageWarp {
             for (int i = 0; i < imgTarget.getWidth(); i++) {
                 Point2D srcCoord = invTransform.transform(new Point2D.Double(i, j));
                 if (isInside(srcCoord, srcRect, interpolation.getMargin())) {
-                        int rgb;
-                        switch (interpolation) {
-                            case NEAREST_NEIGHBOR:
-                                rgb = getColor((int) Math.round(srcCoord.getX()), (int) Math.round(srcCoord.getY()), srcImg).getRGB();
-                                break;
-                            case BILINEAR:
-                                int x0 = (int) Math.floor(srcCoord.getX());
-                                double dx = srcCoord.getX() - x0;
-                                int y0 = (int) Math.floor(srcCoord.getY());
-                                double dy = srcCoord.getY() - y0;
-                                Color c00 = getColor(x0, y0, srcImg);
-                                Color c01 = getColor(x0, y0 + 1, srcImg);
-                                Color c10 = getColor(x0 + 1, y0, srcImg);
-                                Color c11 = getColor(x0 + 1, y0 + 1, srcImg);
-                                int red = (int) Math.round(
-                                        (c00.getRed() * (1-dx) + c10.getRed() * dx) * (1-dy) +
-                                        (c01.getRed() * (1-dx) + c11.getRed() * dx) * dy);
-                                int green = (int) Math.round(
-                                        (c00.getGreen()* (1-dx) + c10.getGreen() * dx) * (1-dy) +
-                                        (c01.getGreen() * (1-dx) + c11.getGreen() * dx) * dy);
-                                int blue = (int) Math.round(
-                                        (c00.getBlue()* (1-dx) + c10.getBlue() * dx) * (1-dy) +
-                                        (c01.getBlue() * (1-dx) + c11.getBlue() * dx) * dy);
-                                int alpha = (int) Math.round(
-                                        (c00.getAlpha()* (1-dx) + c10.getAlpha() * dx) * (1-dy) +
-                                        (c01.getAlpha() * (1-dx) + c11.getAlpha() * dx) * dy);
-                                rgb = new Color(red, green, blue, alpha).getRGB();
-                                break;
-                            default:
-                                throw new AssertionError();
-                        }
-                        imgTarget.setRGB(i, j, rgb);
+                    int rgba;
+                    switch (interpolation) {
+                        case NEAREST_NEIGHBOR:
+                            rgba = getColor((int) Math.round(srcCoord.getX()), (int) Math.round(srcCoord.getY()), srcImg);
+                            break;
+                        case BILINEAR:
+                            int x0 = (int) Math.floor(srcCoord.getX());
+                            double dx = srcCoord.getX() - x0;
+                            int y0 = (int) Math.floor(srcCoord.getY());
+                            double dy = srcCoord.getY() - y0;
+                            int c00 = getColor(x0, y0, srcImg);
+                            int c01 = getColor(x0, y0 + 1, srcImg);
+                            int c10 = getColor(x0 + 1, y0, srcImg);
+                            int c11 = getColor(x0 + 1, y0 + 1, srcImg);
+                            rgba = 0;
+                            // loop over color components: blue, green, red, alpha
+                            for (int ch = 0; ch <= 3; ch++) {
+                                int shift = 8 * ch;
+                                int chVal = (int) Math.round(
+                                    (((c00 >> shift) & 0xff) * (1-dx) + ((c10 >> shift) & 0xff) * dx) * (1-dy) +
+                                    (((c01 >> shift) & 0xff) * (1-dx) + ((c11 >> shift) & 0xff) * dx) * dy);
+                                rgba |= chVal << shift;
+                            }
+                            break;
+                        default:
+                            throw new AssertionError();
+                    }
+                    imgTarget.setRGB(i, j, rgba);
                 }
             }
         }
@@ -118,26 +113,16 @@ public class ImageWarp {
         return x + margin >= xMin && x - margin <= xMax;
     }
 
-    private static int clamp(int i, int max) {
-        if (i < 0) {
-            return 0;
-        } else if (i >= max) {
-            return max - 1;
-        } else {
-            return i;
-        }
-    }
-
-    private static Color getColor(int x, int y, BufferedImage img) {
+    private static int getColor(int x, int y, BufferedImage img) {
         // border strategy: continue with the color of the outermost pixel,
         // but change alpha component to fully translucent
-        int a = clamp(x, img.getWidth());
-        int b = clamp(y, img.getHeight());
-        Color clr = new Color(img.getRGB(a, b));
+        int a = Utils.clamp(x, 0, img.getWidth() - 1);// clamp(x, img.getWidth());
+        int b = Utils.clamp(y, 0, img.getHeight() - 1); // clamp(y, img.getHeight());
+        int clr = img.getRGB(a, b);
         if (a == x && b == y)
             return clr;
         // keep color components, but set transparency to 0
         // (the idea is that border fades out and mixes with next tile)
-        return new Color(clr.getRed(), clr.getGreen(), clr.getBlue(), 0);
+        return clr & 0x00ffffff;
     }
 }
