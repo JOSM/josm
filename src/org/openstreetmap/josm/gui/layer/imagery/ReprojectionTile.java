@@ -102,7 +102,7 @@ public class ReprojectionTile extends Tile {
         }
         double scaleMapView = Main.map.mapView.getScale();
         ImageWarp.Interpolation interpolation;
-        switch (Main.pref.get("imagery.warp.interpolation", "bilinear")) {
+        switch (Main.pref.get("imagery.warp.pixel-interpolation", "bilinear")) {
             case "nearest_neighbor":
                 interpolation = ImageWarp.Interpolation.NEAREST_NEIGHBOR;
                 break;
@@ -147,9 +147,16 @@ public class ReprojectionTile extends Tile {
                 (en11Current.east() - pbTargetAligned.minEast) / scale,
                 (pbTargetAligned.maxNorth - en11Current.north()) / scale);
 
+        ImageWarp.PointTransform transform;
+        int stride = Main.pref.getInteger("imagery.warp.projection-interpolation.stride", 7);
+        if (stride > 0) {
+            transform = new ImageWarp.GridTransform(pointTransform, stride);
+        } else {
+            transform = pointTransform;
+        }
         BufferedImage imageOut = ImageWarp.warp(
-                imageIn, getDimension(pbTargetAligned, scale), pointTransform,
-                interpolation);
+                imageIn, getDimension(pbTargetAligned, scale),
+                transform, interpolation);
         synchronized (this) {
             this.image = imageOut;
             this.anchor = new TileAnchor(p00Img, p11Img);
