@@ -116,8 +116,8 @@ public class ImageWarp {
     private static int getColor(int x, int y, BufferedImage img) {
         // border strategy: continue with the color of the outermost pixel,
         // but change alpha component to fully translucent
-        int a = Utils.clamp(x, 0, img.getWidth() - 1);// clamp(x, img.getWidth());
-        int b = Utils.clamp(y, 0, img.getHeight() - 1); // clamp(y, img.getHeight());
+        int a = Utils.clamp(x, 0, img.getWidth() - 1);
+        int b = Utils.clamp(y, 0, img.getHeight() - 1);
         int clr = img.getRGB(a, b);
         if (a == x && b == y)
             return clr;
