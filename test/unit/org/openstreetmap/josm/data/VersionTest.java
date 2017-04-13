@@ -1,7 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -26,10 +30,34 @@ public class VersionTest {
     @Test
     public void testGetAgentString() {
         String v = Version.getInstance().getAgentString(false);
-        assertTrue(v.startsWith("JOSM/1.5 ("));
-        assertTrue(v.endsWith(" en)"));
+        assertTrue(v, v.matches("JOSM/1\\.5 \\([1-9][0-9]* SVN en\\)"));
         v = Version.getInstance().getAgentString(true);
-        assertTrue(v.startsWith("JOSM/1.5 ("));
-        assertTrue(v.contains(" en) "));
+        assertTrue(v, v.matches("JOSM/1\\.5 \\([1-9][0-9]* SVN en\\).*"));
+    }
+
+    /**
+     * Unit test of {@link Version#initFromRevisionInfo} - null case.
+     */
+    @Test
+    public void testInitFromRevisionInfoNull() {
+        Version v = new Version();
+        v.initFromRevisionInfo(null);
+        assertEquals(Version.JOSM_UNKNOWN_VERSION, v.getVersion());
+    }
+
+    /**
+     * Unit test of {@link Version#initFromRevisionInfo} - local build.
+     */
+    @Test
+    public void testInitFromRevisionInfoLocal() {
+        Version v = new Version();
+        v.initFromRevisionInfo(new ByteArrayInputStream(("\n" +
+            "Revision: 11885\n" +
+            "Is-Local-Build: true\n" +
+            "Build-Date: 2017-04-12 02:08:29\n"
+                ).getBytes(StandardCharsets.UTF_8)));
+        assertEquals(11885, v.getVersion());
+        assertEquals("11885", v.getVersionString());
+        assertTrue(v.isLocalBuild());
     }
 }
