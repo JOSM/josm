@@ -29,6 +29,19 @@
 	</Match>
 
 	<Match>
+		<Bug pattern="EI_EXPOSE_REP2" />
+		<Class name="org.openstreetmap.josm.tools.CopyList" />
+	</Match>
+	<Match>
+		<Bug pattern="MS_CANNOT_BE_FINAL" />
+		<Class name="org.openstreetmap.josm.Main" />
+	</Match>
+	<Match>
+		<Bug pattern="MS_SHOULD_BE_FINAL" />
+		<Class name="org.openstreetmap.josm.Main" />
+	</Match>
+
+	<Match>
 		<Class name="~com.*" />
 	</Match>
     <Match>
