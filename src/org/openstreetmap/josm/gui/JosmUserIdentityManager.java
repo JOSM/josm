@@ -96,7 +96,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
     }
 
     /**
-     * Remebers the fact that the current JOSM user is partially identified
+     * Remembers the fact that the current JOSM user is partially identified
      * by the user name of its OSM account.
      *
      * @param userName the user name. Must not be null. Must not be empty (whitespace only).
@@ -105,10 +105,11 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
      */
     public void setPartiallyIdentified(String userName) {
         CheckParameterUtil.ensureParameterNotNull(userName, "userName");
-        if (userName.trim().isEmpty())
+        String trimmedUserName = userName.trim();
+        if (trimmedUserName.isEmpty())
             throw new IllegalArgumentException(
                     MessageFormat.format("Expected non-empty value for parameter ''{0}'', got ''{1}''", "userName", userName));
-        this.userName = userName;
+        this.userName = trimmedUserName;
         userInfo = null;
     }
 
@@ -124,10 +125,11 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
      */
     public void setFullyIdentified(String username, UserInfo userinfo) {
         CheckParameterUtil.ensureParameterNotNull(username, "username");
-        if (username.trim().isEmpty())
+        String trimmedUserName = userName.trim();
+        if (trimmedUserName.isEmpty())
             throw new IllegalArgumentException(tr("Expected non-empty value for parameter ''{0}'', got ''{1}''", "userName", userName));
         CheckParameterUtil.ensureParameterNotNull(userinfo, "userinfo");
-        this.userName = username;
+        this.userName = trimmedUserName;
         this.userInfo = userinfo;
     }
 
