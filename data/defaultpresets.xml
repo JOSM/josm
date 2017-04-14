@@ -1093,9 +1093,9 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Bicycle"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Bicycle" />
             <space />
-            <combo key="cycleway" text="Cycleway" values="lane,track,opposite_lane,opposite_track,opposite,share_busway,shared_lane" match="key" />
-            <combo key="cycleway:left" text="Cycleway left" values="lane,track,opposite_lane,opposite_track,opposite,share_busway,shared_lane" />
-            <combo key="cycleway:right" text="Cycleway right" values="lane,track,opposite_lane,opposite_track,opposite,share_busway,shared_lane" />
+            <combo key="cycleway" text="Cycleway" values_context="cycleway" values="lane,track,opposite_lane,opposite_track,opposite,share_busway,shared_lane" match="key" />
+            <combo key="cycleway:left" text="Cycleway left" values_context="cycleway" values="lane,track,opposite_lane,opposite_track,opposite,share_busway,shared_lane" />
+            <combo key="cycleway:right" text="Cycleway right" values_context="cycleway" values="lane,track,opposite_lane,opposite_track,opposite,share_busway,shared_lane" />
             <check key="oneway:bicycle" text="Oneway (bicycle)" />
             <space />
             <optional text="Edit Highway Attributes:">
