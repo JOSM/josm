@@ -321,7 +321,7 @@ public class ElemStyles implements PreferenceChangedListener {
         } else if (osm instanceof Relation) {
             Pair<StyleElementList, Range> p = generateStyles(osm, scale, true);
             if (drawMultipolygon && ((Relation) osm).isMultipolygon()
-                    && !Utils.exists(p.a, AreaElement.class) && Main.pref.getBoolean("multipolygon.deprecated.outerstyle", true)) {
+                    && !Utils.exists(p.a, AreaElement.class) && Main.pref.getBoolean("multipolygon.deprecated.outerstyle", false)) {
                 // look at outer ways to find area style
                 Multipolygon multipolygon = MultipolygonCache.getInstance().get((Relation) osm);
                 for (Way w : multipolygon.getOuterWays()) {
