@@ -91,6 +91,7 @@ public final class User {
      */
     public static synchronized void clearUserMap() {
         userMap.clear();
+        lastUser = null;
     }
 
     /**
