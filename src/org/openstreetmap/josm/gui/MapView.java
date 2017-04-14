@@ -254,7 +254,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     public MapView(MainLayerManager layerManager, final ViewportData viewportData) {
         this.layerManager = layerManager;
         initialViewport = viewportData;
-        layerManager.addLayerChangeListener(this, true);
+        layerManager.addAndFireLayerChangeListener(this);
         layerManager.addActiveLayerChangeListener(this);
         Main.pref.addPreferenceChangeListener(this);
 
@@ -745,7 +745,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
      * Destroy this map view panel. Should be called once when it is not needed any more.
      */
     public void destroy() {
-        layerManager.removeLayerChangeListener(this, true);
+        layerManager.removeAndFireLayerChangeListener(this);
         layerManager.removeActiveLayerChangeListener(this);
         Main.pref.removePreferenceChangeListener(this);
         DataSet.removeSelectionListener(repaintSelectionChangedListener);

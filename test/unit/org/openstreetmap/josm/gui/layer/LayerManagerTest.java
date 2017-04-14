@@ -158,6 +158,7 @@ public class LayerManagerTest {
         }
     }
 
+    /** the tested layer manager */
     protected LayerManager layerManager;
 
     /**
@@ -396,7 +397,7 @@ public class LayerManagerTest {
     }
 
     /**
-     * {@link LayerManager#addLayerChangeListener(LayerChangeListener, boolean)} fires fake add events
+     * {@link LayerManager#addAndFireLayerChangeListener(LayerChangeListener)} fires fake add events
      */
     @Test
     public void testAddLayerChangeListenerFire() {
@@ -405,7 +406,7 @@ public class LayerManagerTest {
         TestLayer layer2 = new TestLayer();
         layerManager.addLayer(layer1);
         layerManager.addLayer(layer2);
-        layerManager.addLayerChangeListener(new LayerChangeListener() {
+        layerManager.addAndFireLayerChangeListener(new LayerChangeListener() {
             @Override
             public void layerRemoving(LayerRemoveEvent e) {
                 fail();
@@ -420,7 +421,7 @@ public class LayerManagerTest {
             public void layerAdded(LayerAddEvent e) {
                 fired.add(e.getAddedLayer());
             }
-        }, true);
+        });
 
         assertEquals(Arrays.asList(layer1, layer2), fired);
     }
@@ -451,7 +452,7 @@ public class LayerManagerTest {
     }
 
     /**
-     * {@link LayerManager#removeLayerChangeListener(LayerChangeListener, boolean)} fires fake remove events
+     * {@link LayerManager#removeAndFireLayerChangeListener(LayerChangeListener)} fires fake remove events
      */
     @Test
     public void testRemoveLayerChangeListenerFire() {
@@ -476,8 +477,8 @@ public class LayerManagerTest {
                 fail();
             }
         };
-        layerManager.addLayerChangeListener(listener, false);
-        layerManager.removeLayerChangeListener(listener, true);
+        layerManager.addLayerChangeListener(listener);
+        layerManager.removeAndFireLayerChangeListener(listener);
 
         assertEquals(Arrays.asList(layer1, layer2), fired);
     }

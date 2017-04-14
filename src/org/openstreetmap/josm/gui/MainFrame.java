@@ -93,7 +93,7 @@ public class MainFrame extends JFrame {
 
         // This listener is never removed, since the main frame exists forever.
         Main.getLayerManager().addActiveLayerChangeListener(e -> refreshTitle());
-        Main.getLayerManager().addLayerChangeListener(new ManageLayerListeners(), true);
+        Main.getLayerManager().addAndFireLayerChangeListener(new ManageLayerListeners());
 
         refreshTitle();
 
