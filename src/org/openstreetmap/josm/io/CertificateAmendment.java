@@ -40,13 +40,11 @@ import org.openstreetmap.josm.tools.Utils;
 public final class CertificateAmendment {
 
     private static final String[] CERT_AMEND = {
-        "resource://data/security/DST_Root_CA_X3.pem",
-        "resource://data/security/StartCom_Certification_Authority.pem"
+        "resource://data/security/DST_Root_CA_X3.pem"
     };
 
     private static final String[] SHA_HASHES = {
-        "0687260331a72403d909f105e69bcf0d32e1bd2493ffc6d9206d11bcd6770739",
-        "c766a9bef2d4071c863a31aa4920e813b2d198608cb7b7cfe21143b836df09ea"
+        "0687260331a72403d909f105e69bcf0d32e1bd2493ffc6d9206d11bcd6770739"
     };
 
     private CertificateAmendment() {
