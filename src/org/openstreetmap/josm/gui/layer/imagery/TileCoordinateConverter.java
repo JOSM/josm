@@ -5,6 +5,7 @@ import java.awt.Shape;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Objects;
 
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.TileXY;
@@ -34,11 +35,12 @@ public class TileCoordinateConverter {
      * @param mapView The map view.
      * @param tileSource The tile source to use when converting coordinates.
      * @param settings displacement settings.
+     * @throws NullPointerException if one argument is null
      */
     public TileCoordinateConverter(MapView mapView, TileSource tileSource, TileSourceDisplaySettings settings) {
-        this.mapView = mapView;
-        this.tileSource = tileSource;
-        this.settings = settings;
+        this.mapView = Objects.requireNonNull(mapView, "mapView");
+        this.tileSource = Objects.requireNonNull(tileSource, "tileSource");
+        this.settings = Objects.requireNonNull(settings, "settings");
     }
 
     private MapViewPoint pos(ICoordinate ll) {
