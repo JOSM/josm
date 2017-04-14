@@ -67,6 +67,8 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class SelectAction extends MapMode implements ModifierListener, KeyPressReleaseListener, SelectionEnded {
 
+    private static final String NORMAL = "normal";
+
     /**
      * Select action mode.
      * @since 7543
@@ -84,21 +86,22 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
 
     // contains all possible cases the cursor can be in the SelectAction
     private enum SelectActionCursor {
-        rect("normal", /* ICON(cursor/modifier/) */ "selection"),
-        rect_add("normal", /* ICON(cursor/modifier/) */ "select_add"),
-        rect_rm("normal", /* ICON(cursor/modifier/) */ "select_remove"),
-        way("normal", /* ICON(cursor/modifier/) */ "select_way"),
-        way_add("normal", /* ICON(cursor/modifier/) */ "select_way_add"),
-        way_rm("normal", /* ICON(cursor/modifier/) */ "select_way_remove"),
-        node("normal", /* ICON(cursor/modifier/) */ "select_node"),
-        node_add("normal", /* ICON(cursor/modifier/) */ "select_node_add"),
-        node_rm("normal", /* ICON(cursor/modifier/) */ "select_node_remove"),
-        virtual_node("normal", /* ICON(cursor/modifier/) */ "addnode"),
-        scale(/* ICON(cursor/) */ "scale", null),
-        rotate(/* ICON(cursor/) */ "rotate", null),
-        merge(/* ICON(cursor/) */ "crosshair", null),
-        lasso("normal", /* ICON(cursor/modifier/) */ "rope"),
-        merge_to_node("crosshair", /* ICON(cursor/modifier/) */ "joinnode"),
+
+        rect(NORMAL, "selection"),
+        rect_add(NORMAL, "select_add"),
+        rect_rm(NORMAL, "select_remove"),
+        way(NORMAL, "select_way"),
+        way_add(NORMAL, "select_way_add"),
+        way_rm(NORMAL, "select_way_remove"),
+        node(NORMAL, "select_node"),
+        node_add(NORMAL, "select_node_add"),
+        node_rm(NORMAL, "select_node_remove"),
+        virtual_node(NORMAL, "addnode"),
+        scale("scale", null),
+        rotate("rotate", null),
+        merge("crosshair", null),
+        lasso(NORMAL, "rope"),
+        merge_to_node("crosshair", "joinnode"),
         move(Cursor.MOVE_CURSOR);
 
         private final Cursor c;

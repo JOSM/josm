@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.openstreetmap.josm.data.validation.tests.CrossingWays.HIGHWAY;
+import static org.openstreetmap.josm.data.validation.tests.CrossingWays.RAILWAY;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.geom.Area;
@@ -56,7 +58,7 @@ public abstract class UnconnectedWays extends Test {
 
         @Override
         public boolean isPrimitiveUsable(OsmPrimitive p) {
-            return super.isPrimitiveUsable(p) && p.hasKey("highway");
+            return super.isPrimitiveUsable(p) && p.hasKey(HIGHWAY);
         }
     }
 
@@ -180,9 +182,9 @@ public abstract class UnconnectedWays extends Test {
                     if (en == null || !s.highway || !endnodesHighway.contains(en)) {
                         continue;
                     }
-                    if (en.hasTag("highway", "turning_circle", "bus_stop")
+                    if (en.hasTag(HIGHWAY, "turning_circle", "bus_stop")
                             || en.hasTag("amenity", "parking_entrance")
-                            || en.hasTag("railway", "buffer_stop")
+                            || en.hasTag(RAILWAY, "buffer_stop")
                             || en.isKeyTrue("noexit")
                             || en.hasKey("entrance", "barrier")) {
                         continue;
@@ -301,8 +303,8 @@ public abstract class UnconnectedWays extends Test {
 
         MyWaySegment(Way w, Node n1, Node n2) {
             this.w = w;
-            String railway = w.get("railway");
-            String highway = w.get("highway");
+            String railway = w.get(RAILWAY);
+            String highway = w.get(HIGHWAY);
             this.isAbandoned = "abandoned".equals(railway) || w.isKeyTrue("disused");
             this.highway = (highway != null || railway != null) && !isAbandoned;
             this.isBoundary = !this.highway && w.hasTag("boundary", "administrative");
@@ -448,11 +450,11 @@ public abstract class UnconnectedWays extends Test {
                 // the time very near the associated highway, which is perfectly normal, see #9332
                 && !w.hasKey("addr:interpolation")
                 // similarly for public transport platforms
-                && !w.hasTag("highway", "platform") && !w.hasTag("railway", "platform")
+                && !w.hasTag(HIGHWAY, "platform") && !w.hasTag(RAILWAY, "platform")
                 ) {
             ways.addAll(getWaySegments(w));
             QuadBuckets<Node> set = endnodes;
-            if (w.hasKey("highway", "railway")) {
+            if (w.hasKey(HIGHWAY, RAILWAY)) {
                 set = endnodesHighway;
             }
             addNode(w.firstNode(), set);

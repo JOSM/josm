@@ -26,6 +26,8 @@ import org.openstreetmap.josm.data.osm.Tag;
  */
 public class FixDataHook implements UploadHook {
 
+    private static final String ONEWAY = "oneway";
+
     /**
      * List of checks to run on data
      */
@@ -39,10 +41,10 @@ public class FixDataHook implements UploadHook {
         deprecated.add(new FixDataSpace());
         deprecated.add(new FixDataKey("color",            "colour"));
         deprecated.add(new FixDataTag("highway", "ford",  "ford",    "yes"));
-        deprecated.add(new FixDataTag("oneway",  "false", "oneway",  "no"));
-        deprecated.add(new FixDataTag("oneway",  "0",     "oneway",  "no"));
-        deprecated.add(new FixDataTag("oneway",  "true",  "oneway",  "yes"));
-        deprecated.add(new FixDataTag("oneway",  "1",     "oneway",  "yes"));
+        deprecated.add(new FixDataTag(ONEWAY,    "false",  ONEWAY,   "no"));
+        deprecated.add(new FixDataTag(ONEWAY,    "0",      ONEWAY,   "no"));
+        deprecated.add(new FixDataTag(ONEWAY,    "true",   ONEWAY,   "yes"));
+        deprecated.add(new FixDataTag(ONEWAY,    "1",      ONEWAY,   "yes"));
         deprecated.add(new FixDataTag("highway", "stile", "barrier", "stile"));
         // CHECKSTYLE.ON: SingleSpaceSeparator
         deprecated.add((keys, osm) -> {

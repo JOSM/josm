@@ -31,9 +31,9 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 public abstract class CrossingWays extends Test {
     protected static final int CROSSING_WAYS = 601;
 
-    private static final String HIGHWAY = "highway";
-    private static final String RAILWAY = "railway";
-    private static final String WATERWAY = "waterway";
+    static final String HIGHWAY = "highway";
+    static final String RAILWAY = "railway";
+    static final String WATERWAY = "waterway";
 
     /** All way segments, grouped by cells */
     private final Map<Point2D, List<WaySegment>> cellSegments = new HashMap<>(1000);

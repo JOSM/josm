@@ -105,6 +105,8 @@ import org.xml.sax.SAXException;
  */
 public class Preferences {
 
+    private static final String COLOR_PREFIX = "color.";
+
     private static final String[] OBSOLETE_PREF_KEYS = {
       "hdop.factor", /* remove entry after April 2017 */
       "imagery.layers.addedIds" /* remove entry after June 2017 */
@@ -500,7 +502,7 @@ public class Preferences {
     public synchronized Map<String, String> getAllColors() {
         final Map<String, String> all = new TreeMap<>();
         for (final Entry<String, Setting<?>> e : defaultsMap.entrySet()) {
-            if (e.getKey().startsWith("color.") && e.getValue() instanceof StringSetting) {
+            if (e.getKey().startsWith(COLOR_PREFIX) && e.getValue() instanceof StringSetting) {
                 StringSetting d = (StringSetting) e.getValue();
                 if (d.getValue() != null) {
                     all.put(e.getKey().substring(6), d.getValue());
@@ -508,7 +510,7 @@ public class Preferences {
             }
         }
         for (final Entry<String, Setting<?>> e : settingsMap.entrySet()) {
-            if (e.getKey().startsWith("color.") && (e.getValue() instanceof StringSetting)) {
+            if (e.getKey().startsWith(COLOR_PREFIX) && (e.getValue() instanceof StringSetting)) {
                 all.put(e.getKey().substring(6), ((StringSetting) e.getValue()).getValue());
             }
         }
@@ -863,7 +865,7 @@ public class Preferences {
     public synchronized Color getColor(String colName, String specName, Color def) {
         String colKey = ColorProperty.getColorKey(colName);
         registerColor(colKey, colName);
-        String colStr = specName != null ? get("color."+specName) : "";
+        String colStr = specName != null ? get(COLOR_PREFIX+specName) : "";
         if (colStr.isEmpty()) {
             colStr = get(colKey, ColorHelper.color2html(def, true));
         }
@@ -887,13 +889,13 @@ public class Preferences {
     }
 
     public synchronized Color getDefaultColor(String colKey) {
-        StringSetting col = Utils.cast(defaultsMap.get("color."+colKey), StringSetting.class);
+        StringSetting col = Utils.cast(defaultsMap.get(COLOR_PREFIX+colKey), StringSetting.class);
         String colStr = col == null ? null : col.getValue();
         return colStr == null || colStr.isEmpty() ? null : ColorHelper.html2color(colStr);
     }
 
     public synchronized boolean putColor(String colKey, Color val) {
-        return put("color."+colKey, val != null ? ColorHelper.color2html(val, true) : null);
+        return put(COLOR_PREFIX+colKey, val != null ? ColorHelper.color2html(val, true) : null);
     }
 
     public synchronized int getInteger(String key, int def) {
@@ -1531,9 +1533,9 @@ public class Preferences {
 
     private void migrateOldColorKeys() {
         settingsMap.keySet().stream()
-                .filter(key -> key.startsWith("color."))
+                .filter(key -> key.startsWith(COLOR_PREFIX))
                 .flatMap(key -> {
-                    final String newKey = ColorProperty.getColorKey(key.substring("color.".length()));
+                    final String newKey = ColorProperty.getColorKey(key.substring(COLOR_PREFIX.length()));
                     return key.equals(newKey) || settingsMap.containsKey(newKey)
                             ? Stream.empty()
                             : Stream.of(new AbstractMap.SimpleImmutableEntry<>(key, newKey));

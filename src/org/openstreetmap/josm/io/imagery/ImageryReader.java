@@ -97,6 +97,11 @@ public class ImageryReader implements Closeable {
     }
 
     private static class Parser extends DefaultHandler {
+        private static final String MAX_ZOOM = "max-zoom";
+        private static final String MIN_ZOOM = "min-zoom";
+        private static final String TILE_SIZE = "tile-size";
+        private static final String TRUE = "true";
+
         private StringBuilder accumulator = new StringBuilder();
 
         private Stack<State> states;
@@ -154,7 +159,7 @@ public class ImageryReader implements Closeable {
                     noTileChecksums = new MultiMap<>();
                     metadataHeaders = new HashMap<>();
                     String best = atts.getValue("eli-best");
-                    if ("true".equals(best)) {
+                    if (TRUE.equals(best)) {
                         entry.setBestMarked(true);
                     }
                 }
@@ -163,9 +168,9 @@ public class ImageryReader implements Closeable {
                 if (Arrays.asList(new String[] {
                         "type",
                         "url",
-                        "min-zoom",
-                        "max-zoom",
-                        "tile-size",
+                        MIN_ZOOM,
+                        MAX_ZOOM,
+                        TILE_SIZE,
                 }).contains(qName)) {
                     newState = State.MIRROR_ATTRIBUTE;
                     lang = atts.getValue("lang");
@@ -183,8 +188,8 @@ public class ImageryReader implements Closeable {
                         "default",
                         "url",
                         "eula",
-                        "min-zoom",
-                        "max-zoom",
+                        MIN_ZOOM,
+                        MAX_ZOOM,
                         "attribution-text",
                         "attribution-url",
                         "logo-image",
@@ -194,7 +199,7 @@ public class ImageryReader implements Closeable {
                         "country-code",
                         "icon",
                         "date",
-                        "tile-size",
+                        TILE_SIZE,
                         "valid-georeference",
                 }).contains(qName)) {
                     newState = State.ENTRY_ATTRIBUTE;
@@ -263,7 +268,7 @@ public class ImageryReader implements Closeable {
                 newState = State.UNKNOWN;
             }
             states.push(newState);
-            if (newState == State.UNKNOWN && "true".equals(atts.getValue("mandatory"))) {
+            if (newState == State.UNKNOWN && TRUE.equals(atts.getValue("mandatory"))) {
                 skipEntry = true;
             }
         }
@@ -318,8 +323,8 @@ public class ImageryReader implements Closeable {
                     case "url":
                         mirrorEntry.setUrl(accumulator.toString());
                         break;
-                    case "min-zoom":
-                    case "max-zoom":
+                    case MIN_ZOOM:
+                    case MAX_ZOOM:
                         Integer val = null;
                         try {
                             val = Integer.valueOf(accumulator.toString());
@@ -329,14 +334,14 @@ public class ImageryReader implements Closeable {
                         if (val == null) {
                             mirrorEntry = null;
                         } else {
-                            if ("min-zoom".equals(qName)) {
+                            if (MIN_ZOOM.equals(qName)) {
                                 mirrorEntry.setDefaultMinZoom(val);
                             } else {
                                 mirrorEntry.setDefaultMaxZoom(val);
                             }
                         }
                         break;
-                    case "tile-size":
+                    case TILE_SIZE:
                         Integer tileSize = null;
                         try {
                             tileSize = Integer.valueOf(accumulator.toString());
@@ -382,7 +387,7 @@ public class ImageryReader implements Closeable {
                     break;
                 case "default":
                     switch (accumulator.toString()) {
-                    case "true":
+                    case TRUE:
                         entry.setDefaultEntry(true);
                         break;
                     case "false":
@@ -398,8 +403,8 @@ public class ImageryReader implements Closeable {
                 case "eula":
                     entry.setEulaAcceptanceRequired(accumulator.toString());
                     break;
-                case "min-zoom":
-                case "max-zoom":
+                case MIN_ZOOM:
+                case MAX_ZOOM:
                     Integer val = null;
                     try {
                         val = Integer.valueOf(accumulator.toString());
@@ -409,7 +414,7 @@ public class ImageryReader implements Closeable {
                     if (val == null) {
                         skipEntry = true;
                     } else {
-                        if ("min-zoom".equals(qName)) {
+                        if (MIN_ZOOM.equals(qName)) {
                             entry.setDefaultMinZoom(val);
                         } else {
                             entry.setDefaultMaxZoom(val);
@@ -440,7 +445,7 @@ public class ImageryReader implements Closeable {
                 case "icon":
                     entry.setIcon(accumulator.toString());
                     break;
-                case "tile-size":
+                case TILE_SIZE:
                     Integer tileSize = null;
                     try {
                         tileSize = Integer.valueOf(accumulator.toString());
