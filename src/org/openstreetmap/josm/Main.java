@@ -1301,25 +1301,24 @@ public abstract class Main {
     }
 
     /**
-     * Registers a new {@code MapFrameListener} that will be notified of MapFrame changes
+     * Registers a new {@code MapFrameListener} that will be notified of MapFrame changes.
+     * <p>
+     * It will fire an initial mapFrameInitialized event when the MapFrame is present.
+     * Otherwise will only fire when the MapFrame is created or destroyed.
      * @param listener The MapFrameListener
-     * @param fireWhenMapViewPresent If true, will fire an initial mapFrameInitialized event
-     * when the MapFrame is present. Otherwise will only fire when the MapFrame is created
-     * or destroyed.
      * @return {@code true} if the listeners collection changed as a result of the call
+     * @see #addMapFrameListener
+     * @since 11904
      */
-    public static boolean addMapFrameListener(MapFrameListener listener, boolean fireWhenMapViewPresent) {
-        if (fireWhenMapViewPresent) {
-            return mainPanel.addAndFireMapFrameListener(listener);
-        } else {
-            return mainPanel.addMapFrameListener(listener);
-        }
+    public static boolean addAndFireMapFrameListener(MapFrameListener listener) {
+        return mainPanel.addAndFireMapFrameListener(listener);
     }
 
     /**
      * Registers a new {@code MapFrameListener} that will be notified of MapFrame changes
      * @param listener The MapFrameListener
      * @return {@code true} if the listeners collection changed as a result of the call
+     * @see #addAndFireMapFrameListener
      * @since 5957
      */
     public static boolean addMapFrameListener(MapFrameListener listener) {

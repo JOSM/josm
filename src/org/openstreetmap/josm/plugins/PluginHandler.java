@@ -280,6 +280,10 @@ public final class PluginHandler {
         return pluginList.stream().map(PluginProxy::getPluginInformation).collect(Collectors.toList());
     }
 
+    /**
+     * Returns all ClassLoaders whose resource should be searched.
+     * @return all ClassLoaders whose resource should be searched
+     */
     public static Collection<ClassLoader> getResourceClassLoaders() {
         return Collections.unmodifiableCollection(sources);
     }
@@ -715,7 +719,7 @@ public final class PluginHandler {
                 Main.info(tr("loading plugin ''{0}'' (version {1})", plugin.name, plugin.localversion));
                 PluginProxy pluginProxy = plugin.load(klass);
                 pluginList.add(pluginProxy);
-                Main.addMapFrameListener(pluginProxy, true);
+                Main.addAndFireMapFrameListener(pluginProxy);
             }
             msg = null;
         } catch (PluginException e) {
