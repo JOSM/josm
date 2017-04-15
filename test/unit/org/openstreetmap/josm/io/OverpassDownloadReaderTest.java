@@ -4,6 +4,8 @@ package org.openstreetmap.josm.io;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.regex.Matcher;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.Bounds;
@@ -85,7 +87,9 @@ public class OverpassDownloadReaderTest {
     @Test
     public void testOutputFormatStatement() {
         for (OverpassOutpoutFormat oof : OverpassOutpoutFormat.values()) {
-            assertTrue(OverpassDownloadReader.OUTPUT_FORMAT_STATEMENT.matcher("[out:"+oof.getDirective()+"]").matches());
+            Matcher m = OverpassDownloadReader.OUTPUT_FORMAT_STATEMENT.matcher("[out:"+oof.getDirective()+"]");
+            assertTrue(m.matches());
+            assertEquals(oof.getDirective(), m.group(1));
         }
 
         assertTrue(OverpassDownloadReader.OUTPUT_FORMAT_STATEMENT.matcher(
