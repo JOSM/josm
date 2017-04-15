@@ -584,6 +584,7 @@ public class OsmReader extends AbstractReader {
         }
     }
 
+    @Override
     protected DataSet doParseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
         if (progressMonitor == null) {
             progressMonitor = NullProgressMonitor.INSTANCE;

@@ -98,7 +98,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
 
     static final Pattern OUTPUT_FORMAT_STATEMENT = Pattern.compile(".*\\[out:([a-z]{3,})\\].*", Pattern.DOTALL);
 
-    static final Map<OverpassOutpoutFormat, Class<? extends OsmReader>> outputFormatReaders = new ConcurrentHashMap<>();
+    static final Map<OverpassOutpoutFormat, Class<? extends AbstractReader>> outputFormatReaders = new ConcurrentHashMap<>();
 
     final String overpassServer;
     final String overpassQuery;
@@ -122,8 +122,8 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
      * @param readerClass OSM reader class
      * @return the previous value associated with {@code format}, or {@code null} if there was no mapping
      */
-    public static final Class<? extends OsmReader> registerOverpassOutpoutFormatReader(
-            OverpassOutpoutFormat format, Class<? extends OsmReader> readerClass) {
+    public static final Class<? extends AbstractReader> registerOverpassOutpoutFormatReader(
+            OverpassOutpoutFormat format, Class<? extends AbstractReader> readerClass) {
         return outputFormatReaders.put(Objects.requireNonNull(format), Objects.requireNonNull(readerClass));
     }
 
@@ -229,10 +229,10 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
 
     @Override
     protected DataSet parseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
-        OsmReader reader = null;
+        AbstractReader reader = null;
         Matcher m = OUTPUT_FORMAT_STATEMENT.matcher(overpassQuery);
         if (m.matches()) {
-            Class<? extends OsmReader> readerClass = outputFormatReaders.get(OverpassOutpoutFormat.from(m.group(1)));
+            Class<? extends AbstractReader> readerClass = outputFormatReaders.get(OverpassOutpoutFormat.from(m.group(1)));
             if (readerClass != null) {
                 try {
                     reader = readerClass.getConstructor().newInstance();
