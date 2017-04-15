@@ -52,7 +52,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
      * Possible Overpass API output format, with the {@code [out:<directive>]} statement.
      * @since 11916
      */
-    enum OverpassOutpoutFormat {
+    public enum OverpassOutpoutFormat {
         /** Default output format: plain OSM XML */
         OSM_XML("xml"),
         /** OSM JSON format (not GeoJson) */
