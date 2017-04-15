@@ -14,7 +14,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Helper class for handling OGC GetCapabilities documents
- *
+ * @since 10993
  */
 public final class GetCapabilitiesParseHelper {
     enum TransferMode {

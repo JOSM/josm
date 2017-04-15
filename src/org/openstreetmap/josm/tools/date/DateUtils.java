@@ -58,7 +58,7 @@ public final class DateUtils {
     /**
      * Constructs a new {@code DateUtils}.
      */
-    protected DateUtils() {
+    private DateUtils() {
         // Hide default constructor for utils classes
     }
 

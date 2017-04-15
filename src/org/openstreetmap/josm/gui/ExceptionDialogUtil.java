@@ -37,6 +37,7 @@ public final class ExceptionDialogUtil {
      * just static utility functions. no constructor
      */
     private ExceptionDialogUtil() {
+        // Hide default constructor for utility classes
     }
 
     /**

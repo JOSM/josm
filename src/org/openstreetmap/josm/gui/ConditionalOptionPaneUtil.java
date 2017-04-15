@@ -44,7 +44,9 @@ public final class ConditionalOptionPaneUtil {
     /**
      * this is a static utility class only
      */
-    private ConditionalOptionPaneUtil() {}
+    private ConditionalOptionPaneUtil() {
+        // Hide default constructor for utility classes
+    }
 
     /**
      * Returns the preference value for the preference key "message." + <code>prefKey</code> + ".value".

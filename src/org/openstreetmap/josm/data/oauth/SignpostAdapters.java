@@ -17,6 +17,7 @@ import oauth.signpost.AbstractOAuthProvider;
 public final class SignpostAdapters {
 
     private SignpostAdapters() {
+        // Hide constructor for utility classes
     }
 
     /**

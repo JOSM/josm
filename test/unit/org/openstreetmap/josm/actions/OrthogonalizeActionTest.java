@@ -22,6 +22,7 @@ import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests for class {@link OsmDataLayer}.
@@ -33,7 +34,7 @@ public class OrthogonalizeActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
+    public JOSMTestRules test = new JOSMTestRules().projection();
 
     @Test(expected = OrthogonalizeAction.InvalidUserInputException.class)
     public void testNoSelection() throws Exception {
@@ -81,6 +82,15 @@ public class OrthogonalizeActionTest {
         assertEquals(new LatLon(8.5335208, 55.7304333), nodes.get(1).getCoor().getRoundedToOsmPrecision());
         assertEquals(new LatLon(8.5329143, 55.7312973), nodes.get(2).getCoor().getRoundedToOsmPrecision());
         assertEquals(new LatLon(8.5320550, 55.7306805), nodes.get(3).getCoor().getRoundedToOsmPrecision());
+    }
+
+    /**
+     * Tests that {@code OrthogonalizeAction.EN} satisfies utility class criterias.
+     * @throws ReflectiveOperationException if an error occurs
+     */
+    @Test
+    public void testUtilityClass() throws ReflectiveOperationException {
+        UtilityClassTestUtil.assertUtilityClassWellDefined(OrthogonalizeAction.EN.class);
     }
 
     DataSet performTest(String... search) throws Exception {

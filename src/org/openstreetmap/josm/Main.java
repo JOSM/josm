@@ -1220,6 +1220,10 @@ public abstract class Main {
 
         private static MasterWindowListener INSTANCE;
 
+        /**
+         * Returns the unique {@code MasterWindowListener} instance.
+         * @return the unique {@code MasterWindowListener} instance
+         */
         public static synchronized MasterWindowListener getInstance() {
             if (INSTANCE == null) {
                 INSTANCE = new MasterWindowListener();

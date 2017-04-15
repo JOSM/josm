@@ -33,6 +33,7 @@ public final class ClipboardUtils {
     private static Clipboard clipboard;
 
     private ClipboardUtils() {
+        // Hide default constructor for utility classes
     }
 
     /**

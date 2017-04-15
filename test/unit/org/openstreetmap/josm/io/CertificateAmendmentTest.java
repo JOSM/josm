@@ -8,9 +8,12 @@ import java.net.URLConnection;
 import javax.net.ssl.SSLHandshakeException;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests of {@link CertificateAmendment} class.
@@ -18,11 +21,19 @@ import org.openstreetmap.josm.JOSMFixture;
 public class CertificateAmendmentTest {
 
     /**
-     * Setup test.
+     * Setup rule
      */
-    @BeforeClass
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules();
+
+    /**
+     * Tests that {@code CertificateAmendment} satisfies utility class criterias.
+     * @throws ReflectiveOperationException if an error occurs
+     */
+    @Test
+    public void testUtilityClass() throws ReflectiveOperationException {
+        UtilityClassTestUtil.assertUtilityClassWellDefined(CertificateAmendment.class);
     }
 
     /**
@@ -57,8 +68,8 @@ public class CertificateAmendmentTest {
      */
     @Test
     public void testStartSSL() throws IOException {
-        connect("https://map.dgpsonline.eu", true);
-        connect("https://www.startssl.com", true);
+        // StartSSL is untrusted
+        connect("https://www.startssl.com", false);
     }
 
     /**

@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests for class {@link JCSCacheManager}.
@@ -27,6 +28,15 @@ public class JCSCacheManagerTest {
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
+
+    /**
+     * Tests that {@code JCSCacheManager} satisfies utility class criterias.
+     * @throws ReflectiveOperationException if an error occurs
+     */
+    @Test
+    public void testUtilityClass() throws ReflectiveOperationException {
+        UtilityClassTestUtil.assertUtilityClassWellDefined(JCSCacheManager.class);
+    }
 
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/12054">Bug #12054</a>.

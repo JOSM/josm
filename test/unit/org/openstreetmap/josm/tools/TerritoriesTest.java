@@ -9,6 +9,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests of {@link Territories} class.
@@ -22,10 +23,19 @@ public class TerritoriesTest {
     public JOSMTestRules rules = new JOSMTestRules().platform().projection().commands();
 
     /**
-     * Test of {@link Territories#getIso3166Codes} method.
+     * Tests that {@code Territories} satisfies utility class criterias.
+     * @throws ReflectiveOperationException if an error occurs
      */
     @Test
-    public void testGetIso3166Codes() {
+    public void testUtilityClass() throws ReflectiveOperationException {
+        UtilityClassTestUtil.assertUtilityClassWellDefined(Territories.class);
+    }
+
+    /**
+     * Test of {@link Territories#isIso3166Code} method.
+     */
+    @Test
+    public void testIsIso3166Code() {
         check("Paris", new LatLon(48.8567, 2.3508), "EU", "FR", "FX");
     }
 
