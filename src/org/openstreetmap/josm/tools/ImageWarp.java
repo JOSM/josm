@@ -10,6 +10,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.openstreetmap.josm.Main;
+
 /**
  * Image warping algorithm.
  *
@@ -43,7 +45,7 @@ public class ImageWarp {
 
         private final Map<Integer, Map<Integer, Point2D>> cache;
 
-        private static final boolean CONSISTENCY_TEST = false;
+        private final boolean consistencyTest;
         private final Set<Integer> deletedRows;
 
         /**
@@ -55,7 +57,8 @@ public class ImageWarp {
             this.trfm = trfm;
             this.stride = stride;
             this.cache = new HashMap<>();
-            if (CONSISTENCY_TEST) {
+            this.consistencyTest = Main.isDebugEnabled();
+            if (consistencyTest) {
                 deletedRows = new HashSet<>();
             } else {
                 deletedRows = null;
@@ -90,16 +93,16 @@ public class ImageWarp {
         }
 
         private Map<Integer, Point2D> getRow(int yIdx) {
-            cleanUp(yIdx - 2);
+            cleanUp(yIdx - 3);
             Map<Integer, Point2D> row = cache.get(yIdx);
             if (row == null) {
                 row = new HashMap<>();
                 cache.put(yIdx, row);
-                if (CONSISTENCY_TEST) {
+                if (consistencyTest) {
                     // should not create a row that has been deleted before
                     if (deletedRows.contains(yIdx)) throw new AssertionError();
-                    // only ever cache 2 rows at once
-                    if (cache.size() > 2) throw new AssertionError();
+                    // only ever cache 3 rows at once
+                    if (cache.size() > 3) throw new AssertionError();
                 }
             }
             return row;
@@ -108,7 +111,7 @@ public class ImageWarp {
         // remove rows from cache that will no longer be used
         private void cleanUp(int yIdx) {
             Map<Integer, Point2D> del = cache.remove(yIdx);
-            if (CONSISTENCY_TEST && del != null) {
+            if (consistencyTest && del != null) {
                 // should delete each row only once
                 if (deletedRows.contains(yIdx)) throw new AssertionError();
                 deletedRows.add(yIdx);
