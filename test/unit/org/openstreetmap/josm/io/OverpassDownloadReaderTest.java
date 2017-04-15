@@ -2,11 +2,13 @@
 package org.openstreetmap.josm.io;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.preferences.server.OverpassServerPreference;
+import org.openstreetmap.josm.io.OverpassDownloadReader.OverpassOutpoutFormat;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.OverpassTurboQueryWizard;
 import org.openstreetmap.josm.tools.Utils;
@@ -75,5 +77,25 @@ public class OverpassDownloadReaderTest {
     public void testGeocodeUnknownArea() {
         final String query = OverpassDownloadReader.expandExtendedQueries("{{geocodeArea:foo-bar-baz-does-not-exist}}");
         assertEquals("// Failed to evaluate {{geocodeArea:foo-bar-baz-does-not-exist}}\n", query);
+    }
+
+    /**
+     * Tests evaluating the overpass output format statements.
+     */
+    @Test
+    public void testOutputFormatStatement() {
+        for (OverpassOutpoutFormat oof : OverpassOutpoutFormat.values()) {
+            assertTrue(OverpassDownloadReader.OUTPUT_FORMAT_STATEMENT.matcher("[out:"+oof.getDirective()+"]").matches());
+        }
+
+        assertTrue(OverpassDownloadReader.OUTPUT_FORMAT_STATEMENT.matcher(
+                "[out:pbf][timeout:25][bbox:{{bbox}}];\n" +
+                "(\n" +
+                "  node[\"amenity\"=\"pharmacy\"];\n" +
+                "  way[\"amenity\"=\"pharmacy\"];\n" +
+                "  relation[\"amenity\"=\"pharmacy\"];\n" +
+                ");\n" +
+                "(._;>;);\n" +
+                "out meta;").matches());
     }
 }
