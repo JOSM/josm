@@ -42,7 +42,7 @@ public class CertificateAmendmentTest {
      */
     @Test
     public void testDefault() throws IOException {
-        // something that is neither DST nor StartSSL
+        // something that is not embedded
         connect("https://google.com", true);
     }
 
@@ -60,16 +60,6 @@ public class CertificateAmendmentTest {
         connect("https://letsencrypt.org", true);
         // signed by letsencrypt's cross-sign CA, requires SNI
         connect("https://acme-v01.api.letsencrypt.org", true);
-    }
-
-    /**
-     * Test <a href="https://www.startssl.com">StartSSL</a>.
-     * @throws IOException in case of I/O error
-     */
-    @Test
-    public void testStartSSL() throws IOException {
-        // StartSSL is untrusted
-        connect("https://www.startssl.com", false);
     }
 
     /**
