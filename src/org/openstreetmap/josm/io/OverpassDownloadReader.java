@@ -235,7 +235,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
             Class<? extends AbstractReader> readerClass = outputFormatReaders.get(OverpassOutpoutFormat.from(m.group(1)));
             if (readerClass != null) {
                 try {
-                    reader = readerClass.getConstructor().newInstance();
+                    reader = readerClass.getDeclaredConstructor().newInstance();
                 } catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
                     Main.error(e);
                 }
