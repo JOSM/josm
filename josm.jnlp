@@ -23,5 +23,5 @@
         <jar href="josm-tested.jar"/>
         <property name="java.util.Arrays.useLegacyMergeSort" value="true"/>
     </resources>
-    <application-desc main-class="JOSM"/>
+    <application-desc main-class="org.openstreetmap.josm.gui.MainApplication"/>
 </jnlp>
