@@ -78,21 +78,19 @@ public class NodeElement extends StyleElement {
     }
 
     private static NodeElement create(Environment env, float defaultMajorZindex, boolean allowDefault) {
-        Cascade c = env.mc.getCascade(env.layer);
-
         MapImage mapImage = createIcon(env);
         Symbol symbol = null;
         if (mapImage == null) {
             symbol = createSymbol(env);
         }
 
-        RotationAngle rotationAngle = createRotationAngle(env);
-
         // optimization: if we neither have a symbol, nor a mapImage
         // we don't have to check for the remaining style properties and we don't
         // have to allocate a node element style.
         if (!allowDefault && symbol == null && mapImage == null) return null;
 
+        Cascade c = env.mc.getCascade(env.layer);
+        RotationAngle rotationAngle = createRotationAngle(env);
         return new NodeElement(c, mapImage, symbol, defaultMajorZindex, rotationAngle);
     }
 

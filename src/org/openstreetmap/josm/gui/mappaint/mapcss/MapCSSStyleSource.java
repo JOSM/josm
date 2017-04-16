@@ -611,7 +611,6 @@ public class MapCSSStyleSource extends StyleSource {
 
     @Override
     public void apply(MultiCascade mc, OsmPrimitive osm, double scale, boolean pretendWayIsClosed) {
-        Environment env = new Environment(osm, mc, null, this);
         MapCSSRuleIndex matchingRuleIndex;
         if (osm instanceof Node) {
             matchingRuleIndex = nodeRules;
@@ -633,6 +632,7 @@ public class MapCSSStyleSource extends StyleSource {
             throw new IllegalArgumentException("Unsupported type: " + osm);
         }
 
+        Environment env = new Environment(osm, mc, null, this);
         // the declaration indices are sorted, so it suffices to save the last used index
         int lastDeclUsed = -1;
 
