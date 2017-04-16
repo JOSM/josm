@@ -1244,7 +1244,7 @@ public class GpxDrawHelper implements SoMChangeListener {
     private static void drawHeatGrayDotMap(Graphics2D gB, MapView mv, List<WayPoint> listSegm, int drawSize) {
 
         // typical rendering rate -> use realtime preview instead of accurate display
-        final double maxSegm = 25000, nrSegms = listSegm.size();
+        final double maxSegm = 25_000, nrSegms = listSegm.size();
 
         // determine random drop rate
         final double randomDrop = Math.min(nrSegms > maxSegm ? (nrSegms - maxSegm) / nrSegms : 0, 0.70f);
