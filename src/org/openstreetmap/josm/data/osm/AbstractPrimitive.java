@@ -343,7 +343,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
         if (value) {
             flags |= flag;
         } else {
-            flags &= (short) ~flag;
+            flags &= ~flag;
         }
     }
 
