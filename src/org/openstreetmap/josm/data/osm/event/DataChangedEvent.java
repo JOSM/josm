@@ -14,7 +14,7 @@ public class DataChangedEvent extends AbstractDatasetChangedEvent {
 
     /**
      * Constructs a new {@code DataChangedEvent}
-     * @param dataSet data set
+     * @param dataSet the dataset from which the event comes from
      * @param events list of change events
      */
     public DataChangedEvent(DataSet dataSet, List<AbstractDatasetChangedEvent> events) {
@@ -24,7 +24,7 @@ public class DataChangedEvent extends AbstractDatasetChangedEvent {
 
     /**
      * Constructs a new {@code DataChangedEvent}
-     * @param dataSet data set
+     * @param dataSet data set. Can be null
      */
     public DataChangedEvent(DataSet dataSet) {
         this(dataSet, null);

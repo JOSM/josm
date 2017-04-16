@@ -14,6 +14,11 @@ public class PrimitiveFlagsChangedEvent extends AbstractDatasetChangedEvent {
 
     private final OsmPrimitive primitive;
 
+    /**
+     * Constructs a new {@code PrimitiveFlagsChangedEvent}.
+     * @param dataSet the dataset from which the event comes from
+     * @param primitive the primitive affected by the change
+     */
     public PrimitiveFlagsChangedEvent(DataSet dataSet, OsmPrimitive primitive) {
         super(dataSet);
         this.primitive = primitive;

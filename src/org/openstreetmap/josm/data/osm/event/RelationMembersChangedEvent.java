@@ -12,6 +12,11 @@ public class RelationMembersChangedEvent extends AbstractDatasetChangedEvent {
 
     private final Relation relation;
 
+    /**
+     * Constructs a new {@code RelationMembersChangedEvent}.
+     * @param dataSet the dataset from which the event comes from
+     * @param relation the relation affected by the change
+     */
     public RelationMembersChangedEvent(DataSet dataSet, Relation relation) {
         super(dataSet);
         this.relation = relation;
@@ -22,6 +27,10 @@ public class RelationMembersChangedEvent extends AbstractDatasetChangedEvent {
         listener.relationMembersChanged(this);
     }
 
+    /**
+     * Returns the relation affected by the change.
+     * @return the relation affected by the change
+     */
     public Relation getRelation() {
         return relation;
     }

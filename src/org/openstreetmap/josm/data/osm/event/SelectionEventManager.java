@@ -16,12 +16,16 @@ import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 /**
  * Similar like {@link DatasetEventManager}, just for selection events. Because currently selection changed
  * event are global, only FIRE_IN_EDT and FIRE_EDT_CONSOLIDATED modes are really useful
- *
+ * @since 2912
  */
 public class SelectionEventManager implements SelectionChangedListener {
 
     private static final SelectionEventManager instance = new SelectionEventManager();
 
+    /**
+     * Returns the unique instance.
+     * @return the unique instance
+     */
     public static SelectionEventManager getInstance() {
         return instance;
     }
@@ -58,6 +62,11 @@ public class SelectionEventManager implements SelectionChangedListener {
         DataSet.addSelectionListener(this);
     }
 
+    /**
+     * Registers a new {@code SelectionChangedListener}.
+     * @param listener listener to add
+     * @param fireMode EDT firing mode
+     */
     public void addSelectionListener(SelectionChangedListener listener, FireMode fireMode) {
         if (fireMode == FireMode.IN_EDT)
             throw new UnsupportedOperationException("IN_EDT mode not supported, you probably want to use IN_EDT_CONSOLIDATED.");
@@ -68,6 +77,10 @@ public class SelectionEventManager implements SelectionChangedListener {
         }
     }
 
+    /**
+     * Unregisters a {@code SelectionChangedListener}.
+     * @param listener listener to remove
+     */
     public void removeSelectionListener(SelectionChangedListener listener) {
         ListenerInfo searchListener = new ListenerInfo(listener);
         inEDTListeners.remove(searchListener);

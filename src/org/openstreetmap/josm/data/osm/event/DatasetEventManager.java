@@ -92,6 +92,9 @@ public class DatasetEventManager implements ActiveLayerChangeListener, Listener 
         }
     }
 
+    /**
+     * Event firing mode regarding Event Dispatch Thread.
+     */
     public enum FireMode {
         /**
          * Fire in calling thread immediately.
@@ -166,6 +169,10 @@ public class DatasetEventManager implements ActiveLayerChangeListener, Listener 
         }
     }
 
+    /**
+     * Unregister listener.
+     * @param listener listener to remove
+     */
     public void removeDatasetListener(DataSetListener listener) {
         ListenerInfo searchListener = new ListenerInfo(listener, false);
         inEDTListeners.remove(searchListener);

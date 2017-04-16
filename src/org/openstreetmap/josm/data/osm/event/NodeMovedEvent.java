@@ -12,6 +12,11 @@ public class NodeMovedEvent extends AbstractDatasetChangedEvent {
 
     private final Node node;
 
+    /**
+     * Constructs a new {@code NodeMovedEvent}.
+     * @param dataSet the dataset from which the event comes from
+     * @param node the node affected by the move
+     */
     public NodeMovedEvent(DataSet dataSet, Node node) {
         super(dataSet);
         this.node = node;
@@ -22,6 +27,10 @@ public class NodeMovedEvent extends AbstractDatasetChangedEvent {
         listener.nodeMoved(this);
     }
 
+    /**
+     * Returns the node affected by the move.
+     * @return the node affected by the move
+     */
     public Node getNode() {
         return node;
     }
@@ -35,5 +44,4 @@ public class NodeMovedEvent extends AbstractDatasetChangedEvent {
     public DatasetEventType getType() {
         return DatasetEventType.NODE_MOVED;
     }
-
 }
