@@ -138,7 +138,7 @@ public class OsmPrimitiveKeyHandlingTest {
      * Test hasEqualSemanticAttributes on two nodes with different tags.
      */
     @Test
-    public void testHasEqualSemanticAttributes_2() {
+    public void testHasEqualSemanticAttributes2() {
         Node n1 = new Node(1);
         n1.setCoor(LatLon.ZERO);
         n1.put("key.1", "value.1");
