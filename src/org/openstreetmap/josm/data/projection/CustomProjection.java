@@ -169,7 +169,7 @@ public class CustomProjection extends AbstractProjection {
         }
     }
 
-    private enum Polarity {
+    enum Polarity {
         NORTH(LatLon.NORTH_POLE),
         SOUTH(LatLon.SOUTH_POLE);
 
@@ -179,7 +179,7 @@ public class CustomProjection extends AbstractProjection {
             this.latlon = latlon;
         }
 
-        private LatLon getLatLon() {
+        LatLon getLatLon() {
             return latlon;
         }
     }

@@ -9,6 +9,8 @@ import java.util.stream.Stream;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.CustomProjection.Polarity;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -69,5 +71,14 @@ public class CustomProjectionTest {
                         assertTrue(e.getMessage().contains("xxx"));
                     }
                 });
+    }
+
+    /**
+     * Test {@link CustomProjection.Polarity}.
+     */
+    @Test
+    public void testPolarity() {
+        assertEquals(LatLon.NORTH_POLE, Polarity.NORTH.getLatLon());
+        assertEquals(LatLon.SOUTH_POLE, Polarity.SOUTH.getLatLon());
     }
 }
