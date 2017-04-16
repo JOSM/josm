@@ -166,7 +166,7 @@ public class ReprojectionTile extends Tile {
     }
 
     // add margin and align to pixel grid
-    private ProjectionBounds pbMarginAndAlign(ProjectionBounds box, double scale, double margin) {
+    private static ProjectionBounds pbMarginAndAlign(ProjectionBounds box, double scale, double margin) {
         double minEast = Math.floor(box.minEast / scale - margin) * scale;
         double minNorth = -Math.floor(-(box.minNorth / scale - margin)) * scale;
         double maxEast = Math.ceil(box.maxEast / scale + margin) * scale;
@@ -175,7 +175,7 @@ public class ReprojectionTile extends Tile {
     }
 
     // dimension in pixel
-    private Dimension getDimension(ProjectionBounds bounds, double scale) {
+    private static Dimension getDimension(ProjectionBounds bounds, double scale) {
         return new Dimension(
                 (int) Math.round((bounds.maxEast - bounds.minEast) / scale),
                 (int) Math.round((bounds.maxNorth - bounds.minNorth) / scale));

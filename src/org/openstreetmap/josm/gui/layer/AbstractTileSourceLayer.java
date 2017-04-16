@@ -1212,7 +1212,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         return missedTiles;
     }
 
-    private TileAnchor getAnchor(Tile tile, BufferedImage image) {
+    private static TileAnchor getAnchor(Tile tile, BufferedImage image) {
         if (tile instanceof ReprojectionTile) {
             return ((ReprojectionTile) tile).getAnchor();
         } else if (image != null) {
