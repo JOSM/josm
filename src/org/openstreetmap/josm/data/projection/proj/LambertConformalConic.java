@@ -26,26 +26,53 @@ import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
  */
 public class LambertConformalConic extends AbstractProj {
 
+    /** ellipsoid */
     protected Ellipsoid ellps;
 
-    public abstract static class Parameters {
+    /**
+     * Base class of Lambert Conformal Conic parameters.
+     */
+    public static class Parameters {
+        /** latitude of origin */
         public final double latitudeOrigin;
 
-        public Parameters(double latitudeOrigin) {
+        /**
+         * Constructs a new {@code Parameters}.
+         * @param latitudeOrigin latitude of origin
+         */
+        protected Parameters(double latitudeOrigin) {
             this.latitudeOrigin = latitudeOrigin;
         }
     }
 
+    /**
+     * Parameters with a single standard parallel.
+     */
     public static class Parameters1SP extends Parameters {
+        /**
+         * Constructs a new {@code Parameters1SP}.
+         * @param latitudeOrigin latitude of origin
+         */
         public Parameters1SP(double latitudeOrigin) {
             super(latitudeOrigin);
         }
     }
 
+    /**
+     * Parameters with two standard parallels.
+     */
     public static class Parameters2SP extends Parameters {
+        /** first standard parallel */
         public final double standardParallel1;
+        /** second standard parallel */
         public final double standardParallel2;
 
+        /**
+         * Constructs a new {@code Parameters2SP}.
+         * @param latitudeOrigin latitude of origin
+         * @param standardParallel1 first standard parallel
+         * @param standardParallel2 second standard parallel
+         */
         public Parameters2SP(double latitudeOrigin, double standardParallel1, double standardParallel2) {
             super(latitudeOrigin);
             this.standardParallel1 = standardParallel1;
@@ -176,6 +203,10 @@ public class LambertConformalConic extends AbstractProj {
         return new double[] {phi, lambda};
     }
 
+    /**
+     * Returns projection parameters.
+     * @return projection parameters
+     */
     public final Parameters getParameters() {
         return params;
     }
