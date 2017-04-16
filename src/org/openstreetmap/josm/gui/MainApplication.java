@@ -362,8 +362,6 @@ public class MainApplication extends Main {
             mainFrame.setVisible(true);
         });
 
-        Main.MasterWindowListener.setup();
-
         boolean maximized = Main.pref.getBoolean("gui.maximized", false);
         if ((!args.hasOption(Option.NO_MAXIMIZE) && maximized) || args.hasOption(Option.MAXIMIZE)) {
             mainFrame.setMaximized(true);

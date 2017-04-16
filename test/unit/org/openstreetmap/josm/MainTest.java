@@ -13,7 +13,6 @@ import javax.swing.UIManager;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main.DownloadParamType;
-import org.openstreetmap.josm.Main.MasterWindowListener;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -80,15 +79,5 @@ public class MainTest {
         assertNotNull(Main.getProjection());
         assertEquals(Main.pref.get("laf", Main.platform.getDefaultStyle()), UIManager.getLookAndFeel().getClass().getCanonicalName());
         assertNotNull(Main.toolbar);
-    }
-
-    /**
-     * Unit test of {@link Main.MasterWindowListener}.
-     */
-    @Test
-    public void testMasterWindowListener() {
-        MasterWindowListener.setup();
-        MasterWindowListener.teardown();
-        assertNotNull(MasterWindowListener.getInstance());
     }
 }
