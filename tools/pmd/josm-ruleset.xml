@@ -31,6 +31,7 @@
   	<exclude name="AvoidStringBufferField"/>
   	<exclude name="StringToString"/>
   	<exclude name="UselessStringValueOf"/>
+  	<exclude name="InefficientEmptyStringCheck"/>
   </rule>
   <rule ref="rulesets/java/typeresolution.xml">
   	<exclude name="LooseCoupling"/>
