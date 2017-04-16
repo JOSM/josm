@@ -136,7 +136,7 @@ Build-Date: ${build.tstamp}
         <jar destfile="${dist.dir}/josm-custom.jar" basedir="${build.dir}" level="${clevel}">
             <!-- add attribute excludes="**/*BZip2*,**/*Bzip2*" to create a non-bzip2 supporting jar -->
             <manifest>
-                <attribute name="Main-class" value="JOSM"/>
+                <attribute name="Main-class" value="org.openstreetmap.josm.gui.MainApplication"/>
                 <attribute name="Main-Version" value="${version.entry.commit.revision} SVN"/>
                 <attribute name="Main-Date" value="${version.entry.commit.date}"/>
                 <attribute name="Permissions" value="all-permissions"/>
@@ -272,7 +272,7 @@ Build-Date: ${build.tstamp}
         </javac>
         <!-- JMapViewer -->
         <javac compiler="${javac.compiler}" sourcepath="" srcdir="${src.dir}" 
-            excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java,org/openstreetmap/gui/jmapviewer/JMapViewerTree.java,org/openstreetmap/gui/jmapviewer/checkBoxTree/**,org/openstreetmap/josm/**,JOSM.java,gnu/**"
+            excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java,org/openstreetmap/gui/jmapviewer/JMapViewerTree.java,org/openstreetmap/gui/jmapviewer/checkBoxTree/**,org/openstreetmap/josm/**,gnu/**"
             destdir="build" target="1.8" source="1.8" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerclasspath>
                 <pathelement location="${error_prone_ant.jar}"/>
@@ -516,7 +516,6 @@ Build-Date: ${build.tstamp}
             public static void main(java.lang.String[]);
         }
 
-        -keep class JOSM
         -keep class * extends org.openstreetmap.josm.io.FileImporter
         -keep class * extends org.openstreetmap.josm.io.FileExporter
         -keep class org.openstreetmap.josm.actions.search.SearchCompiler$Never
