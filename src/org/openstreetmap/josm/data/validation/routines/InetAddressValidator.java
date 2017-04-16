@@ -180,7 +180,7 @@ public class InetAddressValidator extends AbstractValidator {
                 }
                 int octetInt = 0;
                 try {
-                    octetInt = Integer.valueOf(octet, BASE_16).intValue();
+                    octetInt = Integer.parseInt(octet, BASE_16);
                 } catch (NumberFormatException e) {
                     return false;
                 }
