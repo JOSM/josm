@@ -706,13 +706,20 @@ public class TagChecker extends TagTest {
         private String description;
         protected List<CheckerElement> data = new ArrayList<>();
         private OsmPrimitiveType type;
-        private int code;
+        private TagCheckLevel level;
         protected Severity severity;
-        // CHECKSTYLE.OFF: SingleSpaceSeparator
-        protected static final int TAG_CHECK_ERROR = 1250;
-        protected static final int TAG_CHECK_WARN  = 1260;
-        protected static final int TAG_CHECK_INFO  = 1270;
-        // CHECKSTYLE.ON: SingleSpaceSeparator
+
+        private enum TagCheckLevel {
+            TAG_CHECK_ERROR(1250),
+            TAG_CHECK_WARN(1260),
+            TAG_CHECK_INFO(1270);
+
+            final int code;
+
+            TagCheckLevel(int code) {
+                this.code = code;
+            }
+        }
 
         protected static class CheckerElement {
             public Object tag;
@@ -808,15 +815,15 @@ public class TagChecker extends TagTest {
             switch (n[1]) {
             case "W":
                 severity = Severity.WARNING;
-                code = TAG_CHECK_WARN;
+                level = TagCheckLevel.TAG_CHECK_WARN;
                 break;
             case "E":
                 severity = Severity.ERROR;
-                code = TAG_CHECK_ERROR;
+                level = TagCheckLevel.TAG_CHECK_ERROR;
                 break;
             case "I":
                 severity = Severity.OTHER;
-                code = TAG_CHECK_INFO;
+                level = TagCheckLevel.TAG_CHECK_INFO;
                 break;
             default:
                 return tr("Could not find warning level");
@@ -846,19 +853,31 @@ public class TagChecker extends TagTest {
             return true;
         }
 
+        /**
+         * Returns the error description.
+         * @return the error description
+         */
         public String getDescription() {
             return description;
         }
 
+        /**
+         * Returns the error severity.
+         * @return the error severity
+         */
         public Severity getSeverity() {
             return severity;
         }
 
+        /**
+         * Returns the error code.
+         * @return the error code
+         */
         public int getCode() {
             if (type == null)
-                return code;
+                return level.code;
 
-            return code + type.ordinal() + 1;
+            return level.code + type.ordinal() + 1;
         }
     }
 }
