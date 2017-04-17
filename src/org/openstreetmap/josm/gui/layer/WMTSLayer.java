@@ -68,7 +68,7 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer<WMTSTileSource> imp
     }
 
     @Override
-    protected int getBestZoom() {
+    public int getBestZoom() {
         if (!Main.isDisplayingMapView())
             return 0;
         ScaleList scaleList = getNativeScales();

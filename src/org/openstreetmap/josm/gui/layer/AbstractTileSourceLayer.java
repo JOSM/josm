@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.layer;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -49,7 +48,6 @@ import java.util.stream.Stream;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -92,17 +90,26 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent.ZoomChangeListener;
-import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.layer.imagery.AutoLoadTilesAction;
+import org.openstreetmap.josm.gui.layer.imagery.AutoZoomAction;
+import org.openstreetmap.josm.gui.layer.imagery.DecreaseZoomAction;
+import org.openstreetmap.josm.gui.layer.imagery.FlushTileCacheAction;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings.FilterChangeListener;
+import org.openstreetmap.josm.gui.layer.imagery.IncreaseZoomAction;
+import org.openstreetmap.josm.gui.layer.imagery.LoadAllTilesAction;
+import org.openstreetmap.josm.gui.layer.imagery.LoadErroneousTilesAction;
 import org.openstreetmap.josm.gui.layer.imagery.ReprojectionTile;
+import org.openstreetmap.josm.gui.layer.imagery.ShowErrorsAction;
 import org.openstreetmap.josm.gui.layer.imagery.TileAnchor;
 import org.openstreetmap.josm.gui.layer.imagery.TileCoordinateConverter;
 import org.openstreetmap.josm.gui.layer.imagery.TilePosition;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings.DisplaySettingsChangeEvent;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings.DisplaySettingsChangeListener;
+import org.openstreetmap.josm.gui.layer.imagery.ZoomToBestAction;
+import org.openstreetmap.josm.gui.layer.imagery.ZoomToNativeLevelAction;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.WMSLayerImporter;
@@ -311,7 +318,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      * @see MapFrame#repaint()
      * @see #invalidate() To trigger a repaint of all places where the layer is displayed.
      */
-    protected void redraw() {
+    public void redraw() {
         invalidate();
     }
 
@@ -390,7 +397,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      * @param zoom zoom level
      * @return average number of screen pixels per tile pixel
      */
-    protected double getScaleFactor(int zoom) {
+    public double getScaleFactor(int zoom) {
         if (coordinateConverter != null) {
             return coordinateConverter.getScaleFactor(zoom);
         } else {
@@ -398,7 +405,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
     }
 
-    protected int getBestZoom() {
+    public int getBestZoom() {
         double factor = getScaleFactor(1); // check the ratio between area of tilesize at zoom 1 to current view
         double result = Math.log(factor)/Math.log(2)/2;
         /*
@@ -421,7 +428,12 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         return intResult;
     }
 
-    private static boolean actionSupportLayers(List<Layer> layers) {
+    /**
+     * Default implementation of {@link org.openstreetmap.josm.gui.layer.Layer.LayerAction#supportLayers(List)}.
+     * @param layers layers
+     * @return {@code true} is layers contains only a {@code TMSLayer}
+     */
+    public static boolean actionSupportLayers(List<Layer> layers) {
         return layers.size() == 1 && layers.get(0) instanceof TMSLayer;
     }
 
@@ -508,172 +520,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 loadTile(clickedTile, true);
                 invalidate();
             }
-        }
-    }
-
-    private class AutoZoomAction extends AbstractAction implements LayerAction {
-        AutoZoomAction() {
-            super(tr("Auto zoom"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-            getDisplaySettings().setAutoZoom(!getDisplaySettings().isAutoZoom());
-        }
-
-        @Override
-        public Component createMenuComponent() {
-            JCheckBoxMenuItem item = new JCheckBoxMenuItem(this);
-            item.setSelected(getDisplaySettings().isAutoZoom());
-            return item;
-        }
-
-        @Override
-        public boolean supportLayers(List<Layer> layers) {
-            return actionSupportLayers(layers);
-        }
-    }
-
-    private class AutoLoadTilesAction extends AbstractAction implements LayerAction {
-        AutoLoadTilesAction() {
-            super(tr("Auto load tiles"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-            getDisplaySettings().setAutoLoad(!getDisplaySettings().isAutoLoad());
-        }
-
-        @Override
-        public Component createMenuComponent() {
-            JCheckBoxMenuItem item = new JCheckBoxMenuItem(this);
-            item.setSelected(getDisplaySettings().isAutoLoad());
-            return item;
-        }
-
-        @Override
-        public boolean supportLayers(List<Layer> layers) {
-            return actionSupportLayers(layers);
-        }
-    }
-
-    private class ShowErrorsAction extends AbstractAction implements LayerAction {
-        ShowErrorsAction() {
-            super(tr("Show errors"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-            getDisplaySettings().setShowErrors(!getDisplaySettings().isShowErrors());
-        }
-
-        @Override
-        public Component createMenuComponent() {
-            JCheckBoxMenuItem item = new JCheckBoxMenuItem(this);
-            item.setSelected(getDisplaySettings().isShowErrors());
-            return item;
-        }
-
-        @Override
-        public boolean supportLayers(List<Layer> layers) {
-            return actionSupportLayers(layers);
-        }
-    }
-
-    private class LoadAllTilesAction extends AbstractAction {
-        LoadAllTilesAction() {
-            super(tr("Load all tiles"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-            loadAllTiles(true);
-        }
-    }
-
-    private class LoadErroneusTilesAction extends AbstractAction {
-        LoadErroneusTilesAction() {
-            super(tr("Load all error tiles"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-            loadAllErrorTiles(true);
-        }
-    }
-
-    private class ZoomToNativeLevelAction extends AbstractAction {
-        ZoomToNativeLevelAction() {
-            super(tr("Zoom to native resolution"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-            double newFactor = Math.sqrt(getScaleFactor(currentZoomLevel));
-            Main.map.mapView.zoomToFactor(newFactor);
-            redraw();
-        }
-    }
-
-    private class ZoomToBestAction extends AbstractAction {
-        ZoomToBestAction() {
-            super(tr("Change resolution"));
-            setEnabled(!getDisplaySettings().isAutoZoom() && getBestZoom() != currentZoomLevel);
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-            setZoomLevel(getBestZoom());
-        }
-    }
-
-    private class IncreaseZoomAction extends AbstractAction {
-        IncreaseZoomAction() {
-            super(tr("Increase zoom"));
-            setEnabled(!getDisplaySettings().isAutoZoom() && zoomIncreaseAllowed());
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-            increaseZoomLevel();
-        }
-    }
-
-    private class DecreaseZoomAction extends AbstractAction {
-        DecreaseZoomAction() {
-            super(tr("Decrease zoom"));
-            setEnabled(!getDisplaySettings().isAutoZoom() && zoomDecreaseAllowed());
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-            decreaseZoomLevel();
-        }
-    }
-
-    private class FlushTileCacheAction extends AbstractAction {
-        FlushTileCacheAction() {
-            super(tr("Flush tile cache"));
-        }
-
-        @Override
-        public void actionPerformed(ActionEvent ae) {
-            new PleaseWaitRunnable(tr("Flush tile cache")) {
-                @Override
-                protected void realRun() {
-                    clearTileCache();
-                }
-
-                @Override
-                protected void finish() {
-                    // empty - flush is instaneus
-                }
-
-                @Override
-                protected void cancel() {
-                    // empty - flush is instaneus
-                }
-            }.run();
         }
     }
 
@@ -1027,7 +873,12 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         return getTileSet(bounds, currentZoomLevel);
     }
 
-    protected void loadAllTiles(boolean force) {
+    /**
+     * Load all visible tiles.
+     * @param force {@code true} to force loading if auto-load is disabled
+     * @since 11950
+     */
+    public void loadAllTiles(boolean force) {
         TileSet ts = getVisibleTileSet();
 
         // if there is more than 18 tiles on screen in any direction, do not load all tiles!
@@ -1039,7 +890,12 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         invalidate();
     }
 
-    protected void loadAllErrorTiles(boolean force) {
+    /**
+     * Load all visible tiles in error.
+     * @param force {@code true} to force loading if auto-load is disabled
+     * @since 11950
+     */
+    public void loadAllErrorTiles(boolean force) {
         TileSet ts = getVisibleTileSet();
         ts.loadAllErrorTiles(force);
         invalidate();
@@ -1800,16 +1656,16 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      */
     public Action[] getCommonEntries() {
         return new Action[] {
-            new AutoLoadTilesAction(),
-            new AutoZoomAction(),
-            new ShowErrorsAction(),
-            new IncreaseZoomAction(),
-            new DecreaseZoomAction(),
-            new ZoomToBestAction(),
-            new ZoomToNativeLevelAction(),
-            new FlushTileCacheAction(),
-            new LoadErroneusTilesAction(),
-            new LoadAllTilesAction()
+            new AutoLoadTilesAction(this),
+            new AutoZoomAction(this),
+            new ShowErrorsAction(this),
+            new IncreaseZoomAction(this),
+            new DecreaseZoomAction(this),
+            new ZoomToBestAction(this),
+            new ZoomToNativeLevelAction(this),
+            new FlushTileCacheAction(this),
+            new LoadErroneousTilesAction(this),
+            new LoadAllTilesAction(this)
         };
     }
 
