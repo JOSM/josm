@@ -163,7 +163,7 @@ public interface PlatformHook {
      * @throws IOException in case of error
      * @throws CertificateException in case of error
      * @throws NoSuchAlgorithmException in case of error
-     * @since 11940
+     * @since 11943
      */
     default X509Certificate getX509Certificate(CertAmend certAmend)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {

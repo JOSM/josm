@@ -44,7 +44,7 @@ public final class CertificateAmendment {
 
     /**
      * A certificate amendment.
-     * @since 11940
+     * @since 11943
      */
     public static class CertAmend {
         private final String id;
