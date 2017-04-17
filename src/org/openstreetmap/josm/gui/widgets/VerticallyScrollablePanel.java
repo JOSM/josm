@@ -20,14 +20,29 @@ public class VerticallyScrollablePanel extends JPanel implements Scrollable {
         super();
     }
 
+    /**
+     * Constructs a new {@code VerticallyScrollablePanel}.
+     * @param isDoubleBuffered  a boolean, true for double-buffering, which
+     *        uses additional memory space to achieve fast, flicker-free updates
+     */
     public VerticallyScrollablePanel(boolean isDoubleBuffered) {
         super(isDoubleBuffered);
     }
 
+    /**
+     * Constructs a new {@code VerticallyScrollablePanel}.
+     * @param layout  the LayoutManager to use
+     * @param isDoubleBuffered  a boolean, true for double-buffering, which
+     *        uses additional memory space to achieve fast, flicker-free updates
+     */
     public VerticallyScrollablePanel(LayoutManager layout, boolean isDoubleBuffered) {
         super(layout, isDoubleBuffered);
     }
 
+    /**
+     * Constructs a new {@code VerticallyScrollablePanel}.
+     * @param layout  the LayoutManager to use
+     */
     public VerticallyScrollablePanel(LayoutManager layout) {
         super(layout);
     }
@@ -62,7 +77,7 @@ public class VerticallyScrollablePanel extends JPanel implements Scrollable {
     }
 
     @Override
-    public int getScrollableUnitIncrement(Rectangle arg0, int arg1, int arg2) {
+    public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
         return 10;
     }
 }
