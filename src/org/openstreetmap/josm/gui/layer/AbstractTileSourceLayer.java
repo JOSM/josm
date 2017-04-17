@@ -411,7 +411,13 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
          * maps as a imagery layer
          */
         int intResult = (int) Math.round(result + 1 + ZOOM_OFFSET.get() / 1.9);
-        intResult = Utils.clamp(intResult, getMinZoomLvl(), getMaxZoomLvl());
+        int minZoom = getMinZoomLvl();
+        int maxZoom = getMaxZoomLvl();
+        if (minZoom <= maxZoom) {
+            intResult = Utils.clamp(intResult, minZoom, maxZoom);
+        } else if (intResult > maxZoom) {
+            intResult = maxZoom;
+        }
         return intResult;
     }
 
