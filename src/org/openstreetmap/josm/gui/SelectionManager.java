@@ -15,6 +15,8 @@ import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.LinkedList;
 
+import javax.swing.Action;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SelectByInternalPointAction;
 import org.openstreetmap.josm.data.Bounds;
@@ -59,7 +61,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      * to get informed when a selection closes.
      * @author imi
      */
-    public interface SelectionEnded {
+    public interface SelectionEnded extends Action {
         /**
          * Called, when the left mouse button was released.
          * @param r The rectangle that encloses the current selection.
@@ -68,19 +70,6 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
          * @see SelectionManager#getSelectedObjects(boolean)
          */
         void selectionEnded(Rectangle r, MouseEvent e);
-
-        /**
-         * Called to register the selection manager for "active" property.
-         * @param listener The listener to register
-         */
-        void addPropertyChangeListener(PropertyChangeListener listener);
-
-        /**
-         * Called to remove the selection manager from the listener list
-         * for "active" property.
-         * @param listener The listener to register
-         */
-        void removePropertyChangeListener(PropertyChangeListener listener);
     }
 
     /**

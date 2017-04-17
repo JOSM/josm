@@ -75,6 +75,7 @@ import org.openstreetmap.josm.data.preferences.EnumProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.IExtendedDialog;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
@@ -240,6 +241,10 @@ public class TagEditHelper {
             addDialog.undoAllTagsAdding();
     }
 
+    /**
+     * Returns a new {@code AddTagsDialog}.
+     * @return a new {@code AddTagsDialog}
+     */
     protected AddTagsDialog getAddTagsDialog() {
         return new AddTagsDialog();
     }
@@ -266,11 +271,15 @@ public class TagEditHelper {
         editDialog.performTagEdit();
     }
 
-    protected interface IEditTagDialog {
-        ExtendedDialog showDialog();
-
-        int getValue();
-
+    /**
+     * Extracted interface of {@link EditTagDialog}.
+     */
+    protected interface IEditTagDialog extends IExtendedDialog {
+        /**
+         * Edit tags of multiple selected objects according to selected ComboBox values
+         * If value == "", tag will be deleted
+         * Confirmations may be needed.
+         */
         void performTagEdit();
     }
 
@@ -482,11 +491,6 @@ public class TagEditHelper {
             });
         }
 
-        /**
-         * Edit tags of multiple selected objects according to selected ComboBox values
-         * If value == "", tag will be deleted
-         * Confirmations may be needed.
-         */
         @Override
         public void performTagEdit() {
             String value = Tag.removeWhiteSpaces(values.getEditor().getItem().toString());

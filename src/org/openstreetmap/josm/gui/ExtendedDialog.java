@@ -72,7 +72,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
  *  }
  * </pre>
  */
-public class ExtendedDialog extends JDialog {
+public class ExtendedDialog extends JDialog implements IExtendedDialog {
     private final boolean disposeOnClose;
     private volatile int result;
     public static final int DialogClosedOtherwise = 0;
@@ -172,21 +172,13 @@ public class ExtendedDialog extends JDialog {
         }
     }
 
-    /**
-     * Allows decorating the buttons with icons.
-     * @param buttonIcons The button icons
-     * @return {@code this}
-     */
+    @Override
     public ExtendedDialog setButtonIcons(Icon... buttonIcons) {
         this.bIcons = Utils.copyArray(buttonIcons);
         return this;
     }
 
-    /**
-     * Convenience method to provide image names instead of images.
-     * @param buttonIcons The button icon names
-     * @return {@code this}
-     */
+    @Override
     public ExtendedDialog setButtonIcons(String... buttonIcons) {
         bIcons = new Icon[buttonIcons.length];
         for (int i = 0; i < buttonIcons.length; ++i) {
@@ -195,77 +187,36 @@ public class ExtendedDialog extends JDialog {
         return this;
     }
 
-    /**
-     * Allows decorating the buttons with tooltips. Expects a String array with
-     * translated tooltip texts.
-     *
-     * @param toolTipTexts the tool tip texts. Ignored, if null.
-     * @return {@code this}
-     */
+    @Override
     public ExtendedDialog setToolTipTexts(String... toolTipTexts) {
         this.bToolTipTexts = Utils.copyArray(toolTipTexts);
         return this;
     }
 
-    /**
-     * Sets the content that will be displayed in the message dialog.
-     *
-     * Note that depending on your other settings more UI elements may appear.
-     * The content is played on top of the other elements though.
-     *
-     * @param content Any element that can be displayed in the message dialog
-     * @return {@code this}
-     */
+    @Override
     public ExtendedDialog setContent(Component content) {
         return setContent(content, true);
     }
 
-    /**
-     * Sets the content that will be displayed in the message dialog.
-     *
-     * Note that depending on your other settings more UI elements may appear.
-     * The content is played on top of the other elements though.
-     *
-     * @param content Any element that can be displayed in the message dialog
-     * @param placeContentInScrollPane if true, places the content in a JScrollPane
-     * @return {@code this}
-     */
+    @Override
     public ExtendedDialog setContent(Component content, boolean placeContentInScrollPane) {
         this.content = content;
         this.placeContentInScrollPane = placeContentInScrollPane;
         return this;
     }
 
-    /**
-     * Sets the message that will be displayed. The String will be automatically
-     * wrapped if it is too long.
-     *
-     * Note that depending on your other settings more UI elements may appear.
-     * The content is played on top of the other elements though.
-     *
-     * @param message The text that should be shown to the user
-     * @return {@code this}
-     */
+    @Override
     public ExtendedDialog setContent(String message) {
         return setContent(string2label(message), false);
     }
 
-    /**
-     * Decorate the dialog with an icon that is shown on the left part of
-     * the window area. (Similar to how it is done in {@link JOptionPane})
-     * @param icon The icon to display
-     * @return {@code this}
-     */
+    @Override
     public ExtendedDialog setIcon(Icon icon) {
         this.icon = icon;
         return this;
     }
 
-    /**
-     * Convenience method to allow values that would be accepted by {@link JOptionPane} as messageType.
-     * @param messageType The {@link JOptionPane} messageType
-     * @return {@code this}
-     */
+    @Override
     public ExtendedDialog setIcon(int messageType) {
         switch (messageType) {
             case JOptionPane.ERROR_MESSAGE:
@@ -283,11 +234,7 @@ public class ExtendedDialog extends JDialog {
         }
     }
 
-    /**
-     * Show the dialog to the user. Call this after you have set all options
-     * for the dialog. You can retrieve the result using {@link #getValue()}.
-     * @return {@code this}
-     */
+    @Override
     public ExtendedDialog showDialog() {
         // Check if the user has set the dialog to not be shown again
         if (toggleCheckState()) {
@@ -308,23 +255,14 @@ public class ExtendedDialog extends JDialog {
         return this;
     }
 
-    /**
-     * Retrieve the user choice after the dialog has been closed.
-     *
-     * @return <ul> <li>The selected button. The count starts with 1.</li>
-     *              <li>A return value of {@link #DialogClosedOtherwise} means the dialog has been closed otherwise.</li>
-     *         </ul>
-     */
+    @Override
     public int getValue() {
         return result;
     }
 
     private boolean setupDone;
 
-    /**
-     * This is called by {@link #showDialog()}.
-     * Only invoke from outside if you need to modify the contentPane
-     */
+    @Override
     public void setupDialog() {
         if (setupDone)
             return;
@@ -522,34 +460,14 @@ public class ExtendedDialog extends JDialog {
         }
     }
 
-    /**
-     * Call this if you want the dialog to remember the geometry (size and position) set by the user.
-     * Set the pref to <code>null</code> or to an empty string to disable again.
-     * By default, it's disabled.
-     *
-     * Note: If you want to set the width of this dialog directly use the usual
-     * setSize, setPreferredSize, setMaxSize, setMinSize
-     *
-     * @param pref  The preference to save the dimension to
-     * @param wg    The default window geometry that should be used if no
-     *              existing preference is found (only takes effect if
-     *              <code>pref</code> is not null or empty
-     * @return {@code this}
-     */
+    @Override
     public ExtendedDialog setRememberWindowGeometry(String pref, WindowGeometry wg) {
         rememberSizePref = pref == null ? "" : pref;
         defaultWindowGeometry = wg;
         return this;
     }
 
-    /**
-     * Calling this will offer the user a "Do not show again" checkbox for the
-     * dialog. Default is to not offer the choice; the dialog will be shown
-     * every time.
-     * Currently, this is not supported for non-modal dialogs.
-     * @param togglePref  The preference to save the checkbox state to
-     * @return {@code this}
-     */
+    @Override
     public ExtendedDialog toggleEnable(String togglePref) {
         if (!modal) {
             throw new IllegalStateException();
@@ -559,32 +477,19 @@ public class ExtendedDialog extends JDialog {
         return this;
     }
 
-    /**
-     * Sets the button that will react to ENTER.
-     * @param defaultButtonIdx The button index (starts to 1)
-     * @return {@code this}
-     */
+    @Override
     public ExtendedDialog setDefaultButton(int defaultButtonIdx) {
         this.defaultButtonIdx = defaultButtonIdx;
         return this;
     }
 
-    /**
-     * Used in combination with toggle:
-     * If the user presses 'cancel' the toggle settings are ignored and not saved to the pref
-     * @param cancelButtonIdx index of the button that stands for cancel, accepts multiple values
-     * @return {@code this}
-     */
+    @Override
     public ExtendedDialog setCancelButton(Integer... cancelButtonIdx) {
         this.cancelButtonIdx = new HashSet<>(Arrays.<Integer>asList(cancelButtonIdx));
         return this;
     }
 
-    /**
-     * Makes default button request initial focus or not.
-     * @param focus {@code true} to make default button request initial focus
-     * @since 7407
-     */
+    @Override
     public void setFocusOnDefaultButton(boolean focus) {
         focusOnDefaultButton = focus;
     }
@@ -595,10 +500,7 @@ public class ExtendedDialog extends JDialog {
         }
     }
 
-    /**
-     * This function returns true if the dialog has been set to "do not show again"
-     * @return true if dialog should not be shown again
-     */
+    @Override
     public final boolean toggleCheckState() {
         toggleable = togglePref != null && !togglePref.isEmpty();
         toggleValue = ConditionalOptionPaneUtil.getDialogReturnValue(togglePref);
@@ -633,20 +535,7 @@ public class ExtendedDialog extends JDialog {
         return lbl;
     }
 
-    /**
-     * Configures how this dialog support for context sensitive help.
-     * <ul>
-     *  <li>if helpTopic is null, the dialog doesn't provide context sensitive help</li>
-     *  <li>if helpTopic != null, the dialog redirect user to the help page for this helpTopic when
-     *  the user clicks F1 in the dialog</li>
-     *  <li>if showHelpButton is true, the dialog displays "Help" button (rightmost button in
-     *  the button row)</li>
-     * </ul>
-     *
-     * @param helpTopic the help topic
-     * @param showHelpButton true, if the dialog displays a help button
-     * @return {@code this}
-     */
+    @Override
     public ExtendedDialog configureContextsensitiveHelp(String helpTopic, boolean showHelpButton) {
         this.helpTopic = helpTopic;
         this.showHelpButton = showHelpButton;
