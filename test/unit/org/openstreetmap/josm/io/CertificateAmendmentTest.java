@@ -25,7 +25,7 @@ public class CertificateAmendmentTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
+    public JOSMTestRules test = new JOSMTestRules().platform().https();
 
     /**
      * Tests that {@code CertificateAmendment} satisfies utility class criterias.
@@ -79,6 +79,15 @@ public class CertificateAmendmentTest {
     @Test
     public void testOverpass() throws IOException {
         connect("https://overpass-api.de", true);
+    }
+
+    /**
+     * Test Dutch government.
+     * @throws IOException in case of I/O error
+     */
+    @Test
+    public void testDutchGovernment() throws IOException {
+        connect("https://geodata.nationaalgeoregister.nl", true);
     }
 
     private static void connect(String url, boolean shouldWork) throws IOException {

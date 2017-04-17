@@ -3,6 +3,7 @@ package org.openstreetmap.josm.testutils;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.text.MessageFormat;
 import java.util.TimeZone;
 
@@ -16,10 +17,12 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.io.CertificateAmendment;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MemoryManagerTest;
 import org.openstreetmap.josm.tools.date.DateUtils;
@@ -45,6 +48,7 @@ public class JOSMTestRules implements TestRule {
     private boolean commands;
     private boolean allowMemoryManagerLeaks;
     private boolean useMapStyles;
+    private boolean useHttps;
 
     /**
      * Disable the default timeout for this test. Use with care.
@@ -140,6 +144,15 @@ public class JOSMTestRules implements TestRule {
     }
 
     /**
+     * Set up HTTPS certificates
+     * @return this instance, for easy chaining
+     */
+    public JOSMTestRules https() {
+        useHttps = true;
+        return this;
+    }
+
+    /**
       * Allow the execution of commands using {@link Main#undoRedo}
       * @return this instance, for easy chaining
       */
@@ -221,6 +234,19 @@ public class JOSMTestRules implements TestRule {
             Main.pref.put("osm-server.url", "http://invalid");
         }
 
+        // Set Platform
+        if (platform) {
+            Main.determinePlatformHook();
+        }
+
+        if (useHttps) {
+            try {
+                CertificateAmendment.addMissingCertificates();
+            } catch (IOException | GeneralSecurityException ex) {
+                throw new JosmRuntimeException(ex);
+            }
+        }
+
         if (useProjection) {
             Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
         }
@@ -240,11 +266,6 @@ public class JOSMTestRules implements TestRule {
             } catch (OsmTransferCanceledException | OsmApiInitializationException e) {
                 throw new InitializationError(e);
             }
-        }
-
-        // Set Platform
-        if (platform) {
-            Main.determinePlatformHook();
         }
 
         if (useMapStyles) {

@@ -8,7 +8,10 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.List;
+
+import org.openstreetmap.josm.io.CertificateAmendment.CertAmend;
 
 /**
  * This interface allows platform (operating system) dependent code
@@ -150,6 +153,21 @@ public interface PlatformHook {
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
         // TODO setup HTTPS certificate on Unix and OS X systems
         return false;
+    }
+
+    /**
+     * Returns the {@code X509Certificate} matching the given certificate amendment information.
+     * @param certAmend certificate amendment
+     * @return the {@code X509Certificate} matching the given certificate amendment information, or {@code null}
+     * @throws KeyStoreException in case of error
+     * @throws IOException in case of error
+     * @throws CertificateException in case of error
+     * @throws NoSuchAlgorithmException in case of error
+     * @since 11940
+     */
+    default X509Certificate getX509Certificate(CertAmend certAmend)
+            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+        return null;
     }
 
     /**

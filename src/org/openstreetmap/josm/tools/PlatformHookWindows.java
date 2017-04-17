@@ -44,11 +44,14 @@ import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.security.SignatureException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
@@ -63,11 +66,12 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.io.CertificateAmendment.CertAmend;
 
 /**
-  * {@code PlatformHook} implementation for Microsoft Windows systems.
-  * @since 1023
-  */
+ * {@code PlatformHook} implementation for Microsoft Windows systems.
+ * @since 1023
+ */
 public class PlatformHookWindows implements PlatformHook {
 
     /**
@@ -350,6 +354,28 @@ public class PlatformHookWindows implements PlatformHook {
         Main.info(tr("Adding JOSM localhost certificate to {0} keystore", WINDOWS_ROOT));
         ks.setEntry(entryAlias, trustedCert, null);
         return true;
+    }
+
+    @Override
+    public X509Certificate getX509Certificate(CertAmend certAmend)
+            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+        KeyStore ks = getRootKeystore();
+        // Search by alias (fast)
+        Certificate result = ks.getCertificate(certAmend.getId());
+        if (result instanceof X509Certificate) {
+            return (X509Certificate) result;
+        }
+        // If not found, search by SHA-256 (slower)
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        for (Enumeration<String> aliases = ks.aliases(); aliases.hasMoreElements();) {
+            result = ks.getCertificate(aliases.nextElement());
+            if (result instanceof X509Certificate
+                    && certAmend.getSha256().equalsIgnoreCase(Utils.toHexString(md.digest(result.getEncoded())))) {
+                return (X509Certificate) result;
+            }
+        }
+        // Not found
+        return null;
     }
 
     @Override

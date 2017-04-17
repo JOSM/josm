@@ -15,6 +15,9 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateEncodingException;
+import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.PKIXParameters;
 import java.security.cert.TrustAnchor;
@@ -39,12 +42,53 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public final class CertificateAmendment {
 
-    private static final String[] CERT_AMEND = {
-        "resource://data/security/DST_Root_CA_X3.pem"
+    /**
+     * A certificate amendment.
+     * @since 11940
+     */
+    public static class CertAmend {
+        private final String id;
+        private final String sha256;
+
+        CertAmend(String path, String sha256) {
+            this.id = path;
+            this.sha256 = sha256;
+        }
+
+        /**
+         * Returns the certificate identifier.
+         * @return path for JOSM embedded certificate, alias for platform certificate
+         */
+        public final String getId() {
+            return id;
+        }
+
+        /**
+         * Returns the SHA-256 hash.
+         * @return the SHA-256 hash, in hexadecimal
+         */
+        public final String getSha256() {
+            return sha256;
+        }
+    }
+
+    /**
+     * Certificates embedded in JOSM
+     */
+    private static final CertAmend[] CERT_AMEND = {
+        new CertAmend("resource://data/security/DST_Root_CA_X3.pem",
+                "0687260331a72403d909f105e69bcf0d32e1bd2493ffc6d9206d11bcd6770739")
     };
 
-    private static final String[] SHA_HASHES = {
-        "0687260331a72403d909f105e69bcf0d32e1bd2493ffc6d9206d11bcd6770739"
+    /**
+     * Certificates looked into platform native keystore and not embedded in JOSM.
+     * Identifiers must match Windows keystore aliases for efficient search.
+     */
+    private static final CertAmend[] PLATFORM_CERT_AMEND = {
+        new CertAmend("Staat der Nederlanden Root CA - G2",
+                "668c83947da63b724bece1743c31a0e6aed0db8ec5b31be377bb784f91b6716f"),
+        new CertAmend("Government of Netherlands G3",
+                "3c4fb0b95ab8b30032f432b86f535fe172c185d0fd39865837cf36187fa6f428")
     };
 
     private CertificateAmendment() {
@@ -65,32 +109,30 @@ public final class CertificateAmendment {
             keyStore.load(is, "changeit".toCharArray());
         }
 
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
         CertificateFactory cf = CertificateFactory.getInstance("X.509");
         boolean certificateAdded = false;
-        for (int i = 0; i < CERT_AMEND.length; i++) {
-            try (CachedFile certCF = new CachedFile(CERT_AMEND[i])) {
-                byte[] certBytes = certCF.getByteContent();
-                ByteArrayInputStream certIS = new ByteArrayInputStream(certBytes);
-                X509Certificate cert = (X509Certificate) cf.generateCertificate(certIS);
-                MessageDigest md = MessageDigest.getInstance("SHA-256");
-                String sha1 = Utils.toHexString(md.digest(cert.getEncoded()));
-                if (!SHA_HASHES[i].equals(sha1)) {
-                    throw new IllegalStateException(
-                            tr("Error adding certificate {0} - certificate fingerprint mismatch. Expected {1}, was {2}",
-                            CERT_AMEND[i],
-                            SHA_HASHES[i],
-                            sha1
-                            ));
-                }
-                if (certificateIsMissing(keyStore, cert)) {
-                    if (Main.isDebugEnabled()) {
-                        Main.debug(tr("Adding certificate for TLS connections: {0}", cert.getSubjectX500Principal().getName()));
-                    }
-                    String alias = "josm:" + new File(CERT_AMEND[i]).getName();
-                    keyStore.setCertificateEntry(alias, cert);
+        // Add embedded certificates. Exit in case of error
+        for (CertAmend certAmend : CERT_AMEND) {
+            try (CachedFile certCF = new CachedFile(certAmend.id)) {
+                X509Certificate cert = (X509Certificate) cf.generateCertificate(
+                        new ByteArrayInputStream(certCF.getByteContent()));
+                if (checkAndAddCertificate(md, cert, certAmend, keyStore)) {
                     certificateAdded = true;
                 }
             }
+        }
+
+        try {
+            // Try to add platform certificates. Do not exit in case of error (embedded certificates may be OK)
+            for (CertAmend certAmend : PLATFORM_CERT_AMEND) {
+                X509Certificate cert = Main.platform.getX509Certificate(certAmend);
+                if (checkAndAddCertificate(md, cert, certAmend, keyStore)) {
+                    certificateAdded = true;
+                }
+            }
+        } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | IllegalStateException e) {
+            Main.error(e);
         }
 
         if (certificateAdded) {
@@ -100,6 +142,27 @@ public final class CertificateAmendment {
             sslContext.init(null, tmf.getTrustManagers(), null);
             SSLContext.setDefault(sslContext);
         }
+    }
+
+    private static boolean checkAndAddCertificate(MessageDigest md, X509Certificate cert, CertAmend certAmend, KeyStore keyStore)
+            throws CertificateEncodingException, KeyStoreException, InvalidAlgorithmParameterException {
+        if (cert != null) {
+            String sha256 = Utils.toHexString(md.digest(cert.getEncoded()));
+            if (!certAmend.sha256.equals(sha256)) {
+                throw new IllegalStateException(
+                        tr("Error adding certificate {0} - certificate fingerprint mismatch. Expected {1}, was {2}",
+                            certAmend.id, certAmend.sha256, sha256));
+            }
+            if (certificateIsMissing(keyStore, cert)) {
+                if (Main.isDebugEnabled()) {
+                    Main.debug(tr("Adding certificate for TLS connections: {0}", cert.getSubjectX500Principal().getName()));
+                }
+                String alias = "josm:" + new File(certAmend.id).getName();
+                keyStore.setCertificateEntry(alias, cert);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

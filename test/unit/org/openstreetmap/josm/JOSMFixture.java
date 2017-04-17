@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CertificateAmendment;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -110,7 +111,7 @@ public class JOSMFixture {
         try {
             CertificateAmendment.addMissingCertificates();
         } catch (IOException | GeneralSecurityException ex) {
-            throw new RuntimeException(ex);
+            throw new JosmRuntimeException(ex);
         }
 
         // init projection
