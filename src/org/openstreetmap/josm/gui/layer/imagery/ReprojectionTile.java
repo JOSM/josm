@@ -109,7 +109,6 @@ public class ReprojectionTile extends Tile {
             default:
                 interpolation = ImageWarp.Interpolation.BILINEAR;
         }
-        double margin = interpolation.getMargin();
 
         Projection projCurrent = Main.getProjection();
         Projection projServer = Projections.getProjectionByCode(source.getServerCRS());
@@ -120,6 +119,7 @@ public class ReprojectionTile extends Tile {
         // find east-north rectangle in current projection, that will fully contain the tile
         ProjectionBounds pbTarget = projCurrent.getEastNorthBoundsBox(pbServer, projServer);
 
+        double margin = 2;
         Dimension dim = getDimension(pbMarginAndAlign(pbTarget, scaleMapView, margin), scaleMapView);
         Integer scaleFix = limitScale(source.getTileSize(), Math.sqrt(dim.getWidth() * dim.getHeight()));
         double scale = scaleFix == null ? scaleMapView : (scaleMapView * scaleFix);

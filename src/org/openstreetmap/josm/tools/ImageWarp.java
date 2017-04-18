@@ -167,7 +167,7 @@ public class ImageWarp {
         for (int j = 0; j < imgTarget.getHeight(); j++) {
             for (int i = 0; i < imgTarget.getWidth(); i++) {
                 Point2D srcCoord = invTransform.transform(new Point2D.Double(i, j));
-                if (isInside(srcCoord, srcRect, interpolation.getMargin())) {
+                if (srcRect.contains(srcCoord)) {
                     int rgba;
                     switch (interpolation) {
                         case NEAREST_NEIGHBOR:
@@ -202,25 +202,10 @@ public class ImageWarp {
         return imgTarget;
     }
 
-    private static boolean isInside(Point2D p, Rectangle2D rect, double margin) {
-        return isInside(p.getX(), rect.getMinX(), rect.getMaxX(), margin) &&
-                isInside(p.getY(), rect.getMinY(), rect.getMaxY(), margin);
-    }
-
-    private static boolean isInside(double x, double xMin, double xMax, double margin) {
-        return x + margin >= xMin && x - margin <= xMax;
-    }
-
     private static int getColor(int x, int y, BufferedImage img) {
         // border strategy: continue with the color of the outermost pixel,
-        // but change alpha component to fully translucent
-        int a = Utils.clamp(x, 0, img.getWidth() - 1);
-        int b = Utils.clamp(y, 0, img.getHeight() - 1);
-        int clr = img.getRGB(a, b);
-        if (a == x && b == y)
-            return clr;
-        // keep color components, but set transparency to 0
-        // (the idea is that border fades out and mixes with next tile)
-        return clr & 0x00ffffff;
+        return img.getRGB(
+                Utils.clamp(x, 0, img.getWidth() - 1),
+                Utils.clamp(y, 0, img.getHeight() - 1));
     }
 }
