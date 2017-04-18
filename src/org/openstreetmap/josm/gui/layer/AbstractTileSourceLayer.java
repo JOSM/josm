@@ -721,13 +721,19 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      */
     @Override
     public void zoomChanged() {
+        zoomChanged(true);
+    }
+
+    private void zoomChanged(boolean invalidate) {
         if (Main.isDebugEnabled()) {
             Main.debug("zoomChanged(): " + currentZoomLevel);
         }
         if (tileLoader instanceof TMSCachedTileLoader) {
             ((TMSCachedTileLoader) tileLoader).cancelOutstandingTasks();
         }
-        invalidate();
+        if (invalidate) {
+            invalidate();
+        }
     }
 
     protected int getMaxZoomLvl() {
@@ -782,11 +788,15 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      * @return true, when zoom has changed to desired value, false if it was outside supported zoom levels
      */
     public boolean setZoomLevel(int zoom) {
+        return setZoomLevel(zoom, true);
+    }
+
+    private boolean setZoomLevel(int zoom, boolean invalidate) {
         if (zoom == currentZoomLevel) return true;
         if (zoom > this.getMaxZoomLvl()) return false;
         if (zoom < this.getMinZoomLvl()) return false;
         currentZoomLevel = zoom;
-        zoomChanged();
+        zoomChanged(invalidate);
         return true;
     }
 
@@ -1427,7 +1437,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 tsi = dts.getTileSetInfo(zoom);
             }
 
-            setZoomLevel(zoom);
+            setZoomLevel(zoom, false);
 
             // If all tiles at displayZoomLevel is loaded, load all tiles at next zoom level
             // to make sure there're really no more zoom levels
@@ -1445,7 +1455,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             }
             ts = dts.getTileSet(zoom);
         } else if (getDisplaySettings().isAutoZoom()) {
-            setZoomLevel(zoom);
+            setZoomLevel(zoom, false);
         }
 
         // Too many tiles... refuse to download
