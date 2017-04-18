@@ -246,7 +246,9 @@ class SyncEditorLayerIndex {
             def e = eliUrls.get(url)
             if (!josmUrls.containsKey(url)) continue
             def j = josmUrls.get(url)
-            if (!getName(e).equals(getName(j))) {
+            def ename = getName(e).replace("'","’")
+            def jname = getName(j).replace("'","’")
+            if (!ename.equals(jname)) {
                 myprintln "* Name differs ('${getName(e)}' != '${getName(j)}'): $url"
             }
         }
