@@ -224,7 +224,13 @@ public class RequestProcessor extends Thread {
                 String websiteDoc = HelpUtil.getWikiBaseHelpUrl() +"/Help/Preferences/RemoteControl";
                 String help = "No command specified! The following commands are available:<ul>" + usage
                         + "</ul>" + "See <a href=\""+websiteDoc+"\">"+websiteDoc+"</a> for complete documentation.";
-                sendBadRequest(out, help);
+                sendHeader(out, "400 Bad Request", "text/html", true);
+                out.write(String.format(
+                        RESPONSE_TEMPLATE,
+                        "<title>Bad Request</title>",
+                        "<h1>HTTP Error 400: Bad Request</h1>" +
+                        "<p>" + help + "</p>"));
+                out.flush();
             } else {
                 // create handler object
                 RequestHandler handler = handlerClass.getConstructor().newInstance();
@@ -329,12 +335,9 @@ public class RequestProcessor extends Thread {
     /**
      * Sends a 400 error: bad request
      *
-     * @param out
-     *            The writer where the error is written
-     * @param help
-     *            Optional HTML help content to display, can be null
-     * @throws IOException
-     *             If the error can not be written
+     * @param out The writer where the error is written
+     * @param help Optional help content to display, can be null
+     * @throws IOException If the error can not be written
      */
     private static void sendBadRequest(Writer out, String help) throws IOException {
         sendHeader(out, "400 Bad Request", "text/html", true);
