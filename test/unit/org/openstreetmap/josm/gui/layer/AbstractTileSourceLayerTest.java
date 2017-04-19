@@ -167,20 +167,6 @@ public class AbstractTileSourceLayerTest {
     }
 
     /**
-     * Test {@link AbstractTileSourceLayer#redraw}
-     */
-    @Test
-    public void testRedraw() {
-        try {
-            assertFalse(invalidated.get());
-            testLayer.redraw();
-            assertTrue(invalidated.get());
-        } finally {
-            invalidated.set(false);
-        }
-    }
-
-    /**
      * Test {@link AbstractTileSourceLayer#clearTileCache}
      */
     @Test
