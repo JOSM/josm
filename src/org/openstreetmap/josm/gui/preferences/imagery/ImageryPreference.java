@@ -38,6 +38,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.UIManager;
+import javax.swing.event.HyperlinkEvent.EventType;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -64,10 +65,12 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.OpenBrowser;
 
 /**
  * Imagery preferences, including imagery providers, settings and offsets.
@@ -361,6 +364,14 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             defaultToolbar.setOpaque(false);
             defaultToolbar.add(new ReloadAction());
             add(defaultToolbar, GBC.eol().anchor(GBC.SOUTH).insets(0, 0, 5, 0));
+
+            HtmlPanel help = new HtmlPanel(tr("New default entries can be added in the <a href=\"{0}\">Wiki</a>.", Main.getJOSMWebsite()+"/wiki/Maps"));
+            help.getEditorPane().addHyperlinkListener(e -> {
+                if (e.getEventType() == EventType.ACTIVATED) {
+                    OpenBrowser.displayUrl(e.getURL().toString());
+                }
+            });
+            add(help, GBC.eol().insets(10, 0, 0, 10).fill(GBC.HORIZONTAL));
 
             ActivateAction activate = new ActivateAction();
             defaultTable.getSelectionModel().addListSelectionListener(activate);
