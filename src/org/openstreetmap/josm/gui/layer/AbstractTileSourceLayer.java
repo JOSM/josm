@@ -87,7 +87,6 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent.ZoomChangeListener;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -1849,6 +1848,14 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             if (memory != null) {
                 memory.free();
             }
+        }
+    }
+
+    @Override
+    public void projectionChanged(Projection oldValue, Projection newValue) {
+        super.projectionChanged(oldValue, newValue);
+        if (tileCache != null) {
+            tileCache.clear();
         }
     }
 }

@@ -317,6 +317,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 return true;
             }
 
+            LOG.log(Level.FINE, "JCS - starting HttpClient GET request for URL: {0}", getUrl());
             final HttpClient request = getRequest("GET", true);
 
             if (isObjectLoadable() &&
