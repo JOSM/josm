@@ -365,7 +365,8 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             defaultToolbar.add(new ReloadAction());
             add(defaultToolbar, GBC.eol().anchor(GBC.SOUTH).insets(0, 0, 5, 0));
 
-            HtmlPanel help = new HtmlPanel(tr("New default entries can be added in the <a href=\"{0}\">Wiki</a>.", Main.getJOSMWebsite()+"/wiki/Maps"));
+            HtmlPanel help = new HtmlPanel(tr("New default entries can be added in the <a href=\"{0}\">Wiki</a>.",
+                Main.getJOSMWebsite()+"/wiki/Maps"));
             help.getEditorPane().addHyperlinkListener(e -> {
                 if (e.getEventType() == EventType.ACTIVATED) {
                     OpenBrowser.displayUrl(e.getURL().toString());
