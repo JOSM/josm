@@ -1,8 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.imagery;
 
+import java.awt.Polygon;
+import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Objects;
@@ -120,27 +121,37 @@ public class TileCoordinateConverter {
     }
 
     /**
-     * Returns a quadrilateral formed by the 4 corners of the tile in screen coordinates.
+     * Returns a shape that approximates the outline of the tile in screen coordinates.
      *
      * If the tile is rectangular, this will be the exact border of the tile.
      * The tile may be more oddly shaped due to reprojection, then it is an approximation
      * of the tile outline.
      * @param tile the tile
-     * @return quadrilateral tile outline in screen coordinates
+     * @return tile outline in screen coordinates
      */
-    public Shape getScreenQuadrilateralForTile(Tile tile) {
-        Point2D p00 = this.getPixelForTile(tile.getXtile(), tile.getYtile(), tile.getZoom());
-        Point2D p10 = this.getPixelForTile(tile.getXtile() + 1, tile.getYtile(), tile.getZoom());
-        Point2D p11 = this.getPixelForTile(tile.getXtile() + 1, tile.getYtile() + 1, tile.getZoom());
-        Point2D p01 = this.getPixelForTile(tile.getXtile(), tile.getYtile() + 1, tile.getZoom());
-
-        Path2D pth = new Path2D.Double();
-        pth.moveTo(p00.getX(), p00.getY());
-        pth.lineTo(p01.getX(), p01.getY());
-        pth.lineTo(p11.getX(), p11.getY());
-        pth.lineTo(p10.getX(), p10.getY());
-        pth.closePath();
-        return pth;
+    public Shape getTileShapeScreen(Tile tile) {
+        if (requiresReprojection()) {
+            Point2D p00 = this.getPixelForTile(tile.getXtile(), tile.getYtile(), tile.getZoom());
+            Point2D p10 = this.getPixelForTile(tile.getXtile() + 1, tile.getYtile(), tile.getZoom());
+            Point2D p11 = this.getPixelForTile(tile.getXtile() + 1, tile.getYtile() + 1, tile.getZoom());
+            Point2D p01 = this.getPixelForTile(tile.getXtile(), tile.getYtile() + 1, tile.getZoom());
+            return new Polygon(new int[] {
+                    (int) Math.round(p00.getX()),
+                    (int) Math.round(p01.getX()),
+                    (int) Math.round(p11.getX()),
+                    (int) Math.round(p10.getX())},
+                new int[] {
+                    (int) Math.round(p00.getY()),
+                    (int) Math.round(p01.getY()),
+                    (int) Math.round(p11.getY()),
+                    (int) Math.round(p10.getY())}, 4);
+        } else {
+            Point2D p00 = this.getPixelForTile(tile.getXtile(), tile.getYtile(), tile.getZoom());
+            Point2D p11 = this.getPixelForTile(tile.getXtile() + 1, tile.getYtile() + 1, tile.getZoom());
+            return new Rectangle((int) Math.round(p00.getX()), (int) Math.round(p00.getY()),
+                    (int) Math.round(p11.getX()) - (int) Math.round(p00.getX()),
+                    (int) Math.round(p11.getY()) - (int) Math.round(p00.getY()));
+        }
     }
 
     /**

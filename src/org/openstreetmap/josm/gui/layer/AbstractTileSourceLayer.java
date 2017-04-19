@@ -964,7 +964,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             g.clip(clip);
         }
         g.drawImage(toDrawImg, (int) Math.round(screen0.getX()), (int) Math.round(screen0.getY()),
-                (int) Math.round(screen1.getX() - screen0.getX()), (int) Math.round(screen1.getY() - screen0.getY()), this);
+                (int) Math.round(screen1.getX()) - (int) Math.round(screen0.getX()),
+                (int) Math.round(screen1.getY()) - (int) Math.round(screen0.getY()), this);
         if (clip != null) {
             g.setClip(oldClip);
         }
@@ -1026,7 +1027,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     // If drawing the displayZoomLevel, border is null and we draw the entire tile set.
     private List<Tile> paintTileImages(Graphics2D g, TileSet ts, int zoom, Tile border) {
         if (zoom <= 0) return Collections.emptyList();
-        Shape borderClip = coordinateConverter.getScreenQuadrilateralForTile(border);
+        Shape borderClip = coordinateConverter.getTileShapeScreen(border);
         List<Tile> missedTiles = new LinkedList<>();
         // The callers of this code *require* that we return any tiles that we do not draw in missedTiles.
         // ts.allExistingTiles() by default will only return already-existing tiles.
@@ -1139,7 +1140,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         if (Main.isDebugEnabled()) {
             // draw tile outline in semi-transparent red
             g.setColor(new Color(255, 0, 0, 50));
-            g.draw(coordinateConverter.getScreenQuadrilateralForTile(tile));
+            g.draw(coordinateConverter.getTileShapeScreen(tile));
         }
     }
 
