@@ -300,26 +300,12 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     /**
      * Clears the tile cache.
-     *
-     * If the current tileLoader is an instance of OsmTileLoader, a new
-     * TmsTileClearController is created and passed to the according clearCache method.
      */
     public void clearTileCache() {
         if (tileLoader instanceof CachedTileLoader) {
             ((CachedTileLoader) tileLoader).clearCache(tileSource);
         }
         tileCache.clear();
-    }
-
-    /**
-     * Initiates a repaint of Main.map
-     *
-     * @see Main#map
-     * @see MapFrame#repaint()
-     * @see #invalidate() To trigger a repaint of all places where the layer is displayed.
-     */
-    public void redraw() {
-        invalidate();
     }
 
     /**

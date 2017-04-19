@@ -117,6 +117,7 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
 
     @Override
     public void projectionChanged(Projection oldValue, Projection newValue) {
+        super.projectionChanged(oldValue, newValue);
         Projection tileProjection = chooseProjection(newValue);
         if (!Objects.equals(tileSource.getTileProjection(), tileProjection)) {
             tileSource.setTileProjection(tileProjection);

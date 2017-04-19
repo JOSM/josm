@@ -33,6 +33,7 @@ public class FlushTileCacheAction extends AbstractAction {
             @Override
             protected void realRun() {
                 layer.clearTileCache();
+                layer.invalidate();
             }
 
             @Override
