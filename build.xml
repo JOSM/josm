@@ -481,7 +481,7 @@ Build-Date: ${build.tstamp}
         </junitreport>
         <jacoco:report>
             <executiondata>
-                <file file="${test.dir}/*.exec"/>
+                <fileset dir="${test.dir}" includes="*.exec"/>
             </executiondata>
             <structure name="JOSM Test Coverage">
                 <classfiles>
