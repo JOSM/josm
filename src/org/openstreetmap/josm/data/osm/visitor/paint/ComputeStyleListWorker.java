@@ -138,13 +138,17 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
     public void add(Relation osm, int flags) {
         StyleElementList sl = styles.get(osm, circum, nc);
         for (StyleElement s : sl) {
-            if (drawMultipolygon && drawArea && (s instanceof AreaElement || s instanceof AreaIconElement)
-                    && (flags & StyledMapRenderer.FLAG_DISABLED) == 0) {
-                output.add(new StyleRecord(s, osm, flags));
-            } else if ((drawMultipolygon && drawArea && s instanceof TextElement) || (drawRestriction && s instanceof NodeElement)) {
+            if (drawAreaElement(flags, s) ||
+               (drawMultipolygon && drawArea && s instanceof TextElement) ||
+               (drawRestriction && s instanceof NodeElement)) {
                 output.add(new StyleRecord(s, osm, flags));
             }
         }
+    }
+
+    private boolean drawAreaElement(int flags, StyleElement s) {
+        return drawMultipolygon && drawArea && (s instanceof AreaElement || s instanceof AreaIconElement)
+                && (flags & StyledMapRenderer.FLAG_DISABLED) == 0;
     }
 
     public void add(Way osm, int flags) {
