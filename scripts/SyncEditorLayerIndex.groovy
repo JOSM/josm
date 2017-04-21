@@ -16,6 +16,7 @@
  *
  * Add option "-h" to show the available command line flags.
  */
+import java.text.DecimalFormat
 import javax.json.Json
 import javax.json.JsonArray
 import javax.json.JsonObject
@@ -47,6 +48,7 @@ class SyncEditorLayerIndex {
      * Main method.
      */
     static main(def args) {
+        Locale.setDefault(Locale.ROOT);
         parse_command_line_arguments(args)
         def script = new SyncEditorLayerIndex()
         script.loadSkip()
@@ -195,7 +197,22 @@ class SyncEditorLayerIndex {
         myprintln "*** Loaded ${eliEntries.size()} entries (ELI). ***"
     }
 
+    String maininfo(def entry, String offset) {
+        String res = offset + "<type>${getType(entry)}</type>\n"
+        res += offset + "<url><![CDATA[${getUrl(entry)}]]></url>\n"
+        if(getType(entry) == "tms") {
+            if(getMinZoom(entry) != null)
+                res += offset + "<min-zoom>${getMinZoom(entry)}</min-zoom>\n"
+            if(getMaxZoom(entry) != null)
+                res += offset + "<max-zoom>${getMaxZoom(entry)}</max-zoom>\n"
+        }
+        return res
+    }
+
+    
     void printentries(def entries, def stream) {
+        DecimalFormat df = new DecimalFormat("#.#######")
+        df.setRoundingMode(java.math.RoundingMode.CEILING)
         stream.write "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
         stream.write "<imagery xmlns=\"http://josm.openstreetmap.de/maps-1.0\">\n"
         for (def e : entries) {
@@ -203,6 +220,12 @@ class SyncEditorLayerIndex {
             stream.write "    <entry"+(best ? " eli-best=\"true\"" : "" )+">\n"
             stream.write "        <name>${getName(e)}</name>\n"
             stream.write "        <id>${getId(e)}</id>\n"
+            if(getDate(e) != "")
+                stream.write "        <date>${getDate(e)}</date>\n"
+            stream.write maininfo(e, "        ")
+            for (def m : getMirrors(e)) {
+                    stream.write "        <mirror>\n"+maininfo(m, "            ")+"        </mirror>\n"
+            }
             def minlat = 1000
             def minlon = 1000
             def maxlat = -1000
@@ -222,15 +245,15 @@ class SyncEditorLayerIndex {
                     if(!(i++%3)) {
                         shapes += sep + "    "
                     }
-                    shapes += "<point lat='${String.format(Locale.ROOT, "%.7f",lat)}' lon='${String.format(Locale.ROOT, "%.7f",lon)}'/>"
+                    shapes += "<point lat='${df.format(lat)}' lon='${df.format(lon)}'/>"
                 }
                 shapes += sep + "</shape>\n"
             }
             if(shapes) {
-                stream.write "        <bounds min-lat='${minlat}' min-lon='${minlon}' max-lat='${maxlat}' max-lon='${maxlon}'>\n"
+                stream.write "        <bounds min-lat='${df.format(minlat)}' min-lon='${df.format(minlon)}' max-lat='${df.format(maxlat)}' max-lon='${df.format(maxlon)}'>\n"
                 stream.write shapes + "        </bounds>\n"
-                stream.write "    </entry>\n"
             }
+            stream.write "    </entry>\n"
         }
         stream.write "</imagery>\n"
         stream.close()
@@ -578,6 +601,10 @@ class SyncEditorLayerIndex {
     static String getName(Object e) {
         if (e instanceof ImageryInfo) return e.getOriginalName()
         return e.get("properties").getString("name")
+    }
+    static List<Object> getMirrors(Object e) {
+        if (e instanceof ImageryInfo) return e.getMirrors()
+        return []
     }
     static List<Shape> getShapes(Object e) {
         if (e instanceof ImageryInfo) {
