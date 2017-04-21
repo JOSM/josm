@@ -52,7 +52,17 @@ class SyncEditorLayerIndex {
         script.loadSkip()
         script.start()
         script.loadJosmEntries()
+        if(options.josmxml) {
+            def file = new FileWriter(options.josmxml)
+            def stream = new BufferedWriter(file)
+            script.printentries(script.josmEntries, stream)
+        }
         script.loadELIEntries()
+        if(options.elixml) {
+            def file = new FileWriter(options.elixml)
+            def stream = new BufferedWriter(file)
+            script.printentries(script.eliEntries, stream)
+        }
         script.checkInOneButNotTheOther()
         script.checkCommonEntries()
         script.end()
@@ -77,6 +87,8 @@ class SyncEditorLayerIndex {
         cli.n(longOpt:'noskip', argName:"noskip", "don't skip known entries")
         cli.x(longOpt:'xhtmlbody', argName:"xhtmlbody", "create XHTML body for display in a web page")
         cli.X(longOpt:'xhtml', argName:"xhtml", "create XHTML for display in a web page")
+        cli.p(longOpt:'elixml', args:1, argName:"elixml", "ELI entries for use in JOSM as XML file (incomplete)")
+        cli.q(longOpt:'josmxml', args:1, argName:"josmxml", "JOSM entries reoutput as XML file (incomplete)")
         cli.m(longOpt:'nomissingeli', argName:"nomissingeli", "don't show missing editor layer index entries")
         cli.h(longOpt:'help', "show this help")
         options = cli.parse(args)
@@ -119,10 +131,10 @@ class SyncEditorLayerIndex {
 
     void myprintlnfinal(String s) {
         if(outputStream != null) {
-            outputStream.write(s);
-            outputStream.newLine();
+            outputStream.write(s)
+            outputStream.newLine()
         } else {
-            println s;
+            println s
         }
     }
 
@@ -134,7 +146,7 @@ class SyncEditorLayerIndex {
                 s = "<pre style=\"margin:3px;color:"+color+"\">"+s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")+"</pre>"
             }
             if (!options.noskip) {
-                return;
+                return
             }
         } else if(options.xhtmlbody || options.xhtml) {
             String color = s.startsWith("***") ? "black" : ((s.startsWith("+ ") || s.startsWith("+++ ELI")) ? "blue" : "red")
@@ -178,6 +190,47 @@ class SyncEditorLayerIndex {
             }
         }
         myprintln "*** Loaded ${eliEntries.size()} entries (ELI). ***"
+    }
+
+    void printentries(def entries, def stream) {
+        stream.write "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n"
+        stream.write "<imagery xmlns=\"http://josm.openstreetmap.de/maps-1.0\">\n"
+        for (def e : entries) {
+            def best = "eli-best".equals(getQuality(e))
+            stream.write "    <entry"+(best ? " eli-best=\"true\"" : "" )+">\n"
+            stream.write "        <name>${getName(e)}</name>\n"
+            stream.write "        <id>${getId(e)}</id>\n"
+            def minlat = 1000
+            def minlon = 1000
+            def maxlat = -1000
+            def maxlon = -1000
+            def shapes = ""
+            def sep = "\n            "
+            for(def s: getShapes(e)) {
+                shapes += "            <shape>"
+                def i = 0
+                for(def p: s.getPoints()) {
+                    def lat = p.getLat()
+                    def lon = p.getLon()
+                    if(lat > maxlat) maxlat = lat
+                    if(lon > maxlon) maxlon = lon
+                    if(lat < minlat) minlat = lat
+                    if(lon < minlon) minlon = lon
+                    if(!(i++%3)) {
+                        shapes += sep + "    "
+                    }
+                    shapes += "<point lat='${String.format(Locale.ROOT, "%.7f",lat)}' lon='${String.format(Locale.ROOT, "%.7f",lon)}'/>"
+                }
+                shapes += sep + "</shape>\n"
+            }
+            if(shapes) {
+                stream.write "        <bounds min-lat='${minlat}' min-lon='${minlon}' max-lat='${maxlat}' max-lon='${maxlon}'>\n"
+                stream.write shapes + "        </bounds>\n"
+                stream.write "    </entry>\n"
+            }
+        }
+        stream.write "</imagery>\n"
+        stream.close()
     }
 
     void loadJosmEntries() {
@@ -312,12 +365,12 @@ class SyncEditorLayerIndex {
             def j = josmUrls.get(url)
             def jd = getDate(j)
             // The forms 2015;- or -;2015 or 2015;2015 are handled equal to 2015
-            String ef = ed.replaceAll("\\A-;","").replaceAll(";-\\z","").replaceAll("\\A([0-9-]+);\\1\\z","\$1");
+            String ef = ed.replaceAll("\\A-;","").replaceAll(";-\\z","").replaceAll("\\A([0-9-]+);\\1\\z","\$1")
             // ELI has a strange and inconsistent used end_date definition, so we try again with subtraction by one
-            String ed2 = ed;
+            String ed2 = ed
             def reg = (ed =~ /^(.*;)(\d\d\d\d)(-(\d\d)(-(\d\d))?)?$/)
             if(reg != null && reg.count == 1) {
-                Calendar cal = Calendar.getInstance();
+                Calendar cal = Calendar.getInstance()
                 cal.set(reg[0][2] as Integer, reg[0][4] == null ? 0 : (reg[0][4] as Integer)-1, reg[0][6] == null ? 1 : reg[0][6] as Integer)
                 cal.add(Calendar.DAY_OF_MONTH, -1)
                 ed2 = reg[0][1] + cal.get(Calendar.YEAR)
@@ -326,11 +379,11 @@ class SyncEditorLayerIndex {
                 if (reg[0][6] != null)
                     ed2 += "-" + String.format("%02d", cal.get(Calendar.DAY_OF_MONTH))
             }
-            String ef2 = ed2.replaceAll("\\A-;","").replaceAll(";-\\z","").replaceAll("\\A([0-9-]+);\\1\\z","\$1");
+            String ef2 = ed2.replaceAll("\\A-;","").replaceAll(";-\\z","").replaceAll("\\A([0-9-]+);\\1\\z","\$1")
             if (!ed.equals(jd) && !ef.equals(jd) && !ed2.equals(jd) && !ef2.equals(jd)) {
-                String t = "'${ed}'";
+                String t = "'${ed}'"
                 if (!ed.equals(ef)) {
-                    t += " or '${ef}'";
+                    t += " or '${ef}'"
                 }
                 if (jd.isEmpty()) {
                     myprintln "- Missing JOSM date (${t}): ${getDescription(j)}"
@@ -350,6 +403,11 @@ class SyncEditorLayerIndex {
                 if(!p[0].equals(p[p.size()-1])) {
                     myprintln "+++ JOSM shape $num unclosed: ${getDescription(j)}"
                 }
+                for (def nump = 1; nump < p.size(); ++nump) {
+                    if (p[nump-1] == p[nump]) {
+                        myprintln "+++ JOSM shape $num double point at ${nump-1}: ${getDescription(j)}"
+                    }
+                }
                 ++num
             }
         }
@@ -361,6 +419,11 @@ class SyncEditorLayerIndex {
                 def p = shape.getPoints()
                 if(!p[0].equals(p[p.size()-1]) && !options.nomissingeli) {
                     myprintln "+++ ELI shape $num unclosed: ${getDescription(e)}"
+                }
+                for (def nump = 1; nump < p.size(); ++nump) {
+                    if (p[nump-1] == p[nump]) {
+                        myprintln "+++ ELI shape $num double point at ${nump-1}: ${getDescription(e)}"
+                    }
                 }
                 ++num
             }
@@ -425,14 +488,14 @@ class SyncEditorLayerIndex {
             def j = josmUrls.get(url)
             def id = getId(j)
             if(josmMirrors.containsKey(url)) {
-                continue;
+                continue
             }
             if(id == null) {
                 myprintln "* No JOSM-ID: ${getDescription(j)}"
             } else if(josmIds.containsKey(id)) {
                 myprintln "* JOSM-ID ${id} not unique: ${getDescription(j)}"
             } else {
-                josmIds.put(id, j);
+                josmIds.put(id, j)
             }
             def d = getDate(j)
             if(!d.isEmpty()) {
@@ -441,8 +504,8 @@ class SyncEditorLayerIndex {
                     myprintln "* JOSM-Date '${d}' is strange: ${getDescription(j)}"
                 } else {
                     try {
-                        def first = verifyDate(reg[0][2],reg[0][4],reg[0][6]);
-                        def second = verifyDate(reg[0][9],reg[0][11],reg[0][13]);
+                        def first = verifyDate(reg[0][2],reg[0][4],reg[0][6])
+                        def second = verifyDate(reg[0][9],reg[0][11],reg[0][13])
                         if(second.compareTo(first) < 0) {
                             myprintln "* JOSM-Date '${d}' is strange (second earlier than first): ${getDescription(j)}"
                         }
@@ -454,21 +517,21 @@ class SyncEditorLayerIndex {
             }
             def js = getShapes(j)
             if(js.size()) {
-                def minlat = 1000;
-                def minlon = 1000;
-                def maxlat = -1000;
-                def maxlon = -1000;
+                def minlat = 1000
+                def minlon = 1000
+                def maxlat = -1000
+                def maxlon = -1000
                 for(def s: js) {
                     for(def p: s.getPoints()) {
-                        def lat = p.getLat();
-                        def lon = p.getLon();
-                        if(lat > maxlat) maxlat = lat;
-                        if(lon > maxlon) maxlon = lon;
-                        if(lat < minlat) minlat = lat;
-                        if(lon < minlon) minlon = lon;
+                        def lat = p.getLat()
+                        def lon = p.getLon()
+                        if(lat > maxlat) maxlat = lat
+                        if(lon > maxlon) maxlon = lon
+                        if(lat < minlat) minlat = lat
+                        if(lon < minlon) minlon = lon
                     }
                 }
-                def b = j.getBounds();
+                def b = j.getBounds()
                 if(b.getMinLat() != minlat || b.getMinLon() != minlon || b.getMaxLat() != maxlat || b.getMaxLon() != maxlon) {
                     myprintln "* Bounds do not match shape (is ${b.getMinLat()},${b.getMinLon()},${b.getMaxLat()},${b.getMaxLon()}, calculated <bounds min-lat='${minlat}' min-lon='${minlon}' max-lat='${maxlat}' max-lon='${maxlon}'>): ${getDescription(j)}"
                 }
@@ -494,7 +557,7 @@ class SyncEditorLayerIndex {
             return start+";-"
         else if(!end.isEmpty())
             return "-;"+end
-        return "";
+        return ""
     }
     static Date verifyDate(String year, String month, String day) {
         def date
@@ -517,9 +580,9 @@ class SyncEditorLayerIndex {
     }
     static List<Shape> getShapes(Object e) {
         if (e instanceof ImageryInfo) {
-            def bounds = e.getBounds();
+            def bounds = e.getBounds()
             if(bounds != null) {
-                return bounds.getShapes();
+                return bounds.getShapes()
             }
             return []
         }

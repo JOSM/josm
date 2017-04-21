@@ -701,6 +701,10 @@ Build-Date: ${build.tstamp}
         <echo message="Checking editor imagery difference"/>
         <groovy src="scripts/SyncEditorLayerIndex.groovy" classpath="${dist.dir}/josm-custom.jar">
                 <arg value="-noskip"/>
+                <arg value="-p"/>
+                <arg value="eli.imagery.xml"/>
+                <arg value="-q"/>
+                <arg value="josm.imagery.xml"/>
         </groovy>
     </target>
 
