@@ -196,10 +196,15 @@ class SyncEditorLayerIndex {
         }
         myprintln "*** Loaded ${eliEntries.size()} entries (ELI). ***"
     }
+    String cdata(def s) {
+        if(s =~ /[<>&]/)
+            return "<![CDATA[$s]]>"
+       return s
+    }
 
     String maininfo(def entry, String offset) {
         String res = offset + "<type>${getType(entry)}</type>\n"
-        res += offset + "<url><![CDATA[${getUrl(entry)}]]></url>\n"
+        res += offset + "<url>${cdata(getUrl(entry))}</url>\n"
         if(getType(entry) == "tms") {
             if(getMinZoom(entry) != null)
                 res += offset + "<min-zoom>${getMinZoom(entry)}</min-zoom>\n"
@@ -208,7 +213,6 @@ class SyncEditorLayerIndex {
         }
         return res
     }
-
     
     void printentries(def entries, def stream) {
         DecimalFormat df = new DecimalFormat("#.#######")
@@ -220,8 +224,13 @@ class SyncEditorLayerIndex {
             stream.write "    <entry"+(best ? " eli-best=\"true\"" : "" )+">\n"
             stream.write "        <name>${getName(e)}</name>\n"
             stream.write "        <id>${getId(e)}</id>\n"
-            if(getDate(e) != "")
-                stream.write "        <date>${getDate(e)}</date>\n"
+            def t
+            if((t = getDate(e)))
+                stream.write "        <date>$t</date>\n"
+            if((t = getCountryCode(e)))
+                stream.write "        <country-code>$t</country-code>\n"
+            if((t = getIcon(e)))
+                stream.write "        <icon>${cdata(t)}</icon>\n"
             stream.write maininfo(e, "        ")
             for (def m : getMirrors(e)) {
                     stream.write "        <mirror>\n"+maininfo(m, "            ")+"        </mirror>\n"
