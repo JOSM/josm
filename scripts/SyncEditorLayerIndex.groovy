@@ -34,9 +34,9 @@ class SyncEditorLayerIndex {
     def josmUrls = new HashMap<String, ImageryInfo>()
     def josmMirrors = new HashMap<String, ImageryInfo>()
 
-    static String eliInputFile = 'imagery.geojson'
-    static String josmInputFile = 'maps.xml'
-    static String ignoreInputFile = 'maps_ignores.txt'
+    static String eliInputFile = 'imagery_eli.geojson'
+    static String josmInputFile = 'imagery_josm.imagery.xml'
+    static String ignoreInputFile = 'imagery_josm.ignores.txt'
     static FileWriter outputFile = null
     static BufferedWriter outputStream = null
     def skip = [:]
@@ -89,7 +89,7 @@ class SyncEditorLayerIndex {
         cli.X(longOpt:'xhtml', argName:"xhtml", "create XHTML for display in a web page")
         cli.p(longOpt:'elixml', args:1, argName:"elixml", "ELI entries for use in JOSM as XML file (incomplete)")
         cli.q(longOpt:'josmxml', args:1, argName:"josmxml", "JOSM entries reoutput as XML file (incomplete)")
-        cli.m(longOpt:'nomissingeli', argName:"nomissingeli", "don't show missing editor layer index entries")
+        cli.m(longOpt:'noeli', argName:"noeli", "don't show output for ELI problems")
         cli.h(longOpt:'help', "show this help")
         options = cli.parse(args)
 
@@ -151,6 +151,9 @@ class SyncEditorLayerIndex {
         } else if(options.xhtmlbody || options.xhtml) {
             String color = s.startsWith("***") ? "black" : ((s.startsWith("+ ") || s.startsWith("+++ ELI")) ? "blue" : "red")
             s = "<pre style=\"margin:3px;color:"+color+"\">"+s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")+"</pre>"
+        }
+        if ((s.startsWith("+ ") || s.startsWith("+++ ELI")) && options.noeli) {
+            return
         }
         myprintlnfinal(s)
     }
@@ -282,8 +285,6 @@ class SyncEditorLayerIndex {
             }
         }
 
-        if (options.nomissingeli)
-            return
         def l2 = inOneButNotTheOther(josmUrls, eliUrls)
         myprintln "*** URLs found in JOSM but not in ELI (${l2.size()}): ***"
         if (!l2.isEmpty()) {
