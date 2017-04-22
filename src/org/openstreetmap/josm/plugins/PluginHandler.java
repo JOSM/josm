@@ -143,6 +143,43 @@ public final class PluginHandler {
         // Hide default constructor for utils classes
     }
 
+    static final class PluginInformationAction extends AbstractAction {
+        private final PluginInformation info;
+
+        PluginInformationAction(PluginInformation info) {
+            super(tr("Information"));
+            this.info = info;
+        }
+
+        /**
+         * Returns plugin information text.
+         * @return plugin information text
+         */
+        public String getText() {
+            StringBuilder b = new StringBuilder();
+            for (Entry<String, String> e : info.attr.entrySet()) {
+                b.append(e.getKey());
+                b.append(": ");
+                b.append(e.getValue());
+                b.append('\n');
+            }
+            return b.toString();
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent event) {
+            String text = getText();
+            JosmTextArea a = new JosmTextArea(10, 40);
+            a.setEditable(false);
+            a.setText(text);
+            a.setCaretPosition(0);
+            if (!GraphicsEnvironment.isHeadless()) {
+                JOptionPane.showMessageDialog(Main.parent, new JScrollPane(a), tr("Plugin information"),
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+    }
+
     /**
      * Description of a deprecated plugin
      */
@@ -1407,24 +1444,7 @@ public final class PluginHandler {
             + (info.version != null && !info.version.isEmpty() ? " Version: " + info.version : "");
             pluginTab.add(new JLabel(name), GBC.std());
             pluginTab.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-            pluginTab.add(new JButton(new AbstractAction(tr("Information")) {
-                @Override
-                public void actionPerformed(ActionEvent event) {
-                    StringBuilder b = new StringBuilder();
-                    for (Entry<String, String> e : info.attr.entrySet()) {
-                        b.append(e.getKey());
-                        b.append(": ");
-                        b.append(e.getValue());
-                        b.append('\n');
-                    }
-                    JosmTextArea a = new JosmTextArea(10, 40);
-                    a.setEditable(false);
-                    a.setText(b.toString());
-                    a.setCaretPosition(0);
-                    JOptionPane.showMessageDialog(Main.parent, new JScrollPane(a), tr("Plugin information"),
-                            JOptionPane.INFORMATION_MESSAGE);
-                }
-            }), GBC.eol());
+            pluginTab.add(new JButton(new PluginInformationAction(info)), GBC.eol());
 
             JosmTextArea description = new JosmTextArea(info.description == null ? tr("no description available")
                     : info.description);
