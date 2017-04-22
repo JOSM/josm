@@ -58,7 +58,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
 
     private static final String CROSSHAIR = "crosshair";
 
-    private enum State {
+    enum State {
         SELECTING, IMPROVING
     }
 

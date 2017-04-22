@@ -10,12 +10,12 @@ import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.actions.OrthogonalizeAction.Direction;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Geometry;
@@ -25,7 +25,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
- * Unit tests for class {@link OsmDataLayer}.
+ * Unit tests for class {@link OrthogonalizeAction}.
  */
 public class OrthogonalizeActionTest {
 
@@ -109,5 +109,13 @@ public class OrthogonalizeActionTest {
             assertEquals(-Math.PI / 2, Geometry.getCornerAngle(
                     way.getNode(i - 1).getEastNorth(), way.getNode(i).getEastNorth(), way.getNode(i + 1).getEastNorth()), 1e-6);
         }
+    }
+
+    /**
+     * Unit test of {@link Direction} enum.
+     */
+    @Test
+    public void testEnumDirection() {
+        TestUtils.superficialEnumCodeCoverage(Direction.class);
     }
 }

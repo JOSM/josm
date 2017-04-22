@@ -14,6 +14,9 @@ import java.util.Collection;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.actions.mapmode.SelectAction.Mode;
+import org.openstreetmap.josm.actions.mapmode.SelectAction.SelectActionCursor;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -140,5 +143,21 @@ public class SelectActionTest {
             // Ensure we clean the place before leaving, even if test fails.
             Main.getLayerManager().removeLayer(layer);
         }
+    }
+
+    /**
+     * Unit test of {@link Mode} enum.
+     */
+    @Test
+    public void testEnumMode() {
+        TestUtils.superficialEnumCodeCoverage(Mode.class);
+    }
+
+    /**
+     * Unit test of {@link SelectActionCursor} enum.
+     */
+    @Test
+    public void testEnumSelectActionCursor() {
+        TestUtils.superficialEnumCodeCoverage(SelectActionCursor.class);
     }
 }

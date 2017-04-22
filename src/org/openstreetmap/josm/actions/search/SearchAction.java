@@ -66,6 +66,9 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
     private static final String SEARCH_EXPRESSION = "searchExpression";
 
+    /**
+     * Search mode.
+     */
     public enum SearchMode {
         /** replace selection */
         replace('R'),

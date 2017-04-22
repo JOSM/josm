@@ -15,6 +15,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
+import org.openstreetmap.josm.actions.search.SearchCompiler.ExactKeyValue;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -480,5 +481,13 @@ public class SearchCompilerTest {
     public void testTicket14217() throws Exception {
         assertNotNull(SearchCompiler.compile(new String(Files.readAllBytes(
                 Paths.get(TestUtils.getRegressionDataFile(14217, "filter.txt"))), StandardCharsets.UTF_8)));
+    }
+
+    /**
+     * Unit test of {@link SearchCompiler.ExactKeyValue.Mode} enum.
+     */
+    @Test
+    public void testEnumExactKeyValueMode() {
+        TestUtils.superficialEnumCodeCoverage(ExactKeyValue.Mode.class);
     }
 }

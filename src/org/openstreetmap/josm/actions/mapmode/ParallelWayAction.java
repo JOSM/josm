@@ -119,7 +119,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
     // CHECKSTYLE.ON: SingleSpaceSeparator
     // @formatter:on
 
-    private enum Mode {
+    enum Mode {
         DRAGGING, NORMAL
     }
 
@@ -614,7 +614,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         }
     }
 
-    private enum Modifier {
+    enum Modifier {
         CTRL('c'),
         ALT('a'),
         SHIFT('s');

@@ -494,7 +494,7 @@ public final class OrthogonalizeAction extends JosmAction {
         }
     }
 
-    private enum Direction {
+    enum Direction {
         RIGHT, UP, LEFT, DOWN;
         public Direction changeBy(int directionChange) {
             int tmp = (this.ordinal() + directionChange) % 4;

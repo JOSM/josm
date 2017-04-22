@@ -27,7 +27,19 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class MoveAction extends JosmAction {
 
-    public enum Direction { UP, LEFT, RIGHT, DOWN }
+    /**
+     * Move direction.
+     */
+    public enum Direction {
+        /** Move up */
+        UP,
+        /** Move left */
+        LEFT,
+        /** Move right */
+        RIGHT,
+        /** Move down */
+        DOWN
+    }
 
     private final Direction myDirection;
 

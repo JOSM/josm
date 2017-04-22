@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.actions.mapmode.ExtrudeAction.Mode;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -41,5 +43,13 @@ public class ExtrudeActionTest {
         } finally {
             Main.getLayerManager().removeLayer(layer);
         }
+    }
+
+    /**
+     * Unit test of {@link Mode} enum.
+     */
+    @Test
+    public void testEnumMode() {
+        TestUtils.superficialEnumCodeCoverage(Mode.class);
     }
 }

@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.awt.Component;
@@ -9,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Arrays;
@@ -28,6 +30,8 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.testutils.FakeGraphics;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -284,5 +288,22 @@ public final class TestUtils {
                 // Do nothing
             }
         };
+    }
+
+    /**
+     * Ensures 100% code coverage for enums.
+     * @param enumClass enum class to cover
+     */
+    public static void superficialEnumCodeCoverage(Class<? extends Enum<?>> enumClass) {
+        try {
+            Method values = enumClass.getMethod("values");
+            Method valueOf = enumClass.getMethod("valueOf", String.class);
+            Utils.setObjectsAccessible(values, valueOf);
+            for (Object o : (Object[]) values.invoke(null)) {
+                assertEquals(o, valueOf.invoke(null, ((Enum<?>) o).name()));
+            }
+        } catch (IllegalArgumentException | ReflectiveOperationException | SecurityException e) {
+            throw new JosmRuntimeException(e);
+        }
     }
 }

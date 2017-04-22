@@ -745,7 +745,7 @@ public class SearchCompiler {
      */
     public static class ExactKeyValue extends TaggedMatch {
 
-        private enum Mode {
+        enum Mode {
             ANY, ANY_KEY, ANY_VALUE, EXACT, NONE, MISSING_KEY,
             ANY_KEY_REGEXP, ANY_VALUE_REGEXP, EXACT_REGEXP, MISSING_KEY_REGEXP;
         }
@@ -756,6 +756,13 @@ public class SearchCompiler {
         private final Pattern valuePattern;
         private final Mode mode;
 
+        /**
+         * Constructs a new {@code ExactKeyValue}.
+         * @param regexp regular expression
+         * @param key key
+         * @param value value
+         * @throws ParseError if a parse error occurs
+         */
         public ExactKeyValue(boolean regexp, String key, String value) throws ParseError {
             if ("".equals(key))
                 throw new ParseError(tr("Key cannot be empty when tag operator is used. Sample use: key=value"));

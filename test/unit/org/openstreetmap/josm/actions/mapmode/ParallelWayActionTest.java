@@ -7,6 +7,9 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.actions.mapmode.ParallelWayAction.Mode;
+import org.openstreetmap.josm.actions.mapmode.ParallelWayAction.Modifier;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -41,5 +44,21 @@ public class ParallelWayActionTest {
         } finally {
             Main.getLayerManager().removeLayer(layer);
         }
+    }
+
+    /**
+     * Unit test of {@link Mode} enum.
+     */
+    @Test
+    public void testEnumMode() {
+        TestUtils.superficialEnumCodeCoverage(Mode.class);
+    }
+
+    /**
+     * Unit test of {@link Modifier} enum.
+     */
+    @Test
+    public void testEnumModifier() {
+        TestUtils.superficialEnumCodeCoverage(Modifier.class);
     }
 }
