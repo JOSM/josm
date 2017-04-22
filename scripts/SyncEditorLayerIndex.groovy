@@ -512,8 +512,8 @@ class SyncEditorLayerIndex {
 
             et = getProjections(e)
             jt = getProjections(j)
-            if (et) et = String.join(" ", et.toSorted());
-            if (jt) jt = String.join(" ", jt.toSorted());
+            if (et) { et = new LinkedList(et); Collections.sort(et); et = String.join(" ", et) }
+            if (jt) { jt = new LinkedList(jt); Collections.sort(jt); jt = String.join(" ", jt) }
             if (!et.equals(jt)) {
                 if (!jt) {
                     myprintln "+ SKIP - Missing JOSM projections (${et}): ${getDescription(j)}"
