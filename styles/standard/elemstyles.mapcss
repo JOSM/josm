@@ -1819,6 +1819,9 @@ node[advertising=column] {
     icon-image: "presets/leisure/advertising_column.svg";
     set icon_z17;
 }
+area[advertising=column] {
+    fill-color: advertising#880000;
+}
 node[advertising=billboard] {
     icon-image: "presets/leisure/billboard.svg";
     set icon_z17;

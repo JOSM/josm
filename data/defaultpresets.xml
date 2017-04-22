@@ -3121,6 +3121,7 @@
             <space />
             <key key="amenity" value="car_wash" />
             <reference ref="name_brand_operator_oh_wheelchair" />
+            <check key="self_service" text="Self Service" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Wash -->
         <separator/>
@@ -5932,7 +5933,7 @@
             <multiselect key="valves" text="Valves" values="dunlop;schrader;sclaverand;regina" display_values="Dunlop (Woods);Schrader;Sclaverand (Presta);Regina" values_searchable="true" />
         </item> <!-- Compressed Air -->
         <separator/>
-        <item name="Advertising Column" icon="presets/leisure/advertising_column.svg" type="node" preset_name_label="true">
+        <item name="Advertising Column" icon="presets/leisure/advertising_column.svg" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:advertising=column"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:advertising=column"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:advertising=column"
