@@ -99,7 +99,7 @@ public class ReprojectionTile extends Tile {
      * Transforms the given image.
      * @param imageIn tile image to reproject
      */
-    public void transform(BufferedImage imageIn) {
+    protected void transform(BufferedImage imageIn) {
         if (!Main.isDisplayingMapView()) {
             reset();
             return;

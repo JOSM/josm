@@ -133,28 +133,14 @@ public class ImageWarp {
          *
          * Simplest possible method. Faster, but not very good quality.
          */
-        NEAREST_NEIGHBOR(1),
+        NEAREST_NEIGHBOR,
+
         /**
          * Bilinear.
          *
          * Decent quality.
          */
-        BILINEAR(2);
-
-        private final int margin;
-
-        private Interpolation(int margin) {
-            this.margin = margin;
-        }
-
-        /**
-         * Number of pixels to scan outside the source image.
-         * Used to get smoother borders.
-         * @return the margin
-         */
-        public int getMargin() {
-            return margin;
-        }
+        BILINEAR;
     }
 
     /**
