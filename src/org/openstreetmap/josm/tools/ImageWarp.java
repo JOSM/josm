@@ -24,6 +24,11 @@ public class ImageWarp {
      * Transformation that translates the pixel coordinates.
      */
     public interface PointTransform {
+        /**
+         * Translates pixel coordinates.
+         * @param pt pixel coordinates
+         * @return transformed pixel coordinates
+         */
         Point2D transform(Point2D pt);
     }
 

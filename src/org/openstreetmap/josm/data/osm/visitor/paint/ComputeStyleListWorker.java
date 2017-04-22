@@ -29,7 +29,7 @@ import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
- * Helper to cumpute style list.
+ * Helper to compute style list.
  * @since 11914 (extracted from StyledMapRenderer)
  */
 public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> implements Visitor {
@@ -84,6 +84,10 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
         }
     }
 
+    /**
+     * Compute directly (without using fork/join) the style list. Only called for small input.
+     * @return list of computed style records
+     */
     public List<StyleRecord> computeDirectly() {
         MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
         try {
@@ -128,6 +132,11 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Add new style records for the given node.
+     * @param osm node
+     * @param flags flags
+     */
     public void add(Node osm, int flags) {
         StyleElementList sl = styles.get(osm, circum, nc);
         for (StyleElement s : sl) {
@@ -135,6 +144,25 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
         }
     }
 
+    /**
+     * Add new style records for the given way.
+     * @param osm way
+     * @param flags flags
+     */
+    public void add(Way osm, int flags) {
+        StyleElementList sl = styles.get(osm, circum, nc);
+        for (StyleElement s : sl) {
+            if ((drawArea && (flags & StyledMapRenderer.FLAG_DISABLED) == 0) || !(s instanceof AreaElement)) {
+                output.add(new StyleRecord(s, osm, flags));
+            }
+        }
+    }
+
+    /**
+     * Add new style records for the given relation.
+     * @param osm relation
+     * @param flags flags
+     */
     public void add(Relation osm, int flags) {
         StyleElementList sl = styles.get(osm, circum, nc);
         for (StyleElement s : sl) {
@@ -149,14 +177,5 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
     private boolean drawAreaElement(int flags, StyleElement s) {
         return drawMultipolygon && drawArea && (s instanceof AreaElement || s instanceof AreaIconElement)
                 && (flags & StyledMapRenderer.FLAG_DISABLED) == 0;
-    }
-
-    public void add(Way osm, int flags) {
-        StyleElementList sl = styles.get(osm, circum, nc);
-        for (StyleElement s : sl) {
-            if ((drawArea && (flags & StyledMapRenderer.FLAG_DISABLED) == 0) || !(s instanceof AreaElement)) {
-                output.add(new StyleRecord(s, osm, flags));
-            }
-        }
     }
 }

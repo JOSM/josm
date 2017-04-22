@@ -95,6 +95,10 @@ public class ReprojectionTile extends Tile {
         this.maxZoomReached = false;
     }
 
+    /**
+     * Transforms the given image.
+     * @param imageIn tile image to reproject
+     */
     public void transform(BufferedImage imageIn) {
         if (!Main.isDisplayingMapView()) {
             reset();

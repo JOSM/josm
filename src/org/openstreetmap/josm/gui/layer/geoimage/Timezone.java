@@ -6,6 +6,11 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.text.ParseException;
 import java.util.Objects;
 
+/**
+ * Timezone in hours.<p>
+ * TODO: should probably be replaced by {@link java.util.TimeZone}.
+ * @since 11914 (extracted from {@link CorrelateGpxWithImages})
+ */
 public final class Timezone {
 
     static final Timezone ZERO = new Timezone(0.0);
@@ -15,6 +20,10 @@ public final class Timezone {
         this.timezone = hours;
     }
 
+    /**
+     * Returns the timezone in hours.
+     * @return the timezone in hours
+     */
     public double getHours() {
         return timezone;
     }

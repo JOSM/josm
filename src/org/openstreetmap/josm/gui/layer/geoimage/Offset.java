@@ -10,6 +10,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.openstreetmap.josm.tools.Pair;
 
+/**
+ * Time offset of GPX correlation.
+ * @since 11914 (extracted from {@link CorrelateGpxWithImages})
+ */
 public final class Offset {
 
     static final Offset ZERO = new Offset(0);
