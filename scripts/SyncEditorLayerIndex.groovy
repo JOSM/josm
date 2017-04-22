@@ -196,20 +196,31 @@ class SyncEditorLayerIndex {
         }
         myprintln "*** Loaded ${eliEntries.size()} entries (ELI). ***"
     }
-    String cdata(def s) {
-        if(s =~ /[<>&]/)
+    String cdata(def s, boolean escape = false) {
+        if(escape) {
+            return s.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;")
+        } else if(s =~ /[<>&]/)
             return "<![CDATA[$s]]>"
        return s
     }
 
     String maininfo(def entry, String offset) {
-        String res = offset + "<type>${getType(entry)}</type>\n"
+        String t = getType(entry)
+        String res = offset + "<type>$t</type>\n"
         res += offset + "<url>${cdata(getUrl(entry))}</url>\n"
-        if(getType(entry) == "tms") {
+        if(t == "tms") {
             if(getMinZoom(entry) != null)
                 res += offset + "<min-zoom>${getMinZoom(entry)}</min-zoom>\n"
             if(getMaxZoom(entry) != null)
                 res += offset + "<max-zoom>${getMaxZoom(entry)}</max-zoom>\n"
+        } else if (t == "wms") {
+            def p = getProjections(entry)
+            if (p) {
+                res += offset + "<projections>\n"
+                for (def c : p)
+                    res += offset + "    <code>$c</code>\n"
+                res += offset + "</projections>\n"
+            }
         }
         return res
     }
@@ -222,16 +233,31 @@ class SyncEditorLayerIndex {
         for (def e : entries) {
             def best = "eli-best".equals(getQuality(e))
             stream.write "    <entry"+(best ? " eli-best=\"true\"" : "" )+">\n"
-            stream.write "        <name>${getName(e)}</name>\n"
+            stream.write "        <name>${cdata(getName(e), true)}</name>\n"
             stream.write "        <id>${getId(e)}</id>\n"
             def t
             if((t = getDate(e)))
                 stream.write "        <date>$t</date>\n"
             if((t = getCountryCode(e)))
                 stream.write "        <country-code>$t</country-code>\n"
+            stream.write maininfo(e, "        ")
+            if((t = getAttributionText(e)))
+                stream.write "        <attribution-text mandatory=\"true\">${cdata(t, true)}</attribution-text>\n"
+            if((t = getAttributionUrl(e)))
+                stream.write "        <attribution-url>${cdata(t)}</attribution-url>\n"
+            if((t = getTermsOfUseText(e)))
+                stream.write "        <terms-of-use-text>${cdata(t, true)}</terms-of-use-text>\n"
+            if((t = getTermsOfUseUrl(e)))
+                stream.write "        <terms-of-use-url>${cdata(t)}</terms-of-use-url>\n"
+            if((t = getPermissionReferenceUrl(e)))
+                stream.write "        <permission-ref>${cdata(t)}</permission-ref>\n"
+            if((getValidGeoreference(e)))
+                stream.write "        <valid-georeference>true</valid-georeference>\n"
             if((t = getIcon(e)))
                 stream.write "        <icon>${cdata(t)}</icon>\n"
-            stream.write maininfo(e, "        ")
+            for (def d : getDescriptions(e)) {
+                    stream.write "        <description lang=\"${d.getKey()}\">${d.getValue()}</description>\n"
+            }
             for (def m : getMirrors(e)) {
                     stream.write "        <mirror>\n"+maininfo(m, "            ")+"        </mirror>\n"
             }
@@ -615,6 +641,15 @@ class SyncEditorLayerIndex {
         if (e instanceof ImageryInfo) return e.getMirrors()
         return []
     }
+    static List<Object> getProjections(Object e) {
+        def r
+        if (e instanceof ImageryInfo) {
+            r = e.getServerProjections()
+        } else {
+            r = e.get("properties").get("available_projections")
+        }
+        return r ? r : []
+    }
     static List<Shape> getShapes(Object e) {
         if (e instanceof ImageryInfo) {
             def bounds = e.getBounds()
@@ -678,6 +713,41 @@ class SyncEditorLayerIndex {
     static String getIcon(Object e) {
         if (e instanceof ImageryInfo) return e.getIcon()
         return e.get("properties").getString("icon", null)
+    }
+    static String getAttributionText(Object e) {
+        if (e instanceof ImageryInfo) return e.getAttributionText(0, null, null)
+        try {return e.get("properties").get("attribution").getString("text", null)} catch (NullPointerException ex) {return null}
+    }
+    static String getAttributionUrl(Object e) {
+        if (e instanceof ImageryInfo) return e.getAttributionLinkURL()
+        try {return e.get("properties").get("attribution").getString("url", null)} catch (NullPointerException ex) {return null}
+    }
+    static String getTermsOfUseText(Object e) {
+        if (e instanceof ImageryInfo) return e.getTermsOfUseText()
+        return null
+    }
+    static String getTermsOfUseUrl(Object e) {
+        if (e instanceof ImageryInfo) return e.getTermsOfUseURL()
+        return null
+    }
+    static String getPermissionReferenceUrl(Object e) {
+        if (e instanceof ImageryInfo) return e.getPermissionReferenceURL()
+        return e.get("properties").getString("license_url", null)
+    }
+    static Map<String,String> getDescriptions(Object e) {
+        Map<String,String> res = new HashMap<String, String>()
+        if (e instanceof ImageryInfo) {
+          String a = e.getDescription()
+          if (a) res.put("en", a)
+        } else {
+          String a = e.get("properties").getString("description", null)
+          if (a) res.put("en", a)
+        }
+        return res
+    }
+    static Boolean getValidGeoreference(Object e) {
+        if (e instanceof ImageryInfo) return e.isGeoreferenceValid()
+        return false
     }
     String getDescription(Object o) {
         def url = getUrl(o)
