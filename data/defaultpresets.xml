@@ -7487,7 +7487,9 @@
             <reference ref="power_line_extra" />
         </item> <!-- Power Bay -->
         <item name="Power Switch" icon="presets/power/switch.svg" type="node" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=switch" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=switch"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=switch"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=switch" />
             <space />
             <key key="power" value="switch" />
         </item> <!-- Power Switch -->
