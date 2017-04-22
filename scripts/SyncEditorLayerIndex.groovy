@@ -453,6 +453,77 @@ class SyncEditorLayerIndex {
                 }
             }
         }
+        myprintln "*** Same URL, but different information: ***"
+        for (def url : eliUrls.keySet()) {
+            if (!josmUrls.containsKey(url)) continue
+            def e = eliUrls.get(url)
+            def j = josmUrls.get(url)
+
+            def et = getDescriptions(e)
+            def jt = getDescriptions(j)
+            if (et.size() > 0) et = et["en"]
+            if (jt.size() > 0) jt = jt["en"]
+            if (!et.equals(jt)) {
+                if (!jt) {
+                    myprintln "+ SKIP - Missing JOSM description (${et}): ${getDescription(j)}"
+                } else if (et) {
+                    myprintln "+ SKIP * Description differs (${et} != '${jt}'): ${getDescription(j)}"
+                } else if (!options.nomissingeli) {
+                    myprintln "+ Missing ELI description ('${jt}'): ${getDescription(j)}"
+                }
+            }
+
+            et = getPermissionReferenceUrl(e)
+            jt = getPermissionReferenceUrl(j)
+            if (!jt) jt = getTermsOfUseUrl(j)
+            if (!et.equals(jt)) {
+                if (!jt) {
+                    myprintln "+ SKIP - Missing JOSM license URL (${et}): ${getDescription(j)}"
+                } else if (et) {
+                    myprintln "+ SKIP * License URL differs (${et} != '${jt}'): ${getDescription(j)}"
+                } else if (!options.nomissingeli) {
+                    myprintln "+ Missing ELI license URL ('${jt}'): ${getDescription(j)}"
+                }
+            }
+
+            et = getAttributionUrl(e)
+            jt = getAttributionUrl(j)
+            if (!et.equals(jt)) {
+                if (!jt) {
+                    myprintln "+ SKIP - Missing JOSM attribution URL (${et}): ${getDescription(j)}"
+                } else if (et) {
+                    myprintln "+ SKIP * Attribution URL differs (${et} != '${jt}'): ${getDescription(j)}"
+                } else if (!options.nomissingeli) {
+                    myprintln "+ Missing ELI attribution URL ('${jt}'): ${getDescription(j)}"
+                }
+            }
+
+            et = getAttributionText(e)
+            jt = getAttributionText(j)
+            if (!et.equals(jt)) {
+                if (!jt) {
+                    myprintln "+ SKIP - Missing JOSM attribution text (${et}): ${getDescription(j)}"
+                } else if (et) {
+                    myprintln "+ SKIP * Attribution text differs (${et} != '${jt}'): ${getDescription(j)}"
+                } else if (!options.nomissingeli) {
+                    myprintln "+ Missing ELI attribution text ('${jt}'): ${getDescription(j)}"
+                }
+            }
+
+            et = getProjections(e)
+            jt = getProjections(j)
+            if (et) et = String.join(" ", et.toSorted());
+            if (jt) jt = String.join(" ", jt.toSorted());
+            if (!et.equals(jt)) {
+                if (!jt) {
+                    myprintln "+ SKIP - Missing JOSM projections (${et}): ${getDescription(j)}"
+                } else if (et) {
+                    myprintln "+ SKIP * Projections differ (${et} != '${jt}'): ${getDescription(j)}"
+                } else if (!options.nomissingeli) {
+                    myprintln "+ Missing ELI projections ('${jt}'): ${getDescription(j)}"
+                }
+            }
+        }
         myprintln "*** Mismatching shapes: ***"
         for (def url : josmUrls.keySet()) {
             def j = josmUrls.get(url)
@@ -646,7 +717,13 @@ class SyncEditorLayerIndex {
         if (e instanceof ImageryInfo) {
             r = e.getServerProjections()
         } else {
-            r = e.get("properties").get("available_projections")
+            def s = e.get("properties").get("available_projections")
+            if (s) {
+                r = []
+                for (def p : s)
+                    r += p.getString()
+            }
+            
         }
         return r ? r : []
     }
