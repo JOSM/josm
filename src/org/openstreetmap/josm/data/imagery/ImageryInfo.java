@@ -641,8 +641,8 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
 
     /**
      * Return the permission reference URL.
-     * @param url The url.
-     * @see #setPermissionReferenceURL()
+     * @return The url
+     * @see #setPermissionReferenceURL
      * @since 11975
      */
     public String getPermissionReferenceURL() {
