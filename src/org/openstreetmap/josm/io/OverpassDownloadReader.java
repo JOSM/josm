@@ -200,8 +200,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
             if (ex.getMessage() != null && ex.getMessage().contains(errorIndicator)) {
                 final String errorPlusRest = ex.getMessage().split(errorIndicator)[1];
                 if (errorPlusRest != null) {
-                    final String error = errorPlusRest.split("</")[0].replaceAll(".*::request_read_and_idx::","");
-                    ex.setErrorHeader(error);
+                    ex.setErrorHeader(errorPlusRest.split("</")[0].replaceAll(".*::request_read_and_idx::", ""));
                 }
             }
             throw ex;
