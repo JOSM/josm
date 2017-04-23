@@ -6107,6 +6107,7 @@
             <separator/>
             <item name="Bunker" name_context="golf" icon="presets/sport/golf/bunker.svg" type="closedway" preset_name_label="true">
                 <link href="http://wiki.openstreetmap.org/wiki/Tag:golf=bunker"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:golf=bunker"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:golf=bunker" />
                 <space />
                 <key key="golf" value="bunker" />
@@ -6150,6 +6151,7 @@
             </item> <!-- Green -->
             <item name="Fairway" name_context="golf" icon="presets/sport/golf/fairway.svg" type="closedway,multipolygon" preset_name_label="true">
                 <link href="http://wiki.openstreetmap.org/wiki/Tag:golf=fairway"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:golf=fairway"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:golf=fairway" />
                 <space />
                 <key key="golf" value="fairway" />
@@ -7458,8 +7460,9 @@
             </optional>
         </item> <!-- Power Transformer -->
         <item name="Power Switchgear" icon="presets/power/switchgear.svg" type="closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=switchgear"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=switchgear" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=switch"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=switch"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=switch" />
             <space />
             <label text="(Please only use this tag if more detailed mapping using busbars and bays is impossible!)" />
             <space />
@@ -10957,6 +10960,24 @@
                 <role key="label" text="Label point" requisite="optional" type="node" count="1" />
             </roles>
         </item> <!-- Boundary -->
+        <item name="Building" icon="presets/landmark/building.svg" type="relation" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Relation:building"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Relation:building"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Relation:building"
+                  uk.href="http://wiki.openstreetmap.org/wiki/Uk:Relation:building" />
+            <key key="type" value="building" />
+            <preset_link preset_name="Building" />
+            <preset_link preset_name="Entrance" />
+            <preset_link preset_name="Building part" />
+            <roles>
+                <role key="outline" text="Outline of building" requisite="required" type="way,closedway,multipolygon" />
+                <role key="part" text="Inner segment" requisite="required" type="way,closedway" />
+                <role key="ridge" text="Roof ridge" requisite="optional" type="way,closedway" />
+                <role key="edge" text="Roof edge" requisite="optional" type="way,closedway" />
+                <role key="entrance" text="Entrance" requisite="optional" type="node" />
+                <role key="level_-?\d+" text="Building level" regexp="true" requisite="optional" type="relation" />
+            </roles>
+        </item> <!-- Building -->
         <item name="Site" type="relation" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Relation:site" />
             <space />

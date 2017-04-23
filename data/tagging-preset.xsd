@@ -313,6 +313,7 @@
         <attribute name="type" type="string" />
         <attribute name="count" type="integer" />
         <attribute name="member_expression" type="string" />
+        <attribute name="regexp" type="boolean" />
         <anyAttribute processContents="skip" />
     </complexType>
 
