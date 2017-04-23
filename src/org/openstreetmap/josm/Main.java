@@ -1001,12 +1001,14 @@ public abstract class Main {
          * @return the download task, or {@code null}
          */
         List<Future<?>> downloadGps(String param) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("Parameter \"downloadgps\" does not accept file names or file URLs"),
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
-            );
+            if (!GraphicsEnvironment.isHeadless()) {
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("Parameter \"downloadgps\" does not accept file names or file URLs"),
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                );
+            }
             return Collections.emptyList();
         }
 

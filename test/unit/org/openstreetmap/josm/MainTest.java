@@ -7,6 +7,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.net.MalformedURLException;
+import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
 
@@ -95,24 +97,65 @@ public class MainTest {
         Main.postConstructorProcessCmdLine(new ProgramArguments(new String[0]));
     }
 
-    /**
-     * Unit test of {@link Main#postConstructorProcessCmdLine} - nominal cases.
-     * This test assumes the DEV API contains nodes around 0,0 and GPX tracks around London
-     */
-    @Test
-    public void testPostConstructorProcessCmdLineNominal() {
+    private static void doTestPostConstructorProcessCmdLine(String download, String downloadGps, boolean gpx) {
         assertNull(Main.getLayerManager().getEditDataSet());
         Main.postConstructorProcessCmdLine(new ProgramArguments(new String[]{
-                "--download=0.01,0.01,0.05,0.05",
-                "--downloadgps=51.35,-0.4,51.60,0.2",
+                "--download=" + download,
+                "--downloadgps=" + downloadGps,
                 "--selection=type: node"}));
         DataSet ds = Main.getLayerManager().getEditDataSet();
         assertNotNull(ds);
         assertFalse(ds.getSelected().isEmpty());
         Main.getLayerManager().removeLayer(Main.getLayerManager().getEditLayer());
-        List<GpxLayer> gpxLayers = Main.getLayerManager().getLayersOfType(GpxLayer.class);
-        assertEquals(1, gpxLayers.size());
-        Main.getLayerManager().removeLayer(gpxLayers.iterator().next());
+        if (gpx) {
+            List<GpxLayer> gpxLayers = Main.getLayerManager().getLayersOfType(GpxLayer.class);
+            assertEquals(1, gpxLayers.size());
+            Main.getLayerManager().removeLayer(gpxLayers.iterator().next());
+        }
+    }
+
+    /**
+     * Unit test of {@link Main#postConstructorProcessCmdLine} - nominal case with bounds.
+     * This test assumes the DEV API contains nodes around 0,0 and GPX tracks around London
+     */
+    @Test
+    public void testPostConstructorProcessCmdLineBounds() {
+        doTestPostConstructorProcessCmdLine(
+                "0.01,0.01,0.05,0.05",
+                "51.35,-0.4,51.60,0.2", true);
+    }
+
+    /**
+     * Unit test of {@link Main#postConstructorProcessCmdLine} - nominal case with http/https URLs.
+     * This test assumes the DEV API contains nodes around 0,0 and GPX tracks around London
+     */
+    @Test
+    public void testPostConstructorProcessCmdLineHttpUrl() {
+        doTestPostConstructorProcessCmdLine(
+                "http://api06.dev.openstreetmap.org/api/0.6/map?bbox=0.01,0.01,0.05,0.05",
+                "https://master.apis.dev.openstreetmap.org/api/0.6/trackpoints?bbox=-0.4,51.35,0.2,51.6&page=0", true);
+    }
+
+    /**
+     * Unit test of {@link Main#postConstructorProcessCmdLine} - nominal case with file URLs.
+     * @throws MalformedURLException if an error occurs
+     */
+    @Test
+    public void testPostConstructorProcessCmdLineFileUrl() throws MalformedURLException {
+        doTestPostConstructorProcessCmdLine(
+                Paths.get(TestUtils.getTestDataRoot() + "multipolygon.osm").toUri().toURL().toExternalForm(),
+                Paths.get(TestUtils.getTestDataRoot() + "minimal.gpx").toUri().toURL().toExternalForm(), false);
+    }
+
+    /**
+     * Unit test of {@link Main#postConstructorProcessCmdLine} - nominal case with file names.
+     * @throws MalformedURLException if an error occurs
+     */
+    @Test
+    public void testPostConstructorProcessCmdLineFilename() throws MalformedURLException {
+        doTestPostConstructorProcessCmdLine(
+                Paths.get(TestUtils.getTestDataRoot() + "multipolygon.osm").toFile().getAbsolutePath(),
+                Paths.get(TestUtils.getTestDataRoot() + "minimal.gpx").toFile().getAbsolutePath(), false);
     }
 
     /**
