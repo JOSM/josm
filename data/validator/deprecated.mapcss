@@ -29,7 +29,7 @@ way[highway=ford] {
   group: tr("deprecated tagging");
 }
   
-*[class] {
+way[class] {
   /* from http://wiki.openstreetmap.org/wiki/Deprecated_features */
   throwWarning: tr("{0} is deprecated", "{0.key}");
   suggestAlternative: "highway";
