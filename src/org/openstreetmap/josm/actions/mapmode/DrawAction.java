@@ -1295,6 +1295,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     @Override
+    public Collection<? extends OsmPrimitive> getPreservedPrimitives() {
+        DataSet ds = getLayerManager().getEditDataSet();
+        return ds != null ? ds.getSelected() : null;
+    }
+
+    @Override
     public boolean layerIsSupported(Layer l) {
         return l instanceof OsmDataLayer;
     }

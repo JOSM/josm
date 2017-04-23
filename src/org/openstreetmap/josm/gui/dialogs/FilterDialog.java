@@ -28,6 +28,7 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -45,6 +46,8 @@ import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
+import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.MapFrame.MapModeChangeListener;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
@@ -56,7 +59,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author Petr_Dlouhý
  */
-public class FilterDialog extends ToggleDialog implements DataSetListener {
+public class FilterDialog extends ToggleDialog implements DataSetListener, MapModeChangeListener {
 
     private JTable userTable;
     private final FilterTableModel filterModel = new FilterTableModel();
@@ -81,12 +84,14 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
     @Override
     public void showNotify() {
         DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT_CONSOLIDATED);
+        MapFrame.addMapModeChangeListener(this);
         filterModel.executeFilters();
     }
 
     @Override
     public void hideNotify() {
         DatasetEventManager.getInstance().removeDatasetListener(this);
+        MapFrame.removeMapModeChangeListener(this);
         filterModel.clearFilterFlags();
         Main.map.mapView.repaint();
     }
@@ -107,6 +112,9 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
             tr("Filter mode")
     };
 
+    /**
+     * Builds the GUI.
+     */
     protected void build() {
         userTable = new UserTable(filterModel);
 
@@ -374,8 +382,13 @@ public class FilterDialog extends ToggleDialog implements DataSetListener {
         filterModel.executeFilters(getAffectedPrimitives(event.getPrimitives()));
     }
 
+    @Override
+    public void mapModeChange(MapMode oldMapMode, MapMode newMapMode) {
+        filterModel.executeFilters();
+    }
+
     /**
-     * This method is intendet for Plugins getting the filtermodel and using .addFilter() to
+     * This method is intended for Plugins getting the filtermodel and using .addFilter() to
      * add a new filter.
      * @return the filtermodel
      */
