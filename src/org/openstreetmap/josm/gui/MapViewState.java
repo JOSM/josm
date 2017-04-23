@@ -188,15 +188,16 @@ public final class MapViewState implements Serializable {
     }
 
     /**
-     * Gets the {@link MapViewPoint} for the given node. This is faster than {@link #getPointFor(LatLon)} because it uses the node east/north
-     * cache.
+     * Gets the {@link MapViewPoint} for the given node.
+     * This is faster than {@link #getPointFor(LatLon)} because it uses the node east/north cache.
      * @param node The node
      * @return The position of that node.
      * @since 10827
      */
     public MapViewPoint getPointFor(Node node) {
         try {
-            return getPointFor(node.getEastNorth(getProjection()));
+            return getPointFor(Optional.ofNullable(node.getEastNorth(getProjection()))
+                    .orElseThrow(IllegalArgumentException::new));
         } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             throw BugReport.intercept(e).put("node", node);
         }
