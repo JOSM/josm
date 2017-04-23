@@ -9,6 +9,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -595,14 +596,18 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 } else {
                     msg = null;
                 }
-                Main.map.statusLine.setHelpText(msg);
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        msg,
-                        tr("Warning"),
-                        JOptionPane.WARNING_MESSAGE
-                );
-            } else {
+                if (Main.map != null) {
+                    Main.map.statusLine.setHelpText(msg);
+                }
+                if (!GraphicsEnvironment.isHeadless()) {
+                    JOptionPane.showMessageDialog(
+                            Main.parent,
+                            msg,
+                            tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE
+                    );
+                }
+            } else if (Main.map != null) {
                 Main.map.statusLine.setHelpText(tr("Found {0} matches", foundMatches));
             }
         }

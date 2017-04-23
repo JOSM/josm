@@ -17,6 +17,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -825,16 +826,29 @@ public abstract class Main {
         }
     }
 
+    /**
+     * Handle command line instructions after GUI has been initialized.
+     * @param args program arguments
+     */
     protected static void postConstructorProcessCmdLine(ProgramArguments args) {
+        List<Future<?>> tasks = new ArrayList<>();
         List<File> fileList = new ArrayList<>();
         for (String s : args.get(Option.DOWNLOAD)) {
-            DownloadParamType.paramType(s).download(s, fileList);
+            tasks.addAll(DownloadParamType.paramType(s).download(s, fileList));
         }
         if (!fileList.isEmpty()) {
-            OpenFileAction.openFiles(fileList, true);
+            tasks.add(OpenFileAction.openFiles(fileList, true));
         }
         for (String s : args.get(Option.DOWNLOADGPS)) {
-            DownloadParamType.paramType(s).downloadGps(s);
+            tasks.addAll(DownloadParamType.paramType(s).downloadGps(s));
+        }
+        // Make sure all download tasks complete before handling selection arguments
+        for (Future<?> task : tasks) {
+            try {
+                task.get();
+            } catch (InterruptedException | ExecutionException e) {
+                error(e);
+            }
         }
         for (String s : args.get(Option.SELECTION)) {
             SearchAction.search(s, SearchAction.SearchMode.add);
@@ -867,6 +881,9 @@ public abstract class Main {
         return false;
     }
 
+    /**
+     * Shutdown JOSM.
+     */
     protected void shutdown() {
         if (!GraphicsEnvironment.isHeadless()) {
             worker.shutdown();
@@ -896,12 +913,12 @@ public abstract class Main {
     enum DownloadParamType {
         httpUrl {
             @Override
-            void download(String s, Collection<File> fileList) {
-                new OpenLocationAction().openUrl(false, s);
+            List<Future<?>> download(String s, Collection<File> fileList) {
+                return new OpenLocationAction().openUrl(false, s);
             }
 
             @Override
-            void downloadGps(String s) {
+            List<Future<?>> downloadGps(String s) {
                 final Bounds b = OsmUrlToBounds.parse(s);
                 if (b == null) {
                     JOptionPane.showMessageDialog(
@@ -910,13 +927,13 @@ public abstract class Main {
                             tr("Warning"),
                             JOptionPane.WARNING_MESSAGE
                     );
-                    return;
+                    return Collections.emptyList();
                 }
-                downloadFromParamBounds(true, b);
+                return downloadFromParamBounds(true, b);
             }
         }, fileUrl {
             @Override
-            void download(String s, Collection<File> fileList) {
+            List<Future<?>> download(String s, Collection<File> fileList) {
                 File f = null;
                 try {
                     f = new File(new URI(s));
@@ -932,6 +949,7 @@ public abstract class Main {
                 if (f != null) {
                     fileList.add(f);
                 }
+                return Collections.emptyList();
             }
         }, bounds {
 
@@ -939,31 +957,33 @@ public abstract class Main {
              * Download area specified on the command line as bounds string.
              * @param rawGps Flag to download raw GPS tracks
              * @param s The bounds parameter
+             * @return the complete download task (including post-download handler), or {@code null}
              */
-            private void downloadFromParamBounds(final boolean rawGps, String s) {
+            private List<Future<?>> downloadFromParamBounds(final boolean rawGps, String s) {
                 final StringTokenizer st = new StringTokenizer(s, ",");
                 if (st.countTokens() == 4) {
-                    Bounds b = new Bounds(
+                    return Main.downloadFromParamBounds(rawGps, new Bounds(
                             new LatLon(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken())),
                             new LatLon(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()))
-                    );
-                    Main.downloadFromParamBounds(rawGps, b);
+                    ));
                 }
+                return Collections.emptyList();
             }
 
             @Override
-            void download(String param, Collection<File> fileList) {
-                downloadFromParamBounds(false, param);
+            List<Future<?>> download(String param, Collection<File> fileList) {
+                return downloadFromParamBounds(false, param);
             }
 
             @Override
-            void downloadGps(String param) {
-                downloadFromParamBounds(true, param);
+            List<Future<?>> downloadGps(String param) {
+                return downloadFromParamBounds(true, param);
             }
         }, fileName {
             @Override
-            void download(String s, Collection<File> fileList) {
+            List<Future<?>> download(String s, Collection<File> fileList) {
                 fileList.add(new File(s));
+                return Collections.emptyList();
             }
         };
 
@@ -971,20 +991,23 @@ public abstract class Main {
          * Performs the download
          * @param param represents the object to be downloaded
          * @param fileList files which shall be opened, should be added to this collection
+         * @return the download task, or {@code null}
          */
-        abstract void download(String param, Collection<File> fileList);
+        abstract List<Future<?>> download(String param, Collection<File> fileList);
 
         /**
          * Performs the GPS download
          * @param param represents the object to be downloaded
+         * @return the download task, or {@code null}
          */
-        void downloadGps(String param) {
+        List<Future<?>> downloadGps(String param) {
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("Parameter \"downloadgps\" does not accept file names or file URLs"),
                     tr("Warning"),
                     JOptionPane.WARNING_MESSAGE
             );
+            return Collections.emptyList();
         }
 
         /**
@@ -1007,13 +1030,14 @@ public abstract class Main {
      * Download area specified as Bounds value.
      * @param rawGps Flag to download raw GPS tracks
      * @param b The bounds value
+     * @return the complete download task (including post-download handler)
      */
-    private static void downloadFromParamBounds(final boolean rawGps, Bounds b) {
+    private static List<Future<?>> downloadFromParamBounds(final boolean rawGps, Bounds b) {
         DownloadTask task = rawGps ? new DownloadGpsTask() : new DownloadOsmTask();
         // asynchronously launch the download task ...
         Future<?> future = task.download(true, b, null);
         // ... and the continuation when the download is finished (this will wait for the download to finish)
-        Main.worker.execute(new PostDownloadHandler(task, future));
+        return Collections.singletonList(Main.worker.submit(new PostDownloadHandler(task, future)));
     }
 
     /**

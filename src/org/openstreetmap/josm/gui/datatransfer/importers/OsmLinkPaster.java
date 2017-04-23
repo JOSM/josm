@@ -50,7 +50,7 @@ public class OsmLinkPaster extends AbstractOsmDataPaster {
         }
 
         String transferData = (String) support.getTransferable().getTransferData(df);
-        if (new NoWarnOpenLocationAction().openUrl(transferData)) {
+        if (!new NoWarnOpenLocationAction().openUrl(transferData).isEmpty()) {
             return true;
         }
 

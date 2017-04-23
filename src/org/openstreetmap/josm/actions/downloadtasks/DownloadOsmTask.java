@@ -266,8 +266,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                 // or it is not clear which layer to merge to
                 //
                 final OsmDataLayer layer = createNewLayer(newLayerName);
-                if (Main.main != null)
-                    Main.getLayerManager().addLayer(layer, zoomAfterDownload);
+                Main.getLayerManager().addLayer(layer, zoomAfterDownload);
                 return layer;
             }
             return null;

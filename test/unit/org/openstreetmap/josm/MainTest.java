@@ -2,17 +2,22 @@
 package org.openstreetmap.josm;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.swing.UIManager;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main.DownloadParamType;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.ProgramArguments;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -27,7 +32,7 @@ public class MainTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform();
+    public JOSMTestRules test = new JOSMTestRules().platform().devAPI();
 
     /**
      * Unit test of {@link DownloadParamType#paramType} method.
@@ -79,5 +84,42 @@ public class MainTest {
         assertNotNull(Main.getProjection());
         assertEquals(Main.pref.get("laf", Main.platform.getDefaultStyle()), UIManager.getLookAndFeel().getClass().getCanonicalName());
         assertNotNull(Main.toolbar);
+    }
+
+    /**
+     * Unit test of {@link Main#postConstructorProcessCmdLine} - empty case.
+     */
+    @Test
+    public void testPostConstructorProcessCmdLineEmpty() {
+        // Check the method accepts no arguments
+        Main.postConstructorProcessCmdLine(new ProgramArguments(new String[0]));
+    }
+
+    /**
+     * Unit test of {@link Main#postConstructorProcessCmdLine} - nominal cases.
+     * This test assumes the DEV API contains nodes around 0,0 and GPX tracks around London
+     */
+    @Test
+    public void testPostConstructorProcessCmdLineNominal() {
+        assertNull(Main.getLayerManager().getEditDataSet());
+        Main.postConstructorProcessCmdLine(new ProgramArguments(new String[]{
+                "--download=0.01,0.01,0.05,0.05",
+                "--downloadgps=51.35,-0.4,51.60,0.2",
+                "--selection=type: node"}));
+        DataSet ds = Main.getLayerManager().getEditDataSet();
+        assertNotNull(ds);
+        assertFalse(ds.getSelected().isEmpty());
+        Main.getLayerManager().removeLayer(Main.getLayerManager().getEditLayer());
+        List<GpxLayer> gpxLayers = Main.getLayerManager().getLayersOfType(GpxLayer.class);
+        assertEquals(1, gpxLayers.size());
+        Main.getLayerManager().removeLayer(gpxLayers.iterator().next());
+    }
+
+    /**
+     * Unit test of {@link DownloadParamType} enum.
+     */
+    @Test
+    public void testEnumDownloadParamType() {
+        TestUtils.superficialEnumCodeCoverage(DownloadParamType.class);
     }
 }
