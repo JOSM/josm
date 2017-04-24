@@ -237,8 +237,7 @@ public class RelationChecker extends Test {
 
         if (name == null) {
            return true;
-        }
-        else if (possibleMatchError != null) {
+        } else if (possibleMatchError != null) {
             // if any error found, then assume that member type was correct
             // and complain about not matching the memberExpression
             // (the only failure, that we could gather)
@@ -281,7 +280,7 @@ public class RelationChecker extends Test {
             }
             checkRoleCounts(n, r, keyname, map.get(r.key));
         }
-        if("network".equals(n.get("type")) && !"bicycle".equals(n.get("route"))) {
+        if ("network".equals(n.get("type")) && !"bicycle".equals(n.get("route"))) {
             return;
         }
         // verify unwanted members
@@ -293,7 +292,7 @@ public class RelationChecker extends Test {
                     break;
                 }
             }
-            
+
             if (!found) {
                 String templates = allroles.stream().map(r -> r.key).collect(Collectors.joining("/"));
 
