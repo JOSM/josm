@@ -11,6 +11,8 @@ import java.net.MalformedURLException;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import javax.swing.UIManager;
 
@@ -99,10 +101,16 @@ public class MainTest {
 
     private static void doTestPostConstructorProcessCmdLine(String download, String downloadGps, boolean gpx) {
         assertNull(Main.getLayerManager().getEditDataSet());
-        Main.postConstructorProcessCmdLine(new ProgramArguments(new String[]{
+        for (Future<?> f : Main.postConstructorProcessCmdLine(new ProgramArguments(new String[]{
                 "--download=" + download,
                 "--downloadgps=" + downloadGps,
-                "--selection=type: node"}));
+                "--selection=type: node"}))) {
+            try {
+                f.get();
+            } catch (InterruptedException | ExecutionException e) {
+                Main.error(e);
+            }
+        }
         DataSet ds = Main.getLayerManager().getEditDataSet();
         assertNotNull(ds);
         assertFalse(ds.getSelected().isEmpty());

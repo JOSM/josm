@@ -829,8 +829,9 @@ public abstract class Main {
     /**
      * Handle command line instructions after GUI has been initialized.
      * @param args program arguments
+     * @return the list of submitted tasks
      */
-    protected static void postConstructorProcessCmdLine(ProgramArguments args) {
+    protected static List<Future<?>> postConstructorProcessCmdLine(ProgramArguments args) {
         List<Future<?>> tasks = new ArrayList<>();
         List<File> fileList = new ArrayList<>();
         for (String s : args.get(Option.DOWNLOAD)) {
@@ -842,17 +843,15 @@ public abstract class Main {
         for (String s : args.get(Option.DOWNLOADGPS)) {
             tasks.addAll(DownloadParamType.paramType(s).downloadGps(s));
         }
-        // Make sure all download tasks complete before handling selection arguments
-        for (Future<?> task : tasks) {
-            try {
-                task.get();
-            } catch (InterruptedException | ExecutionException e) {
-                error(e);
-            }
+        final Collection<String> selectionArguments = args.get(Option.SELECTION);
+        if (!selectionArguments.isEmpty()) {
+            tasks.add(Main.worker.submit(() -> {
+                for (String s : selectionArguments) {
+                    SearchAction.search(s, SearchAction.SearchMode.add);
+                }
+            }));
         }
-        for (String s : args.get(Option.SELECTION)) {
-            SearchAction.search(s, SearchAction.SearchMode.add);
-        }
+        return tasks;
     }
 
     /**
