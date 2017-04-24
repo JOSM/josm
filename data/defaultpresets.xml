@@ -7460,9 +7460,8 @@
             </optional>
         </item> <!-- Power Transformer -->
         <item name="Power Switchgear" icon="presets/power/switchgear.svg" type="closedway" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=switch"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=switch"
-                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=switch" />
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:power=switchgear"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=switchgear" />
             <space />
             <label text="(Please only use this tag if more detailed mapping using busbars and bays is impossible!)" />
             <space />
