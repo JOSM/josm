@@ -179,6 +179,7 @@ public class ProjectionRegressionTest {
              }
         }
 
+        final boolean java9 = TestUtils.getJavaVersion() >= 9;
         for (TestData data : allData) {
             Projection proj = Projections.getProjectionByCode(data.code);
             if (proj == null) {
@@ -187,20 +188,18 @@ public class ProjectionRegressionTest {
             }
             EastNorth en = proj.latlon2eastNorth(data.ll);
             LatLon ll2 = proj.eastNorth2latlon(data.en);
-            if (TestUtils.getJavaVersion() >= 9) {
-                en = getRoundedToOsmPrecision(en.east(), en.north());
-                ll2 = ll2.getRoundedToOsmPrecision();
-                data.en = getRoundedToOsmPrecision(data.en.east(), data.en.north());
-                data.ll2 = data.ll2.getRoundedToOsmPrecision();
-            }
-            if (!en.equals(data.en)) {
+            boolean eqJava8 = !java9 && en.equals(data.en);
+            boolean eqJava9 = java9 && equalsJava9(en, data.en);
+            if (!eqJava8 && !eqJava9) {
                 String error = String.format("%s (%s): Projecting latlon(%s,%s):%n" +
                         "        expected: eastnorth(%s,%s),%n" +
                         "        but got:  eastnorth(%s,%s)!%n",
                         proj.toString(), data.code, data.ll.lat(), data.ll.lon(), data.en.east(), data.en.north(), en.east(), en.north());
                 fail.append(error);
             }
-            if (!ll2.equals(data.ll2)) {
+            eqJava8 = !java9 && ll2.equals(data.ll2);
+            eqJava9 = java9 && equalsJava9(ll2, data.ll2);
+            if (!eqJava8 && !eqJava9) {
                 String error = String.format("%s (%s): Inverse projecting eastnorth(%s,%s):%n" +
                         "        expected: latlon(%s,%s),%n" +
                         "        but got:  latlon(%s,%s)!%n",
@@ -213,5 +212,20 @@ public class ProjectionRegressionTest {
             System.err.println(fail.toString());
             throw new AssertionError(fail.toString());
         }
+    }
+
+    private static boolean equalsDoubleMaxUlp(double d1, double d2) {
+        // Due to error accumulation in projection computation, the difference can reach thousands of ULPs
+        return Math.abs(d1 - d2) <= 3500 * Math.ulp(d1);
+    }
+
+    private static boolean equalsJava9(EastNorth en1, EastNorth en2) {
+        return equalsDoubleMaxUlp(en1.east(), en2.east()) &&
+               equalsDoubleMaxUlp(en1.north(), en2.north());
+    }
+
+    private static boolean equalsJava9(LatLon ll1, LatLon ll2) {
+        return equalsDoubleMaxUlp(ll1.lat(), ll2.lat()) &&
+               equalsDoubleMaxUlp(ll1.lon(), ll2.lon());
     }
 }
