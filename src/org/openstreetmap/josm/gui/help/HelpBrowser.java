@@ -20,7 +20,7 @@ import java.util.Locale;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -57,7 +57,7 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 /**
  * Help browser displaying HTML pages fetched from JOSM wiki.
  */
-public class HelpBrowser extends JDialog implements IHelpBrowser {
+public class HelpBrowser extends JFrame implements IHelpBrowser {
 
     /** the unique instance */
     private static HelpBrowser instance;
@@ -149,6 +149,10 @@ public class HelpBrowser extends JDialog implements IHelpBrowser {
         return ss;
     }
 
+    /**
+     * Builds toolbar.
+     * @return the toolbar
+     */
     protected JToolBar buildToolBar() {
         JToolBar tb = new JToolBar();
         tb.add(new JButton(new HomeAction(this)));
@@ -161,6 +165,9 @@ public class HelpBrowser extends JDialog implements IHelpBrowser {
         return tb;
     }
 
+    /**
+     * Builds GUI.
+     */
     protected final void build() {
         help = new JosmEditorPane();
         JosmHTMLEditorKit kit = new JosmHTMLEditorKit();
@@ -219,6 +226,10 @@ public class HelpBrowser extends JDialog implements IHelpBrowser {
         super.setVisible(visible);
     }
 
+    /**
+     * Load help topic.
+     * @param content topic contents
+     */
     protected void loadTopic(String content) {
         Document document = help.getEditorKit().createDefaultDocument();
         try {
