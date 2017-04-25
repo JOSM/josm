@@ -1081,6 +1081,7 @@
         </item> <!-- Dedicated Bridleway -->
         <item name="Cycle Lane/Track" icon="presets/transport/way/cycle_lane_track.svg" type="way,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Bicycle"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Bicycle"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Bicycle"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Bicycle"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Bicycle"
@@ -8540,6 +8541,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=copyshop"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:shop=copyshop"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=copyshop"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:shop=copyshop"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=copyshop"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=copyshop"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:shop=copyshop"
@@ -8824,6 +8826,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=doityourself"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:shop=doityourself"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=doityourself"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:shop=doityourself"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=doityourself"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=doityourself"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:shop=doityourself"
@@ -9399,6 +9402,7 @@
         <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=electrician"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:craft=electrician"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:craft=electrician"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:craft=electrician"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:craft=electrician"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:craft=electrician"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:craft=electrician" />
@@ -9504,6 +9508,7 @@
         <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=handicraft"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:craft=handicraft"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:craft=handicraft"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:craft=handicraft"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:craft=handicraft"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:craft=handicraft"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:craft=handicraft" />
