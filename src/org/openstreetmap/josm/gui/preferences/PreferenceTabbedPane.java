@@ -461,13 +461,14 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
         }
     }
 
-    private void insertGUITabsForSetting(Icon icon, TabPreferenceSetting tps, int index) {
+    private int insertGUITabsForSetting(Icon icon, TabPreferenceSetting tps, int index) {
         int position = index;
         for (PreferenceTab tab : tabs) {
             if (tab.getTabPreferenceSetting().equals(tps)) {
                 insertTab(null, icon, tab.getComponent(), tps.getTooltip(), position++);
             }
         }
+        return position - 1;
     }
 
     private void addGUITabs(boolean clear) {
@@ -594,8 +595,9 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                     }
                     Icon icon = getIconAt(index);
                     remove(index);
-                    insertGUITabsForSetting(icon, preferenceSettings, index);
-                    setSelectedIndex(index);
+                    if (index <= insertGUITabsForSetting(icon, preferenceSettings, index)) {
+                        setSelectedIndex(index);
+                    }
                 } catch (SecurityException ex) {
                     Main.error(ex);
                 } catch (RuntimeException ex) { // NOPMD
