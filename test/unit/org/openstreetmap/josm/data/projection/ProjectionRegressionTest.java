@@ -188,18 +188,14 @@ public class ProjectionRegressionTest {
             }
             EastNorth en = proj.latlon2eastNorth(data.ll);
             LatLon ll2 = proj.eastNorth2latlon(data.en);
-            boolean eqJava8 = !java9 && en.equals(data.en);
-            boolean eqJava9 = java9 && equalsJava9(en, data.en);
-            if (!eqJava8 && !eqJava9) {
+            if (!(java9 ? equalsJava9(en, data.en) : en.equals(data.en))) {
                 String error = String.format("%s (%s): Projecting latlon(%s,%s):%n" +
                         "        expected: eastnorth(%s,%s),%n" +
                         "        but got:  eastnorth(%s,%s)!%n",
                         proj.toString(), data.code, data.ll.lat(), data.ll.lon(), data.en.east(), data.en.north(), en.east(), en.north());
                 fail.append(error);
             }
-            eqJava8 = !java9 && ll2.equals(data.ll2);
-            eqJava9 = java9 && equalsJava9(ll2, data.ll2);
-            if (!eqJava8 && !eqJava9) {
+            if (!(java9 ? equalsJava9(ll2, data.ll2) : ll2.equals(data.ll2))) {
                 String error = String.format("%s (%s): Inverse projecting eastnorth(%s,%s):%n" +
                         "        expected: latlon(%s,%s),%n" +
                         "        but got:  latlon(%s,%s)!%n",
