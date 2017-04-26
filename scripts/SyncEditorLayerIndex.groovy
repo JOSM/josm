@@ -723,7 +723,6 @@ class SyncEditorLayerIndex {
                 for (def p : s)
                     r += p.getString()
             }
-            
         }
         return r ? r : []
     }
@@ -760,6 +759,8 @@ class SyncEditorLayerIndex {
     }
     static Integer getMinZoom(Object e) {
         if (e instanceof ImageryInfo) {
+            if("wms".equals(getType(e)) && e.getName() =~ / mirror/)
+                return null;
             int mz = e.getMinZoom()
             return mz == 0 ? null : mz
         } else {
@@ -770,6 +771,8 @@ class SyncEditorLayerIndex {
     }
     static Integer getMaxZoom(Object e) {
         if (e instanceof ImageryInfo) {
+            if("wms".equals(getType(e)) && e.getName() =~ / mirror/)
+                return null;
             int mz = e.getMaxZoom()
             return mz == 0 ? null : mz
         } else {
