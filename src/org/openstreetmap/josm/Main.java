@@ -582,7 +582,7 @@ public abstract class Main {
      */
     protected abstract void initializeMainWindow();
 
-    private static class InitializationTask implements Callable<Void> {
+    static final class InitializationTask implements Callable<Void> {
 
         private final String name;
         private final Runnable task;
@@ -1227,6 +1227,14 @@ public abstract class Main {
      */
     public static Map<String, Throwable> getNetworkErrors() {
         return new HashMap<>(NETWORK_ERRORS);
+    }
+
+    /**
+     * Clears the network errors cache.
+     * @since 12011
+     */
+    public static void clearNetworkErrors() {
+        NETWORK_ERRORS.clear();
     }
 
     /**
