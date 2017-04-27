@@ -55,9 +55,7 @@ import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.UndoRedoHandler;
-import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -74,7 +72,6 @@ import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.ProgramArguments;
 import org.openstreetmap.josm.gui.ProgramArguments.Option;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
@@ -616,35 +613,6 @@ public abstract class Main {
      */
     public static MainLayerManager getLayerManager() {
         return layerManager;
-    }
-
-    /**
-     * Add a new layer to the map.
-     *
-     * If no map exists, create one.
-     *
-     * @param layer the layer
-     * @param bounds the bounds of the layer (target zoom area); can be null, then
-     * the viewport isn't changed
-     */
-    public final void addLayer(Layer layer, ProjectionBounds bounds) {
-        addLayer(layer, bounds == null ? null : new ViewportData(bounds));
-    }
-
-    /**
-     * Add a new layer to the map.
-     *
-     * If no map exists, create one.
-     *
-     * @param layer the layer
-     * @param viewport the viewport to zoom to; can be null, then the viewport isn't changed
-     */
-    public final void addLayer(Layer layer, ViewportData viewport) {
-        getLayerManager().addLayer(layer);
-        if (viewport != null && Main.map.mapView != null) {
-            // MapView may be null in headless mode here.
-            Main.map.mapView.scheduleZoomTo(viewport);
-        }
     }
 
     /**
