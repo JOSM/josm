@@ -77,12 +77,14 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
             return;
         }
         if (changesets.isEmpty()) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("There are no open changesets"),
-                    tr("No open changesets"),
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            if (!GraphicsEnvironment.isHeadless()) {
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("There are no open changesets"),
+                        tr("No open changesets"),
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
             return;
         }
         SwingUtilities.invokeLater(() -> ChangesetCache.getInstance().update(changesets));
