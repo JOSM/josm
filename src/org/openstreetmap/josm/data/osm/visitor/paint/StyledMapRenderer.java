@@ -26,8 +26,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -1522,13 +1522,15 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 return;
             }
 
-            Collections.sort(allStyleElems); // TODO: try parallel sort when switching to Java 8
+            // We use parallel sort here. This is only available for arrays.
+            StyleRecord[] sorted = allStyleElems.toArray(new StyleRecord[allStyleElems.size()]);
+            Arrays.parallelSort(sorted, null);
 
             if (!benchmark.renderDraw(allStyleElems)) {
                 return;
             }
 
-            for (StyleRecord record : allStyleElems) {
+            for (StyleRecord record : sorted) {
                 paintRecord(record);
             }
 
