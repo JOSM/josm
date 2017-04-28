@@ -92,6 +92,7 @@ public final class Utils {
 
     private static final String[] SIZE_UNITS = {"B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
 
+    // Constants backported from Java 9, see https://bugs.openjdk.java.net/browse/JDK-4477961
     private static final double TO_DEGREES = 180.0 / Math.PI;
     private static final double TO_RADIANS = Math.PI / 180.0;
 
@@ -1561,9 +1562,10 @@ public final class Utils {
      * Replacement for {@link Math#toDegrees(double)} to match the Java 9
      * version of that method. (Can be removed when JOSM support for Java 8 ends.)
      * Only relevant in relation to ProjectionRegressionTest.
-     * @see https://josm.openstreetmap.de/ticket/11889
      * @param angleRad an angle in radians
      * @return the same angle in degrees
+     * @see <a href="https://josm.openstreetmap.de/ticket/11889">#11889</a>
+     * @since 12013
      */
     public static double toDegrees(double angleRad) {
         return angleRad * TO_DEGREES;
@@ -1575,9 +1577,10 @@ public final class Utils {
      * Replacement for {@link Math#toRadians(double)} to match the Java 9
      * version of that method. (Can be removed when JOSM support for Java 8 ends.)
      * Only relevant in relation to ProjectionRegressionTest.
-     * @see https://josm.openstreetmap.de/ticket/11889
      * @param angleDeg an angle in degrees
      * @return the same angle in radians
+     * @see <a href="https://josm.openstreetmap.de/ticket/11889">#11889</a>
+     * @since 12013
      */
     public static double toRadians(double angleDeg) {
         return angleDeg * TO_RADIANS;
