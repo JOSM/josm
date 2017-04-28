@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * The polar case of the stereographic projection.
@@ -106,7 +107,7 @@ public class PolarStereographic extends AbstractProj {
         if (params.lat_ts == null) {
             latitudeTrueScale = (params.lat0 < 0) ? -Math.PI/2 : Math.PI/2;
         } else {
-            latitudeTrueScale = Math.toRadians(params.lat_ts);
+            latitudeTrueScale = Utils.toRadians(params.lat_ts);
         }
         southPole = latitudeTrueScale < 0;
 

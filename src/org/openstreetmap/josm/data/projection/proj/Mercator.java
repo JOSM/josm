@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Mercator Cylindrical Projection. The parallels and the meridians are straight lines and
@@ -68,7 +69,7 @@ public class Mercator extends AbstractProj implements IScaleFactorProvider {
              * scaleFactor is not a parameter in the 2 SP case and is computed from
              * the standard parallel.
              */
-            double standardParallel = Math.toRadians(params.lat_ts);
+            double standardParallel = Utils.toRadians(params.lat_ts);
             if (spherical) {
                 scaleFactor *= Math.cos(standardParallel);
             } else {
@@ -80,7 +81,7 @@ public class Mercator extends AbstractProj implements IScaleFactorProvider {
          * correspondent to the equator. See Snyder and al. for reference, page 47.
          */
         if (params.lat0 != null) {
-            final double lat0 = Math.toRadians(params.lat0);
+            final double lat0 = Utils.toRadians(params.lat0);
             final double sinPhi = Math.sin(lat0);
             scaleFactor *= (Math.cos(lat0) / (Math.sqrt(1 - e2 * sinPhi * sinPhi)));
         }

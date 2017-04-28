@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Lambert Azimuthal Equal Area (EPSG code 9820).
@@ -77,7 +78,7 @@ public class LambertAzimuthalEqualArea extends AbstractProj {
         if (params.lat0 == null)
             throw new ProjectionConfigurationException(tr("Parameter ''{0}'' required.", "lat_0"));
 
-        latitudeOfOrigin = Math.toRadians(params.lat0);
+        latitudeOfOrigin = Utils.toRadians(params.lat0);
         /*
          * Detects the mode (oblique, etc.).
          */

@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Cassini-Soldner Projection (EPSG code 9806).
@@ -55,7 +56,7 @@ public class CassiniSoldner extends AbstractProj {
         super.initialize(params);
         if (params.lat0 == null)
             throw new ProjectionConfigurationException(tr("Parameter ''{0}'' required.", "lat_0"));
-        double latitudeOfOrigin = Math.toRadians(params.lat0);
+        double latitudeOfOrigin = Utils.toRadians(params.lat0);
         ml0 = mlfn(latitudeOfOrigin, Math.sin(latitudeOfOrigin), Math.cos(latitudeOfOrigin));
     }
 

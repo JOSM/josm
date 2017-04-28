@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.projection.datum;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Datum provides general conversion from one ellipsoid to another.
@@ -38,9 +39,9 @@ public class SevenParameterDatum extends AbstractDatum {
         this.dx = dx;
         this.dy = dy;
         this.dz = dz;
-        this.rx = Math.toRadians(rx / 3600);
-        this.ry = Math.toRadians(ry / 3600);
-        this.rz = Math.toRadians(rz / 3600);
+        this.rx = Utils.toRadians(rx / 3600);
+        this.ry = Utils.toRadians(ry / 3600);
+        this.rz = Utils.toRadians(rz / 3600);
         this.s = s / 1e6;
     }
 

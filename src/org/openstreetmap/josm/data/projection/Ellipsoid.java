@@ -7,6 +7,7 @@
 package org.openstreetmap.josm.data.projection;
 
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Reference ellipsoids.
@@ -338,7 +339,7 @@ public final class Ellipsoid {
             delta = Math.abs(l - lt);
             lt = l;
         }
-        return new LatLon(Math.toDegrees(lt), Math.toDegrees(lg));
+        return new LatLon(Utils.toDegrees(lt), Utils.toDegrees(lg));
     }
 
     /**
@@ -348,8 +349,8 @@ public final class Ellipsoid {
      * @return the corresponding (X, Y Z) cartesian coordinates in meters.
      */
     public double[] latLon2Cart(LatLon coord) {
-        double phi = Math.toRadians(coord.lat());
-        double lambda = Math.toRadians(coord.lon());
+        double phi = Utils.toRadians(coord.lat());
+        double lambda = Utils.toRadians(coord.lon());
 
         double rn = a / Math.sqrt(1 - e2 * Math.pow(Math.sin(phi), 2));
         double[] xyz = new double[3];

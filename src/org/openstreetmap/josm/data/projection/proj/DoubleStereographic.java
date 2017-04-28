@@ -12,12 +12,12 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
-import static java.lang.Math.toRadians;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Implementation of the stereographic double projection,
@@ -58,7 +58,7 @@ public class DoubleStereographic extends AbstractProj {
     }
 
     private void initialize(double lat0) {
-        double phi0 = toRadians(lat0);
+        double phi0 = Utils.toRadians(lat0);
         double e2 = ellps.e2;
         r = sqrt(1-e2) / (1 - e2*pow(sin(phi0), 2));
         n = sqrt(1 + ellps.eb2 * pow(cos(phi0), 4));

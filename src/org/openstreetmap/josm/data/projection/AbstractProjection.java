@@ -115,7 +115,7 @@ public abstract class AbstractProjection implements Projection {
     @Override
     public EastNorth latlon2eastNorth(LatLon ll) {
         ll = datum.fromWGS84(ll);
-        double[] en = proj.project(Math.toRadians(ll.lat()), Math.toRadians(LatLon.normalizeLon(ll.lon() - lon0 - pm)));
+        double[] en = proj.project(Utils.toRadians(ll.lat()), Utils.toRadians(LatLon.normalizeLon(ll.lon() - lon0 - pm)));
         return new EastNorth((ellps.a * k0 * en[0] + x0) / toMeter, (ellps.a * k0 * en[1] + y0) / toMeter);
     }
 
@@ -134,8 +134,8 @@ public abstract class AbstractProjection implements Projection {
 
     private LatLon eastNorth2latlon(EastNorth en, DoubleUnaryOperator normalizeLon) {
         double[] latlonRad = proj.invproject((en.east() * toMeter - x0) / ellps.a / k0, (en.north() * toMeter - y0) / ellps.a / k0);
-        double lon = Math.toDegrees(latlonRad[1]) + lon0 + pm;
-        LatLon ll = new LatLon(Math.toDegrees(latlonRad[0]), normalizeLon.applyAsDouble(lon));
+        double lon = Utils.toDegrees(latlonRad[1]) + lon0 + pm;
+        LatLon ll = new LatLon(Utils.toDegrees(latlonRad[0]), normalizeLon.applyAsDouble(lon));
         return datum.toWGS84(ll);
     }
 

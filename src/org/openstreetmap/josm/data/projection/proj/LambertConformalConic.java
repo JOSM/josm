@@ -11,13 +11,13 @@ import static java.lang.Math.pow;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
 import static java.lang.Math.tan;
-import static java.lang.Math.toRadians;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.CustomProjection.Param;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Implementation of the Lambert Conformal Conic projection.
@@ -124,12 +124,12 @@ public class LambertConformalConic extends AbstractProj {
     private void initialize2SP(double lat0, double lat1, double lat2) {
         this.params = new Parameters2SP(lat0, lat1, lat2);
 
-        final double m1 = m(toRadians(lat1));
-        final double m2 = m(toRadians(lat2));
+        final double m1 = m(Utils.toRadians(lat1));
+        final double m2 = m(Utils.toRadians(lat2));
 
-        final double t1 = t(toRadians(lat1));
-        final double t2 = t(toRadians(lat2));
-        final double tf = t(toRadians(lat0));
+        final double t1 = t(Utils.toRadians(lat1));
+        final double t2 = t(Utils.toRadians(lat2));
+        final double tf = t(Utils.toRadians(lat0));
 
         n = (log(m1) - log(m2)) / (log(t1) - log(t2));
         f = m1 / (n * pow(t1, n));
@@ -143,7 +143,7 @@ public class LambertConformalConic extends AbstractProj {
      */
     private void initialize1SP(double lat0) {
         this.params = new Parameters1SP(lat0);
-        final double lat0rad = toRadians(lat0);
+        final double lat0rad = Utils.toRadians(lat0);
 
         final double m0 = m(lat0rad);
         final double t0 = t(lat0rad);

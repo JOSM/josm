@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Albers Equal Area Projection (EPSG code 9822). This is a conic projection with parallels being
@@ -88,10 +89,10 @@ public class AlbersEqualArea extends AbstractProj {
         if (params.lat1 == null)
             throw new ProjectionConfigurationException(tr("Parameter ''{0}'' required.", "lat_1"));
 
-        double lat0 = Math.toRadians(params.lat0);
+        double lat0 = Utils.toRadians(params.lat0);
         // Standards parallels in radians.
-        double phi1 = Math.toRadians(params.lat1);
-        double phi2 = params.lat2 == null ? phi1 : Math.toRadians(params.lat2);
+        double phi1 = Utils.toRadians(params.lat1);
+        double phi2 = params.lat2 == null ? phi1 : Utils.toRadians(params.lat2);
 
         // Compute Constants
         if (Math.abs(phi1 + phi2) < EPSILON) {

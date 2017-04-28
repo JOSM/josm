@@ -92,6 +92,9 @@ public final class Utils {
 
     private static final String[] SIZE_UNITS = {"B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
 
+    private static final double TO_DEGREES = 180.0 / Math.PI;
+    private static final double TO_RADIANS = Math.PI / 180.0;
+
     private Utils() {
         // Hide default constructor for utils classes
     }
@@ -1285,7 +1288,6 @@ public final class Utils {
      * Returns a new secure DOM builder, supporting XML namespaces.
      * @return a new secure DOM builder, supporting XML namespaces
      * @throws ParserConfigurationException if a parser cannot be created which satisfies the requested configuration.
-     * @throws ParserConfigurationException if a parser cannot be created which satisfies the requested configuration.
      * @since 10404
      */
     public static DocumentBuilder newSafeDOMBuilder() throws ParserConfigurationException {
@@ -1551,5 +1553,33 @@ public final class Utils {
         } else {
             return val;
         }
+    }
+
+    /**
+     * Convert angle from radians to degrees.
+     *
+     * Replacement for {@link Math#toDegrees(double)} to match the Java 9
+     * version of that method. (Can be removed when JOSM support for Java 8 ends.)
+     * Only relevant in relation to ProjectionRegressionTest.
+     * @see https://josm.openstreetmap.de/ticket/11889
+     * @param angleRad an angle in radians
+     * @return the same angle in degrees
+     */
+    public static double toDegrees(double angleRad) {
+        return angleRad * TO_DEGREES;
+    }
+
+    /**
+     * Convert angle from degrees to radians.
+     *
+     * Replacement for {@link Math#toRadians(double)} to match the Java 9
+     * version of that method. (Can be removed when JOSM support for Java 8 ends.)
+     * Only relevant in relation to ProjectionRegressionTest.
+     * @see https://josm.openstreetmap.de/ticket/11889
+     * @param angleDeg an angle in degrees
+     * @return the same angle in radians
+     */
+    public static double toRadians(double angleDeg) {
+        return angleDeg * TO_RADIANS;
     }
 }
