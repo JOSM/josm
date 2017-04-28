@@ -87,6 +87,7 @@ public abstract class AbstractMapViewPaintable implements MapViewPaintable {
 
     /**
      * This needs to be called whenever the content of this view was invalidated.
+     * It triggers a repaint of the components that display this layer.
      */
     public void invalidate() {
         for (PaintableInvalidationListener l : invalidationListeners) {

@@ -49,6 +49,7 @@ import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -155,13 +156,12 @@ public final class DataSet implements Data, ProjectionChangeListener {
     // provide means to highlight map elements that are not osm primitives
     private Collection<WaySegment> highlightedVirtualNodes = new LinkedList<>();
     private Collection<WaySegment> highlightedWaySegments = new LinkedList<>();
+    private final ListenerList<HighlightUpdateListener> highlightUpdateListeners = ListenerList.create();
 
     // Number of open calls to beginUpdate
     private int updateCount;
     // Events that occurred while dataset was locked but should be fired after write lock is released
     private final List<AbstractDatasetChangedEvent> cachedEvents = new ArrayList<>();
-
-    private int highlightUpdateCount;
 
     private UploadPolicy uploadPolicy;
 
@@ -266,15 +266,6 @@ public final class DataSet implements Data, ProjectionChangeListener {
      */
     public Lock getReadLock() {
         return lock.readLock();
-    }
-
-    /**
-     * This method can be used to detect changes in highlight state of primitives. If highlighting was changed
-     * then the method will return different number.
-     * @return the current highlight counter
-     */
-    public int getHighlightUpdateCount() {
-        return highlightUpdateCount;
     }
 
     /**
@@ -725,6 +716,24 @@ public final class DataSet implements Data, ProjectionChangeListener {
      */
     public Collection<WaySegment> getHighlightedWaySegments() {
         return Collections.unmodifiableCollection(highlightedWaySegments);
+    }
+
+    /**
+     * Adds a listener that gets notified whenever way segment / virtual nodes highlights change.
+     * @param listener The Listener
+     * @since 12014
+     */
+    public void addHighlightUpdateListener(HighlightUpdateListener listener) {
+        highlightUpdateListeners.addListener(listener);
+    }
+
+    /**
+     * Removes a listener that was added with {@link #addHighlightUpdateListener(HighlightUpdateListener)}
+     * @param listener The Listener
+     * @since 12014
+     */
+    public void removeHighlightUpdateListener(HighlightUpdateListener listener) {
+        highlightUpdateListeners.removeListener(listener);
     }
 
     /**
@@ -1334,7 +1343,8 @@ public final class DataSet implements Data, ProjectionChangeListener {
     }
 
     void fireHighlightingChanged() {
-        highlightUpdateCount++;
+        HighlightUpdateListener.HighlightUpdateEvent e = new HighlightUpdateListener.HighlightUpdateEvent(this);
+        highlightUpdateListeners.fireEvent(l -> l.highlightUpdated(e));
     }
 
     /**

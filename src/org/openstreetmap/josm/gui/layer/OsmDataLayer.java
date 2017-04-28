@@ -65,6 +65,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSet.UploadPolicy;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
+import org.openstreetmap.josm.data.osm.HighlightUpdateListener;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -116,7 +117,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * @author imi
  * @since 17
  */
-public class OsmDataLayer extends AbstractModifiableLayer implements Listener, SelectionChangedListener {
+public class OsmDataLayer extends AbstractModifiableLayer implements Listener, SelectionChangedListener, HighlightUpdateListener {
     private static final int HATCHED_SIZE = 15;
     /** Property used to know if this layer has to be saved on disk */
     public static final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
@@ -125,7 +126,6 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
     private boolean requiresSaveToFile;
     private boolean requiresUploadToServer;
-    private int highlightUpdateCount;
 
     /**
      * List of validation errors in this layer.
@@ -363,6 +363,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         conflicts = new ConflictCollection();
         data.addDataSetListener(new DataSetListenerAdapter(this));
         data.addDataSetListener(MultipolygonCache.getInstance());
+        data.addHighlightUpdateListener(this);
         DataSet.addSelectionListener(this);
         if (name != null && name.startsWith(createLayerName("")) && Character.isDigit(
                 (name.substring(createLayerName("").length()) + "XX" /*avoid StringIndexOutOfBoundsException*/).charAt(1))) {
@@ -399,8 +400,6 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      * Draw nodes last to overlap the ways they belong to.
      */
     @Override public void paint(final Graphics2D g, final MapView mv, Bounds box) {
-        highlightUpdateCount = data.getHighlightUpdateCount();
-
         boolean active = mv.getLayerManager().getActiveLayer() == this;
         boolean inactive = !active && Main.pref.getBoolean("draw.data.inactive_color", true);
         boolean virtual = !inactive && mv.isVirtualNodesEnabled();
@@ -907,11 +906,6 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     }
 
     @Override
-    public boolean isChanged() {
-        return highlightUpdateCount != data.getHighlightUpdateCount();
-    }
-
-    @Override
     public void onPostSaveToFile() {
         setRequiresSaveToFile(false);
         setRequiresUploadToServer(isModified());
@@ -951,6 +945,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     public void destroy() {
         super.destroy();
         DataSet.removeSelectionListener(this);
+        data.removeHighlightUpdateListener(this);
     }
 
     @Override
@@ -1100,5 +1095,10 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
             v.computeBoundingBox(data.getNodes());
         }
         return v.getBounds();
+    }
+
+    @Override
+    public void highlightUpdated(HighlightUpdateEvent e) {
+        invalidate();
     }
 }
