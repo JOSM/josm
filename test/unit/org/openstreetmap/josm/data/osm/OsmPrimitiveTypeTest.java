@@ -176,4 +176,12 @@ public class OsmPrimitiveTypeTest {
         assertEquals(5, w.getVersion());
         assertEquals(6, r.getVersion());
     }
+
+    /**
+     * Unit test of {@link OsmPrimitiveType#newVersionedInstance} method - error case.
+     */
+    @Test(expected = AssertionError.class)
+    public void testNewVersionedInstanceError() {
+        OsmPrimitiveType.CLOSEDWAY.newVersionedInstance(1, 0);
+    }
 }
