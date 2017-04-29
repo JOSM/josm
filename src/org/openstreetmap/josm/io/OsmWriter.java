@@ -32,16 +32,18 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
- * Save the dataset into a stream as osm intern xml format. This is not using any
- * xml library for storing.
+ * Save the dataset into a stream as osm intern xml format. This is not using any xml library for storing.
  * @author imi
+ * @since 59
  */
 public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
 
+    /** Default OSM API version */
     public static final String DEFAULT_API_VERSION = "0.6";
 
     private final boolean osmConform;
     private boolean withBody = true;
+    private boolean withVisible = true;
     private boolean isOsmChange;
     private String version;
     private Changeset changeset;
@@ -59,8 +61,21 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         this.version = version == null ? DEFAULT_API_VERSION : version;
     }
 
+    /**
+     * Sets whether body must be written.
+     * @param wb if {@code true} body will be written.
+     */
     public void setWithBody(boolean wb) {
         this.withBody = wb;
+    }
+
+    /**
+     * Sets whether 'visible' attribute must be written.
+     * @param wv if {@code true} 'visible' attribute will be written.
+     * @since 12019
+     */
+    public void setWithVisible(boolean wv) {
+        this.withVisible = wv;
     }
 
     public void setIsOsmChange(boolean isOsmChange) {
@@ -126,6 +141,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
      * @param ds The dataset to write
      */
     public void writeContent(DataSet ds) {
+        setWithVisible(UploadPolicy.NORMAL.equals(ds.getUploadPolicy()));
         writeNodes(ds.getNodes());
         writeWays(ds.getWays());
         writeRelations(ds.getRelations());
@@ -321,7 +337,9 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
                     out.print(" user='"+XmlWriter.encode(osm.getUser().getName())+'\'');
                 }
             }
-            out.print(" visible='"+osm.isVisible()+'\'');
+            if (withVisible) {
+                out.print(" visible='"+osm.isVisible()+'\'');
+            }
         }
         if (osm.getVersion() != 0) {
             out.print(" version='"+osm.getVersion()+'\'');
