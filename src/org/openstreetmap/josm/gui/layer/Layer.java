@@ -150,6 +150,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
     private File associatedFile;
 
     private final ValueChangeListener<Object> invalidateListener = change -> invalidate();
+    private boolean isDestroyed;
 
     /**
      * Create the layer and fill in the necessary components.
@@ -270,7 +271,11 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
      * via command line parameter).
      */
     @Override
-    public void destroy() {
+    public synchronized void destroy() {
+        if (isDestroyed) {
+            throw new IllegalStateException("The layer has already been destroyed: " + this);
+        }
+        isDestroyed = true;
         // Override in subclasses if needed
         removeColorPropertyListener();
     }
