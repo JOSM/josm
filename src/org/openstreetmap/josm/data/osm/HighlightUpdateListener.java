@@ -14,7 +14,7 @@ public interface HighlightUpdateListener {
      * @author Michael Zangl
      * @since 12014
      */
-    public class HighlightUpdateEvent {
+    class HighlightUpdateEvent {
         private final DataSet dataSet;
 
         /**
