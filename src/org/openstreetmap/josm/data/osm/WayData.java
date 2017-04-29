@@ -19,6 +19,15 @@ public class WayData extends PrimitiveData implements IWay {
     }
 
     /**
+     * Constructs a new {@code WayData} with given id.
+     * @param id id
+     * @since 12017
+     */
+    public WayData(long id) {
+        super(id);
+    }
+
+    /**
      * Constructs a new {@code WayData}.
      * @param data way data to copy
      */

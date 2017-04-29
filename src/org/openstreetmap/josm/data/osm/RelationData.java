@@ -23,6 +23,15 @@ public class RelationData extends PrimitiveData implements IRelation {
     }
 
     /**
+     * Constructs a new {@code RelationData} with given id.
+     * @param id id
+     * @since 12017
+     */
+    public RelationData(long id) {
+        super(id);
+    }
+
+    /**
      * Constructs a new {@code RelationData}.
      * @param data relation data to copy
      */

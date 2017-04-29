@@ -23,6 +23,15 @@ public class NodeData extends PrimitiveData implements INode {
     }
 
     /**
+     * Constructs a new {@code NodeData} with given id.
+     * @param id id
+     * @since 12017
+     */
+    public NodeData(long id) {
+        super(id);
+    }
+
+    /**
      * Constructs a new {@code NodeData}.
      * @param data node data to copy
      */
