@@ -156,11 +156,6 @@ public class ProjectionRegressionTest {
      */
     @BeforeClass
     public static void setUp() {
-        System.out.println(Math.abs(-365218.9961895874 - -365218.9961895873) / Math.ulp(-365218.9961895874));
-        System.out.println(Math.abs(-1004398.8994415683 - -1004398.899441569) / Math.ulp(-1004398.8994415683));
-        System.out.println(Math.abs(24167.894484478747 - 24167.894484477292) / Math.ulp(24167.894484478747));
-        System.out.println(Math.abs(22416.160243623483 - 22416.16024362645) / Math.ulp(22416.160243623483));
-        System.out.println(Math.abs(602.4722978938371 - 602.4722978937789) / Math.ulp(602.4722978938371));
         JOSMFixture.createUnitTestFixture().init();
     }
 
