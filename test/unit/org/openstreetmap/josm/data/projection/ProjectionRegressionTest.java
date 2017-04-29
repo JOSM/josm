@@ -156,6 +156,11 @@ public class ProjectionRegressionTest {
      */
     @BeforeClass
     public static void setUp() {
+        System.out.println(Math.abs(-365218.9961895874 - -365218.9961895873) / Math.ulp(-365218.9961895874));
+        System.out.println(Math.abs(-1004398.8994415683 - -1004398.899441569) / Math.ulp(-1004398.8994415683));
+        System.out.println(Math.abs(24167.894484478747 - 24167.894484477292) / Math.ulp(24167.894484478747));
+        System.out.println(Math.abs(22416.160243623483 - 22416.16024362645) / Math.ulp(22416.160243623483));
+        System.out.println(Math.abs(602.4722978938371 - 602.4722978937789) / Math.ulp(602.4722978938371));
         JOSMFixture.createUnitTestFixture().init();
     }
 
@@ -211,12 +216,12 @@ public class ProjectionRegressionTest {
     }
 
     private static boolean equalsDoubleMaxUlp(double d1, double d2) {
-        // Due to error accumulation in projection computation, the difference can reach thousands of ULPs
-        // The worst error is 34813 ULP (followed by 6144 ULP then 4193 ULP) with:
-        // ID74 / UTM zone 49N (EPSG:23849): Projecting latlon(45.59023817877892,104.5874747574324):
-        // expected: eastnorth(-196.85762506100582,5068568.526775028),
-        // but got:  eastnorth(-196.85762506199535,5068568.526775027)!
-        return Math.abs(d1 - d2) <= 35000 * Math.ulp(d1);
+        // Due to error accumulation in projection computation, the difference can reach hundreds of ULPs
+        // The worst error is 816 ULP (followed by 512 ULP then 400 ULP) with:
+        // WGS 72BE / UTM zone 12N (EPSG:32412): Projecting latlon(-19.603789209544317,-115.55033658613439):
+        // expected: eastnorth(22416.160243623483,-2174011.280696576),
+        // but got:  eastnorth(22416.16024362645,-2174011.280696576)!
+        return Math.abs(d1 - d2) <= 850 * Math.ulp(d1);
     }
 
     private static boolean equalsJava9(EastNorth en1, EastNorth en2) {
