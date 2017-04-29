@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Utils;
@@ -40,7 +41,7 @@ public class SelectActionTest {
             super(mapFrame);
             Field mv = SelectAction.class.getDeclaredField("mv");
             Utils.setObjectsAccessible(mv);
-            mv.set(this, new MapViewMock());
+            mv.set(this, new MapViewMock(new MainLayerManager()));
         }
 
         @Override
