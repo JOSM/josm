@@ -126,7 +126,7 @@ This is an overview of the files and directories in the JOSM code repository:
                             used to detect code errors during compilation
     - findbugs/             libs and config files for findbugs (automatically detects common bugs and potential
                             problems in source code); can be launched as an ant target in build.xml
-    - groovy-all-2.4.8.jar  used for some unit tests and various scripts
+    - groovy-all-2.4.11.jar used for some unit tests and various scripts
     - jacocoant.jar         used to include coverage data into JUnit test reports
     - japicc/               used to generate a compatibility report between optimized jar and normal one
     - javacc.jar            used in the build process to generate some .java files from a javacc source file
