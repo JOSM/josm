@@ -171,7 +171,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
     }
 
     @Override
-    public void destroy() {
+    public synchronized void destroy() {
         Main.map.validatorDialog.tree.removeInvalidationListener(invalidator);
         Main.getLayerManager().removeLayerChangeListener(this);
         super.destroy();

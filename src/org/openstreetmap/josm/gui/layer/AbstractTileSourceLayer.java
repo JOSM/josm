@@ -1803,7 +1803,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     }
 
     @Override
-    public void destroy() {
+    public synchronized void destroy() {
         super.destroy();
         adjustAction.destroy();
     }

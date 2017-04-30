@@ -942,7 +942,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     }
 
     @Override
-    public void destroy() {
+    public synchronized void destroy() {
         super.destroy();
         DataSet.removeSelectionListener(this);
         data.removeHighlightUpdateListener(this);

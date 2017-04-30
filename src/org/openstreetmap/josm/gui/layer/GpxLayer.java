@@ -388,7 +388,7 @@ public class GpxLayer extends Layer {
     }
 
     @Override
-    public void destroy() {
+    public synchronized void destroy() {
         super.destroy();
         SystemOfMeasurement.removeSoMChangeListener(drawHelper);
     }
