@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import java.awt.geom.Area;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -427,5 +428,14 @@ public final class Node extends OsmPrimitive implements INode {
             return false;
         LatLon coor = getCoor();
         return coor != null && !coor.isIn(area);
+    }
+
+    /**
+     * Replies the set of referring ways.
+     * @return the set of referring ways
+     * @since 12031
+     */
+    public List<Way> getParentWays() {
+        return getFilteredList(getReferrers(), Way.class);
     }
 }

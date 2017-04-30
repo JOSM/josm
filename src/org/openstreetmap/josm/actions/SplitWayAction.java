@@ -370,8 +370,7 @@ public class SplitWayAction extends JosmAction {
         // Special case - one of the selected ways touches (not cross) way that we want to split
         if (selectedNodes.size() == 1) {
             Node n = selectedNodes.get(0);
-            List<Way> referredWays =
-                OsmPrimitive.getFilteredList(n.getReferrers(), Way.class);
+            List<Way> referredWays = n.getParentWays();
             Way inTheMiddle = null;
             for (Way w: referredWays) {
                 // Need to look at all nodes see #11184 for a case where node n is

@@ -694,7 +694,7 @@ public final class ConditionFactory {
          * @return {@code true} if the object is a unconnected node
          */
         static boolean unconnected(Environment e) { // NO_UCD (unused code)
-            return e.osm instanceof Node && OsmPrimitive.getFilteredList(e.osm.getReferrers(), Way.class).isEmpty();
+            return e.osm instanceof Node && ((Node) e.osm).getParentWays().isEmpty();
         }
 
         /**

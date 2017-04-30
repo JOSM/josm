@@ -89,7 +89,7 @@ public final class AlignInLineAction extends JosmAction {
         // Get ways passing though all selected nodes.
         Set<Way> waysRef = null;
         for (Node n: nodes) {
-            Collection<Way> ref = OsmPrimitive.getFilteredList(n.getReferrers(), Way.class);
+            Collection<Way> ref = n.getParentWays();
             if (waysRef == null)
                 waysRef = new HashSet<>(ref);
             else
@@ -186,7 +186,7 @@ public final class AlignInLineAction extends JosmAction {
                 List<Way> involvedWays;
                 if (selectedWays.isEmpty())
                     // No selected way, all way containing this node are used
-                    involvedWays = OsmPrimitive.getFilteredList(selectedNode.getReferrers(), Way.class);
+                    involvedWays = selectedNode.getParentWays();
                 else
                     // Selected way, use only these ways
                     involvedWays = selectedWays;

@@ -185,7 +185,7 @@ public class Highways extends Test {
         cyclistWays = 0;
         carsWays = 0;
 
-        for (Way w : OsmPrimitive.getFilteredList(n.getReferrers(), Way.class)) {
+        for (Way w : n.getParentWays()) {
             String highway = w.get(HIGHWAY);
             if (highway != null) {
                 if ("footway".equals(highway) || "path".equals(highway)) {
