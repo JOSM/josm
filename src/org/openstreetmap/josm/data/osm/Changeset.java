@@ -369,10 +369,7 @@ public final class Changeset implements Tagged {
             return false;
         if (open != other.open)
             return false;
-        if (tags == null) {
-            if (other.tags != null)
-                return false;
-        } else if (!tags.equals(other.tags))
+        if (!tags.equals(other.tags))
             return false;
         if (user == null) {
             if (other.user != null)
