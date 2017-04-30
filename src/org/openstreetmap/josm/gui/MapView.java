@@ -71,6 +71,7 @@ import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
 import org.openstreetmap.josm.tools.AudioPlayer;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
@@ -445,7 +446,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         try {
             LayerPainter painter = registeredLayers.get(layer);
             if (painter == null) {
-                throw new IllegalArgumentException("Cannot paint layer, it is not registered.");
+                Logging.warn("Cannot paint layer, it is not registered: {0}", layer);
+                return;
             }
             MapViewRectangle clipBounds = getState().getViewArea(g.getClipBounds());
             MapViewGraphics paintGraphics = new MapViewGraphics(this, g, clipBounds);
