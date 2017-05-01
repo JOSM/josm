@@ -1,7 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 import org.junit.Assert;
@@ -54,6 +58,49 @@ public class DataSetTest {
         List<Relation> result = ds.searchRelations(bbox);
         Assert.assertEquals("We should have found only one item.", 1, result.size());
         Assert.assertTrue("The item found is relation r.", result.contains(r));
+    }
+
+    /**
+     * Unit test of methods {@link DataSet#addChangeSetTag} / {@link DataSet#getChangeSetTags}.
+     */
+    @Test
+    public void testChangesetTags() {
+        final DataSet ds = new DataSet();
+        assertTrue(ds.getChangeSetTags().isEmpty());
+        ds.addChangeSetTag("foo", "bar");
+        assertEquals("bar", ds.getChangeSetTags().get("foo"));
+    }
+
+    /**
+     * Unit test of methods {@link DataSet#allNonDeletedPrimitives}
+     *                    / {@link DataSet#allNonDeletedCompletePrimitives}
+     *                    / {@link DataSet#allNonDeletedPhysicalPrimitives}.
+     */
+    @Test
+    public void testAllNonDeleted() {
+        final DataSet ds = new DataSet();
+        assertTrue(ds.allNonDeletedPrimitives().isEmpty());
+        assertTrue(ds.allNonDeletedCompletePrimitives().isEmpty());
+        assertTrue(ds.allNonDeletedPhysicalPrimitives().isEmpty());
+
+        Node n1 = new Node(1); n1.setCoor(LatLon.NORTH_POLE); n1.setDeleted(true); n1.setIncomplete(false); ds.addPrimitive(n1);
+        Node n2 = new Node(2); n2.setCoor(LatLon.NORTH_POLE); n2.setDeleted(false); n2.setIncomplete(false); ds.addPrimitive(n2);
+        Node n3 = new Node(3); n3.setCoor(LatLon.NORTH_POLE); n3.setDeleted(false); n3.setIncomplete(true); ds.addPrimitive(n3);
+
+        Way w1 = new Way(1); w1.setDeleted(true); w1.setIncomplete(false); ds.addPrimitive(w1);
+        Way w2 = new Way(2); w2.setDeleted(false); w2.setIncomplete(false); ds.addPrimitive(w2);
+        Way w3 = new Way(3); w3.setDeleted(false); w3.setIncomplete(true); ds.addPrimitive(w3);
+
+        Relation r1 = new Relation(1); r1.setDeleted(true); r1.setIncomplete(false); ds.addPrimitive(r1);
+        Relation r2 = new Relation(2); r2.setDeleted(false); r2.setIncomplete(false); ds.addPrimitive(r2);
+        Relation r3 = new Relation(3); r3.setDeleted(false); r3.setIncomplete(true); ds.addPrimitive(r3);
+
+        assertEquals(new HashSet<>(Arrays.asList(n2, n3, w2, w3, r2, r3)),
+                new HashSet<>(ds.allNonDeletedPrimitives()));
+        assertEquals(new HashSet<>(Arrays.asList(n2, w2, r2)),
+                new HashSet<>(ds.allNonDeletedCompletePrimitives()));
+        assertEquals(new HashSet<>(Arrays.asList(n2, w2)),
+                new HashSet<>(ds.allNonDeletedPhysicalPrimitives()));
     }
 
     /**
