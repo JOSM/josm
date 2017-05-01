@@ -13,12 +13,14 @@ import java.util.Set;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.ChangesetDataSet.ChangesetDataSetEntry;
 import org.openstreetmap.josm.data.osm.ChangesetDataSet.ChangesetModificationType;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -84,5 +86,19 @@ public class ChangesetDataSetTest {
         assertEquals(ChangesetModificationType.CREATED, cdse.getModificationType());
         assertEquals(prim1, cdse.getPrimitive());
         assertFalse(it.hasNext());
+        try {
+            it.remove();
+            fail("remove should throw UnsupportedOperationException");
+        } catch (UnsupportedOperationException e) {
+            Logging.trace(e.getMessage());
+        }
+    }
+
+    /**
+     * Unit test of {@link ChangesetModificationType} enum.
+     */
+    @Test
+    public void testEnumChangesetModificationType() {
+        TestUtils.superficialEnumCodeCoverage(ChangesetModificationType.class);
     }
 }
