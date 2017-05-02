@@ -229,6 +229,7 @@ Build-Date: ${build.tstamp}
             <!-- get rid of "internal proprietary API" warning -->
             <compilerarg value="-XDignore.symbol.file"/>
             <exclude name="org/apache/commons/compress/compressors/bzip2/BZip2Utils.java"/>
+            <exclude name="org/apache/commons/compress/compressors/brotli/**"/>
             <exclude name="org/apache/commons/compress/compressors/lzma/**"/>
             <exclude name="org/apache/commons/compress/compressors/xz/**"/>
             <exclude name="org/apache/commons/compress/compressors/CompressorStreamFactory.java"/>
