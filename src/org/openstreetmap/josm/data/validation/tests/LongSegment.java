@@ -126,16 +126,16 @@ public class LongSegment extends Test {
 
     @Override
     public boolean isPrimitiveUsable(OsmPrimitive p) {
-        if (!p.isUsable()) {
-            return false;
-        } else if (p instanceof Way && ((Way) p).getNodesCount() > 1) {
-            // test only Ways with at least 2 nodes
-            return true;
-        } else if (p instanceof Node && p.isDrawable()) {
-            // test all nodes - ways referred by them may not be checked automatically.
-            return true;
-        } else {
-            return false;
-        }
+        return p.isUsable() && (isUsableWay(p) || isUsableNode(p));
+    }
+
+    private boolean isUsableNode(OsmPrimitive p) {
+        // test changed nodes - ways referred by them may not be checked automatically.
+        return p instanceof Node && p.isDrawable();
+    }
+
+    private boolean isUsableWay(OsmPrimitive p) {
+        // test only Ways with at least 2 nodes
+        return p instanceof Way && ((Way) p).getNodesCount() > 1;
     }
 }
