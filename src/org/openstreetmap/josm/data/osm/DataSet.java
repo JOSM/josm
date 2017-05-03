@@ -21,7 +21,6 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Function;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.openstreetmap.josm.Main;
@@ -574,8 +573,8 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
             OsmPrimitive primitive = getPrimitiveByIdChecked(primitiveId);
             if (primitive == null)
                 return;
-            super.removePrimitive(primitive);
             clearSelection(primitiveId);
+            super.removePrimitive(primitive);
             allPrimitives.remove(primitive);
             primitive.setDataset(null);
             firePrimitivesRemoved(Collections.singletonList(primitive), false);
@@ -1245,18 +1244,19 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     public void cleanupDeletedPrimitives() {
         beginUpdate();
         try {
-            cleanupDeleted(Stream.concat(
-                    getNodes().stream(), Stream.concat(getNodes().stream(), getNodes().stream())));
+            Collection<OsmPrimitive> toCleanUp = getPrimitives(primitive -> primitive.isDeleted() && (!primitive.isVisible() || primitive.isNew()));
+            if (!toCleanUp.isEmpty()) {
+                clearSelection(toCleanUp.stream().map(OsmPrimitive::getPrimitiveId));
+                for (OsmPrimitive primitive : toCleanUp) {
+                    allPrimitives.remove(primitive);
+                    removePrimitive(primitive);
+                    primitive.setDataset(null);
+                }
+                firePrimitivesRemoved(toCleanUp, false);
+            }
         } finally {
             endUpdate();
         }
-    }
-
-    private void cleanupDeleted(Stream<? extends OsmPrimitive> it) {
-        it.filter(primitive -> primitive.isDeleted() && (!primitive.isVisible() || primitive.isNew()))
-                .collect(Collectors.toList())
-                .forEach(primitive -> this.removePrimitive(primitive.getPrimitiveId()));
-
     }
 
     /**
