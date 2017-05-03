@@ -68,8 +68,8 @@ public class TagChecker extends TagTest {
 
     /** Normalized keys: the key should be substituted by the value if the key was not found in presets */
     private static final Map<String, String> harmonizedKeys = new HashMap<>();
-    /** The spell check preset values */
-    private static volatile MultiMap<String, String> presetsValueData;
+    /** The spell check preset values which are not stored in TaggingPresets */
+    private static volatile MultiMap<String, String> additionalPresetsValueData;
     /** The TagChecker data */
     private static final List<CheckerData> checkerData = new ArrayList<>();
     private static final List<String> ignoreDataStartsWith = new ArrayList<>();
@@ -258,14 +258,14 @@ public class TagChecker extends TagTest {
 
         Collection<TaggingPreset> presets = TaggingPresets.getTaggingPresets();
         if (!presets.isEmpty()) {
-            presetsValueData = new MultiMap<>();
+            additionalPresetsValueData = new MultiMap<>();
             for (String a : OsmPrimitive.getUninterestingKeys()) {
-                presetsValueData.putVoid(a);
+                additionalPresetsValueData.putVoid(a);
             }
             // TODO directionKeys are no longer in OsmPrimitive (search pattern is used instead)
             for (String a : Main.pref.getCollection(ValidatorPreference.PREFIX + ".knownkeys",
                     Arrays.asList(new String[]{"is_in", "int_ref", "fixme", "population"}))) {
-                presetsValueData.putVoid(a);
+                additionalPresetsValueData.putVoid(a);
             }
             for (TaggingPreset p : presets) {
                 for (TaggingPresetItem i : p.data) {
@@ -284,7 +284,6 @@ public class TagChecker extends TagTest {
     private static void addPresetValue(KeyedItem ky) {
         Collection<String> values = ky.getValues();
         if (ky.key != null && values != null) {
-            presetsValueData.putAll(ky.key, values);
             harmonizedKeys.put(harmonizeKey(ky.key), ky.key);
         }
     }
@@ -304,6 +303,13 @@ public class TagChecker extends TagTest {
         return false;
     }
 
+    private static Set<String> getPresetValues(String key) {
+        Set<String> res = TaggingPresets.getPresetValues(key);
+        if (res != null)
+            return res;
+        return additionalPresetsValueData.get(key);
+    }
+
     /**
      * Determines if the given key is in internal presets.
      * @param key key
@@ -311,7 +317,7 @@ public class TagChecker extends TagTest {
      * @since 9023
      */
     public static boolean isKeyInPresets(String key) {
-        return presetsValueData.get(key) != null;
+        return getPresetValues(key) != null;
     }
 
     /**
@@ -322,7 +328,7 @@ public class TagChecker extends TagTest {
      * @since 9023
      */
     public static boolean isTagInPresets(String key, String value) {
-        final Set<String> values = presetsValueData.get(key);
+        final Set<String> values = getPresetValues(key);
         return values != null && (values.isEmpty() || values.contains(value));
     }
 
@@ -461,7 +467,8 @@ public class TagChecker extends TagTest {
                         .build());
                 withErrors.put(p, "HTML");
             }
-            if (checkValues && key != null && value != null && !value.isEmpty() && presetsValueData != null && !isTagIgnored(key, value)) {
+            if (checkValues && key != null && value != null && !value.isEmpty() && additionalPresetsValueData != null
+                    && !isTagIgnored(key, value)) {
                 if (!isKeyInPresets(key)) {
                     String prettifiedKey = harmonizeKey(key);
                     String fixedKey = harmonizedKeys.get(prettifiedKey);
@@ -486,7 +493,7 @@ public class TagChecker extends TagTest {
                 } else if (!isTagInPresets(key, value)) {
                     // try to fix common typos and check again if value is still unknown
                     String fixedValue = harmonizeValue(prop.getValue());
-                    Map<String, String> possibleValues = getPossibleValues(presetsValueData.get(key));
+                    Map<String, String> possibleValues = getPossibleValues(getPresetValues(key));
                     if (possibleValues.containsKey(fixedValue)) {
                         final String newKey = possibleValues.get(fixedValue);
                         // misspelled preset value
