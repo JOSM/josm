@@ -101,7 +101,7 @@ public class ConflictResolutionDialog extends ExtendedDialog implements Property
         resolver.addPropertyChangeListener(this);
         HelpUtil.setHelpContext(this.getRootPane(), ht("Dialog/Conflict"));
 
-        setContent(p);
+        setContent(p, false);
     }
 
     @Override
