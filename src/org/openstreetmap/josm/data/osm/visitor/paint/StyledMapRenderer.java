@@ -98,40 +98,63 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         private final StyleElement style;
         private final OsmPrimitive osm;
         private final int flags;
+        private final long order;
 
         StyleRecord(StyleElement style, OsmPrimitive osm, int flags) {
             this.style = style;
             this.osm = osm;
             this.flags = flags;
+
+            long order = 0;
+            if ((this.flags & FLAG_DISABLED) != 0) {
+                order |= 1;
+            }
+
+            order <<= 24;
+            order |= floatToFixed(this.style.majorZIndex, 24, 8);
+
+            // selected on top of member of selected on top of unselected
+            // FLAG_DISABLED bit is the same at this point, but we simply ignore it
+            order <<= 4;
+            order |= this.flags & 0xf;
+
+            order <<= 24;
+            order |= floatToFixed(this.style.zIndex, 24, 8);
+
+            order <<= 1;
+            // simple node on top of icons and shapes
+            if (NodeElement.SIMPLE_NODE_ELEMSTYLE.equals(this.style)) {
+                order |= 1;
+            }
+
+            this.order = order;
+        }
+
+        /**
+         * Converts a float to a fixed pointdecimal so that the order stays the same.
+         *
+         * @param number The float to convert
+         * @param totalBits
+         *            Total number of bits. 1 sign bit, then the bits before the
+         *            decimal point, then those after.
+         * @param afterDecimalBits
+         *            Number of fixed bits after the decimal point.
+         * @return The float converted to an integer.
+         */
+        private static long floatToFixed(double number, int totalBits, int afterDecimalBits) {
+            long value = (long) (number * (1l << afterDecimalBits));
+            long highestBitMask = 1l << totalBits - 1;
+            long valueMask = highestBitMask - 1;
+            long signBit = number < 0 ? 0 : highestBitMask;
+            return signBit | value & valueMask;
         }
 
         @Override
         public int compareTo(StyleRecord other) {
-            if ((this.flags & FLAG_DISABLED) != 0 && (other.flags & FLAG_DISABLED) == 0)
-                return -1;
-            if ((this.flags & FLAG_DISABLED) == 0 && (other.flags & FLAG_DISABLED) != 0)
-                return 1;
-
-            int d0 = Float.compare(this.style.majorZIndex, other.style.majorZIndex);
-            if (d0 != 0)
-                return d0;
-
-            // selected on top of member of selected on top of unselected
-            // FLAG_DISABLED bit is the same at this point
-            if (this.flags > other.flags)
-                return 1;
-            if (this.flags < other.flags)
-                return -1;
-
-            int dz = Float.compare(this.style.zIndex, other.style.zIndex);
-            if (dz != 0)
-                return dz;
-
-            // simple node on top of icons and shapes
-            if (NodeElement.SIMPLE_NODE_ELEMSTYLE.equals(this.style) && !NodeElement.SIMPLE_NODE_ELEMSTYLE.equals(other.style))
-                return 1;
-            if (!NodeElement.SIMPLE_NODE_ELEMSTYLE.equals(this.style) && NodeElement.SIMPLE_NODE_ELEMSTYLE.equals(other.style))
-                return -1;
+            int d = Long.compare(order, other.order);
+            if (d != 0) {
+                return d;
+            }
 
             // newer primitives to the front
             long id = this.osm.getUniqueId() - other.osm.getUniqueId();
