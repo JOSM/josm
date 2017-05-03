@@ -910,19 +910,14 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      * @since 12048
      */
     private boolean doSelectionChange(Function<Set<OsmPrimitive>, SelectionChangeEvent> command) {
-        lock.readLock().lock();
-        try {
-            synchronized (selectionLock) {
-                SelectionChangeEvent event = command.apply(currentSelectedPrimitives);
-                if (event.isNop()) {
-                    return false;
-                }
-                currentSelectedPrimitives = event.getSelection();
-                selectionListeners.fireEvent(l -> l.selectionChanged(event));
-                return true;
+        synchronized (selectionLock) {
+            SelectionChangeEvent event = command.apply(currentSelectedPrimitives);
+            if (event.isNop()) {
+                return false;
             }
-        } finally {
-            lock.readLock().unlock();
+            currentSelectedPrimitives = event.getSelection();
+            selectionListeners.fireEvent(l -> l.selectionChanged(event));
+            return true;
         }
     }
 
