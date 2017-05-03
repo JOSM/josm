@@ -54,7 +54,6 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
@@ -103,7 +102,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author imi
  */
-public final class DataSet implements Data, ProjectionChangeListener {
+public final class DataSet extends QuadBucketPrimitiveStore implements Data, ProjectionChangeListener {
 
     /**
      * Upload policy.
@@ -215,12 +214,12 @@ public final class DataSet implements Data, ProjectionChangeListener {
         copyFrom.getReadLock().lock();
         try {
             Map<OsmPrimitive, OsmPrimitive> primMap = new HashMap<>();
-            for (Node n : copyFrom.nodes) {
+            for (Node n : copyFrom.getNodes()) {
                 Node newNode = new Node(n);
                 primMap.put(n, newNode);
                 addPrimitive(newNode);
             }
-            for (Way w : copyFrom.ways) {
+            for (Way w : copyFrom.getWays()) {
                 Way newWay = new Way(w);
                 primMap.put(w, newWay);
                 List<Node> newNodes = new ArrayList<>();
@@ -232,13 +231,14 @@ public final class DataSet implements Data, ProjectionChangeListener {
             }
             // Because relations can have other relations as members we first clone all relations
             // and then get the cloned members
-            for (Relation r : copyFrom.relations) {
+            Collection<Relation> relations = copyFrom.getRelations();
+            for (Relation r : relations) {
                 Relation newRelation = new Relation(r, r.isNew());
                 newRelation.setMembers(null);
                 primMap.put(r, newRelation);
                 addPrimitive(newRelation);
             }
-            for (Relation r : copyFrom.relations) {
+            for (Relation r : relations) {
                 Relation newRelation = (Relation) primMap.get(r);
                 List<RelationMember> newMembers = new ArrayList<>();
                 for (RelationMember rm: r.getMembers()) {
@@ -417,12 +417,6 @@ public final class DataSet implements Data, ProjectionChangeListener {
     }
 
     /**
-     * All nodes goes here, even when included in other data (ways etc). This enables the instant
-     * conversion of the whole DataSet by iterating over this data structure.
-     */
-    private final QuadBuckets<Node> nodes = new QuadBuckets<>();
-
-    /**
      * Gets a filtered collection of primitives matching the given predicate.
      * @param <T> The primitive type.
      * @param predicate The predicate to match
@@ -442,38 +436,15 @@ public final class DataSet implements Data, ProjectionChangeListener {
         return getPrimitives(Node.class::isInstance);
     }
 
-    /**
-     * Searches for nodes in the given bounding box.
-     * @param bbox the bounding box
-     * @return List of nodes in the given bbox. Can be empty but not null
-     */
+    @Override
     public List<Node> searchNodes(BBox bbox) {
         lock.readLock().lock();
         try {
-            return nodes.search(bbox);
+            return super.searchNodes(bbox);
         } finally {
             lock.readLock().unlock();
         }
     }
-
-    /**
-     * Determines if the given node can be retrieved in the data set through its bounding box. Useful for dataset consistency test.
-     * For efficiency reasons this method does not lock the dataset, you have to lock it manually.
-     *
-     * @param n The node to search
-     * @return {@code true} if {@code n} ban be retrieved in this data set, {@code false} otherwise
-     * @since 7501
-     */
-    public boolean containsNode(Node n) {
-        return nodes.contains(n);
-    }
-
-    /**
-     * All ways (Streets etc.) in the DataSet.
-     *
-     * The way nodes are stored only in the way list.
-     */
-    private final QuadBuckets<Way> ways = new QuadBuckets<>();
 
     /**
      * Replies an unmodifiable collection of ways in this dataset
@@ -484,36 +455,30 @@ public final class DataSet implements Data, ProjectionChangeListener {
         return getPrimitives(Way.class::isInstance);
     }
 
-    /**
-     * Searches for ways in the given bounding box.
-     * @param bbox the bounding box
-     * @return List of ways in the given bbox. Can be empty but not null
-     */
+    @Override
     public List<Way> searchWays(BBox bbox) {
         lock.readLock().lock();
         try {
-            return ways.search(bbox);
+            return super.searchWays(bbox);
         } finally {
             lock.readLock().unlock();
         }
     }
 
     /**
-     * Determines if the given way can be retrieved in the data set through its bounding box. Useful for dataset consistency test.
-     * For efficiency reasons this method does not lock the dataset, you have to lock it manually.
-     *
-     * @param w The way to search
-     * @return {@code true} if {@code w} ban be retrieved in this data set, {@code false} otherwise
-     * @since 7501
+     * Searches for relations in the given bounding box.
+     * @param bbox the bounding box
+     * @return List of relations in the given bbox. Can be empty but not null
      */
-    public boolean containsWay(Way w) {
-        return ways.contains(w);
+    @Override
+    public List<Relation> searchRelations(BBox bbox) {
+        lock.readLock().lock();
+        try {
+            return super.searchRelations(bbox);
+        } finally {
+            lock.readLock().unlock();
+        }
     }
-
-    /**
-     * All relations/relationships
-     */
-    private final Collection<Relation> relations = new ArrayList<>();
 
     /**
      * Replies an unmodifiable collection of relations in this dataset
@@ -522,35 +487,6 @@ public final class DataSet implements Data, ProjectionChangeListener {
      */
     public Collection<Relation> getRelations() {
         return getPrimitives(Relation.class::isInstance);
-    }
-
-    /**
-     * Searches for relations in the given bounding box.
-     * @param bbox the bounding box
-     * @return List of relations in the given bbox. Can be empty but not null
-     */
-    public List<Relation> searchRelations(BBox bbox) {
-        lock.readLock().lock();
-        try {
-            // QuadBuckets might be useful here (don't forget to do reindexing after some of rm is changed)
-            return relations.stream()
-                    .filter(r -> r.getBBox().intersects(bbox))
-                    .collect(Collectors.toList());
-        } finally {
-            lock.readLock().unlock();
-        }
-    }
-
-    /**
-     * Determines if the given relation can be retrieved in the data set through its bounding box. Useful for dataset consistency test.
-     * For efficiency reasons this method does not lock the dataset, you have to lock it manually.
-     *
-     * @param r The relation to search
-     * @return {@code true} if {@code r} ban be retrieved in this data set, {@code false} otherwise
-     * @since 7501
-     */
-    public boolean containsRelation(Relation r) {
-        return relations.contains(r);
     }
 
     /**
@@ -604,6 +540,7 @@ public final class DataSet implements Data, ProjectionChangeListener {
      *
      * @param primitive the primitive.
      */
+    @Override
     public void addPrimitive(OsmPrimitive primitive) {
         Objects.requireNonNull(primitive, "primitive");
         beginUpdate();
@@ -615,16 +552,7 @@ public final class DataSet implements Data, ProjectionChangeListener {
             allPrimitives.add(primitive);
             primitive.setDataset(this);
             primitive.updatePosition(); // Set cached bbox for way and relation (required for reindexWay and reindexRelation to work properly)
-            boolean success = false;
-            if (primitive instanceof Node) {
-                success = nodes.add((Node) primitive);
-            } else if (primitive instanceof Way) {
-                success = ways.add((Way) primitive);
-            } else if (primitive instanceof Relation) {
-                success = relations.add((Relation) primitive);
-            }
-            if (!success)
-                throw new JosmRuntimeException("failed to add primitive: "+primitive);
+            super.addPrimitive(primitive);
             firePrimitivesAdded(Collections.singletonList(primitive), false);
         } finally {
             endUpdate();
@@ -646,16 +574,7 @@ public final class DataSet implements Data, ProjectionChangeListener {
             OsmPrimitive primitive = getPrimitiveByIdChecked(primitiveId);
             if (primitive == null)
                 return;
-            boolean success = false;
-            if (primitive instanceof Node) {
-                success = nodes.remove(primitive);
-            } else if (primitive instanceof Way) {
-                success = ways.remove(primitive);
-            } else if (primitive instanceof Relation) {
-                success = relations.remove(primitive);
-            }
-            if (!success)
-                throw new JosmRuntimeException("failed to remove primitive: "+primitive);
+            super.removePrimitive(primitive);
             clearSelection(primitiveId);
             allPrimitives.remove(primitive);
             primitive.setDataset(null);
@@ -1123,7 +1042,7 @@ public final class DataSet implements Data, ProjectionChangeListener {
         Set<Relation> result = new HashSet<>();
         beginUpdate();
         try {
-            for (Relation relation : relations) {
+            for (Relation relation : getRelations()) {
                 List<RelationMember> members = relation.getMembers();
 
                 Iterator<RelationMember> it = members.iterator();
@@ -1180,45 +1099,6 @@ public final class DataSet implements Data, ProjectionChangeListener {
                 return true;
         }
         return false;
-    }
-
-    private void reindexNode(Node node, LatLon newCoor, EastNorth eastNorth) {
-        if (!nodes.remove(node))
-            throw new JosmRuntimeException("Reindexing node failed to remove");
-        node.setCoorInternal(newCoor, eastNorth);
-        if (!nodes.add(node))
-            throw new JosmRuntimeException("Reindexing node failed to add");
-        for (OsmPrimitive primitive: node.getReferrers()) {
-            if (primitive instanceof Way) {
-                reindexWay((Way) primitive);
-            } else {
-                reindexRelation((Relation) primitive);
-            }
-        }
-    }
-
-    private void reindexWay(Way way) {
-        BBox before = way.getBBox();
-        if (!ways.remove(way))
-            throw new JosmRuntimeException("Reindexing way failed to remove");
-        way.updatePosition();
-        if (!ways.add(way))
-            throw new JosmRuntimeException("Reindexing way failed to add");
-        if (!way.getBBox().equals(before)) {
-            for (OsmPrimitive primitive: way.getReferrers()) {
-                reindexRelation((Relation) primitive);
-            }
-        }
-    }
-
-    private static void reindexRelation(Relation relation) {
-        BBox before = relation.getBBox();
-        relation.updatePosition();
-        if (!before.equals(relation.getBBox())) {
-            for (OsmPrimitive primitive: relation.getReferrers()) {
-                reindexRelation((Relation) primitive);
-            }
-        }
     }
 
     /**
@@ -1371,24 +1251,24 @@ public final class DataSet implements Data, ProjectionChangeListener {
         beginUpdate();
         try {
             cleanupDeleted(Stream.concat(
-                    nodes.stream(), Stream.concat(ways.stream(), relations.stream())));
+                    getNodes().stream(), Stream.concat(getNodes().stream(), getNodes().stream())));
         } finally {
             endUpdate();
         }
     }
 
     private void cleanupDeleted(Stream<? extends OsmPrimitive> it) {
-        clearSelection(it
-                .filter(primitive -> primitive.isDeleted() && (!primitive.isVisible() || primitive.isNew()))
-                .peek(allPrimitives::remove)
-                .peek(primitive -> primitive.setDataset(null)));
+        it.filter(primitive -> primitive.isDeleted() && (!primitive.isVisible() || primitive.isNew()))
+                .collect(Collectors.toList())
+                .forEach(primitive -> this.removePrimitive(primitive.getPrimitiveId()));
+
     }
 
     /**
      * Removes all primitives from the dataset and resets the currently selected primitives
      * to the empty collection. Also notifies selection change listeners if necessary.
-     *
      */
+    @Override
     public void clear() {
         beginUpdate();
         try {
@@ -1396,9 +1276,7 @@ public final class DataSet implements Data, ProjectionChangeListener {
             for (OsmPrimitive primitive:allPrimitives) {
                 primitive.setDataset(null);
             }
-            nodes.clear();
-            ways.clear();
-            relations.clear();
+            super.clear();
             allPrimitives.clear();
         } finally {
             endUpdate();
