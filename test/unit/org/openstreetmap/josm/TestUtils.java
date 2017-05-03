@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Graphics2D;
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +17,8 @@ import java.security.PrivilegedAction;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
@@ -304,6 +307,27 @@ public final class TestUtils {
             }
         } catch (IllegalArgumentException | ReflectiveOperationException | SecurityException e) {
             throw new JosmRuntimeException(e);
+        }
+    }
+
+    /**
+     * Get a descendant component by name.
+     * @param root The root component to start searching from.
+     * @param name The component name
+     * @return The component with that name or null if it does not exist.
+     * @since 12045
+     */
+    public static Component getComponentByName(Component root, String name) {
+        if (name.equals(root.getName())) {
+            return root;
+        } else if (root instanceof Container) {
+            Container container = (Container) root;
+            return Stream.of(container.getComponents())
+                    .map(child -> getComponentByName(child, name))
+                    .filter(Objects::nonNull)
+                    .findFirst().orElse(null);
+        } else {
+            return null;
         }
     }
 }
