@@ -710,7 +710,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         if (affectedNodes.size() < 2 && (mode == Mode.ROTATE || mode == Mode.SCALE)) {
             return false;
         }
-        Command c = getLastCommand();
+        Command c = getLastCommandInDataset(ds);
         if (mode == Mode.MOVE) {
             if (startEN == null) return false; // fix #8128
             ds.beginUpdate();
@@ -783,8 +783,9 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      * Adapt last move command (if it is suitable) to work with next drag, started at point startEN
      */
     private void useLastMoveCommandIfPossible() {
-        Command c = getLastCommand();
-        Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(getLayerManager().getEditDataSet().getSelected());
+        DataSet dataSet = getLayerManager().getEditDataSet();
+        Command c = getLastCommandInDataset(dataSet);
+        Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(dataSet.getSelected());
         if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
             // old command was created with different base point of movement, we need to recalculate it
             ((MoveCommand) c).changeStartPoint(startEN);
@@ -793,15 +794,21 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
 
     /**
      * Obtain command in undoRedo stack to "continue" when dragging
+     * @param ds The data set the command needs to be in.
      * @return last command
      */
-    private static Command getLastCommand() {
-        Command c = !Main.main.undoRedo.commands.isEmpty()
-                ? Main.main.undoRedo.commands.getLast() : null;
-        if (c instanceof SequenceCommand) {
-            c = ((SequenceCommand) c).getLastCommand();
+    private Command getLastCommandInDataset(DataSet ds) {
+        LinkedList<Command> commands = Main.main.undoRedo.commands;
+        if (!commands.isEmpty()) {
+            Command lastCommand = commands.getLast();
+            if (lastCommand instanceof SequenceCommand) {
+                lastCommand = ((SequenceCommand) lastCommand).getLastCommand();
+            }
+            if (ds.equals(lastCommand.getAffectedDataSet())) {
+                return lastCommand;
+            }
         }
-        return c;
+        return null;
     }
 
     /**
@@ -897,10 +904,9 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             // Move all selected primitive to preserve shape #10748
             Collection<OsmPrimitive> selection = ds.getSelectedNodesAndWays();
             Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
-            Command c = getLastCommand();
+            Command c = getLastCommandInDataset(ds);
             ds.beginUpdate();
-            if (c instanceof MoveCommand
-                && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
+            if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
                 Node selectedNode = selNodes.iterator().next();
                 EastNorth selectedEN = selectedNode.getEastNorth();
                 EastNorth targetEN = target.getEastNorth();

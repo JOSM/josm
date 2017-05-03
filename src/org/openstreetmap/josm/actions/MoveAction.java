@@ -136,7 +136,7 @@ public class MoveAction extends JosmAction {
         ? Main.main.undoRedo.commands.getLast() : null;
 
         ds.beginUpdate();
-        if (c instanceof MoveCommand && ds.equals(((MoveCommand) c).getAffectedDataSet())
+        if (c instanceof MoveCommand && ds.equals(c.getAffectedDataSet())
                 && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
             ((MoveCommand) c).moveAgain(distx, disty);
         } else {
