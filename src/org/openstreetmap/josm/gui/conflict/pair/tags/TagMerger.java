@@ -4,23 +4,21 @@ package org.openstreetmap.josm.gui.conflict.pair.tags;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Adjustable;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
@@ -28,204 +26,57 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.conflict.pair.AbstractMergePanel;
 import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.tagging.TagTableColumnModelBuilder;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
  * UI component for resolving conflicts in the tag sets of two {@link OsmPrimitive}s.
  * @since 1622
  */
-public class TagMerger extends JPanel implements IConflictResolver {
+public class TagMerger extends AbstractMergePanel implements IConflictResolver {
+    private static final String[] KEY_VALUE = new String[] {tr("Key"), tr("Value")};
 
-    private JTable mineTable;
-    private JTable mergedTable;
-    private JTable theirTable;
-    private final TagMergeModel model;
-    private final String[] keyvalue;
-    private transient AdjustmentSynchronizer adjustmentSynchronizer;
+    private final TagMergeModel model = new TagMergeModel();
+
+    /**
+     * the table for my tag set
+     */
+    private final JTable mineTable = generateTable(model, new MineTableCellRenderer());
+    /**
+     * the table for the merged tag set
+     */
+    private final JTable mergedTable = generateTable(model, new MergedTableCellRenderer());
+    /**
+     * the table for their tag set
+     */
+    private final JTable theirTable = generateTable(model, new TheirTableCellRenderer());
 
     /**
      * Constructs a new {@code TagMerger}.
      */
     public TagMerger() {
-        model = new TagMergeModel();
-        keyvalue = new String[]{tr("Key"), tr("Value")};
-        build();
-    }
-
-    /**
-     * embeds table in a new {@link JScrollPane} and returns th scroll pane
-     *
-     * @param table the table
-     * @return the scroll pane embedding the table
-     */
-    protected JScrollPane embeddInScrollPane(JTable table) {
-        JScrollPane pane = new JScrollPane(table);
-        adjustmentSynchronizer.synchronizeAdjustment(pane.getVerticalScrollBar());
-        return pane;
-    }
-
-    /**
-     * builds the table for my tag set (table already embedded in a scroll pane)
-     *
-     * @return the table (embedded in a scroll pane)
-     */
-    protected JScrollPane buildMineTagTable() {
-        mineTable = new JTable(model, new TagTableColumnModelBuilder(new MineTableCellRenderer(), keyvalue).build());
         mineTable.setName("table.my");
-        return embeddInScrollPane(mineTable);
-    }
-
-    /**
-     * builds the table for their tag set (table already embedded in a scroll pane)
-     *
-     * @return the table (embedded in a scroll pane)
-     */
-    protected JScrollPane buildTheirTable() {
-        theirTable = new JTable(model, new TagTableColumnModelBuilder(new TheirTableCellRenderer(), keyvalue).build());
         theirTable.setName("table.their");
-        return embeddInScrollPane(theirTable);
-    }
-
-    /**
-     * builds the table for the merged tag set (table already embedded in a scroll pane)
-     *
-     * @return the table (embedded in a scroll pane)
-     */
-
-    protected JScrollPane buildMergedTable() {
-        mergedTable = new JTable(model, new TagTableColumnModelBuilder(new MergedTableCellRenderer(), keyvalue).build());
         mergedTable.setName("table.merged");
-        return embeddInScrollPane(mergedTable);
-    }
-
-    /**
-     * build the user interface
-     */
-    protected final void build() {
-        GridBagConstraints gc = new GridBagConstraints();
-        setLayout(new GridBagLayout());
-
-        adjustmentSynchronizer = new AdjustmentSynchronizer();
-
-        gc.gridx = 0;
-        gc.gridy = 0;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
-        gc.insets = new Insets(10, 0, 10, 0);
-        JLabel lblMy = new JLabel(tr("My version (local dataset)"));
-        add(lblMy, gc);
-
-        gc.gridx = 2;
-        gc.gridy = 0;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
-        JLabel lblMerge = new JLabel(tr("Merged version"));
-        add(lblMerge, gc);
-
-        gc.gridx = 4;
-        gc.gridy = 0;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
-        gc.insets = new Insets(0, 0, 0, 0);
-        JLabel lblTheir = new JLabel(tr("Their version (server dataset)"));
-        add(lblTheir, gc);
-
-        gc.gridx = 0;
-        gc.gridy = 1;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gc.weightx = 0.3;
-        gc.weighty = 1.0;
-        JScrollPane tabMy = buildMineTagTable();
-        lblMy.setLabelFor(tabMy);
-        add(tabMy, gc);
-
-        gc.gridx = 1;
-        gc.gridy = 1;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
-        KeepMineAction keepMineAction = new KeepMineAction();
-        mineTable.getSelectionModel().addListSelectionListener(keepMineAction);
-        JButton btnKeepMine = new JButton(keepMineAction);
-        btnKeepMine.setName("button.keepmine");
-        add(btnKeepMine, gc);
-
-        gc.gridx = 2;
-        gc.gridy = 1;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gc.weightx = 0.3;
-        gc.weighty = 1.0;
-        JScrollPane tabMerge = buildMergedTable();
-        lblMerge.setLabelFor(tabMerge);
-        add(tabMerge, gc);
-
-        gc.gridx = 3;
-        gc.gridy = 1;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
-        KeepTheirAction keepTheirAction = new KeepTheirAction();
-        JButton btnKeepTheir = new JButton(keepTheirAction);
-        btnKeepTheir.setName("button.keeptheir");
-        add(btnKeepTheir, gc);
-
-        gc.gridx = 4;
-        gc.gridy = 1;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.anchor = GridBagConstraints.FIRST_LINE_START;
-        gc.weightx = 0.3;
-        gc.weighty = 1.0;
-        JScrollPane tabTheir = buildTheirTable();
-        lblTheir.setLabelFor(tabTheir);
-        add(tabTheir, gc);
-        theirTable.getSelectionModel().addListSelectionListener(keepTheirAction);
 
         DoubleClickAdapter dblClickAdapter = new DoubleClickAdapter();
         mineTable.addMouseListener(dblClickAdapter);
         theirTable.addMouseListener(dblClickAdapter);
 
-        gc.gridx = 2;
-        gc.gridy = 2;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
-        UndecideAction undecidedAction = new UndecideAction();
-        mergedTable.getSelectionModel().addListSelectionListener(undecidedAction);
-        JButton btnUndecide = new JButton(undecidedAction);
-        btnUndecide.setName("button.undecide");
-        add(btnUndecide, gc);
+        buildRows();
+    }
+
+    private JTable generateTable(TagMergeModel model2, TagMergeTableCellRenderer renderer) {
+        return new JTable(model, new TagTableColumnModelBuilder(renderer, KEY_VALUE).build());
+    }
+
+    @Override
+    protected List<? extends MergeRow> getRows() {
+        return Arrays.asList(new TitleRow(), new TagTableRow(), new UndecidedRow());
     }
 
     /**
@@ -250,6 +101,76 @@ public class TagMerger extends JPanel implements IConflictResolver {
         }
         mineTable.getSelectionModel().setSelectionInterval(index, index);
         theirTable.getSelectionModel().setSelectionInterval(index, index);
+    }
+
+    private final class TagTableRow extends MergeRow {
+        private transient AdjustmentSynchronizer adjustmentSynchronizer = new AdjustmentSynchronizer();
+
+        /**
+         * embeds table in a new {@link JScrollPane} and returns th scroll pane
+         *
+         * @param table the table
+         * @return the scroll pane embedding the table
+         */
+        protected JScrollPane embeddInScrollPane(JTable table) {
+            JScrollPane pane = new JScrollPane(table);
+            adjustmentSynchronizer.synchronizeAdjustment(pane.getVerticalScrollBar());
+            return pane;
+        }
+
+        @Override
+        protected JComponent mineField() {
+            return embeddInScrollPane(mineTable);
+        }
+
+        @Override
+        protected JComponent mineButton() {
+            KeepMineAction keepMineAction = new KeepMineAction();
+            mineTable.getSelectionModel().addListSelectionListener(keepMineAction);
+            JButton btnKeepMine = new JButton(keepMineAction);
+            btnKeepMine.setName("button.keepmine");
+            return btnKeepMine;
+        }
+
+        @Override
+        protected JComponent merged() {
+            return embeddInScrollPane(mergedTable);
+        }
+
+        @Override
+        protected JComponent theirsButton() {
+            KeepTheirAction keepTheirAction = new KeepTheirAction();
+            theirTable.getSelectionModel().addListSelectionListener(keepTheirAction);
+            JButton btnKeepTheir = new JButton(keepTheirAction);
+            btnKeepTheir.setName("button.keeptheir");
+            return btnKeepTheir;
+        }
+
+        @Override
+        protected JComponent theirsField() {
+            return embeddInScrollPane(theirTable);
+        }
+
+        @Override
+        protected void addConstraints(GBC constraints, int columnIndex) {
+            super.addConstraints(constraints, columnIndex);
+            // Fill to bottom
+            constraints.weighty = 1;
+        }
+    }
+
+    private final class UndecidedRow extends AbstractUndecideRow {
+        @Override
+        protected AbstractAction createAction() {
+            UndecideAction undecidedAction = new UndecideAction();
+            mergedTable.getSelectionModel().addListSelectionListener(undecidedAction);
+            return undecidedAction;
+        }
+
+        @Override
+        protected String getButtonName() {
+            return "button.undecide";
+        }
     }
 
     /**

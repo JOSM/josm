@@ -6,6 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.GridBagLayout;
 import java.util.List;
 
+import javax.swing.AbstractAction;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -151,6 +153,32 @@ public abstract class AbstractMergePanel extends JPanel {
         }
     }
 
+    /**
+     * Add the undecide button to the middle of the merged row.
+     */
+    protected abstract static class AbstractUndecideRow extends AbstractMergePanel.MergeRow {
+        @Override
+        protected JComponent merged() {
+            AbstractAction actUndecide = createAction();
+            JButton button = new JButton(actUndecide);
+            button.setName(getButtonName());
+            return button;
+        }
+
+        protected abstract AbstractAction createAction();
+
+        protected abstract String getButtonName();
+
+        @Override
+        protected void addConstraints(GBC constraints, int columnIndex) {
+            super.addConstraints(constraints, columnIndex);
+            constraints.fill(GBC.NONE);
+        }
+    }
+
+    /**
+     * The current row counter. Used when adding new rows.
+     */
     protected int currentRow = 0;
 
     /**

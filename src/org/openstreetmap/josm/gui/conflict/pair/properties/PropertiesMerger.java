@@ -272,32 +272,12 @@ public class PropertiesMerger extends AbstractMergePanel implements ChangeListen
         }
     }
 
-    private abstract class AbstractUndecideRow<T extends AbstractAction & ChangeListener> extends AbstractMergePanel.MergeRow {
-        @Override
-        protected JComponent merged() {
-            // we add the undecide button below this text field
-            T actUndecideCoordinates = createAction();
-            model.addChangeListener(actUndecideCoordinates);
-            JButton button = new JButton(actUndecideCoordinates);
-            button.setName(getButtonName());
-            return button;
-        }
-
-        protected abstract T createAction();
-
-        protected abstract String getButtonName();
-
-        @Override
-        protected void addConstraints(GBC constraints, int columnIndex) {
-            super.addConstraints(constraints, columnIndex);
-            constraints.fill(GBC.NONE);
-        }
-    }
-
-    private final class UndecideCoordinatesRow extends AbstractUndecideRow<UndecideCoordinateConflictAction> {
+    private final class UndecideCoordinatesRow extends AbstractUndecideRow {
         @Override
         protected UndecideCoordinateConflictAction createAction() {
-            return new UndecideCoordinateConflictAction();
+            UndecideCoordinateConflictAction action = new UndecideCoordinateConflictAction();
+            model.addChangeListener(action);
+            return action;
         }
 
         @Override
@@ -306,10 +286,12 @@ public class PropertiesMerger extends AbstractMergePanel implements ChangeListen
         }
     }
 
-    private final class UndecideDeletedStateRow extends AbstractUndecideRow<UndecideDeletedStateConflictAction> {
+    private final class UndecideDeletedStateRow extends AbstractUndecideRow {
         @Override
         protected UndecideDeletedStateConflictAction createAction() {
-            return new UndecideDeletedStateConflictAction();
+            UndecideDeletedStateConflictAction action = new UndecideDeletedStateConflictAction();
+            model.addChangeListener(action);
+            return action;
         }
 
         @Override
