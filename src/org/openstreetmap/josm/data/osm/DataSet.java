@@ -1010,7 +1010,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         Set<Way> result = new HashSet<>();
         beginUpdate();
         try {
-            for (Way way : OsmPrimitive.getFilteredList(node.getReferrers(), Way.class)) {
+            for (Way way : node.getParentWays()) {
                 List<Node> wayNodes = way.getNodes();
                 if (wayNodes.remove(node)) {
                     if (wayNodes.size() < 2) {
