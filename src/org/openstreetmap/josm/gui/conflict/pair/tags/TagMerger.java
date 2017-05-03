@@ -45,15 +45,15 @@ public class TagMerger extends AbstractMergePanel implements IConflictResolver {
     /**
      * the table for my tag set
      */
-    private final JTable mineTable = generateTable(model, new MineTableCellRenderer());
+    private final JTable mineTable = generateTable(new MineTableCellRenderer());
     /**
      * the table for the merged tag set
      */
-    private final JTable mergedTable = generateTable(model, new MergedTableCellRenderer());
+    private final JTable mergedTable = generateTable(new MergedTableCellRenderer());
     /**
      * the table for their tag set
      */
-    private final JTable theirTable = generateTable(model, new TheirTableCellRenderer());
+    private final JTable theirTable = generateTable(new TheirTableCellRenderer());
 
     /**
      * Constructs a new {@code TagMerger}.
@@ -70,7 +70,7 @@ public class TagMerger extends AbstractMergePanel implements IConflictResolver {
         buildRows();
     }
 
-    private JTable generateTable(TagMergeModel model2, TagMergeTableCellRenderer renderer) {
+    private JTable generateTable(TagMergeTableCellRenderer renderer) {
         return new JTable(model, new TagTableColumnModelBuilder(renderer, KEY_VALUE).build());
     }
 
@@ -104,7 +104,7 @@ public class TagMerger extends AbstractMergePanel implements IConflictResolver {
     }
 
     private final class TagTableRow extends MergeRow {
-        private transient AdjustmentSynchronizer adjustmentSynchronizer = new AdjustmentSynchronizer();
+        private final AdjustmentSynchronizer adjustmentSynchronizer = new AdjustmentSynchronizer();
 
         /**
          * embeds table in a new {@link JScrollPane} and returns th scroll pane
@@ -112,7 +112,7 @@ public class TagMerger extends AbstractMergePanel implements IConflictResolver {
          * @param table the table
          * @return the scroll pane embedding the table
          */
-        protected JScrollPane embeddInScrollPane(JTable table) {
+        JScrollPane embeddInScrollPane(JTable table) {
             JScrollPane pane = new JScrollPane(table);
             adjustmentSynchronizer.synchronizeAdjustment(pane.getVerticalScrollBar());
             return pane;

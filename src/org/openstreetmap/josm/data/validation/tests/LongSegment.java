@@ -129,12 +129,12 @@ public class LongSegment extends Test {
         return p.isUsable() && (isUsableWay(p) || isUsableNode(p));
     }
 
-    private boolean isUsableNode(OsmPrimitive p) {
+    private static boolean isUsableNode(OsmPrimitive p) {
         // test changed nodes - ways referred by them may not be checked automatically.
         return p instanceof Node && p.isDrawable();
     }
 
-    private boolean isUsableWay(OsmPrimitive p) {
+    private static boolean isUsableWay(OsmPrimitive p) {
         // test only Ways with at least 2 nodes
         return p instanceof Way && ((Way) p).getNodesCount() > 1;
     }

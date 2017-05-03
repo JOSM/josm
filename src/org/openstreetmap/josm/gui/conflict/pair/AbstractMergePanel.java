@@ -179,7 +179,7 @@ public abstract class AbstractMergePanel extends JPanel {
     /**
      * The current row counter. Used when adding new rows.
      */
-    protected int currentRow = 0;
+    protected int currentRow;
 
     /**
      * Create a new merge panel.
