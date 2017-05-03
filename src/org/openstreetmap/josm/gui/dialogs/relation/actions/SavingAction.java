@@ -75,7 +75,6 @@ abstract class SavingAction extends AbstractRelationEditorAction {
 
         // make sure everybody is notified about the changes
         //
-        layer.data.fireSelectionChanged();
         editor.setRelation(newRelation);
         if (editor instanceof RelationEditor) {
             RelationDialogManager.getRelationDialogManager().updateContext(
@@ -107,7 +106,6 @@ abstract class SavingAction extends AbstractRelationEditorAction {
         memberTableModel.applyToRelation(editedRelation);
         if (!editedRelation.hasEqualSemanticAttributes(editor.getRelation(), false)) {
             Main.main.undoRedo.add(new ChangeCommand(editor.getRelation(), editedRelation));
-            layer.data.fireSelectionChanged();
         }
     }
 

@@ -2,23 +2,37 @@
 package org.openstreetmap.josm.data.osm.event;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 
 import javax.swing.SwingUtilities;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
+import org.openstreetmap.josm.gui.layer.MainLayerManager;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
+import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 
 /**
- * Similar like {@link DatasetEventManager}, just for selection events. Because currently selection changed
- * event are global, only FIRE_IN_EDT and FIRE_EDT_CONSOLIDATED modes are really useful
+ * Similar like {@link DatasetEventManager}, just for selection events.
+ *
+ * It allows to register listeners to global selection events for the selection in the current edit layer.
+ *
+ * If you want to listen to selections to a specific data layer,
+ * you can register a listener to that layer by using {@link DataSet#addSelectionListener(DataSelectionListener)}
+ *
  * @since 2912
  */
-public class SelectionEventManager implements SelectionChangedListener {
+public class SelectionEventManager implements DataSelectionListener, ActiveLayerChangeListener {
 
     private static final SelectionEventManager instance = new SelectionEventManager();
 
@@ -58,8 +72,11 @@ public class SelectionEventManager implements SelectionChangedListener {
     /**
      * Constructs a new {@code SelectionEventManager}.
      */
-    public SelectionEventManager() {
-        DataSet.addSelectionListener(this);
+    protected SelectionEventManager() {
+        MainLayerManager layerManager = Main.getLayerManager();
+        // We do not allow for destructing this object.
+        // Currently, this is a singleton class, so this is not required.
+        layerManager.addAndFireActiveLayerChangeListener(this);
     }
 
     /**
@@ -88,7 +105,31 @@ public class SelectionEventManager implements SelectionChangedListener {
     }
 
     @Override
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+    public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
+        DataSet oldDataSet = e.getPreviousEditDataSet();
+        if (oldDataSet != null) {
+            // Fake a selection removal
+            // Relying on this allows components to not have to monitor layer changes.
+            // If we would not do this, e.g. the move command would have a hard time tracking which layer
+            // the last moved selection was in.
+            SelectionReplaceEvent event = new SelectionReplaceEvent(oldDataSet,
+                    new HashSet<>(oldDataSet.getAllSelected()), Stream.empty());
+            selectionChanged(event);
+            oldDataSet.removeSelectionListener(this);
+        }
+        DataSet newDataSet = e.getSource().getEditDataSet();
+        if (newDataSet != null) {
+            newDataSet.addSelectionListener(this);
+            // Fake a selection add
+            SelectionReplaceEvent event = new SelectionReplaceEvent(newDataSet,
+                    Collections.emptySet(), newDataSet.getAllSelected().stream());
+            selectionChanged(event);
+        }
+    }
+
+    @Override
+    public void selectionChanged(SelectionChangeEvent e) {
+        Set<OsmPrimitive> newSelection = e.getSelection();
         fireEvents(normalListeners, newSelection);
         selection = newSelection;
         SwingUtilities.invokeLater(edtRunnable);

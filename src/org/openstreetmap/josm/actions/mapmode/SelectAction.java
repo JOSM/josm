@@ -849,7 +849,6 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             updateKeyModifiers(e);
             if (ctrl) mergePrims(e.getPoint());
         }
-        getLayerManager().getEditDataSet().fireSelectionChanged();
     }
 
     static class ConfirmMoveDialog extends ExtendedDialog {
