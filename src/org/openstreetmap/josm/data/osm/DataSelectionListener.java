@@ -28,7 +28,7 @@ public interface DataSelectionListener {
      * @author Michael Zangl
      * @since 12048
      */
-    public interface SelectionChangeEvent {
+    interface SelectionChangeEvent {
         /**
          * Gets the previous selection
          * <p>

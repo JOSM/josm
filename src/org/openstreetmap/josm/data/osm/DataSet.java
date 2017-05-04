@@ -1244,7 +1244,8 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     public void cleanupDeletedPrimitives() {
         beginUpdate();
         try {
-            Collection<OsmPrimitive> toCleanUp = getPrimitives(primitive -> primitive.isDeleted() && (!primitive.isVisible() || primitive.isNew()));
+            Collection<OsmPrimitive> toCleanUp = getPrimitives(
+                    primitive -> primitive.isDeleted() && (!primitive.isVisible() || primitive.isNew()));
             if (!toCleanUp.isEmpty()) {
                 clearSelection(toCleanUp.stream().map(OsmPrimitive::getPrimitiveId));
                 for (OsmPrimitive primitive : toCleanUp) {

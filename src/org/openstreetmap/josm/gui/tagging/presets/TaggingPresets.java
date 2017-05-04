@@ -114,11 +114,7 @@ public final class TaggingPresets {
         if (item instanceof KeyedItem) {
             KeyedItem ki = (KeyedItem) item;
             if (ki.key != null && ki.getValues() != null) {
-                try {
-                    PRESET_TAG_CACHE.putAll(ki.key, ki.getValues());
-                } catch (NullPointerException e) {
-                    Main.error(e, p + ": Unable to cache " + ki);
-                }
+                PRESET_TAG_CACHE.putAll(ki.key, ki.getValues());
             }
         } else if (item instanceof Roles) {
             Roles r = (Roles) item;

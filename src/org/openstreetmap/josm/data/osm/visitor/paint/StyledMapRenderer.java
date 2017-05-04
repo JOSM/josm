@@ -142,8 +142,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
          * @return The float converted to an integer.
          */
         private static long floatToFixed(double number, int totalBits, int afterDecimalBits) {
-            long value = (long) (number * (1l << afterDecimalBits));
-            long highestBitMask = 1l << totalBits - 1;
+            long value = (long) (number * (1L << afterDecimalBits));
+            long highestBitMask = 1L << totalBits - 1;
             long valueMask = highestBitMask - 1;
             long signBit = number < 0 ? 0 : highestBitMask;
             return signBit | value & valueMask;

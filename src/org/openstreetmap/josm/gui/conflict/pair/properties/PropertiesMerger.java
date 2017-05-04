@@ -329,7 +329,7 @@ public class PropertiesMerger extends AbstractMergePanel implements ChangeListen
         }
     }
 
-    private final class EmptyFillRow extends AbstractMergePanel.MergeRow {
+    private static final class EmptyFillRow extends AbstractMergePanel.MergeRow {
         @Override
         protected JComponent merged() {
             return new JPanel();
