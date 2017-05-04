@@ -797,7 +797,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      * @param ds The data set the command needs to be in.
      * @return last command
      */
-    private Command getLastCommandInDataset(DataSet ds) {
+    private static Command getLastCommandInDataset(DataSet ds) {
         LinkedList<Command> commands = Main.main.undoRedo.commands;
         if (!commands.isEmpty()) {
             Command lastCommand = commands.getLast();

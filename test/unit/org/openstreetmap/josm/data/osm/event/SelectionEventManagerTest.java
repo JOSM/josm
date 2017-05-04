@@ -44,7 +44,7 @@ public class SelectionEventManagerTest {
      * Tests that events in the active layer are propagated.
      */
     @Test
-    public void test() {
+    public void testEventPropagation() {
         // automatically adds the layers
         CommandTestDataWithRelation testData1 = new CommandTestDataWithRelation();
         CommandTestDataWithRelation testData2 = new CommandTestDataWithRelation();
