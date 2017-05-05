@@ -115,7 +115,7 @@ class SyncEditorLayerIndex {
     }
 
     void loadSkip() {
-        FileReader fr = new FileReader(ignoreInputFile)
+        def fr = new InputStreamReader(new FileInputStream(ignoreInputFile), "UTF-8")
         def line
 
         while((line = fr.readLine()) != null) {
@@ -224,7 +224,7 @@ class SyncEditorLayerIndex {
         }
         return res
     }
-    
+
     void printentries(def entries, def stream) {
         DecimalFormat df = new DecimalFormat("#.#######")
         df.setRoundingMode(java.math.RoundingMode.CEILING)
@@ -358,8 +358,8 @@ class SyncEditorLayerIndex {
             def e = eliUrls.get(url)
             if (!josmUrls.containsKey(url)) continue
             def j = josmUrls.get(url)
-            def ename = getName(e).replace("'","’")
-            def jname = getName(j).replace("'","’")
+            def ename = getName(e).replace("'","\u2019")
+            def jname = getName(j).replace("'","\u2019")
             if (!ename.equals(jname)) {
                 myprintln "* Name differs ('${getName(e)}' != '${getName(j)}'): $url"
             }
