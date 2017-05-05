@@ -38,8 +38,8 @@ class SyncEditorLayerIndex {
     static String eliInputFile = 'imagery_eli.geojson'
     static String josmInputFile = 'imagery_josm.imagery.xml'
     static String ignoreInputFile = 'imagery_josm.ignores.txt'
-    static FileWriter outputFile = null
-    static BufferedWriter outputStream = null
+    static FileOutputStream outputFile = null
+    static OutputStreamWriter outputStream = null
     def skip = [:]
 
     static def options
@@ -55,15 +55,19 @@ class SyncEditorLayerIndex {
         script.start()
         script.loadJosmEntries()
         if(options.josmxml) {
-            def file = new FileWriter(options.josmxml)
-            def stream = new BufferedWriter(file)
+            def file = new FileOutputStream(options.josmxml)
+            def stream = new OutputStreamWriter(file, "UTF-8")
             script.printentries(script.josmEntries, stream)
+            stream.close();
+            file.close();
         }
         script.loadELIEntries()
         if(options.elixml) {
-            def file = new FileWriter(options.elixml)
-            def stream = new BufferedWriter(file)
+            def file = new FileOutputStream(options.elixml)
+            def stream = new OutputStreamWriter(file, "UTF-8")
             script.printentries(script.eliEntries, stream)
+            stream.close();
+            file.close();
         }
         script.checkInOneButNotTheOther()
         script.checkCommonEntries()
@@ -109,8 +113,8 @@ class SyncEditorLayerIndex {
             ignoreInputFile = options.ignore_input
         }
         if (options.output && options.output != "-") {
-            outputFile = new FileWriter(options.output)
-            outputStream = new BufferedWriter(outputFile)
+            outputFile = new FileOutputStream(options.output)
+            outputStream = new OutputStreamWriter(outputFile, "UTF-8")
         }
     }
 
