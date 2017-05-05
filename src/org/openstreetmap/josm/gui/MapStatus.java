@@ -292,20 +292,20 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
                 boolean mouseNotMoved = oldMousePos != null && oldMousePos.equals(ms.mousePos);
                 boolean isAtOldPosition = mouseNotMoved && popup != null;
                 boolean middleMouseDown = (ms.modifiers & MouseEvent.BUTTON2_DOWN_MASK) != 0;
-                try {
-                    ds = mv.getLayerManager().getEditDataSet();
-                    if (ds != null) {
-                        // This is not perfect, if current dataset was changed during execution, the lock would be useless
-                        if (isAtOldPosition && middleMouseDown) {
-                            // Write lock is necessary when selecting in popupCycleSelection
-                            // locks can not be upgraded -> if do read lock here and write lock later
-                            // (in OsmPrimitive.updateFlags) then always occurs deadlock (#5814)
-                            ds.beginUpdate();
-                        } else {
-                            ds.getReadLock().lock();
-                        }
-                    }
 
+                ds = mv.getLayerManager().getEditDataSet();
+                if (ds != null) {
+                    // This is not perfect, if current dataset was changed during execution, the lock would be useless
+                    if (isAtOldPosition && middleMouseDown) {
+                        // Write lock is necessary when selecting in popupCycleSelection
+                        // locks can not be upgraded -> if do read lock here and write lock later
+                        // (in OsmPrimitive.updateFlags) then always occurs deadlock (#5814)
+                        ds.beginUpdate();
+                    } else {
+                        ds.getReadLock().lock();
+                    }
+                }
+                try {
                     // Set the text label in the bottom status bar
                     // "if mouse moved only" was added to stop heap growing
                     if (!mouseNotMoved) {

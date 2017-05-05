@@ -714,27 +714,31 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         if (mode == Mode.MOVE) {
             if (startEN == null) return false; // fix #8128
             ds.beginUpdate();
-            if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
-                ((MoveCommand) c).saveCheckpoint();
-                ((MoveCommand) c).applyVectorTo(currentEN);
-            } else {
-                c = new MoveCommand(selection, startEN, currentEN);
-                Main.main.undoRedo.add(c);
-            }
-            for (Node n : affectedNodes) {
-                LatLon ll = n.getCoor();
-                if (ll != null && ll.isOutSideWorld()) {
-                    // Revert move
-                    ((MoveCommand) c).resetToCheckpoint();
-                    ds.endUpdate();
-                    JOptionPane.showMessageDialog(
-                            Main.parent,
-                            tr("Cannot move objects outside of the world."),
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE);
-                    mv.setNewCursor(cursor, this);
-                    return false;
+            try {
+                if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
+                    ((MoveCommand) c).saveCheckpoint();
+                    ((MoveCommand) c).applyVectorTo(currentEN);
+                } else {
+                    c = new MoveCommand(selection, startEN, currentEN);
+                    Main.main.undoRedo.add(c);
                 }
+                for (Node n : affectedNodes) {
+                    LatLon ll = n.getCoor();
+                    if (ll != null && ll.isOutSideWorld()) {
+                        // Revert move
+                        ((MoveCommand) c).resetToCheckpoint();
+                        // TODO: We might use a simple notification in the lower left corner.
+                        JOptionPane.showMessageDialog(
+                                Main.parent,
+                                tr("Cannot move objects outside of the world."),
+                                tr("Warning"),
+                                JOptionPane.WARNING_MESSAGE);
+                        mv.setNewCursor(cursor, this);
+                        return false;
+                    }
+                }
+            } finally {
+                ds.endUpdate();
             }
         } else {
             startEN = currentEN; // drag can continue after scaling/rotation
@@ -744,27 +748,29 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             }
 
             ds.beginUpdate();
-
-            if (mode == Mode.ROTATE) {
-                if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand) c).getTransformedNodes())) {
-                    ((RotateCommand) c).handleEvent(currentEN);
-                } else {
-                    Main.main.undoRedo.add(new RotateCommand(selection, currentEN));
+            try {
+                if (mode == Mode.ROTATE) {
+                    if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand) c).getTransformedNodes())) {
+                        ((RotateCommand) c).handleEvent(currentEN);
+                    } else {
+                        Main.main.undoRedo.add(new RotateCommand(selection, currentEN));
+                    }
+                } else if (mode == Mode.SCALE) {
+                    if (c instanceof ScaleCommand && affectedNodes.equals(((ScaleCommand) c).getTransformedNodes())) {
+                        ((ScaleCommand) c).handleEvent(currentEN);
+                    } else {
+                        Main.main.undoRedo.add(new ScaleCommand(selection, currentEN));
+                    }
                 }
-            } else if (mode == Mode.SCALE) {
-                if (c instanceof ScaleCommand && affectedNodes.equals(((ScaleCommand) c).getTransformedNodes())) {
-                    ((ScaleCommand) c).handleEvent(currentEN);
-                } else {
-                    Main.main.undoRedo.add(new ScaleCommand(selection, currentEN));
-                }
-            }
 
-            Collection<Way> ways = ds.getSelectedWays();
-            if (doesImpactStatusLine(affectedNodes, ways)) {
-                Main.map.statusLine.setDist(ways);
+                Collection<Way> ways = ds.getSelectedWays();
+                if (doesImpactStatusLine(affectedNodes, ways)) {
+                    Main.map.statusLine.setDist(ways);
+                }
+            } finally {
+                ds.endUpdate();
             }
         }
-        ds.endUpdate();
         return true;
     }
 
@@ -906,14 +912,17 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
             Command c = getLastCommandInDataset(ds);
             ds.beginUpdate();
-            if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
-                Node selectedNode = selNodes.iterator().next();
-                EastNorth selectedEN = selectedNode.getEastNorth();
-                EastNorth targetEN = target.getEastNorth();
-                ((MoveCommand) c).moveAgain(targetEN.getX() - selectedEN.getX(),
-                                            targetEN.getY() - selectedEN.getY());
+            try {
+                if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
+                    Node selectedNode = selNodes.iterator().next();
+                    EastNorth selectedEN = selectedNode.getEastNorth();
+                    EastNorth targetEN = target.getEastNorth();
+                    ((MoveCommand) c).moveAgain(targetEN.getX() - selectedEN.getX(),
+                                                targetEN.getY() - selectedEN.getY());
+                }
+            } finally {
+                ds.endUpdate();
             }
-            ds.endUpdate();
         }
 
         Collection<Node> nodesToMerge = new LinkedList<>(selNodes);

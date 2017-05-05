@@ -193,8 +193,8 @@ public abstract class AbstractReader {
     }
 
     protected final void prepareDataSet() throws IllegalDataException {
+        ds.beginUpdate();
         try {
-            ds.beginUpdate();
             processNodesAfterParsing();
             processWaysAfterParsing();
             processRelationsAfterParsing();

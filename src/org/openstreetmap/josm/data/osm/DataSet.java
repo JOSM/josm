@@ -1227,8 +1227,8 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      */
     public void invalidateEastNorthCache() {
         if (Main.getProjection() == null) return; // sanity check
+        beginUpdate();
         try {
-            beginUpdate();
             for (Node n: getNodes()) {
                 n.invalidateEastNorthCache();
             }
