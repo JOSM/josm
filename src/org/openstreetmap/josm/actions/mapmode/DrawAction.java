@@ -237,9 +237,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     private static void addRemoveSelection(DataSet ds, OsmPrimitive toAdd, OsmPrimitive toRemove) {
         ds.beginUpdate(); // to prevent the selection listener to screw around with the state
-        ds.addSelected(toAdd);
-        ds.clearSelection(toRemove);
-        ds.endUpdate();
+        try {
+            ds.addSelected(toAdd);
+            ds.clearSelection(toRemove);
+        } finally {
+            ds.endUpdate();
+        }
     }
 
     @Override
