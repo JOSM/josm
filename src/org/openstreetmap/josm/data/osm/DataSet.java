@@ -55,7 +55,6 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * DataSet is the data behind the application. It can consists of only a few points up to the whole
@@ -1230,7 +1229,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
         if (Main.getProjection() == null) return; // sanity check
         try {
             beginUpdate();
-            for (Node n: Utils.filteredCollection(allPrimitives, Node.class)) {
+            for (Node n: getNodes()) {
                 n.invalidateEastNorthCache();
             }
         } finally {
