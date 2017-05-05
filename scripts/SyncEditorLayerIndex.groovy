@@ -137,8 +137,7 @@ class SyncEditorLayerIndex {
 
     void myprintlnfinal(String s) {
         if(outputStream != null) {
-            outputStream.write(s)
-            outputStream.newLine()
+            outputStream.write(s+System.getProperty("line.separator"))
         } else {
             println s
         }
