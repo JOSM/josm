@@ -111,7 +111,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             }
 
             order <<= 24;
-            order |= floatToFixed(this.style.majorZIndex, 24, 8);
+            order |= floatToFixed(this.style.majorZIndex, 24);
 
             // selected on top of member of selected on top of unselected
             // FLAG_DISABLED bit is the same at this point, but we simply ignore it
@@ -119,7 +119,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             order |= this.flags & 0xf;
 
             order <<= 24;
-            order |= floatToFixed(this.style.zIndex, 24, 8);
+            order |= floatToFixed(this.style.zIndex, 24);
 
             order <<= 1;
             // simple node on top of icons and shapes
@@ -131,22 +131,29 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
 
         /**
-         * Converts a float to a fixed pointdecimal so that the order stays the same.
+         * Converts a float to a fixed point decimal so that the order stays the same.
          *
          * @param number The float to convert
          * @param totalBits
-         *            Total number of bits. 1 sign bit, then the bits before the
-         *            decimal point, then those after.
-         * @param afterDecimalBits
-         *            Number of fixed bits after the decimal point.
+         *            Total number of bits. 1 sign bit. There should be at least 15 bits.
          * @return The float converted to an integer.
          */
-        private static long floatToFixed(double number, int totalBits, int afterDecimalBits) {
-            long value = (long) (number * (1L << afterDecimalBits));
-            long highestBitMask = 1L << totalBits - 1;
-            long valueMask = highestBitMask - 1;
-            long signBit = number < 0 ? 0 : highestBitMask;
-            return signBit | value & valueMask;
+        protected static long floatToFixed(float number, int totalBits) {
+            long value = Float.floatToIntBits(number) & 0xffffffffL;
+
+            boolean negative = (value & 0x80000000L) != 0;
+            // Invert the sign bit, so that negative numbers are lower
+            value ^= 0x80000000L;
+            // Now do the shift. Do it before accounting for negative numbers (symetry)
+            if (totalBits < 32) {
+                value >>= (32 - totalBits);
+            }
+            // positive numbers are sorted now. Negative ones the wrong way.
+            if (negative) {
+                // Negative number: re-map it
+                value = (1L << (totalBits - 1)) - value;
+            }
+            return value;
         }
 
         @Override
