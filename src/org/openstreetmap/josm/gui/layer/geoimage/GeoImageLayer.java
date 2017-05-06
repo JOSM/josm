@@ -18,8 +18,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -74,7 +72,8 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * Layer displaying geottaged pictures.
  */
-public class GeoImageLayer extends AbstractModifiableLayer implements PropertyChangeListener, JumpToMarkerLayer {
+public class GeoImageLayer extends AbstractModifiableLayer implements
+        JumpToMarkerLayer, NavigatableComponent.ZoomChangeListener {
 
     private static List<Action> menuAdditions = new LinkedList<>();
 
@@ -1025,7 +1024,6 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
             }
         });
 
-        Main.map.mapView.addPropertyChangeListener(this);
         if (Main.map.getToggleDialog(ImageViewerDialog.class) == null) {
             ImageViewerDialog.newInstance();
             Main.map.addToggleDialog(ImageViewerDialog.getInstance());
@@ -1033,11 +1031,14 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
     }
 
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        if (NavigatableComponent.PROPNAME_CENTER.equals(evt.getPropertyName()) ||
-                NavigatableComponent.PROPNAME_SCALE.equals(evt.getPropertyName())) {
-            updateOffscreenBuffer = true;
-        }
+    public LayerPainter attachToMapView(MapViewEvent event) {
+        MapView.addZoomChangeListener(this);
+        return super.attachToMapView(event);
+    }
+
+    @Override
+    public void zoomChanged() {
+        updateOffscreenBuffer = true;
     }
 
     /**

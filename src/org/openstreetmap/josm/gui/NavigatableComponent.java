@@ -103,11 +103,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /** Divide intervals between native resolution levels to smaller steps if they are much larger than zoom ratio */
     public static final BooleanProperty PROP_ZOOM_INTERMEDIATE_STEPS = new BooleanProperty("zoom.intermediate-steps", true);
 
-    /** Property name for center change events */
-    public static final String PROPNAME_CENTER = "center";
-    /** Property name for scale change events */
-    public static final String PROPNAME_SCALE = "scale";
-
     /**
      * The layer which scale is set to.
      */
@@ -663,20 +658,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     private void zoomNoUndoTo(EastNorth newCenter, double newScale, boolean initial) {
         if (!Utils.equalsEpsilon(getScale(), newScale)) {
-            double oldScale = getScale();
             state = state.usingScale(newScale);
-            if (!initial) {
-                firePropertyChange(PROPNAME_SCALE, oldScale, newScale);
-            }
         }
         if (!newCenter.equals(getCenter())) {
-            EastNorth oldCenter = getCenter();
             state = state.movedTo(state.getCenter(), newCenter);
-            if (!initial) {
-                firePropertyChange(PROPNAME_CENTER, oldCenter, newCenter);
-            }
         }
-
         if (!initial) {
             repaint();
             fireZoomChanged();
