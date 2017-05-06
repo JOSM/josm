@@ -495,7 +495,6 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
          */
         if (Main.pref.getBoolean("sidetoolbar.scrollable", true)) {
             final ScrollViewport svp = new ScrollViewport(sideToolBar, ScrollViewport.VERTICAL_DIRECTION);
-            svp.addMouseWheelListener(e -> svp.scroll(0, e.getUnitsToScroll() * 5));
             sideToolBar = svp;
         }
         sideToolBar.setVisible(Main.pref.getBoolean("sidetoolbar.visible", true));

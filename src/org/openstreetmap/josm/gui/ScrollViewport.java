@@ -140,6 +140,12 @@ public class ScrollViewport extends JPanel {
 
         showOrHideButtons();
 
+        if ((direction & VERTICAL_DIRECTION) != 0) {
+            addMouseWheelListener(e -> scroll(0, e.getUnitsToScroll() * 5));
+        } else if ((direction & HORIZONTAL_DIRECTION) != 0) {
+            addMouseWheelListener(e -> scroll(e.getUnitsToScroll() * 5, 0));
+        }
+
         timer.setRepeats(true);
         timer.setInitialDelay(400);
     }
@@ -247,12 +253,27 @@ public class ScrollViewport extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return vp.getPreferredSize();
+        if (component == null) {
+            return vp.getPreferredSize();
+        } else {
+            return component.getPreferredSize();
+        }
     }
 
     @Override
     public Dimension getMinimumSize() {
-        return vp.getMinimumSize();
+        if (component == null) {
+            return vp.getMinimumSize();
+        } else {
+            Dimension minSize = component.getMinimumSize();
+            if ((allowedScrollDirections & HORIZONTAL_DIRECTION) != 0) {
+                minSize = new Dimension(20, minSize.height);
+            }
+            if ((allowedScrollDirections & VERTICAL_DIRECTION) != 0) {
+                minSize = new Dimension(minSize.width, 20);
+            }
+            return minSize;
+        }
     }
 
     /**
