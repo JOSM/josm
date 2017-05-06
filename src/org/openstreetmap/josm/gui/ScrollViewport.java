@@ -20,8 +20,11 @@ import javax.swing.Timer;
 
 import org.openstreetmap.josm.tools.ImageProvider;
 
-/** A viewport with UP and DOWN arrow buttons, so that the user can make the
+/**
+ * A viewport with UP and DOWN arrow buttons, so that the user can make the
  * content scroll.
+ *
+ * This should be used for long, vertical toolbars.
  */
 public class ScrollViewport extends JPanel {
 
@@ -31,8 +34,19 @@ public class ScrollViewport extends JPanel {
     public static final int DOWN_DIRECTION = 2;
     public static final int LEFT_DIRECTION = 4;
     public static final int RIGHT_DIRECTION = 8;
+    /**
+     * Allow vertical scrolling
+     */
     public static final int VERTICAL_DIRECTION = UP_DIRECTION | DOWN_DIRECTION;
+
+    /**
+     * Allow horizontal scrolling
+     */
     public static final int HORIZONTAL_DIRECTION = LEFT_DIRECTION | RIGHT_DIRECTION;
+
+    /**
+     * Allow scrolling in both directions
+     */
     public static final int ALL_DIRECTION = HORIZONTAL_DIRECTION | VERTICAL_DIRECTION;
 
     private class ScrollViewPortMouseListener extends MouseAdapter {
@@ -71,63 +85,58 @@ public class ScrollViewport extends JPanel {
 
     private int scrollDirection = NO_SCROLL;
 
+    private final int allowedScrollDirections;
+
+    private final ComponentAdapter refreshButtonsOnResize = new ComponentAdapter() {
+        @Override
+        public void componentResized(ComponentEvent e) {
+            showOrHideButtons();
+        }
+    };
+
+    /**
+     * Create a new scroll viewport
+     * @param c The component to display as content.
+     * @param direction The direction to scroll.
+     *        Should be one of {@link #VERTICAL_DIRECTION}, {@link #HORIZONTAL_DIRECTION}, {@link #ALL_DIRECTION}
+     */
     public ScrollViewport(JComponent c, int direction) {
         this(direction);
         add(c);
     }
 
+    /**
+     * Create a new scroll viewport
+     * @param direction The direction to scroll.
+     *        Should be one of {@link #VERTICAL_DIRECTION}, {@link #HORIZONTAL_DIRECTION}, {@link #ALL_DIRECTION}
+     */
     public ScrollViewport(int direction) {
-        setLayout(new BorderLayout());
-
-        JButton button;
+        super(new BorderLayout());
+        this.allowedScrollDirections = direction;
 
         // UP
         if ((direction & UP_DIRECTION) != 0) {
-            button = new JButton();
-            button.addMouseListener(new ScrollViewPortMouseListener(UP_DIRECTION));
-            button.setPreferredSize(new Dimension(10, 10));
-            button.setIcon(ImageProvider.get("svpUp"));
-            add(button, BorderLayout.NORTH);
-            buttons.add(button);
+            addScrollButton(UP_DIRECTION, "svpUp", BorderLayout.NORTH);
         }
 
         // DOWN
         if ((direction & DOWN_DIRECTION) != 0) {
-            button = new JButton();
-            button.addMouseListener(new ScrollViewPortMouseListener(DOWN_DIRECTION));
-            button.setPreferredSize(new Dimension(10, 10));
-            button.setIcon(ImageProvider.get("svpDown"));
-            add(button, BorderLayout.SOUTH);
-            buttons.add(button);
+            addScrollButton(DOWN_DIRECTION, "svpDown", BorderLayout.SOUTH);
         }
 
         // LEFT
         if ((direction & LEFT_DIRECTION) != 0) {
-            button = new JButton();
-            button.addMouseListener(new ScrollViewPortMouseListener(LEFT_DIRECTION));
-            button.setPreferredSize(new Dimension(10, 10));
-            button.setIcon(ImageProvider.get("svpLeft"));
-            add(button, BorderLayout.WEST);
-            buttons.add(button);
+            addScrollButton(LEFT_DIRECTION, "svpLeft", BorderLayout.WEST);
         }
 
         // RIGHT
         if ((direction & RIGHT_DIRECTION) != 0) {
-            button = new JButton();
-            button.addMouseListener(new ScrollViewPortMouseListener(RIGHT_DIRECTION));
-            button.setPreferredSize(new Dimension(10, 10));
-            button.setIcon(ImageProvider.get("svpRight"));
-            add(button, BorderLayout.EAST);
-            buttons.add(button);
+            addScrollButton(RIGHT_DIRECTION, "svpRight", BorderLayout.EAST);
         }
 
         add(vp, BorderLayout.CENTER);
 
-        this.addComponentListener(new ComponentAdapter() {
-            @Override public void componentResized(ComponentEvent e) {
-                showOrHideButtons();
-            }
-        });
+        this.addComponentListener(refreshButtonsOnResize);
 
         showOrHideButtons();
 
@@ -135,6 +144,18 @@ public class ScrollViewport extends JPanel {
         timer.setInitialDelay(400);
     }
 
+    private void addScrollButton(int direction, String icon, String borderLayoutPosition) {
+        JButton button = new JButton();
+        button.addMouseListener(new ScrollViewPortMouseListener(direction));
+        button.setPreferredSize(new Dimension(10, 10));
+        button.setIcon(ImageProvider.get(icon));
+        add(button, borderLayoutPosition);
+        buttons.add(button);
+    }
+
+    /**
+     * Scrolls in the currently selected scroll direction.
+     */
     public synchronized void scroll() {
         int direction = scrollDirection;
 
@@ -165,6 +186,11 @@ public class ScrollViewport extends JPanel {
         scroll(deltaX, deltaY);
     }
 
+    /**
+     * Scrolls by the given offset
+     * @param deltaX offset x
+     * @param deltaY offset y
+     */
     public synchronized void scroll(int deltaX, int deltaY) {
         if (component == null)
             return;
@@ -195,8 +221,13 @@ public class ScrollViewport extends JPanel {
      * Only show them if the Viewport is too small for the content.
      */
     public void showOrHideButtons() {
-        boolean needButtons = vp.getViewSize().height > vp.getViewRect().height ||
-        vp.getViewSize().width > vp.getViewRect().width;
+        boolean needButtons = false;
+        if ((allowedScrollDirections & VERTICAL_DIRECTION) != 0) {
+            needButtons |= getViewSize().height > getViewRect().height;
+        }
+        if ((allowedScrollDirections & HORIZONTAL_DIRECTION) != 0) {
+            needButtons |= getViewSize().width > getViewRect().width;
+        }
         for (JButton b : buttons) {
             b.setVisible(needButtons);
         }
@@ -214,9 +245,27 @@ public class ScrollViewport extends JPanel {
         return vp.getViewPosition();
     }
 
+    @Override
+    public Dimension getPreferredSize() {
+        return vp.getPreferredSize();
+    }
+
+    @Override
+    public Dimension getMinimumSize() {
+        return vp.getMinimumSize();
+    }
+
+    /**
+     * Sets the component to be used as content.
+     * @param c The component
+     */
     public void add(JComponent c) {
         vp.removeAll();
+        if (this.component != null) {
+            this.component.removeComponentListener(refreshButtonsOnResize);
+        }
         this.component = c;
+        c.addComponentListener(refreshButtonsOnResize);
         vp.add(c);
     }
 }
