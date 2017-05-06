@@ -230,15 +230,6 @@ public final class MapViewState implements Serializable {
     }
 
     /**
-     * Gets the center of the view, rounded to a pixel coordinate
-     * @return The center position.
-     * @since 10856
-     */
-    public MapViewPoint getCenterAtPixel() {
-        return getForView(viewWidth / 2, viewHeight / 2);
-    }
-
-    /**
      * Gets the width of the view on the Screen;
      * @return The width of the view component in screen pixel.
      */

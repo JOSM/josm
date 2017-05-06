@@ -296,14 +296,14 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * Zoom in current view. Use configured zoom step and scaling settings.
      */
     public void zoomIn() {
-        zoomTo(state.getCenterAtPixel().getEastNorth(), scaleZoomIn());
+        zoomTo(state.getCenter().getEastNorth(), scaleZoomIn());
     }
 
     /**
      * Zoom out current view. Use configured zoom step and scaling settings.
      */
     public void zoomOut() {
-        zoomTo(state.getCenterAtPixel().getEastNorth(), scaleZoomOut());
+        zoomTo(state.getCenter().getEastNorth(), scaleZoomOut());
     }
 
     protected void updateLocationState() {
@@ -400,7 +400,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @return the current center of the viewport
      */
     public EastNorth getCenter() {
-        return state.getCenterAtPixel().getEastNorth();
+        return state.getCenter().getEastNorth();
     }
 
     /**
