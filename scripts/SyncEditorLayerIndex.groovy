@@ -466,8 +466,7 @@ class SyncEditorLayerIndex {
             def jt = getDescriptions(j)
             et = (et.size() > 0) ? et["en"] : ""
             jt = (jt.size() > 0) ? jt["en"] : ""
-            def et2 = et.replaceAll("channels (\\d+) ", "\$1 channels ") // imagico entries
-            if (!et.equals(jt) && !(et && jt && (et.endsWith(jt) || et2.endsWith(jt)))) {
+            if (!et.equals(jt) && !(et && jt && et.endsWith(jt))) {
                 if (!jt) {
                     myprintln "+ SKIP - Missing JOSM description (${et}): ${getDescription(j)}"
                 } else if (et) {
