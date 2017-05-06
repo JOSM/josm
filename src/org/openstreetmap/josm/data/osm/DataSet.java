@@ -176,6 +176,8 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     private final Object selectionLock = new Object();
     /**
      * The current selected primitives. This is always a unmodifiable set.
+     *
+     * The set should be ordered in the order in which the primitives have been added to the selection.
      */
     private Set<OsmPrimitive> currentSelectedPrimitives = Collections.emptySet();
 
@@ -704,6 +706,8 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      * Replies an unmodifiable collection of primitives currently selected
      * in this dataset, except deleted ones. May be empty, but not null.
      *
+     * When iterating through the set it is ordered by the order in which the primitives were added to the selection.
+     *
      * @return unmodifiable collection of primitives
      */
     public Collection<OsmPrimitive> getSelected() {
@@ -713,6 +717,8 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     /**
      * Replies an unmodifiable collection of primitives currently selected
      * in this dataset, including deleted ones. May be empty, but not null.
+     *
+     * When iterating through the set it is ordered by the order in which the primitives were added to the selection.
      *
      * @return unmodifiable collection of primitives
      */

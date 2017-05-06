@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -122,5 +123,46 @@ public class DataSetTest {
         ds.addPrimitive(w1);
         ds.addPrimitive(w2);
         ds.unlinkNodeFromWays(n2);
+    }
+
+    /**
+     * Test the selection order.
+     * See <a href="https://josm.openstreetmap.de/ticket/14737">#14737</a>
+     * @since 12069
+     */
+    @Test
+    public void testSelectionOrderPreserved() {
+        final DataSet ds = new DataSet();
+        Node n1 = new Node(1);
+        Node n2 = new Node(2);
+        Node n3 = new Node(3);
+        ds.addPrimitive(n1);
+        ds.addPrimitive(n2);
+        ds.addPrimitive(n3);
+
+        assertEquals(Arrays.asList(), new ArrayList<>(ds.getSelected()));
+
+        ds.setSelected(n1.getPrimitiveId(), n2.getPrimitiveId());
+        assertEquals(Arrays.asList(n1, n2), new ArrayList<>(ds.getSelected()));
+
+        ds.clearSelection();
+        assertEquals(Arrays.asList(), new ArrayList<>(ds.getSelected()));
+
+        ds.addSelected(n3.getPrimitiveId());
+        ds.addSelected(n1.getPrimitiveId(), n2.getPrimitiveId());
+        assertEquals(Arrays.asList(n3, n1, n2), new ArrayList<>(ds.getSelected()));
+
+        ds.addSelected(n3.getPrimitiveId());
+        assertEquals(Arrays.asList(n3, n1, n2), new ArrayList<>(ds.getSelected()));
+
+        ds.clearSelection(n1.getPrimitiveId());
+        assertEquals(Arrays.asList(n3, n2), new ArrayList<>(ds.getSelected()));
+
+        ds.toggleSelected(n1.getPrimitiveId());
+        assertEquals(Arrays.asList(n3, n2, n1), new ArrayList<>(ds.getSelected()));
+
+        ds.toggleSelected(n2.getPrimitiveId());
+        assertEquals(Arrays.asList(n3, n1), new ArrayList<>(ds.getSelected()));
+
     }
 }

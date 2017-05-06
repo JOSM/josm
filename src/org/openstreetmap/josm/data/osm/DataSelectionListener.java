@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -38,7 +39,7 @@ public interface DataSelectionListener {
         Set<OsmPrimitive> getOldSelection();
 
         /**
-         * Gets the new selection
+         * Gets the new selection. New elements are added to the end of the collection.
          * <p>
          * This collection cannot be modified and will not change.
          * @return The new selection
@@ -174,7 +175,7 @@ public interface DataSelectionListener {
             if (this.add.isEmpty()) {
                 this.current = this.getOldSelection();
             } else {
-                this.current = new HashSet<>(old);
+                this.current = new LinkedHashSet<>(old);
                 this.current.addAll(add);
             }
         }
@@ -216,7 +217,7 @@ public interface DataSelectionListener {
             if (this.remove.isEmpty()) {
                 this.current = this.getOldSelection();
             } else {
-                HashSet<OsmPrimitive> currentSet = new HashSet<>(old);
+                HashSet<OsmPrimitive> currentSet = new LinkedHashSet<>(old);
                 currentSet.removeAll(remove);
                 current = Collections.unmodifiableSet(currentSet);
             }
@@ -256,9 +257,9 @@ public interface DataSelectionListener {
          */
         public SelectionToggleEvent(DataSet source, Set<OsmPrimitive> old, Stream<OsmPrimitive> toToggle) {
             super(source, old);
-            HashSet<OsmPrimitive> currentSet = new HashSet<>(old);
-            HashSet<OsmPrimitive> removeSet = new HashSet<>();
-            HashSet<OsmPrimitive> addSet = new HashSet<>();
+            HashSet<OsmPrimitive> currentSet = new LinkedHashSet<>(old);
+            HashSet<OsmPrimitive> removeSet = new LinkedHashSet<>();
+            HashSet<OsmPrimitive> addSet = new LinkedHashSet<>();
             toToggle.forEach(p -> {
                 if (currentSet.remove(p)) {
                     removeSet.add(p);
