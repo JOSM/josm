@@ -15,8 +15,9 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
 /**
  * Abstract file importer.
@@ -102,7 +103,7 @@ public abstract class FileImporter implements Comparable<FileImporter> {
         } catch (IOException e) {
             displayError(f, e);
             return false;
-        } catch (Exception e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             BugReportExceptionHandler.handleException(e);
             return false;
         }
