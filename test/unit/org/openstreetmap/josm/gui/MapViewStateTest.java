@@ -67,14 +67,6 @@ public class MapViewStateTest {
         doTestGetCenter(s -> s.getCenter(), t -> t / 2d);
     }
 
-    /**
-     * Test {@link MapViewState#getCenterAtPixel()} returns map view center.
-     */
-    @Test
-    public void testGetCenterAtPixel() {
-        doTestGetCenter(s -> s.getCenterAtPixel(), t -> (double) (t / 2));
-    }
-
     private static void assertHasViewCoords(double x, double y, MapViewPoint center) {
         assertEquals("x", x, center.getInViewX(), 0.01);
         assertEquals("y", y, center.getInViewY(), 0.01);
