@@ -574,10 +574,25 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
             OsmPrimitive primitive = getPrimitiveByIdChecked(primitiveId);
             if (primitive == null)
                 return;
-            clearSelection(primitiveId);
-            super.removePrimitive(primitive);
-            allPrimitives.remove(primitive);
-            primitive.setDataset(null);
+            removePrimitiveImpl(primitive);
+            firePrimitivesRemoved(Collections.singletonList(primitive), false);
+        } finally {
+            endUpdate();
+        }
+    }
+
+    private void removePrimitiveImpl(OsmPrimitive primitive) {
+        clearSelection(primitive.getPrimitiveId());
+        super.removePrimitive(primitive);
+        allPrimitives.remove(primitive);
+        primitive.setDataset(null);
+    }
+
+    @Override
+    protected void removePrimitive(OsmPrimitive primitive) {
+        beginUpdate();
+        try {
+            removePrimitiveImpl(primitive);
             firePrimitivesRemoved(Collections.singletonList(primitive), false);
         } finally {
             endUpdate();
@@ -1252,11 +1267,10 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
             Collection<OsmPrimitive> toCleanUp = getPrimitives(
                     primitive -> primitive.isDeleted() && (!primitive.isVisible() || primitive.isNew()));
             if (!toCleanUp.isEmpty()) {
+                // We unselect them in advance to not fire a selection change for every primitive
                 clearSelection(toCleanUp.stream().map(OsmPrimitive::getPrimitiveId));
                 for (OsmPrimitive primitive : toCleanUp) {
-                    allPrimitives.remove(primitive);
-                    removePrimitive(primitive);
-                    primitive.setDataset(null);
+                    removePrimitiveImpl(primitive);
                 }
                 firePrimitivesRemoved(toCleanUp, false);
             }
