@@ -102,7 +102,7 @@ public final class TaggingPresets {
      * Initialize the cache for presets. This is done only once.
      * @param presets Tagging presets to cache
      */
-    private static void cachePresets(Collection<TaggingPreset> presets) {
+    public static void cachePresets(Collection<TaggingPreset> presets) {
         for (final TaggingPreset p : presets) {
             for (TaggingPresetItem item : p.data) {
                 cachePresetItem(p, item);
