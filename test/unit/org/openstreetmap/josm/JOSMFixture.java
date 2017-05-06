@@ -20,6 +20,7 @@ import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CertificateAmendment;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -139,7 +140,7 @@ public class JOSMFixture {
     }
 
     private void setupGUI() {
-        Main.getLayerManager().resetState();
+        JOSMTestRules.cleanLayerEnvironment();
         assertTrue(Main.getLayerManager().getLayers().isEmpty());
         assertNull(Main.getLayerManager().getEditLayer());
         assertNull(Main.getLayerManager().getActiveLayer());

@@ -14,6 +14,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -285,10 +286,22 @@ public class JOSMTestRules implements TestRule {
     @SuppressFBWarnings("DM_GC")
     private void cleanUpFromJosmFixture() {
         MemoryManagerTest.resetState(true);
-        Main.getLayerManager().resetState();
+        cleanLayerEnvironment();
         Main.pref.resetToInitialState();
         Main.platform = null;
         System.gc();
+    }
+
+    /**
+     * Cleans the Layer manager and the SelectionEventManager.
+     * You don't need to call this during tests, the test environment will do it for you.
+     * @since 12070
+     */
+    public static void cleanLayerEnvironment() {
+        // Get the instance before cleaning - this ensures that it is initialized.
+        SelectionEventManager eventManager = SelectionEventManager.getInstance();
+        Main.getLayerManager().resetState();
+        eventManager.resetState();
     }
 
     /**
@@ -303,7 +316,7 @@ public class JOSMTestRules implements TestRule {
             }
         });
         // Remove all layers
-        Main.getLayerManager().resetState();
+        cleanLayerEnvironment();
         MemoryManagerTest.resetState(allowMemoryManagerLeaks);
 
         // TODO: Remove global listeners and other global state.

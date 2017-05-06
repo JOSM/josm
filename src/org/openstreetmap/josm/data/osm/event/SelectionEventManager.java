@@ -146,4 +146,14 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
             fireEvents(inEDTListeners, selection);
         }
     };
+
+    /**
+     * Only to be used during unit tests, to reset the state. Do not use it in plugins/other code.
+     * Called after the layer manager was reset by the test framework.
+     */
+    public void resetState() {
+        inEDTListeners.clear();
+        normalListeners.clear();
+        Main.getLayerManager().addAndFireActiveLayerChangeListener(this);
+    }
 }
