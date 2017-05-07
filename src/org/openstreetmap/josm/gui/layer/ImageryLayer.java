@@ -203,13 +203,13 @@ public abstract class ImageryLayer extends Layer {
         private final transient OffsetBookmark b;
 
         ApplyOffsetAction(OffsetBookmark b) {
-            super(b.name);
+            super(b.getName());
             this.b = b;
         }
 
         @Override
         public void actionPerformed(ActionEvent ev) {
-            setOffset(b.dx, b.dy);
+            setOffset(b.getOffset().east(), b.getOffset().north());
             Main.main.menu.imageryMenu.refreshOffsetMenu();
             Main.map.repaint();
         }
@@ -252,7 +252,8 @@ public abstract class ImageryLayer extends Layer {
                 continue;
             }
             JCheckBoxMenuItem item = new JCheckBoxMenuItem(new ApplyOffsetAction(b));
-            if (Utils.equalsEpsilon(b.dx, getDx()) && Utils.equalsEpsilon(b.dy, getDy())) {
+            if (Utils.equalsEpsilon(b.getOffset().east(), getDx()) &&
+                    Utils.equalsEpsilon(b.getOffset().north(), getDy())) {
                 item.setSelected(true);
             }
             subMenu.add(item);
