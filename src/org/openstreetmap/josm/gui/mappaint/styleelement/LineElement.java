@@ -30,14 +30,14 @@ public class LineElement extends StyleElement {
      */
     public static final LineElement UNTAGGED_WAY = createSimpleLineStyle(null, false);
 
-    private BasicStroke line;
+    private final BasicStroke line;
     public Color color;
     public Color dashesBackground;
     public float offset;
     public float realWidth; // the real width of this line in meter
     public boolean wayDirectionArrows;
 
-    private BasicStroke dashesLine;
+    private final BasicStroke dashesLine;
 
     public enum LineType {
         NORMAL("", 3f),

@@ -21,6 +21,9 @@ public class PartiallyInsideAreaStrategy extends CompletelyInsideAreaStrategy {
      */
     public static final PartiallyInsideAreaStrategy INSTANCE = new PartiallyInsideAreaStrategy();
 
+    private PartiallyInsideAreaStrategy() {
+    }
+
     @Override
     public MapViewPositionAndRotation findLabelPlacement(MapViewPath path, Rectangle2D nb) {
         MapViewPositionAndRotation inside = super.findLabelPlacement(path, nb);

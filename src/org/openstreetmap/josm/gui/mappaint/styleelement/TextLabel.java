@@ -76,7 +76,7 @@ public class TextLabel implements StyleKeys {
      */
     @Deprecated
     public TextLabel(LabelCompositionStrategy strategy, Font font, int xOffset, int yOffset, Color color, Float haloRadius, Color haloColor) {
-        this(strategy, font, xOffset, yOffset, color, haloRadius, haloColor, new CompletelyInsideAreaStrategy());
+        this(strategy, font, xOffset, yOffset, color, haloRadius, haloColor, CompletelyInsideAreaStrategy.INSTANCE);
     }
 
     /**
@@ -253,7 +253,7 @@ public class TextLabel implements StyleKeys {
 
     @Override
     public String toString() {
-        return "TextElement{" + toStringImpl() + '}';
+        return "TextLabel{" + toStringImpl() + '}';
     }
 
     protected String toStringImpl() {
