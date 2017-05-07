@@ -466,7 +466,7 @@ class SyncEditorLayerIndex {
             def jt = getDescriptions(j)
             et = (et.size() > 0) ? et["en"] : ""
             jt = (jt.size() > 0) ? jt["en"] : ""
-            if (!et.equals(jt) && !(et && jt && et.endsWith(jt))) {
+            if (!et.equals(jt)) {
                 if (!jt) {
                     myprintln "+ SKIP - Missing JOSM description (${et}): ${getDescription(j)}"
                 } else if (et) {
