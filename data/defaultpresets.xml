@@ -7940,6 +7940,17 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Dairy -->
+        <item name="Cheese" icon="presets/shop/groceries/cheese.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=cheese"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:shop=cheese"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=cheese"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=cheese"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=cheese" />
+            <space />
+            <key key="shop" value="cheese" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Cheese -->
         <item name="Deli (Fine Food)" icon="presets/shop/groceries/deli.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=deli"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:shop=deli"

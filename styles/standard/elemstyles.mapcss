@@ -1886,6 +1886,7 @@ area[shop=paint],
 area[shop=pawnbroker],
 area[shop=seafood],
 area[shop=dairy],
+area[shop=cheese],
 area[shop=shoes],
 area[shop=sports],
 area[shop=stationery],
@@ -2135,6 +2136,10 @@ node[shop=seafood] {
 }
 node[shop=dairy] {
     icon-image: "presets/shop/groceries/dairy.svg";
+    set icon_z17;
+}
+node[shop=cheese] {
+    icon-image: "presets/shop/groceries/cheese.svg";
     set icon_z17;
 }
 node[shop=shoes] {
