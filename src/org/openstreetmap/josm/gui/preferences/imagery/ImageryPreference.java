@@ -53,6 +53,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
@@ -782,10 +783,10 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         }
 
         private static boolean confirmEulaAcceptance(PreferenceTabbedPane gui, String eulaUrl) {
-            URL url = null;
+            URL url;
             try {
                 url = new URL(eulaUrl.replaceAll("\\{lang\\}", LanguageInfo.getWikiLanguagePrefix()));
-                JosmEditorPane htmlPane = null;
+                JosmEditorPane htmlPane;
                 try {
                     htmlPane = new JosmEditorPane(url);
                 } catch (IOException e1) {
@@ -903,16 +904,16 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 OffsetBookmark info = OffsetBookmark.getBookmarkByIndex(row);
                 switch (column) {
                 case 0:
-                    if (info.projectionCode == null) return "";
-                    return info.projectionCode;
+                    if (info.getProjectionCode() == null) return "";
+                    return info.getProjectionCode();
                 case 1:
-                    return info.layerName;
+                    return info.getImageryName();
                 case 2:
-                    return info.name;
+                    return info.getName();
                 case 3:
-                    return info.dx;
+                    return info.getOffset().east();
                 case 4:
-                    return info.dy;
+                    return info.getOffset().north();
                 default:
                     throw new ArrayIndexOutOfBoundsException();
                 }
@@ -923,16 +924,18 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 OffsetBookmark info = OffsetBookmark.getBookmarkByIndex(row);
                 switch (column) {
                 case 1:
-                    info.layerName = o.toString();
+                    info.setImageryName(o.toString());
                     break;
                 case 2:
-                    info.name = o.toString();
+                    info.setName(o.toString());
                     break;
                 case 3:
-                    info.dx = Double.parseDouble((String) o);
+                    double dx = Double.parseDouble((String) o);
+                    info.setOffset(new EastNorth(dx, info.getOffset().north()));
                     break;
                 case 4:
-                    info.dy = Double.parseDouble((String) o);
+                    double dy = Double.parseDouble((String) o);
+                    info.setOffset(new EastNorth(info.getOffset().east(), dy));
                     break;
                 default:
                     throw new ArrayIndexOutOfBoundsException();
