@@ -15,7 +15,7 @@ import org.openstreetmap.josm.gui.draw.MapViewPositionAndRotation;
  * @since 11722
  * @since 11748 moved to own file
  */
-public class PartiallyInsideAreaStrategy extends CompletelyInsideAreaStrategy {
+public final class PartiallyInsideAreaStrategy extends CompletelyInsideAreaStrategy {
     /**
      * An instance of this class.
      */
