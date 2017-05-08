@@ -217,10 +217,16 @@ public class OsmReader extends AbstractReader {
         NodeData nd = new NodeData();
         String lat = parser.getAttributeValue(null, "lat");
         String lon = parser.getAttributeValue(null, "lon");
+        LatLon ll = null;
         if (lat != null && lon != null) {
-            nd.setCoor(new LatLon(Double.parseDouble(lat), Double.parseDouble(lon)));
+            ll = new LatLon(Double.parseDouble(lat), Double.parseDouble(lon));
+            nd.setCoor(ll);
         }
         readCommon(nd);
+        if (ll != null && !ll.isValid()) {
+            throwException(tr("Illegal value for attributes ''lat'', ''lon'' on node with ID {0}. Got ''{1}'', ''{2}''.",
+                    Long.toString(nd.getId()), lat, lon));
+        }
         Node n = new Node(nd.getId(), nd.getVersion());
         n.setVisible(nd.isVisible());
         n.load(nd);
