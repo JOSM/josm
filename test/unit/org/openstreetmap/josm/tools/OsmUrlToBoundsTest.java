@@ -72,7 +72,9 @@ public class OsmUrlToBoundsTest {
                 OsmUrlToBounds.positionToBounds(51.4831, -0.3509, 10)),
         new ParseTestItem("https://www.openstreetmap.org/#map", null),
         new ParseTestItem("https://www.openstreetmap.org/#map=foo", null),
-        new ParseTestItem("https://www.openstreetmap.org/#map=fooz/foolat/foolon", null)
+        new ParseTestItem("https://www.openstreetmap.org/#map=fooz/foolat/foolon", null),
+        new ParseTestItem("http://tyrasd.github.io/latest-changes/#13/51.6891/10.2312",
+                OsmUrlToBounds.positionToBounds(51.6891, 10.2312, 13))
     };
 
     private static class ParseTestItem {
