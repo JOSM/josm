@@ -210,7 +210,7 @@ public class GeoJSONWriter {
     protected void appendLayerFeatures(DataSet ds, JsonObjectBuilder object) {
         JsonArrayBuilder array = Json.createArrayBuilder();
         if (ds != null) {
-            ds.allPrimitives().forEach(p -> appendPrimitive(p, array));
+            ds.allNonDeletedPrimitives().forEach(p -> appendPrimitive(p, array));
         }
         object.add("features", array);
     }
