@@ -175,7 +175,6 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         for (Way w : sourceWays) {
             w.setHighlighted(true);
         }
-        mv.repaint();
     }
 
     @Override
@@ -191,7 +190,6 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         pWays = null;
         sourceWays = null;
         referenceSegment = null;
-        mv.repaint();
     }
 
     @Override
