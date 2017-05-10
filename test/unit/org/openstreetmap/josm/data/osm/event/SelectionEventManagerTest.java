@@ -31,7 +31,7 @@ public class SelectionEventManagerTest {
         private Collection<? extends OsmPrimitive> newSelection;
         private final String name;
 
-        public SelectionListener(String name) {
+        SelectionListener(String name) {
             this.name = name;
         }
 
@@ -109,7 +109,7 @@ public class SelectionEventManagerTest {
 
     private void assertSelectionEquals(List<SelectionListener> listeners, Object should) {
         // sync
-        GuiHelper.runInEDTAndWait(() -> {});
+        GuiHelper.runInEDTAndWait(() -> { });
         for (SelectionListener listener : listeners) {
             assertEquals(listener.name, should, listener.newSelection);
             listener.newSelection = null;

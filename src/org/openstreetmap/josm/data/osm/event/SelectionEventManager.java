@@ -116,10 +116,10 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
      * It is preferred to add a DataSelectionListener - that listener will receive more information about the event.
      * @param listener listener to add
      * @param fireMode Set this to IN_EDT_CONSOLIDATED if you want the event to be fired in the EDT thread.
-     *                 Set it to IMMEDIATELY if youw ant the event to fire in the thread that caused the selection update.
+     *                 Set it to IMMEDIATELY if you want the event to fire in the thread that caused the selection update.
      */
     public void addSelectionListener(SelectionChangedListener listener, FireMode fireMode) {
-        if (fireMode == FireMode.IN_EDT)  {
+        if (fireMode == FireMode.IN_EDT) {
             throw new UnsupportedOperationException("IN_EDT mode not supported, you probably want to use IN_EDT_CONSOLIDATED.");
         } else if (fireMode == FireMode.IN_EDT_CONSOLIDATED) {
             inEDTListeners.addIfAbsent(new ListenerInfo(listener));
