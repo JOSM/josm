@@ -141,4 +141,21 @@ public interface MapViewPaintable {
      * @param bbox Bounding box
      */
     void paint(Graphics2D g, MapView mv, Bounds bbox);
+
+    /**
+     * Adds a new paintable invalidation listener.
+     * @param l The listener to add.
+     * @since 12107
+     */
+    default void addInvalidationListener(PaintableInvalidationListener l) {
+    }
+
+    /**
+     * Removes an added paintable invalidation listener. May throw an exception if the listener is added twice.
+     * @param l The listener to remove.
+     * @since 12107
+     */
+    default void removeInvalidationListener(PaintableInvalidationListener l) {
+    }
+
 }

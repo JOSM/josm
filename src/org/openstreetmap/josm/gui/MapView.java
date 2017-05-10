@@ -51,7 +51,6 @@ import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
 import org.openstreetmap.josm.gui.datatransfer.OsmTransferHandler;
-import org.openstreetmap.josm.gui.layer.AbstractMapViewPaintable;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -123,9 +122,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
          * @param p The paintable.
          */
         public synchronized void addTo(MapViewPaintable p) {
-            if (p instanceof AbstractMapViewPaintable) {
-                ((AbstractMapViewPaintable) p).addInvalidationListener(this);
-            }
+            p.addInvalidationListener(this);
         }
 
         /**
@@ -133,9 +130,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
          * @param p The paintable.
          */
         public synchronized void removeFrom(MapViewPaintable p) {
-            if (p instanceof AbstractMapViewPaintable) {
-                ((AbstractMapViewPaintable) p).removeInvalidationListener(this);
-            }
+            p.removeInvalidationListener(this);
             invalidatedLayers.remove(p);
         }
 
