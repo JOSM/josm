@@ -34,6 +34,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -79,6 +80,7 @@ import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.AreaAndPerimeter;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
@@ -1528,7 +1530,23 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         BBox bbox = bounds.toBBox();
         getSettings(renderVirtualNodes);
 
-        data.getReadLock().lock();
+        try {
+            if (data.getReadLock().tryLock(1, TimeUnit.SECONDS)) {
+                try {
+                    paintWithLock(data, renderVirtualNodes, benchmark, bbox);
+                } finally {
+                    data.getReadLock().unlock();
+                }
+            } else {
+                Logging.warn("Cannot paint layer {0}: It is locked.");
+            }
+        } catch (InterruptedException e) {
+            Logging.warn("Cannot paint layer {0}: Interrupted");
+        }
+    }
+
+    private void paintWithLock(final DataSet data, boolean renderVirtualNodes, RenderBenchmarkCollector benchmark,
+            BBox bbox) {
         try {
             highlightWaySegments = data.getHighlightedWaySegments();
 
@@ -1574,8 +1592,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     .put("scale", scale)
                     .put("paintSettings", paintSettings)
                     .put("renderVirtualNodes", renderVirtualNodes);
-        } finally {
-            data.getReadLock().unlock();
         }
     }
 
