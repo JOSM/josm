@@ -1,12 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm.event;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
@@ -16,7 +14,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
@@ -44,11 +41,20 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
         return instance;
     }
 
-    private static class ListenerInfo {
+    private abstract static class AbstractListenerInfo {
+        abstract void fire(SelectionChangeEvent event);
+    }
+
+    private static class ListenerInfo extends AbstractListenerInfo {
         private final SelectionChangedListener listener;
 
         ListenerInfo(SelectionChangedListener listener) {
             this.listener = listener;
+        }
+
+        @Override
+        void fire(SelectionChangeEvent event) {
+            listener.selectionChanged(event.getSelection());
         }
 
         @Override
@@ -65,9 +71,34 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
         }
     }
 
-    private Collection<? extends OsmPrimitive> selection;
-    private final CopyOnWriteArrayList<ListenerInfo> inEDTListeners = new CopyOnWriteArrayList<>();
-    private final CopyOnWriteArrayList<ListenerInfo> normalListeners = new CopyOnWriteArrayList<>();
+    private static class DataListenerInfo extends AbstractListenerInfo {
+        private final DataSelectionListener listener;
+
+        DataListenerInfo(DataSelectionListener listener) {
+            this.listener = listener;
+        }
+
+        @Override
+        void fire(SelectionChangeEvent event) {
+            listener.selectionChanged(event);
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(listener);
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            DataListenerInfo that = (DataListenerInfo) o;
+            return Objects.equals(listener, that.listener);
+        }
+    }
+
+    private final CopyOnWriteArrayList<AbstractListenerInfo> inEDTListeners = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<AbstractListenerInfo> immedatelyListeners = new CopyOnWriteArrayList<>();
 
     /**
      * Constructs a new {@code SelectionEventManager}.
@@ -81,6 +112,8 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
 
     /**
      * Registers a new {@code SelectionChangedListener}.
+     *
+     * It is preferred to add a DataSelectionListener - that listener will receive more information about the event.
      * @param listener listener to add
      * @param fireMode Set this to IN_EDT_CONSOLIDATED if you want the event to be fired in the EDT thread.
      *                 Set it to IMMEDIATELY if youw ant the event to fire in the thread that caused the selection update.
@@ -91,8 +124,27 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
         } else if (fireMode == FireMode.IN_EDT_CONSOLIDATED) {
             inEDTListeners.addIfAbsent(new ListenerInfo(listener));
         } else {
-            normalListeners.addIfAbsent(new ListenerInfo(listener));
+            immedatelyListeners.addIfAbsent(new ListenerInfo(listener));
         }
+    }
+
+    /**
+     * Adds a selection listener that gets notified for selections immediately.
+     * @param listener The listener to add.
+     * @since 12098
+     */
+    public void addSelectionListener(DataSelectionListener listener) {
+        immedatelyListeners.addIfAbsent(new DataListenerInfo(listener));
+    }
+
+    /**
+     * Adds a selection listener that gets notified for selections later in the EDT thread.
+     * Events are sent in the right order but may be delayed.
+     * @param listener The listener to add.
+     * @since 12098
+     */
+    public void addSelectionListenerForEdt(DataSelectionListener listener) {
+        inEDTListeners.addIfAbsent(new DataListenerInfo(listener));
     }
 
     /**
@@ -100,9 +152,21 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
      * @param listener listener to remove
      */
     public void removeSelectionListener(SelectionChangedListener listener) {
-        ListenerInfo searchListener = new ListenerInfo(listener);
+        remove(new ListenerInfo(listener));
+    }
+
+    /**
+     * Unregisters a {@code DataSelectionListener}.
+     * @param listener listener to remove
+     * @since 12098
+     */
+    public void removeSelectionListener(DataSelectionListener listener) {
+        remove(new DataListenerInfo(listener));
+    }
+
+    private void remove(AbstractListenerInfo searchListener) {
         inEDTListeners.remove(searchListener);
-        normalListeners.remove(searchListener);
+        immedatelyListeners.remove(searchListener);
     }
 
     @Override
@@ -129,24 +193,16 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
     }
 
     @Override
-    public void selectionChanged(SelectionChangeEvent e) {
-        Set<OsmPrimitive> newSelection = e.getSelection();
-        fireEvents(normalListeners, newSelection);
-        selection = newSelection;
-        SwingUtilities.invokeLater(edtRunnable);
+    public void selectionChanged(SelectionChangeEvent event) {
+        fireEvent(immedatelyListeners, event);
+        SwingUtilities.invokeLater(() -> fireEvent(inEDTListeners, event));
     }
 
-    private static void fireEvents(List<ListenerInfo> listeners, Collection<? extends OsmPrimitive> newSelection) {
-        for (ListenerInfo listener: listeners) {
-            listener.listener.selectionChanged(newSelection);
+    private static void fireEvent(List<AbstractListenerInfo> listeners, SelectionChangeEvent event) {
+        for (AbstractListenerInfo listener: listeners) {
+            listener.fire(event);
         }
     }
-
-    private final Runnable edtRunnable = () -> {
-        if (selection != null) {
-            fireEvents(inEDTListeners, selection);
-        }
-    };
 
     /**
      * Only to be used during unit tests, to reset the state. Do not use it in plugins/other code.
@@ -154,7 +210,7 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
      */
     public void resetState() {
         inEDTListeners.clear();
-        normalListeners.clear();
+        immedatelyListeners.clear();
         Main.getLayerManager().addAndFireActiveLayerChangeListener(this);
     }
 }

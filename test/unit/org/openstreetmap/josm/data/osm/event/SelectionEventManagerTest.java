@@ -2,19 +2,21 @@
 package org.openstreetmap.josm.data.osm.event;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.CommandTest.CommandTestDataWithRelation;
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -25,12 +27,22 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
  * @since 12048
  */
 public class SelectionEventManagerTest {
-    private final class SelectionListener implements SelectionChangedListener {
+    private final class SelectionListener implements SelectionChangedListener, DataSelectionListener {
         private Collection<? extends OsmPrimitive> newSelection;
+        private final String name;
+
+        public SelectionListener(String name) {
+            this.name = name;
+        }
 
         @Override
         public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
             this.newSelection = newSelection;
+        }
+
+        @Override
+        public void selectionChanged(SelectionChangeEvent event) {
+            this.newSelection = event.getSelection();
         }
     }
 
@@ -51,31 +63,57 @@ public class SelectionEventManagerTest {
         Main.getLayerManager().setActiveLayer(testData1.layer);
         assertEquals(testData1.layer, Main.getLayerManager().getEditLayer());
 
-        SelectionListener listener = new SelectionListener();
-        SelectionEventManager.getInstance().addSelectionListener(listener, FireMode.IMMEDIATELY);
-        assertNull(listener.newSelection);
+        SelectionListener listener1 = new SelectionListener("IMMEDIATELY");
+        SelectionListener listener2 = new SelectionListener("IN_EDT_CONSOLIDATED");
+        SelectionListener listener3 = new SelectionListener("normal");
+        SelectionListener listener4 = new SelectionListener("edt");
+        SelectionEventManager instance = SelectionEventManager.getInstance();
+        instance.addSelectionListener(listener1, FireMode.IMMEDIATELY);
+        instance.addSelectionListener(listener2, FireMode.IN_EDT_CONSOLIDATED);
+        instance.addSelectionListener(listener3);
+        instance.addSelectionListenerForEdt(listener4);
+        List<SelectionListener> listeners = Arrays.asList(listener1, listener2, listener3, listener4);
+        assertSelectionEquals(listeners, null);
 
         // active layer, should change
         testData1.layer.data.setSelected(testData1.existingNode.getPrimitiveId());
-        assertEquals(new HashSet<OsmPrimitive>(Arrays.asList(testData1.existingNode)), listener.newSelection);
+        assertSelectionEquals(listeners, new HashSet<OsmPrimitive>(Arrays.asList(testData1.existingNode)));
 
-        listener.newSelection = null;
         testData1.layer.data.clearSelection(testData1.existingNode.getPrimitiveId());
-        assertEquals(new HashSet<OsmPrimitive>(Arrays.asList()), listener.newSelection);
+        assertSelectionEquals(listeners, new HashSet<OsmPrimitive>(Arrays.asList()));
 
-        listener.newSelection = null;
         testData1.layer.data.addSelected(testData1.existingNode2.getPrimitiveId());
-        assertEquals(new HashSet<OsmPrimitive>(Arrays.asList(testData1.existingNode2)), listener.newSelection);
+        assertSelectionEquals(listeners, new HashSet<OsmPrimitive>(Arrays.asList(testData1.existingNode2)));
 
         // changing to other dataset should trigger a empty selection
-        listener.newSelection = null;
         Main.getLayerManager().setActiveLayer(testData2.layer);
-        assertEquals(new HashSet<OsmPrimitive>(Arrays.asList()), listener.newSelection);
+        assertSelectionEquals(listeners, new HashSet<OsmPrimitive>(Arrays.asList()));
 
         // This should not trigger anything, since the layer is not active any more.
-        listener.newSelection = null;
         testData1.layer.data.clearSelection(testData1.existingNode.getPrimitiveId());
-        assertNull(listener.newSelection);
+        assertSelectionEquals(listeners, null);
+
+        testData2.layer.data.setSelected(testData2.existingNode.getPrimitiveId());
+        assertSelectionEquals(listeners, new HashSet<OsmPrimitive>(Arrays.asList(testData2.existingNode)));
+
+        // removal
+        instance.removeSelectionListener((SelectionChangedListener) listener1);
+        instance.removeSelectionListener((SelectionChangedListener) listener2);
+        instance.removeSelectionListener((DataSelectionListener) listener3);
+        instance.removeSelectionListener((DataSelectionListener) listener4);
+
+        // no event triggered now
+        testData2.layer.data.setSelected(testData2.existingNode2.getPrimitiveId());
+        assertSelectionEquals(listeners, null);
+    }
+
+    private void assertSelectionEquals(List<SelectionListener> listeners, Object should) {
+        // sync
+        GuiHelper.runInEDTAndWait(() -> {});
+        for (SelectionListener listener : listeners) {
+            assertEquals(listener.name, should, listener.newSelection);
+            listener.newSelection = null;
+        }
     }
 
 }
