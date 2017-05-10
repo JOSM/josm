@@ -30,6 +30,7 @@ import javax.swing.JTextField;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.ProjectionBounds;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
@@ -107,23 +108,11 @@ public abstract class ImageryLayer extends Layer {
     /**
      * Sets the displacement offset of this layer. The layer is automatically invalidated.
      * To be removed end of 2016
-     * @param dx The x offset
-     * @param dy The y offset
+     * @param offset the offset bookmark
      * @deprecated Use {@link TileSourceDisplaySettings}
      */
     @Deprecated
-    public void setOffset(double dx, double dy) {
-        // moved to AbstractTileSourceLayer/TileSourceDisplaySettings. Remains until all actions migrate.
-    }
-
-    /**
-     * To be removed end of 2016
-     * @param dx deprecated
-     * @param dy deprecated
-     * @deprecated Use {@link TileSourceDisplaySettings}
-     */
-    @Deprecated
-    public void displace(double dx, double dy) {
+    public void setOffset(OffsetBookmark offset) {
         // moved to AbstractTileSourceLayer/TileSourceDisplaySettings. Remains until all actions migrate.
     }
 
@@ -209,7 +198,7 @@ public abstract class ImageryLayer extends Layer {
 
         @Override
         public void actionPerformed(ActionEvent ev) {
-            setOffset(b.getOffset().east(), b.getOffset().north());
+            setOffset(b);
             Main.main.menu.imageryMenu.refreshOffsetMenu();
             Main.map.repaint();
         }
@@ -252,8 +241,8 @@ public abstract class ImageryLayer extends Layer {
                 continue;
             }
             JCheckBoxMenuItem item = new JCheckBoxMenuItem(new ApplyOffsetAction(b));
-            if (Utils.equalsEpsilon(b.getOffset().east(), getDx()) &&
-                    Utils.equalsEpsilon(b.getOffset().north(), getDy())) {
+            EastNorth offset = b.getDisplacement(Main.getProjection());
+            if (Utils.equalsEpsilon(offset.east(), getDx()) && Utils.equalsEpsilon(offset.north(), getDy())) {
                 item.setSelected(true);
             }
             subMenu.add(item);

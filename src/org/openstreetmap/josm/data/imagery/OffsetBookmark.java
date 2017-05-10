@@ -11,23 +11,32 @@ import java.util.ListIterator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.pref;
+import org.openstreetmap.josm.data.Preferences.writeExplicitly;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 
+/**
+ * Class to save a displacement of background imagery as a bookmark.
+ *
+ * Known offset bookmarks will be stored in the preferences and can be
+ * restored by the user in later sessions.
+ */
 public class OffsetBookmark {
     private static final List<OffsetBookmark> allBookmarks = new ArrayList<>();
 
     @pref private String projection_code;
     @pref private String imagery_name;
     @pref private String name;
-    @pref private double dx, dy;
+    @pref @writeExplicitly private double dx, dy;
     @pref private double center_lon, center_lat;
 
     public boolean isUsable(ImageryLayer layer) {
         if (projection_code == null) return false;
-        if (!Main.getProjection().toCode().equals(projection_code)) return false;
+        if (!Main.getProjection().toCode().equals(projection_code) && !hasCenter()) return false;
         return layer.getInfo().getName().equals(imagery_name);
     }
 
@@ -82,12 +91,56 @@ public class OffsetBookmark {
         return imagery_name;
     }
 
-    public EastNorth getOffset() {
+    /**
+     * Get displacement in EastNorth coordinates of the original projection.
+     *
+     * @see #getProjectionCode()
+     * @return the displacement
+     */
+    public EastNorth getDisplacement() {
         return new EastNorth(dx, dy);
     }
 
+    /**
+     * Get displacement in EastNorth coordinates of a given projection.
+     *
+     * Displacement will be converted to the given projection, with respect to the
+     * center (reference point) of this bookmark.
+     * @param proj the projection
+     * @return the displacement, converted to that projection
+     */
+    public EastNorth getDisplacement(Projection proj) {
+        if (proj.toCode().equals(projection_code)) {
+            return getDisplacement();
+        }
+        LatLon center = getCenter();
+        Projection offsetProj = Projections.getProjectionByCode(projection_code);
+        EastNorth centerEN = offsetProj.latlon2eastNorth(center);
+        EastNorth shiftedEN = centerEN.add(getDisplacement());
+        LatLon shifted = offsetProj.eastNorth2latlon(shiftedEN);
+        EastNorth centerEN2 = proj.latlon2eastNorth(center);
+        EastNorth shiftedEN2 = proj.latlon2eastNorth(shifted);
+        return shiftedEN2.subtract(centerEN2);
+    }
+
+    /**
+     * Get center/reference point of the bookmark.
+     *
+     * Basically this is the place where it was created and is valid.
+     * The center may be unrecorded (see {@link #hasCenter()), in which
+     * case a dummy center (0,0) will be returned.
+     * @return the center
+     */
     public LatLon getCenter() {
         return new LatLon(center_lat, center_lon);
+    }
+
+    /**
+     * Check if bookmark has a valid center.
+     * @return true if bookmark has a valid center
+     */
+    public boolean hasCenter() {
+        return center_lat != 0 || center_lon != 0;
     }
 
     public void setProjectionCode(String projectionCode) {
@@ -102,9 +155,9 @@ public class OffsetBookmark {
         this.imagery_name = imageryName;
     }
 
-    public void setOffset(EastNorth offset) {
-        this.dx = offset.east();
-        this.dy = offset.north();
+    public void setDisplacement(EastNorth displacement) {
+        this.dx = displacement.east();
+        this.dy = displacement.north();
     }
 
     public static void loadBookmarks() {

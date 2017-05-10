@@ -7,6 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -61,10 +62,12 @@ public class TileSourceDisplaySettings {
     /** if layer should show errors on tiles */
     private boolean showErrors;
 
+    private OffsetBookmark offsetBookmark = null;
     /**
-     * The displacement
+     * the displacement (basically caches the displacement from the offsetBookmark
+     * in the current projection)
      */
-    private EastNorth displacement = new EastNorth(0, 0);
+    private EastNorth displacement = EastNorth.ZERO;
 
     private final CopyOnWriteArrayList<DisplaySettingsChangeListener> listeners = new CopyOnWriteArrayList<>();
 
@@ -188,24 +191,31 @@ public class TileSourceDisplaySettings {
     }
 
     /**
-     * Set the displacement
-     * @param displacement The new displacement
-     * @since 10571
+     * Sets an offset bookmark to use.
+     * 
+     * @param offsetBookmark the offset bookmark, may be null
      */
-    public void setDisplacement(EastNorth displacement) {
-        CheckParameterUtil.ensureValidCoordinates(displacement, "displacement");
-        this.displacement = displacement;
-        fireSettingsChange(DISPLACEMENT);
+    public void setOffsetBookmark(OffsetBookmark offsetBookmark) {
+        this.offsetBookmark = offsetBookmark;
+        if (offsetBookmark == null) {
+            setDisplacement(EastNorth.ZERO);
+        } else {
+            setDisplacement(offsetBookmark.getDisplacement(Main.getProjection()));
+        }
     }
 
     /**
-     * Adds the given value to the displacement.
-     * @param displacement The value to add.
-     * @since 10571
+     * Gets the offset bookmark in use.
+     * @return the offset bookmark, may be null
      */
-    public void addDisplacement(EastNorth displacement) {
+    public OffsetBookmark getOffsetBookmark() {
+        return this.offsetBookmark;
+    }
+
+    private void setDisplacement(EastNorth displacement) {
         CheckParameterUtil.ensureValidCoordinates(displacement, "displacement");
-        setDisplacement(this.displacement.add(displacement));
+        this.displacement = displacement;
+        fireSettingsChange(DISPLACEMENT);
     }
 
     /**

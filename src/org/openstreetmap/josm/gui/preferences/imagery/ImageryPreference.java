@@ -911,9 +911,9 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 case 2:
                     return info.getName();
                 case 3:
-                    return info.getOffset().east();
+                    return info.getDisplacement().east();
                 case 4:
-                    return info.getOffset().north();
+                    return info.getDisplacement().north();
                 default:
                     throw new ArrayIndexOutOfBoundsException();
                 }
@@ -931,11 +931,11 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                     break;
                 case 3:
                     double dx = Double.parseDouble((String) o);
-                    info.setOffset(new EastNorth(dx, info.getOffset().north()));
+                    info.setDisplacement(new EastNorth(dx, info.getDisplacement().north()));
                     break;
                 case 4:
                     double dy = Double.parseDouble((String) o);
-                    info.setOffset(new EastNorth(info.getOffset().east(), dy));
+                    info.setDisplacement(new EastNorth(info.getDisplacement().east(), dy));
                     break;
                 default:
                     throw new ArrayIndexOutOfBoundsException();

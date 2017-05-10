@@ -80,6 +80,7 @@ import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
 import org.openstreetmap.josm.data.imagery.TileLoaderFactory;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
@@ -333,18 +334,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      */
     @Override
     @Deprecated
-    public void displace(double dx, double dy) {
-        getDisplaySettings().addDisplacement(new EastNorth(dx, dy));
-    }
-
-    /**
-     * {@inheritDoc}
-     * @deprecated Use {@link TileSourceDisplaySettings}
-     */
-    @Override
-    @Deprecated
-    public void setOffset(double dx, double dy) {
-        getDisplaySettings().setDisplacement(new EastNorth(dx, dy));
+    public void setOffset(OffsetBookmark offset) {
+        getDisplaySettings().setOffsetBookmark(offset);
     }
 
     @Override
@@ -1855,6 +1846,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     @Override
     public void projectionChanged(Projection oldValue, Projection newValue) {
         super.projectionChanged(oldValue, newValue);
+        displaySettings.setOffsetBookmark(displaySettings.getOffsetBookmark());
         if (tileCache != null) {
             tileCache.clear();
         }
