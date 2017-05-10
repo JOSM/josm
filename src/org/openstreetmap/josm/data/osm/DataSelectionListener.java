@@ -20,9 +20,12 @@ public interface DataSelectionListener {
 
     /**
      * Called whenever the selection is changed.
-     * @param e The selection change event.
+     *
+     * You get notified about the new selection, the elements that were added and removed and the layer that triggered the event.
+     * @param event The selection change event.
+     * @see SelectionChangeEvent
      */
-    void selectionChanged(SelectionChangeEvent e);
+    void selectionChanged(SelectionChangeEvent event);
 
     /**
      * The event that is fired when the selection changed.
@@ -52,7 +55,7 @@ public interface DataSelectionListener {
          * Those are the primitives contained in {@link #getOldSelection()} but not in {@link #getSelection()}
          * <p>
          * This collection cannot be modified and will not change.
-         * @return The primitives
+         * @return The primitives that were removed
          */
         Set<OsmPrimitive> getRemoved();
 
@@ -62,7 +65,7 @@ public interface DataSelectionListener {
          * Those are the primitives contained in {@link #getSelection()} but not in {@link #getOldSelection()}
          * <p>
          * This collection cannot be modified and will not change.
-         * @return The primitives
+         * @return The primitives that were added
          */
         Set<OsmPrimitive> getAdded();
 
@@ -75,7 +78,7 @@ public interface DataSelectionListener {
         /**
          * Test if this event did not change anything.
          * <p>
-         * Should return true for all events that are fired.
+         * This will return <code>false</code> for all events that are sent to listeners, so you don't need to test it.
          * @return <code>true</code> if this did not change the selection.
          */
         default boolean isNop() {
