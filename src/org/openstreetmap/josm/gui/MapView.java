@@ -695,6 +695,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             if (added) {
                 invalidatedListener.addTo(mvp);
             }
+            repaint();
             return added;
         }
     }
@@ -710,6 +711,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             if (removed) {
                 invalidatedListener.removeFrom(mvp);
             }
+            repaint();
             return removed;
         }
     }

@@ -292,14 +292,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         removeHighlighting();
         Main.map.keyDetector.removeKeyListener(this);
         Main.map.keyDetector.removeModifierListener(this);
-
-        // when exiting we let everybody know about the currently selected
-        // primitives
-        //
-        DataSet ds = getLayerManager().getEditDataSet();
-        if (ds != null) {
-            ds.fireSelectionChanged();
-        }
     }
 
     /**
@@ -358,9 +350,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * the helper line until the user chooses to draw something else.
      */
     private void finishDrawing() {
-        // let everybody else know about the current selection
-        //
-        Main.getLayerManager().getEditDataSet().fireSelectionChanged();
         lastUsedNode = null;
         wayIsFinished = true;
         Main.map.selectSelectTool(true);
