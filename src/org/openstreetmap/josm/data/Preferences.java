@@ -1534,12 +1534,7 @@ public class Preferences {
     private void migrateOldColorKeys() {
         settingsMap.keySet().stream()
                 .filter(key -> key.startsWith(COLOR_PREFIX))
-                .flatMap(key -> {
-                    final String newKey = ColorProperty.getColorKey(key.substring(COLOR_PREFIX.length()));
-                    return key.equals(newKey) || settingsMap.containsKey(newKey)
-                            ? Stream.empty()
-                            : Stream.of(new AbstractMap.SimpleImmutableEntry<>(key, newKey));
-                })
+                .flatMap(this::searchOldColorKey)
                 .collect(Collectors.toList()) // to avoid ConcurrentModificationException
                 .forEach(entry -> {
                     final String oldKey = entry.getKey();
@@ -1548,6 +1543,13 @@ public class Preferences {
                     put(newKey, get(oldKey));
                     put(oldKey, null);
                 });
+    }
+
+    private Stream<AbstractMap.SimpleImmutableEntry<String, String>> searchOldColorKey(String key) {
+        final String newKey = ColorProperty.getColorKey(key.substring(COLOR_PREFIX.length()));
+        return key.equals(newKey) || settingsMap.containsKey(newKey)
+                ? Stream.empty()
+                : Stream.of(new AbstractMap.SimpleImmutableEntry<>(key, newKey));
     }
 
     private void removeUrlFromEntries(int loadedVersion, int versionMax, String key, String urlPart) {
