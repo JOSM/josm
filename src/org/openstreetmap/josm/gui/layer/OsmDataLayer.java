@@ -169,8 +169,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     /**
      * Adds recently closed relation.
      * @param relation new entry for the list of recently closed relations
-     * @since 9668
      * @see #PROPERTY_RECENT_RELATIONS_NUMBER
+     * @since 9668
      */
     public void setRecentRelation(Relation relation) {
         recentRelations.put(relation, null);

@@ -41,19 +41,19 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
         return instance;
     }
 
-    private abstract static class AbstractListenerInfo {
-        abstract void fire(SelectionChangeEvent event);
+    private interface ListenerInfo {
+        void fire(SelectionChangeEvent event);
     }
 
-    private static class ListenerInfo extends AbstractListenerInfo {
+    private static class OldListenerInfo implements ListenerInfo {
         private final SelectionChangedListener listener;
 
-        ListenerInfo(SelectionChangedListener listener) {
+        OldListenerInfo(SelectionChangedListener listener) {
             this.listener = listener;
         }
 
         @Override
-        void fire(SelectionChangeEvent event) {
+        public void fire(SelectionChangeEvent event) {
             listener.selectionChanged(event.getSelection());
         }
 
@@ -66,12 +66,12 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
         public boolean equals(Object o) {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
-            ListenerInfo that = (ListenerInfo) o;
+            OldListenerInfo that = (OldListenerInfo) o;
             return Objects.equals(listener, that.listener);
         }
     }
 
-    private static class DataListenerInfo extends AbstractListenerInfo {
+    private static class DataListenerInfo implements ListenerInfo {
         private final DataSelectionListener listener;
 
         DataListenerInfo(DataSelectionListener listener) {
@@ -79,7 +79,7 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
         }
 
         @Override
-        void fire(SelectionChangeEvent event) {
+        public void fire(SelectionChangeEvent event) {
             listener.selectionChanged(event);
         }
 
@@ -97,8 +97,8 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
         }
     }
 
-    private final CopyOnWriteArrayList<AbstractListenerInfo> inEDTListeners = new CopyOnWriteArrayList<>();
-    private final CopyOnWriteArrayList<AbstractListenerInfo> immedatelyListeners = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<ListenerInfo> inEDTListeners = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<ListenerInfo> immedatelyListeners = new CopyOnWriteArrayList<>();
 
     /**
      * Constructs a new {@code SelectionEventManager}.
@@ -122,9 +122,9 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
         if (fireMode == FireMode.IN_EDT) {
             throw new UnsupportedOperationException("IN_EDT mode not supported, you probably want to use IN_EDT_CONSOLIDATED.");
         } else if (fireMode == FireMode.IN_EDT_CONSOLIDATED) {
-            inEDTListeners.addIfAbsent(new ListenerInfo(listener));
+            inEDTListeners.addIfAbsent(new OldListenerInfo(listener));
         } else {
-            immedatelyListeners.addIfAbsent(new ListenerInfo(listener));
+            immedatelyListeners.addIfAbsent(new OldListenerInfo(listener));
         }
     }
 
@@ -152,7 +152,7 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
      * @param listener listener to remove
      */
     public void removeSelectionListener(SelectionChangedListener listener) {
-        remove(new ListenerInfo(listener));
+        remove(new OldListenerInfo(listener));
     }
 
     /**
@@ -164,7 +164,7 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
         remove(new DataListenerInfo(listener));
     }
 
-    private void remove(AbstractListenerInfo searchListener) {
+    private void remove(ListenerInfo searchListener) {
         inEDTListeners.remove(searchListener);
         immedatelyListeners.remove(searchListener);
     }
@@ -198,8 +198,8 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
         SwingUtilities.invokeLater(() -> fireEvent(inEDTListeners, event));
     }
 
-    private static void fireEvent(List<AbstractListenerInfo> listeners, SelectionChangeEvent event) {
-        for (AbstractListenerInfo listener: listeners) {
+    private static void fireEvent(List<ListenerInfo> listeners, SelectionChangeEvent event) {
+        for (ListenerInfo listener: listeners) {
             listener.fire(event);
         }
     }
