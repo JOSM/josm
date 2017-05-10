@@ -133,9 +133,20 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      */
     public final List<TestError> validationErrors = new ArrayList<>();
 
+    /**
+     * The default number of relations in the recent relations cache.
+     * @see #getRecentRelations()
+     */
     public static final int DEFAULT_RECENT_RELATIONS_NUMBER = 20;
+    /**
+     * The number of relations to use in the recent relations cache.
+     * @see #getRecentRelations()
+     */
     public static final IntegerProperty PROPERTY_RECENT_RELATIONS_NUMBER = new IntegerProperty("properties.last-closed-relations-size",
             DEFAULT_RECENT_RELATIONS_NUMBER);
+    /**
+     * The extension that should be used when saving the OSM file.
+     */
     public static final StringProperty PROPERTY_SAVE_EXTENSION = new StringProperty("save.extension.osm", "osm");
 
     private static final ColorProperty PROPERTY_BACKGROUND_COLOR = new ColorProperty(marktr("background"), Color.BLACK);
@@ -159,6 +170,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      * Adds recently closed relation.
      * @param relation new entry for the list of recently closed relations
      * @since 9668
+     * @see #PROPERTY_RECENT_RELATIONS_NUMBER
      */
     public void setRecentRelation(Relation relation) {
         recentRelations.put(relation, null);
@@ -222,12 +234,33 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         }
     }
 
+    /**
+     * A listener that counts the number of primitives it encounters
+     */
     public static final class DataCountVisitor extends AbstractVisitor {
+        /**
+         * Nodes that have been visited
+         */
         public int nodes;
+        /**
+         * Ways that have been visited
+         */
         public int ways;
+        /**
+         * Relations that have been visited
+         */
         public int relations;
+        /**
+         * Deleted nodes that have been visited
+         */
         public int deletedNodes;
+        /**
+         * Deleted ways that have been visited
+         */
         public int deletedWays;
+        /**
+         * Deleted relations that have been visited
+         */
         public int deletedRelations;
 
         @Override
@@ -255,8 +288,16 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         }
     }
 
+    /**
+     * A listener that gets notified of command queue (undo/redo) size changes.
+     */
     @FunctionalInterface
     public interface CommandQueueListener {
+        /**
+         * Notifies the listener about the new queue size
+         * @param queueSize Undo stack size
+         * @param redoSize Redo stack size
+         */
         void commandChanged(int queueSize, int redoSize);
     }
 
