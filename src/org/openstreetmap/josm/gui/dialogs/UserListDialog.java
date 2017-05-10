@@ -30,10 +30,10 @@ import javax.swing.table.DefaultTableModel;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractInfoAction;
-import org.openstreetmap.josm.data.SelectionChangedListener;
-import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
@@ -50,7 +50,7 @@ import org.openstreetmap.josm.tools.Utils;
  * selection area, along with the number of objects.
  *
  */
-public class UserListDialog extends ToggleDialog implements SelectionChangedListener, ActiveLayerChangeListener {
+public class UserListDialog extends ToggleDialog implements DataSelectionListener, ActiveLayerChangeListener {
 
     /**
      * The display list.
@@ -70,14 +70,14 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
 
     @Override
     public void showNotify() {
-        DataSet.addSelectionListener(this);
+        SelectionEventManager.getInstance().addSelectionListenerForEdt(this);
         Main.getLayerManager().addActiveLayerChangeListener(this);
     }
 
     @Override
     public void hideNotify() {
         Main.getLayerManager().removeActiveLayerChangeListener(this);
-        DataSet.removeSelectionListener(this);
+        SelectionEventManager.getInstance().removeSelectionListener(this);
     }
 
     protected void build() {
@@ -102,18 +102,18 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         }));
     }
 
-    /**
-     * Called when the selection in the dataset changed.
-     * @param newSelection The new selection array.
-     */
     @Override
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        refresh(newSelection);
+    public void selectionChanged(SelectionChangeEvent event) {
+        refresh(event.getSelection());
     }
 
     @Override
     public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
         Layer activeLayer = e.getSource().getActiveLayer();
+        refreshForActiveLayer(activeLayer);
+    }
+
+    private void refreshForActiveLayer(Layer activeLayer) {
         if (activeLayer instanceof OsmDataLayer) {
             refresh(((OsmDataLayer) activeLayer).data.getAllSelected());
         } else {
@@ -126,8 +126,8 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
      * @param fromPrimitives OSM primitives to fetch users from
      */
     public void refresh(Collection<? extends OsmPrimitive> fromPrimitives) {
-        model.populate(fromPrimitives);
         GuiHelper.runInEDT(() -> {
+            model.populate(fromPrimitives);
             if (model.getRowCount() != 0) {
                 setTitle(trn("{0} Author", "{0} Authors", model.getRowCount(), model.getRowCount()));
             } else {
@@ -139,10 +139,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
     @Override
     public void showDialog() {
         super.showDialog();
-        Layer layer = Main.getLayerManager().getActiveLayer();
-        if (layer instanceof OsmDataLayer) {
-            refresh(((OsmDataLayer) layer).data.getAllSelected());
-        }
+        refreshForActiveLayer(Main.getLayerManager().getActiveLayer());
     }
 
     class SelectUsersPrimitivesAction extends AbstractAction implements ListSelectionListener {
@@ -307,6 +304,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
         }
 
         public void populate(Collection<? extends OsmPrimitive> primitives) {
+            GuiHelper.assertCallFromEdt();
             Map<User, Integer> statistics = computeStatistics(primitives);
             data.clear();
             if (primitives != null) {
@@ -315,7 +313,7 @@ public class UserListDialog extends ToggleDialog implements SelectionChangedList
                 }
             }
             Collections.sort(data);
-            GuiHelper.runInEDTAndWait(this::fireTableDataChanged);
+            this.fireTableDataChanged();
         }
 
         @Override
