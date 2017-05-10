@@ -567,7 +567,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
             if (playHeadMarker == null)
                 return;
             addAudioMarker(playHeadMarker.time, playHeadMarker.getCoor());
-            Main.map.mapView.repaint();
+            invalidate();
         }
     }
 }
