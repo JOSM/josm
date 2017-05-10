@@ -31,7 +31,7 @@ public class ColorfulFilter implements BufferedImageOp {
 
     @Override
     public BufferedImage filter(BufferedImage src, BufferedImage dst) {
-        if (src.getWidth() == 0 || src.getHeight() == 0) {
+        if (src.getWidth() == 0 || src.getHeight() == 0 || src.getType() == BufferedImage.TYPE_CUSTOM) {
             return src;
         }
 
