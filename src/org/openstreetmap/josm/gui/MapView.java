@@ -40,11 +40,12 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.ProjectionBounds;
-import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
@@ -268,7 +269,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         });
 
         // listens to selection changes to redraw the map
-        DataSet.addSelectionListener(repaintSelectionChangedListener);
+        SelectionEventManager.getInstance().addSelectionListenerForEdt(repaintSelectionChangedListener);
 
         //store the last mouse action
         this.addMouseMotionListener(new MouseMotionListener() {
@@ -741,7 +742,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         paintPreferencesChanged.set(true);
     }
 
-    private final transient SelectionChangedListener repaintSelectionChangedListener = newSelection -> repaint();
+    private final transient DataSelectionListener repaintSelectionChangedListener = event -> repaint();
 
     /**
      * Destroy this map view panel. Should be called once when it is not needed any more.
@@ -750,7 +751,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         layerManager.removeAndFireLayerChangeListener(this);
         layerManager.removeActiveLayerChangeListener(this);
         Main.pref.removePreferenceChangeListener(this);
-        DataSet.removeSelectionListener(repaintSelectionChangedListener);
+        SelectionEventManager.getInstance().removeSelectionListener(repaintSelectionChangedListener);
         MultipolygonCache.getInstance().clear();
         if (mapMover != null) {
             mapMover.destroy();
