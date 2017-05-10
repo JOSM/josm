@@ -132,7 +132,7 @@ public interface DataSelectionListener {
          */
         public SelectionReplaceEvent(DataSet source, Set<OsmPrimitive> old, Stream<OsmPrimitive> newSelection) {
             super(source, old);
-            this.current = newSelection.collect(Collectors.toSet());
+            this.current = newSelection.collect(Collectors.toCollection(LinkedHashSet::new));
         }
 
         @Override
@@ -143,7 +143,9 @@ public interface DataSelectionListener {
         @Override
         public synchronized Set<OsmPrimitive> getRemoved() {
             if (removed == null) {
-                removed = getOldSelection().stream().filter(p -> !current.contains(p)).collect(Collectors.toSet());
+                removed = getOldSelection().stream()
+                        .filter(p -> !current.contains(p))
+                        .collect(Collectors.toCollection(LinkedHashSet::new));
             }
             return removed;
         }
@@ -151,7 +153,8 @@ public interface DataSelectionListener {
         @Override
         public synchronized Set<OsmPrimitive> getAdded() {
             if (added == null) {
-                added = current.stream().filter(p -> !getOldSelection().contains(p)).collect(Collectors.toSet());
+                added = current.stream()
+                        .filter(p -> !getOldSelection().contains(p)).collect(Collectors.toCollection(LinkedHashSet::new));
             }
             return added;
         }
@@ -174,7 +177,9 @@ public interface DataSelectionListener {
          */
         public SelectionAddEvent(DataSet source, Set<OsmPrimitive> old, Stream<OsmPrimitive> toAdd) {
             super(source, old);
-            this.add = toAdd.filter(p -> !old.contains(p)).collect(Collectors.toSet());
+            this.add = toAdd
+                    .filter(p -> !old.contains(p))
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
             if (this.add.isEmpty()) {
                 this.current = this.getOldSelection();
             } else {
@@ -216,7 +221,9 @@ public interface DataSelectionListener {
          */
         public SelectionRemoveEvent(DataSet source, Set<OsmPrimitive> old, Stream<OsmPrimitive> toRemove) {
             super(source, old);
-            this.remove = toRemove.filter(old::contains).collect(Collectors.toSet());
+            this.remove = toRemove
+                    .filter(old::contains)
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
             if (this.remove.isEmpty()) {
                 this.current = this.getOldSelection();
             } else {
