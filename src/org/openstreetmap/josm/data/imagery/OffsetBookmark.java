@@ -94,8 +94,8 @@ public class OffsetBookmark {
     /**
      * Get displacement in EastNorth coordinates of the original projection.
      *
-     * @see #getProjectionCode()
      * @return the displacement
+     * @see #getProjectionCode()
      */
     public EastNorth getDisplacement() {
         return new EastNorth(dx, dy);
@@ -127,7 +127,7 @@ public class OffsetBookmark {
      * Get center/reference point of the bookmark.
      *
      * Basically this is the place where it was created and is valid.
-     * The center may be unrecorded (see {@link #hasCenter()), in which
+     * The center may be unrecorded (see {@link #hasCenter()}, in which
      * case a dummy center (0,0) will be returned.
      * @return the center
      */
