@@ -62,7 +62,7 @@ public class TileSourceDisplaySettings {
     /** if layer should show errors on tiles */
     private boolean showErrors;
 
-    private OffsetBookmark offsetBookmark = null;
+    private OffsetBookmark offsetBookmark;
     /**
      * the displacement (basically caches the displacement from the offsetBookmark
      * in the current projection)
@@ -192,7 +192,7 @@ public class TileSourceDisplaySettings {
 
     /**
      * Sets an offset bookmark to use.
-     * 
+     *
      * @param offsetBookmark the offset bookmark, may be null
      */
     public void setOffsetBookmark(OffsetBookmark offsetBookmark) {
