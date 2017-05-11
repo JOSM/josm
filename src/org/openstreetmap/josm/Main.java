@@ -1077,10 +1077,6 @@ public abstract class Main {
     private static void fireProjectionChanged(Projection oldValue, Projection newValue, Bounds oldBounds) {
         if ((newValue == null ^ oldValue == null)
                 || (newValue != null && oldValue != null && !Objects.equals(newValue.toCode(), oldValue.toCode()))) {
-            if (Main.map != null) {
-                // This needs to be called first
-                Main.map.mapView.fixProjection();
-            }
             synchronized (Main.class) {
                 Iterator<WeakReference<ProjectionChangeListener>> it = listeners.iterator();
                 while (it.hasNext()) {
@@ -1102,6 +1098,7 @@ public abstract class Main {
 
     /**
      * Register a projection change listener.
+     * The listener is registered to be weak, so keep a reference of it if you want it to be preserved.
      *
      * @param listener the listener. Ignored if <code>null</code>.
      */

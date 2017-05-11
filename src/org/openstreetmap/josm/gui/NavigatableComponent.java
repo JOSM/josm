@@ -51,6 +51,7 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
@@ -170,13 +171,17 @@ public class NavigatableComponent extends JComponent implements Helpful {
     private transient MapViewState state;
 
     /**
+     * Main uses weak link to store this, so we need to keep a reference.
+     */
+    private final ProjectionChangeListener projectionChangeListener = (oldValue, newValue) -> fixProjection();
+
+    /**
      * Constructs a new {@code NavigatableComponent}.
      */
     public NavigatableComponent() {
         setLayout(null);
         state = MapViewState.createDefaultState(getWidth(), getHeight());
-        // uses weak link.
-        Main.addProjectionChangeListener((oldValue, newValue) -> fixProjection());
+        Main.addProjectionChangeListener(projectionChangeListener);
     }
 
     @Override
