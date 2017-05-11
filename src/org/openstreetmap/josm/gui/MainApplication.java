@@ -87,7 +87,7 @@ public class MainApplication extends Main {
      */
     private static final List<String> COMMAND_LINE_ARGS = new ArrayList<>();
 
-    private MainFrame mainFrame;
+    private final MainFrame mainFrame;
 
     /**
      * Constructs a new {@code MainApplication} without a window.
@@ -108,15 +108,18 @@ public class MainApplication extends Main {
 
     @Override
     protected void initializeMainWindow() {
-        mainPanel.reAddListeners();
         if (mainFrame != null) {
+            mainFrame.preInitialize();
+            panel = mainFrame.getPanel();
             mainFrame.initialize();
-
             menu = mainFrame.getMenu();
         } else {
             // required for running some tests.
+            panel = new MainPanel(Main.getLayerManager());
             menu = new MainMenu();
         }
+        panel.addMapFrameListener((o, n) -> redoUndoListener.commandChanged(0, 0));
+        panel.reAddListeners();
     }
 
     @Override

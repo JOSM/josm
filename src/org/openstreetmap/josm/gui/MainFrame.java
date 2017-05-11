@@ -48,6 +48,7 @@ public class MainFrame extends JFrame {
 
     protected transient WindowGeometry geometry;
     protected int windowState = JFrame.NORMAL;
+    private MainPanel panel;
     private MainMenu menu;
 
     /**
@@ -70,7 +71,16 @@ public class MainFrame extends JFrame {
     }
 
     /**
+     * Performs pre-initialization required before the call to {@link #initialize()}.
+     * @since 12125
+     */
+    public void preInitialize() {
+        panel = new MainPanel(Main.getLayerManager());
+    }
+
+    /**
      * Initializes the content of the window and get the current status panel.
+     * {@link #preInitialize()} must have been previously called.
      */
     public void initialize() {
         menu = new MainMenu();
@@ -97,7 +107,7 @@ public class MainFrame extends JFrame {
 
         refreshTitle();
 
-        getContentPane().add(Main.panel, BorderLayout.CENTER);
+        getContentPane().add(panel, BorderLayout.CENTER);
         menu.initialize();
     }
 
@@ -114,12 +124,28 @@ public class MainFrame extends JFrame {
     /**
      * Gets the main menu used for this window.
      * @return The main menu.
+     * @throws IllegalStateException if the main frame has not been initialized yet
+     * @see #initialize
      */
     public MainMenu getMenu() {
         if (menu == null) {
             throw new IllegalStateException("Not initialized.");
         }
         return menu;
+    }
+
+    /**
+     * Gets the main panel.
+     * @return The main panel.
+     * @throws IllegalStateException if the main frame has not been initialized yet
+     * @see #initialize
+     * @since 12125
+     */
+    public MainPanel getPanel() {
+        if (panel == null) {
+            throw new IllegalStateException("Not initialized.");
+        }
+        return panel;
     }
 
     /**

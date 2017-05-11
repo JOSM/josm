@@ -64,7 +64,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.data.validation.OsmValidator;
-import org.openstreetmap.josm.gui.MainFrame;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MainPanel;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -197,6 +196,12 @@ public abstract class Main {
     public MainMenu menu;
 
     /**
+     * The main panel.
+     * @since 12125
+     */
+    public MainPanel panel;
+
+    /**
      * The file watcher service.
      */
     public static final FileWatcher fileWatcher = new FileWatcher();
@@ -212,12 +217,6 @@ public abstract class Main {
      */
     @Deprecated
     public static int logLevel = 3;
-
-    /**
-     * The real main panel. This field may be removed any time and made private to {@link MainFrame}
-     * @see #panel
-     */
-    protected static final MainPanel mainPanel = new MainPanel(getLayerManager());
 
     /**
      * Replies the first lines of last 5 error and warning messages, used for bug reports
@@ -490,7 +489,6 @@ public abstract class Main {
      */
     protected Main() {
         setInstance(this);
-        mainPanel.addMapFrameListener((o, n) -> redoUndoListener.commandChanged(0, 0));
     }
 
     private static void setInstance(Main instance) {
@@ -578,7 +576,7 @@ public abstract class Main {
 
     /**
      * Called once at startup to initialize the main window content.
-     * Should set {@link #menu}
+     * Should set {@link #menu} and {@link #panel}
      */
     protected abstract void initializeMainWindow();
 
@@ -715,11 +713,9 @@ public abstract class Main {
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Global panel.
+     * Listener that sets the enabled state of undo/redo menu entries.
      */
-    public static final JPanel panel = mainPanel;
-
-    private final CommandQueueListener redoUndoListener = (queueSize, redoSize) -> {
+    protected final CommandQueueListener redoUndoListener = (queueSize, redoSize) -> {
             menu.undo.setEnabled(queueSize > 0);
             menu.redo.setEnabled(redoSize > 0);
         };
@@ -769,7 +765,6 @@ public abstract class Main {
         }
         toolbar = new ToolbarPreferences();
         contentPanePrivate.updateUI();
-        panel.updateUI();
 
         UIManager.put("OptionPane.okIcon", ImageProvider.get("ok"));
         UIManager.put("OptionPane.yesIcon", UIManager.get("OptionPane.okIcon"));
@@ -1157,7 +1152,7 @@ public abstract class Main {
      * @since 11904
      */
     public static boolean addAndFireMapFrameListener(MapFrameListener listener) {
-        return mainPanel.addAndFireMapFrameListener(listener);
+        return main.panel.addAndFireMapFrameListener(listener);
     }
 
     /**
@@ -1168,7 +1163,7 @@ public abstract class Main {
      * @since 5957
      */
     public static boolean addMapFrameListener(MapFrameListener listener) {
-        return mainPanel.addMapFrameListener(listener);
+        return main.panel.addMapFrameListener(listener);
     }
 
     /**
@@ -1178,7 +1173,7 @@ public abstract class Main {
      * @since 5957
      */
     public static boolean removeMapFrameListener(MapFrameListener listener) {
-        return mainPanel.removeMapFrameListener(listener);
+        return main.panel.removeMapFrameListener(listener);
     }
 
     /**
