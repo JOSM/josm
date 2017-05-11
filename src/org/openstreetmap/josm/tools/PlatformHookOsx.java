@@ -39,6 +39,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
         // And will not work when one of the system independent LAFs is used.
         // They just insist on painting themselves...
         Utils.updateSystemProperty("apple.laf.useScreenMenuBar", "true");
+        Utils.updateSystemProperty("apple.awt.application.name", "JOSM");
     }
 
     @Override
@@ -77,6 +78,19 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
         }
     }
 
+    /**
+     * Registers Apple handlers.
+     * @param appClass application class
+     * @param quitHandler quit handler class
+     * @param aboutHandler about handler class
+     * @param openFilesHandler open file handler class
+     * @param preferencesHandler preferences handler class
+     * @param proxy proxy
+     * @param appInstance application instance (instance of {@code appClass})
+     * @throws IllegalAccessException in case of reflection error
+     * @throws InvocationTargetException in case of reflection error
+     * @throws NoSuchMethodException if any {@code set*Handler} method cannot be found
+     */
     protected void setHandlers(Class<?> appClass, Class<?> quitHandler, Class<?> aboutHandler,
             Class<?> openFilesHandler, Class<?> preferencesHandler, Object proxy, Object appInstance)
                     throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -86,6 +100,12 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
         appClass.getDeclaredMethod("setPreferencesHandler", preferencesHandler).invoke(appInstance, proxy);
     }
 
+    /**
+     * Find Apple handler class in {@code com.apple.eawt} or {@code java.awt.desktop} packages.
+     * @param className simple class name
+     * @return class
+     * @throws ClassNotFoundException if the handler class cannot be found
+     */
     protected Class<?> findHandlerClass(String className) throws ClassNotFoundException {
         try {
             return Class.forName("com.apple.eawt."+className);
