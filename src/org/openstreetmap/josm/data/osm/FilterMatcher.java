@@ -224,7 +224,8 @@ public class FilterMatcher {
 
     private static FilterType test(List<FilterInfo> filters, OsmPrimitive primitive, boolean hidden) {
 
-        if (primitive.isIncomplete() || (Main.map != null && Main.map.mapMode.getPreservedPrimitives().contains(primitive)))
+        if (primitive.isIncomplete() ||
+                (Main.map != null && Main.map.mapMode != null && Main.map.mapMode.getPreservedPrimitives().contains(primitive)))
             return FilterType.NOT_FILTERED;
 
         boolean filtered = false;
