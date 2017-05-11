@@ -152,7 +152,7 @@ public class FilterTableModel extends AbstractTableModel {
                     if (primitive.isDisabledAndHidden()) {
                         disabledAndHiddenCount--;
                     }
-                    changed = changed | FilterWorker.executeFilters(primitive, filterMatcher);
+                    changed |= FilterWorker.executeFilters(primitive, filterMatcher);
                     if (primitive.isDisabled()) {
                         disabledCount++;
                     }
