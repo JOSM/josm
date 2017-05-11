@@ -332,10 +332,16 @@ public class PlatformHookWindows implements PlatformHook {
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
         KeyStore ks = getRootKeystore();
         // Look for certificate to install
-        String alias = ks.getCertificateAlias(trustedCert.getTrustedCertificate());
-        if (alias != null) {
-            // JOSM certificate found, return
-            Main.debug(tr("JOSM localhost certificate found in {0} keystore: {1}", WINDOWS_ROOT, alias));
+        try {
+            String alias = ks.getCertificateAlias(trustedCert.getTrustedCertificate());
+            if (alias != null) {
+                // JOSM certificate found, return
+                Main.debug(tr("JOSM localhost certificate found in {0} keystore: {1}", WINDOWS_ROOT, alias));
+                return false;
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // catch error of JDK-8172244 as bug seems to not be fixed anytime soon
+            Main.error(e, "JDK-8172244 occured. Abort HTTPS setup");
             return false;
         }
         if (!GraphicsEnvironment.isHeadless()) {
