@@ -368,6 +368,18 @@ class SyncEditorLayerIndex {
             }
         }
 
+        /*myprintln "*** Same URL, but different Id: ***"
+        for (def url : eliUrls.keySet()) {
+            def e = eliUrls.get(url)
+            if (!josmUrls.containsKey(url)) continue
+            def j = josmUrls.get(url)
+            def ename = getId(e)
+            def jname = getId(j)
+            if (!ename.equals(jname)) {
+                myprintln "* Id differs ('${getId(e)}' != '${getId(j)}'): $url"
+            }
+        }*/
+
         myprintln "*** Same URL, but different type: ***"
         for (def url : eliUrls.keySet()) {
             def e = eliUrls.get(url)
