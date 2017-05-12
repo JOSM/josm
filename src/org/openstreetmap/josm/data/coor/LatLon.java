@@ -7,9 +7,9 @@ import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
-import static java.lang.Math.toRadians;
 import static org.openstreetmap.josm.data.projection.Ellipsoid.WGS84;
 import static org.openstreetmap.josm.tools.I18n.trc;
+import static org.openstreetmap.josm.tools.Utils.toRadians;
 
 import java.awt.geom.Area;
 import java.text.DecimalFormat;

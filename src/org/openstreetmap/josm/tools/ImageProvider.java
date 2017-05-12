@@ -1316,7 +1316,7 @@ public class ImageProvider {
                     angle = 90.0;
                 }
 
-                double radian = Math.toRadians(angle);
+                double radian = Utils.toRadians(angle);
 
                 new ImageIcon(img); // load completely
                 int iw = img.getWidth(null);
@@ -1345,7 +1345,7 @@ public class ImageProvider {
                 g2d.translate(w / 2, h / 2);
 
                 // rotate the graphics about the center point of the icon
-                g2d.rotate(Math.toRadians(originalAngle));
+                g2d.rotate(Utils.toRadians(originalAngle));
 
                 g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
                 g2d.drawImage(img, -cx, -cy, null);

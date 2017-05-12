@@ -32,6 +32,7 @@ import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Tools / Orthogonalize
@@ -67,8 +68,8 @@ public final class OrthogonalizeAction extends JosmAction {
      *
      * Current policy is to except just everything, no matter how strange the result would be.
      */
-    private static final double TOLERANCE1 = Math.toRadians(45.);   // within a way
-    private static final double TOLERANCE2 = Math.toRadians(45.);   // ways relative to each other
+    private static final double TOLERANCE1 = Utils.toRadians(45.);   // within a way
+    private static final double TOLERANCE2 = Utils.toRadians(45.);   // ways relative to each other
 
     /**
      * Remember movements, so the user can later undo it for certain nodes

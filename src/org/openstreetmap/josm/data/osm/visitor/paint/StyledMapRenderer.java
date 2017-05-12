@@ -285,7 +285,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      */
     static final int FLAG_OUTERMEMBER_OF_SELECTED = 8;
 
-    private static final double PHI = Math.toRadians(20);
+    private static final double PHI = Utils.toRadians(20);
     private static final double cosPHI = Math.cos(PHI);
     private static final double sinPHI = Math.sin(PHI);
     /**
@@ -977,7 +977,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         } else {
             fromAngle = Math.atan(dy / dx);
         }
-        double fromAngleDeg = Math.toDegrees(fromAngle);
+        double fromAngleDeg = Utils.toDegrees(fromAngle);
 
         double vx = distanceFromVia * Math.cos(fromAngle);
         double vy = distanceFromVia * Math.sin(fromAngle);
@@ -1000,41 +1000,41 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         if (pFrom.x >= pVia.x && pFrom.y >= pVia.y) {
             if (!leftHandTraffic) {
-                vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg - 90));
-                vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg - 90));
+                vx2 = distanceFromWay * Math.cos(Utils.toRadians(fromAngleDeg - 90));
+                vy2 = distanceFromWay * Math.sin(Utils.toRadians(fromAngleDeg - 90));
             } else {
-                vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 90));
-                vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 90));
+                vx2 = distanceFromWay * Math.cos(Utils.toRadians(fromAngleDeg + 90));
+                vy2 = distanceFromWay * Math.sin(Utils.toRadians(fromAngleDeg + 90));
             }
             iconAngle = 270+fromAngleDeg;
         }
         if (pFrom.x < pVia.x && pFrom.y >= pVia.y) {
             if (!leftHandTraffic) {
-                vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg));
-                vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg));
+                vx2 = distanceFromWay * Math.sin(Utils.toRadians(fromAngleDeg));
+                vy2 = distanceFromWay * Math.cos(Utils.toRadians(fromAngleDeg));
             } else {
-                vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 180));
-                vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 180));
+                vx2 = distanceFromWay * Math.sin(Utils.toRadians(fromAngleDeg + 180));
+                vy2 = distanceFromWay * Math.cos(Utils.toRadians(fromAngleDeg + 180));
             }
             iconAngle = 90-fromAngleDeg;
         }
         if (pFrom.x < pVia.x && pFrom.y < pVia.y) {
             if (!leftHandTraffic) {
-                vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 90));
-                vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 90));
+                vx2 = distanceFromWay * Math.cos(Utils.toRadians(fromAngleDeg + 90));
+                vy2 = distanceFromWay * Math.sin(Utils.toRadians(fromAngleDeg + 90));
             } else {
-                vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg - 90));
-                vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg - 90));
+                vx2 = distanceFromWay * Math.cos(Utils.toRadians(fromAngleDeg - 90));
+                vy2 = distanceFromWay * Math.sin(Utils.toRadians(fromAngleDeg - 90));
             }
             iconAngle = 90+fromAngleDeg;
         }
         if (pFrom.x >= pVia.x && pFrom.y < pVia.y) {
             if (!leftHandTraffic) {
-                vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 180));
-                vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 180));
+                vx2 = distanceFromWay * Math.sin(Utils.toRadians(fromAngleDeg + 180));
+                vy2 = distanceFromWay * Math.cos(Utils.toRadians(fromAngleDeg + 180));
             } else {
-                vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg));
-                vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg));
+                vx2 = distanceFromWay * Math.sin(Utils.toRadians(fromAngleDeg));
+                vy2 = distanceFromWay * Math.cos(Utils.toRadians(fromAngleDeg));
             }
             iconAngle = 270-fromAngleDeg;
         }

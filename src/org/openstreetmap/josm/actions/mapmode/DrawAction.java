@@ -75,7 +75,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     private static final Color ORANGE_TRANSPARENT = new Color(Color.ORANGE.getRed(), Color.ORANGE.getGreen(), Color.ORANGE.getBlue(), 128);
 
-    private static final ArrowPaintHelper START_WAY_INDICATOR = new ArrowPaintHelper(Math.toRadians(90), 8);
+    private static final ArrowPaintHelper START_WAY_INDICATOR = new ArrowPaintHelper(Utils.toRadians(90), 8);
 
     static final CachingProperty<Boolean> USE_REPEATED_SHORTCUT
             = new BooleanProperty("draw.anglesnap.toggleOnRepeatedA", true).cached();
@@ -838,13 +838,13 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return; // Don't create zero length way segments.
 
 
-        double curHdg = Math.toDegrees(getCurrentBaseNode().getEastNorth()
+        double curHdg = Utils.toDegrees(getCurrentBaseNode().getEastNorth()
                 .heading(currentMouseEastNorth));
         double baseHdg = -1;
         if (previousNode != null) {
             EastNorth en = previousNode.getEastNorth();
             if (en != null) {
-                baseHdg = Math.toDegrees(en.heading(getCurrentBaseNode().getEastNorth()));
+                baseHdg = Utils.toDegrees(en.heading(getCurrentBaseNode().getEastNorth()));
             }
         }
 

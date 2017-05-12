@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.draw.SymbolShape;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.tools.Utils;
 
 class DrawSnapHelper {
 
@@ -376,7 +377,7 @@ class DrawSnapHelper {
         // find out the distance, in metres, between the base point and projected point
         LatLon mouseLatLon = Main.map.mapView.getProjection().eastNorth2latlon(snapPoint);
         double distance = this.drawAction.getCurrentBaseNode().getCoor().greatCircleDistance(mouseLatLon);
-        double hdg = Math.toDegrees(p0.heading(snapPoint));
+        double hdg = Utils.toDegrees(p0.heading(snapPoint));
         // heading of segment from current to calculated point, not to mouse position
 
         if (baseHeading >= 0) { // there is previous line segment with some heading
@@ -484,7 +485,7 @@ class DrawSnapHelper {
         segmentPoint2 = seg.getSecondNode().getEastNorth();
 
         double hdg = segmentPoint1.heading(segmentPoint2);
-        hdg = Math.toDegrees(hdg);
+        hdg = Utils.toDegrees(hdg);
         if (hdg < 0) {
             hdg += 360;
         }

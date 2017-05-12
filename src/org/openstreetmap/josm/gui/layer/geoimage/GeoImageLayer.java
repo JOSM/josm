@@ -588,14 +588,14 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
                     double leftdir = (headdir < 90) ? headdir + 270 : headdir - 90;
                     double rightdir = (headdir > 270) ? headdir - 270 : headdir + 90;
 
-                    double ptx = p.x + Math.cos(Math.toRadians(headdir)) * arrowlength;
-                    double pty = p.y + Math.sin(Math.toRadians(headdir)) * arrowlength;
+                    double ptx = p.x + Math.cos(Utils.toRadians(headdir)) * arrowlength;
+                    double pty = p.y + Math.sin(Utils.toRadians(headdir)) * arrowlength;
 
-                    double ltx = p.x + Math.cos(Math.toRadians(leftdir)) * arrowwidth/2;
-                    double lty = p.y + Math.sin(Math.toRadians(leftdir)) * arrowwidth/2;
+                    double ltx = p.x + Math.cos(Utils.toRadians(leftdir)) * arrowwidth/2;
+                    double lty = p.y + Math.sin(Utils.toRadians(leftdir)) * arrowwidth/2;
 
-                    double rtx = p.x + Math.cos(Math.toRadians(rightdir)) * arrowwidth/2;
-                    double rty = p.y + Math.sin(Math.toRadians(rightdir)) * arrowwidth/2;
+                    double rtx = p.x + Math.cos(Utils.toRadians(rightdir)) * arrowwidth/2;
+                    double rty = p.y + Math.sin(Utils.toRadians(rightdir)) * arrowwidth/2;
 
                     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     g.setColor(new Color(255, 255, 255, 192));

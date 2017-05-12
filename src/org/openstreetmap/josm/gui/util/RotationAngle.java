@@ -152,25 +152,25 @@ public interface RotationAngle {
                 return 0; // 0 degree => 0 radian
             case "ne":
             case "northeast":
-                return Math.toRadians(45);
+                return Utils.toRadians(45);
             case "e":
             case "east":
-                return Math.toRadians(90);
+                return Utils.toRadians(90);
             case "se":
             case "southeast":
-                return Math.toRadians(135);
+                return Utils.toRadians(135);
             case "s":
             case "south":
                 return Math.PI; // 180 degree
             case "sw":
             case "southwest":
-                return Math.toRadians(225);
+                return Utils.toRadians(225);
             case "w":
             case "west":
-                return Math.toRadians(270);
+                return Utils.toRadians(270);
             case "nw":
             case "northwest":
-                return Math.toRadians(315);
+                return Utils.toRadians(315);
             default:
                 throw new IllegalArgumentException("Unexpected cardinal direction " + cardinal);
         }

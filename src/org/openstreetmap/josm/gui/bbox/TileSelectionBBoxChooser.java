@@ -52,6 +52,7 @@ import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * TileSelectionBBoxChooser allows to select a bounding box (i.e. for downloading) based
@@ -183,7 +184,7 @@ public class TileSelectionBBoxChooser extends JPanel implements BBoxChooser {
      */
     protected LatLon getNorthWestLatLonOfTile(Point tile, int zoom) {
         double lon = tile.x / Math.pow(2.0, zoom) * 360.0 - 180;
-        double lat = Math.toDegrees(Math.atan(Math.sinh(Math.PI - (2.0 * Math.PI * tile.y) / Math.pow(2.0, zoom))));
+        double lat = Utils.toDegrees(Math.atan(Math.sinh(Math.PI - (2.0 * Math.PI * tile.y) / Math.pow(2.0, zoom))));
         return new LatLon(lat, lon);
     }
 

@@ -85,7 +85,7 @@ public class GpxDrawHelper implements SoMChangeListener {
     /** maximum value of displayed HDOP, minimum is 0 */
     private int hdoprange;
 
-    private static final double PHI = Math.toRadians(15);
+    private static final double PHI = Utils.toRadians(15);
 
     //// Variables used only to check cache validity
     private boolean computeCacheInSync;

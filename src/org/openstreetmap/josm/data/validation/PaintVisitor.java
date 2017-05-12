@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Visitor that highlights the primitives affected by an error
@@ -143,7 +144,7 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
         double t = Math.atan2((double) p2.x - p1.x, (double) p2.y - p1.y);
         double cosT = 5 * Math.cos(t);
         double sinT = 5 * Math.sin(t);
-        int deg = (int) Math.toDegrees(t);
+        int deg = (int) Utils.toDegrees(t);
         if (selected) {
             g.setColor(getHighlightColor(color));
             int[] x = new int[] {(int) (p1.x + cosT), (int) (p2.x + cosT),
