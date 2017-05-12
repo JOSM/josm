@@ -37,7 +37,6 @@ import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
@@ -205,6 +204,11 @@ public abstract class Main {
      * The same main panel, required to be static for {@code MapFrameListener} handling.
      */
     protected static MainPanel mainPanel;
+
+    /**
+     * The private content pane of {@code MainFrame}, required to be static for shortcut handling.
+     */
+    protected static JComponent contentPanePrivate;
 
     /**
      * The file watcher service.
@@ -637,8 +641,6 @@ public abstract class Main {
         }
     }
 
-    protected static final JPanel contentPanePrivate = new JPanel(new BorderLayout());
-
     public static void redirectToMainContentPane(JComponent source) {
         RedirectInputMap.redirect(source, contentPanePrivate);
     }
@@ -769,7 +771,6 @@ public abstract class Main {
             error(e);
         }
         toolbar = new ToolbarPreferences();
-        contentPanePrivate.updateUI();
 
         UIManager.put("OptionPane.okIcon", ImageProvider.get("ok"));
         UIManager.put("OptionPane.yesIcon", UIManager.get("OptionPane.okIcon"));

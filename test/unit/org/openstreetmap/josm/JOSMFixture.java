@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -13,8 +14,11 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import javax.swing.JPanel;
+
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MainPanel;
 import org.openstreetmap.josm.gui.layer.LayerManagerTest.TestLayer;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -145,6 +149,12 @@ public class JOSMFixture {
         assertNull(Main.getLayerManager().getEditLayer());
         assertNull(Main.getLayerManager().getActiveLayer());
 
+        if (Main.contentPanePrivate == null) {
+            Main.contentPanePrivate = new JPanel(new BorderLayout());
+        }
+        if (Main.mainPanel == null) {
+            Main.mainPanel = new MainPanel(Main.getLayerManager());
+        }
         if (Main.toolbar == null) {
             Main.toolbar = new ToolbarPreferences();
         }

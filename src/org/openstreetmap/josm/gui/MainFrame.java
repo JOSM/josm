@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -55,20 +54,19 @@ public class MainFrame extends JFrame {
      * Create a new main window.
      */
     public MainFrame() {
-        this(new JPanel(), new WindowGeometry(new Rectangle(10, 10, 500, 500)));
+        this(new WindowGeometry(new Rectangle(10, 10, 500, 500)));
     }
 
     /**
-     * Create a new main window. The parameters will be removed in the future.
-     * @param contentPanePrivate The content
+     * Create a new main window. The parameter will be removed in the future.
      * @param geometry The inital geometry to use.
-     * @since 11713
+     * @since 12127
      */
-    public MainFrame(Container contentPanePrivate, WindowGeometry geometry) {
+    public MainFrame(WindowGeometry geometry) {
         super();
         this.geometry = geometry;
         this.panel = new MainPanel(Main.getLayerManager());
-        setContentPane(contentPanePrivate);
+        setContentPane(new JPanel(new BorderLayout()));
     }
 
     /**

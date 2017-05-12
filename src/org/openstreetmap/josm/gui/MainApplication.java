@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.net.ssl.SSLSocketFactory;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
@@ -312,7 +313,8 @@ public class MainApplication extends Main {
         WindowGeometry geometry = WindowGeometry.mainWindow("gui.geometry",
                 args.getSingle(Option.GEOMETRY).orElse(null),
                 !args.hasOption(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
-        final MainFrame mainFrame = new MainFrame(contentPanePrivate, geometry);
+        final MainFrame mainFrame = new MainFrame(geometry);
+        Main.contentPanePrivate = (JComponent) mainFrame.getContentPane();
         Main.mainPanel = mainFrame.getPanel();
         Main.parent = mainFrame;
 
