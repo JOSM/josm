@@ -24,11 +24,11 @@ import java.util.TreeSet;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This test is used to monitor changes in projection code.
@@ -179,7 +179,7 @@ public class ProjectionRegressionTest {
              }
         }
 
-        final boolean java9 = TestUtils.getJavaVersion() >= 9;
+        final boolean java9 = Utils.getJavaVersion() >= 9;
         for (TestData data : allData) {
             Projection proj = Projections.getProjectionByCode(data.code);
             if (proj == null) {

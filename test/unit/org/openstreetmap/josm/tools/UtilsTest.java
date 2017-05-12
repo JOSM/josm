@@ -195,6 +195,29 @@ public class UtilsTest {
     }
 
     /**
+     * Test {@link Utils#getJavaVersion}
+     */
+    @Test
+    public void testGetJavaVersion() {
+        String javaVersion = System.getProperty("java.version");
+        try {
+            System.setProperty("java.version", "1.8.0_72-ea");
+            assertEquals(8, Utils.getJavaVersion());
+
+            System.setProperty("java.version", "9-ea");
+            assertEquals(9, Utils.getJavaVersion());
+
+            System.setProperty("java.version", "9");
+            assertEquals(9, Utils.getJavaVersion());
+
+            System.setProperty("java.version", "9.0.1");
+            assertEquals(9, Utils.getJavaVersion());
+        } finally {
+            System.setProperty("java.version", javaVersion);
+        }
+    }
+
+    /**
      * Tests if readBytesFromStream handles null streams (might happen when there is no data on error stream)
      * @throws IOException in case of I/O error
      */

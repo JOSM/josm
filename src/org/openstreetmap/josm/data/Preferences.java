@@ -1404,7 +1404,6 @@ public class Preferences {
 
     /**
      * Updates system properties with the current values in the preferences.
-     *
      */
     public void updateSystemProperties() {
         if ("true".equals(get("prefer.ipv6", "auto")) && !"true".equals(Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true"))) {
@@ -1416,7 +1415,7 @@ public class Preferences {
         // Workaround to fix a Java bug. This ugly hack comes from Sun bug database: https://bugs.openjdk.java.net/browse/JDK-6292739
         // Force AWT toolkit to update its internal preferences (fix #6345).
         // Does not work anymore with Java 9, to remove with Java 9 migration
-        if (!GraphicsEnvironment.isHeadless()) {
+        if (Utils.getJavaVersion() < 9 && !GraphicsEnvironment.isHeadless()) {
             try {
                 Field field = Toolkit.class.getDeclaredField("resources");
                 Utils.setObjectsAccessible(field);
