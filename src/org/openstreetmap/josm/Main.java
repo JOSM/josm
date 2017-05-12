@@ -202,6 +202,11 @@ public abstract class Main {
     public MainPanel panel;
 
     /**
+     * The same main panel, required to be static for {@code MapFrameListener} handling.
+     */
+    protected static MainPanel mainPanel;
+
+    /**
      * The file watcher service.
      */
     public static final FileWatcher fileWatcher = new FileWatcher();
@@ -1152,7 +1157,7 @@ public abstract class Main {
      * @since 11904
      */
     public static boolean addAndFireMapFrameListener(MapFrameListener listener) {
-        return main.panel.addAndFireMapFrameListener(listener);
+        return mainPanel.addAndFireMapFrameListener(listener);
     }
 
     /**
@@ -1163,7 +1168,7 @@ public abstract class Main {
      * @since 5957
      */
     public static boolean addMapFrameListener(MapFrameListener listener) {
-        return main.panel.addMapFrameListener(listener);
+        return mainPanel.addMapFrameListener(listener);
     }
 
     /**
@@ -1173,7 +1178,7 @@ public abstract class Main {
      * @since 5957
      */
     public static boolean removeMapFrameListener(MapFrameListener listener) {
-        return main.panel.removeMapFrameListener(listener);
+        return mainPanel.removeMapFrameListener(listener);
     }
 
     /**

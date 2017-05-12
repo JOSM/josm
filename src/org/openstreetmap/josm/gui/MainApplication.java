@@ -87,6 +87,9 @@ public class MainApplication extends Main {
      */
     private static final List<String> COMMAND_LINE_ARGS = new ArrayList<>();
 
+    private static ProgramArguments args;
+    private static boolean skipLoadingPlugins;
+
     private final MainFrame mainFrame;
 
     /**
@@ -109,7 +112,6 @@ public class MainApplication extends Main {
     @Override
     protected void initializeMainWindow() {
         if (mainFrame != null) {
-            mainFrame.preInitialize();
             panel = mainFrame.getPanel();
             mainFrame.initialize();
             menu = mainFrame.getMenu();
@@ -207,10 +209,20 @@ public class MainApplication extends Main {
      * @param argArray Command-line arguments
      */
     public static void main(final String[] argArray) {
+        // First initializes all stuff that do not require AWT/Swing
+        mainNoGui(argArray);
+        // Then initializes all AWT/Swing stuff
+        mainGui();
+    }
+
+    /**
+     * Initializes all stuff that do not require AWT/Swing.
+     * @param argArray Command-line arguments
+     */
+    private static void mainNoGui(final String[] argArray) {
         I18n.init();
 
         // construct argument table
-        ProgramArguments args = null;
         try {
             args = new ProgramArguments(argArray);
         } catch (IllegalArgumentException e) {
@@ -260,7 +272,7 @@ public class MainApplication extends Main {
 
         COMMAND_LINE_ARGS.addAll(Arrays.asList(argArray));
 
-        boolean skipLoadingPlugins = args.hasOption(Option.SKIP_PLUGINS);
+        skipLoadingPlugins = args.hasOption(Option.SKIP_PLUGINS);
         if (skipLoadingPlugins) {
             Main.info(tr("Plugin loading skipped"));
         }
@@ -285,7 +297,12 @@ public class MainApplication extends Main {
         processOffline(args);
 
         Main.platform.afterPrefStartupHook();
+    }
 
+    /**
+     * Initializes all AWT/Swing stuff.
+     */
+    private static void mainGui() {
         FontsManager.initialize();
 
         I18n.setupLanguageFonts();
@@ -296,6 +313,7 @@ public class MainApplication extends Main {
                 args.getSingle(Option.GEOMETRY).orElse(null),
                 !args.hasOption(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
         final MainFrame mainFrame = new MainFrame(contentPanePrivate, geometry);
+        Main.mainPanel = mainFrame.getPanel();
         Main.parent = mainFrame;
 
         if (args.hasOption(Option.LOAD_PREFERENCES)) {
