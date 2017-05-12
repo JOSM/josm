@@ -480,7 +480,10 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
             fixButton.setEnabled(hasFixes);
 
             if (isDblClick) {
-                Main.getLayerManager().getEditDataSet().setSelected(sel);
+                DataSet ds = Main.getLayerManager().getEditDataSet();
+                if (ds != null) {
+                    ds.setSelected(sel);
+                }
                 if (Main.pref.getBoolean("validator.autozoom", false)) {
                     AutoScaleAction.zoomTo(sel);
                 }
