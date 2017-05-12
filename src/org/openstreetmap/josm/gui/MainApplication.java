@@ -314,7 +314,9 @@ public class MainApplication extends Main {
                 args.getSingle(Option.GEOMETRY).orElse(null),
                 !args.hasOption(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
         final MainFrame mainFrame = new MainFrame(geometry);
-        Main.contentPanePrivate = (JComponent) mainFrame.getContentPane();
+        if (mainFrame.getContentPane() instanceof JComponent) {
+            Main.contentPanePrivate = (JComponent) mainFrame.getContentPane();
+        }
         Main.mainPanel = mainFrame.getPanel();
         Main.parent = mainFrame;
 
