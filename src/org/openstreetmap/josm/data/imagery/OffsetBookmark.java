@@ -269,8 +269,8 @@ public class OffsetBookmark {
      *
      * The map contains all the information to restore the offset bookmark.
      * @return properties map of all data
-     * @since 12134
      * @see #fromPropertiesMap(java.util.Map)
+     * @since 12134
      */
     public Map<String, String> toPropertiesMap() {
         return Preferences.serializeStruct(this, OffsetBookmark.class);
@@ -280,8 +280,8 @@ public class OffsetBookmark {
      * Creates an offset bookmark from a properties map.
      * @param properties the properties map
      * @return corresponding offset bookmark
-     * @since 12134
      * @see #toPropertiesMap()
+     * @since 12134
      */
     public static OffsetBookmark fromPropertiesMap(Map<String, String> properties) {
         return Preferences.deserializeStruct(properties, OffsetBookmark.class);
