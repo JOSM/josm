@@ -206,7 +206,7 @@ public class OsmReader extends AbstractReader {
             ds.addDataSource(src);
         } else {
             throwException(tr("Missing mandatory attributes on element ''bounds''. " +
-                    "Got minlon=''{0}'',minlat=''{1}'',maxlon=''{3}'',maxlat=''{4}'', origin=''{5}''.",
+                    "Got minlon=''{0}'',minlat=''{1}'',maxlon=''{2}'',maxlat=''{3}'', origin=''{4}''.",
                     minlon, minlat, maxlon, maxlat, origin
             ));
         }
