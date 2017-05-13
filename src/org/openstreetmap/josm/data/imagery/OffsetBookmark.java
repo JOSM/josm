@@ -8,8 +8,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Preferences.pref;
 import org.openstreetmap.josm.data.Preferences.writeExplicitly;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -260,5 +262,28 @@ public class OffsetBookmark {
         }
         allBookmarks.add(nb);
         saveBookmarks();
+    }
+
+    /**
+     * Converts the offset bookmark to a properties map.
+     *
+     * The map contains all the information to restore the offset bookmark.
+     * @return properties map of all data
+     * @since 12134
+     * @see #fromPropertiesMap(java.util.Map)
+     */
+    public Map<String, String> toPropertiesMap() {
+        return Preferences.serializeStruct(this, OffsetBookmark.class);
+    }
+
+    /**
+     * Creates an offset bookmark from a properties map.
+     * @param properties the properties map
+     * @return corresponding offset bookmark
+     * @since 12134
+     * @see #toPropertiesMap()
+     */
+    public static OffsetBookmark fromPropertiesMap(Map<String, String> properties) {
+        return Preferences.deserializeStruct(properties, OffsetBookmark.class);
     }
 }

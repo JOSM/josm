@@ -10,6 +10,7 @@ import java.util.Map;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
+import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -35,24 +36,38 @@ public class ImagerySessionImporter implements SessionLayerImporter {
         if (!"0.1".equals(version)) {
             throw new IllegalDataException(tr("Version ''{0}'' of meta data for imagery layer is not supported. Expected: 0.1", version));
         }
+        Map<String, String> attributes = readProperties(elem);
+
+        ImageryPreferenceEntry prefEntry = Preferences.deserializeStruct(attributes, ImageryPreferenceEntry.class);
+        ImageryInfo info = new ImageryInfo(prefEntry);
+        ImageryLayer layer = ImageryLayer.create(info);
+        if (layer instanceof AbstractTileSourceLayer) {
+            AbstractTileSourceLayer<?> tsLayer = (AbstractTileSourceLayer<?>) layer;
+            tsLayer.getDisplaySettings().loadFrom(attributes);
+            NodeList nodes = elem.getChildNodes();
+            for (int i = 0; i < nodes.getLength(); ++i) {
+                Node node = nodes.item(i);
+                if (node.getNodeType() == Node.ELEMENT_NODE && "offset".equals(node.getLocalName())) {
+                    Map<String, String> offsetAttributes = readProperties((Element) node);
+                    OffsetBookmark offset = OffsetBookmark.fromPropertiesMap(offsetAttributes);
+                    tsLayer.getDisplaySettings().setOffsetBookmark(offset);
+                    break;
+                }
+            }
+        }
+        return layer;
+    }
+
+    private Map<String, String> readProperties(Element elem) {
         Map<String, String> attributes = new HashMap<>();
-
         NodeList nodes = elem.getChildNodes();
-
         for (int i = 0; i < nodes.getLength(); ++i) {
             Node node = nodes.item(i);
-            if (node.getNodeType() == Node.ELEMENT_NODE) {
+            if (node.getNodeType() == Node.ELEMENT_NODE && node.getChildNodes().getLength() <= 1) {
                 Element e = (Element) node;
                 attributes.put(e.getTagName(), e.getTextContent());
             }
         }
-        ImageryPreferenceEntry prefEntry = Preferences.deserializeStruct(attributes, ImageryPreferenceEntry.class);
-        ImageryInfo i = new ImageryInfo(prefEntry);
-        ImageryLayer layer = ImageryLayer.create(i);
-        if (layer instanceof AbstractTileSourceLayer) {
-            AbstractTileSourceLayer<?> tsLayer = (AbstractTileSourceLayer<?>) layer;
-            tsLayer.getDisplaySettings().loadFrom(attributes);
-        }
-        return layer;
+        return attributes;
     }
 }

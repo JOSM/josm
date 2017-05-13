@@ -247,21 +247,23 @@ public class TileSourceDisplaySettings {
 
     /**
      * Stores the current settings object to the given hashmap.
+     * The offset data is not stored and needs to be handled separately.
      * @param data The map to store the settings to.
      * @see #loadFrom(Map)
+     * @see OffsetBookmark#toPropertiesMap()
      */
     public void storeTo(Map<String, String> data) {
         data.put(AUTO_LOAD, Boolean.toString(autoLoad));
         data.put(AUTO_ZOOM, Boolean.toString(autoZoom));
         data.put(SHOW_ERRORS, Boolean.toString(showErrors));
-        data.put("dx", String.valueOf(getDx()));
-        data.put("dy", String.valueOf(getDy()));
     }
 
     /**
      * Load the settings from the given data instance.
+     * The offset data is not loaded and needs to be handled separately.
      * @param data The data
      * @see #storeTo(Map)
+     * @see OffsetBookmark#fromPropertiesMap(java.util.Map)
      */
     public void loadFrom(Map<String, String> data) {
         try {
@@ -278,12 +280,6 @@ public class TileSourceDisplaySettings {
             String doShowErrors = data.get(SHOW_ERRORS);
             if (doShowErrors != null) {
                 setShowErrors(Boolean.parseBoolean(doShowErrors));
-            }
-
-            String dx = data.get("dx");
-            String dy = data.get("dy");
-            if (dx != null && dy != null) {
-                setDisplacement(new EastNorth(Double.parseDouble(dx), Double.parseDouble(dy)));
             }
         } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             throw BugReport.intercept(e).put("data", data);
