@@ -68,6 +68,7 @@ import org.openstreetmap.josm.actions.ParameterizedActionDecorator;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -994,8 +995,10 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
      * Constructs a new {@code ToolbarPreferences}.
      */
     public ToolbarPreferences() {
-        control.setFloatable(false);
-        control.setComponentPopupMenu(popupMenu);
+        GuiHelper.runInEDTAndWait(() -> {
+            control.setFloatable(false);
+            control.setComponentPopupMenu(popupMenu);
+        });
         Main.pref.addPreferenceChangeListener(e -> {
             if ("toolbar.visible".equals(e.getKey())) {
                 refreshToolbarControl();
@@ -1109,12 +1112,12 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         String toolbar = (String) action.getValue("toolbar");
         if (toolbar == null) {
             Main.info(tr("Registered toolbar action without name: {0}",
-            action.getClass().getName()));
+                action.getClass().getName()));
         } else {
             Action r = regactions.get(toolbar);
             if (r != null) {
                 Main.info(tr("Registered toolbar action {0} overwritten: {1} gets {2}",
-                toolbar, r.getClass().getName(), action.getClass().getName()));
+                    toolbar, r.getClass().getName(), action.getClass().getName()));
             }
         }
         if (toolbar != null) {

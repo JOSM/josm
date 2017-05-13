@@ -451,7 +451,7 @@ public class MainApplication extends Main {
     static void loadLatePlugins(SplashScreen splash, SplashProgressMonitor monitor, Collection<PluginInformation> pluginsToLoad) {
         monitor.indeterminateSubTask(tr("Loading plugins"));
         PluginHandler.loadLatePlugins(splash, pluginsToLoad, monitor.createSubTaskMonitor(1, false));
-        toolbar.refreshToolbarControl();
+        GuiHelper.runInEDTAndWait(() -> toolbar.refreshToolbarControl());
     }
 
     private static void processOffline(ProgramArguments args) {
