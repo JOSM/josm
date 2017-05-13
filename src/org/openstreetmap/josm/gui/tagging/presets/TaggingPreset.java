@@ -32,6 +32,7 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.AdaptableAction;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
@@ -72,7 +73,7 @@ import org.xml.sax.SAXException;
  * It is also able to construct dialogs out of preset definitions.
  * @since 294
  */
-public class TaggingPreset extends AbstractAction implements ActiveLayerChangeListener, Predicate<OsmPrimitive> {
+public class TaggingPreset extends AbstractAction implements ActiveLayerChangeListener, AdaptableAction, Predicate<OsmPrimitive> {
 
     public static final int DIALOG_ANSWER_APPLY = 1;
     public static final int DIALOG_ANSWER_NEW_RELATION = 2;
