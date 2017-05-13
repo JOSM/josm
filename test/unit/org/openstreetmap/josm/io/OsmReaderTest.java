@@ -47,4 +47,20 @@ public class OsmReaderTest {
                     " (at line 5, column 179). 578 bytes have been read", e.getMessage());
         }
     }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/14788">Bug #14788</a>.
+     * @throws Exception if any error occurs
+     */
+    @Test
+    public void testTicket14788() throws Exception {
+        try (InputStream in = TestUtils.getRegressionDataStream(14788, "remove_sign_test_4.osm")) {
+            OsmReader.parseDataSet(in, NullProgressMonitor.INSTANCE);
+            fail("should throw exception");
+        } catch (IllegalDataException e) {
+            assertEquals("Illegal value for attributes 'lat', 'lon' on node with ID 978." +
+                    " Got 'nan', 'nan'." +
+                    " (at line 4, column 151). 336 bytes have been read", e.getMessage());
+        }
+    }
 }
