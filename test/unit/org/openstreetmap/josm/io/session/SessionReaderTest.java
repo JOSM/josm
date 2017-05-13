@@ -127,8 +127,8 @@ public class SessionReaderTest {
         assertTrue(layers.get(0) instanceof ImageryLayer);
         final AbstractTileSourceLayer<?> image = (AbstractTileSourceLayer<?>) layers.get(0);
         assertEquals("Bing aerial imagery", image.getName());
-        assertEquals(image.getDisplaySettings().getDx(), 12.34, 1e-9);
-        assertEquals(image.getDisplaySettings().getDy(), -56.78, 1e-9);
+        assertEquals(-2.671667778864503, image.getDisplaySettings().getDx(), 1e-9);
+        assertEquals(13.89643478114158, image.getDisplaySettings().getDy(), 1e-9);
     }
 
     /**
