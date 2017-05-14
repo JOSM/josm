@@ -482,7 +482,7 @@ class SyncEditorLayerIndex {
                 if (!jt) {
                     myprintln "+ SKIP - Missing JOSM description (${et}): ${getDescription(j)}"
                 } else if (et) {
-                    myprintln "+ SKIP * Description differs (${et} != '${jt}'): ${getDescription(j)}"
+                    myprintln "* Description differs (${et} != '${jt}'): ${getDescription(j)}"
                 } else if (!options.nomissingeli) {
                     myprintln "+ Missing ELI description ('${jt}'): ${getDescription(j)}"
                 }
@@ -505,7 +505,7 @@ class SyncEditorLayerIndex {
             jt = getAttributionUrl(j)
             if (!et.equals(jt)) {
                 if (!jt) {
-                    myprintln "+ SKIP - Missing JOSM attribution URL (${et}): ${getDescription(j)}"
+                    myprintln "- Missing JOSM attribution URL (${et}): ${getDescription(j)}"
                 } else if (et) {
                     myprintln "+ SKIP * Attribution URL differs (${et} != '${jt}'): ${getDescription(j)}"
                 } else if (!options.nomissingeli) {
@@ -517,7 +517,7 @@ class SyncEditorLayerIndex {
             jt = getAttributionText(j)
             if (!et.equals(jt)) {
                 if (!jt) {
-                    myprintln "+ SKIP - Missing JOSM attribution text (${et}): ${getDescription(j)}"
+                    myprintln "- Missing JOSM attribution text (${et}): ${getDescription(j)}"
                 } else if (et) {
                     myprintln "+ SKIP * Attribution text differs (${et} != '${jt}'): ${getDescription(j)}"
                 } else if (!options.nomissingeli) {
@@ -531,7 +531,7 @@ class SyncEditorLayerIndex {
             if (jt) { jt = new LinkedList(jt); Collections.sort(jt); jt = String.join(" ", jt) }
             if (!et.equals(jt)) {
                 if (!jt) {
-                    myprintln "+ SKIP - Missing JOSM projections (${et}): ${getDescription(j)}"
+                    myprintln "- Missing JOSM projections (${et}): ${getDescription(j)}"
                 } else if (et) {
                     myprintln "+ SKIP * Projections differ (${et} != '${jt}'): ${getDescription(j)}"
                 } else if (!options.nomissingeli) {
