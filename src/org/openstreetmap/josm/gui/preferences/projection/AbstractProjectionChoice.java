@@ -7,6 +7,11 @@ import org.openstreetmap.josm.data.projection.CustomProjection;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 
+/**
+ * Super class for ProjectionChoice implementations.
+ * <p>
+ * Handles common parameters <code>name</code>, <code>id</code> and <code>cacheDir</code>.
+ */
 public abstract class AbstractProjectionChoice implements ProjectionChoice {
 
     protected String name;

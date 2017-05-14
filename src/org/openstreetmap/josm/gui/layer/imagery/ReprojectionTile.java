@@ -64,7 +64,7 @@ public class ReprojectionTile extends Tile {
      * @param currentScale the current mapview scale
      * @return true if the tile should be reprojected again from the source image.
      */
-    public boolean needsUpdate(double currentScale) {
+    public synchronized boolean needsUpdate(double currentScale) {
         if (Utils.equalsEpsilon(nativeScale, currentScale))
             return false;
         return !maxZoomReached || currentScale >= nativeScale;

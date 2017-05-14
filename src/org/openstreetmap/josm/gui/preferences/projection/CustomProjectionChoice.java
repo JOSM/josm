@@ -33,6 +33,13 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * ProjectionChoice where a CRS can be defined using various parameters.
+ * <p>
+ * The configuration string mimics the syntax of the PROJ.4 project and should
+ * be mostly compatible.
+ * @see CustomProjection
+ */
 public class CustomProjectionChoice extends AbstractProjectionChoice implements SubPrefsOptions {
 
     private String pref;
