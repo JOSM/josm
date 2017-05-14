@@ -571,7 +571,6 @@ public class PlatformHookWindows implements PlatformHook {
         def.add(new FontEntry("nko_tifinagh_vai_osmanya", "Ebrima", "EBRIMA.TTF"));    // ISO 639: ber. Nko only since Win 8
         def.add(new FontEntry("khmer1", "Khmer UI", "KHMERUI.TTF"));                   // ISO 639: km
         def.add(new FontEntry("lao1", "Lao UI", "LAOUI.TTF"));                         // ISO 639: lo
-        def.add(new FontEntry("symbol", "Segoe UI Symbol", "SEGUISYM.TTF"));           // subset of Unicode-encoded symbols
         def.add(new FontEntry("tai_le", "Microsoft Tai Le", "TAILE.TTF"));             // ISO 639: khb
         def.add(new FontEntry("new_tai_lue", "Microsoft New Tai Lue", "NTHAILU.TTF")); // ISO 639: khb
 
