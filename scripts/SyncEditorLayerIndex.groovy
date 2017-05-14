@@ -534,7 +534,7 @@ class SyncEditorLayerIndex {
                     myprintln "- Missing JOSM projections (${et}): ${getDescription(j)}"
                 } else if (et) {
                     myprintln "+ SKIP * Projections differ (${et} != '${jt}'): ${getDescription(j)}"
-                } else if (!options.nomissingeli) {
+                } else if (!options.nomissingeli && !getType(e).equals("tms")) {
                     myprintln "+ Missing ELI projections ('${jt}'): ${getDescription(j)}"
                 }
             }
