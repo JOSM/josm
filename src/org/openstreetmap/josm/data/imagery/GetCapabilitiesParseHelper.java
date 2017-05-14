@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.imagery;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Locale;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -201,10 +202,12 @@ public final class GetCapabilitiesParseHelper {
      * Convert CRS identifier to plain code
      * @param crsIdentifier CRS identifier
      * @return CRS Identifier as it is used within JOSM (without prefix)
+     * @see <a href="https://portal.opengeospatial.org/files/?artifact_id=24045">
+     *     Definition identifier URNs in OGC namespace, chapter 7.2: URNs for single objects</a>
      */
     public static String crsToCode(String crsIdentifier) {
         if (crsIdentifier.startsWith("urn:ogc:def:crs:")) {
-            return crsIdentifier.replaceFirst("urn:ogc:def:crs:([^:]*):.*:(.*)$", "$1:$2");
+            return crsIdentifier.replaceFirst("urn:ogc:def:crs:([^:]*)(?::.*)?:(.*)$", "$1:$2").toUpperCase(Locale.ENGLISH);
         }
         return crsIdentifier;
     }
