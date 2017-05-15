@@ -789,8 +789,6 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
                 mapMode.exitMode();
                 mapMode.enterMode();
             }
-            // invalidate repaint cache
-            mapView.preferenceChanged(null);
         }
 
         // After all listeners notice new layer, some buttons will be disabled/enabled
