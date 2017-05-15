@@ -38,7 +38,7 @@ public class CachingProperty<T> extends AbstractProperty<T> implements ValueChan
 
     @Override
     public boolean put(T value) {
-        return toCache.put(cache);
+        return toCache.put(value);
     }
 
     @Override
