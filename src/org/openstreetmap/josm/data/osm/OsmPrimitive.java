@@ -1351,7 +1351,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      */
     public final boolean hasAreaTags() {
         return hasKey("landuse", "amenity", "building", "building:part")
-                || hasTag("area", "yes")
+                || hasTag("area", OsmUtils.TRUE_VALUE)
                 || hasTag("waterway", "riverbank")
                 || hasTagDifferent("leisure", "picnic_table", "slipway", "firepit")
                 || hasTag("natural", "water", "wood", "scrub", "wetland", "grassland", "heath", "rock", "bare_rock",
