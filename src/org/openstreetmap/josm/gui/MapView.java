@@ -35,6 +35,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
@@ -183,6 +184,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         }
     }
 
+    /**
+     * Replaced by the {@link DrawAction#VIEWPORT_FOLLOWING} property
+     * @deprecated since 12180. Can be remove soon (does any plugin even use this?)
+     */
+    @Deprecated
     public boolean viewportFollowing;
 
     /**

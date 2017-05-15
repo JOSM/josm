@@ -120,7 +120,7 @@ public class FollowLineAction extends JosmAction {
             );
             // "viewport following" mode for tracing long features
             // from aerial imagery or GPS tracks.
-            if (Main.map.mapView.viewportFollowing) {
+            if (DrawAction.VIEWPORT_FOLLOWING.get()) {
                 Main.map.mapView.smoothScrollTo(newPoint.getEastNorth());
             }
         }

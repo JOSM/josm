@@ -73,6 +73,12 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class DrawAction extends MapMode implements MapViewPaintable, SelectionChangedListener, KeyPressReleaseListener, ModifierListener {
 
+    /**
+     * If this property is set, the draw action moves the viewport when adding new points.
+     * @since 12182
+     */
+    public static final CachingProperty<Boolean> VIEWPORT_FOLLOWING = new BooleanProperty("draw.viewport.following", false).cached();
+
     private static final Color ORANGE_TRANSPARENT = new Color(Color.ORANGE.getRed(), Color.ORANGE.getGreen(), Color.ORANGE.getBlue(), 128);
 
     private static final ArrowPaintHelper START_WAY_INDICATOR = new ArrowPaintHelper(Utils.toRadians(90), 8);
@@ -613,7 +619,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         // "viewport following" mode for tracing long features
         // from aerial imagery or GPS tracks.
-        if (Main.map.mapView.viewportFollowing) {
+        if (VIEWPORT_FOLLOWING.get()) {
             Main.map.mapView.smoothScrollTo(n.getEastNorth());
         }
         computeHelperLine();

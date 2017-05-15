@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -35,7 +36,7 @@ public class ViewportFollowToggleAction extends ToggleAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         toggleSelectedState(e);
-        Main.map.mapView.viewportFollowing = isSelected();
+        DrawAction.VIEWPORT_FOLLOWING.put(isSelected());
         notifySelectedState();
     }
 
