@@ -42,7 +42,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author Imi
  */
-public class LatLon extends Coordinate {
+public class LatLon extends Coordinate implements ILatLon {
 
     private static final long serialVersionUID = 1L;
 
@@ -250,7 +250,11 @@ public class LatLon extends Coordinate {
         super(lon, lat);
     }
 
-    protected LatLon(LatLon coor) {
+    /**
+     * Creates a new LatLon object for the given coordinate
+     * @param coor The coordinates to copy from.
+     */
+    public LatLon(ILatLon coor) {
         super(coor.lon(), coor.lat());
     }
 
@@ -262,10 +266,7 @@ public class LatLon extends Coordinate {
         this(coor.getLat(), coor.getLon());
     }
 
-    /**
-     * Returns the latitude, i.e., the north-south position in degrees.
-     * @return the latitude
-     */
+    @Override
     public double lat() {
         return y;
     }
@@ -285,10 +286,7 @@ public class LatLon extends Coordinate {
         }
     }
 
-    /**
-     * Returns the longitude, i.e., the east-west position in degrees.
-     * @return the longitude
-     */
+    @Override
     public double lon() {
         return x;
     }

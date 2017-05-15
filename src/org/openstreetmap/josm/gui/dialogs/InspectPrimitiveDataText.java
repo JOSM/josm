@@ -202,10 +202,10 @@ public class InspectPrimitiveDataText {
     }
 
     void addCoordinates(Node n) {
-        if (n.getCoor() != null) {
+        if (n.isLatLonKnown()) {
             add(tr("Coordinates: "),
-                    Double.toString(n.getCoor().lat()), ", ",
-                    Double.toString(n.getCoor().lon()));
+                    Double.toString(n.lat()), ", ",
+                    Double.toString(n.lon()));
             add(tr("Coordinates (projected): "),
                     Double.toString(n.getEastNorth().east()), ", ",
                     Double.toString(n.getEastNorth().north()));

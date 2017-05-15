@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import org.junit.Test;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
@@ -22,7 +23,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 public class ShiftedProjectionTest {
     private static final class ProjectingBase implements Projecting {
         @Override
-        public EastNorth latlon2eastNorth(LatLon ll) {
+        public EastNorth latlon2eastNorth(ILatLon ll) {
             return new EastNorth(ll.lat() * 2, ll.lon() * 3);
         }
 
@@ -52,7 +53,7 @@ public class ShiftedProjectionTest {
     }
 
     /**
-     * Test {@link ShiftedProjecting#latlon2eastNorth(LatLon)}
+     * Test {@link ShiftedProjecting#latlon2eastNorth(ILatLon)}
      */
     @Test
     public void testLatlon2eastNorth() {

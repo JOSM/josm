@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.QuadTiling;
 import org.openstreetmap.josm.tools.Utils;
@@ -84,7 +85,7 @@ public class BBox {
      * @param w the way
      */
     public BBox(Way w) {
-        w.getNodes().forEach(n -> add(n.getCoor()));
+        w.getNodes().forEach(this::add);
     }
 
     /**
@@ -92,9 +93,25 @@ public class BBox {
      * @param n the node
      */
     public BBox(Node n) {
-        if (n.isLatLonKnown()) {
-            add(n.getCoor());
-        }
+        this((ILatLon) n);
+    }
+
+    /**
+     * Create BBox for a given latlon. An invalid BBox is returned if the coordinates are not known.
+     * @param ll The lat lon position
+     */
+    public BBox(ILatLon ll) {
+        add(ll);
+    }
+
+    /**
+     * Add a point to an existing BBox. Extends this bbox if necessary so that this.bounds(c) will return true
+     * if c is a valid LatLon instance.
+     * Kept for binary compatibility
+     * @param c a LatLon point
+     */
+    public final void add(LatLon c) {
+        add((ILatLon) c);
     }
 
     /**
@@ -102,10 +119,8 @@ public class BBox {
      * if c is a valid LatLon instance.
      * @param c a LatLon point
      */
-    public final void add(LatLon c) {
-        if (c != null && c.isValid()) {
-            add(c.lon(), c.lat());
-        }
+    public final void add(ILatLon c) {
+        add(c.lon(), c.lat());
     }
 
     /**

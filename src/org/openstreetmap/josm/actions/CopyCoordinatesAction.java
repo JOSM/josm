@@ -30,9 +30,9 @@ public class CopyCoordinatesAction extends JosmAction {
     public void actionPerformed(ActionEvent ae) {
         StringBuilder s = new StringBuilder();
         for (Node n : getSelectedNodes()) {
-            s.append(n.getCoor().lat());
+            s.append(n.lat());
             s.append(", ");
-            s.append(n.getCoor().lon());
+            s.append(n.lon());
             s.append('\n');
         }
         ClipboardUtils.copyString(s.toString().trim());

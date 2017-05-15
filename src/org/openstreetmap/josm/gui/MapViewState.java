@@ -19,6 +19,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.projection.Projecting;
@@ -179,12 +180,29 @@ public final class MapViewState implements Serializable {
 
     /**
      * Gets the {@link MapViewPoint} for the given {@link LatLon} coordinate.
+     * <p>
+     * This method exists to not break binary compatibility with old plugins
      * @param latlon the position
      * @return The point for that position.
      * @since 10651
      */
     public MapViewPoint getPointFor(LatLon latlon) {
-        return getPointFor(getProjection().latlon2eastNorth(latlon));
+        return getPointFor((ILatLon) latlon);
+    }
+
+    /**
+     * Gets the {@link MapViewPoint} for the given {@link LatLon} coordinate.
+     * @param latlon the position
+     * @return The point for that position.
+     * @since xxx
+     */
+    public MapViewPoint getPointFor(ILatLon latlon) {
+        try {
+            return getPointFor(Optional.ofNullable(latlon.getEastNorth(getProjection()))
+                    .orElseThrow(IllegalArgumentException::new));
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
+            throw BugReport.intercept(e).put("latlon", latlon);
+        }
     }
 
     /**
@@ -195,12 +213,7 @@ public final class MapViewState implements Serializable {
      * @since 10827
      */
     public MapViewPoint getPointFor(Node node) {
-        try {
-            return getPointFor(Optional.ofNullable(node.getEastNorth(getProjection()))
-                    .orElseThrow(IllegalArgumentException::new));
-        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
-            throw BugReport.intercept(e).put("node", node);
-        }
+        return getPointFor((ILatLon) node);
     }
 
     /**
@@ -248,9 +261,19 @@ public final class MapViewState implements Serializable {
     /**
      * Gets the current projection used for the MapView.
      * @return The projection.
+     * @see #getProjecting()
      */
     public Projection getProjection() {
         return projecting.getBaseProjection();
+    }
+
+    /**
+     * Gets the current projecting instance that is used to convert between east/north and lat/lon space.
+     * @return The projection.
+     * @since xxx
+     */
+    public Projecting getProjecting() {
+        return projecting;
     }
 
     /**

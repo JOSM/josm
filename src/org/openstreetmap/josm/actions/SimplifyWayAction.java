@@ -244,9 +244,8 @@ public class SimplifyWayAction extends JosmAction {
         for (int i = from + 1; i < to; i++) {
             Node n = wnew.get(i);
             double xte = Math.abs(Ellipsoid.WGS84.a
-                    * xtd(fromN.getCoor().lat() * Math.PI / 180, fromN.getCoor().lon() * Math.PI / 180, toN.getCoor().lat() * Math.PI
-                            / 180, toN.getCoor().lon() * Math.PI / 180, n.getCoor().lat() * Math.PI / 180, n.getCoor().lon() * Math.PI
-                            / 180));
+                    * xtd(fromN.lat() * Math.PI / 180, fromN.lon() * Math.PI / 180, toN.lat() * Math.PI / 180,
+                            toN.lon() * Math.PI / 180,     n.lat() * Math.PI / 180,   n.lon() * Math.PI / 180));
             if (xte > xtemax) {
                 xtemax = xte;
                 imax = i;

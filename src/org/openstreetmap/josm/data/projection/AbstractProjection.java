@@ -9,6 +9,7 @@ import java.util.function.DoubleUnaryOperator;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.Datum;
 import org.openstreetmap.josm.data.projection.proj.Proj;
@@ -113,20 +114,22 @@ public abstract class AbstractProjection implements Projection {
     }
 
     @Override
-    public EastNorth latlon2eastNorth(LatLon ll) {
-        ll = datum.fromWGS84(ll);
+    public EastNorth latlon2eastNorth(ILatLon toConvert) {
+        // TODO: Use ILatLon in datum, so we don't need to wrap it here.
+        LatLon ll = datum.fromWGS84(new LatLon(toConvert));
         double[] en = proj.project(Utils.toRadians(ll.lat()), Utils.toRadians(LatLon.normalizeLon(ll.lon() - lon0 - pm)));
         return new EastNorth((ellps.a * k0 * en[0] + x0) / toMeter, (ellps.a * k0 * en[1] + y0) / toMeter);
     }
 
     @Override
     public LatLon eastNorth2latlon(EastNorth en) {
+        // We know it is a latlon. Nice would be to change this method return type to ILatLon
         return eastNorth2latlon(en, LatLon::normalizeLon);
     }
 
     @Override
     public LatLon eastNorth2latlonClamped(EastNorth en) {
-        LatLon ll = eastNorth2latlon(en, lon -> Utils.clamp(lon, -180, 180));
+        ILatLon ll = eastNorth2latlon(en, lon -> Utils.clamp(lon, -180, 180));
         Bounds bounds = getWorldBoundsLatLon();
         return new LatLon(Utils.clamp(ll.lat(), bounds.getMinLat(), bounds.getMaxLat()),
                 Utils.clamp(ll.lon(), bounds.getMinLon(), bounds.getMaxLon()));

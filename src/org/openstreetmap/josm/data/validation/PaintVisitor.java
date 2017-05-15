@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.data.validation;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +17,8 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.draw.MapViewPath;
+import org.openstreetmap.josm.gui.draw.SymbolShape;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -26,7 +28,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
     /** The graphics */
-    private final Graphics g;
+    private final Graphics2D g;
     /** The MapView */
     private final MapView mv;
 
@@ -43,7 +45,7 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
      * @param g The graphics
      * @param mv The Mapview
      */
-    public PaintVisitor(Graphics g, MapView mv) {
+    public PaintVisitor(Graphics2D g, MapView mv) {
         this.g = g;
         this.mv = mv;
     }
@@ -120,14 +122,14 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
         PaintedPoint pp = new PaintedPoint(n.getCoor(), color);
 
         if (!paintedPoints.contains(pp)) {
-            Point p = mv.getPoint(n);
+            MapViewPath circle = new MapViewPath(mv.getState()).shapeAround(n, SymbolShape.CIRCLE, 10);
 
             if (selected) {
                 g.setColor(getHighlightColor(color));
-                g.fillOval(p.x - 5, p.y - 5, 10, 10);
+                g.fill(circle);
             }
             g.setColor(color);
-            g.drawOval(p.x - 5, p.y - 5, 10, 10);
+            g.draw(circle);
             paintedPoints.add(pp);
         }
     }

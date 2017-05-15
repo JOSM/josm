@@ -40,7 +40,18 @@ public class NodeData extends PrimitiveData implements INode {
         setCoor(data.getCoor());
     }
 
-    private boolean isLatLonKnown() {
+    @Override
+    public double lat() {
+        return lat;
+    }
+
+    @Override
+    public double lon() {
+        return lon;
+    }
+
+    @Override
+    public boolean isLatLonKnown() {
         return !Double.isNaN(lat) && !Double.isNaN(lon);
     }
 
