@@ -147,10 +147,10 @@ public class OsmDataLayerTest {
     @Test
     public void testGetToolTipText() {
         DataSet ds = new DataSet();
-        assertEquals("0 nodes, 0 ways, 0 relations", new OsmDataLayer(ds, "", null).getToolTipText());
+        assertEquals("<html>0 nodes<br>0 ways<br>0 relations</html>", new OsmDataLayer(ds, "", null).getToolTipText());
         fillDataSet(ds);
-        assertEquals("1 node, 1 way, 1 relation", new OsmDataLayer(ds, "", null).getToolTipText());
-        assertEquals("<html>1 node, 1 way, 1 relation<br>data.osm</html>", new OsmDataLayer(ds, "", new File("data.osm")).getToolTipText());
+        assertEquals("<html>1 node<br>1 way<br>1 relation</html>", new OsmDataLayer(ds, "", null).getToolTipText());
+        assertEquals("<html>1 node<br>1 way<br>1 relation<br>data.osm</html>", new OsmDataLayer(ds, "", new File("data.osm")).getToolTipText());
     }
 
     /**
