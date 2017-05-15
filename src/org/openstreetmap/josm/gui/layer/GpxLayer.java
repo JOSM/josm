@@ -49,12 +49,17 @@ import org.openstreetmap.josm.io.GpxImporter;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
+/**
+ * A layer that displays data from a Gpx file / the OSM gpx downloads.
+ */
 public class GpxLayer extends Layer {
 
     /** GPX data */
     public GpxData data;
     private final boolean isLocalFile;
-    // used by ChooseTrackVisibilityAction to determine which tracks to show/hide
+    /**
+     * used by {@link ChooseTrackVisibilityAction} to determine which tracks to show/hide
+     */
     public boolean[] trackVisibility = new boolean[0];
 
     private final List<GpxTrack> lastTracks = new ArrayList<>(); // List of tracks at last paint
@@ -263,6 +268,12 @@ public class GpxLayer extends Layer {
             return true;
     }
 
+    /**
+     * Shows/hides all tracks of a given date range by setting them to visible/invisible.
+     * @param fromDate The min date
+     * @param toDate The max date
+     * @param showWithoutDate Include tracks that don't have any date set..
+     */
     public void filterTracksByDate(Date fromDate, Date toDate, boolean showWithoutDate) {
         int i = 0;
         long from = fromDate.getTime();
