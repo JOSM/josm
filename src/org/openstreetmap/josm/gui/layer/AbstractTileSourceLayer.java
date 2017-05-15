@@ -1669,11 +1669,6 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     public void visitBoundingBox(BoundingXYVisitor v) {
     }
 
-    @Override
-    public boolean isChanged() {
-        return false; // we use #invalidate()
-    }
-
     /**
      * Task responsible for precaching imagery along the gpx track
      *

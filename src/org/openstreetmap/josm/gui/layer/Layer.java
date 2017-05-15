@@ -506,11 +506,10 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
      * @return True if layer was changed since last paint
      * @deprecated This is not supported by multiple map views.
      * Fire an {@link #invalidate()} to trigger a repaint.
-     * Let this method return false if you only use invalidation events.
      */
     @Deprecated
     public boolean isChanged() {
-        return true;
+        return false;
     }
 
     /**
