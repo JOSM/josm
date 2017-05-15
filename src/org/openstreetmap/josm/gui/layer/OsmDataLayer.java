@@ -107,7 +107,6 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
-import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -480,19 +479,29 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
     }
 
     @Override public String getToolTipText() {
-        int nodes = new SubclassFilteredCollection<>(data.getNodes(), p -> !p.isDeleted()).size();
-        int ways = new SubclassFilteredCollection<>(data.getWays(), p -> !p.isDeleted()).size();
-        int rels = new SubclassFilteredCollection<>(data.getRelations(), p -> !p.isDeleted()).size();
+        DataCountVisitor counter = new DataCountVisitor();
+        for (final OsmPrimitive osm : data.allPrimitives()) {
+            osm.accept(counter);
+        }
+        int nodes = counter.nodes - counter.deletedNodes;
+        int ways = counter.ways - counter.deletedWays;
+        int rels = counter.relations - counter.deletedRelations;
 
-        String tool = trn("{0} node", "{0} nodes", nodes, nodes)+", ";
-        tool += trn("{0} way", "{0} ways", ways, ways)+", ";
-        tool += trn("{0} relation", "{0} relations", rels, rels);
+        StringBuilder tooltip = new StringBuilder();
+        tooltip.append("<html>");
+        tooltip.append(trn("{0} node", "{0} nodes", nodes, nodes));
+        tooltip.append("<br>");
+        tooltip.append(trn("{0} way", "{0} ways", ways, ways));
+        tooltip.append("<br>");
+        tooltip.append(trn("{0} relation", "{0} relations", rels, rels));
 
         File f = getAssociatedFile();
         if (f != null) {
-            tool = "<html>"+tool+"<br>"+f.getPath()+"</html>";
+            tooltip.append("<br>");
+            tooltip.append(f.getPath());
         }
-        return tool;
+        tooltip.append("</html>");
+        return tooltip.toString();
     }
 
     @Override public void mergeFrom(final Layer from) {
