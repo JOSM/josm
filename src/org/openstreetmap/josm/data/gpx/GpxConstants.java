@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Bounds;
 
 /**
  * Constants for GPX handling.
@@ -27,21 +28,80 @@ public interface GpxConstants {
     /** Source of data. Included to give user some idea of reliability and accuracy of data. */
     String GPX_SRC = "src";
 
+    /**
+     * Prefix used for all meta values.
+     */
     String META_PREFIX = "meta.";
+    /**
+     * A constant for the metadata hash map: the author name of the file
+     * @see GpxData#get(String)
+     */
     String META_AUTHOR_NAME = META_PREFIX + "author.name";
+    /**
+     * A constant for the metadata hash map: the author email of the file
+     * @see GpxData#get(String)
+     */
     String META_AUTHOR_EMAIL = META_PREFIX + "author.email";
+    /**
+     * A constant for the metadata hash map: a link to a page about the author
+     * @see GpxData#get(String)
+     */
     String META_AUTHOR_LINK = META_PREFIX + "author.link";
+    /**
+     * A constant for the metadata hash map: the author field for the copyright information in the gpx file
+     * @see GpxData#get(String)
+     */
     String META_COPYRIGHT_AUTHOR = META_PREFIX + "copyright.author";
+    /**
+     * A constant for the metadata hash map: the license of the file
+     * @see GpxData#get(String)
+     */
     String META_COPYRIGHT_LICENSE = META_PREFIX + "copyright.license";
+    /**
+     * A constant for the metadata hash map: the year of the license for the file
+     * @see GpxData#get(String)
+     */
     String META_COPYRIGHT_YEAR = META_PREFIX + "copyright.year";
+    /**
+     * A constant for the metadata hash map: a description of the file
+     * @see GpxData#get(String)
+     */
     String META_DESC = META_PREFIX + "desc";
+    /**
+     * A constant for the metadata hash map: the keywords of the file
+     * @see GpxData#get(String)
+     */
     String META_KEYWORDS = META_PREFIX + "keywords";
+    /**
+     * A constant for the metadata hash map: the links. They are stored as list of {@link GpxLink} objects
+     * @see GpxData#get(String)
+     */
     String META_LINKS = META_PREFIX + "links";
+    /**
+     * A constant for the metadata hash map: the name of the file (stored in the file, not the one on the disk)
+     * @see GpxData#get(String)
+     */
     String META_NAME = META_PREFIX + "name";
+    /**
+     * A constant for the metadata hash map: the time as string
+     * @see GpxData#get(String)
+     */
     String META_TIME = META_PREFIX + "time";
+    /**
+     * A constant for the metadata hash map: the bounding box. This is a {@link Bounds} object
+     * @see GpxData#getMetaBounds()
+     */
     String META_BOUNDS = META_PREFIX + "bounds";
+    /**
+     * A constant for the metadata hash map: the extension data. This is a {@link Extensions} object
+     * @see GpxData#addExtension(String, String)
+     * @see GpxData#get(String)
+     */
     String META_EXTENSIONS = META_PREFIX + "extensions";
 
+    /**
+     * A namespace for josm GPX extensions
+     */
     String JOSM_EXTENSIONS_NAMESPACE_URI = Main.getXMLBase() + "/gpx-extensions-1.0";
 
     /** Elevation (in meters) of the point. */

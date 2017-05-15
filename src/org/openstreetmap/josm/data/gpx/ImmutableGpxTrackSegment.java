@@ -8,6 +8,9 @@ import java.util.List;
 
 import org.openstreetmap.josm.data.Bounds;
 
+/**
+ * A gpx track segment consisting of multiple waypoints, that cannot be changed.
+ */
 public class ImmutableGpxTrackSegment implements GpxTrackSegment {
 
     private final List<WayPoint> wayPoints;
@@ -58,7 +61,7 @@ public class ImmutableGpxTrackSegment implements GpxTrackSegment {
 
     @Override
     public Collection<WayPoint> getWayPoints() {
-        return wayPoints;
+        return Collections.unmodifiableList(wayPoints);
     }
 
     @Override

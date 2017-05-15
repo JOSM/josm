@@ -27,8 +27,18 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      * The seconds (not milliseconds!) since 1970-01-01 00:00 UTC
      */
     public double time;
+    /**
+     * The color to draw the segment before this point in
+     * @see #drawLine
+     */
     public Color customColoring;
+    /**
+     * <code>true</code> indicates that the line before this point should be drawn
+     */
     public boolean drawLine;
+    /**
+     * The direction of the line before this point. Used as cache to speed up drawing. Should not be relied on.
+     */
     public int dir;
 
     /**

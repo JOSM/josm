@@ -33,14 +33,31 @@ import org.openstreetmap.josm.tools.ListenerList;
  */
 public class GpxData extends WithAttributes implements Data {
 
+    /**
+     * The disk file this layer is stored in, if it is a local layer. May be <code>null</code>.
+     */
     public File storageFile;
+    /**
+     * A boolean flag indicating if the data was read from the OSM server.
+     */
     public boolean fromServer;
 
-    /** Creator (usually software) */
+    /**
+     * Creator metadata for this file (usually software)
+     */
     public String creator;
 
+    /**
+     * A list of tracks this file consists of
+     */
     private final ArrayList<GpxTrack> privateTracks = new ArrayList<>();
+    /**
+     * GXP routes in this file
+     */
     private final ArrayList<GpxRoute> privateRoutes = new ArrayList<>();
+    /**
+     * Addidionaly waypoints for this file.
+     */
     private final ArrayList<WayPoint> privateWaypoints = new ArrayList<>();
     private final GpxTrackChangeListener proxy = e -> fireInvalidate();
 
