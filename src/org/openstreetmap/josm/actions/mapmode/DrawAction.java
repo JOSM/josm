@@ -1151,7 +1151,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 // don't draw line if we don't know where from or where to
                 || currentMouseEastNorth == null || getCurrentBaseNode() == null
                 // don't draw line if mouse is outside window
-                || !Main.map.mapView.getBounds().contains(mousePos))
+                || !Main.map.mapView.getState().getForView(mousePos.getX(), mousePos.getY()).isInView())
             return;
 
         Graphics2D g2 = g;
