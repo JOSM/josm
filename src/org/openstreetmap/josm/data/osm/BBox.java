@@ -117,10 +117,13 @@ public class BBox {
     /**
      * Add a point to an existing BBox. Extends this bbox if necessary so that this.bounds(c) will return true
      * if c is a valid LatLon instance.
-     * @param c a LatLon point
+     * If it is invalid or <code>null</code>, this call is ignored.
+     * @param c a LatLon point.
      */
     public final void add(ILatLon c) {
-        add(c.lon(), c.lat());
+        if (c != null) {
+            add(c.lon(), c.lat());
+        }
     }
 
     /**
