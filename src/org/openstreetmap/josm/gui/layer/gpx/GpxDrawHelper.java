@@ -193,9 +193,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     public void systemOfMeasurementChanged(String oldSoM, String newSoM) {
         SystemOfMeasurement som = SystemOfMeasurement.getSystemOfMeasurement();
         velocityScale.addTitle(tr("Velocity, {0}", som.speedName));
-        if (oldSoM != null && newSoM != null && Main.isDisplayingMapView()) {
-            Main.map.mapView.repaint();
-        }
+        layer.invalidate();
     }
 
     /**
