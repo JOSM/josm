@@ -1240,12 +1240,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 /* draw arrow */
                 if (drawArrowHelper != null) {
                     boolean drawArrow;
-                    if (showHeadArrowOnly) {
-                        // always draw last arrow - no matter how short the segment is
-                        drawArrow = !it.hasNext();
-                    } else {
+                    // always draw last arrow - no matter how short the segment is
+                    drawArrow = !it.hasNext();
+                    if (!showHeadArrowOnly) {
                         // draw arrows in between only if there is enough space
-                        drawArrow = p1.distanceToInView(p2) > drawArrowHelper.getOnLineLength() * 1.3;
+                        drawArrow = drawArrow || p1.distanceToInView(p2) > drawArrowHelper.getOnLineLength() * 1.3;
                     }
                     if (drawArrow) {
                         drawArrowHelper.paintArrowAt(orientationArrows, p2, p1);
