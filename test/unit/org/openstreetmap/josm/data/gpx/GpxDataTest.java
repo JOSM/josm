@@ -324,7 +324,9 @@ public class GpxDataTest {
                 .collect(Collectors.toList());
         data.addTrack(new ImmutableGpxTrack(Arrays.asList(points), Collections.emptyMap()));
 
-        assertEquals(points.get(1), data.nearestPointOnTrack(new EastNorth(10, 0), 10));
+        WayPoint closeToMiddle = data.nearestPointOnTrack(new EastNorth(10, 0), 10);
+        assertEquals(points.get(1).lat(), closeToMiddle.lat(), 1e-4);
+        assertEquals(points.get(1).lon(), closeToMiddle.lon(), 1e-4);
 
         WayPoint close = data.nearestPointOnTrack(new EastNorth(5, 5), 10);
         assertEquals(10, close.getEastNorth().east(), .01);

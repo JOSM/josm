@@ -70,7 +70,7 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
             for (GpxTrack trk : data.tracks) {
                 for (GpxTrackSegment segment : trk.getSegments()) {
                     for (WayPoint p : segment.getWayPoints()) {
-                        latsum += p.getCoor().lat();
+                        latsum += p.lat();
                         latcnt++;
                     }
                 }

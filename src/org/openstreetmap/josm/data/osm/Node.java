@@ -106,7 +106,7 @@ public final class Node extends OsmPrimitive implements INode {
         if (Double.isNaN(east) || Double.isNaN(north) || !Objects.equals(projection.getCacheKey(), eastNorthCacheKey)) {
             // projected coordinates haven't been calculated yet,
             // so fill the cache of the projected node coordinates
-            EastNorth en = Projections.project(new LatLon(lat, lon));
+            EastNorth en = projection.latlon2eastNorth(this);
             this.east = en.east();
             this.north = en.north();
             this.eastNorthCacheKey = projection.getCacheKey();

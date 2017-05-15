@@ -477,12 +477,11 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                         oldWp = null;
                     }
                     for (WayPoint trkPnt : segment) {
-                        LatLon c = trkPnt.getCoor();
-                        if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
+                        if (!trkPnt.isLatLonKnown()) {
                             continue;
                         }
                         if (oldWp != null && trkPnt.time > oldWp.time) {
-                            double vel = c.greatCircleDistance(oldWp.getCoor())
+                            double vel = trkPnt.getCoor().greatCircleDistance(oldWp.getCoor())
                                     / (trkPnt.time - oldWp.time);
                             velocities.add(vel);
                         }
@@ -623,8 +622,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         if (lines) {
             Point old = null;
             for (WayPoint trkPnt : visibleSegments) {
-                LatLon c = trkPnt.getCoor();
-                if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
+                if (!trkPnt.isLatLonKnown()) {
                     continue;
                 }
                 Point screen = mv.getPoint(trkPnt.getEastNorth());
@@ -652,8 +650,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
             Point old = null;
             Point oldA = null; // last arrow painted
             for (WayPoint trkPnt : visibleSegments) {
-                LatLon c = trkPnt.getCoor();
-                if (Double.isNaN(c.lat()) || Double.isNaN(c.lon())) {
+                if (!trkPnt.isLatLonKnown()) {
                     continue;
                 }
                 if (trkPnt.drawLine) {

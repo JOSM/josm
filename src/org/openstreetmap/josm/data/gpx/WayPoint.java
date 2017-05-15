@@ -5,17 +5,23 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.data.projection.Projecting;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
-public class WayPoint extends WithAttributes implements Comparable<WayPoint>, TemplateEngineDataProvider {
+/**
+ * A point in the GPX data
+ * @since 12167 implements ILatLon
+ */
+public class WayPoint extends WithAttributes implements Comparable<WayPoint>, TemplateEngineDataProvider, ILatLon {
 
     /**
      * The seconds (not milliseconds!) since 1970-01-01 00:00 UTC
@@ -35,6 +41,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
         lon = p.lon;
         east = p.east;
         north = p.north;
+        eastNorthCacheKey = p.eastNorthCacheKey;
         time = p.time;
         customColoring = p.customColoring;
         drawLine = p.drawLine;
@@ -62,6 +69,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      */
     private double east = Double.NaN;
     private double north = Double.NaN;
+    private Object eastNorthCacheKey = null;
 
     /**
      * Invalidate the internal cache of east/north coordinates.
@@ -79,25 +87,26 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
         return new LatLon(lat, lon);
     }
 
-    /**
-     * <p>Replies the projected east/north coordinates.</p>
-     *
-     * <p>Uses the {@link Main#getProjection() global projection} to project the lan/lon-coordinates.
-     * Internally caches the projected coordinates.</p>
-     *
-     * <p><strong>Caveat:</strong> doesn't listen to projection changes. Clients must
-     * {@link #invalidateEastNorthCache() invalidate the internal cache}.</p>
-     *
-     * @return the east north coordinates or {@code null}
-     * @see #invalidateEastNorthCache()
-     */
-    public final EastNorth getEastNorth() {
-        if (Double.isNaN(east) || Double.isNaN(north)) {
+    @Override
+    public double lon() {
+        return lat;
+    }
+
+    @Override
+    public double lat() {
+        return lon;
+    }
+
+    @Override
+    public final EastNorth getEastNorth(Projecting projecting) {
+        Object newCacheKey = projecting.getCacheKey();
+        if (Double.isNaN(east) || Double.isNaN(north) || !Objects.equals(newCacheKey, this.eastNorthCacheKey)) {
             // projected coordinates haven't been calculated yet,
             // so fill the cache of the projected waypoint coordinates
-            EastNorth en = Projections.project(new LatLon(lat, lon));
+            EastNorth en = projecting.latlon2eastNorth(this);
             this.east = en.east();
             this.north = en.north();
+            this.eastNorthCacheKey = newCacheKey;
         }
         return new EastNorth(east, north);
     }
