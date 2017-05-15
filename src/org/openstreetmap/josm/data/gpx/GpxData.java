@@ -39,9 +39,9 @@ public class GpxData extends WithAttributes implements Data {
     /** Creator (usually software) */
     public String creator;
 
-    private ArrayList<GpxTrack> privateTracks = new ArrayList<>();
-    private ArrayList<GpxRoute> privateRoutes = new ArrayList<>();
-    private ArrayList<WayPoint> privateWaypoints = new ArrayList<>();
+    private final ArrayList<GpxTrack> privateTracks = new ArrayList<>();
+    private final ArrayList<GpxRoute> privateRoutes = new ArrayList<>();
+    private final ArrayList<WayPoint> privateWaypoints = new ArrayList<>();
     private final GpxTrackChangeListener proxy = e -> fireInvalidate();
 
     /**
@@ -579,10 +579,10 @@ public class GpxData extends WithAttributes implements Data {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((dataSources == null) ? 0 : dataSources.hashCode());
-        result = prime * result + ((routes == null) ? 0 : routes.hashCode());
-        result = prime * result + ((tracks == null) ? 0 : tracks.hashCode());
-        result = prime * result + ((waypoints == null) ? 0 : waypoints.hashCode());
+        result = prime * result + dataSources.hashCode();
+        result = prime * result + privateRoutes.hashCode();
+        result = prime * result + privateTracks.hashCode();
+        result = prime * result + privateWaypoints.hashCode();
         return result;
     }
 
@@ -600,20 +600,20 @@ public class GpxData extends WithAttributes implements Data {
                 return false;
         } else if (!dataSources.equals(other.dataSources))
             return false;
-        if (routes == null) {
-            if (other.routes != null)
+        if (privateRoutes == null) {
+            if (other.privateRoutes != null)
                 return false;
-        } else if (!routes.equals(other.routes))
+        } else if (!privateRoutes.equals(other.privateRoutes))
             return false;
-        if (tracks == null) {
-            if (other.tracks != null)
+        if (privateTracks == null) {
+            if (other.privateTracks != null)
                 return false;
-        } else if (!tracks.equals(other.tracks))
+        } else if (!privateTracks.equals(other.privateTracks))
             return false;
-        if (waypoints == null) {
-            if (other.waypoints != null)
+        if (privateWaypoints == null) {
+            if (other.privateWaypoints != null)
                 return false;
-        } else if (!waypoints.equals(other.waypoints))
+        } else if (!privateWaypoints.equals(other.privateWaypoints))
             return false;
         return true;
     }
