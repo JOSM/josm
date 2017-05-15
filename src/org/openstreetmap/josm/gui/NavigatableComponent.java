@@ -36,8 +36,8 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.ViewportData;
-import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -509,20 +509,23 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * Return the point on the screen where this Coordinate would be.
+     *
+     * Alternative: {@link #getState()}, then {@link MapViewState#getPointFor(ILatLon)}
      * @param latlon The point, where this geopoint would be drawn.
      * @return The point on screen where "point" would be drawn, relative to the own top/left.
      */
     public Point2D getPoint2D(LatLon latlon) {
-        if (latlon == null)
+        if (latlon == null) {
             return new Point();
-        else if (latlon instanceof CachedLatLon)
-            return getPoint2D(((CachedLatLon) latlon).getEastNorth());
-        else
-            return getPoint2D(getProjection().latlon2eastNorth(latlon));
+        } else {
+            return getPoint2D(latlon.getEastNorth());
+        }
     }
 
     /**
      * Return the point on the screen where this Node would be.
+     *
+     * Alternative: {@link #getState()}, then {@link MapViewState#getPointFor(ILatLon)}
      * @param n The node, where this geopoint would be drawn.
      * @return The point on screen where "node" would be drawn, relative to the own top/left.
      */

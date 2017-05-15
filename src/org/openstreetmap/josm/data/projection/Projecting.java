@@ -24,6 +24,7 @@ public interface Projecting {
      *
      * @param ll the geographical point to convert (in WGS84 lat/lon)
      * @return the corresponding east/north coordinates
+     * @see ILatLon#getEastNorth(Projecting)
      */
     default EastNorth latlon2eastNorth(LatLon ll) {
         return latlon2eastNorth((ILatLon) ll);
@@ -35,6 +36,7 @@ public interface Projecting {
      * @param ll the geographical point to convert (in WGS84 lat/lon)
      * @return the corresponding east/north coordinates
      * @since 12161
+     * @see ILatLon#getEastNorth(Projecting)
      */
     EastNorth latlon2eastNorth(ILatLon ll);
 

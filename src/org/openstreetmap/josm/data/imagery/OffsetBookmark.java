@@ -117,11 +117,11 @@ public class OffsetBookmark {
         }
         LatLon center = getCenter();
         Projection offsetProj = Projections.getProjectionByCode(projection_code);
-        EastNorth centerEN = offsetProj.latlon2eastNorth(center);
+        EastNorth centerEN = center.getEastNorth(offsetProj);
         EastNorth shiftedEN = centerEN.add(getDisplacement());
         LatLon shifted = offsetProj.eastNorth2latlon(shiftedEN);
-        EastNorth centerEN2 = proj.latlon2eastNorth(center);
-        EastNorth shiftedEN2 = proj.latlon2eastNorth(shifted);
+        EastNorth centerEN2 = center.getEastNorth(proj);
+        EastNorth shiftedEN2 = shifted.getEastNorth(proj);
         return shiftedEN2.subtract(centerEN2);
     }
 
