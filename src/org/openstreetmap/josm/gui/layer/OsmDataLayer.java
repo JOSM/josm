@@ -50,7 +50,6 @@ import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.ProjectionBounds;
-import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -61,6 +60,7 @@ import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSet.UploadPolicy;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
@@ -117,7 +117,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * @author imi
  * @since 17
  */
-public class OsmDataLayer extends AbstractModifiableLayer implements Listener, SelectionChangedListener, HighlightUpdateListener {
+public class OsmDataLayer extends AbstractModifiableLayer implements Listener, DataSelectionListener, HighlightUpdateListener {
     private static final int HATCHED_SIZE = 15;
     /** Property used to know if this layer has to be saved on disk */
     public static final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
@@ -405,7 +405,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         data.addDataSetListener(new DataSetListenerAdapter(this));
         data.addDataSetListener(MultipolygonCache.getInstance());
         data.addHighlightUpdateListener(this);
-        DataSet.addSelectionListener(this);
+        data.addSelectionListener(this);
         if (name != null && name.startsWith(createLayerName("")) && Character.isDigit(
                 (name.substring(createLayerName("").length()) + "XX" /*avoid StringIndexOutOfBoundsException*/).charAt(1))) {
             while (AlphanumComparator.getInstance().compare(createLayerName(dataLayerCounter), name) < 0) {
@@ -985,7 +985,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     @Override
     public synchronized void destroy() {
         super.destroy();
-        DataSet.removeSelectionListener(this);
+        data.removeSelectionListener(this);
         data.removeHighlightUpdateListener(this);
     }
 
@@ -997,7 +997,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     }
 
     @Override
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+    public void selectionChanged(SelectionChangeEvent event) {
         invalidate();
     }
 
