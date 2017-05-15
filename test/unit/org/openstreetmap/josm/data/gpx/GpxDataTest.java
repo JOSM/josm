@@ -325,10 +325,13 @@ public class GpxDataTest {
         data.addTrack(new ImmutableGpxTrack(Arrays.asList(points), Collections.emptyMap()));
 
         WayPoint closeToMiddle = data.nearestPointOnTrack(new EastNorth(10, 0), 10);
-        assertEquals(points.get(1).lat(), closeToMiddle.lat(), 1e-4);
-        assertEquals(points.get(1).lon(), closeToMiddle.lon(), 1e-4);
+        assertEquals(points.get(1), closeToMiddle);
 
         WayPoint close = data.nearestPointOnTrack(new EastNorth(5, 5), 10);
+        assertEquals(10, close.getEastNorth().east(), .01);
+        assertEquals(5, close.getEastNorth().north(), .01);
+
+        close = data.nearestPointOnTrack(new EastNorth(15, 5), 10);
         assertEquals(10, close.getEastNorth().east(), .01);
         assertEquals(5, close.getEastNorth().north(), .01);
 

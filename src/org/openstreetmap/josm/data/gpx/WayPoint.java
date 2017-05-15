@@ -89,12 +89,12 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
 
     @Override
     public double lon() {
-        return lat;
+        return lon;
     }
 
     @Override
     public double lat() {
-        return lon;
+        return lat;
     }
 
     @Override
