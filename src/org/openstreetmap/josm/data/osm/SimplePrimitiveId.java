@@ -9,6 +9,9 @@ import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * A primitive id and a primitive type
+ */
 public class SimplePrimitiveId implements PrimitiveId, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -16,10 +19,21 @@ public class SimplePrimitiveId implements PrimitiveId, Serializable {
     private final long id;
     private final OsmPrimitiveType type;
 
+    /**
+     * A pattern that is used to parse a textual primitive id
+     */
     public static final Pattern ID_PATTERN = Pattern.compile("(n|node|w|way|r|rel|relation)[ /]?(\\d+)");
 
+    /**
+     * A pattern that is used to parse an id range
+     */
     public static final Pattern MULTIPLE_IDS_PATTERN = Pattern.compile(ID_PATTERN.pattern() + "(-(\\d+))?");
 
+    /**
+     * Create a new primtive id
+     * @param id The id
+     * @param type The type of the primitive
+     */
     public SimplePrimitiveId(long id, OsmPrimitiveType type) {
         this.id = id;
         this.type = type;

@@ -6,6 +6,9 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+/**
+ * This is an extension of {@link RelationMember} that stores the parent relation and the index in it in addition to the role/child.
+ */
 public class RelationToChildReference {
 
     /**
@@ -47,6 +50,13 @@ public class RelationToChildReference {
     private final String role;
     private final OsmPrimitive child;
 
+    /**
+     * Create a new {@link RelationToChildReference}
+     * @param parent The parent relation
+     * @param position The position of the child in the parent
+     * @param role The role of the child
+     * @param child The actual child (member of parent)
+     */
     public RelationToChildReference(Relation parent, int position, String role, OsmPrimitive child) {
         this.parent = parent;
         this.position = position;
@@ -54,25 +64,44 @@ public class RelationToChildReference {
         this.child = child;
     }
 
+    /**
+     * Create a new {@link RelationToChildReference}
+     * @param parent The parent relation
+     * @param position The position of the child in the parent
+     * @param member The role and relation for the child
+     */
     public RelationToChildReference(Relation parent, int position, RelationMember member) {
-        this.parent = parent;
-        this.position = position;
-        this.role = member.getRole();
-        this.child = member.getMember();
+        this(parent, position, member.getRole(), member.getMember());
     }
 
+    /**
+     * Get the parent relation
+     * @return The parent
+     */
     public Relation getParent() {
         return parent;
     }
 
+    /**
+     * Get the position of the child in the parent
+     * @return The position of the child
+     */
     public int getPosition() {
         return position;
     }
 
+    /**
+     * Get the role of the child
+     * @return The role
+     */
     public String getRole() {
         return role;
     }
 
+    /**
+     * Get the actual child
+     * @return The child
+     */
     public OsmPrimitive getChild() {
         return child;
     }

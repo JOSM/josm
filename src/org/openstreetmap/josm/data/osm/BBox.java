@@ -298,6 +298,10 @@ public class BBox {
         return idx1;
     }
 
+    /**
+     * Converts the bounds to a rectangle
+     * @return The rectangle in east/north space.
+     */
     public Rectangle2D toRectangle() {
         return new Rectangle2D.Double(xmin, ymin, xmax - xmin, ymax - ymin);
     }
@@ -338,6 +342,11 @@ public class BBox {
         return "[ x: " + xmin + " -> " + xmax + ", y: " + ymin + " -> " + ymax + " ]";
     }
 
+    /**
+     * Creates a CSV string for this bbox
+     * @param separator The separator to use
+     * @return A string
+     */
     public String toStringCSV(String separator) {
         return Utils.join(separator, Arrays.asList(
                 LatLon.cDdFormatter.format(xmin),

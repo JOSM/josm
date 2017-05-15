@@ -1013,6 +1013,10 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         return result;
     }
 
+    /**
+     * Gets a list of all primitives in the current dataset that reference this primitive.
+     * @return The referrers
+     */
     public final List<OsmPrimitive> getReferrers() {
         return getReferrers(false);
     }

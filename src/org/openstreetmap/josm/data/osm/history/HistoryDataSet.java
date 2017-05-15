@@ -196,6 +196,10 @@ public class HistoryDataSet implements LayerChangeListener {
         fireHistoryUpdated(null);
     }
 
+    /**
+     * Gets a unsorted set of all changeset ids that were used by the primitives in this data set
+     * @return The ids
+     */
     public Collection<Long> getChangesetIds() {
         final Set<Long> ids = new HashSet<>();
         for (Collection<HistoryOsmPrimitive> i : data.values()) {

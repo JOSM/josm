@@ -306,6 +306,10 @@ public abstract class AbstractPrimitive implements IPrimitive {
         return new SimplePrimitiveId(getUniqueId(), getType());
     }
 
+    /**
+     * Gets the type this primitive is displayed at
+     * @return A {@link OsmPrimitiveType}
+     */
     public OsmPrimitiveType getDisplayType() {
         return getType();
     }
@@ -668,6 +672,11 @@ public abstract class AbstractPrimitive implements IPrimitive {
         return OsmUtils.isFalse(get(key));
     }
 
+    /**
+     * Gets a key ignoring the case of the key
+     * @param key The key to get
+     * @return The value for a key that matches the given key ignoring case.
+     */
     public final String getIgnoreCase(String key) {
         String[] keys = this.keys;
         if (key == null)
@@ -680,6 +689,10 @@ public abstract class AbstractPrimitive implements IPrimitive {
         return null;
     }
 
+    /**
+     * Gets the number of keys
+     * @return The number of keys set for this primitive.
+     */
     public final int getNumKeys() {
         String[] keys = this.keys;
         return keys == null ? 0 : keys.length / 2;

@@ -6,6 +6,9 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.projection.Projections;
 
+/**
+ * The data on a single node (tags and position) that is stored in the database
+ */
 public class NodeData extends PrimitiveData implements INode {
 
     private static final long serialVersionUID = 5626323599550908773L;
