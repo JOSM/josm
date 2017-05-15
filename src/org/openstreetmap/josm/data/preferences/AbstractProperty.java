@@ -5,6 +5,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.tools.ListenableWeakReference;
 
 /**
  * Captures the common functionality of preference properties
@@ -249,11 +250,28 @@ public abstract class AbstractProperty<T> {
      * @since 10824
      */
     public void addWeakListener(ValueChangeListener<? super T> listener) {
-        addWeakListenerImpl(new PreferenceChangedListenerAdapter(listener));
+        ValueChangeListener<T> weakListener = new WeakPreferenceAdapter(listener);
+        PreferenceChangedListenerAdapter adapter = new PreferenceChangedListenerAdapter(weakListener);
+        addListenerImpl(adapter);
     }
 
-    protected void addWeakListenerImpl(PreferenceChangedListener adapter) {
-        getPreferences().addWeakKeyPreferenceChangeListener(getKey(), adapter);
+    private class WeakPreferenceAdapter extends ListenableWeakReference<ValueChangeListener<? super T>>
+            implements ValueChangeListener<T> {
+        public WeakPreferenceAdapter(ValueChangeListener<? super T> referent) {
+            super(referent);
+        }
+
+        @Override
+        public void valueChanged(ValueChangeEvent<? extends T> e) {
+            ValueChangeListener<? super T> r = this.get();
+            r.valueChanged(e);
+        }
+
+        @Override
+        protected void onDereference() {
+            removeListenerImpl(new PreferenceChangedListenerAdapter(this));
+        }
+
     }
 
     /**
