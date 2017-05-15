@@ -480,7 +480,7 @@ class SyncEditorLayerIndex {
             jt = (jt.size() > 0) ? jt["en"] : ""
             if (!et.equals(jt)) {
                 if (!jt) {
-                    myprintln "+ SKIP - Missing JOSM description (${et}): ${getDescription(j)}"
+                    myprintln "- Missing JOSM description (${et}): ${getDescription(j)}"
                 } else if (et) {
                     myprintln "* Description differs ('${et}' != '${jt}'): ${getDescription(j)}"
                 } else if (!options.nomissingeli) {
@@ -533,7 +533,7 @@ class SyncEditorLayerIndex {
                 if (!jt) {
                     myprintln "- Missing JOSM projections (${et}): ${getDescription(j)}"
                 } else if (et) {
-                    myprintln "+ SKIP * Projections differ ('${et}' != '${jt}'): ${getDescription(j)}"
+                    myprintln "* Projections differ ('${et}' != '${jt}'): ${getDescription(j)}"
                 } else if (!options.nomissingeli && !getType(e).equals("tms")) {
                     myprintln "+ Missing ELI projections ('${jt}'): ${getDescription(j)}"
                 }
