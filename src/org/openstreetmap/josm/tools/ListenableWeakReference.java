@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
  * @param <T> The weak reference
  */
 public class ListenableWeakReference<T> extends WeakReference<T> {
-    private static ReferenceQueue<Object> GLOBAL_QUEUE = new ReferenceQueue<>();
+    private static final ReferenceQueue<Object> GLOBAL_QUEUE = new ReferenceQueue<>();
     private static Thread thread;
     private Runnable runOnDereference;
 
@@ -64,6 +64,7 @@ public class ListenableWeakReference<T> extends WeakReference<T> {
             }
         } catch (InterruptedException e) {
             BugReport.intercept(e).warn();
+            Thread.currentThread().interrupt();
         }
     }
 }
