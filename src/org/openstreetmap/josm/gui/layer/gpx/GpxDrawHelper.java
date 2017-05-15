@@ -623,6 +623,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
             Point old = null;
             for (WayPoint trkPnt : visibleSegments) {
                 if (!trkPnt.isLatLonKnown()) {
+                    old = null;
                     continue;
                 }
                 Point screen = mv.getPoint(trkPnt.getEastNorth());
@@ -651,6 +652,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
             Point oldA = null; // last arrow painted
             for (WayPoint trkPnt : visibleSegments) {
                 if (!trkPnt.isLatLonKnown()) {
+                    old = null;
                     continue;
                 }
                 if (trkPnt.drawLine) {
