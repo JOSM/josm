@@ -229,8 +229,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             noUpdates = true;
             selectVisibleTracksInTable();
             noUpdates = false;
-            Main.map.mapView.preferenceChanged(null);
-            Main.map.repaint(100);
+            layer.invalidate();
         });
         dateFilter.loadFromPrefs();
 
