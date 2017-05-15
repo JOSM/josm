@@ -487,18 +487,16 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
         int ways = counter.ways - counter.deletedWays;
         int rels = counter.relations - counter.deletedRelations;
 
-        StringBuilder tooltip = new StringBuilder();
-        tooltip.append("<html>");
-        tooltip.append(trn("{0} node", "{0} nodes", nodes, nodes));
-        tooltip.append("<br>");
-        tooltip.append(trn("{0} way", "{0} ways", ways, ways));
-        tooltip.append("<br>");
-        tooltip.append(trn("{0} relation", "{0} relations", rels, rels));
+        StringBuilder tooltip = new StringBuilder("<html>")
+                .append(trn("{0} node", "{0} nodes", nodes, nodes))
+                .append("<br>")
+                .append(trn("{0} way", "{0} ways", ways, ways))
+                .append("<br>")
+                .append(trn("{0} relation", "{0} relations", rels, rels));
 
         File f = getAssociatedFile();
         if (f != null) {
-            tooltip.append("<br>");
-            tooltip.append(f.getPath());
+            tooltip.append("<br>").append(f.getPath());
         }
         tooltip.append("</html>");
         return tooltip.toString();
