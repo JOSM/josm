@@ -294,12 +294,5 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         layer.invalidate();
         // ...sync with layer visibility instead to avoid having two ways to hide everything
         layer.setVisible(v == 1 || !s.isSelectionEmpty());
-
-        if (Main.isDisplayingMapView()) {
-            Main.map.mapView.preferenceChanged(null);
-        }
-        if (Main.map != null) {
-            Main.map.repaint();
-        }
     }
 }
