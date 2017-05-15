@@ -34,7 +34,7 @@ public interface Projecting {
      *
      * @param ll the geographical point to convert (in WGS84 lat/lon)
      * @return the corresponding east/north coordinates
-     * @since xxx
+     * @since 12161
      */
     EastNorth latlon2eastNorth(ILatLon ll);
 

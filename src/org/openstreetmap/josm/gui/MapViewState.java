@@ -194,7 +194,7 @@ public final class MapViewState implements Serializable {
      * Gets the {@link MapViewPoint} for the given {@link LatLon} coordinate.
      * @param latlon the position
      * @return The point for that position.
-     * @since xxx
+     * @since 12161
      */
     public MapViewPoint getPointFor(ILatLon latlon) {
         try {
@@ -270,7 +270,7 @@ public final class MapViewState implements Serializable {
     /**
      * Gets the current projecting instance that is used to convert between east/north and lat/lon space.
      * @return The projection.
-     * @since xxx
+     * @since 12161
      */
     public Projecting getProjecting() {
         return projecting;
