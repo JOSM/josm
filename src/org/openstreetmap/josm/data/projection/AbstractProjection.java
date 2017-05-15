@@ -168,7 +168,7 @@ public abstract class AbstractProjection implements Projection {
     @Override
     public double getDefaultZoomInPPD() {
         // this will set the map scaler to about 1000 m
-        return 10;
+        return 10 / getMetersPerUnit();
     }
 
     /**
