@@ -668,8 +668,9 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 b.setEnabled(activeLayerSupported);
             }
         }
+        // invalidate repaint cache. The layer order may have changed by this, so we invalidate every layer
+        getLayerManager().getLayers().forEach(invalidatedListener::invalidate);
         AudioPlayer.reset();
-        repaint();
     }
 
     /**

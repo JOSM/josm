@@ -23,6 +23,8 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.styleelement.MapImage;
 import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement;
@@ -339,10 +341,12 @@ public final class MapPaintStyles {
             SwingUtilities.invokeLater(() -> {
                 fireMapPaintSylesUpdated();
                 styles.clearCached();
-                if (Main.isDisplayingMapView()) {
-                    Main.map.mapView.preferenceChanged(null);
-                    Main.map.mapView.repaint();
-                }
+
+                // Trigger a repaint of all data layers
+                Main.getLayerManager().getLayers()
+                    .stream()
+                    .filter(layer -> layer instanceof OsmDataLayer)
+                    .forEach(Layer::invalidate);
             });
         }
 
