@@ -141,9 +141,9 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
 
             if (key.startsWith("oneway") || key.endsWith("oneway")) {
                 if (OsmUtils.isReversed(value)) {
-                    newValue = OsmUtils.trueval;
+                    newValue = OsmUtils.TRUE_VALUE;
                 } else if (OsmUtils.isTrue(value)) {
-                    newValue = OsmUtils.reverseval;
+                    newValue = OsmUtils.REVERSE_VALUE;
                 }
                 newKey = COMBINED_SWITCHERS.apply(key);
             } else if (key.startsWith("incline") || key.endsWith("incline")) {
@@ -263,7 +263,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
 
     static Map<OsmPrimitive, List<TagCorrection>> getTagCorrectionsMap(Way way) {
         Map<OsmPrimitive, List<TagCorrection>> tagCorrectionsMap = new HashMap<>();
-        List<TagCorrection> tagCorrections = getTagCorrections((Tagged) way);
+        List<TagCorrection> tagCorrections = getTagCorrections(way);
         if (!tagCorrections.isEmpty()) {
             tagCorrectionsMap.put(way, tagCorrections);
         }

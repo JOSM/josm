@@ -11,6 +11,9 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.TextTagParser;
 
+/**
+ * Utility methods/constants that are useful for generic OSM tag handling.
+ */
 public final class OsmUtils {
 
     private static final Set<String> TRUE_VALUES = new HashSet<>(Arrays
@@ -20,14 +23,46 @@ public final class OsmUtils {
     private static final Set<String> REVERSE_VALUES = new HashSet<>(Arrays
             .asList("reverse", "-1"));
 
-    public static final String trueval = "yes";
-    public static final String falseval = "no";
-    public static final String reverseval = "-1";
+    /**
+     * A value that should be used to indicate true
+     * @since 12186
+     */
+    public static final String TRUE_VALUE = "yes";
+    /**
+     * A value that should be used to indicate false
+     * @since 12186
+     */
+    public static final String FALSE_VALUE = "no";
+    /**
+     * A value that should be used to indicate that a property applies reversed on the way
+     * @since 12186
+     */
+    public static final String REVERSE_VALUE = "-1";
+
+    /**
+     * Discouraged synonym for {@link #TRUE_VALUE}
+     */
+    public static final String trueval = TRUE_VALUE;
+    /**
+     * Discouraged synonym for {@link #FALSE_VALUE}
+     */
+    public static final String falseval = FALSE_VALUE;
+    /**
+     * Discouraged synonym for {@link #REVERSE_VALUE}
+     */
+    public static final String reverseval = REVERSE_VALUE;
 
     private OsmUtils() {
         // Hide default constructor for utils classes
     }
 
+    /**
+     * Converts a string to a boolean value
+     * @param value The string to convert
+     * @return {@link Boolean#TRUE} if that string represents a true value,
+     *         {@link Boolean#FALSE} if it represents a false value,
+     *         <code>null</code> otherwise.
+     */
     public static Boolean getOsmBoolean(String value) {
         if (value == null) return null;
         String lowerValue = value.toLowerCase(Locale.ENGLISH);
@@ -36,19 +71,41 @@ public final class OsmUtils {
         return null;
     }
 
+    /**
+     * Normalizes the OSM boolean value
+     * @param value The tag value
+     * @return The best true/false value or the old value if the input cannot be converted.
+     * @see #TRUE_VALUE
+     * @see #FALSE_VALUE
+     */
     public static String getNamedOsmBoolean(String value) {
         Boolean res = getOsmBoolean(value);
         return res == null ? value : (res ? trueval : falseval);
     }
 
+    /**
+     * Check if the value is a value indicating that a property applies reversed.
+     * @param value The value to check
+     * @return true if it is reversed.
+     */
     public static boolean isReversed(String value) {
         return REVERSE_VALUES.contains(value);
     }
 
+    /**
+     * Check if a tag value represents a boolean true value
+     * @param value The value to check
+     * @return true if it is a true value.
+     */
     public static boolean isTrue(String value) {
         return TRUE_VALUES.contains(value);
     }
 
+    /**
+     * Check if a tag value represents a boolean false value
+     * @param value The value to check
+     * @return true if it is a true value.
+     */
     public static boolean isFalse(String value) {
         return FALSE_VALUES.contains(value);
     }

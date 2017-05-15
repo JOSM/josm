@@ -761,10 +761,10 @@ public class TagChecker extends TagTest {
                         valueAll = true;
                     } else if ("BOOLEAN_TRUE".equals(n)) {
                         valueBool = true;
-                        value = OsmUtils.trueval;
+                        value = OsmUtils.TRUE_VALUE;
                     } else if ("BOOLEAN_FALSE".equals(n)) {
                         valueBool = true;
-                        value = OsmUtils.falseval;
+                        value = OsmUtils.FALSE_VALUE;
                     } else {
                         value = n.startsWith("/") ? getPattern(n) : n;
                     }
