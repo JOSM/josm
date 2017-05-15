@@ -26,12 +26,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.SystemOfMeasurement.SoMChangeListener;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -41,6 +43,12 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapViewState;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.layer.MapViewGraphics;
+import org.openstreetmap.josm.gui.layer.MapViewPaintable;
+import org.openstreetmap.josm.gui.layer.MapViewPaintable.MapViewEvent;
+import org.openstreetmap.josm.gui.layer.MapViewPaintable.PaintableInvalidationEvent;
+import org.openstreetmap.josm.gui.layer.MapViewPaintable.PaintableInvalidationListener;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.ColorScale;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -50,7 +58,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Class that helps to draw large set of GPS tracks with different colors and options
  * @since 7319
  */
-public class GpxDrawHelper implements SoMChangeListener {
+public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerPainter, PaintableInvalidationListener {
 
     /**
      * The color that is used for drawing GPX points.
@@ -59,6 +67,7 @@ public class GpxDrawHelper implements SoMChangeListener {
     public static final ColorProperty DEFAULT_COLOR = new ColorProperty(marktr("gps point"), Color.magenta);
 
     private final GpxData data;
+    private final GpxLayer layer;
 
     // draw lines between points belonging to different segments
     private boolean forceLines;
@@ -166,6 +175,10 @@ public class GpxDrawHelper implements SoMChangeListener {
     // user defined heatmap color
     private Color[] heatMapLutColor = createColorLut(0, Color.BLACK, Color.WHITE);
 
+    // The heat map was invalidated since the last draw.
+    private boolean gpxLayerInvalidated;
+
+
     private void setupColors() {
         hdopAlpha = Main.pref.getInteger("hdop.color.alpha", -1);
         velocityScale = ColorScale.createHSBScale(256);
@@ -203,11 +216,15 @@ public class GpxDrawHelper implements SoMChangeListener {
 
     /**
      * Constructs a new {@code GpxDrawHelper}.
-     * @param gpxData GPX data
-     * @since 11713
+     * @param gpxLayer The layer to draw
+     * @since 12157
      */
-    public GpxDrawHelper(GpxData gpxData) {
-        data = gpxData;
+    public GpxDrawHelper(GpxLayer gpxLayer) {
+        layer = gpxLayer;
+        data = gpxLayer.data;
+
+        layer.addInvalidationListener(this);
+        SystemOfMeasurement.addSoMChangeListener(this);
         setupColors();
     }
 
@@ -300,6 +317,64 @@ public class GpxDrawHelper implements SoMChangeListener {
         directionScale.setNoDataColor(neutralColor);
 
         largesize += lineWidth;
+    }
+
+    @Override
+    public void paint(MapViewGraphics graphics) {
+        List<WayPoint> visibleSegments = listVisibleSegments(graphics.getClipBounds().getLatLonBoundsBox());
+        if (!visibleSegments.isEmpty()) {
+            readPreferences(layer.getName());
+            drawAll(graphics.getDefaultGraphics(), graphics.getMapView(), visibleSegments);
+            if (graphics.getMapView().getLayerManager().getActiveLayer() == layer) {
+                drawColorBar(graphics.getDefaultGraphics(), graphics.getMapView());
+            }
+        }
+    }
+
+    private List<WayPoint> listVisibleSegments(Bounds box) {
+        WayPoint last = null;
+        LinkedList<WayPoint> visibleSegments = new LinkedList<>();
+
+        ensureTrackVisibilityLength();
+        for (Collection<WayPoint> segment : data.getLinesIterable(layer.trackVisibility)) {
+
+            for (WayPoint pt : segment) {
+                Bounds b = new Bounds(pt.getCoor());
+                if (pt.drawLine && last != null) {
+                    b.extend(last.getCoor());
+                }
+                if (b.intersects(box)) {
+                    if (last != null && (visibleSegments.isEmpty()
+                            || visibleSegments.getLast() != last)) {
+                        if (last.drawLine) {
+                            WayPoint l = new WayPoint(last);
+                            l.drawLine = false;
+                            visibleSegments.add(l);
+                        } else {
+                            visibleSegments.add(last);
+                        }
+                    }
+                    visibleSegments.add(pt);
+                }
+                last = pt;
+            }
+        }
+        return visibleSegments;
+    }
+
+    /** ensures the trackVisibility array has the correct length without losing data.
+     * TODO: Make this nicer by syncing the trackVisibility automatically.
+     * additional entries are initialized to true;
+     */
+    private void ensureTrackVisibilityLength() {
+        final int l = data.getTracks().size();
+        if (l == layer.trackVisibility.length)
+            return;
+        final int m = Math.min(l, layer.trackVisibility.length);
+        layer.trackVisibility = Arrays.copyOf(layer.trackVisibility, l);
+        for (int i = m; i < l; i++) {
+            layer.trackVisibility[i] = true;
+        }
     }
 
     /**
@@ -1202,8 +1277,9 @@ public class GpxDrawHelper implements SoMChangeListener {
         // 3rd Calculate the heat map data by draw GPX traces with alpha value ----------
 
         // recalculation of image needed
-        final boolean imageRecalc = !mapViewState.equalsInWindow(heatMapMapViewState) ||
-                                    heatMapCacheLineWith != globalLineWidth;
+        final boolean imageRecalc = !mapViewState.equalsInWindow(heatMapMapViewState)
+                || gpxLayerInvalidated
+                || heatMapCacheLineWith != globalLineWidth;
 
         // need re-generation of gray image ?
         if (imageSetup || imageRecalc) {
@@ -1227,6 +1303,7 @@ public class GpxDrawHelper implements SoMChangeListener {
             // remember draw parameter
             heatMapMapViewState = mapViewState;
             heatMapCacheLineWith = globalLineWidth;
+            gpxLayerInvalidated = false;
         }
 
         // 4th. Draw data on target layer, map data via color lookup table --------------
@@ -1400,5 +1477,16 @@ public class GpxDrawHelper implements SoMChangeListener {
         } else if (colored == ColorMode.DIRECTION) {
             directionScale.drawColorBar(g, w-30, 50, 20, 100, 180.0/Math.PI);
         }
+    }
+
+    @Override
+    public void paintableInvalidated(PaintableInvalidationEvent event) {
+        gpxLayerInvalidated = true;
+    }
+
+    @Override
+    public void detachFromMapView(MapViewEvent event) {
+        SystemOfMeasurement.removeSoMChangeListener(this);
+        layer.removeInvalidationListener(this);
     }
 }

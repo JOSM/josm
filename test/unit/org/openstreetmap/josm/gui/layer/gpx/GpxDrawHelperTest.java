@@ -14,6 +14,7 @@ import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.io.GpxReaderTest;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.xml.sax.SAXException;
@@ -122,7 +123,8 @@ public class GpxDrawHelperTest {
      */
     static List<String> calculateColors(String fileName, String layerName, int n) throws IOException, SAXException {
         final GpxData data = GpxReaderTest.parseGpxData(fileName);
-        final GpxDrawHelper gdh = new GpxDrawHelper(data);
+        final GpxLayer layer = new GpxLayer(data);
+        final GpxDrawHelper gdh = new GpxDrawHelper(layer);
         gdh.readPreferences(layerName);
         gdh.calculateColors();
         return data.getTrackPoints().limit(n).map(p -> ColorHelper.color2html(p.customColoring)).collect(Collectors.toList());
