@@ -566,9 +566,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
             }
         }
         // repaint to make sure new data is displayed properly.
-        if (Main.isDisplayingMapView()) {
-            Main.map.mapView.repaint();
-        }
+        invalidate();
         // warn about new conflicts
         if (numNewConflicts > 0 && Main.map != null && Main.map.conflictDialog != null) {
             Main.map.conflictDialog.warnNumNewConflicts(numNewConflicts);
