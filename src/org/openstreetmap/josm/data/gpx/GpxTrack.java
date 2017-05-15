@@ -39,6 +39,63 @@ public interface GpxTrack extends IWithAttributes {
     /**
      * Returns the number of times this track has been changed.
      * @return Number of times this track has been changed. Always 0 for read-only tracks
+     * @deprecated since 12156 Replaced by change listeners.
      */
-    int getUpdateCount();
+    @Deprecated
+    default int getUpdateCount() {
+        // to allow removal
+        return 0;
+    }
+
+    /**
+     * Add a listener that listens to changes in the GPX track.
+     * @param l The listener
+     */
+    default void addListener(GpxTrackChangeListener l) {
+        // nop
+    }
+
+    /**
+     * Remove a listener that listens to changes in the GPX track.
+     * @param l The listener
+     */
+    default void removeListener(GpxTrackChangeListener l) {
+        // nop
+    }
+
+    /**
+     * A listener that listens to GPX track changes.
+     * @author Michael Zangl
+     * @since 12156
+     */
+    @FunctionalInterface
+    public interface GpxTrackChangeListener {
+        /**
+         * Called when the gpx data changed.
+         * @param e The event
+         */
+        void gpxDataChanged(GpxTrackChangeEvent e);
+    }
+
+    /**
+     * A track change event for the current track.
+     * @author Michael Zangl
+     * @since 12156
+     */
+    class GpxTrackChangeEvent {
+        private final GpxTrack source;
+
+        GpxTrackChangeEvent(GpxTrack source) {
+            super();
+            this.source = source;
+        }
+
+        /**
+         * Get the track that was changed.
+         * @return The track.
+         */
+        public GpxTrack getSource() {
+            return source;
+        }
+    }
 }

@@ -2,22 +2,27 @@
 package org.openstreetmap.josm.data.gpx;
 
 import java.io.File;
+import java.text.MessageFormat;
+import java.util.AbstractCollection;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.DoubleSummaryStatistics;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.gpx.GpxTrack.GpxTrackChangeListener;
+import org.openstreetmap.josm.tools.ListenerList;
 
 /**
  * Objects of this class represent a gpx file with tracks, waypoints and routes.
@@ -34,12 +39,41 @@ public class GpxData extends WithAttributes implements Data {
     /** Creator (usually software) */
     public String creator;
 
-    /** Tracks */
-    public final Collection<GpxTrack> tracks = new LinkedList<>();
-    /** Routes */
-    public final Collection<GpxRoute> routes = new LinkedList<>();
-    /** Waypoints */
-    public final Collection<WayPoint> waypoints = new LinkedList<>();
+    private ArrayList<GpxTrack> privateTracks = new ArrayList<>();
+    private ArrayList<GpxRoute> privateRoutes = new ArrayList<>();
+    private ArrayList<WayPoint> privateWaypoints = new ArrayList<>();
+    private final GpxTrackChangeListener proxy = e -> fireInvalidate();
+
+    /**
+     * Tracks. Access is discouraged, use {@link #getTracks()} to read.
+     * @see #getTracks()
+     */
+    public final Collection<GpxTrack> tracks = new ListeningCollection<GpxTrack>(privateTracks, this::fireInvalidate) {
+
+        @Override
+        protected void removed(GpxTrack cursor) {
+            cursor.removeListener(proxy);
+            super.removed(cursor);
+        }
+
+        @Override
+        protected void added(GpxTrack cursor) {
+            super.added(cursor);
+            cursor.addListener(proxy);
+        }
+    };
+
+    /**
+     * Routes. Access is discouraged, use {@link #getTracks()} to read.
+     * @see #getRoutes()
+     */
+    public final Collection<GpxRoute> routes = new ListeningCollection<>(privateRoutes, this::fireInvalidate);
+
+    /**
+     * Waypoints. Access is discouraged, use {@link #getTracks()} to read.
+     * @see #getWaypoints()
+     */
+    public final Collection<WayPoint> waypoints = new ListeningCollection<>(privateWaypoints, this::fireInvalidate);
 
     /**
      * All data sources (bounds of downloaded bounds) of this GpxData.<br>
@@ -48,6 +82,8 @@ public class GpxData extends WithAttributes implements Data {
      * @since 7575
      */
     public final Set<DataSource> dataSources = new HashSet<>();
+
+    private final ListenerList<GpxDataChangeListener> listeners = ListenerList.create();
 
     /**
      * Merges data from another object.
@@ -71,10 +107,114 @@ public class GpxData extends WithAttributes implements Data {
                 put(k, ent.getValue());
             }
         }
-        tracks.addAll(other.tracks);
-        routes.addAll(other.routes);
-        waypoints.addAll(other.waypoints);
+        privateTracks.addAll(other.getTracks());
+        privateRoutes.addAll(other.getRoutes());
+        privateWaypoints.addAll(other.getWaypoints());
         dataSources.addAll(other.dataSources);
+        fireInvalidate();
+    }
+
+    /**
+     * Get all tracks contained in this data set.
+     * @return The tracks.
+     */
+    public Collection<GpxTrack> getTracks() {
+        return Collections.unmodifiableCollection(privateTracks);
+    }
+
+    /**
+     * Add a new track
+     * @param track The new track
+     * @since 12156
+     */
+    public void addTrack(GpxTrack track) {
+        if (privateTracks.contains(track)) {
+            throw new IllegalArgumentException(MessageFormat.format("The track was already added to this data: {0}", track));
+        }
+        privateTracks.add(track);
+        track.addListener(proxy);
+        fireInvalidate();
+    }
+
+    /**
+     * Remove a track
+     * @param track The old track
+     * @since 12156
+     */
+    public void removeTrack(GpxTrack track) {
+        if (!privateTracks.remove(track)) {
+            throw new IllegalArgumentException(MessageFormat.format("The track was not in this data: {0}", track));
+        }
+        track.removeListener(proxy);
+        fireInvalidate();
+    }
+
+    /**
+     * Gets the list of all routes defined in this data set.
+     * @return The routes
+     * @since 12156
+     */
+    public Collection<GpxRoute> getRoutes() {
+        return Collections.unmodifiableCollection(privateRoutes);
+    }
+
+    /**
+     * Add a new route
+     * @param route The new route
+     * @since 12156
+     */
+    public void addRoute(GpxRoute route) {
+        if (privateRoutes.contains(route)) {
+            throw new IllegalArgumentException(MessageFormat.format("The route was already added to this data: {0}", route));
+        }
+        privateRoutes.add(route);
+        fireInvalidate();
+    }
+
+    /**
+     * Remove a route
+     * @param route The old route
+     * @since 12156
+     */
+    public void removeRoute(GpxRoute route) {
+        if (!privateRoutes.remove(route)) {
+            throw new IllegalArgumentException(MessageFormat.format("The route was not in this data: {0}", route));
+        }
+        fireInvalidate();
+    }
+
+    /**
+     * Gets a list of all way points in this data set.
+     * @return The way points.
+     * @since 12156
+     */
+    public Collection<WayPoint> getWaypoints() {
+        return Collections.unmodifiableCollection(privateWaypoints);
+    }
+
+    /**
+     * Add a new waypoint
+     * @param waypoint The new waypoint
+     * @since 12156
+     */
+    public void addWaypoint(WayPoint waypoint) {
+        if (privateWaypoints.contains(waypoint)) {
+            throw new IllegalArgumentException(MessageFormat.format("The route was already added to this data: {0}", waypoint));
+        }
+        privateWaypoints.add(waypoint);
+        fireInvalidate();
+    }
+
+    /**
+     * Remove a waypoint
+     * @param waypoint The old waypoint
+     * @since 12156
+     */
+    public void removeWaypoint(WayPoint waypoint) {
+        if (!privateWaypoints.remove(waypoint)) {
+            throw new IllegalArgumentException(MessageFormat.format("The route was not in this data: {0}", waypoint));
+        }
+        fireInvalidate();
     }
 
     /**
@@ -82,13 +222,19 @@ public class GpxData extends WithAttributes implements Data {
      * @return {@code true} if this GPX data has track points, {@code false} otherwise
      */
     public boolean hasTrackPoints() {
-        for (GpxTrack trk : tracks) {
-            for (GpxTrackSegment trkseg : trk.getSegments()) {
-                if (!trkseg.getWayPoints().isEmpty())
-                    return true;
-            }
-        }
-        return false;
+        return getTrackPoints().findAny().isPresent();
+    }
+
+    /**
+     * Gets a stream of all track points in the segments of the tracks of this data.
+     * @return The stream
+     * @see #getTracks()
+     * @see GpxTrack#getSegments()
+     * @see GpxTrackSegment#getWayPoints()
+     * @since 12156
+     */
+    public Stream<WayPoint> getTrackPoints() {
+        return getTracks().stream().flatMap(trk -> trk.getSegments().stream()).flatMap(trkseg -> trkseg.getWayPoints().stream());
     }
 
     /**
@@ -96,11 +242,7 @@ public class GpxData extends WithAttributes implements Data {
      * @return {@code true} if this GPX data has route points, {@code false} otherwise
      */
     public boolean hasRoutePoints() {
-        for (GpxRoute rte : routes) {
-            if (!rte.routePoints.isEmpty())
-                return true;
-        }
-        return false;
+        return getRoutes().stream().anyMatch(rte -> !rte.routePoints.isEmpty());
     }
 
     /**
@@ -143,14 +285,14 @@ public class GpxData extends WithAttributes implements Data {
      */
     public Bounds recalculateBounds() {
         Bounds bounds = null;
-        for (WayPoint wpt : waypoints) {
+        for (WayPoint wpt : getWaypoints()) {
             if (bounds == null) {
                 bounds = new Bounds(wpt.getCoor());
             } else {
                 bounds.extend(wpt.getCoor());
             }
         }
-        for (GpxRoute rte : routes) {
+        for (GpxRoute rte : getRoutes()) {
             for (WayPoint wpt : rte.routePoints) {
                 if (bounds == null) {
                     bounds = new Bounds(wpt.getCoor());
@@ -159,7 +301,7 @@ public class GpxData extends WithAttributes implements Data {
                 }
             }
         }
-        for (GpxTrack trk : tracks) {
+        for (GpxTrack trk : getTracks()) {
             Bounds trkBounds = trk.getBounds();
             if (trkBounds != null) {
                 if (bounds == null) {
@@ -177,13 +319,7 @@ public class GpxData extends WithAttributes implements Data {
      * @return the length in meters
      */
     public double length() {
-        double result = 0.0; // in meters
-
-        for (GpxTrack trk : tracks) {
-            result += trk.length();
-        }
-
-        return result;
+        return getTracks().stream().mapToDouble(GpxTrack::length).sum();
     }
 
     /**
@@ -260,9 +396,7 @@ public class GpxData extends WithAttributes implements Data {
         double px = p.east();
         double py = p.north();
         double rx = 0.0, ry = 0.0, sx, sy, x, y;
-        if (tracks == null)
-            return null;
-        for (GpxTrack track : tracks) {
+        for (GpxTrack track : getTracks()) {
             for (GpxTrackSegment seg : track.getSegments()) {
                 WayPoint r = null;
                 for (WayPoint S : seg.getWayPoints()) {
@@ -351,28 +485,14 @@ public class GpxData extends WithAttributes implements Data {
      * Resets the internal caches of east/north coordinates.
      */
     public void resetEastNorthCache() {
-        if (waypoints != null) {
-            for (WayPoint wp : waypoints) {
+        getWaypoints().forEach(WayPoint::invalidateEastNorthCache);
+        getTrackPoints().forEach(WayPoint::invalidateEastNorthCache);
+        for (GpxRoute route: getRoutes()) {
+            if (route.routePoints == null) {
+                continue;
+            }
+            for (WayPoint wp: route.routePoints) {
                 wp.invalidateEastNorthCache();
-            }
-        }
-        if (tracks != null) {
-            for (GpxTrack track: tracks) {
-                for (GpxTrackSegment segment: track.getSegments()) {
-                    for (WayPoint wp: segment.getWayPoints()) {
-                        wp.invalidateEastNorthCache();
-                    }
-                }
-            }
-        }
-        if (routes != null) {
-            for (GpxRoute route: routes) {
-                if (route.routePoints == null) {
-                    continue;
-                }
-                for (WayPoint wp: route.routePoints) {
-                    wp.invalidateEastNorthCache();
-                }
             }
         }
     }
@@ -496,5 +616,146 @@ public class GpxData extends WithAttributes implements Data {
         } else if (!waypoints.equals(other.waypoints))
             return false;
         return true;
+    }
+
+    /**
+     * Adds a listener that gets called whenever the data changed.
+     * @param listener The listener
+     * @since 12156
+     */
+    public void addChangeListener(GpxDataChangeListener listener) {
+        listeners.addListener(listener);
+    }
+
+    /**
+     * Adds a listener that gets called whenever the data changed. It is added with a weak link
+     * @param listener The listener
+     */
+    public void addWeakChangeListener(GpxDataChangeListener listener) {
+        listeners.addWeakListener(listener);
+    }
+
+    /**
+     * Removes a listener that gets called whenever the data changed.
+     * @param listener The listener
+     * @since 12156
+     */
+    public void removeChangeListener(GpxDataChangeListener listener) {
+        listeners.removeListener(listener);
+    }
+
+    private void fireInvalidate() {
+        GpxDataChangeEvent e = new GpxDataChangeEvent(this);
+        listeners.fireEvent(l -> l.gpxDataChanged(e));
+    }
+
+    /**
+     * This is a proxy of a collection that notifies a listener on every collection change
+     * @author Michael Zangl
+     *
+     * @param <T> The entry type
+     * @since 12156
+     */
+    private static class ListeningCollection<T> extends AbstractCollection<T> {
+        private final ArrayList<T> base;
+        private final Runnable runOnModification;
+
+        ListeningCollection(ArrayList<T> base, Runnable runOnModification) {
+            this.base = base;
+            this.runOnModification = runOnModification;
+        }
+
+        @Override
+        public Iterator<T> iterator() {
+            Iterator<T> it = base.iterator();
+            return new Iterator<T>() {
+                private T cursor;
+
+                @Override
+                public boolean hasNext() {
+                    return it.hasNext();
+                }
+
+                @Override
+                public T next() {
+                    cursor = it.next();
+                    return cursor;
+                }
+
+                @Override
+                public void remove() {
+                    if (cursor != null) {
+                        removed(cursor);
+                        cursor = null;
+                    }
+                    it.remove();
+                }
+            };
+        }
+
+        @Override
+        public int size() {
+            return base.size();
+        }
+
+        @Override
+        public boolean remove(Object o) {
+            boolean remove = base.remove(o);
+            if (remove) {
+                removed((T) o);
+            }
+            return remove;
+        }
+
+        @Override
+        public boolean add(T e) {
+            boolean add = base.add(e);
+            added(e);
+            return add;
+        }
+
+        protected void removed(T cursor) {
+            runOnModification.run();
+        }
+
+        protected void added(T cursor) {
+            runOnModification.run();
+        }
+    }
+
+    /**
+     * A listener that listens to GPX data changes.
+     * @author Michael Zangl
+     * @since 12156
+     */
+    @FunctionalInterface
+    public interface GpxDataChangeListener {
+        /**
+         * Called when the gpx data changed.
+         * @param e The event
+         */
+        void gpxDataChanged(GpxDataChangeEvent e);
+    }
+
+    /**
+     * A data change event in any of the gpx data.
+     * @author Michael Zangl
+     * @since 12156
+     */
+    public static class GpxDataChangeEvent {
+        private final GpxData source;
+
+        GpxDataChangeEvent(GpxData source) {
+            super();
+            this.source = source;
+        }
+
+        /**
+         * Get the data that was changed.
+         * @return The data.
+         */
+        public GpxData getSource() {
+            return source;
+        }
     }
 }

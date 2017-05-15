@@ -742,7 +742,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
                 trkseg.add(nodeToWayPoint(n));
             }
 
-            gpxData.tracks.add(new ImmutableGpxTrack(trk, trkAttr));
+            gpxData.addTrack(new ImmutableGpxTrack(trk, trkAttr));
         });
     }
 

@@ -217,8 +217,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         for (int i = 0; i < layer.trackVisibility.length; i++) {
             layer.trackVisibility[table.convertRowIndexToModel(i)] = s.isSelectedIndex(i);
         }
-        Main.map.mapView.preferenceChanged(null);
-        Main.map.repaint(100);
+        layer.invalidate();
     }
 
     @Override
@@ -291,6 +290,8 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         for (int i = 0; i < layer.trackVisibility.length; i++) {
             layer.trackVisibility[table.convertRowIndexToModel(i)] = all || s.isSelectedIndex(i);
         }
+        // layer has been changed
+        layer.invalidate();
         // ...sync with layer visibility instead to avoid having two ways to hide everything
         layer.setVisible(v == 1 || !s.isSelectionEmpty());
 
