@@ -35,8 +35,8 @@ public interface Projecting {
      *
      * @param ll the geographical point to convert (in WGS84 lat/lon)
      * @return the corresponding east/north coordinates
+     * @see ILatLon#getEastNorth(Projecting) as shorthand.
      * @since 12161
-     * @see ILatLon#getEastNorth(Projecting)
      */
     EastNorth latlon2eastNorth(ILatLon ll);
 
@@ -50,6 +50,7 @@ public interface Projecting {
 
     /**
      * Gets the base projection instance used.
+     * This may be the same as this one or a different one if this one is translated in east/north space.
      * @return The projection.
      */
     Projection getBaseProjection();

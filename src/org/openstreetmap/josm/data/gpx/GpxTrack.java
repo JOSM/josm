@@ -69,7 +69,7 @@ public interface GpxTrack extends IWithAttributes {
      * @since 12156
      */
     @FunctionalInterface
-    public interface GpxTrackChangeListener {
+    interface GpxTrackChangeListener {
         /**
          * Called when the gpx data changed.
          * @param e The event

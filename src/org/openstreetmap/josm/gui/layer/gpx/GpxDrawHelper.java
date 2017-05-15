@@ -178,7 +178,6 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     // The heat map was invalidated since the last draw.
     private boolean gpxLayerInvalidated;
 
-
     private void setupColors() {
         hdopAlpha = Main.pref.getInteger("hdop.color.alpha", -1);
         velocityScale = ColorScale.createHSBScale(256);
@@ -722,7 +721,6 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
                     continue;
                 }
                 Point screen = mv.getPoint(trkPnt.getEastNorth());
-
 
                 if (hdopCircle && trkPnt.get(GpxConstants.PT_HDOP) != null) {
                     // hdop value

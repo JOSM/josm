@@ -6,7 +6,6 @@
  */
 package org.openstreetmap.josm.data.projection;
 
-import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.Utils;
 

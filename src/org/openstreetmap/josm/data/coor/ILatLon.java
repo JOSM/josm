@@ -21,13 +21,13 @@ public interface ILatLon {
      * Returns the longitude, i.e., the east-west position in degrees.
      * @return the longitude or NaN if {@link #isLatLonKnown()} returns false
      */
-    public double lon();
+    double lon();
 
     /**
      * Returns the latitude, i.e., the north-south position in degrees.
      * @return the latitude or NaN if {@link #isLatLonKnown()} returns false
      */
-    public double lat();
+    double lat();
 
     /**
      * Determines if this object has valid coordinates.

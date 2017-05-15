@@ -46,10 +46,10 @@ public class GpxDataTest {
     private GpxData data;
 
     /**
-     * @throws java.lang.Exception
+     * Set up empty test data
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         data = new GpxData();
     }
 
@@ -280,8 +280,13 @@ public class GpxDataTest {
      */
     @Test
     public void testLength() {
-        ImmutableGpxTrack track1 = waypointGpxTrack(new WayPoint(new LatLon(0, 0)), new WayPoint(new LatLon(1, 1)), new WayPoint(new LatLon(0, 2)));
-        ImmutableGpxTrack track2 = waypointGpxTrack(new WayPoint(new LatLon(0, 0)), new WayPoint(new LatLon(-1, 1)));
+        ImmutableGpxTrack track1 = waypointGpxTrack(
+                new WayPoint(new LatLon(0, 0)),
+                new WayPoint(new LatLon(1, 1)),
+                new WayPoint(new LatLon(0, 2)));
+        ImmutableGpxTrack track2 = waypointGpxTrack(
+                new WayPoint(new LatLon(0, 0)),
+                new WayPoint(new LatLon(-1, 1)));
         data.addTrack(track1);
         data.addTrack(track2);
         assertEquals(3 * new LatLon(0, 0).greatCircleDistance(new LatLon(1, 1)), data.length(), 1);
