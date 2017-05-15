@@ -107,9 +107,9 @@ public class GpxData extends WithAttributes implements Data {
                 put(k, ent.getValue());
             }
         }
-        privateTracks.addAll(other.getTracks());
-        privateRoutes.addAll(other.getRoutes());
-        privateWaypoints.addAll(other.getWaypoints());
+        other.getTracks().forEach(this::addTrack);
+        other.getRoutes().forEach(this::addRoute);
+        other.getWaypoints().forEach(this::addWaypoint);
         dataSources.addAll(other.dataSources);
         fireInvalidate();
     }
@@ -128,7 +128,7 @@ public class GpxData extends WithAttributes implements Data {
      * @since 12156
      */
     public void addTrack(GpxTrack track) {
-        if (privateTracks.contains(track)) {
+        if (privateTracks.stream().anyMatch(t -> t == track)) {
             throw new IllegalArgumentException(MessageFormat.format("The track was already added to this data: {0}", track));
         }
         privateTracks.add(track);
@@ -142,7 +142,7 @@ public class GpxData extends WithAttributes implements Data {
      * @since 12156
      */
     public void removeTrack(GpxTrack track) {
-        if (!privateTracks.remove(track)) {
+        if (!privateTracks.removeIf(t -> t == track)) {
             throw new IllegalArgumentException(MessageFormat.format("The track was not in this data: {0}", track));
         }
         track.removeListener(proxy);
@@ -164,7 +164,7 @@ public class GpxData extends WithAttributes implements Data {
      * @since 12156
      */
     public void addRoute(GpxRoute route) {
-        if (privateRoutes.contains(route)) {
+        if (privateRoutes.stream().anyMatch(r -> r == route)) {
             throw new IllegalArgumentException(MessageFormat.format("The route was already added to this data: {0}", route));
         }
         privateRoutes.add(route);
@@ -177,7 +177,7 @@ public class GpxData extends WithAttributes implements Data {
      * @since 12156
      */
     public void removeRoute(GpxRoute route) {
-        if (!privateRoutes.remove(route)) {
+        if (!privateRoutes.removeIf(r -> r == route)) {
             throw new IllegalArgumentException(MessageFormat.format("The route was not in this data: {0}", route));
         }
         fireInvalidate();
@@ -198,7 +198,7 @@ public class GpxData extends WithAttributes implements Data {
      * @since 12156
      */
     public void addWaypoint(WayPoint waypoint) {
-        if (privateWaypoints.contains(waypoint)) {
+        if (privateWaypoints.stream().anyMatch(w -> w == waypoint)) {
             throw new IllegalArgumentException(MessageFormat.format("The route was already added to this data: {0}", waypoint));
         }
         privateWaypoints.add(waypoint);
@@ -211,7 +211,7 @@ public class GpxData extends WithAttributes implements Data {
      * @since 12156
      */
     public void removeWaypoint(WayPoint waypoint) {
-        if (!privateWaypoints.remove(waypoint)) {
+        if (!privateWaypoints.removeIf(w -> w == waypoint)) {
             throw new IllegalArgumentException(MessageFormat.format("The route was not in this data: {0}", waypoint));
         }
         fireInvalidate();
@@ -579,10 +579,10 @@ public class GpxData extends WithAttributes implements Data {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + dataSources.hashCode();
-        result = prime * result + privateRoutes.hashCode();
-        result = prime * result + privateTracks.hashCode();
-        result = prime * result + privateWaypoints.hashCode();
+        result = prime * result + ((dataSources == null) ? 0 : dataSources.hashCode());
+        result = prime * result + ((privateRoutes == null) ? 0 : privateRoutes.hashCode());
+        result = prime * result + ((privateTracks == null) ? 0 : privateTracks.hashCode());
+        result = prime * result + ((privateWaypoints == null) ? 0 : privateWaypoints.hashCode());
         return result;
     }
 
