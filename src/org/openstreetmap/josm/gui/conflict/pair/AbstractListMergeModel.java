@@ -75,6 +75,11 @@ import org.openstreetmap.josm.tools.Utils;
  * @see AbstractListMerger
  */
 public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends ConflictResolveCommand> extends ChangeNotifier {
+    /**
+     * The property name to listen for frozen changes.
+     * @see #setFrozen(boolean)
+     * @see #isFrozen()
+     */
     public static final String FROZEN_PROP = AbstractListMergeModel.class.getName() + ".frozen";
 
     private static final int MAX_DELETED_PRIMITIVE_IN_DIALOG = 5;
@@ -229,15 +234,23 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
         synchronized (listeners) {
             PropertyChangeEvent evt = new PropertyChangeEvent(this, FROZEN_PROP, oldValue, newValue);
             listeners.forEach(listener -> listener.propertyChange(evt));
-            }
         }
+    }
 
+    /**
+     * Sets the frozen status for this model.
+     * @param isFrozen <code>true</code> if it should be frozen.
+     */
     public final void setFrozen(boolean isFrozen) {
         boolean oldValue = this.isFrozen;
         this.isFrozen = isFrozen;
         fireFrozenChanged(oldValue, this.isFrozen);
     }
 
+    /**
+     * Check if the model is frozen.
+     * @return The current frozen state.
+     */
     public final boolean isFrozen() {
         return isFrozen;
     }
@@ -397,6 +410,10 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
         }
     }
 
+    /**
+     * Copies over all values from the given side to the merged table..
+     * @param source The source side to copy from.
+     */
     public void copyAll(ListRole source) {
         getMergedEntries().clear();
 
@@ -566,7 +583,6 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
      * @return true, if the lists are equal; false otherwise
      */
     protected boolean myAndTheirEntriesEqual() {
-
         if (getMyEntriesSize() != getTheirEntriesSize())
             return false;
         for (int i = 0; i < getMyEntriesSize(); i++) {
@@ -703,6 +719,10 @@ public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends Co
             return entries.get(opposite);
         }
 
+        /**
+         * Get the role of the table.
+         * @return The role.
+         */
         public ListRole getRole() {
             return role;
         }
