@@ -59,12 +59,20 @@ public class HistoryDataSet implements LayerChangeListener {
         changesets = new HashMap<>();
     }
 
+    /**
+     * Adds a listener that listens to history data set events.
+     * @param listener The listener
+     */
     public void addHistoryDataSetListener(HistoryDataSetListener listener) {
         if (listener != null) {
             listeners.addIfAbsent(listener);
         }
     }
 
+    /**
+     * Removes a listener that listens to history data set events.
+     * @param listener The listener
+     */
     public void removeHistoryDataSetListener(HistoryDataSetListener listener) {
         listeners.remove(listener);
     }

@@ -6,6 +6,9 @@ import java.util.List;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
+/**
+ * An event that is triggered when the changeset id has changed for a list of primitives.
+ */
 public class ChangesetIdChangedEvent extends AbstractDatasetChangedEvent {
 
     private final List<OsmPrimitive> primitives;

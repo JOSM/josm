@@ -9,6 +9,9 @@ import java.util.List;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
+/**
+ * An event that is triggered if primitives have been added to the dataset
+ */
 public class PrimitivesAddedEvent extends AbstractDatasetChangedEvent {
 
     private final List<? extends OsmPrimitive> primitives;

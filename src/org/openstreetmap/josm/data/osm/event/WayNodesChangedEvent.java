@@ -8,6 +8,9 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 
+/**
+ * An event that is triggered when the nodes of a way have been changed (nodes added, removed or the order was changed)
+ */
 public class WayNodesChangedEvent extends AbstractDatasetChangedEvent {
 
     private final Way way;

@@ -246,10 +246,26 @@ public class Multipolygon {
         }
     }
 
+    /**
+     * The polygon data for a multipolygon part.
+     * It contains the outline of this polygon in east/north space.
+     */
     public static class PolyData extends JoinedWay {
+        /**
+         * The intersection type used for {@link PolyData#contains(java.awt.geom.Path2D.Double)}
+         */
         public enum Intersection {
+            /**
+             * The polygon is completely inside this PolyData
+             */
             INSIDE,
+            /**
+             * The polygon is completely outside of this PolyData
+             */
             OUTSIDE,
+            /**
+             * The polygon is partially inside and outside of this PolyData
+             */
             CROSSING
         }
 
@@ -312,6 +328,11 @@ public class Multipolygon {
             }
         }
 
+        /**
+         * Checks if this multipolygon contains or crosses an other polygon
+         * @param p The path to check. Needs to be in east/north space.
+         * @return a {@link Intersection} constant
+         */
         public Intersection contains(Path2D.Double p) {
             int contains = 0;
             int total = 0;
@@ -333,6 +354,10 @@ public class Multipolygon {
             return Intersection.CROSSING;
         }
 
+        /**
+         * Adds an inner polygon
+         * @param inner The polygon to add as inner polygon.
+         */
         public void addInner(PolyData inner) {
             inners.add(inner);
             appendInner(inner.poly);
@@ -342,10 +367,18 @@ public class Multipolygon {
             poly.append(inner.getPathIterator(null), false);
         }
 
+        /**
+         * Gets the polygon outline and interior as java path
+         * @return The path in east/north space.
+         */
         public Path2D.Double get() {
             return poly;
         }
 
+        /**
+         * Gets the bounds as {@link Rectangle2D} in east/north space.
+         * @return The bounds
+         */
         public Rectangle2D getBounds() {
             if (bounds == null) {
                 bounds = poly.getBounds2D();
@@ -353,6 +386,10 @@ public class Multipolygon {
             return bounds;
         }
 
+        /**
+         * Gets a list of all inner polygons.
+         * @return The inner polygons.
+         */
         public List<PolyData> getInners() {
             return Collections.unmodifiableList(inners);
         }
@@ -394,6 +431,10 @@ public class Multipolygon {
             bounds = null;
         }
 
+        /**
+         * Check if this polygon was changed by a node move
+         * @param event The node move event
+         */
         public void nodeMoved(NodeMovedEvent event) {
             final Node n = event.getNode();
             boolean innerChanged = false;
@@ -408,6 +449,10 @@ public class Multipolygon {
             }
         }
 
+        /**
+         * Check if this polygon was affected by a way change
+         * @param event The way event
+         */
         public void wayNodesChanged(WayNodesChangedEvent event) {
             final Long wayId = event.getChangedWay().getUniqueId();
             boolean innerChanged = false;
@@ -525,6 +570,11 @@ public class Multipolygon {
         }
     }
 
+    /**
+     * Attempt to combine the ways in the list if they share common end nodes
+     * @param waysToJoin The ways to join
+     * @return A collection of {@link JoinedWay} objects indicating the possible join of those ways
+     */
     public static Collection<JoinedWay> joinWays(Collection<Way> waysToJoin) {
         final Collection<JoinedWay> result = new ArrayList<>();
         final Way[] joinArray = waysToJoin.toArray(new Way[waysToJoin.size()]);
@@ -620,6 +670,12 @@ public class Multipolygon {
         return result;
     }
 
+    /**
+     * Find a matching outer polygon for the inner one
+     * @param inner The inner polygon to search the outer for
+     * @param outerPolygons The possible outer polygons
+     * @return The outer polygon that was found or <code>null</code> if none was found.
+     */
     public PolyData findOuterPolygon(PolyData inner, List<PolyData> outerPolygons) {
         // First try to test only bbox, use precise testing only if we don't get unique result
         Rectangle2D innerBox = inner.getBounds();

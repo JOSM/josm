@@ -43,40 +43,77 @@ public final class MapRendererFactory {
      */
     public static final String PREF_KEY_RENDERER_CLASS_NAME = "mappaint.renderer-class-name";
 
+    /**
+     * An exception thrown while creating a map renderer
+     */
     public static class MapRendererFactoryException extends RuntimeException {
 
+        /**
+         * Create a new {@link MapRendererFactoryException}
+         * @param message The message
+         * @param cause The cause
+         */
         public MapRendererFactoryException(String message, Throwable cause) {
             super(message, cause);
         }
 
+        /**
+         * Create a new {@link MapRendererFactoryException}
+         * @param message The message
+         */
         public MapRendererFactoryException(String message) {
             super(message);
         }
 
+        /**
+         * Create a new {@link MapRendererFactoryException}
+         * @param cause The cause
+         */
         public MapRendererFactoryException(Throwable cause) {
             super(cause);
         }
     }
 
+    /**
+     * A description of a possible renderer for the map
+     */
     public static class Descriptor {
         private final Class<? extends AbstractMapRenderer> renderer;
         private final String displayName;
         private final String description;
 
+        /**
+         * Creates a new map renderer description
+         * @param renderer The renderer
+         * @param displayName The display name for the renderer
+         * @param description The longer description that should be displayed to the user.
+         */
         public Descriptor(Class<? extends AbstractMapRenderer> renderer, String displayName, String description) {
             this.renderer = renderer;
             this.displayName = displayName;
             this.description = description;
         }
 
+        /**
+         * Get the class of the renderer
+         * @return The class
+         */
         public Class<? extends AbstractMapRenderer> getRenderer() {
             return renderer;
         }
 
+        /**
+         * Get the display name
+         * @return The name
+         */
         public String getDisplayName() {
             return displayName;
         }
 
+        /**
+         * Get the description
+         * @return The description
+         */
         public String getDescription() {
             return description;
         }

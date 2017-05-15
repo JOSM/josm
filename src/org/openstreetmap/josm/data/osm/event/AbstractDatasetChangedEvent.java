@@ -16,14 +16,41 @@ public abstract class AbstractDatasetChangedEvent {
      * Type of dataset changed event, returned by {@link AbstractDatasetChangedEvent#getType}.
      */
     public enum DatasetEventType {
+        /**
+         * A combination of multiple events
+         */
         DATA_CHANGED,
+        /**
+         * The lat/lon coordinates of a node have changed.
+         */
         NODE_MOVED,
+        /**
+         * Primitives have been added to this dataset
+         */
         PRIMITIVES_ADDED,
+        /**
+         * Primitives have been removed from this dataset
+         */
         PRIMITIVES_REMOVED,
+        /**
+         * The members of a relation have changed
+         */
         RELATION_MEMBERS_CHANGED,
+        /**
+         * The tags of a primitve have changed
+         */
         TAGS_CHANGED,
+        /**
+         * The nodes of a way or their order has changed
+         */
         WAY_NODES_CHANGED,
+        /**
+         * The changeset id changed for a list of primitives
+         */
         CHANGESET_ID_CHANGED,
+        /**
+         * The flags changed for a primitive and have not been covered in an other event
+         */
         PRIMITIVE_FLAGS_CHANGED,
     }
 

@@ -3,6 +3,10 @@ package org.openstreetmap.josm.data.osm.history;
 
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 
+/**
+ * A listener that listens to changes in the {@link HistoryDataSet}.
+ * @see HistoryDataSet#addHistoryDataSetListener(HistoryDataSetListener)
+ */
 public interface HistoryDataSetListener {
     /**
      * Fired by a {@link HistoryDataSet} if the cached history of an OSM primitive with

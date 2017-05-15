@@ -9,6 +9,9 @@ import java.util.List;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
+/**
+ * An event that is triggered when primitives were removed from the dataset
+ */
 public class PrimitivesRemovedEvent extends AbstractDatasetChangedEvent {
 
     private final List<? extends OsmPrimitive> primitives;

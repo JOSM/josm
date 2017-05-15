@@ -778,6 +778,10 @@ public final class Way extends OsmPrimitive implements IWay {
         clearCachedNodeStyles();
     }
 
+    /**
+     * Clears all cached styles for all nodes of this way. This should not be called from outside.
+     * @see Node#clearCachedStyle()
+     */
     public void clearCachedNodeStyles() {
         for (final Node n : nodes) {
             n.clearCachedStyle();

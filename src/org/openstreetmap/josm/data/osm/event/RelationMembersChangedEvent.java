@@ -8,6 +8,9 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 
+/**
+ * An event that is triggered if the members of a single relation have changed
+ */
 public class RelationMembersChangedEvent extends AbstractDatasetChangedEvent {
 
     private final Relation relation;

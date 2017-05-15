@@ -8,6 +8,9 @@ import java.util.Map;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
+/**
+ * An event that is triggered if the tags of a single primitive have changed
+ */
 public class TagsChangedEvent extends AbstractDatasetChangedEvent {
 
     private final OsmPrimitive primitive;

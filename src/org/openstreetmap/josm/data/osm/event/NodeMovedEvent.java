@@ -8,6 +8,9 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
+/**
+ * An event that is triggered on a node move (lat/lon change)
+ */
 public class NodeMovedEvent extends AbstractDatasetChangedEvent {
 
     private final Node node;
