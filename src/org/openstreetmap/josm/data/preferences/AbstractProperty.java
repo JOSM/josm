@@ -6,6 +6,7 @@ import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.ListenableWeakReference;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * Captures the common functionality of preference properties
@@ -237,7 +238,11 @@ public abstract class AbstractProperty<T> {
      * @since 10824
      */
     public void addListener(ValueChangeListener<? super T> listener) {
-        addListenerImpl(new PreferenceChangedListenerAdapter(listener));
+        try {
+            addListenerImpl(new PreferenceChangedListenerAdapter(listener));
+        } catch (RuntimeException e) {
+            throw BugReport.intercept(e).put("listener", listener).put("preference", key);
+        }
     }
 
     protected void addListenerImpl(PreferenceChangedListener adapter) {
@@ -250,9 +255,13 @@ public abstract class AbstractProperty<T> {
      * @since 10824
      */
     public void addWeakListener(ValueChangeListener<? super T> listener) {
-        ValueChangeListener<T> weakListener = new WeakPreferenceAdapter(listener);
-        PreferenceChangedListenerAdapter adapter = new PreferenceChangedListenerAdapter(weakListener);
-        addListenerImpl(adapter);
+        try {
+            ValueChangeListener<T> weakListener = new WeakPreferenceAdapter(listener);
+            PreferenceChangedListenerAdapter adapter = new PreferenceChangedListenerAdapter(weakListener);
+            addListenerImpl(adapter);
+        } catch (RuntimeException e) {
+            throw BugReport.intercept(e).put("listener", listener).put("preference", key);
+        }
     }
 
     private class WeakPreferenceAdapter extends ListenableWeakReference<ValueChangeListener<? super T>>
@@ -280,7 +289,11 @@ public abstract class AbstractProperty<T> {
      * @since 10824
      */
     public void removeListener(ValueChangeListener<? super T> listener) {
-        removeListenerImpl(new PreferenceChangedListenerAdapter(listener));
+        try {
+            removeListenerImpl(new PreferenceChangedListenerAdapter(listener));
+        } catch (RuntimeException e) {
+            throw BugReport.intercept(e).put("listener", listener).put("preference", key);
+        }
     }
 
     protected void removeListenerImpl(PreferenceChangedListener adapter) {
