@@ -2,7 +2,6 @@
 package org.openstreetmap.josm.data.osm;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
@@ -45,7 +44,7 @@ public class WayData extends PrimitiveData implements IWay {
      * @return The ids of the nodes
      */
     public List<Long> getNodes() {
-        return Collections.unmodifiableList(nodes);
+        return nodes;
     }
 
     @Override
