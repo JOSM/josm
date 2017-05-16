@@ -30,7 +30,7 @@ public class WayPointTest {
     public void testEqualsContract() {
         EqualsVerifier.forClass(WayPoint.class).usingGetClass()
             .suppress(Warning.NONFINAL_FIELDS)
-            .withIgnoredFields("customColoring", "dir", "drawLine", "east", "north")
+            .withIgnoredFields("customColoring", "dir", "drawLine", "east", "north", "eastNorthCacheKey")
             .withPrefabValues(ColorSpace.class, ColorSpace.getInstance(ColorSpace.CS_sRGB), ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB))
             .verify();
     }
