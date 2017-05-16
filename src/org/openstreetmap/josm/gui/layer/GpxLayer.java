@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeListener;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
@@ -59,6 +60,10 @@ public class GpxLayer extends Layer {
      * TODO: Make it private, make it respond to track changes.
      */
     public boolean[] trackVisibility = new boolean[0];
+    /**
+     * Added as field to be kept as reference.
+     */
+    private final GpxDataChangeListener dataChangeListener = e -> this.invalidate();
 
     /**
      * Constructs a new {@code GpxLayer} without name.
@@ -86,7 +91,7 @@ public class GpxLayer extends Layer {
     public GpxLayer(GpxData d, String name, boolean isLocal) {
         super(d.getString(GpxConstants.META_NAME));
         data = d;
-        data.addWeakChangeListener(e -> this.invalidate());
+        data.addWeakChangeListener(dataChangeListener);
         trackVisibility = new boolean[data.getTracks().size()];
         Arrays.fill(trackVisibility, true);
         setName(name);
