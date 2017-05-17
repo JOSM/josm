@@ -79,7 +79,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      */
     private double east = Double.NaN;
     private double north = Double.NaN;
-    private Object eastNorthCacheKey = null;
+    private Object eastNorthCacheKey;
 
     /**
      * Invalidate the internal cache of east/north coordinates.

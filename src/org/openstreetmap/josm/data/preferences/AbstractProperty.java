@@ -266,21 +266,22 @@ public abstract class AbstractProperty<T> {
 
     private class WeakPreferenceAdapter extends ListenableWeakReference<ValueChangeListener<? super T>>
             implements ValueChangeListener<T> {
-        public WeakPreferenceAdapter(ValueChangeListener<? super T> referent) {
+        WeakPreferenceAdapter(ValueChangeListener<? super T> referent) {
             super(referent);
         }
 
         @Override
         public void valueChanged(ValueChangeEvent<? extends T> e) {
-            ValueChangeListener<? super T> r = this.get();
-            r.valueChanged(e);
+            ValueChangeListener<? super T> r = super.get();
+            if (r != null) {
+                r.valueChanged(e);
+            }
         }
 
         @Override
         protected void onDereference() {
             removeListenerImpl(new PreferenceChangedListenerAdapter(this));
         }
-
     }
 
     /**
