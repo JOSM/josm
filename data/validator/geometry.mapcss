@@ -237,12 +237,12 @@ way[waterway] > node.node_in_bridge {
   throwWarning: tr("node connects waterway and bridge");
 }
 
-/* #11128 */
+/* #11128, #14812 */
 way[highway] > node[tourism=information][information=guidepost] {
   set guidepost;
   throwOther: tr("{0} node connected to a highway", "{1.tag}");
 }
-way[highway] > node[amenity][!entrance][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking|bicycle_parking|bus_station|car_wash|ferry_terminal)$/],
+way[highway] > node[amenity][!entrance][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking|bicycle_parking|bus_station|car_wash|ferry_terminal|weighbridge)$/],
 way[highway] > node[building][!entrance],
 way[highway] > node[leisure][!entrance][leisure!=slipway],
 way[highway] > node[office][!entrance],
