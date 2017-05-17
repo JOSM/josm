@@ -989,7 +989,6 @@ public final class DomainValidator extends AbstractValidator {
         "movistar", // movistar Telefónica S.A.
         "msd", // msd MSD Registry Holdings, Inc.
         "mtn", // mtn MTN Dubai Limited
-        "mtpc", // mtpc Mitsubishi Tanabe Pharma Corporation
         "mtr", // mtr MTR Corporation Limited
         "museum", // museum Museum Domain Management Association
         "mutual", // mutual Northwestern Mutual MU TLD Registry, LLC
