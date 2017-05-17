@@ -152,8 +152,11 @@ public class Capabilities {
      * @return {@code true} is version is between the minimum supported version and the maximum one, {@code false} otherwise
      */
     public boolean supportsVersion(String version) {
-        return get("version", "minimum").compareTo(version) <= 0
-            && get("version", "maximum").compareTo(version) >= 0;
+        String min = get("version", "minimum");
+        String max = get("version", "maximum");
+        return min != null && max != null
+            && min.compareTo(version) <= 0
+            && max.compareTo(version) >= 0;
     }
 
     private static void warnIllegalValue(String attr, String elem, Object val) {
