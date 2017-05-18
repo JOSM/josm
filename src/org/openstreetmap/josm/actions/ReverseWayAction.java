@@ -87,7 +87,6 @@ public final class ReverseWayAction extends JosmAction {
             return;
         }
 
-        boolean propertiesUpdated = false;
         Collection<Command> c = new LinkedList<>();
         for (Way w : sel) {
             ReverseWayResult revResult;
@@ -98,13 +97,8 @@ public final class ReverseWayAction extends JosmAction {
                 return;
             }
             c.addAll(revResult.getCommands());
-            propertiesUpdated |= !revResult.getTagCorrectionCommands().isEmpty();
         }
         Main.main.undoRedo.add(new SequenceCommand(tr("Reverse ways"), c));
-        // FIXME: This should be handled by undoRedo.
-        if (propertiesUpdated) {
-            ds.fireSelectionChanged();
-        }
     }
 
     /**
