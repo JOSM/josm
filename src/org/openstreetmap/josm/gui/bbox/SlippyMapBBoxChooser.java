@@ -96,7 +96,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
 
     private static CopyOnWriteArrayList<TileSourceProvider> providers = new CopyOnWriteArrayList<>();
     static {
-        addTileSourceProvider(new OsmTileSource.Mapnik());
+        addTileSourceProvider(() -> Arrays.<TileSource>asList(new OsmTileSource.Mapnik()));
         addTileSourceProvider(new TMSTileSourceProvider());
     }
 
