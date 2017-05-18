@@ -28,23 +28,43 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.UserCancelException;
 
+/**
+ * Reverses the ways that are currently selected by the user
+ */
 public final class ReverseWayAction extends JosmAction {
 
+    /**
+     * The resulting way after reversing it and the commands to get there.
+     */
     public static class ReverseWayResult {
         private final Way newWay;
         private final Collection<Command> tagCorrectionCommands;
         private final Command reverseCommand;
 
+        /**
+         * Create a new {@link ReverseWayResult}
+         * @param newWay The new way primitive
+         * @param tagCorrectionCommands The commands to correct the tags
+         * @param reverseCommand The command to reverse the way
+         */
         public ReverseWayResult(Way newWay, Collection<Command> tagCorrectionCommands, Command reverseCommand) {
             this.newWay = newWay;
             this.tagCorrectionCommands = tagCorrectionCommands;
             this.reverseCommand = reverseCommand;
         }
 
+        /**
+         * Gets the new way object
+         * @return The new, reversed way
+         */
         public Way getNewWay() {
             return newWay;
         }
 
+        /**
+         * Gets the commands that will be required to do a full way reversal including changing the tags
+         * @return The comamnds
+         */
         public Collection<Command> getCommands() {
             List<Command> c = new ArrayList<>();
             c.addAll(tagCorrectionCommands);
@@ -52,19 +72,34 @@ public final class ReverseWayAction extends JosmAction {
             return c;
         }
 
+        /**
+         * Gets a single sequence command for reversing this way including changing the tags
+         * @return the command
+         */
         public Command getAsSequenceCommand() {
             return new SequenceCommand(tr("Reverse way"), getCommands());
         }
 
+        /**
+         * Gets the basic reverse command that only changes the order of the nodes.
+         * @return The reorder nodes command
+         */
         public Command getReverseCommand() {
             return reverseCommand;
         }
 
+        /**
+         * Gets the command to change the tags of the way
+         * @return The command to reverse the tags
+         */
         public Collection<Command> getTagCorrectionCommands() {
             return tagCorrectionCommands;
         }
     }
 
+    /**
+     * Creates a new {@link ReverseWayAction} and binds the shortcut
+     */
     public ReverseWayAction() {
         super(tr("Reverse Ways"), "wayflip", tr("Reverse the direction of all selected ways."),
                 Shortcut.registerShortcut("tools:reverse", tr("Tool: {0}", tr("Reverse Ways")), KeyEvent.VK_R, Shortcut.DIRECT), true);
