@@ -108,7 +108,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             this.flags = flags;
 
             long order = 0;
-            if ((this.flags & FLAG_DISABLED) != 0) {
+            if ((this.flags & FLAG_DISABLED) == 0) {
                 order |= 1;
             }
 
