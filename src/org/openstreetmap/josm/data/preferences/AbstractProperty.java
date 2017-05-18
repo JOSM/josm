@@ -264,6 +264,11 @@ public abstract class AbstractProperty<T> {
         }
     }
 
+    /**
+     * This class wraps the ValueChangeListener in a ListenableWeakReference that automatically removes itself
+     * if the listener is garbage collected.
+     * @author Michael Zangl
+     */
     private class WeakPreferenceAdapter extends ListenableWeakReference<ValueChangeListener<? super T>>
             implements ValueChangeListener<T> {
         WeakPreferenceAdapter(ValueChangeListener<? super T> referent) {
