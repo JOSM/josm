@@ -53,7 +53,9 @@ public interface Projection extends Projecting {
     /**
      * Get a filename compatible string (for the cache directory).
      * @return the cache directory name (base name)
+     * @deprecated unused - remove in 2017-07
      */
+    @Deprecated
     String getCacheDirectoryName();
 
     /**
