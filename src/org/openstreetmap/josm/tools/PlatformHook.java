@@ -1,6 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,9 +15,16 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.List;
 
+import javax.swing.JOptionPane;
+
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.io.CertificateAmendment.CertAmend;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
  * This interface allows platform (operating system) dependent code
@@ -223,4 +233,70 @@ public interface PlatformHook {
      * @since 11642
      */
     List<File> getDefaultProj4NadshiftDirectories();
+
+    /**
+     * Determines if the JVM is OpenJDK-based.
+     * @return {@code true} if {@code java.home} contains "openjdk", {@code false} otherwise
+     * @since 12219
+     */
+    default boolean isOpenJDK() {
+        String javaHome = System.getProperty("java.home");
+        return javaHome != null && javaHome.contains("openjdk");
+    }
+
+    /**
+     * Asks user to update its version of Java.
+     * @param updVersion target update version
+     * @param url download URL
+     * @param major true for a migration towards a major version of Java (8->9), false otherwise
+     * @param eolDate the EOL/expiration date
+     * @since 12219
+     */
+    default void askUpdateJava(String updVersion, String url, String eolDate, boolean major) {
+        ExtendedDialog ed = new ExtendedDialog(
+                Main.parent,
+                tr("Outdated Java version"),
+                new String[]{tr("OK"), tr("Update Java"), tr("Cancel")});
+        // Check if the dialog has not already been permanently hidden by user
+        if (!ed.toggleEnable("askUpdateJava"+updVersion).toggleCheckState()) {
+            ed.setButtonIcons(new String[]{"ok", "java", "cancel"}).setCancelButton(3);
+            ed.setMinimumSize(new Dimension(480, 300));
+            ed.setIcon(JOptionPane.WARNING_MESSAGE);
+            StringBuilder content = new StringBuilder(tr("You are running version {0} of Java.",
+                    "<b>"+System.getProperty("java.version")+"</b>")).append("<br><br>");
+            if ("Sun Microsystems Inc.".equals(System.getProperty("java.vendor")) && !isOpenJDK()) {
+                content.append("<b>").append(tr("This version is no longer supported by {0} since {1} and is not recommended for use.",
+                        "Oracle", eolDate)).append("</b><br><br>");
+            }
+            content.append("<b>")
+                   .append(major ?
+                        tr("JOSM will soon stop working with this version; we highly recommend you to update to Java {0}.", updVersion) :
+                        tr("You may face critical Java bugs; we highly recommend you to update to Java {0}.", updVersion))
+                   .append("</b><br><br>")
+                   .append(tr("Would you like to update now ?"));
+            ed.setContent(content.toString());
+
+            if (ed.showDialog().getValue() == 2) {
+                try {
+                    openUrl(url);
+                } catch (IOException e) {
+                    Main.warn(e);
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks if the running version of Java has expired, proposes to user to update it if needed.
+     * @since 12219
+     */
+    default void checkExpiredJava() {
+        Date expiration = Utils.getJavaExpirationDate();
+        if (expiration != null && expiration.before(new Date())) {
+            String version = Utils.getJavaLatestVersion();
+            askUpdateJava(version != null ? version : "latest",
+                    Main.pref.get("java.update.url", "https://www.java.com/download"),
+                    DateUtils.getDateFormat(DateFormat.MEDIUM).format(expiration), false);
+        }
+    }
 }

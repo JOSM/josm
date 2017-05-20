@@ -31,13 +31,16 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivilegedAction;
 import java.text.Bidi;
+import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.text.ParseException;
 import java.util.AbstractCollection;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -1644,5 +1647,38 @@ public final class Utils {
         int bPos = version.indexOf('b');
         int pPos = version.indexOf('+');
         return Integer.parseInt(version.substring(bPos > -1 ? bPos + 1 : pPos + 1, version.length()));
+    }
+
+    /**
+     * Returns the JRE expiration date.
+     * @return the JRE expiration date, or null
+     * @since 12219
+     */
+    public static Date getJavaExpirationDate() {
+        try {
+            Object value = Class.forName("com.sun.deploy.config.BuiltInProperties").getDeclaredField("JRE_EXPIRATION_DATE").get(null);
+            if (value instanceof String) {
+                return DateFormat.getDateInstance(3, Locale.US).parse((String) value);
+            }
+        } catch (IllegalArgumentException | ReflectiveOperationException | SecurityException | ParseException e) {
+            Main.debug(e);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the latest version of Java, from Oracle website.
+     * @return the latest version of Java, from Oracle website
+     * @since 12219
+     */
+    public static String getJavaLatestVersion() {
+        try {
+            return HttpClient.create(
+                    new URL(Main.pref.get("java.baseline.version.url", "http://javadl-esd-secure.oracle.com/update/baseline.version")))
+                    .connect().fetchContent().split("\n")[0];
+        } catch (IOException e) {
+            Main.error(e);
+        }
+        return null;
     }
 }

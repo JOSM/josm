@@ -182,6 +182,11 @@ public class PlatformHookWindows implements PlatformHook {
     }
 
     @Override
+    public void startupHook() {
+        checkExpiredJava();
+    }
+
+    @Override
     public void openUrl(String url) throws IOException {
         Runtime.getRuntime().exec("rundll32 url.dll,FileProtocolHandler " + url);
     }
