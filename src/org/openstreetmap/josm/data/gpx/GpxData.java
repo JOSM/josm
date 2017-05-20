@@ -716,6 +716,7 @@ public class GpxData extends WithAttributes implements Data {
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public boolean remove(Object o) {
             boolean remove = base.remove(o);
             if (remove) {
