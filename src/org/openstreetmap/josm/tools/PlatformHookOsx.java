@@ -32,6 +32,8 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
 
     private static final PlatformHookOsx ivhandler = new PlatformHookOsx();
 
+    private String oSBuildNumber;
+
     @Override
     public void preStartupHook() {
         // This will merge our MenuBar into the system menu.
@@ -383,6 +385,29 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
     @Override
     public String getOSDescription() {
         return System.getProperty("os.name") + ' ' + System.getProperty("os.version");
+    }
+
+    private String buildOSBuildNumber() {
+        StringBuilder sb = new StringBuilder();
+        try {
+            sb.append(exec("sw_vers", "-productName"))
+              .append(' ')
+              .append(exec("sw_vers", "-productVersion"))
+              .append(" (")
+              .append(exec("sw_vers", "-buildVersion"))
+              .append(')');
+        } catch (IOException e) {
+            Main.error(e);
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String getOSBuildNumber() {
+        if (oSBuildNumber == null) {
+            oSBuildNumber = buildOSBuildNumber();
+        }
+        return oSBuildNumber;
     }
 
     @Override

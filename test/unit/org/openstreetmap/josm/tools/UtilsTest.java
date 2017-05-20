@@ -218,6 +218,58 @@ public class UtilsTest {
     }
 
     /**
+     * Test {@link Utils#getJavaUpdate}
+     */
+    @Test
+    public void testGetJavaUpdate() {
+        String javaVersion = System.getProperty("java.version");
+        try {
+            System.setProperty("java.version", "1.8.0_131");
+            assertEquals(131, Utils.getJavaUpdate());
+
+            System.setProperty("java.version", "1.8.0_152-ea");
+            assertEquals(152, Utils.getJavaUpdate());
+
+            System.setProperty("java.version", "9-ea");
+            assertEquals(0, Utils.getJavaUpdate());
+
+            System.setProperty("java.version", "9");
+            assertEquals(0, Utils.getJavaUpdate());
+
+            System.setProperty("java.version", "9.1.2");
+            assertEquals(1, Utils.getJavaUpdate());
+        } finally {
+            System.setProperty("java.version", javaVersion);
+        }
+    }
+
+    /**
+     * Test {@link Utils#getJavaBuild}
+     */
+    @Test
+    public void testGetJavaBuild() {
+        String javaVersion = System.getProperty("java.runtime.version");
+        try {
+            System.setProperty("java.runtime.version", "1.8.0_131-b11");
+            assertEquals(11, Utils.getJavaBuild());
+
+            System.setProperty("java.runtime.version", "1.8.0_152-ea-b04");
+            assertEquals(4, Utils.getJavaBuild());
+
+            System.setProperty("java.runtime.version", "9-ea+170");
+            assertEquals(170, Utils.getJavaBuild());
+
+            System.setProperty("java.runtime.version", "9+200");
+            assertEquals(200, Utils.getJavaBuild());
+
+            System.setProperty("java.runtime.version", "9.1.2+62");
+            assertEquals(62, Utils.getJavaBuild());
+        } finally {
+            System.setProperty("java.runtime.version", javaVersion);
+        }
+    }
+
+    /**
      * Tests if readBytesFromStream handles null streams (might happen when there is no data on error stream)
      * @throws IOException in case of I/O error
      */

@@ -9,7 +9,6 @@ import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -206,17 +205,14 @@ public class PlatformHookUnixoid implements PlatformHook {
             try {
                 // Try lsb_release (only available on LSB-compliant Linux systems,
                 // see https://www.linuxbase.org/lsb-cert/productdir.php?by_prod )
-                Process p = Runtime.getRuntime().exec("lsb_release -ds");
-                try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
-                    String line = Utils.strip(input.readLine());
-                    if (line != null && !line.isEmpty()) {
-                        line = line.replaceAll("\"+", "");
-                        line = line.replaceAll("NAME=", ""); // strange code for some Gentoo's
-                        if (line.startsWith("Linux ")) // e.g. Linux Mint
-                            return line;
-                        else if (!line.isEmpty())
-                            return "Linux " + line;
-                    }
+                String line = exec("lsb_release -ds");
+                if (line != null && !line.isEmpty()) {
+                    line = line.replaceAll("\"+", "");
+                    line = line.replaceAll("NAME=", ""); // strange code for some Gentoo's
+                    if (line.startsWith("Linux ")) // e.g. Linux Mint
+                        return line;
+                    else if (!line.isEmpty())
+                        return "Linux " + line;
                 }
             } catch (IOException e) {
                 Main.debug(e);

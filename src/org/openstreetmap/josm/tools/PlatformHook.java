@@ -2,8 +2,11 @@
 package org.openstreetmap.josm.tools;
 
 import java.awt.GraphicsEnvironment;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -139,6 +142,15 @@ public interface PlatformHook {
     String getOSDescription();
 
     /**
+     * Returns OS build number.
+     * @return OS build number.
+     * @since 12217
+     */
+    default String getOSBuildNumber() {
+        return "";
+    }
+
+    /**
      * Setup system keystore to add JOSM HTTPS certificate (for remote control).
      * @param entryAlias The entry alias to use
      * @param trustedCert the JOSM certificate for localhost
@@ -168,6 +180,20 @@ public interface PlatformHook {
     default X509Certificate getX509Certificate(CertAmend certAmend)
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
         return null;
+    }
+
+    /**
+     * Executes a native command and returns the first line of standard output.
+     * @param command array containing the command to call and its arguments.
+     * @return first stripped line of standard output
+     * @throws IOException if an I/O error occurs
+     * @since 12217
+     */
+    default String exec(String... command) throws IOException {
+        Process p = Runtime.getRuntime().exec(command);
+        try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
+            return Utils.strip(input.readLine());
+        }
     }
 
     /**

@@ -83,8 +83,12 @@ public final class ShowStatusReportAction extends JosmAction {
         StringBuilder text = new StringBuilder(256);
         String runtimeVersion = System.getProperty("java.runtime.version");
         text.append(Version.getInstance().getReleaseAttributes())
-            .append("\nIdentification: ").append(Version.getInstance().getAgentString())
-            .append("\nMemory Usage: ")
+            .append("\nIdentification: ").append(Version.getInstance().getAgentString());
+        String buildNumber = Main.platform.getOSBuildNumber();
+        if (!buildNumber.isEmpty()) {
+            text.append("\nOS Build number: ").append(buildNumber);
+        }
+        text.append("\nMemory Usage: ")
             .append(Runtime.getRuntime().totalMemory()/1024/1024)
             .append(" MB / ")
             .append(Runtime.getRuntime().maxMemory()/1024/1024)

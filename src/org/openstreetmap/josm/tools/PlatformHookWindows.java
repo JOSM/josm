@@ -26,6 +26,7 @@ import static java.awt.event.KeyEvent.VK_X;
 import static java.awt.event.KeyEvent.VK_Y;
 import static java.awt.event.KeyEvent.VK_Z;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.WinRegistry.HKEY_LOCAL_MACHINE;
 
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedWriter;
@@ -35,6 +36,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
@@ -63,9 +65,11 @@ import java.util.Locale;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.gui.preferences.display.LafPreference;
 import org.openstreetmap.josm.io.CertificateAmendment.CertAmend;
 
 /**
@@ -149,9 +153,32 @@ public class PlatformHookWindows implements PlatformHook {
 
     private static final String WINDOWS_ROOT = "Windows-ROOT";
 
+    private static final String CURRENT_VERSION = "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion";
+
+    private String oSBuildNumber;
+
     @Override
     public void afterPrefStartupHook() {
         extendFontconfig("fontconfig.properties.src");
+        // Workaround for JDK-8180379: crash on Windows 10 1703 with Windows L&F and java < 8u152 / 9+171
+        // To remove during Java 9 migration
+        if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("windows 10") &&
+                getDefaultStyle().equals(LafPreference.LAF.get())) {
+            try {
+                final int currentBuild = Integer.parseInt(getCurrentBuild());
+                final int javaVersion = Utils.getJavaVersion();
+                final int javaUpdate = Utils.getJavaUpdate();
+                final int javaBuild = Utils.getJavaBuild();
+                // See https://technet.microsoft.com/en-us/windows/release-info.aspx
+                if (currentBuild >= 15_063 && ((javaVersion == 8 && javaUpdate < 152)
+                        || (javaVersion == 9 && javaUpdate == 0 && javaBuild < 171))) {
+                    // Workaround from https://bugs.openjdk.java.net/browse/JDK-8179014
+                    UIManager.put("FileChooser.useSystemExtensionHiding", false);
+                }
+            } catch (NumberFormatException | ReflectiveOperationException e) {
+                Main.error(e);
+            }
+        }
     }
 
     @Override
@@ -247,6 +274,38 @@ public class PlatformHookWindows implements PlatformHook {
     public String getOSDescription() {
         return Utils.strip(System.getProperty("os.name")) + ' ' +
                 ((System.getenv("ProgramFiles(x86)") == null) ? "32" : "64") + "-Bit";
+    }
+
+    private static String getProductName() throws IllegalAccessException, InvocationTargetException {
+        return WinRegistry.readString(HKEY_LOCAL_MACHINE, CURRENT_VERSION, "ProductName");
+    }
+
+    private static String getReleaseId() throws IllegalAccessException, InvocationTargetException {
+        return WinRegistry.readString(HKEY_LOCAL_MACHINE, CURRENT_VERSION, "ReleaseId");
+    }
+
+    private static String getCurrentBuild() throws IllegalAccessException, InvocationTargetException {
+        return WinRegistry.readString(HKEY_LOCAL_MACHINE, CURRENT_VERSION, "CurrentBuild");
+    }
+
+    private static String buildOSBuildNumber() {
+        StringBuilder sb = new StringBuilder();
+        try {
+            sb.append(getProductName()).append(' ')
+              .append(getReleaseId()).append(" (")
+              .append(getCurrentBuild()).append(')');
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            Main.error(e);
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String getOSBuildNumber() {
+        if (oSBuildNumber == null) {
+            oSBuildNumber = buildOSBuildNumber();
+        }
+        return oSBuildNumber;
     }
 
     /**

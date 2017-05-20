@@ -1606,4 +1606,43 @@ public final class Utils {
         return Integer.parseInt(version.substring(0,
                 dotPos > -1 ? dotPos : dashPos > -1 ? dashPos : 1));
     }
+
+    /**
+     * Returns the Java update as an int value.
+     * @return the Java update as an int value (121, 131, etc.)
+     * @since 12217
+     */
+    public static int getJavaUpdate() {
+        String version = System.getProperty("java.version");
+        if (version.startsWith("1.")) {
+            version = version.substring(2);
+        }
+        // Allow these formats:
+        // 1.8.0_72-ea
+        // 9-ea
+        // 9
+        // 9.0.1
+        int undePos = version.indexOf('_');
+        int dashPos = version.indexOf('-');
+        if (undePos > -1) {
+            return Integer.parseInt(version.substring(undePos + 1,
+                    dashPos > -1 ? dashPos : version.length()));
+        }
+        int firstDotPos = version.indexOf('.');
+        int lastDotPos = version.lastIndexOf('.');
+        return firstDotPos > - 1 ? Integer.parseInt(version.substring(firstDotPos + 1,
+                lastDotPos > -1 ? lastDotPos : version.length())) : 0;
+    }
+
+    /**
+     * Returns the Java build number as an int value.
+     * @return the Java build number as an int value (0, 1, etc.)
+     * @since 12217
+     */
+    public static int getJavaBuild() {
+        String version = System.getProperty("java.runtime.version");
+        int bPos = version.indexOf('b');
+        int pPos = version.indexOf('+');
+        return Integer.parseInt(version.substring(bPos > -1 ? bPos + 1 : pPos + 1, version.length()));
+    }
 }
