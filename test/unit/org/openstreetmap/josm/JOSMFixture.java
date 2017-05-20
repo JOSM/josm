@@ -149,15 +149,9 @@ public class JOSMFixture {
         assertNull(Main.getLayerManager().getEditLayer());
         assertNull(Main.getLayerManager().getActiveLayer());
 
-        if (Main.contentPanePrivate == null) {
-            Main.contentPanePrivate = new JPanel(new BorderLayout());
-        }
-        if (Main.mainPanel == null) {
-            Main.mainPanel = new MainPanel(Main.getLayerManager());
-        }
-        if (Main.toolbar == null) {
-            Main.toolbar = new ToolbarPreferences();
-        }
+        initContentPane();
+        initMainPanel();
+        initToolbar();
         if (Main.main == null) {
             new MainApplication().initialize();
         } else {
@@ -165,5 +159,32 @@ public class JOSMFixture {
         }
         // Add a test layer to the layer manager to get the MapFrame
         Main.getLayerManager().addLayer(new TestLayer());
+    }
+
+    /**
+     * Make sure {@code Main.contentPanePrivate} is initialized.
+     */
+    public static void initContentPane() {
+        if (Main.contentPanePrivate == null) {
+            Main.contentPanePrivate = new JPanel(new BorderLayout());
+        }
+    }
+
+    /**
+     * Make sure {@code Main.mainPanel} is initialized.
+     */
+    public static void initMainPanel() {
+        if (Main.mainPanel == null) {
+            Main.mainPanel = new MainPanel(Main.getLayerManager());
+        }
+    }
+
+    /**
+     * Make sure {@code Main.toolbar} is initialized.
+     */
+    public static void initToolbar() {
+        if (Main.toolbar == null) {
+            Main.toolbar = new ToolbarPreferences();
+        }
     }
 }
