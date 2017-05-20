@@ -294,7 +294,7 @@ public class PlatformHookWindows implements PlatformHook {
             sb.append(getProductName()).append(' ')
               .append(getReleaseId()).append(" (")
               .append(getCurrentBuild()).append(')');
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (ReflectiveOperationException e) {
             Main.error(e);
         }
         return sb.toString();

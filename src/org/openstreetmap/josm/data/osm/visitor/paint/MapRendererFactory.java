@@ -304,11 +304,11 @@ public final class MapRendererFactory {
         try {
             Constructor<?> c = activeRenderer.getConstructor(new Class<?>[]{Graphics2D.class, NavigatableComponent.class, boolean.class});
             return AbstractMapRenderer.class.cast(c.newInstance(g, viewport, isInactiveMode));
-        } catch (NoSuchMethodException | IllegalArgumentException | InstantiationException | IllegalAccessException e) {
-            throw new MapRendererFactoryException(e);
         } catch (InvocationTargetException e) {
             Main.debug(e);
             throw new MapRendererFactoryException(e.getCause());
+        } catch (ReflectiveOperationException | IllegalArgumentException e) {
+            throw new MapRendererFactoryException(e);
         }
     }
 

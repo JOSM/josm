@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -823,7 +822,7 @@ public final class ConditionFactory {
         public boolean applies(Environment e) {
             try {
                 return not ^ (Boolean) method.invoke(null, e);
-            } catch (IllegalAccessException | InvocationTargetException ex) {
+            } catch (ReflectiveOperationException ex) {
                 throw new JosmRuntimeException(ex);
             }
         }
