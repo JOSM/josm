@@ -144,7 +144,7 @@ Build-Date: ${build.tstamp}
                 <attribute name="Application-Name" value="JOSM - Java OpenStreetMap Editor"/>
                 <!-- Java 9 stuff. Entries are safely ignored by Java 8 -->
                 <attribute name="Add-Exports" value="java.base/sun.security.util java.base/sun.security.x509" />
-                <attribute name="Add-Opens" value="java.desktop/javax.swing.text.html" />
+                <attribute name="Add-Opens" value="java.desktop/javax.swing.text.html java.base/java.util.prefs" />
             </manifest>
             <zipfileset dir="images" prefix="images"/>
             <zipfileset dir="data" prefix="data"/>
