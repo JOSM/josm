@@ -248,7 +248,7 @@ public interface PlatformHook {
      * Asks user to update its version of Java.
      * @param updVersion target update version
      * @param url download URL
-     * @param major true for a migration towards a major version of Java (8->9), false otherwise
+     * @param major true for a migration towards a major version of Java (8:9), false otherwise
      * @param eolDate the EOL/expiration date
      * @since 12219
      */

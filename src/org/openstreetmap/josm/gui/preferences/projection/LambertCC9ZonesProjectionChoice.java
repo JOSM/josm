@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 /**
  * ProjectionChoice for Lambert CC (9 zones, EPSG:3942-3950).
  * <p>
- * @see <a link="https://fr.wikipedia.org/wiki/Projection_conique_conforme_de_Lambert#Lambert_zone_CC">Lambert CC</a>
+ * @see <a href="https://fr.wikipedia.org/wiki/Projection_conique_conforme_de_Lambert#Lambert_zone_CC">Lambert CC</a>
  */
 public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice {
 

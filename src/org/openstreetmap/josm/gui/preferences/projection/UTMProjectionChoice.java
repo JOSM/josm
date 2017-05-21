@@ -21,7 +21,7 @@ import org.openstreetmap.josm.tools.GBC;
 /**
  * ProjectionChoice for UTM.
  * <p>
- * @see <a link="https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system">UTM</a>
+ * @see <a href="https://en.wikipedia.org/wiki/Universal_Transverse_Mercator_coordinate_system">UTM</a>
  */
 public class UTMProjectionChoice extends ListProjectionChoice {
 

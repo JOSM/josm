@@ -16,7 +16,7 @@ import org.openstreetmap.josm.tools.GBC;
  * ProjectionChoice for Swiss grid, CH1903 / LV03 military coordinates (EPSG:21781).
  * <p>
  * This is the old system and <b>not</b> CH1903+ from 1995.
- * @see <a link="https://en.wikipedia.org/wiki/Swiss_coordinate_system">swiss grid</a>
+ * @see <a href="https://en.wikipedia.org/wiki/Swiss_coordinate_system">swiss grid</a>
  */
 public class SwissGridProjectionChoice extends SingleProjectionChoice {
 

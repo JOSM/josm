@@ -11,7 +11,7 @@ import org.openstreetmap.josm.Main;
 /**
  * ProjectionChoice for Gauß-Krüger coordinate system (zones 2-5, EPSG:31466-31469).
  * <p>
- * @see <a link="https://de.wikipedia.org/wiki/Gauß-Krüger-Koordinatensystem">Gauß-Krüger</a>
+ * @see <a href="https://de.wikipedia.org/wiki/Gauß-Krüger-Koordinatensystem">Gauß-Krüger</a>
  */
 public class GaussKruegerProjectionChoice extends ListProjectionChoice {
 
