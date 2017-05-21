@@ -35,6 +35,7 @@ public class WMTSTileSourceTest {
     private ImageryInfo testImageryWIEN = getImagery(TestUtils.getTestDataRoot() + "wmts/getCapabilities-wien.xml");
     private ImageryInfo testImageryWALLONIE = getImagery(TestUtils.getTestDataRoot() + "wmts/WMTSCapabilities-Wallonie.xml");
     private ImageryInfo testImageryOntario = getImagery(TestUtils.getTestDataRoot() + "wmts/WMTSCapabilities-Ontario.xml");
+    private ImageryInfo testImageryGeoAdminCh = getImagery(TestUtils.getTestDataRoot() + "wmts/WMTSCapabilities-GeoAdminCh.xml");
     private ImageryInfo testImagery12168 = getImagery(TestUtils.getTestDataRoot() + "wmts/bug12168-WMTSCapabilities.xml");
     private ImageryInfo testLotsOfLayers = getImagery(TestUtils.getTestDataRoot() + "wmts/getCapabilities-lots-of-layers.xml");
     private ImageryInfo testDuplicateTags = getImagery(TestUtils.getTestDataRoot() + "wmts/bug12573-wmts-identifier.xml");
@@ -244,7 +245,6 @@ public class WMTSTileSourceTest {
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"));
         WMTSTileSource testSource = new WMTSTileSource(testLotsOfLayers);
         testSource.initProjection(Main.getProjection());
-
     }
 
     @Test
@@ -278,6 +278,25 @@ public class WMTSTileSourceTest {
         assertEquals(
                 "http://188.253.0.155:6080/arcgis/rest/services/Mashhad_BaseMap_1/MapServer/WMTS/tile/1.0.0/Mashhad_BaseMap_1"
                         + "/default/default028mm/1/3/2",
+                testSource.getTileUrl(1, 2, 3)
+                );
+    }
+
+    /**
+     * Test WMTS dimension.
+     * @throws IOException if any I/O error occurs
+     */
+    @Test
+    public void testDimension() throws IOException {
+        Main.setProjection(Projections.getProjectionByCode("EPSG:21781"));
+        ImageryInfo info = new ImageryInfo(testImageryGeoAdminCh);
+        Collection<DefaultLayer> defaultLayers = new ArrayList<>(1);
+        defaultLayers.add(new WMTSDefaultLayer("ch.are.agglomerationen_isolierte_staedte", "21781_26"));
+        info.setDefaultLayers(defaultLayers);
+        WMTSTileSource testSource = new WMTSTileSource(info);
+        testSource.initProjection(Main.getProjection());
+        assertEquals(
+                "http://wmts.geo.admin.ch/1.0.0/ch.are.agglomerationen_isolierte_staedte/default/20140101/21781/1/3/2.png",
                 testSource.getTileUrl(1, 2, 3)
                 );
     }
