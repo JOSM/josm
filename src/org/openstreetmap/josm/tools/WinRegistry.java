@@ -55,24 +55,13 @@ public final class WinRegistry {
 
     static {
         try {
-            regOpenKey = userClass.getDeclaredMethod("WindowsRegOpenKey",
-                    new Class[] { int.class, byte[].class, int.class });
-            regOpenKey.setAccessible(true);
-            regCloseKey = userClass.getDeclaredMethod("WindowsRegCloseKey",
-                    new Class[] { int.class });
-            regCloseKey.setAccessible(true);
-            regQueryValueEx = userClass.getDeclaredMethod("WindowsRegQueryValueEx",
-                    new Class[] { int.class, byte[].class });
-            regQueryValueEx.setAccessible(true);
-            regEnumValue = userClass.getDeclaredMethod("WindowsRegEnumValue",
-                    new Class[] { int.class, int.class, int.class });
-            regEnumValue.setAccessible(true);
-            regQueryInfoKey = userClass.getDeclaredMethod("WindowsRegQueryInfoKey1",
-                    new Class[] { int.class });
-            regQueryInfoKey.setAccessible(true);
-            regEnumKeyEx = userClass.getDeclaredMethod("WindowsRegEnumKeyEx",
-                    new Class[] { int.class, int.class, int.class });
-            regEnumKeyEx.setAccessible(true);
+            regOpenKey = userClass.getDeclaredMethod("WindowsRegOpenKey", int.class, byte[].class, int.class);
+            regCloseKey = userClass.getDeclaredMethod("WindowsRegCloseKey", int.class);
+            regQueryValueEx = userClass.getDeclaredMethod("WindowsRegQueryValueEx", int.class, byte[].class);
+            regEnumValue = userClass.getDeclaredMethod("WindowsRegEnumValue", int.class, int.class, int.class);
+            regQueryInfoKey = userClass.getDeclaredMethod("WindowsRegQueryInfoKey1", int.class);
+            regEnumKeyEx = userClass.getDeclaredMethod("WindowsRegEnumKeyEx", int.class, int.class, int.class);
+            Utils.setObjectsAccessible(regOpenKey, regCloseKey, regQueryValueEx, regEnumValue, regQueryInfoKey, regEnumKeyEx);
         } catch (SecurityException | ReflectiveOperationException e) {
             throw new JosmRuntimeException(e);
         }
