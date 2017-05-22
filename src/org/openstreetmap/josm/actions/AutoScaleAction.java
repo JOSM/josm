@@ -223,10 +223,14 @@ public class AutoScaleAction extends JosmAction {
         if (Main.getLayerManager().getActiveLayer() == null) {
             return null;
         }
-        List<Layer> layers = LayerListDialog.getInstance().getModel().getSelectedLayers();
-        if (layers.isEmpty())
-            return null;
-        return layers.get(0);
+        try {
+            List<Layer> layers = LayerListDialog.getInstance().getModel().getSelectedLayers();
+            if (!layers.isEmpty())
+                return layers.get(0);
+        } catch (IllegalStateException e) {
+            Main.error(e);
+        }
+        return null;
     }
 
     private BoundingXYVisitor getBoundingBox() {
