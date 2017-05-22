@@ -705,6 +705,10 @@ public class CustomProjection extends AbstractProjection {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * @deprecated unused - remove in 2017-07
+     */
     @Override
     @Deprecated
     public String getCacheDirectoryName() {
