@@ -243,6 +243,8 @@ class SyncEditorLayerIndex {
                 stream.write "        <date>$t</date>\n"
             if((t = getCountryCode(e)))
                 stream.write "        <country-code>$t</country-code>\n"
+            if((getDefault(e)))
+                stream.write "        <default>true</default>\n"
             stream.write maininfo(e, "        ")
             if((t = getAttributionText(e)))
                 stream.write "        <attribution-text mandatory=\"true\">${cdata(t, true)}</attribution-text>\n"
@@ -368,7 +370,7 @@ class SyncEditorLayerIndex {
             }
         }
 
-        /*myprintln "*** Same URL, but different Id: ***"
+        myprintln "*** Same URL, but different Id: ***"
         for (def url : eliUrls.keySet()) {
             def e = eliUrls.get(url)
             if (!josmUrls.containsKey(url)) continue
@@ -376,9 +378,9 @@ class SyncEditorLayerIndex {
             def ename = getId(e)
             def jname = getId(j)
             if (!ename.equals(jname)) {
-                myprintln "* Id differs ('${getId(e)}' != '${getId(j)}'): $url"
+                myprintln "+ SKIP * Id differs ('${getId(e)}' != '${getId(j)}'): $url"
             }
-        }*/
+        }
 
         myprintln "*** Same URL, but different type: ***"
         for (def url : eliUrls.keySet()) {
@@ -536,6 +538,16 @@ class SyncEditorLayerIndex {
                     myprintln "* Projections differ ('${et}' != '${jt}'): ${getDescription(j)}"
                 } else if (!options.nomissingeli && !getType(e).equals("tms")) {
                     myprintln "+ Missing ELI projections ('${jt}'): ${getDescription(j)}"
+                }
+            }
+
+            et = getDefault(e)
+            jt = getDefault(j)
+            if (!et.equals(jt)) {
+                if (!jt) {
+                    myprintln "* SKIP - Missing JOSM default: ${getDescription(j)}"
+                } else if (!options.nomissingeli) {
+                    myprintln "+ Missing ELI default: ${getDescription(j)}"
                 }
             }
         }
@@ -843,6 +855,10 @@ class SyncEditorLayerIndex {
     static Boolean getValidGeoreference(Object e) {
         if (e instanceof ImageryInfo) return e.isGeoreferenceValid()
         return false
+    }
+    static Boolean getDefault(Object e) {
+        if (e instanceof ImageryInfo) return e.isDefaultEntry()
+        return e.get("properties").getBoolean("default", false)
     }
     String getDescription(Object o) {
         def url = getUrl(o)
