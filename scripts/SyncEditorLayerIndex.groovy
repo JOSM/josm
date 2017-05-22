@@ -545,7 +545,7 @@ class SyncEditorLayerIndex {
             jt = getDefault(j)
             if (!et.equals(jt)) {
                 if (!jt) {
-                    myprintln "* SKIP - Missing JOSM default: ${getDescription(j)}"
+                    myprintln "- Missing JOSM default: ${getDescription(j)}"
                 } else if (!options.nomissingeli) {
                     myprintln "+ Missing ELI default: ${getDescription(j)}"
                 }
