@@ -706,6 +706,7 @@ public class CustomProjection extends AbstractProjection {
     }
 
     @Override
+    @Deprecated
     public String getCacheDirectoryName() {
         if (cacheDir != null) {
             return cacheDir;
