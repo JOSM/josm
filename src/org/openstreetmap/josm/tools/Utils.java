@@ -1656,7 +1656,15 @@ public final class Utils {
      */
     public static Date getJavaExpirationDate() {
         try {
-            Object value = Class.forName("com.sun.deploy.config.BuiltInProperties").getDeclaredField("JRE_EXPIRATION_DATE").get(null);
+            Object value = null;
+            Class<?> c = Class.forName("com.sun.deploy.config.BuiltInProperties");
+            try {
+                value = c.getDeclaredField("JRE_EXPIRATION_DATE").get(null);
+            } catch (NoSuchFieldException e) {
+                // Field is gone with Java 9, there's a method instead
+                Main.trace(e);
+                value = c.getDeclaredMethod("getProperty", String.class).invoke(null, "JRE_EXPIRATION_DATE");
+            }
             if (value instanceof String) {
                 return DateFormat.getDateInstance(3, Locale.US).parse((String) value);
             }

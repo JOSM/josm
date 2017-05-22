@@ -143,7 +143,7 @@ Build-Date: ${build.tstamp}
                 <attribute name="Codebase" value="josm.openstreetmap.de"/>
                 <attribute name="Application-Name" value="JOSM - Java OpenStreetMap Editor"/>
                 <!-- Java 9 stuff. Entries are safely ignored by Java 8 -->
-                <attribute name="Add-Exports" value="java.base/sun.security.util java.base/sun.security.x509" />
+                <attribute name="Add-Exports" value="java.base/sun.security.util java.base/sun.security.x509 jdk.deploy/com.sun.deploy.config" />
                 <attribute name="Add-Opens" value="java.desktop/javax.swing.text.html java.prefs/java.util.prefs" />
             </manifest>
             <zipfileset dir="images" prefix="images"/>
@@ -443,6 +443,8 @@ Build-Date: ${build.tstamp}
                     <jvmarg value="java.base/sun.security.util=ALL-UNNAMED" if:set="isJava9" />
                     <jvmarg value="--add-exports" if:set="isJava9" />
                     <jvmarg value="java.base/sun.security.x509=ALL-UNNAMED" if:set="isJava9" />
+                    <jvmarg value="--add-exports" if:set="isJava9" />
+                    <jvmarg value="jdk.deploy/com.sun.deploy.config=ALL-UNNAMED" if:set="isJava9" />
                     <jvmarg value="--add-opens" if:set="isJava9" />
                     <jvmarg value="java.base/java.io=ALL-UNNAMED" if:set="isJava9" />
                     <jvmarg value="--add-opens" if:set="isJava9" />
