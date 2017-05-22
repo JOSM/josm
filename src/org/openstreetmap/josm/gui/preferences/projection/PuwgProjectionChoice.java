@@ -11,8 +11,8 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * ProjectionChoice for PUWG 1992 (EPSG:2180) and PUWG 2000 for Poland (Zone 5-8, EPSG:2176-2179).
  * <p>
- * @see <a href="https://pl.wikipedia.org/wiki/Układ_współrzędnych_1992">PUWG 1992</a>
- * @see <a href="https://pl.wikipedia.org/wiki/Układ_współrzędnych_2000">PUWG 2000</a>
+ * @see <a href="https://pl.wikipedia.org/wiki/Uk%C5%82ad_wsp%C3%B3%C5%82rz%C4%99dnych_1992">PUWG 1992</a>
+ * @see <a href="https://pl.wikipedia.org/wiki/Uk%C5%82ad_wsp%C3%B3%C5%82rz%C4%99dnych_2000">PUWG 2000</a>
  */
 public class PuwgProjectionChoice extends ListProjectionChoice {
 
