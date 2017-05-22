@@ -442,7 +442,15 @@ Build-Date: ${build.tstamp}
                     <jvmarg value="--add-exports" if:set="isJava9" />
                     <jvmarg value="java.base/sun.security.x509=ALL-UNNAMED" if:set="isJava9" />
                     <jvmarg value="--add-opens" if:set="isJava9" />
+                    <jvmarg value="java.base/java.io=ALL-UNNAMED" if:set="isJava9" />
+                    <jvmarg value="--add-opens" if:set="isJava9" />
                     <jvmarg value="java.base/java.lang=ALL-UNNAMED" if:set="isJava9" />
+                    <jvmarg value="--add-opens" if:set="isJava9" />
+                    <jvmarg value="java.base/java.text=ALL-UNNAMED" if:set="isJava9" />
+                    <jvmarg value="--add-opens" if:set="isJava9" />
+                    <jvmarg value="java.base/java.util=ALL-UNNAMED" if:set="isJava9" />
+                    <jvmarg value="--add-opens" if:set="isJava9" />
+                    <jvmarg value="java.desktop/java.awt=ALL-UNNAMED" if:set="isJava9" />
                     <sysproperty key="josm.home" value="${test.dir}/config/@{testfamily}-josm.home"/>
                     <sysproperty key="josm.test.data" value="${test.dir}/data"/>
                     <sysproperty key="java.awt.headless" value="true"/>
