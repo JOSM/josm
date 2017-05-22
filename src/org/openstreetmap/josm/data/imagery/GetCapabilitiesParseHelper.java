@@ -78,7 +78,7 @@ public final class GetCapabilitiesParseHelper {
      * @throws XMLStreamException if any XML stream error occurs
      */
     public static XMLStreamReader getReader(InputStream in) throws XMLStreamException {
-        XMLInputFactory factory = XMLInputFactory.newFactory();
+        XMLInputFactory factory = XMLInputFactory.newInstance();
         // do not try to load external entities, nor validate the XML
         factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
         factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
