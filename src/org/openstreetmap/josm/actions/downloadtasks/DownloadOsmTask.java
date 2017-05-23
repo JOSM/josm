@@ -278,7 +278,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                 layer = Optional.ofNullable(getEditLayer()).orElseGet(this::getFirstDataLayer);
                 Collection<OsmPrimitive> primitivesToUpdate = searchPrimitivesToUpdate(bounds, layer.data);
                 layer.mergeFrom(dataSet);
-                if (Main.map != null && zoomAfterDownload) {
+                if (Main.map != null && zoomAfterDownload && bounds != null) {
                     Main.map.mapView.zoomTo(new ViewportData(computeBbox(bounds)));
                 }
                 if (!primitivesToUpdate.isEmpty()) {
