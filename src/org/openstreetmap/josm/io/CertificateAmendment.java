@@ -48,10 +48,12 @@ public final class CertificateAmendment {
      */
     public static class CertAmend {
         private final String id;
+        private final String filename;
         private final String sha256;
 
-        CertAmend(String path, String sha256) {
-            this.id = path;
+        CertAmend(String id, String filename, String sha256) {
+            this.id = id;
+            this.filename = filename;
             this.sha256 = sha256;
         }
 
@@ -61,6 +63,15 @@ public final class CertificateAmendment {
          */
         public final String getId() {
             return id;
+        }
+
+        /**
+         * Returns the certificate filename.
+         * @return filename for both JOSM embedded certificate and platform certificate
+         * @since 12241
+         */
+        public final String getFilename() {
+            return filename;
         }
 
         /**
@@ -76,7 +87,7 @@ public final class CertificateAmendment {
      * Certificates embedded in JOSM
      */
     private static final CertAmend[] CERT_AMEND = {
-        new CertAmend("resource://data/security/DST_Root_CA_X3.pem",
+        new CertAmend("resource://data/security/DST_Root_CA_X3.pem", "DST_Root_CA_X3.pem",
                 "0687260331a72403d909f105e69bcf0d32e1bd2493ffc6d9206d11bcd6770739")
     };
 
@@ -85,9 +96,9 @@ public final class CertificateAmendment {
      * Identifiers must match Windows keystore aliases for efficient search.
      */
     private static final CertAmend[] PLATFORM_CERT_AMEND = {
-        new CertAmend("Staat der Nederlanden Root CA - G2",
+        new CertAmend("Staat der Nederlanden Root CA - G2", "Staat_der_Nederlanden_Root_CA_-_G2.crt",
                 "668c83947da63b724bece1743c31a0e6aed0db8ec5b31be377bb784f91b6716f"),
-        new CertAmend("Government of Netherlands G3",
+        new CertAmend("Government of Netherlands G3", "Staat_der_Nederlanden_Root_CA_-_G3.crt",
                 "3c4fb0b95ab8b30032f432b86f535fe172c185d0fd39865837cf36187fa6f428")
     };
 

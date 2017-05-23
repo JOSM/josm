@@ -7,6 +7,7 @@ import java.awt.Desktop;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -14,11 +15,17 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.io.CertificateAmendment.CertAmend;
 
 /**
  * {@code PlatformHook} implementation for Unix systems.
@@ -416,5 +423,18 @@ public class PlatformHookUnixoid implements PlatformHook {
     @Override
     public List<File> getDefaultProj4NadshiftDirectories() {
         return Arrays.asList(new File("/usr/local/share/proj"), new File("/usr/share/proj"));
+    }
+
+    @Override
+    public X509Certificate getX509Certificate(CertAmend certAmend)
+            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+        File f = new File("/usr/share/ca-certificates/mozilla", certAmend.getFilename());
+        if (f.exists()) {
+            CertificateFactory fact = CertificateFactory.getInstance("X.509");
+            try (FileInputStream is = new FileInputStream(f)) {
+                return (X509Certificate) fact.generateCertificate(is);
+            }
+        }
+        return null;
     }
 }
