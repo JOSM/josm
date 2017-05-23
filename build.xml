@@ -25,7 +25,7 @@
         <property name="proj-build.dir" location="${base.dir}/build2"/>
         <property name="epsg.output" location="${base.dir}/data/projection/custom-epsg"/>
         <property name="groovy.jar" location="${base.dir}/tools/groovy-all-2.4.11.jar"/>
-        <property name="error_prone_ant.jar" location="${base.dir}/tools/error_prone_ant-2.0.19.jar"/>
+        <property name="error_prone_ant.jar" location="${base.dir}/tools/error_prone_ant.jar"/>
         <property name="javac.compiler" value="com.google.errorprone.ErrorProneAntCompilerAdapter" />
         <!-- build parameter: compression level (ant -Dclevel=N)
                  N ranges from 0 (no compression) to 9 (maximum compression)
@@ -322,6 +322,7 @@ Build-Date: ${build.tstamp}
             <compilerarg value="-Xep:FutureReturnValueIgnored:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
             <compilerarg value="-Xep:FloatingPointLiteralPrecision:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
             <compilerarg value="-Xep:ShortCircuitBoolean:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
+            <compilerarg value="-Xep:LiteralClassName:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
             <compilerarg line="-Xmaxwarns 1000"/>
         </javac>
 
