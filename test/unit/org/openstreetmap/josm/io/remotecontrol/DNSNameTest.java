@@ -7,9 +7,6 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
-
 /**
  * Unit tests of {@link DNSName} class.
  */
@@ -32,13 +29,5 @@ public class DNSNameTest {
     public void testDNSNameNominal() throws IOException {
         assertEquals("localhost", new DNSName("localhost").getName());
         assertEquals("127.0.0.1", new DNSName("127.0.0.1").getName());
-    }
-
-    /**
-     * Unit test of methods {@link DNSName#equals} and {@link DNSName#hashCode}.
-     */
-    @Test
-    public void testEqualsContract() {
-        EqualsVerifier.forClass(DNSName.class).suppress(Warning.NULL_FIELDS).verify();
     }
 }

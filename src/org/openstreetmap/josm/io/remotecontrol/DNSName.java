@@ -25,10 +25,9 @@
 package org.openstreetmap.josm.io.remotecontrol;
 
 import java.io.IOException;
-import java.util.Locale;
+import java.lang.reflect.Field;
 
-import sun.security.util.DerOutputStream;
-import sun.security.x509.GeneralNameInterface;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This class implements the DNSName as required by the GeneralNames
@@ -45,19 +44,19 @@ import sun.security.x509.GeneralNameInterface;
  * instead of wpolk@nist.gov) is not permitted; such identities are to
  * be encoded as rfc822Name.
  *
- * This class has been copied from OpenJDK7u repository and modified
+ * This class has been copied from OpenJDK8u repository and modified
  * in order to fix Java bug 8016345:
  * https://bugs.openjdk.java.net/browse/JDK-8016345
  *
- * It can be deleted after a migration to a Java release fixing this bug.
+ * It can be deleted after a migration to a Java release fixing this bug:
+ * https://bugs.openjdk.java.net/browse/JDK-8054380
  * <p>
  * @author Amit Kapoor
  * @author Hemma Prafullchandra
  * @author JOSM developers
  * @since 7347
  */
-public final class DNSName implements GeneralNameInterface {
-    private final String name;
+public final class DNSName extends sun.security.x509.DNSName {
 
     private static final String alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final String digitsAndHyphen = "0123456789-";
@@ -70,6 +69,7 @@ public final class DNSName implements GeneralNameInterface {
      * @throws IOException if the name is not a valid DNSName subjectAltName
      */
     public DNSName(String name) throws IOException {
+        super("fake");
         if (name == null || name.isEmpty())
             throw new IOException("DNS name must not be null");
         if (name.indexOf(' ') != -1)
@@ -94,159 +94,12 @@ public final class DNSName implements GeneralNameInterface {
                     throw new IOException("DNSName components must consist of letters, digits, and hyphens");
             }
         }
-        this.name = name;
-    }
-
-    /**
-     * Return the type of the GeneralName.
-     * @return the type of the GeneralName
-     */
-    @Override
-    public int getType() {
-        return GeneralNameInterface.NAME_DNS;
-    }
-
-    /**
-     * Return the actual name value of the GeneralName.
-     * @return the actual name value of the GeneralName
-     */
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * Encode the DNS name into the DerOutputStream.
-     *
-     * @param out the DER stream to encode the DNSName to.
-     * @throws IOException on encoding errors.
-     */
-    @Override
-    public void encode(DerOutputStream out) throws IOException {
-        out.putIA5String(name);
-    }
-
-    /**
-     * Convert the name into user readable string.
-     */
-    @Override
-    public String toString() {
-        return "DNSName: " + name;
-    }
-
-    /**
-     * Compares this name with another, for equality.
-     *
-     * @return true iff the names are equivalent
-     * according to RFC2459.
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-
-        if (!(obj instanceof DNSName))
-            return false;
-
-        DNSName other = (DNSName) obj;
-
-        // RFC2459 mandates that these names are
-        // not case-sensitive
-        return name.equalsIgnoreCase(other.name);
-    }
-
-    /**
-     * Returns the hash code value for this object.
-     *
-     * @return a hash code value for this object.
-     */
-    @Override
-    public int hashCode() {
-        return name.toUpperCase(Locale.ENGLISH).hashCode();
-    }
-
-    /**
-     * Return type of constraint inputName places on this name:<ul>
-     *   <li>NAME_DIFF_TYPE = -1: input name is different type from name (i.e. does not constrain).
-     *   <li>NAME_MATCH = 0: input name matches name.
-     *   <li>NAME_NARROWS = 1: input name narrows name (is lower in the naming subtree)
-     *   <li>NAME_WIDENS = 2: input name widens name (is higher in the naming subtree)
-     *   <li>NAME_SAME_TYPE = 3: input name does not match or narrow name, but is same type.
-     * </ul>.  These results are used in checking NameConstraints during
-     * certification path verification.
-     * <p>
-     * RFC2459: DNS name restrictions are expressed as foo.bar.com. Any subdomain
-     * satisfies the name constraint. For example, www.foo.bar.com would
-     * satisfy the constraint but bigfoo.bar.com would not.
-     * <p>
-     * draft-ietf-pkix-new-part1-00.txt:  DNS name restrictions are expressed as foo.bar.com.
-     * Any DNS name that
-     * can be constructed by simply adding to the left hand side of the name
-     * satisfies the name constraint. For example, www.foo.bar.com would
-     * satisfy the constraint but foo1.bar.com would not.
-     * <p>
-     * RFC1034: By convention, domain names can be stored with arbitrary case, but
-     * domain name comparisons for all present domain functions are done in a
-     * case-insensitive manner, assuming an ASCII character set, and a high
-     * order zero bit.
-     * <p>
-     * @param inputName to be checked for being constrained
-     * @return constraint type above
-     * @throws UnsupportedOperationException if name is not exact match, but narrowing and widening are
-     *          not supported for this name type.
-     */
-    @Override
-    public int constrains(GeneralNameInterface inputName) {
-        int constraintType;
-        if (inputName == null)
-            constraintType = NAME_DIFF_TYPE;
-        else if (inputName.getType() != NAME_DNS)
-            constraintType = NAME_DIFF_TYPE;
-        else {
-            if (!(inputName instanceof DNSName)) {
-                throw new IllegalArgumentException("inputName: " + inputName);
-            }
-            String inName =
-                (((DNSName) inputName).getName()).toLowerCase(Locale.ENGLISH);
-            String thisName = name.toLowerCase(Locale.ENGLISH);
-            if (inName.equals(thisName))
-                constraintType = NAME_MATCH;
-            else if (thisName.endsWith(inName)) {
-                int inNdx = thisName.lastIndexOf(inName);
-                if (thisName.charAt(inNdx-1) == '.')
-                    constraintType = NAME_WIDENS;
-                else
-                    constraintType = NAME_SAME_TYPE;
-            } else if (inName.endsWith(thisName)) {
-                int ndx = inName.lastIndexOf(thisName);
-                if (inName.charAt(ndx-1) == '.')
-                    constraintType = NAME_NARROWS;
-                else
-                    constraintType = NAME_SAME_TYPE;
-            } else {
-                constraintType = NAME_SAME_TYPE;
-            }
+        try {
+            Field fName = getClass().getSuperclass().getDeclaredField("name");
+            Utils.setObjectsAccessible(fName);
+            fName.set(this, name);
+        } catch (ReflectiveOperationException | SecurityException e) {
+            throw new IOException(e);
         }
-        return constraintType;
-    }
-
-    /**
-     * Return subtree depth of this name for purposes of determining
-     * NameConstraints minimum and maximum bounds and for calculating
-     * path lengths in name subtrees.
-     *
-     * @return distance of name from root
-     * @throws UnsupportedOperationException if not supported for this name type
-     */
-    @Override
-    public int subtreeDepth() {
-        String subtree = name;
-        int i = 1;
-
-        /* count dots */
-        for (; subtree.lastIndexOf('.') >= 0; i++) {
-            subtree = subtree.substring(0, subtree.lastIndexOf('.'));
-        }
-
-        return i;
     }
 }
