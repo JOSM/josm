@@ -28,6 +28,37 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     private String osDescription;
 
+    // rpm returns translated string "package %s is not installed\n", can't find a way to force english output
+    // translations from https://github.com/rpm-software-management/rpm
+    private static final String[] NOT_INSTALLED = {
+            "not installed",          // en
+            "no s'ha instal·lat",     // ca
+            "尚未安裝",                // cmn
+            "není nainstalován",      // cs
+            "ikke installeret",       // da
+            "nicht installiert",      // de
+            "ne estas instalita",     // eo
+            "no está instalado",      // es
+            "ole asennettu",          // fi
+            "pas installé",           // fr
+            "non è stato installato", // it
+            "はインストールされていません。",   // ja
+            "패키지가 설치되어 있지 않습니다", // ko
+            "ikke installert",        // nb
+            "nie jest zainstalowany", // pl
+            "não está instalado",     // pt
+            "не установлен",          // ru
+            "ni nameščen",            // sl
+            "nie je nainštalovaný",   // sk
+            "није инсталиран",        // sr
+            "inte installerat",       // sv
+            "kurulu değil",           // tr
+            "не встановлено",         // uk
+            "chưa cài đặt gói",       // vi
+            "未安装软件包",             // zh_CN
+            "尚未安裝"                // zh_TW
+    };
+
     @Override
     public void preStartupHook() {
         // See #12022 - Disable GNOME ATK Java wrapper as it causes a lot of serious trouble
@@ -115,7 +146,11 @@ public class PlatformHookUnixoid implements PlatformHook {
                         args = new String[] {"rpm", "-q", "--qf", "%{arch}-%{version}", packageName};
                     }
                     String version = Utils.execOutput(Arrays.asList(args));
-                    if (version != null && !version.contains("not installed")) {
+                    if (version != null) {
+                        for (String notInstalled : NOT_INSTALLED) {
+                            if (version.contains(notInstalled))
+                                break;
+                        }
                         return packageName + ':' + version;
                     }
                 }
