@@ -186,7 +186,7 @@ class SyncEditorLayerIndex {
         jr.close()
 
         for (def e : eliEntries) {
-            def url = getUrl(e)
+            def url = getUrlStripped(e)
             if (url.contains("{z}")) {
                 myprintln "+++ ELI-URL uses {z} instead of {zoom}: "+url
                 url = url.replace("{z}","{zoom}")
@@ -304,7 +304,7 @@ class SyncEditorLayerIndex {
         josmEntries = reader.parse()
 
         for (def e : josmEntries) {
-            def url = getUrl(e)
+            def url = getUrlStripped(e)
             if (url.contains("{z}")) {
                 myprintln "+++ JOSM-URL uses {z} instead of {zoom}: "+url
                 url = url.replace("{z}","{zoom}")
@@ -315,7 +315,7 @@ class SyncEditorLayerIndex {
                 josmUrls.put(url, e)
             }
             for (def m : e.getMirrors()) {
-                url = getUrl(m)
+                url = getUrlStripped(m)
                 m.origName = m.getOriginalName().replaceAll(" mirror server( \\d+)?","")
                 if (josmUrls.containsKey(url)) {
                     myprintln "+++ JOSM-Mirror-URL is not unique: "+url
@@ -366,7 +366,7 @@ class SyncEditorLayerIndex {
             def ename = getName(e).replace("'","\u2019")
             def jname = getName(j).replace("'","\u2019")
             if (!ename.equals(jname)) {
-                myprintln "* Name differs ('${getName(e)}' != '${getName(j)}'): $url"
+                myprintln "* Name differs ('${getName(e)}' != '${getName(j)}'): ${getUrl(j)}"
             }
         }
 
@@ -378,7 +378,7 @@ class SyncEditorLayerIndex {
             def ename = getId(e)
             def jname = getId(j)
             if (!ename.equals(jname)) {
-                myprintln "+ SKIP * Id differs ('${getId(e)}' != '${getId(j)}'): $url"
+                myprintln "+ SKIP * Id differs ('${getId(e)}' != '${getId(j)}'): ${getUrl(j)}"
             }
         }
 
@@ -388,7 +388,7 @@ class SyncEditorLayerIndex {
             if (!josmUrls.containsKey(url)) continue
             def j = josmUrls.get(url)
             if (!getType(e).equals(getType(j))) {
-                myprintln "* Type differs (${getType(e)} != ${getType(j)}): ${getName(j)} - $url"
+                myprintln "* Type differs (${getType(e)} != ${getType(j)}): ${getName(j)} - ${getUrl(j)}"
             }
         }
 
@@ -702,6 +702,9 @@ class SyncEditorLayerIndex {
     static String getUrl(Object e) {
         if (e instanceof ImageryInfo) return e.url
         return e.get("properties").getString("url")
+    }
+    static String getUrlStripped(Object e) {
+        return getUrl(e).replaceAll("\\?(apikey|access_token)=.*","")
     }
     static String getDate(Object e) {
         if (e instanceof ImageryInfo) return e.date ? e.date : ""
