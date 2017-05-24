@@ -26,7 +26,7 @@ public class DownloadOsmTaskTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
+    public JOSMTestRules test = new JOSMTestRules().https();
 
     /**
      * Unit test of {@code DownloadOsmTask#acceptsUrl} method.

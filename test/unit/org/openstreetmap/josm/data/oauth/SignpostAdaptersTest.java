@@ -30,7 +30,7 @@ public class SignpostAdaptersTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
+    public JOSMTestRules test = new JOSMTestRules().https();
 
     private static HttpClient newClient() throws MalformedURLException {
         return HttpClient.create(new URL("https://www.openstreetmap.org"));

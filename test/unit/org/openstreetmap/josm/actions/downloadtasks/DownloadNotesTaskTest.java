@@ -26,7 +26,7 @@ public class DownloadNotesTaskTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform();
+    public JOSMTestRules test = new JOSMTestRules().platform().https();
 
     /**
      * Unit test of {@code DownloadNotesTask#acceptsUrl} method.
