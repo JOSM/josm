@@ -150,6 +150,7 @@ public class JOSMTestRules implements TestRule {
      */
     public JOSMTestRules https() {
         useHttps = true;
+        platform = true;
         return this;
     }
 
