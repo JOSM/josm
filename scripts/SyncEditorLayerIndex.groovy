@@ -157,7 +157,7 @@ class SyncEditorLayerIndex {
             String color = s.startsWith("***") ? "black" : ((s.startsWith("+ ") || s.startsWith("+++ ELI")) ? "blue" :  (s.startsWith("#") ? "chocolate" : "red"))
             s = "<pre style=\"margin:3px;color:"+color+"\">"+s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")+"</pre>"
         }
-        if ((s.startsWith("+ ") || s.startsWith("+++ ELI")) && options.noeli) {
+        if ((s.startsWith("+ ") || s.startsWith("+++ ELI") || s.startsWith("#")) && options.noeli) {
             return
         }
         myprintlnfinal(s)
