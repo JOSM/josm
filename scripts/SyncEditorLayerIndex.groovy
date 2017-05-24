@@ -154,7 +154,7 @@ class SyncEditorLayerIndex {
                 return
             }
         } else if(options.xhtmlbody || options.xhtml) {
-            String color = s.startsWith("***") ? "black" : ((s.startsWith("+ ") || s.startsWith("+++ ELI")) ? "blue" : "red")
+            String color = s.startsWith("***") ? "black" : ((s.startsWith("+ ") || s.startsWith("+++ ELI")) ? "blue" :  (s.startsWith("#") ? "chocolate" : "red"))
             s = "<pre style=\"margin:3px;color:"+color+"\">"+s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")+"</pre>"
         }
         if ((s.startsWith("+ ") || s.startsWith("+++ ELI")) && options.noeli) {
@@ -378,7 +378,7 @@ class SyncEditorLayerIndex {
             def ename = getId(e)
             def jname = getId(j)
             if (!ename.equals(jname)) {
-                myprintln "+ SKIP * Id differs ('${getId(e)}' != '${getId(j)}'): ${getUrl(j)}"
+                myprintln "# Id differs ('${getId(e)}' != '${getId(j)}'): ${getUrl(j)}"
             }
         }
 
