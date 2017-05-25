@@ -626,7 +626,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
 
     @Override
     public boolean requiresAttribution() {
-        return attributionText != null || attributionImage != null || termsOfUseText != null || termsOfUseURL != null;
+        return attributionText != null || attributionLinkURL != null || attributionImage != null || termsOfUseText != null || termsOfUseURL != null;
     }
 
     @Override
