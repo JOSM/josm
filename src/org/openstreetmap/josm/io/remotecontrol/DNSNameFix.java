@@ -56,7 +56,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @author JOSM developers
  * @since 7347
  */
-public final class DNSName extends sun.security.x509.DNSName {
+public final class DNSNameFix extends sun.security.x509.DNSName {
 
     private static final String alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final String digitsAndHyphen = "0123456789-";
@@ -68,7 +68,7 @@ public final class DNSName extends sun.security.x509.DNSName {
      * @param name the DNSName.
      * @throws IOException if the name is not a valid DNSName subjectAltName
      */
-    public DNSName(String name) throws IOException {
+    public DNSNameFix(String name) throws IOException {
         super("fake");
         if (name == null || name.isEmpty())
             throw new IOException("DNS name must not be null");
