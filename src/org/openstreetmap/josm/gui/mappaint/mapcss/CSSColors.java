@@ -5,6 +5,11 @@ import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * List of named CSS colors as per CSS Color Module Level 3.
+ * 
+ * @see <a href="https://drafts.csswg.org/css-color-3/">CSS Color Module Level 3</a>
+ */
 public final class CSSColors {
     private static final Map<String, Color> CSS_COLORS = new HashMap<>();
     static {

@@ -15,6 +15,14 @@ import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.RelativeFloat;
 
+/**
+ * Class that defines how objects ({@link OsmPrimitive}) should be drawn on the map.
+ * 
+ * Several subclasses of this abstract class implement different drawing features,
+ * like icons for a node or area fill. This class and all its subclasses are immutable
+ * and tend to get shared when multiple objects have the same style (in order to
+ * save memory, see {@link org.openstreetmap.josm.gui.mappaint.StyleCache#intern()}).
+ */
 public abstract class StyleElement implements StyleKeys {
 
     protected static final int ICON_IMAGE_IDX = 0;
@@ -31,6 +39,15 @@ public abstract class StyleElement implements StyleKeys {
     // primitive; true, if it is a highlight or modifier
     public boolean defaultSelectedHandling;
 
+    /**
+     * Construct a new StyleElement
+     * @param majorZindex like z-index, but higher priority
+     * @param zIndex order the objects are drawn
+     * @param objectZindex like z-index, but lower priority
+     * @param isModifier if false, a default line or node symbol is generated
+     * @param defaultSelectedHandling true if default behavior for selected objects
+     * is enabled, false if a style for selected state is given explicitly
+     */
     public StyleElement(float majorZindex, float zIndex, float objectZindex, boolean isModifier, boolean defaultSelectedHandling) {
         this.majorZIndex = majorZindex;
         this.zIndex = zIndex;

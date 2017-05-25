@@ -32,6 +32,12 @@ import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.WikiReader;
 
+/**
+ * Panel that fills the main part of the program window when JOSM has just started.
+ * 
+ * It downloads and displays the so called <em>message of the day</em>, which
+ * contains news about recent major changes, warning in case of outdated versions, etc.
+ */
 public final class GettingStarted extends JPanel implements ProxyPreferenceListener {
 
     private final LinkGeneral lg;

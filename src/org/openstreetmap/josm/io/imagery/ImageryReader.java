@@ -30,6 +30,11 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+/**
+ * Reader to parse the list of available imagery servers from an XML definition file.
+ * <p>
+ * The format is specified in the <a href="https://josm.openstreetmap.de/wiki/Maps">JOSM wiki</a>.
+ */
 public class ImageryReader implements Closeable {
 
     private final String source;

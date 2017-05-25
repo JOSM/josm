@@ -12,6 +12,9 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
+/**
+ * Style element that displays a repeated image pattern along a way.
+ */
 public class RepeatImageElement extends StyleElement {
 
     /**

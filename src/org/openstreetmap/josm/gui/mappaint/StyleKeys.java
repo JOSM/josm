@@ -1,6 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
+/**
+ * Interface defining string constants (MapCSS property keys).
+ * 
+ * For the implementation of the <code>@supports</code> feature, the list of
+ * supported keys is loaded from this interface using reflection.
+ * @see org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource#evalSupportsDeclCondition(java.lang.String, java.lang.Object)
+ */
 public interface StyleKeys {
 
     String COLOR = "color";

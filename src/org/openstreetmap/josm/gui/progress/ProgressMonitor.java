@@ -4,6 +4,8 @@ package org.openstreetmap.josm.gui.progress;
 import java.awt.Component;
 
 /**
+ * An interface for displaying the progress of a task.
+ * <p>
  * Typical use case is:
  * <pre>
  *   monitor.beginTask()
@@ -20,12 +22,12 @@ import java.awt.Component;
  *
  * {@link #subTask(String)} and {@link #indeterminateSubTask(String)} has nothing to do with logical
  * structure of the work, they just show task title to the user.
- *
+ * <p>
  * If task consists of multiple tasks then {@link #createSubTaskMonitor(int, boolean)} may be used. It
  * will create new ProgressMonitor, then can be passed to the subtask. Subtask doesn't know whether
  * it runs standalone or as a part of other task. Progressbar will be updated so that total progress is
  * shown, not just progress of the subtask
- *
+ * <p>
  * All ProgressMonitor implementations should be thread safe.
  *
  */
