@@ -658,6 +658,15 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
         return null;
     }
 
+    /**
+     * Return the raw attribution logo information (an URL to the image).
+     * @return The url text
+     * @since 12257
+     */
+    public String getAttributionImageRaw() {
+        return attributionImage;
+    }
+
     @Override
     public String getAttributionImageURL() {
         return attributionImageURL;
