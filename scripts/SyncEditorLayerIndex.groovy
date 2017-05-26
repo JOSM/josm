@@ -250,6 +250,10 @@ class SyncEditorLayerIndex {
                 stream.write "        <attribution-text mandatory=\"true\">${cdata(t, true)}</attribution-text>\n"
             if((t = getAttributionUrl(e)))
                 stream.write "        <attribution-url>${cdata(t)}</attribution-url>\n"
+            if((t = getLogoImage(e)))
+                stream.write "        <logo-image>${cdata(t, true)}</logo-image>\n"
+            if((t = getLogoUrl(e)))
+                stream.write "        <logo-url>${cdata(t)}</logo-url>\n"
             if((t = getTermsOfUseText(e)))
                 stream.write "        <terms-of-use-text>${cdata(t, true)}</terms-of-use-text>\n"
             if((t = getTermsOfUseUrl(e)))
@@ -672,6 +676,15 @@ class SyncEditorLayerIndex {
                     }
                 }
             }
+            if(getAttributionUrl(j) && !getAttributionText(j)) {
+                myprintln "* Attribution link without text: ${getDescription(j)}"
+            }
+            if(getLogoUrl(j) && !getLogoImage(j)) {
+                myprintln "* Logo link without image: ${getDescription(j)}"
+            }
+            if(getTermsOfUseText(j) && !getTermsOfUseUrl(j)) {
+                myprintln "* Terms of Use text without link: ${getDescription(j)}"
+            }
             def js = getShapes(j)
             if(js.size()) {
                 def minlat = 1000
@@ -838,6 +851,14 @@ class SyncEditorLayerIndex {
     }
     static String getTermsOfUseUrl(Object e) {
         if (e instanceof ImageryInfo) return e.getTermsOfUseURL()
+        return null
+    }
+    static String getLogoImage(Object e) {
+        if (e instanceof ImageryInfo) return e.getAttributionImageRaw()
+        return null
+    }
+    static String getLogoUrl(Object e) {
+        if (e instanceof ImageryInfo) return e.getAttributionImageURL()
         return null
     }
     static String getPermissionReferenceUrl(Object e) {
