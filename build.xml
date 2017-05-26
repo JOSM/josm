@@ -143,8 +143,8 @@ Build-Date: ${build.tstamp}
                 <attribute name="Codebase" value="josm.openstreetmap.de"/>
                 <attribute name="Application-Name" value="JOSM - Java OpenStreetMap Editor"/>
                 <!-- Java 9 stuff. Entries are safely ignored by Java 8 -->
-                <attribute name="Add-Exports" value="java.base/sun.security.util jdk.deploy/com.sun.deploy.config" />
-                <attribute name="Add-Opens" value="java.base/sun.security.x509 java.desktop/javax.swing.text.html java.prefs/java.util.prefs" />
+                <attribute name="Add-Exports" value="java.base/sun.security.util java.desktop/com.sun.imageio.spi jdk.deploy/com.sun.deploy.config" />
+                <attribute name="Add-Opens" value="java.base/java.lang java.base/jdk.internal.loader java.base/sun.security.x509 java.desktop/javax.imageio.spi java.desktop/javax.swing.text.html java.prefs/java.util.prefs" />
             </manifest>
             <zipfileset dir="images" prefix="images"/>
             <zipfileset dir="data" prefix="data"/>
