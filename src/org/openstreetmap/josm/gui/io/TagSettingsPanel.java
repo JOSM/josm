@@ -90,6 +90,7 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
      * @return the map with the current tags in the tag editor model.
      */
     public Map<String, String> getTags(boolean keepEmpty) {
+        forceCommentFieldReload();
         return pnlTagEditor.getModel().getTags(keepEmpty);
     }
 
@@ -107,6 +108,14 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
     public void tableChanged(TableModelEvent e) {
         changesetCommentModel.setComment(getTagEditorValue("comment"));
         changesetSourceModel.setComment(getTagEditorValue("source"));
+    }
+
+    /**
+     * Force update the fields if the user is currently changing them. See #5676
+     */
+    private void forceCommentFieldReload() {
+        setProperty("comment", changesetCommentModel.getComment());
+        setProperty("source", changesetSourceModel.getComment());
     }
 
     /**
