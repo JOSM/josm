@@ -499,9 +499,9 @@ class SyncEditorLayerIndex {
             if (!jt) jt = getTermsOfUseUrl(j)
             if (!et.equals(jt)) {
                 if (!jt) {
-                    myprintln "+ SKIP - Missing JOSM license URL (${et}): ${getDescription(j)}"
+                    myprintln "- Missing JOSM license URL (${et}): ${getDescription(j)}"
                 } else if (et) {
-                    myprintln "+ SKIP * License URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                    myprintln "* License URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
                 } else if (!options.nomissingeli) {
                     myprintln "+ Missing ELI license URL ('${jt}'): ${getDescription(j)}"
                 }
@@ -513,7 +513,7 @@ class SyncEditorLayerIndex {
                 if (!jt) {
                     myprintln "- Missing JOSM attribution URL (${et}): ${getDescription(j)}"
                 } else if (et) {
-                    myprintln "+ SKIP * Attribution URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                    myprintln "* Attribution URL differs ('${et}' != '${jt}'): ${getDescription(j)}"
                 } else if (!options.nomissingeli) {
                     myprintln "+ Missing ELI attribution URL ('${jt}'): ${getDescription(j)}"
                 }
@@ -525,7 +525,7 @@ class SyncEditorLayerIndex {
                 if (!jt) {
                     myprintln "- Missing JOSM attribution text (${et}): ${getDescription(j)}"
                 } else if (et) {
-                    myprintln "+ SKIP * Attribution text differs ('${et}' != '${jt}'): ${getDescription(j)}"
+                    myprintln "* Attribution text differs ('${et}' != '${jt}'): ${getDescription(j)}"
                 } else if (!options.nomissingeli) {
                     myprintln "+ Missing ELI attribution text ('${jt}'): ${getDescription(j)}"
                 }
