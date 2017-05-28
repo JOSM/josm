@@ -58,7 +58,7 @@ public class ImagerySessionImporter implements SessionLayerImporter {
         return layer;
     }
 
-    private Map<String, String> readProperties(Element elem) {
+    private static Map<String, String> readProperties(Element elem) {
         Map<String, String> attributes = new HashMap<>();
         NodeList nodes = elem.getChildNodes();
         for (int i = 0; i < nodes.getLength(); ++i) {

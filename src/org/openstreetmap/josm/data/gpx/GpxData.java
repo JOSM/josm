@@ -3,7 +3,6 @@ package org.openstreetmap.josm.data.gpx;
 
 import java.io.File;
 import java.text.MessageFormat;
-import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -23,6 +22,7 @@ import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.gpx.GpxTrack.GpxTrackChangeListener;
 import org.openstreetmap.josm.tools.ListenerList;
+import org.openstreetmap.josm.tools.ListeningCollection;
 
 /**
  * Objects of this class represent a gpx file with tracks, waypoints and routes.
@@ -664,81 +664,6 @@ public class GpxData extends WithAttributes implements Data {
     private void fireInvalidate() {
         GpxDataChangeEvent e = new GpxDataChangeEvent(this);
         listeners.fireEvent(l -> l.gpxDataChanged(e));
-    }
-
-    /**
-     * This is a proxy of a collection that notifies a listener on every collection change
-     * @author Michael Zangl
-     *
-     * @param <T> The entry type
-     * @since 12156
-     */
-    private static class ListeningCollection<T> extends AbstractCollection<T> {
-        private final ArrayList<T> base;
-        private final Runnable runOnModification;
-
-        ListeningCollection(ArrayList<T> base, Runnable runOnModification) {
-            this.base = base;
-            this.runOnModification = runOnModification;
-        }
-
-        @Override
-        public Iterator<T> iterator() {
-            Iterator<T> it = base.iterator();
-            return new Iterator<T>() {
-                private T cursor;
-
-                @Override
-                public boolean hasNext() {
-                    return it.hasNext();
-                }
-
-                @Override
-                public T next() {
-                    cursor = it.next();
-                    return cursor;
-                }
-
-                @Override
-                public void remove() {
-                    if (cursor != null) {
-                        removed(cursor);
-                        cursor = null;
-                    }
-                    it.remove();
-                }
-            };
-        }
-
-        @Override
-        public int size() {
-            return base.size();
-        }
-
-        @Override
-        @SuppressWarnings("unchecked")
-        public boolean remove(Object o) {
-            boolean remove = base.remove(o);
-            if (remove) {
-                removed((T) o);
-            }
-            return remove;
-        }
-
-        @Override
-        public boolean add(T e) {
-            boolean add = base.add(e);
-            added(e);
-            return add;
-        }
-
-        protected void removed(T cursor) {
-            runOnModification.run();
-        }
-
-        protected void added(T cursor) {
-            runOnModification.run();
-        }
     }
 
     /**

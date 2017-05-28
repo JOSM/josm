@@ -97,7 +97,7 @@ public class ImagerySessionExporter extends AbstractSessionExporter<ImageryLayer
         return layerElem;
     }
 
-    private void addAttributes(Element element, Map<String, String> props, ExportSupport support) {
+    private static void addAttributes(Element element, Map<String, String> props, ExportSupport support) {
         for (Map.Entry<String, String> entry : props.entrySet()) {
             Element attrElem = support.createElement(entry.getKey());
             element.appendChild(attrElem);

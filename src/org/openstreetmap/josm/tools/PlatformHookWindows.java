@@ -173,7 +173,7 @@ public class PlatformHookWindows implements PlatformHook {
                 if (currentBuild >= 15_063 && ((javaVersion == 8 && javaUpdate < 152)
                         || (javaVersion == 9 && javaUpdate == 0 && javaBuild < 171))) {
                     // Workaround from https://bugs.openjdk.java.net/browse/JDK-8179014
-                    UIManager.put("FileChooser.useSystemExtensionHiding", false);
+                    UIManager.put("FileChooser.useSystemExtensionHiding", Boolean.FALSE);
                 }
             } catch (NumberFormatException | ReflectiveOperationException e) {
                 Main.error(e);
