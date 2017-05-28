@@ -2,8 +2,8 @@
 package org.openstreetmap.josm.tools;
 
 import java.util.AbstractCollection;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * This is a proxy of a collection that notifies a listener on every collection change
@@ -14,15 +14,16 @@ import java.util.Iterator;
  * @since 12156
  */
 public class ListeningCollection<T> extends AbstractCollection<T> {
-    private final ArrayList<T> base;
+    private final List<T> base;
     private final Runnable runOnModification;
 
     /**
      * Constructs a new {@code ListeningCollection}.
      * @param base base collection
      * @param runOnModification runnable run at each modification
+     * @since 12269
      */
-    public ListeningCollection(ArrayList<T> base, Runnable runOnModification) {
+    public ListeningCollection(List<T> base, Runnable runOnModification) {
         this.base = base;
         this.runOnModification = runOnModification;
     }
