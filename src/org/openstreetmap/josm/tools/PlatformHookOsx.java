@@ -59,21 +59,19 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
             Class<?> preferencesHandler = findHandlerClass("PreferencesHandler");
             Object proxy = Proxy.newProxyInstance(PlatformHookOsx.class.getClassLoader(), new Class<?>[] {
                 quitHandler, aboutHandler, openFilesHandler, preferencesHandler}, ivhandler);
-            try {
-                Object appli = eawtApplication.getConstructor((Class[]) null).newInstance((Object[]) null);
-                setHandlers(eawtApplication, quitHandler, aboutHandler, openFilesHandler, preferencesHandler, proxy, appli);
-                // this method has been deprecated, but without replacement ATM
-                eawtApplication.getDeclaredMethod("setEnabledPreferencesMenu", boolean.class).invoke(appli, Boolean.TRUE);
-                // setup the dock icon. It is automatically set with application bundle and Web start but we need
-                // to do it manually if run with `java -jar``
-                eawtApplication.getDeclaredMethod("setDockIconImage", Image.class).invoke(appli, ImageProvider.get("logo").getImage());
-                // enable full screen
-                enableOSXFullscreen((Window) Main.parent);
-            } catch (IllegalAccessException e) {
-                Main.debug(e);
-                // with Java 9, module java.desktop does not export com.apple.eawt, use new Desktop API instead
+            Object appli = eawtApplication.getConstructor((Class[]) null).newInstance((Object[]) null);
+            if (Utils.getJavaVersion() >= 9) {
                 setHandlers(Desktop.class, quitHandler, aboutHandler, openFilesHandler, preferencesHandler, proxy, Desktop.getDesktop());
+            } else {
+                setHandlers(eawtApplication, quitHandler, aboutHandler, openFilesHandler, preferencesHandler, proxy, appli);
+                // this method has been deprecated, but without replacement. To remove with Java 9 migration
+                eawtApplication.getDeclaredMethod("setEnabledPreferencesMenu", boolean.class).invoke(appli, Boolean.TRUE);
             }
+            // setup the dock icon. It is automatically set with application bundle and Web start but we need
+            // to do it manually if run with `java -jar``
+            eawtApplication.getDeclaredMethod("setDockIconImage", Image.class).invoke(appli, ImageProvider.get("logo").getImage());
+            // enable full screen
+            enableOSXFullscreen((Window) Main.parent);
         } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException ex) {
             // We'll just ignore this for now. The user will still be able to close JOSM by closing all its windows.
             Main.warn("Failed to register with OSX: " + ex);
@@ -111,9 +109,11 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
      */
     protected Class<?> findHandlerClass(String className) throws ClassNotFoundException {
         try {
+            // Java 8 handlers
             return Class.forName("com.apple.eawt."+className);
         } catch (ClassNotFoundException e) {
             Main.trace(e);
+            // Java 9 handlers
             return Class.forName("java.awt.desktop."+className);
         }
     }
