@@ -662,8 +662,10 @@ public class GpxData extends WithAttributes implements Data {
     }
 
     private void fireInvalidate() {
-        GpxDataChangeEvent e = new GpxDataChangeEvent(this);
-        listeners.fireEvent(l -> l.gpxDataChanged(e));
+        if (listeners.hasListeners()) {
+            GpxDataChangeEvent e = new GpxDataChangeEvent(this);
+            listeners.fireEvent(l -> l.gpxDataChanged(e));
+        }
     }
 
     /**
