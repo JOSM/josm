@@ -157,10 +157,18 @@ public class SplashScreen extends JFrame implements ChangeListener {
         }
 
         public void finish() {
-            if (!"".equals(duration)) {
-                throw new IllegalStateException("This tasks has already been finished");
+            if (isFinished()) {
+                throw new IllegalStateException("This task has already been finished: " + name);
             }
             duration = tr(" ({0})", Utils.getDurationString(System.currentTimeMillis() - start));
+        }
+
+        /**
+         * Determines if this task has been finished.
+         * @return {@code true} if this task has been finished
+         */
+        public boolean isFinished() {
+            return !duration.isEmpty();
         }
 
         @Override
@@ -173,7 +181,8 @@ public class SplashScreen extends JFrame implements ChangeListener {
             if (this == o) return true;
             if (o == null || getClass() != o.getClass()) return false;
             MeasurableTask that = (MeasurableTask) o;
-            return Objects.equals(name, that.name);
+            return Objects.equals(name, that.name)
+                && isFinished() == that.isFinished();
         }
 
         @Override
