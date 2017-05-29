@@ -39,6 +39,8 @@ import org.openstreetmap.josm.data.SystemOfMeasurement.SoMChangeListener;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeEvent;
+import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeListener;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.MapView;
@@ -58,7 +60,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Class that helps to draw large set of GPS tracks with different colors and options
  * @since 7319
  */
-public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerPainter, PaintableInvalidationListener {
+public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerPainter, PaintableInvalidationListener, GpxDataChangeListener {
 
     /**
      * The color that is used for drawing GPX points.
@@ -219,6 +221,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     public GpxDrawHelper(GpxLayer gpxLayer) {
         layer = gpxLayer;
         data = gpxLayer.data;
+        data.addChangeListener(this);
 
         layer.addInvalidationListener(this);
         SystemOfMeasurement.addSoMChangeListener(this);
@@ -1449,7 +1452,8 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     /**
      *  callback when data is changed, invalidate cached configuration parameters
      */
-    public void dataChanged() {
+    @Override
+    public void gpxDataChanged(GpxDataChangeEvent e) {
         computeCacheInSync = false;
     }
 
@@ -1483,5 +1487,6 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     public void detachFromMapView(MapViewEvent event) {
         SystemOfMeasurement.removeSoMChangeListener(this);
         layer.removeInvalidationListener(this);
+        data.removeChangeListener(this);
     }
 }
