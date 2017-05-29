@@ -55,14 +55,6 @@ public class RestartAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        // If JOSM has been started with property 'josm.restart=true' this means
-        // it is executed by a start script that can handle restart.
-        // Request for restart is indicated by exit code 9.
-        String scriptRestart = System.getProperty("josm.restart");
-        if ("true".equals(scriptRestart)) {
-            Main.exitJosm(true, 9, SaveLayersDialog.Reason.RESTART);
-        }
-
         try {
             restartJOSM();
         } catch (IOException ex) {
@@ -84,6 +76,14 @@ public class RestartAction extends JosmAction {
      * @throws IOException in case of any I/O error
      */
     public static void restartJOSM() throws IOException {
+        // If JOSM has been started with property 'josm.restart=true' this means
+        // it is executed by a start script that can handle restart.
+        // Request for restart is indicated by exit code 9.
+        String scriptRestart = System.getProperty("josm.restart");
+        if ("true".equals(scriptRestart)) {
+            Main.exitJosm(true, 9, SaveLayersDialog.Reason.RESTART);
+        }
+
         if (isRestartSupported() && !Main.exitJosm(false, 0, SaveLayersDialog.Reason.RESTART)) return;
         final List<String> cmd;
         // special handling for OSX .app package

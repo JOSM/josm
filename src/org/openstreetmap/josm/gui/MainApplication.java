@@ -497,7 +497,11 @@ public class MainApplication extends Main {
                 if (wasv6 && !hasv6) {
                     Main.info(tr("Detected no useable IPv6 network, prefering IPv4 over IPv6 after next restart."));
                     Main.pref.put("validated.ipv6", hasv6); // be sure it is stored before the restart!
-                    new RestartAction().actionPerformed(null);
+                    try {
+                        RestartAction.restartJOSM();
+                    } catch (IOException e) {
+                        Main.error(e);
+                    }
                 }
                 Main.pref.put("validated.ipv6", hasv6);
             }, "IPv6-checker").start();

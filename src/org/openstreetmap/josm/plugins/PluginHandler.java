@@ -609,7 +609,11 @@ public final class PluginHandler {
                         }
                         Main.pref.putCollection("plugins", plugins);
                         // restart
-                        new RestartAction().actionPerformed(null);
+                        try {
+                            RestartAction.restartJOSM();
+                        } catch (IOException e) {
+                            Main.error(e);
+                        }
                     } else {
                         Main.warn("No plugin downloaded, restart canceled");
                     }
