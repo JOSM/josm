@@ -170,8 +170,8 @@ public class PlatformHookWindows implements PlatformHook {
                 final int javaUpdate = Utils.getJavaUpdate();
                 final int javaBuild = Utils.getJavaBuild();
                 // See https://technet.microsoft.com/en-us/windows/release-info.aspx
-                if (currentBuild >= 15_063 && ((javaVersion == 8 && javaUpdate < 152)
-                        || (javaVersion == 9 && javaUpdate == 0 && javaBuild < 171))) {
+                if (currentBuild >= 15_063 && ((javaVersion == 8 && javaUpdate < 141)
+                        || (javaVersion == 9 && javaUpdate == 0 && javaBuild < 173))) {
                     // Workaround from https://bugs.openjdk.java.net/browse/JDK-8179014
                     UIManager.put("FileChooser.useSystemExtensionHiding", Boolean.FALSE);
                 }
