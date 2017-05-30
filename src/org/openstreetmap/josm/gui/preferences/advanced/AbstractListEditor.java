@@ -30,7 +30,7 @@ public abstract class AbstractListEditor<T> extends ExtendedDialog {
     public AbstractListEditor(Component parent, String title, PrefEntry entry) {
         super(parent, title, tr("OK"), tr("Cancel"));
         this.entry = entry;
-        setButtonIcons("ok.png", "cancel.png");
+        setButtonIcons("ok", "cancel");
         setRememberWindowGeometry(getClass().getName() + ".geometry", WindowGeometry.centerInWindow(parent, new Dimension(500, 350)));
     }
 

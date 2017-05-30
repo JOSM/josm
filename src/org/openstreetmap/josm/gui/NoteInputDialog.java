@@ -55,7 +55,7 @@ public class NoteInputDialog extends ExtendedDialog {
         contentPanel.add(label);
         contentPanel.add(scrollPane);
         setContent(contentPanel, false);
-        setButtonIcons(icon, ImageProvider.get("cancel.png"));
+        setButtonIcons(icon, ImageProvider.get("cancel"));
 
         showDialog();
     }

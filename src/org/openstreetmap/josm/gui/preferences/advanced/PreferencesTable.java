@@ -220,7 +220,7 @@ public class PreferencesTable extends JTable {
 
     private static boolean askAddSetting(JComponent gui, JPanel p) {
         return new ExtendedDialog(gui, tr("Add setting"), tr("OK"), tr("Cancel"))
-                .setContent(p).setButtonIcons("ok.png", "cancel.png").showDialog().getValue() == 1;
+                .setContent(p).setButtonIcons("ok", "cancel").showDialog().getValue() == 1;
     }
 
     private static boolean doAddSimple(final JComponent gui, PrefEntry pe, StringSetting sSetting) {
