@@ -55,14 +55,16 @@ public class ListenableWeakReference<T> extends WeakReference<T> {
     }
 
     private static void clean() {
+        boolean running = true;
         try {
-            while (true) {
+            while (running) {
                 Reference<? extends Object> ref = GLOBAL_QUEUE.remove();
                 if (ref instanceof ListenableWeakReference) {
                     ((ListenableWeakReference<?>) ref).onDereference();
                 }
             }
         } catch (InterruptedException e) {
+            running = false;
             BugReport.intercept(e).warn();
             Thread.currentThread().interrupt();
         }
