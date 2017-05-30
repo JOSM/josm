@@ -217,8 +217,8 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
         return new ExtendedDialog(
                 Main.parent,
                 title,
-                new String[] {tr("Ok")})
-        .setButtonIcons(new String[] {"ok"})
+                tr("Ok"))
+        .setButtonIcons("ok")
         .setIcon(msgType)
         .setContent(p, false);
     }

@@ -434,9 +434,9 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                 setIconImage(icon.getImage());
             contentInsets = new Insets(10, 5, 0, 5);
             if (showNewRelation) {
-                setButtonIcons(new String[] {"ok", "dialogs/addrelation", "cancel" });
+                setButtonIcons("ok", "dialogs/addrelation", "cancel");
             } else {
-                setButtonIcons(new String[] {"ok", "cancel" });
+                setButtonIcons("ok", "cancel");
             }
             setContent(content);
             setDefaultButton(1);

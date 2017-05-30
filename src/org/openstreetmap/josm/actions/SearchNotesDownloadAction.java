@@ -52,20 +52,18 @@ public class SearchNotesDownloadAction extends JosmAction {
         gc.gridy = 1;
         contentPanel.add(searchTermBox, gc);
 
-        ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Search for notes"),
-                new String[] {tr("Search for notes"), tr("Cancel")});
-        ed.setContent(contentPanel);
-        ed.setButtonIcons(new String[] {"note_search", "cancel"});
-        ed.showDialog();
-        if (ed.getValue() != 1) {
+        ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Search for notes"), tr("Search for notes"), tr("Cancel"))
+            .setContent(contentPanel)
+            .setButtonIcons("note_search", "cancel");
+        if (ed.showDialog().getValue() != 1) {
             return;
         }
 
         String searchTerm = Optional.ofNullable(searchTermBox.getText()).orElse("").trim();
         if (searchTerm.isEmpty()) {
-            Notification notification = new Notification(tr("You must enter a search term"));
-            notification.setIcon(JOptionPane.WARNING_MESSAGE);
-            notification.show();
+            new Notification(tr("You must enter a search term"))
+                .setIcon(JOptionPane.WARNING_MESSAGE)
+                .show();
             return;
         }
 

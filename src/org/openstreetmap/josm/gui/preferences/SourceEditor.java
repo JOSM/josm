@@ -43,7 +43,6 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -915,7 +914,7 @@ public abstract class SourceEditor extends JPanel {
          * @param e source entry to edit
          */
         public EditSourceEntryDialog(Component parent, String title, SourceEntry e) {
-            super(parent, title, new String[] {tr("Ok"), tr("Cancel")});
+            super(parent, title, tr("Ok"), tr("Cancel"));
 
             JPanel p = new JPanel(new GridBagLayout());
 
@@ -941,7 +940,7 @@ public abstract class SourceEditor extends JPanel {
                 cbActive = new JCheckBox(tr("active"), e == null || e.active);
                 p.add(cbActive, GBC.eol().insets(15, 0, 5, 0));
             }
-            setButtonIcons(new String[] {"ok", "cancel"});
+            setButtonIcons("ok", "cancel");
             setContent(p);
 
             // Make OK button enabled only when a file/URL has been set
@@ -1190,15 +1189,15 @@ public abstract class SourceEditor extends JPanel {
                     }
                 }
                 if (!messages.isEmpty()) {
-                    ExtendedDialog dlg = new ExtendedDialog(Main.parent, tr("Warning"), new String[] {tr("Cancel"), tr("Continue anyway")});
-                    dlg.setButtonIcons(new Icon[] {
+                    ExtendedDialog dlg = new ExtendedDialog(Main.parent, tr("Warning"), tr("Cancel"), tr("Continue anyway"));
+                    dlg.setButtonIcons(
                         ImageProvider.get("cancel"),
                         new ImageProvider("ok").setMaxSize(ImageSizes.LARGEICON).addOverlay(
                                 new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1.0, 1.0)).get()
-                    });
-                    dlg.setToolTipTexts(new String[] {
+                    );
+                    dlg.setToolTipTexts(
                         tr("Cancel and return to the previous dialog"),
-                        tr("Ignore warning and install style anyway")});
+                        tr("Ignore warning and install style anyway"));
                     dlg.setContent("<html>" + tr("Some entries have unmet dependencies:") +
                             "<br>" + Utils.join("<br>", messages) + "</html>");
                     dlg.setIcon(JOptionPane.WARNING_MESSAGE);

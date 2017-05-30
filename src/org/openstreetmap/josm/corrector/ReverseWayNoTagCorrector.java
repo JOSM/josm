@@ -35,14 +35,14 @@ public final class ReverseWayNoTagCorrector {
     /**
      * Tags that imply a semantic meaning from the way direction and cannot be changed.
      */
-    private static final TagCollection directionalTags = new TagCollection(Arrays.asList(new Tag[]{
+    private static final TagCollection directionalTags = new TagCollection(Arrays.asList(
             new Tag("natural", "coastline"),
             new Tag("natural", "cliff"),
             new Tag("barrier", "guard_rail"),
             new Tag("barrier", "kerb"),
             new Tag("barrier", "retaining_wall"),
-            new Tag("man_made", "embankment"),
-    }));
+            new Tag("man_made", "embankment")
+    ));
 
     /**
      * Replies the tags that imply a semantic meaning from <code>way</code> direction and cannot be changed.

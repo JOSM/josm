@@ -50,8 +50,8 @@ public class LayerListPopup extends JPopupMenu {
             if (object instanceof Component) {
                 ExtendedDialog ed = new ExtendedDialog(
                         Main.parent, tr("Information about layer"),
-                        new String[] {tr("OK")});
-                ed.setButtonIcons(new String[] {"ok"});
+                        tr("OK"));
+                ed.setButtonIcons("ok");
                 ed.setIcon(JOptionPane.INFORMATION_MESSAGE);
                 ed.setContent((Component) object);
                 ed.setResizable(layer.isInfoResizable());

@@ -290,8 +290,8 @@ public final class ShowStatusReportAction extends JosmAction {
 
         ExtendedDialog ed = new ExtendedDialog(Main.parent,
                 tr("Status Report"),
-                new String[] {tr("Copy to clipboard and close"), tr("Report bug"), tr("Close") });
-        ed.setButtonIcons(new String[] {"copy", "bug", "cancel" });
+                tr("Copy to clipboard and close"), tr("Report bug"), tr("Close"));
+        ed.setButtonIcons("copy", "bug", "cancel");
         ed.setContent(ta, false);
         ed.setMinimumSize(new Dimension(380, 200));
         ed.setPreferredSize(new Dimension(700, Main.parent.getHeight()-50));

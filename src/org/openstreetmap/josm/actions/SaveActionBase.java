@@ -206,15 +206,14 @@ public abstract class SaveActionBase extends DiskAccessAction {
      */
     public static boolean confirmOverwrite(File file) {
         if (file == null || file.exists()) {
-            ExtendedDialog dialog = new ExtendedDialog(
+            return new ExtendedDialog(
                     Main.parent,
                     tr("Overwrite"),
-                    new String[] {tr("Overwrite"), tr("Cancel")}
-            );
-            dialog.setContent(tr("File exists. Overwrite?"));
-            dialog.setButtonIcons(new String[] {"save_as", "cancel"});
-            dialog.showDialog();
-            return dialog.getValue() == 1;
+                    tr("Overwrite"), tr("Cancel"))
+                .setContent(tr("File exists. Overwrite?"))
+                .setButtonIcons("save_as", "cancel")
+                .showDialog()
+                .getValue() == 1;
         }
         return true;
     }

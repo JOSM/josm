@@ -256,10 +256,10 @@ public interface PlatformHook {
         ExtendedDialog ed = new ExtendedDialog(
                 Main.parent,
                 tr("Outdated Java version"),
-                new String[]{tr("OK"), tr("Update Java"), tr("Cancel")});
+                tr("OK"), tr("Update Java"), tr("Cancel"));
         // Check if the dialog has not already been permanently hidden by user
         if (!ed.toggleEnable("askUpdateJava"+updVersion).toggleCheckState()) {
-            ed.setButtonIcons(new String[]{"ok", "java", "cancel"}).setCancelButton(3);
+            ed.setButtonIcons("ok", "java", "cancel").setCancelButton(3);
             ed.setMinimumSize(new Dimension(480, 300));
             ed.setIcon(JOptionPane.WARNING_MESSAGE);
             StringBuilder content = new StringBuilder(tr("You are running version {0} of Java.",

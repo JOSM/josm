@@ -170,13 +170,13 @@ public class ImageryReader implements Closeable {
                 }
                 break;
             case MIRROR:
-                if (Arrays.asList(new String[] {
+                if (Arrays.asList(
                         "type",
                         "url",
                         MIN_ZOOM,
                         MAX_ZOOM,
-                        TILE_SIZE,
-                }).contains(qName)) {
+                        TILE_SIZE
+                ).contains(qName)) {
                     newState = State.MIRROR_ATTRIBUTE;
                     lang = atts.getValue("lang");
                 } else if ("projections".equals(qName)) {
@@ -185,7 +185,7 @@ public class ImageryReader implements Closeable {
                 }
                 break;
             case ENTRY:
-                if (Arrays.asList(new String[] {
+                if (Arrays.asList(
                         "name",
                         "id",
                         "type",
@@ -206,8 +206,8 @@ public class ImageryReader implements Closeable {
                         "icon",
                         "date",
                         TILE_SIZE,
-                        "valid-georeference",
-                }).contains(qName)) {
+                        "valid-georeference"
+                ).contains(qName)) {
                     newState = State.ENTRY_ATTRIBUTE;
                     lang = atts.getValue("lang");
                 } else if ("bounds".equals(qName)) {

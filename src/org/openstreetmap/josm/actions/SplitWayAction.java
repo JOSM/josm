@@ -242,7 +242,7 @@ public class SplitWayAction extends JosmAction {
             this.list = new JList<>(newWays.toArray(new Way[newWays.size()]));
             configureList();
 
-            setButtonIcons(new String[]{"ok", "cancel"});
+            setButtonIcons("ok", "cancel");
             final JPanel pane = new JPanel(new GridBagLayout());
             pane.add(new JLabel(getTitle()), GBC.eol().fill(GBC.HORIZONTAL));
             pane.add(list, GBC.eop().fill(GBC.HORIZONTAL));

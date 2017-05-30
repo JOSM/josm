@@ -544,13 +544,13 @@ public class MainApplication extends Main {
                     ExtendedDialog dialog = new ExtendedDialog(
                             Main.parent,
                             tr("Unsaved osm data"),
-                            new String[] {tr("Restore"), tr("Cancel"), tr("Discard")}
+                            tr("Restore"), tr("Cancel"), tr("Discard")
                             );
                     dialog.setContent(
                             trn("JOSM found {0} unsaved osm data layer. ",
                                     "JOSM found {0} unsaved osm data layers. ", unsavedLayerFiles.size(), unsavedLayerFiles.size()) +
                                     tr("It looks like JOSM crashed last time. Would you like to restore the data?"));
-                    dialog.setButtonIcons(new String[] {"ok", "cancel", "dialogs/delete"});
+                    dialog.setButtonIcons("ok", "cancel", "dialogs/delete");
                     int selection = dialog.showDialog().getValue();
                     if (selection == 1) {
                         autosaveTask.recoverUnsavedLayers();
@@ -566,8 +566,8 @@ public class MainApplication extends Main {
             if (hasErrors) {
                 ExtendedDialog ed = new ExtendedDialog(
                         Main.parent, title,
-                        new String[]{tr("Change proxy settings"), tr("Cancel")});
-                ed.setButtonIcons(new String[]{"dialogs/settings", "cancel"}).setCancelButton(2);
+                        tr("Change proxy settings"), tr("Cancel"));
+                ed.setButtonIcons("dialogs/settings", "cancel").setCancelButton(2);
                 ed.setMinimumSize(new Dimension(460, 260));
                 ed.setIcon(JOptionPane.WARNING_MESSAGE);
                 ed.setContent(message);

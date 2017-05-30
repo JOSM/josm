@@ -868,8 +868,8 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         ConfirmMoveDialog() {
             super(Main.parent,
                     tr("Move elements"),
-                    new String[]{tr("Move them"), tr("Undo move")});
-            setButtonIcons(new String[]{"reorder", "cancel"});
+                    tr("Move them"), tr("Undo move"));
+            setButtonIcons("reorder", "cancel");
             setCancelButton(2);
         }
     }

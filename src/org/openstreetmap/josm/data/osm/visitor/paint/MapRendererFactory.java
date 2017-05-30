@@ -302,7 +302,7 @@ public final class MapRendererFactory {
      */
     public AbstractMapRenderer createActiveRenderer(Graphics2D g, NavigatableComponent viewport, boolean isInactiveMode) {
         try {
-            Constructor<?> c = activeRenderer.getConstructor(new Class<?>[]{Graphics2D.class, NavigatableComponent.class, boolean.class});
+            Constructor<?> c = activeRenderer.getConstructor(Graphics2D.class, NavigatableComponent.class, boolean.class);
             return AbstractMapRenderer.class.cast(c.newInstance(g, viewport, isInactiveMode));
         } catch (InvocationTargetException e) {
             Main.debug(e);

@@ -32,7 +32,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 
 import javax.swing.GrayFilter;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -196,15 +195,13 @@ public final class GuiHelper {
      */
     public static boolean warnUser(String title, String content, ImageIcon baseActionIcon, String continueToolTip) {
         ExtendedDialog dlg = new ExtendedDialog(Main.parent,
-                title, new String[] {tr("Cancel"), tr("Continue")});
+                title, tr("Cancel"), tr("Continue"));
         dlg.setContent(content);
-        dlg.setButtonIcons(new Icon[] {
+        dlg.setButtonIcons(
                     new ImageProvider("cancel").setMaxSize(ImageSizes.LARGEICON).get(),
                     new ImageProvider("upload").setMaxSize(ImageSizes.LARGEICON).addOverlay(
-                            new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1.0, 1.0)).get()});
-        dlg.setToolTipTexts(new String[] {
-                tr("Cancel"),
-                continueToolTip});
+                            new ImageOverlay(new ImageProvider("warning-small"), 0.5, 0.5, 1.0, 1.0)).get());
+        dlg.setToolTipTexts(tr("Cancel"), continueToolTip);
         dlg.setIcon(JOptionPane.WARNING_MESSAGE);
         dlg.setCancelButton(1);
         return dlg.showDialog().getValue() != 2;
@@ -226,8 +223,8 @@ public final class GuiHelper {
         sp.setPreferredSize(new Dimension(640, 240));
         p.add(sp, GBC.eol().fill(GBC.BOTH));
 
-        ExtendedDialog ed = new ExtendedDialog(parent, title, new String[] {tr("OK")});
-        ed.setButtonIcons(new String[] {"ok.png"});
+        ExtendedDialog ed = new ExtendedDialog(parent, title, tr("OK"));
+        ed.setButtonIcons("ok");
         ed.setContent(p);
         ed.showDialog();
     }

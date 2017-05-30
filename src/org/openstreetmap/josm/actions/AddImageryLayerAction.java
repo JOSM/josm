@@ -48,7 +48,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
 
     static class SelectWmsLayersDialog extends ExtendedDialog {
         SelectWmsLayersDialog(WMSLayerTree tree, JComboBox<String> formats) {
-            super(Main.parent, tr("Select WMS layers"), new String[]{tr("Add layers"), tr("Cancel")});
+            super(Main.parent, tr("Select WMS layers"), tr("Add layers"), tr("Cancel"));
             final JScrollPane scrollPane = new JScrollPane(tree.getLayerTree());
             scrollPane.setPreferredSize(new Dimension(400, 400));
             final JPanel panel = new JPanel(new GridBagLayout());

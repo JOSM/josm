@@ -96,10 +96,10 @@ public class UserListDialog extends ToggleDialog implements DataSelectionListene
         ShowUserInfoAction showUserInfoAction = new ShowUserInfoAction();
         userTable.getSelectionModel().addListSelectionListener(showUserInfoAction);
 
-        createLayout(userTable, true, Arrays.asList(new SideButton[] {
+        createLayout(userTable, true, Arrays.asList(
             new SideButton(selectionUsersPrimitivesAction),
             new SideButton(showUserInfoAction)
-        }));
+        ));
     }
 
     @Override

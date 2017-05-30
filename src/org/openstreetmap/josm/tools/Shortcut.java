@@ -182,9 +182,9 @@ public final class Shortcut {
     }
 
     private void saveDefault() {
-        Main.pref.getCollection("shortcut.entry."+shortText, Arrays.asList(new String[]{longText,
-        String.valueOf(requestedKey), String.valueOf(requestedGroup), String.valueOf(requestedKey),
-        String.valueOf(getGroupModifier(requestedGroup)), String.valueOf(true), String.valueOf(false)}));
+        Main.pref.getCollection("shortcut.entry."+shortText, Arrays.asList(longText,
+            String.valueOf(requestedKey), String.valueOf(requestedGroup), String.valueOf(requestedKey),
+            String.valueOf(getGroupModifier(requestedGroup)), String.valueOf(true), String.valueOf(false)));
     }
 
     // get a string that can be put into the preferences
@@ -192,9 +192,9 @@ public final class Shortcut {
         if (isAutomatic() || isReset() || !isAssignedUser()) {
             return Main.pref.putCollection("shortcut.entry."+shortText, null);
         } else {
-            return Main.pref.putCollection("shortcut.entry."+shortText, Arrays.asList(new String[]{longText,
-            String.valueOf(requestedKey), String.valueOf(requestedGroup), String.valueOf(assignedKey),
-            String.valueOf(assignedModifier), String.valueOf(assignedDefault), String.valueOf(assignedUser)}));
+            return Main.pref.putCollection("shortcut.entry."+shortText, Arrays.asList(longText,
+                String.valueOf(requestedKey), String.valueOf(requestedGroup), String.valueOf(assignedKey),
+                String.valueOf(assignedModifier), String.valueOf(assignedDefault), String.valueOf(assignedUser)));
         }
     }
 

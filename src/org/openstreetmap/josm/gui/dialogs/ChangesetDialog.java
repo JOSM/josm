@@ -210,13 +210,13 @@ public class ChangesetDialog extends ToggleDialog {
         lstInSelection.addMouseListener(popupMenuLauncher);
         lstInActiveDataLayer.addMouseListener(popupMenuLauncher);
 
-        createLayout(pnl, false, Arrays.asList(new SideButton[] {
+        createLayout(pnl, false, Arrays.asList(
             new SideButton(selectObjectsAction, false),
             new SideButton(readChangesetAction, false),
             new SideButton(closeChangesetAction, false),
             new SideButton(showChangesetInfoAction, false),
             new SideButton(new LaunchChangesetManagerAction(), false)
-        }));
+        ));
     }
 
     protected JList<Changeset> getCurrentChangesetList() {

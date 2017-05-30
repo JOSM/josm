@@ -85,7 +85,7 @@ public final class PluginHandler {
     static {
         String inCore = tr("integrated into main program");
 
-        DEPRECATED_PLUGINS = Arrays.asList(new DeprecatedPlugin[] {
+        DEPRECATED_PLUGINS = Arrays.asList(
             new DeprecatedPlugin("mappaint", inCore),
             new DeprecatedPlugin("unglueplugin", inCore),
             new DeprecatedPlugin("lang-de", inCore),
@@ -135,8 +135,8 @@ public final class PluginHandler {
             new DeprecatedPlugin("josm-geojson", tr("replaced by new {0} plugin", "geojson")),
             new DeprecatedPlugin("proj4j", inCore),
             new DeprecatedPlugin("OpenStreetView", tr("replaced by new {0} plugin", "OpenStreetCam")),
-            new DeprecatedPlugin("imageryadjust", inCore),
-        });
+            new DeprecatedPlugin("imageryadjust", inCore)
+        );
     }
 
     private PluginHandler() {

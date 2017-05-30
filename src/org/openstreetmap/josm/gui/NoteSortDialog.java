@@ -32,7 +32,7 @@ public class NoteSortDialog extends ExtendedDialog {
      * @param buttonText - Translated text to be shown on the action button
      */
     public NoteSortDialog(Component parent, String title, String buttonText) {
-        super(parent, title, new String[] {buttonText, tr("Cancel")});
+        super(parent, title, buttonText, tr("Cancel"));
     }
 
     /**

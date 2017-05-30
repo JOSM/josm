@@ -117,7 +117,7 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
         if (zipRequired) {
             fc = createAndOpenFileChooser(false, false, tr("Save session"), joz, JFileChooser.FILES_ONLY, "lastDirectory");
         } else {
-            fc = createAndOpenFileChooser(false, false, tr("Save session"), Arrays.asList(new FileFilter[]{jos, joz}), jos,
+            fc = createAndOpenFileChooser(false, false, tr("Save session"), Arrays.asList(jos, joz), jos,
                     JFileChooser.FILES_ONLY, "lastDirectory");
         }
 
@@ -187,9 +187,9 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
          * Constructs a new {@code SessionSaveAsDialog}.
          */
         public SessionSaveAsDialog() {
-            super(Main.parent, tr("Save Session"), new String[] {tr("Save As"), tr("Cancel")});
+            super(Main.parent, tr("Save Session"), tr("Save As"), tr("Cancel"));
             initialize();
-            setButtonIcons(new String[] {"save_as", "cancel"});
+            setButtonIcons("save_as", "cancel");
             setDefaultButton(1);
             setRememberWindowGeometry(getClass().getName() + ".geometry",
                     WindowGeometry.centerInWindow(Main.parent, new Dimension(350, 450)));

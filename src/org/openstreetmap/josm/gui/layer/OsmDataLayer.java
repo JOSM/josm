@@ -658,7 +658,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
 
     @Override public Action[] getMenuEntries() {
         List<Action> actions = new ArrayList<>();
-        actions.addAll(Arrays.asList(new Action[]{
+        actions.addAll(Arrays.asList(
                 LayerListDialog.getInstance().createActivateLayerAction(this),
                 LayerListDialog.getInstance().createShowHideLayerAction(),
                 LayerListDialog.getInstance().createDeleteLayerAction(),
@@ -666,23 +666,22 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
                 LayerListDialog.getInstance().createMergeLayerAction(this),
                 LayerListDialog.getInstance().createDuplicateLayerAction(this),
                 new LayerSaveAction(this),
-                new LayerSaveAsAction(this),
-        }));
+                new LayerSaveAsAction(this)));
         if (ExpertToggleAction.isExpert()) {
-            actions.addAll(Arrays.asList(new Action[]{
+            actions.addAll(Arrays.asList(
                     new LayerGpxExportAction(this),
-                    new ConvertToGpxLayerAction()}));
+                    new ConvertToGpxLayerAction()));
         }
-        actions.addAll(Arrays.asList(new Action[]{
+        actions.addAll(Arrays.asList(
                 SeparatorLayerAction.INSTANCE,
-                new RenameLayerAction(getAssociatedFile(), this)}));
+                new RenameLayerAction(getAssociatedFile(), this)));
         if (ExpertToggleAction.isExpert()) {
             actions.add(new ToggleUploadDiscouragedLayerAction(this));
         }
-        actions.addAll(Arrays.asList(new Action[]{
+        actions.addAll(Arrays.asList(
                 new ConsistencyTestAction(),
                 SeparatorLayerAction.INSTANCE,
-                new LayerListPopup.InfoAction(this)}));
+                new LayerListPopup.InfoAction(this)));
         return actions.toArray(new Action[actions.size()]);
     }
 
@@ -1053,30 +1052,28 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
             if (GraphicsEnvironment.isHeadless()) {
                 return 2;
             }
-            ExtendedDialog dialog = new ExtendedDialog(
+            return new ExtendedDialog(
                     Main.parent,
                     tr("Empty document"),
-                    new String[] {tr("Save anyway"), tr("Cancel")}
-            );
-            dialog.setContent(tr("The document contains no data."));
-            dialog.setButtonIcons(new String[] {"save", "cancel"});
-            return dialog.showDialog().getValue();
+                    tr("Save anyway"), tr("Cancel"))
+                .setContent(tr("The document contains no data."))
+                .setButtonIcons("save", "cancel")
+                .showDialog().getValue();
         })) {
             return false;
         }
 
         ConflictCollection conflictsCol = getConflicts();
         return conflictsCol == null || conflictsCol.isEmpty() || 1 == GuiHelper.runInEDTAndWaitAndReturn(() -> {
-            ExtendedDialog dialog = new ExtendedDialog(
+            return new ExtendedDialog(
                     Main.parent,
                     /* I18N: Display title of the window showing conflicts */
                     tr("Conflicts"),
-                    new String[] {tr("Reject Conflicts and Save"), tr("Cancel")}
-            );
-            dialog.setContent(
-                    tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"));
-            dialog.setButtonIcons(new String[] {"save", "cancel"});
-            return dialog.showDialog().getValue();
+                    tr("Reject Conflicts and Save"), tr("Cancel"))
+                .setContent(
+                    tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"))
+                .setButtonIcons("save", "cancel")
+                .showDialog().getValue();
         });
     }
 

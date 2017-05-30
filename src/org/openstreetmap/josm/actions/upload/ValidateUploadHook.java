@@ -140,12 +140,11 @@ public class ValidateUploadHook implements UploadHook {
 
         ExtendedDialog ed = new ExtendedDialog(Main.parent,
                 tr("Suspicious data found. Upload anyway?"),
-                new String[] {tr("Continue upload"), tr("Cancel")});
-        ed.setButtonIcons(new String[] {"ok.png", "cancel.png"});
-        ed.setContent(p);
-        ed.showDialog();
+                tr("Continue upload"), tr("Cancel"))
+            .setButtonIcons("ok", "cancel")
+            .setContent(p);
 
-        if (ed.getValue() != 1) {
+        if (ed.showDialog().getValue() != 1) {
             OsmValidator.initializeTests();
             OsmValidator.initializeErrorLayer();
             Main.map.validatorDialog.unfurlDialog();

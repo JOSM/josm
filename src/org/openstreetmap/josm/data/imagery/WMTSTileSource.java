@@ -193,7 +193,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         private final JTable list;
 
         SelectLayerDialog(Collection<Layer> layers) {
-            super(Main.parent, tr("Select WMTS layer"), new String[]{tr("Add layers"), tr("Cancel")});
+            super(Main.parent, tr("Select WMTS layer"), tr("Add layers"), tr("Cancel"));
             this.layers = groupLayersByNameAndTileMatrixSet(layers);
             //getLayersTable(layers, Main.getProjection())
             this.list = new JTable(
@@ -463,7 +463,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                         layer.baseUrl = reader.getAttributeValue("", "template");
                     } else if (QN_STYLE.equals(reader.getName()) &&
                             "true".equals(reader.getAttributeValue("", "isDefault"))) {
-                        if (GetCapabilitiesParseHelper.moveReaderToTag(reader, new QName[] {GetCapabilitiesParseHelper.QN_OWS_IDENTIFIER})) {
+                        if (GetCapabilitiesParseHelper.moveReaderToTag(reader, GetCapabilitiesParseHelper.QN_OWS_IDENTIFIER)) {
                             layer.style = reader.getElementText();
                             tagStack.push(reader.getName()); // keep tagStack in sync
                         }
@@ -635,11 +635,11 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             if (event == XMLStreamReader.START_ELEMENT &&
                     GetCapabilitiesParseHelper.QN_OWS_OPERATION.equals(reader.getName()) &&
                     "GetTile".equals(reader.getAttributeValue("", "name")) &&
-                    GetCapabilitiesParseHelper.moveReaderToTag(reader, new QName[] {
+                    GetCapabilitiesParseHelper.moveReaderToTag(reader,
                             GetCapabilitiesParseHelper.QN_OWS_DCP,
                             GetCapabilitiesParseHelper.QN_OWS_HTTP,
-                            GetCapabilitiesParseHelper.QN_OWS_GET,
-                    })) {
+                            GetCapabilitiesParseHelper.QN_OWS_GET
+                    )) {
                 this.baseUrl = reader.getAttributeValue(GetCapabilitiesParseHelper.XLINK_NS_URL, "href");
                 this.transferMode = GetCapabilitiesParseHelper.getTransferMode(reader);
             }

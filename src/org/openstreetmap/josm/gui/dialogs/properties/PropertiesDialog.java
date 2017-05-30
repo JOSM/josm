@@ -1013,13 +1013,12 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
 
             ExtendedDialog ed = new ExtendedDialog(Main.parent,
                     tr("Change relation"),
-                    new String[] {tr("Delete from relation"), tr("Cancel")});
-            ed.setButtonIcons(new String[] {"dialogs/delete", "cancel"});
+                    tr("Delete from relation"), tr("Cancel"));
+            ed.setButtonIcons("dialogs/delete", "cancel");
             ed.setContent(tr("Really delete selection from relation {0}?", cur.getDisplayName(DefaultNameFormatter.getInstance())));
             ed.toggleEnable(DELETE_FROM_RELATION_PREF);
-            ed.showDialog();
 
-            if (ed.getValue() != 1)
+            if (ed.showDialog().getValue() != 1)
                 return;
 
             Relation rel = new Relation(cur);

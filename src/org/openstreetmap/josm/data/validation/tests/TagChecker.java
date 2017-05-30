@@ -264,7 +264,7 @@ public class TagChecker extends TagTest {
             }
             // TODO directionKeys are no longer in OsmPrimitive (search pattern is used instead)
             for (String a : Main.pref.getCollection(ValidatorPreference.PREFIX + ".knownkeys",
-                    Arrays.asList(new String[]{"is_in", "int_ref", "fixme", "population"}))) {
+                    Arrays.asList("is_in", "int_ref", "fixme", "population"))) {
                 additionalPresetsValueData.putVoid(a);
             }
             for (TaggingPreset p : presets) {

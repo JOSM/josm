@@ -176,10 +176,7 @@ public final class GetCapabilitiesParseHelper {
                 event = reader.next()) {
             if (event == XMLStreamReader.START_ELEMENT && QN_OWS_CONSTRAINT.equals(reader.getName())
              && "GetEncoding".equals(reader.getAttributeValue("", "name"))) {
-                moveReaderToTag(reader, new QName[]{
-                        QN_OWS_ALLOWED_VALUES,
-                        QN_OWS_VALUE
-                });
+                moveReaderToTag(reader, QN_OWS_ALLOWED_VALUES, QN_OWS_VALUE);
                 return TransferMode.fromString(reader.getElementText());
             }
         }

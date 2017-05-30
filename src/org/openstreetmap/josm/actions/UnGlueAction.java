@@ -205,8 +205,8 @@ public class UnGlueAction extends JosmAction {
         final transient ExistingBothNewChoice memberships;
 
         private PropertiesMembershipDialog(boolean preselectNew, boolean queryTags, boolean queryMemberships) {
-            super(Main.parent, tr("Tags / Memberships"), new String[]{tr("Unglue"), tr("Cancel")});
-            setButtonIcons(new String[]{"unglueways", "cancel"});
+            super(Main.parent, tr("Tags / Memberships"), tr("Unglue"), tr("Cancel"));
+            setButtonIcons("unglueways", "cancel");
 
             final JPanel content = new JPanel(new GridBagLayout());
 

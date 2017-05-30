@@ -265,7 +265,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
             defPL2.title = tr("Potlatch 2");
             defPL2.description = tr("the main Potlatch 2 style");
 
-            return Arrays.asList(new ExtendedSourceEntry[] {defJosmMapcss, defPL2});
+            return Arrays.asList(defJosmMapcss, defPL2);
         }
 
         @Override

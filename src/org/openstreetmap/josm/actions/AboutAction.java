@@ -109,8 +109,8 @@ public final class AboutAction extends JosmAction {
         panel.add(about, GBC.std().fill());
 
         GuiHelper.prepareResizeableOptionPane(panel, panel.getPreferredSize());
-        int ret = new ExtendedDialog(Main.parent, tr("About JOSM..."), new String[] {tr("OK"), tr("Report bug")})
-            .setButtonIcons(new String[] {"ok", "bug"})
+        int ret = new ExtendedDialog(Main.parent, tr("About JOSM..."), tr("OK"), tr("Report bug"))
+            .setButtonIcons("ok", "bug")
             .setContent(panel, false)
             .showDialog().getValue();
         if (2 == ret) {

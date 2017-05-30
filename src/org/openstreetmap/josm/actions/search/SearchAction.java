@@ -339,9 +339,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         ExtendedDialog dialog = new ExtendedDialog(
                 Main.parent,
                 initialValues instanceof Filter ? tr("Filter") : tr("Search"),
-                        new String[] {
-                    initialValues instanceof Filter ? tr("Submit filter") : tr("Start Search"),
-                            tr("Cancel")}
+                initialValues instanceof Filter ? tr("Submit filter") : tr("Start Search"),
+                tr("Cancel")
         ) {
             @Override
             protected void buttonAction(int buttonIndex, ActionEvent evt) {
@@ -367,13 +366,11 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 }
             }
         };
-        dialog.setButtonIcons(new String[] {"dialogs/search", "cancel"});
+        dialog.setButtonIcons("dialogs/search", "cancel");
         dialog.configureContextsensitiveHelp("/Action/Search", true /* show help button */);
         dialog.setContent(p);
-        dialog.showDialog();
-        int result = dialog.getValue();
 
-        if (result != 1) return null;
+        if (dialog.showDialog().getValue() != 1) return null;
 
         // User pressed OK - let's perform the search
         SearchMode mode = replace.isSelected() ? SearchAction.SearchMode.replace

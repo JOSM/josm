@@ -375,17 +375,15 @@ public class TagEditHelper {
      * @return {@code true} if the user accepts to overwrite key, {@code false} otherwise
      */
     private static boolean warnOverwriteKey(String action, String togglePref) {
-        ExtendedDialog ed = new ExtendedDialog(
+        return new ExtendedDialog(
                 Main.parent,
                 tr("Overwrite key"),
-                new String[]{tr("Replace"), tr("Cancel")});
-        ed.setButtonIcons(new String[]{"purge", "cancel"});
-        ed.setContent(action+'\n'+ tr("The new key is already used, overwrite values?"));
-        ed.setCancelButton(2);
-        ed.toggleEnable(togglePref);
-        ed.showDialog();
-
-        return ed.getValue() == 1;
+                tr("Replace"), tr("Cancel"))
+            .setButtonIcons("purge", "cancel")
+            .setContent(action+'\n'+ tr("The new key is already used, overwrite values?"))
+            .setCancelButton(2)
+            .toggleEnable(togglePref)
+            .showDialog().getValue() == 1;
     }
 
     protected class EditTagDialog extends AbstractTagsDialog implements IEditTagDialog {
@@ -415,8 +413,8 @@ public class TagEditHelper {
         };
 
         protected EditTagDialog(String key, Map<String, Integer> map, final boolean initialFocusOnKey) {
-            super(Main.parent, trn("Change value?", "Change values?", map.size()), new String[] {tr("OK"), tr("Cancel")});
-            setButtonIcons(new String[] {"ok", "cancel"});
+            super(Main.parent, trn("Change value?", "Change values?", map.size()), tr("OK"), tr("Cancel"));
+            setButtonIcons("ok", "cancel");
             setCancelButton(2);
             configureContextsensitiveHelp("/Dialog/EditValue", true /* show help button */);
             this.key = key;
@@ -678,8 +676,8 @@ public class TagEditHelper {
         private int commandCount;
 
         protected AddTagsDialog() {
-            super(Main.parent, tr("Add value?"), new String[] {tr("OK"), tr("Cancel")});
-            setButtonIcons(new String[] {"ok", "cancel"});
+            super(Main.parent, tr("Add value?"), tr("OK"), tr("Cancel"));
+            setButtonIcons("ok", "cancel");
             setCancelButton(2);
             configureContextsensitiveHelp("/Dialog/AddValue", true /* show help button */);
 

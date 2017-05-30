@@ -29,15 +29,14 @@ public class CacheEntryAttributes extends ElementAttributes {
     private static final String HTTP_RESPONSE_CODE = "httpResponceCode";
     private static final String ERROR_MESSAGE = "errorMessage";
     // this contains all of the above
-    private static final Set<String> RESERVED_KEYS = new HashSet<>(Arrays.asList(new String[]{
+    private static final Set<String> RESERVED_KEYS = new HashSet<>(Arrays.asList(
         NO_TILE_AT_ZOOM,
         ETAG,
         LAST_MODIFICATION,
         EXPIRATION_TIME,
         HTTP_RESPONSE_CODE,
         ERROR_MESSAGE
-    }));
-
+    ));
 
     /**
      * Constructs a new {@code CacheEntryAttributes}.

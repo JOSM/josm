@@ -152,7 +152,7 @@ public class XmlObjectParser implements Iterable<Object> {
                     }
                     Method m = entry.getMethod(fieldName);
                     if (m != null) {
-                        m.invoke(c, new Object[]{getValueForClass(m.getParameterTypes()[0], value)});
+                        m.invoke(c, getValueForClass(m.getParameterTypes()[0], value));
                     }
                 }
             } catch (ReflectiveOperationException | IllegalArgumentException e) {

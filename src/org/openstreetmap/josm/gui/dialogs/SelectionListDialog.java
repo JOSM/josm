@@ -131,9 +131,9 @@ public class SelectionListDialog extends ToggleDialog {
         final SideButton searchButton = new SideButton(actSearch);
         searchButton.createArrow(e -> SearchPopupMenu.launch(searchButton));
 
-        createLayout(lstPrimitives, true, Arrays.asList(new SideButton[] {
+        createLayout(lstPrimitives, true, Arrays.asList(
             selectButton, searchButton, new SideButton(actShowHistory)
-        }));
+        ));
     }
 
     /**

@@ -534,9 +534,9 @@ public class MapPaintDialog extends ToggleDialog {
             if (sel < 0 || sel >= model.getRowCount())
                 return;
             final StyleSource s = model.getRow(sel);
-            ExtendedDialog info = new ExtendedDialog(Main.parent, tr("Map Style info"), new String[] {tr("Close")});
+            ExtendedDialog info = new ExtendedDialog(Main.parent, tr("Map Style info"), tr("Close"));
             info.setPreferredSize(new Dimension(600, 400));
-            info.setButtonIcons(new String[] {"ok.png"});
+            info.setButtonIcons("ok");
 
             final JTabbedPane tabs = new JTabbedPane();
 

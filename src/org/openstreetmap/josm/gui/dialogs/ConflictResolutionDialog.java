@@ -44,7 +44,7 @@ public class ConflictResolutionDialog extends ExtendedDialog implements Property
      */
     public ConflictResolutionDialog(Component parent) {
         // We define our own actions, but need to give a hint about number of buttons
-        super(parent, tr("Resolve conflicts"), new String[] {null, null, null});
+        super(parent, tr("Resolve conflicts"), null, null, null);
         setDefaultButton(1);
         setCancelButton(2);
         build();

@@ -428,7 +428,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         public void actionPerformed(ActionEvent ae) {
             Tile clickedTile = clickedTileHolder.getTile();
             if (clickedTile != null) {
-                ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Tile Info"), new String[]{tr("OK")});
+                ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Tile Info"), tr("OK"));
                 JPanel panel = new JPanel(new GridBagLayout());
                 Rectangle2D displaySize = coordinateConverter.getRectangleForTile(clickedTile);
                 String url = "";

@@ -79,10 +79,10 @@ public class RelationUploadOrderHook implements UploadHook {
         ExtendedDialog dialog = new ExtendedDialog(
                 Main.parent,
                 tr("Cycling dependencies"),
-                new String[] {tr("OK")}
+                tr("OK")
         );
         dialog.setContent(pnl, false /* don't embed in scroll pane */);
-        dialog.setButtonIcons(new String[] {"ok"});
+        dialog.setButtonIcons("ok");
         dialog.setRememberWindowGeometry(
                 getClass().getName() + ".geometry",
                 WindowGeometry.centerInWindow(Main.parent, new Dimension(300, 300))

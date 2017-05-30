@@ -26,7 +26,7 @@ public final class MenuItemSearchDialog extends ExtendedDialog {
     private static final MenuItemSearchDialog INSTANCE = new MenuItemSearchDialog(Main.main.menu);
 
     private MenuItemSearchDialog(MainMenu menu) {
-        super(Main.parent, tr("Search menu items"), new String[]{tr("Select"), tr("Cancel")});
+        super(Main.parent, tr("Search menu items"), tr("Select"), tr("Cancel"));
         this.selector = new Selector(menu);
         this.selector.setDblClickListener(e -> buttonAction(0, null));
         setContent(selector, false);

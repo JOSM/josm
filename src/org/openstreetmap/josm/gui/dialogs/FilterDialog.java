@@ -238,9 +238,9 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
             }
         });
 
-        createLayout(userTable, true, Arrays.asList(new SideButton[] {
+        createLayout(userTable, true, Arrays.asList(
                 addButton, editButton, deleteButton, upButton, downButton
-        }));
+        ));
     }
 
     @Override

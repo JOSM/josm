@@ -64,7 +64,7 @@ public class OpenLocationAction extends JosmAction {
     static class WhichTasksToPerformDialog extends ExtendedDialog {
         WhichTasksToPerformDialog(JList<DownloadTask> list) {
             super(Main.parent, tr("Which tasks to perform?"), new String[]{tr("Ok"), tr("Cancel")}, true);
-            setButtonIcons(new String[]{"ok", "cancel"});
+            setButtonIcons("ok", "cancel");
             final JPanel pane = new JPanel(new GridLayout(2, 1));
             pane.add(new JLabel(tr("Which tasks to perform?")));
             pane.add(list);
@@ -137,17 +137,14 @@ public class OpenLocationAction extends JosmAction {
 
         ExtendedDialog dialog = new ExtendedDialog(Main.parent,
                 tr("Download Location"),
-                new String[] {tr("Download URL"), tr("Cancel")}
-        );
-        dialog.setContent(all, false /* don't embedded content in JScrollpane  */);
-        dialog.setButtonIcons(new String[] {"download", "cancel"});
-        dialog.setToolTipTexts(new String[] {
+                tr("Download URL"), tr("Cancel"))
+            .setContent(all, false /* don't embedded content in JScrollpane  */)
+            .setButtonIcons("download", "cancel")
+            .setToolTipTexts(
                 tr("Start downloading data"),
-                tr("Close dialog and cancel downloading")
-        });
-        dialog.configureContextsensitiveHelp("/Action/OpenLocation", true /* show help button */);
-        dialog.showDialog();
-        if (dialog.getValue() == 1) {
+                tr("Close dialog and cancel downloading"))
+            .configureContextsensitiveHelp("/Action/OpenLocation", true /* show help button */);
+        if (dialog.showDialog().getValue() == 1) {
             USE_NEW_LAYER.put(layer.isSelected());
             remindUploadAddressHistory(uploadAddresses);
             openUrl(Utils.strip(uploadAddresses.getText()));

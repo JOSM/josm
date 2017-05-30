@@ -141,9 +141,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
             if (lastNumMatched == 0 && new ExtendedDialog(
                         Main.parent,
                         tr("Correlate images with GPX track"),
-                        new String[] {tr("OK"), tr("Try Again")}).
+                        tr("OK"), tr("Try Again")).
                         setContent(tr("No images could be matched!")).
-                        setButtonIcons(new String[] {"ok", "dialogs/refresh"}).
+                        setButtonIcons("ok", "dialogs/refresh").
                         showDialog().getValue() == 2)
                 return AGAIN;
             return DONE;
@@ -731,7 +731,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     false
             );
             syncDialog.setContent(panelTf, false);
-            syncDialog.setButtonIcons(new String[] {"ok", "cancel"});
+            syncDialog.setButtonIcons("ok", "cancel");
             syncDialog.setupDialog();
             outerPanel.add(syncDialog.getContentPane(), BorderLayout.PAGE_START);
             syncDialog.setContentPane(outerPanel);
@@ -954,8 +954,8 @@ public class CorrelateGpxWithImages extends AbstractAction {
             // Settings are only saved temporarily to the layer.
             new ExtendedDialog(Main.parent,
                     tr("Adjust timezone and offset"),
-                    new String[] {tr("Close")}).
-                    setContent(p).setButtonIcons(new String[] {"ok"}).showDialog();
+                    tr("Close")).
+                    setContent(p).setButtonIcons("ok").showDialog();
         }
     }
 

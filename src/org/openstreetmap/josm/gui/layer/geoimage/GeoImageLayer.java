@@ -718,8 +718,8 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
             int result = new ExtendedDialog(
                     Main.parent,
                     tr("Delete image file from disk"),
-                    new String[] {tr("Cancel"), tr("Delete")})
-            .setButtonIcons(new String[] {"cancel", "dialogs/delete"})
+                    tr("Cancel"), tr("Delete"))
+            .setButtonIcons("cancel", "dialogs/delete")
             .setContent(new JLabel(tr("<html><h3>Delete the file {0} from disk?<p>The image file will be permanently lost!</h3></html>",
                     toDelete.getFile().getName()), ImageProvider.get("dialogs/geoimage/deletefromdisk"), SwingConstants.LEFT))
                     .toggleEnable("geoimage.deleteimagefromdisk")

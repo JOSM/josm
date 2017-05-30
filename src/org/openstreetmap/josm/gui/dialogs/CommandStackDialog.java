@@ -126,11 +126,11 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         UndoRedoAction redoAction = new UndoRedoAction(UndoRedoType.REDO);
         wireUpdateEnabledStateUpdater(redoAction, redoTree);
 
-        scrollPane = (JScrollPane) createLayout(treesPanel, true, Arrays.asList(new SideButton[] {
+        scrollPane = (JScrollPane) createLayout(treesPanel, true, Arrays.asList(
             new SideButton(selectAction),
             new SideButton(undoAction),
             new SideButton(redoAction)
-        }));
+        ));
 
         InputMapUtils.addEnterAction(undoTree, selectAndZoomAction);
         InputMapUtils.addEnterAction(redoTree, selectAndZoomAction);
