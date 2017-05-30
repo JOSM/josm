@@ -10,6 +10,9 @@
 		<Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS" />
 	</Match>
 	<Match>
+		<Bug pattern="IL_INFINITE_LOOP" />
+	</Match>
+	<Match>
 		<Bug pattern="NM_CONFUSING" />
 	</Match>
 	<Match>
