@@ -15,7 +15,6 @@ import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * File importer allowing to import geottaged images (*.jpg files).
@@ -87,7 +86,7 @@ public class JpgImporter extends FileImporter {
         }
     }
 
-    private static void addRecursiveFiles(List<File> files, Set<String> visitedDirs, List<File> sel, ProgressMonitor progressMonitor)
+    static void addRecursiveFiles(List<File> files, Set<String> visitedDirs, List<File> sel, ProgressMonitor progressMonitor)
             throws IOException {
 
         if (progressMonitor.isCanceled())
@@ -106,7 +105,7 @@ public class JpgImporter extends FileImporter {
                         progressMonitor.worked(1);
                     }
                 } else {
-                    if (Utils.hasExtension(f, "jpg")) {
+                    if (FILE_FILTER.accept(f)) {
                         files.add(f);
                     }
                     progressMonitor.worked(1);
