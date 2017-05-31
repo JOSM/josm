@@ -25,7 +25,6 @@ import java.util.TreeSet;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.ValidateAction;
 import org.openstreetmap.josm.data.validation.tests.Addresses;
 import org.openstreetmap.josm.data.validation.tests.ApiCapabilitiesTest;
 import org.openstreetmap.josm.data.validation.tests.BarriersEntrances;
@@ -75,9 +74,6 @@ public final class OsmValidator {
     }
 
     private static volatile ValidatorLayer errorLayer;
-
-    /** The validate action */
-    public static final ValidateAction validateAction = new ValidateAction();
 
     /** Grid detail, multiplier of east,north values for valuable cell sizing */
     private static double griddetail;

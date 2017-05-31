@@ -30,6 +30,7 @@ import javax.swing.tree.TreePath;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractSelectAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.ValidateAction;
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.SelectionChangedListener;
@@ -69,6 +70,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
     /** The display tree */
     public ValidatorTreePanel tree;
+
+    /** The validate action */
+    public static final ValidateAction validateAction = new ValidateAction();
 
     /** The fix button */
     private final SideButton fixButton;
@@ -133,7 +137,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
         buttons.add(lookupButton);
 
-        buttons.add(new SideButton(OsmValidator.validateAction));
+        buttons.add(new SideButton(validateAction));
 
         fixButton = new SideButton(new AbstractAction() {
             {
