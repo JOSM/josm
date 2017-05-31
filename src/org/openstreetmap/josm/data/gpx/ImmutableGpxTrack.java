@@ -83,11 +83,6 @@ public class ImmutableGpxTrack extends WithAttributes implements GpxTrack {
     }
 
     @Override
-    public int getUpdateCount() {
-        return 0;
-    }
-
-    @Override
     public int hashCode() {
         return 31 * super.hashCode() + ((segments == null) ? 0 : segments.hashCode());
     }

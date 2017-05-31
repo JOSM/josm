@@ -37,17 +37,6 @@ public interface GpxTrack extends IWithAttributes {
     double length();
 
     /**
-     * Returns the number of times this track has been changed.
-     * @return Number of times this track has been changed. Always 0 for read-only tracks
-     * @deprecated since 12156 Replaced by change listeners.
-     */
-    @Deprecated
-    default int getUpdateCount() {
-        // to allow removal
-        return 0;
-    }
-
-    /**
      * Add a listener that listens to changes in the GPX track.
      * @param l The listener
      */
