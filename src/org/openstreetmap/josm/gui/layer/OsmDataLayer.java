@@ -1064,8 +1064,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
         }
 
         ConflictCollection conflictsCol = getConflicts();
-        return conflictsCol == null || conflictsCol.isEmpty() || 1 == GuiHelper.runInEDTAndWaitAndReturn(() -> {
-            return new ExtendedDialog(
+        return conflictsCol == null || conflictsCol.isEmpty() || 1 == GuiHelper.runInEDTAndWaitAndReturn(() ->
+            new ExtendedDialog(
                     Main.parent,
                     /* I18N: Display title of the window showing conflicts */
                     tr("Conflicts"),
@@ -1073,8 +1073,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
                 .setContent(
                     tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"))
                 .setButtonIcons("save", "cancel")
-                .showDialog().getValue();
-        });
+                .showDialog().getValue()
+        );
     }
 
     /**
