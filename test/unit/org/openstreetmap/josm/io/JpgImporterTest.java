@@ -18,7 +18,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Unit tests of {@link OsmApi} class.
+ * Unit tests of {@link JpgImporter} class.
  */
 public class JpgImporterTest {
 

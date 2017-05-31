@@ -136,7 +136,7 @@ public class SimplifyWayAction extends JosmAction {
      * @return true if <code>node</code> is a required node which can't be removed
      * in order to simplify the way.
      */
-    protected boolean isRequiredNode(Way way, Node node) {
+    protected static boolean isRequiredNode(Way way, Node node) {
         int frequency = Collections.frequency(way.getNodes(), node);
         if ((way.getNode(0) == node) && (way.getNode(way.getNodesCount()-1) == node)) {
             frequency = frequency - 1; // closed way closing node counted only once
@@ -173,7 +173,7 @@ public class SimplifyWayAction extends JosmAction {
      * @return The sequence of commands to run
      * @since 6411
      */
-    public SequenceCommand simplifyWay(Way w, double threshold) {
+    public static SequenceCommand simplifyWay(Way w, double threshold) {
         int lower = 0;
         int i = 0;
         List<Node> newNodes = new ArrayList<>(w.getNodesCount());
@@ -233,7 +233,7 @@ public class SimplifyWayAction extends JosmAction {
      * @param threshold the max error threshold
      * @param simplifiedNodes list that will contain resulting nodes
      */
-    protected void buildSimplifiedNodeList(List<Node> wnew, int from, int to, double threshold, List<Node> simplifiedNodes) {
+    protected static void buildSimplifiedNodeList(List<Node> wnew, int from, int to, double threshold, List<Node> simplifiedNodes) {
 
         Node fromN = wnew.get(from);
         Node toN = wnew.get(to);

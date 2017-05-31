@@ -490,7 +490,7 @@ public class SplitWayAction extends JosmAction {
      * submit the command in {@link SplitWayResult#getCommand()} first,
      * i.e. {@code Main.main.undoredo.add(result.getCommand())}.
      *
-     * @param layer the layer which the way belongs to. Must not be null.
+     * @param layer the layer which the way belongs to.
      * @param way the way to split. Must not be null.
      * @param wayChunks the list of way chunks into the way is split. Must not be null.
      * @param selection The list of currently selected primitives
@@ -511,7 +511,7 @@ public class SplitWayAction extends JosmAction {
      * submit the command in {@link SplitWayResult#getCommand()} first,
      * i.e. {@code Main.main.undoredo.add(result.getCommand())}.
      *
-     * @param layer the layer which the way belongs to. Must not be null.
+     * @param layer the layer which the way belongs to.
      * @param way the way to split. Must not be null.
      * @param wayChunks the list of way chunks into the way is split. Must not be null.
      * @param selection The list of currently selected primitives
@@ -732,7 +732,7 @@ public class SplitWayAction extends JosmAction {
      *
      * Replies null if the way couldn't be split at the given nodes.
      *
-     * @param layer the layer which the way belongs to. Must not be null.
+     * @param layer the layer which the way belongs to.
      * @param way the way to split. Must not be null.
      * @param atNodes the list of nodes where the way is split. Must not be null.
      * @param selection The list of currently selected primitives
