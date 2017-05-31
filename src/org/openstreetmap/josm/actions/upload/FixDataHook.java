@@ -185,27 +185,27 @@ public class FixDataHook implements UploadHook {
      */
     @Override
     public boolean checkUpload(APIDataSet apiDataSet) {
-        if (!Main.pref.getBoolean("fix.data.on.upload", true))
-            return true;
+        if (Main.pref.getBoolean("fix.data.on.upload", true)) {
+            Collection<Command> cmds = new LinkedList<>();
 
-        List<OsmPrimitive> objectsToUpload = apiDataSet.getPrimitives();
-        Collection<Command> cmds = new LinkedList<>();
-
-        for (OsmPrimitive osm : objectsToUpload) {
-            Map<String, String> keys = new HashMap<>(osm.getKeys());
-            if (!keys.isEmpty()) {
-                boolean modified = false;
-                for (FixData fix : deprecated) {
-                    if (fix.fixKeys(keys, osm))
-                        modified = true;
+            for (OsmPrimitive osm : apiDataSet.getPrimitives()) {
+                Map<String, String> keys = new HashMap<>(osm.getKeys());
+                if (!keys.isEmpty()) {
+                    boolean modified = false;
+                    for (FixData fix : deprecated) {
+                        if (fix.fixKeys(keys, osm))
+                            modified = true;
+                    }
+                    if (modified) {
+                        cmds.add(new ChangePropertyCommand(Collections.singleton(osm), keys));
+                    }
                 }
-                if (modified)
-                    cmds.add(new ChangePropertyCommand(Collections.singleton(osm), keys));
+            }
+
+            if (!cmds.isEmpty()) {
+                Main.main.undoRedo.add(new SequenceCommand(tr("Fix deprecated tags"), cmds));
             }
         }
-
-        if (!cmds.isEmpty())
-            Main.main.undoRedo.add(new SequenceCommand(tr("Fix deprecated tags"), cmds));
         return true;
     }
 }
