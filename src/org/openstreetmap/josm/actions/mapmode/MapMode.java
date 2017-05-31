@@ -116,6 +116,10 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
         Main.map.statusLine.repaint();
     }
 
+    /**
+     * Returns a short translated help message describing how this map mode can be used, to be displayed in status line.
+     * @return a short translated help message describing how this map mode can be used
+     */
     public String getModeHelpText() {
         return "";
     }

@@ -21,7 +21,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.Geometry;
 
 /**
- * Helper for ParallelWayAction
+ * Helper for {@link ParallelWayAction}.
  *
  * @author Ole Jørgen Brønner (olejorgenb)
  */
@@ -34,7 +34,12 @@ public class ParallelWays {
     private final EastNorth[] pts;
     private final EastNorth[] normals;
 
-    // Need a reference way to determine the direction of the offset when we manage multiple ways
+    /**
+     * Constructs a new {@code ParallelWays}.
+     * @param sourceWays source ways
+     * @param copyTags whether tags should be copied
+     * @param refWayIndex Need a reference way to determine the direction of the offset when we manage multiple ways
+     */
     public ParallelWays(Collection<Way> sourceWays, boolean copyTags, int refWayIndex) {
         // Possible/sensible to use PrimetiveDeepCopy here?
 
@@ -117,6 +122,10 @@ public class ParallelWays {
         }
     }
 
+    /**
+     * Determines if the nodes graph form a closed path
+     * @return {@code true} if the nodes graph form a closed path
+     */
     public boolean isClosedPath() {
         return sortedNodes.get(0) == sortedNodes.get(sortedNodes.size() - 1);
     }
@@ -168,9 +177,11 @@ public class ParallelWays {
         }
     }
 
+    /**
+     * Performs the action by adding a new sequence command to the undo/redo queue.
+     */
     public void commit() {
-        SequenceCommand undoCommand = new SequenceCommand("Make parallel way(s)", makeAddWayAndNodesCommandList());
-        Main.main.undoRedo.add(undoCommand);
+        Main.main.undoRedo.add(new SequenceCommand("Make parallel way(s)", makeAddWayAndNodesCommandList()));
     }
 
     private List<Command> makeAddWayAndNodesCommandList() {
@@ -194,6 +205,10 @@ public class ParallelWays {
         }
     }
 
+    /**
+     * Returns the resulting parallel ways.
+     * @return the resulting parallel ways
+     */
     public final List<Way> getWays() {
         return ways;
     }

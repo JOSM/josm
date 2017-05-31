@@ -123,7 +123,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
     }
 
     private boolean lassoMode;
-    public boolean repeatedKeySwitchLassoOption;
+    private boolean repeatedKeySwitchLassoOption;
 
     // Cache previous mouse event (needed when only the modifier keys are
     // pressed but the mouse isn't moved)

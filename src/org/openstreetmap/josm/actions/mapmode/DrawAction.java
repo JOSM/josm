@@ -1314,6 +1314,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         snapChangeAction.destroy();
     }
 
+    /**
+     * Undo the last command. Binded by default to backspace key.
+     */
     public class BackSpaceAction extends AbstractAction {
 
         @Override
