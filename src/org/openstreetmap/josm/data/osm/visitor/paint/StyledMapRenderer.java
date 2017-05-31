@@ -391,10 +391,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param pfClip clipping area for partial fill (only needed for unclosed
      * polygons)
      * @param disabled If this should be drawn with a special disabled style.
-     * @param text Ignored. Use {@link #drawText(OsmPrimitive, TextLabel)} instead.
      */
     protected void drawArea(MapViewPath path, Color color,
-            MapImage fillImage, Float extent, Path2D.Double pfClip, boolean disabled, TextLabel text) {
+            MapImage fillImage, Float extent, Path2D.Double pfClip, boolean disabled) {
         if (!isOutlineOnly && color.getAlpha() != 0) {
             Shape area = path;
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
@@ -454,9 +453,28 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param extentThreshold if not null, determines if the partial filled should
      * be replaced by plain fill, when it covers a certain fraction of the total area
      * @param disabled If this should be drawn with a special disabled style.
-     * @param text The text to write on the area.
+     * @param text Ignored. Use {@link #drawText(OsmPrimitive, TextLabel)} instead.
+     * @deprecated use {@link #drawArea(Relation r, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled)}
      */
+    @Deprecated
     public void drawArea(Relation r, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled, TextLabel text) {
+        drawArea(r, color, fillImage, extent, extentThreshold, disabled);
+    }
+
+    /**
+     * Draws a multipolygon area.
+     * @param r The multipolygon relation
+     * @param color The color to fill the area with.
+     * @param fillImage The image to fill the area with. Overrides color.
+     * @param extent if not null, area will be filled partially; specifies, how
+     * far to fill from the boundary towards the center of the area;
+     * if null, area will be filled completely
+     * @param extentThreshold if not null, determines if the partial filled should
+     * be replaced by plain fill, when it covers a certain fraction of the total area
+     * @param disabled If this should be drawn with a special disabled style.
+     * @since 12285
+     */
+    public void drawArea(Relation r, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled) {
         Multipolygon multipolygon = MultipolygonCache.getInstance().get(r);
         if (!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
             for (PolyData pd : multipolygon.getCombinedPolygons()) {
@@ -476,7 +494,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 }
                 drawArea(p,
                         pd.isSelected() ? paintSettings.getRelationSelectedColor(color.getAlpha()) : color,
-                        fillImage, extent, pfClip, disabled, text);
+                        fillImage, extent, pfClip, disabled);
             }
         }
     }
@@ -492,9 +510,28 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param extentThreshold if not null, determines if the partial filled should
      * be replaced by plain fill, when it covers a certain fraction of the total area
      * @param disabled If this should be drawn with a special disabled style.
-     * @param text The text to write on the area.
+     * @param text Ignored. Use {@link #drawText(OsmPrimitive, TextLabel)} instead.
+     * @deprecated use {@link #drawArea(Way w, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled)}
      */
+    @Deprecated
     public void drawArea(Way w, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled, TextLabel text) {
+        drawArea(w, color, fillImage, extent, extentThreshold, disabled);
+    }
+
+    /**
+     * Draws an area defined by a way. They way does not need to be closed, but it should.
+     * @param w The way.
+     * @param color The color to fill the area with.
+     * @param fillImage The image to fill the area with. Overrides color.
+     * @param extent if not null, area will be filled partially; specifies, how
+     * far to fill from the boundary towards the center of the area;
+     * if null, area will be filled completely
+     * @param extentThreshold if not null, determines if the partial filled should
+     * be replaced by plain fill, when it covers a certain fraction of the total area
+     * @param disabled If this should be drawn with a special disabled style.
+     * @since 12285
+     */
+    public void drawArea(Way w, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled) {
         Path2D.Double pfClip = null;
         if (extent != null) {
             if (!usePartialFill(Geometry.getAreaAndPerimeter(w.getNodes()), extent, extentThreshold)) {
@@ -503,7 +540,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 pfClip = getPFClip(w, extent * scale);
             }
         }
-        drawArea(getPath(w), color, fillImage, extent, pfClip, disabled, text);
+        drawArea(getPath(w), color, fillImage, extent, pfClip, disabled);
     }
 
     /**
@@ -1155,17 +1192,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 }
             }
         }
-    }
-
-    /**
-     * Draws a text along a given way.
-     * @param way The way to draw the text on.
-     * @param text The text definition (font/.../text content) to draw.
-     * @deprecated Use {@link #drawText(OsmPrimitive, TextLabel)} instead.
-     */
-    @Deprecated
-    public void drawTextOnPath(Way way, TextLabel text) {
-        // NOP.
     }
 
     /**

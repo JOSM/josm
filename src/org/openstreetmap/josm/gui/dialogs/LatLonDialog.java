@@ -319,17 +319,6 @@ public class LatLonDialog extends ExtendedDialog {
         }
     }
 
-    /**
-     * Parses the given string as lat/lon.
-     * @param coord String to parse
-     * @return parsed lat/lon
-     * @deprecated use {@link LatLon#parse(String)} instead
-     */
-    @Deprecated
-    public static LatLon parseLatLon(final String coord) {
-        return LatLon.parse(coord);
-    }
-
     public static EastNorth parseEastNorth(String s) {
         String[] en = s.split("[;, ]+");
         if (en.length != 2) return null;

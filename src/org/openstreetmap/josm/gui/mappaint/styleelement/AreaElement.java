@@ -41,13 +41,6 @@ public class AreaElement extends StyleElement {
     public MapImage fillImage;
 
     /**
-     * The text that should be written on this area.
-     * @deprecated Use {@link TextElement} instead.
-     */
-    @Deprecated
-    public TextLabel text;
-
-    /**
      * Fill the area only partially from the borders
      * <p>
      * Public access is discouraged.
@@ -126,12 +119,12 @@ public class AreaElement extends StyleElement {
                     myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
                 }
             }
-            painter.drawArea((Way) osm, myColor, fillImage, extent, extentThreshold, painter.isInactiveMode() || osm.isDisabled(), text);
+            painter.drawArea((Way) osm, myColor, fillImage, extent, extentThreshold, painter.isInactiveMode() || osm.isDisabled());
         } else if (osm instanceof Relation) {
             if (color != null && (selected || outermember)) {
                 myColor = paintSettings.getRelationSelectedColor(color.getAlpha());
             }
-            painter.drawArea((Relation) osm, myColor, fillImage, extent, extentThreshold, painter.isInactiveMode() || osm.isDisabled(), text);
+            painter.drawArea((Relation) osm, myColor, fillImage, extent, extentThreshold, painter.isInactiveMode() || osm.isDisabled());
         }
     }
 
