@@ -1167,7 +1167,6 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                         s.width = s.height;
                         b.setMinimumSize(s);
                         b.setMaximumSize(s);
-                        //b.setSize(s);
                     } else if (s.height < s.width) {
                         s.height = s.width;
                         b.setMinimumSize(s);

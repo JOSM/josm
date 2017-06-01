@@ -102,7 +102,7 @@ public class PolarStereographic extends AbstractProj {
         if (params.lat0 != 90.0 && params.lat0 != -90.0)
             throw new ProjectionConfigurationException(
                     tr("Polar Stereographic: Parameter ''{0}'' must be 90 or -90.", "lat_0"));
-        // Latitude of true scale, in radians;
+        // Latitude of true scale, in radians
         double latitudeTrueScale;
         if (params.lat_ts == null) {
             latitudeTrueScale = (params.lat0 < 0) ? -Math.PI/2 : Math.PI/2;
@@ -111,7 +111,7 @@ public class PolarStereographic extends AbstractProj {
         }
         southPole = latitudeTrueScale < 0;
 
-        // Computes coefficients.
+        // Computes coefficients
         double latitudeTrueScaleAbs = Math.abs(latitudeTrueScale);
         if (Math.abs(latitudeTrueScaleAbs - Math.PI/2) >= EPSILON) {
             final double t = Math.sin(latitudeTrueScaleAbs);
