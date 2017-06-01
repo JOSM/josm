@@ -674,20 +674,14 @@ public class MapCSSStyleSource extends StyleSource {
         if (SUPPORTED_KEYS.contains(feature)) return true;
         switch (feature) {
             case "user-agent":
-            {
                 String s = Cascade.convertTo(val, String.class);
                 return "josm".equals(s);
-            }
             case "min-josm-version":
-            {
-                Float v = Cascade.convertTo(val, Float.class);
-                return v != null && Math.round(v) <= Version.getInstance().getVersion();
-            }
+                Float min = Cascade.convertTo(val, Float.class);
+                return min != null && Math.round(min) <= Version.getInstance().getVersion();
             case "max-josm-version":
-            {
-                Float v = Cascade.convertTo(val, Float.class);
-                return v != null && Math.round(v) >= Version.getInstance().getVersion();
-            }
+                Float max = Cascade.convertTo(val, Float.class);
+                return max != null && Math.round(max) >= Version.getInstance().getVersion();
             default:
                 return false;
         }
