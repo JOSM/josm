@@ -50,6 +50,16 @@ public abstract class AbstractProjectionChoice implements ProjectionChoice {
         return id;
     }
 
+    /**
+    * Get the cache directory name.
+    * @return the cache directory name (base name)
+    * @deprecated unused - remove in 2017-09
+    */
+    @Deprecated
+    public String getCacheDir() {
+        return cacheDir;
+    }
+
     @Override
     public String toString() {
         return name;
@@ -63,6 +73,6 @@ public abstract class AbstractProjectionChoice implements ProjectionChoice {
     public Projection getProjection() {
         String code = getCurrentCode();
         return new CustomProjection(getProjectionName(), code, Optional.ofNullable(Projections.getInit(code))
-                .orElseThrow(() -> new AssertionError("Error: Unknown projection code: " + code)), cacheDir);
+                .orElseThrow(() -> new AssertionError("Error: Unknown projection code: " + code)));
     }
 }

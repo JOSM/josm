@@ -209,12 +209,23 @@ public class CustomProjection extends AbstractProjection {
      * @param code unique code for this projection - may be null
      * @param pref the string that defines the custom projection
      * @param cacheDir cache directory name
+     * @deprecated unused - remove in 2017-09
      */
     public CustomProjection(String name, String code, String pref, String cacheDir) {
+        this(name, code, pref);
+    }
+
+    /**
+     * Constructs a new {@code CustomProjection} with given name, code and parameters.
+     *
+     * @param name describe projection in one or two words
+     * @param code unique code for this projection - may be null
+     * @param pref the string that defines the custom projection
+     */
+    public CustomProjection(String name, String code, String pref) {
         this.name = name;
         this.code = code;
         this.pref = pref;
-        this.cacheDir = cacheDir;
         try {
             update(pref);
         } catch (ProjectionConfigurationException ex) {
@@ -707,7 +718,7 @@ public class CustomProjection extends AbstractProjection {
 
     /**
      * {@inheritDoc}
-     * @deprecated unused - remove in 2017-07
+     * @deprecated unused - remove in 2017-09
      */
     @Override
     @Deprecated
