@@ -157,9 +157,10 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
     /**
      * Returns list of recently closed relations or null if none.
      * @return list of recently closed relations or <code>null</code> if none
+     * @since 12291 (signature)
      * @since 9668
      */
-    public ArrayList<Relation> getRecentRelations() {
+    public List<Relation> getRecentRelations() {
         ArrayList<Relation> list = new ArrayList<>(recentRelations.keySet());
         Collections.reverse(list);
         return list;
