@@ -199,7 +199,7 @@ public class CustomProjection extends AbstractProjection {
      * (ex: "+proj=tmerc +lon_0=-3 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-8,-5,2,85")
      */
     public CustomProjection(String pref) {
-        this(null, null, pref, null);
+        this(null, null, pref);
     }
 
     /**

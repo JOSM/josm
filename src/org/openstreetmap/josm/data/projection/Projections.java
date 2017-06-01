@@ -344,7 +344,7 @@ public final class Projections {
         if (proj == null) {
             ProjectionDefinition pd = inits.get(code);
             if (pd == null) return null;
-            proj = new CustomProjection(pd.name, code, pd.definition, null);
+            proj = new CustomProjection(pd.name, code, pd.definition);
         }
         projectionsByCode_cache.put(code, proj);
         return proj;
