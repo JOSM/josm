@@ -211,6 +211,7 @@ public class CustomProjection extends AbstractProjection {
      * @param cacheDir cache directory name
      * @deprecated unused - remove in 2017-09
      */
+    @Deprecated
     public CustomProjection(String name, String code, String pref, String cacheDir) {
         this(name, code, pref);
     }
