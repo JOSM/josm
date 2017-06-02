@@ -49,6 +49,7 @@ import org.openstreetmap.josm.gui.dialogs.validator.ValidatorTreePanel;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.ValidatorLayer;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
@@ -640,9 +641,8 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 monitor.subTask(tr("Updating map ..."));
                 SwingUtilities.invokeAndWait(() -> {
                     Main.main.undoRedo.afterAdd();
-                    Main.map.repaint();
+                    Main.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
                     tree.resetErrors();
-                    ds.fireSelectionChanged();
                 });
             } catch (InterruptedException | InvocationTargetException e) {
                 // FIXME: signature of realRun should have a generic checked exception we could throw here
