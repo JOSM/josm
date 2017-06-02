@@ -21,7 +21,6 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * This is the model for the changeset cache manager dialog.
- *
  */
 public class ChangesetCacheManagerModel extends AbstractTableModel implements ChangesetCacheListener {
 
@@ -33,14 +32,26 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
     private transient Changeset changesetInDetailView;
     private final PropertyChangeSupport support = new PropertyChangeSupport(this);
 
+    /**
+     * Creates a new ChangesetCacheManagerModel that is based on the selectionModel
+     * @param selectionModel A new selection model that should be used.
+     */
     public ChangesetCacheManagerModel(DefaultListSelectionModel selectionModel) {
         this.selectionModel = selectionModel;
     }
 
+    /**
+     * Adds a property change listener to this model.
+     * @param listener The listener
+     */
     public void addPropertyChangeListener(PropertyChangeListener listener) {
         support.addPropertyChangeListener(listener);
     }
 
+    /**
+     * Removes a property change listener from this model.
+     * @param listener The listener
+     */
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         support.removePropertyChangeListener(listener);
     }
@@ -131,6 +142,9 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
         return data.get(row);
     }
 
+    /**
+     * Initializes the data that is displayed using the changeset cache.
+     */
     public void init() {
         ChangesetCache cc = ChangesetCache.getInstance();
         List<Changeset> selected = getSelectedChangesets();
@@ -143,10 +157,17 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
         cc.addChangesetCacheListener(this);
     }
 
+    /**
+     * Destroys and unregisters this model.
+     */
     public void tearDown() {
         ChangesetCache.getInstance().removeChangesetCacheListener(this);
     }
 
+    /**
+     * Gets the selection model this table is based on.
+     * @return The selection model.
+     */
     public DefaultListSelectionModel getSelectionModel() {
         return selectionModel;
     }
