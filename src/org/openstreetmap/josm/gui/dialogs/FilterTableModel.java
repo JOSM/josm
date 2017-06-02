@@ -65,6 +65,11 @@ public class FilterTableModel extends AbstractTableModel {
     public int disabledAndHiddenCount;
 
     /**
+     * A helper for {@link #drawOSDText(Graphics2D)}.
+     */
+    private final OSDLabel lblOSD = new OSDLabel("");
+
+    /**
      * Constructs a new {@code FilterTableModel}.
      */
     public FilterTableModel() {
@@ -271,7 +276,7 @@ public class FilterTableModel extends AbstractTableModel {
 
     /**
      * Removes the filter that is displayed in the given row
-     * @param rowIndex
+     * @param rowIndex The index of the filter to remove
      */
     public void removeFilter(int rowIndex) {
         filters.remove(rowIndex);
@@ -431,8 +436,6 @@ public class FilterTableModel extends AbstractTableModel {
             super.paintComponent(g);
         }
     }
-
-    private final OSDLabel lblOSD = new OSDLabel("");
 
     /**
      * Draws a text on the map display that indicates that filters are active.
