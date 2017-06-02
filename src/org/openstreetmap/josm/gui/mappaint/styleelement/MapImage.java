@@ -32,22 +32,62 @@ public class MapImage {
      */
     private BufferedImage img;
 
+    /**
+     * The alpha (opacity) value of the image. It is multiplied to the image alpha channel.
+     * Range: 0...255
+     */
     public int alpha = 255;
+    /**
+     * The name of the image that should be displayed. It is given to the {@link ImageProvider}
+     */
     public String name;
+    /**
+     * The StyleSource that registered the image
+     */
     public StyleSource source;
+    /**
+     * A flag indicating that the image should automatically be scaled to the right size.
+     */
     public boolean autoRescale;
+    /**
+     * The width of the image, as set by MapCSS
+     */
     public int width = -1;
+    /**
+     * The height of the image, as set by MapCSS
+     */
     public int height = -1;
+    /**
+     * The x offset of the anchor of this image
+     */
     public int offsetX;
+    /**
+     * The y offset of the anchor of this image
+     */
     public int offsetY;
 
     private boolean temporary;
+
+    /**
+     * A cache that holds a disabled (gray) version of this image
+     */
     private BufferedImage disabledImgCache;
 
+    /**
+     * Creates a new {@link MapImage}
+     * @param name The image name
+     * @param source The style source that requests this image
+     */
     public MapImage(String name, StyleSource source) {
         this(name, source, true);
     }
 
+    /**
+     * Creates a new {@link MapImage}
+     * @param name The image name
+     * @param source The style source that requests this image
+     * @param autoRescale A flag indicating to automatically adjust the width/height of the image
+     */
     public MapImage(String name, StyleSource source, boolean autoRescale) {
         this.name = name;
         this.source = source;
@@ -124,14 +164,26 @@ public class MapImage {
         return img;
     }
 
+    /**
+     * Gets the image width
+     * @return The real image width
+     */
     public int getWidth() {
         return getImage().getWidth(null);
     }
 
+    /**
+     * Gets the image height
+     * @return The real image height
+     */
     public int getHeight() {
         return getImage().getHeight(null);
     }
 
+    /**
+     * Gets the alpha value the image should be multiplied with
+     * @return The value in range 0..1
+     */
     public float getAlphaFloat() {
         return Utils.colorInt2float(alpha);
     }
@@ -186,6 +238,10 @@ public class MapImage {
         }
     }
 
+    /**
+     * Gets a box provider that provides a box that covers the size of this image
+     * @return The box provider
+     */
     public BoxProvider getBoxProvider() {
         return new MapImageBoxProvider();
     }

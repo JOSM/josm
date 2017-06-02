@@ -21,8 +21,17 @@ public class RepeatImageElement extends StyleElement {
      * The side on which the image should be aligned to the line.
      */
     public enum LineImageAlignment {
+        /**
+         * Align it to the top side of the line
+         */
         TOP(.5),
+        /**
+         * Align it to the center of the line
+         */
         CENTER(0),
+        /**
+         * Align it to the bottom of the line
+         */
         BOTTOM(-.5);
 
         private final double alignmentOffset;
@@ -40,15 +49,39 @@ public class RepeatImageElement extends StyleElement {
         }
     }
 
+    /**
+     * The image to draw on the line repeatedly
+     */
     public MapImage pattern;
+    /**
+     * The offset to the side of the way
+     */
     public float offset;
+    /**
+     * The space between the images
+     */
     public float spacing;
+    /**
+     * The offset of the first image along the way
+     */
     public float phase;
+    /**
+     * The alignment of the image
+     */
     public LineImageAlignment align;
 
     private static final String[] REPEAT_IMAGE_KEYS = {REPEAT_IMAGE, REPEAT_IMAGE_WIDTH, REPEAT_IMAGE_HEIGHT, REPEAT_IMAGE_OPACITY,
             null, null};
 
+    /**
+     * Create a new image element
+     * @param c The cascade
+     * @param pattern The image to draw on the line repeatedly
+     * @param offset The offset to the side of the way
+     * @param spacing The space between the images
+     * @param phase The offset of the first image along the way
+     * @param align The alignment of the image
+     */
     public RepeatImageElement(Cascade c, MapImage pattern, float offset, float spacing, float phase, LineImageAlignment align) {
         super(c, 2.9f);
         CheckParameterUtil.ensureParameterNotNull(pattern);
@@ -60,6 +93,11 @@ public class RepeatImageElement extends StyleElement {
         this.align = align;
     }
 
+    /**
+     * Create a RepeatImageElement from the given environment
+     * @param env The environment
+     * @return The image style element or <code>null</code> if none should be painted
+     */
     public static RepeatImageElement create(Environment env) {
         MapImage pattern = NodeElement.createIcon(env, REPEAT_IMAGE_KEYS);
         if (pattern == null)

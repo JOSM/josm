@@ -23,6 +23,9 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 3880
  */
 public class TextLabel implements StyleKeys {
+    /**
+     * The default strategy to use when determining the label of a element.
+     */
     public static final LabelCompositionStrategy AUTO_LABEL_COMPOSITION_STRATEGY = new DeriveLabelFromNameTagsCompositionStrategy();
 
     /**

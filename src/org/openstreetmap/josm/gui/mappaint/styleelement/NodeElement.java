@@ -47,7 +47,13 @@ public class NodeElement extends StyleElement {
 
     private static final String[] ICON_KEYS = {ICON_IMAGE, ICON_WIDTH, ICON_HEIGHT, ICON_OPACITY, ICON_OFFSET_X, ICON_OFFSET_Y};
 
+    /**
+     * The style used for simple nodes
+     */
     public static final NodeElement SIMPLE_NODE_ELEMSTYLE;
+    /**
+     * A box provider that provides the size of a simple node
+     */
     public static final BoxProvider SIMPLE_NODE_ELEMSTYLE_BOXPROVIDER;
     static {
         MultiCascade mc = new MultiCascade();
@@ -57,7 +63,14 @@ public class NodeElement extends StyleElement {
         SIMPLE_NODE_ELEMSTYLE_BOXPROVIDER = SIMPLE_NODE_ELEMSTYLE.getBoxProvider();
     }
 
+    /**
+     * The default styles that are used for nodes.
+     * @see #SIMPLE_NODE_ELEMSTYLE
+     */
     public static final StyleElementList DEFAULT_NODE_STYLELIST = new StyleElementList(NodeElement.SIMPLE_NODE_ELEMSTYLE);
+    /**
+     * The default styles that are used for nodes with text.
+     */
     public static final StyleElementList DEFAULT_NODE_STYLELIST_TEXT = new StyleElementList(NodeElement.SIMPLE_NODE_ELEMSTYLE,
             BoxTextElement.SIMPLE_NODE_TEXT_ELEMSTYLE);
 

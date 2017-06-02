@@ -17,7 +17,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.RelativeFloat;
 
 /**
  * Class that defines how objects ({@link OsmPrimitive}) should be drawn on the map.
- * 
+ *
  * Several subclasses of this abstract class implement different drawing features,
  * like icons for a node or area fill. This class and all its subclasses are immutable
  * and tend to get shared when multiple objects have the same style (in order to
@@ -32,11 +32,26 @@ public abstract class StyleElement implements StyleKeys {
     protected static final int ICON_OFFSET_X_IDX = 4;
     protected static final int ICON_OFFSET_Y_IDX = 5;
 
+    /**
+     * The major z index of this style element
+     */
     public float majorZIndex;
+    /**
+     * The z index as set by the user
+     */
     public float zIndex;
+    /**
+     * The object z index
+     */
     public float objectZIndex;
-    public boolean isModifier;  // false, if style can serve as main style for the
-    // primitive; true, if it is a highlight or modifier
+    /**
+     * false, if style can serve as main style for the primitive;
+     * true, if it is a highlight or modifier
+     */
+    public boolean isModifier;
+    /**
+     * A flag indicating that the selection color handling should be done automatically
+     */
     public boolean defaultSelectedHandling;
 
     /**
@@ -76,6 +91,10 @@ public abstract class StyleElement implements StyleKeys {
     public abstract void paintPrimitive(OsmPrimitive primitive, MapPaintSettings paintSettings, StyledMapRenderer painter,
             boolean selected, boolean outermember, boolean member);
 
+    /**
+     * Check if this is a style that makes the line visible to the user
+     * @return <code>true</code> for line styles
+     */
     public boolean isProperLineStyle() {
         return false;
     }
