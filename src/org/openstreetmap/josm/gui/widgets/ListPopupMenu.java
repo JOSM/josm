@@ -8,13 +8,17 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.ListSelectionListener;
 
 /**
+ * A popup menu for one or more lists. If actions are added to this menu, a ListSelectionListener is registered automatically.
  * @author Vincent
- *
  */
 public class ListPopupMenu extends JPopupMenu {
 
     private final JList<?>[] lists;
 
+    /**
+     * Create a new ListPopupMenu
+     * @param lists The lists to which listeners should be appended
+     */
     public ListPopupMenu(JList<?>... lists) {
         this.lists = lists;
     }

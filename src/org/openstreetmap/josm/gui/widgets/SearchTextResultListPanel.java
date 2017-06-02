@@ -19,6 +19,10 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionListener;
 
+/**
+ * A panel containing a search text field and a list of results for that search text.
+ * @param <T> The class of the things that are searched
+ */
 public abstract class SearchTextResultListPanel<T> extends JPanel {
 
     protected final JosmTextField edSearchText;
@@ -124,6 +128,9 @@ public abstract class SearchTextResultListPanel<T> extends JPanel {
         }
     }
 
+    /**
+     * Initializes and clears the panel.
+     */
     public synchronized void init() {
         listSelectionListeners.clear();
         edSearchText.setText("");
@@ -141,18 +148,33 @@ public abstract class SearchTextResultListPanel<T> extends JPanel {
         lsResult.ensureIndexIsVisible(newIndex);
     }
 
+    /**
+     * Clear the selected result
+     */
     public synchronized void clearSelection() {
         lsResult.clearSelection();
     }
 
+    /**
+     * Get the number of items available
+     * @return The number of search result items available
+     */
     public synchronized int getItemCount() {
         return lsResultModel.getSize();
     }
 
+    /**
+     * Sets a listener to be invoked on double click
+     * @param dblClickListener The double click listener
+     */
     public void setDblClickListener(ActionListener dblClickListener) {
         this.dblClickListener = dblClickListener;
     }
 
+    /**
+     * Sets a listener to be invoked on ssingle click
+     * @param clickListener The click listener
+     */
     public void setClickListener(ActionListener clickListener) {
         this.clickListener = clickListener;
     }

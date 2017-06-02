@@ -11,6 +11,11 @@ import javax.swing.Scrollable;
 
 import org.openstreetmap.josm.gui.util.GuiHelper;
 
+/**
+ * A panel that can be scrolled vertically. It enhances the normal {@link JPanel} to allow for better scrolling.
+ * Scroll pane contents may extend this.
+ * Use {@link #getVerticalScrollPane()} once to embed it into a scroll pane.
+ */
 public class VerticallyScrollablePanel extends JPanel implements Scrollable {
 
     /**
