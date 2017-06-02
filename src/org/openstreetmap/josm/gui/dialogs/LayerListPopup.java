@@ -31,6 +31,10 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class LayerListPopup extends JPopupMenu {
 
+    /**
+     * An action that displays the layer information.
+     * @see Layer#getInfoComponent()
+     */
     public static final class InfoAction extends AbstractAction {
         private final transient Layer layer;
 

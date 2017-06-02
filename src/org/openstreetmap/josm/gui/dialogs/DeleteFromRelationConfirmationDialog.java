@@ -182,7 +182,6 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
 
     /**
      * The table model which manages the list of relation-to-child references
-     *
      */
     public static class RelationMemberTableModel extends DefaultTableModel {
         private static class RelationToChildReferenceComparator implements Comparator<RelationToChildReference>, Serializable {
@@ -212,6 +211,10 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
             return data.size();
         }
 
+        /**
+         * Sets the data that should be displayed in the list.
+         * @param references A list of references to display
+         */
         public void populate(Collection<RelationToChildReference> references) {
             data.clear();
             if (references != null) {
@@ -221,6 +224,10 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
             fireTableDataChanged();
         }
 
+        /**
+         * Gets the list of children that are currently displayed.
+         * @return The children.
+         */
         public Set<OsmPrimitive> getObjectsToDelete() {
             Set<OsmPrimitive> ret = new HashSet<>();
             for (RelationToChildReference ref: data) {
@@ -229,10 +236,18 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
             return ret;
         }
 
+        /**
+         * Gets the number of elements {@link #getObjectsToDelete()} would return.
+         * @return That number.
+         */
         public int getNumObjectsToDelete() {
             return getObjectsToDelete().size();
         }
 
+        /**
+         * Gets the set of parent relations
+         * @return All parent relations of the references
+         */
         public Set<OsmPrimitive> getParentRelations() {
             Set<OsmPrimitive> ret = new HashSet<>();
             for (RelationToChildReference ref: data) {
@@ -241,6 +256,10 @@ public class DeleteFromRelationConfirmationDialog extends JDialog implements Tab
             return ret;
         }
 
+        /**
+         * Gets the number of elements {@link #getParentRelations()} would return.
+         * @return That number.
+         */
         public int getNumParentRelations() {
             return getParentRelations().size();
         }

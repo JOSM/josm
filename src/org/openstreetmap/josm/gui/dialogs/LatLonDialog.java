@@ -33,9 +33,15 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
+/**
+ * A dialog that lets the user add a node at the coordinates he enters.
+ */
 public class LatLonDialog extends ExtendedDialog {
     private static final Color BG_COLOR_ERROR = new Color(255, 224, 224);
 
+    /**
+     * The tabs that define the coordinate mode.
+     */
     public JTabbedPane tabs;
     private JosmTextField tfLatLon, tfEastNorth;
     private LatLon latLonCoordinates;
@@ -154,6 +160,12 @@ public class LatLonDialog extends ExtendedDialog {
         });
     }
 
+    /**
+     * Creates a new {@link LatLonDialog}
+     * @param parent The parent
+     * @param title The title of this dialog
+     * @param help The help text to use
+     */
     public LatLonDialog(Component parent, String title, String help) {
         super(parent, title, tr("Ok"), tr("Cancel"));
         setButtonIcons("ok", "cancel");
@@ -163,10 +175,18 @@ public class LatLonDialog extends ExtendedDialog {
         setCoordinates(null);
     }
 
+    /**
+     * Check if lat/lon mode is active
+     * @return <code>true</code> iff the user selects lat/lon coordinates
+     */
     public boolean isLatLon() {
         return tabs.getModel().getSelectedIndex() == 0;
     }
 
+    /**
+     * Sets the coordinate fields to the given coordinates
+     * @param ll The lat/lon coordinates
+     */
     public void setCoordinates(LatLon ll) {
         LatLon llc = Optional.ofNullable(ll).orElse(LatLon.ZERO);
         tfLatLon.setText(llc.latToString(CoordinateFormat.getDefaultFormat()) + ' ' +
@@ -179,6 +199,10 @@ public class LatLonDialog extends ExtendedDialog {
         setOkEnabled(true);
     }
 
+    /**
+     * Gets the coordinates that are entered by the user.
+     * @return The coordinates
+     */
     public LatLon getCoordinates() {
         if (isLatLon()) {
             return latLonCoordinates;
@@ -188,10 +212,18 @@ public class LatLonDialog extends ExtendedDialog {
         }
     }
 
+    /**
+     * Gets the coordinates that are entered in the lat/lon field
+     * @return The lat/lon coordinates
+     */
     public LatLon getLatLonCoordinates() {
         return latLonCoordinates;
     }
 
+    /**
+     * Gets the coordinates that are entered in the east/north field
+     * @return The east/north coordinates
+     */
     public EastNorth getEastNorthCoordinates() {
         return eastNorthCoordinates;
     }
@@ -319,6 +351,11 @@ public class LatLonDialog extends ExtendedDialog {
         }
     }
 
+    /**
+     * Parses a east/north coordinate string
+     * @param s The coordinates
+     * @return The east/north coordinates or <code>null</code> on error.
+     */
     public static EastNorth parseEastNorth(String s) {
         String[] en = s.split("[;, ]+");
         if (en.length != 2) return null;
@@ -331,18 +368,34 @@ public class LatLonDialog extends ExtendedDialog {
         }
     }
 
+    /**
+     * Gets the text entered in the lat/lon text field.
+     * @return The text the user entered
+     */
     public String getLatLonText() {
         return tfLatLon.getText();
     }
 
+    /**
+     * Set the text in the lat/lon text field.
+     * @param text The new text
+     */
     public void setLatLonText(String text) {
         tfLatLon.setText(text);
     }
 
+    /**
+     * Gets the text entered in the east/north text field.
+     * @return The text the user entered
+     */
     public String getEastNorthText() {
         return tfEastNorth.getText();
     }
 
+    /**
+     * Set the text in the east/north text field.
+     * @param text The new text
+     */
     public void setEastNorthText(String text) {
         tfEastNorth.setText(text);
     }

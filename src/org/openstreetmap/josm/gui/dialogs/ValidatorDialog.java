@@ -528,6 +528,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         }
     }
 
+    /**
+     * A visitor that is used to compute the bounds of an error.
+     */
     public static class ValidatorBoundingXYVisitor extends BoundingXYVisitor implements ValidatorVisitor {
         @Override
         public void visit(OsmPrimitive p) {
@@ -559,6 +562,10 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         }
     }
 
+    /**
+     * Called when the selection was changed to update the list of displayed errors
+     * @param newSelection The new selection
+     */
     public void updateSelection(Collection<? extends OsmPrimitive> newSelection) {
         if (!Main.pref.getBoolean(ValidatorPreference.PREF_FILTER_BY_SELECTION, false))
             return;
