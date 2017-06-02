@@ -59,7 +59,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
                         } catch (IOException e) {
                             Main.warn(e, tr("Could not read tagging preset source: {0}", source));
                             ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Error"),
-                                    new String[] {tr("Yes"), tr("No"), tr("Cancel")});
+                                    tr("Yes"), tr("No"), tr("Cancel"));
                             ed.setContent(tr("Could not read tagging preset source: {0}\nDo you want to keep it?", source));
                             switch (ed.showDialog().getValue()) {
                             case 1:

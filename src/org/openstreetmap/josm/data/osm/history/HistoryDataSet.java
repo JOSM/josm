@@ -59,12 +59,20 @@ public class HistoryDataSet implements LayerChangeListener {
         changesets = new HashMap<>();
     }
 
+    /**
+     * Adds a listener that listens to history data set events.
+     * @param listener The listener
+     */
     public void addHistoryDataSetListener(HistoryDataSetListener listener) {
         if (listener != null) {
             listeners.addIfAbsent(listener);
         }
     }
 
+    /**
+     * Removes a listener that listens to history data set events.
+     * @param listener The listener
+     */
     public void removeHistoryDataSetListener(HistoryDataSetListener listener) {
         listeners.remove(listener);
     }
@@ -188,6 +196,10 @@ public class HistoryDataSet implements LayerChangeListener {
         fireHistoryUpdated(null);
     }
 
+    /**
+     * Gets a unsorted set of all changeset ids that were used by the primitives in this data set
+     * @return The ids
+     */
     public Collection<Long> getChangesetIds() {
         final Set<Long> ids = new HashSet<>();
         for (Collection<HistoryOsmPrimitive> i : data.values()) {

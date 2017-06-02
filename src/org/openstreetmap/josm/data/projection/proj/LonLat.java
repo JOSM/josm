@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Simple Lat/Lon (pseudo-)projection.
@@ -33,12 +34,12 @@ public class LonLat implements Proj {
 
     @Override
     public double[] project(double latRad, double lonRad) {
-        return new double[] {Math.toDegrees(lonRad) / a, Math.toDegrees(latRad) / a};
+        return new double[] {Utils.toDegrees(lonRad) / a, Utils.toDegrees(latRad) / a};
     }
 
     @Override
     public double[] invproject(double east, double north) {
-        return new double[] {Math.toRadians(north * a), Math.toRadians(east * a)};
+        return new double[] {Utils.toRadians(north * a), Utils.toRadians(east * a)};
     }
 
     @Override

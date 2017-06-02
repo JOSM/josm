@@ -87,6 +87,9 @@ public class SimilarNamedWaysTest {
         assertEquals(message, expected, actual);
     }
 
+    /**
+     * Test similar names.
+     */
     @Test
     public void testSimilarNames() {
         checkSimilarity("same string", "Testname", "Testname", false);
@@ -117,5 +120,11 @@ public class SimilarNamedWaysTest {
         checkSimilarity("first and second typo2", "First Street", "Socond Street", true);
         checkSimilarity("first and second 2 changes", "First Street", "Soconds Street", true);
         checkSimilarity("first and second 3 changes", "First Street", "Soconds Stret", false);
+
+        // case only, see #14858
+        checkSimilarity("case only", "Rua São João", "Rua Sao Joao", true);
+        checkSimilarity("case only", "Rua São João", "Rua SAO JOAO", true);
+        checkSimilarity("case only", "Rua Sao Joao", "Rua SAO JOAO", true);
+        checkSimilarity("case only", "Rue éèçàïù", "Rue EeCAIU", true);
     }
 }

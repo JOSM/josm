@@ -26,7 +26,16 @@ public abstract class PrimitiveData extends AbstractPrimitive implements Seriali
      * Constructs a new {@code PrimitiveData}.
      */
     public PrimitiveData() {
-        id = OsmPrimitive.generateUniqueId();
+        this(OsmPrimitive.generateUniqueId());
+    }
+
+    /**
+     * Constructs a new {@code PrimitiveData} with given id.
+     * @param id id
+     * @since 12017
+     */
+    public PrimitiveData(long id) {
+        this.id = id;
     }
 
     /**

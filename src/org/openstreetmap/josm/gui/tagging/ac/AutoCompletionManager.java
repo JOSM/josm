@@ -28,11 +28,7 @@ import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
-import org.openstreetmap.josm.gui.tagging.presets.items.CheckGroup;
-import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
-import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.MultiMap;
@@ -202,38 +198,6 @@ public class AutoCompletionManager implements DataSetListener {
     }
 
     /**
-     * Initialize the cache for presets. This is done only once.
-     * @param presets Tagging presets to cache
-     */
-    public static void cachePresets(Collection<TaggingPreset> presets) {
-        for (final TaggingPreset p : presets) {
-            for (TaggingPresetItem item : p.data) {
-                cachePresetItem(p, item);
-            }
-        }
-    }
-
-    protected static void cachePresetItem(TaggingPreset p, TaggingPresetItem item) {
-        if (item instanceof KeyedItem) {
-            KeyedItem ki = (KeyedItem) item;
-            if (ki.key != null && ki.getValues() != null) {
-                PRESET_TAG_CACHE.putAll(ki.key, ki.getValues());
-            }
-        } else if (item instanceof Roles) {
-            Roles r = (Roles) item;
-            for (Role i : r.roles) {
-                if (i.key != null) {
-                    PRESET_ROLE_CACHE.add(i.key);
-                }
-            }
-        } else if (item instanceof CheckGroup) {
-            for (KeyedItem check : ((CheckGroup) item).checks) {
-                cachePresetItem(p, check);
-            }
-        }
-    }
-
-    /**
      * Remembers user input for the given key/value.
      * @param key Tag key
      * @param value Tag value
@@ -252,10 +216,6 @@ public class AutoCompletionManager implements DataSetListener {
      */
     protected List<String> getDataKeys() {
         return new ArrayList<>(getTagCache().keySet());
-    }
-
-    protected List<String> getPresetKeys() {
-        return new ArrayList<>(PRESET_TAG_CACHE.keySet());
     }
 
     protected Collection<String> getUserInputKeys() {
@@ -278,10 +238,6 @@ public class AutoCompletionManager implements DataSetListener {
      */
     protected List<String> getDataValues(String key) {
         return new ArrayList<>(getTagCache().getValues(key));
-    }
-
-    protected static List<String> getPresetValues(String key) {
-        return new ArrayList<>(PRESET_TAG_CACHE.getValues(key));
     }
 
     protected static Collection<String> getUserInputValues(String key) {
@@ -311,7 +267,7 @@ public class AutoCompletionManager implements DataSetListener {
      * @param list the list to populate
      */
     public void populateWithMemberRoles(AutoCompletionList list) {
-        list.add(PRESET_ROLE_CACHE, AutoCompletionItemPriority.IS_IN_STANDARD);
+        list.add(TaggingPresets.getPresetRoles(), AutoCompletionItemPriority.IS_IN_STANDARD);
         list.add(getRoleCache(), AutoCompletionItemPriority.IS_IN_DATASET);
     }
 
@@ -346,7 +302,7 @@ public class AutoCompletionManager implements DataSetListener {
      * @param list the list to populate
      */
     public void populateWithKeys(AutoCompletionList list) {
-        list.add(getPresetKeys(), AutoCompletionItemPriority.IS_IN_STANDARD);
+        list.add(TaggingPresets.getPresetKeys(), AutoCompletionItemPriority.IS_IN_STANDARD);
         list.add(new AutoCompletionListItem("source", AutoCompletionItemPriority.IS_IN_STANDARD));
         list.add(getDataKeys(), AutoCompletionItemPriority.IS_IN_DATASET);
         list.addUserInput(getUserInputKeys());
@@ -372,7 +328,7 @@ public class AutoCompletionManager implements DataSetListener {
      */
     public void populateWithTagValues(AutoCompletionList list, List<String> keys) {
         for (String key : keys) {
-            list.add(getPresetValues(key), AutoCompletionItemPriority.IS_IN_STANDARD);
+            list.add(TaggingPresets.getPresetValues(key), AutoCompletionItemPriority.IS_IN_STANDARD);
             list.add(getDataValues(key), AutoCompletionItemPriority.IS_IN_DATASET);
             list.addUserInput(getUserInputValues(key));
         }

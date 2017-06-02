@@ -31,6 +31,7 @@ import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.draw.MapPath2D;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A map renderer that paints a simple scheme of every primitive it visits to a
@@ -89,7 +90,7 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
     private DataSet ds;
 
     /** Helper variable for {@link #drawSegment} */
-    private static final ArrowPaintHelper ARROW_PAINT_HELPER = new ArrowPaintHelper(Math.toRadians(20), 10);
+    private static final ArrowPaintHelper ARROW_PAINT_HELPER = new ArrowPaintHelper(Utils.toRadians(20), 10);
 
     /** Helper variable for {@link #visit(Relation)} */
     private final Stroke relatedWayStroke = new BasicStroke(

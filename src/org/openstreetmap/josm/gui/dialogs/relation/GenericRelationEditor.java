@@ -59,6 +59,7 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.MainMenu;
+import org.openstreetmap.josm.gui.ScrollViewport;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.AddSelectedAfterSelection;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.AddSelectedAtEndAction;
@@ -464,7 +465,7 @@ public class GenericRelationEditor extends RelationEditor {
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.weightx = 0.0;
         gc.weighty = 1.0;
-        pnl.add(leftButtonToolbar, gc);
+        pnl.add(new ScrollViewport(leftButtonToolbar, ScrollViewport.VERTICAL_DIRECTION), gc);
 
         gc.gridx = 1;
         gc.gridy = 1;
@@ -520,7 +521,8 @@ public class GenericRelationEditor extends RelationEditor {
         gc.anchor = GridBagConstraints.NORTHWEST;
         gc.weightx = 0.0;
         gc.weighty = 1.0;
-        pnl2.add(buildSelectionControlButtonToolbar(memberTable, memberTableModel, selectionTableModel, re), gc);
+        pnl2.add(new ScrollViewport(buildSelectionControlButtonToolbar(memberTable, memberTableModel, selectionTableModel, re),
+                ScrollViewport.VERTICAL_DIRECTION), gc);
 
         gc.gridx = 1;
         gc.gridy = 1;

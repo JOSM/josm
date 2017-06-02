@@ -66,8 +66,7 @@ public class JosmImageView extends ImageView {
                 }
                 setPropertiesFromAttributes();
             }
-        } catch (IllegalArgumentException | IllegalAccessException |
-                InvocationTargetException | NoSuchMethodException | SecurityException e) {
+        } catch (IllegalArgumentException | ReflectiveOperationException | SecurityException e) {
            Main.error(e);
        }
     }

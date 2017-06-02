@@ -180,7 +180,7 @@ public class InetAddressValidator extends AbstractValidator {
                 }
                 int octetInt = 0;
                 try {
-                    octetInt = Integer.valueOf(octet, BASE_16).intValue();
+                    octetInt = Integer.parseInt(octet, BASE_16);
                 } catch (NumberFormatException e) {
                     return false;
                 }
@@ -190,9 +190,6 @@ public class InetAddressValidator extends AbstractValidator {
             }
             validOctets++;
         }
-        if (validOctets < IPV6_MAX_HEX_GROUPS && !containsCompressedZeroes) {
-            return false;
-        }
-        return true;
+        return validOctets >= IPV6_MAX_HEX_GROUPS || containsCompressedZeroes;
     }
 }

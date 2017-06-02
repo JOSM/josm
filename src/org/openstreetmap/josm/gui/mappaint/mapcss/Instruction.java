@@ -10,9 +10,20 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 
+/**
+ * A MapCSS Instruction.
+ * 
+ * For example a simple assignment like <code>width: 3;</code>, but may also
+ * be a set instruction (<code>set highway;</code>).
+ * A MapCSS {@link MapCSSRule.Declaration} is a list of instructions.
+ */
 @FunctionalInterface
 public interface Instruction extends StyleKeys {
 
+    /**
+     * Execute the instruction in the given environment.
+     * @param env the environment
+     */
     void execute(Environment env);
 
     class RelativeFloat {

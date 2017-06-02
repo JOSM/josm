@@ -45,17 +45,29 @@ public class ReprojectionTile extends Tile {
         return anchor;
     }
 
+    /**
+     * Get the scale that was used for reprojecting the tile.
+     *
+     * This is not necessarily the mapview scale, but may be
+     * adjusted to avoid excessively large cache image.
+     * @return the scale that was used for reprojecting the tile
+     */
     public double getNativeScale() {
         return nativeScale;
     }
 
-    public boolean needsUpdate(double currentScale) {
+    /**
+     * Check if it is necessary to refresh the cache to match the current mapview
+     * scale and get optimized image quality.
+     *
+     * When the maximum zoom is exceeded, this method will generally return false.
+     * @param currentScale the current mapview scale
+     * @return true if the tile should be reprojected again from the source image.
+     */
+    public synchronized boolean needsUpdate(double currentScale) {
         if (Utils.equalsEpsilon(nativeScale, currentScale))
             return false;
-        if (maxZoomReached && currentScale < nativeScale)
-            // zoomed in even more - max zoom already reached, so no update
-            return false;
-        return true;
+        return !maxZoomReached || currentScale >= nativeScale;
     }
 
     @Override
@@ -83,21 +95,24 @@ public class ReprojectionTile extends Tile {
         this.maxZoomReached = false;
     }
 
-    public void transform(BufferedImage imageIn) {
+    /**
+     * Transforms the given image.
+     * @param imageIn tile image to reproject
+     */
+    protected void transform(BufferedImage imageIn) {
         if (!Main.isDisplayingMapView()) {
             reset();
             return;
         }
         double scaleMapView = Main.map.mapView.getScale();
         ImageWarp.Interpolation interpolation;
-        switch (Main.pref.get("imagery.warp.interpolation", "bilinear")) {
+        switch (Main.pref.get("imagery.warp.pixel-interpolation", "bilinear")) {
             case "nearest_neighbor":
                 interpolation = ImageWarp.Interpolation.NEAREST_NEIGHBOR;
                 break;
             default:
                 interpolation = ImageWarp.Interpolation.BILINEAR;
         }
-        double margin = interpolation.getMargin();
 
         Projection projCurrent = Main.getProjection();
         Projection projServer = Projections.getProjectionByCode(source.getServerCRS());
@@ -108,16 +123,11 @@ public class ReprojectionTile extends Tile {
         // find east-north rectangle in current projection, that will fully contain the tile
         ProjectionBounds pbTarget = projCurrent.getEastNorthBoundsBox(pbServer, projServer);
 
-        // add margin and align to pixel grid
-        double minEast = Math.floor(pbTarget.minEast / scaleMapView - margin) * scaleMapView;
-        double minNorth = -Math.floor(-(pbTarget.minNorth / scaleMapView - margin)) * scaleMapView;
-        double maxEast = Math.ceil(pbTarget.maxEast / scaleMapView + margin) * scaleMapView;
-        double maxNorth = -Math.ceil(-(pbTarget.maxNorth / scaleMapView + margin)) * scaleMapView;
-        ProjectionBounds pbTargetAligned = new ProjectionBounds(minEast, minNorth, maxEast, maxNorth);
-
-        Dimension dim = getDimension(pbTargetAligned, scaleMapView);
+        double margin = 2;
+        Dimension dim = getDimension(pbMarginAndAlign(pbTarget, scaleMapView, margin), scaleMapView);
         Integer scaleFix = limitScale(source.getTileSize(), Math.sqrt(dim.getWidth() * dim.getHeight()));
         double scale = scaleFix == null ? scaleMapView : (scaleMapView * scaleFix);
+        ProjectionBounds pbTargetAligned = pbMarginAndAlign(pbTarget, scale, margin);
 
         ImageWarp.PointTransform pointTransform = pt -> {
             EastNorth target = new EastNorth(pbTargetAligned.minEast + pt.getX() * scale,
@@ -141,9 +151,16 @@ public class ReprojectionTile extends Tile {
                 (en11Current.east() - pbTargetAligned.minEast) / scale,
                 (pbTargetAligned.maxNorth - en11Current.north()) / scale);
 
+        ImageWarp.PointTransform transform;
+        int stride = Main.pref.getInteger("imagery.warp.projection-interpolation.stride", 7);
+        if (stride > 0) {
+            transform = new ImageWarp.GridTransform(pointTransform, stride);
+        } else {
+            transform = pointTransform;
+        }
         BufferedImage imageOut = ImageWarp.warp(
-                imageIn, getDimension(pbTargetAligned, scale), pointTransform,
-                interpolation);
+                imageIn, getDimension(pbTargetAligned, scale),
+                transform, interpolation);
         synchronized (this) {
             this.image = imageOut;
             this.anchor = new TileAnchor(p00Img, p11Img);
@@ -152,7 +169,17 @@ public class ReprojectionTile extends Tile {
         }
     }
 
-    private Dimension getDimension(ProjectionBounds bounds, double scale) {
+    // add margin and align to pixel grid
+    private static ProjectionBounds pbMarginAndAlign(ProjectionBounds box, double scale, double margin) {
+        double minEast = Math.floor(box.minEast / scale - margin) * scale;
+        double minNorth = -Math.floor(-(box.minNorth / scale - margin)) * scale;
+        double maxEast = Math.ceil(box.maxEast / scale + margin) * scale;
+        double maxNorth = -Math.ceil(-(box.maxNorth / scale + margin)) * scale;
+        return new ProjectionBounds(minEast, minNorth, maxEast, maxNorth);
+    }
+
+    // dimension in pixel
+    private static Dimension getDimension(ProjectionBounds bounds, double scale) {
         return new Dimension(
                 (int) Math.round((bounds.maxEast - bounds.minEast) / scale),
                 (int) Math.round((bounds.maxNorth - bounds.minNorth) / scale));

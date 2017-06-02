@@ -5,10 +5,8 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,7 +16,6 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -43,24 +40,6 @@ public final class CreateCircleActionTest {
     public JOSMTestRules test = new JOSMTestRules().platform().projection().commands();
 
     /**
-     * FIXME: Conveniance method to prevent Selection Change events.
-     * A more proper way should be to define a TestingDataSet class with limited
-     * functionalities, but DataSet is declare as final (due to Cloneable interface).
-     *
-     * I don't know why, but in other tests there are no problem to add selected primitives
-     * but in this case there is a problem with an even listener of selection change.
-     * @param p primitive
-     * @param ds data set
-     * @throws ReflectiveOperationException if an error occurs
-     */
-    public void addSelected(OsmPrimitive p, DataSet ds) throws ReflectiveOperationException {
-        Method method = ds.getClass().getDeclaredMethod("addSelected",
-                                                        new Class<?>[] {Collection.class, boolean.class});
-        Utils.setObjectsAccessible(method);
-        method.invoke(ds, Collections.singleton(p), false);
-    }
-
-    /**
      * Test case: When Create Circle action is performed with a single way selected,
      * circle direction must equals way direction.
      * see #7421
@@ -82,7 +61,7 @@ public final class CreateCircleActionTest {
         w.setNodes(Arrays.asList(new Node[] {n1, n2, n3}));
         dataSet.addPrimitive(w);
 
-        addSelected(w, dataSet);
+        dataSet.addSelected(w);
 
         CreateCircleAction action = new CreateCircleAction();
         action.setEnabled(true);
@@ -144,9 +123,9 @@ public final class CreateCircleActionTest {
         dataSet.addPrimitive(n2);
         dataSet.addPrimitive(n3);
 
-        addSelected(n1, dataSet);
-        addSelected(n2, dataSet);
-        addSelected(n3, dataSet);
+        dataSet.addSelected(n1);
+        dataSet.addSelected(n2);
+        dataSet.addSelected(n3);
 
         // Mock left/right hand traffic database
         Field rlCache = RightAndLefthandTraffic.class.getDeclaredField("rlCache");

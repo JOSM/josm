@@ -73,9 +73,15 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class DrawAction extends MapMode implements MapViewPaintable, SelectionChangedListener, KeyPressReleaseListener, ModifierListener {
 
+    /**
+     * If this property is set, the draw action moves the viewport when adding new points.
+     * @since 12182
+     */
+    public static final CachingProperty<Boolean> VIEWPORT_FOLLOWING = new BooleanProperty("draw.viewport.following", false).cached();
+
     private static final Color ORANGE_TRANSPARENT = new Color(Color.ORANGE.getRed(), Color.ORANGE.getGreen(), Color.ORANGE.getBlue(), 128);
 
-    private static final ArrowPaintHelper START_WAY_INDICATOR = new ArrowPaintHelper(Math.toRadians(90), 8);
+    private static final ArrowPaintHelper START_WAY_INDICATOR = new ArrowPaintHelper(Utils.toRadians(90), 8);
 
     static final CachingProperty<Boolean> USE_REPEATED_SHORTCUT
             = new BooleanProperty("draw.anglesnap.toggleOnRepeatedA", true).cached();
@@ -237,9 +243,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
     private static void addRemoveSelection(DataSet ds, OsmPrimitive toAdd, OsmPrimitive toRemove) {
         ds.beginUpdate(); // to prevent the selection listener to screw around with the state
-        ds.addSelected(toAdd);
-        ds.clearSelection(toRemove);
-        ds.endUpdate();
+        try {
+            ds.addSelected(toAdd);
+            ds.clearSelection(toRemove);
+        } finally {
+            ds.endUpdate();
+        }
     }
 
     @Override
@@ -289,14 +298,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         removeHighlighting();
         Main.map.keyDetector.removeKeyListener(this);
         Main.map.keyDetector.removeModifierListener(this);
-
-        // when exiting we let everybody know about the currently selected
-        // primitives
-        //
-        DataSet ds = getLayerManager().getEditDataSet();
-        if (ds != null) {
-            ds.fireSelectionChanged();
-        }
     }
 
     /**
@@ -355,9 +356,6 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * the helper line until the user chooses to draw something else.
      */
     private void finishDrawing() {
-        // let everybody else know about the current selection
-        //
-        Main.getLayerManager().getEditDataSet().fireSelectionChanged();
         lastUsedNode = null;
         wayIsFinished = true;
         Main.map.selectSelectTool(true);
@@ -621,7 +619,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
 
         // "viewport following" mode for tracing long features
         // from aerial imagery or GPS tracks.
-        if (Main.map.mapView.viewportFollowing) {
+        if (VIEWPORT_FOLLOWING.get()) {
             Main.map.mapView.smoothScrollTo(n.getEastNorth());
         }
         computeHelperLine();
@@ -846,13 +844,13 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
             return; // Don't create zero length way segments.
 
 
-        double curHdg = Math.toDegrees(getCurrentBaseNode().getEastNorth()
+        double curHdg = Utils.toDegrees(getCurrentBaseNode().getEastNorth()
                 .heading(currentMouseEastNorth));
         double baseHdg = -1;
         if (previousNode != null) {
             EastNorth en = previousNode.getEastNorth();
             if (en != null) {
-                baseHdg = Math.toDegrees(en.heading(getCurrentBaseNode().getEastNorth()));
+                baseHdg = Utils.toDegrees(en.heading(getCurrentBaseNode().getEastNorth()));
             }
         }
 
@@ -1159,7 +1157,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
                 // don't draw line if we don't know where from or where to
                 || currentMouseEastNorth == null || getCurrentBaseNode() == null
                 // don't draw line if mouse is outside window
-                || !Main.map.mapView.getBounds().contains(mousePos))
+                || !Main.map.mapView.getState().getForView(mousePos.getX(), mousePos.getY()).isInView())
             return;
 
         Graphics2D g2 = g;
@@ -1295,6 +1293,12 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
     }
 
     @Override
+    public Collection<? extends OsmPrimitive> getPreservedPrimitives() {
+        DataSet ds = getLayerManager().getEditDataSet();
+        return ds != null ? ds.getSelected() : Collections.emptySet();
+    }
+
+    @Override
     public boolean layerIsSupported(Layer l) {
         return l instanceof OsmDataLayer;
     }
@@ -1310,6 +1314,9 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         snapChangeAction.destroy();
     }
 
+    /**
+     * Undo the last command. Binded by default to backspace key.
+     */
     public class BackSpaceAction extends AbstractAction {
 
         @Override

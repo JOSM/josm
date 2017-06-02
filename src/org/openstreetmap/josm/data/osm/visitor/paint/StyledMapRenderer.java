@@ -26,16 +26,15 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinTask;
-import java.util.concurrent.RecursiveTask;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -47,7 +46,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.BBox;
-import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -56,7 +54,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
@@ -68,12 +65,6 @@ import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.draw.MapViewPositionAndRotation;
-import org.openstreetmap.josm.gui.mappaint.ElemStyles;
-import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
-import org.openstreetmap.josm.gui.mappaint.StyleElementList;
-import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
-import org.openstreetmap.josm.gui.mappaint.styleelement.AreaElement;
-import org.openstreetmap.josm.gui.mappaint.styleelement.AreaIconElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.HorizontalTextAlignment;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.VerticalTextAlignment;
@@ -82,7 +73,6 @@ import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.RepeatImageElement.LineImageAlignment;
 import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.Symbol;
-import org.openstreetmap.josm.gui.mappaint.styleelement.TextElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.TextLabel;
 import org.openstreetmap.josm.gui.mappaint.styleelement.placement.PositionForAreaStrategy;
 import org.openstreetmap.josm.tools.CompositeList;
@@ -90,6 +80,7 @@ import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.AreaAndPerimeter;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
@@ -109,40 +100,70 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         private final StyleElement style;
         private final OsmPrimitive osm;
         private final int flags;
+        private final long order;
 
         StyleRecord(StyleElement style, OsmPrimitive osm, int flags) {
             this.style = style;
             this.osm = osm;
             this.flags = flags;
+
+            long order = 0;
+            if ((this.flags & FLAG_DISABLED) == 0) {
+                order |= 1;
+            }
+
+            order <<= 24;
+            order |= floatToFixed(this.style.majorZIndex, 24);
+
+            // selected on top of member of selected on top of unselected
+            // FLAG_DISABLED bit is the same at this point, but we simply ignore it
+            order <<= 4;
+            order |= this.flags & 0xf;
+
+            order <<= 24;
+            order |= floatToFixed(this.style.zIndex, 24);
+
+            order <<= 1;
+            // simple node on top of icons and shapes
+            if (NodeElement.SIMPLE_NODE_ELEMSTYLE.equals(this.style)) {
+                order |= 1;
+            }
+
+            this.order = order;
+        }
+
+        /**
+         * Converts a float to a fixed point decimal so that the order stays the same.
+         *
+         * @param number The float to convert
+         * @param totalBits
+         *            Total number of bits. 1 sign bit. There should be at least 15 bits.
+         * @return The float converted to an integer.
+         */
+        protected static long floatToFixed(float number, int totalBits) {
+            long value = Float.floatToIntBits(number) & 0xffffffffL;
+
+            boolean negative = (value & 0x80000000L) != 0;
+            // Invert the sign bit, so that negative numbers are lower
+            value ^= 0x80000000L;
+            // Now do the shift. Do it before accounting for negative numbers (symetry)
+            if (totalBits < 32) {
+                value >>= (32 - totalBits);
+            }
+            // positive numbers are sorted now. Negative ones the wrong way.
+            if (negative) {
+                // Negative number: re-map it
+                value = (1L << (totalBits - 1)) - value;
+            }
+            return value;
         }
 
         @Override
         public int compareTo(StyleRecord other) {
-            if ((this.flags & FLAG_DISABLED) != 0 && (other.flags & FLAG_DISABLED) == 0)
-                return -1;
-            if ((this.flags & FLAG_DISABLED) == 0 && (other.flags & FLAG_DISABLED) != 0)
-                return 1;
-
-            int d0 = Float.compare(this.style.majorZIndex, other.style.majorZIndex);
-            if (d0 != 0)
-                return d0;
-
-            // selected on top of member of selected on top of unselected
-            // FLAG_DISABLED bit is the same at this point
-            if (this.flags > other.flags)
-                return 1;
-            if (this.flags < other.flags)
-                return -1;
-
-            int dz = Float.compare(this.style.zIndex, other.style.zIndex);
-            if (dz != 0)
-                return dz;
-
-            // simple node on top of icons and shapes
-            if (NodeElement.SIMPLE_NODE_ELEMSTYLE.equals(this.style) && !NodeElement.SIMPLE_NODE_ELEMSTYLE.equals(other.style))
-                return 1;
-            if (!NodeElement.SIMPLE_NODE_ELEMSTYLE.equals(this.style) && NodeElement.SIMPLE_NODE_ELEMSTYLE.equals(other.style))
-                return -1;
+            int d = Long.compare(order, other.order);
+            if (d != 0) {
+                return d;
+            }
 
             // newer primitives to the front
             long id = this.osm.getUniqueId() - other.osm.getUniqueId();
@@ -246,25 +267,25 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * <p>
      * Not used in any public interfaces.
      */
-    private static final int FLAG_NORMAL = 0;
+    static final int FLAG_NORMAL = 0;
     /**
      * A primitive with {@link OsmPrimitive#isDisabled()}
      */
-    private static final int FLAG_DISABLED = 1;
+    static final int FLAG_DISABLED = 1;
     /**
      * A primitive with {@link OsmPrimitive#isMemberOfSelected()}
      */
-    private static final int FLAG_MEMBER_OF_SELECTED = 2;
+    static final int FLAG_MEMBER_OF_SELECTED = 2;
     /**
      * A primitive with {@link OsmPrimitive#isSelected()}
      */
-    private static final int FLAG_SELECTED = 4;
+    static final int FLAG_SELECTED = 4;
     /**
      * A primitive with {@link OsmPrimitive#isOuterMemberOfSelected()}
      */
-    private static final int FLAG_OUTERMEMBER_OF_SELECTED = 8;
+    static final int FLAG_OUTERMEMBER_OF_SELECTED = 8;
 
-    private static final double PHI = Math.toRadians(20);
+    private static final double PHI = Utils.toRadians(20);
     private static final double cosPHI = Math.cos(PHI);
     private static final double sinPHI = Math.sin(PHI);
     /**
@@ -370,10 +391,9 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param pfClip clipping area for partial fill (only needed for unclosed
      * polygons)
      * @param disabled If this should be drawn with a special disabled style.
-     * @param text Ignored. Use {@link #drawText(OsmPrimitive, TextLabel)} instead.
      */
     protected void drawArea(MapViewPath path, Color color,
-            MapImage fillImage, Float extent, Path2D.Double pfClip, boolean disabled, TextLabel text) {
+            MapImage fillImage, Float extent, Path2D.Double pfClip, boolean disabled) {
         if (!isOutlineOnly && color.getAlpha() != 0) {
             Shape area = path;
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_OFF);
@@ -433,9 +453,28 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param extentThreshold if not null, determines if the partial filled should
      * be replaced by plain fill, when it covers a certain fraction of the total area
      * @param disabled If this should be drawn with a special disabled style.
-     * @param text The text to write on the area.
+     * @param text Ignored. Use {@link #drawText(OsmPrimitive, TextLabel)} instead.
+     * @deprecated use {@link #drawArea(Relation r, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled)}
      */
+    @Deprecated
     public void drawArea(Relation r, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled, TextLabel text) {
+        drawArea(r, color, fillImage, extent, extentThreshold, disabled);
+    }
+
+    /**
+     * Draws a multipolygon area.
+     * @param r The multipolygon relation
+     * @param color The color to fill the area with.
+     * @param fillImage The image to fill the area with. Overrides color.
+     * @param extent if not null, area will be filled partially; specifies, how
+     * far to fill from the boundary towards the center of the area;
+     * if null, area will be filled completely
+     * @param extentThreshold if not null, determines if the partial filled should
+     * be replaced by plain fill, when it covers a certain fraction of the total area
+     * @param disabled If this should be drawn with a special disabled style.
+     * @since 12285
+     */
+    public void drawArea(Relation r, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled) {
         Multipolygon multipolygon = MultipolygonCache.getInstance().get(r);
         if (!r.isDisabled() && !multipolygon.getOuterWays().isEmpty()) {
             for (PolyData pd : multipolygon.getCombinedPolygons()) {
@@ -455,7 +494,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 }
                 drawArea(p,
                         pd.isSelected() ? paintSettings.getRelationSelectedColor(color.getAlpha()) : color,
-                        fillImage, extent, pfClip, disabled, text);
+                        fillImage, extent, pfClip, disabled);
             }
         }
     }
@@ -471,9 +510,28 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param extentThreshold if not null, determines if the partial filled should
      * be replaced by plain fill, when it covers a certain fraction of the total area
      * @param disabled If this should be drawn with a special disabled style.
-     * @param text The text to write on the area.
+     * @param text Ignored. Use {@link #drawText(OsmPrimitive, TextLabel)} instead.
+     * @deprecated use {@link #drawArea(Way w, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled)}
      */
+    @Deprecated
     public void drawArea(Way w, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled, TextLabel text) {
+        drawArea(w, color, fillImage, extent, extentThreshold, disabled);
+    }
+
+    /**
+     * Draws an area defined by a way. They way does not need to be closed, but it should.
+     * @param w The way.
+     * @param color The color to fill the area with.
+     * @param fillImage The image to fill the area with. Overrides color.
+     * @param extent if not null, area will be filled partially; specifies, how
+     * far to fill from the boundary towards the center of the area;
+     * if null, area will be filled completely
+     * @param extentThreshold if not null, determines if the partial filled should
+     * be replaced by plain fill, when it covers a certain fraction of the total area
+     * @param disabled If this should be drawn with a special disabled style.
+     * @since 12285
+     */
+    public void drawArea(Way w, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled) {
         Path2D.Double pfClip = null;
         if (extent != null) {
             if (!usePartialFill(Geometry.getAreaAndPerimeter(w.getNodes()), extent, extentThreshold)) {
@@ -482,7 +540,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 pfClip = getPFClip(w, extent * scale);
             }
         }
-        drawArea(getPath(w), color, fillImage, extent, pfClip, disabled, text);
+        drawArea(getPath(w), color, fillImage, extent, pfClip, disabled);
     }
 
     /**
@@ -956,7 +1014,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         } else {
             fromAngle = Math.atan(dy / dx);
         }
-        double fromAngleDeg = Math.toDegrees(fromAngle);
+        double fromAngleDeg = Utils.toDegrees(fromAngle);
 
         double vx = distanceFromVia * Math.cos(fromAngle);
         double vy = distanceFromVia * Math.sin(fromAngle);
@@ -979,41 +1037,41 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
         if (pFrom.x >= pVia.x && pFrom.y >= pVia.y) {
             if (!leftHandTraffic) {
-                vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg - 90));
-                vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg - 90));
+                vx2 = distanceFromWay * Math.cos(Utils.toRadians(fromAngleDeg - 90));
+                vy2 = distanceFromWay * Math.sin(Utils.toRadians(fromAngleDeg - 90));
             } else {
-                vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 90));
-                vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 90));
+                vx2 = distanceFromWay * Math.cos(Utils.toRadians(fromAngleDeg + 90));
+                vy2 = distanceFromWay * Math.sin(Utils.toRadians(fromAngleDeg + 90));
             }
             iconAngle = 270+fromAngleDeg;
         }
         if (pFrom.x < pVia.x && pFrom.y >= pVia.y) {
             if (!leftHandTraffic) {
-                vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg));
-                vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg));
+                vx2 = distanceFromWay * Math.sin(Utils.toRadians(fromAngleDeg));
+                vy2 = distanceFromWay * Math.cos(Utils.toRadians(fromAngleDeg));
             } else {
-                vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 180));
-                vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 180));
+                vx2 = distanceFromWay * Math.sin(Utils.toRadians(fromAngleDeg + 180));
+                vy2 = distanceFromWay * Math.cos(Utils.toRadians(fromAngleDeg + 180));
             }
             iconAngle = 90-fromAngleDeg;
         }
         if (pFrom.x < pVia.x && pFrom.y < pVia.y) {
             if (!leftHandTraffic) {
-                vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 90));
-                vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 90));
+                vx2 = distanceFromWay * Math.cos(Utils.toRadians(fromAngleDeg + 90));
+                vy2 = distanceFromWay * Math.sin(Utils.toRadians(fromAngleDeg + 90));
             } else {
-                vx2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg - 90));
-                vy2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg - 90));
+                vx2 = distanceFromWay * Math.cos(Utils.toRadians(fromAngleDeg - 90));
+                vy2 = distanceFromWay * Math.sin(Utils.toRadians(fromAngleDeg - 90));
             }
             iconAngle = 90+fromAngleDeg;
         }
         if (pFrom.x >= pVia.x && pFrom.y < pVia.y) {
             if (!leftHandTraffic) {
-                vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg + 180));
-                vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg + 180));
+                vx2 = distanceFromWay * Math.sin(Utils.toRadians(fromAngleDeg + 180));
+                vy2 = distanceFromWay * Math.cos(Utils.toRadians(fromAngleDeg + 180));
             } else {
-                vx2 = distanceFromWay * Math.sin(Math.toRadians(fromAngleDeg));
-                vy2 = distanceFromWay * Math.cos(Math.toRadians(fromAngleDeg));
+                vx2 = distanceFromWay * Math.sin(Utils.toRadians(fromAngleDeg));
+                vy2 = distanceFromWay * Math.cos(Utils.toRadians(fromAngleDeg));
             }
             iconAngle = 270-fromAngleDeg;
         }
@@ -1137,17 +1195,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     }
 
     /**
-     * Draws a text along a given way.
-     * @param way The way to draw the text on.
-     * @param text The text definition (font/.../text content) to draw.
-     * @deprecated Use {@link #drawText(OsmPrimitive, TextLabel)} instead.
-     */
-    @Deprecated
-    public void drawTextOnPath(Way way, TextLabel text) {
-        // NOP.
-    }
-
-    /**
      * draw way. This method allows for two draw styles (line using color, dashes using dashedColor) to be passed.
      * @param way The way to draw
      * @param color The base color to draw the way in
@@ -1200,6 +1247,10 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         MapViewPoint lastPoint = null;
         Iterator<MapViewPoint> it = new OffsetIterator(mapState, wayNodes, offset);
         boolean initialMoveToNeeded = true;
+        ArrowPaintHelper drawArrowHelper = null;
+        if (showOrientation) {
+            drawArrowHelper = new ArrowPaintHelper(PHI, 10 + line.getLineWidth());
+        }
         while (it.hasNext()) {
             MapViewPoint p = it.next();
             if (lastPoint != null) {
@@ -1213,10 +1264,17 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 path.lineTo(p2);
 
                 /* draw arrow */
-                if (showHeadArrowOnly ? !it.hasNext() : showOrientation) {
-                    //TODO: Cache
-                    ArrowPaintHelper drawHelper = new ArrowPaintHelper(PHI, 10 + line.getLineWidth());
-                    drawHelper.paintArrowAt(orientationArrows, p2, p1);
+                if (drawArrowHelper != null) {
+                    boolean drawArrow;
+                    // always draw last arrow - no matter how short the segment is
+                    drawArrow = !it.hasNext();
+                    if (!showHeadArrowOnly) {
+                        // draw arrows in between only if there is enough space
+                        drawArrow = drawArrow || p1.distanceToInView(p2) > drawArrowHelper.getOnLineLength() * 1.3;
+                    }
+                    if (drawArrow) {
+                        drawArrowHelper.paintArrowAt(orientationArrows, p2, p1);
+                    }
                 }
             }
             lastPoint = p;
@@ -1453,14 +1511,15 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         Rectangle2D bounds = area.getBounds2D();
         if (bounds.isEmpty()) return false;
         MapViewPoint p = mapState.getPointFor(new EastNorth(bounds.getX(), bounds.getY()));
-        if (p.getInViewX() > mapState.getViewWidth()) return false;
-        if (p.getInViewY() < 0) return false;
+        if (p.getInViewY() < 0 || p.getInViewX() > mapState.getViewWidth()) return false;
         p = mapState.getPointFor(new EastNorth(bounds.getX() + bounds.getWidth(), bounds.getY() + bounds.getHeight()));
-        if (p.getInViewX() < 0) return false;
-        if (p.getInViewY() > mapState.getViewHeight()) return false;
-        return true;
+        return p.getInViewX() >= 0 && p.getInViewY() <= mapState.getViewHeight();
     }
 
+    /**
+     * Determines if the paint visitor shall render OSM objects such that they look inactive.
+     * @return {@code true} if the paint visitor shall render OSM objects such that they look inactive
+     */
     public boolean isInactiveMode() {
         return isInactiveMode;
     }
@@ -1493,132 +1552,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    private static class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> implements Visitor {
-        private final transient List<? extends OsmPrimitive> input;
-        private final transient List<StyleRecord> output;
-
-        private final transient ElemStyles styles = MapPaintStyles.getStyles();
-        private final int directExecutionTaskSize;
-        private final double circum;
-        private final NavigatableComponent nc;
-
-        private final boolean drawArea;
-        private final boolean drawMultipolygon;
-        private final boolean drawRestriction;
-
-        /**
-         * Constructs a new {@code ComputeStyleListWorker}.
-         * @param circum distance on the map in meters that 100 screen pixels represent
-         * @param nc navigatable component
-         * @param input the primitives to process
-         * @param output the list of styles to which styles will be added
-         * @param directExecutionTaskSize the threshold deciding whether to subdivide the tasks
-         */
-        ComputeStyleListWorker(double circum, NavigatableComponent nc,
-                final List<? extends OsmPrimitive> input, List<StyleRecord> output, int directExecutionTaskSize) {
-            this.circum = circum;
-            this.nc = nc;
-            this.input = input;
-            this.output = output;
-            this.directExecutionTaskSize = directExecutionTaskSize;
-            this.drawArea = circum <= Main.pref.getInteger("mappaint.fillareas", 10_000_000);
-            this.drawMultipolygon = drawArea && Main.pref.getBoolean("mappaint.multipolygon", true);
-            this.drawRestriction = Main.pref.getBoolean("mappaint.restriction", true);
-            this.styles.setDrawMultipolygon(drawMultipolygon);
-        }
-
-        @Override
-        protected List<StyleRecord> compute() {
-            if (input.size() <= directExecutionTaskSize) {
-                return computeDirectly();
-            } else {
-                final Collection<ForkJoinTask<List<StyleRecord>>> tasks = new ArrayList<>();
-                for (int fromIndex = 0; fromIndex < input.size(); fromIndex += directExecutionTaskSize) {
-                    final int toIndex = Math.min(fromIndex + directExecutionTaskSize, input.size());
-                    final List<StyleRecord> output = new ArrayList<>(directExecutionTaskSize);
-                    tasks.add(new ComputeStyleListWorker(circum, nc, input.subList(fromIndex, toIndex), output, directExecutionTaskSize).fork());
-                }
-                for (ForkJoinTask<List<StyleRecord>> task : tasks) {
-                    output.addAll(task.join());
-                }
-                return output;
-            }
-        }
-
-        public List<StyleRecord> computeDirectly() {
-            MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
-            try {
-                for (final OsmPrimitive osm : input) {
-                    acceptDrawable(osm);
-                }
-                return output;
-            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
-                throw BugReport.intercept(e).put("input-size", input.size()).put("output-size", output.size());
-            } finally {
-                MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
-            }
-        }
-
-        private void acceptDrawable(final OsmPrimitive osm) {
-            try {
-                if (osm.isDrawable()) {
-                    osm.accept(this);
-                }
-            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
-                throw BugReport.intercept(e).put("osm", osm);
-            }
-        }
-
-        @Override
-        public void visit(Node n) {
-            add(n, computeFlags(n, false));
-        }
-
-        @Override
-        public void visit(Way w) {
-            add(w, computeFlags(w, true));
-        }
-
-        @Override
-        public void visit(Relation r) {
-            add(r, computeFlags(r, true));
-        }
-
-        @Override
-        public void visit(Changeset cs) {
-            throw new UnsupportedOperationException();
-        }
-
-        public void add(Node osm, int flags) {
-            StyleElementList sl = styles.get(osm, circum, nc);
-            for (StyleElement s : sl) {
-                output.add(new StyleRecord(s, osm, flags));
-            }
-        }
-
-        public void add(Relation osm, int flags) {
-            StyleElementList sl = styles.get(osm, circum, nc);
-            for (StyleElement s : sl) {
-                if (drawMultipolygon && drawArea && (s instanceof AreaElement || s instanceof AreaIconElement) && (flags & FLAG_DISABLED) == 0) {
-                    output.add(new StyleRecord(s, osm, flags));
-                } else if (drawMultipolygon && drawArea && s instanceof TextElement) {
-                    output.add(new StyleRecord(s, osm, flags));
-                } else if (drawRestriction && s instanceof NodeElement) {
-                    output.add(new StyleRecord(s, osm, flags));
-                }
-            }
-        }
-
-        public void add(Way osm, int flags) {
-            StyleElementList sl = styles.get(osm, circum, nc);
-            for (StyleElement s : sl) {
-                if ((drawArea && (flags & FLAG_DISABLED) == 0) || !(s instanceof AreaElement)) {
-                    output.add(new StyleRecord(s, osm, flags));
-                }
-            }
-        }
-    }
-
     /**
      * Sets the factory that creates the benchmark data receivers.
      * @param benchmarkFactory The factory.
@@ -1634,7 +1567,23 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         BBox bbox = bounds.toBBox();
         getSettings(renderVirtualNodes);
 
-        data.getReadLock().lock();
+        try {
+            if (data.getReadLock().tryLock(1, TimeUnit.SECONDS)) {
+                try {
+                    paintWithLock(data, renderVirtualNodes, benchmark, bbox);
+                } finally {
+                    data.getReadLock().unlock();
+                }
+            } else {
+                Logging.warn("Cannot paint layer {0}: It is locked.");
+            }
+        } catch (InterruptedException e) {
+            Logging.warn("Cannot paint layer {0}: Interrupted");
+        }
+    }
+
+    private void paintWithLock(final DataSet data, boolean renderVirtualNodes, RenderBenchmarkCollector benchmark,
+            BBox bbox) {
         try {
             highlightWaySegments = data.getHighlightedWaySegments();
 
@@ -1658,13 +1607,15 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                 return;
             }
 
-            Collections.sort(allStyleElems); // TODO: try parallel sort when switching to Java 8
+            // We use parallel sort here. This is only available for arrays.
+            StyleRecord[] sorted = allStyleElems.toArray(new StyleRecord[allStyleElems.size()]);
+            Arrays.parallelSort(sorted, null);
 
             if (!benchmark.renderDraw(allStyleElems)) {
                 return;
             }
 
-            for (StyleRecord record : allStyleElems) {
+            for (StyleRecord record : sorted) {
                 paintRecord(record);
             }
 
@@ -1678,8 +1629,6 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     .put("scale", scale)
                     .put("paintSettings", paintSettings)
                     .put("renderVirtualNodes", renderVirtualNodes);
-        } finally {
-            data.getReadLock().unlock();
         }
     }
 

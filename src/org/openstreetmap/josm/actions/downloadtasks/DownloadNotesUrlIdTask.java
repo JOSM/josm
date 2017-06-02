@@ -9,6 +9,12 @@ import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
+/**
+ * Specialized task for downloading OSM notes by ID.
+ * <p>
+ * It handles one URL pattern: openstreetmap website URL with {@code /node/<id>} argument.
+ * @since 8195
+ */
 public class DownloadNotesUrlIdTask extends DownloadNotesTask {
 
     private static final String URL_ID_PATTERN = "https?://www\\.(osm|openstreetmap)\\.org/note/(\\p{Digit}+).*";

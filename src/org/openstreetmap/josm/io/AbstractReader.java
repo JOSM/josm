@@ -3,6 +3,7 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
 /**
  * Abstract Reader, allowing other implementations than OsmReader (PbfReader in PBF plugin for example)
@@ -191,8 +193,8 @@ public abstract class AbstractReader {
     }
 
     protected final void prepareDataSet() throws IllegalDataException {
+        ds.beginUpdate();
         try {
-            ds.beginUpdate();
             processNodesAfterParsing();
             processWaysAfterParsing();
             processRelationsAfterParsing();
@@ -201,4 +203,6 @@ public abstract class AbstractReader {
             ds.endUpdate();
         }
     }
+
+    protected abstract DataSet doParseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException;
 }

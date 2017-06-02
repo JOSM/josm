@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.dialogs.relation.sort;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -93,6 +94,12 @@ public class WayConnectionTypeCalculatorTest {
 
         }
         return Arrays.toString(result);
+    }
+
+    @Test
+    public void testEmpty() {
+        String actual = getConnections(wayConnectionTypeCalculator.updateLinks(new ArrayList<>()));
+        Assert.assertEquals("[]", actual);
     }
 
     @Test

@@ -6,8 +6,8 @@ import java.util.Collection;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
-import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -26,7 +26,7 @@ public class BoundingXYVisitor extends AbstractVisitor {
 
     @Override
     public void visit(Node n) {
-        visit(n.getEastNorth());
+        visit((ILatLon) n);
     }
 
     @Override
@@ -74,12 +74,12 @@ public class BoundingXYVisitor extends AbstractVisitor {
      */
     public void visit(LatLon latlon) {
         if (latlon != null) {
-            if (latlon instanceof CachedLatLon) {
-                visit(((CachedLatLon) latlon).getEastNorth());
-            } else {
-                visit(Main.getProjection().latlon2eastNorth(latlon));
-            }
+            visit((ILatLon) latlon);
         }
+    }
+
+    private void visit(ILatLon latlon) {
+        visit(latlon.getEastNorth());
     }
 
     /**
@@ -133,13 +133,12 @@ public class BoundingXYVisitor extends AbstractVisitor {
             return;
         LatLon minLatlon = Main.getProjection().eastNorth2latlon(bounds.getMin());
         LatLon maxLatlon = Main.getProjection().eastNorth2latlon(bounds.getMax());
-        bounds = new ProjectionBounds(
-                Main.getProjection().latlon2eastNorth(new LatLon(
+        bounds = new ProjectionBounds(new LatLon(
                         Math.max(-90, minLatlon.lat() - enlargeDegree),
-                        Math.max(-180, minLatlon.lon() - enlargeDegree))),
-                Main.getProjection().latlon2eastNorth(new LatLon(
+                        Math.max(-180, minLatlon.lon() - enlargeDegree)).getEastNorth(),
+                new LatLon(
                         Math.min(90, maxLatlon.lat() + enlargeDegree),
-                        Math.min(180, maxLatlon.lon() + enlargeDegree))));
+                        Math.min(180, maxLatlon.lon() + enlargeDegree)).getEastNorth());
     }
 
     /**

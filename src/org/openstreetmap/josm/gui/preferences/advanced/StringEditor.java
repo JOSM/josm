@@ -29,9 +29,9 @@ public class StringEditor extends ExtendedDialog {
      * @param setting string setting
      */
     public StringEditor(final JComponent gui, PrefEntry entry, StringSetting setting) {
-        super(gui, tr("Change string setting"), new String[] {tr("OK"), tr("Cancel")});
+        super(gui, tr("Change string setting"), tr("OK"), tr("Cancel"));
         this.entry = entry;
-        setButtonIcons(new String[] {"ok.png", "cancel.png"});
+        setButtonIcons("ok", "cancel");
         setContent(build(setting.getValue() == null ? "" : setting.getValue()));
     }
 

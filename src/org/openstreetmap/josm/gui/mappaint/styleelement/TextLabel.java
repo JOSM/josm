@@ -14,7 +14,6 @@ import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy.DeriveLabelFromNameTagsCompositionStrategy;
 import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy.StaticLabelCompositionStrategy;
 import org.openstreetmap.josm.gui.mappaint.styleelement.LabelCompositionStrategy.TagLookupCompositionStrategy;
-import org.openstreetmap.josm.gui.mappaint.styleelement.placement.CompletelyInsideAreaStrategy;
 import org.openstreetmap.josm.gui.mappaint.styleelement.placement.PositionForAreaStrategy;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
@@ -24,6 +23,9 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 3880
  */
 public class TextLabel implements StyleKeys {
+    /**
+     * The default strategy to use when determining the label of a element.
+     */
     public static final LabelCompositionStrategy AUTO_LABEL_COMPOSITION_STRATEGY = new DeriveLabelFromNameTagsCompositionStrategy();
 
     /**
@@ -60,24 +62,6 @@ public class TextLabel implements StyleKeys {
      * The position strategy for this text label.
      */
     private final PositionForAreaStrategy labelPositionStrategy;
-
-    /**
-     * Creates a new text element
-     *
-     * @param strategy the strategy indicating how the text is composed for a specific {@link OsmPrimitive} to be rendered.
-     * If null, no label is rendered.
-     * @param font the font to be used. Must not be null.
-     * @param xOffset x offset
-     * @param yOffset y offset
-     * @param color the color to be used. Must not be null
-     * @param haloRadius halo radius
-     * @param haloColor halo color
-     * @deprecated since 11722, To be removed in mid-2017
-     */
-    @Deprecated
-    public TextLabel(LabelCompositionStrategy strategy, Font font, int xOffset, int yOffset, Color color, Float haloRadius, Color haloColor) {
-        this(strategy, font, xOffset, yOffset, color, haloRadius, haloColor, new CompletelyInsideAreaStrategy());
-    }
 
     /**
      * Creates a new text element
@@ -253,7 +237,7 @@ public class TextLabel implements StyleKeys {
 
     @Override
     public String toString() {
-        return "TextElement{" + toStringImpl() + '}';
+        return "TextLabel{" + toStringImpl() + '}';
     }
 
     protected String toStringImpl() {

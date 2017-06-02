@@ -5,9 +5,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.junit.BeforeClass;
@@ -57,7 +58,7 @@ public class TaggingPresetPreferenceTestIT {
         // Double traditional timeouts to avoid random problems
         Main.pref.putInteger("socket.timeout.connect", 30);
         Main.pref.putInteger("socket.timeout.read", 60);
-        Collection<Throwable> allErrors = new ArrayList<>();
+        Map<Object, Throwable> allErrors = new HashMap<>();
         Set<String> allMessages = new HashSet<>();
         for (ExtendedSourceEntry source : sources) {
             System.out.println(source.url);
@@ -72,7 +73,7 @@ public class TaggingPresetPreferenceTestIT {
                     e.printStackTrace();
                     // ignore frequent network errors with www.freietonne.de causing too much Jenkins failures
                     if (!source.url.contains("www.freietonne.de")) {
-                        allErrors.add(e1);
+                        allErrors.put(source.url, e1);
                     }
                     System.out.println(" => KO");
                 }
@@ -80,7 +81,7 @@ public class TaggingPresetPreferenceTestIT {
                 e.printStackTrace();
                 if (!source.url.contains("yopaseopor/")) {
                     // ignore https://raw.githubusercontent.com/yopaseopor/traffic_signs_preset_JOSM cause too much errors
-                    allErrors.add(e);
+                    allErrors.put(source.url, e);
                 }
                 System.out.println(" => KO");
             }

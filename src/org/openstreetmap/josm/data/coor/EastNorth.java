@@ -15,6 +15,8 @@ public class EastNorth extends Coordinate {
 
     private static final long serialVersionUID = 1L;
 
+    public static final EastNorth ZERO = new EastNorth(0, 0);
+
     /**
      * Constructs a new {@code EastNorth}.
      * @param east easting

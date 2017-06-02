@@ -26,6 +26,7 @@ import static java.awt.event.KeyEvent.VK_X;
 import static java.awt.event.KeyEvent.VK_Y;
 import static java.awt.event.KeyEvent.VK_Z;
 import static org.openstreetmap.josm.tools.I18n.tr;
+import static org.openstreetmap.josm.tools.WinRegistry.HKEY_LOCAL_MACHINE;
 
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedWriter;
@@ -35,6 +36,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystems;
@@ -44,11 +46,14 @@ import java.security.InvalidKeyException;
 import java.security.KeyFactory;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PublicKey;
 import java.security.SignatureException;
+import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.ArrayList;
@@ -60,14 +65,17 @@ import java.util.Locale;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
+import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.gui.preferences.display.LafPreference;
+import org.openstreetmap.josm.io.CertificateAmendment.CertAmend;
 
 /**
-  * {@code PlatformHook} implementation for Microsoft Windows systems.
-  * @since 1023
-  */
+ * {@code PlatformHook} implementation for Microsoft Windows systems.
+ * @since 1023
+ */
 public class PlatformHookWindows implements PlatformHook {
 
     /**
@@ -145,9 +153,37 @@ public class PlatformHookWindows implements PlatformHook {
 
     private static final String WINDOWS_ROOT = "Windows-ROOT";
 
+    private static final String CURRENT_VERSION = "SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion";
+
+    private String oSBuildNumber;
+
     @Override
     public void afterPrefStartupHook() {
         extendFontconfig("fontconfig.properties.src");
+        // Workaround for JDK-8180379: crash on Windows 10 1703 with Windows L&F and java < 8u152 / 9+171
+        // To remove during Java 9 migration
+        if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("windows 10") &&
+                getDefaultStyle().equals(LafPreference.LAF.get())) {
+            try {
+                final int currentBuild = Integer.parseInt(getCurrentBuild());
+                final int javaVersion = Utils.getJavaVersion();
+                final int javaUpdate = Utils.getJavaUpdate();
+                final int javaBuild = Utils.getJavaBuild();
+                // See https://technet.microsoft.com/en-us/windows/release-info.aspx
+                if (currentBuild >= 15_063 && ((javaVersion == 8 && javaUpdate < 141)
+                        || (javaVersion == 9 && javaUpdate == 0 && javaBuild < 173))) {
+                    // Workaround from https://bugs.openjdk.java.net/browse/JDK-8179014
+                    UIManager.put("FileChooser.useSystemExtensionHiding", Boolean.FALSE);
+                }
+            } catch (NumberFormatException | ReflectiveOperationException e) {
+                Main.error(e);
+            }
+        }
+    }
+
+    @Override
+    public void startupHook() {
+        checkExpiredJava();
     }
 
     @Override
@@ -245,6 +281,38 @@ public class PlatformHookWindows implements PlatformHook {
                 ((System.getenv("ProgramFiles(x86)") == null) ? "32" : "64") + "-Bit";
     }
 
+    private static String getProductName() throws IllegalAccessException, InvocationTargetException {
+        return WinRegistry.readString(HKEY_LOCAL_MACHINE, CURRENT_VERSION, "ProductName");
+    }
+
+    private static String getReleaseId() throws IllegalAccessException, InvocationTargetException {
+        return WinRegistry.readString(HKEY_LOCAL_MACHINE, CURRENT_VERSION, "ReleaseId");
+    }
+
+    private static String getCurrentBuild() throws IllegalAccessException, InvocationTargetException {
+        return WinRegistry.readString(HKEY_LOCAL_MACHINE, CURRENT_VERSION, "CurrentBuild");
+    }
+
+    private static String buildOSBuildNumber() {
+        StringBuilder sb = new StringBuilder();
+        try {
+            sb.append(getProductName()).append(' ')
+              .append(getReleaseId()).append(" (")
+              .append(getCurrentBuild()).append(')');
+        } catch (ReflectiveOperationException e) {
+            Main.error(e);
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String getOSBuildNumber() {
+        if (oSBuildNumber == null) {
+            oSBuildNumber = buildOSBuildNumber();
+        }
+        return oSBuildNumber;
+    }
+
     /**
      * Loads Windows-ROOT keystore.
      * @return Windows-ROOT keystore
@@ -328,10 +396,16 @@ public class PlatformHookWindows implements PlatformHook {
             throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
         KeyStore ks = getRootKeystore();
         // Look for certificate to install
-        String alias = ks.getCertificateAlias(trustedCert.getTrustedCertificate());
-        if (alias != null) {
-            // JOSM certificate found, return
-            Main.debug(tr("JOSM localhost certificate found in {0} keystore: {1}", WINDOWS_ROOT, alias));
+        try {
+            String alias = ks.getCertificateAlias(trustedCert.getTrustedCertificate());
+            if (alias != null) {
+                // JOSM certificate found, return
+                Main.debug(tr("JOSM localhost certificate found in {0} keystore: {1}", WINDOWS_ROOT, alias));
+                return false;
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            // catch error of JDK-8172244 as bug seems to not be fixed anytime soon
+            Main.error(e, "JDK-8172244 occured. Abort HTTPS setup");
             return false;
         }
         if (!GraphicsEnvironment.isHeadless()) {
@@ -350,6 +424,28 @@ public class PlatformHookWindows implements PlatformHook {
         Main.info(tr("Adding JOSM localhost certificate to {0} keystore", WINDOWS_ROOT));
         ks.setEntry(entryAlias, trustedCert, null);
         return true;
+    }
+
+    @Override
+    public X509Certificate getX509Certificate(CertAmend certAmend)
+            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+        KeyStore ks = getRootKeystore();
+        // Search by alias (fast)
+        Certificate result = ks.getCertificate(certAmend.getId());
+        if (result instanceof X509Certificate) {
+            return (X509Certificate) result;
+        }
+        // If not found, search by SHA-256 (slower)
+        MessageDigest md = MessageDigest.getInstance("SHA-256");
+        for (Enumeration<String> aliases = ks.aliases(); aliases.hasMoreElements();) {
+            result = ks.getCertificate(aliases.nextElement());
+            if (result instanceof X509Certificate
+                    && certAmend.getSha256().equalsIgnoreCase(Utils.toHexString(md.digest(result.getEncoded())))) {
+                return (X509Certificate) result;
+            }
+        }
+        // Not found
+        return null;
     }
 
     @Override
@@ -533,6 +629,7 @@ public class PlatformHookWindows implements PlatformHook {
         def.add(new FontEntry("myanmar", "Myanmar Text", "MMRTEXT.TTF"));              // ISO 639: my
         def.add(new FontEntry("nirmala", "Nirmala UI", "NIRMALA.TTF"));                // ISO 639: sat,srb
         def.add(new FontEntry("segoeui", "Segoe UI", "SEGOEUI.TTF"));                  // ISO 639: lis
+        def.add(new FontEntry("emoji", "Segoe UI Emoji", "SEGUIEMJ.TTF"));             // emoji symbol characters
 
         // Windows 7 and later
         def.add(new FontEntry("nko_tifinagh_vai_osmanya", "Ebrima", "EBRIMA.TTF"));    // ISO 639: ber. Nko only since Win 8

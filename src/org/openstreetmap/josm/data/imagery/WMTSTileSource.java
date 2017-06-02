@@ -73,6 +73,8 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
 
     // CHECKSTYLE.OFF: SingleSpaceSeparator
     private static final QName QN_CONTENTS            = new QName(WMTSTileSource.WMTS_NS_URL, "Contents");
+    private static final QName QN_DEFAULT             = new QName(WMTSTileSource.WMTS_NS_URL, "Default");
+    private static final QName QN_DIMENSION           = new QName(WMTSTileSource.WMTS_NS_URL, "Dimension");
     private static final QName QN_FORMAT              = new QName(WMTSTileSource.WMTS_NS_URL, "Format");
     private static final QName QN_LAYER               = new QName(WMTSTileSource.WMTS_NS_URL, "Layer");
     private static final QName QN_MATRIX_WIDTH        = new QName(WMTSTileSource.WMTS_NS_URL, "MatrixWidth");
@@ -86,6 +88,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     private static final QName QN_TILE_WIDTH          = new QName(WMTSTileSource.WMTS_NS_URL, "TileWidth");
     private static final QName QN_TILE_HEIGHT         = new QName(WMTSTileSource.WMTS_NS_URL, "TileHeight");
     private static final QName QN_TOPLEFT_CORNER      = new QName(WMTSTileSource.WMTS_NS_URL, "TopLeftCorner");
+    private static final QName QN_VALUE               = new QName(WMTSTileSource.WMTS_NS_URL, "Value");
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
     private static final String PATTERN_HEADER = "\\{header\\(([^,]+),([^}]+)\\)\\}";
@@ -141,7 +144,12 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             crs = builder.crs;
             identifier = builder.identifier;
         }
+    }
 
+    private static class Dimension {
+        private String identifier;
+        private String defaultValue;
+        private final List<String> values = new ArrayList<>();
     }
 
     private static class Layer {
@@ -152,6 +160,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         private String baseUrl;
         private String style;
         private final Collection<String> tileMatrixSetLinks = new ArrayList<>();
+        private final Collection<Dimension> dimensions = new ArrayList<>();
 
         Layer(Layer l) {
             Objects.requireNonNull(l);
@@ -161,6 +170,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             baseUrl = l.baseUrl;
             style = l.style;
             tileMatrixSet = new TileMatrixSet(l.tileMatrixSet);
+            dimensions.addAll(l.dimensions);
         }
 
         Layer() {
@@ -183,7 +193,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         private final JTable list;
 
         SelectLayerDialog(Collection<Layer> layers) {
-            super(Main.parent, tr("Select WMTS layer"), new String[]{tr("Add layers"), tr("Cancel")});
+            super(Main.parent, tr("Select WMTS layer"), tr("Add layers"), tr("Cancel"));
             this.layers = groupLayersByNameAndTileMatrixSet(layers);
             //getLayersTable(layers, Main.getProjection())
             this.list = new JTable(
@@ -453,12 +463,14 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                         layer.baseUrl = reader.getAttributeValue("", "template");
                     } else if (QN_STYLE.equals(reader.getName()) &&
                             "true".equals(reader.getAttributeValue("", "isDefault"))) {
-                        if (GetCapabilitiesParseHelper.moveReaderToTag(reader, new QName[] {GetCapabilitiesParseHelper.QN_OWS_IDENTIFIER})) {
+                        if (GetCapabilitiesParseHelper.moveReaderToTag(reader, GetCapabilitiesParseHelper.QN_OWS_IDENTIFIER)) {
                             layer.style = reader.getElementText();
                             tagStack.push(reader.getName()); // keep tagStack in sync
                         }
+                    } else if (QN_DIMENSION.equals(reader.getName())) {
+                        layer.dimensions.add(parseDimension(reader));
                     } else if (QN_TILEMATRIX_SET_LINK.equals(reader.getName())) {
-                        layer.tileMatrixSetLinks.add(praseTileMatrixSetLink(reader));
+                        layer.tileMatrixSetLinks.add(parseTileMatrixSetLink(reader));
                     } else {
                         GetCapabilitiesParseHelper.moveReaderToEndCurrentTag(reader);
                     }
@@ -487,13 +499,39 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     }
 
     /**
+     * Gets Dimension value. Returns when reader is on Dimension closing tag
+     *
+     * @param reader StAX reader instance
+     * @return dimension
+     * @throws XMLStreamException See {@link XMLStreamReader}
+     */
+    private static Dimension parseDimension(XMLStreamReader reader) throws XMLStreamException {
+        Dimension ret = new Dimension();
+        for (int event = reader.getEventType();
+                reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT &&
+                        QN_DIMENSION.equals(reader.getName()));
+                event = reader.next()) {
+            if (event == XMLStreamReader.START_ELEMENT) {
+                if (GetCapabilitiesParseHelper.QN_OWS_IDENTIFIER.equals(reader.getName())) {
+                    ret.identifier = reader.getElementText();
+                } else if (QN_DEFAULT.equals(reader.getName())) {
+                    ret.defaultValue = reader.getElementText();
+                } else if (QN_VALUE.equals(reader.getName())) {
+                    ret.values.add(reader.getElementText());
+                }
+            }
+        }
+        return ret;
+    }
+
+    /**
      * Gets TileMatrixSetLink value. Returns when reader is on TileMatrixSetLink closing tag
      *
      * @param reader StAX reader instance
      * @return TileMatrixSetLink identifier
      * @throws XMLStreamException See {@link XMLStreamReader}
      */
-    private static String praseTileMatrixSetLink(XMLStreamReader reader) throws XMLStreamException {
+    private static String parseTileMatrixSetLink(XMLStreamReader reader) throws XMLStreamException {
         String ret = null;
         for (int event = reader.getEventType();
                 reader.hasNext() && !(event == XMLStreamReader.END_ELEMENT &&
@@ -597,11 +635,11 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             if (event == XMLStreamReader.START_ELEMENT &&
                     GetCapabilitiesParseHelper.QN_OWS_OPERATION.equals(reader.getName()) &&
                     "GetTile".equals(reader.getAttributeValue("", "name")) &&
-                    GetCapabilitiesParseHelper.moveReaderToTag(reader, new QName[] {
+                    GetCapabilitiesParseHelper.moveReaderToTag(reader,
                             GetCapabilitiesParseHelper.QN_OWS_DCP,
                             GetCapabilitiesParseHelper.QN_OWS_HTTP,
-                            GetCapabilitiesParseHelper.QN_OWS_GET,
-                    })) {
+                            GetCapabilitiesParseHelper.QN_OWS_GET
+                    )) {
                 this.baseUrl = reader.getAttributeValue(GetCapabilitiesParseHelper.XLINK_NS_URL, "href");
                 this.transferMode = GetCapabilitiesParseHelper.getTransferMode(reader);
             }
@@ -717,13 +755,19 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             return ""; // no matrix, probably unsupported CRS selected.
         }
 
-        return url.replaceAll("\\{layer\\}", this.currentLayer.identifier)
+        url = url.replaceAll("\\{layer\\}", this.currentLayer.identifier)
                 .replaceAll("\\{format\\}", this.currentLayer.format)
                 .replaceAll("\\{TileMatrixSet\\}", this.currentTileMatrixSet.identifier)
                 .replaceAll("\\{TileMatrix\\}", tileMatrix.identifier)
                 .replaceAll("\\{TileRow\\}", Integer.toString(tiley))
                 .replaceAll("\\{TileCol\\}", Integer.toString(tilex))
                 .replaceAll("(?i)\\{style\\}", this.currentLayer.style);
+
+        for (Dimension d : currentLayer.dimensions) {
+            url = url.replaceAll("\\{"+d.identifier+"\\}", d.defaultValue);
+        }
+
+        return url;
     }
 
     /**
@@ -934,6 +978,10 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         return nativeScaleList;
     }
 
+    /**
+     * Returns the tile projection.
+     * @return the tile projection
+     */
     public Projection getTileProjection() {
         return tileProjection;
     }

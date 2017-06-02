@@ -295,7 +295,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2017040800, Last Updated Sat Apr  8 07:07:01 2017 UTC
+        // Taken from Version 2017052400, Last Updated Wed May 24 07:07:02 2017 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -353,6 +353,7 @@ public final class DomainValidator extends AbstractValidator {
         "app", // app Charleston Road Registry Inc.
         "apple", // apple Apple Inc.
         "aquarelle", // aquarelle Aquarelle.com
+        "arab", // arab League of Arab States
         "aramco", // aramco Aramco Services Company
         "archi", // archi STARTING DOT LIMITED
         "army", // army United TLD Holdco Ltd.
@@ -989,7 +990,6 @@ public final class DomainValidator extends AbstractValidator {
         "movistar", // movistar Telefónica S.A.
         "msd", // msd MSD Registry Holdings, Inc.
         "mtn", // mtn MTN Dubai Limited
-        "mtpc", // mtpc Mitsubishi Tanabe Pharma Corporation
         "mtr", // mtr MTR Corporation Limited
         "museum", // museum Museum Domain Management Association
         "mutual", // mutual Northwestern Mutual MU TLD Registry, LLC
@@ -1053,7 +1053,6 @@ public final class DomainValidator extends AbstractValidator {
         "orange", // orange Orange Brand Services Limited
         "org", // org Public Interest Registry (PIR)
         "organic", // organic Afilias Limited
-        "orientexpress", // orientexpress Orient Express
         "origins", // origins The Estée Lauder Companies Inc.
         "osaka", // osaka Interlink Co., Ltd.
         "otsuka", // otsuka Otsuka Holdings Co., Ltd.
@@ -1492,6 +1491,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--mxtq1m", // 政府 Net-Chinese Co., Ltd.
         "xn--ngbc5azd", // شبكة International Domain Registry Pty. Ltd.
         "xn--ngbe9e0a", // بيتك Kuwait Finance House
+        "xn--ngbrx", // عرب League of Arab States
         "xn--nqv7f", // 机构 Public Interest Registry
         "xn--nqv7fs00ema", // 组织机构 Public Interest Registry
         "xn--nyqy26a", // 健康 Stable Tone Limited

@@ -53,7 +53,9 @@ public interface Projection extends Projecting {
     /**
      * Get a filename compatible string (for the cache directory).
      * @return the cache directory name (base name)
+     * @deprecated unused - remove in 2017-07
      */
+    @Deprecated
     String getCacheDirectoryName();
 
     /**
@@ -118,13 +120,4 @@ public interface Projection extends Projecting {
      * @return true if natural order of coordinates is North East, false if East North
      */
     boolean switchXY();
-
-    /**
-     * Gets the object used as cache identifier when caching results of this projection.
-     * @return The object to use as cache key
-     * @since 10827
-     */
-    default Object getCacheKey() {
-        return this;
-    }
 }

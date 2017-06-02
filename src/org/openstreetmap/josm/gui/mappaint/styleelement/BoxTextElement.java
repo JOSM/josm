@@ -24,12 +24,44 @@ public class BoxTextElement extends StyleElement {
     /**
      * MapCSS text-anchor-horizontal
      */
-    public enum HorizontalTextAlignment { LEFT, CENTER, RIGHT }
+    public enum HorizontalTextAlignment {
+        /**
+         * Align to the left
+         */
+        LEFT,
+        /**
+         * Align in the center
+         */
+        CENTER,
+        /**
+         * Align to the right
+         */
+        RIGHT }
 
     /**
      * MapCSS text-anchor-vertical
      */
-    public enum VerticalTextAlignment { ABOVE, TOP, CENTER, BOTTOM, BELOW }
+    public enum VerticalTextAlignment {
+        /**
+         * Render above the box
+         */
+        ABOVE,
+        /**
+         * Align to the top of the box
+         */
+        TOP,
+        /**
+         * Render at the center of the box
+         */
+        CENTER,
+        /**
+         * Align to the bottom of the box
+         */
+        BOTTOM,
+        /**
+         * Render below the box
+         */
+        BELOW }
 
     /**
      * Something that provides us with a {@link BoxProviderResult}
@@ -51,6 +83,11 @@ public class BoxTextElement extends StyleElement {
         private final Rectangle box;
         private final boolean temporary;
 
+        /**
+         * Create a new box provider result
+         * @param box The box
+         * @param temporary The temporary flag, will be returned by {@link #isTemporary()}
+         */
         public BoxProviderResult(Rectangle box, boolean temporary) {
             this.box = box;
             this.temporary = temporary;

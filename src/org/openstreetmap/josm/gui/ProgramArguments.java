@@ -135,7 +135,7 @@ public class ProgramArguments {
             if (opt != null) {
                 addOption(opt, g.getOptarg());
             } else
-                throw new IllegalArgumentException("Invalid option: "+c);
+                throw new IllegalArgumentException("Invalid option: "+ (char) c);
         }
         // positional arguments are a shortcut for the --download ... option
         for (int i = g.getOptind(); i < args.length; ++i) {

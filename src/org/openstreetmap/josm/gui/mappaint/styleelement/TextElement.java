@@ -32,11 +32,10 @@ public class TextElement extends StyleElement {
      * @return The text element or <code>null</code> if it could not be created.
      */
     public static TextElement create(final Environment env) {
-        final Cascade c = env.mc.getCascade(env.layer);
-
         TextLabel text = TextLabel.create(env, PaintColors.TEXT.get(), false);
         if (text == null)
             return null;
+        final Cascade c = env.mc.getCascade(env.layer);
         return new TextElement(c, text);
     }
 

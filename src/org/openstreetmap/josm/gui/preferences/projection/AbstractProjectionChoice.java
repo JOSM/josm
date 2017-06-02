@@ -7,6 +7,11 @@ import org.openstreetmap.josm.data.projection.CustomProjection;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 
+/**
+ * Super class for ProjectionChoice implementations.
+ * <p>
+ * Handles common parameters <code>name</code>, <code>id</code> and <code>cacheDir</code>.
+ */
 public abstract class AbstractProjectionChoice implements ProjectionChoice {
 
     protected String name;
@@ -45,6 +50,12 @@ public abstract class AbstractProjectionChoice implements ProjectionChoice {
         return id;
     }
 
+    /**
+    * Get the cache directory name.
+    * @return the cache directory name (base name)
+    * @deprecated unused - remove in 2017-09
+    */
+    @Deprecated
     public String getCacheDir() {
         return cacheDir;
     }
@@ -62,6 +73,6 @@ public abstract class AbstractProjectionChoice implements ProjectionChoice {
     public Projection getProjection() {
         String code = getCurrentCode();
         return new CustomProjection(getProjectionName(), code, Optional.ofNullable(Projections.getInit(code))
-                .orElseThrow(() -> new AssertionError("Error: Unknown projection code: " + code)), getCacheDir());
+                .orElseThrow(() -> new AssertionError("Error: Unknown projection code: " + code)));
     }
 }

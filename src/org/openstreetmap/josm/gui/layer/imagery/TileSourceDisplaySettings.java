@@ -7,6 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -61,10 +62,12 @@ public class TileSourceDisplaySettings {
     /** if layer should show errors on tiles */
     private boolean showErrors;
 
+    private OffsetBookmark offsetBookmark;
     /**
-     * The displacement
+     * the displacement (basically caches the displacement from the offsetBookmark
+     * in the current projection)
      */
-    private EastNorth displacement = new EastNorth(0, 0);
+    private EastNorth displacement = EastNorth.ZERO;
 
     private final CopyOnWriteArrayList<DisplaySettingsChangeListener> listeners = new CopyOnWriteArrayList<>();
 
@@ -188,24 +191,31 @@ public class TileSourceDisplaySettings {
     }
 
     /**
-     * Set the displacement
-     * @param displacement The new displacement
-     * @since 10571
+     * Sets an offset bookmark to use.
+     *
+     * @param offsetBookmark the offset bookmark, may be null
      */
-    public void setDisplacement(EastNorth displacement) {
-        CheckParameterUtil.ensureValidCoordinates(displacement, "displacement");
-        this.displacement = displacement;
-        fireSettingsChange(DISPLACEMENT);
+    public void setOffsetBookmark(OffsetBookmark offsetBookmark) {
+        this.offsetBookmark = offsetBookmark;
+        if (offsetBookmark == null) {
+            setDisplacement(EastNorth.ZERO);
+        } else {
+            setDisplacement(offsetBookmark.getDisplacement(Main.getProjection()));
+        }
     }
 
     /**
-     * Adds the given value to the displacement.
-     * @param displacement The value to add.
-     * @since 10571
+     * Gets the offset bookmark in use.
+     * @return the offset bookmark, may be null
      */
-    public void addDisplacement(EastNorth displacement) {
+    public OffsetBookmark getOffsetBookmark() {
+        return this.offsetBookmark;
+    }
+
+    private void setDisplacement(EastNorth displacement) {
         CheckParameterUtil.ensureValidCoordinates(displacement, "displacement");
-        setDisplacement(this.displacement.add(displacement));
+        this.displacement = displacement;
+        fireSettingsChange(DISPLACEMENT);
     }
 
     /**
@@ -237,21 +247,23 @@ public class TileSourceDisplaySettings {
 
     /**
      * Stores the current settings object to the given hashmap.
+     * The offset data is not stored and needs to be handled separately.
      * @param data The map to store the settings to.
      * @see #loadFrom(Map)
+     * @see OffsetBookmark#toPropertiesMap()
      */
     public void storeTo(Map<String, String> data) {
         data.put(AUTO_LOAD, Boolean.toString(autoLoad));
         data.put(AUTO_ZOOM, Boolean.toString(autoZoom));
         data.put(SHOW_ERRORS, Boolean.toString(showErrors));
-        data.put("dx", String.valueOf(getDx()));
-        data.put("dy", String.valueOf(getDy()));
     }
 
     /**
      * Load the settings from the given data instance.
+     * The offset data is not loaded and needs to be handled separately.
      * @param data The data
      * @see #storeTo(Map)
+     * @see OffsetBookmark#fromPropertiesMap(java.util.Map)
      */
     public void loadFrom(Map<String, String> data) {
         try {
@@ -268,12 +280,6 @@ public class TileSourceDisplaySettings {
             String doShowErrors = data.get(SHOW_ERRORS);
             if (doShowErrors != null) {
                 setShowErrors(Boolean.parseBoolean(doShowErrors));
-            }
-
-            String dx = data.get("dx");
-            String dy = data.get("dy");
-            if (dx != null && dy != null) {
-                setDisplacement(new EastNorth(Double.parseDouble(dx), Double.parseDouble(dy)));
             }
         } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             throw BugReport.intercept(e).put("data", data);
@@ -294,18 +300,12 @@ public class TileSourceDisplaySettings {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
+        if (obj == null || getClass() != obj.getClass())
             return false;
         TileSourceDisplaySettings other = (TileSourceDisplaySettings) obj;
-        if (autoLoad != other.autoLoad)
-            return false;
-        if (autoZoom != other.autoZoom)
-            return false;
-        if (showErrors != other.showErrors)
-            return false;
-        return true;
+        return autoLoad == other.autoLoad
+            && autoZoom == other.autoZoom
+            && showErrors == other.showErrors;
     }
 
     @Override

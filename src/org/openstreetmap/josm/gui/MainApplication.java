@@ -37,6 +37,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.net.ssl.SSLSocketFactory;
+import javax.swing.JComponent;
 import javax.swing.JOptionPane;
 import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
@@ -87,7 +88,7 @@ public class MainApplication extends Main {
      */
     private static final List<String> COMMAND_LINE_ARGS = new ArrayList<>();
 
-    private MainFrame mainFrame;
+    private final MainFrame mainFrame;
 
     /**
      * Constructs a new {@code MainApplication} without a window.
@@ -108,15 +109,17 @@ public class MainApplication extends Main {
 
     @Override
     protected void initializeMainWindow() {
-        mainPanel.reAddListeners();
         if (mainFrame != null) {
+            panel = mainFrame.getPanel();
             mainFrame.initialize();
-
             menu = mainFrame.getMenu();
         } else {
             // required for running some tests.
+            panel = new MainPanel(Main.getLayerManager());
             menu = new MainMenu();
         }
+        panel.addMapFrameListener((o, n) -> redoUndoListener.commandChanged(0, 0));
+        panel.reAddListeners();
     }
 
     @Override
@@ -206,8 +209,8 @@ public class MainApplication extends Main {
     public static void main(final String[] argArray) {
         I18n.init();
 
-        // construct argument table
         ProgramArguments args = null;
+        // construct argument table
         try {
             args = new ProgramArguments(argArray);
         } catch (IllegalArgumentException e) {
@@ -292,7 +295,11 @@ public class MainApplication extends Main {
         WindowGeometry geometry = WindowGeometry.mainWindow("gui.geometry",
                 args.getSingle(Option.GEOMETRY).orElse(null),
                 !args.hasOption(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
-        final MainFrame mainFrame = new MainFrame(contentPanePrivate, geometry);
+        final MainFrame mainFrame = new MainFrame(geometry);
+        if (mainFrame.getContentPane() instanceof JComponent) {
+            Main.contentPanePrivate = (JComponent) mainFrame.getContentPane();
+        }
+        Main.mainPanel = mainFrame.getPanel();
         Main.parent = mainFrame;
 
         if (args.hasOption(Option.LOAD_PREFERENCES)) {
@@ -362,8 +369,6 @@ public class MainApplication extends Main {
             mainFrame.setVisible(true);
         });
 
-        Main.MasterWindowListener.setup();
-
         boolean maximized = Main.pref.getBoolean("gui.maximized", false);
         if ((!args.hasOption(Option.NO_MAXIMIZE) && maximized) || args.hasOption(Option.MAXIMIZE)) {
             mainFrame.setMaximized(true);
@@ -428,7 +433,7 @@ public class MainApplication extends Main {
     static void loadLatePlugins(SplashScreen splash, SplashProgressMonitor monitor, Collection<PluginInformation> pluginsToLoad) {
         monitor.indeterminateSubTask(tr("Loading plugins"));
         PluginHandler.loadLatePlugins(splash, pluginsToLoad, monitor.createSubTaskMonitor(1, false));
-        toolbar.refreshToolbarControl();
+        GuiHelper.runInEDTAndWait(() -> toolbar.refreshToolbarControl());
     }
 
     private static void processOffline(ProgramArguments args) {
@@ -492,7 +497,11 @@ public class MainApplication extends Main {
                 if (wasv6 && !hasv6) {
                     Main.info(tr("Detected no useable IPv6 network, prefering IPv4 over IPv6 after next restart."));
                     Main.pref.put("validated.ipv6", hasv6); // be sure it is stored before the restart!
-                    new RestartAction().actionPerformed(null);
+                    try {
+                        RestartAction.restartJOSM();
+                    } catch (IOException e) {
+                        Main.error(e);
+                    }
                 }
                 Main.pref.put("validated.ipv6", hasv6);
             }, "IPv6-checker").start();
@@ -535,13 +544,13 @@ public class MainApplication extends Main {
                     ExtendedDialog dialog = new ExtendedDialog(
                             Main.parent,
                             tr("Unsaved osm data"),
-                            new String[] {tr("Restore"), tr("Cancel"), tr("Discard")}
+                            tr("Restore"), tr("Cancel"), tr("Discard")
                             );
                     dialog.setContent(
                             trn("JOSM found {0} unsaved osm data layer. ",
                                     "JOSM found {0} unsaved osm data layers. ", unsavedLayerFiles.size(), unsavedLayerFiles.size()) +
                                     tr("It looks like JOSM crashed last time. Would you like to restore the data?"));
-                    dialog.setButtonIcons(new String[] {"ok", "cancel", "dialogs/delete"});
+                    dialog.setButtonIcons("ok", "cancel", "dialogs/delete");
                     int selection = dialog.showDialog().getValue();
                     if (selection == 1) {
                         autosaveTask.recoverUnsavedLayers();
@@ -557,8 +566,8 @@ public class MainApplication extends Main {
             if (hasErrors) {
                 ExtendedDialog ed = new ExtendedDialog(
                         Main.parent, title,
-                        new String[]{tr("Change proxy settings"), tr("Cancel")});
-                ed.setButtonIcons(new String[]{"dialogs/settings", "cancel"}).setCancelButton(2);
+                        tr("Change proxy settings"), tr("Cancel"));
+                ed.setButtonIcons("dialogs/settings", "cancel").setCancelButton(2);
                 ed.setMinimumSize(new Dimension(460, 260));
                 ed.setIcon(JOptionPane.WARNING_MESSAGE);
                 ed.setContent(message);

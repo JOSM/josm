@@ -36,8 +36,8 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.ViewportData;
-import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -51,6 +51,7 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.help.Helpful;
 import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
@@ -102,11 +103,6 @@ public class NavigatableComponent extends JComponent implements Helpful {
     public static final DoubleProperty PROP_ZOOM_RATIO = new DoubleProperty("zoom.ratio", 2.0);
     /** Divide intervals between native resolution levels to smaller steps if they are much larger than zoom ratio */
     public static final BooleanProperty PROP_ZOOM_INTERMEDIATE_STEPS = new BooleanProperty("zoom.intermediate-steps", true);
-
-    /** Property name for center change events */
-    public static final String PROPNAME_CENTER = "center";
-    /** Property name for scale change events */
-    public static final String PROPNAME_SCALE = "scale";
 
     /**
      * The layer which scale is set to.
@@ -175,13 +171,17 @@ public class NavigatableComponent extends JComponent implements Helpful {
     private transient MapViewState state;
 
     /**
+     * Main uses weak link to store this, so we need to keep a reference.
+     */
+    private final ProjectionChangeListener projectionChangeListener = (oldValue, newValue) -> fixProjection();
+
+    /**
      * Constructs a new {@code NavigatableComponent}.
      */
     public NavigatableComponent() {
         setLayout(null);
         state = MapViewState.createDefaultState(getWidth(), getHeight());
-        // uses weak link.
-        Main.addProjectionChangeListener((oldValue, newValue) -> fixProjection());
+        Main.addProjectionChangeListener(projectionChangeListener);
     }
 
     @Override
@@ -301,14 +301,14 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * Zoom in current view. Use configured zoom step and scaling settings.
      */
     public void zoomIn() {
-        zoomTo(state.getCenterAtPixel().getEastNorth(), scaleZoomIn());
+        zoomTo(state.getCenter().getEastNorth(), scaleZoomIn());
     }
 
     /**
      * Zoom out current view. Use configured zoom step and scaling settings.
      */
     public void zoomOut() {
-        zoomTo(state.getCenterAtPixel().getEastNorth(), scaleZoomOut());
+        zoomTo(state.getCenter().getEastNorth(), scaleZoomOut());
     }
 
     protected void updateLocationState() {
@@ -405,7 +405,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @return the current center of the viewport
      */
     public EastNorth getCenter() {
-        return state.getCenterAtPixel().getEastNorth();
+        return state.getCenter().getEastNorth();
     }
 
     /**
@@ -509,20 +509,23 @@ public class NavigatableComponent extends JComponent implements Helpful {
 
     /**
      * Return the point on the screen where this Coordinate would be.
+     *
+     * Alternative: {@link #getState()}, then {@link MapViewState#getPointFor(ILatLon)}
      * @param latlon The point, where this geopoint would be drawn.
      * @return The point on screen where "point" would be drawn, relative to the own top/left.
      */
     public Point2D getPoint2D(LatLon latlon) {
-        if (latlon == null)
+        if (latlon == null) {
             return new Point();
-        else if (latlon instanceof CachedLatLon)
-            return getPoint2D(((CachedLatLon) latlon).getEastNorth());
-        else
-            return getPoint2D(getProjection().latlon2eastNorth(latlon));
+        } else {
+            return getPoint2D(latlon.getEastNorth());
+        }
     }
 
     /**
      * Return the point on the screen where this Node would be.
+     *
+     * Alternative: {@link #getState()}, then {@link MapViewState#getPointFor(ILatLon)}
      * @param n The node, where this geopoint would be drawn.
      * @return The point on screen where "node" would be drawn, relative to the own top/left.
      */
@@ -663,20 +666,11 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     private void zoomNoUndoTo(EastNorth newCenter, double newScale, boolean initial) {
         if (!Utils.equalsEpsilon(getScale(), newScale)) {
-            double oldScale = getScale();
             state = state.usingScale(newScale);
-            if (!initial) {
-                firePropertyChange(PROPNAME_SCALE, oldScale, newScale);
-            }
         }
         if (!newCenter.equals(getCenter())) {
-            EastNorth oldCenter = getCenter();
             state = state.movedTo(state.getCenter(), newCenter);
-            if (!initial) {
-                firePropertyChange(PROPNAME_CENTER, oldCenter, newCenter);
-            }
         }
-
         if (!initial) {
             repaint();
             fireZoomChanged();

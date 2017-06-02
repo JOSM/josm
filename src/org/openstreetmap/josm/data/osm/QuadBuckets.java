@@ -404,7 +404,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     public boolean removeAll(Collection<?> objects) {
         boolean changed = false;
         for (Object o : objects) {
-            changed = changed | remove(o);
+            changed |= remove(o);
         }
         return changed;
     }
@@ -413,7 +413,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
     public boolean addAll(Collection<? extends T> objects) {
         boolean changed = false;
         for (T o : objects) {
-            changed = changed | this.add(o);
+            changed |= add(o);
         }
         return changed;
     }

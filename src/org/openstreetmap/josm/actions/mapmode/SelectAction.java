@@ -67,6 +67,8 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class SelectAction extends MapMode implements ModifierListener, KeyPressReleaseListener, SelectionEnded {
 
+    private static final String NORMAL = "normal";
+
     /**
      * Select action mode.
      * @since 7543
@@ -83,22 +85,23 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
     }
 
     // contains all possible cases the cursor can be in the SelectAction
-    private enum SelectActionCursor {
-        rect("normal", /* ICON(cursor/modifier/) */ "selection"),
-        rect_add("normal", /* ICON(cursor/modifier/) */ "select_add"),
-        rect_rm("normal", /* ICON(cursor/modifier/) */ "select_remove"),
-        way("normal", /* ICON(cursor/modifier/) */ "select_way"),
-        way_add("normal", /* ICON(cursor/modifier/) */ "select_way_add"),
-        way_rm("normal", /* ICON(cursor/modifier/) */ "select_way_remove"),
-        node("normal", /* ICON(cursor/modifier/) */ "select_node"),
-        node_add("normal", /* ICON(cursor/modifier/) */ "select_node_add"),
-        node_rm("normal", /* ICON(cursor/modifier/) */ "select_node_remove"),
-        virtual_node("normal", /* ICON(cursor/modifier/) */ "addnode"),
-        scale(/* ICON(cursor/) */ "scale", null),
-        rotate(/* ICON(cursor/) */ "rotate", null),
-        merge(/* ICON(cursor/) */ "crosshair", null),
-        lasso("normal", /* ICON(cursor/modifier/) */ "rope"),
-        merge_to_node("crosshair", /* ICON(cursor/modifier/) */ "joinnode"),
+    enum SelectActionCursor {
+
+        rect(NORMAL, "selection"),
+        rect_add(NORMAL, "select_add"),
+        rect_rm(NORMAL, "select_remove"),
+        way(NORMAL, "select_way"),
+        way_add(NORMAL, "select_way_add"),
+        way_rm(NORMAL, "select_way_remove"),
+        node(NORMAL, "select_node"),
+        node_add(NORMAL, "select_node_add"),
+        node_rm(NORMAL, "select_node_remove"),
+        virtual_node(NORMAL, "addnode"),
+        scale("scale", null),
+        rotate("rotate", null),
+        merge("crosshair", null),
+        lasso(NORMAL, "rope"),
+        merge_to_node("crosshair", "joinnode"),
         move(Cursor.MOVE_CURSOR);
 
         private final Cursor c;
@@ -110,13 +113,17 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             c = Cursor.getPredefinedCursor(systemCursor);
         }
 
+        /**
+         * Returns the action cursor.
+         * @return the cursor
+         */
         public Cursor cursor() {
             return c;
         }
     }
 
     private boolean lassoMode;
-    public boolean repeatedKeySwitchLassoOption;
+    private boolean repeatedKeySwitchLassoOption;
 
     // Cache previous mouse event (needed when only the modifier keys are
     // pressed but the mouse isn't moved)
@@ -703,31 +710,35 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         if (affectedNodes.size() < 2 && (mode == Mode.ROTATE || mode == Mode.SCALE)) {
             return false;
         }
-        Command c = getLastCommand();
+        Command c = getLastCommandInDataset(ds);
         if (mode == Mode.MOVE) {
             if (startEN == null) return false; // fix #8128
             ds.beginUpdate();
-            if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
-                ((MoveCommand) c).saveCheckpoint();
-                ((MoveCommand) c).applyVectorTo(currentEN);
-            } else {
-                c = new MoveCommand(selection, startEN, currentEN);
-                Main.main.undoRedo.add(c);
-            }
-            for (Node n : affectedNodes) {
-                LatLon ll = n.getCoor();
-                if (ll != null && ll.isOutSideWorld()) {
-                    // Revert move
-                    ((MoveCommand) c).resetToCheckpoint();
-                    ds.endUpdate();
-                    JOptionPane.showMessageDialog(
-                            Main.parent,
-                            tr("Cannot move objects outside of the world."),
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE);
-                    mv.setNewCursor(cursor, this);
-                    return false;
+            try {
+                if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
+                    ((MoveCommand) c).saveCheckpoint();
+                    ((MoveCommand) c).applyVectorTo(currentEN);
+                } else {
+                    c = new MoveCommand(selection, startEN, currentEN);
+                    Main.main.undoRedo.add(c);
                 }
+                for (Node n : affectedNodes) {
+                    LatLon ll = n.getCoor();
+                    if (ll != null && ll.isOutSideWorld()) {
+                        // Revert move
+                        ((MoveCommand) c).resetToCheckpoint();
+                        // TODO: We might use a simple notification in the lower left corner.
+                        JOptionPane.showMessageDialog(
+                                Main.parent,
+                                tr("Cannot move objects outside of the world."),
+                                tr("Warning"),
+                                JOptionPane.WARNING_MESSAGE);
+                        mv.setNewCursor(cursor, this);
+                        return false;
+                    }
+                }
+            } finally {
+                ds.endUpdate();
             }
         } else {
             startEN = currentEN; // drag can continue after scaling/rotation
@@ -737,27 +748,29 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             }
 
             ds.beginUpdate();
-
-            if (mode == Mode.ROTATE) {
-                if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand) c).getTransformedNodes())) {
-                    ((RotateCommand) c).handleEvent(currentEN);
-                } else {
-                    Main.main.undoRedo.add(new RotateCommand(selection, currentEN));
+            try {
+                if (mode == Mode.ROTATE) {
+                    if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand) c).getTransformedNodes())) {
+                        ((RotateCommand) c).handleEvent(currentEN);
+                    } else {
+                        Main.main.undoRedo.add(new RotateCommand(selection, currentEN));
+                    }
+                } else if (mode == Mode.SCALE) {
+                    if (c instanceof ScaleCommand && affectedNodes.equals(((ScaleCommand) c).getTransformedNodes())) {
+                        ((ScaleCommand) c).handleEvent(currentEN);
+                    } else {
+                        Main.main.undoRedo.add(new ScaleCommand(selection, currentEN));
+                    }
                 }
-            } else if (mode == Mode.SCALE) {
-                if (c instanceof ScaleCommand && affectedNodes.equals(((ScaleCommand) c).getTransformedNodes())) {
-                    ((ScaleCommand) c).handleEvent(currentEN);
-                } else {
-                    Main.main.undoRedo.add(new ScaleCommand(selection, currentEN));
-                }
-            }
 
-            Collection<Way> ways = ds.getSelectedWays();
-            if (doesImpactStatusLine(affectedNodes, ways)) {
-                Main.map.statusLine.setDist(ways);
+                Collection<Way> ways = ds.getSelectedWays();
+                if (doesImpactStatusLine(affectedNodes, ways)) {
+                    Main.map.statusLine.setDist(ways);
+                }
+            } finally {
+                ds.endUpdate();
             }
         }
-        ds.endUpdate();
         return true;
     }
 
@@ -776,8 +789,9 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      * Adapt last move command (if it is suitable) to work with next drag, started at point startEN
      */
     private void useLastMoveCommandIfPossible() {
-        Command c = getLastCommand();
-        Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(getLayerManager().getEditDataSet().getSelected());
+        DataSet dataSet = getLayerManager().getEditDataSet();
+        Command c = getLastCommandInDataset(dataSet);
+        Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(dataSet.getSelected());
         if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
             // old command was created with different base point of movement, we need to recalculate it
             ((MoveCommand) c).changeStartPoint(startEN);
@@ -786,15 +800,21 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
 
     /**
      * Obtain command in undoRedo stack to "continue" when dragging
+     * @param ds The data set the command needs to be in.
      * @return last command
      */
-    private static Command getLastCommand() {
-        Command c = !Main.main.undoRedo.commands.isEmpty()
-                ? Main.main.undoRedo.commands.getLast() : null;
-        if (c instanceof SequenceCommand) {
-            c = ((SequenceCommand) c).getLastCommand();
+    private static Command getLastCommandInDataset(DataSet ds) {
+        LinkedList<Command> commands = Main.main.undoRedo.commands;
+        if (!commands.isEmpty()) {
+            Command lastCommand = commands.getLast();
+            if (lastCommand instanceof SequenceCommand) {
+                lastCommand = ((SequenceCommand) lastCommand).getLastCommand();
+            }
+            if (ds.equals(lastCommand.getAffectedDataSet())) {
+                return lastCommand;
+            }
         }
-        return c;
+        return null;
     }
 
     /**
@@ -842,15 +862,14 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             updateKeyModifiers(e);
             if (ctrl) mergePrims(e.getPoint());
         }
-        getLayerManager().getEditDataSet().fireSelectionChanged();
     }
 
     static class ConfirmMoveDialog extends ExtendedDialog {
         ConfirmMoveDialog() {
             super(Main.parent,
                     tr("Move elements"),
-                    new String[]{tr("Move them"), tr("Undo move")});
-            setButtonIcons(new String[]{"reorder", "cancel"});
+                    tr("Move them"), tr("Undo move"));
+            setButtonIcons("reorder", "cancel");
             setCancelButton(2);
         }
     }
@@ -891,17 +910,19 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
             // Move all selected primitive to preserve shape #10748
             Collection<OsmPrimitive> selection = ds.getSelectedNodesAndWays();
             Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
-            Command c = getLastCommand();
+            Command c = getLastCommandInDataset(ds);
             ds.beginUpdate();
-            if (c instanceof MoveCommand
-                && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
-                Node selectedNode = selNodes.iterator().next();
-                EastNorth selectedEN = selectedNode.getEastNorth();
-                EastNorth targetEN = target.getEastNorth();
-                ((MoveCommand) c).moveAgain(targetEN.getX() - selectedEN.getX(),
-                                            targetEN.getY() - selectedEN.getY());
+            try {
+                if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
+                    Node selectedNode = selNodes.iterator().next();
+                    EastNorth selectedEN = selectedNode.getEastNorth();
+                    EastNorth targetEN = target.getEastNorth();
+                    ((MoveCommand) c).moveAgain(targetEN.getX() - selectedEN.getX(),
+                                                targetEN.getY() - selectedEN.getY());
+                }
+            } finally {
+                ds.endUpdate();
             }
-            ds.endUpdate();
         }
 
         Collection<Node> nodesToMerge = new LinkedList<>(selNodes);

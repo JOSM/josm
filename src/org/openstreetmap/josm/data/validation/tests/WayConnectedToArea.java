@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.openstreetmap.josm.data.validation.tests.CrossingWays.HIGHWAY;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.List;
@@ -29,14 +30,14 @@ public class WayConnectedToArea extends Test {
 
     @Override
     public void visit(Way w) {
-        if (!w.isUsable() || w.isClosed() || !w.hasKey("highway")) {
+        if (!w.isUsable() || w.isClosed() || !w.hasKey(HIGHWAY)) {
             return;
         }
 
         boolean hasway = false;
         List<OsmPrimitive> r = w.firstNode().getReferrers();
         for (OsmPrimitive p : r) {
-            if (p != w && p.hasKey("highway")) {
+            if (p != w && p.hasKey(HIGHWAY)) {
                 hasway = true;
                 break;
             }
@@ -49,7 +50,7 @@ public class WayConnectedToArea extends Test {
         hasway = false;
         r = w.lastNode().getReferrers();
         for (OsmPrimitive p : r) {
-            if (p != w && p.hasKey("highway")) {
+            if (p != w && p.hasKey(HIGHWAY)) {
                 hasway = true;
                 break;
             }
@@ -85,7 +86,7 @@ public class WayConnectedToArea extends Test {
 
     private void addPossibleError(Way w, Node wayNode, OsmPrimitive p, OsmPrimitive area) {
         // Avoid "legal" cases (see #10655)
-        if (w.hasKey("highway") && wayNode.hasTag("leisure", "slipway") && area.hasTag("natural", "water")) {
+        if (w.hasKey(HIGHWAY) && wayNode.hasTag("leisure", "slipway") && area.hasTag("natural", "water")) {
             return;
         }
         errors.add(TestError.builder(this, Severity.WARNING, 2301)

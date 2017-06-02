@@ -43,8 +43,8 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.draw.MapViewPath;
+import org.openstreetmap.josm.gui.layer.AbstractMapViewPaintable;
 import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.ModifierListener;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -89,7 +89,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author Ole Jørgen Brønner (olejorgenb)
  */
-public class ParallelWayAction extends MapMode implements ModifierListener, MapViewPaintable {
+public class ParallelWayAction extends MapMode implements ModifierListener {
 
     private static final CachingProperty<BasicStroke> HELPER_LINE_STROKE = new StrokeProperty(prefKey("stroke.hepler-line"), "1").cached();
     private static final CachingProperty<BasicStroke> REF_LINE_STROKE = new StrokeProperty(prefKey("stroke.ref-line"), "2 2 3").cached();
@@ -119,7 +119,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
     // CHECKSTYLE.ON: SingleSpaceSeparator
     // @formatter:on
 
-    private enum Mode {
+    enum Mode {
         DRAGGING, NORMAL
     }
 
@@ -144,6 +144,8 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
     private EastNorth helperLineStart;
     private EastNorth helperLineEnd;
 
+    private final ParallelWayLayer temporaryLayer = new ParallelWayLayer();
+
     /**
      * Constructs a new {@code ParallelWayAction}.
      * @param mapFrame Map frame
@@ -167,7 +169,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
 
         mv.addMouseListener(this);
         mv.addMouseMotionListener(this);
-        mv.addTemporaryLayer(this);
+        mv.addTemporaryLayer(temporaryLayer);
 
         //// Needed to update the mouse cursor if modifiers are changed when the mouse is motionless
         Main.map.keyDetector.addModifierListener(this);
@@ -175,7 +177,6 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         for (Way w : sourceWays) {
             w.setHighlighted(true);
         }
-        mv.repaint();
     }
 
     @Override
@@ -183,7 +184,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         super.exitMode();
         mv.removeMouseListener(this);
         mv.removeMouseMotionListener(this);
-        mv.removeTemporaryLayer(this);
+        mv.removeTemporaryLayer(temporaryLayer);
         Main.map.statusLine.setDist(-1);
         Main.map.statusLine.repaint();
         Main.map.keyDetector.removeModifierListener(this);
@@ -191,7 +192,6 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         pWays = null;
         sourceWays = null;
         referenceSegment = null;
-        mv.repaint();
     }
 
     @Override
@@ -335,7 +335,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
 
         setMode(Mode.NORMAL);
         resetMouseTrackingState();
-        mv.repaint();
+        temporaryLayer.invalidate();
     }
 
     private static void removeWayHighlighting(Collection<Way> ways) {
@@ -432,7 +432,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
 
         Main.map.statusLine.setDist(Math.abs(snappedRealD));
         Main.map.statusLine.repaint();
-        mv.repaint();
+        temporaryLayer.invalidate();
     }
 
     private boolean matchesCurrentModifiers(CachingProperty<Map<Modifier, Boolean>> spec) {
@@ -451,29 +451,6 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
             modifiers.add(Modifier.SHIFT);
         }
         return spec.entrySet().stream().allMatch(entry -> modifiers.contains(entry.getKey()) == entry.getValue().booleanValue());
-    }
-
-    @Override
-    public void paint(Graphics2D g, MapView mv, Bounds bbox) {
-        if (mode == Mode.DRAGGING) {
-            CheckParameterUtil.ensureParameterNotNull(mv, "mv");
-
-            Color mainColor = MAIN_COLOR.get();
-            // FIXME: should clip the line (gets insanely slow when zoomed in on a very long line
-            g.setStroke(REF_LINE_STROKE.get());
-            g.setColor(mainColor);
-            MapViewPath line = new MapViewPath(mv);
-            line.moveTo(referenceSegment.getFirstNode());
-            line.lineTo(referenceSegment.getSecondNode());
-            g.draw(line.computeClippedLine(g.getStroke()));
-
-            g.setStroke(HELPER_LINE_STROKE.get());
-            g.setColor(mainColor);
-            line = new MapViewPath(mv);
-            line.moveTo(helperLineStart);
-            line.lineTo(helperLineEnd);
-            g.draw(line.computeClippedLine(g.getStroke()));
-        }
     }
 
     private boolean isModifiersValidForDragMode() {
@@ -614,7 +591,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
         }
     }
 
-    private enum Modifier {
+    enum Modifier {
         CTRL('c'),
         ALT('a'),
         SHIFT('s');
@@ -632,6 +609,30 @@ public class ParallelWayAction extends MapMode implements ModifierListener, MapV
          */
         public static Optional<Modifier> findWithShortCode(int charCode) {
             return Stream.of(values()).filter(m -> m.shortChar == Character.toLowerCase(charCode)).findAny();
+        }
+    }
+
+    private class ParallelWayLayer extends AbstractMapViewPaintable {
+        @Override
+        public void paint(Graphics2D g, MapView mv, Bounds bbox) {
+            if (mode == Mode.DRAGGING) {
+                CheckParameterUtil.ensureParameterNotNull(mv, "mv");
+
+                Color mainColor = MAIN_COLOR.get();
+                g.setStroke(REF_LINE_STROKE.get());
+                g.setColor(mainColor);
+                MapViewPath line = new MapViewPath(mv);
+                line.moveTo(referenceSegment.getFirstNode());
+                line.lineTo(referenceSegment.getSecondNode());
+                g.draw(line.computeClippedLine(g.getStroke()));
+
+                g.setStroke(HELPER_LINE_STROKE.get());
+                g.setColor(mainColor);
+                line = new MapViewPath(mv);
+                line.moveTo(helperLineStart);
+                line.lineTo(helperLineEnd);
+                g.draw(line.computeClippedLine(g.getStroke()));
+            }
         }
     }
 }

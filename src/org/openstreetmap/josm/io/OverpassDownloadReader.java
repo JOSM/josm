@@ -6,7 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.EnumMap;
+import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,6 +48,58 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         }
     }
 
+    /**
+     * Possible Overpass API output format, with the {@code [out:<directive>]} statement.
+     * @since 11916
+     */
+    public enum OverpassOutpoutFormat {
+        /** Default output format: plain OSM XML */
+        OSM_XML("xml"),
+        /** OSM JSON format (not GeoJson) */
+        OSM_JSON("json"),
+        /** CSV, see https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL#Output_Format_.28out.29 */
+        CSV("csv"),
+        /** Custom, see https://overpass-api.de/output_formats.html#custom */
+        CUSTOM("custom"),
+        /** Popup, see https://overpass-api.de/output_formats.html#popup */
+        POPUP("popup"),
+        /** PBF, see https://josm.openstreetmap.de/ticket/14653 */
+        PBF("pbf");
+
+        private final String directive;
+
+        OverpassOutpoutFormat(String directive) {
+            this.directive = directive;
+        }
+
+        /**
+         * Returns the directive used in {@code [out:<directive>]} statement.
+         * @return the directive used in {@code [out:<directive>]} statement
+         */
+        public String getDirective() {
+            return directive;
+        }
+
+        /**
+         * Returns the {@code OverpassOutpoutFormat} matching the given directive.
+         * @param directive directive used in {@code [out:<directive>]} statement
+         * @return {@code OverpassOutpoutFormat} matching the given directive
+         * @throws IllegalArgumentException in case of invalid directive
+         */
+        static OverpassOutpoutFormat from(String directive) {
+            for (OverpassOutpoutFormat oof : values()) {
+                if (oof.directive.equals(directive)) {
+                    return oof;
+                }
+            }
+            throw new IllegalArgumentException(directive);
+        }
+    }
+
+    static final Pattern OUTPUT_FORMAT_STATEMENT = Pattern.compile(".*\\[out:([a-z]{3,})\\].*", Pattern.DOTALL);
+
+    static final Map<OverpassOutpoutFormat, Class<? extends AbstractReader>> outputFormatReaders = new ConcurrentHashMap<>();
+
     final String overpassServer;
     final String overpassQuery;
 
@@ -59,6 +114,21 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         super(downloadArea);
         this.overpassServer = overpassServer;
         this.overpassQuery = overpassQuery.trim();
+    }
+
+    /**
+     * Registers an OSM reader for the given Overpass output format.
+     * @param format Overpass output format
+     * @param readerClass OSM reader class
+     * @return the previous value associated with {@code format}, or {@code null} if there was no mapping
+     */
+    public static final Class<? extends AbstractReader> registerOverpassOutpoutFormatReader(
+            OverpassOutpoutFormat format, Class<? extends AbstractReader> readerClass) {
+        return outputFormatReaders.put(Objects.requireNonNull(format), Objects.requireNonNull(readerClass));
+    }
+
+    static {
+        registerOverpassOutpoutFormatReader(OverpassOutpoutFormat.OSM_XML, OverpassOsmReader.class);
     }
 
     @Override
@@ -130,8 +200,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
             if (ex.getMessage() != null && ex.getMessage().contains(errorIndicator)) {
                 final String errorPlusRest = ex.getMessage().split(errorIndicator)[1];
                 if (errorPlusRest != null) {
-                    final String error = errorPlusRest.split("</")[0];
-                    ex.setErrorHeader(error);
+                    ex.setErrorHeader(errorPlusRest.split("</")[0].replaceAll(".*::request_read_and_idx::", ""));
                 }
             }
             throw ex;
@@ -159,7 +228,22 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
 
     @Override
     protected DataSet parseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
-        return new OverpassOsmReader().doParseDataSet(source, progressMonitor);
+        AbstractReader reader = null;
+        Matcher m = OUTPUT_FORMAT_STATEMENT.matcher(overpassQuery);
+        if (m.matches()) {
+            Class<? extends AbstractReader> readerClass = outputFormatReaders.get(OverpassOutpoutFormat.from(m.group(1)));
+            if (readerClass != null) {
+                try {
+                    reader = readerClass.getDeclaredConstructor().newInstance();
+                } catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
+                    Main.error(e);
+                }
+            }
+        }
+        if (reader == null) {
+            reader = new OverpassOsmReader();
+        }
+        return reader.doParseDataSet(source, progressMonitor);
     }
 
     @Override

@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.coor;
 import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.projection.Projecting;
 import org.openstreetmap.josm.data.projection.Projection;
 
 /**
@@ -19,7 +20,7 @@ public class CachedLatLon extends LatLon {
     private static final long serialVersionUID = 1L;
 
     private EastNorth eastNorth;
-    private transient Projection proj;
+    private transient Object cacheKey;
 
     /**
      * Constructs a new {@code CachedLatLon}.
@@ -36,7 +37,7 @@ public class CachedLatLon extends LatLon {
      */
     public CachedLatLon(LatLon coor) {
         super(coor.lat(), coor.lon());
-        proj = null;
+        cacheKey = null;
     }
 
     /**
@@ -44,8 +45,12 @@ public class CachedLatLon extends LatLon {
      * @param eastNorth easting/northing
      */
     public CachedLatLon(EastNorth eastNorth) {
-        super(Main.getProjection().eastNorth2latlon(eastNorth));
-        proj = Main.getProjection();
+        this(eastNorth, Main.getProjection());
+    }
+
+    private CachedLatLon(EastNorth eastNorth, Projection projection) {
+        super(projection.eastNorth2latlon(eastNorth));
+        cacheKey = projection.getCacheKey();
         this.eastNorth = eastNorth;
     }
 
@@ -54,10 +59,11 @@ public class CachedLatLon extends LatLon {
      *
      * @return the internally cached east/north coordinates. null, if the globally defined projection is null
      */
-    public final EastNorth getEastNorth() {
-        if (!Objects.equals(proj, Main.getProjection())) {
-            proj = Main.getProjection();
-            eastNorth = proj.latlon2eastNorth(this);
+    @Override
+    public final EastNorth getEastNorth(Projecting projecting) {
+        if (!Objects.equals(cacheKey, projecting.getCacheKey())) {
+            cacheKey = projecting.getCacheKey();
+            eastNorth = projecting.latlon2eastNorth(this);
         }
         return eastNorth;
     }

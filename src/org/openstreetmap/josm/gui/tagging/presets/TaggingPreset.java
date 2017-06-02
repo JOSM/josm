@@ -32,6 +32,7 @@ import javax.swing.JToggleButton;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.AdaptableAction;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
@@ -72,7 +73,7 @@ import org.xml.sax.SAXException;
  * It is also able to construct dialogs out of preset definitions.
  * @since 294
  */
-public class TaggingPreset extends AbstractAction implements ActiveLayerChangeListener, Predicate<OsmPrimitive> {
+public class TaggingPreset extends AbstractAction implements ActiveLayerChangeListener, AdaptableAction, Predicate<OsmPrimitive> {
 
     public static final int DIALOG_ANSWER_APPLY = 1;
     public static final int DIALOG_ANSWER_NEW_RELATION = 2;
@@ -433,9 +434,9 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                 setIconImage(icon.getImage());
             contentInsets = new Insets(10, 5, 0, 5);
             if (showNewRelation) {
-                setButtonIcons(new String[] {"ok", "dialogs/addrelation", "cancel" });
+                setButtonIcons("ok", "dialogs/addrelation", "cancel");
             } else {
-                setButtonIcons(new String[] {"ok", "cancel" });
+                setButtonIcons("ok", "cancel");
             }
             setContent(content);
             setDefaultButton(1);

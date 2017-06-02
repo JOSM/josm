@@ -6,6 +6,9 @@ import java.util.Objects;
 
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
+/**
+ * This is the data (role, type and id) that is stored in the database for a given relation member.
+ */
 public class RelationMemberData implements PrimitiveId, Serializable {
 
     private static final long serialVersionUID = 381392198209333319L;

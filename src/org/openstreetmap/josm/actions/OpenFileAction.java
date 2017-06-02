@@ -21,6 +21,7 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -83,20 +84,24 @@ public class OpenFileAction extends DiskAccessAction {
      * Open a list of files. The complete list will be passed to batch importers.
      * Filenames will not be saved in history.
      * @param fileList A list of files
+     * @return the future task
+     * @since 11986 (return task)
      */
-    public static void openFiles(List<File> fileList) {
-        openFiles(fileList, false);
+    public static Future<?> openFiles(List<File> fileList) {
+        return openFiles(fileList, false);
     }
 
     /**
      * Open a list of files. The complete list will be passed to batch importers.
      * @param fileList A list of files
      * @param recordHistory {@code true} to save filename in history (default: false)
+     * @return the future task
+     * @since 11986 (return task)
      */
-    public static void openFiles(List<File> fileList, boolean recordHistory) {
+    public static Future<?> openFiles(List<File> fileList, boolean recordHistory) {
         OpenFileTask task = new OpenFileTask(fileList, null);
         task.setRecordHistory(recordHistory);
-        Main.worker.submit(task);
+        return Main.worker.submit(task);
     }
 
     /**

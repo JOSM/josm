@@ -5,9 +5,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,7 +14,7 @@ import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.io.GpxReaderTest;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.xml.sax.SAXException;
@@ -124,14 +123,10 @@ public class GpxDrawHelperTest {
      */
     static List<String> calculateColors(String fileName, String layerName, int n) throws IOException, SAXException {
         final GpxData data = GpxReaderTest.parseGpxData(fileName);
-        final GpxDrawHelper gdh = new GpxDrawHelper(data);
+        final GpxLayer layer = new GpxLayer(data);
+        final GpxDrawHelper gdh = new GpxDrawHelper(layer);
         gdh.readPreferences(layerName);
         gdh.calculateColors();
-        final Iterator<WayPoint> wayPointIterator = data.tracks.iterator().next().getSegments().iterator().next().getWayPoints().iterator();
-        final List<String> colorCodes = new ArrayList<>(n);
-        while (colorCodes.size() < n) {
-            colorCodes.add(ColorHelper.color2html(wayPointIterator.next().customColoring));
-        }
-        return colorCodes;
+        return data.getTrackPoints().limit(n).map(p -> ColorHelper.color2html(p.customColoring)).collect(Collectors.toList());
     }
 }

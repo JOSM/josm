@@ -109,9 +109,23 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
         }
     }
 
+    /**
+     * The visibility property for this layer. May be <code>true</code> (visible) or <code>false</code> (hidden).
+     */
     public static final String VISIBLE_PROP = Layer.class.getName() + ".visible";
+    /**
+     * The opacity of this layer. A number between 0 and 1
+     */
     public static final String OPACITY_PROP = Layer.class.getName() + ".opacity";
+    /**
+     * The name property of the layer.
+     * You can listen to name changes by listening to changes to this property.
+     */
     public static final String NAME_PROP = Layer.class.getName() + ".name";
+    /**
+     * Property that defines the filter state.
+     * This is currently not used.
+     */
     public static final String FILTER_STATE_PROP = Layer.class.getName() + ".filterstate";
 
     /**
@@ -150,6 +164,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
     private File associatedFile;
 
     private final ValueChangeListener<Object> invalidateListener = change -> invalidate();
+    private boolean isDestroyed;
 
     /**
      * Create the layer and fill in the necessary components.
@@ -239,8 +254,19 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
      */
     public abstract boolean isMergable(Layer other);
 
+    /**
+     * Visits the content bounds of this layer. The behavior of this method depends on the layer,
+     * but each implementation should attempt to cover the relevant content of the layer in this method.
+     * @param v The visitor that gets notified about the contents of this layer.
+     */
     public abstract void visitBoundingBox(BoundingXYVisitor v);
 
+    /**
+     * Gets the layer information to display to the user.
+     * This is used if the user requests information about this layer.
+     * It should display a description of the layer content.
+     * @return Either a String or a {@link Component} describing the layer.
+     */
     public abstract Object getInfoComponent();
 
     /**
@@ -270,15 +296,30 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
      * via command line parameter).
      */
     @Override
-    public void destroy() {
+    public synchronized void destroy() {
+        if (isDestroyed) {
+            throw new IllegalStateException("The layer has already been destroyed: " + this);
+        }
+        isDestroyed = true;
         // Override in subclasses if needed
         removeColorPropertyListener();
     }
 
+    /**
+     * Gets the associated file for this layer.
+     * @return The file or <code>null</code> if it is unset.
+     * @see #setAssociatedFile(File)
+     */
     public File getAssociatedFile() {
         return associatedFile;
     }
 
+    /**
+     * Sets the associated file for this layer.
+     *
+     * The associated file might be the one that the user opened.
+     * @param file The file, may be <code>null</code>
+     */
     public void setAssociatedFile(File file) {
         associatedFile = file;
     }
@@ -465,11 +506,10 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
      * @return True if layer was changed since last paint
      * @deprecated This is not supported by multiple map views.
      * Fire an {@link #invalidate()} to trigger a repaint.
-     * Let this method return false if you only use invalidation events.
      */
     @Deprecated
     public boolean isChanged() {
-        return true;
+        return false;
     }
 
     /**
@@ -497,6 +537,10 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
     public static class LayerSaveAction extends AbstractAction {
         private final transient Layer layer;
 
+        /**
+         * Create a new action that saves the layer
+         * @param layer The layer to save.
+         */
         public LayerSaveAction(Layer layer) {
             putValue(SMALL_ICON, ImageProvider.get("save"));
             putValue(SHORT_DESCRIPTION, tr("Save the current data."));
@@ -511,9 +555,16 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
         }
     }
 
+    /**
+     * Action to save the layer in a new file
+     */
     public static class LayerSaveAsAction extends AbstractAction {
         private final transient Layer layer;
 
+        /**
+         * Create a new save as action
+         * @param layer The layer that should be saved.
+         */
         public LayerSaveAsAction(Layer layer) {
             putValue(SMALL_ICON, ImageProvider.get("save_as"));
             putValue(SHORT_DESCRIPTION, tr("Save the current data to a new file."));
@@ -528,9 +579,16 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
         }
     }
 
+    /**
+     * Action that exports the layer as gpx file
+     */
     public static class LayerGpxExportAction extends AbstractAction {
         private final transient Layer layer;
 
+        /**
+         * Create a new gpx export action for the given layer.
+         * @param layer The layer
+         */
         public LayerGpxExportAction(Layer layer) {
             putValue(SMALL_ICON, ImageProvider.get("exportgpx"));
             putValue(SHORT_DESCRIPTION, tr("Export the data to GPX file."));

@@ -69,24 +69,19 @@ public abstract class AbstractMapViewPaintable implements MapViewPaintable {
         return new CompatibilityModeLayerPainter();
     }
 
-    /**
-     * Adds a new paintable invalidation listener.
-     * @param l The listener to add.
-     */
+    @Override
     public void addInvalidationListener(PaintableInvalidationListener l) {
         invalidationListeners.add(l);
     }
 
-    /**
-     * Removes an added paintable invalidation listener.
-     * @param l The listener to remove.
-     */
+    @Override
     public void removeInvalidationListener(PaintableInvalidationListener l) {
         invalidationListeners.remove(l);
     }
 
     /**
      * This needs to be called whenever the content of this view was invalidated.
+     * It triggers a repaint of the components that display this layer.
      */
     public void invalidate() {
         for (PaintableInvalidationListener l : invalidationListeners) {

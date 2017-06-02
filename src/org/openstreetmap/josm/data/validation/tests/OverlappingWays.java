@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.openstreetmap.josm.data.validation.tests.CrossingWays.HIGHWAY;
+import static org.openstreetmap.josm.data.validation.tests.CrossingWays.RAILWAY;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
@@ -89,9 +91,9 @@ public class OverlappingWays extends Test {
                 int area = 0;
 
                 for (WaySegment ws : duplicated) {
-                    if (ws.way.hasKey("highway")) {
+                    if (ws.way.hasKey(HIGHWAY)) {
                         highway++;
-                    } else if (ws.way.hasKey("railway")) {
+                    } else if (ws.way.hasKey(RAILWAY)) {
                         railway++;
                     }
                     Boolean ar = OsmUtils.getOsmBoolean(ws.way.get("area"));

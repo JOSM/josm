@@ -183,10 +183,6 @@ public class ElemStyles implements PreferenceChangedListener {
      *
      * This method does multipolygon handling.
      *
-     * There are different tagging styles for multipolygons, that have to be respected:
-     * - tags on the relation
-     * - tags on the outer way (deprecated)
-     *
      * If the primitive is a way, look for multipolygon parents. In case it
      * is indeed member of some multipolygon as role "outer", all area styles
      * are removed. (They apply to the multipolygon area.)
@@ -216,6 +212,7 @@ public class ElemStyles implements PreferenceChangedListener {
             boolean isOuterWayOfSomeMP = false;
             Color wayColor = null;
 
+            // FIXME: Maybe in the future outer way styles apply to outers ignoring the multipolygon?
             for (OsmPrimitive referrer : osm.getReferrers()) {
                 Relation r = (Relation) referrer;
                 if (!drawMultipolygon || !r.isMultipolygon() || !r.isUsable()) {
@@ -319,22 +316,7 @@ public class ElemStyles implements PreferenceChangedListener {
             }
             return p;
         } else if (osm instanceof Relation) {
-            Pair<StyleElementList, Range> p = generateStyles(osm, scale, true);
-            if (drawMultipolygon && ((Relation) osm).isMultipolygon()
-                    && !Utils.exists(p.a, AreaElement.class) && Main.pref.getBoolean("multipolygon.deprecated.outerstyle", true)) {
-                // look at outer ways to find area style
-                Multipolygon multipolygon = MultipolygonCache.getInstance().get((Relation) osm);
-                for (Way w : multipolygon.getOuterWays()) {
-                    Pair<StyleElementList, Range> wayStyles = generateStyles(w, scale, false);
-                    p.b = Range.cut(p.b, wayStyles.b);
-                    StyleElement area = Utils.find(wayStyles.a, AreaElement.class);
-                    if (area != null) {
-                        p.a = new StyleElementList(p.a, area);
-                        break;
-                    }
-                }
-            }
-            return p;
+            return generateStyles(osm, scale, true);
         }
         return null;
     }

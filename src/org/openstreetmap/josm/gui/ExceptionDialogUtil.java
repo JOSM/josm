@@ -37,6 +37,7 @@ public final class ExceptionDialogUtil {
      * just static utility functions. no constructor
      */
     private ExceptionDialogUtil() {
+        // Hide default constructor for utility classes
     }
 
     /**
@@ -360,7 +361,7 @@ public final class ExceptionDialogUtil {
     public static void explainGenericHttpException(OsmApiException e) {
         HelpAwareOptionPane.showOptionDialog(
                 Main.parent,
-                ExceptionUtil.explainClientTimeout(e),
+                ExceptionUtil.explainGeneric(e),
                 tr("Communication with OSM server failed"),
                 JOptionPane.ERROR_MESSAGE,
                 ht("/ErrorMessages#GenericCommunicationError")
@@ -475,7 +476,7 @@ public final class ExceptionDialogUtil {
             case HttpURLConnection.HTTP_CLIENT_TIMEOUT:
                 explainClientTimeout(oae);
                 return;
-            case 509:
+            case 509: case 429:
                 explainBandwidthLimitExceeded(oae);
                 return;
             default:

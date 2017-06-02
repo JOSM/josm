@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
@@ -42,7 +43,8 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
     private static volatile ImageryOffsetDialog offsetDialog;
     private static Cursor cursor = ImageProvider.getCursor("normal", "move");
 
-    private EastNorth old;
+    private OffsetBookmark old;
+    private OffsetBookmark tempOffset;
     private EastNorth prevEastNorth;
     private transient AbstractTileSourceLayer<?> layer;
     private MapMode oldMapMode;
@@ -65,7 +67,20 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         if (!layer.isVisible()) {
             layer.setVisible(true);
         }
-        old = layer.getDisplaySettings().getDisplacement();
+        old = layer.getDisplaySettings().getOffsetBookmark();
+        EastNorth curOff = old == null ? EastNorth.ZERO : old.getDisplacement(Main.getProjection());
+        LatLon center;
+        if (Main.isDisplayingMapView()) {
+            center = Main.getProjection().eastNorth2latlon(Main.map.mapView.getCenter());
+        } else {
+            center = LatLon.ZERO;
+        }
+        tempOffset = new OffsetBookmark(
+                Main.getProjection().toCode(),
+                layer.getInfo().getName(),
+                null,
+                curOff.east(), curOff.north(), center.lon(), center.lat());
+        layer.getDisplaySettings().setOffsetBookmark(tempOffset);
         addListeners();
         showOffsetDialog(new ImageryOffsetDialog());
     }
@@ -95,7 +110,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         super.exitMode();
         if (offsetDialog != null) {
             if (layer != null) {
-                layer.getDisplaySettings().setDisplacement(old);
+                layer.getDisplaySettings().setOffsetBookmark(old);
             }
             hideOffsetDialog();
             // do not restore old mode here - this is called when the new mode is already known.
@@ -135,7 +150,9 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         }
         if (dx != 0 || dy != 0) {
             double ppd = layer.getPPD();
-            layer.getDisplaySettings().addDisplacement(new EastNorth(dx / ppd, dy / ppd));
+            EastNorth d = tempOffset.getDisplacement().add(new EastNorth(dx / ppd, dy / ppd));
+            tempOffset.setDisplacement(d);
+            layer.getDisplaySettings().setOffsetBookmark(tempOffset);
             if (offsetDialog != null) {
                 offsetDialog.updateOffset();
             }
@@ -162,8 +179,9 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
     public void mouseDragged(MouseEvent e) {
         if (layer == null || prevEastNorth == null) return;
         EastNorth eastNorth = Main.map.mapView.getEastNorth(e.getX(), e.getY());
-        EastNorth d = layer.getDisplaySettings().getDisplacement().add(eastNorth).subtract(prevEastNorth);
-        layer.getDisplaySettings().setDisplacement(d);
+        EastNorth d = tempOffset.getDisplacement().add(eastNorth).subtract(prevEastNorth);
+        tempOffset.setDisplacement(d);
+        layer.getDisplaySettings().setOffsetBookmark(tempOffset);
         if (offsetDialog != null) {
             offsetDialog.updateOffset();
         }
@@ -198,7 +216,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
                     tr("Adjust imagery offset"),
                     new String[] {tr("OK"), tr("Cancel")},
                     false);
-            setButtonIcons(new String[] {"ok", "cancel"});
+            setButtonIcons("ok", "cancel");
             contentInsets = new Insets(10, 15, 5, 15);
             JPanel pnl = new JPanel(new GridBagLayout());
             pnl.add(new JMultilineLabel(tr("Use arrow keys or drag the imagery layer with mouse to adjust the imagery offset.\n" +
@@ -238,7 +256,8 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
                     String northing = ostr.substring(semicolon + 1).trim().replace(',', '.');
                     double dx = Double.parseDouble(easting);
                     double dy = Double.parseDouble(northing);
-                    layer.getDisplaySettings().setDisplacement(new EastNorth(dx, dy));
+                    tempOffset.setDisplacement(new EastNorth(dx, dy));
+                    layer.getDisplaySettings().setOffsetBookmark(tempOffset);
                 } catch (NumberFormatException nfe) {
                     // we repaint offset numbers in any case
                     Main.trace(nfe);
@@ -274,12 +293,12 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             ExtendedDialog dialog = new ExtendedDialog(
                     Main.parent,
                     tr("Overwrite"),
-                    new String[] {tr("Overwrite"), tr("Cancel")}
+                    tr("Overwrite"), tr("Cancel")
             ) { {
                 contentInsets = new Insets(10, 15, 10, 15);
             } };
             dialog.setContent(tr("Offset bookmark already exists. Overwrite?"));
-            dialog.setButtonIcons(new String[] {"ok.png", "cancel.png"});
+            dialog.setButtonIcons("ok", "cancel");
             dialog.setupDialog();
             dialog.setVisible(true);
             return dialog.getValue() == 1;
@@ -304,7 +323,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             offsetDialog = null;
             if (layer != null) {
                 if (getValue() != 1) {
-                    layer.getDisplaySettings().setDisplacement(old);
+                    layer.getDisplaySettings().setOffsetBookmark(old);
                 } else if (tBookmarkName.getText() != null && !tBookmarkName.getText().isEmpty()) {
                     OffsetBookmark.bookmarkOffset(tBookmarkName.getText(), layer);
                 }

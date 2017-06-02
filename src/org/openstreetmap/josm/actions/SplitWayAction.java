@@ -242,7 +242,7 @@ public class SplitWayAction extends JosmAction {
             this.list = new JList<>(newWays.toArray(new Way[newWays.size()]));
             configureList();
 
-            setButtonIcons(new String[]{"ok", "cancel"});
+            setButtonIcons("ok", "cancel");
             final JPanel pane = new JPanel(new GridBagLayout());
             pane.add(new JLabel(getTitle()), GBC.eol().fill(GBC.HORIZONTAL));
             pane.add(list, GBC.eop().fill(GBC.HORIZONTAL));
@@ -370,8 +370,7 @@ public class SplitWayAction extends JosmAction {
         // Special case - one of the selected ways touches (not cross) way that we want to split
         if (selectedNodes.size() == 1) {
             Node n = selectedNodes.get(0);
-            List<Way> referredWays =
-                OsmPrimitive.getFilteredList(n.getReferrers(), Way.class);
+            List<Way> referredWays = n.getParentWays();
             Way inTheMiddle = null;
             for (Way w: referredWays) {
                 // Need to look at all nodes see #11184 for a case where node n is
@@ -491,7 +490,7 @@ public class SplitWayAction extends JosmAction {
      * submit the command in {@link SplitWayResult#getCommand()} first,
      * i.e. {@code Main.main.undoredo.add(result.getCommand())}.
      *
-     * @param layer the layer which the way belongs to. Must not be null.
+     * @param layer the layer which the way belongs to.
      * @param way the way to split. Must not be null.
      * @param wayChunks the list of way chunks into the way is split. Must not be null.
      * @param selection The list of currently selected primitives
@@ -512,7 +511,7 @@ public class SplitWayAction extends JosmAction {
      * submit the command in {@link SplitWayResult#getCommand()} first,
      * i.e. {@code Main.main.undoredo.add(result.getCommand())}.
      *
-     * @param layer the layer which the way belongs to. Must not be null.
+     * @param layer the layer which the way belongs to.
      * @param way the way to split. Must not be null.
      * @param wayChunks the list of way chunks into the way is split. Must not be null.
      * @param selection The list of currently selected primitives
@@ -733,7 +732,7 @@ public class SplitWayAction extends JosmAction {
      *
      * Replies null if the way couldn't be split at the given nodes.
      *
-     * @param layer the layer which the way belongs to. Must not be null.
+     * @param layer the layer which the way belongs to.
      * @param way the way to split. Must not be null.
      * @param atNodes the list of nodes where the way is split. Must not be null.
      * @param selection The list of currently selected primitives

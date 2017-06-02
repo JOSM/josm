@@ -59,7 +59,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
     private static final HighlightHelper highlightHelper = new HighlightHelper();
     private boolean drawTargetHighlight;
 
-    private enum DeleteMode {
+    enum DeleteMode {
         none(/* ICON(cursor/modifier/) */ "delete"),
         segment(/* ICON(cursor/modifier/) */ "delete_segment"),
         node(/* ICON(cursor/modifier/) */ "delete_node"),
@@ -74,6 +74,10 @@ public class DeleteAction extends MapMode implements ModifierListener {
             c = ImageProvider.getCursor("normal", cursorName);
         }
 
+        /**
+         * Returns the mode cursor.
+         * @return the mode cursor
+         */
         public Cursor cursor() {
             return c;
         }

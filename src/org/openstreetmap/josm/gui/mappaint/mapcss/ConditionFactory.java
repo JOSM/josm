@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.mapcss;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.Arrays;
@@ -624,9 +623,7 @@ public final class ConditionFactory {
         static boolean closed(Environment e) { // NO_UCD (unused code)
             if (e.osm instanceof Way && ((Way) e.osm).isClosed())
                 return true;
-            if (e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon())
-                return true;
-            return false;
+            return e.osm instanceof Relation && ((Relation) e.osm).isMultipolygon();
         }
 
         /**
@@ -696,7 +693,7 @@ public final class ConditionFactory {
          * @return {@code true} if the object is a unconnected node
          */
         static boolean unconnected(Environment e) { // NO_UCD (unused code)
-            return e.osm instanceof Node && OsmPrimitive.getFilteredList(e.osm.getReferrers(), Way.class).isEmpty();
+            return e.osm instanceof Node && ((Node) e.osm).getParentWays().isEmpty();
         }
 
         /**
@@ -825,7 +822,7 @@ public final class ConditionFactory {
         public boolean applies(Environment e) {
             try {
                 return not ^ (Boolean) method.invoke(null, e);
-            } catch (IllegalAccessException | InvocationTargetException ex) {
+            } catch (ReflectiveOperationException ex) {
                 throw new JosmRuntimeException(ex);
             }
         }

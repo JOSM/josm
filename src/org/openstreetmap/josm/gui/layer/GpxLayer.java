@@ -8,27 +8,22 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.io.File;
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
 
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.gpx.GpxData.GpxDataChangeListener;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
-import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -49,18 +44,26 @@ import org.openstreetmap.josm.io.GpxImporter;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
+/**
+ * A layer that displays data from a Gpx file / the OSM gpx downloads.
+ */
 public class GpxLayer extends Layer {
 
     /** GPX data */
     public GpxData data;
     private final boolean isLocalFile;
-    // used by ChooseTrackVisibilityAction to determine which tracks to show/hide
+    /**
+     * used by {@link ChooseTrackVisibilityAction} to determine which tracks to show/hide
+     *
+     * Call {@link #invalidate()} after each change!
+     *
+     * TODO: Make it private, make it respond to track changes.
+     */
     public boolean[] trackVisibility = new boolean[0];
-
-    private final List<GpxTrack> lastTracks = new ArrayList<>(); // List of tracks at last paint
-    private int lastUpdateCount;
-
-    private final GpxDrawHelper drawHelper;
+    /**
+     * Added as field to be kept as reference.
+     */
+    private final GpxDataChangeListener dataChangeListener = e -> this.invalidate();
 
     /**
      * Constructs a new {@code GpxLayer} without name.
@@ -88,9 +91,9 @@ public class GpxLayer extends Layer {
     public GpxLayer(GpxData d, String name, boolean isLocal) {
         super(d.getString(GpxConstants.META_NAME));
         data = d;
-        drawHelper = new GpxDrawHelper(data);
-        SystemOfMeasurement.addSoMChangeListener(drawHelper);
-        ensureTrackVisibilityLength();
+        data.addWeakChangeListener(dataChangeListener);
+        trackVisibility = new boolean[data.getTracks().size()];
+        Arrays.fill(trackVisibility, true);
         setName(name);
         isLocalFile = isLocal;
     }
@@ -145,7 +148,7 @@ public class GpxLayer extends Layer {
             info.append(tr("Description: {0}", data.get(GpxConstants.META_DESC))).append("<br>");
         }
 
-        if (!data.tracks.isEmpty()) {
+        if (!data.getTracks().isEmpty()) {
             info.append("<table><thead align='center'><tr><td colspan='5'>")
                 .append(trn("{0} track", "{0} tracks", data.tracks.size(), data.tracks.size()))
                 .append("</td></tr><tr align='center'><td>").append(tr("Name")).append("</td><td>")
@@ -153,7 +156,7 @@ public class GpxLayer extends Layer {
                 .append("</td><td>").append(tr("Length")).append("</td><td>").append(tr("URL"))
                 .append("</td></tr></thead>");
 
-            for (GpxTrack trk : data.tracks) {
+            for (GpxTrack trk : data.getTracks()) {
                 info.append("<tr><td>");
                 if (trk.getAttributes().containsKey(GpxConstants.GPX_NAME)) {
                     info.append(trk.get(GpxConstants.GPX_NAME));
@@ -176,8 +179,8 @@ public class GpxLayer extends Layer {
         }
 
         info.append(tr("Length: {0}", SystemOfMeasurement.getSystemOfMeasurement().getDistText(data.length()))).append("<br>")
-            .append(trn("{0} route, ", "{0} routes, ", data.routes.size(), data.routes.size()))
-            .append(trn("{0} waypoint", "{0} waypoints", data.waypoints.size(), data.waypoints.size())).append("<br></html>");
+            .append(trn("{0} route, ", "{0} routes, ", data.getRoutes().size(), data.getRoutes().size()))
+            .append(trn("{0} waypoint", "{0} waypoints", data.getWaypoints().size(), data.getWaypoints().size())).append("<br></html>");
 
         final JScrollPane sp = new JScrollPane(new HtmlPanel(info.toString()));
         sp.setPreferredSize(new Dimension(sp.getPreferredSize().width+20, 370));
@@ -234,9 +237,9 @@ public class GpxLayer extends Layer {
             info.append(tr("Description: {0}", data.get(GpxConstants.META_DESC))).append("<br>");
         }
 
-        info.append(trn("{0} track, ", "{0} tracks, ", data.tracks.size(), data.tracks.size()))
-            .append(trn("{0} route, ", "{0} routes, ", data.routes.size(), data.routes.size()))
-            .append(trn("{0} waypoint", "{0} waypoints", data.waypoints.size(), data.waypoints.size())).append("<br>")
+        info.append(trn("{0} track, ", "{0} tracks, ", data.getTracks().size(), data.getTracks().size()))
+            .append(trn("{0} route, ", "{0} routes, ", data.getRoutes().size(), data.getRoutes().size()))
+            .append(trn("{0} waypoint", "{0} waypoints", data.getWaypoints().size(), data.getWaypoints().size())).append("<br>")
             .append(tr("Length: {0}", SystemOfMeasurement.getSystemOfMeasurement().getDistText(data.length())))
             .append("<br></html>");
         return info.toString();
@@ -247,27 +250,17 @@ public class GpxLayer extends Layer {
         return other instanceof GpxLayer;
     }
 
-    private int sumUpdateCount() {
-        int updateCount = 0;
-        for (GpxTrack track: data.tracks) {
-            updateCount += track.getUpdateCount();
-        }
-        return updateCount;
-    }
-
-    @Override
-    public boolean isChanged() {
-        if (data.tracks.equals(lastTracks))
-            return sumUpdateCount() != lastUpdateCount;
-        else
-            return true;
-    }
-
+    /**
+     * Shows/hides all tracks of a given date range by setting them to visible/invisible.
+     * @param fromDate The min date
+     * @param toDate The max date
+     * @param showWithoutDate Include tracks that don't have any date set..
+     */
     public void filterTracksByDate(Date fromDate, Date toDate, boolean showWithoutDate) {
         int i = 0;
         long from = fromDate.getTime();
         long to = toDate.getTime();
-        for (GpxTrack trk : data.tracks) {
+        for (GpxTrack trk : data.getTracks()) {
             Date[] t = GpxData.getMinMaxTimeForTrack(trk);
 
             if (t == null) continue;
@@ -275,6 +268,7 @@ public class GpxLayer extends Layer {
             trackVisibility[i] = (tm == 0 && showWithoutDate) || (from <= tm && tm <= to);
             i++;
         }
+        invalidate();
     }
 
     @Override
@@ -282,54 +276,7 @@ public class GpxLayer extends Layer {
         if (!(from instanceof GpxLayer))
             throw new IllegalArgumentException("not a GpxLayer: " + from);
         data.mergeFrom(((GpxLayer) from).data);
-        drawHelper.dataChanged();
-    }
-
-    @Override
-    public void paint(Graphics2D g, MapView mv, Bounds box) {
-        lastUpdateCount = sumUpdateCount();
-        lastTracks.clear();
-        lastTracks.addAll(data.tracks);
-
-        List<WayPoint> visibleSegments = listVisibleSegments(box);
-        if (!visibleSegments.isEmpty()) {
-            drawHelper.readPreferences(getName());
-            drawHelper.drawAll(g, mv, visibleSegments);
-            if (Main.getLayerManager().getActiveLayer() == this) {
-                drawHelper.drawColorBar(g, mv);
-            }
-        }
-    }
-
-    private List<WayPoint> listVisibleSegments(Bounds box) {
-        WayPoint last = null;
-        LinkedList<WayPoint> visibleSegments = new LinkedList<>();
-
-        ensureTrackVisibilityLength();
-        for (Collection<WayPoint> segment : data.getLinesIterable(trackVisibility)) {
-
-            for (WayPoint pt : segment) {
-                Bounds b = new Bounds(pt.getCoor());
-                if (pt.drawLine && last != null) {
-                    b.extend(last.getCoor());
-                }
-                if (b.intersects(box)) {
-                    if (last != null && (visibleSegments.isEmpty()
-                            || visibleSegments.getLast() != last)) {
-                        if (last.drawLine) {
-                            WayPoint l = new WayPoint(last);
-                            l.drawLine = false;
-                            visibleSegments.add(l);
-                        } else {
-                            visibleSegments.add(last);
-                        }
-                    }
-                    visibleSegments.add(pt);
-                }
-                last = pt;
-            }
-        }
-        return visibleSegments;
+        invalidate();
     }
 
     @Override
@@ -345,20 +292,6 @@ public class GpxLayer extends Layer {
     @Override
     public void setAssociatedFile(File file) {
         data.storageFile = file;
-    }
-
-    /** ensures the trackVisibility array has the correct length without losing data.
-     * additional entries are initialized to true;
-     */
-    private void ensureTrackVisibilityLength() {
-        final int l = data.tracks.size();
-        if (l == trackVisibility.length)
-            return;
-        final int m = Math.min(l, trackVisibility.length);
-        trackVisibility = Arrays.copyOf(trackVisibility, l);
-        for (int i = m; i < l; i++) {
-            trackVisibility[i] = true;
-        }
     }
 
     @Override
@@ -388,8 +321,12 @@ public class GpxLayer extends Layer {
     }
 
     @Override
-    public void destroy() {
-        super.destroy();
-        SystemOfMeasurement.removeSoMChangeListener(drawHelper);
+    public void paint(Graphics2D g, MapView mv, Bounds bbox) {
+        // unused - we use a painter so this is not called.
+    }
+
+    @Override
+    protected LayerPainter createMapViewPainter(MapViewEvent event) {
+        return new GpxDrawHelper(this);
     }
 }

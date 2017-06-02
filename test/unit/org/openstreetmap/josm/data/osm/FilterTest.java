@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -17,11 +18,14 @@ import org.junit.Test;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.Filter.FilterPreferenceEntry;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 
 /**
  * Unit tests for class {@link Filter}.
@@ -186,7 +190,63 @@ public class FilterTest {
         }
     }
 
-    private String filterCode(OsmPrimitive osm) {
+    /**
+     * Unit tests of {@link Filter.FilterPreferenceEntry} class.
+     */
+    @Test
+    public void testFilterPreferenceEntry() {
+        Filter f = new Filter();
+        FilterPreferenceEntry fpe = f.getPreferenceEntry();
+
+        assertTrue(fpe.enable);
+
+        assertFalse(fpe.case_sensitive);
+        assertFalse(fpe.hiding);
+        assertFalse(fpe.inverted);
+        assertFalse(fpe.mapCSS_search);
+        assertFalse(fpe.regex_search);
+
+        assertEquals("add", fpe.mode);
+        assertEquals("1", fpe.version);
+        assertEquals("", fpe.text);
+
+        f.allElements = !f.allElements;
+        f.caseSensitive = !f.caseSensitive;
+        f.enable = !f.enable;
+        f.hiding = !f.hiding;
+        f.inverted = !f.inverted;
+        f.mapCSSSearch = !f.mapCSSSearch;
+        f.mode = SearchMode.remove;
+        f.regexSearch = !f.regexSearch;
+        f.text = "foo";
+        fpe = f.getPreferenceEntry();
+
+        assertFalse(fpe.enable);
+
+        assertTrue(fpe.case_sensitive);
+        assertTrue(fpe.hiding);
+        assertTrue(fpe.inverted);
+        assertTrue(fpe.mapCSS_search);
+        assertTrue(fpe.regex_search);
+
+        assertEquals("remove", fpe.mode);
+        assertEquals("1", fpe.version);
+        assertEquals("foo", fpe.text);
+
+        assertEquals(fpe, new Filter(fpe).getPreferenceEntry());
+    }
+
+    /**
+     * Unit test of methods {@link FilterPreferenceEntry#equals} and {@link FilterPreferenceEntry#hashCode}.
+     */
+    @Test
+    public void testEqualsContract() {
+        EqualsVerifier.forClass(FilterPreferenceEntry.class).usingGetClass()
+            .suppress(Warning.NONFINAL_FIELDS)
+            .verify();
+    }
+
+    private static String filterCode(OsmPrimitive osm) {
         if (!osm.isDisabled())
             return "v";
         if (!osm.isDisabledAndHidden())

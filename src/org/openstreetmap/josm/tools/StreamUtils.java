@@ -15,7 +15,9 @@ public final class StreamUtils {
     /**
      * Utility class
      */
-    private StreamUtils() {}
+    private StreamUtils() {
+        // Hide default constructor for utility classes
+    }
 
     /**
      * Returns a sequential {@code Stream} with the iterable as its source.

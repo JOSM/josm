@@ -317,6 +317,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 return true;
             }
 
+            LOG.log(Level.FINE, "JCS - starting HttpClient GET request for URL: {0}", getUrl());
             final HttpClient request = getRequest("GET", true);
 
             if (isObjectLoadable() &&
@@ -423,10 +424,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
      * @return true if object should be cached and returned to listener
      */
     protected boolean isResponseLoadable(Map<String, List<String>> headerFields, int responseCode, byte[] raw) {
-        if (raw == null || raw.length == 0 || responseCode >= 400) {
-            return false;
-        }
-        return true;
+        return raw != null && raw.length != 0 && responseCode < 400;
     }
 
     protected abstract V createCacheEntry(byte[] content);

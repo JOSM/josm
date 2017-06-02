@@ -71,6 +71,9 @@ public class OpeningHourTestTest {
                 key, "Su-Th sunset-24:00, 04:00-sunrise; Fr-Sa sunset-sunrise").get(0).getPrettifiedValue());
     }
 
+    /**
+     * Test translated messages.
+     */
     @Test
     public void testI18n() {
         assertTrue(openingHourTest.checkOpeningHourSyntax("opening_hours", ".", OpeningHourTest.CheckMode.POINTS_IN_TIME, false, "de")
@@ -117,7 +120,8 @@ public class OpeningHourTestTest {
     public void testCheckOpeningHourSyntax4() {
         assertThat(openingHourTest.checkOpeningHourSyntax(null, null), isEmpty());
         assertThat(openingHourTest.checkOpeningHourSyntax(null, ""), isEmpty());
-        assertThat(openingHourTest.checkOpeningHourSyntax(null, " "), isEmpty());
+        assertEquals("null - The value contains nothing meaningful which can be parsed.",
+                openingHourTest.checkOpeningHourSyntax(null, " ").get(0).getMessage());
     }
 
     /**

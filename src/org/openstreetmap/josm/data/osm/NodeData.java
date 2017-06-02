@@ -6,6 +6,9 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.projection.Projections;
 
+/**
+ * The data on a single node (tags and position) that is stored in the database
+ */
 public class NodeData extends PrimitiveData implements INode {
 
     private static final long serialVersionUID = 5626323599550908773L;
@@ -23,6 +26,15 @@ public class NodeData extends PrimitiveData implements INode {
     }
 
     /**
+     * Constructs a new {@code NodeData} with given id.
+     * @param id id
+     * @since 12017
+     */
+    public NodeData(long id) {
+        super(id);
+    }
+
+    /**
      * Constructs a new {@code NodeData}.
      * @param data node data to copy
      */
@@ -31,7 +43,18 @@ public class NodeData extends PrimitiveData implements INode {
         setCoor(data.getCoor());
     }
 
-    private boolean isLatLonKnown() {
+    @Override
+    public double lat() {
+        return lat;
+    }
+
+    @Override
+    public double lon() {
+        return lon;
+    }
+
+    @Override
+    public boolean isLatLonKnown() {
         return !Double.isNaN(lat) && !Double.isNaN(lon);
     }
 

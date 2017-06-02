@@ -4,7 +4,7 @@ package org.openstreetmap.josm.actions;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
@@ -28,8 +28,8 @@ public final class AlignInLineActionTest {
     /**
      * Setup test.
      */
-    @BeforeClass
-    public static void setUp() {
+    @Before
+    public void setUp() {
         JOSMFixture.createUnitTestFixture().init(true);
 
         // Enable "Align in line" feature.

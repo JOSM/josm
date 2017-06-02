@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.projection.datum;
 
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Datum provides general conversion from one ellipsoid to another.
@@ -38,9 +39,9 @@ public class SevenParameterDatum extends AbstractDatum {
         this.dx = dx;
         this.dy = dy;
         this.dz = dz;
-        this.rx = Math.toRadians(rx / 3600);
-        this.ry = Math.toRadians(ry / 3600);
-        this.rz = Math.toRadians(rz / 3600);
+        this.rx = Utils.toRadians(rx / 3600);
+        this.ry = Utils.toRadians(ry / 3600);
+        this.rz = Utils.toRadians(rz / 3600);
         this.s = s / 1e6;
     }
 
@@ -50,7 +51,7 @@ public class SevenParameterDatum extends AbstractDatum {
         double x = dx + xyz[0]*(1+s) + xyz[2]*ry - xyz[1]*rz;
         double y = dy + xyz[1]*(1+s) + xyz[0]*rz - xyz[2]*rx;
         double z = dz + xyz[2]*(1+s) + xyz[1]*rx - xyz[0]*ry;
-        return Ellipsoid.WGS84.cart2LatLon(new double[] {x, y, z});
+        return Ellipsoid.WGS84.cart2LatLon(x, y, z);
     }
 
     @Override
@@ -59,6 +60,6 @@ public class SevenParameterDatum extends AbstractDatum {
         double x = (1-s)*(-dx + xyz[0] + ((-dz+xyz[2])*(-ry) - (-dy+xyz[1])*(-rz)));
         double y = (1-s)*(-dy + xyz[1] + ((-dx+xyz[0])*(-rz) - (-dz+xyz[2])*(-rx)));
         double z = (1-s)*(-dz + xyz[2] + ((-dy+xyz[1])*(-rx) - (-dx+xyz[0])*(-ry)));
-        return this.ellps.cart2LatLon(new double[] {x, y, z});
+        return this.ellps.cart2LatLon(x, y, z);
     }
 }

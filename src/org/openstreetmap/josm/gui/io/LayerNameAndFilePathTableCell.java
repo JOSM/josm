@@ -123,12 +123,9 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
     }
 
     private static boolean canWrite(File f) {
-        if (f == null) return false;
-        if (f.isDirectory()) return false;
+        if (f == null || f.isDirectory()) return false;
         if (f.exists() && f.canWrite()) return true;
-        if (!f.exists() && f.getParentFile() != null && f.getParentFile().canWrite())
-            return true;
-        return false;
+        return !f.exists() && f.getParentFile() != null && f.getParentFile().canWrite();
     }
 
     /**

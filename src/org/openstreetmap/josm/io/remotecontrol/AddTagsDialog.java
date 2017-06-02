@@ -139,7 +139,7 @@ public class AddTagsDialog extends ExtendedDialog {
         super(Main.parent, tr("Add tags to selected objects"), new String[] {tr("Add selected tags"), tr("Add all tags"), tr("Cancel")},
                 false,
                 true);
-        setToolTipTexts(new String[]{tr("Add checked tags to selected objects"), tr("Shift+Enter: Add all tags to selected objects"), ""});
+        setToolTipTexts(tr("Add checked tags to selected objects"), tr("Shift+Enter: Add all tags to selected objects"), "");
 
         this.sender = senderName;
 

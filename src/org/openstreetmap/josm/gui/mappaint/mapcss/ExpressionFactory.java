@@ -619,7 +619,7 @@ public final class ExpressionFactory {
          * @see Math#toRadians(double)
          */
         public static double degree_to_radians(double degree) { // NO_UCD (unused code)
-            return Math.toRadians(degree);
+            return Utils.toRadians(degree);
         }
 
         /**

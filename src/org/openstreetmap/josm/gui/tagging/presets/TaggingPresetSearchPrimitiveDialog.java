@@ -65,7 +65,7 @@ public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
     }
 
     TaggingPresetSearchPrimitiveDialog() {
-        super(Main.parent, tr("Presets"), new String[] {tr("Search"), tr("Cancel")});
+        super(Main.parent, tr("Presets"), tr("Search"), tr("Cancel"));
         selector = new TaggingPresetSelector(false, false);
         setContent(selector, false);
         selector.setDblClickListener(e -> buttonAction(0, null));
@@ -85,7 +85,6 @@ public final class TaggingPresetSearchPrimitiveDialog extends ExtendedDialog {
         if (buttonIndex == 0) {
             TaggingPreset preset = selector.getSelectedPresetAndUpdateClassification();
             if (preset != null) {
-
                 final Set<OsmPrimitive> matching = new HashSet<>(Main.getLayerManager().getEditDataSet().getPrimitives(preset));
                 Main.getLayerManager().getEditDataSet().setSelected(matching);
             }

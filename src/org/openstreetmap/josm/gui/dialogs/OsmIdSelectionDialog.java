@@ -51,14 +51,35 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
     protected final HistoryComboBox cbId = new HistoryComboBox();
     protected final transient GroupLayout layout = new GroupLayout(panel);
 
+    /**
+     * Creates a new OsmIdSelectionDialog
+     * @param parent       The parent element that will be used for position and maximum size
+     * @param title        The text that will be shown in the window titlebar
+     * @param buttonTexts  String Array of the text that will appear on the buttons. The first button is the default one.
+     */
     public OsmIdSelectionDialog(Component parent, String title, String... buttonTexts) {
         super(parent, title, buttonTexts);
     }
 
+    /**
+     * Creates a new OsmIdSelectionDialog
+     * @param parent The parent element that will be used for position and maximum size
+     * @param title The text that will be shown in the window titlebar
+     * @param buttonTexts String Array of the text that will appear on the buttons. The first button is the default one.
+     * @param modal Set it to {@code true} if you want the dialog to be modal
+     */
     public OsmIdSelectionDialog(Component parent, String title, String[] buttonTexts, boolean modal) {
         super(parent, title, buttonTexts, modal);
     }
 
+    /**
+     * Creates a new OsmIdSelectionDialog
+     * @param parent The parent element that will be used for position and maximum size
+     * @param title The text that will be shown in the window titlebar
+     * @param buttonTexts String Array of the text that will appear on the buttons. The first button is the default one.
+     * @param modal Set it to {@code true} if you want the dialog to be modal
+     * @param disposeOnClose whether to call {@link #dispose} when closing the dialog
+     */
     public OsmIdSelectionDialog(Component parent, String title, String[] buttonTexts, boolean modal, boolean disposeOnClose) {
         super(parent, title, buttonTexts, modal, disposeOnClose);
     }

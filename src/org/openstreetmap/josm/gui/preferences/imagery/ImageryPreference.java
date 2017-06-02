@@ -38,6 +38,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 import javax.swing.UIManager;
+import javax.swing.event.HyperlinkEvent.EventType;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -52,6 +53,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.MapPolygon;
 import org.openstreetmap.gui.jmapviewer.interfaces.MapRectangle;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
@@ -64,10 +66,12 @@ import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.OpenBrowser;
 
 /**
  * Imagery preferences, including imagery providers, settings and offsets.
@@ -361,6 +365,15 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
             defaultToolbar.setOpaque(false);
             defaultToolbar.add(new ReloadAction());
             add(defaultToolbar, GBC.eol().anchor(GBC.SOUTH).insets(0, 0, 5, 0));
+
+            HtmlPanel help = new HtmlPanel(tr("New default entries can be added in the <a href=\"{0}\">Wiki</a>.",
+                Main.getJOSMWebsite()+"/wiki/Maps"));
+            help.getEditorPane().addHyperlinkListener(e -> {
+                if (e.getEventType() == EventType.ACTIVATED) {
+                    OpenBrowser.displayUrl(e.getURL().toString());
+                }
+            });
+            add(help, GBC.eol().insets(10, 0, 0, 10).fill(GBC.HORIZONTAL));
 
             ActivateAction activate = new ActivateAction();
             defaultTable.getSelectionModel().addListSelectionListener(activate);
@@ -770,10 +783,10 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         }
 
         private static boolean confirmEulaAcceptance(PreferenceTabbedPane gui, String eulaUrl) {
-            URL url = null;
+            URL url;
             try {
                 url = new URL(eulaUrl.replaceAll("\\{lang\\}", LanguageInfo.getWikiLanguagePrefix()));
-                JosmEditorPane htmlPane = null;
+                JosmEditorPane htmlPane;
                 try {
                     htmlPane = new JosmEditorPane(url);
                 } catch (IOException e1) {
@@ -891,16 +904,16 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 OffsetBookmark info = OffsetBookmark.getBookmarkByIndex(row);
                 switch (column) {
                 case 0:
-                    if (info.projectionCode == null) return "";
-                    return info.projectionCode;
+                    if (info.getProjectionCode() == null) return "";
+                    return info.getProjectionCode();
                 case 1:
-                    return info.layerName;
+                    return info.getImageryName();
                 case 2:
-                    return info.name;
+                    return info.getName();
                 case 3:
-                    return info.dx;
+                    return info.getDisplacement().east();
                 case 4:
-                    return info.dy;
+                    return info.getDisplacement().north();
                 default:
                     throw new ArrayIndexOutOfBoundsException();
                 }
@@ -911,16 +924,18 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 OffsetBookmark info = OffsetBookmark.getBookmarkByIndex(row);
                 switch (column) {
                 case 1:
-                    info.layerName = o.toString();
+                    info.setImageryName(o.toString());
                     break;
                 case 2:
-                    info.name = o.toString();
+                    info.setName(o.toString());
                     break;
                 case 3:
-                    info.dx = Double.parseDouble((String) o);
+                    double dx = Double.parseDouble((String) o);
+                    info.setDisplacement(new EastNorth(dx, info.getDisplacement().north()));
                     break;
                 case 4:
-                    info.dy = Double.parseDouble((String) o);
+                    double dy = Double.parseDouble((String) o);
+                    info.setDisplacement(new EastNorth(info.getDisplacement().east(), dy));
                     break;
                 default:
                     throw new ArrayIndexOutOfBoundsException();

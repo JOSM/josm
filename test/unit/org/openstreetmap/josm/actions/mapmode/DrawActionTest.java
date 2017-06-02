@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions.mapmode;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.event.InputEvent;
@@ -21,11 +22,9 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -55,9 +54,8 @@ public class DrawActionTest {
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
         Main.getLayerManager().addLayer(layer);
 
-        Field mapView = MapFrame.class.getDeclaredField("mapView");
-        Utils.setObjectsAccessible(mapView);
-        mapView.set(Main.map, new MapViewMock());
+        // fix map view position
+        Main.map.mapView.zoomTo(new EastNorth(0, 0), 1);
 
         Node n1 = new Node(new EastNorth(0, 0));
         Node n2 = new Node(new EastNorth(100, 0));
@@ -101,5 +99,15 @@ public class DrawActionTest {
             // Ensure we clean the place before leaving, even if test fails.
             Main.getLayerManager().removeLayer(layer);
         }
+    }
+
+    /**
+     * Non regression test case for bug #14762.
+     */
+    @Test
+    public void testTicket14762() {
+        DrawAction action = new DrawAction();
+        assertNull(action.getLayerManager().getEditDataSet());
+        assertEquals(0, action.getPreservedPrimitives().size());
     }
 }

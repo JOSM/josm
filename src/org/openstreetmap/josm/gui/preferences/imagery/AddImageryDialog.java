@@ -21,8 +21,8 @@ public class AddImageryDialog extends ExtendedDialog implements ContentValidatio
      * @param panel  The content that will be displayed in the message dialog
      */
     public AddImageryDialog(Component parent, AddImageryPanel panel) {
-        super(parent, tr("Add Imagery URL"), new String[] {tr("OK"), tr("Cancel")});
-        setButtonIcons(new String[] {"ok", "cancel"});
+        super(parent, tr("Add Imagery URL"), tr("OK"), tr("Cancel"));
+        setButtonIcons("ok", "cancel");
         setCancelButton(2);
         configureContextsensitiveHelp("/Dialog/AddImagery", true /* show help button */);
         setContent(panel, false);

@@ -39,13 +39,13 @@ public class DownloadObjectDialog extends OsmIdSelectionDialog {
      * @param parent The parent component
      */
     public DownloadObjectDialog(Component parent) {
-        super(parent, tr("Download object"), new String[]{tr("Download object"), tr("Cancel")});
+        super(parent, tr("Download object"), tr("Download object"), tr("Cancel"));
         init();
-        setButtonIcons(new String[]{"download", "cancel"});
-        setToolTipTexts(new String[]{
+        setButtonIcons("download", "cancel");
+        setToolTipTexts(
                 tr("Start downloading"),
                 tr("Close dialog and cancel downloading")
-        });
+        );
         configureContextsensitiveHelp("/Action/DownloadObject", true /* show help button */);
     }
 

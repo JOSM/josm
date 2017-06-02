@@ -141,41 +141,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
 
     @Override
     public LayerPainter attachToMapView(MapViewEvent event) {
-        event.getMapView().addMouseListener(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if (e.getButton() != MouseEvent.BUTTON1)
-                    return;
-                boolean mousePressedInButton = false;
-                for (Marker mkr : data) {
-                    if (mkr.containsPoint(e.getPoint())) {
-                        mousePressedInButton = true;
-                        break;
-                    }
-                }
-                if (!mousePressedInButton)
-                    return;
-                mousePressed = true;
-                if (isVisible()) {
-                    invalidate();
-                }
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent ev) {
-                if (ev.getButton() != MouseEvent.BUTTON1 || !mousePressed)
-                    return;
-                mousePressed = false;
-                if (!isVisible())
-                    return;
-                for (Marker mkr : data) {
-                    if (mkr.containsPoint(ev.getPoint())) {
-                        mkr.actionPerformed(new ActionEvent(this, 0, null));
-                    }
-                }
-                invalidate();
-            }
-        });
+        event.getMapView().addMouseListener(new MarkerMouseAdapter());
 
         if (event.getMapView().playHeadMarker == null) {
             event.getMapView().playHeadMarker = PlayHeadMarker.create();
@@ -474,6 +440,42 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         return "show".equalsIgnoreCase(current);
     }
 
+    private final class MarkerMouseAdapter extends MouseAdapter {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            if (e.getButton() != MouseEvent.BUTTON1)
+                return;
+            boolean mousePressedInButton = false;
+            for (Marker mkr : data) {
+                if (mkr.containsPoint(e.getPoint())) {
+                    mousePressedInButton = true;
+                    break;
+                }
+            }
+            if (!mousePressedInButton)
+                return;
+            mousePressed = true;
+            if (isVisible()) {
+                invalidate();
+            }
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent ev) {
+            if (ev.getButton() != MouseEvent.BUTTON1 || !mousePressed)
+                return;
+            mousePressed = false;
+            if (!isVisible())
+                return;
+            for (Marker mkr : data) {
+                if (mkr.containsPoint(ev.getPoint())) {
+                    mkr.actionPerformed(new ActionEvent(this, 0, null));
+                }
+            }
+            invalidate();
+        }
+    }
+
     public static final class ShowHideMarkerText extends AbstractAction implements LayerAction {
         private final transient MarkerLayer layer;
 
@@ -565,7 +567,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
             if (playHeadMarker == null)
                 return;
             addAudioMarker(playHeadMarker.time, playHeadMarker.getCoor());
-            Main.map.mapView.repaint();
+            invalidate();
         }
     }
 }

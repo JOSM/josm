@@ -316,7 +316,7 @@ public final class PlayHeadMarker extends Marker {
         WayPoint w1 = null;
         WayPoint w2 = null;
 
-        for (GpxTrack track : trackLayer.data.tracks) {
+        for (GpxTrack track : trackLayer.data.getTracks()) {
             for (GpxTrackSegment trackseg : track.getSegments()) {
                 for (WayPoint w: trackseg.getWayPoints()) {
                     if (audioTime < w.time) {

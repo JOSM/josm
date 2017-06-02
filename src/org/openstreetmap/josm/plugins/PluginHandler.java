@@ -85,7 +85,7 @@ public final class PluginHandler {
     static {
         String inCore = tr("integrated into main program");
 
-        DEPRECATED_PLUGINS = Arrays.asList(new DeprecatedPlugin[] {
+        DEPRECATED_PLUGINS = Arrays.asList(
             new DeprecatedPlugin("mappaint", inCore),
             new DeprecatedPlugin("unglueplugin", inCore),
             new DeprecatedPlugin("lang-de", inCore),
@@ -135,11 +135,49 @@ public final class PluginHandler {
             new DeprecatedPlugin("josm-geojson", tr("replaced by new {0} plugin", "geojson")),
             new DeprecatedPlugin("proj4j", inCore),
             new DeprecatedPlugin("OpenStreetView", tr("replaced by new {0} plugin", "OpenStreetCam")),
-        });
+            new DeprecatedPlugin("imageryadjust", inCore)
+        );
     }
 
     private PluginHandler() {
         // Hide default constructor for utils classes
+    }
+
+    static final class PluginInformationAction extends AbstractAction {
+        private final PluginInformation info;
+
+        PluginInformationAction(PluginInformation info) {
+            super(tr("Information"));
+            this.info = info;
+        }
+
+        /**
+         * Returns plugin information text.
+         * @return plugin information text
+         */
+        public String getText() {
+            StringBuilder b = new StringBuilder();
+            for (Entry<String, String> e : info.attr.entrySet()) {
+                b.append(e.getKey());
+                b.append(": ");
+                b.append(e.getValue());
+                b.append('\n');
+            }
+            return b.toString();
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent event) {
+            String text = getText();
+            JosmTextArea a = new JosmTextArea(10, 40);
+            a.setEditable(false);
+            a.setText(text);
+            a.setCaretPosition(0);
+            if (!GraphicsEnvironment.isHeadless()) {
+                JOptionPane.showMessageDialog(Main.parent, new JScrollPane(a), tr("Plugin information"),
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
     }
 
     /**
@@ -280,6 +318,10 @@ public final class PluginHandler {
         return pluginList.stream().map(PluginProxy::getPluginInformation).collect(Collectors.toList());
     }
 
+    /**
+     * Returns all ClassLoaders whose resource should be searched.
+     * @return all ClassLoaders whose resource should be searched
+     */
     public static Collection<ClassLoader> getResourceClassLoaders() {
         return Collections.unmodifiableCollection(sources);
     }
@@ -567,7 +609,11 @@ public final class PluginHandler {
                         }
                         Main.pref.putCollection("plugins", plugins);
                         // restart
-                        new RestartAction().actionPerformed(null);
+                        try {
+                            RestartAction.restartJOSM();
+                        } catch (IOException e) {
+                            Main.error(e);
+                        }
                     } else {
                         Main.warn("No plugin downloaded, restart canceled");
                     }
@@ -715,7 +761,7 @@ public final class PluginHandler {
                 Main.info(tr("loading plugin ''{0}'' (version {1})", plugin.name, plugin.localversion));
                 PluginProxy pluginProxy = plugin.load(klass);
                 pluginList.add(pluginProxy);
-                Main.addMapFrameListener(pluginProxy, true);
+                Main.addAndFireMapFrameListener(pluginProxy);
             }
             msg = null;
         } catch (PluginException e) {
@@ -1402,24 +1448,7 @@ public final class PluginHandler {
             + (info.version != null && !info.version.isEmpty() ? " Version: " + info.version : "");
             pluginTab.add(new JLabel(name), GBC.std());
             pluginTab.add(Box.createHorizontalGlue(), GBC.std().fill(GBC.HORIZONTAL));
-            pluginTab.add(new JButton(new AbstractAction(tr("Information")) {
-                @Override
-                public void actionPerformed(ActionEvent event) {
-                    StringBuilder b = new StringBuilder();
-                    for (Entry<String, String> e : info.attr.entrySet()) {
-                        b.append(e.getKey());
-                        b.append(": ");
-                        b.append(e.getValue());
-                        b.append('\n');
-                    }
-                    JosmTextArea a = new JosmTextArea(10, 40);
-                    a.setEditable(false);
-                    a.setText(b.toString());
-                    a.setCaretPosition(0);
-                    JOptionPane.showMessageDialog(Main.parent, new JScrollPane(a), tr("Plugin information"),
-                            JOptionPane.INFORMATION_MESSAGE);
-                }
-            }), GBC.eol());
+            pluginTab.add(new JButton(new PluginInformationAction(info)), GBC.eol());
 
             JosmTextArea description = new JosmTextArea(info.description == null ? tr("no description available")
                     : info.description);

@@ -3,8 +3,11 @@ package org.openstreetmap.josm.gui.tagging.presets;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -13,7 +16,11 @@ import javax.swing.JSeparator;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MenuScroller;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
+import org.openstreetmap.josm.gui.tagging.presets.items.CheckGroup;
+import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
+import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
+import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
+import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
@@ -24,6 +31,11 @@ public final class TaggingPresets {
 
     /** The collection of tagging presets */
     private static final Collection<TaggingPreset> taggingPresets = new ArrayList<>();
+
+    /** cache for key/value pairs found in the preset */
+    private static final MultiMap<String, String> PRESET_TAG_CACHE = new MultiMap<>();
+    /** cache for roles found in the preset */
+    private static final Set<String> PRESET_ROLE_CACHE = new HashSet<>();
 
     /** The collection of listeners */
     private static final Collection<TaggingPresetListener> listeners = new ArrayList<>();
@@ -38,6 +50,7 @@ public final class TaggingPresets {
     public static void readFromPreferences() {
         taggingPresets.clear();
         taggingPresets.addAll(TaggingPresetReader.readFromPreferences(false, false));
+        cachePresets(taggingPresets);
     }
 
     /**
@@ -53,7 +66,6 @@ public final class TaggingPresets {
         if (taggingPresets.isEmpty()) {
             Main.main.menu.presetsMenu.setVisible(false);
         } else {
-            AutoCompletionManager.cachePresets(taggingPresets);
             Map<TaggingPresetMenu, JMenu> submenus = new HashMap<>();
             for (final TaggingPreset p : taggingPresets) {
                 JMenu m = p.group != null ? submenus.get(p.group) : Main.main.menu.presetsMenu;
@@ -87,11 +99,71 @@ public final class TaggingPresets {
     }
 
     /**
+     * Initialize the cache for presets. This is done only once.
+     * @param presets Tagging presets to cache
+     */
+    public static void cachePresets(Collection<TaggingPreset> presets) {
+        for (final TaggingPreset p : presets) {
+            for (TaggingPresetItem item : p.data) {
+                cachePresetItem(p, item);
+            }
+        }
+    }
+
+    private static void cachePresetItem(TaggingPreset p, TaggingPresetItem item) {
+        if (item instanceof KeyedItem) {
+            KeyedItem ki = (KeyedItem) item;
+            if (ki.key != null && ki.getValues() != null) {
+                PRESET_TAG_CACHE.putAll(ki.key, ki.getValues());
+            }
+        } else if (item instanceof Roles) {
+            Roles r = (Roles) item;
+            for (Role i : r.roles) {
+                if (i.key != null) {
+                    PRESET_ROLE_CACHE.add(i.key);
+                }
+            }
+        } else if (item instanceof CheckGroup) {
+            for (KeyedItem check : ((CheckGroup) item).checks) {
+                cachePresetItem(p, check);
+            }
+        }
+    }
+
+    /**
      * Replies a new collection containing all tagging presets.
      * @return a new collection containing all tagging presets. Empty if presets are not initialized (never null)
      */
     public static Collection<TaggingPreset> getTaggingPresets() {
-        return new ArrayList<>(taggingPresets);
+        return Collections.unmodifiableCollection(taggingPresets);
+    }
+
+    /**
+     * Replies a set of all roles in the tagging presets.
+     * @return a set of all roles in the tagging presets.
+     */
+    public static Set<String> getPresetRoles() {
+        return Collections.unmodifiableSet(PRESET_ROLE_CACHE);
+    }
+
+    /**
+     * Replies a set of all keys in the tagging presets.
+     * @return a set of all keys in the tagging presets.
+     */
+    public static Set<String> getPresetKeys() {
+        return Collections.unmodifiableSet(PRESET_TAG_CACHE.keySet());
+    }
+
+    /**
+     * Return set of values for a key in the tagging presets
+     * @param key the key
+     * @return set of values for a key in the tagging presets or null if none is found
+     */
+    public static Set<String> getPresetValues(String key) {
+        Set<String> values = PRESET_TAG_CACHE.get(key);
+        if (values != null)
+            return Collections.unmodifiableSet(values);
+        return null;
     }
 
     /**

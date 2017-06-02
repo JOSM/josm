@@ -24,11 +24,11 @@ import java.util.TreeSet;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.Pair;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * This test is used to monitor changes in projection code.
@@ -179,6 +179,7 @@ public class ProjectionRegressionTest {
              }
         }
 
+        final boolean java9 = Utils.getJavaVersion() >= 9;
         for (TestData data : allData) {
             Projection proj = Projections.getProjectionByCode(data.code);
             if (proj == null) {
@@ -187,20 +188,14 @@ public class ProjectionRegressionTest {
             }
             EastNorth en = proj.latlon2eastNorth(data.ll);
             LatLon ll2 = proj.eastNorth2latlon(data.en);
-            if (TestUtils.getJavaVersion() >= 9) {
-                en = getRoundedToOsmPrecision(en.east(), en.north());
-                ll2 = ll2.getRoundedToOsmPrecision();
-                data.en = getRoundedToOsmPrecision(data.en.east(), data.en.north());
-                data.ll2 = data.ll2.getRoundedToOsmPrecision();
-            }
-            if (!en.equals(data.en)) {
+            if (!(java9 ? equalsJava9(en, data.en) : en.equals(data.en))) {
                 String error = String.format("%s (%s): Projecting latlon(%s,%s):%n" +
                         "        expected: eastnorth(%s,%s),%n" +
                         "        but got:  eastnorth(%s,%s)!%n",
                         proj.toString(), data.code, data.ll.lat(), data.ll.lon(), data.en.east(), data.en.north(), en.east(), en.north());
                 fail.append(error);
             }
-            if (!ll2.equals(data.ll2)) {
+            if (!(java9 ? equalsJava9(ll2, data.ll2) : ll2.equals(data.ll2))) {
                 String error = String.format("%s (%s): Inverse projecting eastnorth(%s,%s):%n" +
                         "        expected: latlon(%s,%s),%n" +
                         "        but got:  latlon(%s,%s)!%n",
@@ -213,5 +208,24 @@ public class ProjectionRegressionTest {
             System.err.println(fail.toString());
             throw new AssertionError(fail.toString());
         }
+    }
+
+    private static boolean equalsDoubleMaxUlp(double d1, double d2) {
+        // Due to error accumulation in projection computation, the difference can reach hundreds of ULPs
+        // The worst error is 816 ULP (followed by 512 ULP then 400 ULP) with:
+        // WGS 72BE / UTM zone 12N (EPSG:32412): Projecting latlon(-19.603789209544317,-115.55033658613439):
+        // expected: eastnorth(22416.160243623483,-2174011.280696576),
+        // but got:  eastnorth(22416.16024362645,-2174011.280696576)!
+        return Math.abs(d1 - d2) <= 850 * Math.ulp(d1);
+    }
+
+    private static boolean equalsJava9(EastNorth en1, EastNorth en2) {
+        return equalsDoubleMaxUlp(en1.east(), en2.east()) &&
+               equalsDoubleMaxUlp(en1.north(), en2.north());
+    }
+
+    private static boolean equalsJava9(LatLon ll1, LatLon ll2) {
+        return equalsDoubleMaxUlp(ll1.lat(), ll2.lat()) &&
+               equalsDoubleMaxUlp(ll1.lon(), ll2.lon());
     }
 }

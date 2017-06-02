@@ -118,7 +118,7 @@ public class RemoteControlHttpsServer extends Thread {
         GeneralNameInterface gn;
         switch (t.toLowerCase(Locale.ENGLISH)) {
             case "uri": gn = new URIName(v); break;
-            case "dns": gn = new DNSName(v); break;
+            case "dns": gn = new DNSNameFix(v); break;
             case "ip": gn = new IPAddressName(v); break;
             default: gn = new OIDName(v);
         }

@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -26,6 +27,12 @@ public class PropertiesMergerTest {
      */
     @Test
     public void testPropertiesMerger() {
-        assertNotNull(new PropertiesMerger());
+        PropertiesMerger merger = new PropertiesMerger();
+        assertNotNull(TestUtils.getComponentByName(merger, "button.keepmycoordinates"));
+        assertNotNull(TestUtils.getComponentByName(merger, "button.keeptheircoordinates"));
+        assertNotNull(TestUtils.getComponentByName(merger, "button.undecidecoordinates"));
+        assertNotNull(TestUtils.getComponentByName(merger, "button.keepmydeletedstate"));
+        assertNotNull(TestUtils.getComponentByName(merger, "button.keeptheirdeletedstate"));
+        assertNotNull(TestUtils.getComponentByName(merger, "button.undecidedeletedstate"));
     }
 }

@@ -56,7 +56,9 @@ import org.openstreetmap.josm.tools.Shortcut;
 public class ImproveWayAccuracyAction extends MapMode implements
         SelectionChangedListener, ModifierListener {
 
-    private enum State {
+    private static final String CROSSHAIR = "crosshair";
+
+    enum State {
         SELECTING, IMPROVING
     }
 
@@ -75,11 +77,11 @@ public class ImproveWayAccuracyAction extends MapMode implements
 
     private final Cursor cursorSelect = ImageProvider.getCursor("normal", "mode");
     private final Cursor cursorSelectHover = ImageProvider.getCursor("hand", "mode");
-    private final Cursor cursorImprove = ImageProvider.getCursor("crosshair", null);
-    private final Cursor cursorImproveAdd = ImageProvider.getCursor("crosshair", "addnode");
-    private final Cursor cursorImproveDelete = ImageProvider.getCursor("crosshair", "delete_node");
-    private final Cursor cursorImproveAddLock = ImageProvider.getCursor("crosshair", "add_node_lock");
-    private final Cursor cursorImproveLock = ImageProvider.getCursor("crosshair", "lock");
+    private final Cursor cursorImprove = ImageProvider.getCursor(CROSSHAIR, null);
+    private final Cursor cursorImproveAdd = ImageProvider.getCursor(CROSSHAIR, "addnode");
+    private final Cursor cursorImproveDelete = ImageProvider.getCursor(CROSSHAIR, "delete_node");
+    private final Cursor cursorImproveAddLock = ImageProvider.getCursor(CROSSHAIR, "add_node_lock");
+    private final Cursor cursorImproveLock = ImageProvider.getCursor(CROSSHAIR, "lock");
 
     private Color guideColor;
 

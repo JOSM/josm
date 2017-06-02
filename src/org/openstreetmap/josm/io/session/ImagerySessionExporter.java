@@ -13,6 +13,7 @@ import javax.swing.SwingConstants;
 
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
+import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
@@ -81,14 +82,26 @@ public class ImagerySessionExporter extends AbstractSessionExporter<ImageryLayer
         ImageryPreferenceEntry e = new ImageryPreferenceEntry(layer.getInfo());
         Map<String, String> data = new LinkedHashMap<>(Preferences.serializeStruct(e, ImageryPreferenceEntry.class));
         if (layer instanceof AbstractTileSourceLayer) {
-            AbstractTileSourceLayer<?> tsLayer = (AbstractTileSourceLayer<?>) layer;
-            tsLayer.getDisplaySettings().storeTo(data);
+            ((AbstractTileSourceLayer<?>) layer).getDisplaySettings().storeTo(data);
         }
-        for (Map.Entry<String, String> entry : data.entrySet()) {
-            Element attrElem = support.createElement(entry.getKey());
-            layerElem.appendChild(attrElem);
-            attrElem.appendChild(support.createTextNode(entry.getValue()));
+        addAttributes(layerElem, data, support);
+        if (layer instanceof AbstractTileSourceLayer) {
+            OffsetBookmark offset = ((AbstractTileSourceLayer<?>) layer).getDisplaySettings().getOffsetBookmark();
+            if (offset != null) {
+                Map<String, String> offsetProps = offset.toPropertiesMap();
+                Element offsetEl = support.createElement("offset");
+                layerElem.appendChild(offsetEl);
+                addAttributes(offsetEl, offsetProps, support);
+            }
         }
         return layerElem;
+    }
+
+    private static void addAttributes(Element element, Map<String, String> props, ExportSupport support) {
+        for (Map.Entry<String, String> entry : props.entrySet()) {
+            Element attrElem = support.createElement(entry.getKey());
+            element.appendChild(attrElem);
+            attrElem.appendChild(support.createTextNode(entry.getValue()));
+        }
     }
 }

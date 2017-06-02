@@ -7,6 +7,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.actions.mapmode.ImproveWayAccuracyAction.State;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -41,5 +43,13 @@ public class ImproveWayAccuracyActionTest {
         } finally {
             Main.getLayerManager().removeLayer(layer);
         }
+    }
+
+    /**
+     * Unit test of {@link State} enum.
+     */
+    @Test
+    public void testEnumState() {
+        TestUtils.superficialEnumCodeCoverage(State.class);
     }
 }

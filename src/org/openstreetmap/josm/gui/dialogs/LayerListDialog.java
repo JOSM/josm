@@ -322,14 +322,14 @@ public class LayerListDialog extends ToggleDialog {
     @Override
     public void showNotify() {
         layerManager.addActiveLayerChangeListener(activateLayerAction);
-        layerManager.addLayerChangeListener(model, true);
+        layerManager.addAndFireLayerChangeListener(model);
         layerManager.addAndFireActiveLayerChangeListener(model);
         model.populate();
     }
 
     @Override
     public void hideNotify() {
-        layerManager.removeLayerChangeListener(model, true);
+        layerManager.removeAndFireLayerChangeListener(model);
         layerManager.removeActiveLayerChangeListener(model);
         layerManager.removeActiveLayerChangeListener(activateLayerAction);
     }
@@ -984,9 +984,7 @@ public class LayerListDialog extends ToggleDialog {
 
         @Override
         public boolean isCellEditable(int row, int col) {
-            if (col == 0 && getActiveLayer() == getLayers().get(row))
-                return false;
-            return true;
+            return col != 0 || getActiveLayer() != getLayers().get(row);
         }
 
         @Override

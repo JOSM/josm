@@ -120,11 +120,8 @@ public final class WaySegment implements Comparable<WaySegment> {
      * @return true if other way segment is the same or reverse
      */
     public boolean isSimilar(WaySegment s2) {
-        if (getFirstNode().equals(s2.getFirstNode()) && getSecondNode().equals(s2.getSecondNode()))
-            return true;
-        if (getFirstNode().equals(s2.getSecondNode()) && getSecondNode().equals(s2.getFirstNode()))
-            return true;
-        return false;
+        return (getFirstNode().equals(s2.getFirstNode()) && getSecondNode().equals(s2.getSecondNode()))
+            || (getFirstNode().equals(s2.getSecondNode()) && getSecondNode().equals(s2.getFirstNode()));
     }
 
     @Override

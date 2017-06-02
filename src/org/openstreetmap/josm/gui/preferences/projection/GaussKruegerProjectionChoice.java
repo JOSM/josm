@@ -8,6 +8,11 @@ import java.util.Collections;
 
 import org.openstreetmap.josm.Main;
 
+/**
+ * ProjectionChoice for Gauß-Krüger coordinate system (zones 2-5, EPSG:31466-31469).
+ * <p>
+ * @see <a href="https://de.wikipedia.org/wiki/Gauß-Krüger-Koordinatensystem">Gauß-Krüger</a>
+ */
 public class GaussKruegerProjectionChoice extends ListProjectionChoice {
 
     private static String[] zones = {"2", "3", "4", "5"};

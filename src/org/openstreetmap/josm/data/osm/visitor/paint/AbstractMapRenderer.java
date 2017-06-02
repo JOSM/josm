@@ -222,11 +222,12 @@ public abstract class AbstractMapRenderer implements Rendering {
      */
     public void visitVirtual(Path2D path, Way w) {
         Iterator<Node> it = w.getNodes().iterator();
-        if (it.hasNext()) {
-            MapViewPoint lastP = mapState.getPointFor(it.next());
-            while (it.hasNext()) {
-                MapViewPoint p = mapState.getPointFor(it.next());
-                if (isSegmentVisible(lastP, p) && isLargeSegment(lastP, p, virtualNodeSpace)) {
+        MapViewPoint lastP = null;
+        while (it.hasNext()) {
+            Node n = it.next();
+            if (n.isLatLonKnown()) {
+                MapViewPoint p = mapState.getPointFor(n);
+                if (lastP != null && isSegmentVisible(lastP, p) && isLargeSegment(lastP, p, virtualNodeSpace)) {
                     double x = (p.getInViewX()+lastP.getInViewX())/2;
                     double y = (p.getInViewY()+lastP.getInViewY())/2;
                     path.moveTo(x-virtualNodeSize, y);

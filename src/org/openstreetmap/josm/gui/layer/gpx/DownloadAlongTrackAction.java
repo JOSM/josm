@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Action that issues a series of download requests to the API, following the GPX track.
@@ -69,7 +70,7 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
             for (GpxTrack trk : data.tracks) {
                 for (GpxTrackSegment segment : trk.getSegments()) {
                     for (WayPoint p : segment.getWayPoints()) {
-                        latsum += p.getCoor().lat();
+                        latsum += p.lat();
                         latcnt++;
                     }
                 }
@@ -85,7 +86,7 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
             return null;
         }
         double avglat = latsum / latcnt;
-        double scale = Math.cos(Math.toRadians(avglat));
+        double scale = Math.cos(Utils.toRadians(avglat));
         /*
          * Compute buffer zone extents and maximum bounding box size. Note that the maximum we
          * ever offer is a bbox area of 0.002, while the API theoretically supports 0.25, but as

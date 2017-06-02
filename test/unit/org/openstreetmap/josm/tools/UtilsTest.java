@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests of {@link Utils} class.
@@ -28,6 +29,15 @@ public class UtilsTest {
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules rules = new JOSMTestRules();
+
+    /**
+     * Tests that {@code Utils} satisfies utility class criterias.
+     * @throws ReflectiveOperationException if an error occurs
+     */
+    @Test
+    public void testUtilityClass() throws ReflectiveOperationException {
+        UtilityClassTestUtil.assertUtilityClassWellDefined(Utils.class);
+    }
 
     /**
      * Test of {@link Utils#strip} method.
@@ -182,6 +192,81 @@ public class UtilsTest {
         List<? extends Object> items = Arrays.asList("1", Integer.valueOf(2));
         assertEquals("<ul><li>1</li><li>2</li></ul>", Utils.joinAsHtmlUnorderedList(items));
         assertEquals("<ul></ul>", Utils.joinAsHtmlUnorderedList(Collections.emptyList()));
+    }
+
+    /**
+     * Test {@link Utils#getJavaVersion}
+     */
+    @Test
+    public void testGetJavaVersion() {
+        String javaVersion = System.getProperty("java.version");
+        try {
+            System.setProperty("java.version", "1.8.0_72-ea");
+            assertEquals(8, Utils.getJavaVersion());
+
+            System.setProperty("java.version", "9-ea");
+            assertEquals(9, Utils.getJavaVersion());
+
+            System.setProperty("java.version", "9");
+            assertEquals(9, Utils.getJavaVersion());
+
+            System.setProperty("java.version", "9.0.1");
+            assertEquals(9, Utils.getJavaVersion());
+        } finally {
+            System.setProperty("java.version", javaVersion);
+        }
+    }
+
+    /**
+     * Test {@link Utils#getJavaUpdate}
+     */
+    @Test
+    public void testGetJavaUpdate() {
+        String javaVersion = System.getProperty("java.version");
+        try {
+            System.setProperty("java.version", "1.8.0_131");
+            assertEquals(131, Utils.getJavaUpdate());
+
+            System.setProperty("java.version", "1.8.0_152-ea");
+            assertEquals(152, Utils.getJavaUpdate());
+
+            System.setProperty("java.version", "9-ea");
+            assertEquals(0, Utils.getJavaUpdate());
+
+            System.setProperty("java.version", "9");
+            assertEquals(0, Utils.getJavaUpdate());
+
+            System.setProperty("java.version", "9.1.2");
+            assertEquals(1, Utils.getJavaUpdate());
+        } finally {
+            System.setProperty("java.version", javaVersion);
+        }
+    }
+
+    /**
+     * Test {@link Utils#getJavaBuild}
+     */
+    @Test
+    public void testGetJavaBuild() {
+        String javaVersion = System.getProperty("java.runtime.version");
+        try {
+            System.setProperty("java.runtime.version", "1.8.0_131-b11");
+            assertEquals(11, Utils.getJavaBuild());
+
+            System.setProperty("java.runtime.version", "1.8.0_152-ea-b04");
+            assertEquals(4, Utils.getJavaBuild());
+
+            System.setProperty("java.runtime.version", "9-ea+170");
+            assertEquals(170, Utils.getJavaBuild());
+
+            System.setProperty("java.runtime.version", "9+200");
+            assertEquals(200, Utils.getJavaBuild());
+
+            System.setProperty("java.runtime.version", "9.1.2+62");
+            assertEquals(62, Utils.getJavaBuild());
+        } finally {
+            System.setProperty("java.runtime.version", javaVersion);
+        }
     }
 
     /**

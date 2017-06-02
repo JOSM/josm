@@ -145,7 +145,7 @@ public class DefaultProxySelector extends ProxySelector {
         }
         proxyExceptions = new HashSet<>(
             Main.pref.getCollection(ProxyPreferencesPanel.PROXY_EXCEPTIONS,
-                    Arrays.asList(new String[]{"localhost", IPV4_LOOPBACK, IPV6_LOOPBACK}))
+                    Arrays.asList("localhost", IPV4_LOOPBACK, IPV6_LOOPBACK))
         );
     }
 

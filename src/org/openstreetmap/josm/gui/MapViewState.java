@@ -19,6 +19,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.projection.Projecting;
@@ -179,27 +180,40 @@ public final class MapViewState implements Serializable {
 
     /**
      * Gets the {@link MapViewPoint} for the given {@link LatLon} coordinate.
+     * <p>
+     * This method exists to not break binary compatibility with old plugins
      * @param latlon the position
      * @return The point for that position.
      * @since 10651
      */
     public MapViewPoint getPointFor(LatLon latlon) {
-        return getPointFor(getProjection().latlon2eastNorth(latlon));
+        return getPointFor((ILatLon) latlon);
     }
 
     /**
-     * Gets the {@link MapViewPoint} for the given node. This is faster than {@link #getPointFor(LatLon)} because it uses the node east/north
-     * cache.
+     * Gets the {@link MapViewPoint} for the given {@link LatLon} coordinate.
+     * @param latlon the position
+     * @return The point for that position.
+     * @since 12161
+     */
+    public MapViewPoint getPointFor(ILatLon latlon) {
+        try {
+            return getPointFor(Optional.ofNullable(latlon.getEastNorth(getProjection()))
+                    .orElseThrow(IllegalArgumentException::new));
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
+            throw BugReport.intercept(e).put("latlon", latlon);
+        }
+    }
+
+    /**
+     * Gets the {@link MapViewPoint} for the given node.
+     * This is faster than {@link #getPointFor(LatLon)} because it uses the node east/north cache.
      * @param node The node
      * @return The position of that node.
      * @since 10827
      */
     public MapViewPoint getPointFor(Node node) {
-        try {
-            return getPointFor(node.getEastNorth(getProjection()));
-        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
-            throw BugReport.intercept(e).put("node", node);
-        }
+        return getPointFor((ILatLon) node);
     }
 
     /**
@@ -229,15 +243,6 @@ public final class MapViewState implements Serializable {
     }
 
     /**
-     * Gets the center of the view, rounded to a pixel coordinate
-     * @return The center position.
-     * @since 10856
-     */
-    public MapViewPoint getCenterAtPixel() {
-        return getForView(viewWidth / 2, viewHeight / 2);
-    }
-
-    /**
      * Gets the width of the view on the Screen;
      * @return The width of the view component in screen pixel.
      */
@@ -256,9 +261,19 @@ public final class MapViewState implements Serializable {
     /**
      * Gets the current projection used for the MapView.
      * @return The projection.
+     * @see #getProjecting()
      */
     public Projection getProjection() {
         return projecting.getBaseProjection();
+    }
+
+    /**
+     * Gets the current projecting instance that is used to convert between east/north and lat/lon space.
+     * @return The projection.
+     * @since 12161
+     */
+    public Projecting getProjecting() {
+        return projecting;
     }
 
     /**
@@ -379,7 +394,7 @@ public final class MapViewState implements Serializable {
     private static EastNorth calculateDefaultCenter() {
         Bounds b = Optional.ofNullable(DownloadDialog.getSavedDownloadBounds()).orElseGet(
                 () -> Main.getProjection().getWorldBoundsLatLon());
-        return Main.getProjection().latlon2eastNorth(b.getCenter());
+        return b.getCenter().getEastNorth();
     }
 
     /**

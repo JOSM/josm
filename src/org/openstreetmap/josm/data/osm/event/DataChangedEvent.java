@@ -8,13 +8,16 @@ import java.util.List;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
+/**
+ * A combined data change event. It consists of multiple dataset events.
+ */
 public class DataChangedEvent extends AbstractDatasetChangedEvent {
 
     private final List<AbstractDatasetChangedEvent> events;
 
     /**
      * Constructs a new {@code DataChangedEvent}
-     * @param dataSet data set
+     * @param dataSet the dataset from which the event comes from
      * @param events list of change events
      */
     public DataChangedEvent(DataSet dataSet, List<AbstractDatasetChangedEvent> events) {
@@ -24,7 +27,7 @@ public class DataChangedEvent extends AbstractDatasetChangedEvent {
 
     /**
      * Constructs a new {@code DataChangedEvent}
-     * @param dataSet data set
+     * @param dataSet data set. Can be null
      */
     public DataChangedEvent(DataSet dataSet) {
         this(dataSet, null);

@@ -30,22 +30,64 @@ public class LineElement extends StyleElement {
      */
     public static final LineElement UNTAGGED_WAY = createSimpleLineStyle(null, false);
 
-    private BasicStroke line;
+    /**
+     * The stroke used to paint the line
+     */
+    private final BasicStroke line;
+    /**
+     * The color of the line. Should not be accessed directly
+     */
     public Color color;
+
+    /**
+     * The stroke used to paint the gaps between the dashes
+     */
+    private final BasicStroke dashesLine;
+    /**
+     * The secondary color of the line that is used for the gaps in dashed lines. Should not be accessed directly
+     */
     public Color dashesBackground;
+    /**
+     * The dash offset. Should not be accessed directly
+     */
     public float offset;
-    public float realWidth; // the real width of this line in meter
+    /**
+     * the real width of this line in meter. Should not be accessed directly
+     */
+    public float realWidth;
+    /**
+     * A flag indicating if the direction arrwos should be painted. Should not be accessed directly
+     */
     public boolean wayDirectionArrows;
 
-    private BasicStroke dashesLine;
-
+    /**
+     * The type of this line
+     */
     public enum LineType {
+        /**
+         * A normal line
+         */
         NORMAL("", 3f),
+        /**
+         * A casing (line behind normal line, extended to the right/left)
+         */
         CASING("casing-", 2f),
+        /**
+         * A casing, but only to the left
+         */
         LEFT_CASING("left-casing-", 2.1f),
+        /**
+         * A casing, but only to the right
+         */
         RIGHT_CASING("right-casing-", 2.1f);
 
+        /**
+         * The MapCSS line prefix used
+         */
         public final String prefix;
+        /**
+         * The major z index to use during painting
+         */
         public final float defaultMajorZIndex;
 
         LineType(String prefix, float defaultMajorZindex) {
@@ -137,6 +179,12 @@ public class LineElement extends StyleElement {
         return !isModifier;
     }
 
+    /**
+     * Converts a linejoin of a {@link BasicStroke} to a MapCSS string
+     * @param linejoin The linejoin
+     * @return The MapCSS string or <code>null</code> on error.
+     * @see BasicStroke#getLineJoin()
+     */
     public String linejoinToString(int linejoin) {
         switch (linejoin) {
             case BasicStroke.JOIN_BEVEL: return "bevel";
@@ -146,6 +194,12 @@ public class LineElement extends StyleElement {
         }
     }
 
+    /**
+     * Converts a linecap of a {@link BasicStroke} to a MapCSS string
+     * @param linecap The linecap
+     * @return The MapCSS string or <code>null</code> on error.
+     * @see BasicStroke#getEndCap()
+     */
     public String linecapToString(int linecap) {
         switch (linecap) {
             case BasicStroke.CAP_BUTT: return "none";
@@ -208,10 +262,20 @@ public class LineElement extends StyleElement {
         return createLine(new Environment(w, mc, "default", null));
     }
 
+    /**
+     * Create a line element from the given MapCSS environment
+     * @param env The environment
+     * @return The line element describing the line that should be painted, or <code>null</code> if none should be painted.
+     */
     public static LineElement createLine(Environment env) {
         return createImpl(env, LineType.NORMAL);
     }
 
+    /**
+     * Create a line element for the left casing from the given MapCSS environment
+     * @param env The environment
+     * @return The line element describing the line that should be painted, or <code>null</code> if none should be painted.
+     */
     public static LineElement createLeftCasing(Environment env) {
         LineElement leftCasing = createImpl(env, LineType.LEFT_CASING);
         if (leftCasing != null) {
@@ -220,6 +284,11 @@ public class LineElement extends StyleElement {
         return leftCasing;
     }
 
+    /**
+     * Create a line element for the right casing from the given MapCSS environment
+     * @param env The environment
+     * @return The line element describing the line that should be painted, or <code>null</code> if none should be painted.
+     */
     public static LineElement createRightCasing(Environment env) {
         LineElement rightCasing = createImpl(env, LineType.RIGHT_CASING);
         if (rightCasing != null) {
@@ -228,6 +297,11 @@ public class LineElement extends StyleElement {
         return rightCasing;
     }
 
+    /**
+     * Create a line element for the casing from the given MapCSS environment
+     * @param env The environment
+     * @return The line element describing the line that should be painted, or <code>null</code> if none should be painted.
+     */
     public static LineElement createCasing(Environment env) {
         LineElement casing = createImpl(env, LineType.CASING);
         if (casing != null) {

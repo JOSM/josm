@@ -106,7 +106,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         JPanel pane = new JPanel(new BorderLayout());
         pane.add(new JScrollPane(displayList), BorderLayout.CENTER);
 
-        createLayout(pane, false, Arrays.asList(new SideButton[]{
+        createLayout(pane, false, Arrays.asList(
                 new SideButton(downloadNotesInViewAction, false),
                 new SideButton(newAction, false),
                 new SideButton(addCommentAction, false),
@@ -114,7 +114,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
                 new SideButton(reopenAction, false),
                 new SideButton(sortAction, false),
                 new SideButton(openInBrowserAction, false),
-                new SideButton(uploadAction, false)}));
+                new SideButton(uploadAction, false)));
         updateButtonStates();
     }
 

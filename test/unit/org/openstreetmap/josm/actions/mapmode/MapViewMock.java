@@ -8,10 +8,15 @@ import java.awt.geom.Point2D;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.layer.MainLayerManager;
 
 class MapViewMock extends MapView {
     MapViewMock() {
-        super(Main.getLayerManager(), null);
+        this(Main.getLayerManager());
+    }
+
+    MapViewMock(MainLayerManager layerManager) {
+        super(layerManager, null);
     }
 
     @Override

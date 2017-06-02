@@ -7,6 +7,9 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 import oauth.signpost.OAuthConsumer;
 
+/**
+ * An oauth token that has been obtained by JOSM and can be used to authenticate the user on the server.
+ */
 public class OAuthToken {
 
     /**

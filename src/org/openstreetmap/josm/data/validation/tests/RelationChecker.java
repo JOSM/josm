@@ -7,8 +7,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -94,23 +94,13 @@ public class RelationChecker extends Test {
         }
     }
 
-    private static class RolePreset {
-        private final List<Role> roles;
-        private final String name;
-
-        RolePreset(List<Role> roles, String name) {
-            this.roles = roles;
-            this.name = name;
-        }
-    }
-
     private static class RoleInfo {
         private int total;
     }
 
     @Override
     public void visit(Relation n) {
-        Map<String, RolePreset> allroles = buildAllRoles(n);
+        Map<Role, String> allroles = buildAllRoles(n);
         if (allroles.isEmpty() && n.hasTag("type", "route")
                 && n.hasTag("route", "train", "subway", "monorail", "tram", "bus", "trolleybus", "aerialway", "ferry")) {
             errors.add(TestError.builder(this, Severity.WARNING, RELATION_UNKNOWN)
@@ -150,23 +140,15 @@ public class RelationChecker extends Test {
     }
 
     // return Roles grouped by key
-    private static Map<String, RolePreset> buildAllRoles(Relation n) {
-        Map<String, RolePreset> allroles = new HashMap<>();
+    private static Map<Role, String> buildAllRoles(Relation n) {
+        Map<Role, String> allroles = new LinkedHashMap<>();
 
         for (TaggingPreset p : relationpresets) {
             final boolean matches = TaggingPresetItem.matches(Utils.filteredCollection(p.data, KeyedItem.class), n.getKeys());
             final Roles r = Utils.find(p.data, Roles.class);
             if (matches && r != null) {
                 for (Role role: r.roles) {
-                    String key = role.key;
-                    List<Role> roleGroup;
-                    if (allroles.containsKey(key)) {
-                        roleGroup = allroles.get(key).roles;
-                    } else {
-                        roleGroup = new LinkedList<>();
-                        allroles.put(key, new RolePreset(roleGroup, p.name));
-                    }
-                    roleGroup.add(role);
+                    allroles.put(role, p.name);
                 }
             }
         }
@@ -198,21 +180,27 @@ public class RelationChecker extends Test {
     /**
      * get all role definition for specified key and check, if some definition matches
      *
-     * @param rolePreset containing preset for role of the member
+     * @param allroles containing list of possible role presets of the member
      * @param member to be verified
      * @param n relation to be verified
      * @return <tt>true</tt> if member passed any of definition within preset
      *
      */
-    private boolean checkMemberExpressionAndType(RolePreset rolePreset, RelationMember member, Relation n) {
-        if (rolePreset == null || rolePreset.roles == null) {
-            // no restrictions on role types
-            return true;
-        }
+    private boolean checkMemberExpressionAndType(Map<Role, String> allroles, RelationMember member, Relation n) {
+        String role = member.getRole();
+        String name = null;
+        // Set of all accepted types in template
+        Collection<TaggingPresetType> types = EnumSet.noneOf(TaggingPresetType.class);
         TestError possibleMatchError = null;
         // iterate through all of the role definition within preset
         // and look for any matching definition
-        for (Role r: rolePreset.roles) {
+        for (Map.Entry<Role, String> e : allroles.entrySet()) {
+            Role r = e.getKey();
+            if (!r.isRole(role)) {
+                continue;
+            }
+            name = e.getValue();
+            types.addAll(r.types);
             if (checkMemberType(r, member)) {
                 // member type accepted by role definition
                 if (r.memberExpression == null) {
@@ -237,7 +225,7 @@ public class RelationChecker extends Test {
                             possibleMatchError = TestError.builder(this, Severity.WARNING, WRONG_TYPE)
                                     .message(ROLE_VERIF_PROBLEM_MSG,
                                             marktr("Role of relation member does not match expression ''{0}'' in template {1}"),
-                                            r.memberExpression, rolePreset.name)
+                                            r.memberExpression, name)
                                     .primitives(member.getMember().isUsable() ? member.getMember() : n)
                                     .build();
                         }
@@ -250,7 +238,9 @@ public class RelationChecker extends Test {
             }
         }
 
-        if (possibleMatchError != null) {
+        if (name == null) {
+           return true;
+        } else if (possibleMatchError != null) {
             // if any error found, then assume that member type was correct
             // and complain about not matching the memberExpression
             // (the only failure, that we could gather)
@@ -259,19 +249,13 @@ public class RelationChecker extends Test {
             // no errors found till now. So member at least failed at matching the type
             // it could also fail at memberExpression, but we can't guess at which
 
-            // prepare Set of all accepted types in template
-            Collection<TaggingPresetType> types = EnumSet.noneOf(TaggingPresetType.class);
-            for (Role r: rolePreset.roles) {
-                types.addAll(r.types);
-            }
-
             // convert in localization friendly way to string of accepted types
             String typesStr = types.stream().map(x -> tr(x.getName())).collect(Collectors.joining("/"));
 
             errors.add(TestError.builder(this, Severity.WARNING, WRONG_TYPE)
                     .message(ROLE_VERIF_PROBLEM_MSG,
                             marktr("Type ''{0}'' of relation member with role ''{1}'' does not match accepted types ''{2}'' in template {3}"),
-                            member.getType(), member.getRole(), typesStr, rolePreset.name)
+                            member.getType(), member.getRole(), typesStr, name)
                     .primitives(member.getMember().isUsable() ? member.getMember() : n)
                     .build());
         }
@@ -284,29 +268,36 @@ public class RelationChecker extends Test {
      * @param allroles contains presets for specified relation
      * @param map contains statistics of occurances of specified role types in relation
      */
-    private void checkRoles(Relation n, Map<String, RolePreset> allroles, Map<String, RoleInfo> map) {
+    private void checkRoles(Relation n, Map<Role, String> allroles, Map<String, RoleInfo> map) {
         // go through all members of relation
         for (RelationMember member: n.getMembers()) {
-            String role = member.getRole();
-
             // error reporting done inside
-            checkMemberExpressionAndType(allroles.get(role), member, n);
+            checkMemberExpressionAndType(allroles, member, n);
         }
 
         // verify role counts based on whole role sets
-        for (RolePreset rp: allroles.values()) {
-            for (Role r: rp.roles) {
-                String keyname = r.key;
-                if (keyname.isEmpty()) {
-                    keyname = tr("<empty>");
-                }
-                checkRoleCounts(n, r, keyname, map.get(r.key));
+        for (Role r: allroles.keySet()) {
+            String keyname = r.key;
+            if (keyname.isEmpty()) {
+                keyname = tr("<empty>");
             }
+            checkRoleCounts(n, r, keyname, map.get(r.key));
+        }
+        if ("network".equals(n.get("type")) && !"bicycle".equals(n.get("route"))) {
+            return;
         }
         // verify unwanted members
         for (String key : map.keySet()) {
-            if (!allroles.containsKey(key) && !"network".equals(n.get("type")) && !"bicycle".equals(n.get("route"))) {
-                String templates = allroles.keySet().stream().collect(Collectors.joining("/"));
+            boolean found = false;
+            for (Role r: allroles.keySet()) {
+                if (r.isRole(key)) {
+                    found = true;
+                    break;
+                }
+            }
+
+            if (!found) {
+                String templates = allroles.keySet().stream().map(r -> r.key).collect(Collectors.joining("/"));
 
                 if (!key.isEmpty()) {
                     errors.add(TestError.builder(this, Severity.WARNING, ROLE_UNKNOWN)

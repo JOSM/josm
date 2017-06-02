@@ -5,38 +5,63 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.data.projection.Projecting;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
-public class WayPoint extends WithAttributes implements Comparable<WayPoint>, TemplateEngineDataProvider {
+/**
+ * A point in the GPX data
+ * @since 12167 implements ILatLon
+ */
+public class WayPoint extends WithAttributes implements Comparable<WayPoint>, TemplateEngineDataProvider, ILatLon {
 
     /**
      * The seconds (not milliseconds!) since 1970-01-01 00:00 UTC
      */
     public double time;
+    /**
+     * The color to draw the segment before this point in
+     * @see #drawLine
+     */
     public Color customColoring;
+    /**
+     * <code>true</code> indicates that the line before this point should be drawn
+     */
     public boolean drawLine;
+    /**
+     * The direction of the line before this point. Used as cache to speed up drawing. Should not be relied on.
+     */
     public int dir;
 
+    /**
+     * Constructs a new {@code WayPoint} from an existing one.
+     * @param p existing waypoint
+     */
     public WayPoint(WayPoint p) {
         attr.putAll(p.attr);
         lat = p.lat;
         lon = p.lon;
         east = p.east;
         north = p.north;
+        eastNorthCacheKey = p.eastNorthCacheKey;
         time = p.time;
         customColoring = p.customColoring;
         drawLine = p.drawLine;
         dir = p.dir;
     }
 
+    /**
+     * Constructs a new {@code WayPoint} from lat/lon coordinates.
+     * @param ll lat/lon coordinates
+     */
     public WayPoint(LatLon ll) {
         lat = ll.lat();
         lon = ll.lon();
@@ -54,6 +79,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
      */
     private double east = Double.NaN;
     private double north = Double.NaN;
+    private Object eastNorthCacheKey;
 
     /**
      * Invalidate the internal cache of east/north coordinates.
@@ -63,29 +89,34 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
         this.north = Double.NaN;
     }
 
+    /**
+     * Returns the waypoint coordinates.
+     * @return the waypoint coordinates
+     */
     public final LatLon getCoor() {
         return new LatLon(lat, lon);
     }
 
-    /**
-     * <p>Replies the projected east/north coordinates.</p>
-     *
-     * <p>Uses the {@link Main#getProjection() global projection} to project the lan/lon-coordinates.
-     * Internally caches the projected coordinates.</p>
-     *
-     * <p><strong>Caveat:</strong> doesn't listen to projection changes. Clients must
-     * {@link #invalidateEastNorthCache() invalidate the internal cache}.</p>
-     *
-     * @return the east north coordinates or {@code null}
-     * @see #invalidateEastNorthCache()
-     */
-    public final EastNorth getEastNorth() {
-        if (Double.isNaN(east) || Double.isNaN(north)) {
+    @Override
+    public double lon() {
+        return lon;
+    }
+
+    @Override
+    public double lat() {
+        return lat;
+    }
+
+    @Override
+    public final EastNorth getEastNorth(Projecting projecting) {
+        Object newCacheKey = projecting.getCacheKey();
+        if (Double.isNaN(east) || Double.isNaN(north) || !Objects.equals(newCacheKey, this.eastNorthCacheKey)) {
             // projected coordinates haven't been calculated yet,
             // so fill the cache of the projected waypoint coordinates
-            EastNorth en = Projections.project(new LatLon(lat, lon));
+            EastNorth en = projecting.latlon2eastNorth(this);
             this.east = en.east();
             this.north = en.north();
+            this.eastNorthCacheKey = newCacheKey;
         }
         return new EastNorth(east, north);
     }
@@ -137,6 +168,10 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
         return Double.compare(time, w.time);
     }
 
+    /**
+     * Returns the waypoint time.
+     * @return the waypoint time
+     */
     public Date getTime() {
         return new Date((long) (time * 1000));
     }
@@ -176,17 +211,11 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (!super.equals(obj))
-            return false;
-        if (getClass() != obj.getClass())
+        if (obj == null || !super.equals(obj) || getClass() != obj.getClass())
             return false;
         WayPoint other = (WayPoint) obj;
-        if (Double.doubleToLongBits(lat) != Double.doubleToLongBits(other.lat))
-            return false;
-        if (Double.doubleToLongBits(lon) != Double.doubleToLongBits(other.lon))
-            return false;
-        if (Double.doubleToLongBits(time) != Double.doubleToLongBits(other.time))
-            return false;
-        return true;
+        return Double.doubleToLongBits(lat) == Double.doubleToLongBits(other.lat)
+            && Double.doubleToLongBits(lon) == Double.doubleToLongBits(other.lon)
+            && Double.doubleToLongBits(time) == Double.doubleToLongBits(other.time);
     }
 }

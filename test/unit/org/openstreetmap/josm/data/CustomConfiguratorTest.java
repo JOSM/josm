@@ -17,10 +17,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.CustomConfigurator.PreferencesUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests for class {@link CustomConfigurator}.
@@ -116,5 +118,14 @@ public class CustomConfiguratorTest {
         log = CustomConfigurator.getLog();
         assertFalse(log, log.contains("Error"));
         assertEquals(9, pref.getCollection("lorem_ipsum").size());
+    }
+
+    /**
+     * Tests that {@code PreferencesUtils} satisfies utility class criterias.
+     * @throws ReflectiveOperationException if an error occurs
+     */
+    @Test
+    public void testUtilityClass() throws ReflectiveOperationException {
+        UtilityClassTestUtil.assertUtilityClassWellDefined(PreferencesUtils.class);
     }
 }

@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.openstreetmap.josm.data.validation.tests.CrossingWays.HIGHWAY;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.HashSet;
@@ -80,7 +81,7 @@ public class UntaggedWay extends Test {
 
         Map<String, String> tags = w.getKeys();
         if (!tags.isEmpty()) {
-            String highway = tags.get("highway");
+            String highway = tags.get(HIGHWAY);
             if (highway != null && NAMED_WAYS.contains(highway) && !tags.containsKey("name") && !tags.containsKey("ref")
                     && !"yes".equals(tags.get("noname"))) {
                 boolean isJunction = false;

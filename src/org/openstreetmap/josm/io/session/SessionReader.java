@@ -566,13 +566,11 @@ public class SessionReader {
                     ExtendedDialog dlg = new ExtendedDialog(
                             Main.parent,
                             title,
-                            new String[] {tr("Cancel"), tr("Skip layer and continue")}
-                            );
-                    dlg.setButtonIcons(new String[] {"cancel", "dialogs/next"});
-                    dlg.setIcon(icon);
-                    dlg.setContent(message);
-                    dlg.showDialog();
-                    cancel = dlg.getValue() != 2;
+                            tr("Cancel"), tr("Skip layer and continue"))
+                        .setButtonIcons("cancel", "dialogs/next")
+                        .setIcon(icon)
+                        .setContent(message);
+                    cancel = dlg.showDialog().getValue() != 2;
                 });
             } catch (InvocationTargetException | InterruptedException ex) {
                 throw new JosmRuntimeException(ex);

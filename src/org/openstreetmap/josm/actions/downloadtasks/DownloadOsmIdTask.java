@@ -15,6 +15,12 @@ import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.gui.io.DownloadPrimitivesWithReferrersTask;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
+/**
+ * Specialized task for downloading OSM objects by ID.
+ * <p>
+ * It handles one URL pattern: openstreetmap website URL with {@code /(node|way|relation)/<id>} argument.
+ * @since 8240
+ */
 public class DownloadOsmIdTask extends DownloadOsmTask {
 
     private static final String URL_ID_PATTERN = "https?://www\\.(osm|openstreetmap)\\.org/(node|way|relation)/(\\p{Digit}+).*";

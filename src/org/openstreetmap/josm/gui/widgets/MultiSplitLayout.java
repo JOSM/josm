@@ -654,30 +654,29 @@ public class MultiSplitLayout implements LayoutManager {
                 double y = bounds.getY();
                 while (splitChildren.hasNext()) {
                     Node splitChild = splitChildren.next();
-                    Divider dividerChild =
-                        splitChildren.hasNext() ? (Divider) splitChildren.next() : null;
-
-                        double childHeight;
-                        if (getFloatingDividers()) {
-                            childHeight = preferredNodeSize(splitChild).getHeight();
-                        } else {
-                            if (dividerChild != null) {
-                                childHeight = dividerChild.getBounds().getY() - y;
-                            } else {
-                                childHeight = split.getBounds().getMaxY() - y;
-                            }
-                        }
-                        childBounds = boundsWithYandHeight(bounds, y, childHeight);
-                        layout1(splitChild, childBounds);
-
-                        if (getFloatingDividers() && (dividerChild != null)) {
-                            double dividerY = childBounds.getMaxY();
-                            Rectangle dividerBounds = boundsWithYandHeight(bounds, dividerY, dividerSize);
-                            dividerChild.setBounds(dividerBounds);
-                        }
+                    Node nodeChild = splitChildren.hasNext() ? splitChildren.next() : null;
+                    Divider dividerChild = nodeChild instanceof Divider ? (Divider) nodeChild : null;
+                    double childHeight;
+                    if (getFloatingDividers()) {
+                        childHeight = preferredNodeSize(splitChild).getHeight();
+                    } else {
                         if (dividerChild != null) {
-                            y = dividerChild.getBounds().getMaxY();
+                            childHeight = dividerChild.getBounds().getY() - y;
+                        } else {
+                            childHeight = split.getBounds().getMaxY() - y;
                         }
+                    }
+                    childBounds = boundsWithYandHeight(bounds, y, childHeight);
+                    layout1(splitChild, childBounds);
+
+                    if (getFloatingDividers() && (dividerChild != null)) {
+                        double dividerY = childBounds.getMaxY();
+                        Rectangle dividerBounds = boundsWithYandHeight(bounds, dividerY, dividerSize);
+                        dividerChild.setBounds(dividerBounds);
+                    }
+                    if (dividerChild != null) {
+                        y = dividerChild.getBounds().getMaxY();
+                    }
                 }
             }
             /* The bounds of the Split node root are set to be just
@@ -830,10 +829,17 @@ public class MultiSplitLayout implements LayoutManager {
     /**
      * Base class for the nodes that model a MultiSplitLayout.
      */
-    public abstract static class Node {
+    public static class Node {
         private Split parent;
         private Rectangle bounds = new Rectangle();
         private double weight;
+
+        /**
+         * Constructs a new {@code Node}.
+         */
+        protected Node() {
+            // Default constructor for subclasses only
+        }
 
         /**
          * Returns the Split parent of this Node, or null.

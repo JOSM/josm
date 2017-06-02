@@ -3,7 +3,9 @@ package org.openstreetmap.josm.data;
 
 import java.util.Collection;
 
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 
 /**
  * This is a listener for selection changes through the dataset's data. Whenever
@@ -13,6 +15,9 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
  * Note that these events are not fired immediately but are inserted in the
  * Swing event queue and packed together. So only one selection changed event
  * is issued within a one message dispatch routine.
+ *
+ * @see DataSelectionListener For a more advanced listener class.
+ * @see SelectionEventManager For managing your selection events.
  *
  * @author imi
  * @since     8 (creation)

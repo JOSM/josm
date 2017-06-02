@@ -4,6 +4,8 @@ package org.openstreetmap.josm.actions;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.actions.ExtensionFileFilter.AddArchiveExtension;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
@@ -45,5 +47,13 @@ public class ExtensionFileFilterTest {
         EqualsVerifier.forClass(ExtensionFileFilter.class).usingGetClass()
             .suppress(Warning.ANNOTATION) // FIXME: remove it after https://github.com/jqno/equalsverifier/issues/152 is fixed
             .verify();
+    }
+
+    /**
+     * Unit test of {@link AddArchiveExtension} enum.
+     */
+    @Test
+    public void testEnumAddArchiveExtension() {
+        TestUtils.superficialEnumCodeCoverage(AddArchiveExtension.class);
     }
 }

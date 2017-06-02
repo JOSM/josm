@@ -31,6 +31,10 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class LayerListPopup extends JPopupMenu {
 
+    /**
+     * An action that displays the layer information.
+     * @see Layer#getInfoComponent()
+     */
     public static final class InfoAction extends AbstractAction {
         private final transient Layer layer;
 
@@ -50,8 +54,8 @@ public class LayerListPopup extends JPopupMenu {
             if (object instanceof Component) {
                 ExtendedDialog ed = new ExtendedDialog(
                         Main.parent, tr("Information about layer"),
-                        new String[] {tr("OK")});
-                ed.setButtonIcons(new String[] {"ok"});
+                        tr("OK"));
+                ed.setButtonIcons("ok");
                 ed.setIcon(JOptionPane.INFORMATION_MESSAGE);
                 ed.setContent((Component) object);
                 ed.setResizable(layer.isInfoResizable());

@@ -206,7 +206,7 @@ public class OsmReader extends AbstractReader {
             ds.addDataSource(src);
         } else {
             throwException(tr("Missing mandatory attributes on element ''bounds''. " +
-                    "Got minlon=''{0}'',minlat=''{1}'',maxlon=''{3}'',maxlat=''{4}'', origin=''{5}''.",
+                    "Got minlon=''{0}'',minlat=''{1}'',maxlon=''{2}'',maxlat=''{3}'', origin=''{4}''.",
                     minlon, minlat, maxlon, maxlat, origin
             ));
         }
@@ -217,10 +217,20 @@ public class OsmReader extends AbstractReader {
         NodeData nd = new NodeData();
         String lat = parser.getAttributeValue(null, "lat");
         String lon = parser.getAttributeValue(null, "lon");
+        LatLon ll = null;
         if (lat != null && lon != null) {
-            nd.setCoor(new LatLon(Double.parseDouble(lat), Double.parseDouble(lon)));
+            try {
+                ll = new LatLon(Double.parseDouble(lat), Double.parseDouble(lon));
+                nd.setCoor(ll);
+            } catch (NumberFormatException e) {
+                Main.trace(e);
+            }
         }
         readCommon(nd);
+        if (lat != null && lon != null && (ll == null || !ll.isValid())) {
+            throwException(tr("Illegal value for attributes ''lat'', ''lon'' on node with ID {0}. Got ''{1}'', ''{2}''.",
+                    Long.toString(nd.getId()), lat, lon));
+        }
         Node n = new Node(nd.getId(), nd.getVersion());
         n.setVisible(nd.isVisible());
         n.load(nd);
@@ -584,6 +594,7 @@ public class OsmReader extends AbstractReader {
         }
     }
 
+    @Override
     protected DataSet doParseDataSet(InputStream source, ProgressMonitor progressMonitor) throws IllegalDataException {
         if (progressMonitor == null) {
             progressMonitor = NullProgressMonitor.INSTANCE;

@@ -29,8 +29,8 @@ public class LogShowDialog extends ExtendedDialog {
      * @param log Multi-line log
      */
     public LogShowDialog(String title, String msg, String log) {
-        super(Main.parent, title, new String[] {tr("OK")});
-        setButtonIcons(new String[] {"ok.png"});
+        super(Main.parent, title, tr("OK"));
+        setButtonIcons("ok");
         setContent(build(msg, log));
     }
 

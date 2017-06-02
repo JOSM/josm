@@ -106,15 +106,11 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
             ExtendedDialog dialog = new ExtendedDialog(
                     progressMonitor.getWindowParent(),
                     tr("Skip download"),
-                    new String[] {
-                        tr("Download Plugin"),
-                        tr("Skip Download") }
+                    tr("Download Plugin"), tr("Skip Download")
             );
             dialog.setContent(tr("JOSM version {0} required for plugin {1}.", pi.mainversion, pi.name));
-            dialog.setButtonIcons(new String[] {"download", "cancel"});
-            dialog.showDialog();
-            int answer = dialog.getValue();
-            if (answer != 1)
+            dialog.setButtonIcons("download", "cancel");
+            if (dialog.showDialog().getValue() != 1)
                 throw new PluginDownloadException(tr("Download skipped"));
         }
         try {
@@ -125,8 +121,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
             }
             URL url = new URL(pi.downloadlink);
             synchronized (this) {
-                downloadConnection = HttpClient.create(url)
-                        .setAccept(PLUGIN_MIME_TYPES);
+                downloadConnection = HttpClient.create(url).setAccept(PLUGIN_MIME_TYPES);
                 downloadConnection.connect();
             }
             try (InputStream in = downloadConnection.getResponse().getContent()) {

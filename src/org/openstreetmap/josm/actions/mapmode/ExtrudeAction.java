@@ -865,11 +865,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
         boolean prevSegmentParallel = Geometry.segmentsParallel(n1en, prevNode.getEastNorth(), n1en, n2en);
         boolean nextSegmentParallel = Geometry.segmentsParallel(n2en, nextNode.getEastNorth(), n1en, n2en);
-        if (prevSegmentParallel || nextSegmentParallel) {
-            return false;
-        }
-
-        return true;
+        return !prevSegmentParallel && !nextSegmentParallel;
     }
 
     /**

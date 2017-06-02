@@ -30,6 +30,7 @@ import javax.swing.tree.TreePath;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AbstractSelectAction;
 import org.openstreetmap.josm.actions.AutoScaleAction;
+import org.openstreetmap.josm.actions.ValidateAction;
 import org.openstreetmap.josm.actions.relation.EditRelationAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.SelectionChangedListener;
@@ -48,6 +49,7 @@ import org.openstreetmap.josm.gui.dialogs.validator.ValidatorTreePanel;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.layer.ValidatorLayer;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
@@ -69,6 +71,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
     /** The display tree */
     public ValidatorTreePanel tree;
+
+    /** The validate action */
+    public static final ValidateAction validateAction = new ValidateAction();
 
     /** The fix button */
     private final SideButton fixButton;
@@ -133,7 +138,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
         buttons.add(lookupButton);
 
-        buttons.add(new SideButton(OsmValidator.validateAction));
+        buttons.add(new SideButton(validateAction));
 
         fixButton = new SideButton(new AbstractAction() {
             {
@@ -480,7 +485,10 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
             fixButton.setEnabled(hasFixes);
 
             if (isDblClick) {
-                Main.getLayerManager().getEditDataSet().setSelected(sel);
+                DataSet ds = Main.getLayerManager().getEditDataSet();
+                if (ds != null) {
+                    ds.setSelected(sel);
+                }
                 if (Main.pref.getBoolean("validator.autozoom", false)) {
                     AutoScaleAction.zoomTo(sel);
                 }
@@ -521,6 +529,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         }
     }
 
+    /**
+     * A visitor that is used to compute the bounds of an error.
+     */
     public static class ValidatorBoundingXYVisitor extends BoundingXYVisitor implements ValidatorVisitor {
         @Override
         public void visit(OsmPrimitive p) {
@@ -552,6 +563,10 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         }
     }
 
+    /**
+     * Called when the selection was changed to update the list of displayed errors
+     * @param newSelection The new selection
+     */
     public void updateSelection(Collection<? extends OsmPrimitive> newSelection) {
         if (!Main.pref.getBoolean(ValidatorPreference.PREF_FILTER_BY_SELECTION, false))
             return;
@@ -626,9 +641,8 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 monitor.subTask(tr("Updating map ..."));
                 SwingUtilities.invokeAndWait(() -> {
                     Main.main.undoRedo.afterAdd();
-                    Main.map.repaint();
+                    Main.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
                     tree.resetErrors();
-                    ds.fireSelectionChanged();
                 });
             } catch (InterruptedException | InvocationTargetException e) {
                 // FIXME: signature of realRun should have a generic checked exception we could throw here

@@ -22,9 +22,9 @@ public class Check extends KeyedItem {
     /** The localized version of {@link #text}. */
     public String locale_text; // NOSONAR
     /** the value to set when checked (default is "yes") */
-    public String value_on = OsmUtils.trueval; // NOSONAR
+    public String value_on = OsmUtils.TRUE_VALUE; // NOSONAR
     /** the value to set when unchecked (default is "no") */
-    public String value_off = OsmUtils.falseval; // NOSONAR
+    public String value_off = OsmUtils.FALSE_VALUE; // NOSONAR
     /** whether the off value is disabled in the dialog, i.e., only unset or yes are provided */
     public boolean disable_off; // NOSONAR
     /** "on" or "off" or unset (default is unset) */

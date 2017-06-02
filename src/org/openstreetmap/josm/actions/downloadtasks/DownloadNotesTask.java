@@ -29,7 +29,12 @@ import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.xml.sax.SAXException;
 
-/** Task for downloading notes */
+/**
+ * General task for downloading OSM notes.
+ * <p>
+ * It handles two URL patterns: API call and dump file export.
+ * @since 7531
+ */
 public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
 
     private static final String PATTERN_API_URL = "https?://.*/api/0.6/notes.*";

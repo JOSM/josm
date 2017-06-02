@@ -169,7 +169,7 @@ public class CustomProjection extends AbstractProjection {
         }
     }
 
-    private enum Polarity {
+    enum Polarity {
         NORTH(LatLon.NORTH_POLE),
         SOUTH(LatLon.SOUTH_POLE);
 
@@ -179,7 +179,7 @@ public class CustomProjection extends AbstractProjection {
             this.latlon = latlon;
         }
 
-        private LatLon getLatLon() {
+        LatLon getLatLon() {
             return latlon;
         }
     }
@@ -199,7 +199,7 @@ public class CustomProjection extends AbstractProjection {
      * (ex: "+proj=tmerc +lon_0=-3 +k_0=0.9996 +x_0=500000 +ellps=WGS84 +datum=WGS84 +bounds=-8,-5,2,85")
      */
     public CustomProjection(String pref) {
-        this(null, null, pref, null);
+        this(null, null, pref);
     }
 
     /**
@@ -209,12 +209,24 @@ public class CustomProjection extends AbstractProjection {
      * @param code unique code for this projection - may be null
      * @param pref the string that defines the custom projection
      * @param cacheDir cache directory name
+     * @deprecated unused - remove in 2017-09
      */
+    @Deprecated
     public CustomProjection(String name, String code, String pref, String cacheDir) {
+        this(name, code, pref);
+    }
+
+    /**
+     * Constructs a new {@code CustomProjection} with given name, code and parameters.
+     *
+     * @param name describe projection in one or two words
+     * @param code unique code for this projection - may be null
+     * @param pref the string that defines the custom projection
+     */
+    public CustomProjection(String name, String code, String pref) {
         this.name = name;
         this.code = code;
         this.pref = pref;
-        this.cacheDir = cacheDir;
         try {
             update(pref);
         } catch (ProjectionConfigurationException ex) {
@@ -343,12 +355,13 @@ public class CustomProjection extends AbstractProjection {
      */
     public static Map<String, String> parseParameterList(String pref, boolean ignoreUnknownParameter) throws ProjectionConfigurationException {
         Map<String, String> parameters = new HashMap<>();
-        if (pref.trim().isEmpty()) {
+        String trimmedPref = pref.trim();
+        if (trimmedPref.isEmpty()) {
             return parameters;
         }
 
         Pattern keyPattern = Pattern.compile("\\+(?<key>[a-zA-Z0-9_]+)(=(?<value>.*))?");
-        String[] parts = Utils.WHITE_SPACES_PATTERN.split(pref.trim());
+        String[] parts = Utils.WHITE_SPACES_PATTERN.split(trimmedPref);
         for (String part : parts) {
             Matcher m = keyPattern.matcher(part);
             if (m.matches()) {
@@ -487,6 +500,13 @@ public class CustomProjection extends AbstractProjection {
         return new NullDatum(null, ellps);
     }
 
+    /**
+     * Parse {@code towgs84} parameter.
+     * @param paramList List of parameter arguments (expected: 3 or 7)
+     * @param ellps ellipsoid
+     * @return parsed datum ({@link ThreeParameterDatum} or {@link SevenParameterDatum})
+     * @throws ProjectionConfigurationException if the arguments cannot be parsed
+     */
     public Datum parseToWGS84(String paramList, Ellipsoid ellps) throws ProjectionConfigurationException {
         String[] numStr = paramList.split(",");
 
@@ -697,7 +717,12 @@ public class CustomProjection extends AbstractProjection {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     * @deprecated unused - remove in 2017-09
+     */
     @Override
+    @Deprecated
     public String getCacheDirectoryName() {
         if (cacheDir != null) {
             return cacheDir;

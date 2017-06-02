@@ -60,15 +60,15 @@ public class CombineWayAction extends JosmAction {
     }
 
     protected static boolean confirmChangeDirectionOfWays() {
-        ExtendedDialog ed = new ExtendedDialog(Main.parent,
+        return new ExtendedDialog(Main.parent,
                 tr("Change directions?"),
-                new String[] {tr("Reverse and Combine"), tr("Cancel")});
-        ed.setButtonIcons(new String[] {"wayflip", "cancel"});
-        ed.setContent(tr("The ways can not be combined in their current directions.  "
-                + "Do you want to reverse some of them?"));
-        ed.toggleEnable("combineway-reverse");
-        ed.showDialog();
-        return ed.getValue() == 1;
+                tr("Reverse and Combine"), tr("Cancel"))
+            .setButtonIcons("wayflip", "cancel")
+            .setContent(tr("The ways can not be combined in their current directions.  "
+                + "Do you want to reverse some of them?"))
+            .toggleEnable("combineway-reverse")
+            .showDialog()
+            .getValue() == 1;
     }
 
     protected static void warnCombiningImpossible() {

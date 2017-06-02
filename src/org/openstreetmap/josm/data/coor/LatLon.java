@@ -7,9 +7,9 @@ import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
-import static java.lang.Math.toRadians;
 import static org.openstreetmap.josm.data.projection.Ellipsoid.WGS84;
 import static org.openstreetmap.josm.tools.I18n.trc;
+import static org.openstreetmap.josm.tools.Utils.toRadians;
 
 import java.awt.geom.Area;
 import java.text.DecimalFormat;
@@ -42,7 +42,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author Imi
  */
-public class LatLon extends Coordinate {
+public class LatLon extends Coordinate implements ILatLon {
 
     private static final long serialVersionUID = 1L;
 
@@ -250,7 +250,11 @@ public class LatLon extends Coordinate {
         super(lon, lat);
     }
 
-    protected LatLon(LatLon coor) {
+    /**
+     * Creates a new LatLon object for the given coordinate
+     * @param coor The coordinates to copy from.
+     */
+    public LatLon(ILatLon coor) {
         super(coor.lon(), coor.lat());
     }
 
@@ -262,10 +266,7 @@ public class LatLon extends Coordinate {
         this(coor.getLat(), coor.getLon());
     }
 
-    /**
-     * Returns the latitude, i.e., the north-south position in degrees.
-     * @return the latitude
-     */
+    @Override
     public double lat() {
         return y;
     }
@@ -280,15 +281,12 @@ public class LatLon extends Coordinate {
         case DECIMAL_DEGREES: return cDdFormatter.format(y);
         case DEGREES_MINUTES_SECONDS: return dms(y) + ((y < 0) ? SOUTH : NORTH);
         case NAUTICAL: return dm(y) + ((y < 0) ? SOUTH : NORTH);
-        case EAST_NORTH: return cDdFormatter.format(Main.getProjection().latlon2eastNorth(this).north());
+        case EAST_NORTH: return cDdFormatter.format(this.getEastNorth().north());
         default: return "ERR";
         }
     }
 
-    /**
-     * Returns the longitude, i.e., the east-west position in degrees.
-     * @return the longitude
-     */
+    @Override
     public double lon() {
         return x;
     }
@@ -303,7 +301,7 @@ public class LatLon extends Coordinate {
         case DECIMAL_DEGREES: return cDdFormatter.format(x);
         case DEGREES_MINUTES_SECONDS: return dms(x) + ((x < 0) ? WEST : EAST);
         case NAUTICAL: return dm(x) + ((x < 0) ? WEST : EAST);
-        case EAST_NORTH: return cDdFormatter.format(Main.getProjection().latlon2eastNorth(this).east());
+        case EAST_NORTH: return cDdFormatter.format(this.getEastNorth().east());
         default: return "ERR";
         }
     }

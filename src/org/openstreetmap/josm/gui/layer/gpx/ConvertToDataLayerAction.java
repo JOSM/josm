@@ -73,7 +73,7 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
         @Override
         public DataSet convert() {
             final DataSet ds = new DataSet();
-            for (GpxTrack trk : layer.data.tracks) {
+            for (GpxTrack trk : layer.data.getTracks()) {
                 for (GpxTrackSegment segment : trk.getSegments()) {
                     List<Node> nodes = new ArrayList<>();
                     for (WayPoint p : segment.getWayPoints()) {

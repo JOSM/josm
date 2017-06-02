@@ -611,7 +611,6 @@ public class MapCSSStyleSource extends StyleSource {
 
     @Override
     public void apply(MultiCascade mc, OsmPrimitive osm, double scale, boolean pretendWayIsClosed) {
-        Environment env = new Environment(osm, mc, null, this);
         MapCSSRuleIndex matchingRuleIndex;
         if (osm instanceof Node) {
             matchingRuleIndex = nodeRules;
@@ -633,6 +632,7 @@ public class MapCSSStyleSource extends StyleSource {
             throw new IllegalArgumentException("Unsupported type: " + osm);
         }
 
+        Environment env = new Environment(osm, mc, null, this);
         // the declaration indices are sorted, so it suffices to save the last used index
         int lastDeclUsed = -1;
 
@@ -674,20 +674,14 @@ public class MapCSSStyleSource extends StyleSource {
         if (SUPPORTED_KEYS.contains(feature)) return true;
         switch (feature) {
             case "user-agent":
-            {
                 String s = Cascade.convertTo(val, String.class);
                 return "josm".equals(s);
-            }
             case "min-josm-version":
-            {
-                Float v = Cascade.convertTo(val, Float.class);
-                return v != null && Math.round(v) <= Version.getInstance().getVersion();
-            }
+                Float min = Cascade.convertTo(val, Float.class);
+                return min != null && Math.round(min) <= Version.getInstance().getVersion();
             case "max-josm-version":
-            {
-                Float v = Cascade.convertTo(val, Float.class);
-                return v != null && Math.round(v) >= Version.getInstance().getVersion();
-            }
+                Float max = Cascade.convertTo(val, Float.class);
+                return max != null && Math.round(max) >= Version.getInstance().getVersion();
             default:
                 return false;
         }

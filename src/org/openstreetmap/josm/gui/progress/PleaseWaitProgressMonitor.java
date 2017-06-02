@@ -17,6 +17,11 @@ import org.openstreetmap.josm.gui.PleaseWaitDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
+/**
+ * A progress monitor used in {@link org.openstreetmap.josm.gui.PleaseWaitRunnable}.
+ * <p>
+ * Progress is displayed in a dialog window ({@link PleaseWaitDialog}).
+ */
 public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 
     /**

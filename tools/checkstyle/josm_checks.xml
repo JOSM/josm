@@ -14,7 +14,7 @@ JOSM Checkstyle rules
   <property name="charset" value="UTF-8"/>
   <module name="TreeWalker">
     <module name="BooleanExpressionComplexity">
-      <property name="max" value="6"/>
+      <property name="max" value="7"/>
     </module>
     <module name="CatchParameterName">
       <property name="format" value="^(e[1-9]?|t|ex[1-9]?|[a-z][a-z][a-zA-Z]+)$"/>
@@ -57,7 +57,6 @@ JOSM Checkstyle rules
       <property name="max" value="10"/>
     </module>
     <module name="OuterTypeNumber"/>
-    <module name="MethodCount"/>
     <module name="GenericWhitespace"/>
     <module name="EmptyForInitializerPad"/>
     <module name="EmptyForIteratorPad"/>

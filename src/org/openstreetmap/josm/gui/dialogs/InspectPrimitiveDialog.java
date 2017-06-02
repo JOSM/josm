@@ -61,13 +61,13 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
      * @param layer data layer
      */
     public InspectPrimitiveDialog(final Collection<OsmPrimitive> primitives, OsmDataLayer layer) {
-        super(Main.parent, tr("Advanced object info"), new String[] {tr("Close")});
+        super(Main.parent, tr("Advanced object info"), tr("Close"));
         this.primitives = new ArrayList<>(primitives);
         this.layer = layer;
         setRememberWindowGeometry(getClass().getName() + ".geometry",
                 WindowGeometry.centerInWindow(Main.parent, new Dimension(750, 550)));
 
-        setButtonIcons(new String[]{"ok.png"});
+        setButtonIcons("ok");
         final JTabbedPane tabs = new JTabbedPane();
 
         tabs.addTab(tr("data"), genericMonospacePanel(new JPanel(), buildDataText(layer, this.primitives)));

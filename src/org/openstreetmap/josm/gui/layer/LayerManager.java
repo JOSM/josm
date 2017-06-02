@@ -63,6 +63,9 @@ public class LayerManager {
         void layerOrderChanged(LayerOrderChangeEvent e);
     }
 
+    /**
+     * Base class of layer manager events.
+     */
     protected static class LayerManagerEvent {
         private final LayerManager source;
 
@@ -214,6 +217,11 @@ public class LayerManager {
         GuiHelper.runInEDTAndWaitWithException(() -> realAddLayer(layer, initialZoom));
     }
 
+    /**
+     * Add a layer (implementation).
+     * @param layer The layer to add
+     * @param initialZoom whether if the mapview must be zoomed at layer projection bounds
+     */
     protected synchronized void realAddLayer(Layer layer, boolean initialZoom) {
         if (containsLayer(layer)) {
             throw new IllegalArgumentException("Cannot add a layer twice: " + layer);
@@ -239,6 +247,10 @@ public class LayerManager {
         GuiHelper.runInEDTAndWaitWithException(() -> realRemoveLayer(layer));
     }
 
+    /**
+     * Remove the layer from the mapview (implementation).
+     * @param layer The layer to remove
+     */
     protected synchronized void realRemoveLayer(Layer layer) {
         GuiHelper.assertCallFromEdt();
         Set<Layer> toRemove = Collections.newSetFromMap(new IdentityHashMap<Layer, Boolean>());
@@ -255,6 +267,11 @@ public class LayerManager {
         }
     }
 
+    /**
+     * Remove a single layer from the mapview (implementation).
+     * @param layerToRemove The layer to remove
+     * @return A list of layers that should be removed afterwards.
+     */
     protected Collection<Layer> realRemoveSingleLayer(Layer layerToRemove) {
         updateLayers(mutableLayers -> mutableLayers.remove(layerToRemove));
         return fireLayerRemoving(layerToRemove);
@@ -272,6 +289,12 @@ public class LayerManager {
         GuiHelper.runInEDTAndWaitWithException(() -> realMoveLayer(layer, position));
     }
 
+    /**
+     * Move a layer to a new position (implementation).
+     * @param layer The layer to move.
+     * @param position The position.
+     * @throws IndexOutOfBoundsException if the position is out of bounds.
+     */
     protected synchronized void realMoveLayer(Layer layer, int position) {
         checkContainsLayer(layer);
         checkPosition(position);
@@ -359,6 +382,11 @@ public class LayerManager {
         return getLayers().contains(layer);
     }
 
+    /**
+     * Checks if the specified layer is handled by this layer manager.
+     * @param layer layer to check
+     * @throws IllegalArgumentException if layer is not handled by this layer manager
+     */
     protected void checkContainsLayer(Layer layer) {
         if (!containsLayer(layer)) {
             throw new IllegalArgumentException(layer + " is not managed by us.");
@@ -370,27 +398,27 @@ public class LayerManager {
      *
      * @param listener the listener.
      * @throws IllegalArgumentException If the listener was added twice.
+     * @see #addAndFireLayerChangeListener
      */
     public synchronized void addLayerChangeListener(LayerChangeListener listener) {
-        addLayerChangeListener(listener, false);
-    }
-
-    /**
-     * Adds a layer change listener
-     *
-     * @param listener the listener.
-     * @param fireAdd if we should fire an add event for every layer in this manager.
-     * @throws IllegalArgumentException If the listener was added twice.
-     */
-    public synchronized void addLayerChangeListener(LayerChangeListener listener, boolean fireAdd) {
         if (layerChangeListeners.contains(listener)) {
             throw new IllegalArgumentException("Listener already registered.");
         }
         layerChangeListeners.add(listener);
-        if (fireAdd) {
-            for (Layer l : getLayers()) {
-                listener.layerAdded(new LayerAddEvent(this, l, true));
-            }
+    }
+
+    /**
+     * Adds a layer change listener and fire an add event for every layer in this manager.
+     *
+     * @param listener the listener.
+     * @throws IllegalArgumentException If the listener was added twice.
+     * @see #addLayerChangeListener
+     * @since 11905
+     */
+    public synchronized void addAndFireLayerChangeListener(LayerChangeListener listener) {
+        addLayerChangeListener(listener);
+        for (Layer l : getLayers()) {
+            listener.layerAdded(new LayerAddEvent(this, l, true));
         }
     }
 
@@ -398,27 +426,27 @@ public class LayerManager {
      * Removes a layer change listener
      *
      * @param listener the listener. Ignored if null or already registered.
+     * @see #removeAndFireLayerChangeListener
      */
     public synchronized void removeLayerChangeListener(LayerChangeListener listener) {
-        removeLayerChangeListener(listener, false);
+        if (!layerChangeListeners.remove(listener)) {
+            throw new IllegalArgumentException("Listener was not registered before: " + listener);
+        }
     }
 
     /**
-     * Removes a layer change listener
+     * Removes a layer change listener and fire a remove event for every layer in this manager.
+     * The event is fired as if the layer was deleted but
+     * {@link LayerRemoveEvent#scheduleRemoval(Collection)} is ignored.
      *
      * @param listener the listener.
-     * @param fireRemove if we should fire a remove event for every layer in this manager. The event is fired as if the layer was deleted but
-     * {@link LayerRemoveEvent#scheduleRemoval(Collection)} is ignored.
+     * @see #removeLayerChangeListener
+     * @since 11905
      */
-    public synchronized void removeLayerChangeListener(LayerChangeListener listener, boolean fireRemove) {
-        if (!layerChangeListeners.remove(listener)) {
-            throw new IllegalArgumentException("Listener was not registered before: " + listener);
-        } else {
-            if (fireRemove) {
-                for (Layer l : getLayers()) {
-                    listener.layerRemoving(new LayerRemoveEvent(this, l));
-                }
-            }
+    public synchronized void removeAndFireLayerChangeListener(LayerChangeListener listener) {
+        removeLayerChangeListener(listener);
+        for (Layer l : getLayers()) {
+            listener.layerRemoving(new LayerRemoveEvent(this, l));
         }
     }
 
@@ -474,6 +502,9 @@ public class LayerManager {
         GuiHelper.runInEDTAndWaitWithException(this::realResetState);
     }
 
+    /**
+     * Reset all layer manager state (implementation).
+     */
     protected synchronized void realResetState() {
         // The listeners trigger the removal of other layers
         while (!getLayers().isEmpty()) {

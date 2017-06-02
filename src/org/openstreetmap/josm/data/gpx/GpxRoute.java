@@ -4,7 +4,15 @@ package org.openstreetmap.josm.data.gpx;
 import java.util.Collection;
 import java.util.LinkedList;
 
+/**
+ * A route is a part of a GPX file containing of multiple GPX points.
+ */
 public class GpxRoute extends WithAttributes {
+    /**
+     * The points this route consists of. Should not be changed after creation.
+     * <p>
+     * This collection is ordered.
+     */
     public Collection<WayPoint> routePoints = new LinkedList<>();
 
     @Override

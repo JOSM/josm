@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm.visitor.paint;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.MapViewState;
@@ -41,7 +42,7 @@ public class OffsetIterator implements Iterator<MapViewPoint> {
      */
     public OffsetIterator(MapViewState mapState, List<Node> nodes, double offset) {
         this.mapState = mapState;
-        this.nodes = nodes;
+        this.nodes = nodes.stream().filter(Node::isLatLonKnown).collect(Collectors.toList());
         this.offset = offset;
         idx = 0;
     }

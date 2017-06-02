@@ -2,13 +2,14 @@
 package org.openstreetmap.josm.data.osm;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
  * INode captures the common functions of {@link Node} and {@link NodeData}.
  * @since 4098
  */
-public interface INode extends IPrimitive {
+public interface INode extends IPrimitive, ILatLon {
 
     /**
      * Returns lat/lon coordinates of this node.
@@ -21,12 +22,6 @@ public interface INode extends IPrimitive {
      * @param coor lat/lon coordinates of this node
      */
     void setCoor(LatLon coor);
-
-    /**
-     * Returns east/north coordinates of this node.
-     * @return east/north coordinates of this node
-     */
-    EastNorth getEastNorth();
 
     /**
      * Sets east/north coordinates of this node.

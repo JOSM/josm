@@ -56,12 +56,15 @@ public class OpenLocationAction extends JosmAction {
      * true if the URL needs to be opened in a new layer, false otherwise
      */
     private static final BooleanProperty USE_NEW_LAYER = new BooleanProperty("download.newlayer", false);
+    /**
+     * the list of download tasks
+     */
     protected final transient List<Class<? extends DownloadTask>> downloadTasks;
 
     static class WhichTasksToPerformDialog extends ExtendedDialog {
         WhichTasksToPerformDialog(JList<DownloadTask> list) {
             super(Main.parent, tr("Which tasks to perform?"), new String[]{tr("Ok"), tr("Cancel")}, true);
-            setButtonIcons(new String[]{"ok", "cancel"});
+            setButtonIcons("ok", "cancel");
             final JPanel pane = new JPanel(new GridLayout(2, 1));
             pane.add(new JLabel(tr("Which tasks to perform?")));
             pane.add(list);
@@ -134,17 +137,14 @@ public class OpenLocationAction extends JosmAction {
 
         ExtendedDialog dialog = new ExtendedDialog(Main.parent,
                 tr("Download Location"),
-                new String[] {tr("Download URL"), tr("Cancel")}
-        );
-        dialog.setContent(all, false /* don't embedded content in JScrollpane  */);
-        dialog.setButtonIcons(new String[] {"download", "cancel"});
-        dialog.setToolTipTexts(new String[] {
+                tr("Download URL"), tr("Cancel"))
+            .setContent(all, false /* don't embedded content in JScrollpane  */)
+            .setButtonIcons("download", "cancel")
+            .setToolTipTexts(
                 tr("Start downloading data"),
-                tr("Close dialog and cancel downloading")
-        });
-        dialog.configureContextsensitiveHelp("/Action/OpenLocation", true /* show help button */);
-        dialog.showDialog();
-        if (dialog.getValue() == 1) {
+                tr("Close dialog and cancel downloading"))
+            .configureContextsensitiveHelp("/Action/OpenLocation", true /* show help button */);
+        if (dialog.showDialog().getValue() == 1) {
             USE_NEW_LAYER.put(layer.isSelected());
             remindUploadAddressHistory(uploadAddresses);
             openUrl(Utils.strip(uploadAddresses.getText()));
@@ -199,44 +199,44 @@ public class OpenLocationAction extends JosmAction {
      * Open the given URL.
      * @param newLayer true if the URL needs to be opened in a new layer, false otherwise
      * @param url The URL to open
+     * @return the list of tasks that have been started successfully (can be empty).
+     * @since 11986 (return type)
      */
-    public void openUrl(boolean newLayer, String url) {
-        realOpenUrl(newLayer, url);
+    public List<Future<?>> openUrl(boolean newLayer, String url) {
+        return realOpenUrl(newLayer, url);
     }
 
     /**
      * Open the given URL. This class checks the {@link #USE_NEW_LAYER} preference to check if a new layer should be used.
      * @param url The URL to open
-     * @return <code>true</code> if at least one task was started successfully.
-     * @since 11279
+     * @return the list of tasks that have been started successfully (can be empty).
+     * @since 11986 (return type)
      */
-    public boolean openUrl(String url) {
+    public List<Future<?>> openUrl(String url) {
         return realOpenUrl(USE_NEW_LAYER.get(), url);
     }
 
-    private boolean realOpenUrl(boolean newLayer, String url) {
+    private List<Future<?>> realOpenUrl(boolean newLayer, String url) {
         Collection<DownloadTask> tasks = findDownloadTasks(url, false);
 
         if (tasks.size() > 1) {
             tasks = askWhichTasksToLoad(tasks);
         } else if (tasks.isEmpty()) {
             warnNoSuitableTasks(url);
-            return false;
+            return Collections.emptyList();
         }
 
         PleaseWaitProgressMonitor monitor = new PleaseWaitProgressMonitor(tr("Download Data"));
 
-        boolean hadAnySuccess = false;
+        List<Future<?>> result = new ArrayList<>();
         for (final DownloadTask task : tasks) {
             try {
-                Future<?> future = task.loadUrl(newLayer, url, monitor);
-                Main.worker.submit(new PostDownloadHandler(task, future));
-                hadAnySuccess = true;
+                result.add(Main.worker.submit(new PostDownloadHandler(task, task.loadUrl(newLayer, url, monitor))));
             } catch (IllegalArgumentException e) {
                 Main.error(e);
             }
         }
-        return hadAnySuccess;
+        return result;
     }
 
     /**

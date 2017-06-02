@@ -333,9 +333,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
     }
 
     public boolean canRemove(int... rows) {
-        if (rows == null || rows.length == 0)
-            return false;
-        return true;
+        return rows != null && rows.length != 0;
     }
 
     public DefaultListSelectionModel getSelectionModel() {

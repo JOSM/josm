@@ -8,6 +8,12 @@ import java.util.concurrent.Future;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 
+/**
+ * Specialized task for downloading OSM notes within bounds.
+ * <p>
+ * It handles one URL pattern: openstreetmap website URL with {@code #map?} argument.
+ * @since 8195
+ */
 public class DownloadNotesUrlBoundsTask extends DownloadNotesTask {
 
     @Override

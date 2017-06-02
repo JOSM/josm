@@ -2,7 +2,7 @@
 package org.openstreetmap.josm.data.validation;
 
 import java.awt.Color;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +17,9 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.draw.MapViewPath;
+import org.openstreetmap.josm.gui.draw.SymbolShape;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Visitor that highlights the primitives affected by an error
@@ -25,7 +28,7 @@ import org.openstreetmap.josm.gui.MapView;
  */
 public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
     /** The graphics */
-    private final Graphics g;
+    private final Graphics2D g;
     /** The MapView */
     private final MapView mv;
 
@@ -42,7 +45,7 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
      * @param g The graphics
      * @param mv The Mapview
      */
-    public PaintVisitor(Graphics g, MapView mv) {
+    public PaintVisitor(Graphics2D g, MapView mv) {
         this.g = g;
         this.mv = mv;
     }
@@ -119,14 +122,14 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
         PaintedPoint pp = new PaintedPoint(n.getCoor(), color);
 
         if (!paintedPoints.contains(pp)) {
-            Point p = mv.getPoint(n);
+            MapViewPath circle = new MapViewPath(mv.getState()).shapeAround(n, SymbolShape.CIRCLE, 10);
 
             if (selected) {
                 g.setColor(getHighlightColor(color));
-                g.fillOval(p.x - 5, p.y - 5, 10, 10);
+                g.fill(circle);
             }
             g.setColor(color);
-            g.drawOval(p.x - 5, p.y - 5, 10, 10);
+            g.draw(circle);
             paintedPoints.add(pp);
         }
     }
@@ -143,7 +146,7 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
         double t = Math.atan2((double) p2.x - p1.x, (double) p2.y - p1.y);
         double cosT = 5 * Math.cos(t);
         double sinT = 5 * Math.sin(t);
-        int deg = (int) Math.toDegrees(t);
+        int deg = (int) Utils.toDegrees(t);
         if (selected) {
             g.setColor(getHighlightColor(color));
             int[] x = new int[] {(int) (p1.x + cosT), (int) (p2.x + cosT),
@@ -224,8 +227,7 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
 
     /**
      * Checks if the given segment is in the visible area.
-     * NOTE: This will return true for a small number of non-visible
-     *       segments.
+     * NOTE: This will return true for a small number of non-visible segments.
      * @param n1 The first point of the segment to check
      * @param n2 The second point of the segment to check
      * @return {@code true} if the segment is visible
@@ -233,15 +235,10 @@ public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
     protected boolean isSegmentVisible(Node n1, Node n2) {
         Point p1 = mv.getPoint(n1);
         Point p2 = mv.getPoint(n2);
-        if ((p1.x < 0) && (p2.x < 0))
-            return false;
-        if ((p1.y < 0) && (p2.y < 0))
-            return false;
-        if ((p1.x > mv.getWidth()) && (p2.x > mv.getWidth()))
-            return false;
-        if ((p1.y > mv.getHeight()) && (p2.y > mv.getHeight()))
-            return false;
-        return true;
+        return (p1.x >= 0 || p2.x >= 0)
+            && (p1.y >= 0 || p2.y >= 0)
+            && (p1.x <= mv.getWidth() || p2.x <= mv.getWidth())
+            && (p1.y <= mv.getHeight() || p2.y <= mv.getHeight());
     }
 
     @Override

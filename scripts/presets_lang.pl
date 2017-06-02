@@ -36,10 +36,6 @@ sub handle_start
       my $main = `wget "$data{href}" -O - -q`;
       my $h = uri_unescape($data{href});
       my $v = "href=\"$h\"";
-      if($h eq "http://wiki.openstreetmap.org/wiki/Proposed_features/House_numbers/Karlsruhe_Schema")
-      {
-        $datan{"de"} = "/wiki/Proposed_features/De:Hausnummern";
-      }
       while($main =~ /<a href="(\/wiki\/[^"]+)"[^>]+><b>·<\/b> <bdi lang="([a-z_A-Z-]+)"(?: style="unicode-bidi:embed;unicode-bidi:-webkit-isolate;unicode-bidi:isolate")?>/g)
       {
         my $lang = lc($2);
@@ -68,7 +64,7 @@ sub handle_start
         $v .= "\n" . (" " x 18) . "$l.href=\"http://wiki.openstreetmap.org$datan{$l}\"";
       }
       print "$v\n";
-      print "Replace failed for $data{href}.\n" if !($file =~ s/(<link )href="\Q$data{href}\E.*?( ?\/>)/$1$v$2/s);
+      print "Replace failed for $data{href}.\n" if !($file =~ s/(<link )href="\Q$data{href}\E".*?( ?\/>)/$1$v$2/s);
 
       $skip++;
     }

@@ -28,6 +28,8 @@ public class Roles extends TaggingPresetItem {
         public Set<TaggingPresetType> types; // NOSONAR
         /** Role name used in a relation */
         public String key; // NOSONAR
+        /** Is the role name a regular expression */
+        public boolean regexp; // NOSONAR
         /** The text to display */
         public String text; // NOSONAR
         /** The context used for translating {@link #text} */
@@ -36,8 +38,9 @@ public class Roles extends TaggingPresetItem {
         public String locale_text; // NOSONAR
         /** An expression (cf. search dialog) for objects of this role */
         public SearchCompiler.Match memberExpression; // NOSONAR
-
+        /** Is this role required at least once in the relation? */
         public boolean required; // NOSONAR
+        /** How often must the element appear */
         private long count;
 
         public void setType(String types) throws SAXException {
@@ -49,6 +52,13 @@ public class Roles extends TaggingPresetItem {
                 required = true;
             } else if (!"optional".equals(str))
                 throw new SAXException(tr("Unknown requisite: {0}", str));
+        }
+
+        public void setRegexp(String str) throws SAXException {
+            if ("true".equals(str)) {
+                regexp = true;
+            } else if (!"false".equals(str))
+                throw new SAXException(tr("Unknown regexp value: {0}", str));
         }
 
         public void setMember_expression(String memberExpression) throws SAXException {
@@ -82,6 +92,20 @@ public class Roles extends TaggingPresetItem {
                 return c != 0 ? c : 0;
             else
                 return c != 0 ? c : 1;
+        }
+
+        /**
+         * Check if the given role matches this class (required to check regexp role types)
+         * @param role role to check
+         * @return <code>true</code> if role matches
+         * @since 11989
+         */
+        public boolean isRole(String role) {
+            if (regexp && role != null) { // pass null through, it will anyway fail
+                
+                return role.matches(this.key);
+            }
+            return this.key.equals(role);
         }
 
         public boolean addToPanel(JPanel p) {

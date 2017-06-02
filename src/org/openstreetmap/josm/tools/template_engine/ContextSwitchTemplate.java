@@ -20,6 +20,11 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 
+/**
+ * The context switch offers possibility to use tags of referenced primitive when constructing primitive name.
+ * @author jttt
+ * @since 4546
+ */
 public class ContextSwitchTemplate implements TemplateEntry {
 
     private static final TemplateEngineDataProvider EMPTY_PROVIDER = new TemplateEngineDataProvider() {
@@ -243,6 +248,13 @@ public class ContextSwitchTemplate implements TemplateEntry {
             return m;
     }
 
+    /**
+     * Constructs a new {@code ContextSwitchTemplate}.
+     * @param match match
+     * @param template template
+     * @param searchExpressionPosition search expression position
+     * @throws ParseError if a parse error occurs, or if the match transformation returns the same primitive
+     */
     public ContextSwitchTemplate(Match match, TemplateEntry template, int searchExpressionPosition) throws ParseError {
         Match m = transform(match, searchExpressionPosition);
         if (!(m instanceof ContextProvider))

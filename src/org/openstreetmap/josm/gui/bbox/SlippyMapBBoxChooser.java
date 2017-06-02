@@ -58,7 +58,6 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         static {
             // Urls that already exist in the slippymap chooser and shouldn't be copied from TMS layer list
             existingSlippyMapUrls.add("https://{switch:a,b,c}.tile.openstreetmap.org/{zoom}/{x}/{y}.png");      // Mapnik
-            existingSlippyMapUrls.add("http://tile.opencyclemap.org/cycle/{zoom}/{x}/{y}.png"); // Cyclemap
         }
 
         @Override
@@ -97,9 +96,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
 
     private static CopyOnWriteArrayList<TileSourceProvider> providers = new CopyOnWriteArrayList<>();
     static {
-        addTileSourceProvider(() -> Arrays.<TileSource>asList(
-                new OsmTileSource.Mapnik(),
-                new OsmTileSource.CycleMap()));
+        addTileSourceProvider(() -> Arrays.<TileSource>asList(new OsmTileSource.Mapnik()));
         addTileSourceProvider(new TMSTileSourceProvider());
     }
 

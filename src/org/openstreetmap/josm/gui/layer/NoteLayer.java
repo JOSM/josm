@@ -259,6 +259,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
             }
         }
         noteData.setSelectedNote(closestNote);
+        invalidate();
     }
 
     @Override

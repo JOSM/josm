@@ -27,7 +27,19 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class MoveAction extends JosmAction {
 
-    public enum Direction { UP, LEFT, RIGHT, DOWN }
+    /**
+     * Move direction.
+     */
+    public enum Direction {
+        /** Move up */
+        UP,
+        /** Move left */
+        LEFT,
+        /** Move right */
+        RIGHT,
+        /** Move down */
+        DOWN
+    }
 
     private final Direction myDirection;
 
@@ -124,13 +136,17 @@ public class MoveAction extends JosmAction {
         ? Main.main.undoRedo.commands.getLast() : null;
 
         ds.beginUpdate();
-        if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
-            ((MoveCommand) c).moveAgain(distx, disty);
-        } else {
-            c = new MoveCommand(selection, distx, disty);
-            Main.main.undoRedo.add(c);
+        try {
+            if (c instanceof MoveCommand && ds.equals(c.getAffectedDataSet())
+                    && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
+                ((MoveCommand) c).moveAgain(distx, disty);
+            } else {
+                c = new MoveCommand(selection, distx, disty);
+                Main.main.undoRedo.add(c);
+            }
+        } finally {
+            ds.endUpdate();
         }
-        ds.endUpdate();
 
         for (Node n : affectedNodes) {
             if (n.getCoor().isOutSideWorld()) {

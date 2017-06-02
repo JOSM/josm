@@ -31,13 +31,16 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivilegedAction;
 import java.text.Bidi;
+import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.text.ParseException;
 import java.util.AbstractCollection;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -91,6 +94,10 @@ public final class Utils {
     private static final char[] DEFAULT_STRIP = {'\u200B', '\uFEFF'};
 
     private static final String[] SIZE_UNITS = {"B", "kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"};
+
+    // Constants backported from Java 9, see https://bugs.openjdk.java.net/browse/JDK-4477961
+    private static final double TO_DEGREES = 180.0 / Math.PI;
+    private static final double TO_RADIANS = Math.PI / 180.0;
 
     private Utils() {
         // Hide default constructor for utils classes
@@ -1191,9 +1198,7 @@ public final class Utils {
      * @since 7356
      */
     public static boolean isLocalUrl(String url) {
-        if (url == null || url.startsWith("http://") || url.startsWith("https://") || url.startsWith("resource://"))
-            return false;
-        return true;
+        return url != null && !url.startsWith("http://") && !url.startsWith("https://") && !url.startsWith("resource://");
     }
 
     /**
@@ -1286,7 +1291,6 @@ public final class Utils {
     /**
      * Returns a new secure DOM builder, supporting XML namespaces.
      * @return a new secure DOM builder, supporting XML namespaces
-     * @throws ParserConfigurationException if a parser cannot be created which satisfies the requested configuration.
      * @throws ParserConfigurationException if a parser cannot be created which satisfies the requested configuration.
      * @since 10404
      */
@@ -1553,5 +1557,136 @@ public final class Utils {
         } else {
             return val;
         }
+    }
+
+    /**
+     * Convert angle from radians to degrees.
+     *
+     * Replacement for {@link Math#toDegrees(double)} to match the Java 9
+     * version of that method. (Can be removed when JOSM support for Java 8 ends.)
+     * Only relevant in relation to ProjectionRegressionTest.
+     * @param angleRad an angle in radians
+     * @return the same angle in degrees
+     * @see <a href="https://josm.openstreetmap.de/ticket/11889">#11889</a>
+     * @since 12013
+     */
+    public static double toDegrees(double angleRad) {
+        return angleRad * TO_DEGREES;
+    }
+
+    /**
+     * Convert angle from degrees to radians.
+     *
+     * Replacement for {@link Math#toRadians(double)} to match the Java 9
+     * version of that method. (Can be removed when JOSM support for Java 8 ends.)
+     * Only relevant in relation to ProjectionRegressionTest.
+     * @param angleDeg an angle in degrees
+     * @return the same angle in radians
+     * @see <a href="https://josm.openstreetmap.de/ticket/11889">#11889</a>
+     * @since 12013
+     */
+    public static double toRadians(double angleDeg) {
+        return angleDeg * TO_RADIANS;
+    }
+
+    /**
+     * Returns the Java version as an int value.
+     * @return the Java version as an int value (8, 9, etc.)
+     * @since 12130
+     */
+    public static int getJavaVersion() {
+        String version = System.getProperty("java.version");
+        if (version.startsWith("1.")) {
+            version = version.substring(2);
+        }
+        // Allow these formats:
+        // 1.8.0_72-ea
+        // 9-ea
+        // 9
+        // 9.0.1
+        int dotPos = version.indexOf('.');
+        int dashPos = version.indexOf('-');
+        return Integer.parseInt(version.substring(0,
+                dotPos > -1 ? dotPos : dashPos > -1 ? dashPos : 1));
+    }
+
+    /**
+     * Returns the Java update as an int value.
+     * @return the Java update as an int value (121, 131, etc.)
+     * @since 12217
+     */
+    public static int getJavaUpdate() {
+        String version = System.getProperty("java.version");
+        if (version.startsWith("1.")) {
+            version = version.substring(2);
+        }
+        // Allow these formats:
+        // 1.8.0_72-ea
+        // 9-ea
+        // 9
+        // 9.0.1
+        int undePos = version.indexOf('_');
+        int dashPos = version.indexOf('-');
+        if (undePos > -1) {
+            return Integer.parseInt(version.substring(undePos + 1,
+                    dashPos > -1 ? dashPos : version.length()));
+        }
+        int firstDotPos = version.indexOf('.');
+        int lastDotPos = version.lastIndexOf('.');
+        return firstDotPos > - 1 ? Integer.parseInt(version.substring(firstDotPos + 1,
+                lastDotPos > -1 ? lastDotPos : version.length())) : 0;
+    }
+
+    /**
+     * Returns the Java build number as an int value.
+     * @return the Java build number as an int value (0, 1, etc.)
+     * @since 12217
+     */
+    public static int getJavaBuild() {
+        String version = System.getProperty("java.runtime.version");
+        int bPos = version.indexOf('b');
+        int pPos = version.indexOf('+');
+        return Integer.parseInt(version.substring(bPos > -1 ? bPos + 1 : pPos + 1, version.length()));
+    }
+
+    /**
+     * Returns the JRE expiration date.
+     * @return the JRE expiration date, or null
+     * @since 12219
+     */
+    public static Date getJavaExpirationDate() {
+        try {
+            Object value = null;
+            Class<?> c = Class.forName("com.sun.deploy.config.BuiltInProperties");
+            try {
+                value = c.getDeclaredField("JRE_EXPIRATION_DATE").get(null);
+            } catch (NoSuchFieldException e) {
+                // Field is gone with Java 9, there's a method instead
+                Main.trace(e);
+                value = c.getDeclaredMethod("getProperty", String.class).invoke(null, "JRE_EXPIRATION_DATE");
+            }
+            if (value instanceof String) {
+                return DateFormat.getDateInstance(3, Locale.US).parse((String) value);
+            }
+        } catch (IllegalArgumentException | ReflectiveOperationException | SecurityException | ParseException e) {
+            Main.debug(e);
+        }
+        return null;
+    }
+
+    /**
+     * Returns the latest version of Java, from Oracle website.
+     * @return the latest version of Java, from Oracle website
+     * @since 12219
+     */
+    public static String getJavaLatestVersion() {
+        try {
+            return HttpClient.create(
+                    new URL(Main.pref.get("java.baseline.version.url", "http://javadl-esd-secure.oracle.com/update/baseline.version")))
+                    .connect().fetchContent().split("\n")[0];
+        } catch (IOException e) {
+            Main.error(e);
+        }
+        return null;
     }
 }

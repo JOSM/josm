@@ -16,13 +16,19 @@
   <rule ref="rulesets/java/finalizers.xml"/>
   <rule ref="rulesets/java/imports.xml"/>
   <rule ref="rulesets/java/migrating.xml"/>
-  <rule ref="rulesets/java/naming.xml"/>
+  <rule ref="rulesets/java/naming.xml"/>-->
   <rule ref="rulesets/java/optimizations.xml">
   	<exclude name="LocalVariableCouldBeFinal"/>
   	<exclude name="MethodArgumentCouldBeFinal"/>
-  </rule>-->
+  	<exclude name="AvoidInstantiatingObjectsInLoops"/>
+  	<exclude name="PrematureDeclaration"/>
+  	<exclude name="SimplifyStartsWith"/>
+  	<exclude name="UseStringBufferForStringAppends"/>
+  	<exclude name="UseArrayListInsteadOfVector"/>
+  </rule>
   <rule ref="rulesets/java/strictexception.xml">
   	<exclude name="ExceptionAsFlowControl"/>
+  	<exclude name="AvoidCatchingGenericException"/>
   	<exclude name="AvoidRethrowingException"/>
   </rule>
   <rule ref="rulesets/java/strings.xml">
@@ -31,6 +37,7 @@
   	<exclude name="AvoidStringBufferField"/>
   	<exclude name="StringToString"/>
   	<exclude name="UselessStringValueOf"/>
+  	<exclude name="InefficientEmptyStringCheck"/>
   </rule>
   <rule ref="rulesets/java/typeresolution.xml">
   	<exclude name="LooseCoupling"/>

@@ -8,7 +8,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.text.DateFormat;
@@ -97,20 +96,27 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
         lblInfo = new JMultilineLabel("");
         pnl1.add(lblInfo, BorderLayout.CENTER);
 
-        JPanel pnlUserAndChangeset = new JPanel(new GridLayout(2, 2));
+        // +-----------------------+-------------------------------------+
+        // | User:                 | lblUser                             |
+        // +-----------------------+-------------------------------------+
+        // | changesetButton       | lblChangeset | lblChangesetComments |
+        // +-----------------------+-------------------------------------+
+        JPanel pnlUserAndChangeset = new JPanel(new GridBagLayout());
+        pnlUserAndChangeset.add(new JLabel(tr("User:")), GBC.std());
+
         lblUser = new UrlLabel("", 2);
-        pnlUserAndChangeset.add(new JLabel(tr("User:")));
-        pnlUserAndChangeset.add(lblUser);
-        changesetButton.setMargin(new Insets(0, 0, 0, 0));
-        pnlUserAndChangeset.add(changesetButton);
+        pnlUserAndChangeset.add(lblUser, GBC.eol().insets(5, 0, 0, 0).weight(1, 0));
+
+        changesetButton.setMargin(new Insets(0, 0, 0, 2));
+        pnlUserAndChangeset.add(changesetButton, GBC.std().fill().weight(0, 0));
+
         lblChangeset = new UrlLabel("", 2);
-        final JPanel pnlChangesetInfo = new JPanel(new BorderLayout());
-        pnlChangesetInfo.add(lblChangeset, BorderLayout.CENTER);
+        pnlUserAndChangeset.add(lblChangeset, GBC.std().insets(5, 0, 0, 0).weight(1, 0));
+
         lblChangesetComments.setAction(changesetCommentsDialogAction);
         lblChangesetComments.setMargin(new Insets(0, 0, 0, 0));
         lblChangesetComments.setIcon(new ImageProvider("dialogs/notes/note_comment").setMaxSize(12).get());
-        pnlChangesetInfo.add(lblChangesetComments, BorderLayout.EAST);
-        pnlUserAndChangeset.add(pnlChangesetInfo);
+        pnlUserAndChangeset.add(lblChangesetComments, GBC.eol());
 
         texChangesetComment = buildTextArea(tr("Changeset comment"));
         texChangesetSource = buildTextArea(tr("Changeset source"));

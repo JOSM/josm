@@ -1013,6 +1013,10 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         return result;
     }
 
+    /**
+     * Gets a list of all primitives in the current dataset that reference this primitive.
+     * @return The referrers
+     */
     public final List<OsmPrimitive> getReferrers() {
         return getReferrers(false);
     }
@@ -1151,9 +1155,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     boolean hasEqualSemanticFlags(final OsmPrimitive other) {
         if (!isNew() && id != other.id)
             return false;
-        if (isIncomplete() ^ other.isIncomplete()) // exclusive or operator for performance (see #7159)
-            return false;
-        return true;
+        return !(isIncomplete() ^ other.isIncomplete()); // exclusive or operator for performance (see #7159)
     }
 
     boolean hasEqualSemanticAttributes(final OsmPrimitive other, final boolean testInterestingTagsOnly) {
@@ -1353,7 +1355,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      */
     public final boolean hasAreaTags() {
         return hasKey("landuse", "amenity", "building", "building:part")
-                || hasTag("area", "yes")
+                || hasTag("area", OsmUtils.TRUE_VALUE)
                 || hasTag("waterway", "riverbank")
                 || hasTagDifferent("leisure", "picnic_table", "slipway", "firepit")
                 || hasTag("natural", "water", "wood", "scrub", "wetland", "grassland", "heath", "rock", "bare_rock",

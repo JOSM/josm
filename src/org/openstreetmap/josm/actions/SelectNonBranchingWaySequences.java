@@ -159,6 +159,6 @@ public class SelectNonBranchingWaySequences {
         } while (way != null);
 
         if (selectionChanged)
-            data.setSelected(selection, true);
+            data.setSelected(selection);
     }
 }

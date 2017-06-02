@@ -42,7 +42,7 @@ public class Tokenizer {
 
     public enum TokenType { CONDITION_START, VARIABLE_START, CONTEXT_SWITCH_START, END, PIPE, APOSTROPHE, TEXT, EOF }
 
-    private final Set<Character> specialCharaters = new HashSet<>(Arrays.asList(new Character[] {'$', '?', '{', '}', '|', '\'', '!'}));
+    private final Set<Character> specialCharaters = new HashSet<>(Arrays.asList('$', '?', '{', '}', '|', '\'', '!'));
 
     private final String template;
 

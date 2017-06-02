@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests of {@link ReverseWayTagCorrector} class.
@@ -30,6 +31,15 @@ public class ReverseWayTagCorrectorTest {
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules();
+
+    /**
+     * Tests that {@code ReverseWayTagCorrector.TagSwitcher} satisfies utility class criterias.
+     * @throws ReflectiveOperationException if an error occurs
+     */
+    @Test
+    public void testUtilityClass() throws ReflectiveOperationException {
+        UtilityClassTestUtil.assertUtilityClassWellDefined(ReverseWayTagCorrector.TagSwitcher.class);
+    }
 
     /**
      * Test of {@link ReverseWayTagCorrector.TagSwitcher#apply} method.

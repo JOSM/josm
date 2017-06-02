@@ -210,13 +210,13 @@ public class ChangesetDialog extends ToggleDialog {
         lstInSelection.addMouseListener(popupMenuLauncher);
         lstInActiveDataLayer.addMouseListener(popupMenuLauncher);
 
-        createLayout(pnl, false, Arrays.asList(new SideButton[] {
+        createLayout(pnl, false, Arrays.asList(
             new SideButton(selectObjectsAction, false),
             new SideButton(readChangesetAction, false),
             new SideButton(closeChangesetAction, false),
             new SideButton(showChangesetInfoAction, false),
             new SideButton(new LaunchChangesetManagerAction(), false)
-        }));
+        ));
     }
 
     protected JList<Changeset> getCurrentChangesetList() {
@@ -558,10 +558,18 @@ public class ChangesetDialog extends ToggleDialog {
         }
     }
 
+    /**
+     * Add a separator to the popup menu
+     */
     public void addPopupMenuSeparator() {
         popupMenu.addSeparator();
     }
 
+    /**
+     * Add a menu item to the popup menu
+     * @param a The action to add
+     * @return The menu item that was added.
+     */
     public JMenuItem addPopupMenuAction(Action a) {
         return popupMenu.add(a);
     }

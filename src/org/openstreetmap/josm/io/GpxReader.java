@@ -465,7 +465,7 @@ public class GpxReader implements GpxConstants {
                 case "trk":
                     currentState = states.pop();
                     convertUrlToLink(currentTrackAttr);
-                    data.tracks.add(new ImmutableGpxTrack(currentTrack, currentTrackAttr));
+                    data.addTrack(new ImmutableGpxTrack(currentTrack, currentTrackAttr));
                     break;
                 case "name":
                 case "cmt":
@@ -496,7 +496,7 @@ public class GpxReader implements GpxConstants {
                 case "rte":
                     currentState = states.pop();
                     convertUrlToLink(currentRoute.attr);
-                    data.routes.add(currentRoute);
+                    data.addRoute(currentRoute);
                     break;
                 default: // Do nothing
                 }

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<osm version="0.6" upload='never'>
+    <bounds minlat="45.4333839417" minlon="12.3324651718" maxlat="45.4374351501" maxlon="12.3392772675"/>
+    <node id="978" visible="true" version="10" changeset="12345678" timestamp="2017-05-13T05:47:18Z" user="Tharindu" uid="123456" lat="nan" lon="nan">
+        <tag k="sign" v="yes"/>
+        <tag k="appeal" v="0.620945"/>
+        <tag k="name" v="Piazza San Marco"/>
+        <tag k="tourism" v="information"/>
+        <tag k="information" v="guidepost"/>
+    </node>
+</osm>

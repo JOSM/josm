@@ -6,10 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GraphicsEnvironment;
-import java.awt.Window;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -20,6 +17,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -39,7 +37,6 @@ import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
@@ -57,9 +54,7 @@ import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.UndoRedoHandler;
-import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -68,7 +63,6 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.data.validation.OsmValidator;
-import org.openstreetmap.josm.gui.MainFrame;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MainPanel;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -76,7 +70,6 @@ import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.ProgramArguments;
 import org.openstreetmap.josm.gui.ProgramArguments.Option;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
@@ -202,6 +195,22 @@ public abstract class Main {
     public MainMenu menu;
 
     /**
+     * The main panel.
+     * @since 12125
+     */
+    public MainPanel panel;
+
+    /**
+     * The same main panel, required to be static for {@code MapFrameListener} handling.
+     */
+    protected static MainPanel mainPanel;
+
+    /**
+     * The private content pane of {@code MainFrame}, required to be static for shortcut handling.
+     */
+    protected static JComponent contentPanePrivate;
+
+    /**
      * The file watcher service.
      */
     public static final FileWatcher fileWatcher = new FileWatcher();
@@ -217,12 +226,6 @@ public abstract class Main {
      */
     @Deprecated
     public static int logLevel = 3;
-
-    /**
-     * The real main panel. This field may be removed any time and made private to {@link MainFrame}
-     * @see #panel
-     */
-    protected static final MainPanel mainPanel = new MainPanel(getLayerManager());
 
     /**
      * Replies the first lines of last 5 error and warning messages, used for bug reports
@@ -495,7 +498,6 @@ public abstract class Main {
      */
     protected Main() {
         setInstance(this);
-        mainPanel.addMapFrameListener((o, n) -> redoUndoListener.commandChanged(0, 0));
     }
 
     private static void setInstance(Main instance) {
@@ -516,7 +518,7 @@ public abstract class Main {
         undoRedo.addCommandQueueListener(redoUndoListener);
 
         // creating toolbar
-        contentPanePrivate.add(toolbar.control, BorderLayout.NORTH);
+        GuiHelper.runInEDTAndWait(() -> contentPanePrivate.add(toolbar.control, BorderLayout.NORTH));
 
         registerActionShortcut(menu.help, Shortcut.registerShortcut("system:help", tr("Help"),
                 KeyEvent.VK_F1, Shortcut.DIRECT));
@@ -574,20 +576,20 @@ public abstract class Main {
         FeatureAdapter.registerTranslationAdapter(I18n.getTranslationAdapter());
         FeatureAdapter.registerLoggingAdapter(name -> Logging.getLogger());
 
-        new InitializationTask(tr("Updating user interface"), () -> {
+        new InitializationTask(tr("Updating user interface"), () -> GuiHelper.runInEDTAndWait(() -> {
             toolbar.refreshToolbarControl();
             toolbar.control.updateUI();
             contentPanePrivate.updateUI();
-        }).call();
+        })).call();
     }
 
     /**
      * Called once at startup to initialize the main window content.
-     * Should set {@link #menu}
+     * Should set {@link #menu} and {@link #panel}
      */
     protected abstract void initializeMainWindow();
 
-    private static class InitializationTask implements Callable<Void> {
+    static final class InitializationTask implements Callable<Void> {
 
         private final String name;
         private final Runnable task;
@@ -621,35 +623,6 @@ public abstract class Main {
     }
 
     /**
-     * Add a new layer to the map.
-     *
-     * If no map exists, create one.
-     *
-     * @param layer the layer
-     * @param bounds the bounds of the layer (target zoom area); can be null, then
-     * the viewport isn't changed
-     */
-    public final void addLayer(Layer layer, ProjectionBounds bounds) {
-        addLayer(layer, bounds == null ? null : new ViewportData(bounds));
-    }
-
-    /**
-     * Add a new layer to the map.
-     *
-     * If no map exists, create one.
-     *
-     * @param layer the layer
-     * @param viewport the viewport to zoom to; can be null, then the viewport isn't changed
-     */
-    public final void addLayer(Layer layer, ViewportData viewport) {
-        getLayerManager().addLayer(layer);
-        if (viewport != null && Main.map.mapView != null) {
-            // MapView may be null in headless mode here.
-            Main.map.mapView.scheduleZoomTo(viewport);
-        }
-    }
-
-    /**
      * Replies the current selected primitives, from a end-user point of view.
      * It is not always technically the same collection of primitives than {@link DataSet#getSelected()}.
      * Indeed, if the user is currently in drawing mode, only the way currently being drawn is returned,
@@ -667,8 +640,6 @@ public abstract class Main {
             return ds.getSelected();
         }
     }
-
-    protected static final JPanel contentPanePrivate = new JPanel(new BorderLayout());
 
     public static void redirectToMainContentPane(JComponent source) {
         RedirectInputMap.redirect(source, contentPanePrivate);
@@ -749,11 +720,9 @@ public abstract class Main {
     ///////////////////////////////////////////////////////////////////////////
 
     /**
-     * Global panel.
+     * Listener that sets the enabled state of undo/redo menu entries.
      */
-    public static final JPanel panel = mainPanel;
-
-    private final CommandQueueListener redoUndoListener = (queueSize, redoSize) -> {
+    protected final CommandQueueListener redoUndoListener = (queueSize, redoSize) -> {
             menu.undo.setEnabled(queueSize > 0);
             menu.redo.setEnabled(redoSize > 0);
         };
@@ -802,8 +771,6 @@ public abstract class Main {
             error(e);
         }
         toolbar = new ToolbarPreferences();
-        contentPanePrivate.updateUI();
-        panel.updateUI();
 
         UIManager.put("OptionPane.okIcon", ImageProvider.get("ok"));
         UIManager.put("OptionPane.yesIcon", UIManager.get("OptionPane.okIcon"));
@@ -828,20 +795,32 @@ public abstract class Main {
         }
     }
 
-    protected static void postConstructorProcessCmdLine(ProgramArguments args) {
+    /**
+     * Handle command line instructions after GUI has been initialized.
+     * @param args program arguments
+     * @return the list of submitted tasks
+     */
+    protected static List<Future<?>> postConstructorProcessCmdLine(ProgramArguments args) {
+        List<Future<?>> tasks = new ArrayList<>();
         List<File> fileList = new ArrayList<>();
         for (String s : args.get(Option.DOWNLOAD)) {
-            DownloadParamType.paramType(s).download(s, fileList);
+            tasks.addAll(DownloadParamType.paramType(s).download(s, fileList));
         }
         if (!fileList.isEmpty()) {
-            OpenFileAction.openFiles(fileList, true);
+            tasks.add(OpenFileAction.openFiles(fileList, true));
         }
         for (String s : args.get(Option.DOWNLOADGPS)) {
-            DownloadParamType.paramType(s).downloadGps(s);
+            tasks.addAll(DownloadParamType.paramType(s).downloadGps(s));
         }
-        for (String s : args.get(Option.SELECTION)) {
-            SearchAction.search(s, SearchAction.SearchMode.add);
+        final Collection<String> selectionArguments = args.get(Option.SELECTION);
+        if (!selectionArguments.isEmpty()) {
+            tasks.add(Main.worker.submit(() -> {
+                for (String s : selectionArguments) {
+                    SearchAction.search(s, SearchAction.SearchMode.add);
+                }
+            }));
         }
+        return tasks;
     }
 
     /**
@@ -870,6 +849,9 @@ public abstract class Main {
         return false;
     }
 
+    /**
+     * Shutdown JOSM.
+     */
     protected void shutdown() {
         if (!GraphicsEnvironment.isHeadless()) {
             worker.shutdown();
@@ -899,12 +881,12 @@ public abstract class Main {
     enum DownloadParamType {
         httpUrl {
             @Override
-            void download(String s, Collection<File> fileList) {
-                new OpenLocationAction().openUrl(false, s);
+            List<Future<?>> download(String s, Collection<File> fileList) {
+                return new OpenLocationAction().openUrl(false, s);
             }
 
             @Override
-            void downloadGps(String s) {
+            List<Future<?>> downloadGps(String s) {
                 final Bounds b = OsmUrlToBounds.parse(s);
                 if (b == null) {
                     JOptionPane.showMessageDialog(
@@ -913,13 +895,13 @@ public abstract class Main {
                             tr("Warning"),
                             JOptionPane.WARNING_MESSAGE
                     );
-                    return;
+                    return Collections.emptyList();
                 }
-                downloadFromParamBounds(true, b);
+                return downloadFromParamBounds(true, b);
             }
         }, fileUrl {
             @Override
-            void download(String s, Collection<File> fileList) {
+            List<Future<?>> download(String s, Collection<File> fileList) {
                 File f = null;
                 try {
                     f = new File(new URI(s));
@@ -935,6 +917,7 @@ public abstract class Main {
                 if (f != null) {
                     fileList.add(f);
                 }
+                return Collections.emptyList();
             }
         }, bounds {
 
@@ -942,31 +925,33 @@ public abstract class Main {
              * Download area specified on the command line as bounds string.
              * @param rawGps Flag to download raw GPS tracks
              * @param s The bounds parameter
+             * @return the complete download task (including post-download handler), or {@code null}
              */
-            private void downloadFromParamBounds(final boolean rawGps, String s) {
+            private List<Future<?>> downloadFromParamBounds(final boolean rawGps, String s) {
                 final StringTokenizer st = new StringTokenizer(s, ",");
                 if (st.countTokens() == 4) {
-                    Bounds b = new Bounds(
+                    return Main.downloadFromParamBounds(rawGps, new Bounds(
                             new LatLon(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken())),
                             new LatLon(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()))
-                    );
-                    Main.downloadFromParamBounds(rawGps, b);
+                    ));
                 }
+                return Collections.emptyList();
             }
 
             @Override
-            void download(String param, Collection<File> fileList) {
-                downloadFromParamBounds(false, param);
+            List<Future<?>> download(String param, Collection<File> fileList) {
+                return downloadFromParamBounds(false, param);
             }
 
             @Override
-            void downloadGps(String param) {
-                downloadFromParamBounds(true, param);
+            List<Future<?>> downloadGps(String param) {
+                return downloadFromParamBounds(true, param);
             }
         }, fileName {
             @Override
-            void download(String s, Collection<File> fileList) {
+            List<Future<?>> download(String s, Collection<File> fileList) {
                 fileList.add(new File(s));
+                return Collections.emptyList();
             }
         };
 
@@ -974,20 +959,25 @@ public abstract class Main {
          * Performs the download
          * @param param represents the object to be downloaded
          * @param fileList files which shall be opened, should be added to this collection
+         * @return the download task, or {@code null}
          */
-        abstract void download(String param, Collection<File> fileList);
+        abstract List<Future<?>> download(String param, Collection<File> fileList);
 
         /**
          * Performs the GPS download
          * @param param represents the object to be downloaded
+         * @return the download task, or {@code null}
          */
-        void downloadGps(String param) {
-            JOptionPane.showMessageDialog(
-                    Main.parent,
-                    tr("Parameter \"downloadgps\" does not accept file names or file URLs"),
-                    tr("Warning"),
-                    JOptionPane.WARNING_MESSAGE
-            );
+        List<Future<?>> downloadGps(String param) {
+            if (!GraphicsEnvironment.isHeadless()) {
+                JOptionPane.showMessageDialog(
+                        Main.parent,
+                        tr("Parameter \"downloadgps\" does not accept file names or file URLs"),
+                        tr("Warning"),
+                        JOptionPane.WARNING_MESSAGE
+                );
+            }
+            return Collections.emptyList();
         }
 
         /**
@@ -1010,13 +1000,14 @@ public abstract class Main {
      * Download area specified as Bounds value.
      * @param rawGps Flag to download raw GPS tracks
      * @param b The bounds value
+     * @return the complete download task (including post-download handler)
      */
-    private static void downloadFromParamBounds(final boolean rawGps, Bounds b) {
+    private static List<Future<?>> downloadFromParamBounds(final boolean rawGps, Bounds b) {
         DownloadTask task = rawGps ? new DownloadGpsTask() : new DownloadOsmTask();
         // asynchronously launch the download task ...
         Future<?> future = task.download(true, b, null);
         // ... and the continuation when the download is finished (this will wait for the download to finish)
-        Main.worker.execute(new PostDownloadHandler(task, future));
+        return Collections.singletonList(Main.worker.submit(new PostDownloadHandler(task, future)));
     }
 
     /**
@@ -1087,10 +1078,6 @@ public abstract class Main {
     private static void fireProjectionChanged(Projection oldValue, Projection newValue, Bounds oldBounds) {
         if ((newValue == null ^ oldValue == null)
                 || (newValue != null && oldValue != null && !Objects.equals(newValue.toCode(), oldValue.toCode()))) {
-            if (Main.map != null) {
-                // This needs to be called first
-                Main.map.mapView.fixProjection();
-            }
             synchronized (Main.class) {
                 Iterator<WeakReference<ProjectionChangeListener>> it = listeners.iterator();
                 while (it.hasNext()) {
@@ -1112,6 +1099,7 @@ public abstract class Main {
 
     /**
      * Register a projection change listener.
+     * The listener is registered to be weak, so keep a reference of it if you want it to be preserved.
      *
      * @param listener the listener. Ignored if <code>null</code>.
      */
@@ -1159,167 +1147,25 @@ public abstract class Main {
         void fromOtherApplication();
     }
 
-    private static final List<WeakReference<WindowSwitchListener>> windowSwitchListeners = new ArrayList<>();
-
     /**
-     * Register a window switch listener.
-     *
-     * @param listener the listener. Ignored if <code>null</code>.
-     */
-    public static void addWindowSwitchListener(WindowSwitchListener listener) {
-        if (listener == null) return;
-        synchronized (Main.class) {
-            for (WeakReference<WindowSwitchListener> wr : windowSwitchListeners) {
-                // already registered ? => abort
-                if (wr.get() == listener) return;
-            }
-            boolean wasEmpty = windowSwitchListeners.isEmpty();
-            windowSwitchListeners.add(new WeakReference<>(listener));
-            if (wasEmpty) {
-                // The following call will have no effect, when there is no window
-                // at the time. Therefore, MasterWindowListener.setup() will also be
-                // called, as soon as the main window is shown.
-                MasterWindowListener.setup();
-            }
-        }
-    }
-
-    /**
-     * Removes a window switch listener.
-     *
-     * @param listener the listener. Ignored if <code>null</code>.
-     */
-    public static void removeWindowSwitchListener(WindowSwitchListener listener) {
-        if (listener == null) return;
-        synchronized (Main.class) {
-            // remove the listener - and any other listener which got garbage
-            // collected in the meantime
-            windowSwitchListeners.removeIf(wr -> wr.get() == null || wr.get() == listener);
-            if (windowSwitchListeners.isEmpty()) {
-                MasterWindowListener.teardown();
-            }
-        }
-    }
-
-    /**
-     * WindowListener, that is registered on all Windows of the application.
-     *
-     * Its purpose is to notify WindowSwitchListeners, that the user switches to
-     * another application, e.g. a browser, or back to JOSM.
-     *
-     * When changing from JOSM to another application and back (e.g. two times
-     * alt+tab), the active Window within JOSM may be different.
-     * Therefore, we need to register listeners to <strong>all</strong> (visible)
-     * Windows in JOSM, and it does not suffice to monitor the one that was
-     * deactivated last.
-     *
-     * This class is only "active" on demand, i.e. when there is at least one
-     * WindowSwitchListener registered.
-     */
-    protected static class MasterWindowListener extends WindowAdapter {
-
-        private static MasterWindowListener INSTANCE;
-
-        public static synchronized MasterWindowListener getInstance() {
-            if (INSTANCE == null) {
-                INSTANCE = new MasterWindowListener();
-            }
-            return INSTANCE;
-        }
-
-        /**
-         * Register listeners to all non-hidden windows.
-         *
-         * Windows that are created later, will be cared for in {@link #windowDeactivated(WindowEvent)}.
-         */
-        public static void setup() {
-            if (!windowSwitchListeners.isEmpty()) {
-                for (Window w : Window.getWindows()) {
-                    if (w.isShowing() && !Arrays.asList(w.getWindowListeners()).contains(getInstance())) {
-                        w.addWindowListener(getInstance());
-                    }
-                }
-            }
-        }
-
-        /**
-         * Unregister all listeners.
-         */
-        public static void teardown() {
-            for (Window w : Window.getWindows()) {
-                w.removeWindowListener(getInstance());
-            }
-        }
-
-        @Override
-        public void windowActivated(WindowEvent e) {
-            if (e.getOppositeWindow() == null) { // we come from a window of a different application
-                // fire WindowSwitchListeners
-                synchronized (Main.class) {
-                    Iterator<WeakReference<WindowSwitchListener>> it = windowSwitchListeners.iterator();
-                    while (it.hasNext()) {
-                        WeakReference<WindowSwitchListener> wr = it.next();
-                        WindowSwitchListener listener = wr.get();
-                        if (listener == null) {
-                            it.remove();
-                            continue;
-                        }
-                        listener.fromOtherApplication();
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void windowDeactivated(WindowEvent e) {
-            // set up windows that have been created in the meantime
-            for (Window w : Window.getWindows()) {
-                if (!w.isShowing()) {
-                    w.removeWindowListener(getInstance());
-                } else {
-                    if (!Arrays.asList(w.getWindowListeners()).contains(getInstance())) {
-                        w.addWindowListener(getInstance());
-                    }
-                }
-            }
-            if (e.getOppositeWindow() == null) { // we go to a window of a different application
-                // fire WindowSwitchListeners
-                synchronized (Main.class) {
-                    Iterator<WeakReference<WindowSwitchListener>> it = windowSwitchListeners.iterator();
-                    while (it.hasNext()) {
-                        WeakReference<WindowSwitchListener> wr = it.next();
-                        WindowSwitchListener listener = wr.get();
-                        if (listener == null) {
-                            it.remove();
-                            continue;
-                        }
-                        listener.toOtherApplication();
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Registers a new {@code MapFrameListener} that will be notified of MapFrame changes
+     * Registers a new {@code MapFrameListener} that will be notified of MapFrame changes.
+     * <p>
+     * It will fire an initial mapFrameInitialized event when the MapFrame is present.
+     * Otherwise will only fire when the MapFrame is created or destroyed.
      * @param listener The MapFrameListener
-     * @param fireWhenMapViewPresent If true, will fire an initial mapFrameInitialized event
-     * when the MapFrame is present. Otherwise will only fire when the MapFrame is created
-     * or destroyed.
      * @return {@code true} if the listeners collection changed as a result of the call
+     * @see #addMapFrameListener
+     * @since 11904
      */
-    public static boolean addMapFrameListener(MapFrameListener listener, boolean fireWhenMapViewPresent) {
-        if (fireWhenMapViewPresent) {
-            return mainPanel.addAndFireMapFrameListener(listener);
-        } else {
-            return mainPanel.addMapFrameListener(listener);
-        }
+    public static boolean addAndFireMapFrameListener(MapFrameListener listener) {
+        return mainPanel.addAndFireMapFrameListener(listener);
     }
 
     /**
      * Registers a new {@code MapFrameListener} that will be notified of MapFrame changes
      * @param listener The MapFrameListener
      * @return {@code true} if the listeners collection changed as a result of the call
+     * @see #addAndFireMapFrameListener
      * @since 5957
      */
     public static boolean addMapFrameListener(MapFrameListener listener) {
@@ -1379,6 +1225,14 @@ public abstract class Main {
      */
     public static Map<String, Throwable> getNetworkErrors() {
         return new HashMap<>(NETWORK_ERRORS);
+    }
+
+    /**
+     * Clears the network errors cache.
+     * @since 12011
+     */
+    public static void clearNetworkErrors() {
+        NETWORK_ERRORS.clear();
     }
 
     /**

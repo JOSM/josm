@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import java.util.Objects;
+
 import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 import org.openstreetmap.josm.data.Preferences.pref;
@@ -113,6 +115,29 @@ public class Filter extends SearchSetting {
          */
         @writeExplicitly
         @pref public boolean inverted;
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(case_sensitive, enable, hiding, inverted, mapCSS_search, mode, regex_search, text, version);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj)
+                return true;
+            if (obj == null || getClass() != obj.getClass())
+                return false;
+            FilterPreferenceEntry other = (FilterPreferenceEntry) obj;
+            return case_sensitive == other.case_sensitive
+                    && enable == other.enable
+                    && hiding == other.hiding
+                    && inverted == other.inverted
+                    && mapCSS_search == other.mapCSS_search
+                    && regex_search == other.regex_search
+                    && Objects.equals(mode, other.mode)
+                    && Objects.equals(text, other.text)
+                    && Objects.equals(version, other.version);
+        }
     }
 
     /**

@@ -138,6 +138,21 @@ public class RelationCheckerTest {
     }
 
     @Test
+    public void testBuildingMemberExpression() {
+        Relation r = createRelation("type=building");
+        r.addMember(new RelationMember("outline", new Way()));
+        r.addMember(new RelationMember("part", new Way()));
+        r.addMember(new RelationMember("level_-12", new Relation()));
+        r.addMember(new RelationMember("level_0", new Relation()));
+        r.addMember(new RelationMember("level_12", new Relation()));
+        r.addMember(new RelationMember("level_x", new Relation())); // fails
+
+        List<TestError> errors = testRelation(r);
+        assertEquals(1, errors.size());
+        assertEquals("Role 'level_x' unknown in templates 'outline/part/ridge/edge/entrance/level_-?\\d+'", errors.get(0).getDescription());
+    }
+
+    @Test
     public void testRouteMemberExpression() {
         Relation r = createRelation("type=route route=tram public_transport:version=2");
         r.addMember(new RelationMember("", createPrimitive("way railway=tram")));

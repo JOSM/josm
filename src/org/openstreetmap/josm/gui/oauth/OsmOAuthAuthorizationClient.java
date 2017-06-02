@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.CookieHandler;
 import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
@@ -88,19 +87,6 @@ public class OsmOAuthAuthorizationClient {
      */
     public void cancel() {
         canceled = true;
-        if (provider != null) {
-            try {
-                Field f = provider.getClass().getDeclaredField("connection");
-                Utils.setObjectsAccessible(f);
-                HttpURLConnection con = (HttpURLConnection) f.get(provider);
-                if (con != null) {
-                    con.disconnect();
-                }
-            } catch (NoSuchFieldException | SecurityException | IllegalAccessException e) {
-                Main.error(e);
-                Main.warn(tr("Failed to cancel running OAuth operation"));
-            }
-        }
         synchronized (this) {
             if (connection != null) {
                 connection.disconnect();

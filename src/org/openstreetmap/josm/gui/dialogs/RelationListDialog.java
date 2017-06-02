@@ -162,13 +162,13 @@ public class RelationListDialog extends ToggleDialog
         SideButton editButton = new SideButton(editAction, false);
         recentRelationsAction = new RecentRelationsAction(editButton);
 
-        createLayout(pane, false, Arrays.asList(new SideButton[]{
+        createLayout(pane, false, Arrays.asList(
                 new SideButton(newAction, false),
                 editButton,
                 new SideButton(duplicateAction, false),
                 new SideButton(deleteRelationsAction, false),
                 new SideButton(selectRelationAction, false)
-        }));
+        ));
 
         InputMapUtils.unassignCtrlShiftUpDown(displaylist, JComponent.WHEN_FOCUSED);
 

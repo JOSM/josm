@@ -50,7 +50,6 @@ import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.ProjectionBounds;
-import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -61,10 +60,12 @@ import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSet.UploadPolicy;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
+import org.openstreetmap.josm.data.osm.HighlightUpdateListener;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -106,7 +107,6 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
-import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -116,7 +116,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * @author imi
  * @since 17
  */
-public class OsmDataLayer extends AbstractModifiableLayer implements Listener, SelectionChangedListener {
+public class OsmDataLayer extends AbstractModifiableLayer implements Listener, DataSelectionListener, HighlightUpdateListener {
     private static final int HATCHED_SIZE = 15;
     /** Property used to know if this layer has to be saved on disk */
     public static final String REQUIRES_SAVE_TO_DISK_PROP = OsmDataLayer.class.getName() + ".requiresSaveToDisk";
@@ -125,7 +125,6 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
     private boolean requiresSaveToFile;
     private boolean requiresUploadToServer;
-    private int highlightUpdateCount;
 
     /**
      * List of validation errors in this layer.
@@ -133,9 +132,20 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      */
     public final List<TestError> validationErrors = new ArrayList<>();
 
+    /**
+     * The default number of relations in the recent relations cache.
+     * @see #getRecentRelations()
+     */
     public static final int DEFAULT_RECENT_RELATIONS_NUMBER = 20;
+    /**
+     * The number of relations to use in the recent relations cache.
+     * @see #getRecentRelations()
+     */
     public static final IntegerProperty PROPERTY_RECENT_RELATIONS_NUMBER = new IntegerProperty("properties.last-closed-relations-size",
             DEFAULT_RECENT_RELATIONS_NUMBER);
+    /**
+     * The extension that should be used when saving the OSM file.
+     */
     public static final StringProperty PROPERTY_SAVE_EXTENSION = new StringProperty("save.extension.osm", "osm");
 
     private static final ColorProperty PROPERTY_BACKGROUND_COLOR = new ColorProperty(marktr("background"), Color.BLACK);
@@ -147,9 +157,10 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     /**
      * Returns list of recently closed relations or null if none.
      * @return list of recently closed relations or <code>null</code> if none
+     * @since 12291 (signature)
      * @since 9668
      */
-    public ArrayList<Relation> getRecentRelations() {
+    public List<Relation> getRecentRelations() {
         ArrayList<Relation> list = new ArrayList<>(recentRelations.keySet());
         Collections.reverse(list);
         return list;
@@ -158,6 +169,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     /**
      * Adds recently closed relation.
      * @param relation new entry for the list of recently closed relations
+     * @see #PROPERTY_RECENT_RELATIONS_NUMBER
      * @since 9668
      */
     public void setRecentRelation(Relation relation) {
@@ -222,12 +234,33 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         }
     }
 
+    /**
+     * A listener that counts the number of primitives it encounters
+     */
     public static final class DataCountVisitor extends AbstractVisitor {
+        /**
+         * Nodes that have been visited
+         */
         public int nodes;
+        /**
+         * Ways that have been visited
+         */
         public int ways;
+        /**
+         * Relations that have been visited
+         */
         public int relations;
+        /**
+         * Deleted nodes that have been visited
+         */
         public int deletedNodes;
+        /**
+         * Deleted ways that have been visited
+         */
         public int deletedWays;
+        /**
+         * Deleted relations that have been visited
+         */
         public int deletedRelations;
 
         @Override
@@ -255,8 +288,16 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         }
     }
 
+    /**
+     * A listener that gets notified of command queue (undo/redo) size changes.
+     */
     @FunctionalInterface
     public interface CommandQueueListener {
+        /**
+         * Notifies the listener about the new queue size
+         * @param queueSize Undo stack size
+         * @param redoSize Redo stack size
+         */
         void commandChanged(int queueSize, int redoSize);
     }
 
@@ -363,7 +404,8 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
         conflicts = new ConflictCollection();
         data.addDataSetListener(new DataSetListenerAdapter(this));
         data.addDataSetListener(MultipolygonCache.getInstance());
-        DataSet.addSelectionListener(this);
+        data.addHighlightUpdateListener(this);
+        data.addSelectionListener(this);
         if (name != null && name.startsWith(createLayerName("")) && Character.isDigit(
                 (name.substring(createLayerName("").length()) + "XX" /*avoid StringIndexOutOfBoundsException*/).charAt(1))) {
             while (AlphanumComparator.getInstance().compare(createLayerName(dataLayerCounter), name) < 0) {
@@ -399,8 +441,6 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
      * Draw nodes last to overlap the ways they belong to.
      */
     @Override public void paint(final Graphics2D g, final MapView mv, Bounds box) {
-        highlightUpdateCount = data.getHighlightUpdateCount();
-
         boolean active = mv.getLayerManager().getActiveLayer() == this;
         boolean inactive = !active && Main.pref.getBoolean("draw.data.inactive_color", true);
         boolean virtual = !inactive && mv.isVirtualNodesEnabled();
@@ -440,19 +480,27 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     }
 
     @Override public String getToolTipText() {
-        int nodes = new SubclassFilteredCollection<>(data.getNodes(), p -> !p.isDeleted()).size();
-        int ways = new SubclassFilteredCollection<>(data.getWays(), p -> !p.isDeleted()).size();
-        int rels = new SubclassFilteredCollection<>(data.getRelations(), p -> !p.isDeleted()).size();
+        DataCountVisitor counter = new DataCountVisitor();
+        for (final OsmPrimitive osm : data.allPrimitives()) {
+            osm.accept(counter);
+        }
+        int nodes = counter.nodes - counter.deletedNodes;
+        int ways = counter.ways - counter.deletedWays;
+        int rels = counter.relations - counter.deletedRelations;
 
-        String tool = trn("{0} node", "{0} nodes", nodes, nodes)+", ";
-        tool += trn("{0} way", "{0} ways", ways, ways)+", ";
-        tool += trn("{0} relation", "{0} relations", rels, rels);
+        StringBuilder tooltip = new StringBuilder("<html>")
+                .append(trn("{0} node", "{0} nodes", nodes, nodes))
+                .append("<br>")
+                .append(trn("{0} way", "{0} ways", ways, ways))
+                .append("<br>")
+                .append(trn("{0} relation", "{0} relations", rels, rels));
 
         File f = getAssociatedFile();
         if (f != null) {
-            tool = "<html>"+tool+"<br>"+f.getPath()+"</html>";
+            tooltip.append("<br>").append(f.getPath());
         }
-        return tool;
+        tooltip.append("</html>");
+        return tooltip.toString();
     }
 
     @Override public void mergeFrom(final Layer from) {
@@ -519,9 +567,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
             }
         }
         // repaint to make sure new data is displayed properly.
-        if (Main.isDisplayingMapView()) {
-            Main.map.mapView.repaint();
-        }
+        invalidate();
         // warn about new conflicts
         if (numNewConflicts > 0 && Main.map != null && Main.map.conflictDialog != null) {
             Main.map.conflictDialog.warnNumNewConflicts(numNewConflicts);
@@ -613,7 +659,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
 
     @Override public Action[] getMenuEntries() {
         List<Action> actions = new ArrayList<>();
-        actions.addAll(Arrays.asList(new Action[]{
+        actions.addAll(Arrays.asList(
                 LayerListDialog.getInstance().createActivateLayerAction(this),
                 LayerListDialog.getInstance().createShowHideLayerAction(),
                 LayerListDialog.getInstance().createDeleteLayerAction(),
@@ -621,23 +667,22 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
                 LayerListDialog.getInstance().createMergeLayerAction(this),
                 LayerListDialog.getInstance().createDuplicateLayerAction(this),
                 new LayerSaveAction(this),
-                new LayerSaveAsAction(this),
-        }));
+                new LayerSaveAsAction(this)));
         if (ExpertToggleAction.isExpert()) {
-            actions.addAll(Arrays.asList(new Action[]{
+            actions.addAll(Arrays.asList(
                     new LayerGpxExportAction(this),
-                    new ConvertToGpxLayerAction()}));
+                    new ConvertToGpxLayerAction()));
         }
-        actions.addAll(Arrays.asList(new Action[]{
+        actions.addAll(Arrays.asList(
                 SeparatorLayerAction.INSTANCE,
-                new RenameLayerAction(getAssociatedFile(), this)}));
+                new RenameLayerAction(getAssociatedFile(), this)));
         if (ExpertToggleAction.isExpert()) {
             actions.add(new ToggleUploadDiscouragedLayerAction(this));
         }
-        actions.addAll(Arrays.asList(new Action[]{
+        actions.addAll(Arrays.asList(
                 new ConsistencyTestAction(),
                 SeparatorLayerAction.INSTANCE,
-                new LayerListPopup.InfoAction(this)}));
+                new LayerListPopup.InfoAction(this)));
         return actions.toArray(new Action[actions.size()]);
     }
 
@@ -693,7 +738,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
                 trkseg.add(nodeToWayPoint(n));
             }
 
-            gpxData.tracks.add(new ImmutableGpxTrack(trk, trkAttr));
+            gpxData.addTrack(new ImmutableGpxTrack(trk, trkAttr));
         });
     }
 
@@ -907,11 +952,6 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     }
 
     @Override
-    public boolean isChanged() {
-        return highlightUpdateCount != data.getHighlightUpdateCount();
-    }
-
-    @Override
     public void onPostSaveToFile() {
         setRequiresSaveToFile(false);
         setRequiresUploadToServer(isModified());
@@ -948,9 +988,10 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     }
 
     @Override
-    public void destroy() {
+    public synchronized void destroy() {
         super.destroy();
-        DataSet.removeSelectionListener(this);
+        data.removeSelectionListener(this);
+        data.removeHighlightUpdateListener(this);
     }
 
     @Override
@@ -961,7 +1002,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
     }
 
     @Override
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+    public void selectionChanged(SelectionChangeEvent event) {
         invalidate();
     }
 
@@ -1012,34 +1053,29 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
             if (GraphicsEnvironment.isHeadless()) {
                 return 2;
             }
-            ExtendedDialog dialog = new ExtendedDialog(
+            return new ExtendedDialog(
                     Main.parent,
                     tr("Empty document"),
-                    new String[] {tr("Save anyway"), tr("Cancel")}
-            );
-            dialog.setContent(tr("The document contains no data."));
-            dialog.setButtonIcons(new String[] {"save", "cancel"});
-            return dialog.showDialog().getValue();
+                    tr("Save anyway"), tr("Cancel"))
+                .setContent(tr("The document contains no data."))
+                .setButtonIcons("save", "cancel")
+                .showDialog().getValue();
         })) {
             return false;
         }
 
         ConflictCollection conflictsCol = getConflicts();
-        if (conflictsCol != null && !conflictsCol.isEmpty() && 1 != GuiHelper.runInEDTAndWaitAndReturn(() -> {
-            ExtendedDialog dialog = new ExtendedDialog(
+        return conflictsCol == null || conflictsCol.isEmpty() || 1 == GuiHelper.runInEDTAndWaitAndReturn(() ->
+            new ExtendedDialog(
                     Main.parent,
                     /* I18N: Display title of the window showing conflicts */
                     tr("Conflicts"),
-                    new String[] {tr("Reject Conflicts and Save"), tr("Cancel")}
-            );
-            dialog.setContent(
-                    tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"));
-            dialog.setButtonIcons(new String[] {"save", "cancel"});
-            return dialog.showDialog().getValue();
-        })) {
-            return false;
-        }
-        return true;
+                    tr("Reject Conflicts and Save"), tr("Cancel"))
+                .setContent(
+                    tr("There are unresolved conflicts. Conflicts will not be saved and handled as if you rejected all. Continue?"))
+                .setButtonIcons("save", "cancel")
+                .showDialog().getValue()
+        );
     }
 
     /**
@@ -1103,5 +1139,10 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, S
             v.computeBoundingBox(data.getNodes());
         }
         return v.getBounds();
+    }
+
+    @Override
+    public void highlightUpdated(HighlightUpdateEvent e) {
+        invalidate();
     }
 }

@@ -134,9 +134,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
         SideButton btnSelect = new SideButton(actSelect);
         addListSelectionListener(actSelect);
 
-        createLayout(lstConflicts, true, Arrays.asList(new SideButton[] {
-            btnResolve, btnSelect
-        }));
+        createLayout(lstConflicts, true, Arrays.asList(btnResolve, btnSelect));
 
         popupMenuHandler.addAction(Main.main.menu.autoScaleActions.get("conflict"));
 
@@ -504,7 +502,6 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
             }
             Main.main.undoRedo.add(new SequenceCommand(name, commands));
             refreshView();
-            Main.map.mapView.repaint();
         }
     }
 

@@ -14,6 +14,11 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * ProjectionChoice for Lambert CC (9 zones, EPSG:3942-3950).
+ * <p>
+ * @see <a href="https://fr.wikipedia.org/wiki/Projection_conique_conforme_de_Lambert#Lambert_zone_CC">Lambert CC</a>
+ */
 public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice {
 
     private static String[] lambert9zones = {
@@ -38,7 +43,7 @@ public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice {
     private static class LambertCC9CBPanel extends CBPanel {
         LambertCC9CBPanel(String[] entries, int initialIndex, String label, ActionListener listener) {
             super(entries, initialIndex, label, listener);
-            this.add(new JLabel(ImageProvider.get("data/projection", "LambertCC9Zones.png")), GBC.eol().fill(GBC.HORIZONTAL));
+            this.add(new JLabel(ImageProvider.get("data/projection", "LambertCC9Zones")), GBC.eol().fill(GBC.HORIZONTAL));
             this.add(GBC.glue(1, 1), GBC.eol().fill(GBC.BOTH));
         }
     }

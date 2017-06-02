@@ -9,20 +9,15 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.TimeZone;
 
 import javax.swing.ImageIcon;
@@ -33,15 +28,12 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.gpx.Extensions;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
-import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.preferences.CachedProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.ImageProvider;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.template_engine.ParseError;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 import org.openstreetmap.josm.tools.template_engine.TemplateEntry;
@@ -183,41 +175,7 @@ public class Marker implements TemplateEngineDataProvider {
 
     // Add one Marker specifying the default behaviour.
     static {
-        Marker.markerProducers.add((wpt, relativePath, parentLayer, time, offset) -> {
-            String uri = null;
-            // cheapest way to check whether "link" object exists and is a non-empty collection of GpxLink objects...
-            Collection<GpxLink> links = wpt.<GpxLink>getCollection(GpxConstants.META_LINKS);
-            if (links != null) {
-                for (GpxLink oneLink : links) {
-                    uri = oneLink.uri;
-                    break;
-                }
-            }
-
-            URL url = uriToUrl(uri, relativePath);
-            String urlStr = url == null ? "" : url.toString();
-            String symbolName = Optional.ofNullable(wpt.getString("symbol")).orElseGet(() -> wpt.getString(GpxConstants.PT_SYM));
-            // text marker is returned in every case, see #10208
-            final Marker marker = new Marker(wpt.getCoor(), wpt, symbolName, parentLayer, time, offset);
-            if (url == null) {
-                return Collections.singleton(marker);
-            } else if (urlStr.endsWith(".wav")) {
-                final AudioMarker audioMarker = new AudioMarker(wpt.getCoor(), wpt, url, parentLayer, time, offset);
-                Extensions exts = (Extensions) wpt.get(GpxConstants.META_EXTENSIONS);
-                if (exts != null && exts.containsKey("offset")) {
-                    try {
-                        audioMarker.syncOffset = Double.parseDouble(exts.get("sync-offset"));
-                    } catch (NumberFormatException nfe) {
-                        Main.warn(nfe);
-                    }
-                }
-                return Arrays.asList(marker, audioMarker);
-            } else if (urlStr.endsWith(".png") || urlStr.endsWith(".jpg") || urlStr.endsWith(".jpeg") || urlStr.endsWith(".gif")) {
-                return Arrays.asList(marker, new ImageMarker(wpt.getCoor(), url, parentLayer, time, offset));
-            } else {
-                return Arrays.asList(marker, new WebMarker(wpt.getCoor(), url, parentLayer, time, offset));
-            }
-        });
+        Marker.markerProducers.add(new DefaultMarkerProducers());
     }
 
     /**
@@ -236,21 +194,6 @@ public class Marker implements TemplateEngineDataProvider {
      */
     public static void prependMarkerProducer(MarkerProducers mp) {
         markerProducers.add(0, mp);
-    }
-
-    private static URL uriToUrl(String uri, File relativePath) {
-        URL url = null;
-        if (uri != null) {
-            try {
-                url = new URL(uri);
-            } catch (MalformedURLException e) {
-                // Try a relative file:// url, if the link is not in an URL-compatible form
-                if (relativePath != null) {
-                    url = Utils.fileToURL(new File(relativePath.getParentFile(), uri));
-                }
-            }
-        }
-        return url;
     }
 
     /**

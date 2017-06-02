@@ -70,7 +70,7 @@ public class OsmTransferHandler extends AbstractStackTransferHandler {
      * @param transferable The transferable to use.
      */
     public void pasteOn(OsmDataLayer editLayer, EastNorth mPosition, Transferable transferable) {
-        importData(new TransferSupport(Main.panel, transferable), editLayer, mPosition);
+        importData(new TransferSupport(Main.main.panel, transferable), editLayer, mPosition);
     }
 
     /**
@@ -79,7 +79,7 @@ public class OsmTransferHandler extends AbstractStackTransferHandler {
      */
     public void pasteTags(Collection<? extends OsmPrimitive> primitives) {
         Transferable transferable = ClipboardUtils.getClipboardContent();
-        importTags(new TransferSupport(Main.panel, transferable), primitives);
+        importTags(new TransferSupport(Main.main.panel, transferable), primitives);
     }
 
     /**

@@ -94,12 +94,13 @@ public class TemplateParser {
             check(TokenType.APOSTROPHE);
             condition = parseExpression(CONDITION_WITH_APOSTROPHES_END_TOKENS);
             check(TokenType.APOSTROPHE);
-            if (searchExpression.getText().trim().isEmpty()) {
+            String searchText = searchExpression.getText().trim();
+            if (searchText.isEmpty()) {
                 result.getEntries().add(condition);
             } else {
                 try {
                     result.getEntries().add(new SearchExpressionCondition(
-                            SearchCompiler.compile(searchExpression.getText()), condition));
+                            SearchCompiler.compile(searchText), condition));
                 } catch (SearchCompiler.ParseError e) {
                     throw new ParseError(searchExpression.getPosition(), e);
                 }
@@ -124,11 +125,12 @@ public class TemplateParser {
         TemplateEntry template = parseExpression(CONDITION_WITH_APOSTROPHES_END_TOKENS);
         check(TokenType.APOSTROPHE);
         ContextSwitchTemplate result;
-        if (searchExpression.getText().trim().isEmpty())
+        String searchText = searchExpression.getText().trim();
+        if (searchText.isEmpty())
             throw new ParseError(tr("Expected search expression"));
         else {
             try {
-                Match match = SearchCompiler.compile(searchExpression.getText());
+                Match match = SearchCompiler.compile(searchText);
                 result = new ContextSwitchTemplate(match, template, searchExpression.getPosition());
             } catch (SearchCompiler.ParseError e) {
                 throw new ParseError(searchExpression.getPosition(), e);

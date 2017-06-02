@@ -495,7 +495,6 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
          */
         if (Main.pref.getBoolean("sidetoolbar.scrollable", true)) {
             final ScrollViewport svp = new ScrollViewport(sideToolBar, ScrollViewport.VERTICAL_DIRECTION);
-            svp.addMouseWheelListener(e -> svp.scroll(0, e.getUnitsToScroll() * 5));
             sideToolBar = svp;
         }
         sideToolBar.setVisible(Main.pref.getBoolean("sidetoolbar.visible", true));
@@ -784,14 +783,10 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
             }
         }
         // if this is really a change (and not the first active layer)
-        if (e.getPreviousActiveLayer() != null) {
-            if (!modeChanged && mapMode != null) {
-                // Let mapmodes know about new active layer
-                mapMode.exitMode();
-                mapMode.enterMode();
-            }
-            // invalidate repaint cache
-            mapView.preferenceChanged(null);
+        if (e.getPreviousActiveLayer() != null && !modeChanged && mapMode != null) {
+            // Let mapmodes know about new active layer
+            mapMode.exitMode();
+            mapMode.enterMode();
         }
 
         // After all listeners notice new layer, some buttons will be disabled/enabled

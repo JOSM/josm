@@ -105,6 +105,8 @@ import org.xml.sax.SAXException;
  */
 public class Preferences {
 
+    private static final String COLOR_PREFIX = "color.";
+
     private static final String[] OBSOLETE_PREF_KEYS = {
       "hdop.factor", /* remove entry after April 2017 */
       "imagery.layers.addedIds" /* remove entry after June 2017 */
@@ -500,7 +502,7 @@ public class Preferences {
     public synchronized Map<String, String> getAllColors() {
         final Map<String, String> all = new TreeMap<>();
         for (final Entry<String, Setting<?>> e : defaultsMap.entrySet()) {
-            if (e.getKey().startsWith("color.") && e.getValue() instanceof StringSetting) {
+            if (e.getKey().startsWith(COLOR_PREFIX) && e.getValue() instanceof StringSetting) {
                 StringSetting d = (StringSetting) e.getValue();
                 if (d.getValue() != null) {
                     all.put(e.getKey().substring(6), d.getValue());
@@ -508,7 +510,7 @@ public class Preferences {
             }
         }
         for (final Entry<String, Setting<?>> e : settingsMap.entrySet()) {
-            if (e.getKey().startsWith("color.") && (e.getValue() instanceof StringSetting)) {
+            if (e.getKey().startsWith(COLOR_PREFIX) && (e.getValue() instanceof StringSetting)) {
                 all.put(e.getKey().substring(6), ((StringSetting) e.getValue()).getValue());
             }
         }
@@ -863,7 +865,7 @@ public class Preferences {
     public synchronized Color getColor(String colName, String specName, Color def) {
         String colKey = ColorProperty.getColorKey(colName);
         registerColor(colKey, colName);
-        String colStr = specName != null ? get("color."+specName) : "";
+        String colStr = specName != null ? get(COLOR_PREFIX+specName) : "";
         if (colStr.isEmpty()) {
             colStr = get(colKey, ColorHelper.color2html(def, true));
         }
@@ -887,13 +889,13 @@ public class Preferences {
     }
 
     public synchronized Color getDefaultColor(String colKey) {
-        StringSetting col = Utils.cast(defaultsMap.get("color."+colKey), StringSetting.class);
+        StringSetting col = Utils.cast(defaultsMap.get(COLOR_PREFIX+colKey), StringSetting.class);
         String colStr = col == null ? null : col.getValue();
         return colStr == null || colStr.isEmpty() ? null : ColorHelper.html2color(colStr);
     }
 
     public synchronized boolean putColor(String colKey, Color val) {
-        return put("color."+colKey, val != null ? ColorHelper.color2html(val, true) : null);
+        return put(COLOR_PREFIX+colKey, val != null ? ColorHelper.color2html(val, true) : null);
     }
 
     public synchronized int getInteger(String key, int def) {
@@ -1402,7 +1404,6 @@ public class Preferences {
 
     /**
      * Updates system properties with the current values in the preferences.
-     *
      */
     public void updateSystemProperties() {
         if ("true".equals(get("prefer.ipv6", "auto")) && !"true".equals(Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true"))) {
@@ -1414,7 +1415,7 @@ public class Preferences {
         // Workaround to fix a Java bug. This ugly hack comes from Sun bug database: https://bugs.openjdk.java.net/browse/JDK-6292739
         // Force AWT toolkit to update its internal preferences (fix #6345).
         // Does not work anymore with Java 9, to remove with Java 9 migration
-        if (!GraphicsEnvironment.isHeadless()) {
+        if (Utils.getJavaVersion() < 9 && !GraphicsEnvironment.isHeadless()) {
             try {
                 Field field = Toolkit.class.getDeclaredField("resources");
                 Utils.setObjectsAccessible(field);
@@ -1531,13 +1532,8 @@ public class Preferences {
 
     private void migrateOldColorKeys() {
         settingsMap.keySet().stream()
-                .filter(key -> key.startsWith("color."))
-                .flatMap(key -> {
-                    final String newKey = ColorProperty.getColorKey(key.substring("color.".length()));
-                    return key.equals(newKey) || settingsMap.containsKey(newKey)
-                            ? Stream.empty()
-                            : Stream.of(new AbstractMap.SimpleImmutableEntry<>(key, newKey));
-                })
+                .filter(key -> key.startsWith(COLOR_PREFIX))
+                .flatMap(this::searchOldColorKey)
                 .collect(Collectors.toList()) // to avoid ConcurrentModificationException
                 .forEach(entry -> {
                     final String oldKey = entry.getKey();
@@ -1546,6 +1542,13 @@ public class Preferences {
                     put(newKey, get(oldKey));
                     put(oldKey, null);
                 });
+    }
+
+    private Stream<AbstractMap.SimpleImmutableEntry<String, String>> searchOldColorKey(String key) {
+        final String newKey = ColorProperty.getColorKey(key.substring(COLOR_PREFIX.length()));
+        return key.equals(newKey) || settingsMap.containsKey(newKey)
+                ? Stream.empty()
+                : Stream.of(new AbstractMap.SimpleImmutableEntry<>(key, newKey));
     }
 
     private void removeUrlFromEntries(int loadedVersion, int versionMax, String key, String urlPart) {

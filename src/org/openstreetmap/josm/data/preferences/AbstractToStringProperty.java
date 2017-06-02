@@ -59,12 +59,6 @@ public abstract class AbstractToStringProperty<T> extends AbstractProperty<T> {
         }
 
         @Override
-        protected void addWeakListenerImpl(PreferenceChangedListener adapter) {
-            super.addWeakListenerImpl(adapter);
-            parent.addWeakListenerImpl(adapter);
-        }
-
-        @Override
         protected void removeListenerImpl(PreferenceChangedListener adapter) {
             super.removeListenerImpl(adapter);
             parent.removeListenerImpl(adapter);

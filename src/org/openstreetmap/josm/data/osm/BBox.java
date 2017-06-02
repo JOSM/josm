@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.QuadTiling;
 import org.openstreetmap.josm.tools.Utils;
@@ -84,7 +85,7 @@ public class BBox {
      * @param w the way
      */
     public BBox(Way w) {
-        w.getNodes().forEach(n -> add(n.getCoor()));
+        w.getNodes().forEach(this::add);
     }
 
     /**
@@ -92,18 +93,35 @@ public class BBox {
      * @param n the node
      */
     public BBox(Node n) {
-        if (n.isLatLonKnown()) {
-            add(n.getCoor());
-        }
+        this((ILatLon) n);
+    }
+
+    /**
+     * Create BBox for a given latlon. An invalid BBox is returned if the coordinates are not known.
+     * @param ll The lat lon position
+     */
+    public BBox(ILatLon ll) {
+        add(ll);
     }
 
     /**
      * Add a point to an existing BBox. Extends this bbox if necessary so that this.bounds(c) will return true
      * if c is a valid LatLon instance.
+     * Kept for binary compatibility
      * @param c a LatLon point
      */
     public final void add(LatLon c) {
-        if (c != null && c.isValid()) {
+        add((ILatLon) c);
+    }
+
+    /**
+     * Add a point to an existing BBox. Extends this bbox if necessary so that this.bounds(c) will return true
+     * if c is a valid LatLon instance.
+     * If it is invalid or <code>null</code>, this call is ignored.
+     * @param c a LatLon point.
+     */
+    public final void add(ILatLon c) {
+        if (c != null) {
             add(c.lon(), c.lat());
         }
     }
@@ -280,6 +298,10 @@ public class BBox {
         return idx1;
     }
 
+    /**
+     * Converts the bounds to a rectangle
+     * @return The rectangle in east/north space.
+     */
     public Rectangle2D toRectangle() {
         return new Rectangle2D.Double(xmin, ymin, xmax - xmin, ymax - ymin);
     }
@@ -320,6 +342,11 @@ public class BBox {
         return "[ x: " + xmin + " -> " + xmax + ", y: " + ymin + " -> " + ymax + " ]";
     }
 
+    /**
+     * Creates a CSV string for this bbox
+     * @param separator The separator to use
+     * @return A string
+     */
     public String toStringCSV(String separator) {
         return Utils.join(separator, Arrays.asList(
                 LatLon.cDdFormatter.format(xmin),

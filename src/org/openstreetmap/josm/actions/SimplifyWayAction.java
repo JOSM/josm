@@ -136,7 +136,7 @@ public class SimplifyWayAction extends JosmAction {
      * @return true if <code>node</code> is a required node which can't be removed
      * in order to simplify the way.
      */
-    protected boolean isRequiredNode(Way way, Node node) {
+    protected static boolean isRequiredNode(Way way, Node node) {
         int frequency = Collections.frequency(way.getNodes(), node);
         if ((way.getNode(0) == node) && (way.getNode(way.getNodesCount()-1) == node)) {
             frequency = frequency - 1; // closed way closing node counted only once
@@ -173,7 +173,7 @@ public class SimplifyWayAction extends JosmAction {
      * @return The sequence of commands to run
      * @since 6411
      */
-    public SequenceCommand simplifyWay(Way w, double threshold) {
+    public static SequenceCommand simplifyWay(Way w, double threshold) {
         int lower = 0;
         int i = 0;
         List<Node> newNodes = new ArrayList<>(w.getNodesCount());
@@ -233,7 +233,7 @@ public class SimplifyWayAction extends JosmAction {
      * @param threshold the max error threshold
      * @param simplifiedNodes list that will contain resulting nodes
      */
-    protected void buildSimplifiedNodeList(List<Node> wnew, int from, int to, double threshold, List<Node> simplifiedNodes) {
+    protected static void buildSimplifiedNodeList(List<Node> wnew, int from, int to, double threshold, List<Node> simplifiedNodes) {
 
         Node fromN = wnew.get(from);
         Node toN = wnew.get(to);
@@ -243,10 +243,11 @@ public class SimplifyWayAction extends JosmAction {
         double xtemax = 0;
         for (int i = from + 1; i < to; i++) {
             Node n = wnew.get(i);
+            // CHECKSTYLE.OFF: SingleSpaceSeparator
             double xte = Math.abs(Ellipsoid.WGS84.a
-                    * xtd(fromN.getCoor().lat() * Math.PI / 180, fromN.getCoor().lon() * Math.PI / 180, toN.getCoor().lat() * Math.PI
-                            / 180, toN.getCoor().lon() * Math.PI / 180, n.getCoor().lat() * Math.PI / 180, n.getCoor().lon() * Math.PI
-                            / 180));
+                    * xtd(fromN.lat() * Math.PI / 180, fromN.lon() * Math.PI / 180, toN.lat() * Math.PI / 180,
+                            toN.lon() * Math.PI / 180,     n.lat() * Math.PI / 180,   n.lon() * Math.PI / 180));
+            // CHECKSTYLE.ON: SingleSpaceSeparator
             if (xte > xtemax) {
                 xtemax = xte;
                 imax = i;

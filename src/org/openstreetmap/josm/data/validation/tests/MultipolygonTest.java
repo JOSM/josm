@@ -767,9 +767,7 @@ public class MultipolygonTest extends Test {
 
     @Override
     public boolean isFixable(TestError testError) {
-        if (testError.getCode() == REPEATED_MEMBER_SAME_ROLE)
-            return true;
-        return false;
+        return testError.getCode() == REPEATED_MEMBER_SAME_ROLE;
     }
 
     /**

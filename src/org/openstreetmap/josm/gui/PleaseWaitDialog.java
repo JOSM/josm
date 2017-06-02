@@ -11,7 +11,6 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoundedRangeModel;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -36,12 +35,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
 
     private final JLabel currentAction = new JLabel("");
     private final JLabel customText = new JLabel("");
-    /**
-     * The direct progress access.
-     * @deprecated To be removed in mid-2017. Use {@link #updateProgress(int)}
-     */
-    @Deprecated
-    public final transient BoundedRangeModel progress = progressBar.getModel();
+
     private JButton btnCancel;
     private JButton btnInBackground;
     /** the text area and the scroll pane for the log */

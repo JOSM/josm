@@ -96,7 +96,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
     }
 
     /**
-     * Remebers the fact that the current JOSM user is partially identified
+     * Remembers the fact that the current JOSM user is partially identified
      * by the user name of its OSM account.
      *
      * @param userName the user name. Must not be null. Must not be empty (whitespace only).
@@ -105,10 +105,11 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
      */
     public void setPartiallyIdentified(String userName) {
         CheckParameterUtil.ensureParameterNotNull(userName, "userName");
-        if (userName.trim().isEmpty())
+        String trimmedUserName = userName.trim();
+        if (trimmedUserName.isEmpty())
             throw new IllegalArgumentException(
                     MessageFormat.format("Expected non-empty value for parameter ''{0}'', got ''{1}''", "userName", userName));
-        this.userName = userName;
+        this.userName = trimmedUserName;
         userInfo = null;
     }
 
@@ -116,19 +117,20 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
      * Remembers the fact that the current JOSM user is fully identified with a
      * verified pair of user name and user id.
      *
-     * @param username the user name. Must not be null. Must not be empty.
-     * @param userinfo additional information about the user, retrieved from the OSM server and including the user id
+     * @param userName the user name. Must not be null. Must not be empty.
+     * @param userInfo additional information about the user, retrieved from the OSM server and including the user id
      * @throws IllegalArgumentException if userName is null
      * @throws IllegalArgumentException if userName is empty
-     * @throws IllegalArgumentException if userinfo is null
+     * @throws IllegalArgumentException if userInfo is null
      */
-    public void setFullyIdentified(String username, UserInfo userinfo) {
-        CheckParameterUtil.ensureParameterNotNull(username, "username");
-        if (username.trim().isEmpty())
+    public void setFullyIdentified(String userName, UserInfo userInfo) {
+        CheckParameterUtil.ensureParameterNotNull(userName, "userName");
+        String trimmedUserName = userName.trim();
+        if (trimmedUserName.isEmpty())
             throw new IllegalArgumentException(tr("Expected non-empty value for parameter ''{0}'', got ''{1}''", "userName", userName));
-        CheckParameterUtil.ensureParameterNotNull(userinfo, "userinfo");
-        this.userName = username;
-        this.userInfo = userinfo;
+        CheckParameterUtil.ensureParameterNotNull(userInfo, "userInfo");
+        this.userName = trimmedUserName;
+        this.userInfo = userInfo;
     }
 
     /**

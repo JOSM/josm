@@ -6,17 +6,28 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Assert;
+import org.junit.After;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 
 /**
  * Unit test of {@link ChangesetCache}
  */
 public class ChangesetCacheTest {
+
+    /**
+     * Clears cache after each unit test.
+     */
+    @After
+    public void after() {
+        ChangesetCache.getInstance().clear();
+    }
 
     /**
      * Unit test of {@link ChangesetCache#ChangesetCache}
@@ -183,33 +194,98 @@ public class ChangesetCacheTest {
     }
 
     /**
-     * Unit test of method {@link ChangesetCache#getOpenChangesets}.
+     * Unit test of methods {@link ChangesetCache#getOpenChangesets} / {@link ChangesetCache#getChangesets}.
      */
     @Test
     public void testGetOpenChangesets() {
         final ChangesetCache cache = ChangesetCache.getInstance();
         // empty cache => empty list
-        Assert.assertTrue(
+        assertTrue(
                 "Empty cache should produce an empty list.",
                 cache.getOpenChangesets().isEmpty()
+        );
+        assertTrue(
+                "Empty cache should produce an empty list.",
+                cache.getChangesets().isEmpty()
         );
 
         // cache with only closed changesets => empty list
         Changeset closedCs = new Changeset(1);
         closedCs.setOpen(false);
         cache.update(closedCs);
-        Assert.assertTrue(
+        assertTrue(
                 "Cache with only closed changesets should produce an empty list.",
                 cache.getOpenChangesets().isEmpty()
         );
+        assertEquals(1, cache.getChangesets().size());
 
         // cache with open and closed changesets => list with only the open ones
         Changeset openCs = new Changeset(2);
         openCs.setOpen(true);
         cache.update(openCs);
-        Assert.assertEquals(
+        assertEquals(
                 Collections.singletonList(openCs),
                 cache.getOpenChangesets()
         );
+        assertEquals(2, cache.getChangesets().size());
+    }
+
+    /**
+     * Unit test of method {@link ChangesetCache#getOpenChangesetsForCurrentUser}.
+     */
+    @Test
+    public void testGetOpenChangesetsForCurrentUser() {
+        final ChangesetCache cache = ChangesetCache.getInstance();
+        // empty cache => empty list
+        assertTrue(
+                "Empty cache should produce an empty list.",
+                cache.getOpenChangesetsForCurrentUser().isEmpty()
+        );
+
+        Changeset openCs1 = new Changeset(1);
+        openCs1.setOpen(true);
+        openCs1.setUser(User.getAnonymous());
+        cache.update(openCs1);
+
+        Changeset openCs2 = new Changeset(2);
+        openCs2.setOpen(true);
+        openCs2.setUser(User.createLocalUser("foo"));
+        cache.update(openCs2);
+
+        Changeset closedCs = new Changeset(3);
+        closedCs.setOpen(false);
+        cache.update(closedCs);
+
+        assertEquals(3, cache.getChangesets().size());
+
+        JosmUserIdentityManager.getInstance().setAnonymous();
+        assertEquals(2, cache.getOpenChangesetsForCurrentUser().size());
+
+        JosmUserIdentityManager.getInstance().setPartiallyIdentified("foo");
+        assertEquals(1, cache.getOpenChangesetsForCurrentUser().size());
+    }
+
+    /**
+     * Unit test of methods {@link ChangesetCache#remove}.
+     */
+    @Test
+    public void testRemove() {
+        final ChangesetCache cache = ChangesetCache.getInstance();
+        Changeset cs1 = new Changeset(1);
+        cache.update(cs1);
+        assertEquals(1, cache.getChangesets().size());
+
+        cache.remove((Changeset) null);
+        cache.remove(cs1);
+        assertTrue(cache.getChangesets().isEmpty());
+
+        Changeset cs2 = new Changeset(2);
+        cache.update((Collection<Changeset>) null);
+        cache.update(Arrays.asList(cs1, cs2));
+        assertEquals(2, cache.getChangesets().size());
+
+        cache.remove((Collection<Changeset>) null);
+        cache.remove(Arrays.asList(cs1, cs2));
+        assertTrue(cache.getChangesets().isEmpty());
     }
 }

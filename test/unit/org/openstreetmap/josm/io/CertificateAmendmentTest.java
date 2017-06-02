@@ -8,9 +8,12 @@ import java.net.URLConnection;
 import javax.net.ssl.SSLHandshakeException;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests of {@link CertificateAmendment} class.
@@ -18,11 +21,19 @@ import org.openstreetmap.josm.JOSMFixture;
 public class CertificateAmendmentTest {
 
     /**
-     * Setup test.
+     * Setup rule
      */
-    @BeforeClass
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().platform().https();
+
+    /**
+     * Tests that {@code CertificateAmendment} satisfies utility class criterias.
+     * @throws ReflectiveOperationException if an error occurs
+     */
+    @Test
+    public void testUtilityClass() throws ReflectiveOperationException {
+        UtilityClassTestUtil.assertUtilityClassWellDefined(CertificateAmendment.class);
     }
 
     /**
@@ -31,7 +42,7 @@ public class CertificateAmendmentTest {
      */
     @Test
     public void testDefault() throws IOException {
-        // something that is neither DST nor StartSSL
+        // something that is not embedded
         connect("https://google.com", true);
     }
 
@@ -52,16 +63,6 @@ public class CertificateAmendmentTest {
     }
 
     /**
-     * Test <a href="https://www.startssl.com">StartSSL</a>.
-     * @throws IOException in case of I/O error
-     */
-    @Test
-    public void testStartSSL() throws IOException {
-        connect("https://map.dgpsonline.eu", true);
-        connect("https://www.startssl.com", true);
-    }
-
-    /**
      * Test a broken certificate.
      * @throws IOException in case of I/O error
      */
@@ -78,6 +79,15 @@ public class CertificateAmendmentTest {
     @Test
     public void testOverpass() throws IOException {
         connect("https://overpass-api.de", true);
+    }
+
+    /**
+     * Test Dutch government.
+     * @throws IOException in case of I/O error
+     */
+    @Test
+    public void testDutchGovernment() throws IOException {
+        connect("https://geodata.nationaalgeoregister.nl", true);
     }
 
     private static void connect(String url, boolean shouldWork) throws IOException {

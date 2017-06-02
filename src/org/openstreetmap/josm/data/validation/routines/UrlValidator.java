@@ -23,6 +23,7 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -371,11 +372,7 @@ public class UrlValidator extends AbstractValidator {
             return false;
         }
 
-        if (isOff(ALLOW_ALL_SCHEMES) && !allowedSchemes.contains(scheme.toLowerCase(Locale.ENGLISH))) {
-            return false;
-        }
-
-        return true;
+        return isOn(ALLOW_ALL_SCHEMES) || allowedSchemes.contains(scheme.toLowerCase(Locale.ENGLISH));
     }
 
     /**
@@ -427,12 +424,7 @@ public class UrlValidator extends AbstractValidator {
             }
         }
 
-        String extra = authorityMatcher.group(PARSE_AUTHORITY_EXTRA);
-        if (extra != null && !extra.trim().isEmpty()) {
-            return false;
-        }
-
-        return true;
+        return Optional.ofNullable(authorityMatcher.group(PARSE_AUTHORITY_EXTRA)).orElse("").trim().isEmpty();
     }
 
     /**
@@ -461,12 +453,7 @@ public class UrlValidator extends AbstractValidator {
             return false;
         }
 
-        int slash2Count = countToken("//", path);
-        if (slash2Count > 0 && isOff(ALLOW_2_SLASHES)) {
-            return false;
-        }
-
-        return true;
+        return isOn(ALLOW_2_SLASHES) || countToken("//", path) <= 0;
     }
 
     /**

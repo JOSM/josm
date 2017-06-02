@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 
 /**
@@ -28,7 +29,7 @@ public class ShiftedProjecting implements Projecting {
     }
 
     @Override
-    public EastNorth latlon2eastNorth(LatLon ll) {
+    public EastNorth latlon2eastNorth(ILatLon ll) {
         return base.latlon2eastNorth(ll).add(offset);
     }
 

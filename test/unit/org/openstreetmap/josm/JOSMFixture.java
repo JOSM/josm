@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -13,14 +14,19 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import javax.swing.JPanel;
+
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MainPanel;
 import org.openstreetmap.josm.gui.layer.LayerManagerTest.TestLayer;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CertificateAmendment;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -110,7 +116,7 @@ public class JOSMFixture {
         try {
             CertificateAmendment.addMissingCertificates();
         } catch (IOException | GeneralSecurityException ex) {
-            throw new RuntimeException(ex);
+            throw new JosmRuntimeException(ex);
         }
 
         // init projection
@@ -138,20 +144,47 @@ public class JOSMFixture {
     }
 
     private void setupGUI() {
-        Main.getLayerManager().resetState();
+        JOSMTestRules.cleanLayerEnvironment();
         assertTrue(Main.getLayerManager().getLayers().isEmpty());
         assertNull(Main.getLayerManager().getEditLayer());
         assertNull(Main.getLayerManager().getActiveLayer());
 
-        if (Main.toolbar == null) {
-            Main.toolbar = new ToolbarPreferences();
-        }
+        initContentPane();
+        initMainPanel();
+        initToolbar();
         if (Main.main == null) {
             new MainApplication().initialize();
         } else {
-            Main.mainPanel.reAddListeners();
+            Main.main.panel.reAddListeners();
         }
         // Add a test layer to the layer manager to get the MapFrame
         Main.getLayerManager().addLayer(new TestLayer());
+    }
+
+    /**
+     * Make sure {@code Main.contentPanePrivate} is initialized.
+     */
+    public static void initContentPane() {
+        if (Main.contentPanePrivate == null) {
+            Main.contentPanePrivate = new JPanel(new BorderLayout());
+        }
+    }
+
+    /**
+     * Make sure {@code Main.mainPanel} is initialized.
+     */
+    public static void initMainPanel() {
+        if (Main.mainPanel == null) {
+            Main.mainPanel = new MainPanel(Main.getLayerManager());
+        }
+    }
+
+    /**
+     * Make sure {@code Main.toolbar} is initialized.
+     */
+    public static void initToolbar() {
+        if (Main.toolbar == null) {
+            Main.toolbar = new ToolbarPreferences();
+        }
     }
 }

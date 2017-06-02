@@ -21,7 +21,6 @@ import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.EastNorth;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder;
@@ -223,7 +222,7 @@ public final class Geometry {
 
         BBox bounds = new BBox(nodes.get(0));
         for (Node n: nodes) {
-            bounds.add(n.getCoor());
+            bounds.add(n);
         }
         return bounds;
     }
@@ -416,7 +415,7 @@ public final class Geometry {
         else if (segmentOnly && offset >= 1)
             return p2;
         else
-            return new EastNorth(p1.getX() + ldx * offset, p1.getY() + ldy * offset);
+            return p1.interpolate(p2, offset);
     }
 
     /**
@@ -512,10 +511,10 @@ public final class Geometry {
         boolean begin = true;
         for (Node n : polygon) {
             if (begin) {
-                path.moveTo(n.getCoor().lon(), n.getCoor().lat());
+                path.moveTo(n.lon(), n.lat());
                 begin = false;
             } else {
-                path.lineTo(n.getCoor().lon(), n.getCoor().lat());
+                path.lineTo(n.lon(), n.lat());
             }
         }
         if (!begin) {
@@ -727,8 +726,8 @@ public final class Geometry {
         double area2 = 0.;
 
         for (int node = 1; node <= /*sic! consider last-first as well*/ nodesCount; node++) {
-            LatLon coorPrev = nodes.get(node - 1).getCoor();
-            LatLon coorCurr = nodes.get(node % nodesCount).getCoor();
+            Node coorPrev = nodes.get(node - 1);
+            Node coorCurr = nodes.get(node % nodesCount);
             area2 += coorPrev.lon() * coorCurr.lat();
             area2 -= coorCurr.lon() * coorPrev.lat();
         }
@@ -987,13 +986,15 @@ public final class Geometry {
         CheckParameterUtil.ensureParameterNotNull(nodes, "nodes");
         double area = 0;
         double perimeter = 0;
+        Projection useProjection = projection == null ? Main.getProjection() : projection;
+
         if (!nodes.isEmpty()) {
             boolean closed = nodes.get(0) == nodes.get(nodes.size() - 1);
             int numSegments = closed ? nodes.size() - 1 : nodes.size();
-            EastNorth p1 = projection == null ? nodes.get(0).getEastNorth() : projection.latlon2eastNorth(nodes.get(0).getCoor());
+            EastNorth p1 = nodes.get(0).getEastNorth(useProjection);
             for (int i = 1; i <= numSegments; i++) {
                 final Node node = nodes.get(i == numSegments ? 0 : i);
-                final EastNorth p2 = projection == null ? node.getEastNorth() : projection.latlon2eastNorth(node.getCoor());
+                final EastNorth p2 = node.getEastNorth(useProjection);
                 if (p1 != null && p2 != null) {
                     area += p1.east() * p2.north() - p2.east() * p1.north();
                     perimeter += p1.distance(p2);

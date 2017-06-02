@@ -21,6 +21,9 @@ public class CompletelyInsideAreaStrategy implements PositionForAreaStrategy {
      */
     public static final CompletelyInsideAreaStrategy INSTANCE = new CompletelyInsideAreaStrategy();
 
+    protected CompletelyInsideAreaStrategy() {
+    }
+
     @Override
     public MapViewPositionAndRotation findLabelPlacement(MapViewPath path, Rectangle2D nb) {
         // Using the Centroid is Nicer for buildings like: +--------+

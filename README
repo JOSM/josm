@@ -122,11 +122,10 @@ This is an overview of the files and directories in the JOSM code repository:
     - checkstyle/           libs and config files for checkstyle (automatically detects code style
                             problems in source code); can be launched as an ant target in build.xml
     - commons-cli-1.3.1.jar dependency of Groovy Ant task
-    - error_prone_ant-2.0.19.jar
-                            used to detect code errors during compilation
+    - error_prone_ant.jar   used to detect code errors during compilation
     - findbugs/             libs and config files for findbugs (automatically detects common bugs and potential
                             problems in source code); can be launched as an ant target in build.xml
-    - groovy-all-2.4.8.jar  used for some unit tests and various scripts
+    - groovy-all-2.4.11.jar used for some unit tests and various scripts
     - jacocoant.jar         used to include coverage data into JUnit test reports
     - japicc/               used to generate a compatibility report between optimized jar and normal one
     - javacc.jar            used in the build process to generate some .java files from a javacc source file

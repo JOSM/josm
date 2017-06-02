@@ -48,4 +48,13 @@ public class ArrowPaintHelper {
             path.lineTo(x + dx * cos + dy * -sin, y + dx * sin + dy * cos);
         }
     }
+
+    /**
+     * Gets the length of the arrow along the line segment.
+     * @return the length along the line
+     * @since 12154
+     */
+    public double getOnLineLength() {
+        return length * cos;
+    }
 }

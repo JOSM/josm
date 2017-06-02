@@ -41,9 +41,21 @@ public interface NameFormatter {
      */
     String format(Changeset changeset);
 
+    /**
+     * Gets a comparator that sorts the nodes by the string that this formatter would create for them
+     * @return That comparator
+     */
     Comparator<Node> getNodeComparator();
 
+    /**
+     * Gets a comparator that sorts the ways by the string that this formatter would create for them
+     * @return That comparator
+     */
     Comparator<Way> getWayComparator();
 
+    /**
+     * Gets a comparator that sorts the relations by the string that this formatter would create for them
+     * @return That comparator
+     */
     Comparator<Relation> getRelationComparator();
 }

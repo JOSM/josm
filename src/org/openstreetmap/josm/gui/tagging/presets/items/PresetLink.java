@@ -44,12 +44,12 @@ public class PresetLink extends TaggingPresetItem {
     public boolean addToPanel(JPanel p, Collection<OsmPrimitive> sel, boolean presetInitiallyMatches) {
         final String presetName = preset_name;
         Optional<TaggingPreset> found = TaggingPresets.getTaggingPresets().stream().filter(preset -> presetName.equals(preset.name)).findFirst();
-        if (!found.isPresent())
-            return false;
-        TaggingPreset t = found.get();
-        JLabel lbl = new TaggingPresetLabel(t);
-        lbl.addMouseListener(new TaggingPresetMouseAdapter(t));
-        p.add(lbl, GBC.eol().fill(GBC.HORIZONTAL));
+        if (found.isPresent()) {
+            TaggingPreset t = found.get();
+            JLabel lbl = new TaggingPresetLabel(t);
+            lbl.addMouseListener(new TaggingPresetMouseAdapter(t));
+            p.add(lbl, GBC.eol().fill(GBC.HORIZONTAL));
+        }
         return false;
     }
 

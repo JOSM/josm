@@ -236,6 +236,25 @@ public class TemplateParserTest {
     }
 
     @Test
+    public void testSetAnd() throws ParseError {
+        TemplateParser parser = new TemplateParser("!{(parent(type=child) type=parent) & (parent type=child subtype=parent) '{name}'}");
+        DatasetFactory ds = new DatasetFactory();
+        Relation parent1 = ds.addRelation(1);
+        parent1.put("type", "parent");
+        parent1.put("subtype", "parent");
+        parent1.put("name", "name_parent1");
+        Node child = ds.addNode(1);
+        child.put("type", "child");
+        parent1.addMember(new RelationMember("", child));
+
+        StringBuilder sb = new StringBuilder();
+        TemplateEntry entry = parser.parse();
+        entry.appendText(sb, child);
+
+        Assert.assertEquals("name_parent1", sb.toString());
+    }
+
+    @Test
     public void testSetOr() throws ParseError {
         TemplateParser parser = new TemplateParser("!{(parent(type=type1) type=parent1) | (parent type=type2 type=parent2) '{name}'}");
         DatasetFactory ds = new DatasetFactory();

@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.AggregatePrimitivesVisitor;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
+import org.openstreetmap.josm.gui.layer.ValidatorLayer;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -140,7 +141,8 @@ public class ValidateAction extends JosmAction {
             GuiHelper.runInEDT(() -> {
                 Main.map.validatorDialog.tree.setErrors(errors);
                 Main.map.validatorDialog.unfurlDialog();
-                Main.getLayerManager().getEditDataSet().fireSelectionChanged();
+                //FIXME: nicer way to find / invalidate the corresponding error layer
+                Main.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
             });
         }
 

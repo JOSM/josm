@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.imagery;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Locale;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLInputFactory;
@@ -14,7 +15,7 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Helper class for handling OGC GetCapabilities documents
- *
+ * @since 10993
  */
 public final class GetCapabilitiesParseHelper {
     enum TransferMode {
@@ -77,7 +78,7 @@ public final class GetCapabilitiesParseHelper {
      * @throws XMLStreamException if any XML stream error occurs
      */
     public static XMLStreamReader getReader(InputStream in) throws XMLStreamException {
-        XMLInputFactory factory = XMLInputFactory.newFactory();
+        XMLInputFactory factory = XMLInputFactory.newInstance();
         // do not try to load external entities, nor validate the XML
         factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
         factory.setProperty(XMLInputFactory.IS_VALIDATING, Boolean.FALSE);
@@ -175,10 +176,7 @@ public final class GetCapabilitiesParseHelper {
                 event = reader.next()) {
             if (event == XMLStreamReader.START_ELEMENT && QN_OWS_CONSTRAINT.equals(reader.getName())
              && "GetEncoding".equals(reader.getAttributeValue("", "name"))) {
-                moveReaderToTag(reader, new QName[]{
-                        QN_OWS_ALLOWED_VALUES,
-                        QN_OWS_VALUE
-                });
+                moveReaderToTag(reader, QN_OWS_ALLOWED_VALUES, QN_OWS_VALUE);
                 return TransferMode.fromString(reader.getElementText());
             }
         }
@@ -201,10 +199,12 @@ public final class GetCapabilitiesParseHelper {
      * Convert CRS identifier to plain code
      * @param crsIdentifier CRS identifier
      * @return CRS Identifier as it is used within JOSM (without prefix)
+     * @see <a href="https://portal.opengeospatial.org/files/?artifact_id=24045">
+     *     Definition identifier URNs in OGC namespace, chapter 7.2: URNs for single objects</a>
      */
     public static String crsToCode(String crsIdentifier) {
         if (crsIdentifier.startsWith("urn:ogc:def:crs:")) {
-            return crsIdentifier.replaceFirst("urn:ogc:def:crs:([^:]*):.*:(.*)$", "$1:$2");
+            return crsIdentifier.replaceFirst("urn:ogc:def:crs:([^:]*)(?::.*)?:(.*)$", "$1:$2").toUpperCase(Locale.ENGLISH);
         }
         return crsIdentifier;
     }

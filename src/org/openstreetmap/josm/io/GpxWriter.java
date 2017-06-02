@@ -185,13 +185,13 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
     }
 
     private void writeWayPoints() {
-        for (WayPoint pnt : data.waypoints) {
+        for (WayPoint pnt : data.getWaypoints()) {
             wayPoint(pnt, WAY_POINT);
         }
     }
 
     private void writeRoutes() {
-        for (GpxRoute rte : data.routes) {
+        for (GpxRoute rte : data.getRoutes()) {
             openln("rte");
             writeAttr(rte, RTE_TRK_KEYS);
             for (WayPoint pnt : rte.routePoints) {
@@ -202,7 +202,7 @@ public class GpxWriter extends XmlWriter implements GpxConstants {
     }
 
     private void writeTracks() {
-        for (GpxTrack trk : data.tracks) {
+        for (GpxTrack trk : data.getTracks()) {
             openln("trk");
             writeAttr(trk, RTE_TRK_KEYS);
             for (GpxTrackSegment seg : trk.getSegments()) {

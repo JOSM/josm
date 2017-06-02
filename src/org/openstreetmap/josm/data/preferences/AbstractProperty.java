@@ -5,6 +5,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.tools.ListenableWeakReference;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * Captures the common functionality of preference properties
@@ -236,7 +238,11 @@ public abstract class AbstractProperty<T> {
      * @since 10824
      */
     public void addListener(ValueChangeListener<? super T> listener) {
-        addListenerImpl(new PreferenceChangedListenerAdapter(listener));
+        try {
+            addListenerImpl(new PreferenceChangedListenerAdapter(listener));
+        } catch (RuntimeException e) {
+            throw BugReport.intercept(e).put("listener", listener).put("preference", key);
+        }
     }
 
     protected void addListenerImpl(PreferenceChangedListener adapter) {
@@ -249,11 +255,38 @@ public abstract class AbstractProperty<T> {
      * @since 10824
      */
     public void addWeakListener(ValueChangeListener<? super T> listener) {
-        addWeakListenerImpl(new PreferenceChangedListenerAdapter(listener));
+        try {
+            ValueChangeListener<T> weakListener = new WeakPreferenceAdapter(listener);
+            PreferenceChangedListenerAdapter adapter = new PreferenceChangedListenerAdapter(weakListener);
+            addListenerImpl(adapter);
+        } catch (RuntimeException e) {
+            throw BugReport.intercept(e).put("listener", listener).put("preference", key);
+        }
     }
 
-    protected void addWeakListenerImpl(PreferenceChangedListener adapter) {
-        getPreferences().addWeakKeyPreferenceChangeListener(getKey(), adapter);
+    /**
+     * This class wraps the ValueChangeListener in a ListenableWeakReference that automatically removes itself
+     * if the listener is garbage collected.
+     * @author Michael Zangl
+     */
+    private class WeakPreferenceAdapter extends ListenableWeakReference<ValueChangeListener<? super T>>
+            implements ValueChangeListener<T> {
+        WeakPreferenceAdapter(ValueChangeListener<? super T> referent) {
+            super(referent);
+        }
+
+        @Override
+        public void valueChanged(ValueChangeEvent<? extends T> e) {
+            ValueChangeListener<? super T> r = super.get();
+            if (r != null) {
+                r.valueChanged(e);
+            }
+        }
+
+        @Override
+        protected void onDereference() {
+            removeListenerImpl(new PreferenceChangedListenerAdapter(this));
+        }
     }
 
     /**
@@ -262,7 +295,11 @@ public abstract class AbstractProperty<T> {
      * @since 10824
      */
     public void removeListener(ValueChangeListener<? super T> listener) {
-        removeListenerImpl(new PreferenceChangedListenerAdapter(listener));
+        try {
+            removeListenerImpl(new PreferenceChangedListenerAdapter(listener));
+        } catch (RuntimeException e) {
+            throw BugReport.intercept(e).put("listener", listener).put("preference", key);
+        }
     }
 
     protected void removeListenerImpl(PreferenceChangedListener adapter) {

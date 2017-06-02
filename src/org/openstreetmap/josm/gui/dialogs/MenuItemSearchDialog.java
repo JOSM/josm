@@ -20,13 +20,16 @@ import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.widgets.SearchTextResultListPanel;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * A dialog that allows you to search for a menu item. The user can input part of the menu item name.
+ */
 public final class MenuItemSearchDialog extends ExtendedDialog {
 
     private final Selector selector;
     private static final MenuItemSearchDialog INSTANCE = new MenuItemSearchDialog(Main.main.menu);
 
     private MenuItemSearchDialog(MainMenu menu) {
-        super(Main.parent, tr("Search menu items"), new String[]{tr("Select"), tr("Cancel")});
+        super(Main.parent, tr("Search menu items"), tr("Select"), tr("Cancel"));
         this.selector = new Selector(menu);
         this.selector.setDblClickListener(e -> buttonAction(0, null));
         setContent(selector, false);
@@ -109,6 +112,9 @@ public final class MenuItemSearchDialog extends ExtendedDialog {
         }
     }
 
+    /**
+     * The action that opens the menu item search dialog.
+     */
     public static class Action extends JosmAction {
 
         // CHECKSTYLE.OFF: LineLength

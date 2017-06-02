@@ -18,8 +18,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.image.BufferedImage;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -74,7 +72,8 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * Layer displaying geottaged pictures.
  */
-public class GeoImageLayer extends AbstractModifiableLayer implements PropertyChangeListener, JumpToMarkerLayer {
+public class GeoImageLayer extends AbstractModifiableLayer implements
+        JumpToMarkerLayer, NavigatableComponent.ZoomChangeListener {
 
     private static List<Action> menuAdditions = new LinkedList<>();
 
@@ -589,14 +588,14 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
                     double leftdir = (headdir < 90) ? headdir + 270 : headdir - 90;
                     double rightdir = (headdir > 270) ? headdir - 270 : headdir + 90;
 
-                    double ptx = p.x + Math.cos(Math.toRadians(headdir)) * arrowlength;
-                    double pty = p.y + Math.sin(Math.toRadians(headdir)) * arrowlength;
+                    double ptx = p.x + Math.cos(Utils.toRadians(headdir)) * arrowlength;
+                    double pty = p.y + Math.sin(Utils.toRadians(headdir)) * arrowlength;
 
-                    double ltx = p.x + Math.cos(Math.toRadians(leftdir)) * arrowwidth/2;
-                    double lty = p.y + Math.sin(Math.toRadians(leftdir)) * arrowwidth/2;
+                    double ltx = p.x + Math.cos(Utils.toRadians(leftdir)) * arrowwidth/2;
+                    double lty = p.y + Math.sin(Utils.toRadians(leftdir)) * arrowwidth/2;
 
-                    double rtx = p.x + Math.cos(Math.toRadians(rightdir)) * arrowwidth/2;
-                    double rty = p.y + Math.sin(Math.toRadians(rightdir)) * arrowwidth/2;
+                    double rtx = p.x + Math.cos(Utils.toRadians(rightdir)) * arrowwidth/2;
+                    double rty = p.y + Math.sin(Utils.toRadians(rightdir)) * arrowwidth/2;
 
                     g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                     g.setColor(new Color(255, 255, 255, 192));
@@ -719,8 +718,8 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
             int result = new ExtendedDialog(
                     Main.parent,
                     tr("Delete image file from disk"),
-                    new String[] {tr("Cancel"), tr("Delete")})
-            .setButtonIcons(new String[] {"cancel", "dialogs/delete"})
+                    tr("Cancel"), tr("Delete"))
+            .setButtonIcons("cancel", "dialogs/delete")
             .setContent(new JLabel(tr("<html><h3>Delete the file {0} from disk?<p>The image file will be permanently lost!</h3></html>",
                     toDelete.getFile().getName()), ImageProvider.get("dialogs/geoimage/deletefromdisk"), SwingConstants.LEFT))
                     .toggleEnable("geoimage.deleteimagefromdisk")
@@ -1025,7 +1024,6 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
             }
         });
 
-        Main.map.mapView.addPropertyChangeListener(this);
         if (Main.map.getToggleDialog(ImageViewerDialog.class) == null) {
             ImageViewerDialog.newInstance();
             Main.map.addToggleDialog(ImageViewerDialog.getInstance());
@@ -1033,11 +1031,14 @@ public class GeoImageLayer extends AbstractModifiableLayer implements PropertyCh
     }
 
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {
-        if (NavigatableComponent.PROPNAME_CENTER.equals(evt.getPropertyName()) ||
-                NavigatableComponent.PROPNAME_SCALE.equals(evt.getPropertyName())) {
-            updateOffscreenBuffer = true;
-        }
+    public LayerPainter attachToMapView(MapViewEvent event) {
+        MapView.addZoomChangeListener(this);
+        return super.attachToMapView(event);
+    }
+
+    @Override
+    public void zoomChanged() {
+        updateOffscreenBuffer = true;
     }
 
     /**

@@ -39,6 +39,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -102,31 +103,32 @@ class NotificationManager {
         currentNotification = queue.poll();
         if (currentNotification == null) return;
 
-        currentNotificationPanel = new NotificationPanel(currentNotification, new FreezeMouseListener(), e -> this.stopHideTimer());
-        currentNotificationPanel.validate();
+        GuiHelper.runInEDTAndWait(() -> {
+            currentNotificationPanel = new NotificationPanel(currentNotification, new FreezeMouseListener(), e -> this.stopHideTimer());
+            currentNotificationPanel.validate();
 
-        int margin = 5;
-        JFrame parentWindow = (JFrame) Main.parent;
-        Dimension size = currentNotificationPanel.getPreferredSize();
-        if (parentWindow != null) {
-            int x;
-            int y;
-            if (Main.isDisplayingMapView() && Main.map.mapView.getHeight() > 0) {
-                MapView mv = Main.map.mapView;
-                Point mapViewPos = SwingUtilities.convertPoint(mv.getParent(), mv.getX(), mv.getY(), Main.parent);
-                x = mapViewPos.x + margin;
-                y = mapViewPos.y + mv.getHeight() - Main.map.statusLine.getHeight() - size.height - margin;
-            } else {
-                x = margin;
-                y = parentWindow.getHeight() - Main.toolbar.control.getSize().height - size.height - margin;
+            int margin = 5;
+            JFrame parentWindow = (JFrame) Main.parent;
+            Dimension size = currentNotificationPanel.getPreferredSize();
+            if (parentWindow != null) {
+                int x;
+                int y;
+                if (Main.isDisplayingMapView() && Main.map.mapView.getHeight() > 0) {
+                    MapView mv = Main.map.mapView;
+                    Point mapViewPos = SwingUtilities.convertPoint(mv.getParent(), mv.getX(), mv.getY(), Main.parent);
+                    x = mapViewPos.x + margin;
+                    y = mapViewPos.y + mv.getHeight() - Main.map.statusLine.getHeight() - size.height - margin;
+                } else {
+                    x = margin;
+                    y = parentWindow.getHeight() - Main.toolbar.control.getSize().height - size.height - margin;
+                }
+                parentWindow.getLayeredPane().add(currentNotificationPanel, JLayeredPane.POPUP_LAYER, 0);
+
+                currentNotificationPanel.setLocation(x, y);
             }
-            parentWindow.getLayeredPane().add(currentNotificationPanel, JLayeredPane.POPUP_LAYER, 0);
-
-            currentNotificationPanel.setLocation(x, y);
-        }
-        currentNotificationPanel.setSize(size);
-
-        currentNotificationPanel.setVisible(true);
+            currentNotificationPanel.setSize(size);
+            currentNotificationPanel.setVisible(true);
+        });
 
         running = true;
         elapsedTime = 0;

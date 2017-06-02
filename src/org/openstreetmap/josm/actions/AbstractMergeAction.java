@@ -113,8 +113,8 @@ public abstract class AbstractMergeAction extends JosmAction {
             // return first layer in headless mode, for unit tests
             return targetLayers[0];
         }
-        ExtendedDialog ed = new ExtendedDialog(Main.parent, title, new String[] {buttonText, tr("Cancel")});
-        ed.setButtonIcons(new String[] {buttonIcon, "cancel"});
+        ExtendedDialog ed = new ExtendedDialog(Main.parent, title, buttonText, tr("Cancel"));
+        ed.setButtonIcons(buttonIcon, "cancel");
         ed.setContent(pnl);
         ed.showDialog();
         if (ed.getValue() != 1) {

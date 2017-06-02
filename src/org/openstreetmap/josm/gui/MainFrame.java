@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -48,25 +47,26 @@ public class MainFrame extends JFrame {
 
     protected transient WindowGeometry geometry;
     protected int windowState = JFrame.NORMAL;
+    private final MainPanel panel;
     private MainMenu menu;
 
     /**
      * Create a new main window.
      */
     public MainFrame() {
-        this(new JPanel(), new WindowGeometry(new Rectangle(10, 10, 500, 500)));
+        this(new WindowGeometry(new Rectangle(10, 10, 500, 500)));
     }
 
     /**
-     * Create a new main window. The parameters will be removed in the future.
-     * @param contentPanePrivate The content
+     * Create a new main window. The parameter will be removed in the future.
      * @param geometry The inital geometry to use.
-     * @since 11713
+     * @since 12127
      */
-    public MainFrame(Container contentPanePrivate, WindowGeometry geometry) {
+    public MainFrame(WindowGeometry geometry) {
         super();
         this.geometry = geometry;
-        setContentPane(contentPanePrivate);
+        this.panel = new MainPanel(Main.getLayerManager());
+        setContentPane(new JPanel(new BorderLayout()));
     }
 
     /**
@@ -93,11 +93,11 @@ public class MainFrame extends JFrame {
 
         // This listener is never removed, since the main frame exists forever.
         Main.getLayerManager().addActiveLayerChangeListener(e -> refreshTitle());
-        Main.getLayerManager().addLayerChangeListener(new ManageLayerListeners(), true);
+        Main.getLayerManager().addAndFireLayerChangeListener(new ManageLayerListeners());
 
         refreshTitle();
 
-        getContentPane().add(Main.panel, BorderLayout.CENTER);
+        getContentPane().add(panel, BorderLayout.CENTER);
         menu.initialize();
     }
 
@@ -114,12 +114,23 @@ public class MainFrame extends JFrame {
     /**
      * Gets the main menu used for this window.
      * @return The main menu.
+     * @throws IllegalStateException if the main frame has not been initialized yet
+     * @see #initialize
      */
     public MainMenu getMenu() {
         if (menu == null) {
             throw new IllegalStateException("Not initialized.");
         }
         return menu;
+    }
+
+    /**
+     * Gets the main panel.
+     * @return The main panel.
+     * @since 12125
+     */
+    public MainPanel getPanel() {
+        return panel;
     }
 
     /**

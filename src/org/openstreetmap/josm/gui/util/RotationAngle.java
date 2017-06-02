@@ -56,15 +56,8 @@ public interface RotationAngle {
             if (this == obj) {
                 return true;
             }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
-                return false;
-            }
-            return true;
+            return obj != null && getClass() == obj.getClass();
         }
-
     }
 
     /**
@@ -91,8 +84,7 @@ public interface RotationAngle {
         public int hashCode() {
             final int prime = 31;
             int result = 1;
-            long temp;
-            temp = Double.doubleToLongBits(angle);
+            long temp = Double.doubleToLongBits(angle);
             result = prime * result + (int) (temp ^ (temp >>> 32));
             return result;
         }
@@ -102,17 +94,11 @@ public interface RotationAngle {
             if (this == obj) {
                 return true;
             }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
+            if (obj == null || getClass() != obj.getClass()) {
                 return false;
             }
             StaticRotationAngle other = (StaticRotationAngle) obj;
-            if (Double.doubleToLongBits(angle) != Double.doubleToLongBits(other.angle)) {
-                return false;
-            }
-            return true;
+            return Double.doubleToLongBits(angle) == Double.doubleToLongBits(other.angle);
         }
     }
 
@@ -166,25 +152,25 @@ public interface RotationAngle {
                 return 0; // 0 degree => 0 radian
             case "ne":
             case "northeast":
-                return Math.toRadians(45);
+                return Utils.toRadians(45);
             case "e":
             case "east":
-                return Math.toRadians(90);
+                return Utils.toRadians(90);
             case "se":
             case "southeast":
-                return Math.toRadians(135);
+                return Utils.toRadians(135);
             case "s":
             case "south":
                 return Math.PI; // 180 degree
             case "sw":
             case "southwest":
-                return Math.toRadians(225);
+                return Utils.toRadians(225);
             case "w":
             case "west":
-                return Math.toRadians(270);
+                return Utils.toRadians(270);
             case "nw":
             case "northwest":
-                return Math.toRadians(315);
+                return Utils.toRadians(315);
             default:
                 throw new IllegalArgumentException("Unexpected cardinal direction " + cardinal);
         }

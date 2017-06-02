@@ -134,10 +134,10 @@ public class WayConnectionTypeCalculator {
 
     private int firstGroupIdx;
     private void makeLoopIfNeeded(final List<WayConnectionType> con, final int i) {
-        boolean loop;
+        boolean loop = false;
         if (i == firstGroupIdx) { //is primitive loop
             loop = determineDirection(i, FORWARD, i) == FORWARD;
-        } else {
+        } else if (i >= 0) {
             loop = determineDirection(i, con.get(i).direction, firstGroupIdx) == con.get(firstGroupIdx).direction;
         }
         if (loop) {

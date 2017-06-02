@@ -18,6 +18,9 @@ import org.openstreetmap.josm.tools.Shortcut;
 */
 public class DialogsToggleAction extends ToggleAction {
 
+    private boolean toolbarPreviouslyVisible;
+    private boolean sideToolbarPreviouslyVisible;
+
     /**
      * Constructs a new {@code DialogsToggleAction}.
      */
@@ -45,14 +48,18 @@ public class DialogsToggleAction extends ToggleAction {
     protected void setMode() {
         if (Main.isDisplayingMapView()) {
             boolean selected = isSelected();
+            if (!selected) {
+                toolbarPreviouslyVisible = Main.pref.getBoolean("toolbar.visible", true);
+                sideToolbarPreviouslyVisible = Main.pref.getBoolean("sidetoolbar.visible", true);
+            }
             Main.map.setDialogsPanelVisible(selected);
             Main.map.statusLine.setVisible(selected || Main.pref.getBoolean("statusbar.always-visible", true));
             Main.main.menu.setVisible(selected || Main.pref.getBoolean("menu.always-visible", true));
             // Toolbars listen to preference changes, use it here
-            if (!Main.pref.getBoolean("toolbar.always-visible", true)) {
+            if (!Main.pref.getBoolean("toolbar.always-visible", true) && (!selected || toolbarPreviouslyVisible)) {
                 Main.pref.put("toolbar.visible", selected);
             }
-            if (!Main.pref.getBoolean("sidetoolbar.always-visible", true)) {
+            if (!Main.pref.getBoolean("sidetoolbar.always-visible", true) && (!selected || sideToolbarPreviouslyVisible)) {
                 Main.pref.put("sidetoolbar.visible", selected);
             }
             Main.map.mapView.rememberLastPositionOnScreen();

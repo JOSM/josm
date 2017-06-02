@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder;
 import org.openstreetmap.josm.data.osm.MultipolygonBuilder.JoinedPolygon;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
@@ -400,7 +401,7 @@ public class CreateMultipolygonAction extends JosmAction {
         if ("coastline".equals(values.get("natural")))
             values.remove("natural");
 
-        values.put("area", "yes");
+        values.put("area", OsmUtils.TRUE_VALUE);
 
         List<Command> commands = new ArrayList<>();
         boolean moveTags = Main.pref.getBoolean("multipoly.movetags", true);

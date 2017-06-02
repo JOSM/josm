@@ -4,37 +4,67 @@ package org.openstreetmap.josm.tools;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Desktop;
-import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.CertificateFactory;
+import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import javax.swing.JOptionPane;
-
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.io.CertificateAmendment.CertAmend;
 
 /**
- * {@code PlatformHook} base implementation.
- *
- * Don't write (Main.platform instanceof PlatformHookUnixoid) because other platform
- * hooks are subclasses of this class.
+ * {@code PlatformHook} implementation for Unix systems.
+ * @since 1023
  */
 public class PlatformHookUnixoid implements PlatformHook {
 
     private String osDescription;
+
+    // rpm returns translated string "package %s is not installed\n", can't find a way to force english output
+    // translations from https://github.com/rpm-software-management/rpm
+    private static final String[] NOT_INSTALLED = {
+            "not installed",          // en
+            "no s'ha instal·lat",     // ca
+            "尚未安裝",                // cmn
+            "není nainstalován",      // cs
+            "ikke installeret",       // da
+            "nicht installiert",      // de
+            "ne estas instalita",     // eo
+            "no está instalado",      // es
+            "ole asennettu",          // fi
+            "pas installé",           // fr
+            "non è stato installato", // it
+            "はインストールされていません。",   // ja
+            "패키지가 설치되어 있지 않습니다", // ko
+            "ikke installert",        // nb
+            "nie jest zainstalowany", // pl
+            "não está instalado",     // pt
+            "не установлен",          // ru
+            "ni nameščen",            // sl
+            "nie je nainštalovaný",   // sk
+            "није инсталиран",        // sr
+            "inte installerat",       // sv
+            "kurulu değil",           // tr
+            "не встановлено",         // uk
+            "chưa cài đặt gói",       // vi
+            "未安装软件包",             // zh_CN
+            "尚未安裝"                // zh_TW
+    };
 
     @Override
     public void preStartupHook() {
@@ -100,16 +130,6 @@ public class PlatformHookUnixoid implements PlatformHook {
     }
 
     /**
-     * Determines if the JVM is OpenJDK-based.
-     * @return {@code true} if {@code java.home} contains "openjdk", {@code false} otherwise
-     * @since 6951
-     */
-    public static boolean isOpenJDK() {
-        String javaHome = System.getProperty("java.home");
-        return javaHome != null && javaHome.contains("openjdk");
-    }
-
-    /**
      * Get the package name including detailed version.
      * @param packageNames The possible package names (when a package can have different names on different distributions)
      * @return The package name and package version if it can be identified, null otherwise
@@ -133,7 +153,11 @@ public class PlatformHookUnixoid implements PlatformHook {
                         args = new String[] {"rpm", "-q", "--qf", "%{arch}-%{version}", packageName};
                     }
                     String version = Utils.execOutput(Arrays.asList(args));
-                    if (version != null && !version.contains("not installed")) {
+                    if (version != null) {
+                        for (String notInstalled : NOT_INSTALLED) {
+                            if (version.contains(notInstalled))
+                                break;
+                        }
                         return packageName + ':' + version;
                     }
                 }
@@ -200,23 +224,20 @@ public class PlatformHookUnixoid implements PlatformHook {
         return null;
     }
 
-    protected String buildOSDescription() {
+    private String buildOSDescription() {
         String osName = System.getProperty("os.name");
         if ("Linux".equalsIgnoreCase(osName)) {
             try {
                 // Try lsb_release (only available on LSB-compliant Linux systems,
                 // see https://www.linuxbase.org/lsb-cert/productdir.php?by_prod )
-                Process p = Runtime.getRuntime().exec("lsb_release -ds");
-                try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
-                    String line = Utils.strip(input.readLine());
-                    if (line != null && !line.isEmpty()) {
-                        line = line.replaceAll("\"+", "");
-                        line = line.replaceAll("NAME=", ""); // strange code for some Gentoo's
-                        if (line.startsWith("Linux ")) // e.g. Linux Mint
-                            return line;
-                        else if (!line.isEmpty())
-                            return "Linux " + line;
-                    }
+                String line = exec("lsb_release -ds");
+                if (line != null && !line.isEmpty()) {
+                    line = line.replaceAll("\"+", "");
+                    line = line.replaceAll("NAME=", ""); // strange code for some Gentoo's
+                    if (line.startsWith("Linux ")) // e.g. Linux Mint
+                        return line;
+                    else if (!line.isEmpty())
+                        return "Linux " + line;
                 }
             } catch (IOException e) {
                 Main.debug(e);
@@ -249,7 +270,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         return osDescription;
     }
 
-    protected static class LinuxReleaseInfo {
+    private static class LinuxReleaseInfo {
         private final String path;
         private final String descriptionField;
         private final String idField;
@@ -257,15 +278,15 @@ public class PlatformHookUnixoid implements PlatformHook {
         private final boolean plainText;
         private final String prefix;
 
-        public LinuxReleaseInfo(String path, String descriptionField, String idField, String releaseField) {
+        LinuxReleaseInfo(String path, String descriptionField, String idField, String releaseField) {
             this(path, descriptionField, idField, releaseField, false, null);
         }
 
-        public LinuxReleaseInfo(String path) {
+        LinuxReleaseInfo(String path) {
             this(path, null, null, null, true, null);
         }
 
-        public LinuxReleaseInfo(String path, String prefix) {
+        LinuxReleaseInfo(String path, String prefix) {
             this(path, null, null, null, true, prefix);
         }
 
@@ -278,7 +299,8 @@ public class PlatformHookUnixoid implements PlatformHook {
             this.prefix = prefix;
         }
 
-        @Override public String toString() {
+        @Override
+        public String toString() {
             return "ReleaseInfo [path=" + path + ", descriptionField=" + descriptionField +
                     ", idField=" + idField + ", releaseField=" + releaseField + ']';
         }
@@ -332,41 +354,6 @@ public class PlatformHookUnixoid implements PlatformHook {
                 result = result.replaceAll("\"+", "");
             return result;
         }
-    }
-
-    // Method unused, but kept for translation already done. To reuse during Java 9 migration
-    protected void askUpdateJava(final String version, final String url) {
-        GuiHelper.runInEDTAndWait(() -> {
-            ExtendedDialog ed = new ExtendedDialog(
-                    Main.parent,
-                    tr("Outdated Java version"),
-                    new String[]{tr("OK"), tr("Update Java"), tr("Cancel")});
-            // Check if the dialog has not already been permanently hidden by user
-            if (!ed.toggleEnable("askUpdateJava9").toggleCheckState()) {
-                ed.setButtonIcons(new String[]{"ok", "java", "cancel"}).setCancelButton(3);
-                ed.setMinimumSize(new Dimension(480, 300));
-                ed.setIcon(JOptionPane.WARNING_MESSAGE);
-                StringBuilder content = new StringBuilder(tr("You are running version {0} of Java.", "<b>"+version+"</b>"))
-                        .append("<br><br>");
-                if ("Sun Microsystems Inc.".equals(System.getProperty("java.vendor")) && !isOpenJDK()) {
-                    content.append("<b>").append(tr("This version is no longer supported by {0} since {1} and is not recommended for use.",
-                            "Oracle", tr("April 2015"))).append("</b><br><br>"); // TODO: change date once Java 8 EOL is announced
-                }
-                content.append("<b>")
-                       .append(tr("JOSM will soon stop working with this version; we highly recommend you to update to Java {0}.", "8"))
-                       .append("</b><br><br>")
-                       .append(tr("Would you like to update now ?"));
-                ed.setContent(content.toString());
-
-                if (ed.showDialog().getValue() == 2) {
-                    try {
-                        openUrl(url);
-                    } catch (IOException e) {
-                        Main.warn(e);
-                    }
-                }
-            }
-        });
     }
 
     /**
@@ -436,5 +423,18 @@ public class PlatformHookUnixoid implements PlatformHook {
     @Override
     public List<File> getDefaultProj4NadshiftDirectories() {
         return Arrays.asList(new File("/usr/local/share/proj"), new File("/usr/share/proj"));
+    }
+
+    @Override
+    public X509Certificate getX509Certificate(CertAmend certAmend)
+            throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException {
+        File f = new File("/usr/share/ca-certificates/mozilla", certAmend.getFilename());
+        if (f.exists()) {
+            CertificateFactory fact = CertificateFactory.getInstance("X.509");
+            try (FileInputStream is = new FileInputStream(f)) {
+                return (X509Certificate) fact.generateCertificate(is);
+            }
+        }
+        return null;
     }
 }

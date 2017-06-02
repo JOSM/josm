@@ -6,6 +6,7 @@ import static java.util.regex.Pattern.UNICODE_CASE;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.geom.Point2D;
+import java.text.Normalizer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,6 +34,8 @@ import org.openstreetmap.josm.tools.MultiMap;
 public class SimilarNamedWays extends Test {
 
     protected static final int SIMILAR_NAMED = 701;
+
+    private static final Pattern REMOVE_DIACRITICS = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
 
     /** All ways, grouped by cells */
     private Map<Point2D, List<Way>> cellWays;
@@ -201,6 +204,11 @@ public class SimilarNamedWays extends Test {
         int distance = getLevenshteinDistance(name, name2);
         boolean similar = distance > 0 && distance <= 2;
 
+        // check if only the case differs, so we don't consider large distance as different strings
+        if (distance > 2 && name.length() == name2.length()) {
+            similar = deAccent(name).equalsIgnoreCase(deAccent(name2));
+        }
+
         // try all rules
         for (NormalizeRule rule : rules) {
             int levenshteinDistance = getLevenshteinDistance(rule.normalize(name), rule.normalize(name2));
@@ -213,6 +221,17 @@ public class SimilarNamedWays extends Test {
             }
         }
         return similar;
+    }
+
+    /**
+     * Removes diacritics (accents) from string.
+     * @param str string
+     * @return {@code str} without any diacritic (accent)
+     * @since 12283
+     */
+    public static String deAccent(String str) {
+        // https://stackoverflow.com/a/1215117/2257172
+        return REMOVE_DIACRITICS.matcher(Normalizer.normalize(str, Normalizer.Form.NFD)).replaceAll("");
     }
 
     @FunctionalInterface

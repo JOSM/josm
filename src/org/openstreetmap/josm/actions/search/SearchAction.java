@@ -9,6 +9,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -66,6 +67,9 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
     private static final String SEARCH_EXPRESSION = "searchExpression";
 
+    /**
+     * Search mode.
+     */
     public enum SearchMode {
         /** replace selection */
         replace('R'),
@@ -335,9 +339,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         ExtendedDialog dialog = new ExtendedDialog(
                 Main.parent,
                 initialValues instanceof Filter ? tr("Filter") : tr("Search"),
-                        new String[] {
-                    initialValues instanceof Filter ? tr("Submit filter") : tr("Start Search"),
-                            tr("Cancel")}
+                initialValues instanceof Filter ? tr("Submit filter") : tr("Start Search"),
+                tr("Cancel")
         ) {
             @Override
             protected void buttonAction(int buttonIndex, ActionEvent evt) {
@@ -363,13 +366,11 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 }
             }
         };
-        dialog.setButtonIcons(new String[] {"dialogs/search", "cancel"});
+        dialog.setButtonIcons("dialogs/search", "cancel");
         dialog.configureContextsensitiveHelp("/Action/Search", true /* show help button */);
         dialog.setContent(p);
-        dialog.showDialog();
-        int result = dialog.getValue();
 
-        if (result != 1) return null;
+        if (dialog.showDialog().getValue() != 1) return null;
 
         // User pressed OK - let's perform the search
         SearchMode mode = replace.isSelected() ? SearchAction.SearchMode.replace
@@ -592,14 +593,18 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 } else {
                     msg = null;
                 }
-                Main.map.statusLine.setHelpText(msg);
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        msg,
-                        tr("Warning"),
-                        JOptionPane.WARNING_MESSAGE
-                );
-            } else {
+                if (Main.map != null) {
+                    Main.map.statusLine.setHelpText(msg);
+                }
+                if (!GraphicsEnvironment.isHeadless()) {
+                    JOptionPane.showMessageDialog(
+                            Main.parent,
+                            msg,
+                            tr("Warning"),
+                            JOptionPane.WARNING_MESSAGE
+                    );
+                }
+            } else if (Main.map != null) {
                 Main.map.statusLine.setHelpText(tr("Found {0} matches", foundMatches));
             }
         }

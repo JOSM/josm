@@ -11,7 +11,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
 import org.openstreetmap.josm.command.Command;
@@ -97,22 +99,22 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener {
         propertiesMerger = new PropertiesMerger();
         propertiesMerger.setName("panel.propertiesmerger");
         propertiesMerger.getModel().addPropertyChangeListener(this);
-        tabbedPane.add(tr("Properties"), propertiesMerger);
+        addTab(tr("Properties"), propertiesMerger);
 
         tagMerger = new TagMerger();
         tagMerger.setName("panel.tagmerger");
         tagMerger.getModel().addPropertyChangeListener(this);
-        tabbedPane.add(tr("Tags"), tagMerger);
+        addTab(tr("Tags"), tagMerger);
 
         nodeListMerger = new NodeListMerger();
         nodeListMerger.setName("panel.nodelistmerger");
         nodeListMerger.getModel().addPropertyChangeListener(this);
-        tabbedPane.add(tr("Nodes"), nodeListMerger);
+        addTab(tr("Nodes"), nodeListMerger);
 
         relationMemberMerger = new RelationMemberMerger();
         relationMemberMerger.setName("panel.relationmembermerger");
         relationMemberMerger.getModel().addPropertyChangeListener(this);
-        tabbedPane.add(tr("Members"), relationMemberMerger);
+        addTab(tr("Members"), relationMemberMerger);
 
         setLayout(new BorderLayout());
         add(tabbedPane, BorderLayout.CENTER);
@@ -121,6 +123,11 @@ public class ConflictResolver extends JPanel implements PropertyChangeListener {
         conflictResolvers.add(tagMerger);
         conflictResolvers.add(nodeListMerger);
         conflictResolvers.add(relationMemberMerger);
+    }
+
+    private void addTab(String title, JComponent tabContent) {
+        JScrollPane scrollPanel = new JScrollPane(tabContent);
+        tabbedPane.add(title, scrollPanel);
     }
 
     /**

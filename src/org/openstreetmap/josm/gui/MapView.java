@@ -35,22 +35,22 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.ProjectionBounds;
-import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
-import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
+import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
 import org.openstreetmap.josm.gui.datatransfer.OsmTransferHandler;
-import org.openstreetmap.josm.gui.layer.AbstractMapViewPaintable;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -71,6 +71,7 @@ import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
 import org.openstreetmap.josm.tools.AudioPlayer;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
@@ -121,9 +122,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
          * @param p The paintable.
          */
         public synchronized void addTo(MapViewPaintable p) {
-            if (p instanceof AbstractMapViewPaintable) {
-                ((AbstractMapViewPaintable) p).addInvalidationListener(this);
-            }
+            p.addInvalidationListener(this);
         }
 
         /**
@@ -131,9 +130,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
          * @param p The paintable.
          */
         public synchronized void removeFrom(MapViewPaintable p) {
-            if (p instanceof AbstractMapViewPaintable) {
-                ((AbstractMapViewPaintable) p).removeInvalidationListener(this);
-            }
+            p.removeInvalidationListener(this);
             invalidatedLayers.remove(p);
         }
 
@@ -187,6 +184,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         }
     }
 
+    /**
+     * Replaced by the {@link DrawAction#VIEWPORT_FOLLOWING} property
+     * @deprecated since 12180. Can be remove soon (does any plugin even use this?)
+     */
+    @Deprecated
     public boolean viewportFollowing;
 
     /**
@@ -254,7 +256,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     public MapView(MainLayerManager layerManager, final ViewportData viewportData) {
         this.layerManager = layerManager;
         initialViewport = viewportData;
-        layerManager.addLayerChangeListener(this, true);
+        layerManager.addAndFireLayerChangeListener(this);
         layerManager.addActiveLayerChangeListener(this);
         Main.pref.addPreferenceChangeListener(this);
 
@@ -267,7 +269,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         });
 
         // listens to selection changes to redraw the map
-        DataSet.addSelectionListener(repaintSelectionChangedListener);
+        SelectionEventManager.getInstance().addSelectionListenerForEdt(repaintSelectionChangedListener);
 
         //store the last mouse action
         this.addMouseMotionListener(new MouseMotionListener() {
@@ -445,7 +447,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         try {
             LayerPainter painter = registeredLayers.get(layer);
             if (painter == null) {
-                throw new IllegalArgumentException("Cannot paint layer, it is not registered.");
+                Logging.warn("Cannot paint layer, it is not registered: {0}", layer);
+                return;
             }
             MapViewRectangle clipBounds = getState().getViewArea(g.getClipBounds());
             MapViewGraphics paintGraphics = new MapViewGraphics(this, g, clipBounds);
@@ -489,10 +492,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         int nonChangedLayersCount = 0;
         Set<MapViewPaintable> invalidated = invalidatedListener.collectInvalidatedLayers();
         for (Layer l: visibleLayers) {
-            // `isChanged` for backward compatibility, see https://josm.openstreetmap.de/ticket/13175#comment:7
-            // Layers that still implement it (plugins) will use it to tell the MapView that they have been changed.
-            // This is why the MapView still uses it in addition to the invalidation events.
-            if (l.isChanged() || invalidated.contains(l)) {
+            if (invalidated.contains(l)) {
                 break;
             } else {
                 nonChangedLayersCount++;
@@ -674,8 +674,9 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 b.setEnabled(activeLayerSupported);
             }
         }
+        // invalidate repaint cache. The layer order may have changed by this, so we invalidate every layer
+        getLayerManager().getLayers().forEach(invalidatedListener::invalidate);
         AudioPlayer.reset();
-        repaint();
     }
 
     /**
@@ -692,6 +693,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             if (added) {
                 invalidatedListener.addTo(mvp);
             }
+            repaint();
             return added;
         }
     }
@@ -707,6 +709,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             if (removed) {
                 invalidatedListener.removeFrom(mvp);
             }
+            repaint();
             return removed;
         }
     }
@@ -739,16 +742,16 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         paintPreferencesChanged.set(true);
     }
 
-    private final transient SelectionChangedListener repaintSelectionChangedListener = newSelection -> repaint();
+    private final transient DataSelectionListener repaintSelectionChangedListener = event -> repaint();
 
     /**
      * Destroy this map view panel. Should be called once when it is not needed any more.
      */
     public void destroy() {
-        layerManager.removeLayerChangeListener(this, true);
+        layerManager.removeAndFireLayerChangeListener(this);
         layerManager.removeActiveLayerChangeListener(this);
         Main.pref.removePreferenceChangeListener(this);
-        DataSet.removeSelectionListener(repaintSelectionChangedListener);
+        SelectionEventManager.getInstance().removeSelectionListener(repaintSelectionChangedListener);
         MultipolygonCache.getInstance().clear();
         if (mapMover != null) {
             mapMover.destroy();

@@ -339,17 +339,17 @@ public class NmeaReader {
             } else if ("$GPGSA".equals(e[0]) || "$GNGSA".equals(e[0])) {
                 // vdop
                 accu = e[GPGSA.VDOP.position];
-                if (!accu.isEmpty()) {
+                if (!accu.isEmpty() && currentwp != null) {
                     currentwp.put(GpxConstants.PT_VDOP, Float.valueOf(accu));
                 }
                 // hdop
                 accu = e[GPGSA.HDOP.position];
-                if (!accu.isEmpty()) {
+                if (!accu.isEmpty() && currentwp != null) {
                     currentwp.put(GpxConstants.PT_HDOP, Float.valueOf(accu));
                 }
                 // pdop
                 accu = e[GPGSA.PDOP.position];
-                if (!accu.isEmpty()) {
+                if (!accu.isEmpty() && currentwp != null) {
                     currentwp.put(GpxConstants.PT_PDOP, Float.valueOf(accu));
                 }
             } else if ("$GPRMC".equals(e[0]) || "$GNRMC".equals(e[0])) {

@@ -32,6 +32,8 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
 
     private static final PlatformHookOsx ivhandler = new PlatformHookOsx();
 
+    private String oSBuildNumber;
+
     @Override
     public void preStartupHook() {
         // This will merge our MenuBar into the system menu.
@@ -39,6 +41,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
         // And will not work when one of the system independent LAFs is used.
         // They just insist on painting themselves...
         Utils.updateSystemProperty("apple.laf.useScreenMenuBar", "true");
+        Utils.updateSystemProperty("apple.awt.application.name", "JOSM");
     }
 
     @Override
@@ -56,27 +59,39 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
             Class<?> preferencesHandler = findHandlerClass("PreferencesHandler");
             Object proxy = Proxy.newProxyInstance(PlatformHookOsx.class.getClassLoader(), new Class<?>[] {
                 quitHandler, aboutHandler, openFilesHandler, preferencesHandler}, ivhandler);
-            try {
-                Object appli = eawtApplication.getConstructor((Class[]) null).newInstance((Object[]) null);
-                setHandlers(eawtApplication, quitHandler, aboutHandler, openFilesHandler, preferencesHandler, proxy, appli);
-                // this method has been deprecated, but without replacement ATM
-                eawtApplication.getDeclaredMethod("setEnabledPreferencesMenu", boolean.class).invoke(appli, Boolean.TRUE);
-                // setup the dock icon. It is automatically set with application bundle and Web start but we need
-                // to do it manually if run with `java -jar``
-                eawtApplication.getDeclaredMethod("setDockIconImage", Image.class).invoke(appli, ImageProvider.get("logo").getImage());
-                // enable full screen
-                enableOSXFullscreen((Window) Main.parent);
-            } catch (IllegalAccessException e) {
-                Main.debug(e);
-                // with Java 9, module java.desktop does not export com.apple.eawt, use new Desktop API instead
+            Object appli = eawtApplication.getConstructor((Class[]) null).newInstance((Object[]) null);
+            if (Utils.getJavaVersion() >= 9) {
                 setHandlers(Desktop.class, quitHandler, aboutHandler, openFilesHandler, preferencesHandler, proxy, Desktop.getDesktop());
+            } else {
+                setHandlers(eawtApplication, quitHandler, aboutHandler, openFilesHandler, preferencesHandler, proxy, appli);
+                // this method has been deprecated, but without replacement. To remove with Java 9 migration
+                eawtApplication.getDeclaredMethod("setEnabledPreferencesMenu", boolean.class).invoke(appli, Boolean.TRUE);
             }
+            // setup the dock icon. It is automatically set with application bundle and Web start but we need
+            // to do it manually if run with `java -jar``
+            eawtApplication.getDeclaredMethod("setDockIconImage", Image.class).invoke(appli, ImageProvider.get("logo").getImage());
+            // enable full screen
+            enableOSXFullscreen((Window) Main.parent);
         } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException ex) {
             // We'll just ignore this for now. The user will still be able to close JOSM by closing all its windows.
             Main.warn("Failed to register with OSX: " + ex);
         }
+        checkExpiredJava();
     }
 
+    /**
+     * Registers Apple handlers.
+     * @param appClass application class
+     * @param quitHandler quit handler class
+     * @param aboutHandler about handler class
+     * @param openFilesHandler open file handler class
+     * @param preferencesHandler preferences handler class
+     * @param proxy proxy
+     * @param appInstance application instance (instance of {@code appClass})
+     * @throws IllegalAccessException in case of reflection error
+     * @throws InvocationTargetException in case of reflection error
+     * @throws NoSuchMethodException if any {@code set*Handler} method cannot be found
+     */
     protected void setHandlers(Class<?> appClass, Class<?> quitHandler, Class<?> aboutHandler,
             Class<?> openFilesHandler, Class<?> preferencesHandler, Object proxy, Object appInstance)
                     throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -86,11 +101,19 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
         appClass.getDeclaredMethod("setPreferencesHandler", preferencesHandler).invoke(appInstance, proxy);
     }
 
+    /**
+     * Find Apple handler class in {@code com.apple.eawt} or {@code java.awt.desktop} packages.
+     * @param className simple class name
+     * @return class
+     * @throws ClassNotFoundException if the handler class cannot be found
+     */
     protected Class<?> findHandlerClass(String className) throws ClassNotFoundException {
         try {
+            // Java 8 handlers
             return Class.forName("com.apple.eawt."+className);
         } catch (ClassNotFoundException e) {
             Main.trace(e);
+            // Java 9 handlers
             return Class.forName("java.awt.desktop."+className);
         }
     }
@@ -106,7 +129,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
             // http://stackoverflow.com/a/8693890/2257172
             Class<?> eawtFullScreenUtilities = Class.forName("com.apple.eawt.FullScreenUtilities");
             eawtFullScreenUtilities.getDeclaredMethod("setWindowCanFullScreen",
-                    new Class[]{Window.class, boolean.class}).invoke(eawtFullScreenUtilities, window, Boolean.TRUE);
+                    Window.class, boolean.class).invoke(eawtFullScreenUtilities, window, Boolean.TRUE);
         } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException e) {
             Main.warn("Failed to register with OSX: " + e);
         }
@@ -363,6 +386,29 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
     @Override
     public String getOSDescription() {
         return System.getProperty("os.name") + ' ' + System.getProperty("os.version");
+    }
+
+    private String buildOSBuildNumber() {
+        StringBuilder sb = new StringBuilder();
+        try {
+            sb.append(exec("sw_vers", "-productName"))
+              .append(' ')
+              .append(exec("sw_vers", "-productVersion"))
+              .append(" (")
+              .append(exec("sw_vers", "-buildVersion"))
+              .append(')');
+        } catch (IOException e) {
+            Main.error(e);
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public String getOSBuildNumber() {
+        if (oSBuildNumber == null) {
+            oSBuildNumber = buildOSBuildNumber();
+        }
+        return oSBuildNumber;
     }
 
     @Override

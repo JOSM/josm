@@ -1,19 +1,24 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Graphics2D;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.Node;
@@ -28,6 +33,8 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.testutils.FakeGraphics;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -143,26 +150,6 @@ public final class TestUtils {
         .append("\nCompared\no1: ").append(o1).append("\no3: ").append(o3).append("\ngave: ").append(c)
         .append("\nCompared\no2: ").append(o2).append("\no3: ").append(o3).append("\ngave: ").append(d)
         .toString();
-    }
-
-    /**
-     * Returns the Java version as an int value.
-     * @return the Java version as an int value (8, 9, etc.)
-     */
-    public static int getJavaVersion() {
-        String version = System.getProperty("java.version");
-        if (version.startsWith("1.")) {
-            version = version.substring(2);
-        }
-        // Allow these formats:
-        // 1.8.0_72-ea
-        // 9-ea
-        // 9
-        // 9.0.1
-        int dotPos = version.indexOf('.');
-        int dashPos = version.indexOf('-');
-        return Integer.parseInt(version.substring(0,
-                dotPos > -1 ? dotPos : dashPos > -1 ? dashPos : 1));
     }
 
     /**
@@ -284,5 +271,43 @@ public final class TestUtils {
                 // Do nothing
             }
         };
+    }
+
+    /**
+     * Ensures 100% code coverage for enums.
+     * @param enumClass enum class to cover
+     */
+    public static void superficialEnumCodeCoverage(Class<? extends Enum<?>> enumClass) {
+        try {
+            Method values = enumClass.getMethod("values");
+            Method valueOf = enumClass.getMethod("valueOf", String.class);
+            Utils.setObjectsAccessible(values, valueOf);
+            for (Object o : (Object[]) values.invoke(null)) {
+                assertEquals(o, valueOf.invoke(null, ((Enum<?>) o).name()));
+            }
+        } catch (IllegalArgumentException | ReflectiveOperationException | SecurityException e) {
+            throw new JosmRuntimeException(e);
+        }
+    }
+
+    /**
+     * Get a descendant component by name.
+     * @param root The root component to start searching from.
+     * @param name The component name
+     * @return The component with that name or null if it does not exist.
+     * @since 12045
+     */
+    public static Component getComponentByName(Component root, String name) {
+        if (name.equals(root.getName())) {
+            return root;
+        } else if (root instanceof Container) {
+            Container container = (Container) root;
+            return Stream.of(container.getComponents())
+                    .map(child -> getComponentByName(child, name))
+                    .filter(Objects::nonNull)
+                    .findFirst().orElse(null);
+        } else {
+            return null;
+        }
     }
 }

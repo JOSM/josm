@@ -10,21 +10,22 @@ import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.actions.OrthogonalizeAction.Direction;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
- * Unit tests for class {@link OsmDataLayer}.
+ * Unit tests for class {@link OrthogonalizeAction}.
  */
 public class OrthogonalizeActionTest {
 
@@ -33,7 +34,7 @@ public class OrthogonalizeActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
+    public JOSMTestRules test = new JOSMTestRules().projection();
 
     @Test(expected = OrthogonalizeAction.InvalidUserInputException.class)
     public void testNoSelection() throws Exception {
@@ -83,6 +84,15 @@ public class OrthogonalizeActionTest {
         assertEquals(new LatLon(8.5320550, 55.7306805), nodes.get(3).getCoor().getRoundedToOsmPrecision());
     }
 
+    /**
+     * Tests that {@code OrthogonalizeAction.EN} satisfies utility class criterias.
+     * @throws ReflectiveOperationException if an error occurs
+     */
+    @Test
+    public void testUtilityClass() throws ReflectiveOperationException {
+        UtilityClassTestUtil.assertUtilityClassWellDefined(OrthogonalizeAction.EN.class);
+    }
+
     DataSet performTest(String... search) throws Exception {
         try (FileInputStream in = new FileInputStream(TestUtils.getTestDataRoot() + "orthogonalize.osm")) {
             final DataSet ds = OsmReader.parseDataSet(in, null);
@@ -99,5 +109,13 @@ public class OrthogonalizeActionTest {
             assertEquals(-Math.PI / 2, Geometry.getCornerAngle(
                     way.getNode(i - 1).getEastNorth(), way.getNode(i).getEastNorth(), way.getNode(i + 1).getEastNorth()), 1e-6);
         }
+    }
+
+    /**
+     * Unit test of {@link Direction} enum.
+     */
+    @Test
+    public void testEnumDirection() {
+        TestUtils.superficialEnumCodeCoverage(Direction.class);
     }
 }

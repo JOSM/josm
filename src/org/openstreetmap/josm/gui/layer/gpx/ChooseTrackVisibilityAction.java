@@ -217,8 +217,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         for (int i = 0; i < layer.trackVisibility.length; i++) {
             layer.trackVisibility[table.convertRowIndexToModel(i)] = s.isSelectedIndex(i);
         }
-        Main.map.mapView.preferenceChanged(null);
-        Main.map.repaint(100);
+        layer.invalidate();
     }
 
     @Override
@@ -230,8 +229,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             noUpdates = true;
             selectVisibleTracksInTable();
             noUpdates = false;
-            Main.map.mapView.preferenceChanged(null);
-            Main.map.repaint(100);
+            layer.invalidate();
         });
         dateFilter.loadFromPrefs();
 
@@ -266,8 +264,8 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         if (!GraphicsEnvironment.isHeadless()) {
             // build dialog
             ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Set track visibility for {0}", layer.getName()),
-                    new String[]{tr("Show all"), tr("Show selected only"), tr("Cancel")});
-            ed.setButtonIcons(new String[]{"eye", "dialogs/filter", "cancel"});
+                    tr("Show all"), tr("Show selected only"), tr("Cancel"));
+            ed.setButtonIcons("eye", "dialogs/filter", "cancel");
             ed.setContent(msg, false);
             ed.setDefaultButton(2);
             ed.setCancelButton(3);
@@ -291,14 +289,9 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
         for (int i = 0; i < layer.trackVisibility.length; i++) {
             layer.trackVisibility[table.convertRowIndexToModel(i)] = all || s.isSelectedIndex(i);
         }
+        // layer has been changed
+        layer.invalidate();
         // ...sync with layer visibility instead to avoid having two ways to hide everything
         layer.setVisible(v == 1 || !s.isSelectionEmpty());
-
-        if (Main.isDisplayingMapView()) {
-            Main.map.mapView.preferenceChanged(null);
-        }
-        if (Main.map != null) {
-            Main.map.repaint();
-        }
     }
 }

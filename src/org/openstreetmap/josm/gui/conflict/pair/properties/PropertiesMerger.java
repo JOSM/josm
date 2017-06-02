@@ -3,17 +3,16 @@ package org.openstreetmap.josm.gui.conflict.pair.properties;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
@@ -24,9 +23,11 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
+import org.openstreetmap.josm.gui.conflict.pair.AbstractMergePanel;
 import org.openstreetmap.josm.gui.conflict.pair.IConflictResolver;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.history.VersionInfoPanel;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -34,7 +35,7 @@ import org.openstreetmap.josm.tools.Utils;
  * This class represents a UI component for resolving conflicts in some properties of {@link OsmPrimitive}.
  * @since 1654
  */
-public class PropertiesMerger extends JPanel implements ChangeListener, IConflictResolver {
+public class PropertiesMerger extends AbstractMergePanel implements ChangeListener, IConflictResolver {
     private static final DecimalFormat COORD_FORMATTER = new DecimalFormat("###0.0000000");
 
     private final JLabel lblMyCoordinates = buildValueLabel("label.mycoordinates");
@@ -48,7 +49,7 @@ public class PropertiesMerger extends JPanel implements ChangeListener, IConflic
     private final JLabel lblMyReferrers = buildValueLabel("label.myreferrers");
     private final JLabel lblTheirReferrers = buildValueLabel("label.theirreferrers");
 
-    private final transient PropertiesMergeModel model;
+    private final transient PropertiesMergeModel model = new PropertiesMergeModel();
     private final VersionInfoPanel mineVersionInfo = new VersionInfoPanel();
     private final VersionInfoPanel theirVersionInfo = new VersionInfoPanel();
 
@@ -56,9 +57,21 @@ public class PropertiesMerger extends JPanel implements ChangeListener, IConflic
      * Constructs a new {@code PropertiesMerger}.
      */
     public PropertiesMerger() {
-        model = new PropertiesMergeModel();
         model.addChangeListener(this);
-        build();
+        buildRows();
+    }
+
+    @Override
+    protected List<? extends MergeRow> getRows() {
+        return Arrays.asList(
+                new AbstractMergePanel.TitleRow(),
+                new VersionInfoRow(),
+                new MergeCoordinatesRow(),
+                new UndecideCoordinatesRow(),
+                new MergeDeletedStateRow(),
+                new UndecideDeletedStateRow(),
+                new ReferrersRow(),
+                new EmptyFillRow());
     }
 
     protected static JLabel buildValueLabel(String name) {
@@ -68,225 +81,6 @@ public class PropertiesMerger extends JPanel implements ChangeListener, IConflic
         lbl.setOpaque(true);
         lbl.setBorder(BorderFactory.createLoweredBevelBorder());
         return lbl;
-    }
-
-    protected void buildHeaderRow() {
-        GridBagConstraints gc = new GridBagConstraints();
-
-        gc.gridx = 1;
-        gc.gridy = 0;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
-        gc.insets = new Insets(10, 0, 0, 0);
-        JLabel lblMyVersion = new JLabel(tr("My version"));
-        lblMyVersion.setToolTipText(tr("Properties in my dataset, i.e. the local dataset"));
-        lblMyVersion.setLabelFor(mineVersionInfo);
-        add(lblMyVersion, gc);
-
-        gc.gridx = 3;
-        JLabel lblMergedVersion = new JLabel(tr("Merged version"));
-        lblMergedVersion.setToolTipText(
-                tr("Properties in the merged element. They will replace properties in my elements when merge decisions are applied."));
-        add(lblMergedVersion, gc);
-
-        gc.gridx = 5;
-        JLabel lblTheirVersion = new JLabel(tr("Their version"));
-        lblTheirVersion.setToolTipText(tr("Properties in their dataset, i.e. the server dataset"));
-        lblMyVersion.setLabelFor(theirVersionInfo);
-        add(lblTheirVersion, gc);
-
-        gc.gridx = 1;
-        gc.gridy = 1;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.anchor = GridBagConstraints.LINE_START;
-        gc.insets = new Insets(0, 0, 20, 0);
-        add(mineVersionInfo, gc);
-
-        gc.gridx = 5;
-        add(theirVersionInfo, gc);
-    }
-
-    protected void buildCoordinateConflictRows() {
-        GridBagConstraints gc = new GridBagConstraints();
-
-        gc.gridx = 0;
-        gc.gridy = 2;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
-        gc.fill = GridBagConstraints.HORIZONTAL;
-        gc.anchor = GridBagConstraints.LINE_START;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
-        gc.insets = new Insets(0, 5, 0, 5);
-        add(new JLabel(tr("Coordinates:")), gc);
-
-        gc.gridx = 1;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.33;
-        gc.weighty = 0.0;
-        add(lblMyCoordinates, gc);
-
-        gc.gridx = 2;
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
-        KeepMyCoordinatesAction actKeepMyCoordinates = new KeepMyCoordinatesAction();
-        model.addChangeListener(actKeepMyCoordinates);
-        JButton btnKeepMyCoordinates = new JButton(actKeepMyCoordinates);
-        btnKeepMyCoordinates.setName("button.keepmycoordinates");
-        add(btnKeepMyCoordinates, gc);
-
-        gc.gridx = 3;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.33;
-        gc.weighty = 0.0;
-        add(lblMergedCoordinates, gc);
-
-        gc.gridx = 4;
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
-        KeepTheirCoordinatesAction actKeepTheirCoordinates = new KeepTheirCoordinatesAction();
-        model.addChangeListener(actKeepTheirCoordinates);
-        JButton btnKeepTheirCoordinates = new JButton(actKeepTheirCoordinates);
-        add(btnKeepTheirCoordinates, gc);
-
-        gc.gridx = 5;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.33;
-        gc.weighty = 0.0;
-        add(lblTheirCoordinates, gc);
-
-        // ---------------------------------------------------
-        gc.gridx = 3;
-        gc.gridy = 3;
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
-        UndecideCoordinateConflictAction actUndecideCoordinates = new UndecideCoordinateConflictAction();
-        model.addChangeListener(actUndecideCoordinates);
-        JButton btnUndecideCoordinates = new JButton(actUndecideCoordinates);
-        add(btnUndecideCoordinates, gc);
-    }
-
-    protected void buildDeletedStateConflictRows() {
-        GridBagConstraints gc = new GridBagConstraints();
-
-        gc.gridx = 0;
-        gc.gridy = 4;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.anchor = GridBagConstraints.LINE_START;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
-        gc.insets = new Insets(0, 5, 0, 5);
-        add(new JLabel(tr("Deleted State:")), gc);
-
-        gc.gridx = 1;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.33;
-        gc.weighty = 0.0;
-        add(lblMyDeletedState, gc);
-
-        gc.gridx = 2;
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
-        KeepMyDeletedStateAction actKeepMyDeletedState = new KeepMyDeletedStateAction();
-        model.addChangeListener(actKeepMyDeletedState);
-        JButton btnKeepMyDeletedState = new JButton(actKeepMyDeletedState);
-        btnKeepMyDeletedState.setName("button.keepmydeletedstate");
-        add(btnKeepMyDeletedState, gc);
-
-        gc.gridx = 3;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.33;
-        gc.weighty = 0.0;
-        add(lblMergedDeletedState, gc);
-
-        gc.gridx = 4;
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
-        KeepTheirDeletedStateAction actKeepTheirDeletedState = new KeepTheirDeletedStateAction();
-        model.addChangeListener(actKeepTheirDeletedState);
-        JButton btnKeepTheirDeletedState = new JButton(actKeepTheirDeletedState);
-        btnKeepTheirDeletedState.setName("button.keeptheirdeletedstate");
-        add(btnKeepTheirDeletedState, gc);
-
-        gc.gridx = 5;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.33;
-        gc.weighty = 0.0;
-        add(lblTheirDeletedState, gc);
-
-        // ---------------------------------------------------
-        gc.gridx = 3;
-        gc.gridy = 5;
-        gc.fill = GridBagConstraints.NONE;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
-        UndecideDeletedStateConflictAction actUndecideDeletedState = new UndecideDeletedStateConflictAction();
-        model.addChangeListener(actUndecideDeletedState);
-        JButton btnUndecideDeletedState = new JButton(actUndecideDeletedState);
-        btnUndecideDeletedState.setName("button.undecidedeletedstate");
-        add(btnUndecideDeletedState, gc);
-    }
-
-    protected void buildReferrersRow() {
-        GridBagConstraints gc = new GridBagConstraints();
-
-        gc.gridx = 0;
-        gc.gridy = 7;
-        gc.gridwidth = 1;
-        gc.gridheight = 1;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.anchor = GridBagConstraints.LINE_START;
-        gc.weightx = 0.0;
-        gc.weighty = 0.0;
-        gc.insets = new Insets(0, 5, 0, 5);
-        add(new JLabel(tr("Referenced by:")), gc);
-
-        gc.gridx = 1;
-        gc.gridy = 7;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.33;
-        gc.weighty = 0.0;
-        add(lblMyReferrers, gc);
-
-        gc.gridx = 5;
-        gc.gridy = 7;
-        gc.fill = GridBagConstraints.BOTH;
-        gc.anchor = GridBagConstraints.CENTER;
-        gc.weightx = 0.33;
-        gc.weighty = 0.0;
-        add(lblTheirReferrers, gc);
-    }
-
-    protected final void build() {
-        setLayout(new GridBagLayout());
-        buildHeaderRow();
-        buildCoordinateConflictRows();
-        buildDeletedStateConflictRows();
-        buildReferrersRow();
     }
 
     protected static String coordToString(LatLon coord) {
@@ -396,6 +190,157 @@ public class PropertiesMerger extends JPanel implements ChangeListener, IConflic
      */
     public PropertiesMergeModel getModel() {
         return model;
+    }
+
+    private final class MergeDeletedStateRow extends AbstractMergePanel.MergeRow {
+        @Override
+        protected JComponent rowTitle() {
+            return new JLabel(tr("Deleted State:"));
+        }
+
+        @Override
+        protected JComponent mineField() {
+            return lblMyDeletedState;
+        }
+
+        @Override
+        protected JComponent mineButton() {
+            KeepMyDeletedStateAction actKeepMyDeletedState = new KeepMyDeletedStateAction();
+            model.addChangeListener(actKeepMyDeletedState);
+            JButton btnKeepMyDeletedState = new JButton(actKeepMyDeletedState);
+            btnKeepMyDeletedState.setName("button.keepmydeletedstate");
+            return btnKeepMyDeletedState;
+        }
+
+        @Override
+        protected JComponent merged() {
+            return lblMergedDeletedState;
+        }
+
+        @Override
+        protected JComponent theirsButton() {
+            KeepTheirDeletedStateAction actKeepTheirDeletedState = new KeepTheirDeletedStateAction();
+            model.addChangeListener(actKeepTheirDeletedState);
+            JButton btnKeepTheirDeletedState = new JButton(actKeepTheirDeletedState);
+            btnKeepTheirDeletedState.setName("button.keeptheirdeletedstate");
+            return btnKeepTheirDeletedState;
+        }
+
+        @Override
+        protected JComponent theirsField() {
+            return lblTheirDeletedState;
+        }
+    }
+
+    private final class MergeCoordinatesRow extends AbstractMergePanel.MergeRow {
+        @Override
+        protected JComponent rowTitle() {
+            return new JLabel(tr("Coordinates:"));
+        }
+
+        @Override
+        protected JComponent mineField() {
+            return lblMyCoordinates;
+        }
+
+        @Override
+        protected JComponent mineButton() {
+            KeepMyCoordinatesAction actKeepMyCoordinates = new KeepMyCoordinatesAction();
+            model.addChangeListener(actKeepMyCoordinates);
+            JButton btnKeepMyCoordinates = new JButton(actKeepMyCoordinates);
+            btnKeepMyCoordinates.setName("button.keepmycoordinates");
+            return btnKeepMyCoordinates;
+        }
+
+        @Override
+        protected JComponent merged() {
+            return lblMergedCoordinates;
+        }
+
+        @Override
+        protected JComponent theirsButton() {
+            KeepTheirCoordinatesAction actKeepTheirCoordinates = new KeepTheirCoordinatesAction();
+            model.addChangeListener(actKeepTheirCoordinates);
+            JButton btnKeepTheirCoordinates = new JButton(actKeepTheirCoordinates);
+            btnKeepTheirCoordinates.setName("button.keeptheircoordinates");
+            return btnKeepTheirCoordinates;
+        }
+
+        @Override
+        protected JComponent theirsField() {
+            return lblTheirCoordinates;
+        }
+    }
+
+    private final class UndecideCoordinatesRow extends AbstractUndecideRow {
+        @Override
+        protected UndecideCoordinateConflictAction createAction() {
+            UndecideCoordinateConflictAction action = new UndecideCoordinateConflictAction();
+            model.addChangeListener(action);
+            return action;
+        }
+
+        @Override
+        protected String getButtonName() {
+            return "button.undecidecoordinates";
+        }
+    }
+
+    private final class UndecideDeletedStateRow extends AbstractUndecideRow {
+        @Override
+        protected UndecideDeletedStateConflictAction createAction() {
+            UndecideDeletedStateConflictAction action = new UndecideDeletedStateConflictAction();
+            model.addChangeListener(action);
+            return action;
+        }
+
+        @Override
+        protected String getButtonName() {
+            return "button.undecidedeletedstate";
+        }
+    }
+
+    private final class VersionInfoRow extends AbstractMergePanel.MergeRowWithoutButton {
+        @Override
+        protected JComponent mineField() {
+            return mineVersionInfo;
+        }
+
+        @Override
+        protected JComponent theirsField() {
+            return theirVersionInfo;
+        }
+    }
+
+    private final class ReferrersRow extends AbstractMergePanel.MergeRow {
+        @Override
+        protected JComponent rowTitle() {
+            return new JLabel(tr("Referenced by:"));
+        }
+
+        @Override
+        protected JComponent mineField() {
+            return lblMyReferrers;
+        }
+
+        @Override
+        protected JComponent theirsField() {
+            return lblTheirReferrers;
+        }
+    }
+
+    private static final class EmptyFillRow extends AbstractMergePanel.MergeRow {
+        @Override
+        protected JComponent merged() {
+            return new JPanel();
+        }
+
+        @Override
+        protected void addConstraints(GBC constraints, int columnIndex) {
+            super.addConstraints(constraints, columnIndex);
+            // fill to bottom
+            constraints.weighty = 1;
+        }
     }
 
     class KeepMyCoordinatesAction extends AbstractAction implements ChangeListener {

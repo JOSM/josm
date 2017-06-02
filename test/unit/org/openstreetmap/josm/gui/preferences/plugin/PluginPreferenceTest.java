@@ -16,6 +16,7 @@ import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.preferences.PreferencesTestUtils;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
+import org.openstreetmap.josm.plugins.PluginException;
 import org.openstreetmap.josm.plugins.PluginInformation;
 
 /**
@@ -40,13 +41,22 @@ public class PluginPreferenceTest {
     }
 
     /**
+     * Returns a dummy plugin information.
+     * @return a dummy plugin information
+     * @throws PluginException if an error occurs
+     */
+    public static PluginInformation getDummyPluginInformation() throws PluginException {
+        return new PluginInformation(
+                new File(TestUtils.getTestDataRoot() + "plugin/dummy_plugin.jar"), "dummy_plugin");
+    }
+
+    /**
      * Unit test of {@link PluginPreference#buildDownloadSummary}.
      * @throws Exception if an error occurs
      */
     @Test
     public void testBuildDownloadSummary() throws Exception {
-        final PluginInformation dummy = new PluginInformation(
-                new File(TestUtils.getTestDataRoot() + "plugin/dummy_plugin.jar"), "dummy_plugin");
+        final PluginInformation dummy = getDummyPluginInformation();
         assertEquals("", PluginPreference.buildDownloadSummary(
                 new PluginDownloadTask(NullProgressMonitor.INSTANCE, Collections.<PluginInformation>emptyList(), "")));
         assertEquals("", PluginPreference.buildDownloadSummary(

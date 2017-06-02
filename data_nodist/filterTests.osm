@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<osm version='0.6' generator='JOSM'>
+<osm version='0.6' upload='never' generator='JOSM'>
   <node id='3738203' timestamp='2009-07-01T02:47:18Z' uid='60345' user='Mirko Küster' visible='true' version='2' changeset='4888' lat='51.298034488388204' lon='11.433050190818848'>
     <tag k='operator' v='enviaM' />
     <tag k='power' v='cable_distribution_cabinet' />

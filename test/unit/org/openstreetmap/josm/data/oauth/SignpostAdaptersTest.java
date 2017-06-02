@@ -18,6 +18,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.HttpClient;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests for class {@link SignpostAdapters}.
@@ -29,10 +30,19 @@ public class SignpostAdaptersTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules();
+    public JOSMTestRules test = new JOSMTestRules().https();
 
     private static HttpClient newClient() throws MalformedURLException {
         return HttpClient.create(new URL("https://www.openstreetmap.org"));
+    }
+
+    /**
+     * Tests that {@code SignpostAdapters} satisfies utility class criterias.
+     * @throws ReflectiveOperationException if an error occurs
+     */
+    @Test
+    public void testUtilityClass() throws ReflectiveOperationException {
+        UtilityClassTestUtil.assertUtilityClassWellDefined(SignpostAdapters.class);
     }
 
     /**

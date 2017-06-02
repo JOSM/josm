@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8'?>
-<osm version='0.6' generator='JOSM'>
+<osm version='0.6' upload='never' generator='JOSM'>
   <bounds minlat='51.12' minlon='14.147472381591795' maxlat='51.128' maxlon='14.162492752075195' origin='OpenStreetMap server' />
   <node id='-1' timestamp='2009-09-09T15:30:17Z' visible='true' lat='51.12685072757234' lon='14.154272867306995' />
   <node id='-2' timestamp='2009-09-09T15:30:17Z' visible='true' lat='51.124910227416585' lon='14.155493525272844' />

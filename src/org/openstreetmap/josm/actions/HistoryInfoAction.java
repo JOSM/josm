@@ -57,8 +57,8 @@ public class HistoryInfoAction extends JosmAction {
          * Constructs a new {@code HistoryObjectIDDialog}.
          */
         public HistoryObjectIDDialog() {
-            super(Main.parent, tr("Show history"), new String[]{tr("Show history"), tr("Cancel")});
-            setButtonIcons(new String[]{"dialogs/history", "cancel"});
+            super(Main.parent, tr("Show history"), tr("Show history"), tr("Cancel"));
+            setButtonIcons("dialogs/history", "cancel");
             init();
         }
 

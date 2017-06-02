@@ -31,7 +31,7 @@ public class NoteInputDialog extends ExtendedDialog {
      * @param buttonText Translated string to display on the action button
      */
     public NoteInputDialog(Component parent, String title, String buttonText) {
-        super(parent, title, new String[] {buttonText, tr("Cancel")});
+        super(parent, title, buttonText, tr("Cancel"));
     }
 
     /**
@@ -55,7 +55,7 @@ public class NoteInputDialog extends ExtendedDialog {
         contentPanel.add(label);
         contentPanel.add(scrollPane);
         setContent(contentPanel, false);
-        setButtonIcons(new Icon[] {icon, ImageProvider.get("cancel.png")});
+        setButtonIcons(icon, ImageProvider.get("cancel"));
 
         showDialog();
     }
@@ -66,5 +66,4 @@ public class NoteInputDialog extends ExtendedDialog {
     public String getInputText() {
         return textArea.getText();
     }
-
 }

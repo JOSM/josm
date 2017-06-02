@@ -46,13 +46,10 @@ public final class SaveAction extends SaveActionBase {
             ExtendedDialog dialog = new ExtendedDialog(
                     Main.parent,
                     tr("Overwrite"),
-                    new String[] {tr("Overwrite"), tr("Cancel")}
-            );
-            dialog.setButtonIcons(new String[] {"save_as", "cancel"});
-            dialog.setContent(tr("File {0} exists. Overwrite?", f.getName()));
-            dialog.showDialog();
-            int ret = dialog.getValue();
-            if (ret != 1) {
+                    tr("Overwrite"), tr("Cancel"))
+                .setButtonIcons("save_as", "cancel")
+                .setContent(tr("File {0} exists. Overwrite?", f.getName()));
+            if (dialog.showDialog().getValue() != 1) {
                 f = null;
             }
         }

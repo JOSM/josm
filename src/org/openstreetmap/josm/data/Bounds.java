@@ -9,6 +9,7 @@ import java.text.MessageFormat;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -19,6 +20,8 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * lat/lon min/max values.  The values are rounded to LatLon.OSM_SERVER_PRECISION
  *
  * @author imi
+ *
+ * @see BBox to represent invalid areas.
  */
 public class Bounds {
     /**
@@ -389,10 +392,28 @@ public class Bounds {
 
     /**
      * Determines if the given point {@code ll} is within these bounds.
+     * <p>
+     * Points with unknown coordinates are always outside the coordinates.
      * @param ll The lat/lon to check
      * @return {@code true} if {@code ll} is within these bounds, {@code false} otherwise
      */
     public boolean contains(LatLon ll) {
+        // binary compatibility
+        return contains((ILatLon) ll);
+    }
+
+    /**
+     * Determines if the given point {@code ll} is within these bounds.
+     * <p>
+     * Points with unknown coordinates are always outside the coordinates.
+     * @param ll The lat/lon to check
+     * @return {@code true} if {@code ll} is within these bounds, {@code false} otherwise
+     * @since 12161
+     */
+    public boolean contains(ILatLon ll) {
+        if (!ll.isLatLonKnown()) {
+            return false;
+        }
         if (ll.lat() < minLat || ll.lat() > maxLat)
             return false;
         if (crosses180thMeridian()) {

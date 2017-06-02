@@ -39,6 +39,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @author Michael Zangl
  */
 public final class LayerVisibilityAction extends AbstractAction implements IEnabledStateUpdating, LayerAction {
+    private static final String DIALOGS_LAYERLIST = "dialogs/layerlist";
     private static final int SLIDER_STEPS = 100;
     /**
      * Steps the value is changed by a mouse wheel change (one full click)
@@ -69,7 +70,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
         content.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         content.setLayout(new GridBagLayout());
 
-        new ImageProvider("dialogs/layerlist", "visibility").getResource().attachImageIcon(this, true);
+        new ImageProvider(DIALOGS_LAYERLIST, "visibility").getResource().attachImageIcon(this, true);
         putValue(SHORT_DESCRIPTION, tr("Change visibility of the selected layer."));
 
         visibilityCheckbox = new JCheckBox(tr("Show layer"));
@@ -316,7 +317,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
 
         @Override
         public ImageIcon getIcon() {
-            return ImageProvider.get("dialogs/layerlist", "transparency");
+            return ImageProvider.get(DIALOGS_LAYERLIST, "transparency");
         }
 
         @Override
@@ -354,7 +355,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
 
         @Override
         public ImageIcon getIcon() {
-           return ImageProvider.get("dialogs/layerlist", "gamma");
+           return ImageProvider.get(DIALOGS_LAYERLIST, "gamma");
         }
 
         @Override
@@ -412,7 +413,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
 
         @Override
         public ImageIcon getIcon() {
-           return ImageProvider.get("dialogs/layerlist", "sharpness");
+           return ImageProvider.get(DIALOGS_LAYERLIST, "sharpness");
         }
 
         @Override
@@ -449,7 +450,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
 
         @Override
         public ImageIcon getIcon() {
-           return ImageProvider.get("dialogs/layerlist", "colorfulness");
+           return ImageProvider.get(DIALOGS_LAYERLIST, "colorfulness");
         }
 
         @Override

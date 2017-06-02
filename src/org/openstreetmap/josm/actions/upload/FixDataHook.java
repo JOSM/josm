@@ -26,6 +26,8 @@ import org.openstreetmap.josm.data.osm.Tag;
  */
 public class FixDataHook implements UploadHook {
 
+    private static final String ONEWAY = "oneway";
+
     /**
      * List of checks to run on data
      */
@@ -39,10 +41,10 @@ public class FixDataHook implements UploadHook {
         deprecated.add(new FixDataSpace());
         deprecated.add(new FixDataKey("color",            "colour"));
         deprecated.add(new FixDataTag("highway", "ford",  "ford",    "yes"));
-        deprecated.add(new FixDataTag("oneway",  "false", "oneway",  "no"));
-        deprecated.add(new FixDataTag("oneway",  "0",     "oneway",  "no"));
-        deprecated.add(new FixDataTag("oneway",  "true",  "oneway",  "yes"));
-        deprecated.add(new FixDataTag("oneway",  "1",     "oneway",  "yes"));
+        deprecated.add(new FixDataTag(ONEWAY,    "false",  ONEWAY,   "no"));
+        deprecated.add(new FixDataTag(ONEWAY,    "0",      ONEWAY,   "no"));
+        deprecated.add(new FixDataTag(ONEWAY,    "true",   ONEWAY,   "yes"));
+        deprecated.add(new FixDataTag(ONEWAY,    "1",      ONEWAY,   "yes"));
         deprecated.add(new FixDataTag("highway", "stile", "barrier", "stile"));
         // CHECKSTYLE.ON: SingleSpaceSeparator
         deprecated.add((keys, osm) -> {
@@ -183,27 +185,27 @@ public class FixDataHook implements UploadHook {
      */
     @Override
     public boolean checkUpload(APIDataSet apiDataSet) {
-        if (!Main.pref.getBoolean("fix.data.on.upload", true))
-            return true;
+        if (Main.pref.getBoolean("fix.data.on.upload", true)) {
+            Collection<Command> cmds = new LinkedList<>();
 
-        List<OsmPrimitive> objectsToUpload = apiDataSet.getPrimitives();
-        Collection<Command> cmds = new LinkedList<>();
-
-        for (OsmPrimitive osm : objectsToUpload) {
-            Map<String, String> keys = new HashMap<>(osm.getKeys());
-            if (!keys.isEmpty()) {
-                boolean modified = false;
-                for (FixData fix : deprecated) {
-                    if (fix.fixKeys(keys, osm))
-                        modified = true;
+            for (OsmPrimitive osm : apiDataSet.getPrimitives()) {
+                Map<String, String> keys = new HashMap<>(osm.getKeys());
+                if (!keys.isEmpty()) {
+                    boolean modified = false;
+                    for (FixData fix : deprecated) {
+                        if (fix.fixKeys(keys, osm))
+                            modified = true;
+                    }
+                    if (modified) {
+                        cmds.add(new ChangePropertyCommand(Collections.singleton(osm), keys));
+                    }
                 }
-                if (modified)
-                    cmds.add(new ChangePropertyCommand(Collections.singleton(osm), keys));
+            }
+
+            if (!cmds.isEmpty()) {
+                Main.main.undoRedo.add(new SequenceCommand(tr("Fix deprecated tags"), cmds));
             }
         }
-
-        if (!cmds.isEmpty())
-            Main.main.undoRedo.add(new SequenceCommand(tr("Fix deprecated tags"), cmds));
         return true;
     }
 }

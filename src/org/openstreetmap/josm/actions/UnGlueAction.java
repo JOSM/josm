@@ -95,7 +95,7 @@ public class UnGlueAction extends JosmAction {
         if (checkSelectionOneNodeAtMostOneWay(selection)) {
             checkAndConfirmOutlyingUnglue();
             int count = 0;
-            for (Way w : OsmPrimitive.getFilteredList(selectedNode.getReferrers(), Way.class)) {
+            for (Way w : selectedNode.getParentWays()) {
                 if (!w.isUsable() || w.getNodesCount() < 1) {
                     continue;
                 }
@@ -125,7 +125,7 @@ public class UnGlueAction extends JosmAction {
             Set<Node> tmpNodes = new HashSet<>();
             for (Node n : selectedNodes) {
                 int count = 0;
-                for (Way w : OsmPrimitive.getFilteredList(n.getReferrers(), Way.class)) {
+                for (Way w : n.getParentWays()) {
                     if (!w.isUsable()) {
                         continue;
                     }
@@ -205,8 +205,8 @@ public class UnGlueAction extends JosmAction {
         final transient ExistingBothNewChoice memberships;
 
         private PropertiesMembershipDialog(boolean preselectNew, boolean queryTags, boolean queryMemberships) {
-            super(Main.parent, tr("Tags / Memberships"), new String[]{tr("Unglue"), tr("Cancel")});
-            setButtonIcons(new String[]{"unglueways", "cancel"});
+            super(Main.parent, tr("Tags / Memberships"), tr("Unglue"), tr("Cancel"));
+            setButtonIcons("unglueways", "cancel");
 
             final JPanel content = new JPanel(new GridBagLayout());
 
@@ -331,7 +331,7 @@ public class UnGlueAction extends JosmAction {
         OsmPrimitive n = (OsmPrimitive) selection.toArray()[0];
         if (!(n instanceof Node))
             return false;
-        if (OsmPrimitive.getFilteredList(n.getReferrers(), Way.class).isEmpty())
+        if (((Node) n).getParentWays().isEmpty())
             return false;
 
         selectedNode = (Node) n;
@@ -563,7 +563,7 @@ public class UnGlueAction extends JosmAction {
     private boolean unglueSelfCrossingWay() {
         // According to previous check, only one valid way through that node
         Way way = null;
-        for (Way w: OsmPrimitive.getFilteredList(selectedNode.getReferrers(), Way.class)) {
+        for (Way w: selectedNode.getParentWays()) {
             if (w.isUsable() && w.getNodesCount() >= 1) {
                 way = w;
             }

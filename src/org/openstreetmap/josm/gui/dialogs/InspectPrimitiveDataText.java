@@ -190,8 +190,8 @@ public class InspectPrimitiveDataText {
         BBox bbox = o.getBBox();
         if (bbox != null) {
             add(tr("Bounding box: "), bbox.toStringCSV(", "));
-            EastNorth bottomRigth = Main.getProjection().latlon2eastNorth(bbox.getBottomRight());
-            EastNorth topLeft = Main.getProjection().latlon2eastNorth(bbox.getTopLeft());
+            EastNorth bottomRigth = bbox.getBottomRight().getEastNorth();
+            EastNorth topLeft = bbox.getTopLeft().getEastNorth();
             add(tr("Bounding box (projected): "),
                     Double.toString(topLeft.east()), ", ",
                     Double.toString(bottomRigth.north()), ", ",
@@ -202,10 +202,10 @@ public class InspectPrimitiveDataText {
     }
 
     void addCoordinates(Node n) {
-        if (n.getCoor() != null) {
+        if (n.isLatLonKnown()) {
             add(tr("Coordinates: "),
-                    Double.toString(n.getCoor().lat()), ", ",
-                    Double.toString(n.getCoor().lon()));
+                    Double.toString(n.lat()), ", ",
+                    Double.toString(n.lon()));
             add(tr("Coordinates (projected): "),
                     Double.toString(n.getEastNorth().east()), ", ",
                     Double.toString(n.getEastNorth().north()));

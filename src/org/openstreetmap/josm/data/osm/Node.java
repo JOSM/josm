@@ -3,6 +3,7 @@ package org.openstreetmap.josm.data.osm;
 
 import java.awt.geom.Area;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -13,7 +14,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
-import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.Projecting;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
@@ -46,7 +47,9 @@ public final class Node extends OsmPrimitive implements INode {
      * @return {@code true} if this node has valid coordinates
      * @since 7828
      */
+    @Override
     public boolean isLatLonKnown() {
+        // We cannot use default implementation - if we remove this implementation, we will break binary compatibility.
         return !Double.isNaN(lat) && !Double.isNaN(lon);
     }
 
@@ -79,42 +82,31 @@ public final class Node extends OsmPrimitive implements INode {
      */
     @Override
     public LatLon getCoor() {
-        if (!isLatLonKnown()) return null;
-        return new LatLon(lat, lon);
+        if (!isLatLonKnown()) {
+            return null;
+        } else {
+            return new LatLon(lat, lon);
+        }
     }
 
-    /**
-     * <p>Replies the projected east/north coordinates.</p>
-     *
-     * <p>Uses the {@link Main#getProjection() global projection} to project the lan/lon-coordinates.
-     * Internally caches the projected coordinates.</p>
-     *
-     * <p>Replies {@code null} if this node doesn't know lat/lon-coordinates, i.e. because it is an incomplete node.
-     *
-     * @return the east north coordinates or {@code null}
-     * @see #invalidateEastNorthCache()
-     *
-     */
     @Override
-    public EastNorth getEastNorth() {
-        return getEastNorth(Main.getProjection());
+    public double lat() {
+        return lat;
     }
 
-    /**
-     * Replies the projected east/north coordinates.
-     * <p>
-     * The result of the last conversion is cached. The cache object is used as cache key.
-     * @param projection The projection to use.
-     * @return The projected east/north coordinates
-     * @since 10827
-     */
-    public EastNorth getEastNorth(Projection projection) {
+    @Override
+    public double lon() {
+        return lon;
+    }
+
+    @Override
+    public EastNorth getEastNorth(Projecting projection) {
         if (!isLatLonKnown()) return null;
 
         if (Double.isNaN(east) || Double.isNaN(north) || !Objects.equals(projection.getCacheKey(), eastNorthCacheKey)) {
             // projected coordinates haven't been calculated yet,
             // so fill the cache of the projected node coordinates
-            EastNorth en = Projections.project(new LatLon(lat, lon));
+            EastNorth en = projection.latlon2eastNorth(this);
             this.east = en.east();
             this.north = en.north();
             this.eastNorthCacheKey = projection.getCacheKey();
@@ -427,5 +419,14 @@ public final class Node extends OsmPrimitive implements INode {
             return false;
         LatLon coor = getCoor();
         return coor != null && !coor.isIn(area);
+    }
+
+    /**
+     * Replies the set of referring ways.
+     * @return the set of referring ways
+     * @since 12031
+     */
+    public List<Way> getParentWays() {
+        return getFilteredList(getReferrers(), Way.class);
     }
 }

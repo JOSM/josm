@@ -21,6 +21,10 @@ import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * The powst-download handler notifies user of potential errors that occurred.
+ * @since 2322
+ */
 public class PostDownloadHandler implements Runnable {
     private final DownloadTask task;
     private final Future<?> future;

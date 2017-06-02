@@ -1,6 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.openstreetmap.josm.data.validation.tests.CrossingWays.HIGHWAY;
+import static org.openstreetmap.josm.data.validation.tests.CrossingWays.RAILWAY;
+import static org.openstreetmap.josm.data.validation.tests.CrossingWays.WATERWAY;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
@@ -98,7 +101,7 @@ public class DuplicateNode extends Test {
     protected static final int DUPLICATE_NODE_WATERWAY = 17;
 
     private static final String[] TYPES = {
-            "none", "highway", "railway", "waterway", "boundary", "power", "natural", "landuse", "building"};
+            "none", HIGHWAY, RAILWAY, WATERWAY, "boundary", "power", "natural", "landuse", "building"};
 
     /** The map of potential duplicates.
      *
@@ -209,17 +212,17 @@ public class DuplicateNode extends Test {
                             .message(tr("Mixed type duplicated nodes"))
                             .primitives(primitives)
                             .build());
-                } else if (typeMap.get("highway")) {
+                } else if (typeMap.get(HIGHWAY)) {
                     errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_HIGHWAY)
                             .message(tr("Highway duplicated nodes"))
                             .primitives(primitives)
                             .build());
-                } else if (typeMap.get("railway")) {
+                } else if (typeMap.get(RAILWAY)) {
                     errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_RAILWAY)
                             .message(tr("Railway duplicated nodes"))
                             .primitives(primitives)
                             .build());
-                } else if (typeMap.get("waterway")) {
+                } else if (typeMap.get(WATERWAY)) {
                     errors.add(TestError.builder(parentTest, Severity.ERROR, DUPLICATE_NODE_WATERWAY)
                             .message(tr("Waterway duplicated nodes"))
                             .primitives(primitives)
@@ -342,8 +345,7 @@ public class DuplicateNode extends Test {
         if (testError.getCode() == DUPLICATE_NODE) return false;
         // cannot merge nodes outside download area
         final Iterator<? extends OsmPrimitive> it = testError.getPrimitives().iterator();
-        if (!it.hasNext() || it.next().isOutsideDownloadArea()) return false;
+        return it.hasNext() && !it.next().isOutsideDownloadArea();
         // everything else is ok to merge
-        return true;
     }
 }
