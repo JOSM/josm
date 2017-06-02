@@ -100,6 +100,7 @@ public class SnappyCompressorOutputStream extends CompressorOutputStream {
         this.os = os;
         consumer = new ByteUtils.OutputStreamByteConsumer(os);
         compressor = new LZ77Compressor(params, new LZ77Compressor.Callback() {
+                @Override
                 public void accept(LZ77Compressor.Block block) throws IOException {
                     //System.err.println(block);
                     if (block instanceof LZ77Compressor.LiteralBlock) {
@@ -265,6 +266,7 @@ public class SnappyCompressorOutputStream extends CompressorOutputStream {
     /**
      * Returns a builder correctly configured for the Snappy algorithm using the gven block size.
      * @param blockSize the block size.
+     * @return a builder correctly configured for the Snappy algorithm using the gven block size
      */
     public static Parameters.Builder createParameterBuilder(int blockSize) {
         // the max offset and max literal length defined by the format

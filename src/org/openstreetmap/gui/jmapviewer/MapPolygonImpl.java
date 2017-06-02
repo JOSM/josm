@@ -21,7 +21,7 @@ public class MapPolygonImpl extends MapObjectImpl implements MapPolygon {
 
     private List<? extends ICoordinate> points;
 
-    public MapPolygonImpl(ICoordinate ... points) {
+    public MapPolygonImpl(ICoordinate... points) {
         this(null, null, points);
     }
 
@@ -33,7 +33,7 @@ public class MapPolygonImpl extends MapObjectImpl implements MapPolygon {
         this(null, name, points);
     }
 
-    public MapPolygonImpl(String name, ICoordinate ... points) {
+    public MapPolygonImpl(String name, ICoordinate... points) {
         this(null, name, points);
     }
 
@@ -45,7 +45,7 @@ public class MapPolygonImpl extends MapObjectImpl implements MapPolygon {
         this(layer, name, points, getDefaultStyle());
     }
 
-    public MapPolygonImpl(Layer layer, String name, ICoordinate ... points) {
+    public MapPolygonImpl(Layer layer, String name, ICoordinate... points) {
         this(layer, name, Arrays.asList(points), getDefaultStyle());
     }
 

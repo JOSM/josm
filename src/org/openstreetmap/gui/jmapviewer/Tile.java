@@ -3,7 +3,6 @@ package org.openstreetmap.gui.jmapviewer;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -302,7 +301,7 @@ public class Tile {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder("Tile ").append(key);
+        StringBuilder sb = new StringBuilder(35).append("Tile ").append(key);
         if (loading) {
             sb.append(" [LOADING...]");
         }
@@ -351,10 +350,7 @@ public class Tile {
             return false;
         if (zoom != other.zoom)
             return false;
-        if (!getTileSource().equals(other.getTileSource())) {
-            return false;
-        }
-        return true;
+        return getTileSource().equals(other.getTileSource());
     }
 
     public static String getTileKey(TileSource source, int xtile, int ytile, int zoom) {

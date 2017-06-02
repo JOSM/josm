@@ -72,7 +72,7 @@ public class BlockLZ4CompressorInputStream extends AbstractLZ77CompressorInputSt
             if (!hasMoreDataInBlock()) {
                 state = State.LOOKING_FOR_BACK_REFERENCE;
             }
-            return litLen;
+            return litLen > 0 ? litLen : read(b, off, len);
         case LOOKING_FOR_BACK_REFERENCE:
             if (!initializeBackReference()) {
                 state = State.EOF;
@@ -84,7 +84,7 @@ public class BlockLZ4CompressorInputStream extends AbstractLZ77CompressorInputSt
             if (!hasMoreDataInBlock()) {
                 state = State.NO_BLOCK;
             }
-            return backReferenceLen;
+            return backReferenceLen > 0 ? backReferenceLen : read(b, off, len);
         default:
             throw new IOException("Unknown stream state " + state);
         }

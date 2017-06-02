@@ -37,8 +37,9 @@ public class ZCompressorInputStream extends LZWInputStream {
     private final boolean blockMode;
     private final int maxCodeSize;
     private long totalCodesRead = 0;
-    
-    public ZCompressorInputStream(final InputStream inputStream) throws IOException {
+
+    public ZCompressorInputStream(final InputStream inputStream, final int memoryLimitInKb)
+            throws IOException {
         super(inputStream, ByteOrder.LITTLE_ENDIAN);
         final int firstByte = (int) in.readBits(8);
         final int secondByte = (int) in.readBits(8);
@@ -51,8 +52,12 @@ public class ZCompressorInputStream extends LZWInputStream {
         if (blockMode) {
             setClearCode(DEFAULT_CODE_SIZE);
         }
-        initializeTables(maxCodeSize);
+        initializeTables(maxCodeSize, memoryLimitInKb);
         clearEntries();
+    }
+
+    public ZCompressorInputStream(final InputStream inputStream) throws IOException {
+        this(inputStream, -1);
     }
     
     private void clearEntries() {

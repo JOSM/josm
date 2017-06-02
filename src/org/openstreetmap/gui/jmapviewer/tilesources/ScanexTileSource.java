@@ -109,15 +109,15 @@ public class ScanexTileSource extends TMSTileSource {
     }
 
     // Latitude to Y and back calculations.
-    private static double RADIUS_E = 6378137;   /* radius of Earth at equator, m */
-    private static double EQUATOR = 40075016.68557849; /* equator length, m */
-    private static double E = 0.0818191908426;  /* eccentricity of Earth's ellipsoid */
+    private static final double RADIUS_E = 6378137;   /* radius of Earth at equator, m */
+    private static final double EQUATOR = 40075016.68557849; /* equator length, m */
+    private static final double E = 0.0818191908426;  /* eccentricity of Earth's ellipsoid */
 
     @Override
     public Point latLonToXY(double lat, double lon, int zoom) {
         return new Point(
-                (int) osmMercator.lonToX(lon, zoom),
-                (int) latToTileY(lat, zoom)
+                (int) Math.round(osmMercator.lonToX(lon, zoom)),
+                (int) Math.round(latToTileY(lat, zoom))
                 );
     }
 

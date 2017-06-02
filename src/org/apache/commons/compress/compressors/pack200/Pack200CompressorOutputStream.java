@@ -26,7 +26,6 @@ import java.util.jar.JarInputStream;
 import java.util.jar.Pack200;
 
 import org.apache.commons.compress.compressors.CompressorOutputStream;
-import org.apache.commons.compress.utils.IOUtils;
 
 /**
  * An output stream that compresses using the Pack200 format.
@@ -130,16 +129,8 @@ public class Pack200CompressorOutputStream extends CompressorOutputStream {
             if (properties != null) {
                 p.properties().putAll(properties);
             }
-            JarInputStream ji = null;
-            boolean success = false;
-            try {
-                ji = new JarInputStream(streamBridge.getInput());
+            try (JarInputStream ji = new JarInputStream(streamBridge.getInput())) {
                 p.pack(ji, originalOutput);
-                success = true;
-            } finally {
-                if (!success) {
-                    IOUtils.closeQuietly(ji);
-                }
             }
         }
     }

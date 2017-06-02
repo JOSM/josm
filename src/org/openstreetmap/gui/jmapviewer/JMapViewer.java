@@ -44,6 +44,8 @@ import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
  */
 public class JMapViewer extends JPanel implements TileLoaderListener {
 
+    private static final long serialVersionUID = 1L;
+
     /** whether debug mode is enabled or not */
     public static boolean debug;
 
@@ -502,7 +504,7 @@ public class JMapViewer extends JPanel implements TileLoaderListener {
             return (int) marker.getRadius();
         else if (p != null) {
             Integer radius = getLatOffset(marker.getLat(), marker.getLon(), marker.getRadius(), false);
-            radius = radius == null ? null : p.y - radius.intValue();
+            radius = radius == null ? null : p.y - radius;
             return radius;
         } else
             return null;

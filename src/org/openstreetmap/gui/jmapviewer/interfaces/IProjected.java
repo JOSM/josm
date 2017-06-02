@@ -8,7 +8,15 @@ package org.openstreetmap.gui.jmapviewer.interfaces;
  * can also be degrees or feet.
  */
 public interface IProjected {
+    /**
+     * Returns easting.
+     * @return easting
+     */
     double getEast();
+
+    /**
+     * Returns northing.
+     * @return northing
+     */
     double getNorth();
 }
-

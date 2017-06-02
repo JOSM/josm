@@ -40,7 +40,6 @@ import org.apache.commons.compress.utils.ByteUtils;
 public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
 
     private static final int MIN_BACK_REFERENCE_LENGTH = 4;
-    private static final int MIN_LENGTH_OF_LAST_LITERAL = 5;
     private static final int MIN_OFFSET_OF_LAST_BACK_REFERENCE = 12;
 
     /*
@@ -115,6 +114,7 @@ public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
         this.os = os;
         compressor = new LZ77Compressor(params,
             new LZ77Compressor.Callback() {
+                @Override
                 public void accept(LZ77Compressor.Block block) throws IOException {
                     //System.err.println(block);
                     if (block instanceof LZ77Compressor.LiteralBlock) {
@@ -400,6 +400,7 @@ public class BlockLZ4CompressorOutputStream extends CompressorOutputStream {
 
     /**
      * Returns a builder correctly configured for the LZ4 algorithm.
+     * @return a builder correctly configured for the LZ4 algorithm
      */
     public static Parameters.Builder createParameterBuilder() {
         int maxLen = BlockLZ4CompressorInputStream.WINDOW_SIZE - 1;

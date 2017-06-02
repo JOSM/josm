@@ -14,6 +14,12 @@ public class TileRange {
     protected TileRange() {
     }
 
+    /**
+     * Constructs a new {@code TileRange}.
+     * @param t1 first tile
+     * @param t2 second tile
+     * @param zoom zoom level
+     */
     public TileRange(TileXY t1, TileXY t2, int zoom) {
         minX = (int) Math.floor(Math.min(t1.getX(), t2.getX()));
         minY = (int) Math.floor(Math.min(t1.getY(), t2.getY()));
@@ -22,6 +28,10 @@ public class TileRange {
         this.zoom = zoom;
     }
 
+    /**
+     * Constructs a new {@code TileRange}.
+     * @param r existing tile range to copy
+     */
     public TileRange(TileRange r) {
         minX = r.minX;
         minY = r.minY;

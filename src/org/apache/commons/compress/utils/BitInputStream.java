@@ -88,17 +88,16 @@ public class BitInputStream implements Closeable {
 
         if (bitsCachedSize < count) {
             return processBitsGreater57(count);
-        } else {
-            final long bitsOut;
-            if (byteOrder == ByteOrder.LITTLE_ENDIAN) {
-                bitsOut = (bitsCached & MASKS[count]);
-                bitsCached >>>= count;
-            } else {
-                bitsOut = (bitsCached >> (bitsCachedSize - count)) & MASKS[count];
-            }
-            bitsCachedSize -= count;
-            return bitsOut;
         }
+        final long bitsOut;
+        if (byteOrder == ByteOrder.LITTLE_ENDIAN) {
+            bitsOut = (bitsCached & MASKS[count]);
+            bitsCached >>>= count;
+        } else {
+            bitsOut = (bitsCached >> (bitsCachedSize - count)) & MASKS[count];
+        }
+        bitsCachedSize -= count;
+        return bitsOut;
     }
 
     private long processBitsGreater57(final int count) throws IOException {

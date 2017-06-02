@@ -102,13 +102,13 @@ public class SnappyCompressorInputStream extends AbstractLZ77CompressorInputStre
             if (!hasMoreDataInBlock()) {
                 state = State.NO_BLOCK;
             }
-            return litLen;
+            return litLen > 0 ? litLen : read(b, off, len);
         case IN_BACK_REFERENCE:
             int backReferenceLen = readBackReference(b, off, len);
             if (!hasMoreDataInBlock()) {
                 state = State.NO_BLOCK;
             }
-            return backReferenceLen;
+            return backReferenceLen > 0 ? backReferenceLen : read(b, off, len);
         default:
             throw new IOException("Unknown stream state " + state);
         }

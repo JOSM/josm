@@ -101,6 +101,10 @@ public class AttributionSupport {
 
         g.setFont(ATTR_FONT);
         String attributionText = source.getAttributionText(zoom, topLeft, bottomRight);
+        if (attributionText == null) {
+            // In case attribution text has been forgotte, display URL
+            attributionText = source.getAttributionLinkURL();
+        }
         if (attributionText != null) {
             Rectangle2D stringBounds = g.getFontMetrics().getStringBounds(attributionText, g);
             int textHeight = (int) stringBounds.getHeight() - 5;

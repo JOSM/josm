@@ -20,6 +20,8 @@ package org.apache.commons.compress.compressors.xz;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import org.apache.commons.compress.MemoryLimitException;
 import org.tukaani.xz.XZ;
 import org.tukaani.xz.SingleXZInputStream;
 import org.tukaani.xz.XZInputStream;
@@ -92,30 +94,72 @@ public class XZCompressorInputStream extends CompressorInputStream {
     public XZCompressorInputStream(final InputStream inputStream,
                                    final boolean decompressConcatenated)
             throws IOException {
+        this(inputStream, decompressConcatenated, -1);
+    }
+
+    /**
+     * Creates a new input stream that decompresses XZ-compressed data
+     * from the specified input stream.
+     *
+     * @param       inputStream where to read the compressed data
+     * @param       decompressConcatenated
+     *                          if true, decompress until the end of the
+     *                          input; if false, stop after the first .xz
+     *                          stream and leave the input position to point
+     *                          to the next byte after the .xz stream
+     * @param       memoryLimitInKb memory limit used when reading blocks.  If
+     *                          the estimated memory limit is exceeded on {@link #read()},
+     *                          a {@link MemoryLimitException} is thrown.
+     *
+     * @throws      IOException if the input is not in the .xz format,
+     *                          the input is corrupt or truncated, the .xz
+     *                          headers specify options that are not supported
+     *                          by this implementation,
+     *                          or the underlying <code>inputStream</code> throws an exception
+     *
+     * @since 1.14
+     */
+    public XZCompressorInputStream(InputStream inputStream,
+                                   boolean decompressConcatenated, final int memoryLimitInKb)
+            throws IOException {
         if (decompressConcatenated) {
-            in = new XZInputStream(inputStream);
+            in = new XZInputStream(inputStream, memoryLimitInKb);
         } else {
-            in = new SingleXZInputStream(inputStream);
+            in = new SingleXZInputStream(inputStream, memoryLimitInKb);
         }
     }
 
     @Override
     public int read() throws IOException {
-        final int ret = in.read();
-        count(ret == -1 ? -1 : 1);
-        return ret;
+        try {
+            final int ret = in.read();
+            count(ret == -1 ? -1 : 1);
+            return ret;
+        } catch (org.tukaani.xz.MemoryLimitException e) {
+            throw new MemoryLimitException(e.getMemoryNeeded(), e.getMemoryLimit(), e);
+        }
     }
 
     @Override
     public int read(final byte[] buf, final int off, final int len) throws IOException {
-        final int ret = in.read(buf, off, len);
-        count(ret);
-        return ret;
+        try {
+            final int ret = in.read(buf, off, len);
+            count(ret);
+            return ret;
+        } catch (org.tukaani.xz.MemoryLimitException e) {
+            //convert to commons-compress MemoryLimtException
+            throw new MemoryLimitException(e.getMemoryNeeded(), e.getMemoryLimit(), e);
+        }
     }
 
     @Override
     public long skip(final long n) throws IOException {
-        return in.skip(n);
+        try {
+            return in.skip(n);
+        } catch (org.tukaani.xz.MemoryLimitException e) {
+            //convert to commons-compress MemoryLimtException
+            throw new MemoryLimitException(e.getMemoryNeeded(), e.getMemoryLimit(), e);
+        }
     }
 
     @Override

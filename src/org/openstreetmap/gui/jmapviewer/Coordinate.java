@@ -75,9 +75,6 @@ public class Coordinate implements ICoordinate {
             return false;
         }
         final Coordinate other = (Coordinate) obj;
-        if (!Objects.equals(this.data, other.data)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.data, other.data);
     }
 }

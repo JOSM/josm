@@ -214,7 +214,7 @@ public class FramedLZ4CompressorInputStream extends CompressorInputStream {
         contentHash.update(bdByte);
         if (expectContentSize) { // for now we don't care, contains the uncompressed size
             byte[] contentSize = new byte[8];
-            int skipped = (int) IOUtils.readFully(in, contentSize);
+            int skipped = IOUtils.readFully(in, contentSize);
             count(skipped);
             if (8 != skipped) {
                 throw new IOException("Premature end of stream while reading content size");
@@ -308,13 +308,12 @@ public class FramedLZ4CompressorInputStream extends CompressorInputStream {
             int cnt = currentBlock.read(b, off, len);
             count(cnt);
             return cnt;
-        } else {
-            BlockLZ4CompressorInputStream l = (BlockLZ4CompressorInputStream) currentBlock;
-            long before = l.getBytesRead();
-            int cnt = currentBlock.read(b, off, len);
-            count(l.getBytesRead() - before);
-            return cnt;
         }
+        BlockLZ4CompressorInputStream l = (BlockLZ4CompressorInputStream) currentBlock;
+        long before = l.getBytesRead();
+        int cnt = currentBlock.read(b, off, len);
+        count(l.getBytesRead() - before);
+        return cnt;
     }
 
     private static boolean isSkippableFrameSignature(byte[] b) {
