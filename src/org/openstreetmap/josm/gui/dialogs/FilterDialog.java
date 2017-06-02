@@ -56,6 +56,7 @@ import org.openstreetmap.josm.tools.MultikeyShortcutAction;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
+ * The filter dialog displays a list of filters that are active on the current edit layer.
  *
  * @author Petr_Dlouhý
  */
@@ -295,11 +296,18 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
         }
     }
 
+    /**
+     * Updates the headline of this dialog to display the number of active filters.
+     */
     public void updateDialogHeader() {
         SwingUtilities.invokeLater(() -> setTitle(
                 tr("Filter Hidden:{0} Disabled:{1}", filterModel.disabledAndHiddenCount, filterModel.disabledCount)));
     }
 
+    /**
+     * Draws a text on the map display that indicates that filters are active.
+     * @param g The graphics to draw that text on.
+     */
     public void drawOSDText(Graphics2D g) {
         filterModel.drawOSDText(g);
     }

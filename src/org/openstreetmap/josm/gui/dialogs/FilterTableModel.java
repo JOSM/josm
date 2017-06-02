@@ -32,19 +32,36 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
+ * The model that is used for the table in the {@link FilterDialog}.
  *
  * @author Petr_Dlouhý
  */
 public class FilterTableModel extends AbstractTableModel {
 
+    /**
+     * The filter enabled column
+     */
     public static final int COL_ENABLED = 0;
+    /**
+     * The column indicating if the filter is hiding.
+     */
     public static final int COL_HIDING = 1;
+    /**
+     * The column that displays the filter text
+     */
     public static final int COL_TEXT = 2;
+    /**
+     * The column to invert the filter
+     */
     public static final int COL_INVERTED = 3;
 
-    // number of primitives that are disabled but not hidden
+    /**
+     * number of primitives that are disabled but not hidden
+     */
     public int disabledCount;
-    // number of primitives that are disabled and hidden
+    /**
+     * number of primitives that are disabled and hidden
+     */
     public int disabledAndHiddenCount;
 
     /**
@@ -78,6 +95,9 @@ public class FilterTableModel extends AbstractTableModel {
         executeFilters();
     }
 
+    /**
+     * Runs the filters on the current edit data set.
+     */
     public void executeFilters() {
         DataSet ds = Main.getLayerManager().getEditDataSet();
         boolean changed = false;
@@ -125,6 +145,10 @@ public class FilterTableModel extends AbstractTableModel {
         }
     }
 
+    /**
+     * Runs the filter on a list of primitives that are part of the edit data set.
+     * @param primitives The primitives
+     */
     public void executeFilters(Collection<? extends OsmPrimitive> primitives) {
         DataSet ds = Main.getLayerManager().getEditDataSet();
         if (ds == null)
@@ -178,6 +202,9 @@ public class FilterTableModel extends AbstractTableModel {
 
     }
 
+    /**
+     * Clears all filtered flags from all primitives in the dataset
+     */
     public void clearFilterFlags() {
         DataSet ds = Main.getLayerManager().getEditDataSet();
         if (ds != null) {
@@ -205,47 +232,73 @@ public class FilterTableModel extends AbstractTableModel {
         Main.pref.putListOfStructs("filters.entries", entries, FilterPreferenceEntry.class);
     }
 
-    public void addFilter(Filter f) {
-        filters.add(f);
+    /**
+     * Adds a new filter to the filter list.
+     * @param filter The new filter
+     */
+    public void addFilter(Filter filter) {
+        filters.add(filter);
         savePrefs();
         updateFilters();
         fireTableRowsInserted(filters.size() - 1, filters.size() - 1);
     }
 
-    public void moveDownFilter(int i) {
-        if (i >= filters.size() - 1)
+    /**
+     * Moves down the filter in the given row.
+     * @param rowIndex The filter row
+     */
+    public void moveDownFilter(int rowIndex) {
+        if (rowIndex >= filters.size() - 1)
             return;
-        filters.add(i + 1, filters.remove(i));
+        filters.add(rowIndex + 1, filters.remove(rowIndex));
         savePrefs();
         updateFilters();
-        fireTableRowsUpdated(i, i + 1);
+        fireTableRowsUpdated(rowIndex, rowIndex + 1);
     }
 
-    public void moveUpFilter(int i) {
-        if (i == 0)
+    /**
+     * Moves up the filter in the given row
+     * @param rowIndex The filter row
+     */
+    public void moveUpFilter(int rowIndex) {
+        if (rowIndex == 0)
             return;
-        filters.add(i - 1, filters.remove(i));
+        filters.add(rowIndex - 1, filters.remove(rowIndex));
         savePrefs();
         updateFilters();
-        fireTableRowsUpdated(i - 1, i);
+        fireTableRowsUpdated(rowIndex - 1, rowIndex);
     }
 
-    public void removeFilter(int i) {
-        filters.remove(i);
+    /**
+     * Removes the filter that is displayed in the given row
+     * @param rowIndex
+     */
+    public void removeFilter(int rowIndex) {
+        filters.remove(rowIndex);
         savePrefs();
         updateFilters();
-        fireTableRowsDeleted(i, i);
+        fireTableRowsDeleted(rowIndex, rowIndex);
     }
 
-    public void setFilter(int i, Filter f) {
-        filters.set(i, f);
+    /**
+     * Sets/replaces the filter for a given row.
+     * @param rowIndex The row index
+     * @param filter The filter that should be placed in that row
+     */
+    public void setFilter(int rowIndex, Filter filter) {
+        filters.set(rowIndex, filter);
         savePrefs();
         updateFilters();
-        fireTableRowsUpdated(i, i);
+        fireTableRowsUpdated(rowIndex, rowIndex);
     }
 
-    public Filter getFilter(int i) {
-        return filters.get(i);
+    /**
+     * Gets the filter by row index
+     * @param rowIndex The row index
+     * @return The filter in that row
+     */
+    public Filter getFilter(int rowIndex) {
+        return filters.get(rowIndex);
     }
 
     @Override
@@ -381,6 +434,10 @@ public class FilterTableModel extends AbstractTableModel {
 
     private final OSDLabel lblOSD = new OSDLabel("");
 
+    /**
+     * Draws a text on the map display that indicates that filters are active.
+     * @param g The graphics to draw that text on.
+     */
     public void drawOSDText(Graphics2D g) {
         String message = "<html>" + tr("<h2>Filter active</h2>");
 
