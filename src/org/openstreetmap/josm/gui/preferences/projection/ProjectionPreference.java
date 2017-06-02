@@ -15,12 +15,14 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
@@ -28,6 +30,7 @@ import org.openstreetmap.josm.data.preferences.CollectionProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.data.projection.CustomProjection;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
@@ -66,8 +69,8 @@ public class ProjectionPreference implements SubPreferenceSetting {
         }
     }
 
-    private static List<ProjectionChoice> projectionChoices = new ArrayList<>();
-    private static Map<String, ProjectionChoice> projectionChoicesById = new HashMap<>();
+    private static final List<ProjectionChoice> projectionChoices = new ArrayList<>();
+    private static final Map<String, ProjectionChoice> projectionChoicesById = new HashMap<>();
 
     /**
      * WGS84: Directly use latitude / longitude values as x/y.
@@ -268,9 +271,12 @@ public class ProjectionPreference implements SubPreferenceSetting {
         return Collections.unmodifiableList(projectionChoices);
     }
 
-    private static final StringProperty PROP_PROJECTION = new StringProperty("projection", mercator.getId());
+    private static String projectionChoice;
+    private static final Map<String, Collection<String>> projectionChoicesSub = new HashMap<>();
+    
+    private static final StringProperty PROP_PROJECTION_DEFAULT = new StringProperty("projection.default", mercator.getId());
     private static final StringProperty PROP_COORDINATES = new StringProperty("coordinates", null);
-    private static final CollectionProperty PROP_SUB_PROJECTION = new CollectionProperty("projection.sub", null);
+    private static final CollectionProperty PROP_SUB_PROJECTION_DEFAULT = new CollectionProperty("projection.default.sub", null);
     public static final StringProperty PROP_SYSTEM_OF_MEASUREMENT = new StringProperty("system_of_measurement", "Metric");
     private static final String[] unitsValues = ALL_SYSTEMS.keySet().toArray(new String[ALL_SYSTEMS.size()]);
     private static final String[] unitsValuesTr = new String[unitsValues.length];
@@ -323,7 +329,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
 
     @Override
     public void addGui(PreferenceTabbedPane gui) {
-        ProjectionChoice pc = setupProjectionCombo();
+        final ProjectionChoice pc = setupProjectionCombo();
 
         for (int i = 0; i < coordinatesCombo.getItemCount(); ++i) {
             if (coordinatesCombo.getItemAt(i).name().equals(PROP_COORDINATES.get())) {
@@ -356,6 +362,23 @@ public class ProjectionPreference implements SubPreferenceSetting {
 
         projectionCodeLabel.setLabelFor(projectionCode);
         projectionNameLabel.setLabelFor(projectionName);
+
+        JButton btnSetAsDefault = new JButton(tr("Set as default"));
+        projPanel.add(btnSetAsDefault, GBC.eol().insets(5, 10, 5, 5));
+        btnSetAsDefault.addActionListener(e -> {
+            ProjectionChoice pc2 = (ProjectionChoice) projectionCombo.getSelectedItem();
+            String id = pc2.getId();
+            Collection<String> prefs = pc2.getPreferences(projSubPrefPanel);
+            setProjection(id, prefs, true);
+            pc2.setPreferences(prefs);
+            Projection proj = pc2.getProjection();
+            new ExtendedDialog(gui, tr("Default projection"), tr("OK"))
+                    .setButtonIcons("ok")
+                    .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                    .setContent(tr("Default projection has been set to ''{0}''", proj.toCode()))
+                    .showDialog();
+        });
+        ExpertToggleAction.addVisibilitySwitcher(btnSetAsDefault);
 
         projPanel.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0, 5, 0, 10));
         projPanel.add(new JLabel(tr("Display coordinates as")), GBC.std().insets(5, 5, 0, 5));
@@ -401,7 +424,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
         String id = pc.getId();
         Collection<String> prefs = pc.getPreferences(projSubPrefPanel);
 
-        setProjection(id, prefs);
+        setProjection(id, prefs, false);
 
         if (PROP_COORDINATES.put(((CoordinateFormat) coordinatesCombo.getSelectedItem()).name())) {
             CoordinateFormat.setCoordinateFormat((CoordinateFormat) coordinatesCombo.getSelectedItem());
@@ -414,10 +437,18 @@ public class ProjectionPreference implements SubPreferenceSetting {
     }
 
     public static void setProjection() {
-        setProjection(PROP_PROJECTION.get(), PROP_SUB_PROJECTION.get());
+        setProjection(PROP_PROJECTION_DEFAULT.get(), PROP_SUB_PROJECTION_DEFAULT.get(), false);
     }
 
-    public static void setProjection(String id, Collection<String> pref) {
+    /**
+     * Set projection.
+     * @param id id of the selected projection choice
+     * @param pref the configuration for the selected projection choice
+     * @param makeDefault true, if it is to be set as permanent default
+     * false, if it is to be set for the current session
+     * @since 12306
+     */
+    public static void setProjection(String id, Collection<String> pref, boolean makeDefault) {
         ProjectionChoice pc = projectionChoicesById.get(id);
 
         if (pc == null) {
@@ -431,9 +462,14 @@ public class ProjectionPreference implements SubPreferenceSetting {
             pc = mercator;
         }
         id = pc.getId();
-        PROP_PROJECTION.put(id);
-        PROP_SUB_PROJECTION.put(pref);
-        Main.pref.putCollection("projection.sub."+id, pref);
+        if (makeDefault) {
+            PROP_PROJECTION_DEFAULT.put(id);
+            PROP_SUB_PROJECTION_DEFAULT.put(pref);
+            Main.pref.putCollection("projection.default.sub."+id, pref);
+        } else {
+            projectionChoice = id;
+            projectionChoicesSub.put(id, pref);
+        }
         pc.setPreferences(pref);
         Projection proj = pc.getProjection();
         Main.setProjection(proj);
@@ -466,11 +502,12 @@ public class ProjectionPreference implements SubPreferenceSetting {
      * @return the choice class for user selection
      */
     private ProjectionChoice setupProjectionCombo() {
+        String pcId = projectionChoice != null ? projectionChoice : PROP_PROJECTION_DEFAULT.get();
         ProjectionChoice pc = null;
         for (int i = 0; i < projectionCombo.getItemCount(); ++i) {
             ProjectionChoice pc1 = projectionCombo.getItemAt(i);
             pc1.setPreferences(getSubprojectionPreference(pc1));
-            if (pc1.getId().equals(PROP_PROJECTION.get())) {
+            if (pc1.getId().equals(pcId)) {
                 projectionCombo.setSelectedIndex(i);
                 selectedProjectionChanged(pc1);
                 pc = pc1;
@@ -489,7 +526,10 @@ public class ProjectionPreference implements SubPreferenceSetting {
     }
 
     private static Collection<String> getSubprojectionPreference(ProjectionChoice pc) {
-        return Main.pref.getCollection("projection.sub."+pc.getId(), null);
+        Collection<String> sessionValue = projectionChoicesSub.get(pc.getId());
+        if (sessionValue != null)
+            return sessionValue;
+        return Main.pref.getCollection("projection.default.sub."+pc.getId(), null);
     }
 
     @Override

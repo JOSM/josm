@@ -295,7 +295,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2017052400, Last Updated Wed May 24 07:07:02 2017 UTC
+        // Taken from Version 2017060200, Last Updated Fri Jun  2 07:07:01 2017 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -632,6 +632,7 @@ public final class DomainValidator extends AbstractValidator {
         "esq", // esq Charleston Road Registry Inc.
         "estate", // estate Trixy Park, LLC
         "esurance", // esurance Esurance Insurance Company
+        "etisalat", // etisalat Emirates Telecommunications Corporation (trading as Etisalat)
         "eurovision", // eurovision European Broadcasting Union (EBU)
         "eus", // eus Puntueus Fundazioa
         "events", // events Pioneer Maple, LLC

@@ -108,8 +108,9 @@ public class Preferences {
     private static final String COLOR_PREFIX = "color.";
 
     private static final String[] OBSOLETE_PREF_KEYS = {
-      "hdop.factor", /* remove entry after April 2017 */
-      "imagery.layers.addedIds" /* remove entry after June 2017 */
+      "imagery.layers.addedIds", /* remove entry after June 2017 */
+      "projection", /* remove entry after Nov. 2017 */
+      "projection.sub", /* remove entry after Nov. 2017 */
     };
 
     private static final long MAX_AGE_DEFAULT_PREFERENCES = TimeUnit.DAYS.toSeconds(50);
