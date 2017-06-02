@@ -86,6 +86,10 @@ public final class GuiHelper {
         }
     }
 
+    /**
+     * Add a task to the main worker that will block the worker and run in the GUI thread.
+     * @param task The task to run
+     */
     public static void executeByMainWorkerInEDT(final Runnable task) {
         Main.worker.submit(() -> runInEDTAndWait(task));
     }

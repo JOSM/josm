@@ -22,8 +22,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 
 /**
- *
- *
+ * A panel that allows the user to input the coordinates of a lat/lon box
  */
 public class BoundingBoxSelectionPanel extends JPanel {
 
@@ -84,10 +83,18 @@ public class BoundingBoxSelectionPanel extends JPanel {
         build();
     }
 
+    /**
+     * Sets the bounding box to the given area
+     * @param area The new input values
+     */
     public void setBoundingBox(Bounds area) {
         updateBboxFields(area);
     }
 
+    /**
+     * Get the bounding box the user selected
+     * @return The box or <code>null</code> if no valid data was input.
+     */
     public Bounds getBoundingBox() {
         double minlon, minlat, maxlon, maxlat;
         try {

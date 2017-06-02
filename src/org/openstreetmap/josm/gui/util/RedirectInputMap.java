@@ -19,6 +19,11 @@ public class RedirectInputMap extends ComponentInputMap {
 
     private final InputMap target;
 
+    /**
+     * Create a new {@link RedirectInputMap}
+     * @param component The component the input map will be added to
+     * @param target The target input map that should be mirrored.
+     */
     public RedirectInputMap(JComponent component, InputMap target) {
         super(component);
         this.target = target;
@@ -59,6 +64,11 @@ public class RedirectInputMap extends ComponentInputMap {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Redirects the key inputs from one component to an other component
+     * @param source The source component
+     * @param target The target component to send the keystrokes to.
+     */
     public static void redirect(JComponent source, JComponent target) {
         InputMap lastParent = source.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         while (lastParent.getParent() != null) {

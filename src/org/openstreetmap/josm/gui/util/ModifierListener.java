@@ -8,5 +8,9 @@ package org.openstreetmap.josm.gui.util;
  */
 @FunctionalInterface
 public interface ModifierListener {
+    /**
+     * Called when the modifiers are changed
+     * @param modifiers The new modifiers
+     */
     void modifiersChanged(int modifiers);
 }

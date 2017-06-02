@@ -24,10 +24,25 @@ import org.openstreetmap.josm.tools.GBC;
  */
 public class EditableList extends JPanel {
 
+    /**
+     * The title displayed in input dialog
+     */
     public final String title;
+    /**
+     * The list items
+     */
     public final JList<String> sourcesList = new JList<>(new DefaultListModel<String>());
+    /**
+     * The add button
+     */
     public final JButton addSrcButton = new JButton(tr("Add"));
+    /**
+     * The edit button displayed nex to the list
+     */
     public final JButton editSrcButton = new JButton(tr("Edit"));
+    /**
+     * The delete button
+     */
     public final JButton deleteSrcButton = new JButton(tr("Delete"));
 
     /**
@@ -114,12 +129,20 @@ public class EditableList extends JPanel {
 
     }
 
+    /**
+     * Sets the list items by a given list of strings
+     * @param items The items that should be set
+     */
     public void setItems(final Iterable<String> items) {
         for (String source : items) {
             ((DefaultListModel<String>) sourcesList.getModel()).addElement(source);
         }
     }
 
+    /**
+     * Gets all items that are currently displayed
+     * @return All items as list of strings
+     */
     public List<String> getItems() {
         final List<String> items = new ArrayList<>(sourcesList.getModel().getSize());
         for (int i = 0; i < sourcesList.getModel().getSize(); ++i) {

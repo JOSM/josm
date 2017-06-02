@@ -14,6 +14,9 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
 public class HistoryComboBox extends AutoCompletingComboBox {
     private final ComboBoxHistory model;
 
+    /**
+     * The default size of the search history.
+     */
     public static final int DEFAULT_SEARCH_HISTORY_SIZE = 15;
 
     /**
