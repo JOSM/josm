@@ -123,8 +123,8 @@ public class ParallelWays {
     }
 
     /**
-     * Determines if the nodes graph form a closed path
-     * @return {@code true} if the nodes graph form a closed path
+     * Determines if the nodes graph from a closed path
+     * @return {@code true} if the nodes graph from a closed path
      */
     public boolean isClosedPath() {
         return sortedNodes.get(0) == sortedNodes.get(sortedNodes.size() - 1);

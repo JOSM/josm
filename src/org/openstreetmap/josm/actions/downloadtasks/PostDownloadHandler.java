@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * The powst-download handler notifies user of potential errors that occurred.
+ * The post-download handler notifies user of potential errors that occurred.
  * @since 2322
  */
 public class PostDownloadHandler implements Runnable {
