@@ -1371,6 +1371,8 @@
             <label text="In case of traffic signals:" />
             <check key="button_operated" text="Button operated" />
             <check key="traffic_signals:sound" text="Sound signals" />
+            <combo key="tactile_paving" text="Tactile Paving?" values="yes, no, primitive, incorrect"
+                   default="" delete_if_empty="true" />
         </item> <!-- Pedestrian Crossing -->
         <group name="Traffic Calming" icon="presets/vehicle/choker.svg"> 
             <item name="Bump" icon="presets/vehicle/bump.svg" type="node,way" preset_name_label="true">
