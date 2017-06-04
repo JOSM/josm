@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -34,6 +35,9 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public class MapMover extends MouseAdapter implements Destroyable {
 
+    /**
+     * Zoom wheel is reversed.
+     */
     public static final BooleanProperty PROP_ZOOM_REVERSE_WHEEL = new BooleanProperty("zoom.reverse-wheel", false);
 
     static {
@@ -103,14 +107,15 @@ public class MapMover extends MouseAdapter implements Destroyable {
     /**
      * The point in the map that was the under the mouse point
      * when moving around started.
+     *
+     * This is <code>null</code> if movement is not active
      */
-    private EastNorth mousePosMove;
+    private MapViewPoint mousePosMoveStart;
+
     /**
      * The map to move around.
      */
     private final NavigatableComponent nc;
-
-    private boolean movementInPlace;
 
     private final ArrayList<Pair<ZoomerAction, Shortcut>> registeredShortcuts = new ArrayList<>();
 
@@ -151,28 +156,38 @@ public class MapMover extends MouseAdapter implements Destroyable {
         registeredShortcuts.add(new Pair<>(action, shortcut));
     }
 
+    private boolean movementInProgress() {
+        return mousePosMoveStart != null;
+    }
+
     /**
      * If the right (and only the right) mouse button is pressed, move the map.
      */
     @Override
     public void mouseDragged(MouseEvent e) {
         int offMask = MouseEvent.BUTTON1_DOWN_MASK | MouseEvent.BUTTON2_DOWN_MASK;
-        int macMouseMask = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
-        boolean stdMovement = (e.getModifiersEx() & (MouseEvent.BUTTON3_DOWN_MASK | offMask)) == MouseEvent.BUTTON3_DOWN_MASK;
-        boolean macMovement = Main.isPlatformOsx() && e.getModifiersEx() == macMouseMask;
-        boolean allowedMode = !Main.map.mapModeSelect.equals(Main.map.mapMode)
-                          || SelectAction.Mode.SELECT.equals(Main.map.mapModeSelect.getMode());
-        if (stdMovement || (macMovement && allowedMode)) {
-            if (mousePosMove == null)
-                startMovement(e);
-            EastNorth center = nc.getCenter();
-            EastNorth mouseCenter = nc.getEastNorth(e.getX(), e.getY());
-            nc.zoomTo(new EastNorth(
-                    mousePosMove.east() + center.east() - mouseCenter.east(),
-                    mousePosMove.north() + center.north() - mouseCenter.north()));
+        boolean allowMovement = (e.getModifiersEx() & (MouseEvent.BUTTON3_DOWN_MASK | offMask)) == MouseEvent.BUTTON3_DOWN_MASK;
+        if (Main.isPlatformOsx()) {
+            int macMouseMask = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
+            boolean macMovement = true && e.getModifiersEx() == macMouseMask;
+            boolean allowedMode = !Main.map.mapModeSelect.equals(Main.map.mapMode)
+                              || SelectAction.Mode.SELECT.equals(Main.map.mapModeSelect.getMode());
+            allowMovement |= macMovement && allowedMode;
+        }
+        if (allowMovement) {
+            doMoveForDrag(e);
         } else {
             endMovement();
         }
+    }
+
+    private void doMoveForDrag(MouseEvent e) {
+        if (!movementInProgress()) {
+            startMovement(e);
+        }
+        EastNorth center = nc.getCenter();
+        EastNorth mouseCenter = nc.getEastNorth(e.getX(), e.getY());
+        nc.zoomTo(mousePosMoveStart.getEastNorth().add(center).subtract(mouseCenter));
     }
 
     /**
@@ -204,10 +219,10 @@ public class MapMover extends MouseAdapter implements Destroyable {
      * @param e The mouse event that leat to the movement from.
      */
     private void startMovement(MouseEvent e) {
-        if (movementInPlace)
+        if (movementInProgress()) {
             return;
-        movementInPlace = true;
-        mousePosMove = nc.getEastNorth(e.getX(), e.getY());
+        }
+        mousePosMoveStart = nc.getState().getForView(e.getX(), e.getY());
         nc.setNewCursor(Cursor.MOVE_CURSOR, this);
     }
 
@@ -215,11 +230,11 @@ public class MapMover extends MouseAdapter implements Destroyable {
      * End the movement. Setting back the cursor and clear the movement variables
      */
     private void endMovement() {
-        if (!movementInPlace)
+        if (!movementInProgress()) {
             return;
-        movementInPlace = false;
+        }
         nc.resetCursor(this);
-        mousePosMove = null;
+        mousePosMoveStart = null;
     }
 
     /**
@@ -237,19 +252,14 @@ public class MapMover extends MouseAdapter implements Destroyable {
      */
     @Override
     public void mouseMoved(MouseEvent e) {
-        if (!movementInPlace)
+        if (!movementInProgress()) {
             return;
+        }
         // Mac OSX simulates with  ctrl + mouse 1  the second mouse button hence no dragging events get fired.
         // Is only the selected mouse button pressed?
         if (Main.isPlatformOsx()) {
             if (e.getModifiersEx() == MouseEvent.CTRL_DOWN_MASK) {
-                if (mousePosMove == null) {
-                    startMovement(e);
-                }
-                EastNorth center = nc.getCenter();
-                EastNorth mouseCenter = nc.getEastNorth(e.getX(), e.getY());
-                nc.zoomTo(new EastNorth(mousePosMove.east() + center.east() - mouseCenter.east(), mousePosMove.north()
-                        + center.north() - mouseCenter.north()));
+                doMoveForDrag(e);
             } else {
                 endMovement();
             }
