@@ -43,6 +43,7 @@ public class Addresses extends Test {
     // CHECKSTYLE.OFF: SingleSpaceSeparator
     protected static final String ADDR_HOUSE_NUMBER  = "addr:housenumber";
     protected static final String ADDR_INTERPOLATION = "addr:interpolation";
+    protected static final String ADDR_NEIGHBOURHOOD = "addr:neighbourhood";
     protected static final String ADDR_PLACE         = "addr:place";
     protected static final String ADDR_STREET        = "addr:street";
     protected static final String ASSOCIATED_STREET  = "associatedStreet";
@@ -79,8 +80,8 @@ public class Addresses extends Test {
 
     protected void checkHouseNumbersWithoutStreet(OsmPrimitive p) {
         List<Relation> associatedStreets = getAndCheckAssociatedStreets(p);
-        // Find house number without proper location (neither addr:street, associatedStreet, addr:place or addr:interpolation)
-        if (p.hasKey(ADDR_HOUSE_NUMBER) && !p.hasKey(ADDR_STREET) && !p.hasKey(ADDR_PLACE)) {
+        // Find house number without proper location (neither addr:street, associatedStreet, addr:place, addr:neighbourhood or addr:interpolation)
+        if (p.hasKey(ADDR_HOUSE_NUMBER) && !p.hasKey(ADDR_STREET, ADDR_PLACE, ADDR_NEIGHBOURHOOD)) {
             for (Relation r : associatedStreets) {
                 if (r.hasTag("type", ASSOCIATED_STREET)) {
                     return;
