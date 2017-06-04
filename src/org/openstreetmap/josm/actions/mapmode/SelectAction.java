@@ -881,7 +881,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
     private boolean movesHiddenWay() {
         DataSet ds = getLayerManager().getEditDataSet();
         final Collection<OsmPrimitive> elementsToTest = new HashSet<>(ds.getSelected());
-        for (Way osm : Utils.filteredCollection(ds.getSelected(), Way.class)) {
+        for (Way osm : ds.getSelectedWays()) {
             elementsToTest.addAll(osm.getNodes());
         }
         for (OsmPrimitive node : Utils.filteredCollection(elementsToTest, Node.class)) {

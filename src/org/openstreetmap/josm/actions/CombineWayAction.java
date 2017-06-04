@@ -208,8 +208,7 @@ public class CombineWayAction extends JosmAction {
         final DataSet ds = getLayerManager().getEditDataSet();
         if (ds == null)
             return;
-        Collection<OsmPrimitive> selection = ds.getSelected();
-        Set<Way> selectedWays = OsmPrimitive.getFilteredSet(selection, Way.class);
+        Collection<Way> selectedWays = ds.getSelectedWays();
         if (selectedWays.size() < 2) {
             new Notification(
                     tr("Please select at least two ways to combine."))
