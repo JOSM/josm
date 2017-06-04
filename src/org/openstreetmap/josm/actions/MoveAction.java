@@ -99,8 +99,9 @@ public class MoveAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent event) {
+        DataSet ds = getLayerManager().getEditDataSet();
 
-        if (!Main.isDisplayingMapView())
+        if (!Main.isDisplayingMapView() || ds == null)
             return;
 
         // find out how many "real" units the objects have to be moved in order to
@@ -128,12 +129,10 @@ public class MoveAction extends JosmAction {
             disty = 0;
         }
 
-        DataSet ds = getLayerManager().getEditDataSet();
         Collection<OsmPrimitive> selection = ds.getSelected();
         Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
 
-        Command c = !Main.main.undoRedo.commands.isEmpty()
-        ? Main.main.undoRedo.commands.getLast() : null;
+        Command c = Main.main.undoRedo.getLastCommand();
 
         ds.beginUpdate();
         try {

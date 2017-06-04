@@ -808,17 +808,15 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      * @return last command
      */
     private static Command getLastCommandInDataset(DataSet ds) {
-        LinkedList<Command> commands = Main.main.undoRedo.commands;
-        if (!commands.isEmpty()) {
-            Command lastCommand = commands.getLast();
-            if (lastCommand instanceof SequenceCommand) {
-                lastCommand = ((SequenceCommand) lastCommand).getLastCommand();
-            }
-            if (ds.equals(lastCommand.getAffectedDataSet())) {
-                return lastCommand;
-            }
+        Command lastCommand = Main.main.undoRedo.getLastCommand();
+        if (lastCommand instanceof SequenceCommand) {
+            lastCommand = ((SequenceCommand) lastCommand).getLastCommand();
         }
-        return null;
+        if (lastCommand != null && ds.equals(lastCommand.getAffectedDataSet())) {
+            return lastCommand;
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -881,7 +879,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
     private boolean movesHiddenWay() {
         DataSet ds = getLayerManager().getEditDataSet();
         final Collection<OsmPrimitive> elementsToTest = new HashSet<>(ds.getSelected());
-        for (Way osm : Utils.filteredCollection(ds.getSelected(), Way.class)) {
+        for (Way osm : ds.getSelectedWays()) {
             elementsToTest.addAll(osm.getNodes());
         }
         for (OsmPrimitive node : Utils.filteredCollection(elementsToTest, Node.class)) {

@@ -28,6 +28,8 @@ public class UndoRedoHandler implements LayerChangeListener {
 
     /**
      * All commands that were made on the dataset. Don't write from outside!
+     *
+     * @see #getLastCommand()
      */
     public final LinkedList<Command> commands = new LinkedList<>();
     /**
@@ -42,6 +44,15 @@ public class UndoRedoHandler implements LayerChangeListener {
      */
     public UndoRedoHandler() {
         Main.getLayerManager().addLayerChangeListener(this);
+    }
+
+    /**
+     * Gets the last command that was executed on the command stack.
+     * @return That command or <code>null</code> if there is no such command.
+     * @since #12316
+     */
+    public Command getLastCommand() {
+        return commands.peekLast();
     }
 
     /**
