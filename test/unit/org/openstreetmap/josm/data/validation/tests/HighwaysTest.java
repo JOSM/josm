@@ -4,15 +4,21 @@ package org.openstreetmap.josm.data.validation.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.InputStream;
+import java.util.Collection;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.io.OsmReader;
 
 /**
  * Unit test of {@link HighwaysTest}.
@@ -94,5 +100,27 @@ public class HighwaysTest {
         assertTrue(error.isFixable());
         assertTrue(error.getFix().executeCommand());
         assertEquals("GB:nsl_single", link.get("source:maxspeed"));
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/14891">Bug #14891</a>.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testTicket14891() throws Exception {
+        try (InputStream is = TestUtils.getRegressionDataStream(14891, "14891.osm.bz2")) {
+            Collection<Way> ways = OsmReader.parseDataSet(is, null).getWays();
+            Way roundabout = ways.stream().filter(w -> 10068083 == w.getId()).findFirst().get();
+            Highways test = new Highways();
+            test.visit(roundabout);
+            if (!test.getErrors().isEmpty()) {
+                fail(test.getErrors().get(0).getMessage());
+            }
+            Way w1 = ways.stream().filter(w -> 28508494 == w.getId()).findFirst().get();
+            Way w2 = ways.stream().filter(w -> 28508493 == w.getId()).findFirst().get();
+            test.visit(w1);
+            test.visit(w2);
+            assertEquals(2, test.getErrors().size());
+        }
     }
 }

@@ -790,6 +790,10 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      */
     private void useLastMoveCommandIfPossible() {
         DataSet dataSet = getLayerManager().getEditDataSet();
+        if (dataSet == null) {
+            // It may happen that there is no edit layer.
+            return;
+        }
         Command c = getLastCommandInDataset(dataSet);
         Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(dataSet.getSelected());
         if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
