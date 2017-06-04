@@ -80,7 +80,8 @@ public class Addresses extends Test {
 
     protected void checkHouseNumbersWithoutStreet(OsmPrimitive p) {
         List<Relation> associatedStreets = getAndCheckAssociatedStreets(p);
-        // Find house number without proper location (neither addr:street, associatedStreet, addr:place, addr:neighbourhood or addr:interpolation)
+        // Find house number without proper location
+        // (neither addr:street, associatedStreet, addr:place, addr:neighbourhood or addr:interpolation)
         if (p.hasKey(ADDR_HOUSE_NUMBER) && !p.hasKey(ADDR_STREET, ADDR_PLACE, ADDR_NEIGHBOURHOOD)) {
             for (Relation r : associatedStreets) {
                 if (r.hasTag("type", ASSOCIATED_STREET)) {
