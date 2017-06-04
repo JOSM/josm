@@ -808,17 +808,15 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      * @return last command
      */
     private static Command getLastCommandInDataset(DataSet ds) {
-        LinkedList<Command> commands = Main.main.undoRedo.commands;
-        if (!commands.isEmpty()) {
-            Command lastCommand = commands.getLast();
-            if (lastCommand instanceof SequenceCommand) {
-                lastCommand = ((SequenceCommand) lastCommand).getLastCommand();
-            }
-            if (ds.equals(lastCommand.getAffectedDataSet())) {
-                return lastCommand;
-            }
+        Command lastCommand = Main.main.undoRedo.getLastCommand();
+        if (lastCommand instanceof SequenceCommand) {
+            lastCommand = ((SequenceCommand) lastCommand).getLastCommand();
         }
-        return null;
+        if (lastCommand != null && ds.equals(lastCommand.getAffectedDataSet())) {
+            return lastCommand;
+        } else {
+            return null;
+        }
     }
 
     /**

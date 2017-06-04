@@ -132,8 +132,7 @@ public class MoveAction extends JosmAction {
         Collection<OsmPrimitive> selection = ds.getSelected();
         Collection<Node> affectedNodes = AllNodesVisitor.getAllNodes(selection);
 
-        Command c = !Main.main.undoRedo.commands.isEmpty()
-        ? Main.main.undoRedo.commands.getLast() : null;
+        Command c = Main.main.undoRedo.getLastCommand();
 
         ds.beginUpdate();
         try {
