@@ -642,20 +642,29 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      * @return A string representing a query to search for OSM primitives, see @see{@link OsmPrimitive} that
      * can be described by this preset.
      */
-    private String generatePresetSearchQuery(){
+    public String generatePresetSearchQuery(){
         final String type = "type:";
         final String or = " | ";
         final String and = " ";
         final String wCard = "*";
+        final String opening = "(";
+        final String closing = ")";
 
-        String types = this.types.stream()
-                .map(t -> type.concat(t.toString()))
-                .collect(Collectors.joining(or));
+        final StringBuilder sb = new StringBuilder("");
+        final Set<TaggingPresetType> ts = this.types;
 
-        StringBuilder sb = new StringBuilder(types);
-        sb.insert(0, "("); sb.append(")"); sb.append(and);
+        if (ts != null && !ts.isEmpty()) {
+            String types = this.types.stream()
+                    .map(t -> type.concat(t.toString()))
+                    .collect(Collectors.joining(or));
 
-        sb.append("(");
+            sb.append(opening)
+                    .append(types)
+                    .append(closing)
+                    .append(and);
+        }
+
+        final List<TaggingPresetItem> ds = this.data;
 
         String query = this.data.stream()
                 .filter(e -> e instanceof KeyedItem)
@@ -668,8 +677,11 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                         .collect(Collectors.joining(or)))
                 .collect(Collectors.joining(or));
 
-        sb.append(query);
-        sb.append(")");
+        if (!query.isEmpty()) {
+            sb.append(opening)
+                    .append(query)
+                    .append(closing);
+        }
 
         return sb.toString();
     }
