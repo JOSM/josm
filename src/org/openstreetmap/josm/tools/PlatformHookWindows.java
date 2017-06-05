@@ -296,9 +296,12 @@ public class PlatformHookWindows implements PlatformHook {
     private static String buildOSBuildNumber() {
         StringBuilder sb = new StringBuilder();
         try {
-            sb.append(getProductName()).append(' ')
-              .append(getReleaseId()).append(" (")
-              .append(getCurrentBuild()).append(')');
+            sb.append(getProductName());
+            String releaseId = getReleaseId();
+            if (releaseId != null) {
+                sb.append(' ').append(releaseId);
+            }
+            sb.append(" (").append(getCurrentBuild()).append(')');
         } catch (ReflectiveOperationException e) {
             Main.error(e);
         }
