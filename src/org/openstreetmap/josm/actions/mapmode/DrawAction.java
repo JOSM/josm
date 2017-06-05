@@ -1322,7 +1322,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         @Override
         public void actionPerformed(ActionEvent e) {
             Main.main.undoRedo.undo();
-            Command lastCmd = Main.main.undoRedo.commands.peekLast();
+            Command lastCmd = Main.main.undoRedo.getLastCommand();
             if (lastCmd == null) return;
             Node n = null;
             for (OsmPrimitive p: lastCmd.getParticipatingPrimitives()) {
