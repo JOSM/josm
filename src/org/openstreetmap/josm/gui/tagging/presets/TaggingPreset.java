@@ -652,6 +652,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         return queryGenerator.buildPresetSearchQuery(this);
     }
 
+    // TODO: docs
     private static class TaggingPresetSearchQueryGenerator{
         /**
          * keywords used to build the query.
@@ -683,6 +684,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             return gen;
         }
 
+        // TODO: docs
         public String buildPresetSearchQuery(TaggingPreset p) {
             final StringBuilder sb = new StringBuilder("");
 
@@ -704,6 +706,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             return sb.toString().trim();
         }
 
+        // TODO: docs
         private String buildTypeQuery(Collection<TaggingPresetType> ts) {
             return ts == null
                     ? ""
@@ -717,6 +720,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                     .collect(Collectors.joining(OR));
         }
 
+        // TODO: docs
         private String buildAttributeQuery(Collection<TaggingPresetItem> its) {
             return its.stream()
                     .filter(e -> e instanceof KeyedItem)
