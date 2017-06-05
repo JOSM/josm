@@ -123,6 +123,12 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     private boolean originalSelectionEmpty;
 
     /**
+     * Allows to build a string representation of this preset for searching.
+     */
+    private static final TaggingPresetSearchQueryGenerator queryGenerator =
+            TaggingPresetSearchQueryGenerator.getInstance();
+
+    /**
      * Create an empty tagging preset. This will not have any items and
      * will be an empty string as text. createPanel will return null.
      * Use this as default item for "do not select anything".
@@ -642,58 +648,97 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      * @return A string representing a query to search for OSM primitives, see @see{@link OsmPrimitive} that
      * can be described by this preset.
      */
-    public String generatePresetSearchQuery(){
-        final String type = "type:";
-        final String or = " | ";
-        final String and = " ";
-        final String wCard = "*";
-        final String opening = "(";
-        final String closing = ")";
-
-        final StringBuilder sb = new StringBuilder("");
-        final Set<TaggingPresetType> ts = this.types;
-
-        if (ts != null && !ts.isEmpty()) {
-            String types = this.types.stream()
-                    .map(t -> type.concat(t.toString()))
-                    .collect(Collectors.joining(or));
-
-            sb.append(opening)
-                    .append(types)
-                    .append(closing)
-                    .append(and);
-        }
-
-        final List<TaggingPresetItem> ds = this.data;
-
-        String query = this.data.stream()
-                .filter(e -> e instanceof KeyedItem)
-                .map(e -> (KeyedItem) e)
-                .filter(e -> !e.match.equals("none"))
-                .map(e -> e.match.equals("key") || e.match.equals("key!")
-                        ? this.buildVal(e.key, wCard)
-                        : e.getValues().stream()
-                        .map(x -> this.buildVal(e.key, x))
-                        .collect(Collectors.joining(or)))
-                .collect(Collectors.joining(or));
-
-        if (!query.isEmpty()) {
-            sb.append(opening)
-                    .append(query)
-                    .append(closing);
-        }
-
-        return sb.toString();
+    public String getSearchQuery(){
+        return queryGenerator.buildPresetSearchQuery(this);
     }
 
-    private String buildVal(String key, String val){
-        return new StringBuilder("\"")
-                .append(key)
-                .append("\"")
-                .append("=")
-                .append("\"")
-                .append(val)
-                .append("\"")
-                .toString();
+    private static class TaggingPresetSearchQueryGenerator{
+        /**
+         * keywords used to build the query.
+         */
+        private static final String TYPE = "type:";
+        private static final String WILD_CARD = "*";
+        private static final String OR = " | ";
+        private static final String AND = " ";
+        private static final String OPENING_PAR = "(";
+        private static final String CLOSING_PAR = ")";
+
+        /**
+         * types used to search for objects.
+         */
+        private static final String WAY = "WAY";
+        private static final String NODE = "NODE";
+        private static final String RELATION = "RELATION";
+
+        private static TaggingPresetSearchQueryGenerator gen;
+
+        /**
+         * @return An instance of @see {@link TaggingPresetSearchQueryGenerator}.
+         */
+        public static TaggingPresetSearchQueryGenerator getInstance() {
+            if (gen == null) {
+                gen = new TaggingPresetSearchQueryGenerator();
+            }
+
+            return gen;
+        }
+
+        public String buildPresetSearchQuery(TaggingPreset p) {
+            final StringBuilder sb = new StringBuilder("");
+
+            final String types = this.buildTypeQuery(p.types);
+            if (!types.isEmpty()) {
+                sb.append(OPENING_PAR)
+                        .append(types)
+                        .append(CLOSING_PAR)
+                        .append(AND);
+            }
+
+            final String attrs = this.buildAttributeQuery(p.data);
+            if (!attrs.isEmpty()) {
+                sb.append(OPENING_PAR)
+                        .append(attrs)
+                        .append(CLOSING_PAR);
+            }
+
+            return sb.toString().trim();
+        }
+
+        private String buildTypeQuery(Collection<TaggingPresetType> ts) {
+            return ts == null
+                    ? ""
+                    : ts.stream()
+                        .map(t -> t == TaggingPresetType.NODE
+                                    ? NODE
+                                    : t == TaggingPresetType.WAY || t == TaggingPresetType.CLOSEDWAY
+                                        ? WAY
+                                        : RELATION)
+                    .map(TYPE::concat)
+                    .collect(Collectors.joining(OR));
+        }
+
+        private String buildAttributeQuery(Collection<TaggingPresetItem> its) {
+            return its.stream()
+                    .filter(e -> e instanceof KeyedItem)
+                    .map(e -> (KeyedItem) e)
+                    .filter(e -> !e.match.equals("none"))
+                    .map(e -> e.match.equals("key") || e.match.equals("key!")
+                            ? this.buildKeyValueTemplate(e.key, WILD_CARD)
+                            : e.getValues().stream()
+                                .map(x -> this.buildKeyValueTemplate(e.key, x))
+                                .collect(Collectors.joining(OR)))
+                    .collect(Collectors.joining(OR));
+        }
+
+        private String buildKeyValueTemplate(String key, String val) {
+            return new StringBuilder("\"")
+                    .append(key)
+                    .append("\"")
+                    .append("=")
+                    .append("\"")
+                    .append(val)
+                    .append("\"")
+                    .toString();
+        }
     }
 }
