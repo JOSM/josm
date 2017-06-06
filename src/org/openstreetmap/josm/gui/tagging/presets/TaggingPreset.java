@@ -644,9 +644,9 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     }
 
     /**
-     * Generates a raw search string for this preset, @see{@link SearchCompiler#compile(String)}.
-     * @return A string representing a query to search for OSM primitives, see @see{@link OsmPrimitive} that
-     * can be described by this preset.
+     * Get a string representing this preset as the search query that can
+     * be used in {@link SearchCompiler}.
+     * @return A query to search for {@link OsmPrimitive} that match this preset.
      */
     public String getSearchQuery(){
         return queryGenerator.buildPresetSearchQuery(this);
@@ -654,8 +654,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
 
     /**
      * This class encapsulates logic to convert any preset to a string that can be
-     * fed to @see {@link SearchCompiler} to search for primitives that match some
-     * specific preset.
+     * fed to {@link SearchCompiler} to search for OSM primitives.
      */
     private static class TaggingPresetSearchQueryGenerator{
 
@@ -670,7 +669,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         private static final String CLOSING_PAR = ")";
 
         /**
-         * types used to search for objects.
+         * types used to search for OSM objects.
          */
         private static final String WAY = "WAY";
         private static final String NODE = "NODE";
@@ -689,7 +688,11 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             return gen;
         }
 
-        // TODO: docs
+        /**
+         * Build the query for the preset that can be used in {@link SearchCompiler}.
+         * @param p preset for which the query is needed.
+         * @return the search query for the preset.
+         */
         public String buildPresetSearchQuery(TaggingPreset p) {
             final StringBuilder sb = new StringBuilder("");
 
@@ -712,15 +715,15 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         }
 
         /**
-         * Returns disjunction of types of the preset as a valid query for @see {@link SearchCompiler}.
+         * Returns a string containing disjunction of the type names as a valid query for {@link SearchCompiler}.
          * For example, (type:WAY | type:NODE | type: RELATION) is returned by this method for the
-         * preset containing types : @see {@link TaggingPresetType#WAY}, @see {@link TaggingPresetType#NODE} and
-         * @see {@link TaggingPresetType#RELATION}.
-         * It is worth noting, that @see {@link TaggingPresetType#CLOSEDWAY} and @see {@link TaggingPresetType#MULTIPOLYGON}
-         * are only display types and are not used within searching. So, they are simply converted to one of the
+         * preset containing types : {@link TaggingPresetType#WAY}, {@link TaggingPresetType#NODE} and
+         * {@link TaggingPresetType#RELATION}.
+         * It is worth noting, that {@link TaggingPresetType#CLOSEDWAY} and {@link TaggingPresetType#MULTIPOLYGON}
+         * are display types and do not play a role in searching. So, they are simply converted to one of the
          * standard types, namely CLOSEDWAY -> WAY, MULTIPOLYGON -> RELATION.
          * @param ts types of the preset to be converted to the search query.
-         * @return a string
+         * @return a closed string of types combined with '|' character.
          */
         private String buildTypeQuery(Collection<TaggingPresetType> ts) {
             return ts == null
@@ -735,7 +738,13 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                     .collect(Collectors.joining(OR));
         }
 
-        // TODO: docs
+        /**
+         * Returns a string containing disjunction of the preset attributes as a valid query
+         * for {@link SearchCompiler}. For example, ("amenity"="hotel") is returned for the
+         * hotel preset.
+         * @param its a set of preset fields
+         * @return a closed string of attributes of type "key"="value" combined with '|' character.
+         */
         private String buildAttributeQuery(Collection<TaggingPresetItem> its) {
             return its.stream()
                     .filter(e -> e instanceof KeyedItem)
