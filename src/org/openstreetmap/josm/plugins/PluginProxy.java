@@ -21,16 +21,38 @@ public class PluginProxy extends Plugin {
     /**
      * The plugin.
      */
-    public final Object plugin;
+    private final Object plugin;
+    private final PluginClassLoader classLoader;
 
     /**
      * Constructs a new {@code PluginProxy}.
      * @param plugin the plugin
      * @param info the associated plugin info
+     * @param classLoader the class loader for the plugin
+     * @since 12322
      */
-    public PluginProxy(Object plugin, PluginInformation info) {
+    public PluginProxy(Object plugin, PluginInformation info, PluginClassLoader classLoader) {
         super(info);
         this.plugin = plugin;
+        this.classLoader = classLoader;
+    }
+
+    /**
+     * Get the plugin object.
+     * @return the plugin object
+     * @since 12322
+     */
+    public Object getPlugin() {
+        return plugin;
+    }
+
+    /**
+     * Get the class loader for the plugin.
+     * @return the plugin class loader
+     * @since 12322
+     */
+    public PluginClassLoader getClassLoader() {
+        return classLoader;
     }
 
     private void handlePluginException(Exception e) {
