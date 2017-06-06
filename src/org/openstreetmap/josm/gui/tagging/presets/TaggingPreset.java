@@ -648,7 +648,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      * be used in {@link SearchCompiler}.
      * @return A query to search for {@link OsmPrimitive} that match this preset.
      */
-    public String getSearchQuery(){
+    public String getSearchQuery() {
         return queryGenerator.buildPresetSearchQuery(this);
     }
 
@@ -656,7 +656,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      * This class encapsulates logic to convert any preset to a string that can be
      * fed to {@link SearchCompiler} to search for OSM primitives.
      */
-    private static class TaggingPresetSearchQueryGenerator{
+    private static class TaggingPresetSearchQueryGenerator {
 
         /**
          * keywords used to build the query.
