@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.tools;
+package org.openstreetmap.josm.io.audio;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,6 +16,7 @@ import org.openstreetmap.josm.Main;
  * Utils functions for audio.
  *
  * @author David Earl &lt;david@frankieandshadow.com&gt;
+ * @since 12326 (move to new package)
  * @since 1462
  */
 public final class AudioUtil {

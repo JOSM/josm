@@ -23,7 +23,7 @@ import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
-import org.openstreetmap.josm.tools.AudioPlayer;
+import org.openstreetmap.josm.io.audio.AudioPlayer;
 
 /**
  * Singleton marker class to track position of audio.

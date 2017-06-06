@@ -69,7 +69,7 @@ import org.openstreetmap.josm.gui.layer.MapViewPaintable.PaintableInvalidationLi
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
-import org.openstreetmap.josm.tools.AudioPlayer;
+import org.openstreetmap.josm.io.audio.AudioPlayer;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;

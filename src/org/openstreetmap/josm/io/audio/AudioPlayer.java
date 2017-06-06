@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.tools;
+package org.openstreetmap.josm.io.audio;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -17,11 +17,14 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Creates and controls a separate audio player thread.
  *
  * @author David Earl &lt;david@frankieandshadow.com&gt;
+ * @since 12326 (move to new package)
  * @since 547
  */
 public final class AudioPlayer extends Thread {
