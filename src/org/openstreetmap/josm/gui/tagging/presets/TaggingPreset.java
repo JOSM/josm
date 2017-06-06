@@ -125,7 +125,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     /**
      * Allows to build a string representation of this preset for searching.
      */
-    private static final TaggingPresetSearchQueryGenerator queryGenerator =
+    private static final TaggingPresetSearchQueryGenerator QUERY_GENERATOR =
             new TaggingPresetSearchQueryGenerator();
 
     /**
@@ -649,7 +649,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      * @return A query to search for {@link OsmPrimitive} that match this preset.
      */
     public String getSearchQuery() {
-        return queryGenerator.buildPresetSearchQuery(this);
+        return QUERY_GENERATOR.buildPresetSearchQuery(this);
     }
 
     /**
@@ -683,7 +683,9 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         public String buildPresetSearchQuery(TaggingPreset p) {
             final StringBuilder sb = new StringBuilder("");
 
-            final String types = this.buildTypeQuery(p.types);
+            final String types = this.buildTypeQuery(p.types == null
+                    ? Collections.EMPTY_SET
+                    : p.types);
             if (!types.isEmpty()) {
                 sb.append(OPENING_PAR)
                         .append(types)
@@ -713,14 +715,19 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
          * @return a closed string of types combined with '|' character.
          */
         private String buildTypeQuery(Collection<TaggingPresetType> ts) {
-            return ts == null
-                    ? ""
-                    : ts.stream()
-                        .map(t -> t == TaggingPresetType.NODE
-                                    ? NODE
-                                    : t == TaggingPresetType.WAY || t == TaggingPresetType.CLOSEDWAY
-                                        ? WAY
-                                        : RELATION)
+            return ts.stream()
+                    .map(t -> {
+                        switch (t) {
+                            case NODE:
+                                return NODE;
+                            case WAY: case CLOSEDWAY:
+                                return WAY;
+                            case RELATION: case MULTIPOLYGON:
+                                return RELATION;
+                            default:
+                                throw new AssertionError("unkown preset type");
+                        }
+                    })
                     .map(TYPE::concat)
                     .collect(Collectors.joining(OR));
         }
