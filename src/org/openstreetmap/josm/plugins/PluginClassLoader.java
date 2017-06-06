@@ -49,7 +49,9 @@ public class PluginClassLoader extends URLClassLoader {
                 if (result != null) {
                     return result;
                 }
-            } catch (ClassNotFoundException e) {}
+            } catch (ClassNotFoundException e) {
+                // do nothing
+            }
         }
         Class<?> result = super.loadClass(name, resolve);
         if (result != null) {
