@@ -826,10 +826,12 @@ public final class PluginHandler {
 
             Map<PluginInformation, PluginClassLoader> classLoaders = new HashMap<>();
             for (PluginInformation info : toLoad) {
-                classLoaders.put(info, new PluginClassLoader(
+                PluginClassLoader cl = AccessController.doPrivileged((PrivilegedAction<PluginClassLoader>)
+                    () -> new PluginClassLoader(
                         info.libraries.toArray(new URL[0]),
                         Main.class.getClassLoader(),
                         null));
+                classLoaders.put(info, cl);
             }
 
             // resolve dependencies
@@ -1208,6 +1210,21 @@ public final class PluginHandler {
         for (PluginProxy plugin : pluginList) {
             if (plugin.getPluginInformation().name.equals(name))
                 return plugin.getPlugin();
+        }
+        return null;
+    }
+
+    /**
+     * Returns the plugin class loader for the plugin of the specified name.
+     * @param name The plugin name
+     * @return The plugin class loader for the plugin of the specified name, if
+     * installed and loaded, or {@code null} otherwise.
+     * @since 12323
+     */
+    public static PluginClassLoader getPluginClassLoader(String name) {
+        for (PluginProxy plugin : pluginList) {
+            if (plugin.getPluginInformation().name.equals(name))
+                return plugin.getClassLoader();
         }
         return null;
     }

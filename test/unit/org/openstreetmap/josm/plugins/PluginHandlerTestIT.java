@@ -126,9 +126,9 @@ public class PluginHandlerTestIT {
     }
 
     private static String findFaultyPlugin(Collection<PluginInformation> plugins, Throwable root) {
-        DynamicURLClassLoader cl = PluginHandler.getPluginClassLoader();
         for (PluginInformation p : plugins) {
             try {
+                ClassLoader cl = PluginHandler.getPluginClassLoader(p.getName());
                 String pluginPackage = cl.loadClass(p.className).getPackage().getName();
                 for (StackTraceElement e : root.getStackTrace()) {
                     try {
