@@ -126,7 +126,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      * Allows to build a string representation of this preset for searching.
      */
     private static final TaggingPresetSearchQueryGenerator queryGenerator =
-            TaggingPresetSearchQueryGenerator.getInstance();
+            new TaggingPresetSearchQueryGenerator();
 
     /**
      * Create an empty tagging preset. This will not have any items and
@@ -674,19 +674,6 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         private static final String WAY = "WAY";
         private static final String NODE = "NODE";
         private static final String RELATION = "RELATION";
-
-        private static TaggingPresetSearchQueryGenerator gen;
-
-        /**
-         * @return An instance of @see {@link TaggingPresetSearchQueryGenerator}.
-         */
-        public static TaggingPresetSearchQueryGenerator getInstance() {
-            if (gen == null) {
-                gen = new TaggingPresetSearchQueryGenerator();
-            }
-
-            return gen;
-        }
 
         /**
          * Build the query for the preset that can be used in {@link SearchCompiler}.
