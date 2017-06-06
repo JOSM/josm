@@ -652,8 +652,13 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         return queryGenerator.buildPresetSearchQuery(this);
     }
 
-    // TODO: docs
+    /**
+     * This class encapsulates logic to convert any preset to a string that can be
+     * fed to @see {@link SearchCompiler} to search for primitives that match some
+     * specific preset.
+     */
     private static class TaggingPresetSearchQueryGenerator{
+
         /**
          * keywords used to build the query.
          */
@@ -706,7 +711,17 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             return sb.toString().trim();
         }
 
-        // TODO: docs
+        /**
+         * Returns disjunction of types of the preset as a valid query for @see {@link SearchCompiler}.
+         * For example, (type:WAY | type:NODE | type: RELATION) is returned by this method for the
+         * preset containing types : @see {@link TaggingPresetType#WAY}, @see {@link TaggingPresetType#NODE} and
+         * @see {@link TaggingPresetType#RELATION}.
+         * It is worth noting, that @see {@link TaggingPresetType#CLOSEDWAY} and @see {@link TaggingPresetType#MULTIPOLYGON}
+         * are only display types and are not used within searching. So, they are simply converted to one of the
+         * standard types, namely CLOSEDWAY -> WAY, MULTIPOLYGON -> RELATION.
+         * @param ts types of the preset to be converted to the search query.
+         * @return a string
+         */
         private String buildTypeQuery(Collection<TaggingPresetType> ts) {
             return ts == null
                     ? ""
