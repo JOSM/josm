@@ -11,7 +11,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.tools.AudioPlayer;
+import org.openstreetmap.josm.io.audio.AudioPlayer;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
 /**
