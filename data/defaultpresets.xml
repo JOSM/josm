@@ -3178,6 +3178,7 @@
             <key key="shop" value="car_repair" />
             <reference ref="car_brands" />
             <reference ref="name_operator_oh_wheelchair" />
+            <multiselect key="service" text="Service" text_context="shop=car_repair" values="dealer;repair;parts;tyres" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Repair -->
         <item name="Parts" icon="presets/vehicle/car_parts.svg" type="node,closedway,multipolygon" preset_name_label="true">
