@@ -338,16 +338,8 @@ public final class MapPaintStyles {
 
         @Override
         protected void finish() {
-            SwingUtilities.invokeLater(() -> {
-                fireMapPaintSylesUpdated();
-                styles.clearCached();
-
-                // Trigger a repaint of all data layers
-                Main.getLayerManager().getLayers()
-                    .stream()
-                    .filter(layer -> layer instanceof OsmDataLayer)
-                    .forEach(Layer::invalidate);
-            });
+            fireMapPaintSylesUpdated();
+            afterStyleUpdate();
         }
 
         @Override
@@ -385,8 +377,22 @@ public final class MapPaintStyles {
         styles.setStyleSources(data);
         MapPaintPrefHelper.INSTANCE.put(data);
         fireMapPaintSylesUpdated();
-        styles.clearCached();
-        Main.map.mapView.repaint();
+        afterStyleUpdate();
+    }
+
+    /**
+     * Manually trigger for now. TODO: Move this to a listener
+     */
+    private static void afterStyleUpdate() {
+        SwingUtilities.invokeLater(() -> {
+            styles.clearCached();
+
+            // Trigger a repaint of all data layers
+            Main.getLayerManager().getLayers()
+                .stream()
+                .filter(layer -> layer instanceof OsmDataLayer)
+                .forEach(Layer::invalidate);
+        });
     }
 
     public static boolean canMoveStyles(int[] sel, int i) {
@@ -415,8 +421,7 @@ public final class MapPaintStyles {
         } else {
             fireMapPaintSylesUpdated();
         }
-        styles.clearCached();
-        Main.map.mapView.repaint();
+        afterStyleUpdate();
     }
 
     /**
@@ -447,10 +452,7 @@ public final class MapPaintStyles {
     private static void refreshStyles() {
         MapPaintPrefHelper.INSTANCE.put(styles.getStyleSources());
         fireMapPaintSylesUpdated();
-        styles.clearCached();
-        if (Main.isDisplayingMapView()) {
-            Main.map.mapView.repaint();
-        }
+        afterStyleUpdate();
     }
 
     /***********************************
