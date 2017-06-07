@@ -169,7 +169,7 @@ public class MapMover extends MouseAdapter implements Destroyable {
         boolean allowMovement = (e.getModifiersEx() & (MouseEvent.BUTTON3_DOWN_MASK | offMask)) == MouseEvent.BUTTON3_DOWN_MASK;
         if (Main.isPlatformOsx()) {
             int macMouseMask = MouseEvent.CTRL_DOWN_MASK | MouseEvent.BUTTON1_DOWN_MASK;
-            boolean macMovement = true && e.getModifiersEx() == macMouseMask;
+            boolean macMovement = e.getModifiersEx() == macMouseMask;
             boolean allowedMode = !Main.map.mapModeSelect.equals(Main.map.mapMode)
                               || SelectAction.Mode.SELECT.equals(Main.map.mapModeSelect.getMode());
             allowMovement |= macMovement && allowedMode;
