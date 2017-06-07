@@ -583,6 +583,9 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
 
     private void removePrimitiveImpl(OsmPrimitive primitive) {
         clearSelection(primitive.getPrimitiveId());
+        if (primitive.isSelected()) {
+            throw new DataIntegrityProblemException("Primitive was re-selected by a selection listener: " + primitive);
+        }
         super.removePrimitive(primitive);
         allPrimitives.remove(primitive);
         primitive.setDataset(null);
