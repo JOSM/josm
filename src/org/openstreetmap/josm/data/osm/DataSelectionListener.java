@@ -229,7 +229,7 @@ public interface DataSelectionListener {
             } else {
                 HashSet<OsmPrimitive> currentSet = new LinkedHashSet<>(old);
                 currentSet.removeAll(remove);
-                current = Collections.unmodifiableSet(currentSet);
+                current = currentSet;
             }
         }
 

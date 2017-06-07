@@ -40,15 +40,19 @@ import org.openstreetmap.josm.tools.Utils;
 public class ImportAudioAction extends AbstractAction {
     private final transient GpxLayer layer;
 
-    static final class AudioFileFilter extends FileFilter {
+    /**
+     * Audio file filter.
+     * @since 12328
+     */
+    public static final class AudioFileFilter extends FileFilter {
         @Override
         public boolean accept(File f) {
-            return f.isDirectory() || Utils.hasExtension(f, "wav");
+            return f.isDirectory() || Utils.hasExtension(f, "wav", "mp3", "aac", "aif", "aiff");
         }
 
         @Override
         public String getDescription() {
-            return tr("Wave Audio files (*.wav)");
+            return tr("Audio files (*.wav, *.mp3, *.aac, *.aif, *.aiff)");
         }
     }
 
@@ -118,15 +122,15 @@ public class ImportAudioAction extends AbstractAction {
      * Makes a new marker layer derived from this GpxLayer containing at least one audio marker
      * which the given audio file is associated with. Markers are derived from the following (a)
      * explict waypoints in the GPX layer, or (b) named trackpoints in the GPX layer, or (d)
-     * timestamp on the wav file (e) (in future) voice recognised markers in the sound recording (f)
+     * timestamp on the audio file (e) (in future) voice recognised markers in the sound recording (f)
      * a single marker at the beginning of the track
-     * @param wavFile the file to be associated with the markers in the new marker layer
+     * @param audioFile the file to be associated with the markers in the new marker layer
      * @param ml marker layer
      * @param firstStartTime first start time in milliseconds, used for (d)
      * @param markers keeps track of warning messages to avoid repeated warnings
      */
-    private void importAudio(File wavFile, MarkerLayer ml, double firstStartTime, Markers markers) {
-        URL url = Utils.fileToURL(wavFile);
+    private void importAudio(File audioFile, MarkerLayer ml, double firstStartTime, Markers markers) {
+        URL url = Utils.fileToURL(audioFile);
         boolean hasTracks = layer.data.tracks != null && !layer.data.tracks.isEmpty();
         boolean hasWaypoints = layer.data.waypoints != null && !layer.data.waypoints.isEmpty();
         Collection<WayPoint> waypoints = new ArrayList<>();
@@ -211,9 +215,8 @@ public class ImportAudioAction extends AbstractAction {
 
         // (d) use timestamp of file as location on track
         if (hasTracks && Main.pref.getBoolean("marker.audiofromwavtimestamps", false)) {
-            double lastModified = wavFile.lastModified() / 1000.0; // lastModified is in
-            // milliseconds
-            double duration = AudioUtil.getCalibratedDuration(wavFile);
+            double lastModified = audioFile.lastModified() / 1000.0; // lastModified is in milliseconds
+            double duration = AudioUtil.getCalibratedDuration(audioFile);
             double startTime = lastModified - duration;
             startTime = firstStartTime + (startTime - firstStartTime)
                     / Main.pref.getDouble("audio.calibration", 1.0 /* default, ratio */);
@@ -241,7 +244,7 @@ public class ImportAudioAction extends AbstractAction {
                 wayPointFromTimeStamp = new WayPoint(w1.getCoor().interpolate(w2.getCoor(),
                         (startTime - w1.time) / (w2.time - w1.time)));
                 wayPointFromTimeStamp.time = startTime;
-                String name = wavFile.getName();
+                String name = audioFile.getName();
                 int dot = name.lastIndexOf('.');
                 if (dot > 0) {
                     name = name.substring(0, dot);

@@ -7,6 +7,7 @@ import java.io.IOException;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.io.audio.AudioPlayer;
+import org.openstreetmap.josm.io.audio.AudioUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -42,7 +43,7 @@ public abstract class AudioFastSlowAction extends JosmAction {
             if (AudioPlayer.playing() || AudioPlayer.paused())
                 AudioPlayer.play(AudioPlayer.url(), AudioPlayer.position(), speed * multiplier);
         } catch (IOException | InterruptedException ex) {
-            AudioPlayer.audioMalfunction(ex);
+            AudioUtil.audioMalfunction(ex);
         }
     }
 }
