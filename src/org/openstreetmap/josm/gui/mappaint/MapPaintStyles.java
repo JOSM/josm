@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
@@ -34,6 +33,7 @@ import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference.MapPaintPre
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -459,35 +459,42 @@ public final class MapPaintStyles {
      * MapPaintSylesUpdateListener &amp; related code
      *  (get informed when the list of MapPaint StyleSources changes)
      */
-
     public interface MapPaintSylesUpdateListener {
+        /**
+         * Called on any style source changes that are not handled by {@link #mapPaintStyleEntryUpdated(int)}
+         */
         void mapPaintStylesUpdated();
 
-        void mapPaintStyleEntryUpdated(int idx);
+        /**
+         * Called whenever a single style source entry was changed.
+         * @param index The index of the entry.
+         */
+        void mapPaintStyleEntryUpdated(int index);
     }
 
-    private static final CopyOnWriteArrayList<MapPaintSylesUpdateListener> listeners
-            = new CopyOnWriteArrayList<>();
+    private static final ListenerList<MapPaintSylesUpdateListener> listeners = ListenerList.createUnchecked();
 
+    /**
+     * Add a listener that listens to global style changes.
+     * @param listener The listener
+     */
     public static void addMapPaintSylesUpdateListener(MapPaintSylesUpdateListener listener) {
-        if (listener != null) {
-            listeners.addIfAbsent(listener);
-        }
+        listeners.addListener(listener);
     }
 
+    /**
+     * Removes a listener that listens to global style changes.
+     * @param listener The listener
+     */
     public static void removeMapPaintSylesUpdateListener(MapPaintSylesUpdateListener listener) {
-        listeners.remove(listener);
+        listeners.removeListener(listener);
     }
 
     public static void fireMapPaintSylesUpdated() {
-        for (MapPaintSylesUpdateListener l : listeners) {
-            l.mapPaintStylesUpdated();
-        }
+        listeners.fireEvent(MapPaintSylesUpdateListener::mapPaintStylesUpdated);
     }
 
-    public static void fireMapPaintStyleEntryUpdated(int idx) {
-        for (MapPaintSylesUpdateListener l : listeners) {
-            l.mapPaintStyleEntryUpdated(idx);
-        }
+    public static void fireMapPaintStyleEntryUpdated(int index) {
+        listeners.fireEvent(l -> l.mapPaintStyleEntryUpdated(index));
     }
 }
