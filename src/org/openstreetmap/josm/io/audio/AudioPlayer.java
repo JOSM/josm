@@ -1,24 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.audio;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
-import java.awt.GraphicsEnvironment;
 import java.io.IOException;
 import java.net.URL;
 
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.UnsupportedAudioFileException;
-import javax.swing.JOptionPane;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Creates and controls a separate audio player thread.
@@ -27,29 +14,24 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 12326 (move to new package)
  * @since 547
  */
-public final class AudioPlayer extends Thread {
+public final class AudioPlayer extends Thread implements AudioListener {
 
     private static volatile AudioPlayer audioPlayer;
 
-    private enum State { INITIALIZING, NOTPLAYING, PLAYING, PAUSED, INTERRUPTED }
+    enum State { INITIALIZING, NOTPLAYING, PLAYING, PAUSED, INTERRUPTED }
 
-    private enum Command { PLAY, PAUSE }
+    enum Command { PLAY, PAUSE }
 
-    private enum Result { WAITING, OK, FAILED }
+    enum Result { WAITING, OK, FAILED }
 
     private State state;
+    private SoundPlayer soundPlayer;
     private URL playingUrl;
-    private final double leadIn; // seconds
-    private final double calibration; // ratio of purported duration of samples to true duration
-    private double position; // seconds
-    private double bytesPerSecond;
-    private static long chunk = 4000; /* bytes */
-    private double speed = 1.0;
 
     /**
      * Passes information from the control thread to the playing thread
      */
-    private class Execute {
+    class Execute {
         private Command command;
         private Result result;
         private Exception exception;
@@ -84,7 +66,7 @@ public final class AudioPlayer extends Thread {
                 throw new IOException(exception);
         }
 
-        private void possiblyInterrupt() throws InterruptedException {
+        protected void possiblyInterrupt() throws InterruptedException {
             if (interrupted() || result == Result.WAITING)
                 throw new InterruptedException();
         }
@@ -203,7 +185,7 @@ public final class AudioPlayer extends Thread {
      */
     public static double position() {
         AudioPlayer instance = AudioPlayer.getInstance();
-        return instance == null ? -1 : instance.position;
+        return instance == null ? -1 : instance.soundPlayer.position();
     }
 
     /**
@@ -212,7 +194,7 @@ public final class AudioPlayer extends Thread {
      */
     public static double speed() {
         AudioPlayer instance = AudioPlayer.getInstance();
-        return instance == null ? -1 : instance.speed;
+        return instance == null ? -1 : instance.soundPlayer.speed();
     }
 
     /**
@@ -250,8 +232,16 @@ public final class AudioPlayer extends Thread {
         state = State.INITIALIZING;
         command = new Execute();
         playingUrl = null;
-        leadIn = Main.pref.getDouble("audio.leadin", 1.0 /* default, seconds */);
-        calibration = Main.pref.getDouble("audio.calibration", 1.0 /* default, ratio */);
+        double leadIn = Main.pref.getDouble("audio.leadin", 1.0 /* default, seconds */);
+        double calibration = Main.pref.getDouble("audio.calibration", 1.0 /* default, ratio */);
+        try {
+            soundPlayer = new JavaFxMediaPlayer();
+        } catch (NoClassDefFoundError | InterruptedException e) {
+            Main.debug(e);
+            Main.warn("Java FX is unavailable. Falling back to Java Sound API");
+            soundPlayer = new JavaSoundPlayer(leadIn, calibration);
+        }
+        soundPlayer.addAudioListener(this);
         start();
         while (state == State.INITIALIZING) {
             yield();
@@ -262,14 +252,11 @@ public final class AudioPlayer extends Thread {
      * Starts the thread to actually play the audio, per Thread interface
      * Not to be used as public, though Thread interface doesn't allow it to be made private
      */
-    @Override public void run() {
+    @Override
+    public void run() {
         /* code running in separate thread */
 
         playingUrl = null;
-        AudioInputStream audioInputStream = null;
-        SourceDataLine audioOutputLine = null;
-        AudioFormat audioFormat;
-        byte[] abData = new byte[(int) chunk];
 
         for (;;) {
             try {
@@ -284,29 +271,10 @@ public final class AudioPlayer extends Thread {
                         break;
                     case PLAYING:
                         command.possiblyInterrupt();
-                        for (;;) {
-                            int nBytesRead = 0;
-                            if (audioInputStream != null) {
-                                nBytesRead = audioInputStream.read(abData, 0, abData.length);
-                                position += nBytesRead / bytesPerSecond;
-                            }
-                            command.possiblyInterrupt();
-                            if (nBytesRead < 0 || audioInputStream == null || audioOutputLine == null) {
-                                break;
-                            }
-                            audioOutputLine.write(abData, 0, nBytesRead); // => int nBytesWritten
-                            command.possiblyInterrupt();
+                        if (soundPlayer.playing(command)) {
+                            playingUrl = null;
+                            state = State.NOTPLAYING;
                         }
-                        // end of audio, clean up
-                        if (audioOutputLine != null) {
-                            audioOutputLine.drain();
-                            audioOutputLine.close();
-                        }
-                        audioOutputLine = null;
-                        Utils.close(audioInputStream);
-                        audioInputStream = null;
-                        playingUrl = null;
-                        state = State.NOTPLAYING;
                         command.possiblyInterrupt();
                         break;
                     default: // Do nothing
@@ -318,96 +286,29 @@ public final class AudioPlayer extends Thread {
                 try {
                     switch (command.command()) {
                         case PLAY:
-                            double offset = command.offset();
-                            speed = command.speed();
-                            if (playingUrl != command.url() ||
-                                    stateChange != State.PAUSED ||
-                                    offset != 0) {
-                                if (audioInputStream != null) {
-                                    Utils.close(audioInputStream);
-                                }
-                                playingUrl = command.url();
-                                audioInputStream = AudioSystem.getAudioInputStream(playingUrl);
-                                audioFormat = audioInputStream.getFormat();
-                                long nBytesRead;
-                                position = 0.0;
-                                offset -= leadIn;
-                                double calibratedOffset = offset * calibration;
-                                bytesPerSecond = audioFormat.getFrameRate() /* frames per second */
-                                * audioFormat.getFrameSize() /* bytes per frame */;
-                                if (speed * bytesPerSecond > 256_000.0) {
-                                    speed = 256_000 / bytesPerSecond;
-                                }
-                                if (calibratedOffset > 0.0) {
-                                    long bytesToSkip = (long) (calibratedOffset /* seconds (double) */ * bytesPerSecond);
-                                    // skip doesn't seem to want to skip big chunks, so reduce it to smaller ones
-                                    while (bytesToSkip > chunk) {
-                                        nBytesRead = audioInputStream.skip(chunk);
-                                        if (nBytesRead <= 0)
-                                            throw new IOException(tr("This is after the end of the recording"));
-                                        bytesToSkip -= nBytesRead;
-                                    }
-                                    while (bytesToSkip > 0) {
-                                        long skippedBytes = audioInputStream.skip(bytesToSkip);
-                                        bytesToSkip -= skippedBytes;
-                                        if (skippedBytes == 0) {
-                                            // Avoid inifinite loop
-                                            Main.warn("Unable to skip bytes from audio input stream");
-                                            bytesToSkip = 0;
-                                        }
-                                    }
-                                    position = offset;
-                                }
-                                if (audioOutputLine != null) {
-                                    audioOutputLine.close();
-                                }
-                                audioFormat = new AudioFormat(audioFormat.getEncoding(),
-                                        audioFormat.getSampleRate() * (float) (speed * calibration),
-                                        audioFormat.getSampleSizeInBits(),
-                                        audioFormat.getChannels(),
-                                        audioFormat.getFrameSize(),
-                                        audioFormat.getFrameRate() * (float) (speed * calibration),
-                                        audioFormat.isBigEndian());
-                                DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);
-                                audioOutputLine = (SourceDataLine) AudioSystem.getLine(info);
-                                audioOutputLine.open(audioFormat);
-                                audioOutputLine.start();
-                            }
+                            soundPlayer.play(command, stateChange, playingUrl);
                             stateChange = State.PLAYING;
                             break;
                         case PAUSE:
+                            soundPlayer.pause(command, stateChange, playingUrl);
                             stateChange = State.PAUSED;
                             break;
                         default: // Do nothing
                     }
                     command.ok(stateChange);
-                } catch (LineUnavailableException | IOException | UnsupportedAudioFileException |
-                        SecurityException | IllegalArgumentException startPlayingException) {
+                } catch (AudioException | IOException | SecurityException | IllegalArgumentException startPlayingException) {
                     Main.error(startPlayingException);
                     command.failed(startPlayingException); // sets state
                 }
-            } catch (IOException e) {
+            } catch (AudioException | IOException e) {
                 state = State.NOTPLAYING;
                 Main.error(e);
             }
         }
     }
 
-    /**
-     * Shows a popup audio error message for the given exception.
-     * @param ex The exception used as error reason. Cannot be {@code null}.
-     */
-    public static void audioMalfunction(Exception ex) {
-        String msg = ex.getMessage();
-        if (msg == null)
-            msg = tr("unspecified reason");
-        else
-            msg = tr(msg);
-        Main.error(msg);
-        if (!GraphicsEnvironment.isHeadless()) {
-            JOptionPane.showMessageDialog(Main.parent,
-                    "<html><p>" + msg + "</p></html>",
-                    tr("Error playing sound"), JOptionPane.ERROR_MESSAGE);
-        }
+    @Override
+    public void playing(URL playingURL) {
+        this.playingUrl = playingURL;
     }
 }

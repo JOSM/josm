@@ -1,6 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.audio;
 
+import static org.openstreetmap.josm.tools.I18n.tr;
+
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -9,6 +12,7 @@ import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 
@@ -43,6 +47,25 @@ public final class AudioUtil {
         } catch (UnsupportedAudioFileException | IOException e) {
             Main.debug(e);
             return 0.0;
+        }
+    }
+
+    /**
+     * Shows a popup audio error message for the given exception.
+     * @param ex The exception used as error reason. Cannot be {@code null}.
+     * @since 12328
+     */
+    public static void audioMalfunction(Exception ex) {
+        String msg = ex.getMessage();
+        if (msg == null)
+            msg = tr("unspecified reason");
+        else
+            msg = tr(msg);
+        Main.error(msg);
+        if (!GraphicsEnvironment.isHeadless()) {
+            JOptionPane.showMessageDialog(Main.parent,
+                    "<html><p>" + msg + "</p></html>",
+                    tr("Error playing sound"), JOptionPane.ERROR_MESSAGE);
         }
     }
 }
