@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.Note.State;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.data.osm.NoteData;
+import org.openstreetmap.josm.data.osm.NoteData.NoteDataUpdateListener;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
@@ -48,7 +49,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * A layer to hold Note objects.
  * @since 7522
  */
-public class NoteLayer extends AbstractModifiableLayer implements MouseListener {
+public class NoteLayer extends AbstractModifiableLayer implements MouseListener, NoteDataUpdateListener {
 
     private final NoteData noteData;
 
@@ -60,6 +61,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
     public NoteLayer(Collection<Note> notes, String name) {
         super(name);
         noteData = new NoteData(notes);
+        noteData.addNoteDataUpdateListener(this);
     }
 
     /** Convenience constructor that creates a layer with an empty note list */
@@ -70,6 +72,13 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
     @Override
     public void hookUpMapView() {
         Main.map.mapView.addMouseListener(this);
+    }
+
+    @Override
+    public synchronized void destroy() {
+        Main.map.mapView.removeMouseListener(this);
+        noteData.removeNoteDataUpdateListener(this);
+        super.destroy();
     }
 
     /**
@@ -259,7 +268,6 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
             }
         }
         noteData.setSelectedNote(closestNote);
-        invalidate();
     }
 
     @Override
@@ -290,5 +298,15 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener 
     @Override
     public void mouseExited(MouseEvent e) {
         // Do nothing
+    }
+
+    @Override
+    public void noteDataUpdated(NoteData data) {
+        invalidate();
+    }
+
+    @Override
+    public void selectedNoteChanged(NoteData noteData) {
+        invalidate();
     }
 }

@@ -15,17 +15,39 @@ import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.Note.State;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
+import org.openstreetmap.josm.tools.ListenerList;
 
 /**
  * Class to hold and perform operations on a set of notes
  */
 public class NoteData {
 
+    /**
+     * A listener that can be informed on note data changes.
+     * @author Michael Zangl
+     * @since 12343
+     */
+    public interface NoteDataUpdateListener {
+        /**
+         * Called when the note data is updated
+         * @param data The data that was changed
+         */
+        void noteDataUpdated(NoteData data);
+
+        /**
+         * The selected node was changed
+         * @param noteData The data of which the selected node was changed
+         */
+        void selectedNoteChanged(NoteData noteData);
+    }
+
     private long newNoteId = -1;
 
     private final Storage<Note> noteList;
     private Note selectedNote;
     private Comparator<Note> comparator = Note.DEFAULT_COMPARATOR;
+
+    private final ListenerList<NoteDataUpdateListener> listeners = ListenerList.create();
 
     /**
      * Construct a new note container with a given list of notes
@@ -76,8 +98,8 @@ public class NoteData {
         selectedNote = note;
         if (Main.map != null) {
             Main.map.noteDialog.selectionChanged();
-            Main.map.mapView.repaint();
         }
+        listeners.fireEvent(l -> l.selectedNoteChanged(this));
     }
 
     /**
@@ -212,8 +234,8 @@ public class NoteData {
     private void dataUpdated() {
         if (Main.isDisplayingMapView()) {
             Main.map.noteDialog.setNotes(getSortedNotes());
-            Main.map.mapView.repaint();
         }
+        listeners.fireEvent(l -> l.noteDataUpdated(this));
     }
 
     private static User getCurrentUser() {
@@ -254,5 +276,21 @@ public class NoteData {
     public void setSortMethod(Comparator<Note> comparator) {
         this.comparator = comparator;
         dataUpdated();
+    }
+
+    /**
+     * Adds a listener that listens to node data changes
+     * @param listener The listener
+     */
+    public void addNoteDataUpdateListener(NoteDataUpdateListener listener) {
+        listeners.addListener(listener);
+    }
+
+    /**
+     * Removes a listener that listens to node data changes
+     * @param listener The listener
+     */
+    public void removeNoteDataUpdateListener(NoteDataUpdateListener listener) {
+        listeners.removeListener(listener);
     }
 }
