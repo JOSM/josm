@@ -522,6 +522,7 @@ Build-Date: ${build.tstamp}
 
         -libraryjars ${java.home}/lib/rt.jar
         -libraryjars ${java.home}/lib/jce.jar
+        -libraryjars ${java.home}/lib/ext/jfxrt.jar
 
         -dontoptimize
         -dontobfuscate

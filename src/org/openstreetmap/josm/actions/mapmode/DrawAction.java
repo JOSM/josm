@@ -37,13 +37,14 @@ import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
+import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.osm.visitor.paint.ArrowPaintHelper;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.preferences.AbstractToStringProperty;
@@ -71,7 +72,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * Mapmode to add nodes, create and extend ways.
  */
-public class DrawAction extends MapMode implements MapViewPaintable, SelectionChangedListener, KeyPressReleaseListener, ModifierListener {
+public class DrawAction extends MapMode implements MapViewPaintable, DataSelectionListener, KeyPressReleaseListener, ModifierListener {
 
     /**
      * If this property is set, the draw action moves the viewport when adding new points.
@@ -274,7 +275,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.mapView.addMouseListener(this);
         Main.map.mapView.addMouseMotionListener(this);
         Main.map.mapView.addTemporaryLayer(this);
-        DataSet.addSelectionListener(this);
+        SelectionEventManager.getInstance().addSelectionListenerForEdt(this);
 
         Main.map.keyDetector.addKeyListener(this);
         Main.map.keyDetector.addModifierListener(this);
@@ -287,7 +288,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
         Main.map.mapView.removeMouseListener(this);
         Main.map.mapView.removeMouseMotionListener(this);
         Main.map.mapView.removeTemporaryLayer(this);
-        DataSet.removeSelectionListener(this);
+        SelectionEventManager.getInstance().removeSelectionListener(this);
         Main.unregisterActionShortcut(backspaceAction, backspaceShortcut);
         snapHelper.unsetFixedMode();
         snapCheckboxMenuItem.getAction().setEnabled(false);
@@ -338,7 +339,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, SelectionCh
      * redraw to (possibly) get rid of helper line if selection changes.
      */
     @Override
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+    public void selectionChanged(SelectionChangeEvent event) {
         if (!Main.map.mapView.isActiveLayerDrawable())
             return;
         computeHelperLine();
