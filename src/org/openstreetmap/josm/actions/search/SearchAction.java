@@ -28,7 +28,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
-import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -36,6 +35,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ActionParameter;
@@ -274,35 +275,51 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         final JCheckBox caseSensitive = new JCheckBox(tr("case sensitive"), initialValues.caseSensitive);
         JCheckBox allElements = new JCheckBox(tr("all objects"), initialValues.allElements);
         allElements.setToolTipText(tr("Also include incomplete and deleted objects in search."));
+        JCheckBox addOnToolbar = new JCheckBox(tr("add toolbar button"), false);
+
         final JRadioButton standardSearch = new JRadioButton(tr("standard"), !initialValues.regexSearch && !initialValues.mapCSSSearch);
         final JRadioButton regexSearch = new JRadioButton(tr("regular expression"), initialValues.regexSearch);
         final JRadioButton mapCSSSearch = new JRadioButton(tr("MapCSS selector"), initialValues.mapCSSSearch);
-        final JCheckBox addOnToolbar = new JCheckBox(tr("add toolbar button"), false);
         final ButtonGroup bg2 = new ButtonGroup();
         bg2.add(standardSearch);
         bg2.add(regexSearch);
         bg2.add(mapCSSSearch);
 
-        JPanel top = new JPanel(new GridBagLayout());
-        top.add(label, GBC.std().insets(0, 0, 5, 0));
-        top.add(hcbSearchString, GBC.eol().fill(GBC.HORIZONTAL));
         JPanel left = new JPanel(new GridBagLayout());
-        left.add(replace, GBC.eol());
-        left.add(add, GBC.eol());
-        left.add(remove, GBC.eol());
-        left.add(inSelection, GBC.eop());
-        left.add(caseSensitive, GBC.eol());
+
+        JPanel selectionSettings = new JPanel(new GridBagLayout());
+        selectionSettings.setBorder(BorderFactory.createTitledBorder(tr("Selection settings")));
+        selectionSettings.add(replace, GBC.eol());
+        selectionSettings.add(add, GBC.eol());
+        selectionSettings.add(remove, GBC.eol());
+        selectionSettings.add(inSelection, GBC.eop());
+
+        JPanel additionalSettings = new JPanel(new GridBagLayout());
+        additionalSettings.setBorder(BorderFactory.createTitledBorder(tr("Additional settings")));
+        additionalSettings.add(caseSensitive, GBC.eol());
+
         if (Main.pref.getBoolean("expert", false)) {
-            left.add(allElements, GBC.eol());
-            left.add(addOnToolbar, GBC.eop());
-            left.add(standardSearch, GBC.eol());
-            left.add(regexSearch, GBC.eol());
-            left.add(mapCSSSearch, GBC.eol());
+            additionalSettings.add(allElements, GBC.eol());
+            additionalSettings.add(addOnToolbar, GBC.eop());
+
+            JPanel searchOptions = new JPanel(new GridBagLayout());
+            searchOptions.setBorder(BorderFactory.createTitledBorder(tr("Search Options")));
+            searchOptions.add(standardSearch, GBC.eol());
+            searchOptions.add(regexSearch, GBC.eol());
+            searchOptions.add(mapCSSSearch, GBC.eol());
+
+            left.add(selectionSettings, GBC.eol().fill(GBC.BOTH));
+            left.add(additionalSettings, GBC.eol().fill(GBC.BOTH));
+            left.add(searchOptions, GBC.eol().fill(GBC.BOTH));
+        } else {
+            left.add(selectionSettings, GBC.eol().fill(GBC.BOTH));
+            left.add(additionalSettings, GBC.eol().fill(GBC.BOTH));
         }
 
-        final JPanel right;
-        right = new JPanel(new GridBagLayout());
-        buildHints(right, hcbSearchString);
+        final JPanel right = SearchAction.buildHintsSection(hcbSearchString);
+        final JPanel top = new JPanel(new GridBagLayout());
+        top.add(label, GBC.std().insets(0, 0, 5, 0));
+        top.add(hcbSearchString, GBC.eol().fill(GBC.HORIZONTAL));
 
         final JTextComponent editorComponent = hcbSearchString.getEditorComponent();
         editorComponent.getDocument().addDocumentListener(new AbstractTextComponentValidator(editorComponent) {
@@ -334,8 +351,9 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
         final JPanel p = new JPanel(new GridBagLayout());
         p.add(top, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 5, 5, 0));
-        p.add(left, GBC.std().anchor(GBC.NORTH).insets(5, 10, 10, 0));
-        p.add(right, GBC.eol());
+        p.add(left, GBC.std().anchor(GBC.NORTH).insets(5, 10, 10, 0).fill(GBC.VERTICAL));
+        p.add(right, GBC.eol().fill(GBC.BOTH).insets(0, 10, 0, 0));
+
         ExtendedDialog dialog = new ExtendedDialog(
                 Main.parent,
                 initialValues instanceof Filter ? tr("Filter") : tr("Search"),
@@ -399,17 +417,19 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         return initialValues;
     }
 
-    private static void buildHints(JPanel right, HistoryComboBox hcbSearchString) {
-        right.add(new SearchKeywordRow(hcbSearchString)
-                .addTitle(tr("basic examples"))
-                .addKeyword(tr("Baker Street"), null, tr("''Baker'' and ''Street'' in any key"))
-                .addKeyword(tr("\"Baker Street\""), "\"\"", tr("''Baker Street'' in any key")),
-                GBC.eol());
-        right.add(new SearchKeywordRow(hcbSearchString)
+    private static JPanel buildHintsSection(HistoryComboBox hcbSearchString) {
+        JPanel hintPanel = new JPanel(new GridBagLayout());
+        hintPanel.setBorder(BorderFactory.createTitledBorder(tr("Search hints")));
+
+        hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("basics"))
+                .addKeyword(tr("Baker Street"), null, tr("''Baker'' and ''Street'' in any key"))
+                .addKeyword(tr("\"Baker Street\""), "\"\"", tr("''Baker Street'' in any key"))
                 .addKeyword("<i>key</i>:<i>valuefragment</i>", null,
                         tr("''valuefragment'' anywhere in ''key''"), "name:str matches name=Bakerstreet")
-                .addKeyword("-<i>key</i>:<i>valuefragment</i>", null, tr("''valuefragment'' nowhere in ''key''"))
+                .addKeyword("-<i>key</i>:<i>valuefragment</i>", null, tr("''valuefragment'' nowhere in ''key''")),
+                GBC.eol());
+        hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addKeyword("<i>key</i>=<i>value</i>", null, tr("''key'' with exactly ''value''"))
                 .addKeyword("<i>key</i>=*", null, tr("''key'' with any value"))
                 .addKeyword("*=<i>value</i>", null, tr("''value'' in any key"))
@@ -417,10 +437,10 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("<i>key</i>><i>value</i>", null, tr("matches if ''key'' is greater than ''value'' (analogously, less than)"))
                 .addKeyword("\"key\"=\"value\"", "\"\"=\"\"",
                         tr("to quote operators.<br>Within quoted strings the <b>\"</b> and <b>\\</b> characters need to be escaped " +
-                           "by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>)."),
+                                "by a preceding <b>\\</b> (e.g. <b>\\\"</b> and <b>\\\\</b>)."),
                         "\"addr:street\""),
-                GBC.eol());
-        right.add(new SearchKeywordRow(hcbSearchString)
+                GBC.eol().anchor(GBC.CENTER));
+        hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("combinators"))
                 .addKeyword("<i>expr</i> <i>expr</i>", null, tr("logical and (both expressions have to be satisfied)"))
                 .addKeyword("<i>expr</i> | <i>expr</i>", "| ", tr("logical or (at least one expression has to be satisfied)"))
@@ -430,7 +450,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 GBC.eol());
 
         if (Main.pref.getBoolean("expert", false)) {
-            right.add(new SearchKeywordRow(hcbSearchString)
+            hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("objects"))
                 .addKeyword("type:node", "type:node ", tr("all nodes"))
                 .addKeyword("type:way", "type:way ", tr("all ways"))
@@ -438,7 +458,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("closed", "closed ", tr("all closed ways"))
                 .addKeyword("untagged", "untagged ", tr("object without useful tags")),
                 GBC.eol());
-            right.add(new SearchKeywordRow(hcbSearchString)
+            hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("metadata"))
                 .addKeyword("user:", "user:", tr("objects changed by user", "user:anonymous"))
                 .addKeyword("id:", "id:", tr("objects with given ID"), "id:0 (new objects)")
@@ -448,7 +468,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("timestamp:", "timestamp:", tr("objects with last modification timestamp within range"), "timestamp:2012/",
                         "timestamp:2008/2011-02-04T12"),
                 GBC.eol());
-            right.add(new SearchKeywordRow(hcbSearchString)
+            hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("properties"))
                 .addKeyword("nodes:<i>20-</i>", "nodes:", tr("ways with at least 20 nodes, or relations containing at least 20 nodes"))
                 .addKeyword("ways:<i>3-</i>", "ways:", tr("nodes with at least 3 referring ways, or relations containing at least 3 ways"))
@@ -457,7 +477,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("areasize:<i>-100</i>", "areasize:", tr("closed ways with an area of 100 m\u00b2"))
                 .addKeyword("waylength:<i>200-</i>", "waylength:", tr("ways with a length of 200 m or more")),
                 GBC.eol());
-            right.add(new SearchKeywordRow(hcbSearchString)
+            hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("state"))
                 .addKeyword("modified", "modified ", tr("all modified objects"))
                 .addKeyword("new", "new ", tr("all new objects"))
@@ -465,7 +485,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("incomplete", "incomplete ", tr("all incomplete objects"))
                 .addKeyword("deleted", "deleted ", tr("all deleted objects (checkbox <b>{0}</b> must be enabled)", tr("all objects"))),
                 GBC.eol());
-            right.add(new SearchKeywordRow(hcbSearchString)
+            hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("related objects"))
                 .addKeyword("child <i>expr</i>", "child ", tr("all children of objects matching the expression"), "child building")
                 .addKeyword("parent <i>expr</i>", "parent ", tr("all parents of objects matching the expression"), "parent bus_stop")
@@ -476,7 +496,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("nth%:<i>7</i>", "nth%:",
                         tr("every n-th member of relation and/or every n-th node of way"), "nth%:100 (child waterway)"),
                 GBC.eol());
-            right.add(new SearchKeywordRow(hcbSearchString)
+            hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("view"))
                 .addKeyword("inview", "inview ", tr("objects in current view"))
                 .addKeyword("allinview", "allinview ", tr("objects (and all its way nodes / relation members) in current view"))
@@ -485,6 +505,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                         tr("objects (and all its way nodes / relation members) in downloaded area")),
                 GBC.eol());
         }
+
+        return hintPanel;
     }
 
     /**
@@ -604,7 +626,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                             JOptionPane.WARNING_MESSAGE
                     );
                 }
-            } else if (Main.map != null) {
+            } else {
                 Main.map.statusLine.setHelpText(tr("Found {0} matches", foundMatches));
             }
         }
