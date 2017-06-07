@@ -16,10 +16,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.PushbackTokenizer.Range;
@@ -38,6 +40,8 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.UncheckedParseException;
@@ -75,6 +79,7 @@ public class SearchCompiler {
     private static Map<String, SimpleMatchFactory> simpleMatchFactoryMap = new HashMap<>();
     private static Map<String, UnaryMatchFactory> unaryMatchFactoryMap = new HashMap<>();
     private static Map<String, BinaryMatchFactory> binaryMatchFactoryMap = new HashMap<>();
+    private static Map<String, TaggingPreset> presets;
 
     public SearchCompiler(boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) {
         this.caseSensitive = caseSensitive;
@@ -87,6 +92,11 @@ public class SearchCompiler {
         }
         if (unaryMatchFactoryMap.isEmpty()) {
             addMatchFactory(new CoreUnaryMatchFactory());
+        }
+        // register a listener to react on any change made on the list of presets
+        if (presets == null) {
+            TaggingPresets.addListener(SearchCompiler::loadPresets);
+            loadPresets();
         }
     }
 
@@ -109,6 +119,14 @@ public class SearchCompiler {
                 Main.warn("SearchCompiler: for key ''{0}'', overriding match factory ''{1}'' with ''{2}''", keyword, existing, factory);
             }
         }
+    }
+
+    private static void loadPresets() {
+        presets = TaggingPresets.getTaggingPresets()
+                .stream()
+                .collect(Collectors.toMap(
+                        p -> p.name,
+                        Function.identity()));
     }
 
     public class CoreSimpleMatchFactory implements SimpleMatchFactory {
