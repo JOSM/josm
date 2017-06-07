@@ -199,28 +199,6 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
     }
 
-    private static class DescriptionTextBuilder {
-
-        private final StringBuilder s = new StringBuilder(4096);
-
-        public StringBuilder append(String string) {
-            return s.append(string);
-        }
-
-        StringBuilder appendItem(String item) {
-            return append("<li>").append(item).append("</li>\n");
-        }
-
-        StringBuilder appendItemHeader(String itemHeader) {
-            return append("<li class=\"header\">").append(itemHeader).append("</li>\n");
-        }
-
-        @Override
-        public String toString() {
-            return s.toString();
-        }
-    }
-
     private static class SearchKeywordRow extends JPanel {
 
         private final HistoryComboBox hcb;
