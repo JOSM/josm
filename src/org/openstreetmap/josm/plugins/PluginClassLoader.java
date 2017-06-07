@@ -6,6 +6,8 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.openstreetmap.josm.tools.Logging;
+
 /**
  * Class loader for JOSM plugins.
  * <p>
@@ -51,6 +53,7 @@ public class PluginClassLoader extends URLClassLoader {
                 }
             } catch (ClassNotFoundException e) {
                 // do nothing
+                Logging.trace("Plugin class not found in {0}: {1}", dep, e.getMessage());
             }
         }
         Class<?> result = super.loadClass(name, resolve);

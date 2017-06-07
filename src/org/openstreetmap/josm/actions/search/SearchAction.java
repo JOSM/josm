@@ -28,6 +28,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -35,8 +37,6 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.JTextComponent;
-import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ActionParameter;
@@ -60,10 +60,20 @@ import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * The search action allows the user to search the data layer using a complex search string.
+ *
+ * @see SearchCompiler
+ */
 public class SearchAction extends JosmAction implements ParameterizedAction {
 
+    /**
+     * The default size of the search history
+     */
     public static final int DEFAULT_SEARCH_HISTORY_SIZE = 15;
-    /** Maximum number of characters before the search expression is shortened for display purposes. */
+    /**
+     * Maximum number of characters before the search expression is shortened for display purposes.
+     */
     public static final int MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY = 100;
 
     private static final String SEARCH_EXPRESSION = "searchExpression";
@@ -119,10 +129,18 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
     }
 
+    /**
+     * Gets the search history
+     * @return The last searched terms. Do not modify it.
+     */
     public static Collection<SearchSetting> getSearchHistory() {
         return searchHistory;
     }
 
+    /**
+     * Saves a search to the search history.
+     * @param s The search to save
+     */
     public static void saveToHistory(SearchSetting s) {
         if (searchHistory.isEmpty() || !s.equals(searchHistory.getFirst())) {
             searchHistory.addFirst(new SearchSetting(s));
@@ -142,6 +160,10 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         Main.pref.putCollection("search.history", savedHistory);
     }
 
+    /**
+     * Gets a list of all texts that were recently used in the search
+     * @return The list of search texts.
+     */
     public static List<String> getSearchExpressionHistory() {
         List<String> ret = new ArrayList<>(getSearchHistory().size());
         for (SearchSetting ss: getSearchHistory()) {
@@ -174,28 +196,6 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             actionPerformed(e);
         } else {
             searchWithoutHistory((SearchSetting) parameters.get(SEARCH_EXPRESSION));
-        }
-    }
-
-    private static class DescriptionTextBuilder {
-
-        private final StringBuilder s = new StringBuilder(4096);
-
-        public StringBuilder append(String string) {
-            return s.append(string);
-        }
-
-        StringBuilder appendItem(String item) {
-            return append("<li>").append(item).append("</li>\n");
-        }
-
-        StringBuilder appendItemHeader(String itemHeader) {
-            return append("<li class=\"header\">").append(itemHeader).append("</li>\n");
-        }
-
-        @Override
-        public String toString() {
-            return s.toString();
         }
     }
 
