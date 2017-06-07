@@ -39,14 +39,25 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
 import org.openstreetmap.josm.data.imagery.TileLoaderFactory;
+import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.layer.AbstractCachedTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 
+/**
+ * This panel displays a map and lets the user chose a {@link BBox}.
+ */
 public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
 
+    /**
+     * A list of tile sources that can be used for displaying the map.
+     */
     @FunctionalInterface
     public interface TileSourceProvider {
+        /**
+         * Gets the tile sources that can be displayed
+         * @return The tile sources
+         */
         List<TileSource> getTileSources();
     }
 
@@ -101,6 +112,10 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
     }
 
     private static final StringProperty PROP_MAPSTYLE = new StringProperty("slippy_map_chooser.mapstyle", "Mapnik");
+    /**
+     * The property name used for the resize button.
+     * @see #addPropertyChangeListener(java.beans.PropertyChangeListener)
+     */
     public static final String RESIZE_PROP = SlippyMapBBoxChooser.class.getName() + ".resize";
 
     private final transient TileLoader cachedLoader;
@@ -183,6 +198,12 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         return tileSources;
     }
 
+    /**
+     * Handles a click/move on the attribution
+     * @param p The point in the view
+     * @param click true if it was a click, false for hover
+     * @return if the attribution handled the event
+     */
     public boolean handleAttribution(Point p, boolean click) {
         return attribution.handleAttribution(p, click);
     }
@@ -207,6 +228,10 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         }
     }
 
+    /**
+     * Enables the disk tile cache.
+     * @param enabled true to enable, false to disable
+     */
     public final void setFileCacheEnabled(boolean enabled) {
         if (enabled && cachedLoader != null) {
             setTileLoader(cachedLoader);
@@ -215,6 +240,10 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         }
     }
 
+    /**
+     * Sets the maximum number of tiles that may be held in memory
+     * @param tiles The maximum number of tiles.
+     */
     public final void setMaxTilesInMemory(int tiles) {
         ((MemoryTileCache) getTileCache()).setCacheSize(tiles);
     }
@@ -259,6 +288,10 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         firePropertyChange(RESIZE_PROP, !large, large);
     }
 
+    /**
+     * Sets the active tile source
+     * @param tileSource The active tile source
+     */
     public void toggleMapSource(TileSource tileSource) {
         this.tileController.setTileCache(new MemoryTileCache());
         this.setTileSource(tileSource);
