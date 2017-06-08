@@ -1572,6 +1572,22 @@ public class SearchCompiler {
         }
     }
 
+    /**
+     * Matches presets.
+     */
+    private static class Preset extends Match {
+        private TaggingPreset preset;
+
+        public Preset(TaggingPreset p){
+            this.preset = p;
+        }
+
+        @Override
+        public boolean match(OsmPrimitive osm) {
+            return preset.test(osm);
+        }
+    }
+
     public static class ParseError extends Exception {
         public ParseError(String msg) {
             super(msg);
