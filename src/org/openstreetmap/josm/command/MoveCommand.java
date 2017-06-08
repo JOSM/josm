@@ -206,6 +206,8 @@ public class MoveCommand extends Command {
 
     @Override
     public boolean executeCommand() {
+        ensurePrimitivesAreInDataset();
+
         for (Node n : nodes) {
             // in case #3892 happens again
             if (n == null)
@@ -221,6 +223,8 @@ public class MoveCommand extends Command {
 
     @Override
     public void undoCommand() {
+        ensurePrimitivesAreInDataset();
+
         Iterator<OldNodeState> it = oldState.iterator();
         for (Node n : nodes) {
             OldNodeState os = it.next();
