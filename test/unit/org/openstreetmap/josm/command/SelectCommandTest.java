@@ -122,9 +122,9 @@ public class SelectCommandTest {
      */
     @Test
     public void testGetParticipatingPrimitives() {
-        SelectCommand command = new SelectCommand(Arrays.asList(testData.existingNode, testData.existingWay));
+        SelectCommand command = new SelectCommand(Arrays.asList(testData.existingNode));
         command.executeCommand();
-        assertArrayEquals(new Object[] {}, command.getParticipatingPrimitives().toArray());
+        assertArrayEquals(new Object[] { testData.existingNode }, command.getParticipatingPrimitives().toArray());
     }
 
     /**
