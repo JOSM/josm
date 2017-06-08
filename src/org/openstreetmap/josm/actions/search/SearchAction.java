@@ -41,6 +41,7 @@ import javax.swing.text.JTextComponent;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ActionParameter;
 import org.openstreetmap.josm.actions.ActionParameter.SearchSettingsActionParameter;
+import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.ParameterizedAction;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
@@ -298,7 +299,10 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         additionalSettings.setBorder(BorderFactory.createTitledBorder(tr("Additional settings")));
         additionalSettings.add(caseSensitive, GBC.eol().anchor(GBC.WEST).fill(GBC.HORIZONTAL));
 
-        if (Main.pref.getBoolean("expert", false)) {
+        left.add(selectionSettings, GBC.eol().fill(GBC.BOTH));
+        left.add(additionalSettings, GBC.eol().fill(GBC.BOTH));
+
+        if (ExpertToggleAction.isExpert()) {
             additionalSettings.add(allElements, GBC.eol());
             additionalSettings.add(addOnToolbar, GBC.eop());
 
@@ -308,12 +312,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             searchOptions.add(regexSearch, GBC.eol());
             searchOptions.add(mapCSSSearch, GBC.eol());
 
-            left.add(selectionSettings, GBC.eol().fill(GBC.BOTH));
-            left.add(additionalSettings, GBC.eol().fill(GBC.BOTH));
             left.add(searchOptions, GBC.eol().fill(GBC.BOTH));
-        } else {
-            left.add(selectionSettings, GBC.eol().fill(GBC.BOTH));
-            left.add(additionalSettings, GBC.eol().fill(GBC.BOTH));
         }
 
         final JPanel right = SearchAction.buildHintsSection(hcbSearchString);
@@ -449,7 +448,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("(<i>expr</i>)", "()", tr("use parenthesis to group expressions")),
                 GBC.eol());
 
-        if (Main.pref.getBoolean("expert", false)) {
+        if (ExpertToggleAction.isExpert()) {
             hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("objects"))
                 .addKeyword("type:node", "type:node ", tr("all nodes"))
