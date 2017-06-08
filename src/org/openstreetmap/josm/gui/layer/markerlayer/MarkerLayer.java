@@ -489,7 +489,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         @Override
         public void actionPerformed(ActionEvent e) {
             Main.pref.put("marker.show "+layer.getName(), layer.isTextOrIconShown() ? "hide" : "show");
-            Main.map.mapView.repaint();
+            layer.invalidate();
         }
 
         @Override

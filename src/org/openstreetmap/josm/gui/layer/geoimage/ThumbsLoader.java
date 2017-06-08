@@ -81,15 +81,13 @@ public class ThumbsLoader implements Runnable {
                 entry.setThumbnail(loadThumb(entry));
 
                 if (layer != null && Main.isDisplayingMapView()) {
-                    layer.updateOffscreenBuffer = true;
-                    Main.map.mapView.repaint();
+                    layer.updateBufferAndRepaint();
                 }
             }
         }
         if (layer != null) {
             layer.thumbsLoaded();
-            layer.updateOffscreenBuffer = true;
-            Main.map.mapView.repaint();
+            layer.updateBufferAndRepaint();
         }
     }
 

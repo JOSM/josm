@@ -94,7 +94,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     private boolean thumbsLoaderRunning;
     volatile boolean thumbsLoaded;
     private BufferedImage offscreenBuffer;
-    boolean updateOffscreenBuffer = true;
+    private boolean updateOffscreenBuffer = true;
 
     private MouseAdapter mouseAdapter;
     private MouseMotionAdapter mouseMotionAdapter;
@@ -637,8 +637,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         } else {
             ImageViewerDialog.showImage(this, null);
         }
-        updateOffscreenBuffer = true;
-        Main.map.repaint();
+        updateBufferAndRepaint();
     }
 
     /**
@@ -939,8 +938,8 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
                 if (e.getButton() != MouseEvent.BUTTON1)
                     return;
                 if (isVisible() && isMapModeOk()) {
-                    Main.map.mapView.repaint();
                     cycleModeArmed = true;
+                    invalidate();
                 }
             }
 
@@ -1038,7 +1037,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
 
     @Override
     public void zoomChanged() {
-        updateOffscreenBuffer = true;
+        updateBufferAndRepaint();
     }
 
     /**
@@ -1075,6 +1074,9 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         thumbsLoaded = true;
     }
 
+    /**
+     * Marks the offscreen buffer to be updated.
+     */
     public void updateBufferAndRepaint() {
         updateOffscreenBuffer = true;
         invalidate();
@@ -1128,5 +1130,6 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         } else if (!useThumbs) {
             stopLoadThumbs();
         }
+        invalidate();
     }
 }
