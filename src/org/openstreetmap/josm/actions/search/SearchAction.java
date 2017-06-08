@@ -289,14 +289,14 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
         JPanel selectionSettings = new JPanel(new GridBagLayout());
         selectionSettings.setBorder(BorderFactory.createTitledBorder(tr("Selection settings")));
-        selectionSettings.add(replace, GBC.eol());
+        selectionSettings.add(replace, GBC.eol().anchor(GBC.WEST).fill(GBC.HORIZONTAL));
         selectionSettings.add(add, GBC.eol());
         selectionSettings.add(remove, GBC.eol());
         selectionSettings.add(inSelection, GBC.eop());
 
         JPanel additionalSettings = new JPanel(new GridBagLayout());
         additionalSettings.setBorder(BorderFactory.createTitledBorder(tr("Additional settings")));
-        additionalSettings.add(caseSensitive, GBC.eol());
+        additionalSettings.add(caseSensitive, GBC.eol().anchor(GBC.WEST).fill(GBC.HORIZONTAL));
 
         if (Main.pref.getBoolean("expert", false)) {
             additionalSettings.add(allElements, GBC.eol());
@@ -304,7 +304,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
             JPanel searchOptions = new JPanel(new GridBagLayout());
             searchOptions.setBorder(BorderFactory.createTitledBorder(tr("Search syntax")));
-            searchOptions.add(standardSearch, GBC.eol());
+            searchOptions.add(standardSearch, GBC.eol().anchor(GBC.WEST).fill(GBC.HORIZONTAL));
             searchOptions.add(regexSearch, GBC.eol());
             searchOptions.add(mapCSSSearch, GBC.eol());
 
