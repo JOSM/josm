@@ -151,14 +151,12 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
     @Override
     public void showNotify() {
         Main.getLayerManager().addAndFireActiveLayerChangeListener(this);
-        refreshView();
     }
 
     @Override
     public void hideNotify() {
         Main.getLayerManager().removeActiveLayerChangeListener(this);
-        OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
-        removeEditLayerListeners(editLayer);
+        removeEditLayerListeners(Main.getLayerManager().getEditLayer());
     }
 
     /**
