@@ -337,6 +337,20 @@ public abstract class Command implements PseudoCommand {
         return true;
     }
 
+    /**
+     * Ensures that all primitives that are participating in this command belong to the affected data set.
+     *
+     * Commands may use this in their update methods to check the consitency of the primitives they operate on.
+     * @throws AssertionError if no {@link DataSet} is set or if any primitive does not belong to that dataset.
+     */
+    protected void ensurePrimitivesAreInDataset() {
+        for (OsmPrimitive primitive : this.getParticipatingPrimitives()) {
+            if (primitive.getDataSet() != this.getAffectedDataSet()) {
+                throw new AssertionError("Primitive is of wrong data set for this command: " + primitive);
+            }
+        }
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(cloneMap, layer, data);
