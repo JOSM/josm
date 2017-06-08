@@ -303,7 +303,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             additionalSettings.add(addOnToolbar, GBC.eop());
 
             JPanel searchOptions = new JPanel(new GridBagLayout());
-            searchOptions.setBorder(BorderFactory.createTitledBorder(tr("Search Options")));
+            searchOptions.setBorder(BorderFactory.createTitledBorder(tr("Search syntax")));
             searchOptions.add(standardSearch, GBC.eol());
             searchOptions.add(regexSearch, GBC.eol());
             searchOptions.add(mapCSSSearch, GBC.eol());
