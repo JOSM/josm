@@ -58,14 +58,23 @@ public class SelectCommand extends Command {
 
     @Override
     public void undoCommand() {
+        ensurePrimitivesAreInDataset();
+
         getAffectedDataSet().setSelected(oldSelection);
     }
 
     @Override
     public boolean executeCommand() {
+        ensurePrimitivesAreInDataset();
+
         oldSelection = getAffectedDataSet().getSelected();
         getAffectedDataSet().setSelected(newSelection);
         return true;
+    }
+
+    @Override
+    public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
+        return Collections.unmodifiableCollection(newSelection);
     }
 
     @Override

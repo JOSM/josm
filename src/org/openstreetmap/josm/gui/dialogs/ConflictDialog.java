@@ -40,10 +40,10 @@ import org.openstreetmap.josm.actions.AbstractSelectAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.conflict.IConflictListener;
+import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -74,7 +74,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * dialog on the right of the main frame.
  * @since 86
  */
-public final class ConflictDialog extends ToggleDialog implements ActiveLayerChangeListener, IConflictListener, SelectionChangedListener {
+public final class ConflictDialog extends ToggleDialog implements ActiveLayerChangeListener, IConflictListener, DataSelectionListener {
 
     private static final ColorProperty CONFLICT_COLOR = new ColorProperty(marktr("conflict"), Color.GRAY);
     private static final ColorProperty BACKGROUND_COLOR = new ColorProperty(marktr("background"), Color.BLACK);
@@ -150,15 +150,13 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
 
     @Override
     public void showNotify() {
-        DataSet.addSelectionListener(this);
         Main.getLayerManager().addAndFireActiveLayerChangeListener(this);
-        refreshView();
     }
 
     @Override
     public void hideNotify() {
         Main.getLayerManager().removeActiveLayerChangeListener(this);
-        DataSet.removeSelectionListener(this);
+        removeEditLayerListeners(Main.getLayerManager().getEditLayer());
     }
 
     /**
@@ -258,15 +256,23 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
 
     @Override
     public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
-        OsmDataLayer oldLayer = e.getPreviousEditLayer();
-        if (oldLayer != null) {
-            oldLayer.getConflicts().removeConflictListener(this);
-        }
-        OsmDataLayer newLayer = e.getSource().getEditLayer();
+        removeEditLayerListeners(e.getPreviousEditLayer());
+        addEditLayerListeners(e.getSource().getEditLayer());
+        refreshView();
+    }
+
+    private void addEditLayerListeners(OsmDataLayer newLayer) {
         if (newLayer != null) {
             newLayer.getConflicts().addConflictListener(this);
+            newLayer.data.addSelectionListener(this);
         }
-        refreshView();
+    }
+
+    private void removeEditLayerListeners(OsmDataLayer oldLayer) {
+        if (oldLayer != null) {
+            oldLayer.getConflicts().removeConflictListener(this);
+            oldLayer.data.removeSelectionListener(this);
+        }
     }
 
     /**
@@ -309,10 +315,10 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
     }
 
     @Override
-    public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
+    public void selectionChanged(SelectionChangeEvent event) {
         lstConflicts.setValueIsAdjusting(true);
         lstConflicts.clearSelection();
-        for (OsmPrimitive osm : newSelection) {
+        for (OsmPrimitive osm : event.getSelection()) {
             if (conflicts != null && conflicts.hasConflictForMy(osm)) {
                 int pos = model.indexOf(osm);
                 if (pos >= 0) {
