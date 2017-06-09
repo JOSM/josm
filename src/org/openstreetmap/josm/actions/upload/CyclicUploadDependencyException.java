@@ -4,6 +4,7 @@ package org.openstreetmap.josm.actions.upload;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
@@ -13,14 +14,14 @@ import org.openstreetmap.josm.data.osm.Relation;
  * This is an exception that is thrown if the user attempts to upload a list of relations with a cyclic dependency in them
  */
 public class CyclicUploadDependencyException extends Exception {
-    private final Stack<Relation> cycle;
+    private final List<Relation> cycle;
 
     /**
      * Creates a new {@link CyclicUploadDependencyException}
      * @param cycle The cycle that was found
      */
     public CyclicUploadDependencyException(Stack<Relation> cycle) {
-        this.cycle = cycle;
+        this.cycle = new ArrayList<>(cycle);
     }
 
     protected String formatRelation(Relation r) {
@@ -55,6 +56,6 @@ public class CyclicUploadDependencyException extends Exception {
      * @return The cycle that was detected
      */
     public List<Relation> getCyclicUploadDependency() {
-        return new ArrayList<>(cycle);
+        return Collections.unmodifiableList(cycle);
     }
 }
