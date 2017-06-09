@@ -19,15 +19,26 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Storage;
 
+/**
+ * This is the model that backs a list of changesets
+ */
 public class ChangesetListModel extends DefaultListModel<Changeset> implements ChangesetCacheListener {
     private final transient List<Changeset> data = new ArrayList<>();
     private final transient Storage<Changeset> shownChangesets = new Storage<>(true);
     private final DefaultListSelectionModel selectionModel;
 
+    /**
+     * Creates a new {@link ChangesetListModel}
+     * @param selectionModel The selection model to use for this list
+     */
     public ChangesetListModel(DefaultListSelectionModel selectionModel) {
         this.selectionModel = selectionModel;
     }
 
+    /**
+     * Gets the list of changesets that are currently selected
+     * @return The selected changesets
+     */
     public Set<Changeset> getSelectedChangesets() {
         Set<Changeset> ret = new HashSet<>();
         for (int i = 0; i < getSize(); i++) {
@@ -38,6 +49,10 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
         return ret;
     }
 
+    /**
+     * Gets the IDs of the changesets that are selected
+     * @return The selected ids
+     */
     public Set<Integer> getSelectedChangesetIds() {
         Set<Integer> ret = new HashSet<>();
         for (int i = 0; i < getSize(); i++) {
@@ -48,6 +63,10 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
         return ret;
     }
 
+    /**
+     * Sets the changesets to select
+     * @param changesets The changesets
+     */
     public void setSelectedChangesets(Collection<Changeset> changesets) {
         selectionModel.setValueIsAdjusting(true);
         selectionModel.clearSelection();
@@ -85,6 +104,10 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
         setSelectedChangesets(sel);
     }
 
+    /**
+     * Loads this list with the given changesets
+     * @param ids The ids of the changesets to display
+     */
     public void initFromChangesetIds(Collection<Integer> ids) {
         if (ids == null || ids.isEmpty()) {
             setChangesets(null);
@@ -100,6 +123,10 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
         setChangesets(changesets);
     }
 
+    /**
+     * Loads this list with the given changesets
+     * @param primitives The primitives of which the changesets should be displayed
+     */
     public void initFromPrimitives(Collection<? extends OsmPrimitive> primitives) {
         if (primitives == null) {
             setChangesets(null);
@@ -115,6 +142,10 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
         setChangesets(changesets);
     }
 
+    /**
+     * Loads this list with the given changesets
+     * @param ds The data set to get all changesets from
+     */
     public void initFromDataSet(DataSet ds) {
         if (ds == null) {
             setChangesets(null);

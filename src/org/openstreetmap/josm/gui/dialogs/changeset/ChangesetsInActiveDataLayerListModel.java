@@ -22,6 +22,10 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
  */
 public class ChangesetsInActiveDataLayerListModel extends ChangesetListModel implements DataSetListener, ActiveLayerChangeListener {
 
+    /**
+     * Creates a new {@link ChangesetsInActiveDataLayerListModel}
+     * @param selectionModel The selection model for the list
+     */
     public ChangesetsInActiveDataLayerListModel(DefaultListSelectionModel selectionModel) {
         super(selectionModel);
     }

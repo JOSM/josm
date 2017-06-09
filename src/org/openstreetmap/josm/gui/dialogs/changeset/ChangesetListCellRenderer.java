@@ -13,6 +13,9 @@ import javax.swing.UIManager;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * This class renders the cells in a {@link ChangesetListModel}.
+ */
 public class ChangesetListCellRenderer extends JLabel implements ListCellRenderer<Changeset> {
 
     /**
