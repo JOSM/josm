@@ -231,6 +231,11 @@ public class TextLabel implements StyleKeys {
         return labelPositionStrategy;
     }
 
+    /**
+     * Creates a new text label with a different position strategy
+     * @param labelPositionStrategy The new position strategy to use
+     * @return The new label
+     */
     public TextLabel withPosition(PositionForAreaStrategy labelPositionStrategy) {
         return new TextLabel(this, labelPositionStrategy);
     }

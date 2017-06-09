@@ -212,6 +212,13 @@ public final class OsmUrlToBounds {
 
     private static final int TILE_SIZE_IN_PIXELS = 256;
 
+    /**
+     * Compute the bounds for a given lat/lon position and the zoom level
+     * @param lat The latitude
+     * @param lon The longitude
+     * @param zoom The current zoom level
+     * @return The bounds the OSM server would display
+     */
     public static Bounds positionToBounds(final double lat, final double lon, final int zoom) {
         final Dimension screenSize = getScreenSize();
         double scale = (1 << zoom) * TILE_SIZE_IN_PIXELS / (2 * Math.PI * Ellipsoid.WGS84.a);

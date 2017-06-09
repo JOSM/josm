@@ -49,6 +49,12 @@ public class GeoPropertyIndex<T> {
         return lastLevelUsed.get(ll);
     }
 
+    /**
+     * Gets the index of the given coordinate. Only used internally
+     * @param ll The lat/lon coordinate
+     * @param level The scale level
+     * @return The index for that position
+     */
     public static int index(LatLon ll, int level) {
         long noParts = 1L << level;
         long x = ((long) ((ll.lon() + 180.0) * noParts / 360.0)) & 1;

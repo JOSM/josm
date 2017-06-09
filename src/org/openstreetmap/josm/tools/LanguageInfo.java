@@ -5,6 +5,9 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Locale;
 
+/**
+ * This is a utility class that provides information about locales and allows to convert locale codes.
+ */
 public final class LanguageInfo {
 
     private LanguageInfo() {

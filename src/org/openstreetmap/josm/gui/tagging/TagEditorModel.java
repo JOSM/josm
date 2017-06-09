@@ -34,6 +34,9 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * @since 1762
  */
 public class TagEditorModel extends AbstractTableModel {
+    /**
+     * The dirty property. It is set whenever this table was changed
+     */
     public static final String PROP_DIRTY = TagEditorModel.class.getName() + ".dirty";
 
     /** the list holding the tags */
@@ -256,6 +259,11 @@ public class TagEditorModel extends AbstractTableModel {
         return null;
     }
 
+    /**
+     * Gets a tag row
+     * @param idx The index of the row
+     * @return The tag model for that row
+     */
     public TagModel get(int idx) {
         return idx >= tags.size() ? null : tags.get(idx);
     }

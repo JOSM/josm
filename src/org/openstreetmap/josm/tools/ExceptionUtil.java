@@ -80,6 +80,11 @@ public final class ExceptionUtil {
         );
     }
 
+    /**
+     * Parses a precondition failure response from the server and attempts to get more information about it
+     * @param msg The message from the server
+     * @return The OSM primitive that caused the problem and a collection of primitives that e.g. refer to it
+     */
     public static Pair<OsmPrimitive, Collection<OsmPrimitive>> parsePreconditionFailed(String msg) {
         if (msg == null)
             return null;

@@ -47,10 +47,25 @@ public final class Geometry {
         // Hide default constructor for utils classes
     }
 
+    /**
+     * The result types for a {@link Geometry#polygonIntersection(Area, Area)} test
+     */
     public enum PolygonIntersection {
+        /**
+         * The first polygon is inside the second one
+         */
         FIRST_INSIDE_SECOND,
+        /**
+         * The second one is inside the first
+         */
         SECOND_INSIDE_FIRST,
+        /**
+         * The polygons do not overlap
+         */
         OUTSIDE,
+        /**
+         * The polygon borders cross each other
+         */
         CROSSING
     }
 
@@ -372,6 +387,14 @@ public final class Geometry {
         return new EastNorth(b1 * c2 / det + p1.getX(), -a1 * c2 / det + p1.getY());
     }
 
+    /**
+     * Check if the segment p1 - p2 is parallel to p3 - p4
+     * @param p1 First point for first segment
+     * @param p2 Second point for first segment
+     * @param p3 First point for second segment
+     * @param p4 Second point for second segment
+     * @return <code>true</code> if they are parallel or close to parallel
+     */
     public static boolean segmentsParallel(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
 
         CheckParameterUtil.ensureValidCoordinates(p1, "p1");
@@ -949,15 +972,28 @@ public final class Geometry {
         private final double area;
         private final double perimeter;
 
+        /**
+         * Create a new {@link AreaAndPerimeter}
+         * @param area The area
+         * @param perimeter The perimeter
+         */
         public AreaAndPerimeter(double area, double perimeter) {
             this.area = area;
             this.perimeter = perimeter;
         }
 
+        /**
+         * Gets the area
+         * @return The area size
+         */
         public double getArea() {
             return area;
         }
 
+        /**
+         * Gets the perimeter
+         * @return The perimeter length
+         */
         public double getPerimeter() {
             return perimeter;
         }

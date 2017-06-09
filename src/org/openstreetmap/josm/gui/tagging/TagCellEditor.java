@@ -141,16 +141,28 @@ public class TagCellEditor extends AbstractCellEditor implements TableCellEditor
         editor.setAutoCompletionList(autoCompletionList);
     }
 
+    /**
+     * Sets the manager that helps with auto completion
+     * @param autocomplete The {@link AutoCompletionManager}
+     */
     public void setAutoCompletionManager(AutoCompletionManager autocomplete) {
         this.autocomplete = autocomplete;
     }
 
+    /**
+     * Selects an item from the auto completion list and fills this cell with the value
+     * @param item The text that was selected
+     */
     public void autoCompletionItemSelected(String item) {
         editor.setText(item);
         editor.selectAll();
         editor.requestFocus();
     }
 
+    /**
+     * Gets the editor for this cell
+     * @return The editor text field
+     */
     public AutoCompletingTextField getEditor() {
         return editor;
     }
