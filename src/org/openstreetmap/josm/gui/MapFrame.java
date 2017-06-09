@@ -96,12 +96,12 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
      */
     public static final int DEF_TOGGLE_DLG_WIDTH = 330;
 
-    private final static IntegerProperty TOGGLE_DIALOGS_WIDTH = new IntegerProperty("toggleDialogs.width", DEF_TOGGLE_DLG_WIDTH);
+    private static final IntegerProperty TOGGLE_DIALOGS_WIDTH = new IntegerProperty("toggleDialogs.width", DEF_TOGGLE_DLG_WIDTH);
     /**
      * Do not require to switch modes (potlatch style workflow) for drawing/selecting map modes.
      * @since 12347
      */
-    public final static BooleanProperty MODELESS = new BooleanProperty("modeless", false);
+    public static final BooleanProperty MODELESS = new BooleanProperty("modeless", false);
     /**
      * The current mode, this frame operates.
      */
