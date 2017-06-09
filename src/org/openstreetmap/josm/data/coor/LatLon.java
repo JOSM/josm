@@ -51,6 +51,10 @@ public class LatLon extends Coordinate implements ILatLon {
      * The API returns 7 decimals.
      */
     public static final double MAX_SERVER_PRECISION = 1e-7;
+    /**
+     * The inverse of the server precision
+     * @see #MAX_SERVER_PRECISION
+     */
     public static final double MAX_SERVER_INV_PRECISION = 1e7;
 
     /**
@@ -69,7 +73,13 @@ public class LatLon extends Coordinate implements ILatLon {
             Main.pref == null ? "00.0" : Main.pref.get("latlon.dms.decimal-format", "00.0"));
     private static DecimalFormat cDmMinuteFormatter = new DecimalFormat(
             Main.pref == null ? "00.000" : Main.pref.get("latlon.dm.decimal-format", "00.000"));
+    /**
+     * The normal number format for server precision coordinates
+     */
     public static final DecimalFormat cDdFormatter;
+    /**
+     * The number format used for high precision coordinates
+     */
     public static final DecimalFormat cDdHighPecisionFormatter;
     static {
         // Don't use the localized decimal separator. This way we can present
