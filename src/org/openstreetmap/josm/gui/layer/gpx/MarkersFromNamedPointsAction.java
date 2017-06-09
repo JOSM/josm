@@ -14,9 +14,16 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * An action that converts the named points to a new marker layer
+ */
 public class MarkersFromNamedPointsAction extends AbstractAction {
     private final transient GpxLayer layer;
 
+    /**
+     * Construct a new {@link MarkersFromNamedPointsAction}
+     * @param layer The layer this action is for
+     */
     public MarkersFromNamedPointsAction(final GpxLayer layer) {
         super(tr("Markers From Named Points"), ImageProvider.get("addmarkers"));
         this.layer = layer;

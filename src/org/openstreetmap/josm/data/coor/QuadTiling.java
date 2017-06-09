@@ -3,23 +3,55 @@ package org.openstreetmap.josm.data.coor;
 
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * This class helps in tiling the world into multiple quad tiles.
+ */
 public final class QuadTiling {
 
     private QuadTiling() {
         // Hide default constructor for utils classes
     }
 
+    /**
+     * The maximum number of levels to split the quads
+     */
     public static final int NR_LEVELS = 24;
+    /**
+     * The number of parts the world is split into in each direction
+     */
     public static final double WORLD_PARTS = 1 << NR_LEVELS;
 
+    /**
+     * The log(2) of how many tiles there are per level
+     */
     public static final int TILES_PER_LEVEL_SHIFT = 2; // Has to be 2. Other parts of QuadBuckets code rely on it
+    /**
+     * How many tiles there are per level
+     */
     public static final int TILES_PER_LEVEL = 1 << TILES_PER_LEVEL_SHIFT;
+    /**
+     * The size of the world in X direction
+     */
     public static final int X_PARTS = 360;
+    /**
+     * The offset of the world in x direction
+     */
     public static final int X_BIAS = -180;
 
+    /**
+     * The size of the world in y direction
+     */
     public static final int Y_PARTS = 180;
+    /**
+     * The offset of the world in y direction
+     */
     public static final int Y_BIAS = -90;
 
+    /**
+     * Converts a tile index to a lat/lon position
+     * @param quad The tile to convert
+     * @return The lat/lon position of that tile
+     */
     public static LatLon tile2LatLon(long quad) {
         // The world is divided up into X_PARTS,Y_PARTS.
         // The question is how far we move for each bit being set.

@@ -35,6 +35,10 @@ public class ViewportData {
         this.bounds = null;
     }
 
+    /**
+     * Create a new {@link ViewportData}
+     * @param bounds The bounds to zoom to
+     */
     public ViewportData(ProjectionBounds bounds) {
         CheckParameterUtil.ensureParameterNotNull(bounds);
         this.center = null;

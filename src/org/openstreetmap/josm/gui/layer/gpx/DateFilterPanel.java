@@ -20,6 +20,9 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.widgets.DateEditorWithSlider;
 import org.openstreetmap.josm.tools.GBC;
 
+/**
+ * A panel that allows the user to input a date range he wants to filter the GPX data for.
+ */
 public class DateFilterPanel extends JPanel {
     private final DateEditorWithSlider dateFrom = new DateEditorWithSlider(tr("From"));
     private final DateEditorWithSlider dateTo = new DateEditorWithSlider(tr("To"));
@@ -85,6 +88,9 @@ public class DateFilterPanel extends JPanel {
         }
     }
 
+    /**
+     * Applies the filter that was input by the user to the GPX track
+     */
     public void applyFilter() {
         t.stop();
         filterTracksByDate();
@@ -113,6 +119,10 @@ public class DateFilterPanel extends JPanel {
         noTimestampCb.setSelected(Main.pref.getBoolean(prefDate0, false));
     }
 
+    /**
+     * Sets a listener that should be called after the filter was applied
+     * @param filterAppliedListener The listener to call
+     */
     public void setFilterAppliedListener(ActionListener filterAppliedListener) {
         this.filterAppliedListener = filterAppliedListener;
     }
