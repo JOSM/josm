@@ -10,6 +10,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapRendererFactory;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.osm.visitor.paint.WireframeMapRenderer;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -49,8 +50,6 @@ public class WireframeToggleAction extends ToggleAction {
         }
 
         notifySelectedState();
-        if (Main.isDisplayingMapView()) {
-            Main.map.mapView.repaint();
-        }
+        Main.getLayerManager().getLayersOfType(OsmDataLayer.class).forEach(OsmDataLayer::invalidate);
     }
 }

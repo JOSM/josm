@@ -79,7 +79,7 @@ public interface PlatformHook {
       * from the config, but before any shortcuts are read from
       * it or registered from within the application.
       *
-      * Plese note that you are not allowed to register any
+      * Please note that you are not allowed to register any
       * shortuts from this hook, but only "systemCuts"!
       *
       * BTW: SystemCuts should be named "system:&lt;whatever&gt;",

@@ -43,7 +43,7 @@ public final class DefaultMarkerProducers implements MarkerProducers {
         final Marker marker = new Marker(wpt.getCoor(), wpt, symbolName, parentLayer, time, offset);
         if (url == null) {
             return Collections.singleton(marker);
-        } else if (urlStr.endsWith(".wav")) {
+        } else if (Utils.hasExtension(urlStr, "wav", "mp3", "aac", "aif", "aiff")) {
             final AudioMarker audioMarker = new AudioMarker(wpt.getCoor(), wpt, url, parentLayer, time, offset);
             Extensions exts = (Extensions) wpt.get(GpxConstants.META_EXTENSIONS);
             if (exts != null && exts.containsKey("offset")) {
@@ -54,8 +54,7 @@ public final class DefaultMarkerProducers implements MarkerProducers {
                 }
             }
             return Arrays.asList(marker, audioMarker);
-        } else if (urlStr.endsWith(".png") || urlStr.endsWith(".jpg") || urlStr.endsWith(".jpeg")
-                || urlStr.endsWith(".gif")) {
+        } else if (Utils.hasExtension(urlStr, "png", "jpg", "jpeg", "gif")) {
             return Arrays.asList(marker, new ImageMarker(wpt.getCoor(), url, parentLayer, time, offset));
         } else {
             return Arrays.asList(marker, new WebMarker(wpt.getCoor(), url, parentLayer, time, offset));

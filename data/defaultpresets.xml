@@ -239,6 +239,11 @@
         <text key="symbol" text="Symbol description"/>
         <text key="description" text="Description"/>
     </chunk>
+    <chunk id="genus_species_taxon">
+        <text key="genus" text="Genus" />
+        <text key="species" text="Species" />
+        <text key="taxon" text="Taxon" />
+    </chunk>
     <chunk id="leaf">
         <combo key="leaf_type" text="Type" values="broadleaved,needleleaved,mixed,leafless" values_searchable="true" />
         <combo key="leaf_cycle" text="Cycle" values_searchable="true" >
@@ -1746,9 +1751,7 @@
             <key key="barrier" value="hedge" />
             <optional>
                 <text key="height" text="Height (meters)" length="7" />
-                <text key="genus" text="Genus" />
-                <text key="species" text="Species" />
-                <text key="taxon" text="Taxon" />
+                <reference ref="genus_species_taxon" />
                 <reference ref="leaf" />
             </optional>
         </item> <!-- Hedge -->
@@ -3178,6 +3181,7 @@
             <key key="shop" value="car_repair" />
             <reference ref="car_brands" />
             <reference ref="name_operator_oh_wheelchair" />
+            <multiselect key="service" text="Service" text_context="shop=car_repair" values="dealer;repair;parts;tyres" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Repair -->
         <item name="Parts" icon="presets/vehicle/car_parts.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -10131,9 +10135,7 @@
             <key key="natural" value="tree" />
             <text key="name" text="Name" />
             <text key="height" text="Height (meters)" />
-            <text key="genus" text="Genus" />
-            <text key="species" text="Species" />
-            <text key="taxon" text="Taxon" />
+            <reference ref="genus_species_taxon" />
             <reference ref="leaf" />
         </item> <!-- Tree -->
         <item name="Tree Row" icon="presets/landmark/tree_row.svg" type="way" preset_name_label="true">
@@ -10152,6 +10154,7 @@
             <key key="natural" value="tree_row" />
             <text key="height" text="Height (meters)" />
             <optional>
+                <reference ref="genus_species_taxon" />
                 <reference ref="leaf" />
             </optional>
         </item> <!-- Tree Row -->
@@ -10467,8 +10470,7 @@
             <key key="landuse" value="plant_nursery" />
             <text key="name" text="Name" />
             <text key="operator" text="Operator" />
-            <text key="genus" text="Genus" />
-            <text key="species" text="Species" />
+            <reference ref="genus_species_taxon" />
         </item> <!-- Plant Nursery -->
         <item name="Aquaculture" icon="presets/landuse/aquaculture.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=aquaculture"

@@ -113,9 +113,6 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected AbstractTileSourceLayer<? extends AbstractTMSTileSource> askedLayer() {
-        if (!Main.isDisplayingMapView()) {
-            return null;
-        }
         List<AbstractTileSourceLayer> targetLayers = Main.getLayerManager().getLayersOfType(AbstractTileSourceLayer.class);
         if (targetLayers.isEmpty()) {
             if (!GraphicsEnvironment.isHeadless()) {

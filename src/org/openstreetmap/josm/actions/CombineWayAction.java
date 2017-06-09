@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -111,8 +112,12 @@ public class CombineWayAction extends JosmAction {
         // remove duplicates, preserving order
         ways = new LinkedHashSet<>(ways);
 
+        List<DataSet> dataSets = ways.stream().map(Way::getDataSet).distinct().collect(Collectors.toList());
+        if (dataSets.size() != 1) {
+            throw new IllegalArgumentException("Cannot combine ways of multiple data sets.");
+        }
+
         // try to build a new way which includes all the combined ways
-        //
         NodeGraph graph = NodeGraph.createNearlyUndirectedGraphFromNodeWays(ways);
         List<Node> path = graph.buildSpanningPath();
         if (path == null) {
@@ -193,10 +198,10 @@ public class CombineWayAction extends JosmAction {
         List<Way> deletedWays = new LinkedList<>(ways);
         deletedWays.remove(targetWay);
 
-        cmds.add(new ChangeCommand(targetWay, modifiedTargetWay));
+        cmds.add(new ChangeCommand(dataSets.get(0), targetWay, modifiedTargetWay));
         cmds.addAll(reverseWayTagCommands);
         cmds.addAll(resolution);
-        cmds.add(new DeleteCommand(deletedWays));
+        cmds.add(new DeleteCommand(dataSets.get(0), deletedWays));
         final Command sequenceCommand = new SequenceCommand(/* for correct i18n of plural forms - see #9110 */
                 trn("Combine {0} way", "Combine {0} ways", ways.size(), ways.size()), cmds);
 

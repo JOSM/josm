@@ -29,7 +29,6 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.plugins.PluginHandler.DynamicURLClassLoader;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -126,9 +125,9 @@ public class PluginHandlerTestIT {
     }
 
     private static String findFaultyPlugin(Collection<PluginInformation> plugins, Throwable root) {
-        DynamicURLClassLoader cl = PluginHandler.getPluginClassLoader();
         for (PluginInformation p : plugins) {
             try {
+                ClassLoader cl = PluginHandler.getPluginClassLoader(p.getName());
                 String pluginPackage = cl.loadClass(p.className).getPackage().getName();
                 for (StackTraceElement e : root.getStackTrace()) {
                     try {

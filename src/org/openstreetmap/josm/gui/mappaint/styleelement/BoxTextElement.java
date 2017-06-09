@@ -36,7 +36,8 @@ public class BoxTextElement extends StyleElement {
         /**
          * Align to the right
          */
-        RIGHT }
+        RIGHT
+    }
 
     /**
      * MapCSS text-anchor-vertical
@@ -61,7 +62,8 @@ public class BoxTextElement extends StyleElement {
         /**
          * Render below the box
          */
-        BELOW }
+        BELOW
+    }
 
     /**
      * Something that provides us with a {@link BoxProviderResult}

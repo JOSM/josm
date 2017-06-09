@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
@@ -34,7 +35,6 @@ import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import org.junit.Ignore;
 
 /**
  * Unit tests of {@link JoinAreasAction} class.
@@ -109,6 +109,10 @@ public class JoinAreasActionTest {
         try (InputStream is = new FileInputStream("data_nodist/Join_Areas_Tests_joined.osm")) {
             dsExpected = OsmReader.parseDataSet(is, NullProgressMonitor.INSTANCE);
         }
+
+        // set current edit layer
+        Main.getLayerManager().addLayer(new OsmDataLayer(dsToJoin, "join", null));
+
         Collection<OsmPrimitive> testPrims = dsToJoin.getPrimitives(osm -> osm.get("test") != null);
         MultiMap<String, OsmPrimitive> tests = new MultiMap<>();
         for (OsmPrimitive testPrim : testPrims) {

@@ -167,6 +167,7 @@ public class DeleteCommand extends Command {
 
     @Override
     public boolean executeCommand() {
+        ensurePrimitivesAreInDataset();
         // Make copy and remove all references (to prevent inconsistent dataset (delete referenced) while command is executed)
         for (OsmPrimitive osm: toDelete) {
             if (osm.isDeleted())
@@ -189,6 +190,8 @@ public class DeleteCommand extends Command {
 
     @Override
     public void undoCommand() {
+        ensurePrimitivesAreInDataset();
+
         for (OsmPrimitive osm: toDelete) {
             osm.setDeleted(false);
         }

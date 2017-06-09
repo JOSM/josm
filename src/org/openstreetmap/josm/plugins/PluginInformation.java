@@ -315,14 +315,16 @@ public class PluginInformation {
      * Loads and instantiates the plugin.
      *
      * @param klass the plugin class
+     * @param classLoader the class loader for the plugin
      * @return the instantiated and initialized plugin
      * @throws PluginException if the plugin cannot be loaded or instanciated
+     * @since 12322
      */
-    public PluginProxy load(Class<?> klass) throws PluginException {
+    public PluginProxy load(Class<?> klass, PluginClassLoader classLoader) throws PluginException {
         try {
             Constructor<?> c = klass.getConstructor(PluginInformation.class);
             Object plugin = c.newInstance(this);
-            return new PluginProxy(plugin, this);
+            return new PluginProxy(plugin, this, classLoader);
         } catch (ReflectiveOperationException e) {
             throw new PluginException(name, e);
         }

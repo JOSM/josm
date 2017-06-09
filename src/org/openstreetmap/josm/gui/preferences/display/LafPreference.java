@@ -26,6 +26,7 @@ import javax.swing.UIManager.LookAndFeelInfo;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.preferences.StringProperty;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapMover;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
@@ -134,7 +135,7 @@ public class LafPreference implements SubPreferenceSetting {
         ExpertToggleAction.addVisibilitySwitcher(showLocalizedName);
 
         modeless.setToolTipText(tr("Do not require to switch modes (potlatch style workflow)"));
-        modeless.setSelected(Main.pref.getBoolean("modeless", false));
+        modeless.setSelected(MapFrame.MODELESS.get());
         ExpertToggleAction.addVisibilitySwitcher(modeless);
 
         panel.add(showID, GBC.eop().insets(20, 0, 0, 0));
@@ -202,7 +203,7 @@ public class LafPreference implements SubPreferenceSetting {
         Main.pref.put("draw.splashscreen", showSplashScreen.isSelected());
         Main.pref.put("osm-primitives.showid", showID.isSelected());
         Main.pref.put("osm-primitives.localize-name", showLocalizedName.isSelected());
-        Main.pref.put("modeless", modeless.isSelected());
+        MapFrame.MODELESS.put(modeless.isSelected());
         Main.pref.put(ToggleDialog.PROP_DYNAMIC_BUTTONS.getKey(), dynamicButtons.isSelected());
         Main.pref.put(DateUtils.PROP_ISO_DATES.getKey(), isoDates.isSelected());
         Main.pref.put(FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.getKey(), nativeFileChoosers.isSelected());

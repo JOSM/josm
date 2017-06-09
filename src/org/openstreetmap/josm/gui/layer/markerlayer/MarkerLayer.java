@@ -48,7 +48,7 @@ import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToNextMarker;
 import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.gpx.ConvertToDataLayerAction;
-import org.openstreetmap.josm.tools.AudioPlayer;
+import org.openstreetmap.josm.io.audio.AudioPlayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -489,7 +489,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         @Override
         public void actionPerformed(ActionEvent e) {
             Main.pref.put("marker.show "+layer.getName(), layer.isTextOrIconShown() ? "hide" : "show");
-            Main.map.mapView.repaint();
+            layer.invalidate();
         }
 
         @Override

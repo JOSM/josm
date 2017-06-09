@@ -174,7 +174,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
 
                     // save the clone
                     if (!keysChanged.isEmpty()) {
-                        commands.add(new ChangeCommand(primitive, clone));
+                        commands.add(new ChangeCommand(primitive.getDataSet(), primitive, clone));
                     }
                 }
                 for (Entry<OsmPrimitive, List<RoleCorrection>> entry : roleCorrectionMap.entrySet()) {
@@ -184,7 +184,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                     for (int i = 0; i < roleCorrections.size(); i++) {
                         RoleCorrection roleCorrection = roleCorrections.get(i);
                         if (roleTableMap.get(primitive).getCorrectionTableModel().getApply(i)) {
-                            commands.add(new ChangeRelationMemberRoleCommand(
+                            commands.add(new ChangeRelationMemberRoleCommand(roleCorrection.relation.getDataSet(),
                                     roleCorrection.relation, roleCorrection.position, roleCorrection.newRole));
                         }
                     }

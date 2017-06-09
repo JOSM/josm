@@ -12,7 +12,8 @@ import java.net.URL;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
-import org.openstreetmap.josm.tools.AudioPlayer;
+import org.openstreetmap.josm.io.audio.AudioPlayer;
+import org.openstreetmap.josm.io.audio.AudioUtil;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -54,7 +55,7 @@ public class AudioPlayPauseAction extends JosmAction {
                 }
             }
         } catch (IOException | InterruptedException ex) {
-            AudioPlayer.audioMalfunction(ex);
+            AudioUtil.audioMalfunction(ex);
         }
     }
 }

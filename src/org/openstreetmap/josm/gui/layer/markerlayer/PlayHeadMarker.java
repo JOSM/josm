@@ -23,7 +23,8 @@ import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
-import org.openstreetmap.josm.tools.AudioPlayer;
+import org.openstreetmap.josm.io.audio.AudioPlayer;
+import org.openstreetmap.josm.io.audio.AudioUtil;
 
 /**
  * Singleton marker class to track position of audio.
@@ -99,7 +100,7 @@ public final class PlayHeadMarker extends Marker {
             try {
                 AudioPlayer.pause();
             } catch (IOException | InterruptedException ex) {
-                AudioPlayer.audioMalfunction(ex);
+                AudioUtil.audioMalfunction(ex);
             }
         }
     }
@@ -113,7 +114,7 @@ public final class PlayHeadMarker extends Marker {
             try {
                 AudioPlayer.pause();
             } catch (IOException | InterruptedException ex) {
-                AudioPlayer.audioMalfunction(ex);
+                AudioUtil.audioMalfunction(ex);
             }
         }
         if (reset) {

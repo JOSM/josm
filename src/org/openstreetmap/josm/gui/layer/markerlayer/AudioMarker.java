@@ -11,7 +11,8 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
-import org.openstreetmap.josm.tools.AudioPlayer;
+import org.openstreetmap.josm.io.audio.AudioPlayer;
+import org.openstreetmap.josm.io.audio.AudioUtil;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
 /**
@@ -59,7 +60,7 @@ public class AudioMarker extends ButtonMarker {
             AudioPlayer.play(audioUrl, offset + syncOffset + after);
             recentlyPlayedMarker = this;
         } catch (IOException | InterruptedException e) {
-            AudioPlayer.audioMalfunction(e);
+            AudioUtil.audioMalfunction(e);
         }
     }
 

@@ -52,7 +52,7 @@ import org.openstreetmap.josm.tools.template_engine.TemplateParser;
  * data), and the first one to return a Marker object wins.
  *
  * By default, one the list contains one default "Maker" implementation that
- * will create AudioMarkers for .wav files, ImageMarkers for .png/.jpg/.jpeg
+ * will create AudioMarkers for supported audio files, ImageMarkers for supported image
  * files, and WebMarkers for everything else. (The creation of a WebMarker will
  * fail if there's no valid URL in the &lt;link&gt; tag, so it might still make sense
  * to add Makers for such waypoints at the end of the list.)

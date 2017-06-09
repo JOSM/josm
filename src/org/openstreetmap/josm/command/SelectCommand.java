@@ -8,7 +8,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
 /**
@@ -36,6 +36,21 @@ public class SelectCommand extends Command {
         }
     }
 
+    /**
+     * Constructs a new select command.
+     * @param dataset The dataset the selection belongs to
+     * @param newSelection the primitives to select when executing the command.
+     * @since 12349
+     */
+    public SelectCommand(DataSet dataset, Collection<OsmPrimitive> newSelection) {
+        super(dataset);
+        if (newSelection == null || newSelection.isEmpty()) {
+            this.newSelection = Collections.emptySet();
+        } else {
+            this.newSelection = new HashSet<>(newSelection);
+        }
+    }
+
     @Override
     public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted, Collection<OsmPrimitive> added) {
         // Do nothing
@@ -43,14 +58,23 @@ public class SelectCommand extends Command {
 
     @Override
     public void undoCommand() {
-        Main.getLayerManager().getEditLayer().data.setSelected(oldSelection);
+        ensurePrimitivesAreInDataset();
+
+        getAffectedDataSet().setSelected(oldSelection);
     }
 
     @Override
     public boolean executeCommand() {
-        oldSelection = Main.getLayerManager().getEditLayer().data.getSelected();
-        Main.getLayerManager().getEditLayer().data.setSelected(newSelection);
+        ensurePrimitivesAreInDataset();
+
+        oldSelection = getAffectedDataSet().getSelected();
+        getAffectedDataSet().setSelected(newSelection);
         return true;
+    }
+
+    @Override
+    public Collection<? extends OsmPrimitive> getParticipatingPrimitives() {
+        return Collections.unmodifiableCollection(newSelection);
     }
 
     @Override

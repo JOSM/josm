@@ -10,7 +10,6 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JCheckBoxMenuItem;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -40,7 +39,6 @@ public class ShowThumbnailAction extends AbstractAction implements LayerAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         layer.setUseThumbs(!layer.isUseThumbs());
-        Main.map.mapView.repaint();
     }
 
     /**
