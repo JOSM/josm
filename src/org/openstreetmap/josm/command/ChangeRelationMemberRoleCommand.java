@@ -8,6 +8,7 @@ import java.util.Objects;
 
 import javax.swing.Icon;
 
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -40,6 +41,21 @@ public class ChangeRelationMemberRoleCommand extends Command {
      * @param newRole New role
      */
     public ChangeRelationMemberRoleCommand(Relation relation, int position, String newRole) {
+        this.relation = relation;
+        this.position = position;
+        this.newRole = newRole;
+    }
+
+    /**
+     * Constructs a new {@code ChangeRelationMemberRoleCommand}.
+     * @param dataSet The data set the role is in
+     * @param relation The relation to be changed
+     * @param position Member position
+     * @param newRole New role
+     * @since 12355
+     */
+    public ChangeRelationMemberRoleCommand(DataSet dataSet, Relation relation, int position, String newRole) {
+        super(dataSet);
         this.relation = relation;
         this.position = position;
         this.newRole = newRole;
