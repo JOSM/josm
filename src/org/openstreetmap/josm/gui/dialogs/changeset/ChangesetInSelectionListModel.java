@@ -11,8 +11,15 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 
+/**
+ * A table of changesets that displays the ones that are used by the primitives in the current selection.
+ */
 public class ChangesetInSelectionListModel extends ChangesetListModel implements SelectionChangedListener, ActiveLayerChangeListener {
 
+    /**
+     * Create a new {@link ChangesetInSelectionListModel}
+     * @param selectionModel The model
+     */
     public ChangesetInSelectionListModel(DefaultListSelectionModel selectionModel) {
         super(selectionModel);
     }

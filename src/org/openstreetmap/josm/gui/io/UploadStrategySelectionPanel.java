@@ -233,11 +233,19 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         );
     }
 
+    /**
+     * Sets the number of uploaded objects to display
+     * @param numUploadedObjects The number of objects
+     */
     public void setNumUploadedObjects(int numUploadedObjects) {
         this.numUploadedObjects = Math.max(numUploadedObjects, 0);
         updateNumRequestsLabels();
     }
 
+    /**
+     * Fills the inputs using a {@link UploadStrategySpecification}
+     * @param strategy The strategy
+     */
     public void setUploadStrategySpecification(UploadStrategySpecification strategy) {
         if (strategy == null)
             return;
@@ -252,6 +260,10 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         }
     }
 
+    /**
+     * Gets the upload strategy the user chose
+     * @return The strategy
+     */
     public UploadStrategySpecification getUploadStrategySpecification() {
         UploadStrategy strategy = getUploadStrategy();
         UploadStrategySpecification spec = new UploadStrategySpecification();
@@ -300,6 +312,9 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         }
     }
 
+    /**
+     * Load the panel contents from preferences
+     */
     public void initFromPreferences() {
         UploadStrategy strategy = UploadStrategy.getFromPreferences();
         rbStrategy.get(strategy).setSelected(true);
@@ -308,6 +323,9 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         updateNumRequestsLabels();
     }
 
+    /**
+     * Stores the values that the user has input into the preferences
+     */
     public void rememberUserInput() {
         UploadStrategy strategy = getUploadStrategy();
         UploadStrategy.saveToPreferences(strategy);
@@ -375,6 +393,9 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         }
     }
 
+    /**
+     * Sets the focus on the chunk size field
+     */
     public void initEditingOfChunkSize() {
         tfChunkSize.requestFocusInWindow();
     }

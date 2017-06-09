@@ -7,6 +7,9 @@ import java.util.Locale;
 
 import org.openstreetmap.josm.Main;
 
+/**
+ * The chunk mode to use when uploading
+ */
 public enum UploadStrategy {
     /**
      * Uploads the objects individually, one request per object
@@ -27,6 +30,11 @@ public enum UploadStrategy {
         this.preferenceValue = preferenceValue;
     }
 
+    /**
+     * Reads the value from preferences
+     * @param preferenceValue The preference value
+     * @return The {@link UploadStrategy} for that preference or <code>null</code> if unknown
+     */
     public static UploadStrategy fromPreference(String preferenceValue) {
         if (preferenceValue == null) return null;
         preferenceValue = preferenceValue.trim().toLowerCase(Locale.ENGLISH);

@@ -21,7 +21,11 @@ import org.openstreetmap.josm.io.Capabilities;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
 
-// FIXME this class should extend HtmlPanel instead (duplicated code in here)
+/**
+ * A panel that displays a summary of data the user is about to upload
+ * <p>
+ * FIXME this class should extend HtmlPanel instead (duplicated code in here)
+ */
 public class UploadParameterSummaryPanel extends JPanel implements HyperlinkListener, PropertyChangeListener {
     private transient UploadStrategySpecification spec = new UploadStrategySpecification();
     private int numObjects;
@@ -128,16 +132,28 @@ public class UploadParameterSummaryPanel extends JPanel implements HyperlinkList
         this.configHandler = handler;
     }
 
+    /**
+     * Sets the {@link UploadStrategySpecification} the user chose
+     * @param spec The specification to display
+     */
     public void setUploadStrategySpecification(UploadStrategySpecification spec) {
         this.spec = spec;
         updateSummary();
     }
 
+    /**
+     * Sets the number of objects that will be uploaded
+     * @param numObjects The number to display
+     */
     public void setNumObjects(int numObjects) {
         this.numObjects = numObjects;
         updateSummary();
     }
 
+    /**
+     * Display that the changeset will be closed after the upload
+     * @param value <code>true</code> if it will be closed
+     */
     public void setCloseChangesetAfterNextUpload(boolean value) {
         this.closeChangesetAfterNextUpload = value;
         updateSummary();

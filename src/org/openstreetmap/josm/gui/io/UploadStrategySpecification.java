@@ -55,42 +55,83 @@ public class UploadStrategySpecification {
         return strategy;
     }
 
+    /**
+     * Gets the chunk size
+     * @return The max size of each upload chunk
+     */
     public int getChunkSize() {
         return chunkSize;
     }
 
+    /**
+     * Gets a special value that is used to indicate that the chunk size was not specified
+     * @return A special integer
+     */
     public static int getUnspecifiedChunkSize() {
         return UNSPECIFIED_CHUNK_SIZE;
     }
 
+    /**
+     * Gets the policy that is used when the server max changeset size is exceeded.
+     * @return What to do when the changeset size is exceeded
+     */
     public MaxChangesetSizeExceededPolicy getPolicy() {
         return policy;
     }
 
+    /**
+     * Sets the upload strategy (chunk mode)
+     * @param strategy The upload strategy
+     * @return This object, for easy chaining
+     */
     public UploadStrategySpecification setStrategy(UploadStrategy strategy) {
         this.strategy = strategy;
         return this;
     }
 
+    /**
+     * Sets the upload chunk size
+     * @param chunkSize The chunk size
+     * @return This object, for easy chaining
+     */
     public UploadStrategySpecification setChunkSize(int chunkSize) {
         this.chunkSize = chunkSize;
         return this;
     }
 
+    /**
+     * Sets the policy to use when the max changeset size is exceeded
+     * @param policy The policy
+     * @return This object, for easy chaining
+     */
     public UploadStrategySpecification setPolicy(MaxChangesetSizeExceededPolicy policy) {
         this.policy = policy;
         return this;
     }
 
+    /**
+     * Sets whether to close the changeset after this upload
+     * @param closeChangesetAfterUpload <code>true</code> to close it
+     * @return This object, for easy chaining
+     */
     public UploadStrategySpecification setCloseChangesetAfterUpload(boolean closeChangesetAfterUpload) {
         this.closeChangesetAfterUpload = closeChangesetAfterUpload;
         return this;
     }
 
+    /**
+     * Gets if the changeset should be closed after this upload
+     * @return <code>true</code> to close it
+     */
     public boolean isCloseChangesetAfterUpload() {
         return closeChangesetAfterUpload;
     }
 
+    /**
+     * Gets the number of requests that will be required to upload the objects
+     * @param numObjects The number of objects
+     * @return The number of requests
+     */
     public int getNumRequests(int numObjects) {
         if (numObjects <= 0)
             return 0;

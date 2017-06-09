@@ -33,8 +33,14 @@ import java.awt.Component;
  */
 public interface ProgressMonitor {
 
+    /**
+     * A listener that listens to cancel events on the progress monitor
+     */
     @FunctionalInterface
     interface CancelListener {
+        /**
+         * Called when the operation was canceled
+         */
         void operationCanceled();
     }
 

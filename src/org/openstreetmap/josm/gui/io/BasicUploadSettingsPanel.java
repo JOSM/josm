@@ -38,9 +38,21 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 2599
  */
 public class BasicUploadSettingsPanel extends JPanel {
+    /**
+     * Preference name for history collection
+     */
     public static final String HISTORY_KEY = "upload.comment.history";
+    /**
+     * Preference name for last used upload comment
+     */
     public static final String HISTORY_LAST_USED_KEY = "upload.comment.last-used";
+    /**
+     * Preference name for the max age search comments may have
+     */
     public static final String HISTORY_MAX_AGE_KEY = "upload.comment.max-age";
+    /**
+     * Preference name for the history of source values
+     */
     public static final String SOURCE_HISTORY_KEY = "upload.source.history";
 
     /** the history combo box for the upload comment */

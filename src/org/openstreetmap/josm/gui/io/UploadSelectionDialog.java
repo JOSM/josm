@@ -144,6 +144,10 @@ public class UploadSelectionDialog extends JDialog {
         }
     }
 
+    /**
+     * See if the user pressed the cancel button
+     * @return <code>true</code> if the user canceled the upload
+     */
     public boolean isCanceled() {
         return canceled;
     }
@@ -152,6 +156,10 @@ public class UploadSelectionDialog extends JDialog {
         this.canceled = canceled;
     }
 
+    /**
+     * Gets the list of primitives the user selected
+     * @return The primitives
+     */
     public List<OsmPrimitive> getSelectedPrimitives() {
         List<OsmPrimitive> ret = new ArrayList<>();
         ret.addAll(lstSelectedPrimitives.getOsmPrimitiveListModel().getPrimitives(lstSelectedPrimitives.getSelectedIndices()));

@@ -24,6 +24,9 @@ import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
  * @since 2599
  */
 public class UploadedObjectsSummaryPanel extends JPanel {
+    /**
+     * The swing property name for the number of objects to upload
+     */
     public static final String NUM_OBJECTS_TO_UPLOAD_PROP = UploadedObjectsSummaryPanel.class.getName() + ".numObjectsToUpload";
 
     /** the list with the added primitives */

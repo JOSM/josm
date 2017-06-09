@@ -24,6 +24,9 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTable;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
+/**
+ * An action that zooms to the selected OSM primitive in a table of primitives
+ */
 public class ZoomToAction extends AbstractAction implements LayerChangeListener, ActiveLayerChangeListener, ListSelectionListener {
 
     private final OsmPrimitivesTable table;
@@ -32,6 +35,13 @@ public class ZoomToAction extends AbstractAction implements LayerChangeListener,
     private final String descriptionInactiveLayer;
     private final String descriptionNoSelection;
 
+    /**
+     * Creates a new, generic zoom to action
+     * @param table The table to get the selected element from
+     * @param descriptionNominal The description to display if zooming is possible
+     * @param descriptionInactiveLayer The description to display if zooming is impossible because the layer is not active
+     * @param descriptionNoSelection The description to display if zooming is impossible because the table selection is empty
+     */
     public ZoomToAction(OsmPrimitivesTable table, String descriptionNominal, String descriptionInactiveLayer, String descriptionNoSelection) {
         CheckParameterUtil.ensureParameterNotNull(table);
         this.table = table;
@@ -43,6 +53,10 @@ public class ZoomToAction extends AbstractAction implements LayerChangeListener,
         updateEnabledState();
     }
 
+    /**
+     * Creates a new zoom to action for a {@link MemberTable} using the matching description strings
+     * @param table The table to get the selected element from
+     */
     public ZoomToAction(MemberTable table) {
         this(table,
                 tr("Zoom to the object the first selected member refers to"),
@@ -50,6 +64,10 @@ public class ZoomToAction extends AbstractAction implements LayerChangeListener,
                 tr("Zooming disabled because there is no selected member"));
     }
 
+    /**
+     * Creates a new zoom to action for a {@link RelationMemberTable} using the matching description strings
+     * @param table The table to get the selected element from
+     */
     public ZoomToAction(RelationMemberTable table) {
         this(table,
                 tr("Zoom to the object the first selected member refers to"),
@@ -57,6 +75,10 @@ public class ZoomToAction extends AbstractAction implements LayerChangeListener,
                 tr("Zooming disabled because there is no selected member"));
     }
 
+    /**
+     * Creates a new zoom to action for a {@link NodeListTable} using the matching description strings
+     * @param table The table to get the selected element from
+     */
     public ZoomToAction(NodeListTable table) {
         this(table,
                 tr("Zoom to the first selected node"),
