@@ -5,6 +5,13 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 
+/**
+ * This is an old-style cached preference value.
+ *
+ * You can replace this using the {@link StringProperty#cached()}, {@link BooleanProperty#cached()} accessors
+ *
+ * @param <T> The value type of this property
+ */
 public abstract class CachedProperty<T> extends AbstractProperty<T> implements PreferenceChangedListener {
 
     private final String defaultValueAsString;
