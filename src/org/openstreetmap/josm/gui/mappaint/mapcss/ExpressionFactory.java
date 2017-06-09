@@ -1221,6 +1221,11 @@ public final class ExpressionFactory {
             this.computeMax = computeMax;
         }
 
+        /**
+         * Compute the minimum / maximum over the list
+         * @param lst The list
+         * @return The minimum or maximum depending on {@link #computeMax}
+         */
         public Float aggregateList(List<?> lst) {
             final List<Float> floats = Utils.transform(lst, (Function<Object, Float>) x -> Cascade.convertTo(x, float.class));
             final Collection<Float> nonNullList = SubclassFilteredCollection.filter(floats, Objects::nonNull);
