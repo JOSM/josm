@@ -16,6 +16,9 @@ import org.openstreetmap.josm.data.Bounds;
  */
 public final class GeoUrlToBounds {
 
+    /**
+     * The pattern of a geo: url, having named match groups.
+     */
     public static final Pattern PATTERN = Pattern.compile("geo:(?<lat>[+-]?[0-9.]+),(?<lon>[+-]?[0-9.]+)(\\?z=(?<zoom>[0-9]+))?");
 
     private GeoUrlToBounds() {

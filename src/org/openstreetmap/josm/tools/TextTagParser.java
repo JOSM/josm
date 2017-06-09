@@ -39,6 +39,9 @@ public final class TextTagParser {
         // Hide default constructor for utils classes
     }
 
+    /**
+     * A helper class that analyzes the text and attempts to parse tags from it
+     */
     public static class TextAnalyzer {
         private boolean quotesStarted;
         private boolean esc;
@@ -47,6 +50,10 @@ public final class TextTagParser {
         private final String data;
         private final int n;
 
+        /**
+         * Create a new {@link TextAnalyzer}
+         * @param text The text to parse
+         */
         public TextAnalyzer(String text) {
             pos = 0;
             data = text;
@@ -200,6 +207,11 @@ public final class TextTagParser {
          }
     }
 
+    /**
+     * Gets a list of tags that are in the given text
+     * @param buf The text to parse
+     * @return The tags or <code>null</code> if the tags are not valid
+     */
     public static Map<String, String> getValidatedTagsFromText(String buf) {
         Map<String, String> tags = readTagsFromText(buf);
         return validateTags(tags) ? tags : null;

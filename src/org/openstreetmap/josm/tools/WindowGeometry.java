@@ -219,6 +219,13 @@ public class WindowGeometry {
         this.extent = other.extent;
     }
 
+    /**
+     * Gets the geometry of the main window
+     * @param preferenceKey The preference key to use
+     * @param arg The command line geometry arguments
+     * @param maximize If the user requested to maximize the window
+     * @return The geometry for the main window
+     */
     public static WindowGeometry mainWindow(String preferenceKey, String arg, boolean maximize) {
         Rectangle screenDimension = getScreenInfo("gui.geometry");
         if (arg != null) {
