@@ -76,8 +76,15 @@ public final class MapPaintStyles {
      * style cascade.
      */
     public static class TagKeyReference {
+        /**
+         * The tag name
+         */
         public final String key;
 
+        /**
+         * Create a new {@link TagKeyReference}
+         * @param key The tag name
+         */
         public TagKeyReference(String key) {
             this.key = key;
         }
@@ -95,9 +102,20 @@ public final class MapPaintStyles {
      */
     public static class IconReference {
 
+        /**
+         * The name of the icon
+         */
         public final String iconName;
+        /**
+         * The style source this reference occurred in
+         */
         public final StyleSource source;
 
+        /**
+         * Create a new {@link IconReference}
+         * @param iconName The icon name
+         * @param source The current style source
+         */
         public IconReference(String iconName, StyleSource source) {
             this.iconName = iconName;
             this.source = source;
@@ -181,6 +199,11 @@ public final class MapPaintStyles {
                 .setOptional(true).get();
     }
 
+    /**
+     * Returns the node icon that would be displayed for the given tag.
+     * @param tag The tag to look an icon for
+     * @return {@code null} if no icon found
+     */
     public static ImageIcon getNodeIcon(Tag tag) {
         return getNodeIcon(tag, true);
     }
@@ -224,6 +247,11 @@ public final class MapPaintStyles {
         return null;
     }
 
+    /**
+     * Gets the directories that should be searched for icons
+     * @param source The style source the icon is from
+     * @return A list of directory names
+     */
     public static List<String> getIconSourceDirs(StyleSource source) {
         List<String> dirs = new LinkedList<>();
 
@@ -322,10 +350,17 @@ public final class MapPaintStyles {
         Main.worker.submit(new MapPaintStyleLoader(toReload));
     }
 
+    /**
+     * This class loads the map paint styles
+     */
     public static class MapPaintStyleLoader extends PleaseWaitRunnable {
         private boolean canceled;
         private final Collection<StyleSource> sources;
 
+        /**
+         * Create a new {@link MapPaintStyleLoader}
+         * @param sources The styles to load
+         */
         public MapPaintStyleLoader(Collection<StyleSource> sources) {
             super(tr("Reloading style sources"));
             this.sources = sources;
@@ -395,6 +430,12 @@ public final class MapPaintStyles {
         });
     }
 
+    /**
+     * Check if the styles can be moved
+     * @param sel The indexes of the selected styles
+     * @param i The number of places to move the styles
+     * @return <code>true</code> if that movement is possible
+     */
     public static boolean canMoveStyles(int[] sel, int i) {
         if (sel.length == 0)
             return false;
@@ -409,6 +450,10 @@ public final class MapPaintStyles {
             return true;
     }
 
+    /**
+     * Toggles the active state of several styles
+     * @param sel The style indexes
+     */
     public static void toggleStyleActive(int... sel) {
         List<StyleSource> data = styles.getStyleSources();
         for (int p : sel) {
@@ -490,10 +535,17 @@ public final class MapPaintStyles {
         listeners.removeListener(listener);
     }
 
+    /**
+     * Notifies all listeners that there was any update to the map paint styles
+     */
     public static void fireMapPaintSylesUpdated() {
         listeners.fireEvent(MapPaintSylesUpdateListener::mapPaintStylesUpdated);
     }
 
+    /**
+     * Notifies all listeners that there was an update to a specific map paint style
+     * @param index The style index
+     */
     public static void fireMapPaintStyleEntryUpdated(int index) {
         listeners.fireEvent(l -> l.mapPaintStyleEntryUpdated(index));
     }

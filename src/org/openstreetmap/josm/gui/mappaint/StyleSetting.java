@@ -33,8 +33,16 @@ import org.openstreetmap.josm.Main;
  */
 public interface StyleSetting {
 
+    /**
+     * Adds the menu entry for this style setting to the menu
+     * @param menu The menu to add the setting to
+     */
     void addMenuEntry(JMenu menu);
 
+    /**
+     * gets the value for this setting
+     * @return The value the user selected
+     */
     Object getValue();
 
     /**

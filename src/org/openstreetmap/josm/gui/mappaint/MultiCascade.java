@@ -16,6 +16,9 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class MultiCascade implements StyleKeys {
 
     private final Map<String, Cascade> layers;
+    /**
+     * The scale range this cascade is valid for
+     */
     public Range range;
 
     /**
@@ -73,10 +76,19 @@ public class MultiCascade implements StyleKeys {
         return c;
     }
 
+    /**
+     * Gets all cascades for the known layers
+     * @return The cascades for the layers
+     */
     public Collection<Entry<String, Cascade>> getLayers() {
         return layers.entrySet();
     }
 
+    /**
+     * Check whether this cascade has a given layer
+     * @param layer The layer to check for
+     * @return <code>true</code> if it has that layer
+     */
     public boolean hasLayer(String layer) {
         return layers.containsKey(layer);
     }

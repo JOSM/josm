@@ -11,8 +11,16 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
  */
 @FunctionalInterface
 public interface Subpart {
+    /**
+     * Gets the ID of the suppart
+     * @param env The environment to get it from
+     * @return The id
+     */
     String getId(Environment env);
 
+    /**
+     * The default subpart for normal rules
+     */
     Subpart DEFAULT_SUBPART = new StringSubpart("default");
 
     /**

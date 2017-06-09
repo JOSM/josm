@@ -12,6 +12,9 @@ public class Range {
     private final double lower;
     private final double upper;
 
+    /**
+     * The full scale range from zero to infinity
+     */
     public static final Range ZERO_TO_INFINITY = new Range(0.0, Double.POSITIVE_INFINITY);
 
     /**
@@ -27,6 +30,11 @@ public class Range {
         this.upper = upper;
     }
 
+    /**
+     * Check if a number is contained in this range
+     * @param x The number to test
+     * @return <code>true</code> if it is in this range
+     */
     public boolean contains(double x) {
         return lower < x && x <= upper;
     }
@@ -75,10 +83,18 @@ public class Range {
         return this;
     }
 
+    /**
+     * Gets the lower bound
+     * @return The lower, exclusive, bound
+     */
     public double getLower() {
         return lower;
     }
 
+    /**
+     * Gets the upper bound
+     * @return The upper, inclusive, bound
+     */
     public double getUpper() {
         return upper;
     }

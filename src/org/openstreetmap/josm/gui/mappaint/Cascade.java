@@ -41,6 +41,15 @@ public final class Cascade {
         this.prop = new HashMap<>(other.prop);
     }
 
+    /**
+     * Gets the value for a given key with the given type
+     * @param <T> the expected type
+     * @param key the key
+     * @param def default value, can be null
+     * @param klass the same as T
+     * @return if a value that can be converted to class klass has been mapped to key, returns this
+     *      value, def otherwise
+     */
     public <T> T get(String key, T def, Class<T> klass) {
         return get(key, def, klass, false);
     }
@@ -53,7 +62,7 @@ public final class Cascade {
      * @param klass the same as T
      * @param suppressWarnings show or don't show a warning when some value is
      *      found, but cannot be converted to the requested type
-     * @return if a value with class klass has been mapped to key, returns this
+     * @return if a value that can be converted to class klass has been mapped to key, returns this
      *      value, def otherwise
      */
     public <T> T get(String key, T def, Class<T> klass, boolean suppressWarnings) {
@@ -72,14 +81,29 @@ public final class Cascade {
             return res;
     }
 
+    /**
+     * Gets a property for the given key (like stroke, ...)
+     * @param key The key of the property
+     * @return The value or <code>null</code> if it is not set. May be of any type
+     */
     public Object get(String key) {
         return prop.get(key);
     }
 
+    /**
+     * Sets the property for the given key
+     * @param key The key
+     * @param val The value
+     */
     public void put(String key, Object val) {
         prop.put(key, val);
     }
 
+    /**
+     * Sets the property for the given key, removes it if the value is <code>null</code>
+     * @param key The key
+     * @param val The value, may be <code>null</code>
+     */
     public void putOrClear(String key, Object val) {
         if (val != null) {
             prop.put(key, val);
@@ -88,10 +112,23 @@ public final class Cascade {
         }
     }
 
+    /**
+     * Removes the property with the given key
+     * @param key The key
+     */
     public void remove(String key) {
         prop.remove(key);
     }
 
+    /**
+     * Converts an object to a given other class.
+     *
+     * Only conversions that are useful for MapCSS are supported
+     * @param <T> The class type
+     * @param o The object to convert
+     * @param klass The class
+     * @return The converted object or <code>null</code> if the conversion failed
+     */
     @SuppressWarnings("unchecked")
     public static <T> T convertTo(Object o, Class<T> klass) {
         if (o == null)
@@ -234,14 +271,27 @@ public final class Cascade {
         return res.append('}').toString();
     }
 
+    /**
+     * Checks if this cascade has a value for given key
+     * @param key The key to check
+     * @return <code>true</code> if there is a value
+     */
     public boolean containsKey(String key) {
         return prop.containsKey(key);
     }
 
+    /**
+     * Get if the default selection drawing should be used for the object this cascade applies to
+     * @return <code>true</code> to use the default selection drawing
+     */
     public boolean isDefaultSelectedHandling() {
         return defaultSelectedHandling;
     }
 
+    /**
+     * Set that the default selection drawing should be used for the object this cascade applies to
+     * @param defaultSelectedHandling <code>true</code> to use the default selection drawing
+     */
     public void setDefaultSelectedHandling(boolean defaultSelectedHandling) {
         this.defaultSelectedHandling = defaultSelectedHandling;
     }

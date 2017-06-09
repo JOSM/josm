@@ -23,14 +23,27 @@ public class StyleElementList implements Iterable<StyleElement> {
         lst = new ArrayList<>();
     }
 
+    /**
+     * Create a new List of style elements
+     * @param init The list
+     */
     public StyleElementList(StyleElement... init) {
         lst = new ArrayList<>(Arrays.asList(init));
     }
 
+    /**
+     * Create a new List of style elements
+     * @param sl The list
+     */
     public StyleElementList(Collection<StyleElement> sl) {
         lst = new ArrayList<>(sl);
     }
 
+    /**
+     * Create a new List of style elements
+     * @param sl The list
+     * @param s An item to merge to the list
+     */
     public StyleElementList(StyleElementList sl, StyleElement s) {
         lst = new ArrayList<>(sl.lst);
         lst.add(s);
@@ -41,10 +54,18 @@ public class StyleElementList implements Iterable<StyleElement> {
         return lst.iterator();
     }
 
+    /**
+     * Check if the list is empty
+     * @return <code>true</code> if it is empty
+     */
     public boolean isEmpty() {
         return lst.isEmpty();
     }
 
+    /**
+     * Get the list size
+     * @return The list size
+     */
     public int size() {
         return lst.size();
     }
