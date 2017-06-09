@@ -480,6 +480,11 @@ public class Preferences {
         return getSetting(key, new StringSetting(def), StringSetting.class).getValue();
     }
 
+    /**
+     * Gets all normal (string) settings that have a key starting with the prefix
+     * @param prefix The start of the key
+     * @return The key names of the settings
+     */
     public synchronized Map<String, String> getAllPrefix(final String prefix) {
         final Map<String, String> all = new TreeMap<>();
         for (final Entry<String, Setting<?>> e : settingsMap.entrySet()) {
@@ -490,6 +495,11 @@ public class Preferences {
         return all;
     }
 
+    /**
+     * Gets all list settings that have a key starting with the prefix
+     * @param prefix The start of the key
+     * @return The key names of the list settings
+     */
     public synchronized List<String> getAllPrefixCollectionKeys(final String prefix) {
         final List<String> all = new LinkedList<>();
         for (Map.Entry<String, Setting<?>> entry : settingsMap.entrySet()) {
@@ -500,6 +510,10 @@ public class Preferences {
         return all;
     }
 
+    /**
+     * Gets all known colors (preferences starting with the color prefix)
+     * @return All colors
+     */
     public synchronized Map<String, String> getAllColors() {
         final Map<String, String> all = new TreeMap<>();
         for (final Entry<String, Setting<?>> e : defaultsMap.entrySet()) {
@@ -518,15 +532,35 @@ public class Preferences {
         return all;
     }
 
+    /**
+     * Gets a boolean preference
+     * @param key The preference key
+     * @return The boolean or <code>false</code> if it could not be parsed
+     * @see IntegerProperty#get()
+     */
     public synchronized boolean getBoolean(final String key) {
         String s = get(key, null);
         return s != null && Boolean.parseBoolean(s);
     }
 
+    /**
+     * Gets a boolean preference
+     * @param key The preference key
+     * @param def The default value to use
+     * @return The boolean, <code>false</code> if it could not be parsed, the default value if it is unset
+     * @see IntegerProperty#get()
+     */
     public synchronized boolean getBoolean(final String key, final boolean def) {
         return Boolean.parseBoolean(get(key, Boolean.toString(def)));
     }
 
+    /**
+     * Gets an boolean that may be specialized
+     * @param key The basic key
+     * @param specName The sub-key to append to the key
+     * @param def The default value
+     * @return The boolean value or the default value if it could not be parsed
+     */
     public synchronized boolean getBoolean(final String key, final String specName, final boolean def) {
         boolean generic = getBoolean(key, def);
         String skey = key+'.'+specName;
@@ -563,7 +597,7 @@ public class Preferences {
      * @param key the unique identifier for the setting
      * @param value The new value
      * @return {@code true}, if something has changed (i.e. value is different than before)
-     * @see IntegerProperty
+     * @see IntegerProperty#put(Integer)
      */
     public boolean putInteger(final String key, final Integer value) {
         return put(key, Integer.toString(value));
@@ -574,7 +608,7 @@ public class Preferences {
      * @param key the unique identifier for the setting
      * @param value The new value
      * @return {@code true}, if something has changed (i.e. value is different than before)
-     * @see DoubleProperty
+     * @see DoubleProperty#put(Double)
      */
     public boolean putDouble(final String key, final Double value) {
         return put(key, Double.toString(value));
@@ -585,7 +619,7 @@ public class Preferences {
      * @param key the unique identifier for the setting
      * @param value The new value
      * @return {@code true}, if something has changed (i.e. value is different than before)
-     * @see LongProperty
+     * @see LongProperty#put(Long)
      */
     public boolean putLong(final String key, final Long value) {
         return put(key, Long.toString(value));
@@ -599,6 +633,10 @@ public class Preferences {
         save(getPreferenceFile(), settingsMap.entrySet().stream().filter(NO_DEFAULT_SETTINGS_ENTRY), false);
     }
 
+    /**
+     * Stores the defaults to the defaults file
+     * @throws IOException If the file could not be saved
+     */
     public synchronized void saveDefaults() throws IOException {
         save(getDefaultsCacheFile(), defaultsMap.entrySet().stream(), true);
     }
@@ -889,16 +927,35 @@ public class Preferences {
         }
     }
 
+    /**
+     * Gets the default color that was registered with the preference
+     * @param colKey The color name
+     * @return The color
+     */
     public synchronized Color getDefaultColor(String colKey) {
         StringSetting col = Utils.cast(defaultsMap.get(COLOR_PREFIX+colKey), StringSetting.class);
         String colStr = col == null ? null : col.getValue();
         return colStr == null || colStr.isEmpty() ? null : ColorHelper.html2color(colStr);
     }
 
+    /**
+     * Stores a color
+     * @param colKey The color name
+     * @param val The color
+     * @return true if the setting was modified
+     * @see ColorProperty#put(Color)
+     */
     public synchronized boolean putColor(String colKey, Color val) {
         return put(COLOR_PREFIX+colKey, val != null ? ColorHelper.color2html(val, true) : null);
     }
 
+    /**
+     * Gets an integer preference
+     * @param key The preference key
+     * @param def The default value to use
+     * @return The integer
+     * @see IntegerProperty#get()
+     */
     public synchronized int getInteger(String key, int def) {
         String v = get(key, Integer.toString(def));
         if (v.isEmpty())
@@ -913,6 +970,13 @@ public class Preferences {
         return def;
     }
 
+    /**
+     * Gets an integer that may be specialized
+     * @param key The basic key
+     * @param specName The sub-key to append to the key
+     * @param def The default value
+     * @return The integer value or the default value if it could not be parsed
+     */
     public synchronized int getInteger(String key, String specName, int def) {
         String v = get(key+'.'+specName);
         if (v.isEmpty())
@@ -929,6 +993,13 @@ public class Preferences {
         return def;
     }
 
+    /**
+     * Gets a long preference
+     * @param key The preference key
+     * @param def The default value to use
+     * @return The long value or the default value if it could not be parsed
+     * @see LongProperty#get()
+     */
     public synchronized long getLong(String key, long def) {
         String v = get(key, Long.toString(def));
         if (null == v)
@@ -943,6 +1014,13 @@ public class Preferences {
         return def;
     }
 
+    /**
+     * Gets a double preference
+     * @param key The preference key
+     * @param def The default value to use
+     * @return The double value or the default value if it could not be parsed
+     * @see LongProperty#get()
+     */
     public synchronized double getDouble(String key, double def) {
         String v = get(key, Double.toString(def));
         if (null == v)
@@ -977,6 +1055,12 @@ public class Preferences {
         return val == null ? Collections.<String>emptyList() : val;
     }
 
+    /**
+     * Removes a value from a given String collection
+     * @param key The preference key the collection is stored with
+     * @param value The value that should be removed in the collection
+     * @see #getCollection(String)
+     */
     public synchronized void removeFromCollection(String key, String value) {
         List<String> a = new ArrayList<>(getCollection(key, Collections.<String>emptyList()));
         a.remove(value);
@@ -1023,6 +1107,12 @@ public class Preferences {
         return true;
     }
 
+    /**
+     * Get a setting of any type
+     * @param key The key for the setting
+     * @param def The default value to use if it was not found
+     * @return The setting
+     */
     public synchronized Setting<?> getSetting(String key, Setting<?> def) {
         return getSetting(key, def, Setting.class);
     }
@@ -1099,6 +1189,11 @@ public class Preferences {
         return (Collection) val.getValue();
     }
 
+    /**
+     * Gets a collection of string collections for the given key
+     * @param key The key
+     * @return The collection of string collections or an empty collection as default
+     */
     public Collection<Collection<String>> getArray(String key) {
         Collection<Collection<String>> res = getArray(key, null);
         return res == null ? Collections.<Collection<String>>emptyList() : res;
@@ -1114,10 +1209,23 @@ public class Preferences {
         return putSetting(key, value == null ? null : ListListSetting.create(value));
     }
 
+    /**
+     * Gets a collection of key->value maps.
+     * @param key The key to search at
+     * @param def The default value to use
+     * @return The stored value or the default one if it could not be parsed
+     */
     public Collection<Map<String, String>> getListOfStructs(String key, Collection<Map<String, String>> def) {
         return getSetting(key, new MapListSetting(def == null ? null : new ArrayList<>(def)), MapListSetting.class).getValue();
     }
 
+    /**
+     * Stores a list of structs
+     * @param key The key to store the list in
+     * @param value A list of key->value maps
+     * @return <code>true</code> if the value was changed
+     * @see #getListOfStructs(String, Collection)
+     */
     public boolean putListOfStructs(String key, Collection<Map<String, String>> value) {
         return putSetting(key, value == null ? null : new MapListSetting(new ArrayList<>(value)));
     }
@@ -1395,10 +1503,18 @@ public class Preferences {
         return struct;
     }
 
+    /**
+     * Gets a map of all settings that are currently stored
+     * @return The settings
+     */
     public Map<String, Setting<?>> getAllSettings() {
         return new TreeMap<>(settingsMap);
     }
 
+    /**
+     * Gets a map of all currently known defaults
+     * @return The map (key->setting)
+     */
     public Map<String, Setting<?>> getAllDefaults() {
         return new TreeMap<>(defaultsMap);
     }

@@ -72,12 +72,29 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     private static final String AUTOSAVE_DIR = "autosave";
     private static final String DELETED_LAYERS_DIR = "autosave/deleted_layers";
 
+    /**
+     * If autosave is enabled
+     */
     public static final BooleanProperty PROP_AUTOSAVE_ENABLED = new BooleanProperty("autosave.enabled", true);
+    /**
+     * The number of files to store per layer
+     */
     public static final IntegerProperty PROP_FILES_PER_LAYER = new IntegerProperty("autosave.filesPerLayer", 1);
+    /**
+     * How many deleted layers should be stored
+     */
     public static final IntegerProperty PROP_DELETED_LAYERS = new IntegerProperty("autosave.deletedLayersBackupCount", 5);
+    /**
+     * The autosave interval, in seconds
+     */
     public static final IntegerProperty PROP_INTERVAL = new IntegerProperty("autosave.interval", (int) TimeUnit.MINUTES.toSeconds(5));
+    /**
+     * The maximum number of autosave files to store
+     */
     public static final IntegerProperty PROP_INDEX_LIMIT = new IntegerProperty("autosave.index-limit", 1000);
-    /** Defines if a notification should be displayed after each autosave */
+    /**
+     * Defines if a notification should be displayed after each autosave
+     */
     public static final BooleanProperty PROP_NOTIFICATION = new BooleanProperty("autosave.notification", false);
 
     protected static final class AutosaveLayerInfo {

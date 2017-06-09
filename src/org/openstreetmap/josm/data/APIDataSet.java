@@ -181,6 +181,10 @@ public class APIDataSet {
         return toAdd.size() + toUpdate.size() + toDelete.size();
     }
 
+    /**
+     * Removes the given primitives from this {@link APIDataSet}
+     * @param processed The primitives to remove
+     */
     public void removeProcessed(Collection<IPrimitive> processed) {
         if (processed == null) return;
         toAdd.removeAll(processed);
