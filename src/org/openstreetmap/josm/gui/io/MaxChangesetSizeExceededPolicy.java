@@ -1,6 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.io;
 
+/**
+ * This determines what to do when the max changeset size was exceeded by a upload.
+ */
 public enum MaxChangesetSizeExceededPolicy {
     /**
      * Abort uploading. Send the user back to map editing.
