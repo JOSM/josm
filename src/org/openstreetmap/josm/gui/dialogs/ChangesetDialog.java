@@ -42,6 +42,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
+import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetInSelectionListModel;
@@ -112,8 +113,7 @@ public class ChangesetDialog extends ToggleDialog {
     protected void registerAsListener() {
         // let the model for changesets in the current selection listen to various events
         ChangesetCache.getInstance().addChangesetCacheListener(inSelectionModel);
-        Main.getLayerManager().addActiveLayerChangeListener(inSelectionModel);
-        DataSet.addSelectionListener(inSelectionModel);
+        SelectionEventManager.getInstance().addSelectionListener(inSelectionModel);
 
         // let the model for changesets in the current layer listen to various
         // events and bootstrap it's content
@@ -139,9 +139,8 @@ public class ChangesetDialog extends ToggleDialog {
 
         // remove the list model for the changesets in the current selection as
         // listener
-        //
-        Main.getLayerManager().removeActiveLayerChangeListener(inSelectionModel);
-        DataSet.removeSelectionListener(inSelectionModel);
+        SelectionEventManager.getInstance().removeSelectionListener(inSelectionModel);
+        ChangesetCache.getInstance().removeChangesetCacheListener(inSelectionModel);
     }
 
     @Override
