@@ -324,4 +324,18 @@ public class FilterMatcher {
         return test(disabledFilters, primitive, false);
     }
 
+    /**
+     * Returns a new {@code FilterMatcher} containing the given filters.
+     * @param filters filters to add to the resulting filter matcher
+     * @return a new {@code FilterMatcher} containing the given filters
+     * @throws ParseError if the search expression in a filter cannot be parsed
+     * @since 12383
+     */
+    public static FilterMatcher of(Filter... filters) throws ParseError {
+        FilterMatcher result = new FilterMatcher();
+        for (Filter filter : filters) {
+            result.add(filter);
+        }
+        return result;
+    }
 }
