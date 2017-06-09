@@ -37,6 +37,9 @@ public abstract class StyleSource extends SourceEntry {
 
     private final List<Throwable> errors = new CopyOnWriteArrayList<>();
     private final Set<String> warnings = new CopyOnWriteArraySet<>();
+    /**
+     * The zip file containing the icons for this style
+     */
     public File zipIcons;
 
     /** image provider returning the icon for this style */
@@ -244,6 +247,10 @@ public abstract class StyleSource extends SourceEntry {
                 n, n);
     }
 
+    /**
+     * Gets the background color that was set in this style
+     * @return The color or <code>null</code> if it was not set
+     */
     public Color getBackgroundColorOverride() {
         return null;
     }

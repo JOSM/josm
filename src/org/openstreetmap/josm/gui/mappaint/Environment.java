@@ -14,12 +14,28 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  */
 public class Environment {
 
+    /**
+     * The primitive that is currently evaluated
+     */
     public OsmPrimitive osm;
 
+    /**
+     * The cascades that are currently evaluated
+     */
     public MultiCascade mc;
+    /**
+     * The current MapCSS layer
+     */
     public String layer;
+    /**
+     * The style source that is evaluated
+     */
     public StyleSource source;
     private Context context = Context.PRIMITIVE;
+
+    /**
+     * The name of the default layer. It is used if no layer is specified in the MapCSS rule
+     */
     public static final String DEFAULT_LAYER = "default";
 
     /**
@@ -227,6 +243,10 @@ public class Environment {
         return context == null ? Context.PRIMITIVE : context;
     }
 
+    /**
+     * Gets the role of the matching primitive in the relation
+     * @return The role
+     */
     public String getRole() {
         if (getContext().equals(Context.PRIMITIVE))
             return null;
@@ -238,6 +258,9 @@ public class Environment {
         return null;
     }
 
+    /**
+     * Clears all matching context information
+     */
     public void clearSelectorMatchingInformation() {
         parent = null;
         child = null;
@@ -245,6 +268,11 @@ public class Environment {
         count = null;
     }
 
+    /**
+     * Gets the current cascade for a given layer
+     * @param layer The layer to use, <code>null</code> to use the layer of the {@link Environment}
+     * @return The cascade
+     */
     public Cascade getCascade(String layer) {
         return mc == null ? null : mc.getCascade(layer == null ? this.layer : layer);
     }

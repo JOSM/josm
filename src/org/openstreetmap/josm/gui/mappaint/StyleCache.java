@@ -17,6 +17,9 @@ public final class StyleCache {
     // TODO: clean up the intern pool from time to time (after purge or layer removal)
     private static final Storage<StyleCache> internPool = new Storage<>();
 
+    /**
+     * An empty style cache entry
+     */
     public static final StyleCache EMPTY_STYLECACHE = (new StyleCache()).intern();
 
     private static final int PLAIN = 0;
