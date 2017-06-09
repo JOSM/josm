@@ -332,7 +332,7 @@ public class PushbackTokenizer {
                 return new Range(0, Math.abs(currentNumber));
             }
         } else if (isRange && currentRange == null) {
-            return new Range(currentNumber, Integer.MAX_VALUE);
+            return new Range(currentNumber, Long.MAX_VALUE);
         } else if (currentNumber != null && currentRange != null) {
             return new Range(currentNumber, currentRange);
         } else {
