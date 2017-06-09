@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.osm.FilterMatcher;
 import org.openstreetmap.josm.data.osm.FilterWorker;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -145,7 +146,10 @@ public class FilterTableModel extends AbstractTableModel {
         }
 
         if (changed && Main.isDisplayingMapView()) {
-            Main.map.mapView.repaint();
+            OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
+            if (editLayer != null) {
+                editLayer.invalidate();
+            }
             Main.map.filterDialog.updateDialogHeader();
         }
     }
