@@ -13,21 +13,39 @@ import java.util.Objects;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 
+/**
+ * This class is used to parse a search string and split it into tokens.
+ * It provides methods to parse numbers and extract strings.
+ */
 public class PushbackTokenizer {
 
+    /**
+     * A range of long numbers. Immutable
+     */
     public static class Range {
         private final long start;
         private final long end;
 
+        /**
+         * Create a new range
+         * @param start The start
+         * @param end The end (inclusive)
+         */
         public Range(long start, long end) {
             this.start = start;
             this.end = end;
         }
 
+        /**
+         * @return The start
+         */
         public long getStart() {
             return start;
         }
 
+        /**
+         * @return The end (inclusive)
+         */
         public long getEnd() {
             return end;
         }
@@ -47,23 +65,66 @@ public class PushbackTokenizer {
     private int c;
     private boolean isRange;
 
+    /**
+     * Creates a new {@link PushbackTokenizer}
+     * @param search The search string reader to read the tokens from
+     */
     public PushbackTokenizer(Reader search) {
         this.search = search;
         getChar();
     }
 
+    /**
+     * The token types that may be read
+     */
     public enum Token {
+        /**
+         * Not token (-)
+         */
         NOT(marktr("<not>")),
+        /**
+         * Or token (or) (|)
+         */
         OR(marktr("<or>")),
+        /**
+         * Xor token (xor) (^)
+         */
         XOR(marktr("<xor>")),
+        /**
+         * opening parentheses token (
+         */
         LEFT_PARENT(marktr("<left parent>")),
+        /**
+         * closing parentheses token )
+         */
         RIGHT_PARENT(marktr("<right parent>")),
+        /**
+         * Colon :
+         */
         COLON(marktr("<colon>")),
+        /**
+         * The equals sign (=)
+         */
         EQUALS(marktr("<equals>")),
+        /**
+         * A text
+         */
         KEY(marktr("<key>")),
+        /**
+         * A question mark (?)
+         */
         QUESTION_MARK(marktr("<question mark>")),
+        /**
+         * Marks the end of the input
+         */
         EOF(marktr("<end-of-file>")),
+        /**
+         * Less than sign (<)
+         */
         LESS_THAN("<less-than>"),
+        /**
+         * Greater than sign (>)
+         */
         GREATER_THAN("<greater-than>");
 
         Token(String name) {
@@ -209,6 +270,11 @@ public class PushbackTokenizer {
         }
     }
 
+    /**
+     * Reads the next token if it is equal to the given, suggested token
+     * @param token The token the next one should be equal to
+     * @return <code>true</code> if it has been read
+     */
     public boolean readIfEqual(Token token) {
         Token nextTok = nextToken();
         if (Objects.equals(nextTok, token))
@@ -217,6 +283,10 @@ public class PushbackTokenizer {
         return false;
     }
 
+    /**
+     * Reads the next token. If it is a text, return that text. If not, advance
+     * @return the text or <code>null</code> if the reader was advanced
+     */
     public String readTextOrNumber() {
         Token nextTok = nextToken();
         if (nextTok == Token.KEY)
@@ -225,6 +295,12 @@ public class PushbackTokenizer {
         return null;
     }
 
+    /**
+     * Reads a number
+     * @param errorMessage The error if the number cannot be read
+     * @return The number that was found
+     * @throws ParseError if there is no number
+     */
     public long readNumber(String errorMessage) throws ParseError {
         if ((nextToken() == Token.KEY) && (currentNumber != null))
             return currentNumber;
@@ -232,10 +308,20 @@ public class PushbackTokenizer {
             throw new ParseError(errorMessage);
     }
 
+    /**
+     * Gets the last number that was read
+     * @return The last number
+     */
     public long getReadNumber() {
         return (currentNumber != null) ? currentNumber : 0;
     }
 
+    /**
+     * Reads a range of numbers
+     * @param errorMessage The error if the input is malformed
+     * @return The range that was found
+     * @throws ParseError If the input is not as expected for a range
+     */
     public Range readRange(String errorMessage) throws ParseError {
         if (nextToken() != Token.KEY || (currentNumber == null && currentRange == null)) {
             throw new ParseError(errorMessage);
@@ -254,6 +340,10 @@ public class PushbackTokenizer {
         }
     }
 
+    /**
+     * Gets the last text that was found
+     * @return The text
+     */
     public String getText() {
         return currentText;
     }
