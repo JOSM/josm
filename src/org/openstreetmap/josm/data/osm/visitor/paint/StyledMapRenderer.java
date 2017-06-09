@@ -912,6 +912,12 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
+    /**
+     * Draw a turn restriction
+     * @param r The turn restriction relation
+     * @param icon The icon to draw at the turn point
+     * @param disabled draw using disabled style
+     */
     public void drawRestriction(Relation r, MapImage icon, boolean disabled) {
         Way fromWay = null;
         Way toWay = null;
@@ -1524,10 +1530,18 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         return isInactiveMode;
     }
 
+    /**
+     * Check if icons should be rendered
+     * @return <code>true</code> to display icons
+     */
     public boolean isShowIcons() {
         return showIcons;
     }
 
+    /**
+     * Test if names should be rendered
+     * @return <code>true</code> to display names
+     */
     public boolean isShowNames() {
         return showNames;
     }
