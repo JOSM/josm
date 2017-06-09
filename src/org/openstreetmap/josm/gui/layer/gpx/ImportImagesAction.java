@@ -23,9 +23,16 @@ import org.openstreetmap.josm.io.JpgImporter;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * An aciton that imports images along a GPX path
+ */
 public class ImportImagesAction extends AbstractAction {
     private final transient GpxLayer layer;
 
+    /**
+     * Create a new {@link ImportImagesAction}
+     * @param layer The layer this action should be for
+     */
     public ImportImagesAction(final GpxLayer layer) {
         super(tr("Import images"), ImageProvider.get("dialogs/geoimage"));
         this.layer = layer;

@@ -26,14 +26,25 @@ import org.openstreetmap.josm.gui.preferences.display.GPXSettingsPanel;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * An action that is displayed in the popup menu for the layer to change the drawing of the GPX layer
+ */
 public class CustomizeDrawingAction extends AbstractAction implements LayerAction, MultiLayerAction {
     private transient List<Layer> layers;
 
+    /**
+     * Create a new {@link CustomizeDrawingAction}
+     * @param l The layers that should be customized
+     */
     public CustomizeDrawingAction(List<Layer> l) {
         this();
         layers = l;
     }
 
+    /**
+     * Create a new {@link CustomizeDrawingAction}
+     * @param l The layer that should be customized
+     */
     public CustomizeDrawingAction(Layer l) {
         this();
         layers = new LinkedList<>();
