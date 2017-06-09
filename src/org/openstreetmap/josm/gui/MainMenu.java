@@ -92,7 +92,6 @@ import org.openstreetmap.josm.actions.SessionSaveAsAction;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.actions.SimplifyWayAction;
 import org.openstreetmap.josm.actions.SplitWayAction;
-import org.openstreetmap.josm.actions.ToggleGPXLinesAction;
 import org.openstreetmap.josm.actions.UnGlueAction;
 import org.openstreetmap.josm.actions.UnJoinNodeWayAction;
 import org.openstreetmap.josm.actions.UndoAction;
@@ -220,7 +219,6 @@ public class MainMenu extends JMenuBar {
     /* View menu */
     /** View / Wireframe View */
     public final WireframeToggleAction wireFrameToggleAction = new WireframeToggleAction();
-    public final JosmAction toggleGPXLines = new ToggleGPXLinesAction();
     /** View / Advanced info */
     public final InfoAction info = new InfoAction();
     /** View / Advanced info (web) */
