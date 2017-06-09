@@ -202,7 +202,30 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
      * Different color modes
      */
     public enum ColorMode {
-        NONE, VELOCITY, HDOP, DIRECTION, TIME, HEATMAP;
+        /**
+         * No special colors
+         */
+        NONE,
+        /**
+         * Color by velocity
+         */
+        VELOCITY,
+        /**
+         * Color by accuracy
+         */
+        HDOP,
+        /**
+         * Color by traveling direction
+         */
+        DIRECTION,
+        /**
+         * Color by time
+         */
+        TIME,
+        /**
+         * Color using a heatmap instead of normal lines
+         */
+        HEATMAP;
 
         static ColorMode fromIndex(final int index) {
             return values()[index];

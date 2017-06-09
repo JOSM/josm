@@ -23,6 +23,11 @@ public final class ColorScale {
 
     }
 
+    /**
+     * Gets a HSB color range.
+     * @param count The number of colors the scale should have
+     * @return The scale
+     */
     public static ColorScale createHSBScale(int count) {
         ColorScale sc = new ColorScale();
         sc.colors = new Color[count];
@@ -34,6 +39,11 @@ public final class ColorScale {
         return sc;
     }
 
+    /**
+     * Creates a cyclic color scale (red  yellow  green   blue    red)
+     * @param count The number of colors the scale should have
+     * @return The scale
+     */
     public static ColorScale createCyclicScale(int count) {
         ColorScale sc = new ColorScale();
         // CHECKSTYLE.OFF: SingleSpaceSeparator
@@ -75,6 +85,11 @@ public final class ColorScale {
             return 2*(1-x)*(1-x);
     }
 
+    /**
+     * Sets the hint on the range this scale is for
+     * @param min The minimum value
+     * @param max The maximum value
+     */
     public void setRange(double min, double max) {
         this.min = min;
         this.max = max;
@@ -88,6 +103,11 @@ public final class ColorScale {
         belowMinColor = colors[0];
     }
 
+    /**
+     * Gets a color for the given value.
+     * @param value The value
+     * @return The color for this value, this may be a special color if the value is outside the range but never null.
+     */
     public Color getColor(double value) {
         if (value < min) return belowMinColor;
         if (value > max) return aboveMaxColor;
@@ -101,18 +121,36 @@ public final class ColorScale {
         }
     }
 
+    /**
+     * Gets a color for the given value.
+     * @param value The value, may be <code>null</code>
+     * @return The color for this value, this may be a special color if the value is outside the range or the value is null but never null.
+     */
     public Color getColor(Number value) {
         return (value == null) ? noDataColor : getColor(value.doubleValue());
     }
 
+    /**
+     * Get the color to use if there is no data
+     * @return The color
+     */
     public Color getNoDataColor() {
         return noDataColor;
     }
 
+    /**
+     * Sets the color to use if there is no data
+     * @param noDataColor The color
+     */
     public void setNoDataColor(Color noDataColor) {
         this.noDataColor = noDataColor;
     }
 
+    /**
+     * Make all colors transparent
+     * @param alpha The alpha value all colors in the range should have, range 0..255
+     * @return This scale, for chaining
+     */
     public ColorScale makeTransparent(int alpha) {
         for (int i = 0; i < colors.length; i++) {
             colors[i] = new Color((colors[i].getRGB() & 0xFFFFFF) | ((alpha & 0xFF) << 24), true);
@@ -120,16 +158,30 @@ public final class ColorScale {
         return this;
     }
 
+    /**
+     * Adds a title to this scale
+     * @param title The new title
+     * @return This scale, for chaining
+     */
     public ColorScale addTitle(String title) {
         this.title = title;
         return this;
     }
 
+    /**
+     * Sets the interval count for this scale
+     * @param intervalCount The interval count hint
+     * @return This scale, for chaining
+     */
     public ColorScale setIntervalCount(int intervalCount) {
         this.intervalCount = intervalCount;
         return this;
     }
 
+    /**
+     * Reverses this scale
+     * @return This scale, for chaining
+     */
     public ColorScale makeReversed() {
         int n = colors.length;
         Color tmp;
@@ -144,6 +196,15 @@ public final class ColorScale {
         return this;
     }
 
+    /**
+     * Draws a color bar representing this scale on the given graphics
+     * @param g The graphics to draw on
+     * @param x Rect x
+     * @param y Rect y
+     * @param w Rect width
+     * @param h Rect height
+     * @param valueScale The scale factor of the values
+     */
     public void drawColorBar(Graphics2D g, int x, int y, int w, int h, double valueScale) {
         int n = colors.length;
 
