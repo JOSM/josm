@@ -9,9 +9,16 @@ import java.util.Stack;
 
 import org.openstreetmap.josm.data.osm.Relation;
 
+/**
+ * This is an exception that is thrown if the user attempts to upload a list of relations with a cyclic dependency in them
+ */
 public class CyclicUploadDependencyException extends Exception {
     private final Stack<Relation> cycle;
 
+    /**
+     * Creates a new {@link CyclicUploadDependencyException}
+     * @param cycle The cycle that was found
+     */
     public CyclicUploadDependencyException(Stack<Relation> cycle) {
         this.cycle = cycle;
     }
@@ -43,6 +50,10 @@ public class CyclicUploadDependencyException extends Exception {
         return sb.toString();
     }
 
+    /**
+     * Gets the cycle
+     * @return The cycle that was detected
+     */
     public List<Relation> getCyclicUploadDependency() {
         return new ArrayList<>(cycle);
     }
