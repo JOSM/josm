@@ -6,6 +6,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
+/**
+ * This class contains the progress logic required to implement a {@link ProgressMonitor}.
+ */
 public abstract class AbstractProgressMonitor implements ProgressMonitor {
 
     private static class Request {
@@ -57,6 +60,10 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 
     protected abstract void doSetCustomText(String title);
 
+    /**
+     * Create a new {@link AbstractProgressMonitor}
+     * @param cancelHandler The handler that gets notified when the process is canceled.
+     */
     protected AbstractProgressMonitor(CancelHandler cancelHandler) {
         this.cancelHandler = cancelHandler;
     }

@@ -3,21 +3,38 @@ package org.openstreetmap.josm.gui.progress;
 
 import java.awt.Component;
 
+/**
+ * The progress of a sub task
+ */
 public class ChildProgress extends AbstractProgressMonitor {
 
     private final AbstractProgressMonitor parent;
     private final boolean internal;
 
+    /**
+     * Creates a new {@link ChildProgress}
+     * @param parent The parent task that creates this progress
+     * @param cancelHandler The cancel handler to notify when this task is canceled
+     * @param internal this is an internal task that will not modify the text that is displayed to the user
+     */
     public ChildProgress(AbstractProgressMonitor parent, CancelHandler cancelHandler, boolean internal) {
         super(cancelHandler);
         this.parent = parent;
         this.internal = internal;
     }
 
+    /**
+     * Gets the parent task
+     * @return The parent task
+     */
     public final AbstractProgressMonitor getParent() {
         return parent;
     }
 
+    /**
+     * See if this is an internal task
+     * @return True if this task should not modify the text that is displayed to the user
+     */
     public final boolean isInternal() {
         return internal;
     }

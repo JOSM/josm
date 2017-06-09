@@ -28,6 +28,10 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
      * Implemented by both foreground dialog and background progress dialog (in status bar)
      */
     public interface ProgressMonitorDialog {
+        /**
+         * Sets the visibility of this dialog
+         * @param visible The visibility, <code>true</code> to show it, <code>false</code> to hide it
+         */
         void setVisible(boolean visible);
 
         /**
@@ -36,13 +40,30 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
          */
         void updateProgress(int progress);
 
+        /**
+         * Sets the description of what is done
+         * @param text The description of the task
+         */
         void setCustomText(String text);
 
+        /**
+         * Sets the current action that is done
+         * @param text The current action
+         */
         void setCurrentAction(String text);
 
+        /**
+         * Display that the current progress cannot be determined
+         * @param newValue wether the progress cannot be determined
+         */
         void setIndeterminate(boolean newValue);
 
-        // TODO Not implemented properly in background monitor, log message will get lost if progress runs in background
+        /**
+         * Append a message to the progress log
+         * <p>
+         * TODO Not implemented properly in background monitor, log message will get lost if progress runs in background
+         * @param message The message
+         */
         void appendLogMessage(String message);
     }
 
@@ -173,10 +194,18 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         }
     };
 
+    /**
+     * See if this task is canceleable
+     * @return <code>true</code> if it can be canceled
+     */
     public final boolean isCancelable() {
         return cancelable;
     }
 
+    /**
+     * Sets this task to be cancelable
+     * @param cancelable Whether it can be canceled
+     */
     public final void setCancelable(boolean cancelable) {
         this.cancelable = cancelable;
     }
@@ -273,6 +302,9 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         });
     }
 
+    /**
+     * Update the dialog values
+     */
     public void reset() {
         if (dialog != null) {
             dialog.setTitle(title);
@@ -293,6 +325,9 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         }
     }
 
+    /**
+     * Close the progress dialog window.
+     */
     public void close() {
         doInEDT(() -> {
             if (dialog != null) {
@@ -311,6 +346,9 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         });
     }
 
+    /**
+     * Show the progress dialog in foreground
+     */
     public void showForegroundDialog() {
         isInBackground = false;
         doInEDT(() -> {
