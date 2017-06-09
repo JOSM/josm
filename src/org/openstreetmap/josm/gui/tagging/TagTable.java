@@ -414,6 +414,10 @@ public class TagTable extends JosmTable implements EndEditListener {
         }
     }
 
+    /**
+     * Sets the autocompletion manager that should be used for editing the cells
+     * @param autocomplete The {@link AutoCompletionManager}
+     */
     public void setAutoCompletionManager(AutoCompletionManager autocomplete) {
         if (autocomplete == null) {
             Main.warn("argument autocomplete should not be null. Aborting.");
@@ -425,6 +429,10 @@ public class TagTable extends JosmTable implements EndEditListener {
         }
     }
 
+    /**
+     * Gets the {@link AutoCompletionList} the cell editor is synchronized with
+     * @return The list
+     */
     public AutoCompletionList getAutoCompletionList() {
         if (editor != null)
             return editor.getAutoCompletionList();
@@ -440,6 +448,10 @@ public class TagTable extends JosmTable implements EndEditListener {
         this.nextFocusComponent = nextFocusComponent;
     }
 
+    /**
+     * Gets the editor that is used for the table cells
+     * @return The editor that is used when the user wants to enter text into a cell
+     */
     public TagCellEditor getTableCellEditor() {
         return editor;
     }
@@ -456,6 +468,11 @@ public class TagTable extends JosmTable implements EndEditListener {
         getColumnModel().getColumn(1).setCellEditor(editor);
     }
 
+    /**
+     * Request the focus in a specific cell
+     * @param row The row index
+     * @param col The column index
+     */
     public void requestFocusInCell(final int row, final int col) {
         changeSelection(row, col, false, false);
         editCellAt(row, col);
@@ -471,11 +488,19 @@ public class TagTable extends JosmTable implements EndEditListener {
         // previous solution of using awt.Robot was resetting mouse speed on Windows
     }
 
+    /**
+     * Marks a component that may be focused without stopping the cell editing
+     * @param component The component
+     */
     public void addComponentNotStoppingCellEditing(Component component) {
         if (component == null) return;
         doNotStopCellEditingWhenFocused.addIfAbsent(component);
     }
 
+    /**
+     * Removes a component added with {@link #addComponentNotStoppingCellEditing(Component)}
+     * @param component The component
+     */
     public void removeComponentNotStoppingCellEditing(Component component) {
         if (component == null) return;
         doNotStopCellEditingWhenFocused.remove(component);
