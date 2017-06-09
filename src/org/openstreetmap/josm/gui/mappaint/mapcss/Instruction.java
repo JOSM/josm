@@ -12,7 +12,7 @@ import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 
 /**
  * A MapCSS Instruction.
- * 
+ *
  * For example a simple assignment like <code>width: 3;</code>, but may also
  * be a set instruction (<code>set highway;</code>).
  * A MapCSS {@link MapCSSRule.Declaration} is a list of instructions.
@@ -26,6 +26,9 @@ public interface Instruction extends StyleKeys {
      */
     void execute(Environment env);
 
+    /**
+     * A float value that will be added to the current float value. Specified as +5 or -3 in MapCSS
+     */
     class RelativeFloat {
         public final float val;
 
@@ -39,6 +42,9 @@ public interface Instruction extends StyleKeys {
         }
     }
 
+    /**
+     * An instruction that assigns a given value to a variable on evaluation
+     */
     class AssignmentInstruction implements Instruction {
         public final String key;
         public final Object val;
