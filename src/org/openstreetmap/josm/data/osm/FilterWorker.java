@@ -39,8 +39,7 @@ public final class FilterWorker {
      *
      * @param all the collection of primitives for that the filter state should be updated
      * @param filterMatcher the FilterMatcher
-     * @return true, if the filter state (normal / disabled / hidden)
-     * of any primitive has changed in the process
+     * @return true, if the filter state (normal / disabled / hidden) of any primitive has changed in the process
      */
     public static boolean executeFilters(Collection<OsmPrimitive> all, FilterMatcher filterMatcher) {
         boolean changed;
@@ -88,10 +87,14 @@ public final class FilterWorker {
     /**
      * Clear all filter flags, i.e.&nbsp;turn off filters.
      * @param prims the primitives
+     * @return true, if the filter state (normal / disabled / hidden) of any primitive has changed in the process
+     * @since 12388 (signature)
      */
-    public static void clearFilterFlags(Collection<OsmPrimitive> prims) {
+    public static boolean clearFilterFlags(Collection<OsmPrimitive> prims) {
+        boolean changed = false;
         for (OsmPrimitive osm : prims) {
-            osm.unsetDisabledState();
+            changed |= osm.unsetDisabledState();
         }
+        return changed;
     }
 }
