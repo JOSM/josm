@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -79,7 +78,7 @@ public class SearchCompiler {
     private static Map<String, SimpleMatchFactory> simpleMatchFactoryMap = new HashMap<>();
     private static Map<String, UnaryMatchFactory> unaryMatchFactoryMap = new HashMap<>();
     private static Map<String, BinaryMatchFactory> binaryMatchFactoryMap = new HashMap<>();
-    private static Map<String, TaggingPreset> presets;
+    private static Map<String, List<TaggingPreset>> presets;
 
     public SearchCompiler(boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) {
         this.caseSensitive = caseSensitive;
@@ -94,7 +93,7 @@ public class SearchCompiler {
             addMatchFactory(new CoreUnaryMatchFactory());
         }
         // register a listener to react on any change made on the list of presets
-        if (presets == null) {
+        if (presets == null || presets.isEmpty()) {
             TaggingPresets.addListener(SearchCompiler::loadPresets);
             loadPresets();
         }
@@ -124,16 +123,15 @@ public class SearchCompiler {
     private static void loadPresets() {
         presets = TaggingPresets.getTaggingPresets()
                 .stream()
-                .collect(Collectors.toMap(
-                        p -> p.name,
-                        Function.identity()));
+                .filter(p -> p.name != null)
+                .collect(Collectors.groupingBy(p -> p.name));
     }
 
     public class CoreSimpleMatchFactory implements SimpleMatchFactory {
         private final Collection<String> keywords = Arrays.asList("id", "version", "type", "user", "role",
                 "changeset", "nodes", "ways", "tags", "areasize", "waylength", "modified", "deleted", "selected",
                 "incomplete", "untagged", "closed", "new", "indownloadedarea",
-                "allindownloadedarea", "inview", "allinview", "timestamp", "nth", "nth%", "hasRole");
+                "allindownloadedarea", "inview", "allinview", "timestamp", "nth", "nth%", "hasRole", "preset");
 
         @Override
         public Match get(String keyword, PushbackTokenizer tokenizer) throws ParseError {
@@ -169,6 +167,8 @@ public class SearchCompiler {
                         return new Version(tokenizer);
                     case "type":
                         return new ExactType(tokenizer.readTextOrNumber());
+                    case "preset":
+                        return new Preset(tokenizer.readTextOrNumber());
                     case "user":
                         return new UserMatch(tokenizer.readTextOrNumber());
                     case "role":
@@ -1576,15 +1576,23 @@ public class SearchCompiler {
      * Matches presets.
      */
     private static class Preset extends Match {
-        private TaggingPreset preset;
+        private List<TaggingPreset> ps;
 
-        public Preset(TaggingPreset p){
-            this.preset = p;
+        public Preset(String presetName) throws ParseError{
+            this.ps = SearchCompiler.presets
+                    .get(presetName);
+
+            if (ps == null)
+                throw new ParseError(tr("Unknown preset name: ") + presetName);
         }
 
         @Override
         public boolean match(OsmPrimitive osm) {
-            return preset.test(osm);
+            for (TaggingPreset p : ps) {
+                if (p.test(osm)) return true;
+            }
+
+            return false;
         }
     }
 
