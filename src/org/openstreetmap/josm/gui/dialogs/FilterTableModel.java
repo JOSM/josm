@@ -5,9 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,8 +12,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.BorderFactory;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 
@@ -30,6 +25,7 @@ import org.openstreetmap.josm.data.osm.FilterWorker;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.widgets.OSDLabel;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -420,27 +416,6 @@ public class FilterTableModel extends AbstractTableModel {
         default: // Do nothing
         }
         return null;
-    }
-
-    /**
-     * On screen display label
-     */
-    private static class OSDLabel extends JLabel {
-        OSDLabel(String text) {
-            super(text);
-            setOpaque(true);
-            setForeground(Color.black);
-            setBackground(new Color(0, 0, 0, 0));
-            setFont(getFont().deriveFont(Font.PLAIN));
-            setBorder(BorderFactory.createEmptyBorder(0, 10, 10, 10));
-        }
-
-        @Override
-        public void paintComponent(Graphics g) {
-            g.setColor(new Color(255, 255, 255, 140));
-            g.fillRoundRect(getX(), getY(), getWidth(), getHeight(), 10, 10);
-            super.paintComponent(g);
-        }
     }
 
     /**
