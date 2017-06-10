@@ -146,11 +146,7 @@ public class FilterTableModel extends AbstractTableModel {
         }
 
         if (changed && Main.isDisplayingMapView()) {
-            OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
-            if (editLayer != null) {
-                editLayer.invalidate();
-            }
-            Main.map.filterDialog.updateDialogHeader();
+            updateMap();
         }
     }
 
@@ -204,11 +200,17 @@ public class FilterTableModel extends AbstractTableModel {
         }
 
         if (changed) {
-            Main.map.mapView.repaint();
-            Main.map.filterDialog.updateDialogHeader();
+            updateMap();
             ds.clearSelection(deselect);
         }
+    }
 
+    private static void updateMap() {
+        OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
+        if (editLayer != null) {
+            editLayer.invalidate();
+        }
+        Main.map.filterDialog.updateDialogHeader();
     }
 
     /**
