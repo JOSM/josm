@@ -123,7 +123,7 @@ public class SearchCompiler {
     private static void loadPresets() {
         presets = TaggingPresets.getTaggingPresets()
                 .stream()
-                .filter(p -> p.name != null)
+                .filter(p -> p.getSimpleName() != null)
                 .collect(Collectors.groupingBy(p -> p.name));
     }
 
@@ -1579,13 +1579,20 @@ public class SearchCompiler {
         private List<TaggingPreset> ps;
 
         public Preset(String presetName) throws ParseError{
-            this.ps = SearchCompiler.presets
-                    .get(presetName);
+
+            if (presetName == null)
+                throw new ParseError("Preset name cannot be null");
+
+            this.ps = SearchCompiler.presets.get(presetName);
 
             if (ps == null)
                 throw new ParseError(tr("Unknown preset name: ") + presetName);
         }
 
+        /**
+         * Since presets can have common names, the primitive is considered to
+         * belong to a certain preset if it matches at least one of them.
+         */
         @Override
         public boolean match(OsmPrimitive osm) {
             for (TaggingPreset p : ps) {
