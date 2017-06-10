@@ -217,7 +217,7 @@ public class SimplifyWayAction extends JosmAction {
         Way newWay = new Way(w);
         newWay.setNodes(newNodes);
         cmds.add(new ChangeCommand(w, newWay));
-        cmds.add(new DeleteCommand(delNodes));
+        cmds.add(new DeleteCommand(w.getDataSet(), delNodes));
         w.getDataSet().clearSelection(delNodes);
         return new SequenceCommand(
                 trn("Simplify Way (remove {0} node)", "Simplify Way (remove {0} nodes)", delNodes.size(), delNodes.size()), cmds);
