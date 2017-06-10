@@ -20,7 +20,6 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.PushbackTokenizer.Range;
@@ -78,7 +77,6 @@ public class SearchCompiler {
     private static Map<String, SimpleMatchFactory> simpleMatchFactoryMap = new HashMap<>();
     private static Map<String, UnaryMatchFactory> unaryMatchFactoryMap = new HashMap<>();
     private static Map<String, BinaryMatchFactory> binaryMatchFactoryMap = new HashMap<>();
-//    private static Map<String, List<TaggingPreset>> presets;
 
     public SearchCompiler(boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) {
         this.caseSensitive = caseSensitive;
@@ -92,11 +90,6 @@ public class SearchCompiler {
         if (unaryMatchFactoryMap.isEmpty()) {
             addMatchFactory(new CoreUnaryMatchFactory());
         }
-        // register a listener to react on any change made on the list of presets
-//        if (presets == null) {
-//            loadPresets();
-//            TaggingPresets.addListener(SearchCompiler::loadPresets);
-//        }
     }
 
     /**
@@ -118,13 +111,6 @@ public class SearchCompiler {
                 Main.warn("SearchCompiler: for key ''{0}'', overriding match factory ''{1}'' with ''{2}''", keyword, existing, factory);
             }
         }
-    }
-
-    private static void loadPresets() {
-//        presets = TaggingPresets.getTaggingPresets()
-//                .stream()
-//                .filter(p -> p.getSimpleName() != null)
-//                .collect(Collectors.groupingBy(p -> p.name));
     }
 
     public class CoreSimpleMatchFactory implements SimpleMatchFactory {
@@ -1583,17 +1569,15 @@ public class SearchCompiler {
             if (presetName == null)
                 throw new ParseError("Preset name cannot be null");
 
-//            this.ps = SearchCompiler.presets.get(presetName);
             Collection<TaggingPreset> ts = TaggingPresets.getTaggingPresets();
-            ps = new ArrayList<TaggingPreset>(ts.size());
+            ps = new ArrayList<>();
 
             for (TaggingPreset t : ts) {
                 String name = t.getSimpleName();
 
-                if (name != null && name.equals(presetName)) ps.add(t);
+                if (name != null && name.equalsIgnoreCase(presetName)) ps.add(t);
             }
 
-//            if (ps == null)
             if (ps.isEmpty())
                 throw new ParseError(tr("Unknown preset name: ") + presetName);
         }
