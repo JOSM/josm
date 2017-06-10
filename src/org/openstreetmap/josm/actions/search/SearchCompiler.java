@@ -1564,7 +1564,7 @@ public class SearchCompiler {
     private static class Preset extends Match {
         private List<TaggingPreset> ps;
 
-        public Preset(String presetName) throws ParseError{
+        Preset(String presetName) throws ParseError {
 
             if (presetName == null)
                 throw new ParseError("Preset name cannot be null");
