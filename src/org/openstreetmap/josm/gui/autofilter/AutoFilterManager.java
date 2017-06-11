@@ -57,17 +57,17 @@ public final class AutoFilterManager implements ZoomChangeListener, MapModeChang
     /**
      * Property to determines if the auto filter feature is enabled.
      */
-    public static BooleanProperty PROP_AUTO_FILTER_ENABLED = new BooleanProperty("auto.filter.enabled", Boolean.TRUE);
+    public static final BooleanProperty PROP_AUTO_FILTER_ENABLED = new BooleanProperty("auto.filter.enabled", Boolean.TRUE);
 
     /**
      * Property to determine the current auto filter rule.
      */
-    public static StringProperty PROP_AUTO_FILTER_RULE = new StringProperty("auto.filter.rule", "level");
+    public static final StringProperty PROP_AUTO_FILTER_RULE = new StringProperty("auto.filter.rule", "level");
 
     /**
      * The unique instance.
      */
-    private static AutoFilterManager instance;
+    private static volatile AutoFilterManager instance;
 
     /**
      * The buttons currently displayed in map view.
@@ -318,7 +318,7 @@ public final class AutoFilterManager implements ZoomChangeListener, MapModeChang
      * Returns the currently selected auto filter, if any.
      * @return the currently selected auto filter, or null
      */
-    public AutoFilter getCurrentAutoFilter() {
+    public synchronized AutoFilter getCurrentAutoFilter() {
         return currentAutoFilter;
     }
 

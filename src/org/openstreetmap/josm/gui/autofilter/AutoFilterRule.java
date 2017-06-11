@@ -20,7 +20,7 @@ public class AutoFilterRule {
 
     private Function<String, String> valueFormatter = s -> s;
 
-    private Comparator<String> valueComparator = Comparator.comparingInt(s -> Integer.valueOf(valueFormatter.apply(s)));
+    private Comparator<String> valueComparator = Comparator.comparingInt(s -> Integer.parseInt(valueFormatter.apply(s)));
 
     /**
      * Constructs a new {@code AutoFilterRule}.
@@ -98,7 +98,7 @@ public class AutoFilterRule {
                 .setValueFormatter(s -> s.replaceAll(" mph", "")),
             new AutoFilterRule("voltage", 5)
                 .setValueFormatter(s -> s.replaceAll("000$", "k") + 'V')
-                .setValueComparator(Comparator.comparingInt(s -> Integer.valueOf(s)))
+                .setValueComparator(Comparator.comparingInt(s -> Integer.parseInt(s)))
         };
     }
 
