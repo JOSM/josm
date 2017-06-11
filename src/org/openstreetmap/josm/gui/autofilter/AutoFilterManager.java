@@ -170,20 +170,22 @@ public final class AutoFilterManager implements ZoomChangeListener, MapModeChang
     }
 
     private static Set<String> getTagValues(String key) {
-        BBox bbox = Main.map.mapView.getState().getViewArea().getLatLonBoundsBox().toBBox();
         DataSet ds = Main.getLayerManager().getEditDataSet();
         Set<String> values = new TreeSet<>();
-        Consumer<OsmPrimitive> consumer = o -> {
-            String value = o.get(key);
-            if (value != null) {
-                for (String v : value.split(";")) {
-                    values.add(v);
+        if (ds != null) {
+            BBox bbox = Main.map.mapView.getState().getViewArea().getLatLonBoundsBox().toBBox();
+            Consumer<OsmPrimitive> consumer = o -> {
+                String value = o.get(key);
+                if (value != null) {
+                    for (String v : value.split(";")) {
+                        values.add(v);
+                    }
                 }
-            }
-        };
-        ds.searchNodes(bbox).forEach(consumer);
-        ds.searchWays(bbox).forEach(consumer);
-        ds.searchRelations(bbox).forEach(consumer);
+            };
+            ds.searchNodes(bbox).forEach(consumer);
+            ds.searchWays(bbox).forEach(consumer);
+            ds.searchRelations(bbox).forEach(consumer);
+        }
         return values;
     }
 
