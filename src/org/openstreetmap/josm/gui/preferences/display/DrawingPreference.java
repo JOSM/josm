@@ -14,12 +14,15 @@ import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.gui.autofilter.AutoFilterManager;
+import org.openstreetmap.josm.gui.autofilter.AutoFilterRule;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -47,6 +50,10 @@ public class DrawingPreference implements SubPreferenceSetting {
     private final JCheckBox virtualNodes = new JCheckBox(tr("Draw virtual nodes in select mode"));
     private final JCheckBox inactive = new JCheckBox(tr("Draw inactive layers in other color"));
     private final JCheckBox discardableKeys = new JCheckBox(tr("Display discardable keys"));
+    private final JCheckBox autoFilters = new JCheckBox(tr("Use auto filters"));
+    private final JLabel lblRule = new JLabel(tr("Rule"));
+    private final JosmComboBox<AutoFilterRule> autoFilterRules = new JosmComboBox<>(
+            AutoFilterManager.getInstance().getAutoFilterRules().toArray(new AutoFilterRule[] {}));
 
     // Options that affect performance
     private final JCheckBox useHighlighting = new JCheckBox(tr("Highlight target ways and nodes"));
@@ -130,6 +137,16 @@ public class DrawingPreference implements SubPreferenceSetting {
         discardableKeys.setToolTipText(tr("Display keys which have been deemed uninteresting to the point that they can be silently removed."));
         discardableKeys.setSelected(Main.pref.getBoolean("display.discardable-keys", false));
 
+        // auto filters
+        autoFilters.setToolTipText(tr("Display buttons to automatically filter numeric values of a predefined tag"));
+        autoFilters.setSelected(AutoFilterManager.PROP_AUTO_FILTER_ENABLED.get());
+        autoFilters.addActionListener(e -> {
+            lblRule.setEnabled(autoFilters.isSelected());
+            autoFilterRules.setEnabled(autoFilters.isSelected());
+        });
+        autoFilterRules.setToolTipText("Rule defining which tag will provide automatic filters, below a certain zoom level");
+        autoFilterRules.setSelectedItem(AutoFilterManager.getInstance().getAutoFilterRule(AutoFilterManager.PROP_AUTO_FILTER_RULE.get()));
+
         JLabel performanceLabel = new JLabel(tr("Options that affect drawing performance"));
 
         panel.add(new JLabel(tr("Segment drawing options")),
@@ -156,6 +173,9 @@ public class DrawingPreference implements SubPreferenceSetting {
         panel.add(sourceBounds, GBC.eop().insets(20, 0, 0, 0));
         panel.add(inactive, GBC.eop().insets(20, 0, 0, 0));
         panel.add(discardableKeys, GBC.eop().insets(20, 0, 0, 0));
+        panel.add(autoFilters, GBC.eop().insets(20, 0, 0, 0));
+        panel.add(lblRule, GBC.std().insets(40, 0, 0, 0));
+        panel.add(autoFilterRules, GBC.eop().fill(GBC.HORIZONTAL).insets(5, 0, 0, 0));
 
         ExpertToggleAction.addVisibilitySwitcher(performanceLabel);
         ExpertToggleAction.addVisibilitySwitcher(useAntialiasing);
@@ -187,6 +207,8 @@ public class DrawingPreference implements SubPreferenceSetting {
         Main.pref.put("draw.target-highlight", useHighlighting.isSelected());
         Main.pref.put("draw.helper-line", drawHelperLine.isSelected());
         Main.pref.put("display.discardable-keys", discardableKeys.isSelected());
+        AutoFilterManager.PROP_AUTO_FILTER_ENABLED.put(autoFilters.isSelected());
+        AutoFilterManager.PROP_AUTO_FILTER_RULE.put(((AutoFilterRule) autoFilterRules.getSelectedItem()).getKey());
         int vn = Main.pref.getInteger("mappaint.node.virtual-size", 8);
         if (virtualNodes.isSelected()) {
             if (vn < 1) {

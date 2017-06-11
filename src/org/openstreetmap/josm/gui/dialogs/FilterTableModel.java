@@ -3,30 +3,19 @@ package org.openstreetmap.josm.gui.dialogs;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
-import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 
-import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
-import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Filter;
-import org.openstreetmap.josm.data.osm.Filter.FilterPreferenceEntry;
-import org.openstreetmap.josm.data.osm.FilterMatcher;
-import org.openstreetmap.josm.data.osm.FilterWorker;
-import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.FilterModel;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.gui.autofilter.AutoFilterManager;
 import org.openstreetmap.josm.gui.widgets.OSDLabel;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * The model that is used for the table in the {@link FilterDialog}.
@@ -53,13 +42,9 @@ public class FilterTableModel extends AbstractTableModel {
     public static final int COL_INVERTED = 3;
 
     /**
-     * number of primitives that are disabled but not hidden
+     * The filter model
      */
-    public int disabledCount;
-    /**
-     * number of primitives that are disabled and hidden
-     */
-    public int disabledAndHiddenCount;
+    final FilterModel model = new FilterModel();
 
     /**
      * A helper for {@link #drawOSDText(Graphics2D)}.
@@ -73,27 +58,8 @@ public class FilterTableModel extends AbstractTableModel {
         loadPrefs();
     }
 
-    private final transient List<Filter> filters = new LinkedList<>();
-    private final transient FilterMatcher filterMatcher = new FilterMatcher();
-
     private void updateFilters() {
-        filterMatcher.reset();
-        for (Filter filter : filters) {
-            try {
-                filterMatcher.add(filter);
-            } catch (ParseError e) {
-                Main.error(e);
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("<html>Error in filter <code>{0}</code>:<br>{1}",
-                                Utils.escapeReservedCharactersHTML(Utils.shortenString(filter.text, 80)),
-                                Utils.escapeReservedCharactersHTML(e.getMessage())),
-                        tr("Error in filter"),
-                        JOptionPane.ERROR_MESSAGE);
-                filter.enable = false;
-                savePrefs();
-            }
-        }
+        AutoFilterManager.getInstance().setCurrentAutoFilter(null);
         executeFilters();
     }
 
@@ -101,47 +67,8 @@ public class FilterTableModel extends AbstractTableModel {
      * Runs the filters on the current edit data set.
      */
     public void executeFilters() {
-        DataSet ds = Main.getLayerManager().getEditDataSet();
-        boolean changed = false;
-        if (ds == null) {
-            disabledAndHiddenCount = 0;
-            disabledCount = 0;
-            changed = true;
-        } else {
-            final Collection<OsmPrimitive> deselect = new HashSet<>();
-
-            ds.beginUpdate();
-            try {
-
-                final Collection<OsmPrimitive> all = ds.allNonDeletedCompletePrimitives();
-
-                changed = FilterWorker.executeFilters(all, filterMatcher);
-
-                disabledCount = 0;
-                disabledAndHiddenCount = 0;
-                // collect disabled and selected the primitives
-                for (OsmPrimitive osm : all) {
-                    if (osm.isDisabled()) {
-                        disabledCount++;
-                        if (osm.isSelected()) {
-                            deselect.add(osm);
-                        }
-                        if (osm.isDisabledAndHidden()) {
-                            disabledAndHiddenCount++;
-                        }
-                    }
-                }
-                disabledCount -= disabledAndHiddenCount;
-            } finally {
-                ds.endUpdate();
-            }
-
-            if (!deselect.isEmpty()) {
-                ds.clearSelection(deselect);
-            }
-        }
-
-        if (changed && Main.isDisplayingMapView()) {
+        if (AutoFilterManager.getInstance().getCurrentAutoFilter() == null) {
+            model.executeFilters();
             updateMap();
         }
     }
@@ -151,92 +78,24 @@ public class FilterTableModel extends AbstractTableModel {
      * @param primitives The primitives
      */
     public void executeFilters(Collection<? extends OsmPrimitive> primitives) {
-        DataSet ds = Main.getLayerManager().getEditDataSet();
-        if (ds == null)
-            return;
-
-        boolean changed = false;
-        List<OsmPrimitive> deselect = new ArrayList<>();
-
-        ds.beginUpdate();
-        try {
-            for (int i = 0; i < 2; i++) {
-                for (OsmPrimitive primitive: primitives) {
-
-                    if (i == 0 && primitive instanceof Node) {
-                        continue;
-                    }
-
-                    if (i == 1 && !(primitive instanceof Node)) {
-                        continue;
-                    }
-
-                    if (primitive.isDisabled()) {
-                        disabledCount--;
-                    }
-                    if (primitive.isDisabledAndHidden()) {
-                        disabledAndHiddenCount--;
-                    }
-                    changed |= FilterWorker.executeFilters(primitive, filterMatcher);
-                    if (primitive.isDisabled()) {
-                        disabledCount++;
-                    }
-                    if (primitive.isDisabledAndHidden()) {
-                        disabledAndHiddenCount++;
-                    }
-
-                    if (primitive.isSelected() && primitive.isDisabled()) {
-                        deselect.add(primitive);
-                    }
-
-                }
-            }
-        } finally {
-            ds.endUpdate();
-        }
-
-        if (changed) {
+        if (AutoFilterManager.getInstance().getCurrentAutoFilter() == null) {
+            model.executeFilters(primitives);
             updateMap();
-            ds.clearSelection(deselect);
         }
     }
 
-    private static void updateMap() {
-        OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
-        if (editLayer != null) {
-            editLayer.invalidate();
+    private void updateMap() {
+        if (Main.map != null && model.isChanged()) {
+            Main.map.filterDialog.updateDialogHeader();
         }
-        Main.map.filterDialog.updateDialogHeader();
-    }
-
-    /**
-     * Clears all filtered flags from all primitives in the dataset
-     */
-    public void clearFilterFlags() {
-        DataSet ds = Main.getLayerManager().getEditDataSet();
-        if (ds != null) {
-            FilterWorker.clearFilterFlags(ds.allPrimitives());
-        }
-        disabledCount = 0;
-        disabledAndHiddenCount = 0;
     }
 
     private void loadPrefs() {
-        List<FilterPreferenceEntry> entries = Main.pref.getListOfStructs("filters.entries", null, FilterPreferenceEntry.class);
-        if (entries != null) {
-            for (FilterPreferenceEntry e : entries) {
-                filters.add(new Filter(e));
-            }
-            updateFilters();
-        }
+        model.loadPrefs("filters.entries");
     }
 
     private void savePrefs() {
-        Collection<FilterPreferenceEntry> entries = new ArrayList<>();
-        for (Filter flt : filters) {
-            entries.add(flt.getPreferenceEntry());
-        }
-        Main.pref.putListOfStructs("filters.entries", entries, FilterPreferenceEntry.class);
+        model.savePrefs("filters.entries");
     }
 
     /**
@@ -244,10 +103,12 @@ public class FilterTableModel extends AbstractTableModel {
      * @param filter The new filter
      */
     public void addFilter(Filter filter) {
-        filters.add(filter);
-        savePrefs();
-        updateFilters();
-        fireTableRowsInserted(filters.size() - 1, filters.size() - 1);
+        if (model.addFilter(filter)) {
+            savePrefs();
+            updateFilters();
+            int size = model.getFiltersCount();
+            fireTableRowsInserted(size - 1, size - 1);
+        }
     }
 
     /**
@@ -255,12 +116,11 @@ public class FilterTableModel extends AbstractTableModel {
      * @param rowIndex The filter row
      */
     public void moveDownFilter(int rowIndex) {
-        if (rowIndex >= filters.size() - 1)
-            return;
-        filters.add(rowIndex + 1, filters.remove(rowIndex));
-        savePrefs();
-        updateFilters();
-        fireTableRowsUpdated(rowIndex, rowIndex + 1);
+        if (model.moveDownFilter(rowIndex)) {
+            savePrefs();
+            updateFilters();
+            fireTableRowsUpdated(rowIndex, rowIndex + 1);
+        }
     }
 
     /**
@@ -268,12 +128,11 @@ public class FilterTableModel extends AbstractTableModel {
      * @param rowIndex The filter row
      */
     public void moveUpFilter(int rowIndex) {
-        if (rowIndex == 0)
-            return;
-        filters.add(rowIndex - 1, filters.remove(rowIndex));
-        savePrefs();
-        updateFilters();
-        fireTableRowsUpdated(rowIndex - 1, rowIndex);
+        if (model.moveUpFilter(rowIndex)) {
+            savePrefs();
+            updateFilters();
+            fireTableRowsUpdated(rowIndex - 1, rowIndex);
+        }
     }
 
     /**
@@ -281,10 +140,11 @@ public class FilterTableModel extends AbstractTableModel {
      * @param rowIndex The index of the filter to remove
      */
     public void removeFilter(int rowIndex) {
-        filters.remove(rowIndex);
-        savePrefs();
-        updateFilters();
-        fireTableRowsDeleted(rowIndex, rowIndex);
+        if (model.removeFilter(rowIndex) != null) {
+            savePrefs();
+            updateFilters();
+            fireTableRowsDeleted(rowIndex, rowIndex);
+        }
     }
 
     /**
@@ -293,7 +153,7 @@ public class FilterTableModel extends AbstractTableModel {
      * @param filter The filter that should be placed in that row
      */
     public void setFilter(int rowIndex, Filter filter) {
-        filters.set(rowIndex, filter);
+        model.setFilter(rowIndex, filter);
         savePrefs();
         updateFilters();
         fireTableRowsUpdated(rowIndex, rowIndex);
@@ -305,12 +165,12 @@ public class FilterTableModel extends AbstractTableModel {
      * @return The filter in that row
      */
     public Filter getFilter(int rowIndex) {
-        return filters.get(rowIndex);
+        return model.getFilter(rowIndex);
     }
 
     @Override
     public int getRowCount() {
-        return filters.size();
+        return model.getFiltersCount();
     }
 
     @Override
@@ -342,7 +202,7 @@ public class FilterTableModel extends AbstractTableModel {
      * @return {@code true} if the cell at (row, column) is enabled
      */
     public boolean isCellEnabled(int row, int column) {
-        return filters.get(row).enable || column == 0;
+        return model.getFilter(row).enable || column == 0;
     }
 
     @Override
@@ -352,21 +212,18 @@ public class FilterTableModel extends AbstractTableModel {
 
     @Override
     public void setValueAt(Object aValue, int row, int column) {
-        if (row >= filters.size()) {
+        if (row >= model.getFiltersCount()) {
             return;
         }
-        Filter f = filters.get(row);
+        Filter f = model.getFilter(row);
         switch (column) {
         case COL_ENABLED:
             f.enable = (Boolean) aValue;
-            savePrefs();
-            updateFilters();
-            fireTableRowsUpdated(row, row);
+            setFilter(row, f);
             break;
         case COL_HIDING:
             f.hiding = (Boolean) aValue;
-            savePrefs();
-            updateFilters();
+            setFilter(row, f);
             break;
         case COL_TEXT:
             f.text = (String) aValue;
@@ -374,8 +231,7 @@ public class FilterTableModel extends AbstractTableModel {
             break;
         case COL_INVERTED:
             f.inverted = (Boolean) aValue;
-            savePrefs();
-            updateFilters();
+            setFilter(row, f);
             break;
         default: // Do nothing
         }
@@ -386,10 +242,10 @@ public class FilterTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int row, int column) {
-        if (row >= filters.size()) {
+        if (row >= model.getFiltersCount()) {
             return null;
         }
-        Filter f = filters.get(row);
+        Filter f = model.getFilter(row);
         switch (column) {
         case COL_ENABLED:
             return f.enable;
@@ -423,35 +279,9 @@ public class FilterTableModel extends AbstractTableModel {
      * @param g The graphics to draw that text on.
      */
     public void drawOSDText(Graphics2D g) {
-        String message = "<html>" + tr("<h2>Filter active</h2>");
-
-        if (disabledCount == 0 && disabledAndHiddenCount == 0)
-            return;
-
-        if (disabledAndHiddenCount != 0) {
-            /* for correct i18n of plural forms - see #9110 */
-            message += trn("<p><b>{0}</b> object hidden", "<p><b>{0}</b> objects hidden", disabledAndHiddenCount, disabledAndHiddenCount);
-        }
-
-        if (disabledAndHiddenCount != 0 && disabledCount != 0) {
-            message += "<br>";
-        }
-
-        if (disabledCount != 0) {
-            /* for correct i18n of plural forms - see #9110 */
-            message += trn("<b>{0}</b> object disabled", "<b>{0}</b> objects disabled", disabledCount, disabledCount);
-        }
-
-        message += tr("</p><p>Close the filter dialog to see all objects.<p></html>");
-
-        lblOSD.setText(message);
-        lblOSD.setSize(lblOSD.getPreferredSize());
-
-        int dx = Main.map.mapView.getWidth() - lblOSD.getPreferredSize().width - 15;
-        int dy = 15;
-        g.translate(dx, dy);
-        lblOSD.paintComponent(g);
-        g.translate(-dx, -dy);
+        model.drawOSDText(g, lblOSD,
+                tr("<h2>Filter active</h2>"),
+                tr("</p><p>Close the filter dialog to see all objects.<p></html>"));
     }
 
     /**
@@ -459,6 +289,6 @@ public class FilterTableModel extends AbstractTableModel {
      * @return the list of filters
      */
     public List<Filter> getFilters() {
-        return filters;
+        return model.getFilters();
     }
 }
