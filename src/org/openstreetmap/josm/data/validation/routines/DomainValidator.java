@@ -295,7 +295,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2017060200, Last Updated Fri Jun  2 07:07:01 2017 UTC
+        // Taken from Version 2017061100, Last Updated Sun Jun 11 07:07:01 2017 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -1482,6 +1482,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--kput3i", // 手机 Beijing RITT-Net Technology Development Co., Ltd
         "xn--mgba3a3ejt", // ارامكو Aramco Services Company
         "xn--mgba7c0bbn0a", // العليان Crescent Holding GmbH
+        "xn--mgbaakc7dvf", // اتصالات Emirates Telecommunications Corporation (trading as Etisalat)
         "xn--mgbab2bd", // بازار CORE Association
         "xn--mgbai9azgqp6j", // پاکستان National Telecommunication Corporation
         "xn--mgbb9fbpob", // موبايلي GreenTech Consultancy Company W.L.L.
