@@ -130,6 +130,9 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
 
     private final List<ToggleDialog> allDialogs = new ArrayList<>();
     private final List<IconToggleButton> allDialogButtons = new ArrayList<>();
+    /**
+     * All map mode buttons. Should only be read form the outside
+     */
     public final List<IconToggleButton> allMapModeButtons = new ArrayList<>();
 
     private final ListAllButtonsAction listAllDialogsAction = new ListAllButtonsAction(allDialogButtons);
@@ -293,6 +296,11 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         }
     }
 
+    /**
+     * Enables the select tool
+     * @param onlyIfModeless Only enable if modeless mode is active
+     * @return <code>true</code> if it is selected
+     */
     public boolean selectSelectTool(boolean onlyIfModeless) {
         if (onlyIfModeless && !MODELESS.get())
             return false;
@@ -300,6 +308,11 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         return selectMapMode(mapModeSelect);
     }
 
+    /**
+     * Enables the draw tool
+     * @param onlyIfModeless Only enable if modeless mode is active
+     * @return <code>true</code> if it is selected
+     */
     public boolean selectDrawTool(boolean onlyIfModeless) {
         if (onlyIfModeless && !MODELESS.get())
             return false;
@@ -307,6 +320,11 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         return selectMapMode(mapModeDraw);
     }
 
+    /**
+     * Enables the zoom tool
+     * @param onlyIfModeless Only enable if modeless mode is active
+     * @return <code>true</code> if it is selected
+     */
     public boolean selectZoomTool(boolean onlyIfModeless) {
         if (onlyIfModeless && !MODELESS.get())
             return false;
@@ -400,6 +418,10 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         allDialogs.remove(dlg);
     }
 
+    /**
+     * Adds a new map mode button
+     * @param b The map mode button with a {@link MapMode} action.
+     */
     public void addMapMode(IconToggleButton b) {
         if (!(b.getAction() instanceof MapMode))
             throw new IllegalArgumentException("MapMode action must be subclass of MapMode");
@@ -653,6 +675,9 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         }
     }
 
+    /**
+     * Validate the visibility of all tool bars and hide the ones that should be hidden
+     */
     public void validateToolBarsVisibility() {
         for (IconToggleButton b : allDialogButtons) {
             b.applyButtonHiddenPreferences();

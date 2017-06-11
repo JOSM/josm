@@ -30,9 +30,21 @@ public class ScrollViewport extends JPanel {
 
     private static final int NO_SCROLL = 0;
 
+    /**
+     * Direction flag for upwards
+     */
     public static final int UP_DIRECTION = 1;
+    /**
+     * Direction flag for downwards
+     */
     public static final int DOWN_DIRECTION = 2;
+    /**
+     * Direction flag for left
+     */
     public static final int LEFT_DIRECTION = 4;
+    /**
+     * Direction flag for right
+     */
     public static final int RIGHT_DIRECTION = 8;
     /**
      * Allow vertical scrolling
@@ -239,14 +251,26 @@ public class ScrollViewport extends JPanel {
         }
     }
 
+    /**
+     * Gets the current visible part of the view
+     * @return The current view rect
+     */
     public Rectangle getViewRect() {
         return vp.getViewRect();
     }
 
+    /**
+     * Gets the size of the view
+     * @return The size
+     */
     public Dimension getViewSize() {
         return vp.getViewSize();
     }
 
+    /**
+     * Gets the position (offset) of the view area
+     * @return The offset
+     */
     public Point getViewPosition() {
         return vp.getViewPosition();
     }

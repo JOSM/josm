@@ -80,16 +80,44 @@ public class TagChecker extends TagTest {
     /** The preferences prefix */
     protected static final String PREFIX = ValidatorPreference.PREFIX + "." + TagChecker.class.getSimpleName();
 
+    /**
+     * The preference key to check values
+     */
     public static final String PREF_CHECK_VALUES = PREFIX + ".checkValues";
+    /**
+     * The preference key to check keys
+     */
     public static final String PREF_CHECK_KEYS = PREFIX + ".checkKeys";
+    /**
+     * The preference key to enable complex checks
+     */
     public static final String PREF_CHECK_COMPLEX = PREFIX + ".checkComplex";
+    /**
+     * The preference key to search for fixme tags
+     */
     public static final String PREF_CHECK_FIXMES = PREFIX + ".checkFixmes";
 
+    /**
+     * The preference key for source files
+     * @see #DEFAULT_SOURCES
+     */
     public static final String PREF_SOURCES = PREFIX + ".source";
 
+    /**
+     * The preference key to check keys - used before upload
+     */
     public static final String PREF_CHECK_KEYS_BEFORE_UPLOAD = PREF_CHECK_KEYS + "BeforeUpload";
+    /**
+     * The preference key to check values - used before upload
+     */
     public static final String PREF_CHECK_VALUES_BEFORE_UPLOAD = PREF_CHECK_VALUES + "BeforeUpload";
+    /**
+     * The preference key to run complex tests - used before upload
+     */
     public static final String PREF_CHECK_COMPLEX_BEFORE_UPLOAD = PREF_CHECK_COMPLEX + "BeforeUpload";
+    /**
+     * The preference key to search for fixmes - used before upload
+     */
     public static final String PREF_CHECK_FIXMES_BEFORE_UPLOAD = PREF_CHECK_FIXMES + "BeforeUpload";
 
     protected boolean checkKeys;
@@ -637,6 +665,9 @@ public class TagChecker extends TagTest {
         testPanel.add(prefCheckFixmesBeforeUpload, a);
     }
 
+    /**
+     * Enables/disables the source list field
+     */
     public void handlePrefEnable() {
         boolean selected = prefCheckKeys.isSelected() || prefCheckKeysBeforeUpload.isSelected()
                 || prefCheckComplex.isSelected() || prefCheckComplexBeforeUpload.isSelected();

@@ -14,6 +14,9 @@ import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.gui.help.Helpful;
 
+/**
+ * This is the slider used in the top left corner of the map view. It allows the user to select the scale
+ */
 class MapSlider extends JSlider implements PropertyChangeListener, ChangeListener, Helpful {
 
     private static final double zoomStep = 1.1;

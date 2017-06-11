@@ -32,16 +32,34 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
+/**
+ * Utility methods that display an option dialog with an additional help button that links to the JOSM help
+ */
 public final class HelpAwareOptionPane {
 
     private HelpAwareOptionPane() {
         // Hide default constructor for utils classes
     }
 
+    /**
+     * A specification of a button that should be added to the options dialog
+     */
     public static class ButtonSpec {
+        /**
+         * the button text
+         */
         public final String text;
+        /**
+         * the icon to display. Can be <code>null</code>
+         */
         public final Icon icon;
+        /**
+         * The tooltip to display when hovering the button
+         */
         public final String tooltipText;
+        /**
+         * The help topic to link
+         */
         public final String helpTopic;
         private boolean enabled;
 

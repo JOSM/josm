@@ -234,6 +234,9 @@ public class SimilarNamedWays extends Test {
         return REMOVE_DIACRITICS.matcher(Normalizer.normalize(str, Normalizer.Form.NFD)).replaceAll("");
     }
 
+    /**
+     * A normalization that is applied to names before testing them
+     */
     @FunctionalInterface
     public interface NormalizeRule {
 
@@ -245,10 +248,19 @@ public class SimilarNamedWays extends Test {
         String normalize(String name);
     }
 
+    /**
+     * A rule to replace by regular expression,
+     * so that all strings matching the regular expression are handled as if they were {@link RegExprRule#replacement}
+     */
     public static class RegExprRule implements NormalizeRule {
         private final Pattern regExpr;
         private final String replacement;
 
+        /**
+         * Create a new rule to replace by regular expression
+         * @param expression The regular expression
+         * @param replacement The replacement
+         */
         public RegExprRule(String expression, String replacement) {
             this.regExpr = Pattern.compile(expression);
             this.replacement = replacement;
@@ -265,12 +277,20 @@ public class SimilarNamedWays extends Test {
         }
     }
 
+    /**
+     * A rule that registers synonyms to a given word
+     */
     public static class SynonymRule implements NormalizeRule {
 
         private final String[] words;
         private final Pattern regExpr;
         private final String replacement;
 
+        /**
+         * Create a new {@link SynonymRule}
+         * @param replacement The word to use instead
+         * @param words The synonyms for that word
+         */
         public SynonymRule(String replacement, String... words) {
             this.replacement = replacement.toLowerCase(Locale.ENGLISH);
             this.words = words;

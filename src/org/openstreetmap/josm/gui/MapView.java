@@ -395,6 +395,10 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
     private boolean virtualNodesEnabled;
 
+    /**
+     * Enables or disables drawing of the virtual nodes.
+     * @param enabled if virtual nodes are enabled
+     */
     public void setVirtualNodesEnabled(boolean enabled) {
         if (virtualNodesEnabled != enabled) {
             virtualNodesEnabled = enabled;

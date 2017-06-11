@@ -298,6 +298,10 @@ public class TestError implements Comparable<TestError> {
         return ignorestring.toString();
     }
 
+    /**
+     * Gets the ignores subgroup that is more specialized than {@link #getIgnoreGroup()}
+     * @return The ignore sub group
+     */
     public String getIgnoreSubGroup() {
         String ignorestring = getIgnoreGroup();
         if (descriptionEn != null) {
@@ -306,14 +310,27 @@ public class TestError implements Comparable<TestError> {
         return ignorestring;
     }
 
+    /**
+     * Gets the ignore group ID that is used to allow the user to ignore all same errors
+     * @return The group id
+     * @see TestError#getIgnoreSubGroup()
+     */
     public String getIgnoreGroup() {
         return Integer.toString(code);
     }
 
+    /**
+     * Flags this error as ignored
+     * @param state The ignore flag
+     */
     public void setIgnored(boolean state) {
         ignored = state;
     }
 
+    /**
+     * Checks if this error is ignored
+     * @return <code>true</code> if it is ignored
+     */
     public boolean isIgnored() {
         return ignored;
     }
@@ -370,6 +387,10 @@ public class TestError implements Comparable<TestError> {
         this.selected = selected;
     }
 
+    /**
+     * Visits all highlighted validation elements
+     * @param v The visitor that should receive a visit-notification on all highlighted elements
+     */
     @SuppressWarnings("unchecked")
     public void visitHighlighted(ValidatorVisitor v) {
         for (Object o : highlighted) {

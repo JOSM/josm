@@ -42,6 +42,9 @@ public enum Severity {
         this.color = color;
     }
 
+    /**
+     * Retrieves all colors once from the preferences to register them
+     */
     public static void getColors() {
         for (Severity c : values()) {
             if (Main.isDebugEnabled()) {

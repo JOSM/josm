@@ -50,23 +50,47 @@ public class ConditionalKeys extends Test.TagTest {
         openingHourTest.initialize();
     }
 
+    /**
+     * Check if the key is a key for an access restriction
+     * @param part The key (or the restriction part of it, e.g. for lanes)
+     * @return <code>true</code> if it is a restriction
+     */
     public static boolean isRestrictionType(String part) {
         return RESTRICTION_TYPES.contains(part);
     }
 
+    /**
+     * Check if the value is a valid restriction value
+     * @param part The value
+     * @return <code>true</code> for allowed restriction values
+     */
     public static boolean isRestrictionValue(String part) {
         return RESTRICTION_VALUES.contains(part);
     }
 
+    /**
+     * Checks if the key denotes a <a href="http://wiki.openstreetmap.org/wiki/Key:access#Transport_mode_restrictions">transport access mode restriction</a>
+     * @param part The key (or the restriction part of it, e.g. for lanes)
+     * @return <code>true</code> if it is a restriction
+     */
     public static boolean isTransportationMode(String part) {
-        // http://wiki.openstreetmap.org/wiki/Key:access#Transport_mode_restrictions
         return TRANSPORT_MODES.contains(part);
     }
 
+    /**
+     * Check if a key part is a valid direction
+     * @param part The part of the key
+     * @return <code>true</code> if it is a direction
+     */
     public static boolean isDirection(String part) {
         return "forward".equals(part) || "backward".equals(part);
     }
 
+    /**
+     * Checks if a given key is a valid access key
+     * @param key The conditional key
+     * @return <code>true</code> if the key is valid
+     */
     public boolean isKeyValid(String key) {
         // <restriction-type>[:<transportation mode>][:<direction>]:conditional
         // -- or --            <transportation mode> [:<direction>]:conditional
@@ -90,6 +114,12 @@ public class ConditionalKeys extends Test.TagTest {
         return parts.length == 1 && (isRestrictionType(parts[0]) || isTransportationMode(parts[0]));
     }
 
+    /**
+     * Check if a value is valid
+     * @param key The key the value is for
+     * @param value The value
+     * @return <code>true</code> if it is valid
+     */
     public boolean isValueValid(String key, String value) {
         return validateValue(key, value) == null;
     }
@@ -100,10 +130,24 @@ public class ConditionalKeys extends Test.TagTest {
         }
     }
 
+    /**
+     * A conditional value is a value for the access restriction tag that depends on conditions (time, ...)
+     */
     public static class ConditionalValue {
+        /**
+         * The value the tag should have if the condition matches
+         */
         public final String restrictionValue;
+        /**
+         * The conditions for {@link #restrictionValue}
+         */
         public final Collection<String> conditions;
 
+        /**
+         * Create a new {@link ConditionalValue}
+         * @param restrictionValue The value the tag should have if the condition matches
+         * @param conditions The conditions for that value
+         */
         public ConditionalValue(String restrictionValue, Collection<String> conditions) {
             this.restrictionValue = restrictionValue;
             this.conditions = conditions;
@@ -136,6 +180,12 @@ public class ConditionalKeys extends Test.TagTest {
         }
     }
 
+    /**
+     * Validate a key/value pair
+     * @param key The key
+     * @param value The value
+     * @return The error message for that value or <code>null</code> to indicate valid
+     */
     public String validateValue(String key, String value) {
         try {
             for (final ConditionalValue conditional : ConditionalValue.parse(value)) {
@@ -161,6 +211,11 @@ public class ConditionalKeys extends Test.TagTest {
         return null;
     }
 
+    /**
+     * Validate a primitive
+     * @param p The primitive
+     * @return The errors for that primitive or an empty list if there are no errors.
+     */
     public List<TestError> validatePrimitive(OsmPrimitive p) {
         final List<TestError> errors = new ArrayList<>();
         for (final String key : SubclassFilteredCollection.filter(p.keySet(),
