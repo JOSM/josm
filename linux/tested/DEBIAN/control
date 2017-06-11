@@ -7,6 +7,7 @@ Priority: extra
 Architecture: all
 Depends: openjdk-8-jre | java8-runtime,
          proj-data
+Recommends: openjfx
 Conflicts: josm-plugins
 Replaces: josm-plugins
 Description: Editor for OpenStreetMap
