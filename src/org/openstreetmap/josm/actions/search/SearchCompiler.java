@@ -20,6 +20,8 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
+import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.PushbackTokenizer.Range;
@@ -1562,24 +1564,20 @@ public class SearchCompiler {
      * Matches presets.
      */
     private static class Preset extends Match {
-        private List<TaggingPreset> ps;
+        private List<TaggingPreset> presets;
 
         Preset(String presetName) throws ParseError {
 
-            if (presetName == null)
-                throw new ParseError("Preset name cannot be null");
+            Objects.requireNonNull(presetName);
 
-            Collection<TaggingPreset> ts = TaggingPresets.getTaggingPresets();
-            ps = new ArrayList<>();
+            this.presets = TaggingPresets.getTaggingPresets()
+                    .stream()
+                    .filter(preset -> presetName.equalsIgnoreCase(preset.getSimpleName()))
+                    .collect(Collectors.toList());
 
-            for (TaggingPreset t : ts) {
-                String name = t.getSimpleName();
-
-                if (name != null && name.equalsIgnoreCase(presetName)) ps.add(t);
-            }
-
-            if (ps.isEmpty())
+            if (this.presets.isEmpty()) {
                 throw new ParseError(tr("Unknown preset name: ") + presetName);
+            }
         }
 
         /**
@@ -1588,8 +1586,10 @@ public class SearchCompiler {
          */
         @Override
         public boolean match(OsmPrimitive osm) {
-            for (TaggingPreset p : ps) {
-                if (p.test(osm)) return true;
+            for (TaggingPreset p : this.presets) {
+                if (p.test(osm)) {
+                    return true;
+                }
             }
 
             return false;

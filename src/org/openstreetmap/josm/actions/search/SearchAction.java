@@ -454,8 +454,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("type:node", "type:node ", tr("all nodes"))
                 .addKeyword("type:way", "type:way ", tr("all ways"))
                 .addKeyword("type:relation", "type:relation ", tr("all relations"))
-                .addKeyword("preset:water", "preset:water", tr("all object that match the water preset"))
-                .addKeyword("preset:\"fast food\"", "preset:\"fast food\"", tr("all objects that match the fast food preset"))
+                .addKeyword("preset:water", "preset:water", tr("all objects that use the water preset"))
+                .addKeyword("preset:\"fast food\"", "preset:\"fast food\"", tr("all objects that use the fast food preset"))
                 .addKeyword("closed", "closed ", tr("all closed ways"))
                 .addKeyword("untagged", "untagged ", tr("object without useful tags")),
                 GBC.eol());
