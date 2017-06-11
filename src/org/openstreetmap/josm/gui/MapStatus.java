@@ -153,6 +153,9 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
         }
     }
 
+    /**
+     * The progress monitor that is used to display the progress if the user selects to run in background
+     */
     public class BackgroundProgressMonitor implements ProgressMonitorDialog {
 
         private String title;
@@ -224,6 +227,9 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
     private final JosmTextField helpText = new JosmTextField();
     private final JProgressBar progressBar = new JProgressBar();
     private final transient ComponentAdapter mvComponentAdapter;
+    /**
+     * The progress monitor for displaying a background progress
+     */
     public final transient BackgroundProgressMonitor progressMonitor = new BackgroundProgressMonitor();
 
     // Distance value displayed in distText, stored if refresh needed after a change of system of measurement
@@ -970,6 +976,10 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
         }
     }
 
+    /**
+     * Gets the panel that displays the angle
+     * @return The angle panel
+     */
     public JPanel getAnglePanel() {
         return angleText;
     }
@@ -985,12 +995,20 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
         latText.addMouseListener(ml);
     }
 
-    public void setHelpText(String t) {
-        setHelpText(null, t);
+    /**
+     * Sets the help text in the status panel
+     * @param text The text
+     */
+    public void setHelpText(String text) {
+        setHelpText(null, text);
     }
 
+    /**
+     * Sets the help status text to display
+     * @param id The object that caused the status update (or a id object it selects). May be <code>null</code>
+     * @param text The text
+     */
     public void setHelpText(Object id, final String text) {
-
         StatusTextHistory entry = new StatusTextHistory(id, text);
 
         statusText.remove(entry);
@@ -1002,6 +1020,10 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
         });
     }
 
+    /**
+     * Removes a help text and restores the previous one
+     * @param id The id passed to {@link #setHelpText(Object, String)}
+     */
     public void resetHelpText(Object id) {
         if (statusText.isEmpty())
             return;
@@ -1018,10 +1040,18 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
         statusText.remove(entry);
     }
 
+    /**
+     * Sets the angle to display in the angle panel
+     * @param a The angle
+     */
     public void setAngle(double a) {
         angleText.setText(a < 0 ? "--" : DECIMAL_FORMAT.format(a) + " \u00B0");
     }
 
+    /**
+     * Sets the heading to display in the heading panel
+     * @param h The heading
+     */
     public void setHeading(double h) {
         headingText.setText(h < 0 ? "--" : DECIMAL_FORMAT.format(h) + " \u00B0");
     }

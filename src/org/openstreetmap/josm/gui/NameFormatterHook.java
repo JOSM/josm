@@ -5,6 +5,10 @@ import org.openstreetmap.josm.data.osm.INode;
 import org.openstreetmap.josm.data.osm.IRelation;
 import org.openstreetmap.josm.data.osm.IWay;
 
+/**
+ * Hooks that allow correcting the name of a OSM primitive
+ * @see DefaultNameFormatter
+ */
 public interface NameFormatterHook {
 
     /**
