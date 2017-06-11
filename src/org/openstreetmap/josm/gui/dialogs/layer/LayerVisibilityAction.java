@@ -543,7 +543,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
         };
         private final HashMap<Color, JPanel> panels = new HashMap<>();
 
-        public ColorSelector() {
+        ColorSelector() {
             super(new GridBagLayout());
             add(new JLabel(tr("Color")), GBC.eol().insets(24 + 10, 0, 0, 0));
             for (Color color : COLORS) {
@@ -563,7 +563,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     List<Layer> layers = model.getSelectedLayers();
-                    for(Layer l : layers) {
+                    for (Layer l : layers) {
                         if (l instanceof GpxLayer) {
                             l.getColorProperty().put(color);
                         }
@@ -578,7 +578,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
         @Override
         public void updateLayers(List<Layer> layers, boolean allVisible, boolean allHidden) {
             List<Color> colors = layers.stream().filter(l -> l instanceof GpxLayer)
-                    .map(l -> ((GpxLayer)l).getColorProperty().get())
+                    .map(l -> ((GpxLayer) l).getColorProperty().get())
                     .distinct()
                     .collect(Collectors.toList());
             if (colors.size() == 1) {
