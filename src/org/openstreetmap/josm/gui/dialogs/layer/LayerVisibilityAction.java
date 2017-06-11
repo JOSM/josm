@@ -3,16 +3,24 @@ package org.openstreetmap.josm.gui.dialogs.layer;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -21,11 +29,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
+import javax.swing.UIManager;
+import javax.swing.border.Border;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.IEnabledStateUpdating;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog.LayerListModel;
+import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
@@ -81,10 +92,11 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
         addContentEntry(new ColorfulnessSlider());
         addContentEntry(new GammaFilterSlider());
         addContentEntry(new SharpnessSlider());
+        addContentEntry(new ColorSelector());
     }
 
     private void addContentEntry(LayerVisibilityMenuEntry slider) {
-        content.add(slider.getPanel(), GBC.eop());
+        content.add(slider.getPanel(), GBC.eop().fill(GBC.HORIZONTAL));
         sliders.add(slider);
     }
 
@@ -170,6 +182,11 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
 
         VisibilityCheckbox() {
             super(tr("Show layer"));
+
+            // Align all texts
+            Icon icon = UIManager.getIcon("CheckBox.icon");
+            int iconWidth = icon == null ? 20 : icon.getIconWidth();
+            setBorder(BorderFactory.createEmptyBorder(0, Math.max(24 + 5 - iconWidth, 0), 0, 0));
             addChangeListener(e -> setVisibleFlag(isSelected()));
         }
 
@@ -212,7 +229,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
             this.layerClassFilter = layerClassFilter;
 
             add(new JLabel(getIcon()), GBC.std().span(1, 2).insets(0, 0, 5, 0));
-            add(new JLabel(getLabel()), GBC.eol());
+            add(new JLabel(getLabel()), GBC.eol().insets(5, 0, 5, 0));
             add(slider, GBC.eol());
             addMouseWheelListener(this::mouseWheelMoved);
 
@@ -502,6 +519,94 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
         @Override
         public String getLabel() {
             return tr("Colorfulness");
+        }
+    }
+
+    /**
+     * Allows to select the color for the GPX layer
+     * @author Michael Zangl
+     */
+    private class ColorSelector extends JPanel implements LayerVisibilityMenuEntry {
+
+        private final Border NORMAL_BORDER = BorderFactory.createEmptyBorder(2, 2, 2, 2);
+        private final Border SELECTED_BORDER = BorderFactory.createLineBorder(Color.BLACK, 2);
+
+        // TODO: Nicer color palette
+        private final Color[] COLORS = new Color[] {
+                Color.RED,
+                Color.ORANGE,
+                Color.YELLOW,
+                Color.GREEN,
+                Color.BLUE,
+                Color.CYAN,
+                Color.GRAY,
+        };
+        private final HashMap<Color, JPanel> panels = new HashMap<>();
+
+        public ColorSelector() {
+            super(new GridBagLayout());
+            add(new JLabel(tr("Color")), GBC.eol().insets(24 + 10, 0, 0, 0));
+            for (Color color : COLORS) {
+                addPanelForColor(color);
+            }
+        }
+
+        private void addPanelForColor(Color color) {
+            JPanel innerPanel = new JPanel();
+            innerPanel.setBackground(color);
+
+            JPanel colorPanel = new JPanel(new BorderLayout());
+            colorPanel.setBorder(NORMAL_BORDER);
+            colorPanel.add(innerPanel);
+            colorPanel.setMinimumSize(new Dimension(20, 20));
+            colorPanel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    List<Layer> layers = model.getSelectedLayers();
+                    for(Layer l : layers) {
+                        if (l instanceof GpxLayer) {
+                            l.getColorProperty().put(color);
+                        }
+                    }
+                    highlightColor(color);
+                }
+            });
+            add(colorPanel, GBC.std().weight(1, 1).fill().insets(5));
+            panels.put(color, colorPanel);
+        }
+
+        @Override
+        public void updateLayers(List<Layer> layers, boolean allVisible, boolean allHidden) {
+            List<Color> colors = layers.stream().filter(l -> l instanceof GpxLayer)
+                    .map(l -> ((GpxLayer)l).getColorProperty().get())
+                    .distinct()
+                    .collect(Collectors.toList());
+            if (colors.size() == 1) {
+                setVisible(true);
+                highlightColor(colors.get(0));
+            } else if (colors.size() > 0) {
+                setVisible(true);
+                highlightColor(null);
+            } else {
+                // no GPX layer
+                setVisible(false);
+            }
+        }
+
+        private void highlightColor(Color color) {
+            panels.values().forEach(panel -> panel.setBorder(NORMAL_BORDER));
+            if (color != null) {
+                JPanel selected = panels.get(color);
+                if (selected != null) {
+                    selected.setBorder(SELECTED_BORDER);
+                }
+            }
+            repaint();
+        }
+
+        @Override
+        public JComponent getPanel() {
+            return this;
         }
     }
 }
