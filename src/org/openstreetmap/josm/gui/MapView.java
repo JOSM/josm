@@ -49,6 +49,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
 import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
+import org.openstreetmap.josm.gui.autofilter.AutoFilterManager;
 import org.openstreetmap.josm.gui.datatransfer.OsmTransferHandler;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
@@ -287,6 +288,9 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
         for (JComponent c : getMapNavigationComponents(this)) {
             add(c);
+        }
+        if (AutoFilterManager.PROP_AUTO_FILTER_ENABLED.get()) {
+            AutoFilterManager.getInstance().enableAutoFilterRule(AutoFilterManager.PROP_AUTO_FILTER_RULE.get());
         }
         setTransferHandler(new OsmTransferHandler());
     }
@@ -557,7 +561,9 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             BugReport.intercept(e).put("bounds", () -> getProjection().getWorldBoundsLatLon()).warn();
         }
 
-        if (Main.isDisplayingMapView() && Main.map.filterDialog != null) {
+        if (AutoFilterManager.getInstance().getCurrentAutoFilter() != null) {
+            AutoFilterManager.getInstance().drawOSDText(tempG);
+        } else if (Main.isDisplayingMapView() && Main.map.filterDialog != null) {
             Main.map.filterDialog.drawOSDText(tempG);
         }
 
