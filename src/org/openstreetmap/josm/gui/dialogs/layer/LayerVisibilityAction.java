@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -28,6 +29,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JSlider;
+import javax.swing.UIManager;
 import javax.swing.border.Border;
 
 import org.openstreetmap.josm.Main;
@@ -94,7 +96,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
     }
 
     private void addContentEntry(LayerVisibilityMenuEntry slider) {
-        content.add(slider.getPanel(), GBC.eop());
+        content.add(slider.getPanel(), GBC.eop().fill(GBC.HORIZONTAL));
         sliders.add(slider);
     }
 
@@ -180,6 +182,11 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
 
         VisibilityCheckbox() {
             super(tr("Show layer"));
+
+            // Align all texts
+            Icon icon = UIManager.getIcon("CheckBox.icon");
+            int iconWidth = icon == null ? 20 : icon.getIconWidth();
+            setBorder(BorderFactory.createEmptyBorder(0, Math.max(24 + 5 - iconWidth, 0), 0, 0));
             addChangeListener(e -> setVisibleFlag(isSelected()));
         }
 
@@ -222,7 +229,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
             this.layerClassFilter = layerClassFilter;
 
             add(new JLabel(getIcon()), GBC.std().span(1, 2).insets(0, 0, 5, 0));
-            add(new JLabel(getLabel()), GBC.eol());
+            add(new JLabel(getLabel()), GBC.eol().insets(5, 0, 5, 0));
             add(slider, GBC.eol());
             addMouseWheelListener(this::mouseWheelMoved);
 
@@ -538,6 +545,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
 
         public ColorSelector() {
             super(new GridBagLayout());
+            add(new JLabel(tr("Color")), GBC.eol().insets(24 + 10, 0, 0, 0));
             for (Color color : COLORS) {
                 addPanelForColor(color);
             }
