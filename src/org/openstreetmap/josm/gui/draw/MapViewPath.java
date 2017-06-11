@@ -405,7 +405,7 @@ public class MapViewPath extends MapPath2D {
          */
         ClampingPathVisitor(MapViewRectangle clip, double strokeOffset, double strokeLength, PathSegmentConsumer consumer) {
             this.clip = clip;
-            this.strokeProgress = Math.min(strokeLength - strokeOffset, 0);
+            this.strokeProgress = Math.max(strokeLength - strokeOffset, 0);
             this.strokeLength = strokeLength;
             this.consumer = consumer;
         }
