@@ -69,7 +69,8 @@ public class ConditionalKeys extends Test.TagTest {
     }
 
     /**
-     * Checks if the key denotes a <a href="http://wiki.openstreetmap.org/wiki/Key:access#Transport_mode_restrictions">transport access mode restriction</a>
+     * Checks if the key denotes a
+     * <a href="http://wiki.openstreetmap.org/wiki/Key:access#Transport_mode_restrictions">transport access mode restriction</a>
      * @param part The key (or the restriction part of it, e.g. for lanes)
      * @return <code>true</code> if it is a restriction
      */
