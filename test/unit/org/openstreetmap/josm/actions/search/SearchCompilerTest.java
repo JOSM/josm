@@ -10,6 +10,7 @@ import static org.junit.Assert.fail;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,6 +31,8 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WayData;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -489,5 +492,51 @@ public class SearchCompilerTest {
     @Test
     public void testEnumExactKeyValueMode() {
         TestUtils.superficialEnumCodeCoverage(ExactKeyValue.Mode.class);
+    }
+
+    /**
+     * Robustness test for preset searching. Ensures that the query 'preset:' is not accepted.
+     * @throws ParseError always
+     */
+    @Test(expected = ParseError.class)
+    public void testPresetSearchMissingValue() throws ParseError {
+        SearchSetting settings = new SearchSetting();
+        settings.text = "preset:";
+        settings.mapCSSSearch = false;
+
+        SearchCompiler.compile(settings);
+    }
+
+    /**
+     * Robustness test for preset searching. Validates that it is not possible to search for
+     * non existing presets.
+     * @throws ParseError always
+     */
+    @Test(expected = ParseError.class)
+    public void testPresetNotExist() throws ParseError {
+        String testPresetName = "namethatshouldnotexist";
+        SearchSetting settings = new SearchSetting();
+        settings.text = "preset:" + testPresetName;
+        settings.mapCSSSearch = false;
+
+        // load presets
+        TaggingPresets.readFromPreferences();
+
+        SearchCompiler.compile(settings);
+    }
+
+    /**
+     * Robustness tests for preset searching. Ensures that combined presed names (having more than
+     * 1 words) must be enclosed in " .
+     * @throws ParseError always
+     */
+    @Test(expected = ParseError.class)
+    public void testPresetMultipleWords() throws ParseError{
+        String combinedPresetname = "Fast Food";
+        SearchSetting settings = new SearchSetting();
+        settings.text = "preset:" + combinedPresetname;
+        settings.mapCSSSearch = false;
+
+        SearchCompiler.compile(settings);
     }
 }
