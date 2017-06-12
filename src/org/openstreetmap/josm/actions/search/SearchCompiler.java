@@ -1568,7 +1568,9 @@ public class SearchCompiler {
 
         Preset(String presetName) throws ParseError {
 
-            Objects.requireNonNull(presetName);
+            if (presetName == null) {
+                throw new ParseError("The name of the preset is required");
+            }
 
             this.presets = TaggingPresets.getTaggingPresets()
                     .stream()
