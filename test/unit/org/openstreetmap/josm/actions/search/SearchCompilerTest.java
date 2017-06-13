@@ -571,7 +571,7 @@ public class SearchCompilerTest {
         };
 
         for (int i = 0; i < queries.length; i++) {
-            SearchContext ctx = new SearchContext("preset:" + presetName);
+            SearchContext ctx = new SearchContext(queries[i]);
             ctx.n1.put(key, val);
             ctx.n2.put(key, val);
 
