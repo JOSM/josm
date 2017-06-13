@@ -160,7 +160,10 @@ public class SplashScreen extends JFrame implements ChangeListener {
             if (isFinished()) {
                 throw new IllegalStateException("This task has already been finished: " + name);
             }
-            duration = tr(" ({0})", Utils.getDurationString(System.currentTimeMillis() - start));
+            long time = System.currentTimeMillis() - start;
+            if (time >= 0) {
+                duration = tr(" ({0})", Utils.getDurationString(time));
+            }
         }
 
         /**
