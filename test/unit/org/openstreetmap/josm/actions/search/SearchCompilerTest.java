@@ -10,6 +10,7 @@ import static org.junit.Assert.fail;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Collections;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,6 +31,10 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WayData;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
+import org.openstreetmap.josm.gui.tagging.presets.items.Key;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -489,5 +494,94 @@ public class SearchCompilerTest {
     @Test
     public void testEnumExactKeyValueMode() {
         TestUtils.superficialEnumCodeCoverage(ExactKeyValue.Mode.class);
+    }
+
+    /**
+     * Robustness test for preset searching. Ensures that the query 'preset:' is not accepted.
+     * @throws ParseError always
+     */
+    @Test(expected = ParseError.class)
+    public void testPresetSearchMissingValue() throws ParseError {
+        SearchSetting settings = new SearchSetting();
+        settings.text = "preset:";
+        settings.mapCSSSearch = false;
+
+        SearchCompiler.compile(settings);
+    }
+
+    /**
+     * Robustness test for preset searching. Validates that it is not possible to search for
+     * non existing presets.
+     * @throws ParseError always
+     */
+    @Test(expected = ParseError.class)
+    public void testPresetNotExist() throws ParseError {
+        String testPresetName = "namethatshouldnotexist";
+        SearchSetting settings = new SearchSetting();
+        settings.text = "preset:" + testPresetName;
+        settings.mapCSSSearch = false;
+
+        // load presets
+        TaggingPresets.readFromPreferences();
+
+        SearchCompiler.compile(settings);
+    }
+
+    /**
+     * Robustness tests for preset searching. Ensures that combined presed names (having more than
+     * 1 words) must be enclosed in " .
+     * @throws ParseError always
+     */
+    @Test(expected = ParseError.class)
+    public void testPresetMultipleWords() throws ParseError{
+        String combinedPresetname = "Fast Food";
+        SearchSetting settings = new SearchSetting();
+        settings.text = "preset:" + combinedPresetname;
+        settings.mapCSSSearch = false;
+
+        SearchCompiler.compile(settings);
+    }
+
+    /**
+     * Ensures that correct primitives are matched against the specified preset.
+     * @throws ParseError if an error has been encountered while compiling
+     */
+    @Test
+    public void testPreset() throws ParseError {
+        final String presetName = "testPresetName";
+        final String key = "test_key1";
+        final String val = "test_val1";
+
+        Key key1 = new Key();
+        key1.key = key;
+        key1.value = val;
+
+        TaggingPreset testPreset = new TaggingPreset();
+        testPreset.name = presetName;
+        testPreset.types = Collections.singleton(TaggingPresetType.NODE);
+        testPreset.data.add(key1);
+
+        TaggingPresets.readFromPreferences();
+        TaggingPresets.addTaggingPresets(Collections.singleton(testPreset));
+
+        String[] queries = {
+                "preset:" + presetName,
+                "preset: " + presetName,
+                "preset:" + "\"" + presetName + "\""
+        };
+
+        for (int i = 0; i < queries.length; i++) {
+            SearchContext ctx = new SearchContext(queries[i]);
+            ctx.n1.put(key, val);
+            ctx.n2.put(key, val);
+
+            for (OsmPrimitive osm : new OsmPrimitive[] { ctx.n1, ctx.n2 }) {
+                ctx.match(osm, true);
+            }
+
+            for (OsmPrimitive osm : new OsmPrimitive[] { ctx.r1, ctx.r2, ctx.w1, ctx.w2 }) {
+                ctx.match(osm, false);
+            }
+        }
     }
 }
