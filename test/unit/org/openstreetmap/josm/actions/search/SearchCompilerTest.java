@@ -10,7 +10,7 @@ import static org.junit.Assert.fail;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Objects;
+import java.util.Collections;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,7 +32,9 @@ import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
+import org.openstreetmap.josm.gui.tagging.presets.items.Key;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -538,5 +540,48 @@ public class SearchCompilerTest {
         settings.mapCSSSearch = false;
 
         SearchCompiler.compile(settings);
+    }
+
+    /**
+     * Ensures that correct primitives are matched against the specified preset.
+     * @throws ParseError if an error has been encountered while compiling
+     */
+    @Test
+    public void testPreset() throws ParseError {
+        final String presetName = "testPresetName";
+        final String key = "test_key1";
+        final String val = "test_val1";
+
+        Key key1 = new Key();
+        key1.key = key;
+        key1.value = val;
+
+        TaggingPreset testPreset = new TaggingPreset();
+        testPreset.name = presetName;
+        testPreset.types = Collections.singleton(TaggingPresetType.NODE);
+        testPreset.data.add(key1);
+
+        TaggingPresets.readFromPreferences();
+        TaggingPresets.addTaggingPresets(Collections.singleton(testPreset));
+
+        String[] queries = {
+                "preset:" + presetName,
+                "preset: " + presetName,
+                "preset:" + "\"" + presetName + "\""
+        };
+
+        for (int i = 0; i < queries.length; i++) {
+            SearchContext ctx = new SearchContext("preset:" + presetName);
+            ctx.n1.put(key, val);
+            ctx.n2.put(key, val);
+
+            for (OsmPrimitive osm : new OsmPrimitive[] { ctx.n1, ctx.n2 }) {
+                ctx.match(osm, true);
+            }
+
+            for (OsmPrimitive osm : new OsmPrimitive[] { ctx.r1, ctx.r2, ctx.w1, ctx.w2 }) {
+                ctx.match(osm, false);
+            }
+        }
     }
 }
