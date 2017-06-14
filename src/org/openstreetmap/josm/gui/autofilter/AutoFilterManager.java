@@ -17,6 +17,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
@@ -174,19 +176,33 @@ public final class AutoFilterManager implements ZoomChangeListener, MapModeChang
         Set<String> values = new TreeSet<>();
         if (ds != null) {
             BBox bbox = Main.map.mapView.getState().getViewArea().getLatLonBoundsBox().toBBox();
-            Consumer<OsmPrimitive> consumer = o -> {
-                String value = o.get(key);
-                if (value != null) {
-                    for (String v : value.split(";")) {
-                        values.add(v);
-                    }
-                }
-            };
+            Consumer<OsmPrimitive> consumer = getTagValuesConsumer(key, values);
             ds.searchNodes(bbox).forEach(consumer);
             ds.searchWays(bbox).forEach(consumer);
             ds.searchRelations(bbox).forEach(consumer);
         }
         return values;
+    }
+
+    static Consumer<OsmPrimitive> getTagValuesConsumer(String key, Set<String> values) {
+        return o -> {
+            String value = o.get(key);
+            if (value != null) {
+                Pattern p = Pattern.compile("(-?[0-9]+)-(-?[0-9]+)");
+                for (String v : value.split(";")) {
+                    Matcher m = p.matcher(v);
+                    if (m.matches()) {
+                        int a = Integer.parseInt(m.group(1));
+                        int b = Integer.parseInt(m.group(2));
+                        for (int i = Math.min(a, b); i <= Math.max(a, b); i++) {
+                            values.add(Integer.toString(i));
+                        }
+                    } else {
+                        values.add(v);
+                    }
+                }
+            }
+        };
     }
 
     @Override
