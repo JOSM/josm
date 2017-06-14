@@ -207,6 +207,9 @@ public class CompositeCacheConfigurator
                     ccm.getDefaultCacheAttributes(), regionPrefix ), ea )
             : new CompositeCache<K, V>( cca, ea );
 
+        // Inject cache manager
+        cache.setCompositeCacheManager(ccm);
+
         // Inject scheduler service
         cache.setScheduledExecutorService(ccm.getScheduledExecutorService());
 

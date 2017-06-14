@@ -19,7 +19,6 @@ package org.apache.commons.jcs.auxiliary.remote;
  * under the License.
  */
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.jcs.auxiliary.remote.server.behavior.RemoteType;
@@ -68,10 +67,9 @@ public class RemoteCacheNoWaitFacade<K, V>
         super( noWaits, rca, cacheMgr, cacheEventLogger, elementSerializer );
         this.cacheFactory = cacheFactory;
 
-        for (RemoteCacheNoWait<K,V> rcnw : new ArrayList<RemoteCacheNoWait<K, V>>(this.noWaits))
+        for (RemoteCacheNoWait<K,V> rcnw : this.noWaits)
         {
             ((RemoteCache<K, V>)rcnw.getRemoteCache()).setFacade(this);
-            this.noWaits.add(rcnw);
         }
     }
 

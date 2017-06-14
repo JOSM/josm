@@ -111,6 +111,9 @@ public class CompositeCache<K, V>
     /** Count of misses where element was expired. */
     private AtomicInteger missCountExpired;
 
+    /** Cache manager. */
+    private CompositeCacheManager cacheManager = null;
+
     /**
      * The cache hub can only have one memory cache. This could be made more flexible in the future,
      * but they are tied closely together. More than one doesn't make much sense.
@@ -156,6 +159,16 @@ public class CompositeCache<K, V>
     public void setElementEventQueue( IElementEventQueue queue )
     {
         this.elementEventQ = queue;
+    }
+
+    /**
+     * Injector for cache manager
+     *
+     * @param manager
+     */
+    public void setCompositeCacheManager( CompositeCacheManager manager )
+    {
+        this.cacheManager = manager;
     }
 
     /**
@@ -1286,19 +1299,26 @@ public class CompositeCache<K, V>
      */
     public void dispose( boolean fromRemote )
     {
-        if ( log.isInfoEnabled() )
-        {
-            log.info( "In DISPOSE, [" + this.cacheAttr.getCacheName() + "] fromRemote [" + fromRemote + "]" );
-        }
-
-        // If already disposed, return immediately
+         // If already disposed, return immediately
         if ( alive.compareAndSet(true, false) == false )
         {
             return;
         }
 
+        if ( log.isInfoEnabled() )
+        {
+            log.info( "In DISPOSE, [" + this.cacheAttr.getCacheName() + "] fromRemote [" + fromRemote + "]" );
+        }
+
         synchronized (this)
         {
+            // Remove us from the cache managers list
+            // This will call us back but exit immediately
+            if (cacheManager != null)
+            {
+                cacheManager.freeCache(getCacheName(), fromRemote);
+            }
+
             // Try to stop shrinker thread
             if (future != null)
             {

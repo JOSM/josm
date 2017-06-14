@@ -527,7 +527,7 @@ public class CompositeCacheManager
     @Override
     public <K, V> CompositeCache<K, V> getCache( String cacheName )
     {
-        return getCache( cacheName, this.defaultCacheAttr.clone() );
+        return getCache( cacheName, getDefaultCacheAttributes() );
     }
 
     /**
@@ -540,7 +540,7 @@ public class CompositeCacheManager
     public <K, V> CompositeCache<K, V> getCache( String cacheName, ICompositeCacheAttributes cattr )
     {
         cattr.setCacheName( cacheName );
-        return getCache( cattr, this.defaultElementAttr );
+        return getCache( cattr, getDefaultElementAttributes() );
     }
 
     /**
@@ -565,7 +565,7 @@ public class CompositeCacheManager
      */
     public <K, V> CompositeCache<K, V>  getCache( ICompositeCacheAttributes cattr )
     {
-        return getCache( cattr, this.defaultElementAttr );
+        return getCache( cattr, getDefaultElementAttributes() );
     }
 
     /**
