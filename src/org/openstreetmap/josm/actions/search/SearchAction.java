@@ -360,7 +360,12 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             }
         });
 
-        // Setup the logic to append preset queries to the search text field.
+        /**
+         * Setup the logic to append preset queries to the search text field according to
+         * selected preset by the user in {@link TaggingPresetSelector}.
+         * Every query is of the form ' group/sub-group/presetName' if the correposing group
+         * of the preset exists, otherwise it is simply ' presetName'.
+         */
         final TaggingPresetSelector selector = new TaggingPresetSelector(false, false);
         selector.setBorder(BorderFactory.createTitledBorder(tr("Search by preset")));
 
@@ -425,9 +430,14 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         if (dialog.showDialog().getValue() != 1) return null;
 
         // User pressed OK - let's perform the search
-        SearchMode mode = replace.isSelected() ? SearchAction.SearchMode.replace
-                : (add.isSelected() ? SearchAction.SearchMode.add
-                        : (remove.isSelected() ? SearchAction.SearchMode.remove : SearchAction.SearchMode.in_selection));
+        SearchMode mode = replace.isSelected()
+                ? SearchAction.SearchMode.replace
+                : (add.isSelected()
+                    ? SearchAction.SearchMode.add
+                    : (remove.isSelected()
+                        ? SearchAction.SearchMode.remove
+                        : SearchAction.SearchMode.in_selection));
+
         initialValues.text = hcbSearchString.getText();
         initialValues.mode = mode;
         initialValues.caseSensitive = caseSensitive.isSelected();
@@ -448,6 +458,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             // add custom search button to toolbar preferences
             Main.toolbar.addCustomButton(res, -1, false);
         }
+
         return initialValues;
     }
 
