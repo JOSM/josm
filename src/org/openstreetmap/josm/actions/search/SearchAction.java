@@ -323,12 +323,10 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         top.add(label, GBC.std().insets(0, 0, 5, 0));
         top.add(hcbSearchString, GBC.eol().fill(GBC.HORIZONTAL));
 
-        /**
-         * Setup the logic to validate contents of the search text field.
-         */
         final JTextComponent editorComponent = hcbSearchString.getEditorComponent();
         final Document document = editorComponent.getDocument();
 
+        // Setup the logic to validate contents of the search text field.
         document.addDocumentListener(new AbstractTextComponentValidator(editorComponent) {
 
             @Override
@@ -356,9 +354,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             }
         });
 
-        /**
-         * Setup the logic to append preset queries to the search text field.
-         */
+        // Setup the logic to append preset queries to the search text field.
         final TaggingPresetSelector selector = new TaggingPresetSelector(false, false);
         selector.setBorder(BorderFactory.createTitledBorder(tr("Search by preset")));
 
