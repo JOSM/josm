@@ -119,11 +119,11 @@ public class PushbackTokenizer {
          */
         EOF(marktr("<end-of-file>")),
         /**
-         * Less than sign (<)
+         * Less than sign (&lt;)
          */
         LESS_THAN("<less-than>"),
         /**
-         * Greater than sign (>)
+         * Greater than sign (&gt;)
          */
         GREATER_THAN("<greater-than>");
 
