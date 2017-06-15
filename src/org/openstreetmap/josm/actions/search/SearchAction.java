@@ -247,12 +247,18 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
     }
 
+    /**
+     * Builds and shows the search dialog.
+     * @param initialValues A set of initial values needed in order to initialize the search dialog.
+     *                      If is {@code null}, then default settings are used.
+     * @return Returns {@link SearchAction} object containing parameters of the search.
+     */
     public static SearchSetting showSearchDialog(SearchSetting initialValues) {
         if (initialValues == null) {
             initialValues = new SearchSetting();
         }
-        // -- prepare the combo box with the search expressions
-        //
+
+        // prepare the combo box with the search expressions
         JLabel label = new JLabel(initialValues instanceof Filter ? tr("Filter string:") : tr("Search string:"));
         final HistoryComboBox hcbSearchString = new HistoryComboBox();
         final String tooltip = tr("Enter the search expression");
