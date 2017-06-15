@@ -1563,7 +1563,8 @@ public class SearchCompiler {
      * Matches presets.
      */
     private static class Preset extends Match {
-        private List<TaggingPreset> presets;
+        private List<TaggingPreset> presetsBySimpleName;
+        private List<TaggingPreset> presetsByRawName;
 
         Preset(String presetName) throws ParseError {
 
@@ -1571,12 +1572,19 @@ public class SearchCompiler {
                 throw new ParseError("The name of the preset is required");
             }
 
-            this.presets = TaggingPresets.getTaggingPresets()
-                    .stream()
-                    .filter(preset -> presetName.equalsIgnoreCase(preset.getSimpleName()))
-                    .collect(Collectors.toList());
+            this.presetsByRawName = this.getTaggingPresets(presetName);
 
-            if (this.presets.isEmpty()) {
+            if (presetName.contains("/")) {
+                int idx = presetName.lastIndexOf("/") + 1;
+                int end = presetName.length();
+
+                if (idx < end) {
+                    String simplePresetName = presetName.substring(idx, end);
+                    this.presetsBySimpleName = this.getTaggingPresets(simplePresetName);
+                }
+            }
+
+            if (this.presetsByRawName.isEmpty() && presetsBySimpleName.isEmpty()) {
                 throw new ParseError(tr("Unknown preset name: ") + presetName);
             }
         }
@@ -1587,13 +1595,28 @@ public class SearchCompiler {
          */
         @Override
         public boolean match(OsmPrimitive osm) {
-            for (TaggingPreset p : this.presets) {
+            // first try to match presets by their complete name
+            for (TaggingPreset p : this.presetsByRawName) {
+                if (p.test(osm)) {
+                    return true;
+                }
+            }
+
+            // if none matched, then try to match by their simple name
+            for (TaggingPreset p : this.presetsBySimpleName) {
                 if (p.test(osm)) {
                     return true;
                 }
             }
 
             return false;
+        }
+
+        private List<TaggingPreset> getTaggingPresets(String presetName) {
+            return TaggingPresets.getTaggingPresets()
+                    .stream()
+                    .filter(preset -> presetName.equalsIgnoreCase(preset.getRawName()))
+                    .collect(Collectors.toList());
         }
     }
 
