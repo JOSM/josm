@@ -36,6 +36,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
@@ -54,6 +55,8 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSException;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences.ActionParser;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSelector;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.GBC;
@@ -255,8 +258,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         final String tooltip = tr("Enter the search expression");
         hcbSearchString.setText(initialValues.text);
         hcbSearchString.setToolTipText(tooltip);
+
         // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
-        //
         List<String> searchExpressionHistory = getSearchExpressionHistory();
         Collections.reverse(searchExpressionHistory);
         hcbSearchString.setPossibleItems(searchExpressionHistory);
@@ -320,8 +323,13 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         top.add(label, GBC.std().insets(0, 0, 5, 0));
         top.add(hcbSearchString, GBC.eol().fill(GBC.HORIZONTAL));
 
+        /**
+         * Setup the logic to validate contents of the search text field.
+         */
         final JTextComponent editorComponent = hcbSearchString.getEditorComponent();
-        editorComponent.getDocument().addDocumentListener(new AbstractTextComponentValidator(editorComponent) {
+        final Document document = editorComponent.getDocument();
+
+        document.addDocumentListener(new AbstractTextComponentValidator(editorComponent) {
 
             @Override
             public void validate() {
@@ -348,10 +356,35 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             }
         });
 
+        /**
+         * Setup the logic to append preset queries to the search text field.
+         */
+        final TaggingPresetSelector selector = new TaggingPresetSelector(false, false);
+        selector.setBorder(BorderFactory.createTitledBorder(tr("Search by preset")));
+
+        selector.setDblClickListener(ev -> {
+            TaggingPreset selectedPreset = selector.getSelectedPresetAndUpdateClassification();
+
+            if (selectedPreset == null) {
+                return;
+            }
+
+            int textOffset = editorComponent.getCaretPosition();
+
+            try {
+                final String presetSearchQuery = " preset:" +
+                        "\"" + selectedPreset.getRawName() + "\"";
+                document.insertString(textOffset, presetSearchQuery, null);
+            } catch (BadLocationException e) {
+                throw new JosmRuntimeException(e.getMessage(), e);
+            }
+        });
+
         final JPanel p = new JPanel(new GridBagLayout());
         p.add(top, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 5, 5, 0));
         p.add(left, GBC.std().anchor(GBC.NORTH).insets(5, 10, 10, 0).fill(GBC.VERTICAL));
-        p.add(right, GBC.eol().fill(GBC.BOTH).insets(0, 10, 0, 0));
+        p.add(right, GBC.std().fill(GBC.BOTH).insets(0, 10, 0, 0));
+        p.add(selector, GBC.eol().fill(GBC.BOTH).insets(0, 10, 0, 0));
 
         ExtendedDialog dialog = new ExtendedDialog(
                 Main.parent,
