@@ -260,8 +260,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
         // prepare the combo box with the search expressions
         JLabel label = new JLabel(initialValues instanceof Filter ? tr("Filter string:") : tr("Search string:"));
-        final HistoryComboBox hcbSearchString = new HistoryComboBox();
-        final String tooltip = tr("Enter the search expression");
+        HistoryComboBox hcbSearchString = new HistoryComboBox();
+        String tooltip = tr("Enter the search expression");
         hcbSearchString.setText(initialValues.text);
         hcbSearchString.setToolTipText(tooltip);
 
@@ -282,15 +282,15 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         bg.add(remove);
         bg.add(inSelection);
 
-        final JCheckBox caseSensitive = new JCheckBox(tr("case sensitive"), initialValues.caseSensitive);
+        JCheckBox caseSensitive = new JCheckBox(tr("case sensitive"), initialValues.caseSensitive);
         JCheckBox allElements = new JCheckBox(tr("all objects"), initialValues.allElements);
         allElements.setToolTipText(tr("Also include incomplete and deleted objects in search."));
         JCheckBox addOnToolbar = new JCheckBox(tr("add toolbar button"), false);
 
-        final JRadioButton standardSearch = new JRadioButton(tr("standard"), !initialValues.regexSearch && !initialValues.mapCSSSearch);
-        final JRadioButton regexSearch = new JRadioButton(tr("regular expression"), initialValues.regexSearch);
-        final JRadioButton mapCSSSearch = new JRadioButton(tr("MapCSS selector"), initialValues.mapCSSSearch);
-        final ButtonGroup bg2 = new ButtonGroup();
+        JRadioButton standardSearch = new JRadioButton(tr("standard"), !initialValues.regexSearch && !initialValues.mapCSSSearch);
+        JRadioButton regexSearch = new JRadioButton(tr("regular expression"), initialValues.regexSearch);
+        JRadioButton mapCSSSearch = new JRadioButton(tr("MapCSS selector"), initialValues.mapCSSSearch);
+        ButtonGroup bg2 = new ButtonGroup();
         bg2.add(standardSearch);
         bg2.add(regexSearch);
         bg2.add(mapCSSSearch);
@@ -324,13 +324,13 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             left.add(searchOptions, GBC.eol().fill(GBC.BOTH));
         }
 
-        final JPanel right = SearchAction.buildHintsSection(hcbSearchString);
-        final JPanel top = new JPanel(new GridBagLayout());
+        JPanel right = SearchAction.buildHintsSection(hcbSearchString);
+        JPanel top = new JPanel(new GridBagLayout());
         top.add(label, GBC.std().insets(0, 0, 5, 0));
         top.add(hcbSearchString, GBC.eol().fill(GBC.HORIZONTAL));
 
-        final JTextComponent editorComponent = hcbSearchString.getEditorComponent();
-        final Document document = editorComponent.getDocument();
+        JTextComponent editorComponent = hcbSearchString.getEditorComponent();
+        Document document = editorComponent.getDocument();
 
         // Setup the logic to validate contents of the search text field.
         document.addDocumentListener(new AbstractTextComponentValidator(editorComponent) {
@@ -366,7 +366,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
          * Every query is of the form ' group/sub-group/presetName' if the correposing group
          * of the preset exists, otherwise it is simply ' presetName'.
          */
-        final TaggingPresetSelector selector = new TaggingPresetSelector(false, false);
+        TaggingPresetSelector selector = new TaggingPresetSelector(false, false);
         selector.setBorder(BorderFactory.createTitledBorder(tr("Search by preset")));
 
         selector.setDblClickListener(ev -> {
@@ -387,7 +387,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             }
         });
 
-        final JPanel p = new JPanel(new GridBagLayout());
+        JPanel p = new JPanel(new GridBagLayout());
         p.add(top, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 5, 5, 0));
         p.add(left, GBC.std().anchor(GBC.NORTH).insets(5, 10, 10, 0).fill(GBC.VERTICAL));
         p.add(right, GBC.std().fill(GBC.BOTH).insets(0, 10, 0, 0));
