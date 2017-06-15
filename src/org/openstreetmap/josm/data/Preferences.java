@@ -1210,7 +1210,7 @@ public class Preferences {
     }
 
     /**
-     * Gets a collection of key->value maps.
+     * Gets a collection of key/value maps.
      * @param key The key to search at
      * @param def The default value to use
      * @return The stored value or the default one if it could not be parsed
@@ -1222,7 +1222,7 @@ public class Preferences {
     /**
      * Stores a list of structs
      * @param key The key to store the list in
-     * @param value A list of key->value maps
+     * @param value A list of key/value maps
      * @return <code>true</code> if the value was changed
      * @see #getListOfStructs(String, Collection)
      */
@@ -1513,7 +1513,7 @@ public class Preferences {
 
     /**
      * Gets a map of all currently known defaults
-     * @return The map (key->setting)
+     * @return The map (key/setting)
      */
     public Map<String, Setting<?>> getAllDefaults() {
         return new TreeMap<>(defaultsMap);
