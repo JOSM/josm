@@ -361,7 +361,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             }
         });
 
-        /**
+        /*
          * Setup the logic to append preset queries to the search text field according to
          * selected preset by the user in {@link TaggingPresetSelector}.
          * Every query is of the form ' group/sub-group/presetName' if the correposing group
@@ -377,7 +377,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 return;
             }
 
-            /**
+            /*
              * Make sure that the focus is transfered to the search text field, in order
              * to allow the user simply delete autocompleted part of the query.
              */
