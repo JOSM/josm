@@ -35,6 +35,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
@@ -376,15 +377,22 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 return;
             }
 
-            int textOffset = editorComponent.getCaretPosition();
+            /**
+             * Make sure that the focus is transfered to the search text field, in order
+             * to allow the user simply delete autocompleted part of the query.
+             */
+            editorComponent.requestFocusInWindow();
 
-            try {
-                final String presetSearchQuery = " preset:" +
+            SwingUtilities.invokeLater(() -> {
+                int textOffset = editorComponent.getCaretPosition();
+                String presetSearchQuery = " preset:" +
                         "\"" + selectedPreset.getRawName() + "\"";
-                document.insertString(textOffset, presetSearchQuery, null);
-            } catch (BadLocationException e) {
-                throw new JosmRuntimeException(e.getMessage(), e);
-            }
+                try {
+                    document.insertString(textOffset, presetSearchQuery, null);
+                } catch (BadLocationException e1) {
+                    throw new JosmRuntimeException(e1.getMessage(), e1);
+                }
+            });
         });
 
         JPanel p = new JPanel(new GridBagLayout());
