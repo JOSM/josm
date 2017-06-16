@@ -235,12 +235,23 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        try {
-                            JTextComponent tf = hcb.getEditorComponent();
-                            tf.getDocument().insertString(tf.getCaretPosition(), ' ' + insertText, null);
-                        } catch (BadLocationException ex) {
-                            throw new JosmRuntimeException(ex.getMessage(), ex);
+                        JTextComponent tf = hcb.getEditorComponent();
+
+                        /*
+                         * Get the focus in order to select proper area within the search
+                         * text field if autocompletion triggered.
+                         */
+                        if (!tf.hasFocus()) {
+                            tf.requestFocusInWindow();
                         }
+
+                        SwingUtilities.invokeLater(() -> {
+                            try {
+                                tf.getDocument().insertString(tf.getCaretPosition(), ' ' + insertText, null);
+                            } catch (BadLocationException ex) {
+                                throw new JosmRuntimeException(ex.getMessage(), ex);
+                            }
+                        });
                     }
                 });
             }
@@ -382,7 +393,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             }
 
             /*
-             * Make sure that the focus is transfered to the search text field, in order
+             * Make sure that the focus is transferred to the search text field, in order
              * to allow the user simply delete autocompleted part of the query.
              */
             editorComponent.requestFocusInWindow();
