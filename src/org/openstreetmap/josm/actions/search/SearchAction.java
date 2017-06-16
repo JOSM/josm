@@ -296,8 +296,6 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         bg2.add(regexSearch);
         bg2.add(mapCSSSearch);
 
-        JPanel left = new JPanel(new GridBagLayout());
-
         JPanel selectionSettings = new JPanel(new GridBagLayout());
         selectionSettings.setBorder(BorderFactory.createTitledBorder(tr("Selection settings")));
         selectionSettings.add(replace, GBC.eol().anchor(GBC.WEST).fill(GBC.HORIZONTAL));
@@ -308,6 +306,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         JPanel additionalSettings = new JPanel(new GridBagLayout());
         additionalSettings.setBorder(BorderFactory.createTitledBorder(tr("Additional settings")));
         additionalSettings.add(caseSensitive, GBC.eol().anchor(GBC.WEST).fill(GBC.HORIZONTAL));
+
+        JPanel left = new JPanel(new GridBagLayout());
 
         left.add(selectionSettings, GBC.eol().fill(GBC.BOTH));
         left.add(additionalSettings, GBC.eol().fill(GBC.BOTH));
@@ -333,7 +333,11 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         JTextComponent editorComponent = hcbSearchString.getEditorComponent();
         Document document = editorComponent.getDocument();
 
-        // Setup the logic to validate contents of the search text field.
+        /*
+         * Setup the logic to validate the contents of the search text field which is executed
+         * every time the content of the field has changed. If the query is incorrect, then
+         * the text field is colored red.
+         */
         document.addDocumentListener(new AbstractTextComponentValidator(editorComponent) {
 
             @Override
