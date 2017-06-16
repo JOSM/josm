@@ -1563,8 +1563,7 @@ public class SearchCompiler {
      * Matches presets.
      */
     private static class Preset extends Match {
-        private List<TaggingPreset> presetsBySimpleName;
-        private List<TaggingPreset> presetsByRawName;
+        private final TaggingPreset preset;
 
         Preset(String presetName) throws ParseError {
 
@@ -1572,44 +1571,21 @@ public class SearchCompiler {
                 throw new ParseError("The name of the preset is required");
             }
 
-            this.presetsByRawName = this.getTaggingPresets(presetName);
+            Optional<TaggingPreset> p = TaggingPresets.getTaggingPresets()
+                    .stream()
+                    .filter(preset -> presetName.equalsIgnoreCase(preset.getRawName()))
+                    .findFirst();
 
-            if (presetName.contains("/")) {
-                int idx = presetName.lastIndexOf("/") + 1;
-                int end = presetName.length();
-
-                if (idx < end) {
-                    String simplePresetName = presetName.substring(idx, end);
-                    this.presetsBySimpleName = this.getTaggingPresets(simplePresetName);
-                }
-            }
-
-            if (this.presetsByRawName.isEmpty() && presetsBySimpleName.isEmpty()) {
+            if (!p.isPresent()) {
                 throw new ParseError(tr("Unknown preset name: ") + presetName);
             }
+
+            this.preset = p.get();
         }
 
-        /**
-         * Since presets can have common names, the primitive is considered to
-         * belong to a certain preset if it matches at least one of them.
-         */
         @Override
         public boolean match(OsmPrimitive osm) {
-            // first try to match presets by their complete name
-            for (TaggingPreset p : this.presetsByRawName) {
-                if (p.test(osm)) {
-                    return true;
-                }
-            }
-
-            // if none matched, then try to match by their simple name
-            for (TaggingPreset p : this.presetsBySimpleName) {
-                if (p.test(osm)) {
-                    return true;
-                }
-            }
-
-            return false;
+            return this.preset.test(osm);
         }
 
         private List<TaggingPreset> getTaggingPresets(String presetName) {
