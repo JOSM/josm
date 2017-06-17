@@ -35,7 +35,6 @@ class JavaFxMediaPlayer implements SoundPlayer {
     private final ListenerList<AudioListener> listeners = ListenerList.create();
 
     private URL url;
-    private Media media;
     private MediaPlayer mediaPlayer;
 
     JavaFxMediaPlayer() throws InterruptedException {
@@ -68,8 +67,7 @@ class JavaFxMediaPlayer implements SoundPlayer {
                 if ("file".equals(url.getProtocol()) && !new File(url.toURI()).exists()) {
                     throw new FileNotFoundException(url.toString());
                 }
-                media = new Media(url.toString());
-                mediaPlayer = new MediaPlayer(media);
+                mediaPlayer = new MediaPlayer(new Media(url.toString()));
                 mediaPlayer.setOnPlaying(() -> {
                     listeners.fireEvent(l -> l.playing(url));
                 });

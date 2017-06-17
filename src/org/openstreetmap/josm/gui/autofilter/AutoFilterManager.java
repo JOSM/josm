@@ -59,7 +59,7 @@ public final class AutoFilterManager implements ZoomChangeListener, MapModeChang
     /**
      * Property to determines if the auto filter feature is enabled.
      */
-    public static final BooleanProperty PROP_AUTO_FILTER_ENABLED = new BooleanProperty("auto.filter.enabled", Boolean.TRUE);
+    public static final BooleanProperty PROP_AUTO_FILTER_ENABLED = new BooleanProperty("auto.filter.enabled", true);
 
     /**
      * Property to determine the current auto filter rule.

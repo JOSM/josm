@@ -31,7 +31,6 @@ class JavaSoundPlayer implements SoundPlayer {
 
     private AudioInputStream audioInputStream;
     private SourceDataLine audioOutputLine;
-    private AudioFormat audioFormat;
 
     private final double leadIn; // seconds
     private final double calibration; // ratio of purported duration of samples to true duration
@@ -66,7 +65,7 @@ class JavaSoundPlayer implements SoundPlayer {
             } catch (UnsupportedAudioFileException e) {
                 throw new AudioException(e);
             }
-            audioFormat = audioInputStream.getFormat();
+            AudioFormat audioFormat = audioInputStream.getFormat();
             long nBytesRead;
             position = 0.0;
             offset -= leadIn;
