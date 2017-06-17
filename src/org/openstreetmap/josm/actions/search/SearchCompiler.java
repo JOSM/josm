@@ -1605,18 +1605,18 @@ public class SearchCompiler {
         }
 
         private boolean presetNameMatch(String name, TaggingPreset preset, boolean matchStrictly) {
-            // there is no wildcard
             if (matchStrictly) {
                 return name.equalsIgnoreCase(preset.getRawName());
             }
 
-            String groupSuffix = null;
-            
-            if (name.equals("*") && (groupSuffix = name.substring(0, name.length() - 2)).equals("")) {
+            try {
+                String groupSuffix = name.substring(0, name.length() - 2); // try to remove '/*'
+                TaggingPresetMenu group = preset.group;
+
+                return group != null && groupSuffix.equalsIgnoreCase(group.getRawName());
+            } catch (StringIndexOutOfBoundsException ex) {
                 return false;
             }
-
-            return preset.group != null && preset.group.getRawName().equalsIgnoreCase(groupSuffix);
         }
     }
 
