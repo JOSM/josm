@@ -25,6 +25,7 @@ import org.openstreetmap.josm.command.ChangeRelationMemberRoleCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.correction.RoleCorrection;
 import org.openstreetmap.josm.data.correction.TagCorrection;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -55,7 +56,17 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
             tr("Cancel")
     };
 
+    /**
+     * Creates the commands to correct the tags. Asks the users about it.
+     * @param dataSet The data set the primitives will be in once the commands are executed
+     * @param tagCorrectionsMap The possible tag corrections
+     * @param roleCorrectionMap The possible role corrections
+     * @param description A description to add to the dialog.
+     * @return A list of commands
+     * @throws UserCancelException If the user canceled
+     */
     protected Collection<Command> applyCorrections(
+            DataSet dataSet,
             Map<OsmPrimitive, List<TagCorrection>> tagCorrectionsMap,
             Map<OsmPrimitive, List<RoleCorrection>> roleCorrectionMap,
             String description) throws UserCancelException {
@@ -174,7 +185,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
 
                     // save the clone
                     if (!keysChanged.isEmpty()) {
-                        commands.add(new ChangeCommand(primitive.getDataSet(), primitive, clone));
+                        commands.add(new ChangeCommand(dataSet, primitive, clone));
                     }
                 }
                 for (Entry<OsmPrimitive, List<RoleCorrection>> entry : roleCorrectionMap.entrySet()) {
@@ -184,7 +195,7 @@ public abstract class TagCorrector<P extends OsmPrimitive> {
                     for (int i = 0; i < roleCorrections.size(); i++) {
                         RoleCorrection roleCorrection = roleCorrections.get(i);
                         if (roleTableMap.get(primitive).getCorrectionTableModel().getApply(i)) {
-                            commands.add(new ChangeRelationMemberRoleCommand(roleCorrection.relation.getDataSet(),
+                            commands.add(new ChangeRelationMemberRoleCommand(dataSet,
                                     roleCorrection.relation, roleCorrection.position, roleCorrection.newRole));
                         }
                     }

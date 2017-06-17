@@ -286,7 +286,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
             roleCorrectionMap.put(way, roleCorrections);
         }
 
-        return applyCorrections(tagCorrectionsMap, roleCorrectionMap,
+        return applyCorrections(oldway.getDataSet(), tagCorrectionsMap, roleCorrectionMap,
                 tr("When reversing this way, the following changes are suggested in order to maintain data consistency."));
     }
 
