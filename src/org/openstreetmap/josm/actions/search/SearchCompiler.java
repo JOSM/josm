@@ -1610,24 +1610,13 @@ public class SearchCompiler {
                 return name.equalsIgnoreCase(preset.getRawName());
             }
 
-            // match any preset
-            if (name.equals("*")) {
-                return true;
-            }
-
-            // remove '/*' and try to match the group name
-            String groupSuffix = name.substring(0, name.length() - 2);
-
-            if (groupSuffix.equals("")) {
+            String groupSuffix = null;
+            
+            if (name.equals("*") && (groupSuffix = name.substring(0, name.length() - 2)).equals("")) {
                 return false;
             }
 
-            TaggingPreset group = preset.group;
-            if (group != null) {
-                return group.getRawName().equalsIgnoreCase(groupSuffix);
-            }
-
-            return false;
+            return preset.group != null && preset.group.getRawName().equalsIgnoreCase(groupSuffix);
         }
     }
 
