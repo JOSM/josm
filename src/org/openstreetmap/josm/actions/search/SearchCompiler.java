@@ -40,6 +40,8 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetMenu;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSeparator;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.Geometry;
@@ -1573,6 +1575,7 @@ public class SearchCompiler {
 
             Optional<TaggingPreset> p = TaggingPresets.getTaggingPresets()
                     .stream()
+                    .filter(preset -> !(preset instanceof TaggingPresetMenu))
                     .filter(preset -> presetName.equalsIgnoreCase(preset.getRawName()))
                     .findFirst();
 
