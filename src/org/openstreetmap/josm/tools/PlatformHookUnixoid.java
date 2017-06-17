@@ -230,7 +230,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             try {
                 // Try lsb_release (only available on LSB-compliant Linux systems,
                 // see https://www.linuxbase.org/lsb-cert/productdir.php?by_prod )
-                String line = exec("lsb_release -ds");
+                String line = exec("lsb_release", "-ds");
                 if (line != null && !line.isEmpty()) {
                     line = line.replaceAll("\"+", "");
                     line = line.replaceAll("NAME=", ""); // strange code for some Gentoo's

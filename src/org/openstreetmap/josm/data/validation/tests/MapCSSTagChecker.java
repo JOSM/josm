@@ -759,7 +759,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 if (Main.pref.getBoolean("validator.auto_reload_local_rules", true) && source.isLocal()) {
                     Main.fileWatcher.registerValidatorRule(source);
                 }
-            } catch (IOException | IllegalStateException ex) {
+            } catch (IOException | IllegalStateException | IllegalArgumentException ex) {
                 Main.warn(tr("Failed to add {0} to tag checker", i));
                 Main.warn(ex, false);
             } catch (ParseException ex) {
