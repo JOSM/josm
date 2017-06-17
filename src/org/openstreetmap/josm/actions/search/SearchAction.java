@@ -378,9 +378,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
         /*
          * Setup the logic to append preset queries to the search text field according to
-         * selected preset by the user in {@link TaggingPresetSelector}.
-         * Every query is of the form ' group/sub-group/presetName' if the correposing group
-         * of the preset exists, otherwise it is simply ' presetName'.
+         * selected preset by the user. Every query is of the form ' group/sub-group/presetName'
+         * if the corresponding group of the preset exists, otherwise it is simply ' presetName'.
          */
         TaggingPresetSelector selector = new TaggingPresetSelector(false, false);
         selector.setBorder(BorderFactory.createTitledBorder(tr("Search by preset")));
