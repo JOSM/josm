@@ -36,7 +36,7 @@ class JavaSoundPlayer implements SoundPlayer {
     private final double calibration; // ratio of purported duration of samples to true duration
 
     private double bytesPerSecond;
-    private byte[] abData = new byte[chunk];
+    private final byte[] abData = new byte[chunk];
 
     private double position; // seconds
     private double speed = 1.0;

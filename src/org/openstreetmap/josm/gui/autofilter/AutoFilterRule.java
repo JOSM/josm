@@ -98,7 +98,7 @@ public class AutoFilterRule {
                 .setValueFormatter(s -> s.replaceAll(" mph", "")),
             new AutoFilterRule("voltage", 5)
                 .setValueFormatter(s -> s.replaceAll("000$", "k") + 'V')
-                .setValueComparator(Comparator.comparingInt(s -> Integer.parseInt(s)))
+                .setValueComparator(Comparator.comparingInt(Integer::parseInt))
         };
     }
 

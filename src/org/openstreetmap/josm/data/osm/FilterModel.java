@@ -41,14 +41,8 @@ public class FilterModel {
      */
     private boolean changed;
 
-    /**
-     * Constructs a new {@code FilterTableModel}.
-     */
-    public FilterModel() {
-    }
-
-    private final transient List<Filter> filters = new LinkedList<>();
-    private final transient FilterMatcher filterMatcher = new FilterMatcher();
+    private final List<Filter> filters = new LinkedList<>();
+    private final FilterMatcher filterMatcher = new FilterMatcher();
 
     private void updateFilterMatcher() {
         filterMatcher.reset();
