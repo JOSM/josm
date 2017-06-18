@@ -340,8 +340,11 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
 
         private final List<PresetClassification> classifications = new ArrayList<>();
 
-        public List<PresetClassification> getMatchingPresets(String searchText, boolean onlyApplicable, boolean inTags,
-                                                             Set<TaggingPresetType> presetTypes, final Collection<? extends OsmPrimitive> selectedPrimitives) {
+        public List<PresetClassification> getMatchingPresets(String searchText,
+                                                             boolean onlyApplicable,
+                                                             boolean inTags,
+                                                             Set<TaggingPresetType> presetTypes,
+                                                             final Collection<? extends OsmPrimitive> selectedPrimitives) {
             final String[] groupWords;
             final String[] nameWords;
 
@@ -356,8 +359,12 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
             return getMatchingPresets(groupWords, nameWords, onlyApplicable, inTags, presetTypes, selectedPrimitives);
         }
 
-        public List<PresetClassification> getMatchingPresets(String[] groupWords, String[] nameWords, boolean onlyApplicable,
-                                                             boolean inTags, Set<TaggingPresetType> presetTypes, final Collection<? extends OsmPrimitive> selectedPrimitives) {
+        public List<PresetClassification> getMatchingPresets(String[] groupWords,
+                                                             String[] nameWords,
+                                                             boolean onlyApplicable,
+                                                             boolean inTags,
+                                                             Set<TaggingPresetType> presetTypes,
+                                                             final Collection<? extends OsmPrimitive> selectedPrimitives) {
 
             final List<PresetClassification> result = new ArrayList<>();
             for (PresetClassification presetClassification : classifications) {

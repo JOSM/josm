@@ -539,7 +539,7 @@ public class SearchCompilerTest {
      * @throws ParseError always
      */
     @Test(expected = ParseError.class)
-    public void testPresetMultipleWords() throws ParseError{
+    public void testPresetMultipleWords() throws ParseError {
         TaggingPreset testPreset = new TaggingPreset();
         testPreset.name = "Test Combined Preset Name";
         testPreset.group = new TaggingPresetMenu();
@@ -671,11 +671,11 @@ public class SearchCompilerTest {
         ctx.n1.put(key, val);
         ctx.n2.put(key, val);
 
-        for (OsmPrimitive osm : new OsmPrimitive[] { ctx.n1, ctx.n2 }) {
+        for (OsmPrimitive osm : new OsmPrimitive[] {ctx.n1, ctx.n2}) {
             ctx.match(osm, true);
         }
 
-        for (OsmPrimitive osm : new OsmPrimitive[] { ctx.r1, ctx.r2, ctx.w1, ctx.w2 }) {
+        for (OsmPrimitive osm : new OsmPrimitive[] {ctx.r1, ctx.r2, ctx.w1, ctx.w2}) {
             ctx.match(osm, false);
         }
     }
