@@ -525,7 +525,6 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("closed", "closed ", tr("all closed ways"))
                 .addKeyword("untagged", "untagged ", tr("object without useful tags")),
                 GBC.eol());
-
             hintPanel.add(new SearchKeywordRow(hcbSearchString)
                     .addKeyword("preset:\"Annotation/Address\"", "preset:\"Annotation/Address\"",
                             tr("all objects that use the address preset"))
