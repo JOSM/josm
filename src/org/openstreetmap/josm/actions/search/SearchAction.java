@@ -522,11 +522,16 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("type:node", "type:node ", tr("all nodes"))
                 .addKeyword("type:way", "type:way ", tr("all ways"))
                 .addKeyword("type:relation", "type:relation ", tr("all relations"))
-                .addKeyword("preset:water", "preset:water", tr("all objects that use the water preset"))
-                .addKeyword("preset:\"fast food\"", "preset:\"fast food\"", tr("all objects that use the fast food preset"))
                 .addKeyword("closed", "closed ", tr("all closed ways"))
                 .addKeyword("untagged", "untagged ", tr("object without useful tags")),
                 GBC.eol());
+
+            hintPanel.add(new SearchKeywordRow(hcbSearchString)
+                    .addKeyword("preset:\"Annotation/Address\"", "preset:\"Annotation/Address\"",
+                            tr("all objects that use the address preset"))
+                    .addKeyword("preset:\"Geography/Nature/*\"", "preset:\"Geography/Nature/*\"",
+                            tr("all objects that use any preset under the Geography/Nature group")),
+                    GBC.eol().anchor(GBC.CENTER));
             hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("metadata"))
                 .addKeyword("user:", "user:", tr("objects changed by user", "user:anonymous"))
