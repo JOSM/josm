@@ -139,7 +139,7 @@
 
 /* Wikipedia without wikidata */
 *[!wikipedia][/^wikipedia:/] {
-  throwWarning: tr("wikipedia tag is not set, but a ''{0}'' tag is. Make sure to use wikipedia=language:value together with wikidata tag.", "{0.key}");
+  throwWarning: tr("wikipedia tag is not set, but a ''{0}'' tag is. Make sure to use wikipedia=language:value together with wikidata tag.", "{1.key}");
   assertMatch: "node wikipedia:en=a";
   assertNoMatch: "node wikipedia=a wikipedia:en=b";
   assertNoMatch: "node wikipedia=Foo";
