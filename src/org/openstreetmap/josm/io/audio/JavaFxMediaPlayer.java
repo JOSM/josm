@@ -34,8 +34,6 @@ class JavaFxMediaPlayer implements SoundPlayer {
 
     private final ListenerList<AudioListener> listeners = ListenerList.create();
 
-    private URL url;
-    private Media media;
     private MediaPlayer mediaPlayer;
 
     JavaFxMediaPlayer() throws InterruptedException {
@@ -50,7 +48,7 @@ class JavaFxMediaPlayer implements SoundPlayer {
         final CountDownLatch startupLatch = new CountDownLatch(1);
 
         // Note, this method is called on the FX Application Thread
-        PlatformImpl.startup(() -> startupLatch.countDown());
+        PlatformImpl.startup(startupLatch::countDown);
 
         // Wait for FX platform to start
         startupLatch.await();
@@ -59,7 +57,7 @@ class JavaFxMediaPlayer implements SoundPlayer {
     @Override
     public void play(Execute command, State stateChange, URL playingUrl) throws AudioException, IOException {
         try {
-            url = command.url();
+            final URL url = command.url();
             if (playingUrl != url) {
                 if (mediaPlayer != null) {
                     mediaPlayer.stop();
@@ -68,11 +66,10 @@ class JavaFxMediaPlayer implements SoundPlayer {
                 if ("file".equals(url.getProtocol()) && !new File(url.toURI()).exists()) {
                     throw new FileNotFoundException(url.toString());
                 }
-                media = new Media(url.toString());
-                mediaPlayer = new MediaPlayer(media);
-                mediaPlayer.setOnPlaying(() -> {
-                    listeners.fireEvent(l -> l.playing(url));
-                });
+                mediaPlayer = new MediaPlayer(new Media(url.toString()));
+                mediaPlayer.setOnPlaying(() ->
+                    listeners.fireEvent(l -> l.playing(url))
+                );
             }
             mediaPlayer.setRate(command.speed());
             if (Status.PLAYING == mediaPlayer.getStatus()) {
