@@ -1128,6 +1128,7 @@
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=cycleway"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:highway=cycleway"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:highway=cycleway"
+                  nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:highway=cycleway"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:highway=cycleway"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:highway=cycleway"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:highway=cycleway"
@@ -1634,7 +1635,8 @@
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:mountain_pass"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Key:mountain_pass"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:mountain_pass"
-                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Key:mountain_pass" />
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Key:mountain_pass"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:mountain_pass" />
             <key key="mountain_pass" value="yes" />
             <optional>
                 <text key="name" text="Name" />
@@ -3785,8 +3787,8 @@
         <item name="Navigationaid" icon="presets/transport/airport/navigationaid.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=navigationaid"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:aeroway=navigationaid"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:aeroway=navigationaid"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:aeroway=navigationaid" />
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:aeroway=navigationaid"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:aeroway=navigationaid" />
             <key key="aeroway" value="navigationaid" />
         </item> <!-- Navigationaid -->
         <item name="Windsock" icon="presets/transport/airport/windsock.svg" type="node" preset_name_label="true">
@@ -6411,6 +6413,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=soccer"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:sport=soccer"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:sport=soccer"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:sport=soccer"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:sport=soccer"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:sport=soccer"
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:sport=soccer" />
@@ -7068,7 +7071,10 @@
         </item> <!-- Lighthouse -->
         <item name="Beacon" icon="presets/landmark/beacon.svg" name_context="man_made" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=beacon"
-                  pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=beacon"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=beacon"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=beacon"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=beacon"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:man_made=beacon"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=beacon" />
             <space />
             <key key="man_made" value="beacon" />
@@ -7724,6 +7730,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:historic=ruins"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:historic=ruins"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:historic=ruins"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:historic=ruins"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:historic=ruins"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:historic=ruins"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:historic=ruins"
@@ -10134,6 +10141,7 @@
                   fi.href="http://wiki.openstreetmap.org/wiki/Fi:Tag:natural=tree"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:natural=tree"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:natural=tree"
+                  nl.href="http://wiki.openstreetmap.org/wiki/NL:Tag:natural=tree"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=tree"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:natural=tree"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=tree"
