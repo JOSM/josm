@@ -3596,6 +3596,14 @@ node[aeroway=gate] {
     icon-image: "presets/transport/airport/gate.svg";
     set icon_z17;
 }
+node[airmark=beacon] {
+    icon-image: "presets/transport/airport/airmark_beacon.svg";
+    set icon_z17;
+}
+node[aeroway=navigationaid] {
+    icon-image: "presets/transport/airport/navigationaid.svg";
+    set icon_z17;
+}
 node[aeroway=windsock] {
     icon-image: "presets/transport/airport/windsock.svg";
     set icon_z17;

@@ -3776,15 +3776,19 @@
             <key key="aeroway" value="hangar" />
             <combo key="building" text="Building" values="hangar,yes" values_context="building" default="hangar" values_searchable="true" />
         </item> <!-- Hangar -->
-        <item name="Beacon" icon="presets/landmark/beacon.svg" type="node" preset_name_label="true">
-            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=beacon"
-                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=beacon"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=beacon"
-                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=beacon"
-                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:man_made=beacon"
-                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=beacon" />
-            <key key="man_made" value="beacon" />
+        <item name="Beacon" icon="presets/transport/airport/airmark_beacon.svg" name_context="airmark" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:airmark=beacon"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:airmark=beacon"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:airmark=beacon" />
+            <key key="airmark" value="beacon" />
         </item> <!-- Beacon -->
+        <item name="Navigationaid" icon="presets/transport/airport/navigationaid.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=navigationaid"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:aeroway=navigationaid"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:aeroway=navigationaid"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:aeroway=navigationaid" />
+            <key key="aeroway" value="navigationaid" />
+        </item> <!-- Navigationaid -->
         <item name="Windsock" icon="presets/transport/airport/windsock.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:aeroway=windsock"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:aeroway=windsock"
@@ -7062,7 +7066,7 @@
             <key key="man_made" value="lighthouse" />
             <text key="name" text="Name" />
         </item> <!-- Lighthouse -->
-        <item name="Beacon" icon="presets/landmark/beacon.svg" type="node,closedway" preset_name_label="true">
+        <item name="Beacon" icon="presets/landmark/beacon.svg" name_context="man_made" type="node,closedway" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=beacon"
                   pt_BR.href="http://wiki.openstreetmap.org/wiki/Pt-br:Tag:man_made=beacon"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=beacon" />
