@@ -62,7 +62,7 @@ way.major_road[!ref][!destination:ref][noref!=yes] {
 }
 
 way[highway=road] {
-  throwWarning: tr("temporary highway type");
+  throwWarning: tr("Unspecific highway type");
   assertMatch: "way highway=road";
   assertNoMatch: "way highway=residential";
 }
