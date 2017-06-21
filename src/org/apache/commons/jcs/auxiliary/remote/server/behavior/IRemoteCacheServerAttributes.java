@@ -66,7 +66,7 @@ public interface IRemoteCacheServerAttributes
     /**
      * Gets the ConfigFileName attribute of the IRemoteCacheAttributes object.
      * <p>
-     * @return The clusterServers value
+     * @return The configuration file name
      */
     String getConfigFileName();
 
@@ -74,7 +74,7 @@ public interface IRemoteCacheServerAttributes
      * Sets the ConfigFileName attribute of the IRemoteCacheAttributes object.
      * <p>
      * @param s
-     *            The new clusterServers value
+     *            The new configuration file name
      */
     void setConfigFileName( String s );
 

@@ -124,6 +124,15 @@ public class RemoteUtils
 
         if (null == is) // not found in class path
         {
+            // Try root of class path
+            if (propFile != null && !propFile.startsWith("/"))
+            {
+                is = RemoteUtils.class.getResourceAsStream("/" + propFile);
+            }
+        }
+        
+        if (null == is) // not found in class path
+        {
             if (new File(propFile).exists())
             {
                 // file found

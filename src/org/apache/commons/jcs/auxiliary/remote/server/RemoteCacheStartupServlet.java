@@ -131,12 +131,10 @@ public class RemoteCacheStartupServlet
         {
             if (props == null)
             {
-                RemoteCacheServerFactory.startup(registryHost, registryPort, propsFileName);
+                throw new ServletException("Could not load configuration from " + propsFileName);
             }
-            else
-            {
-                RemoteCacheServerFactory.startup(registryHost, registryPort, props, propsFileName);
-            }
+
+            RemoteCacheServerFactory.startup(registryHost, registryPort, props);
             if (log.isInfoEnabled())
             {
                 log.info("Remote JCS Server started with properties from " + propsFileName);
@@ -144,7 +142,7 @@ public class RemoteCacheStartupServlet
         }
         catch (IOException e)
         {
-            log.error("Problem starting remote cache server.", e);
+            throw new ServletException("Problem starting remote cache server.", e);
         }
     }
 

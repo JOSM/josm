@@ -94,32 +94,48 @@ public class RemoteCacheServerFactory
      * <p>
      * A remote cache is either a local cache or a cluster cache.
      * <p>
-     * @param host
-     * @param port
-     * @param propFile
+     * @param host the host name 
+     * @param port the port number
+     * @param propFile the remote cache hub configuration file
      * @throws IOException
+     * 
+     * @deprecated Use startup(String, int, Properties) instead
      */
+    @Deprecated
     public static void startup( String host, int port, String propFile )
         throws IOException
     {
-        if ( remoteCacheServer != null )
+        if ( log.isInfoEnabled() )
         {
-            throw new IllegalArgumentException( "Server already started." );
+            log.info( "ConfigFileName = [" + propFile + "]" );
         }
+        Properties props = RemoteUtils.loadProps( propFile );
+        startup(host, port, props);
+    }
 
-        synchronized ( RemoteCacheServer.class )
+    /**
+     * Starts up the remote cache server on this JVM, and binds it to the registry on the given host
+     * and port.
+     * <p>
+     * A remote cache is either a local cache or a cluster cache.
+     * <p>
+     * @param host the host name 
+     * @param port the port number
+     * @param props the remote cache hub configuration
+     * @param propFile the remote cache hub configuration file
+     * @throws IOException
+     * 
+     * @deprecated Use startup(String, int, Properties) instead
+     */
+    @Deprecated
+    public static void startup( String host, int port, Properties props, String propFile )
+        throws IOException
+    {
+        if ( log.isWarnEnabled() )
         {
-            if ( remoteCacheServer != null )
-            {
-                return;
-            }
-            if ( log.isInfoEnabled() )
-            {
-                log.info( "ConfigFileName = [" + propFile + "]" );
-            }
-            Properties props = RemoteUtils.loadProps( propFile );
-            startup(host, port, props, propFile);
+            log.warn( "ConfigFileName = [" + propFile + "] ignored" );
         }
+        startup(host, port, props);
     }
 
     /**
@@ -133,7 +149,7 @@ public class RemoteCacheServerFactory
      * @param props
      * @throws IOException
      */
-    public static void startup( String host, int port, Properties props, String propFile )
+    public static void startup( String host, int port, Properties props)
         throws IOException
     {
         if ( remoteCacheServer != null )
@@ -153,7 +169,6 @@ public class RemoteCacheServerFactory
             }
 
             RemoteCacheServerAttributes rcsa = configureRemoteCacheServerAttributes(props);
-            rcsa.setConfigFileName( propFile );
 
             // These should come from the file!
             rcsa.setRemoteLocation( host, port );
@@ -174,11 +189,11 @@ public class RemoteCacheServerFactory
             // CREATE SERVER
             if ( customRMISocketFactory != null )
             {
-                remoteCacheServer = new RemoteCacheServer<Serializable, Serializable>( rcsa, customRMISocketFactory );
+                remoteCacheServer = new RemoteCacheServer<Serializable, Serializable>( rcsa, props, customRMISocketFactory );
             }
             else
             {
-                remoteCacheServer = new RemoteCacheServer<Serializable, Serializable>( rcsa );
+                remoteCacheServer = new RemoteCacheServer<Serializable, Serializable>( rcsa, props );
             }
 
             remoteCacheServer.setCacheEventLogger( cacheEventLogger );
@@ -446,21 +461,9 @@ public class RemoteCacheServerFactory
         // shutdown
         if ( args.length > 0 && args[0].toLowerCase().indexOf( "-shutdown" ) != -1 )
         {
-            String remoteServiceName = prop.getProperty( REMOTE_CACHE_SERVICE_NAME, REMOTE_CACHE_SERVICE_VAL ).trim();
-            String registry = RemoteUtils.getNamingURL("", port, remoteServiceName);
-
-            if ( log.isDebugEnabled() )
-            {
-                log.debug( "looking up server " + registry );
-            }
-            Object obj = Naming.lookup( registry );
-            if ( log.isDebugEnabled() )
-            {
-                log.debug( "server found" );
-            }
-            ICacheServiceAdmin admin = (ICacheServiceAdmin) obj;
             try
             {
+                ICacheServiceAdmin admin = lookupCacheServiceAdmin(prop, port);
                 admin.shutdown();
             }
             catch ( Exception ex )
@@ -474,30 +477,21 @@ public class RemoteCacheServerFactory
         // STATS
         if ( args.length > 0 && args[0].toLowerCase().indexOf( "-stats" ) != -1 )
         {
-
             log.debug( "getting cache stats" );
 
             try
             {
-                String sz = prop.getProperty( REMOTE_CACHE_SERVICE_NAME, REMOTE_CACHE_SERVICE_VAL ).trim();
-                String registry = RemoteUtils.getNamingURL("", port, sz);
-                log.debug( "looking up server " + registry );
-                Object obj = Naming.lookup( registry );
-                log.debug( "server found" );
-
-                log.debug( "obj = " + obj );
-                ICacheServiceAdmin admin = (ICacheServiceAdmin) obj;
+                ICacheServiceAdmin admin = lookupCacheServiceAdmin(prop, port);
 
                 try
                 {
 //                    System.out.println( admin.getStats().toString() );
                     log.debug( admin.getStats() );
                 }
-                catch ( Exception es )
+                catch ( IOException es )
                 {
                     log.error( es );
                 }
-
             }
             catch ( Exception ex )
             {
@@ -516,10 +510,37 @@ public class RemoteCacheServerFactory
             RemoteUtils.createRegistry( port );
         }
         log.debug( "main> starting up RemoteCacheServer" );
-        RemoteCacheServerFactory.startup( host, port, args.length > 0 ? args[0] : null );
+        startup( host, port, prop);
         log.debug( "main> done" );
     }
 
+    /**
+     * Look up the remote cache service admin instance
+     *  
+     * @param config the configuration properties
+     * @param port the local port
+     * @return the admin object instance
+     * 
+     * @throws Exception if lookup fails 
+     */
+    private static ICacheServiceAdmin lookupCacheServiceAdmin(Properties config, int port) throws Exception
+    {
+        String remoteServiceName = config.getProperty( REMOTE_CACHE_SERVICE_NAME, REMOTE_CACHE_SERVICE_VAL ).trim();
+        String registry = RemoteUtils.getNamingURL("", port, remoteServiceName);
+
+        if ( log.isDebugEnabled() )
+        {
+            log.debug( "looking up server " + registry );
+        }
+        Object obj = Naming.lookup( registry );
+        if ( log.isDebugEnabled() )
+        {
+            log.debug( "server found" );
+        }
+        
+        return (ICacheServiceAdmin) obj;
+    }
+    
     /**
      * @param serviceName the serviceName to set
      */
