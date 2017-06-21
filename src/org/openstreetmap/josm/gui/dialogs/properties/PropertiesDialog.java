@@ -1230,13 +1230,13 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
             final String url;
             if (tagTable.getSelectedRowCount() == 1) {
                 final int row = tagTable.getSelectedRow();
-                final String key = Utils.encodeUrl(editHelper.getDataKey(row));
+                final String key = Utils.encodeUrl(editHelper.getDataKey(row)).replaceAll("\\+", "%20");
                 Map<String, Integer> values = editHelper.getDataValues(row);
                 if (values.size() == 1) {
-                    url = TAGINFO_URL_PROP.get() + "tags/" + key /* do not URL encode key, otherwise addr:street does not work */
-                            + '=' + Utils.encodeUrl(values.keySet().iterator().next());
+                    url = TAGINFO_URL_PROP.get() + "tags/" + key
+                            + '=' + Utils.encodeUrl(values.keySet().iterator().next()).replaceAll("\\+", "%20");
                 } else {
-                    url = TAGINFO_URL_PROP.get() + "keys/" + key; /* do not URL encode key, otherwise addr:street does not work */
+                    url = TAGINFO_URL_PROP.get() + "keys/" + key;
                 }
             } else if (membershipTable.getSelectedRowCount() == 1) {
                 final String type = ((Relation) membershipData.getValueAt(membershipTable.getSelectedRow(), 0)).get("type");
