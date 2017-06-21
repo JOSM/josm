@@ -165,6 +165,16 @@ public class GpxImporter extends FileImporter {
         return new GpxImporterData(gpxLayer, markerLayer, postLayerTask);
     }
 
+    /**
+     * Replies the new GPX and marker layers corresponding to the specified GPX file.
+     * @param is input stream to GPX data
+     * @param associatedFile GPX file
+     * @param gpxLayerName The GPX layer name
+     * @param markerLayerName The marker layer name
+     * @param progressMonitor The progress monitor
+     * @return the new GPX and marker layers corresponding to the specified GPX file
+     * @throws IOException if an I/O error occurs
+     */
     public static GpxImporterData loadLayers(InputStream is, final File associatedFile,
             final String gpxLayerName, String markerLayerName, ProgressMonitor progressMonitor) throws IOException {
         try {

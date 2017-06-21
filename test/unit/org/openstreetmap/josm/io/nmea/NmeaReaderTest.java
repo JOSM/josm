@@ -1,7 +1,9 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.io;
+package org.openstreetmap.josm.io.nmea;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -19,6 +21,7 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.io.GpxReaderTest;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.xml.sax.SAXException;
@@ -88,6 +91,19 @@ public class NmeaReaderTest {
         WayPoint gpxWpt = gpxSeg.getWayPoints().iterator().next();
         WayPoint nmeaWpt = nmeaSeg.getWayPoints().iterator().next();
         assertEquals(gpxWpt.getCoor().getRoundedToOsmPrecision(), nmeaWpt.getCoor().getRoundedToOsmPrecision());
+    }
+
+    /**
+     * Unit test of {@link NmeaReader#isSentence}.
+     */
+    @Test
+    public void testIsSentence() {
+        assertTrue(NmeaReader.isSentence("$GPVTG", Sentence.VTG));
+        assertTrue(NmeaReader.isSentence("$GAVTG", Sentence.VTG));
+        assertTrue(NmeaReader.isSentence("$GNVTG", Sentence.VTG));
+        assertFalse(NmeaReader.isSentence("XGAVTG", Sentence.VTG));
+        assertFalse(NmeaReader.isSentence("$GPXXX", Sentence.VTG));
+        assertFalse(NmeaReader.isSentence("$XXVTG", Sentence.VTG));
     }
 
     /**

@@ -19,6 +19,7 @@ import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.GpxImporter.GpxImporterData;
+import org.openstreetmap.josm.io.nmea.NmeaReader;
 
 /**
  * File importer allowing to import NMEA-0183 files (*.nmea/nme/nma/log/txt files).
@@ -87,6 +88,15 @@ public class NMEAImporter extends FileImporter {
         }
     }
 
+    /**
+     * Replies the new GPX and marker layers corresponding to the specified NMEA file.
+     * @param is input stream to NMEA 0183 data
+     * @param associatedFile NMEA file
+     * @param gpxLayerName The GPX layer name
+     * @param markerLayerName The marker layer name
+     * @return the new GPX and marker layers corresponding to the specified NMEA file
+     * @throws IOException if an I/O error occurs
+     */
     public static GpxImporterData loadLayers(InputStream is, final File associatedFile,
             final String gpxLayerName, String markerLayerName) throws IOException {
         final NmeaReader r = new NmeaReader(is);
