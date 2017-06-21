@@ -341,7 +341,7 @@ public class NmeaReader {
                 if ("T".equals(accu)) {
                     // other values than (T)rue are ignored
                     accu = e[VTG.COURSE.position];
-                    if (!accu.isEmpty()) {
+                    if (!accu.isEmpty() && currentwp != null) {
                         Double.parseDouble(accu);
                         currentwp.put("course", accu);
                     }
@@ -350,7 +350,7 @@ public class NmeaReader {
                 accu = e[VTG.SPEED_KMH_UNIT.position];
                 if (accu.startsWith("K")) {
                     accu = e[VTG.SPEED_KMH.position];
-                    if (!accu.isEmpty()) {
+                    if (!accu.isEmpty() && currentwp != null) {
                         double speed = Double.parseDouble(accu);
                         speed /= 3.6; // speed in m/s
                         currentwp.put("speed", Double.toString(speed));

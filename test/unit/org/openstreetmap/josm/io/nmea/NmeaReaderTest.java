@@ -75,22 +75,24 @@ public class NmeaReaderTest {
         NmeaReader in = new NmeaReader(new FileInputStream(TestUtils.getRegressionDataFile(ticket, filename+".nmea")));
         assertEquals(numCoor, in.getNumberOfCoordinates());
         assertEquals(0, in.getParserMalformed());
-        assertEquals(in.data.dataSources, gpx.dataSources);
+        assertEquals(gpx.dataSources, in.data.dataSources);
         assertEquals(1, gpx.tracks.size());
         assertEquals(1, in.data.tracks.size());
         GpxTrack gpxTrack = gpx.tracks.iterator().next();
         GpxTrack nmeaTrack = in.data.tracks.iterator().next();
         assertEquals(gpxTrack.getBounds(), nmeaTrack.getBounds());
-        assertEquals(1, gpxTrack.getSegments().size());
-        assertEquals(1, nmeaTrack.getSegments().size());
-        GpxTrackSegment gpxSeg = gpxTrack.getSegments().iterator().next();
-        GpxTrackSegment nmeaSeg = nmeaTrack.getSegments().iterator().next();
-        assertEquals(gpxSeg.getBounds(), nmeaSeg.getBounds());
-        assertEquals(numCoor, gpxSeg.getWayPoints().size());
-        assertEquals(numCoor, nmeaSeg.getWayPoints().size());
-        WayPoint gpxWpt = gpxSeg.getWayPoints().iterator().next();
-        WayPoint nmeaWpt = nmeaSeg.getWayPoints().iterator().next();
-        assertEquals(gpxWpt.getCoor().getRoundedToOsmPrecision(), nmeaWpt.getCoor().getRoundedToOsmPrecision());
+        int nTracks = gpxTrack.getSegments().size();
+        assertEquals(nTracks, nmeaTrack.getSegments().size());
+        if (nTracks > 0) {
+            GpxTrackSegment gpxSeg = gpxTrack.getSegments().iterator().next();
+            GpxTrackSegment nmeaSeg = nmeaTrack.getSegments().iterator().next();
+            assertEquals(gpxSeg.getBounds(), nmeaSeg.getBounds());
+            assertEquals(numCoor, gpxSeg.getWayPoints().size());
+            assertEquals(numCoor, nmeaSeg.getWayPoints().size());
+            WayPoint gpxWpt = gpxSeg.getWayPoints().iterator().next();
+            WayPoint nmeaWpt = nmeaSeg.getWayPoints().iterator().next();
+            assertEquals(gpxWpt.getCoor().getRoundedToOsmPrecision(), nmeaWpt.getCoor().getRoundedToOsmPrecision());
+        }
     }
 
     /**
@@ -131,5 +133,14 @@ public class NmeaReaderTest {
     @Test
     public void testTicket2147() throws Exception {
         compareWithReference(2147, "WG20080203171807.log", 487);
+    }
+
+    /**
+     * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/14924">Bug #14924</a>.
+     * @throws Exception if an error occurs
+     */
+    @Test
+    public void testTicket14924() throws Exception {
+        compareWithReference(14924, "input", 0);
     }
 }
