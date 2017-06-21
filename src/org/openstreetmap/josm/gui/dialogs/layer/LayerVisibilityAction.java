@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.swing.AbstractAction;
@@ -92,7 +93,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
         addContentEntry(new ColorfulnessSlider());
         addContentEntry(new GammaFilterSlider());
         addContentEntry(new SharpnessSlider());
-        addContentEntry(new ColorSelector());
+        addContentEntry(new ColorSelector(model::getSelectedLayers));
     }
 
     private void addContentEntry(LayerVisibilityMenuEntry slider) {
@@ -526,13 +527,13 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
      * Allows to select the color for the GPX layer
      * @author Michael Zangl
      */
-    private class ColorSelector extends JPanel implements LayerVisibilityMenuEntry {
+    private static class ColorSelector extends JPanel implements LayerVisibilityMenuEntry {
 
-        private final Border NORMAL_BORDER = BorderFactory.createEmptyBorder(2, 2, 2, 2);
-        private final Border SELECTED_BORDER = BorderFactory.createLineBorder(Color.BLACK, 2);
+        private static final Border NORMAL_BORDER = BorderFactory.createEmptyBorder(2, 2, 2, 2);
+        private static final Border SELECTED_BORDER = BorderFactory.createLineBorder(Color.BLACK, 2);
 
         // TODO: Nicer color palette
-        private final Color[] COLORS = new Color[] {
+        private static final Color[] COLORS = new Color[] {
                 Color.RED,
                 Color.ORANGE,
                 Color.YELLOW,
@@ -541,10 +542,12 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
                 Color.CYAN,
                 Color.GRAY,
         };
+        private final Supplier<List<Layer>> layerSupplier;
         private final HashMap<Color, JPanel> panels = new HashMap<>();
 
-        ColorSelector() {
+        ColorSelector(Supplier<List<Layer>> layerSupplier) {
             super(new GridBagLayout());
+            this.layerSupplier = layerSupplier;
             add(new JLabel(tr("Color")), GBC.eol().insets(24 + 10, 0, 0, 0));
             for (Color color : COLORS) {
                 addPanelForColor(color);
@@ -562,7 +565,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
             colorPanel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseClicked(MouseEvent e) {
-                    List<Layer> layers = model.getSelectedLayers();
+                    List<Layer> layers = layerSupplier.get();
                     for (Layer l : layers) {
                         if (l instanceof GpxLayer) {
                             l.getColorProperty().put(color);
@@ -573,6 +576,11 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
             });
             add(colorPanel, GBC.std().weight(1, 1).fill().insets(5));
             panels.put(color, colorPanel);
+
+            List<Color> colors = layerSupplier.get().stream().map(l -> l.getColorProperty().get()).distinct().collect(Collectors.toList());
+            if (colors.size() == 1) {
+                highlightColor(colors.get(0));
+            }
         }
 
         @Override
@@ -584,7 +592,7 @@ public final class LayerVisibilityAction extends AbstractAction implements IEnab
             if (colors.size() == 1) {
                 setVisible(true);
                 highlightColor(colors.get(0));
-            } else if (colors.size() > 0) {
+            } else if (colors.size() > 1) {
                 setVisible(true);
                 highlightColor(null);
             } else {
