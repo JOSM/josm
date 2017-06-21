@@ -113,6 +113,16 @@ public class RemoteCache<K, V>
     }
 
     /**
+     * Get facade
+     *
+     * @return the facade
+     */
+    protected AbstractRemoteCacheNoWaitFacade<K, V> getFacade()
+    {
+        return facade;
+    }
+
+    /**
      * Handles exception by disabling the remote cache service before re-throwing the exception in
      * the form of an IOException.
      * <p>

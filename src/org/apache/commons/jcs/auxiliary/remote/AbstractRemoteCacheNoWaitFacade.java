@@ -60,10 +60,38 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
      * <p>
      * @param noWaits
      * @param rca
-     * @param cacheMgr
      * @param cacheEventLogger
      * @param elementSerializer
      */
+    public AbstractRemoteCacheNoWaitFacade( List<RemoteCacheNoWait<K,V>> noWaits, IRemoteCacheAttributes rca,
+                                    ICacheEventLogger cacheEventLogger, IElementSerializer elementSerializer )
+    {
+        if ( log.isDebugEnabled() )
+        {
+            log.debug( "CONSTRUCTING NO WAIT FACADE" );
+        }
+        this.remoteCacheAttributes = rca;
+        setCacheEventLogger( cacheEventLogger );
+        setElementSerializer( elementSerializer );
+        this.noWaits = new ArrayList<RemoteCacheNoWait<K,V>>(noWaits);
+        for (RemoteCacheNoWait<K,V> nw : this.noWaits)
+        {
+            // FIXME: This cast is very brave. Remove this.
+            ((RemoteCache<K, V>)nw.getRemoteCache()).setFacade(this);
+        }
+    }
+
+    /**
+     * Constructs with the given remote cache, and fires events to any listeners.
+     * <p>
+     * @param noWaits
+     * @param rca
+     * @param cacheMgr
+     * @param cacheEventLogger
+     * @param elementSerializer
+     * @deprecated Unused parameter cacheMgr scheduled for removal
+     */
+    @Deprecated
     public AbstractRemoteCacheNoWaitFacade( List<ICache<K, V>> noWaits, RemoteCacheAttributes rca,
                                     ICompositeCacheManager cacheMgr, ICacheEventLogger cacheEventLogger,
                                     IElementSerializer elementSerializer )
@@ -72,15 +100,16 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
         {
             log.debug( "CONSTRUCTING NO WAIT FACADE" );
         }
-        this.noWaits = new ArrayList<RemoteCacheNoWait<K,V>>();
-        for (ICache<K, V> nw : noWaits)
-        {
-            RemoteCacheNoWait<K,V> rcnw = (RemoteCacheNoWait<K,V>) nw;
-            this.noWaits.add(rcnw);
-        }
         this.remoteCacheAttributes = rca;
         setCacheEventLogger( cacheEventLogger );
         setElementSerializer( elementSerializer );
+        this.noWaits = new ArrayList<RemoteCacheNoWait<K,V>>();
+        for (ICache<K, V> nw : noWaits)
+        {
+            RemoteCacheNoWait<K,V> rcnw = (RemoteCacheNoWait<K,V>)nw;
+            ((RemoteCache<K, V>)rcnw.getRemoteCache()).setFacade(this);
+            this.noWaits.add(rcnw);
+        }
     }
 
     /**

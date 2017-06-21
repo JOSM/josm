@@ -32,7 +32,6 @@ import org.apache.commons.jcs.auxiliary.AuxiliaryCache;
 import org.apache.commons.jcs.auxiliary.AuxiliaryCacheAttributes;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheAttributes;
 import org.apache.commons.jcs.auxiliary.remote.server.behavior.RemoteType;
-import org.apache.commons.jcs.engine.behavior.ICache;
 import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
 import org.apache.commons.jcs.engine.behavior.IElementSerializer;
 import org.apache.commons.jcs.engine.logging.behavior.ICacheEventLogger;
@@ -75,7 +74,7 @@ public class RemoteCacheFactory
     {
         RemoteCacheAttributes rca = (RemoteCacheAttributes) iaca;
 
-        ArrayList<ICache<K, V>> noWaits = new ArrayList<ICache<K, V>>();
+        ArrayList<RemoteCacheNoWait<K,V>> noWaits = new ArrayList<RemoteCacheNoWait<K,V>>();
 
         switch (rca.getRemoteType())
         {
@@ -93,7 +92,7 @@ public class RemoteCacheFactory
 
                     failovers.add( rca.getRemoteLocation() );
                     RemoteCacheManager rcm = getManager( rca, cacheMgr, cacheEventLogger, elementSerializer );
-                    ICache<K, V> ic = rcm.getCache( rca );
+                    RemoteCacheNoWait<K,V> ic = rcm.getCache( rca );
                     noWaits.add( ic );
                 }
 
@@ -120,7 +119,7 @@ public class RemoteCacheFactory
                             // number it is at
                             if ( ( !primaryDefined && fCnt == 1 ) || noWaits.size() <= 0 )
                             {
-                                ICache<K, V> ic = rcm.getCache( rca );
+                                RemoteCacheNoWait<K,V> ic = rcm.getCache( rca );
                                 noWaits.add( ic );
                             }
                         }
@@ -145,7 +144,7 @@ public class RemoteCacheFactory
                         rca.setRemoteLocation(location);
                         RemoteCacheManager rcm = getManager( rca, cacheMgr, cacheEventLogger, elementSerializer );
                         rca.setRemoteType( RemoteType.CLUSTER );
-                        ICache<K, V> ic = rcm.getCache( rca );
+                        RemoteCacheNoWait<K,V> ic = rcm.getCache( rca );
                         noWaits.add( ic );
                     }
                 }
@@ -153,7 +152,7 @@ public class RemoteCacheFactory
         }
 
         RemoteCacheNoWaitFacade<K, V> rcnwf =
-            new RemoteCacheNoWaitFacade<K, V>(noWaits, rca, cacheMgr, cacheEventLogger, elementSerializer, this );
+            new RemoteCacheNoWaitFacade<K, V>(noWaits, rca, cacheEventLogger, elementSerializer, this );
 
         return rcnwf;
     }
