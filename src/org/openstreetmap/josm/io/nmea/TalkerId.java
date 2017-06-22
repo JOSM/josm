@@ -10,6 +10,8 @@ package org.openstreetmap.josm.io.nmea;
 public enum TalkerId {
     /** BeiDou (China) */
     BD,
+    /** Electronic Chart Display & Information System (ECDIS) */
+    EC,
     /** Galileo (Europe) */
     GA,
     /** BeiDou (China) */
@@ -19,5 +21,7 @@ public enum TalkerId {
     /** GNSS (Global Navigation Satellite System). Generic form when multiple sources are combined. */
     GN,
     /** GPS (Global Positioning System) */
-    GP
+    GP,
+    /** Integrated Navigation */
+    IN
 }
