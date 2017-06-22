@@ -18,7 +18,7 @@ public enum Sentence {
      * <pre>
      *            1      2   3   4   5   6   7   8   9
      *            |      |   |   |   |   |   |   |   |
-     * $--GBS,hhmmss.ss,x.x,x.x,x.x,x.x,x.x,x.x,x.x*hh<CR><LF>
+     * $--GBS,hhmmss.ss,x.x,x.x,x.x,x.x,x.x,x.x,x.x*hh
      * </pre>
      * Field Number:<ol>
      * <li>UTC time of the GGA or GNS fix associated with this sentence</li>
@@ -41,7 +41,7 @@ public enum Sentence {
      *                                                      11
      *        1         2       3 4        5 6 7  8   9  10 |  12 13  14   15
      *        |         |       | |        | | |  |   |   | |   | |   |    |
-     * $--GGA,hhmmss.ss,llll.ll,a,yyyyy.yy,a,x,xx,x.x,x.x,M,x.x,M,x.x,xxxx*hh<CR><LF>
+     * $--GGA,hhmmss.ss,llll.ll,a,yyyyy.yy,a,x,xx,x.x,x.x,M,x.x,M,x.x,xxxx*hh
      * </pre>
      * Field Number:<ol>
      * <li>Universal Time Coordinated (UTC)</li>
@@ -80,7 +80,7 @@ public enum Sentence {
      * <pre>
      *        1 2 3                        14 15  16  17  18
      *        | | |                         |  |   |   |   |
-     * $--GSA,a,a,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x.x,x.x,x.x*hh<CR><LF>
+     * $--GSA,a,a,x,x,x,x,x,x,x,x,x,x,x,x,x,x,x.x,x.x,x.x*hh
      * </pre>
      * Field Number:<ol>
      * <li>Selection mode: M=Manual, forced to operate in 2D or 3D, A=Automatic, 3D/2D</li>
@@ -111,7 +111,7 @@ public enum Sentence {
      * <pre>
      *        1 2 3 4 5 6 7     n
      *        | | | | | | |     |
-     * $--GSV,x,x,x,x,x,x,x,...*hh<CR><LF>
+     * $--GSV,x,x,x,x,x,x,x,...*hh
      * </pre>
      * Field Number:<ol>
      * <li>total number of GSV messages to be transmitted in this group</li>
@@ -131,7 +131,7 @@ public enum Sentence {
      * <pre>
      *        1       2 3        4 5         6 7   8
      *        |       | |        | |         | |   |
-     * $--GLL,llll.ll,a,yyyyy.yy,a,hhmmss.ss,a,m,*hh<CR><LF>
+     * $--GLL,llll.ll,a,yyyyy.yy,a,hhmmss.ss,a,m,*hh
      * </pre>
      * Field Number:<ol>
      * <li>Latitude</li>
@@ -153,7 +153,7 @@ public enum Sentence {
      *                                                          12
      *        1         2 3       4 5        6  7   8   9    10 11|  13
      *        |         | |       | |        |  |   |   |    |  | |   |
-     * $--RMC,hhmmss.ss,A,llll.ll,a,yyyyy.yy,a,x.x,x.x,xxxx,x.x,a,m,*hh<CR><LF>
+     * $--RMC,hhmmss.ss,A,llll.ll,a,yyyyy.yy,a,x.x,x.x,xxxx,x.x,a,m,*hh
      * </pre>
      * Field Number:<ol>
      * <li>UTC Time</li>
@@ -179,7 +179,7 @@ public enum Sentence {
      * <pre>
      *         1  2  3  4  5  6  7  8 9   10
      *         |  |  |  |  |  |  |  | |   |
-     * $--VTG,x.x,T,x.x,M,x.x,N,x.x,K,m,*hh<CR><LF>
+     * $--VTG,x.x,T,x.x,M,x.x,N,x.x,K,m,*hh
      * </pre>
      * Field Number:<ol>
      * <li>Track Degrees</li>
@@ -202,7 +202,7 @@ public enum Sentence {
      * <pre>
      *        1         2  3  4    5  6  7
      *        |         |  |  |    |  |  |
-     * $--ZDA,hhmmss.ss,xx,xx,xxxx,xx,xx*hh<CR><LF>
+     * $--ZDA,hhmmss.ss,xx,xx,xxxx,xx,xx*hh
      * </pre>
      * Field Number:<ol>
      * <li>UTC time (hours, minutes, seconds, may have fractional subsecond)</li>
