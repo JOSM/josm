@@ -785,9 +785,11 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
      * This method is used to detect segment under mouse and use it as reference for angle snapping
      */
     private void tryToSetBaseSegmentForAngleSnap() {
-        WaySegment seg = Main.map.mapView.getNearestWaySegment(mousePos, OsmPrimitive::isSelectable);
-        if (seg != null) {
-            snapHelper.setBaseSegment(seg);
+        if (mousePos != null) {
+            WaySegment seg = Main.map.mapView.getNearestWaySegment(mousePos, OsmPrimitive::isSelectable);
+            if (seg != null) {
+                snapHelper.setBaseSegment(seg);
+            }
         }
     }
 

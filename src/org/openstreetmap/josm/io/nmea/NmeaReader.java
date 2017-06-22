@@ -41,7 +41,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  */
 public class NmeaReader {
 
-    public enum VTG {
+    enum VTG {
         COURSE(1), COURSE_REF(2), // true course
         COURSE_M(3), COURSE_M_REF(4), // magnetic course
         SPEED_KN(5), SPEED_KN_UNIT(6), // speed in knots
@@ -55,7 +55,7 @@ public class NmeaReader {
         }
     }
 
-    public enum RMC {
+    enum RMC {
         TIME(1),
         /** Warning from the receiver (A = data ok, V = warning) */
         RECEIVER_WARNING(2),
@@ -77,7 +77,7 @@ public class NmeaReader {
         }
     }
 
-    public enum GGA {
+    enum GGA {
         TIME(1), LATITUDE(2), LATITUDE_NAME(3), LONGITUDE(4), LONGITUDE_NAME(5),
         /**
          * Quality (0 = invalid, 1 = GPS, 2 = DGPS, 6 = estimanted (@since NMEA 2.3))
@@ -95,7 +95,7 @@ public class NmeaReader {
         }
     }
 
-    public enum GSA {
+    enum GSA {
         AUTOMATIC(1),
         FIX_TYPE(2), // 1 = not fixed, 2 = 2D fixed, 3 = 3D fixed)
         // PRN numbers for max 12 satellites
@@ -107,6 +107,23 @@ public class NmeaReader {
 
         public final int position;
         GSA(int position) {
+            this.position = position;
+        }
+    }
+
+    enum GLL {
+        LATITUDE(1), LATITUDE_NS(2), // Latitude, NS
+        LONGITUDE(3), LONGITUDE_EW(4), // Latitude, EW
+        UTC(5), // Universal Time Coordinated
+        STATUS(6), // Status: A = Data valid, V = Data not valid
+        /**
+         * Mode (A = autonom; D = differential; E = estimated; N = not valid; S = simulated)
+         * @since NMEA 2.3
+         */
+        MODE(7);
+
+        public final int position;
+        GLL(int position) {
             this.position = position;
         }
     }
@@ -412,12 +429,33 @@ public class NmeaReader {
                 }
 
                 // TODO fix?
-                // * Mode (A = autonom; D = differential; E = estimated; N = not valid; S
-                // * = simulated)
+                // * Mode (A = autonom; D = differential; E = estimated; N = not valid; S = simulated)
                 // *
                 // * @since NMEA 2.3
                 //
                 //MODE(12);
+            } else if (isSentence(e[0], Sentence.GLL)) {
+                // coordinates
+                LatLon latLon = parseLatLon(
+                        e[GLL.LATITUDE_NS.position],
+                        e[GLL.LONGITUDE_EW.position],
+                        e[GLL.LATITUDE.position],
+                        e[GLL.LONGITUDE.position]
+                );
+                if (LatLon.ZERO.equals(latLon)) {
+                    ps.zeroCoord++;
+                    return false;
+                }
+                // only consider valid data
+                if (!"A".equals(e[GLL.STATUS.position])) {
+                    return false;
+                }
+
+                // RMC sentences contain a full date while GLL sentences contain only time,
+                // so create new waypoints only of the NMEA file does not contain RMC sentences
+                if (ps.pTime == null || currentwp == null) {
+                    currentwp = new WayPoint(latLon);
+                }
             } else {
                 ps.unknown++;
                 return false;
