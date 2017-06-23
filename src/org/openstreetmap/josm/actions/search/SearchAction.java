@@ -245,6 +245,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                             tf.requestFocusInWindow();
                         }
 
+                        // TODO: add docs why we use invokeLater here
                         SwingUtilities.invokeLater(() -> {
                             try {
                                 tf.getDocument().insertString(tf.getCaretPosition(), ' ' + insertText, null);
@@ -397,6 +398,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
              */
             editorComponent.requestFocusInWindow();
 
+            // TODO: add docs why we use invokeLater here
             SwingUtilities.invokeLater(() -> {
                 int textOffset = editorComponent.getCaretPosition();
                 String presetSearchQuery = " preset:" +
