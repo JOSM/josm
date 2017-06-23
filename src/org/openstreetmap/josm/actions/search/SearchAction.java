@@ -454,20 +454,21 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         if (dialog.showDialog().getValue() != 1) return null;
 
         // User pressed OK - let's perform the search
-        SearchMode mode = replace.isSelected()
-                ? SearchAction.SearchMode.replace
-                : (add.isSelected()
-                    ? SearchAction.SearchMode.add
-                    : (remove.isSelected()
-                        ? SearchAction.SearchMode.remove
-                        : SearchAction.SearchMode.in_selection));
-
         initialValues.text = hcbSearchString.getText();
-        initialValues.mode = mode;
         initialValues.caseSensitive = caseSensitive.isSelected();
         initialValues.allElements = allElements.isSelected();
         initialValues.regexSearch = regexSearch.isSelected();
         initialValues.mapCSSSearch = mapCSSSearch.isSelected();
+
+        if (inSelection.isSelected()) {
+            initialValues.mode = SearchAction.SearchMode.in_selection;
+        } else if (replace.isSelected()) {
+            initialValues.mode = SearchAction.SearchMode.replace;
+        } else if (add.isSelected()) {
+            initialValues.mode = SearchAction.SearchMode.add;
+        } else {
+            initialValues.mode = SearchAction.SearchMode.remove;
+        }
 
         if (addOnToolbar.isSelected()) {
             ToolbarPreferences.ActionDefinition aDef =
