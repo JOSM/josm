@@ -14,7 +14,7 @@ package org.openstreetmap.josm.io.nmea;
 public enum Sentence {
 
     /**
-     * GBS - GPS Satellite Fault Detection<p>
+     * GBS - GPS Satellite Fault Detection
      * <pre>
      *            1      2   3   4   5   6   7   8   9
      *            |      |   |   |   |   |   |   |   |
@@ -36,7 +36,7 @@ public enum Sentence {
     GBS,
 
     /**
-     * GGA - Global Positioning System Fix Data<p>
+     * GGA - Global Positioning System Fix Data
      * <pre>
      *                                                      11
      *        1         2       3 4        5 6 7  8   9  10 |  12 13  14   15
@@ -76,7 +76,7 @@ public enum Sentence {
     GGA,
 
     /**
-     * GSA - GPS DOP and active satellites<p>
+     * GSA - GPS DOP and active satellites
      * <pre>
      *        1 2 3                        14 15  16  17  18
      *        | | |                         |  |   |   |   |
@@ -107,7 +107,7 @@ public enum Sentence {
     GSA,
 
     /**
-     * GSV - Satellites in view<p>
+     * GSV - Satellites in view
      * <pre>
      *        1 2 3 4 5 6 7     n
      *        | | | | | | |     |
@@ -127,7 +127,7 @@ public enum Sentence {
     GSV,
 
     /**
-     * GLL - Geographic Position - Latitude/Longitude<p>
+     * GLL - Geographic Position - Latitude/Longitude
      * <pre>
      *        1       2 3        4 5         6 7   8
      *        |       | |        | |         | |   |
@@ -148,7 +148,7 @@ public enum Sentence {
     GLL,
 
     /**
-     * RMC - Recommended Minimum Navigation Information<p>
+     * RMC - Recommended Minimum Navigation Information
      * <pre>
      *                                                          12
      *        1         2 3       4 5        6  7   8   9    10 11|  13
@@ -175,7 +175,7 @@ public enum Sentence {
     RMC,
 
     /**
-     * VTG - Track made good and Ground speed<p>
+     * VTG - Track made good and Ground speed
      * <pre>
      *         1  2  3  4  5  6  7  8 9   10
      *         |  |  |  |  |  |  |  | |   |
@@ -198,7 +198,7 @@ public enum Sentence {
     VTG,
 
     /**
-     * ZDA - Time & Date - UTC, day, month, year and local time zone<p>
+     * ZDA - Time &amp; Date - UTC, day, month, year and local time zone
      * <pre>
      *        1         2  3  4    5  6  7
      *        |         |  |  |    |  |  |

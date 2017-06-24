@@ -35,7 +35,7 @@
         </condition>
         <!-- For Java9-specific stuff -->
         <condition property="isJava9">
-            <equals arg1="${ant.java.version}" arg2="1.9" />
+            <matches string="${ant.java.version}" pattern="(1.)?9" />
         </condition>
         <path id="test.classpath">
             <fileset dir="${test.dir}/lib">

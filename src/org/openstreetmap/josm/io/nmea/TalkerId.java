@@ -10,7 +10,7 @@ package org.openstreetmap.josm.io.nmea;
 public enum TalkerId {
     /** BeiDou (China) */
     BD,
-    /** Electronic Chart Display & Information System (ECDIS) */
+    /** Electronic Chart Display &amp; Information System (ECDIS) */
     EC,
     /** Galileo (Europe) */
     GA,
