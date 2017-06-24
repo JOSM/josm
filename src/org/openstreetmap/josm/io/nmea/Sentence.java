@@ -198,7 +198,7 @@ public enum Sentence {
     VTG,
 
     /**
-     * ZDA - Time & Date - UTC, day, month, year and local time zone<p>
+     * ZDA - Time &amp; Date - UTC, day, month, year and local time zone<p>
      * <pre>
      *        1         2  3  4    5  6  7
      *        |         |  |  |    |  |  |
