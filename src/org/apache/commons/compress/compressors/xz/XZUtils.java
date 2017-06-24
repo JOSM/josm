@@ -168,7 +168,7 @@ public class XZUtils {
             cachedXZAvailability = CachedAvailability.DONT_CACHE;
         } else if (cachedXZAvailability == CachedAvailability.DONT_CACHE) {
             final boolean hasXz = internalIsXZCompressionAvailable();
-            cachedXZAvailability = hasXz ? CachedAvailability.CACHED_AVAILABLE
+            cachedXZAvailability = hasXz ? CachedAvailability.CACHED_AVAILABLE // NOSONAR
                 : CachedAvailability.CACHED_UNAVAILABLE;
         }
     }

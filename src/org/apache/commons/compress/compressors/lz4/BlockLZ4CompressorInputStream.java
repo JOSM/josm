@@ -64,7 +64,7 @@ public class BlockLZ4CompressorInputStream extends AbstractLZ77CompressorInputSt
         switch (state) {
         case EOF:
             return -1;
-        case NO_BLOCK:
+        case NO_BLOCK: // NOSONAR - fallthrough intended
             readSizes();
             /*FALLTHROUGH*/
         case IN_LITERAL:
@@ -73,7 +73,7 @@ public class BlockLZ4CompressorInputStream extends AbstractLZ77CompressorInputSt
                 state = State.LOOKING_FOR_BACK_REFERENCE;
             }
             return litLen > 0 ? litLen : read(b, off, len);
-        case LOOKING_FOR_BACK_REFERENCE:
+        case LOOKING_FOR_BACK_REFERENCE: // NOSONAR - fallthrough intended
             if (!initializeBackReference()) {
                 state = State.EOF;
                 return -1;

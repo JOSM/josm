@@ -102,7 +102,7 @@ public class FixedLengthBlockOutputStream extends OutputStream implements Writab
 
     @Override
     public void write(int b) throws IOException {
-        if(!isOpen()) {
+        if (!isOpen()) {
             throw new ClosedChannelException();
         }
         buffer.put((byte) b);
@@ -110,10 +110,12 @@ public class FixedLengthBlockOutputStream extends OutputStream implements Writab
     }
 
     @Override
-    public void write(byte[] b, int off, int len) throws IOException {
-        if(!isOpen()) {
+    public void write(byte[] b, final int offset, final int length) throws IOException {
+        if (!isOpen()) {
             throw new ClosedChannelException();
         }
+        int off = offset;
+        int len = length;
         while (len > 0) {
             int n = Math.min(len, buffer.remaining());
             buffer.put(b, off, n);
@@ -125,7 +127,7 @@ public class FixedLengthBlockOutputStream extends OutputStream implements Writab
 
     @Override
     public int write(ByteBuffer src) throws IOException {
-        if(!isOpen()) {
+        if (!isOpen()) {
             throw new ClosedChannelException();
         }
         int srcRemaining = src.remaining();
@@ -161,7 +163,7 @@ public class FixedLengthBlockOutputStream extends OutputStream implements Writab
 
     @Override
     public boolean isOpen() {
-        if(!out.isOpen()) {
+        if (!out.isOpen()) {
             closed.set(true);
         }
         return !closed.get();
@@ -182,7 +184,7 @@ public class FixedLengthBlockOutputStream extends OutputStream implements Writab
         buffer.order(ByteOrder.nativeOrder());
         int bytesToWrite = buffer.remaining();
         if (bytesToWrite > 8) {
-            int align = (buffer.position() & 7);
+            int align = buffer.position() & 7;
             if (align != 0) {
                 int limit = 8 - align;
                 for (int i = 0; i < limit; i++) {
@@ -218,9 +220,12 @@ public class FixedLengthBlockOutputStream extends OutputStream implements Writab
 
         @Override
         public int write(ByteBuffer buffer) throws IOException {
-            assert isOpen() : "somehow trying to write to closed BufferAtATimeOutputChannel";
-            assert buffer.hasArray() :
-                "direct buffer somehow written to BufferAtATimeOutputChannel";
+            if (!isOpen()) {
+                throw new ClosedChannelException();
+            }
+            if (!buffer.hasArray()) {
+                throw new IllegalArgumentException("direct buffer somehow written to BufferAtATimeOutputChannel");
+            }
 
             try {
                 int pos = buffer.position();
@@ -229,11 +234,11 @@ public class FixedLengthBlockOutputStream extends OutputStream implements Writab
                 buffer.position(buffer.limit());
                 return len;
             } catch (IOException e) {
-                  try {
-                      close();
-                  } finally {
-                      throw e;
-                  }
+                try {
+                    close();
+                } catch (IOException ignored) { //NOSONAR
+                }
+                throw e;
             }
         }
 

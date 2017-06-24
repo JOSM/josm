@@ -35,7 +35,7 @@ public class BrotliUtils {
         cachedBrotliAvailability = CachedAvailability.DONT_CACHE;
         try {
             Class.forName("org.osgi.framework.BundleEvent");
-        } catch (final Exception ex) {
+        } catch (final Exception ex) { // NOSONAR
             setCacheBrotliAvailablity(true);
         }
     }
@@ -61,7 +61,7 @@ public class BrotliUtils {
         try {
             Class.forName("org.brotli.dec.BrotliInputStream");
             return true;
-        } catch (NoClassDefFoundError | Exception error) {
+        } catch (NoClassDefFoundError | Exception error) { // NOSONAR
             return false;
         }
     }

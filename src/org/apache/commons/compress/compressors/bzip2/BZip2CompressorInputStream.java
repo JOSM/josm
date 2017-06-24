@@ -376,7 +376,7 @@ public class BZip2CompressorInputStream extends CompressorInputStream implements
     /**
      * read bits from the input stream
      * @param n the number of bits to read, must not exceed 32?
-     * @return
+     * @return the requested bits combined into an int
      * @throws IOException
      */
     private static int bsR(BitInputStream bin, final int n) throws IOException {

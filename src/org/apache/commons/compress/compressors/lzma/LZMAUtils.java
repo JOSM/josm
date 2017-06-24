@@ -151,7 +151,7 @@ public class LZMAUtils {
             cachedLZMAAvailability = CachedAvailability.DONT_CACHE;
         } else if (cachedLZMAAvailability == CachedAvailability.DONT_CACHE) {
             final boolean hasLzma = internalIsLZMACompressionAvailable();
-            cachedLZMAAvailability = hasLzma ? CachedAvailability.CACHED_AVAILABLE
+            cachedLZMAAvailability = hasLzma ? CachedAvailability.CACHED_AVAILABLE // NOSONAR
                 : CachedAvailability.CACHED_UNAVAILABLE;
         }
     }
