@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.autofilter;
 
+import java.util.Objects;
+
 import org.openstreetmap.josm.data.osm.Filter;
 
 /**
@@ -46,5 +48,20 @@ public class AutoFilter {
      */
     public Filter getFilter() {
         return filter;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(filter);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        AutoFilter other = (AutoFilter) obj;
+        return Objects.equals(filter, other.filter);
     }
 }

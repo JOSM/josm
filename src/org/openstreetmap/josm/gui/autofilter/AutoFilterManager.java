@@ -140,7 +140,11 @@ public final class AutoFilterManager implements ZoomChangeListener, MapModeChang
             filter.inverted = true;
             filter.text = enabledRule.getKey() + "=" + value;
             String label = enabledRule.getValueFormatter().apply(value);
-            AutoFilterButton button = new AutoFilterButton(new AutoFilter(label, filter.text, filter));
+            AutoFilter autoFilter = new AutoFilter(label, filter.text, filter);
+            AutoFilterButton button = new AutoFilterButton(autoFilter);
+            if (autoFilter.equals(currentAutoFilter)) {
+                button.getModel().setPressed(true);
+            }
             buttons.put(value, button);
             maxWidth = Math.max(maxWidth, button.getPreferredSize().width);
             Main.map.mapView.add(button).setLocation(3, 60 + 22*i++);
