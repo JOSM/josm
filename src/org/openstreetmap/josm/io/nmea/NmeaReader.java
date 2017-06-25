@@ -48,7 +48,7 @@ public class NmeaReader {
         SPEED_KMH(7), SPEED_KMH_UNIT(8), // speed in km/h
         REST(9); // version-specific rest
 
-        public final int position;
+        final int position;
 
         VTG(int position) {
             this.position = position;
@@ -70,7 +70,7 @@ public class NmeaReader {
          */
         MODE(12);
 
-        public final int position;
+        final int position;
 
         RMC(int position) {
             this.position = position;
@@ -89,7 +89,7 @@ public class NmeaReader {
         GPS_AGE(13), // Age of differential GPS data
         REF(14); // REF station
 
-        public final int position;
+        final int position;
         GGA(int position) {
             this.position = position;
         }
@@ -105,7 +105,7 @@ public class NmeaReader {
         HDOP(16),   // HDOP (horizontal precision)
         VDOP(17);   // VDOP (vertical precision)
 
-        public final int position;
+        final int position;
         GSA(int position) {
             this.position = position;
         }
@@ -122,7 +122,7 @@ public class NmeaReader {
          */
         MODE(7);
 
-        public final int position;
+        final int position;
         GLL(int position) {
             this.position = position;
         }
@@ -164,6 +164,11 @@ public class NmeaReader {
         return ps.success;
     }
 
+    /**
+     * Constructs a new {@code NmeaReader}
+     * @param source NMEA file input stream
+     * @throws IOException if an I/O error occurs
+     */
     public NmeaReader(InputStream source) throws IOException {
         rmcTimeFmt.setTimeZone(DateUtils.UTC);
         rmcTimeFmtStd.setTimeZone(DateUtils.UTC);
