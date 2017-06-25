@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.openstreetmap.josm.Main;
@@ -48,7 +49,7 @@ public class NmeaReader {
         SPEED_KMH(7), SPEED_KMH_UNIT(8), // speed in km/h
         REST(9); // version-specific rest
 
-        public final int position;
+        final int position;
 
         VTG(int position) {
             this.position = position;
@@ -70,7 +71,7 @@ public class NmeaReader {
          */
         MODE(12);
 
-        public final int position;
+        final int position;
 
         RMC(int position) {
             this.position = position;
@@ -89,7 +90,7 @@ public class NmeaReader {
         GPS_AGE(13), // Age of differential GPS data
         REF(14); // REF station
 
-        public final int position;
+        final int position;
         GGA(int position) {
             this.position = position;
         }
@@ -105,7 +106,7 @@ public class NmeaReader {
         HDOP(16),   // HDOP (horizontal precision)
         VDOP(17);   // VDOP (vertical precision)
 
-        public final int position;
+        final int position;
         GSA(int position) {
             this.position = position;
         }
@@ -122,7 +123,7 @@ public class NmeaReader {
          */
         MODE(7);
 
-        public final int position;
+        final int position;
         GLL(int position) {
             this.position = position;
         }
@@ -130,8 +131,8 @@ public class NmeaReader {
 
     public GpxData data;
 
-    private final SimpleDateFormat rmcTimeFmt = new SimpleDateFormat("ddMMyyHHmmss.SSS");
-    private final SimpleDateFormat rmcTimeFmtStd = new SimpleDateFormat("ddMMyyHHmmss");
+    private final SimpleDateFormat rmcTimeFmt = new SimpleDateFormat("ddMMyyHHmmss.SSS", Locale.ENGLISH);
+    private final SimpleDateFormat rmcTimeFmtStd = new SimpleDateFormat("ddMMyyHHmmss", Locale.ENGLISH);
 
     private Date readTime(String p) {
         Date d = Optional.ofNullable(rmcTimeFmt.parse(p, new ParsePosition(0)))
@@ -164,6 +165,11 @@ public class NmeaReader {
         return ps.success;
     }
 
+    /**
+     * Constructs a new {@code NmeaReader}
+     * @param source NMEA file input stream
+     * @throws IOException if an I/O error occurs
+     */
     public NmeaReader(InputStream source) throws IOException {
         rmcTimeFmt.setTimeZone(DateUtils.UTC);
         rmcTimeFmtStd.setTimeZone(DateUtils.UTC);
