@@ -131,7 +131,7 @@ public final class AutoFilterManager implements ZoomChangeListener, MapModeChang
         }
     }
 
-    private void addNewButtons(NavigableSet<String> values) {
+    private synchronized void addNewButtons(NavigableSet<String> values) {
         int i = 0;
         int maxWidth = 16;
         for (final String value : values.descendingSet()) {
@@ -262,13 +262,13 @@ public final class AutoFilterManager implements ZoomChangeListener, MapModeChang
         updateFiltersFull();
     }
 
-    private void updateFiltersFull() {
+    private synchronized void updateFiltersFull() {
         if (currentAutoFilter != null) {
             model.executeFilters();
         }
     }
 
-    private void updateFiltersEvent(AbstractDatasetChangedEvent event, boolean affectedOnly) {
+    private synchronized void updateFiltersEvent(AbstractDatasetChangedEvent event, boolean affectedOnly) {
         if (currentAutoFilter != null) {
             Collection<? extends OsmPrimitive> prims = event.getPrimitives();
             model.executeFilters(affectedOnly ? FilterModel.getAffectedPrimitives(prims) : prims);
@@ -362,7 +362,7 @@ public final class AutoFilterManager implements ZoomChangeListener, MapModeChang
      * Draws a text on the map display that indicates that filters are active.
      * @param g The graphics to draw that text on.
      */
-    public void drawOSDText(Graphics2D g) {
+    public synchronized void drawOSDText(Graphics2D g) {
         model.drawOSDText(g, lblOSD,
             tr("<h2>Filter active: {0}</h2>", currentAutoFilter.getFilter().text),
             tr("</p><p>Click again on filter button to see all objects.</p></html>"));
