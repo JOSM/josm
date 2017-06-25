@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Optional;
 
 import org.openstreetmap.josm.Main;
@@ -130,8 +131,8 @@ public class NmeaReader {
 
     public GpxData data;
 
-    private final SimpleDateFormat rmcTimeFmt = new SimpleDateFormat("ddMMyyHHmmss.SSS");
-    private final SimpleDateFormat rmcTimeFmtStd = new SimpleDateFormat("ddMMyyHHmmss");
+    private final SimpleDateFormat rmcTimeFmt = new SimpleDateFormat("ddMMyyHHmmss.SSS", Locale.ENGLISH);
+    private final SimpleDateFormat rmcTimeFmtStd = new SimpleDateFormat("ddMMyyHHmmss", Locale.ENGLISH);
 
     private Date readTime(String p) {
         Date d = Optional.ofNullable(rmcTimeFmt.parse(p, new ParsePosition(0)))
