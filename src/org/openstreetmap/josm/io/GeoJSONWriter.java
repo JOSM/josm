@@ -106,7 +106,7 @@ public class GeoJSONWriter {
         public void visit(Way w) {
             if (w != null) {
                 final JsonArrayBuilder array = getCoorsArray(w.getNodes());
-                if (ElemStyles.hasAreaElemStyle(w, false)) {
+                if (w.isClosed() && ElemStyles.hasAreaElemStyle(w, false)) {
                     final JsonArrayBuilder container = Json.createArrayBuilder().add(array);
                     geomObj.add("type", "Polygon");
                     geomObj.add("coordinates", container);
