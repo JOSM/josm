@@ -1431,7 +1431,6 @@ node[man_made=petroleum_well][!is_prop_set(icon-image)] {
     set icon_z17;
 }
 area[man_made=reservoir_covered],
-area[man_made=surveillance],
 area[man_made=tower],
 area[man_made=wastewater_plant],
 area[man_made=watermill],
