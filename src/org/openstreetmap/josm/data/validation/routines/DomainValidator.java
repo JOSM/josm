@@ -1427,12 +1427,15 @@ public final class DomainValidator extends AbstractValidator {
         "xn--11b4c3d", // कॉम VeriSign Sarl
         "xn--1ck2e1b", // セール Amazon Registry Services, Inc.
         "xn--1qqw23a", // 佛山 Guangzhou YU Wei Information Technology Co., Ltd.
+        "xn--2scrj9c", // ಭಾರತ National Internet eXchange of India
         "xn--30rr7y", // 慈善 Excellent First Limited
         "xn--3bst00m", // 集团 Eagle Horizon Limited
         "xn--3ds443g", // 在线 TLD REGISTRY LIMITED
+        "xn--3hcrj9c", // ଭାରତ National Internet eXchange of India
         "xn--3oq18vl8pn36a", // 大众汽车 Volkswagen (China) Investment Co., Ltd.
         "xn--3pxu8k", // 点看 VeriSign Sarl
         "xn--42c2d9a", // คอม VeriSign Sarl
+        "xn--45br5cyl", // ভাৰত National Internet eXchange of India
         "xn--45q11c", // 八卦 Zodiac Scorpio Limited
         "xn--4gbrim", // موقع Suhub Electronic Establishment
         "xn--54b7fta0cc", // বাংলা Posts and Telecommunications Division
@@ -1474,6 +1477,8 @@ public final class DomainValidator extends AbstractValidator {
         "xn--g2xx48c", // 购物 Minds + Machines Group Limited
         "xn--gckr3f0f", // クラウド Amazon Registry Services, Inc.
         "xn--gk3at1e", // 通販 Amazon Registry Services, Inc.
+        "xn--h2breg3eve", // भारतम् National Internet eXchange of India
+        "xn--h2brj9c8c", // भारोत National Internet eXchange of India
         "xn--hxt814e", // 网店 Zodiac Libra Limited
         "xn--i1b6b1a6a2e", // संगठन Public Interest Registry
         "xn--imr513n", // 餐厅 HU YI GLOBAL INFORMATION RESOURCES (HOLDING) COMPANY. HONGKONG LIMITED
@@ -1490,7 +1495,9 @@ public final class DomainValidator extends AbstractValidator {
         "xn--mgbab2bd", // بازار CORE Association
         "xn--mgbai9azgqp6j", // پاکستان National Telecommunication Corporation
         "xn--mgbb9fbpob", // موبايلي GreenTech Consultancy Company W.L.L.
+        "xn--mgbbh1a", // بارت National Internet eXchange of India
         "xn--mgbca7dzdo", // ابوظبي Abu Dhabi Systems and Information Centre
+        "xn--mgbgu82a", // ڀارت National Internet eXchange of India
         "xn--mgbi4ecexp", // كاثوليك Pontificium Consilium de Comunicationibus Socialibus (PCCS) (Pontifical Council for Social Communication)
         "xn--mgbt3dhd", // همراه Asia Green IT System Bilgisayar San. ve Tic. Ltd. Sti.
         "xn--mk1bu44c", // 닷컴 VeriSign Sarl
@@ -1508,6 +1515,7 @@ public final class DomainValidator extends AbstractValidator {
         "xn--qcka1pmc", // グーグル Charleston Road Registry Inc.
         "xn--rhqv96g", // 世界 Stable Tone Limited
         "xn--rovu88b", // 書籍 Amazon EU S.à r.l.
+        "xn--rvc1e0am3e", // ഭാരതം National Internet eXchange of India
         "xn--ses554g", // 网址 KNET Co., Ltd
         "xn--t60b56a", // 닷넷 VeriSign Sarl
         "xn--tckwe", // コム VeriSign Sarl
