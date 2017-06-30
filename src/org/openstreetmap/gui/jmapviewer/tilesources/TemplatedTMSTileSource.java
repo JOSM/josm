@@ -55,8 +55,9 @@ public class TemplatedTMSTileSource extends TMSTileSource implements TemplatedTi
      */
     public TemplatedTMSTileSource(TileSourceInfo info) {
         super(info);
-        if (info.getCookies() != null) {
-            headers.put(COOKIE_HEADER, info.getCookies());
+        String cookies = info.getCookies();
+        if (cookies != null && !cookies.isEmpty()) {
+            headers.put(COOKIE_HEADER, cookies);
         }
         handleTemplate();
     }
