@@ -159,7 +159,7 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
     /**
      * Constants used in the transformation.
      */
-    private double b, e;
+    private double b, g;
 
     /**
      * Convenience value equal to {@code a} / {@link #b}.
@@ -248,8 +248,8 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
                 f = -f;
             }
         }
-        e = f += d;
-        e = f * Math.pow(tsfn(latCenter, sinph0), b);
+        g = f += d;
+        g = f * Math.pow(tsfn(latCenter, sinph0), b);
 
         /*
          * Computes the constants that depend on the "twoPoint" vs "azimuth" case. In the
@@ -287,9 +287,9 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
              */
             final double h = Math.pow(tsfn(lat1, Math.sin(lat1)), b);
             final double l = Math.pow(tsfn(lat2, Math.sin(lat2)), b);
-            final double fp = e / h;
+            final double fp = g / h;
             final double p = (l - h) / (l + h);
-            double j = e * e;
+            double j = g * g;
             j = (j - l * h) / (j + l * h);
             double diff = lon1 - lon2;
             if (diff < -Math.PI) {
@@ -378,7 +378,7 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
     public double[] project(double y, double x) {
         double u, v;
         if (Math.abs(Math.abs(y) - Math.PI/2.0) > EPSILON) {
-            double q = e / Math.pow(tsfn(y, Math.sin(y)), b);
+            double q = g / Math.pow(tsfn(y, Math.sin(y)), b);
             double temp = 1.0 / q;
             double s = 0.5 * (q - temp);
             double v2 = Math.sin(b * x);
@@ -419,7 +419,7 @@ public class ObliqueMercator extends AbstractProj implements ICentralMeridianPro
                 0.0};
         } else {
             return new double[] {
-                cphi2(Math.pow(e / Math.sqrt((1. + up) / (1. - up)), 1.0 / b)), //calculate t
+                cphi2(Math.pow(g / Math.sqrt((1. + up) / (1. - up)), 1.0 / b)), //calculate t
                 -Math.atan2(sp * cosgamma0 - vp * singamma0, Math.cos(bra * u)) / b};
         }
     }
