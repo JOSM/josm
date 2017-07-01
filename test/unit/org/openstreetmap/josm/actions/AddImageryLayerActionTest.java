@@ -11,7 +11,6 @@ import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
-import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -42,7 +41,7 @@ public final class AddImageryLayerActionTest {
     }
 
     /**
-     * Unit test of {@link AddImageryLayerAction#actionPerformed} - Enabled cases.
+     * Unit test of {@link AddImageryLayerAction#actionPerformed} - Enabled cases for TMS.
      */
     @Test
     public void testActionPerformedEnabled() {
@@ -50,17 +49,7 @@ public final class AddImageryLayerActionTest {
         new AddImageryLayerAction(new ImageryInfo("foo_tms", "http://bar", "tms", null, null)).actionPerformed(null);
         List<TMSLayer> tmsLayers = Main.getLayerManager().getLayersOfType(TMSLayer.class);
         assertEquals(1, tmsLayers.size());
-
-        try {
-            new AddImageryLayerAction(new ImageryInfo("wms.openstreetmap.fr", "http://wms.openstreetmap.fr/wms?",
-                    "wms_endpoint", null, null)).actionPerformed(null);
-            List<WMSLayer> wmsLayers = Main.getLayerManager().getLayersOfType(WMSLayer.class);
-            assertEquals(1, wmsLayers.size());
-
-            Main.getLayerManager().removeLayer(wmsLayers.get(0));
-        } finally {
-            Main.getLayerManager().removeLayer(tmsLayers.get(0));
-        }
+        Main.getLayerManager().removeLayer(tmsLayers.get(0));
     }
 
     /**
