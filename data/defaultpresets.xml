@@ -6780,6 +6780,14 @@
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:man_made=flagpole" />
             <key key="man_made" value="flagpole" />
         </item> <!-- Flagpole -->
+        <item name="Cross" icon="presets/landmark/cross.svg" type="node" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=cross"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=cross"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=cross"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=cross"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:man_made=cross" />
+            <key key="man_made" value="cross" />
+        </item> <!-- Cross -->
         <separator/>
         <item name="Works" icon="presets/landmark/works.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=works"
