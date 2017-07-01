@@ -153,8 +153,6 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
     private String langName;
     /** whether this is a entry activated by default or not */
     private boolean defaultEntry;
-    /** The data part of HTTP cookies header in case the service requires cookies to work */
-    private String cookies;
     /** Whether this service requires a explicit EULA acceptance before it can be activated */
     private String eulaAcceptanceRequired;
     /** type of the imagery servics - WMS, TMS, ... */
@@ -838,15 +836,6 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public void setDefaultEntry(boolean defaultEntry) {
         this.defaultEntry = defaultEntry;
-    }
-
-    /**
-     * Return the data part of HTTP cookies header in case the service requires cookies to work
-     * @return the cookie data part
-     */
-    @Override
-    public String getCookies() {
-        return this.cookies;
     }
 
     /**

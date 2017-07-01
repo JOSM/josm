@@ -42,7 +42,7 @@ public class QuadStateCheckBox extends JCheckBox {
         PARTIAL
     }
 
-    private final transient QuadStateDecorator model;
+    private final transient QuadStateDecorator cbModel;
     private State[] allowed;
 
     /**
@@ -59,7 +59,7 @@ public class QuadStateCheckBox extends JCheckBox {
         super.addMouseListener(new MouseAdapter() {
             @Override public void mousePressed(MouseEvent e) {
                 grabFocus();
-                model.nextState();
+                cbModel.nextState();
             }
         });
         // Reset the keyboard action map
@@ -68,14 +68,14 @@ public class QuadStateCheckBox extends JCheckBox {
             @Override
             public void actionPerformed(ActionEvent e) {
                 grabFocus();
-                model.nextState();
+                cbModel.nextState();
             }
         });
         map.put("released", null);
         SwingUtilities.replaceUIActionMap(this, map);
         // set the model to the adapted model
-        model = new QuadStateDecorator(getModel());
-        setModel(model);
+        cbModel = new QuadStateDecorator(getModel());
+        setModel(cbModel);
         setState(initial);
     }
 
@@ -100,7 +100,7 @@ public class QuadStateCheckBox extends JCheckBox {
      * @param propertyText a description for the modelled property
      */
     public final void setPropertyText(final String propertyText) {
-        model.setPropertyText(propertyText);
+        cbModel.setPropertyText(propertyText);
     }
 
     /**
@@ -108,7 +108,7 @@ public class QuadStateCheckBox extends JCheckBox {
      * @param state The new state
      */
     public final void setState(State state) {
-        model.setState(state);
+        cbModel.setState(state);
     }
 
     /**
@@ -116,7 +116,7 @@ public class QuadStateCheckBox extends JCheckBox {
      * @return The current state
      */
     public State getState() {
-        return model.getState();
+        return cbModel.getState();
     }
 
     @Override

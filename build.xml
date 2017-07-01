@@ -24,7 +24,7 @@
         <property name="mapcss.dir" location="${src.dir}/org/openstreetmap/josm/gui/mappaint/mapcss"/>
         <property name="proj-build.dir" location="${base.dir}/build2"/>
         <property name="epsg.output" location="${base.dir}/data/projection/custom-epsg"/>
-        <property name="groovy.jar" location="${base.dir}/tools/groovy-all-2.4.11.jar"/>
+        <property name="groovy.jar" location="${base.dir}/tools/groovy-all.jar"/>
         <property name="error_prone_ant.jar" location="${base.dir}/tools/error_prone_ant.jar"/>
         <property name="javac.compiler" value="com.google.errorprone.ErrorProneAntCompilerAdapter" />
         <!-- build parameter: compression level (ant -Dclevel=N)
