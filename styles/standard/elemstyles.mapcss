@@ -1324,6 +1324,10 @@ node[man_made=flagpole] {
     icon-image: "presets/misc/flag.svg";
     set icon_z17;
 }
+node[man_made=cross] {
+    icon-image: "presets/landmark/cross.svg";
+    set icon_z17;
+}
 node[man_made=gasometer] {
     icon-image: "presets/landmark/gasometer.svg";
     set icon_z17;
