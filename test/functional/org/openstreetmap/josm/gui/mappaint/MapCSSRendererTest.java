@@ -104,7 +104,10 @@ public class MapCSSRendererTest {
                 new TestConfig("area-icon", AREA_DEFAULT),
 
                 /** Tests if all styles are sorted correctly. Tests {@link StyleRecord#compareTo(StyleRecord)} */
-                new TestConfig("order", AREA_DEFAULT)
+                new TestConfig("order", AREA_DEFAULT),
+
+                /** Tests repeat-image feature for ways */
+                new TestConfig("way-repeat-image", AREA_DEFAULT)
 
                 ).map(e -> new Object[] {e, e.testDirectory})
                 .collect(Collectors.toList());

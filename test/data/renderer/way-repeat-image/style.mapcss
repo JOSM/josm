@@ -1,0 +1,48 @@
+way[test=r1] {
+    color: darkblue;
+    width: 8;
+    repeat-image: "presets/barrier/city_wall.svg";
+    repeat-image-height: 40;
+    repeat-image-align: bottom;
+    repeat-image-offset: 4;
+    repeat-image-phase: -15;
+}
+
+way[test=r2] {
+    color: gray;
+    width: 18;
+    linecap: square;
+    repeat-image: "presets/barrier/guard_rail.svg";
+    repeat-image-height: 16;
+    repeat-image-align: bottom;
+    repeat-image-offset: 9;
+}
+
+way[test=r2]::dashes {
+    major-z-index: 10;
+    repeat-image: "presets/misc/no_icon.svg";
+    repeat-image-width: 16;
+    repeat-image-height: 4;
+    repeat-image-spacing: 12;
+}
+
+way[test=r3] {
+    color: maroon;
+    width: 8;
+    linecap: none;
+    repeat-image: "trees.svg";
+    repeat-image-height: 23;
+    repeat-image-align: bottom;
+    repeat-image-offset: 6;
+    repeat-image-spacing: 8;
+}
+
+way[test=r3]::bottom {
+    repeat-image: "trees-upside_down.svg";
+    repeat-image-height: 23;
+    repeat-image-align: top;
+    repeat-image-offset: -6;
+    repeat-image-spacing: 15;
+}
+
+
