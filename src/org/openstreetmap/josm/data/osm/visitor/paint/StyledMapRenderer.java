@@ -1300,8 +1300,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                     double dist = interval - (inLineOffset % interval);
 
                     while (dist < segmentLength) {
-                        appenOnewayPath(onewayReversed, start, nx, ny, dist, 3d, onewayArrowsCasing);
-                        appenOnewayPath(onewayReversed, start, nx, ny, dist, 2d, onewayArrows);
+                        appendOnewayPath(onewayReversed, start, nx, ny, dist, 3d, onewayArrowsCasing);
+                        appendOnewayPath(onewayReversed, start, nx, ny, dist, 2d, onewayArrows);
                         dist += interval;
                     }
                 }
@@ -1317,7 +1317,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         displaySegments(path, orientationArrows, onewayArrows, onewayArrowsCasing, color, line, dashes, dashedColor);
     }
 
-    private static void appenOnewayPath(boolean onewayReversed, MapViewPoint p1, double nx, double ny, double dist,
+    private static void appendOnewayPath(boolean onewayReversed, MapViewPoint p1, double nx, double ny, double dist,
             double onewaySize, Path2D onewayPath) {
         // scale such that border is 1 px
         final double fac = -(onewayReversed ? -1 : 1) * onewaySize * (1 + sinPHI) / (sinPHI * cosPHI);
