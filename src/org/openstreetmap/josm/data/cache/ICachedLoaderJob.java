@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.net.URL;
 
 /**
+ * Interface for a job to load a single object (typically an imagery tile).
+ * It is either retrieved from cache or downloaded from the given URL ({@link #getUrl()}).
  *
  * @author Wiktor Niesiobędzki
  *

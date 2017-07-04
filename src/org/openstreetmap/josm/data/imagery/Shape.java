@@ -15,8 +15,10 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
 
 /**
- * @author Vincent
+ * Data class to store the outline for background imagery coverage.
  *
+ * Configuration data for imagery to describe the coverage area ({@link ImageryInfo.ImageryBounds}).
+ * @author Vincent
  */
 public class Shape {
 

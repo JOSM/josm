@@ -1,6 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection;
 
+/**
+ * Exception thrown when a projection cannot be constructed due to invalid input
+ * parameters.
+ *
+ * Used mainly in {@link CustomProjection}, where a parameter string is parsed
+ * and converted to a projection.
+ */
 public class ProjectionConfigurationException extends Exception {
 
     /**

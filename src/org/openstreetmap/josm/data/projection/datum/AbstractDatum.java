@@ -3,6 +3,11 @@ package org.openstreetmap.josm.data.projection.datum;
 
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 
+/**
+ * Abstract base class for {@link Datum} implementations.
+ *
+ * Adds common fields and access methods.
+ */
 public abstract class AbstractDatum implements Datum {
 
     protected String name;

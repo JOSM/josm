@@ -3,6 +3,11 @@ package org.openstreetmap.josm.data.preferences;
 
 import org.openstreetmap.josm.Main;
 
+/**
+ * Abstract base class for properties with {@link Enum} value, where the preference
+ * key is generated from a list of parameters.
+ * @param <T> the {@code Enum} class
+ */
 public abstract class ParametrizedEnumProperty<T extends Enum<T>> {
 
     protected final T defaultValue;
