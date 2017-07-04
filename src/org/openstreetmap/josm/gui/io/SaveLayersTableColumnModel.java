@@ -17,6 +17,9 @@ import javax.swing.table.TableColumn;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * Table column model for the {@link SaveLayersTable} in the {@link SaveLayersDialog}.
+ */
 class SaveLayersTableColumnModel extends DefaultTableColumnModel {
     /** small renderer class that handles the "should be uploaded/saved" texts. */
     private static class RecommendedActionsTableCell implements TableCellRenderer {

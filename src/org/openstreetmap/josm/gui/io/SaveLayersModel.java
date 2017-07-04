@@ -13,6 +13,9 @@ import javax.swing.table.DefaultTableModel;
 import org.openstreetmap.josm.gui.layer.AbstractModifiableLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
+/**
+ * Table model for the {@link SaveLayersTable} in the {@link SaveLayersDialog}.
+ */
 public class SaveLayersModel extends DefaultTableModel {
     public static final String MODE_PROP = SaveLayerInfo.class.getName() + ".mode";
 

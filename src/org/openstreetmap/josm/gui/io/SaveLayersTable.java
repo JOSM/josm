@@ -9,6 +9,9 @@ import javax.swing.JTable;
 
 import org.openstreetmap.josm.gui.io.SaveLayersModel.Mode;
 
+/**
+ * A table that displays the list of modified layers in the {@link SaveLayersDialog}.
+ */
 class SaveLayersTable extends JTable implements PropertyChangeListener {
     SaveLayersTable(SaveLayersModel model) {
         super(model, new SaveLayersTableColumnModel());

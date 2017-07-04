@@ -213,7 +213,6 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
                 pnlBasicUploadSettings.getUploadParameterSummaryPanel()
         );
 
-
         // users can click on either of two links in the upload parameter
         // summary handler. This installs the handler for these two events.
         // We simply select the appropriate tab in the tabbed pane with the configuration dialogs.
