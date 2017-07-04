@@ -36,6 +36,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
+/**
+ * Abstract base class for the task of uploading primitives via OSM API.
+ *
+ * Mainly handles conflicts and certain error situations.
+ */
 public abstract class AbstractUploadTask extends PleaseWaitRunnable {
 
     /**

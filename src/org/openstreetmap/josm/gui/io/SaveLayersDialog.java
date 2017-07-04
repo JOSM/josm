@@ -58,6 +58,12 @@ import org.openstreetmap.josm.tools.UserCancelException;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
+/**
+ * Dialog that pops up when the user closes a layer with modified data.
+ *
+ * It asks for confirmation that all modification should be discarded and offers
+ * to save the layers to file or upload to server, depending on the type of layer.
+ */
 public class SaveLayersDialog extends JDialog implements TableModelListener {
 
     /**

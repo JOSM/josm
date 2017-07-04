@@ -14,6 +14,9 @@ import javax.swing.JProgressBar;
 import org.openstreetmap.josm.gui.io.SaveLayersModel.Mode;
 import org.openstreetmap.josm.gui.progress.ProgressRenderer;
 
+/**
+ * A {@link ProgressRenderer} used for upload/save action in the {@link SaveLayersDialog}.
+ */
 class UploadAndSaveProgressRenderer extends JPanel implements ProgressRenderer, PropertyChangeListener {
 
     private final JLabel lblTaskTitle = new JLabel("");

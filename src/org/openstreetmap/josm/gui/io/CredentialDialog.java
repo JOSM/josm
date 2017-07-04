@@ -40,6 +40,12 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
+/**
+ * Dialog box to request username and password from the user.
+ *
+ * The credentials can be for the OSM API (basic authentication), a different
+ * host or an HTTP proxy.
+ */
 public class CredentialDialog extends JDialog {
 
     public static CredentialDialog getOsmApiCredentialDialog(String username, String password, String host,
