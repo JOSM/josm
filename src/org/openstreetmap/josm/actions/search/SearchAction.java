@@ -12,6 +12,7 @@ import java.awt.FlowLayout;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -384,32 +385,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
          */
         TaggingPresetSelector selector = new TaggingPresetSelector(false, false);
         selector.setBorder(BorderFactory.createTitledBorder(tr("Search by preset")));
-
-        selector.setDblClickListener(ev -> {
-            TaggingPreset selectedPreset = selector.getSelectedPresetAndUpdateClassification();
-
-            if (selectedPreset == null) {
-                return;
-            }
-
-            /*
-             * Make sure that the focus is transferred to the search text field, in order
-             * to allow the user simply delete autocompleted part of the query.
-             */
-            editorComponent.requestFocusInWindow();
-
-            // TODO: add docs why we use invokeLater here
-            SwingUtilities.invokeLater(() -> {
-                int textOffset = editorComponent.getCaretPosition();
-                String presetSearchQuery = " preset:" +
-                        "\"" + selectedPreset.getRawName() + "\"";
-                try {
-                    document.insertString(textOffset, presetSearchQuery, null);
-                } catch (BadLocationException e1) {
-                    throw new JosmRuntimeException(e1.getMessage(), e1);
-                }
-            });
-        });
+        selector.setDblClickListener(ev -> setPresetDblClickListener(selector, editorComponent));
 
         JPanel p = new JPanel(new GridBagLayout());
         p.add(top, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 5, 5, 0));
@@ -649,6 +625,43 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         CapturingSearchReceiver receiver = new CapturingSearchReceiver();
         SearchTask.newSearchTask(searchSetting, receiver).run();
         return receiver.result;
+    }
+
+    /**
+     *
+     * @param selector Selector component that the user interacts with
+     * @param searchEditor Editor for search queries
+     */
+    private static void setPresetDblClickListener(TaggingPresetSelector selector, JTextComponent searchEditor) {
+        TaggingPreset selectedPreset = selector.getSelectedPresetAndUpdateClassification();
+
+        if (selectedPreset == null) {
+            return;
+        }
+
+        /*
+         * Make sure that the focus is transferred to the search text field
+         * from the selector component.
+         */
+        searchEditor.requestFocusInWindow();
+
+        /*
+         * In order to make interaction with the search dialog simpler,
+         * we make sure that if autocompletion triggers and the text field is
+         * not in focus, the correct area is selected. We first request focus
+         * and then execute the selection logic. invokeLater allows us to
+         * defer the selection until waiting for focus.
+         */
+        SwingUtilities.invokeLater(() -> {
+            int textOffset = searchEditor.getCaretPosition();
+            String presetSearchQuery = " preset:" +
+                    "\"" + selectedPreset.getRawName() + "\"";
+            try {
+                searchEditor.getDocument().insertString(textOffset, presetSearchQuery, null);
+            } catch (BadLocationException e1) {
+                throw new JosmRuntimeException(e1.getMessage(), e1);
+            }
+        });
     }
 
     /**
