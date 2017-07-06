@@ -845,6 +845,10 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
     }
 
+    /**
+     * This class defines a set of parameters that is used to
+     * perform search within the search dialog.
+     */
     public static class SearchSetting {
         public String text;
         public SearchMode mode;
@@ -906,6 +910,24 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             return Objects.hash(text, mode, caseSensitive, regexSearch, mapCSSSearch, allElements);
         }
 
+        /**
+         * <p>Transforms a string following a certain format, namely "[R | A | D | S][C?,R?,A?,M?] [a-zA-Z]"
+         * where the first part defines the mode of the search, see {@link SearchMode}, the second defines
+         * a set of attributes within the {@code SearchSetting} class and the second is the search query.
+         * <p>
+         * Attributes are as follows:
+         * <ul>
+         *     <li>C - if search is case sensitive
+         *     <li>R - if the regex syntax is used
+         *     <li>A - if all objects are considered
+         *     <li>M - if the mapCSS syntax is used
+         * </ul>
+         * <p>For example, "RC type:node" is a valid string representation of an object that replaces the
+         * current selection, is case sensitive and searches for all objects of type node.
+         * @param s A string representation of a {@code SearchSetting} object
+         *          from which the object must be built.
+         * @return A {@code SearchSetting} defined by the input string.
+         */
         public static SearchSetting readFromString(String s) {
             if (s.isEmpty())
                 return null;
@@ -947,6 +969,11 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             return result;
         }
 
+        /**
+         * Builds a string representation of the {@code SearchSetting} object,
+         * see {@link #readFromString(String)} for more details.
+         * @return A string representation of the {@code SearchSetting} object.
+         */
         public String writeToString() {
             if (text == null || text.isEmpty())
                 return "";
