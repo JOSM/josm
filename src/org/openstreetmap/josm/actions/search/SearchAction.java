@@ -239,14 +239,20 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                         JTextComponent tf = hcb.getEditorComponent();
 
                         /*
-                         * Get the focus in order to select proper area within the search
-                         * text field if autocompletion triggered.
+                         * Make sure that the focus is transferred to the search text field
+                         * from the selector component.
                          */
                         if (!tf.hasFocus()) {
                             tf.requestFocusInWindow();
                         }
 
-                        // TODO: add docs why we use invokeLater here
+                         /*
+                         * In order to make interaction with the search dialog simpler,
+                         * we make sure that if autocompletion triggers and the text field is
+                         * not in focus, the correct area is selected. We first request focus
+                         * and then execute the selection logic. invokeLater allows us to
+                         * defer the selection until waiting for focus.
+                         */
                         SwingUtilities.invokeLater(() -> {
                             try {
                                 tf.getDocument().insertString(tf.getCaretPosition(), ' ' + insertText, null);
