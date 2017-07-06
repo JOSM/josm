@@ -245,7 +245,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                             tf.requestFocusInWindow();
                         }
 
-                         /*
+                        /*
                          * In order to make interaction with the search dialog simpler,
                          * we make sure that if autocompletion triggers and the text field is
                          * not in focus, the correct area is selected. We first request focus
