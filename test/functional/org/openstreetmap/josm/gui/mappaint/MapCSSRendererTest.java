@@ -91,6 +91,9 @@ public class MapCSSRendererTest {
                 /** Tests dashed ways. */
                 new TestConfig("way-dashes", AREA_DEFAULT),
 
+                /** Tests dashed way clamping algorithm */
+                new TestConfig("way-dashes-clamp", AREA_DEFAULT),
+
                 /** Tests fill-color property */
                 new TestConfig("area-fill-color", AREA_DEFAULT),
 
