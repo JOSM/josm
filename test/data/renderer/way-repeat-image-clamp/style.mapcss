@@ -1,0 +1,22 @@
+canvas {
+    default-points: false;
+    default-lines: false;
+}
+
+way[pattern] {
+	width: 1;
+	color: red;
+    repeat-image: "trees.svg";
+    repeat-image-align: bottom;
+    repeat-image-offset: 2;
+    repeat-image-spacing: 20;
+	repeat-image-phase: 0;
+}
+
+way[pattern=B] {
+	repeat-image-phase: 4;
+}
+
+way[pattern=C] {
+	repeat-image-phase: 8;
+}
