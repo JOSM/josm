@@ -1,103 +1,88 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <osm version='0.6' upload='never' generator='JOSM'>
-  <node id='-38146' action='modify' lat='0.1' lon='0.1' />
-  <node id='-38148' action='modify' lat='0.15' lon='0.3' />
-  <node id='-38150' action='modify' lat='0.1' lon='0.5' />
-  <node id='-38152' action='modify' lat='0.1' lon='0.7' />
-  <node id='-38154' action='modify' lat='0.1' lon='0.9' />
-  <node id='-38156' action='modify' lat='0.3' lon='0.1' />
-  <node id='-38158' action='modify' lat='0.35' lon='0.3' />
-  <node id='-38160' action='modify' lat='0.3' lon='0.5' />
-  <node id='-38162' action='modify' lat='0.3' lon='0.7' />
-  <node id='-38164' action='modify' lat='0.3' lon='0.9' />
-  <node id='-38166' action='modify' lat='0.5' lon='0.1' />
-  <node id='-38168' action='modify' lat='0.55' lon='0.3' />
-  <node id='-38170' action='modify' lat='0.5' lon='0.5' />
-  <node id='-38172' action='modify' lat='0.5' lon='0.7' />
-  <node id='-38174' action='modify' lat='0.5' lon='0.9' />
-  <node id='-38176' action='modify' lat='0.7' lon='0.1' />
-  <node id='-38178' action='modify' lat='0.75' lon='0.3' />
-  <node id='-38180' action='modify' lat='0.7' lon='0.5' />
-  <node id='-38182' action='modify' lat='0.7' lon='0.7' />
-  <node id='-38184' action='modify' lat='0.7' lon='0.9' />
-  <node id='-38186' action='modify' lat='0.9' lon='0.1' />
-  <node id='-38188' action='modify' lat='0.95' lon='0.3' />
-  <node id='-38190' action='modify' lat='0.9' lon='0.5' />
-  <node id='-38192' action='modify' lat='0.9' lon='0.7' />
-  <node id='-38194' action='modify' lat='0.9' lon='0.9' />
-  <node id='-38242' action='modify' lat='0.2993788257' lon='-0.49438751221' />
-  <node id='-38243' action='modify' lat='0.38452134447' lon='0.01098358154' />
-  <node id='-38245' action='modify' lat='0.41473301158' lon='0.51910125732' />
-  <node id='-38247' action='modify' lat='0.40923998953' lon='0.99700653076' />
-  <node id='-38249' action='modify' lat='0.27465989777' lon='1.13982879639' />
-  <node id='-38294' action='modify' lat='-0.3048664203' lon='1.31011688232' />
-  <way id='-38196' action='modify'>
-    <nd ref='-38194' />
-    <nd ref='-38192' />
+  <node id='-32972' action='modify' lat='0.1' lon='0.1' />
+  <node id='-32974' action='modify' lat='0.15' lon='0.3' />
+  <node id='-32976' action='modify' lat='0.1' lon='0.5' />
+  <node id='-32978' action='modify' lat='0.1' lon='0.7' />
+  <node id='-32980' action='modify' lat='0.1' lon='0.9' />
+  <node id='-32982' action='modify' lat='0.3' lon='0.1' />
+  <node id='-32984' action='modify' lat='0.35' lon='0.3' />
+  <node id='-32986' action='modify' lat='0.3' lon='0.5' />
+  <node id='-32988' action='modify' lat='0.3' lon='0.7' />
+  <node id='-32990' action='modify' lat='0.3' lon='0.9' />
+  <node id='-32992' action='modify' lat='0.5' lon='0.1' />
+  <node id='-32994' action='modify' lat='0.55' lon='0.3' />
+  <node id='-32996' action='modify' lat='0.5' lon='0.5' />
+  <node id='-32998' action='modify' lat='0.5' lon='0.7' />
+  <node id='-33000' action='modify' lat='0.5' lon='0.9' />
+  <node id='-33002' action='modify' lat='0.7' lon='0.1' />
+  <node id='-33004' action='modify' lat='0.75' lon='0.3' />
+  <node id='-33006' action='modify' lat='0.7' lon='0.5' />
+  <node id='-33008' action='modify' lat='0.7' lon='0.7' />
+  <node id='-33010' action='modify' lat='0.7' lon='0.9' />
+  <node id='-33012' action='modify' lat='0.9' lon='0.1' />
+  <node id='-33014' action='modify' lat='0.95' lon='0.3' />
+  <node id='-33016' action='modify' lat='0.9' lon='0.5' />
+  <node id='-33018' action='modify' lat='0.9' lon='0.7' />
+  <node id='-33020' action='modify' lat='0.9' lon='0.9' />
+  <way id='-33034' action='modify'>
+    <nd ref='-33020' />
+    <nd ref='-33018' />
     <tag k='highlight' v='yes' />
     <tag k='test' v='style5' />
   </way>
-  <way id='-38198' action='modify'>
-    <nd ref='-38184' />
-    <nd ref='-38182' />
+  <way id='-33036' action='modify'>
+    <nd ref='-33010' />
+    <nd ref='-33008' />
     <tag k='highlight' v='yes' />
     <tag k='test' v='style4' />
   </way>
-  <way id='-38200' action='modify'>
-    <nd ref='-38174' />
-    <nd ref='-38172' />
+  <way id='-33038' action='modify'>
+    <nd ref='-33000' />
+    <nd ref='-32998' />
     <tag k='highlight' v='yes' />
     <tag k='test' v='style3' />
   </way>
-  <way id='-38202' action='modify'>
-    <nd ref='-38164' />
-    <nd ref='-38162' />
+  <way id='-33040' action='modify'>
+    <nd ref='-32990' />
+    <nd ref='-32988' />
     <tag k='highlight' v='yes' />
     <tag k='test' v='style2' />
   </way>
-  <way id='-38204' action='modify'>
-    <nd ref='-38154' />
-    <nd ref='-38152' />
+  <way id='-33042' action='modify'>
+    <nd ref='-32980' />
+    <nd ref='-32978' />
     <tag k='highlight' v='yes' />
     <tag k='test' v='style1' />
   </way>
-  <way id='-38206' action='modify'>
-    <nd ref='-38190' />
-    <nd ref='-38188' />
-    <nd ref='-38186' />
+  <way id='-33044' action='modify'>
+    <nd ref='-33016' />
+    <nd ref='-33014' />
+    <nd ref='-33012' />
     <tag k='test' v='style5' />
   </way>
-  <way id='-38208' action='modify'>
-    <nd ref='-38180' />
-    <nd ref='-38178' />
-    <nd ref='-38176' />
+  <way id='-33046' action='modify'>
+    <nd ref='-33006' />
+    <nd ref='-33004' />
+    <nd ref='-33002' />
     <tag k='test' v='style4' />
   </way>
-  <way id='-38210' action='modify'>
-    <nd ref='-38170' />
-    <nd ref='-38168' />
-    <nd ref='-38166' />
+  <way id='-33048' action='modify'>
+    <nd ref='-32996' />
+    <nd ref='-32994' />
+    <nd ref='-32992' />
     <tag k='test' v='style3' />
   </way>
-  <way id='-38212' action='modify'>
-    <nd ref='-38160' />
-    <nd ref='-38158' />
-    <nd ref='-38156' />
+  <way id='-33050' action='modify'>
+    <nd ref='-32986' />
+    <nd ref='-32984' />
+    <nd ref='-32982' />
     <tag k='test' v='style2' />
   </way>
-  <way id='-38214' action='modify'>
-    <nd ref='-38150' />
-    <nd ref='-38148' />
-    <nd ref='-38146' />
+  <way id='-33052' action='modify'>
+    <nd ref='-32976' />
+    <nd ref='-32974' />
+    <nd ref='-32972' />
     <tag k='test' v='style1' />
-  </way>
-  <way id='-38244' action='modify'>
-    <nd ref='-38242' />
-    <nd ref='-38243' />
-    <nd ref='-38245' />
-    <nd ref='-38247' />
-    <nd ref='-38249' />
-    <nd ref='-38294' />
-    <tag k='test' v='out-of-screen' />
   </way>
 </osm>
