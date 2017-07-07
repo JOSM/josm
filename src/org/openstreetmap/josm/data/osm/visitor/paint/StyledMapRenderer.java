@@ -654,14 +654,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             path.lineTo(it.next());
         }
 
-        double startOffset = phase % repeat;
-        if (startOffset < 0) {
-            startOffset += repeat;
-        }
+        double startOffset = computeStartOffset(phase, repeat);
 
         BufferedImage image = pattern.getImage(disabled);
 
-        path.visitClippedLine(startOffset, repeat, (inLineOffset, start, end, startIsOldEnd) -> {
+        path.visitClippedLine(repeat, (inLineOffset, start, end, startIsOldEnd) -> {
             final double segmentLength = start.distanceToInView(end);
             if (segmentLength < 0.1) {
                 // avoid odd patterns when zoomed out.
@@ -678,7 +675,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             g.rotate(Math.atan2(dy, dx));
 
             // The start of the next image
-            double imageStart = -(inLineOffset % repeat);
+            double imageStart = -((inLineOffset + startOffset) % repeat);
 
             while (imageStart < segmentLength) {
                 int x = (int) imageStart;
@@ -690,6 +687,14 @@ public class StyledMapRenderer extends AbstractMapRenderer {
 
             g.setTransform(saveTransform);
         });
+    }
+
+    private static double computeStartOffset(double phase, final double repeat) {
+        double startOffset = phase % repeat;
+        if (startOffset < 0) {
+            startOffset += repeat;
+        }
+        return startOffset;
     }
 
     @Override
@@ -1290,7 +1295,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             onewayArrowsCasing = new MapViewPath(mapState);
             double interval = 60;
 
-            path.visitClippedLine(0, 60, (inLineOffset, start, end, startIsOldEnd) -> {
+            path.visitClippedLine(60, (inLineOffset, start, end, startIsOldEnd) -> {
                 double segmentLength = start.distanceToInView(end);
                 if (segmentLength > 0.001) {
                     final double nx = (end.getInViewX() - start.getInViewX()) / segmentLength;
