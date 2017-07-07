@@ -675,7 +675,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             g.rotate(Math.atan2(dy, dx));
 
             // The start of the next image
-            double imageStart = -((inLineOffset + startOffset) % repeat);
+            // It is shifted by startOffset.
+            double imageStart = -((inLineOffset - startOffset + repeat) % repeat);
 
             while (imageStart < segmentLength) {
                 int x = (int) imageStart;
