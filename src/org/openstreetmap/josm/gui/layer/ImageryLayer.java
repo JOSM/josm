@@ -42,6 +42,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * Abstract base class for background imagery layers ({@link WMSLayer}, {@link TMSLayer}, {@link WMTSLayer}).
+ *
+ * Handles some common tasks, like image filters, image processors, etc.
+ */
 public abstract class ImageryLayer extends Layer {
 
     public static final IntegerProperty PROP_SHARPEN_LEVEL = new IntegerProperty("imagery.sharpen_level", 0);

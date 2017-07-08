@@ -35,6 +35,9 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
+/**
+ * Dialog to view and manipulate geo-tagged images from a {@link GeoImageLayer}.
+ */
 public final class ImageViewerDialog extends ToggleDialog implements LayerChangeListener, ActiveLayerChangeListener {
 
     private static final String COMMAND_ZOOM = "zoom";

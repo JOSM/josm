@@ -26,6 +26,12 @@ import org.openstreetmap.josm.gui.layer.Layer.MultiLayerAction;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * Action to show a dialog for picking a color.
+ *
+ * By calling this action, the user can choose a color to customize the painting
+ * of a certain {@link GpxLayer} or {@link org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer}.
+ */
 public class CustomizeColor extends AbstractAction implements LayerAction, MultiLayerAction {
     private final transient List<AbstractProperty<Color>> colors;
 

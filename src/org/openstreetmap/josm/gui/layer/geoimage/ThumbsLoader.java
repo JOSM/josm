@@ -22,6 +22,11 @@ import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.tools.ExifReader;
 
+/**
+ * Loads thumbnail previews for a list of images from a {@link GeoImageLayer}.
+ * 
+ * Thumbnails are loaded in the background and cached on disk for the next session.
+ */
 public class ThumbsLoader implements Runnable {
     public static final int maxSize = 120;
     public static final int minSize = 22;

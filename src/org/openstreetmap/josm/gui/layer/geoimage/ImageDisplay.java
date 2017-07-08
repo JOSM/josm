@@ -28,6 +28,11 @@ import javax.swing.JComponent;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.ExifReader;
 
+/**
+ * GUI component to display an image (photograph).
+ *
+ * Offers basic mouse interaction (zoom, drag) and on-screen text.
+ */
 public class ImageDisplay extends JComponent {
 
     /** The file that is currently displayed */
