@@ -15,11 +15,29 @@ import org.openstreetmap.josm.tools.MultikeyActionsHandler;
 import org.openstreetmap.josm.tools.MultikeyShortcutAction;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Manages actions to jump from one marker to the next for layers that show markers
+ * ({@link org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer},
+ * {@link org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer}).
+ *
+ * Registers global multi-key shortcuts and offers actions for the right-click menu of
+ * the layers.
+ */
 public final class JumpToMarkerActions {
 
+    /**
+     * Interface for a layer that displays markers and supports jumping from
+     * one marker to the next.
+     */
     public interface JumpToMarkerLayer {
+        /**
+         * Jump (move the viewport) to the next marker.
+         */
         void jumpToNextMarker();
 
+        /**
+         * Jump (move the viewport) to the previous marker.
+         */
         void jumpToPreviousMarker();
     }
 
@@ -30,6 +48,9 @@ public final class JumpToMarkerActions {
     private static volatile JumpToNextMarker jumpToNextMarkerAction;
     private static volatile JumpToPreviousMarker jumpToPreviousMarkerAction;
 
+    /**
+     * Initialize the actions, register shortcuts.
+     */
     public static void initialize() {
         jumpToNextMarkerAction = new JumpToNextMarker(null);
         jumpToPreviousMarkerAction = new JumpToPreviousMarker(null);
@@ -37,6 +58,9 @@ public final class JumpToMarkerActions {
         MultikeyActionsHandler.getInstance().addAction(jumpToPreviousMarkerAction);
     }
 
+    /**
+     * Unregister the actions.
+     */
     public static void unregisterActions() {
         MultikeyActionsHandler.getInstance().removeAction(jumpToNextMarkerAction);
         MultikeyActionsHandler.getInstance().removeAction(jumpToPreviousMarkerAction);

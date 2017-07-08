@@ -12,6 +12,11 @@ import javax.swing.JTabbedPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
 
+/**
+ * Abstract base class for {@link TabPreferenceSetting} implementations.
+ *
+ * Support for common functionality, like icon, title and adding a tab ({@link SubPreferenceSetting}).
+ */
 public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetting implements TabPreferenceSetting {
 
     private final String iconName;

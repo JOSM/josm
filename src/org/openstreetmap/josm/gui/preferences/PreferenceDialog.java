@@ -31,6 +31,13 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
+/**
+ * The main preferences dialog.
+ *
+ * Dialog window where the user can change various settings. Organized in main
+ * tabs to the left ({@link TabPreferenceSetting}) and (optional) sub-pages
+ * ({@link SubPreferenceSetting}).
+ */
 public class PreferenceDialog extends JDialog {
 
     private final PreferenceTabbedPane tpPreferences = new PreferenceTabbedPane();
