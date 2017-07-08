@@ -50,6 +50,7 @@ import sun.security.x509.CertificateSerialNumber;
 import sun.security.x509.CertificateValidity;
 import sun.security.x509.CertificateVersion;
 import sun.security.x509.CertificateX509Key;
+import sun.security.x509.DNSName;
 import sun.security.x509.ExtendedKeyUsageExtension;
 import sun.security.x509.GeneralName;
 import sun.security.x509.GeneralNameInterface;
@@ -108,21 +109,19 @@ public class RemoteControlHttpsServer extends Thread {
     public static final String ENTRY_ALIAS = "josm_localhost";
 
     /**
-     * Creates a GeneralName object from known types.
+     * Creates a GeneralNameInterface object from known types.
      * @param t one of 4 known types
      * @param v value
      * @return which one
      * @throws IOException if any I/O error occurs
      */
-    private static GeneralName createGeneralName(String t, String v) throws IOException {
-        GeneralNameInterface gn;
+    private static GeneralNameInterface createGeneralNameInterface(String t, String v) throws IOException {
         switch (t.toLowerCase(Locale.ENGLISH)) {
-            case "uri": gn = new URIName(v); break;
-            case "dns": gn = new DNSNameFix(v); break;
-            case "ip": gn = new IPAddressName(v); break;
-            default: gn = new OIDName(v);
+            case "uri": return new URIName(v);
+            case "dns": return new DNSName(v);
+            case "ip": return new IPAddressName(v);
+            default: return new OIDName(v);
         }
-        return new GeneralName(gn);
     }
 
     /**
@@ -173,7 +172,7 @@ public class RemoteControlHttpsServer extends Thread {
                 }
                 String t = item.substring(0, colonpos);
                 String v = item.substring(colonpos+1);
-                gnames.add(createGeneralName(t, v));
+                gnames.add(new GeneralName(createGeneralNameInterface(t, v)));
             }
             // Non critical
             ext.set(SubjectAlternativeNameExtension.NAME, new SubjectAlternativeNameExtension(Boolean.FALSE, gnames));
@@ -219,11 +218,7 @@ public class RemoteControlHttpsServer extends Thread {
             KeyPair pair = generator.generateKeyPair();
 
             X509Certificate cert = generateCertificate("CN=localhost, OU=JOSM, O=OpenStreetMap", pair, 1825, "SHA256withRSA",
-                    // see #10033#comment:20: All browsers respect "ip" in SAN, except IE which only understands DNS entries:
-                    // CHECKSTYLE.OFF: LineLength
-                    // https://connect.microsoft.com/IE/feedback/details/814744/the-ie-doesnt-trust-a-san-certificate-when-connecting-to-ip-address
-                    // CHECKSTYLE.ON: LineLength
-                    "dns:localhost,ip:127.0.0.1,dns:127.0.0.1,ip:::1,uri:https://127.0.0.1:"+HTTPS_PORT+",uri:https://::1:"+HTTPS_PORT);
+                    "dns:localhost,ip:127.0.0.1,ip:::1,uri:https://127.0.0.1:"+HTTPS_PORT+",uri:https://::1:"+HTTPS_PORT);
 
             KeyStore ks = KeyStore.getInstance("JKS");
             ks.load(null, null);
