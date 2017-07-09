@@ -24,6 +24,7 @@ public class Lanes extends Test.TagTest {
         "source:lanes",
         "note:lanes",
         "proposed:lanes",
+        "source:proposed:lanes",
         "piste:lanes",
     };
 
