@@ -55,7 +55,7 @@ class JavaFxMediaPlayer implements SoundPlayer {
     }
 
     @Override
-    public void play(Execute command, State stateChange, URL playingUrl) throws AudioException, IOException {
+    public synchronized void play(Execute command, State stateChange, URL playingUrl) throws AudioException, IOException {
         try {
             final URL url = command.url();
             if (playingUrl != url) {
@@ -85,7 +85,7 @@ class JavaFxMediaPlayer implements SoundPlayer {
     }
 
     @Override
-    public void pause(Execute command, State stateChange, URL playingUrl) throws AudioException, IOException {
+    public synchronized void pause(Execute command, State stateChange, URL playingUrl) throws AudioException, IOException {
         if (mediaPlayer != null) {
             try {
                 mediaPlayer.pause();
@@ -102,13 +102,13 @@ class JavaFxMediaPlayer implements SoundPlayer {
     }
 
     @Override
-    public double position() {
-        return mediaPlayer.getCurrentTime().toSeconds();
+    public synchronized double position() {
+        return mediaPlayer != null ? mediaPlayer.getCurrentTime().toSeconds() : -1;
     }
 
     @Override
-    public double speed() {
-        return mediaPlayer.getCurrentRate();
+    public synchronized double speed() {
+        return mediaPlayer != null ? mediaPlayer.getCurrentRate() : -1;
     }
 
     @Override
