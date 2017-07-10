@@ -20,6 +20,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.PushbackTokenizer.Range;
@@ -38,6 +39,10 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetMenu;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSeparator;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.UncheckedParseException;
@@ -115,7 +120,7 @@ public class SearchCompiler {
         private final Collection<String> keywords = Arrays.asList("id", "version", "type", "user", "role",
                 "changeset", "nodes", "ways", "tags", "areasize", "waylength", "modified", "deleted", "selected",
                 "incomplete", "untagged", "closed", "new", "indownloadedarea",
-                "allindownloadedarea", "inview", "allinview", "timestamp", "nth", "nth%", "hasRole");
+                "allindownloadedarea", "inview", "allinview", "timestamp", "nth", "nth%", "hasRole", "preset");
 
         @Override
         public Match get(String keyword, PushbackTokenizer tokenizer) throws ParseError {
@@ -151,6 +156,8 @@ public class SearchCompiler {
                         return new Version(tokenizer);
                     case "type":
                         return new ExactType(tokenizer.readTextOrNumber());
+                    case "preset":
+                        return new Preset(tokenizer.readTextOrNumber());
                     case "user":
                         return new UserMatch(tokenizer.readTextOrNumber());
                     case "role":
@@ -1551,6 +1558,65 @@ public class SearchCompiler {
         @Override
         public String toString() {
             return all ? "allinview" : "inview";
+        }
+    }
+
+    /**
+     * Matches presets.
+     */
+    private static class Preset extends Match {
+        private final List<TaggingPreset> presets;
+
+        Preset(String presetName) throws ParseError {
+
+            if (presetName == null || presetName.equals("")) {
+                throw new ParseError("The name of the preset is required");
+            }
+
+            int wildCardIdx = presetName.lastIndexOf("*");
+            int length = presetName.length() - 1;
+
+            /*
+             * Match strictly (simply comparing the names) if there is no '*' symbol
+             * at the end of the name or '*' is a part of the preset name.
+             */
+            boolean matchStrictly = wildCardIdx == -1 || wildCardIdx != length;
+
+            this.presets = TaggingPresets.getTaggingPresets()
+                    .stream()
+                    .filter(preset -> !(preset instanceof TaggingPresetMenu || preset instanceof TaggingPresetSeparator))
+                    .filter(preset -> this.presetNameMatch(presetName, preset, matchStrictly))
+                    .collect(Collectors.toList());
+
+            if (this.presets.isEmpty()) {
+                throw new ParseError(tr("Unknown preset name: ") + presetName);
+            }
+        }
+
+        @Override
+        public boolean match(OsmPrimitive osm) {
+            for (TaggingPreset preset : this.presets) {
+                if (preset.test(osm)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private boolean presetNameMatch(String name, TaggingPreset preset, boolean matchStrictly) {
+            if (matchStrictly) {
+                return name.equalsIgnoreCase(preset.getRawName());
+            }
+
+            try {
+                String groupSuffix = name.substring(0, name.length() - 2); // try to remove '/*'
+                TaggingPresetMenu group = preset.group;
+
+                return group != null && groupSuffix.equalsIgnoreCase(group.getRawName());
+            } catch (StringIndexOutOfBoundsException ex) {
+                return false;
+            }
         }
     }
 
