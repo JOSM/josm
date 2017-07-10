@@ -35,7 +35,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.SwingUtilities;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
@@ -54,6 +56,8 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSException;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences.ActionParser;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSelector;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.GBC;
@@ -231,12 +235,30 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
                     @Override
                     public void mouseClicked(MouseEvent e) {
-                        try {
-                            JTextComponent tf = hcb.getEditorComponent();
-                            tf.getDocument().insertString(tf.getCaretPosition(), ' ' + insertText, null);
-                        } catch (BadLocationException ex) {
-                            throw new JosmRuntimeException(ex.getMessage(), ex);
+                        JTextComponent tf = hcb.getEditorComponent();
+
+                        /*
+                         * Make sure that the focus is transferred to the search text field
+                         * from the selector component.
+                         */
+                        if (!tf.hasFocus()) {
+                            tf.requestFocusInWindow();
                         }
+
+                        /*
+                         * In order to make interaction with the search dialog simpler,
+                         * we make sure that if autocompletion triggers and the text field is
+                         * not in focus, the correct area is selected. We first request focus
+                         * and then execute the selection logic. invokeLater allows us to
+                         * defer the selection until waiting for focus.
+                         */
+                        SwingUtilities.invokeLater(() -> {
+                            try {
+                                tf.getDocument().insertString(tf.getCaretPosition(), ' ' + insertText, null);
+                            } catch (BadLocationException ex) {
+                                throw new JosmRuntimeException(ex.getMessage(), ex);
+                            }
+                        });
                     }
                 });
             }
@@ -244,19 +266,25 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
     }
 
+    /**
+     * Builds and shows the search dialog.
+     * @param initialValues A set of initial values needed in order to initialize the search dialog.
+     *                      If is {@code null}, then default settings are used.
+     * @return Returns {@link SearchAction} object containing parameters of the search.
+     */
     public static SearchSetting showSearchDialog(SearchSetting initialValues) {
         if (initialValues == null) {
             initialValues = new SearchSetting();
         }
-        // -- prepare the combo box with the search expressions
-        //
+
+        // prepare the combo box with the search expressions
         JLabel label = new JLabel(initialValues instanceof Filter ? tr("Filter string:") : tr("Search string:"));
-        final HistoryComboBox hcbSearchString = new HistoryComboBox();
-        final String tooltip = tr("Enter the search expression");
+        HistoryComboBox hcbSearchString = new HistoryComboBox();
+        String tooltip = tr("Enter the search expression");
         hcbSearchString.setText(initialValues.text);
         hcbSearchString.setToolTipText(tooltip);
+
         // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
-        //
         List<String> searchExpressionHistory = getSearchExpressionHistory();
         Collections.reverse(searchExpressionHistory);
         hcbSearchString.setPossibleItems(searchExpressionHistory);
@@ -273,20 +301,18 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         bg.add(remove);
         bg.add(inSelection);
 
-        final JCheckBox caseSensitive = new JCheckBox(tr("case sensitive"), initialValues.caseSensitive);
+        JCheckBox caseSensitive = new JCheckBox(tr("case sensitive"), initialValues.caseSensitive);
         JCheckBox allElements = new JCheckBox(tr("all objects"), initialValues.allElements);
         allElements.setToolTipText(tr("Also include incomplete and deleted objects in search."));
         JCheckBox addOnToolbar = new JCheckBox(tr("add toolbar button"), false);
 
-        final JRadioButton standardSearch = new JRadioButton(tr("standard"), !initialValues.regexSearch && !initialValues.mapCSSSearch);
-        final JRadioButton regexSearch = new JRadioButton(tr("regular expression"), initialValues.regexSearch);
-        final JRadioButton mapCSSSearch = new JRadioButton(tr("MapCSS selector"), initialValues.mapCSSSearch);
-        final ButtonGroup bg2 = new ButtonGroup();
+        JRadioButton standardSearch = new JRadioButton(tr("standard"), !initialValues.regexSearch && !initialValues.mapCSSSearch);
+        JRadioButton regexSearch = new JRadioButton(tr("regular expression"), initialValues.regexSearch);
+        JRadioButton mapCSSSearch = new JRadioButton(tr("MapCSS selector"), initialValues.mapCSSSearch);
+        ButtonGroup bg2 = new ButtonGroup();
         bg2.add(standardSearch);
         bg2.add(regexSearch);
         bg2.add(mapCSSSearch);
-
-        JPanel left = new JPanel(new GridBagLayout());
 
         JPanel selectionSettings = new JPanel(new GridBagLayout());
         selectionSettings.setBorder(BorderFactory.createTitledBorder(tr("Selection settings")));
@@ -298,6 +324,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         JPanel additionalSettings = new JPanel(new GridBagLayout());
         additionalSettings.setBorder(BorderFactory.createTitledBorder(tr("Additional settings")));
         additionalSettings.add(caseSensitive, GBC.eol().anchor(GBC.WEST).fill(GBC.HORIZONTAL));
+
+        JPanel left = new JPanel(new GridBagLayout());
 
         left.add(selectionSettings, GBC.eol().fill(GBC.BOTH));
         left.add(additionalSettings, GBC.eol().fill(GBC.BOTH));
@@ -315,13 +343,20 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             left.add(searchOptions, GBC.eol().fill(GBC.BOTH));
         }
 
-        final JPanel right = SearchAction.buildHintsSection(hcbSearchString);
-        final JPanel top = new JPanel(new GridBagLayout());
+        JPanel right = SearchAction.buildHintsSection(hcbSearchString);
+        JPanel top = new JPanel(new GridBagLayout());
         top.add(label, GBC.std().insets(0, 0, 5, 0));
         top.add(hcbSearchString, GBC.eol().fill(GBC.HORIZONTAL));
 
-        final JTextComponent editorComponent = hcbSearchString.getEditorComponent();
-        editorComponent.getDocument().addDocumentListener(new AbstractTextComponentValidator(editorComponent) {
+        JTextComponent editorComponent = hcbSearchString.getEditorComponent();
+        Document document = editorComponent.getDocument();
+
+        /*
+         * Setup the logic to validate the contents of the search text field which is executed
+         * every time the content of the field has changed. If the query is incorrect, then
+         * the text field is colored red.
+         */
+        document.addDocumentListener(new AbstractTextComponentValidator(editorComponent) {
 
             @Override
             public void validate() {
@@ -348,10 +383,20 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             }
         });
 
-        final JPanel p = new JPanel(new GridBagLayout());
+        /*
+         * Setup the logic to append preset queries to the search text field according to
+         * selected preset by the user. Every query is of the form ' group/sub-group/.../presetName'
+         * if the corresponding group of the preset exists, otherwise it is simply ' presetName'.
+         */
+        TaggingPresetSelector selector = new TaggingPresetSelector(false, false);
+        selector.setBorder(BorderFactory.createTitledBorder(tr("Search by preset")));
+        selector.setDblClickListener(ev -> setPresetDblClickListener(selector, editorComponent));
+
+        JPanel p = new JPanel(new GridBagLayout());
         p.add(top, GBC.eol().fill(GBC.HORIZONTAL).insets(5, 5, 5, 0));
         p.add(left, GBC.std().anchor(GBC.NORTH).insets(5, 10, 10, 0).fill(GBC.VERTICAL));
-        p.add(right, GBC.eol().fill(GBC.BOTH).insets(0, 10, 0, 0));
+        p.add(right, GBC.std().fill(GBC.BOTH).insets(0, 10, 0, 0));
+        p.add(selector, GBC.eol().fill(GBC.BOTH).insets(0, 10, 0, 0));
 
         ExtendedDialog dialog = new ExtendedDialog(
                 Main.parent,
@@ -390,15 +435,21 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         if (dialog.showDialog().getValue() != 1) return null;
 
         // User pressed OK - let's perform the search
-        SearchMode mode = replace.isSelected() ? SearchAction.SearchMode.replace
-                : (add.isSelected() ? SearchAction.SearchMode.add
-                        : (remove.isSelected() ? SearchAction.SearchMode.remove : SearchAction.SearchMode.in_selection));
         initialValues.text = hcbSearchString.getText();
-        initialValues.mode = mode;
         initialValues.caseSensitive = caseSensitive.isSelected();
         initialValues.allElements = allElements.isSelected();
         initialValues.regexSearch = regexSearch.isSelected();
         initialValues.mapCSSSearch = mapCSSSearch.isSelected();
+
+        if (inSelection.isSelected()) {
+            initialValues.mode = SearchAction.SearchMode.in_selection;
+        } else if (replace.isSelected()) {
+            initialValues.mode = SearchAction.SearchMode.replace;
+        } else if (add.isSelected()) {
+            initialValues.mode = SearchAction.SearchMode.add;
+        } else {
+            initialValues.mode = SearchAction.SearchMode.remove;
+        }
 
         if (addOnToolbar.isSelected()) {
             ToolbarPreferences.ActionDefinition aDef =
@@ -413,6 +464,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             // add custom search button to toolbar preferences
             Main.toolbar.addCustomButton(res, -1, false);
         }
+
         return initialValues;
     }
 
@@ -457,6 +509,12 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 .addKeyword("closed", "closed ", tr("all closed ways"))
                 .addKeyword("untagged", "untagged ", tr("object without useful tags")),
                 GBC.eol());
+            hintPanel.add(new SearchKeywordRow(hcbSearchString)
+                    .addKeyword("preset:\"Annotation/Address\"", "preset:\"Annotation/Address\"",
+                            tr("all objects that use the address preset"))
+                    .addKeyword("preset:\"Geography/Nature/*\"", "preset:\"Geography/Nature/*\"",
+                            tr("all objects that use any preset under the Geography/Nature group")),
+                    GBC.eol().anchor(GBC.CENTER));
             hintPanel.add(new SearchKeywordRow(hcbSearchString)
                 .addTitle(tr("metadata"))
                 .addKeyword("user:", "user:", tr("objects changed by user", "user:anonymous"))
@@ -572,6 +630,43 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         CapturingSearchReceiver receiver = new CapturingSearchReceiver();
         SearchTask.newSearchTask(searchSetting, receiver).run();
         return receiver.result;
+    }
+
+    /**
+     *
+     * @param selector Selector component that the user interacts with
+     * @param searchEditor Editor for search queries
+     */
+    private static void setPresetDblClickListener(TaggingPresetSelector selector, JTextComponent searchEditor) {
+        TaggingPreset selectedPreset = selector.getSelectedPresetAndUpdateClassification();
+
+        if (selectedPreset == null) {
+            return;
+        }
+
+        /*
+         * Make sure that the focus is transferred to the search text field
+         * from the selector component.
+         */
+        searchEditor.requestFocusInWindow();
+
+        /*
+         * In order to make interaction with the search dialog simpler,
+         * we make sure that if autocompletion triggers and the text field is
+         * not in focus, the correct area is selected. We first request focus
+         * and then execute the selection logic. invokeLater allows us to
+         * defer the selection until waiting for focus.
+         */
+        SwingUtilities.invokeLater(() -> {
+            int textOffset = searchEditor.getCaretPosition();
+            String presetSearchQuery = " preset:" +
+                    "\"" + selectedPreset.getRawName() + "\"";
+            try {
+                searchEditor.getDocument().insertString(textOffset, presetSearchQuery, null);
+            } catch (BadLocationException e1) {
+                throw new JosmRuntimeException(e1.getMessage(), e1);
+            }
+        });
     }
 
     /**
@@ -749,6 +844,10 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
     }
 
+    /**
+     * This class defines a set of parameters that is used to
+     * perform search within the search dialog.
+     */
     public static class SearchSetting {
         public String text;
         public SearchMode mode;
@@ -810,6 +909,24 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             return Objects.hash(text, mode, caseSensitive, regexSearch, mapCSSSearch, allElements);
         }
 
+        /**
+         * <p>Transforms a string following a certain format, namely "[R | A | D | S][C?,R?,A?,M?] [a-zA-Z]"
+         * where the first part defines the mode of the search, see {@link SearchMode}, the second defines
+         * a set of attributes within the {@code SearchSetting} class and the second is the search query.
+         * <p>
+         * Attributes are as follows:
+         * <ul>
+         *     <li>C - if search is case sensitive
+         *     <li>R - if the regex syntax is used
+         *     <li>A - if all objects are considered
+         *     <li>M - if the mapCSS syntax is used
+         * </ul>
+         * <p>For example, "RC type:node" is a valid string representation of an object that replaces the
+         * current selection, is case sensitive and searches for all objects of type node.
+         * @param s A string representation of a {@code SearchSetting} object
+         *          from which the object must be built.
+         * @return A {@code SearchSetting} defined by the input string.
+         */
         public static SearchSetting readFromString(String s) {
             if (s.isEmpty())
                 return null;
@@ -851,6 +968,11 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             return result;
         }
 
+        /**
+         * Builds a string representation of the {@code SearchSetting} object,
+         * see {@link #readFromString(String)} for more details.
+         * @return A string representation of the {@code SearchSetting} object.
+         */
         public String writeToString() {
             if (text == null || text.isEmpty())
                 return "";

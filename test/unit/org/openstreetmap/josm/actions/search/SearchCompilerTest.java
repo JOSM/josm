@@ -7,9 +7,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,6 +34,11 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WayData;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetMenu;
+import org.openstreetmap.josm.gui.tagging.presets.items.Key;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -490,4 +499,191 @@ public class SearchCompilerTest {
     public void testEnumExactKeyValueMode() {
         TestUtils.superficialEnumCodeCoverage(ExactKeyValue.Mode.class);
     }
+
+    /**
+     * Robustness test for preset searching. Ensures that the query 'preset:' is not accepted.
+     * @throws ParseError always
+     * @since 12464
+     */
+    @Test(expected = ParseError.class)
+    public void testPresetSearchMissingValue() throws ParseError {
+        SearchSetting settings = new SearchSetting();
+        settings.text = "preset:";
+        settings.mapCSSSearch = false;
+
+        TaggingPresets.readFromPreferences();
+
+        SearchCompiler.compile(settings);
+    }
+
+    /**
+     * Robustness test for preset searching. Validates that it is not possible to search for
+     * non existing presets.
+     * @throws ParseError always
+     * @since 12464
+     */
+    @Test(expected = ParseError.class)
+    public void testPresetNotExist() throws ParseError {
+        String testPresetName = "groupnamethatshouldnotexist/namethatshouldnotexist";
+        SearchSetting settings = new SearchSetting();
+        settings.text = "preset:" + testPresetName;
+        settings.mapCSSSearch = false;
+
+        // load presets
+        TaggingPresets.readFromPreferences();
+
+        SearchCompiler.compile(settings);
+    }
+
+    /**
+     * Robustness tests for preset searching. Ensures that combined preset names (having more than
+     * 1 word) must be enclosed with " .
+     * @throws ParseError always
+     * @since 12464
+     */
+    @Test(expected = ParseError.class)
+    public void testPresetMultipleWords() throws ParseError {
+        TaggingPreset testPreset = new TaggingPreset();
+        testPreset.name = "Test Combined Preset Name";
+        testPreset.group = new TaggingPresetMenu();
+        testPreset.group.name = "TestGroupName";
+
+        String combinedPresetname = testPreset.getRawName();
+        SearchSetting settings = new SearchSetting();
+        settings.text = "preset:" + combinedPresetname;
+        settings.mapCSSSearch = false;
+
+        // load presets
+        TaggingPresets.readFromPreferences();
+
+        SearchCompiler.compile(settings);
+    }
+
+
+    /**
+     * Ensures that correct presets are stored in the {@link org.openstreetmap.josm.actions.search.SearchCompiler.Preset}
+     * class against which the osm primitives are tested.
+     * @throws ParseError if an error has been encountered while compiling
+     * @throws NoSuchFieldException if there is no field called 'presets'
+     * @throws IllegalAccessException if cannot access the field where all matching presets are stored
+     * @since 12464
+     */
+    @Test
+    public void testPresetLookup() throws ParseError, NoSuchFieldException, IllegalAccessException {
+        TaggingPreset testPreset = new TaggingPreset();
+        testPreset.name = "Test Preset Name";
+        testPreset.group = new TaggingPresetMenu();
+        testPreset.group.name = "Test Preset Group Name";
+
+        String query = "preset:" +
+                "\"" + testPreset.getRawName() + "\"";
+        SearchSetting settings = new SearchSetting();
+        settings.text = query;
+        settings.mapCSSSearch = false;
+
+        // load presets and add the test preset
+        TaggingPresets.readFromPreferences();
+        TaggingPresets.addTaggingPresets(Collections.singletonList(testPreset));
+
+        Match match = SearchCompiler.compile(settings);
+
+        // access the private field where all matching presets are stored
+        // and ensure that indeed the correct ones are there
+        Field field = match.getClass().getDeclaredField("presets");
+        field.setAccessible(true);
+        Collection<TaggingPreset> foundPresets = (Collection<TaggingPreset>) field.get(match);
+
+        assertEquals(1, foundPresets.size());
+        assertTrue(foundPresets.contains(testPreset));
+    }
+
+    /**
+     * Ensures that the wildcard search works and that correct presets are stored in
+     * the {@link org.openstreetmap.josm.actions.search.SearchCompiler.Preset} class against which
+     * the osm primitives are tested.
+     * @throws ParseError if an error has been encountered while compiling
+     * @throws NoSuchFieldException if there is no field called 'presets'
+     * @throws IllegalAccessException if cannot access the field where all matching presets are stored
+     * @since 12464
+     */
+    @Test
+    public void testPresetLookupWildcard() throws ParseError, NoSuchFieldException, IllegalAccessException {
+        TaggingPresetMenu group = new TaggingPresetMenu();
+        group.name = "TestPresetGroup";
+
+        TaggingPreset testPreset1 = new TaggingPreset();
+        testPreset1.name = "TestPreset1";
+        testPreset1.group = group;
+
+        TaggingPreset testPreset2 = new TaggingPreset();
+        testPreset2.name = "TestPreset2";
+        testPreset2.group = group;
+
+        TaggingPreset testPreset3 = new TaggingPreset();
+        testPreset3.name = "TestPreset3";
+        testPreset3.group = group;
+
+        String query = "preset:" + "\"" + group.getRawName() + "/*\"";
+        SearchSetting settings = new SearchSetting();
+        settings.text = query;
+        settings.mapCSSSearch = false;
+
+        TaggingPresets.readFromPreferences();
+        TaggingPresets.addTaggingPresets(Arrays.asList(testPreset1, testPreset2, testPreset3));
+
+        Match match = SearchCompiler.compile(settings);
+
+        // access the private field where all matching presets are stored
+        // and ensure that indeed the correct ones are there
+        Field field = match.getClass().getDeclaredField("presets");
+        field.setAccessible(true);
+        Collection<TaggingPreset> foundPresets = (Collection<TaggingPreset>) field.get(match);
+
+        assertEquals(3, foundPresets.size());
+        assertTrue(foundPresets.contains(testPreset1));
+        assertTrue(foundPresets.contains(testPreset2));
+        assertTrue(foundPresets.contains(testPreset3));
+    }
+
+    /**
+     * Ensures that correct primitives are matched against the specified preset.
+     * @throws ParseError if an error has been encountered while compiling
+     * @since 12464
+     */
+    @Test
+    public void testPreset() throws ParseError {
+        final String presetName = "Test Preset Name";
+        final String presetGroupName = "Test Preset Group";
+        final String key = "test_key1";
+        final String val = "test_val1";
+
+        Key key1 = new Key();
+        key1.key = key;
+        key1.value = val;
+
+        TaggingPreset testPreset = new TaggingPreset();
+        testPreset.name = presetName;
+        testPreset.types = Collections.singleton(TaggingPresetType.NODE);
+        testPreset.data.add(key1);
+        testPreset.group = new TaggingPresetMenu();
+        testPreset.group.name = presetGroupName;
+
+        TaggingPresets.readFromPreferences();
+        TaggingPresets.addTaggingPresets(Collections.singleton(testPreset));
+
+        String query = "preset:" + "\"" + testPreset.getRawName() + "\"";
+
+        SearchContext ctx = new SearchContext(query);
+        ctx.n1.put(key, val);
+        ctx.n2.put(key, val);
+
+        for (OsmPrimitive osm : new OsmPrimitive[] {ctx.n1, ctx.n2}) {
+            ctx.match(osm, true);
+        }
+
+        for (OsmPrimitive osm : new OsmPrimitive[] {ctx.r1, ctx.r2, ctx.w1, ctx.w2}) {
+            ctx.match(osm, false);
+        }
+    }
 }
+
