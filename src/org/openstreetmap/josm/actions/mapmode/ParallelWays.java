@@ -11,12 +11,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.CombineWayAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.NodeGraph;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.Geometry;
 
@@ -69,7 +69,7 @@ public class ParallelWays {
         }
 
         // Find a linear ordering of the nodes. Fail if there isn't one.
-        CombineWayAction.NodeGraph nodeGraph = CombineWayAction.NodeGraph.createUndirectedGraphFromNodeWays(ways);
+        NodeGraph nodeGraph = NodeGraph.createUndirectedGraphFromNodeWays(ways);
         List<Node> sortedNodesPath = nodeGraph.buildSpanningPath();
         if (sortedNodesPath == null)
             throw new IllegalArgumentException("Ways must have spanning path"); // Create a dedicated exception?
