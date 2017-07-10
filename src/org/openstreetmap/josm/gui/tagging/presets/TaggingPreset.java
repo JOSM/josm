@@ -173,6 +173,14 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     }
 
     /**
+     * Returns the non translated name without any prefixes.
+     * @return returns the non translated name without any prefixes.
+     */
+    public String getSimpleName() {
+        return this.name;
+    }
+
+    /**
      * Returns the preset icon (16px).
      * @return The preset icon, or {@code null} if none defined
      * @since 6403

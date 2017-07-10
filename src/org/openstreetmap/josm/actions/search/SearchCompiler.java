@@ -20,6 +20,7 @@ import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.PushbackTokenizer.Range;
@@ -38,6 +39,8 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.UncheckedParseException;
@@ -115,7 +118,7 @@ public class SearchCompiler {
         private final Collection<String> keywords = Arrays.asList("id", "version", "type", "user", "role",
                 "changeset", "nodes", "ways", "tags", "areasize", "waylength", "modified", "deleted", "selected",
                 "incomplete", "untagged", "closed", "new", "indownloadedarea",
-                "allindownloadedarea", "inview", "allinview", "timestamp", "nth", "nth%", "hasRole");
+                "allindownloadedarea", "inview", "allinview", "timestamp", "nth", "nth%", "hasRole", "preset");
 
         @Override
         public Match get(String keyword, PushbackTokenizer tokenizer) throws ParseError {
@@ -151,6 +154,8 @@ public class SearchCompiler {
                         return new Version(tokenizer);
                     case "type":
                         return new ExactType(tokenizer.readTextOrNumber());
+                    case "preset":
+                        return new Preset(tokenizer.readTextOrNumber());
                     case "user":
                         return new UserMatch(tokenizer.readTextOrNumber());
                     case "role":
@@ -1551,6 +1556,44 @@ public class SearchCompiler {
         @Override
         public String toString() {
             return all ? "allinview" : "inview";
+        }
+    }
+
+    /**
+     * Matches presets.
+     */
+    private static class Preset extends Match {
+        private List<TaggingPreset> presets;
+
+        Preset(String presetName) throws ParseError {
+
+            if (presetName == null) {
+                throw new ParseError("The name of the preset is required");
+            }
+
+            this.presets = TaggingPresets.getTaggingPresets()
+                    .stream()
+                    .filter(preset -> presetName.equalsIgnoreCase(preset.getSimpleName()))
+                    .collect(Collectors.toList());
+
+            if (this.presets.isEmpty()) {
+                throw new ParseError(tr("Unknown preset name: ") + presetName);
+            }
+        }
+
+        /**
+         * Since presets can have common names, the primitive is considered to
+         * belong to a certain preset if it matches at least one of them.
+         */
+        @Override
+        public boolean match(OsmPrimitive osm) {
+            for (TaggingPreset p : this.presets) {
+                if (p.test(osm)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 
