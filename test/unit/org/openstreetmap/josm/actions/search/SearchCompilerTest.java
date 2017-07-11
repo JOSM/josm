@@ -35,9 +35,9 @@ import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetMenu;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetMenu;
 import org.openstreetmap.josm.gui.tagging.presets.items.Key;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.date.DateUtils;
@@ -591,6 +591,7 @@ public class SearchCompilerTest {
         // and ensure that indeed the correct ones are there
         Field field = match.getClass().getDeclaredField("presets");
         field.setAccessible(true);
+        @SuppressWarnings("unchecked")
         Collection<TaggingPreset> foundPresets = (Collection<TaggingPreset>) field.get(match);
 
         assertEquals(1, foundPresets.size());
@@ -637,6 +638,7 @@ public class SearchCompilerTest {
         // and ensure that indeed the correct ones are there
         Field field = match.getClass().getDeclaredField("presets");
         field.setAccessible(true);
+        @SuppressWarnings("unchecked")
         Collection<TaggingPreset> foundPresets = (Collection<TaggingPreset>) field.get(match);
 
         assertEquals(3, foundPresets.size());

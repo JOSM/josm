@@ -1574,7 +1574,7 @@ public class SearchCompiler {
                 throw new ParseError("The name of the preset is required");
             }
 
-            int wildCardIdx = presetName.lastIndexOf("*");
+            int wildCardIdx = presetName.lastIndexOf('*');
             int length = presetName.length() - 1;
 
             /*
