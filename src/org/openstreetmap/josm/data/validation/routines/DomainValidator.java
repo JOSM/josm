@@ -295,7 +295,7 @@ public final class DomainValidator extends AbstractValidator {
 
     // WARNING: this array MUST be sorted, otherwise it cannot be searched reliably using binary search
     private static final String[] GENERIC_TLDS = new String[] {
-        // Taken from Version 2017063000, Last Updated Fri Jun 30 07:07:01 2017 UTC
+        // Taken from Version 2017071002, Last Updated Tue Jul 11 07:07:02 2017 UTC
         "aaa", // aaa American Automobile Association, Inc.
         "aarp", // aarp AARP
         "abarth", // abarth Fiat Chrysler Automobiles N.V.
@@ -960,6 +960,7 @@ public final class DomainValidator extends AbstractValidator {
         "men", // men Exclusive Registry Limited
         "menu", // menu Wedding TLD2, LLC
         "meo", // meo PT Comunicacoes S.A.
+        "merckmsd", // merckmsd MSD Registry Holdings, Inc.
         "metlife", // metlife MetLife Services and Solutions, LLC
         "miami", // miami Top Level Domain Holdings Limited
         "microsoft", // microsoft Microsoft Corporation
