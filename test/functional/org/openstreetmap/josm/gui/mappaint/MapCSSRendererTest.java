@@ -112,8 +112,10 @@ public class MapCSSRendererTest {
                 /** Tests repeat-image feature for ways */
                 new TestConfig("way-repeat-image", AREA_DEFAULT),
                 /** Tests the clamping for repeat-images and repeat-image-phase */
-                new TestConfig("way-repeat-image-clamp", AREA_DEFAULT)
+                new TestConfig("way-repeat-image-clamp", AREA_DEFAULT),
 
+                /** Tests text along a way */
+                new TestConfig("way-text", AREA_DEFAULT)
                 ).map(e -> new Object[] {e, e.testDirectory})
                 .collect(Collectors.toList());
     }

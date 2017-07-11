@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<osm version='0.6' upload='false' generator='JOSM'>
+  <node id='-36014' action='modify' visible='true' lat='0.95462883113' lon='0.69245784308' />
+  <node id='-36015' action='modify' visible='true' lat='0.93599139732' lon='0.64577386324' />
+  <node id='-36016' action='modify' visible='true' lat='0.92917836022' lon='0.61790219137' />
+  <node id='-36017' action='modify' visible='true' lat='0.83632453647' lon='0.35060605628' />
+  <node id='-36018' action='modify' visible='true' lat='0.66045089174' lon='0.27991121964'>
+    <tag k='railway' v='level_crossing' />
+  </node>
+  <node id='-36019' action='modify' visible='true' lat='0.65770696505' lon='0.18596808237' />
+  <node id='-36020' action='modify' visible='true' lat='0.59627545707' lon='0.10271148998' />
+  <node id='-36104' action='modify' visible='true' lat='0.87616034313' lon='0.70190515136' />
+  <node id='-36106' action='modify' visible='true' lat='0.67834542545' lon='0.84762454988' />
+  <node id='-36108' action='modify' visible='true' lat='0.45474826559' lon='0.7793912778' />
+  <node id='-36110' action='modify' visible='true' lat='0.41652482996' lon='0.59838396312' />
+  <node id='-36112' action='modify' visible='true' lat='0.51601034903' lon='0.48176548874' />
+  <node id='-36114' action='modify' visible='true' lat='0.60557084089' lon='0.63849966061' />
+  <node id='-41946' action='modify' visible='true' lat='0.33593750068' lon='0.10942032794' />
+  <node id='-41955' action='modify' visible='true' lat='0.33278745947' lon='0.61343550409' />
+  <node id='-41982' action='modify' visible='true' lat='0.13433323194' lon='0.80559129' />
+  <node id='-41983' action='modify' visible='true' lat='0.30758709437' lon='0.91899470463' />
+  <node id='-42030' action='modify' visible='true' lat='0.1563838248' lon='0.39607895937' />
+  <node id='-42032' action='modify' visible='true' lat='0.18473455255' lon='0.1377711816' />
+  <way id='-36013' action='modify' visible='true'>
+    <nd ref='-36014' />
+    <nd ref='-36015' />
+    <nd ref='-36016' />
+    <nd ref='-36017' />
+    <nd ref='-36018' />
+    <nd ref='-36019' />
+    <nd ref='-36020' />
+    <tag k='highway' v='tertiary' />
+    <tag k='name' v='An der Actien-Zuckerfabrik' />
+    <tag k='test' v='w1' />
+  </way>
+  <way id='-36105' action='modify' visible='true'>
+    <nd ref='-36114' />
+    <nd ref='-36112' />
+    <nd ref='-36110' />
+    <nd ref='-36108' />
+    <nd ref='-36106' />
+    <nd ref='-36104' />
+    <tag k='test' v='w2' />
+  </way>
+  <way id='-41948' action='modify' visible='true'>
+    <nd ref='-41946' />
+    <nd ref='-41955' />
+    <tag k='name' v='گلستان ۲' />
+    <tag k='test' v='bidi' />
+  </way>
+  <way id='-41984' action='modify' visible='true'>
+    <nd ref='-42032' />
+    <nd ref='-42030' />
+    <nd ref='-41982' />
+    <nd ref='-41983' />
+    <tag k='name' v='Wolfenbütteler Straße' />
+    <tag k='test' v='opacity' />
+  </way>
+</osm>
