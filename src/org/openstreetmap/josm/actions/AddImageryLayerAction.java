@@ -93,7 +93,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
             switch(info.getImageryType()) {
             case WMS_ENDPOINT:
                 // convert to WMS type
-                return getWMSLayerInfo();
+                return getWMSLayerInfo(info);
             case WMTS:
                 // specify which layer to use
                 DefaultLayer layerId = new WMTSTileSource(info).userSelectLayer();
@@ -151,7 +151,14 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         }
     }
 
-    protected ImageryInfo getWMSLayerInfo() throws IOException, WMSGetCapabilitiesException {
+    /**
+     * Asks user to choose a WMS layer from a WMS endpoint.
+     * @param info the WMS endpoint.
+     * @return chosen WMS layer, or null
+     * @throws IOException if any I/O error occurs while contacting the WMS endpoint
+     * @throws WMSGetCapabilitiesException if the WMS getCapabilities request fails
+     */
+    protected static ImageryInfo getWMSLayerInfo(ImageryInfo info) throws IOException, WMSGetCapabilitiesException {
         CheckParameterUtil.ensureThat(ImageryType.WMS_ENDPOINT.equals(info.getImageryType()), "wms_endpoint imagery type expected");
 
         final WMSImagery wms = new WMSImagery();

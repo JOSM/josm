@@ -344,10 +344,10 @@ public class WMSImagery {
             // If that's not available, try LatLonBoundingBox
             bboxElem = getChild(element, "LatLonBoundingBox");
             if (bboxElem != null) {
-                double left = Double.parseDouble(bboxElem.getAttribute("minx"));
-                double top = Double.parseDouble(bboxElem.getAttribute("maxy"));
-                double right = Double.parseDouble(bboxElem.getAttribute("maxx"));
-                double bot = Double.parseDouble(bboxElem.getAttribute("miny"));
+                double left = getDecimalDegree(bboxElem ,"minx");
+                double top = getDecimalDegree(bboxElem, "maxy");
+                double right = getDecimalDegree(bboxElem, "maxx");
+                double bot = getDecimalDegree(bboxElem, "miny");
                 bounds = new Bounds(bot, left, top, right);
             }
         }
@@ -356,6 +356,11 @@ public class WMSImagery {
         List<LayerDetails> childLayers = parseLayers(layerChildren, crsList);
 
         return new LayerDetails(name, ident, crsList, josmSupportsThisLayer, bounds, childLayers);
+    }
+
+    private static double getDecimalDegree(Element elem, String attr) {
+        // Some real-world WMS servers use a comma instead of a dot as decimal separator (seen in Polish WMS server)
+        return Double.parseDouble(elem.getAttribute(attr).replace(',', '.'));
     }
 
     private static boolean isProjSupported(String crs) {

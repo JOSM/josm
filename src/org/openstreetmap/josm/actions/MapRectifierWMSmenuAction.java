@@ -8,6 +8,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -21,11 +22,13 @@ import javax.swing.JRadioButton;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
+import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -231,8 +234,17 @@ public class MapRectifierWMSmenuAction extends JosmAction {
      * @throws IllegalStateException if imagery time is neither HTML nor WMS
      */
     private static void addWMSLayer(String title, String url) {
-        WMSLayer layer = new WMSLayer(new ImageryInfo(title, url));
-        Main.getLayerManager().addLayer(layer);
+        ImageryInfo info = new ImageryInfo(title, url);
+        if (info.getImageryType() == ImageryType.WMS_ENDPOINT) {
+            try {
+                info = AddImageryLayerAction.getWMSLayerInfo(info);
+            } catch (IOException | WMSGetCapabilitiesException e) {
+                Main.error(e);
+                JOptionPane.showMessageDialog(Main.parent, e.getMessage(), tr("No valid WMS URL or id"), JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+        Main.getLayerManager().addLayer(new WMSLayer(info));
     }
 
     @Override
