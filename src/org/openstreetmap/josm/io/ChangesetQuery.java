@@ -22,6 +22,12 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
+/**
+ * Data class to collect restrictions (parameters) for downloading changesets from the
+ * OSM API.
+ * <p>
+ * @see <a href="https://wiki.openstreetmap.org/wiki/API_v0.6#Query:_GET_.2Fapi.2F0.6.2Fchangesets">OSM API 0.6 call "/changesets?"</a>
+ */
 public class ChangesetQuery {
 
     /**

@@ -18,6 +18,10 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 
+/**
+ * File importer that reads *.osm data files. (main storage format for OSM data
+ * in JOSM)
+ */
 public class OsmImporter extends FileImporter {
 
     /**

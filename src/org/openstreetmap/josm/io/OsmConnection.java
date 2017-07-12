@@ -84,7 +84,7 @@ public class OsmConnection {
      *
      * @param connection the connection
      *
-     * @throws OsmTransferException if there is currently no OAuth Access Token configured
+     * @throws MissingOAuthAccessTokenException if there is currently no OAuth Access Token configured
      * @throws OsmTransferException if signing fails
      */
     protected void addOAuthAuthorizationHeader(HttpClient connection) throws OsmTransferException {

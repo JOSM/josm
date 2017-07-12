@@ -11,6 +11,9 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 
+/**
+ * Abstract base class for file exporters - IO classes that save layers to a file.
+ */
 public abstract class FileExporter implements ActiveLayerChangeListener {
 
     public final ExtensionFileFilter filter;
@@ -27,10 +30,25 @@ public abstract class FileExporter implements ActiveLayerChangeListener {
         this.enabled = true;
     }
 
+    /**
+     * Check if this exporter can export a certain layer to a certain file.
+     *
+     * Most exporters support just a single layer type.
+     * @param pathname the target file name (check file extension using the {@link #filter}
+     * @param layer the layer requested for export
+     * @return true, if the exporter can handle the layer and filename is okay
+     */
     public boolean acceptFile(File pathname, Layer layer) {
         return filter.acceptName(pathname.getName());
     }
 
+    /**
+     * Execute the data export. (To be overridden by subclasses.)
+     *
+     * @param file target file
+     * @param layer the layer to export
+     * @throws IOException in case of an IO error
+     */
     public void exportData(File file, Layer layer) throws IOException {
         throw new IOException(tr("Could not export ''{0}''.", file.getName()));
     }

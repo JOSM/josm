@@ -26,6 +26,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+/**
+ * Download and parse info of the logged in user (OSM API v0.6 "/user/details").
+ * @see <a href="https://wiki.openstreetmap.org/wiki/API_v0.6#Details_of_the_logged-in_user">/user/details</a>
+ */
 public class OsmServerUserInfoReader extends OsmServerReader {
 
     protected static String getAttribute(Node node, String name) {
