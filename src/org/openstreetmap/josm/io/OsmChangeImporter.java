@@ -17,6 +17,10 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 
+/**
+ * File importer that reads OSM change files (*.osc).
+ * @see <a href="http://wiki.openstreetmap.org/wiki/OsmChange">OsmChange</a>
+ */
 public class OsmChangeImporter extends FileImporter {
 
     public static final ExtensionFileFilter FILE_FILTER = ExtensionFileFilter.newFilterWithArchiveExtensions(

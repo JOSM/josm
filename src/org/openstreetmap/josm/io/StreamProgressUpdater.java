@@ -8,6 +8,10 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * Helper class for {@link StreamProgressUpdater} to encapsulate interaction with
+ * the {@link ProgressMonitor}.
+ */
 final class StreamProgressUpdater {
 
     private final long size;
