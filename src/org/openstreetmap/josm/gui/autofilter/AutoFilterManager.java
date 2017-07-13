@@ -46,6 +46,10 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrame.MapModeChangeListener;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.NavigatableComponent.ZoomChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.widgets.OSDLabel;
@@ -55,7 +59,7 @@ import org.openstreetmap.josm.gui.widgets.OSDLabel;
  * when the map contents, location or zoom changes.
  * @since 12400
  */
-public final class AutoFilterManager implements ZoomChangeListener, MapModeChangeListener, DataSetListener, PreferenceChangedListener {
+public final class AutoFilterManager implements ZoomChangeListener, MapModeChangeListener, DataSetListener, PreferenceChangedListener, LayerChangeListener {
 
     /**
      * Property to determines if the auto filter feature is enabled.
@@ -117,6 +121,7 @@ public final class AutoFilterManager implements ZoomChangeListener, MapModeChang
         MapFrame.addMapModeChangeListener(this);
         Main.pref.addPreferenceChangeListener(this);
         NavigatableComponent.addZoomChangeListener(this);
+        Main.getLayerManager().addLayerChangeListener(this);
         DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT_CONSOLIDATED);
         registerAutoFilterRules(AutoFilterRule.defaultRules());
     }
@@ -124,7 +129,12 @@ public final class AutoFilterManager implements ZoomChangeListener, MapModeChang
     private synchronized void updateButtons() {
         if (enabledRule != null && Main.map != null
                 && enabledRule.getMinZoomLevel() <= Selector.GeneralSelector.scale2level(Main.map.mapView.getDist100Pixel())) {
+            // Retrieve the values from current rule visible on screen
             NavigableSet<String> values = getNumericValues(enabledRule.getKey(), enabledRule.getValueComparator());
+            // Make sure current auto filter button remains visible even if no data is found, to allow user to disable it
+            if (currentAutoFilter != null) {
+                values.add(currentAutoFilter.getFilter().text.split("=")[1]);
+            }
             if (!values.equals(buttons.keySet())) {
                 removeAllButtons();
                 addNewButtons(values);
@@ -395,5 +405,22 @@ public final class AutoFilterManager implements ZoomChangeListener, MapModeChang
             resetCurrentAutoFilter();
             updateButtons();
         }
+    }
+
+    @Override
+    public void layerAdded(LayerAddEvent e) {
+        // Do nothing
+    }
+
+    @Override
+    public void layerRemoving(LayerRemoveEvent e) {
+        if (Main.getLayerManager().getEditLayer() == null) {
+            resetCurrentAutoFilter();
+        }
+    }
+
+    @Override
+    public void layerOrderChanged(LayerOrderChangeEvent e) {
+        // Do nothing
     }
 }
