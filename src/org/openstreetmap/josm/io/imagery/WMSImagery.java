@@ -172,10 +172,21 @@ public class WMSImagery {
         return a.toString();
     }
 
+    /**
+     * Returns the URL for the "GetMap" WMS request in JPEG format.
+     * @param selectedLayers the list of selected layers, matching the "LAYERS" WMS request argument
+     * @return the URL for the "GetMap" WMS request
+     */
     public String buildGetMapUrl(Collection<LayerDetails> selectedLayers) {
         return buildGetMapUrl(selectedLayers, "image/jpeg");
     }
 
+    /**
+     * Returns the URL for the "GetMap" WMS request.
+     * @param selectedLayers the list of selected layers, matching the "LAYERS" WMS request argument
+     * @param format the requested image format, matching the "FORMAT" WMS request argument
+     * @return the URL for the "GetMap" WMS request
+     */
     public String buildGetMapUrl(Collection<LayerDetails> selectedLayers, String format) {
         return buildRootUrl() + "FORMAT=" + format + (imageFormatHasTransparency(format) ? "&TRANSPARENT=TRUE" : "")
                 + "&VERSION=1.1.1&SERVICE=WMS&REQUEST=GetMap&LAYERS="
@@ -183,6 +194,12 @@ public class WMSImagery {
                 + "&STYLES=&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}";
     }
 
+    /**
+     * Attempts WMS "GetCapabilities" request and initializes internal variables if successful.
+     * @param serviceUrlStr WMS service URL
+     * @throws IOException if any I/O errors occurs
+     * @throws WMSGetCapabilitiesException if the WMS server replies a ServiceException
+     */
     public void attemptGetCapabilities(String serviceUrlStr) throws IOException, WMSGetCapabilitiesException {
         URL getCapabilitiesUrl = null;
         try {
@@ -287,6 +304,12 @@ public class WMSImagery {
                 || format.startsWith("image/svg") || format.startsWith("image/tiff"));
     }
 
+    /**
+     * Returns a new {@code ImageryInfo} describing the given service name and selected WMS layers.
+     * @param name service name
+     * @param selectedLayers selected WMS layers
+     * @return a new {@code ImageryInfo} describing the given service name and selected WMS layers
+     */
     public ImageryInfo toImageryInfo(String name, Collection<LayerDetails> selectedLayers) {
         ImageryInfo i = new ImageryInfo(name, buildGetMapUrl(selectedLayers));
         if (selectedLayers != null) {
@@ -344,7 +367,7 @@ public class WMSImagery {
             // If that's not available, try LatLonBoundingBox
             bboxElem = getChild(element, "LatLonBoundingBox");
             if (bboxElem != null) {
-                double left = getDecimalDegree(bboxElem ,"minx");
+                double left = getDecimalDegree(bboxElem, "minx");
                 double top = getDecimalDegree(bboxElem, "maxy");
                 double right = getDecimalDegree(bboxElem, "maxx");
                 double bot = getDecimalDegree(bboxElem, "miny");
