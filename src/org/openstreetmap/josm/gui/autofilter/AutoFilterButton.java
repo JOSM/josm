@@ -33,7 +33,7 @@ public class AutoFilterButton extends JButton {
             @Override
             public synchronized void actionPerformed(ActionEvent e) {
                 AutoFilterManager afm = AutoFilterManager.getInstance();
-                if (afm.getCurrentAutoFilter() == filter) {
+                if (filter.equals(afm.getCurrentAutoFilter())) {
                     afm.setCurrentAutoFilter(null);
                     Main.map.filterDialog.getFilterModel().executeFilters();
                 } else {

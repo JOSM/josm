@@ -64,4 +64,9 @@ public class AutoFilter {
         AutoFilter other = (AutoFilter) obj;
         return Objects.equals(filter, other.filter);
     }
+
+    @Override
+    public String toString() {
+        return "AutoFilter [label=" + label + ", description=" + description + ", filter=" + filter + ']';
+    }
 }
