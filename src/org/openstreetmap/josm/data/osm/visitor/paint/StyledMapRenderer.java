@@ -581,8 +581,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         FontRenderContext frc = g.getFontRenderContext();
         Rectangle2D bounds = text.font.getStringBounds(s, frc);
 
-        double x = Math.round(p.getInViewX()) + text.xOffset + bounds.getCenterX();
-        double y = Math.round(p.getInViewY()) + text.yOffset + bounds.getCenterY();
+        double x = Math.round(p.getInViewX()) + bs.xOffset + bounds.getCenterX();
+        double y = Math.round(p.getInViewY()) + bs.yOffset + bounds.getCenterY();
         /**
          *
          *       left-above __center-above___ right-above
@@ -1095,10 +1095,11 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     /**
      * Draws a text for the given primitive
      * @param osm The primitive to draw the text for
-     * @param text The text definition (font/position/.../text content) to draw.
+     * @param text The text definition (font/position/.../text content) to draw
+     * @param labelPositionStrategy The position of the text
      * @since 11722
      */
-    public void drawText(OsmPrimitive osm, TextLabel text) {
+    public void drawText(OsmPrimitive osm, TextLabel text, PositionForAreaStrategy labelPositionStrategy) {
         if (!isShowNames()) {
             return;
         }
@@ -1113,7 +1114,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         Font defaultFont = g.getFont();
         forEachPolygon(osm, path -> {
             //TODO: Ignore areas that are out of bounds.
-            PositionForAreaStrategy position = text.getLabelPositionStrategy();
+            PositionForAreaStrategy position = labelPositionStrategy;
             MapViewPositionAndRotation center = position.findLabelPlacement(path, nb);
             if (center != null) {
                 displayText(osm, text, name, nb, center);

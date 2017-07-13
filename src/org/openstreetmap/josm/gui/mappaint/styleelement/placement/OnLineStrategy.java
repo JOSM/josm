@@ -3,6 +3,7 @@ package org.openstreetmap.josm.gui.mappaint.styleelement.placement;
 
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -330,5 +331,47 @@ public class OnLineStrategy implements PositionForAreaStrategy {
 
     private static double theta(MapViewPoint start, MapViewPoint end) {
         return Math.atan2(end.getInViewY() - start.getInViewY(), end.getInViewX() - start.getInViewX());
+    }
+
+    @Override
+    public PositionForAreaStrategy withAddedOffset(Point2D addToOffset) {
+        if (Math.abs(addToOffset.getY()) < 1e-5) {
+            return this;
+        } else {
+            return new OnLineStrategy(this.yOffset - addToOffset.getY());
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "OnLineStrategy [yOffset=" + yOffset + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        long temp;
+        temp = Double.doubleToLongBits(yOffset);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        OnLineStrategy other = (OnLineStrategy) obj;
+        if (Double.doubleToLongBits(yOffset) != Double.doubleToLongBits(other.yOffset)) {
+            return false;
+        }
+        return true;
     }
 }
