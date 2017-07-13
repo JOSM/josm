@@ -338,7 +338,7 @@ public class OnLineStrategy implements PositionForAreaStrategy {
         if (Math.abs(addToOffset.getY()) < 1e-5) {
             return this;
         } else {
-            return new OnLineStrategy(addToOffset.getY() + this.yOffset);
+            return new OnLineStrategy(this.yOffset - addToOffset.getY());
         }
     }
 

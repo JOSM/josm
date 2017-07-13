@@ -12,6 +12,15 @@ area[test] {
 	width: 1;
 }
 
+area[test=C] {
+	text-offset-x: 5;
+	text-offset-y: -10.5;
+}
+
+area[test=D] {
+	text-offset: list(10.2, 20.5);
+}
+
 area[test=H] {
 	text: eval("");
 }

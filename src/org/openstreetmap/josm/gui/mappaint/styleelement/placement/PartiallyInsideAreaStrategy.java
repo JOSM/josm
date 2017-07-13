@@ -51,7 +51,7 @@ public final class PartiallyInsideAreaStrategy extends CompletelyInsideAreaStrat
         if (Math.abs(addToOffset.getX()) < 1e-5 && Math.abs(addToOffset.getY()) < 1e-5) {
             return this;
         } else {
-            return new PartiallyInsideAreaStrategy(offsetX + addToOffset.getX(), offsetY + addToOffset.getY());
+            return new PartiallyInsideAreaStrategy(offsetX + addToOffset.getX(), offsetY - addToOffset.getY());
         }
     }
 

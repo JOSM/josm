@@ -110,7 +110,7 @@ public class CompletelyInsideAreaStrategy implements PositionForAreaStrategy {
         if (Math.abs(addToOffset.getX()) < 1e-5 && Math.abs(addToOffset.getY()) < 1e-5) {
             return this;
         } else {
-            return new CompletelyInsideAreaStrategy(offsetX + addToOffset.getX(), offsetY + addToOffset.getY());
+            return new CompletelyInsideAreaStrategy(offsetX + addToOffset.getX(), offsetY - addToOffset.getY());
         }
     }
 
@@ -144,6 +144,6 @@ public class CompletelyInsideAreaStrategy implements PositionForAreaStrategy {
         }
         CompletelyInsideAreaStrategy other = (CompletelyInsideAreaStrategy) obj;
         return Double.doubleToLongBits(offsetX) == Double.doubleToLongBits(other.offsetX)
-                && Double.doubleToLongBits(offsetY) != Double.doubleToLongBits(other.offsetY);
+                && Double.doubleToLongBits(offsetY) == Double.doubleToLongBits(other.offsetY);
     }
 }
