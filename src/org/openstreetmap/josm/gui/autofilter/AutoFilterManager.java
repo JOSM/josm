@@ -46,6 +46,7 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrame.MapModeChangeListener;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.NavigatableComponent.ZoomChangeListener;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.widgets.OSDLabel;
 
@@ -353,7 +354,10 @@ public final class AutoFilterManager implements ZoomChangeListener, MapModeChang
             model.addFilter(autoFilter.getFilter());
             model.executeFilters();
             if (model.isChanged()) {
-                Main.getLayerManager().getEditLayer().invalidate();
+                OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
+                if (editLayer != null) {
+                    editLayer.invalidate();
+                }
             }
         }
     }

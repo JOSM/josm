@@ -307,7 +307,7 @@ way[highway=footway][cycleway=lane] {
 *[bridge  ][!highway][!railway][!waterway][!piste:type][public_transport != platform][man_made !~ /^(bridge|pipeline)$/][building != bridge],
 *[psv     ][!highway][!railway][!waterway][amenity !~ /^parking.*/],
 *[width   ][!highway][!railway][!waterway][!aeroway][!cycleway][!footway][!barrier][!man_made][!entrance][natural!=stone],
-*[maxspeed][!highway][!railway][traffic_sign !~ /^((.*;)?maxspeed(;.*)?|[A-Z][A-Z]:.+)$/][type != enforcement][waterway !~ /^(river|canal|lock)$/][!traffic_calming] {
+*[maxspeed][!highway][!railway][traffic_sign !~ /^((.*;)?maxspeed(;.*)?|[A-Z][A-Z]:.+)$/][type != enforcement][waterway !~ /^(river|canal|lock)$/][!traffic_calming][aerialway!=zip_line] {
   throwWarning: tr("{0} on suspicious object", "{0.key}");
   group: tr("suspicious tag combination");
 }
