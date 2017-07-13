@@ -45,5 +45,5 @@ way[test=opacity] {
     text-halo-radius: 2.5;
     color: cyan;
     width: 3;
-    text-offset-y: -2;
+    text-offset-y: -5.5;
 }

@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.mappaint.styleelement.placement;
 
 import java.awt.font.GlyphVector;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
 
@@ -78,4 +79,12 @@ public interface PositionForAreaStrategy {
             return defaultStrategy;
         }
     }
+
+    /**
+     * Create a new instance of the same strategy adding a offset
+     * @param addToOffset The offset to add
+     * @return The new strategy
+     * @since 12476
+     */
+    PositionForAreaStrategy withAddedOffset(Point2D addToOffset);
 }

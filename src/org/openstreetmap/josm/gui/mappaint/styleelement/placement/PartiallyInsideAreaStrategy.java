@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint.styleelement.placement;
 
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import org.openstreetmap.josm.gui.draw.MapViewPath;
@@ -19,9 +20,10 @@ public final class PartiallyInsideAreaStrategy extends CompletelyInsideAreaStrat
     /**
      * An instance of this class.
      */
-    public static final PartiallyInsideAreaStrategy INSTANCE = new PartiallyInsideAreaStrategy();
+    public static final PartiallyInsideAreaStrategy INSTANCE = new PartiallyInsideAreaStrategy(0, 0);
 
-    private PartiallyInsideAreaStrategy() {
+    private PartiallyInsideAreaStrategy(double offsetX, double offsetY) {
+        super(offsetX, offsetY);
     }
 
     @Override
@@ -42,5 +44,19 @@ public final class PartiallyInsideAreaStrategy extends CompletelyInsideAreaStrat
                     nb.getWidth() - 2 * nbdx, nb.getHeight() - 2 * nbdy);
             return super.findLabelPlacement(path, smallNb);
         }
+    }
+
+    @Override
+    public PositionForAreaStrategy withAddedOffset(Point2D addToOffset) {
+        if (Math.abs(addToOffset.getX()) < 1e-5 && Math.abs(addToOffset.getY()) < 1e-5) {
+            return this;
+        } else {
+            return new PartiallyInsideAreaStrategy(offsetX + addToOffset.getX(), offsetY + addToOffset.getY());
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "PartiallyInsideAreaStrategy [offsetX=" + offsetX + ", offsetY=" + offsetY + "]";
     }
 }

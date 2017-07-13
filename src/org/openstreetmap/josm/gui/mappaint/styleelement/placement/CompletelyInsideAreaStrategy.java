@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.mappaint.styleelement.placement;
 
 import java.awt.Rectangle;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
 import org.openstreetmap.josm.gui.MapViewState;
@@ -19,9 +20,14 @@ public class CompletelyInsideAreaStrategy implements PositionForAreaStrategy {
     /**
      * An instance of this class.
      */
-    public static final CompletelyInsideAreaStrategy INSTANCE = new CompletelyInsideAreaStrategy();
+    public static final CompletelyInsideAreaStrategy INSTANCE = new CompletelyInsideAreaStrategy(0, 0);
 
-    protected CompletelyInsideAreaStrategy() {
+    protected final double offsetX;
+    protected final double offsetY;
+
+    protected CompletelyInsideAreaStrategy(double offsetX, double offsetY) {
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
     }
 
     @Override
@@ -88,13 +94,56 @@ public class CompletelyInsideAreaStrategy implements PositionForAreaStrategy {
         return null;
     }
 
-    private static MapViewPositionAndRotation centerOf(MapViewState mapViewState, Rectangle centeredNBounds) {
-        return new MapViewPositionAndRotation(
-                mapViewState.getForView(centeredNBounds.getCenterX(), centeredNBounds.getCenterY()), 0);
+    private MapViewPositionAndRotation centerOf(MapViewState mapViewState, Rectangle centeredNBounds) {
+        double x = centeredNBounds.getCenterX() + offsetX;
+        double y = centeredNBounds.getCenterY() + offsetY;
+        return new MapViewPositionAndRotation(mapViewState.getForView(x, y), 0);
     }
 
     @Override
     public boolean supportsGlyphVector() {
         return false;
+    }
+
+    @Override
+    public PositionForAreaStrategy withAddedOffset(Point2D addToOffset) {
+        if (Math.abs(addToOffset.getX()) < 1e-5 && Math.abs(addToOffset.getY()) < 1e-5) {
+            return this;
+        } else {
+            return new CompletelyInsideAreaStrategy(offsetX + addToOffset.getX(), offsetY + addToOffset.getY());
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "CompletelyInsideAreaStrategy [offsetX=" + offsetX + ", offsetY=" + offsetY + "]";
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        long temp;
+        temp = Double.doubleToLongBits(offsetX);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        temp = Double.doubleToLongBits(offsetY);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        CompletelyInsideAreaStrategy other = (CompletelyInsideAreaStrategy) obj;
+        return Double.doubleToLongBits(offsetX) == Double.doubleToLongBits(other.offsetX)
+                && Double.doubleToLongBits(offsetY) != Double.doubleToLongBits(other.offsetY);
     }
 }
