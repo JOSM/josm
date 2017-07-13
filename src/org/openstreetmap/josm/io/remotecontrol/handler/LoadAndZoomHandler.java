@@ -279,10 +279,12 @@ public class LoadAndZoomHandler extends RequestHandler {
         if (args != null && args.containsKey("select")) {
             toSelect.clear();
             for (String item : args.get("select").split(",")) {
-                try {
-                    toSelect.add(SimplePrimitiveId.fromString(item));
-                } catch (IllegalArgumentException ex) {
-                    Main.warn(ex, "RemoteControl: invalid selection '" + item + "' ignored");
+                if (!item.isEmpty()) {
+                    try {
+                        toSelect.add(SimplePrimitiveId.fromString(item));
+                    } catch (IllegalArgumentException ex) {
+                        Main.warn(ex, "RemoteControl: invalid selection '" + item + "' ignored");
+                    }
                 }
             }
         }

@@ -97,10 +97,12 @@ public class LoadObjectHandler extends RequestHandler {
     protected void validateRequest() throws RequestHandlerBadRequestException {
         ps.clear();
         for (String i : (args != null ? args.get("objects") : "").split(",\\s*")) {
-            try {
-                ps.add(SimplePrimitiveId.fromString(i));
-            } catch (IllegalArgumentException e) {
-                Main.warn(e, "RemoteControl: invalid selection '"+i+"' ignored.");
+            if (!i.isEmpty()) {
+                try {
+                    ps.add(SimplePrimitiveId.fromString(i));
+                } catch (IllegalArgumentException e) {
+                    Main.warn(e, "RemoteControl: invalid selection '"+i+"' ignored.");
+                }
             }
         }
     }
