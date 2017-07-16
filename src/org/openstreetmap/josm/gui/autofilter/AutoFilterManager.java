@@ -59,7 +59,8 @@ import org.openstreetmap.josm.gui.widgets.OSDLabel;
  * when the map contents, location or zoom changes.
  * @since 12400
  */
-public final class AutoFilterManager implements ZoomChangeListener, MapModeChangeListener, DataSetListener, PreferenceChangedListener, LayerChangeListener {
+public final class AutoFilterManager
+implements ZoomChangeListener, MapModeChangeListener, DataSetListener, PreferenceChangedListener, LayerChangeListener {
 
     /**
      * Property to determines if the auto filter feature is enabled.
