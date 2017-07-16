@@ -453,7 +453,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param extentThreshold if not null, determines if the partial filled should
      * be replaced by plain fill, when it covers a certain fraction of the total area
      * @param disabled If this should be drawn with a special disabled style.
-     * @param text Ignored. Use {@link #drawText(OsmPrimitive, TextLabel)} instead.
+     * @param text Ignored. Use {@link #drawText} instead.
      * @deprecated use {@link #drawArea(Relation r, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled)}
      */
     @Deprecated
@@ -510,7 +510,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
      * @param extentThreshold if not null, determines if the partial filled should
      * be replaced by plain fill, when it covers a certain fraction of the total area
      * @param disabled If this should be drawn with a special disabled style.
-     * @param text Ignored. Use {@link #drawText(OsmPrimitive, TextLabel)} instead.
+     * @param text Ignored. Use {@link #drawText} instead.
      * @deprecated use {@link #drawArea(Way w, Color color, MapImage fillImage, Float extent, Float extentThreshold, boolean disabled)}
      */
     @Deprecated
