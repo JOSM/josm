@@ -13,6 +13,7 @@ import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet.UploadPolicy;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -163,6 +164,41 @@ public class DataSetTest {
 
         ds.toggleSelected(n2.getPrimitiveId());
         assertEquals(Arrays.asList(n3, n1), new ArrayList<>(ds.getSelected()));
+    }
 
+    /**
+     * Unit test for {@link DataSet#DataSet(DataSet)}.
+     */
+    @Test
+    public void testCopyConstructor() {
+        DataSet ds = new DataSet();
+        assertEqualsDataSet(ds, new DataSet(ds));
+
+        ds.setVersion("fake_version");
+        ds.setUploadPolicy(UploadPolicy.BLOCKED);
+        Node n1 = new Node(LatLon.SOUTH_POLE);
+        Node n2 = new Node(LatLon.NORTH_POLE);
+        Way w = new Way(1);
+        w.setNodes(Arrays.asList(n1, n2));
+        ds.addPrimitive(n1);
+        ds.addPrimitive(n2);
+        ds.addPrimitive(w);
+        Relation r1 = new Relation(1);
+        Relation r2 = new Relation(2);
+        r2.addMember(new RelationMember("role1", n1));
+        r2.addMember(new RelationMember("role2", w));
+        r2.addMember(new RelationMember("role3", r1));
+        ds.addPrimitive(r1);
+        ds.addPrimitive(r2);
+        assertEqualsDataSet(ds, new DataSet(ds));
+    }
+
+    private static void assertEqualsDataSet(DataSet ds1, DataSet ds2) {
+        assertEquals(new ArrayList<>(ds1.getNodes()), new ArrayList<>(ds2.getNodes()));
+        assertEquals(new ArrayList<>(ds1.getWays()), new ArrayList<>(ds2.getWays()));
+        assertEquals(new ArrayList<>(ds1.getRelations()), new ArrayList<>(ds2.getRelations()));
+        assertEquals(new ArrayList<>(ds1.getDataSources()), new ArrayList<>(ds2.getDataSources()));
+        assertEquals(ds1.getUploadPolicy(), ds2.getUploadPolicy());
+        assertEquals(ds1.getVersion(), ds2.getVersion());
     }
 }

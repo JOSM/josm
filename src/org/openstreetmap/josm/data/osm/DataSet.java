@@ -233,7 +233,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
             // and then get the cloned members
             Collection<Relation> relations = copyFrom.getRelations();
             for (Relation r : relations) {
-                Relation newRelation = new Relation(r, r.isNew());
+                Relation newRelation = new Relation(r);
                 newRelation.setMembers(null);
                 primMap.put(r, newRelation);
                 addPrimitive(newRelation);
@@ -250,6 +250,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
                 dataSources.add(new DataSource(source));
             }
             version = copyFrom.version;
+            uploadPolicy = copyFrom.uploadPolicy;
         } finally {
             copyFrom.getReadLock().unlock();
         }
