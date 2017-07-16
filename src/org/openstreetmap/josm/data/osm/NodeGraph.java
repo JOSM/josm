@@ -20,6 +20,14 @@ import org.openstreetmap.josm.tools.Pair;
  * @since 12463 (extracted from CombineWayAction)
  */
 public class NodeGraph {
+
+    /**
+     * Builds a list of pair of nodes from the given way.
+     * @param way way
+     * @param directed if {@code true} each pair of nodes will occur once, in the way nodes order.
+     *                 if {@code false} each pair of nodes will occur twice (the pair and its inversed copy)
+     * @return a list of pair of nodes from the given way
+     */
     public static List<NodePair> buildNodePairs(Way way, boolean directed) {
         List<NodePair> pairs = new ArrayList<>();
         for (Pair<Node, Node> pair: way.getNodePairs(false /* don't sort */)) {
@@ -31,6 +39,13 @@ public class NodeGraph {
         return pairs;
     }
 
+    /**
+     * Builds a list of pair of nodes from the given ways.
+     * @param ways ways
+     * @param directed if {@code true} each pair of nodes will occur once, in the way nodes order.
+     *                 if {@code false} each pair of nodes will occur twice (the pair and its inversed copy)
+     * @return a list of pair of nodes from the given ways
+     */
     public static List<NodePair> buildNodePairs(List<Way> ways, boolean directed) {
         List<NodePair> pairs = new ArrayList<>();
         for (Way w: ways) {
@@ -39,6 +54,11 @@ public class NodeGraph {
         return pairs;
     }
 
+    /**
+     * Builds a new list of pair nodes without the duplicated pairs (including inversed copies).
+     * @param pairs existing list of pairs
+     * @return a new list of pair nodes without the duplicated pairs
+     */
     public static List<NodePair> eliminateDuplicateNodePairs(List<NodePair> pairs) {
         List<NodePair> cleaned = new ArrayList<>();
         for (NodePair p: pairs) {
@@ -241,23 +261,23 @@ public class NodeGraph {
      * @return the spanning path; null, if no path is found
      */
     protected List<Node> buildSpanningPath(Node startNode) {
-        if (startNode == null)
-            return null;
-        Stack<NodePair> path = new Stack<>();
-        Stack<NodePair> nextPairs = new Stack<>();
-        nextPairs.addAll(getOutboundPairs(startNode));
-        while (!nextPairs.isEmpty()) {
-            NodePair cur = nextPairs.pop();
-            if (!path.contains(cur) && !path.contains(cur.swap())) {
-                while (!path.isEmpty() && !path.peek().isPredecessorOf(cur)) {
-                    path.pop();
+        if (startNode != null) {
+            Stack<NodePair> path = new Stack<>();
+            Stack<NodePair> nextPairs = new Stack<>();
+            nextPairs.addAll(getOutboundPairs(startNode));
+            while (!nextPairs.isEmpty()) {
+                NodePair cur = nextPairs.pop();
+                if (!path.contains(cur) && !path.contains(cur.swap())) {
+                    while (!path.isEmpty() && !path.peek().isPredecessorOf(cur)) {
+                        path.pop();
+                    }
+                    path.push(cur);
+                    if (isSpanningWay(path)) return buildPathFromNodePairs(path);
+                    nextPairs.addAll(getOutboundPairs(path.peek()));
                 }
-                path.push(cur);
-                if (isSpanningWay(path)) return buildPathFromNodePairs(path);
-                nextPairs.addAll(getOutboundPairs(path.peek()));
             }
         }
-        return null;
+        return Collections.emptyList();
     }
 
     /**
@@ -279,7 +299,7 @@ public class NodeGraph {
         nodes = nodes.isEmpty() ? getNodes() : nodes;
         for (Node n: nodes) {
             List<Node> path = buildSpanningPath(n);
-            if (path != null)
+            if (!path.isEmpty())
                 return path;
         }
         return null;
