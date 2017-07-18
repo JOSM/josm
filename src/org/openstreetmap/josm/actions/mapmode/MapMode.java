@@ -112,8 +112,10 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     }
 
     protected void updateStatusLine() {
-        Main.map.statusLine.setHelpText(getModeHelpText());
-        Main.map.statusLine.repaint();
+        if (Main.map != null && Main.map.statusLine != null) {
+            Main.map.statusLine.setHelpText(getModeHelpText());
+            Main.map.statusLine.repaint();
+        }
     }
 
     /**
