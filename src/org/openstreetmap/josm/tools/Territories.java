@@ -27,6 +27,9 @@ import org.openstreetmap.josm.io.OsmReader;
  */
 public final class Territories {
 
+    /** Internal OSM filename */
+    public static final String FILENAME = "boundaries.osm";
+
     private static final String ISO3166_1 = "ISO3166-1:alpha2";
     private static final String ISO3166_2 = "ISO3166-2";
 
@@ -78,7 +81,7 @@ public final class Territories {
      */
     public static synchronized void initialize() {
         iso3166Cache = new HashMap<>();
-        try (CachedFile cf = new CachedFile("resource://data/boundaries.osm");
+        try (CachedFile cf = new CachedFile("resource://data/" + FILENAME);
                 InputStream is = cf.getInputStream()) {
             dataSet = OsmReader.parseDataSet(is, null);
             Collection<OsmPrimitive> candidates = new ArrayList<>(dataSet.getWays());
