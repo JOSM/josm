@@ -614,7 +614,7 @@ public class SessionReader {
         }
     }
 
-    private SessionViewportData readViewportData(Element root) {
+    private static SessionViewportData readViewportData(Element root) {
         Element viewportEl = getElementByTagName(root, "viewport");
         if (viewportEl == null) return null;
         LatLon center = null;
@@ -638,7 +638,7 @@ public class SessionReader {
         }
     }
 
-    private SessionProjectionChoiceData readProjectionChoiceData(Element root) {
+    private static SessionProjectionChoiceData readProjectionChoiceData(Element root) {
         Element projectionEl = getElementByTagName(root, "projection");
         if (projectionEl == null) return null;
         Element projectionChoiceEl = getElementByTagName(projectionEl, "projection-choice");

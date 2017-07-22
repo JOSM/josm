@@ -1605,7 +1605,7 @@ public class SearchCompiler {
             return false;
         }
 
-        private boolean presetNameMatch(String name, TaggingPreset preset, boolean matchStrictly) {
+        private static boolean presetNameMatch(String name, TaggingPreset preset, boolean matchStrictly) {
             if (matchStrictly) {
                 return name.equalsIgnoreCase(preset.getRawName());
             }

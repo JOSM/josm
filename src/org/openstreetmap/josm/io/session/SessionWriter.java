@@ -254,7 +254,7 @@ public class SessionWriter {
         return doc;
     }
 
-    private void writeViewPort(Element root) {
+    private static void writeViewPort(Element root) {
         Document doc = root.getOwnerDocument();
         Element viewportEl = doc.createElement("viewport");
         root.appendChild(viewportEl);
@@ -270,7 +270,7 @@ public class SessionWriter {
         scale.setAttribute("meter-per-pixel", Double.toString(dist100px / 100));
     }
 
-    private void writeProjection(Element root) {
+    private static void writeProjection(Element root) {
         Document doc = root.getOwnerDocument();
         Element projectionEl = doc.createElement("projection");
         root.appendChild(projectionEl);
