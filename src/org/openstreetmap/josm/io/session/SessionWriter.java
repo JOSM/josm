@@ -283,15 +283,19 @@ public class SessionWriter {
         Collection<String> parameters = ProjectionPreference.getSubprojectionPreference(pcId);
         Element parametersEl = doc.createElement("parameters");
         projectionChoiceEl.appendChild(parametersEl);
-        for (String param : parameters) {
-            Element paramEl = doc.createElement("param");
-            parametersEl.appendChild(paramEl);
-            paramEl.setTextContent(param);
+        if (parameters != null) {
+            for (String param : parameters) {
+                Element paramEl = doc.createElement("param");
+                parametersEl.appendChild(paramEl);
+                paramEl.setTextContent(param);
+            }
         }
         String code = Main.getProjection().toCode();
-        Element codeEl = doc.createElement("code");
-        projectionEl.appendChild(codeEl);
-        codeEl.setTextContent(code);
+        if (code != null) {
+            Element codeEl = doc.createElement("code");
+            projectionEl.appendChild(codeEl);
+            codeEl.setTextContent(code);
+        }
     }
 
     /**
