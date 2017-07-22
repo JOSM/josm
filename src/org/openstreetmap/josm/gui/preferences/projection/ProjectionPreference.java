@@ -500,11 +500,11 @@ public class ProjectionPreference implements SubPreferenceSetting {
      * @return the choice class for user selection
      */
     private ProjectionChoice setupProjectionCombo() {
-        String pcId = projectionChoice != null ? projectionChoice : PROP_PROJECTION_DEFAULT.get();
+        String pcId = getCurrentProjectionChoiceId();
         ProjectionChoice pc = null;
         for (int i = 0; i < projectionCombo.getItemCount(); ++i) {
             ProjectionChoice pc1 = projectionCombo.getItemAt(i);
-            pc1.setPreferences(getSubprojectionPreference(pc1));
+            pc1.setPreferences(getSubprojectionPreference(pc1.getId()));
             if (pc1.getId().equals(pcId)) {
                 projectionCombo.setSelectedIndex(i);
                 selectedProjectionChanged(pc1);
@@ -523,8 +523,23 @@ public class ProjectionPreference implements SubPreferenceSetting {
         return pc;
     }
 
-    private static Collection<String> getSubprojectionPreference(ProjectionChoice pc) {
-        return Main.pref.getCollection("projection.sub."+pc.getId(), null);
+    /**
+     * Get the id of the projection choice that is currently set.
+     * @return id of the projection choice that is currently set
+     */
+    public static String getCurrentProjectionChoiceId() {
+        return projectionChoice != null ? projectionChoice : PROP_PROJECTION_DEFAULT.get();
+    }
+
+    /**
+     * Get the preferences that have been selected the last time for the given
+     * projection choice.
+     * @param pcId id of the projection choice
+     * @return projection choice parameters that have been selected by the user
+     * the last time; null if user has never selected the given projection choice
+     */
+    public static Collection<String> getSubprojectionPreference(String pcId) {
+        return Main.pref.getCollection("projection.sub."+pcId, null);
     }
 
     @Override
