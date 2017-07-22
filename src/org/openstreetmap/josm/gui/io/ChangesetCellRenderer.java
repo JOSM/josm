@@ -42,8 +42,8 @@ public class ChangesetCellRenderer extends JLabel implements ListCellRenderer<Ch
             sb.append("<strong>").append(tr("Created at:")).append("</strong>").append(
                     DateUtils.formatDateTime(createdDate, DateFormat.SHORT, DateFormat.SHORT)).append("<br>");
         }
-        String comment = cs.get("comment");
-        if (comment != null) {
+        String comment = cs.getComment();
+        if (!comment.isEmpty()) {
             sb.append("<strong>").append(tr("Changeset comment:")).append("</strong>")
               .append(Utils.escapeReservedCharactersHTML(comment)).append("<br>");
         }
@@ -63,8 +63,8 @@ public class ChangesetCellRenderer extends JLabel implements ListCellRenderer<Ch
         if (cs != null) {
             setIcon(icon);
             StringBuilder sb = new StringBuilder();
-            String comment = cs.get("comment");
-            if (comment != null) {
+            String comment = cs.getComment();
+            if (!comment.isEmpty()) {
                 sb.append(cs.getId()).append(" - ").append(comment);
             } else if (cs.get("name") != null) {
                 sb.append(cs.getId()).append(" - ").append(cs.get("name"));
