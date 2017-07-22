@@ -272,7 +272,6 @@ public class ProjectionPreference implements SubPreferenceSetting {
     }
 
     private static String projectionChoice;
-    private static final Map<String, Collection<String>> projectionChoicesSub = new HashMap<>();
     
     private static final StringProperty PROP_PROJECTION_DEFAULT = new StringProperty("projection.default", mercator.getId());
     private static final StringProperty PROP_COORDINATES = new StringProperty("coordinates", null);
@@ -462,13 +461,12 @@ public class ProjectionPreference implements SubPreferenceSetting {
             pc = mercator;
         }
         id = pc.getId();
+        Main.pref.putCollection("projection.sub."+id, pref);
         if (makeDefault) {
             PROP_PROJECTION_DEFAULT.put(id);
             PROP_SUB_PROJECTION_DEFAULT.put(pref);
-            Main.pref.putCollection("projection.default.sub."+id, pref);
         } else {
             projectionChoice = id;
-            projectionChoicesSub.put(id, pref);
         }
         pc.setPreferences(pref);
         Projection proj = pc.getProjection();
@@ -526,10 +524,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
     }
 
     private static Collection<String> getSubprojectionPreference(ProjectionChoice pc) {
-        Collection<String> sessionValue = projectionChoicesSub.get(pc.getId());
-        if (sessionValue != null)
-            return sessionValue;
-        return Main.pref.getCollection("projection.default.sub."+pc.getId(), null);
+        return Main.pref.getCollection("projection.sub."+pc.getId(), null);
     }
 
     @Override
