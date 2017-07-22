@@ -198,18 +198,32 @@ way["lanes:forward"]["lanes:forward" !~ /^[1-9]([0-9]*)$/][highway],
   assertNoMatch: "node admin_level=5";
 }
 
-*[direction][direction>=0][direction<360] {
-    set correct_direction_degree;
-}
-*[direction][direction !~ /^(north|east|south|west|N|E|S|W|NE|SE|SW|NW|NNE|ENE|ESE|SSE|SSW|WSW|WNW|NNW|forward|backward|both|clockwise|anti-clockwise|anticlockwise|up|down)$/]!.correct_direction_degree {
+/* #14989 */
+*[direction][direction<0],
+*[direction][direction>=360] {
   throwWarning: tr("unusual value of {0}", "{1.key}");
-  assertMatch: "node direction=360";
   assertMatch: "node direction=-10";
-  assertMatch: "node direction=north-east";
+  assertMatch: "node direction=360";
+  assertNoMatch: "node direction=0";
+}
+*[direction][direction !~ /^([0-9][0-9]?[0-9]?|north|east|south|west|N|E|S|W|NE|SE|SW|NW|NNE|ENE|ESE|SSE|SSW|WSW|WNW|NNW|forward|backward|both|clockwise|anti-clockwise|anticlockwise|up|down)(-([0-9][0-9]?[0-9]?|N|E|S|W|NE|SE|SW|NW|NNE|ENE|ESE|SSE|SSW|WSW|WNW|NNW))?(;([0-9][0-9]?[0-9]?|N|E|S|W|NE|SE|SW|NW|NNE|ENE|ESE|SSE|SSW|WSW|WNW|NNW)-([0-9][0-9]?[0-9]?|N|E|S|W|NE|SE|SW|NW|NNE|ENE|ESE|SSE|SSW|WSW|WNW|NNW))*$/] {
+  throwWarning: tr("unusual value of {0}", "{1.key}");
+  assertMatch: "node direction=north-down";
+  assertMatch: "node direction=rome";
+  assertMatch: "node direction=C";
+  assertMatch: "node direction=NNNE";
+  assertMatch: "node direction=1360";
+  assertNoMatch: "node direction=NE-S"; /* ranges are used at tourism=viewpoint*/
+  assertMatch: "node direction=north-south"; /* ranges only in numbers or short NESW form */
+  assertMatch: "node direction=north-east"; /* if range use N-E, if single direcion use NE */
+  assertNoMatch: "node direction=0-360"; /* complete panorama view */
+  assertNoMatch: "node direction=45-100;190-250;300-360";
+  assertMatch: "node direction=45-100;190-250;300";
   assertNoMatch: "node direction=up"; 
   assertNoMatch: "node direction=down"; /* up/down are replaced by incline tag, has separate warning */
   assertNoMatch: "node direction=0";
   assertNoMatch: "node direction=45";
+  assertNoMatch: "node direction=360";
   assertNoMatch: "node direction=N";
   assertNoMatch: "node direction=NNE";
   assertNoMatch: "node direction=west";
