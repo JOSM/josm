@@ -18,8 +18,8 @@ import org.openstreetmap.josm.data.osm.Changeset;
 public class ChangesetCacheTableCellRenderer extends AbstractCellRenderer {
 
     protected void renderUploadComment(Changeset cs) {
-        String comment = cs.get("comment");
-        if (comment == null || comment.trim().isEmpty()) {
+        String comment = cs.getComment();
+        if (comment.trim().isEmpty()) {
             setText(trc("changeset.upload-comment", "empty"));
             setFont(UIManager.getFont("Table.font").deriveFont(Font.ITALIC));
         } else {

@@ -220,8 +220,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         String msg;
         if (cs == null) return;
         tfID.setText(Integer.toString(cs.getId()));
-        String comment = cs.get("comment");
-        taComment.setText(comment == null ? "" : comment);
+        taComment.setText(cs.getComment());
 
         if (cs.isOpen()) {
             msg = trc("changeset.state", "Open");

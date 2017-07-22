@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -263,8 +264,17 @@ public final class Changeset implements Tagged {
     }
 
     /**
-     * Replies the number of comments for this changeset.
-     * @return the number of comments for this changeset
+     * Replies this changeset comment.
+     * @return this changeset comment (empty string if missing)
+     * @since 12494
+     */
+    public String getComment() {
+        return Optional.ofNullable(get("comment")).orElse("");
+    }
+
+    /**
+     * Replies the number of comments for this changeset discussion.
+     * @return the number of comments for this changeset discussion
      * @since 7700
      */
     public int getCommentsCount() {
@@ -272,8 +282,8 @@ public final class Changeset implements Tagged {
     }
 
     /**
-     * Sets the number of comments for this changeset.
-     * @param commentsCount the number of comments for this changeset
+     * Sets the number of comments for this changeset discussion.
+     * @param commentsCount the number of comments for this changeset discussion
      * @since 7700
      */
     public void setCommentsCount(int commentsCount) {
