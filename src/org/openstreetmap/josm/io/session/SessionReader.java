@@ -36,7 +36,6 @@ import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
-import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -615,7 +614,7 @@ public class SessionReader {
         }
     }
 
-    private SessionViewportData readViewportData(Element root) {
+    private static SessionViewportData readViewportData(Element root) {
         Element viewportEl = getElementByTagName(root, "viewport");
         if (viewportEl == null) return null;
         LatLon center = null;
@@ -639,7 +638,7 @@ public class SessionReader {
         }
     }
 
-    private SessionProjectionChoiceData readProjectionChoiceData(Element root) {
+    private static SessionProjectionChoiceData readProjectionChoiceData(Element root) {
         Element projectionEl = getElementByTagName(root, "projection");
         if (projectionEl == null) return null;
         Element projectionChoiceEl = getElementByTagName(projectionEl, "projection-choice");
@@ -651,7 +650,7 @@ public class SessionReader {
         if (parametersEl == null) return null;
         Collection<String> parameters = new ArrayList<>();
         NodeList paramNl = parametersEl.getElementsByTagName("param");
-        for (int i=0; i<paramNl.getLength(); i++) {
+        for (int i = 0; i < paramNl.getLength(); i++) {
             Element paramEl = (Element) paramNl.item(i);
             parameters.add(paramEl.getTextContent());
         }

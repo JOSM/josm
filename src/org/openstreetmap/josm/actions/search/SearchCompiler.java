@@ -1570,7 +1570,7 @@ public class SearchCompiler {
 
         Preset(String presetName) throws ParseError {
 
-            if (presetName == null || presetName.equals("")) {
+            if (presetName == null || presetName.isEmpty()) {
                 throw new ParseError("The name of the preset is required");
             }
 
@@ -1586,7 +1586,7 @@ public class SearchCompiler {
             this.presets = TaggingPresets.getTaggingPresets()
                     .stream()
                     .filter(preset -> !(preset instanceof TaggingPresetMenu || preset instanceof TaggingPresetSeparator))
-                    .filter(preset -> this.presetNameMatch(presetName, preset, matchStrictly))
+                    .filter(preset -> presetNameMatch(presetName, preset, matchStrictly))
                     .collect(Collectors.toList());
 
             if (this.presets.isEmpty()) {
@@ -1605,7 +1605,7 @@ public class SearchCompiler {
             return false;
         }
 
-        private boolean presetNameMatch(String name, TaggingPreset preset, boolean matchStrictly) {
+        private static boolean presetNameMatch(String name, TaggingPreset preset, boolean matchStrictly) {
             if (matchStrictly) {
                 return name.equalsIgnoreCase(preset.getRawName());
             }

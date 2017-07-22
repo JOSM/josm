@@ -344,7 +344,7 @@ public class OnLineStrategy implements PositionForAreaStrategy {
 
     @Override
     public String toString() {
-        return "OnLineStrategy [yOffset=" + yOffset + "]";
+        return "OnLineStrategy [yOffset=" + yOffset + ']';
     }
 
     @Override
@@ -362,16 +362,10 @@ public class OnLineStrategy implements PositionForAreaStrategy {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
         OnLineStrategy other = (OnLineStrategy) obj;
-        if (Double.doubleToLongBits(yOffset) != Double.doubleToLongBits(other.yOffset)) {
-            return false;
-        }
-        return true;
+        return Double.doubleToLongBits(yOffset) == Double.doubleToLongBits(other.yOffset);
     }
 }
