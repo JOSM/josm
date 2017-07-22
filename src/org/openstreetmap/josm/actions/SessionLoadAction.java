@@ -19,16 +19,18 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.FileFilterAllFiles;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.session.SessionImporter;
 import org.openstreetmap.josm.io.session.SessionReader;
+import org.openstreetmap.josm.io.session.SessionReader.SessionProjectionChoiceData;
+import org.openstreetmap.josm.io.session.SessionReader.SessionViewportData;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Utils;
@@ -72,7 +74,8 @@ public class SessionLoadAction extends DiskAccessAction {
         private List<Layer> layers;
         private Layer active;
         private List<Runnable> postLoadTasks;
-        private ViewportData viewport;
+        private SessionViewportData viewport;
+        private SessionProjectionChoiceData projectionChoice;
 
         /**
          * Constructs a new {@code Loader} for local session file.
@@ -115,6 +118,12 @@ public class SessionLoadAction extends DiskAccessAction {
             SwingUtilities.invokeLater(() -> {
                 if (canceled)
                     return;
+                if (projectionChoice != null) {
+                    ProjectionPreference.setProjection(
+                            projectionChoice.getProjectionChoiceId(),
+                            projectionChoice.getSubPreferences(),
+                            false);
+                }
                 addLayers();
                 runPostLoadTasks();
             });
@@ -131,8 +140,8 @@ public class SessionLoadAction extends DiskAccessAction {
                 if (active != null) {
                     Main.getLayerManager().setActiveLayer(active);
                 }
-                if (noMap) {
-                    Main.map.mapView.scheduleZoomTo(viewport);
+                if (noMap && viewport != null) {
+                    Main.map.mapView.scheduleZoomTo(viewport.getEastNorthViewport(Main.getProjection()));
                 }
             }
         }
@@ -168,6 +177,7 @@ public class SessionLoadAction extends DiskAccessAction {
                     active = reader.getActive();
                     postLoadTasks = reader.getPostLoadTasks();
                     viewport = reader.getViewport();
+                    projectionChoice = reader.getProjectionChoice();
                 } finally {
                     if (tempFile) {
                         Utils.deleteFile(file);

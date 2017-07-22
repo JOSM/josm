@@ -15,6 +15,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -42,6 +43,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.IllegalDataException;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
@@ -57,6 +59,94 @@ import org.xml.sax.SAXException;
  */
 public class SessionReader {
 
+    /**
+     * Data class for projection saved in the session file.
+     */
+    public static class SessionProjectionChoiceData {
+        private final String projectionChoiceId;
+        private final Collection<String> subPreferences;
+
+        /**
+         * Construct a new SessionProjectionChoiceData.
+         * @param projectionChoiceId projection choice id
+         * @param subPreferences parameters for the projection choice
+         */
+        public SessionProjectionChoiceData(String projectionChoiceId, Collection<String> subPreferences) {
+            this.projectionChoiceId = projectionChoiceId;
+            this.subPreferences = subPreferences;
+        }
+
+        /**
+         * Get the projection choice id.
+         * @return the projection choice id
+         */
+        public String getProjectionChoiceId() {
+            return projectionChoiceId;
+        }
+
+        /**
+         * Get the parameters for the projection choice
+         * @return parameters for the projection choice
+         */
+        public Collection<String> getSubPreferences() {
+            return subPreferences;
+        }
+    }
+
+    /**
+     * Data class for viewport saved in the session file.
+     */
+    public static class SessionViewportData {
+        private final LatLon center;
+        private final double meterPerPixel;
+
+        /**
+         * Construct a new SessionViewportData.
+         * @param center the lat/lon coordinates of the screen center
+         * @param meterPerPixel scale in meters per pixel
+         */
+        public SessionViewportData(LatLon center, double meterPerPixel) {
+            CheckParameterUtil.ensureParameterNotNull(center);
+            this.center = center;
+            this.meterPerPixel = meterPerPixel;
+        }
+
+        /**
+         * Get the lat/lon coordinates of the screen center.
+         * @return lat/lon coordinates of the screen center
+         */
+        public LatLon getCenter() {
+            return center;
+        }
+
+        /**
+         * Get the scale in meters per pixel.
+         * @return scale in meters per pixel
+         */
+        public double getScale() {
+            return meterPerPixel;
+        }
+
+        /**
+         * Convert this viewport data to a {@link ViewportData} object (with projected coordinates).
+         * @param proj the projection to convert from lat/lon to east/north
+         * @return the corresponding ViewportData object
+         */
+        public ViewportData getEastNorthViewport(Projection proj) {
+            EastNorth centerEN = proj.latlon2eastNorth(center);
+            // Get a "typical" distance in east/north units that
+            // corresponds to a couple of pixels. Shouldn't be too
+            // large, to keep it within projection bounds and
+            // not too small to avoid rounding errors.
+            double dist = 0.01 * proj.getDefaultZoomInPPD();
+            LatLon ll1 = proj.eastNorth2latlon(new EastNorth(centerEN.east() - dist, centerEN.north()));
+            LatLon ll2 = proj.eastNorth2latlon(new EastNorth(centerEN.east() + dist, centerEN.north()));
+            double meterPerEasting = ll1.greatCircleDistance(ll2) / dist / 2;
+            double scale = meterPerPixel / meterPerEasting; // unit: easting per pixel
+            return new ViewportData(centerEN, scale);
+        }
+    }
+
     private static final Map<String, Class<? extends SessionLayerImporter>> sessionLayerImporters = new HashMap<>();
 
     private URI sessionFileURI;
@@ -65,7 +155,8 @@ public class SessionReader {
     private List<Layer> layers = new ArrayList<>();
     private int active = -1;
     private final List<Runnable> postLoadTasks = new ArrayList<>();
-    private ViewportData viewport;
+    private SessionViewportData viewport;
+    private SessionProjectionChoiceData projectionChoice;
 
     static {
         registerSessionLayerImporter("osm-data", OsmDataSessionImporter.class);
@@ -129,10 +220,18 @@ public class SessionReader {
 
     /**
      * Return the viewport (map position and scale).
-     * @return The viewport. Can be null when no viewport info is found in the file.
+     * @return the viewport; can be null when no viewport info is found in the file
      */
-    public ViewportData getViewport() {
+    public SessionViewportData getViewport() {
         return viewport;
+    }
+
+    /**
+     * Return the projection choice data.
+     * @return the projection; can be null when no projection info is found in the file
+     */
+    public SessionProjectionChoiceData getProjectionChoice() {
+        return projectionChoice;
     }
 
     /**
@@ -338,41 +437,8 @@ public class SessionReader {
             error(tr("Version ''{0}'' of session file is not supported. Expected: 0.1", version));
         }
 
-        Element viewportEl = getElementByTagName(root, "viewport");
-        if (viewportEl != null) {
-            EastNorth center = null;
-            Element centerEl = getElementByTagName(viewportEl, "center");
-            if (centerEl != null && centerEl.hasAttribute("lat") && centerEl.hasAttribute("lon")) {
-                try {
-                    LatLon centerLL = new LatLon(Double.parseDouble(centerEl.getAttribute("lat")),
-                            Double.parseDouble(centerEl.getAttribute("lon")));
-                    center = Projections.project(centerLL);
-                } catch (NumberFormatException ex) {
-                    Main.warn(ex);
-                }
-            }
-            if (center != null) {
-                Element scaleEl = getElementByTagName(viewportEl, "scale");
-                if (scaleEl != null && scaleEl.hasAttribute("meter-per-pixel")) {
-                    try {
-                        double meterPerPixel = Double.parseDouble(scaleEl.getAttribute("meter-per-pixel"));
-                        Projection proj = Main.getProjection();
-                        // Get a "typical" distance in east/north units that
-                        // corresponds to a couple of pixels. Shouldn't be too
-                        // large, to keep it within projection bounds and
-                        // not too small to avoid rounding errors.
-                        double dist = 0.01 * proj.getDefaultZoomInPPD();
-                        LatLon ll1 = proj.eastNorth2latlon(new EastNorth(center.east() - dist, center.north()));
-                        LatLon ll2 = proj.eastNorth2latlon(new EastNorth(center.east() + dist, center.north()));
-                        double meterPerEasting = ll1.greatCircleDistance(ll2) / dist / 2;
-                        double scale = meterPerPixel / meterPerEasting; // unit: easting per pixel
-                        viewport = new ViewportData(center, scale);
-                    } catch (NumberFormatException ex) {
-                        Main.warn(ex);
-                    }
-                }
-            }
-        }
+        viewport = readViewportData(root);
+        projectionChoice = readProjectionChoiceData(root);
 
         Element layersEl = getElementByTagName(root, "layers");
         if (layersEl == null) return;
@@ -547,6 +613,49 @@ public class SessionReader {
             layer.setName(names.get(entry.getKey()));
             layers.add(layer);
         }
+    }
+
+    private SessionViewportData readViewportData(Element root) {
+        Element viewportEl = getElementByTagName(root, "viewport");
+        if (viewportEl == null) return null;
+        LatLon center = null;
+        Element centerEl = getElementByTagName(viewportEl, "center");
+        if (centerEl == null || !centerEl.hasAttribute("lat") || !centerEl.hasAttribute("lon")) return null;
+        try {
+            center = new LatLon(Double.parseDouble(centerEl.getAttribute("lat")),
+                    Double.parseDouble(centerEl.getAttribute("lon")));
+        } catch (NumberFormatException ex) {
+            Main.warn(ex);
+        }
+        if (center == null) return null;
+        Element scaleEl = getElementByTagName(viewportEl, "scale");
+        if (scaleEl == null || !scaleEl.hasAttribute("meter-per-pixel")) return null;
+        try {
+            double scale = Double.parseDouble(scaleEl.getAttribute("meter-per-pixel"));
+            return new SessionViewportData(center, scale);
+        } catch (NumberFormatException ex) {
+            Main.warn(ex);
+            return null;
+        }
+    }
+
+    private SessionProjectionChoiceData readProjectionChoiceData(Element root) {
+        Element projectionEl = getElementByTagName(root, "projection");
+        if (projectionEl == null) return null;
+        Element projectionChoiceEl = getElementByTagName(projectionEl, "projection-choice");
+        if (projectionChoiceEl == null) return null;
+        Element idEl = getElementByTagName(projectionChoiceEl, "id");
+        if (idEl == null) return null;
+        String id = idEl.getTextContent();
+        Element parametersEl = getElementByTagName(projectionChoiceEl, "parameters");
+        if (parametersEl == null) return null;
+        Collection<String> parameters = new ArrayList<>();
+        NodeList paramNl = parametersEl.getElementsByTagName("param");
+        for (int i=0; i<paramNl.getLength(); i++) {
+            Element paramEl = (Element) paramNl.item(i);
+            parameters.add(paramEl.getTextContent());
+        }
+        return new SessionProjectionChoiceData(id, parameters);
     }
 
     /**

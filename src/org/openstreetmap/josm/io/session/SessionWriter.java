@@ -10,6 +10,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +40,7 @@ import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.gui.layer.WMTSLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
+import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
@@ -212,18 +214,8 @@ public class SessionWriter {
         root.setAttribute("version", "0.1");
         doc.appendChild(root);
 
-        Element viewportEl = doc.createElement("viewport");
-        root.appendChild(viewportEl);
-        Element centerEl = doc.createElement("center");
-        viewportEl.appendChild(centerEl);
-        EastNorth center = Main.map.mapView.getCenter();
-        LatLon centerLL = Projections.inverseProject(center);
-        centerEl.setAttribute("lat", Double.toString(centerLL.lat()));
-        centerEl.setAttribute("lon", Double.toString(centerLL.lon()));
-        Element scale = doc.createElement("scale");
-        viewportEl.appendChild(scale);
-        double dist100px = Main.map.mapView.getDist100Pixel();
-        scale.setAttribute("meter-per-pixel", Double.toString(dist100px / 100));
+        writeViewPort(root);
+        writeProjection(root);
 
         Element layersEl = doc.createElement("layers");
         if (active >= 0) {
@@ -260,6 +252,46 @@ public class SessionWriter {
             layersEl.appendChild(el);
         }
         return doc;
+    }
+
+    private void writeViewPort(Element root) {
+        Document doc = root.getOwnerDocument();
+        Element viewportEl = doc.createElement("viewport");
+        root.appendChild(viewportEl);
+        Element centerEl = doc.createElement("center");
+        viewportEl.appendChild(centerEl);
+        EastNorth center = Main.map.mapView.getCenter();
+        LatLon centerLL = Projections.inverseProject(center);
+        centerEl.setAttribute("lat", Double.toString(centerLL.lat()));
+        centerEl.setAttribute("lon", Double.toString(centerLL.lon()));
+        Element scale = doc.createElement("scale");
+        viewportEl.appendChild(scale);
+        double dist100px = Main.map.mapView.getDist100Pixel();
+        scale.setAttribute("meter-per-pixel", Double.toString(dist100px / 100));
+    }
+
+    private void writeProjection(Element root) {
+        Document doc = root.getOwnerDocument();
+        Element projectionEl = doc.createElement("projection");
+        root.appendChild(projectionEl);
+        String pcId = ProjectionPreference.getCurrentProjectionChoiceId();
+        Element projectionChoiceEl = doc.createElement("projection-choice");
+        projectionEl.appendChild(projectionChoiceEl);
+        Element idEl = doc.createElement("id");
+        projectionChoiceEl.appendChild(idEl);
+        idEl.setTextContent(pcId);
+        Collection<String> parameters = ProjectionPreference.getSubprojectionPreference(pcId);
+        Element parametersEl = doc.createElement("parameters");
+        projectionChoiceEl.appendChild(parametersEl);
+        for (String param : parameters) {
+            Element paramEl = doc.createElement("param");
+            parametersEl.appendChild(paramEl);
+            paramEl.setTextContent(param);
+        }
+        String code = Main.getProjection().toCode();
+        Element codeEl = doc.createElement("code");
+        projectionEl.appendChild(codeEl);
+        codeEl.setTextContent(code);
     }
 
     /**
