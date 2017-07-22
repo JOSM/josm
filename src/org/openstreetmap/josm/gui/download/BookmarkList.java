@@ -4,24 +4,41 @@ package org.openstreetmap.josm.gui.download;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
+import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
 import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.downloadtasks.ChangesetQueryTask;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.data.osm.UserInfo;
+import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.gui.JosmUserIdentityManager;
+import org.openstreetmap.josm.gui.MapViewState;
+import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager;
+import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
+import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 
 /**
  * List class that read and save its content from the bookmark file.
@@ -30,11 +47,18 @@ import org.openstreetmap.josm.tools.ImageProvider;
 public class BookmarkList extends JList<BookmarkList.Bookmark> {
 
     /**
+     * The maximum number of changeset bookmarks to maintain in list.
+     * @since 12495
+     */
+    public static final IntegerProperty MAX_CHANGESET_BOOKMARKS = new IntegerProperty("bookmarks.changesets.max-entries", 15);
+
+    /**
      * Class holding one bookmarkentry.
      */
     public static class Bookmark implements Comparable<Bookmark> {
         private String name;
         private Bounds area;
+        private ImageIcon icon;
 
         /**
          * Constructs a new {@code Bookmark} with the given contents.
@@ -47,6 +71,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
             List<String> array = new ArrayList<>(list);
             if (array.size() < 5)
                 throw new IllegalArgumentException(tr("Wrong number of arguments for bookmark"));
+            icon = ImageProvider.get("dialogs", "bookmark");
             name = array.get(0);
             area = new Bounds(Double.parseDouble(array.get(1)), Double.parseDouble(array.get(2)),
                               Double.parseDouble(array.get(3)), Double.parseDouble(array.get(4)));
@@ -56,8 +81,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
          * Constructs a new empty {@code Bookmark}.
          */
         public Bookmark() {
-            area = null;
-            name = null;
+            this(null, null);
         }
 
         /**
@@ -65,10 +89,23 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
          * @param area The bookmark area
          */
         public Bookmark(Bounds area) {
+            this(null, area);
+        }
+
+        /**
+         * Constructs a new {@code Bookmark} for the given name and area.
+         * @param name The bookmark name
+         * @param area The bookmark area
+         * @since 12495
+         */
+        protected Bookmark(String name, Bounds area) {
+            this.icon = ImageProvider.get("dialogs", "bookmark");
+            this.name = name;
             this.area = area;
         }
 
-        @Override public String toString() {
+        @Override
+        public String toString() {
             return name;
         }
 
@@ -88,7 +125,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
             if (obj == null || getClass() != obj.getClass()) return false;
             Bookmark bookmark = (Bookmark) obj;
             return Objects.equals(name, bookmark.name) &&
-                    Objects.equals(area, bookmark.area);
+                   Objects.equals(area, bookmark.area);
         }
 
         /**
@@ -122,6 +159,75 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
         public void setArea(Bounds area) {
             this.area = area;
         }
+
+        /**
+         * Returns the bookmark icon.
+         * @return the bookmark icon
+         * @since 12495
+         */
+        public ImageIcon getIcon() {
+            return icon;
+        }
+
+        /**
+         * Sets the bookmark icon.
+         * @param icon the bookmark icon
+         * @since 12495
+         */
+        public void setIcon(ImageIcon icon) {
+            this.icon = icon;
+        }
+    }
+
+    /**
+     * A specific optional bookmark for the "home location" configured on osm.org website.
+     * @since 12495
+     */
+    public static class HomeLocationBookmark extends Bookmark {
+        /**
+         * Constructs a new {@code HomeLocationBookmark}.
+         */
+        public HomeLocationBookmark() {
+            setName(tr("Home location"));
+            setIcon(ImageProvider.get("help", "home", ImageSizes.SMALLICON));
+            UserInfo info = JosmUserIdentityManager.getInstance().getUserInfo();
+            if (info == null) {
+                throw new IllegalStateException("User not identified");
+            }
+            LatLon home = info.getHome();
+            if (home == null) {
+                throw new IllegalStateException("User home location not set");
+            }
+            int zoom = info.getHomeZoom();
+            if (zoom <= 3) {
+                // 3 is the default zoom level in OSM database, but the real zoom level was not correct
+                // for a long time, see https://github.com/openstreetmap/openstreetmap-website/issues/1592
+                zoom = 12;
+            }
+            Projection mercator = Projections.getProjectionByCode("EPSG:3857");
+            setArea(MapViewState.createDefaultState(430, 400) // Size of map on osm.org user profile settings
+                    .usingProjection(mercator)
+                    .usingScale(Selector.GeneralSelector.level2scale(zoom) / 100)
+                    .usingCenter(mercator.latlon2eastNorth(home))
+                    .getViewArea()
+                    .getLatLonBoundsBox());
+        }
+    }
+
+    /**
+     * A specific optional bookmark for the boundaries of recent changesets.
+     * @since 12495
+     */
+    public static class ChangesetBookmark extends Bookmark {
+        /**
+         * Constructs a new {@code ChangesetBookmark}.
+         * @param cs changeset
+         */
+        public ChangesetBookmark(Changeset cs) {
+            setName(String.format("%d - %tF - %s", cs.getId(), cs.getCreatedAt(), cs.getComment()));
+            setIcon(ImageProvider.get("data", "changeset", ImageSizes.SMALLICON));
+            setArea(cs.getBounds());
+        }
     }
 
     /**
@@ -135,11 +241,24 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
     }
 
     /**
-     * Loads the bookmarks from file.
+     * Loads the home location bookmark from OSM API,
+     *       the manual bookmarks from preferences file,
+     *       the changeset bookmarks from changeset cache.
      */
     public final void load() {
-        DefaultListModel<Bookmark> model = (DefaultListModel<Bookmark>) getModel();
+        final DefaultListModel<Bookmark> model = (DefaultListModel<Bookmark>) getModel();
         model.removeAllElements();
+        JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+        // Add home location bookmark first, if user fully identified
+        if (im.isFullyIdentified()) {
+            try {
+                model.addElement(new HomeLocationBookmark());
+            } catch (IllegalStateException e) {
+                Main.info(e.getMessage());
+                Main.trace(e);
+            }
+        }
+        // Then add manual bookmarks previously saved in local preferences
         Collection<Collection<String>> args = Main.pref.getArray("bookmarks", null);
         if (args != null) {
             List<Bookmark> bookmarks = new LinkedList<>();
@@ -155,14 +274,31 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
                 model.addElement(b);
             }
         }
+        // Finally add recent changeset bookmarks, if user name is known
+        final int n = MAX_CHANGESET_BOOKMARKS.get();
+        if (n > 0 && !im.isAnonymous()) {
+            final ChangesetCacheManager ccm = ChangesetCacheManager.getInstance();
+            final int userId = im.getUserInfo().getId();
+            int found = 0;
+            for (int i = 0; i < ccm.getModel().getRowCount() && found < n; i++) {
+                Changeset cs = ccm.getModel().getValueAt(i, 0);
+                if (cs.getUser().getId() == userId && cs.getBounds() != null) {
+                    model.addElement(new ChangesetBookmark(cs));
+                    found++;
+                }
+            }
+        }
     }
 
     /**
-     * Saves all bookmarks to the preferences file
+     * Saves all manual bookmarks to the preferences file.
      */
     public final void save() {
         List<Collection<String>> coll = new LinkedList<>();
         for (Object o : ((DefaultListModel<Bookmark>) getModel()).toArray()) {
+            if (o instanceof HomeLocationBookmark || o instanceof ChangesetBookmark) {
+                continue;
+            }
             String[] array = new String[5];
             Bookmark b = (Bookmark) o;
             array[0] = b.getName();
@@ -176,6 +312,36 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
         Main.pref.putArray("bookmarks", coll);
     }
 
+    /**
+     * Refreshes the changeset bookmarks.
+     * @since 12495
+     */
+    public void refreshChangesetBookmarks() {
+        final int n = MAX_CHANGESET_BOOKMARKS.get();
+        if (n > 0) {
+            final DefaultListModel<Bookmark> model = (DefaultListModel<Bookmark>) getModel();
+            for (int i = model.getSize() - 1; i >= 0; i--) {
+                if (model.get(i) instanceof ChangesetBookmark) {
+                    model.remove(i);
+                }
+            }
+            ChangesetQuery query = ChangesetQuery.forCurrentUser();
+            if (!GraphicsEnvironment.isHeadless()) {
+                final ChangesetQueryTask task = new ChangesetQueryTask(this, query);
+                ChangesetCacheManager.getInstance().runDownloadTask(task);
+                Main.worker.submit(() -> {
+                    if (task.isCanceled() || task.isFailed())
+                        return;
+                    GuiHelper.runInEDT(() -> task.getDownloadedData().stream()
+                            .filter(cs -> cs.getBounds() != null)
+                            .sorted(Comparator.reverseOrder())
+                            .limit(n)
+                            .forEachOrdered(cs -> model.addElement(new ChangesetBookmark(cs))));
+                });
+            }
+        }
+    }
+
     static class BookmarkCellRenderer extends JLabel implements ListCellRenderer<BookmarkList.Bookmark> {
 
         /**
@@ -183,7 +349,6 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
          */
         BookmarkCellRenderer() {
             setOpaque(true);
-            setIcon(ImageProvider.get("dialogs", "bookmark"));
         }
 
         protected void renderColor(boolean selected) {
@@ -199,11 +364,13 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
         protected String buildToolTipText(Bookmark b) {
             Bounds area = b.getArea();
             StringBuilder sb = new StringBuilder(128);
-            sb.append("<html>min[latitude,longitude]=<strong>[")
-              .append(area.getMinLat()).append(',').append(area.getMinLon()).append("]</strong>"+
-                      "<br>max[latitude,longitude]=<strong>[")
-              .append(area.getMaxLat()).append(',').append(area.getMaxLon()).append("]</strong>"+
-                      "</html>");
+            if (area != null) {
+                sb.append("<html>min[latitude,longitude]=<strong>[")
+                  .append(area.getMinLat()).append(',').append(area.getMinLon()).append("]</strong>"+
+                          "<br>max[latitude,longitude]=<strong>[")
+                  .append(area.getMaxLat()).append(',').append(area.getMaxLon()).append("]</strong>"+
+                          "</html>");
+            }
             return sb.toString();
         }
 
@@ -211,6 +378,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
         public Component getListCellRendererComponent(JList<? extends Bookmark> list, Bookmark value, int index, boolean isSelected,
                 boolean cellHasFocus) {
             renderColor(isSelected);
+            setIcon(value.getIcon());
             setText(value.getName());
             setToolTipText(buildToolTipText(value));
             return this;

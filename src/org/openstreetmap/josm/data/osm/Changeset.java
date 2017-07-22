@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * upload but in the future we may do more.
  * @since 625
  */
-public final class Changeset implements Tagged {
+public final class Changeset implements Tagged, Comparable<Changeset> {
 
     /** The maximum changeset tag length allowed by API 0.6 **/
     public static final int MAX_CHANGESET_TAG_LENGTH = 255;
@@ -119,6 +119,7 @@ public final class Changeset implements Tagged {
      *         a value less than {@code 0} if {@code getId() < other.getId()}; and
      *         a value greater than {@code 0} if {@code getId() > other.getId()}
      */
+    @Override
     public int compareTo(Changeset other) {
         return Integer.compare(getId(), other.getId());
     }

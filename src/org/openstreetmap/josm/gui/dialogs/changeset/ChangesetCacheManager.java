@@ -634,19 +634,14 @@ public class ChangesetCacheManager extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             Window parent = GuiHelper.getWindowAncestorFor(e);
-            JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
-            if (im.isAnonymous()) {
+            try {
+                ChangesetQuery query = ChangesetQuery.forCurrentUser();
+                if (!GraphicsEnvironment.isHeadless()) {
+                    ChangesetCacheManager.getInstance().runDownloadTask(new ChangesetQueryTask(parent, query));
+                }
+            } catch (IllegalStateException ex) {
                 alertAnonymousUser(parent);
-                return;
-            }
-            ChangesetQuery query = new ChangesetQuery();
-            if (im.isFullyIdentified()) {
-                query = query.forUser(im.getUserId());
-            } else {
-                query = query.forUser(im.getUserName());
-            }
-            if (!GraphicsEnvironment.isHeadless()) {
-                ChangesetCacheManager.getInstance().runDownloadTask(new ChangesetQueryTask(parent, query));
+                Main.trace(ex);
             }
         }
     }
@@ -691,6 +686,15 @@ public class ChangesetCacheManager extends JFrame {
                 model.setChangesetInDetailView(null);
             }
         }
+    }
+
+    /**
+     * Returns the changeset cache model.
+     * @return the changeset cache model
+     * @since 12495
+     */
+    public ChangesetCacheManagerModel getModel() {
+        return model;
     }
 
     /**
