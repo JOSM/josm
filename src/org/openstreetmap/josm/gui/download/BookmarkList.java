@@ -277,14 +277,17 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
         // Finally add recent changeset bookmarks, if user name is known
         final int n = MAX_CHANGESET_BOOKMARKS.get();
         if (n > 0 && !im.isAnonymous()) {
-            final ChangesetCacheManager ccm = ChangesetCacheManager.getInstance();
-            final int userId = im.getUserInfo().getId();
-            int found = 0;
-            for (int i = 0; i < ccm.getModel().getRowCount() && found < n; i++) {
-                Changeset cs = ccm.getModel().getValueAt(i, 0);
-                if (cs.getUser().getId() == userId && cs.getBounds() != null) {
-                    model.addElement(new ChangesetBookmark(cs));
-                    found++;
+            final UserInfo userInfo = im.getUserInfo();
+            if (userInfo != null) {
+                final ChangesetCacheManager ccm = ChangesetCacheManager.getInstance();
+                final int userId = userInfo.getId();
+                int found = 0;
+                for (int i = 0; i < ccm.getModel().getRowCount() && found < n; i++) {
+                    Changeset cs = ccm.getModel().getValueAt(i, 0);
+                    if (cs.getUser().getId() == userId && cs.getBounds() != null) {
+                        model.addElement(new ChangesetBookmark(cs));
+                        found++;
+                    }
                 }
             }
         }

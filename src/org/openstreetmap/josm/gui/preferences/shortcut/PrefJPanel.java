@@ -100,7 +100,8 @@ public class PrefJPanel extends JPanel {
         String unknown = Toolkit.getProperty("AWT.unknown", "Unknown");
         // Assume all known keys are declared in KeyEvent as "public static int VK_*"
         for (Field field : KeyEvent.class.getFields()) {
-            if (field.getName().startsWith("VK_")) {
+            // Ignore VK_KP_DOWN, UP, etc. because they have the same name as VK_DOWN, UP, etc. See #8340
+            if (field.getName().startsWith("VK_") && !field.getName().startsWith("VK_KP_")) {
                 try {
                     int i = field.getInt(null);
                     String s = KeyEvent.getKeyText(i);
