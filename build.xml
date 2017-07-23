@@ -231,6 +231,9 @@ Build-Date: ${build.tstamp}
             destdir="build" target="1.8" source="1.8" debug="on" includeAntRuntime="false" createMissingPackageInfoClass="false">
             <!-- get rid of "internal proprietary API" warning -->
             <compilerarg value="-XDignore.symbol.file"/>
+            <exclude name="org/apache/commons/compress/PasswordRequiredException.java"/>
+            <exclude name="org/apache/commons/compress/archivers/**"/>
+            <exclude name="org/apache/commons/compress/changes/**"/>
             <exclude name="org/apache/commons/compress/compressors/bzip2/BZip2Utils.java"/>
             <exclude name="org/apache/commons/compress/compressors/brotli/**"/>
             <exclude name="org/apache/commons/compress/compressors/lzma/**"/>
@@ -243,10 +246,10 @@ Build-Date: ${build.tstamp}
             <exclude name="org/apache/commons/compress/compressors/gzip/**"/>
             <exclude name="org/apache/commons/compress/compressors/lz4/**"/>
             <exclude name="org/apache/commons/compress/compressors/lz77support/**"/>
-            <exclude name="org/apache/commons/compress/compressors/lzw/**"/>
             <exclude name="org/apache/commons/compress/compressors/pack200/**"/>
             <exclude name="org/apache/commons/compress/compressors/snappy/**"/>
             <exclude name="org/apache/commons/compress/compressors/z/**"/>
+            <exclude name="org/apache/commons/compress/parallel/**"/>
             <exclude name="org/apache/commons/compress/utils/ArchiveUtils.java"/>
             <exclude name="org/apache/commons/jcs/JCS.java"/>
             <exclude name="org/apache/commons/jcs/access/GroupCacheAccess.java"/>
