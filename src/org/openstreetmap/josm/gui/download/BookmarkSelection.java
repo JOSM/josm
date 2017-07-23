@@ -23,6 +23,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.download.BookmarkList.Bookmark;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
@@ -68,6 +69,10 @@ public class BookmarkSelection implements DownloadSelection {
         RenameAction renameAction = new RenameAction();
         bookmarks.addListSelectionListener(renameAction);
         pnl.add(new JButton(renameAction), gc);
+
+        gc.gridy = 2;
+        RefreshAction refreshAction = new RefreshAction();
+        pnl.add(new JButton(refreshAction), gc);
 
         gc.fill = GridBagConstraints.BOTH;
         gc.weightx = 1.0;
@@ -274,6 +279,22 @@ public class BookmarkSelection implements DownloadSelection {
         @Override
         public void valueChanged(ListSelectionEvent e) {
             updateEnabledState();
+        }
+    }
+
+    class RefreshAction extends AbstractAction {
+        /**
+         * Constructs a new {@code RefreshAction}.
+         */
+        RefreshAction() {
+            putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "downloadchangeset"));
+            putValue(SHORT_DESCRIPTION, tr("Download bookmarks for my {0} last changesets", BookmarkList.MAX_CHANGESET_BOOKMARKS.get()));
+            setEnabled(!JosmUserIdentityManager.getInstance().isAnonymous());
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            bookmarks.refreshChangesetBookmarks();
         }
     }
 

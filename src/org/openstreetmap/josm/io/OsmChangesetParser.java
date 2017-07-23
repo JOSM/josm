@@ -152,7 +152,7 @@ public final class OsmChangesetParser {
                 } catch (NumberFormatException e) {
                     throwException(tr("Illegal value for attribute ''{0}''. Got ''{1}''.", "max_lat", maxLatStr));
                 }
-                current.setMax(new LatLon(maxLon, maxLat));
+                current.setMax(new LatLon(maxLat, maxLon));
             }
 
             // -- comments_count

@@ -138,7 +138,7 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
     }
 
     @Override
-    public Object getValueAt(int row, int column) {
+    public Changeset getValueAt(int row, int column) {
         return data.get(row);
     }
 
