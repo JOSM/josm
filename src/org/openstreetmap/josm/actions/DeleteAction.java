@@ -31,7 +31,7 @@ public final class DeleteAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled() || !Main.map.mapView.isActiveLayerVisible())
             return;
-        org.openstreetmap.josm.actions.mapmode.DeleteAction.doActionPerformed(e);
+        Main.map.mapModeDelete.doActionPerformed(e);
     }
 
     @Override
