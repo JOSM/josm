@@ -122,10 +122,12 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
     private void build() {
         model = new ConflictListModel();
 
-        lstConflicts = new JList<>(model);
-        lstConflicts.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        lstConflicts.setCellRenderer(new OsmPrimitivRenderer());
-        lstConflicts.addMouseListener(new MouseEventHandler());
+        synchronized (this) {
+            lstConflicts = new JList<>(model);
+            lstConflicts.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+            lstConflicts.setCellRenderer(new OsmPrimitivRenderer());
+            lstConflicts.addMouseListener(new MouseEventHandler());
+        }
         addListSelectionListener(e -> Main.map.mapView.repaint());
 
         SideButton btnResolve = new SideButton(actResolve);
@@ -164,7 +166,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
      * @param listener the ListSelectionListener
      * @since 5958
      */
-    public void addListSelectionListener(ListSelectionListener listener) {
+    public synchronized void addListSelectionListener(ListSelectionListener listener) {
         lstConflicts.getSelectionModel().addListSelectionListener(listener);
     }
 
@@ -173,7 +175,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
      * @param listener the ListSelectionListener
      * @since 5958
      */
-    public void removeListSelectionListener(ListSelectionListener listener) {
+    public synchronized void removeListSelectionListener(ListSelectionListener listener) {
         lstConflicts.getSelectionModel().removeListSelectionListener(listener);
     }
 
@@ -190,21 +192,22 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
      * Launches a conflict resolution dialog for the first selected conflict
      */
     private void resolve() {
-        if (conflicts == null || model.getSize() == 0)
-            return;
+        synchronized (this) {
+            if (conflicts == null || model.getSize() == 0)
+                return;
 
-        int index = lstConflicts.getSelectedIndex();
-        if (index < 0) {
-            index = 0;
+            int index = lstConflicts.getSelectedIndex();
+            if (index < 0) {
+                index = 0;
+            }
+
+            Conflict<? extends OsmPrimitive> c = conflicts.get(index);
+            ConflictResolutionDialog dialog = new ConflictResolutionDialog(Main.parent);
+            dialog.getConflictResolver().populate(c);
+            dialog.showDialog();
+
+            lstConflicts.setSelectedIndex(index);
         }
-
-        Conflict<? extends OsmPrimitive> c = conflicts.get(index);
-        ConflictResolutionDialog dialog = new ConflictResolutionDialog(Main.parent);
-        dialog.getConflictResolver().populate(c);
-        dialog.showDialog();
-
-        lstConflicts.setSelectedIndex(index);
-
         Main.map.mapView.repaint();
     }
 
@@ -213,14 +216,16 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
      */
     public void refreshView() {
         OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
-        conflicts = editLayer == null ? new ConflictCollection() : editLayer.getConflicts();
+        synchronized (this) {
+            conflicts = editLayer == null ? new ConflictCollection() : editLayer.getConflicts();
+        }
         GuiHelper.runInEDT(() -> {
             model.fireContentChanged();
             updateTitle();
         });
     }
 
-    private void updateTitle() {
+    private synchronized void updateTitle() {
         int conflictsCount = conflicts.size();
         if (conflictsCount > 0) {
             setTitle(trn("Conflict: {0} unresolved", "Conflicts: {0} unresolved", conflictsCount, conflictsCount) +
@@ -246,11 +251,13 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
             return;
         g.setColor(preferencesColor);
         Visitor conflictPainter = new ConflictPainter(nc, g);
-        for (OsmPrimitive o : lstConflicts.getSelectedValuesList()) {
-            if (conflicts == null || !conflicts.hasConflictForMy(o)) {
-                continue;
+        synchronized (this) {
+            for (OsmPrimitive o : lstConflicts.getSelectedValuesList()) {
+                if (conflicts == null || !conflicts.hasConflictForMy(o)) {
+                    continue;
+                }
+                conflicts.getConflictForMy(o).getTheir().accept(conflictPainter);
             }
-            conflicts.getConflictForMy(o).getTheir().accept(conflictPainter);
         }
     }
 
@@ -280,7 +287,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
      *
      * @return the conflict collection currently held by this dialog; may be null
      */
-    public ConflictCollection getConflicts() {
+    public synchronized ConflictCollection getConflicts() {
         return conflicts;
     }
 
@@ -289,7 +296,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
      *
      * @return Conflict
      */
-    public Conflict<? extends OsmPrimitive> getSelectedConflict() {
+    public synchronized Conflict<? extends OsmPrimitive> getSelectedConflict() {
         if (conflicts == null || model.getSize() == 0)
             return null;
 
@@ -298,7 +305,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
         return index >= 0 ? conflicts.get(index) : null;
     }
 
-    private boolean isConflictSelected() {
+    private synchronized boolean isConflictSelected() {
         final ListSelectionModel selModel = lstConflicts.getSelectionModel();
         return selModel.getMinSelectionIndex() >= 0 && selModel.getMaxSelectionIndex() >= selModel.getMinSelectionIndex();
     }
@@ -315,7 +322,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
     }
 
     @Override
-    public void selectionChanged(SelectionChangeEvent event) {
+    public synchronized void selectionChanged(SelectionChangeEvent event) {
         lstConflicts.setValueIsAdjusting(true);
         lstConflicts.clearSelection();
         for (OsmPrimitive osm : event.getSelection()) {
@@ -415,18 +422,18 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
         }
 
         @Override
-        public OsmPrimitive getElementAt(int index) {
+        public synchronized OsmPrimitive getElementAt(int index) {
             if (index < 0 || index >= getSize())
                 return null;
             return conflicts.get(index).getMy();
         }
 
         @Override
-        public int getSize() {
+        public synchronized int getSize() {
             return conflicts != null ? conflicts.size() : 0;
         }
 
-        public int indexOf(OsmPrimitive my) {
+        public synchronized int indexOf(OsmPrimitive my) {
             if (conflicts != null) {
                 for (int i = 0; i < conflicts.size(); i++) {
                     if (conflicts.get(i).isMatchingMy(my))
@@ -436,7 +443,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
             return -1;
         }
 
-        public OsmPrimitive get(int idx) {
+        public synchronized OsmPrimitive get(int idx) {
             return conflicts != null ? conflicts.get(idx).getMy() : null;
         }
     }
@@ -468,8 +475,10 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
         @Override
         public void actionPerformed(ActionEvent e) {
             Collection<OsmPrimitive> sel = new LinkedList<>();
-            for (OsmPrimitive o : lstConflicts.getSelectedValuesList()) {
-                sel.add(o);
+            synchronized (this) {
+                for (OsmPrimitive o : lstConflicts.getSelectedValuesList()) {
+                    sel.add(o);
+                }
             }
             DataSet ds = Main.getLayerManager().getEditDataSet();
             if (ds != null) { // Can't see how it is possible but it happened in #7942
@@ -498,12 +507,14 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
         public void actionPerformed(ActionEvent e) {
             final ConflictResolver resolver = new ConflictResolver();
             final List<Command> commands = new ArrayList<>();
-            for (OsmPrimitive osmPrimitive : lstConflicts.getSelectedValuesList()) {
-                Conflict<? extends OsmPrimitive> c = conflicts.getConflictForMy(osmPrimitive);
-                if (c != null) {
-                    resolver.populate(c);
-                    resolver.decideRemaining(type);
-                    commands.add(resolver.buildResolveCommand());
+            synchronized (this) {
+                for (OsmPrimitive osmPrimitive : lstConflicts.getSelectedValuesList()) {
+                    Conflict<? extends OsmPrimitive> c = conflicts.getConflictForMy(osmPrimitive);
+                    if (c != null) {
+                        resolver.populate(c);
+                        resolver.decideRemaining(type);
+                        commands.add(resolver.buildResolveCommand());
+                    }
                 }
             }
             Main.main.undoRedo.add(new SequenceCommand(name, commands));
