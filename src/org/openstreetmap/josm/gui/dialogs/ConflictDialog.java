@@ -120,9 +120,9 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
      * builds the GUI
      */
     private void build() {
-        model = new ConflictListModel();
-
         synchronized (this) {
+            model = new ConflictListModel();
+
             lstConflicts = new JList<>(model);
             lstConflicts.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
             lstConflicts.setCellRenderer(new OsmPrimitivRenderer());
