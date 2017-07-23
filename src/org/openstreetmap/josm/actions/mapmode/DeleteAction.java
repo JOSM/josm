@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Cursor;
 import java.awt.event.ActionEvent;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.Collection;
@@ -135,15 +134,14 @@ public class DeleteAction extends MapMode implements ModifierListener {
      * Invoked when the action occurs.
      * @param e Action event
      */
-    public static void doActionPerformed(ActionEvent e) {
+    public void doActionPerformed(ActionEvent e) {
         MainLayerManager lm = Main.getLayerManager();
         OsmDataLayer editLayer = lm.getEditLayer();
         if (editLayer == null) {
             return;
         }
 
-        boolean ctrl = (e.getModifiers() & ActionEvent.CTRL_MASK) != 0;
-        boolean alt = (e.getModifiers() & (ActionEvent.ALT_MASK | InputEvent.ALT_GRAPH_MASK)) != 0;
+        updateKeyModifiers(e.getModifiers());
 
         Command c;
         if (ctrl) {
