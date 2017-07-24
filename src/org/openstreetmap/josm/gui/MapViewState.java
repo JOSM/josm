@@ -418,6 +418,14 @@ public final class MapViewState implements Serializable {
      * @author Michael Zangl
      */
     public abstract class MapViewPoint {
+        /**
+         * Gets the map view state this path is used for.
+         * @return The state.
+         * @since 12505
+         */
+        public MapViewState getMapViewState() {
+            return MapViewState.this;
+        }
 
         /**
          * Get this point in view coordinates.

@@ -22,7 +22,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public class OffsetIterator implements Iterator<MapViewPoint> {
     private final MapViewState mapState;
-    private final List<Node> nodes;
+    private final List<MapViewPoint> nodes;
     private final double offset;
     private int idx;
 
@@ -36,15 +36,28 @@ public class OffsetIterator implements Iterator<MapViewPoint> {
 
     /**
      * Creates a new offset iterator
+     * @param nodes The nodes of the original line
+     * @param offset The offset of the line.
+     */
+    public OffsetIterator(List<MapViewPoint> nodes, double offset) {
+        if (nodes.size() < 2) {
+            throw new IllegalArgumentException("There must be at least 2 nodes.");
+        }
+        this.mapState = nodes.get(0).getMapViewState();
+        this.nodes = nodes;
+        this.offset = offset;
+    }
+
+    /**
+     * Creates a new offset iterator
      * @param mapState The map view state this iterator is for.
      * @param nodes The nodes of the original line
      * @param offset The offset of the line.
      */
     public OffsetIterator(MapViewState mapState, List<Node> nodes, double offset) {
         this.mapState = mapState;
-        this.nodes = nodes.stream().filter(Node::isLatLonKnown).collect(Collectors.toList());
+        this.nodes = nodes.stream().filter(Node::isLatLonKnown).map(mapState::getPointFor).collect(Collectors.toList());
         this.offset = offset;
-        idx = 0;
     }
 
     @Override
@@ -159,7 +172,7 @@ public class OffsetIterator implements Iterator<MapViewPoint> {
     }
 
     private MapViewPoint getForIndex(int i) {
-        return mapState.getPointFor(nodes.get(i));
+        return nodes.get(i);
     }
 
     @Override

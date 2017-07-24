@@ -6,9 +6,11 @@ import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
+import java.util.ArrayList;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
+import org.openstreetmap.josm.data.osm.visitor.paint.OffsetIterator;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapViewState;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
@@ -282,6 +284,18 @@ public class MapViewPath extends MapPath2D {
     }
 
     /**
+     * Create a new {@link MapViewPath} that is the same as the current one except that it is offset in the view.
+     * @param viewOffset The offset in view pixels
+     * @return The new path
+     * @since 12505
+     */
+    public MapViewPath offset(double viewOffset) {
+        OffsetPathVisitor visitor = new OffsetPathVisitor(state, viewOffset);
+        visitor.visit(this);
+        return visitor.getPath();
+    }
+
+    /**
      * This class is used to visit the segments of this path.
      * @author Michael Zangl
      * @since 11147
@@ -446,4 +460,41 @@ public class MapViewPath extends MapPath2D {
         }
     }
 
+    private class OffsetPathVisitor extends AbstractMapPathVisitor {
+        private final MapViewPath collector;
+        private final ArrayList<MapViewPoint> points = new ArrayList<>();
+        private final double offset;
+
+        OffsetPathVisitor(MapViewState state, double offset) {
+            this.collector = new MapViewPath(state);
+            this.offset = offset;
+        }
+
+        @Override
+        void visitMoveTo(MapViewPoint p) {
+            finishLineSegment();
+            points.add(p);
+        }
+
+        @Override
+        void visitLineTo(MapViewPoint p) {
+            points.add(p);
+        }
+
+        MapViewPath getPath() {
+            finishLineSegment();
+            return collector;
+        }
+
+        private void finishLineSegment() {
+            if (points.size() > 2) {
+                OffsetIterator iterator = new OffsetIterator(points, offset);
+                collector.moveTo(iterator.next());
+                while (iterator.hasNext()) {
+                    collector.lineTo(iterator.next());
+                }
+                points.clear();
+            }
+        }
+    }
 }
