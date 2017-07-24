@@ -45,7 +45,11 @@ public class OnLineStrategy implements PositionForAreaStrategy {
     public MapViewPositionAndRotation findLabelPlacement(MapViewPath path, Rectangle2D nb) {
         return findOptimalWayPosition(nb, path).map(best -> {
             MapViewPoint center = best.start.interpolate(best.end, .5);
-            return new MapViewPositionAndRotation(center, upsideTheta(best));
+            double theta = upsideTheta(best);
+            MapViewPoint moved = center.getMapViewState().getForView(
+                    center.getInViewX() - Math.sin(theta) * yOffset,
+                    center.getInViewY() + Math.cos(theta) * yOffset);
+            return new MapViewPositionAndRotation(moved, theta);
         }).orElse(null);
     }
 
