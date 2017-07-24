@@ -1158,7 +1158,7 @@ public abstract class Main {
      * @since 11904
      */
     public static boolean addAndFireMapFrameListener(MapFrameListener listener) {
-        return mainPanel.addAndFireMapFrameListener(listener);
+        return mainPanel != null && mainPanel.addAndFireMapFrameListener(listener);
     }
 
     /**
@@ -1169,7 +1169,7 @@ public abstract class Main {
      * @since 5957
      */
     public static boolean addMapFrameListener(MapFrameListener listener) {
-        return mainPanel.addMapFrameListener(listener);
+        return mainPanel != null && mainPanel.addMapFrameListener(listener);
     }
 
     /**
@@ -1179,7 +1179,7 @@ public abstract class Main {
      * @since 5957
      */
     public static boolean removeMapFrameListener(MapFrameListener listener) {
-        return mainPanel.removeMapFrameListener(listener);
+        return mainPanel != null && mainPanel.removeMapFrameListener(listener);
     }
 
     /**
