@@ -1790,6 +1790,9 @@ public class ImageProvider {
         } catch (IIOException | NumberFormatException e) {
             // JAI doesn't like some JPEG files with error "Inconsistent metadata read from stream" (see #10267)
             Main.warn(e);
+        } catch (UnsatisfiedLinkError e) {
+            // On Windows, ComponentColorModel.getRGBComponent can fail with "UnsatisfiedLinkError: no awt in java.library.path", see #13973
+            Main.error(e);
         }
         return null;
     }
