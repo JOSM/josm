@@ -38,6 +38,7 @@ import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -534,8 +535,13 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                     // double click adds a new node
                     addNewNode(e);
                 } else if (e.getPoint().distance(initialMousePos) > initialMoveThreshold && newN1en != null && selectedSegment != null) {
-                    // main extrusion commands
-                    performExtrusion();
+                    try {
+                        // main extrusion commands
+                        performExtrusion();
+                    } catch (DataIntegrityProblemException ex) {
+                        // Can occur if calling undo while extruding, see #12870
+                        Main.error(ex);
+                    }
                 }
             } else if (mode == Mode.translate || mode == Mode.translate_node) {
                 //Commit translate
