@@ -10,6 +10,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.notes.Note;
@@ -18,6 +20,11 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.XmlParsingException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.xml.sax.SAXException;
 
 /**
  * This DataReader reads directly from the REST API of the osm server.
@@ -358,5 +365,61 @@ public abstract class OsmServerReader extends OsmConnection {
      */
     public List<Note> parseRawNotesBzip2(final ProgressMonitor progressMonitor) throws OsmTransferException {
         return null;
+    }
+
+    /**
+     * Returns an attribute from the given DOM node.
+     * @param node DOM node
+     * @param name attribute name
+     * @return attribute value for the given attribute
+     * @since 12510
+     */
+    protected static String getAttribute(Node node, String name) {
+        return node.getAttributes().getNamedItem(name).getNodeValue();
+    }
+
+    /**
+     * DOM document parser.
+     * @param <R> resulting type
+     * @since 12510
+     */
+    @FunctionalInterface
+    protected interface DomParser<R> {
+        /**
+         * Parses a given DOM document.
+         * @param doc DOM document
+         * @return parsed data
+         * @throws XmlParsingException if an XML parsing error occurs
+         */
+        R parse(Document doc) throws XmlParsingException;
+    }
+
+    /**
+     * Fetches generic data from the DOM document resulting an API call.
+     * @param api the OSM API call
+     * @param subtask the subtask translated message
+     * @param parser the parser converting the DOM document (OSM API result)
+     * @param <T> data type
+     * @param monitor The progress monitor
+     * @param reason The reason to show on console. Can be {@code null} if no reason is given
+     * @return The converted data
+     * @throws OsmTransferException if something goes wrong
+     * @since 12510
+     */
+    public <T> T fetchData(String api, String subtask, DomParser<T> parser, ProgressMonitor monitor, String reason)
+            throws OsmTransferException {
+        try {
+            monitor.beginTask("");
+            monitor.indeterminateSubTask(subtask);
+            try (InputStream in = getInputStream(api, monitor.createSubTaskMonitor(1, true), reason)) {
+                return parser.parse(Utils.parseSafeDOM(in));
+            }
+        } catch (OsmTransferException e) {
+            throw e;
+        } catch (IOException | ParserConfigurationException | SAXException e) {
+            throw new OsmTransferException(e);
+        } finally {
+            monitor.finishTask();
+        }
     }
 }
