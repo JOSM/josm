@@ -580,7 +580,6 @@ public class UnGlueAction extends JosmAction {
             if (n == selectedNode) {
                 if (seen) {
                     Node newNode = new Node(n, true /* clear OSM ID */);
-                    newNodes.add(newNode);
                     cmds.add(new AddCommand(newNode));
                     newNodes.add(newNode);
                     addNodes.add(newNode);
