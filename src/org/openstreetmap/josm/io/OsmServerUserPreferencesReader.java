@@ -3,12 +3,9 @@ package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathException;
@@ -16,12 +13,10 @@ import javax.xml.xpath.XPathFactory;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
-import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlParsingException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 
 /**
  * Download and parse preferences of the logged in user (OSM API v0.6 "/user/preferences").
@@ -29,10 +24,6 @@ import org.xml.sax.SAXException;
  * @since 12502
  */
 public class OsmServerUserPreferencesReader extends OsmServerReader {
-
-    protected static String getAttribute(Node node, String name) {
-        return node.getAttributes().getNamedItem(name).getNodeValue();
-    }
 
     /**
      * Parses the given XML data and returns the associated user preferences.
@@ -97,18 +88,7 @@ public class OsmServerUserPreferencesReader extends OsmServerReader {
      * @throws OsmTransferException if something goes wrong
      */
     public Map<String, String> fetchUserPreferences(ProgressMonitor monitor, String reason) throws OsmTransferException {
-        try {
-            monitor.beginTask("");
-            monitor.indeterminateSubTask(tr("Reading user preferences ..."));
-            try (InputStream in = getInputStream("user/preferences", monitor.createSubTaskMonitor(1, true), reason)) {
-                return buildFromXML(Utils.parseSafeDOM(in));
-            }
-        } catch (OsmTransferException e) {
-            throw e;
-        } catch (IOException | ParserConfigurationException | SAXException e) {
-            throw new OsmTransferException(e);
-        } finally {
-            monitor.finishTask();
-        }
+        return fetchData("user/preferences", tr("Reading user preferences ..."),
+                OsmServerUserPreferencesReader::buildFromXML, monitor, reason);
     }
 }
