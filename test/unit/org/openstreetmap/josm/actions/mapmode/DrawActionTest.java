@@ -74,9 +74,9 @@ public class DrawActionTest {
                     Main.map,
                     MouseEvent.MOUSE_RELEASED,
                     2000,
-                    InputEvent.BUTTON1_MASK,
+                    InputEvent.BUTTON1_DOWN_MASK,
                     50, 0,
-                    2, false));
+                    2, false, MouseEvent.BUTTON1));
 
             JList<OsmPrimitive> lstPrimitives = new JList<>();
             OsmPrimitivRenderer renderer = new OsmPrimitivRenderer();
