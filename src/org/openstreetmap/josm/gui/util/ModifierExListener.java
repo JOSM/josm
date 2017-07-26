@@ -3,7 +3,7 @@ package org.openstreetmap.josm.gui.util;
 
 /**
  * Listener called when pressed extended modifier keys change is detected.
- * @since 12516
+ * @since 12517
  */
 @FunctionalInterface
 public interface ModifierExListener {

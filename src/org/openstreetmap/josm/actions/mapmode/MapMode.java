@@ -172,7 +172,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     /**
      * Update internal ctrl, alt, shift mask from given extended modifiers mask.
      * @param modifiers event extended modifiers mask
-     * @since 12516
+     * @since 12517
      */
     protected void updateKeyModifiersEx(int modifiers) {
         ctrl = (modifiers & InputEvent.CTRL_DOWN_MASK) != 0;

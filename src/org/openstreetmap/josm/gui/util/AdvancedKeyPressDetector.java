@@ -19,6 +19,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.ListenerList;
 
 /**
  * Helper object that allows cross-platform detection of key press and release events
@@ -36,7 +37,8 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
     private final List<KeyPressReleaseListener> keyListeners = new CopyOnWriteArrayList<>();
     @Deprecated
     private final List<ModifierListener> modifierListeners = new CopyOnWriteArrayList<>();
-    private final List<ModifierExListener> modifierExListeners = new CopyOnWriteArrayList<>();
+    private final ListenerList<ModifierExListener> modifierExListeners = ListenerList.create();
+    @Deprecated
     private int previousModifiers;
     private int previousModifiersEx;
 
@@ -63,10 +65,10 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
     /**
      * Adds an object that wants to receive extended key modifier changed events.
      * @param l listener to add
-     * @since 12516
+     * @since 12517
      */
     public void addModifierExListener(ModifierExListener l) {
-        modifierExListeners.add(l);
+        modifierExListeners.addListener(l);
     }
 
     /**
@@ -90,10 +92,10 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
     /**
      * Removes the extended key modifier listener.
      * @param l listener to remove
-     * @since 12516
+     * @since 12517
      */
     public void removeModifierExListener(ModifierExListener l) {
-        modifierExListeners.remove(l);
+        modifierExListeners.removeListener(l);
     }
 
     /**
@@ -130,7 +132,7 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
         if (!modifierListeners.isEmpty()) {
             Main.warn(tr("Some of the key modifier listeners forgot to remove themselves: {0}"), modifierListeners.toString());
         }
-        if (!modifierExListeners.isEmpty()) {
+        if (modifierExListeners.hasListeners()) {
             Main.warn(tr("Some of the key modifier listeners forgot to remove themselves: {0}"), modifierExListeners.toString());
         }
         try {
@@ -194,9 +196,7 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
         int modifEx = ke.getModifiersEx();
         if (previousModifiersEx != modifEx) {
             previousModifiersEx = modifEx;
-            for (ModifierExListener m: modifierExListeners) {
-                m.modifiersExChanged(modifEx);
-            }
+            modifierExListeners.fireEvent(m -> m.modifiersExChanged(modifEx));
         }
 
         processKeyEvent(ke);
