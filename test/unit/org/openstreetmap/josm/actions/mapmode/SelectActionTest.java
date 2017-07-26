@@ -99,26 +99,26 @@ public class SelectActionTest {
             event = new MouseEvent(Main.map,
                                    MouseEvent.MOUSE_PRESSED,
                                    0,
-                                   InputEvent.BUTTON1_MASK | InputEvent.CTRL_MASK,
+                                   InputEvent.BUTTON1_DOWN_MASK | InputEvent.CTRL_DOWN_MASK,
                                    100, 0,
                                    1,
-                                   false);
+                                   false, MouseEvent.BUTTON1);
             action.mousePressed(event);
             event = new MouseEvent(Main.map,
                                    MouseEvent.MOUSE_DRAGGED,
                                    1000,
-                                   InputEvent.BUTTON1_MASK | InputEvent.CTRL_MASK,
+                                   InputEvent.BUTTON1_DOWN_MASK | InputEvent.CTRL_DOWN_MASK,
                                    50, 0,
                                    1,
-                                   false);
+                                   false, MouseEvent.BUTTON1);
             action.mouseDragged(event);
             event = new MouseEvent(Main.map,
                                    MouseEvent.MOUSE_RELEASED,
                                    2000,
-                                   InputEvent.BUTTON1_MASK | InputEvent.CTRL_MASK,
+                                   InputEvent.BUTTON1_DOWN_MASK | InputEvent.CTRL_DOWN_MASK,
                                    5, 0,
                                    1,
-                                   false);
+                                   false, MouseEvent.BUTTON1);
             action.mouseReleased(event);
 
             // As result of test, we must find a 2 nodes way, from EN(0, 0) to EN(100, 0)
