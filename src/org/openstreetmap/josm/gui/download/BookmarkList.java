@@ -221,7 +221,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
     public static class ChangesetBookmark extends Bookmark {
         /**
          * Constructs a new {@code ChangesetBookmark}.
-         * @param cs changeset
+         * @param cs changeset from which the boundaries are read. Its id, name and comment are used to name the bookmark
          */
         public ChangesetBookmark(Changeset cs) {
             setName(String.format("%d - %tF - %s", cs.getId(), cs.getCreatedAt(), cs.getComment()));
