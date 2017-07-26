@@ -48,7 +48,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
-import org.openstreetmap.josm.gui.util.ModifierListener;
+import org.openstreetmap.josm.gui.util.ModifierExListener;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -65,7 +65,7 @@ import org.openstreetmap.josm.tools.Utils;
  * On Mac OS X, Ctrl + mouse button 1 simulates right click (map move), so the
  * feature "selection remove" is disabled on this platform.
  */
-public class SelectAction extends MapMode implements ModifierListener, KeyPressReleaseListener, SelectionEnded {
+public class SelectAction extends MapMode implements ModifierExListener, KeyPressReleaseListener, SelectionEnded {
 
     private static final String NORMAL = "normal";
 
@@ -207,7 +207,7 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         cycleManager.init();
         virtualManager.init();
         // This is required to update the cursors when ctrl/shift/alt is pressed
-        Main.map.keyDetector.addModifierListener(this);
+        Main.map.keyDetector.addModifierExListener(this);
         Main.map.keyDetector.addKeyListener(this);
     }
 
@@ -218,13 +218,13 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
         mv.removeMouseListener(this);
         mv.removeMouseMotionListener(this);
         mv.setVirtualNodesEnabled(false);
-        Main.map.keyDetector.removeModifierListener(this);
+        Main.map.keyDetector.removeModifierExListener(this);
         Main.map.keyDetector.removeKeyListener(this);
         removeHighlighting();
     }
 
     @Override
-    public void modifiersChanged(int modifiers) {
+    public void modifiersExChanged(int modifiers) {
         if (!Main.isDisplayingMapView() || oldEvent == null) return;
         if (giveUserFeedback(oldEvent, modifiers)) {
             mv.repaint();
@@ -238,21 +238,21 @@ public class SelectAction extends MapMode implements ModifierListener, KeyPressR
      * @return {@code true} if repaint is required
      */
     private boolean giveUserFeedback(MouseEvent e) {
-        return giveUserFeedback(e, e.getModifiers());
+        return giveUserFeedback(e, e.getModifiersEx());
     }
 
     /**
      * handles adding highlights and updating the cursor for the given mouse event.
      * Please note that the highlighting for merging while moving is handled via mouseDragged.
      * @param e {@code MouseEvent} which should be used as base for the feedback
-     * @param modifiers define custom keyboard modifiers if the ones from MouseEvent are outdated or similar
+     * @param modifiers define custom keyboard extended modifiers if the ones from MouseEvent are outdated or similar
      * @return {@code true} if repaint is required
      */
     private boolean giveUserFeedback(MouseEvent e, int modifiers) {
         Collection<OsmPrimitive> c = asColl(
                 mv.getNearestNodeOrWay(e.getPoint(), mv.isSelectablePredicate, true));
 
-        updateKeyModifiers(modifiers);
+        updateKeyModifiersEx(modifiers);
         determineMapMode(!c.isEmpty());
 
         Set<OsmPrimitive> newHighlights = new HashSet<>();

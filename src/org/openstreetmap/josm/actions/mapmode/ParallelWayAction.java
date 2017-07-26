@@ -46,7 +46,7 @@ import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.layer.AbstractMapViewPaintable;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.util.ModifierListener;
+import org.openstreetmap.josm.gui.util.ModifierExListener;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -89,7 +89,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author Ole Jørgen Brønner (olejorgenb)
  */
-public class ParallelWayAction extends MapMode implements ModifierListener {
+public class ParallelWayAction extends MapMode implements ModifierExListener {
 
     private static final CachingProperty<BasicStroke> HELPER_LINE_STROKE = new StrokeProperty(prefKey("stroke.hepler-line"), "1").cached();
     private static final CachingProperty<BasicStroke> REF_LINE_STROKE = new StrokeProperty(prefKey("stroke.ref-line"), "2 2 3").cached();
@@ -172,7 +172,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener {
         mv.addTemporaryLayer(temporaryLayer);
 
         //// Needed to update the mouse cursor if modifiers are changed when the mouse is motionless
-        Main.map.keyDetector.addModifierListener(this);
+        Main.map.keyDetector.addModifierExListener(this);
         sourceWays = new LinkedHashSet<>(getLayerManager().getEditDataSet().getSelectedWays());
         for (Way w : sourceWays) {
             w.setHighlighted(true);
@@ -187,7 +187,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener {
         mv.removeTemporaryLayer(temporaryLayer);
         Main.map.statusLine.setDist(-1);
         Main.map.statusLine.repaint();
-        Main.map.keyDetector.removeModifierListener(this);
+        Main.map.keyDetector.removeModifierExListener(this);
         removeWayHighlighting(sourceWays);
         pWays = null;
         sourceWays = null;
@@ -215,7 +215,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener {
     }
 
     @Override
-    public void modifiersChanged(int modifiers) {
+    public void modifiersExChanged(int modifiers) {
         if (Main.map == null || mv == null || !mv.isActiveLayerDrawable())
             return;
 
@@ -228,7 +228,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener {
 
     private boolean updateModifiersState(int modifiers) {
         boolean oldAlt = alt, oldShift = shift, oldCtrl = ctrl;
-        updateKeyModifiers(modifiers);
+        updateKeyModifiersEx(modifiers);
         return oldAlt != alt || oldShift != shift || oldCtrl != ctrl;
     }
 
@@ -274,7 +274,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener {
     @Override
     public void mousePressed(MouseEvent e) {
         requestFocusInMapView();
-        updateModifiersState(e.getModifiers());
+        updateModifiersState(e.getModifiersEx());
         // Other buttons are off limit, but we still get events.
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
@@ -299,7 +299,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
-        updateModifiersState(e.getModifiers());
+        updateModifiersState(e.getModifiersEx());
         // Other buttons are off limit, but we still get events.
         if (e.getButton() != MouseEvent.BUTTON1)
             return;
@@ -354,7 +354,7 @@ public class ParallelWayAction extends MapMode implements ModifierListener {
         if (!mouseIsDown)
             return;
 
-        boolean modifiersChanged = updateModifiersState(e.getModifiers());
+        boolean modifiersChanged = updateModifiersState(e.getModifiersEx());
         updateFlagsChangeableAlways();
 
         if (modifiersChanged) {

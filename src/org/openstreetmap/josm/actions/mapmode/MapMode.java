@@ -150,17 +150,34 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     }
 
     protected void updateKeyModifiers(InputEvent e) {
-        updateKeyModifiers(e.getModifiers());
+        updateKeyModifiersEx(e.getModifiersEx());
     }
 
     protected void updateKeyModifiers(MouseEvent e) {
-        updateKeyModifiers(e.getModifiers());
+        updateKeyModifiersEx(e.getModifiersEx());
     }
 
+    /**
+     * Update internal ctrl, alt, shift mask from given modifiers mask.
+     * @param modifiers event modifiers mask
+     * @deprecated use {@link #updateKeyModifiersEx} instead
+     */
+    @Deprecated
     protected void updateKeyModifiers(int modifiers) {
         ctrl = (modifiers & ActionEvent.CTRL_MASK) != 0;
         alt = (modifiers & (ActionEvent.ALT_MASK | InputEvent.ALT_GRAPH_MASK)) != 0;
         shift = (modifiers & ActionEvent.SHIFT_MASK) != 0;
+    }
+
+    /**
+     * Update internal ctrl, alt, shift mask from given extended modifiers mask.
+     * @param modifiers event extended modifiers mask
+     * @since 12516
+     */
+    protected void updateKeyModifiersEx(int modifiers) {
+        ctrl = (modifiers & InputEvent.CTRL_DOWN_MASK) != 0;
+        alt = (modifiers & (InputEvent.ALT_DOWN_MASK | InputEvent.ALT_GRAPH_DOWN_MASK)) != 0;
+        shift = (modifiers & InputEvent.SHIFT_DOWN_MASK) != 0;
     }
 
     protected void requestFocusInMapView() {
