@@ -35,9 +35,11 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
     private Timer timer;
 
     private final List<KeyPressReleaseListener> keyListeners = new CopyOnWriteArrayList<>();
+    /** @deprecated replaced by {@link #modifierExListeners} */
     @Deprecated
     private final List<ModifierListener> modifierListeners = new CopyOnWriteArrayList<>();
     private final ListenerList<ModifierExListener> modifierExListeners = ListenerList.create();
+    /** @deprecated replaced by {@link #previousModifiersEx} */
     @Deprecated
     private int previousModifiers;
     private int previousModifiersEx;
