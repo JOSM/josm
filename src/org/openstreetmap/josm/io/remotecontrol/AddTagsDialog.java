@@ -215,7 +215,7 @@ public class AddTagsDialog extends ExtendedDialog {
         TableHelper.adjustColumnWidth(propertyTable, 3, 300);
         // get edit results if the table looses the focus, for example if a user clicks "add tags"
         propertyTable.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-        propertyTable.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_MASK), "shiftenter");
+        propertyTable.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_DOWN_MASK), "shiftenter");
         propertyTable.getActionMap().put("shiftenter", new AbstractAction() {
             @Override public void actionPerformed(ActionEvent e) {
                 buttonAction(1, e); // add all tags on Shift-Enter
