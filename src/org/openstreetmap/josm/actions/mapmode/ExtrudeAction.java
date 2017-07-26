@@ -53,7 +53,7 @@ import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
-import org.openstreetmap.josm.gui.util.ModifierListener;
+import org.openstreetmap.josm.gui.util.ModifierExListener;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -61,7 +61,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 /**
  * Makes a rectangle from a line, or modifies a rectangle.
  */
-public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPressReleaseListener, ModifierListener {
+public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPressReleaseListener, ModifierExListener {
 
     enum Mode { extrude, translate, select, create_new, translate_node }
 
@@ -295,7 +295,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         Main.map.mapView.addMouseMotionListener(this);
         ignoreNextKeyRelease = true;
         Main.map.keyDetector.addKeyListener(this);
-        Main.map.keyDetector.addModifierListener(this);
+        Main.map.keyDetector.addModifierExListener(this);
     }
 
     @Override
@@ -324,7 +324,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         Main.map.mapView.removeTemporaryLayer(this);
         dualAlignCheckboxMenuItem.getAction().setEnabled(false);
         Main.map.keyDetector.removeKeyListener(this);
-        Main.map.keyDetector.removeModifierListener(this);
+        Main.map.keyDetector.removeModifierExListener(this);
         super.exitMode();
     }
 
@@ -336,10 +336,10 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      * This method is called to indicate different modes via cursor when the Alt/Ctrl/Shift modifier is pressed,
      */
     @Override
-    public void modifiersChanged(int modifiers) {
+    public void modifiersExChanged(int modifiers) {
         if (!Main.isDisplayingMapView() || !Main.map.mapView.isActiveLayerDrawable())
             return;
-        updateKeyModifiers(modifiers);
+        updateKeyModifiersEx(modifiers);
         if (mode == Mode.select) {
             Main.map.mapView.setNewCursor(ctrl ? cursorTranslate : alt ? cursorCreateNew : shift ? cursorCreateNodes : cursor, this);
         }

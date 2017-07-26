@@ -205,7 +205,7 @@ public final class Shortcut {
 
     public boolean isEvent(KeyEvent e) {
         KeyStroke ks = getKeyStroke();
-        return ks != null && ks.equals(KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiers()));
+        return ks != null && ks.equals(KeyStroke.getKeyStroke(e.getKeyCode(), e.getModifiersEx()));
     }
 
     /**
@@ -253,9 +253,18 @@ public final class Shortcut {
      * @return a human readable text for the shortcut
      */
     public String getKeyText() {
-        KeyStroke keyStroke = getKeyStroke();
+        return getKeyText(getKeyStroke());
+    }
+
+    /**
+     * Returns a human readable text for the key stroke.
+     * @param keyStroke key stroke to convert to human readable text
+     * @return a human readable text for the key stroke
+     * @since 12520
+     */
+    public static String getKeyText(KeyStroke keyStroke) {
         if (keyStroke == null) return "";
-        String modifText = KeyEvent.getKeyModifiersText(keyStroke.getModifiers());
+        String modifText = KeyEvent.getModifiersExText(keyStroke.getModifiers());
         if ("".equals(modifText)) return KeyEvent.getKeyText(keyStroke.getKeyCode());
         return modifText + '+' + KeyEvent.getKeyText(keyStroke.getKeyCode());
     }

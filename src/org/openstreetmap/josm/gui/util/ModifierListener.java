@@ -5,7 +5,9 @@ package org.openstreetmap.josm.gui.util;
  * Listener called when pressed modifier keys change is detected
  * @since 7217
  * @since 10600 (functional interface)
+ * @deprecated use ModifierExListener instead
  */
+@Deprecated
 @FunctionalInterface
 public interface ModifierListener {
     /**

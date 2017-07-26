@@ -62,7 +62,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
-import org.openstreetmap.josm.gui.util.ModifierListener;
+import org.openstreetmap.josm.gui.util.ModifierExListener;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
@@ -72,7 +72,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * Mapmode to add nodes, create and extend ways.
  */
-public class DrawAction extends MapMode implements MapViewPaintable, DataSelectionListener, KeyPressReleaseListener, ModifierListener {
+public class DrawAction extends MapMode implements MapViewPaintable, DataSelectionListener, KeyPressReleaseListener, ModifierExListener {
 
     /**
      * If this property is set, the draw action moves the viewport when adding new points.
@@ -278,7 +278,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
         SelectionEventManager.getInstance().addSelectionListenerForEdt(this);
 
         Main.map.keyDetector.addKeyListener(this);
-        Main.map.keyDetector.addModifierListener(this);
+        Main.map.keyDetector.addModifierExListener(this);
         ignoreNextKeyRelease = true;
     }
 
@@ -298,17 +298,17 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
 
         removeHighlighting();
         Main.map.keyDetector.removeKeyListener(this);
-        Main.map.keyDetector.removeModifierListener(this);
+        Main.map.keyDetector.removeModifierExListener(this);
     }
 
     /**
      * redraw to (possibly) get rid of helper line if selection changes.
      */
     @Override
-    public void modifiersChanged(int modifiers) {
+    public void modifiersExChanged(int modifiers) {
         if (!Main.isDisplayingMapView() || !Main.map.mapView.isActiveLayerDrawable())
             return;
-        updateKeyModifiers(modifiers);
+        updateKeyModifiersEx(modifiers);
         computeHelperLine();
         addHighlighting();
     }

@@ -19,6 +19,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.Timer;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.ListenerList;
 
 /**
  * Helper object that allows cross-platform detection of key press and release events
@@ -34,8 +35,12 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
     private Timer timer;
 
     private final List<KeyPressReleaseListener> keyListeners = new CopyOnWriteArrayList<>();
+    @Deprecated
     private final List<ModifierListener> modifierListeners = new CopyOnWriteArrayList<>();
+    private final ListenerList<ModifierExListener> modifierExListeners = ListenerList.create();
+    @Deprecated
     private int previousModifiers;
+    private int previousModifiersEx;
 
     private boolean enabled = true;
 
@@ -50,9 +55,20 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
     /**
      * Adds an object that wants to receive key modifier changed events.
      * @param l listener to add
+     * @deprecated use {@link #addModifierExListener} instead
      */
+    @Deprecated
     public void addModifierListener(ModifierListener l) {
         modifierListeners.add(l);
+    }
+
+    /**
+     * Adds an object that wants to receive extended key modifier changed events.
+     * @param l listener to add
+     * @since 12517
+     */
+    public void addModifierExListener(ModifierExListener l) {
+        modifierExListeners.addListener(l);
     }
 
     /**
@@ -66,9 +82,20 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
     /**
      * Removes the key modifier listener.
      * @param l listener to remove
+     * @deprecated use {@link #removeModifierExListener} instead
      */
+    @Deprecated
     public void removeModifierListener(ModifierListener l) {
         modifierListeners.remove(l);
+    }
+
+    /**
+     * Removes the extended key modifier listener.
+     * @param l listener to remove
+     * @since 12517
+     */
+    public void removeModifierExListener(ModifierExListener l) {
+        modifierExListeners.removeListener(l);
     }
 
     /**
@@ -104,6 +131,9 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
         }
         if (!modifierListeners.isEmpty()) {
             Main.warn(tr("Some of the key modifier listeners forgot to remove themselves: {0}"), modifierListeners.toString());
+        }
+        if (modifierExListeners.hasListeners()) {
+            Main.warn(tr("Some of the key modifier listeners forgot to remove themselves: {0}"), modifierExListeners.toString());
         }
         try {
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);
@@ -146,6 +176,7 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     public void eventDispatched(AWTEvent e) {
         if (!(e instanceof KeyEvent)) {
             return;
@@ -159,6 +190,13 @@ public class AdvancedKeyPressDetector implements AWTEventListener {
             for (ModifierListener m: modifierListeners) {
                 m.modifiersChanged(modif);
             }
+        }
+
+        // check if ctrl, alt, shift extended modifiers are changed
+        int modifEx = ke.getModifiersEx();
+        if (previousModifiersEx != modifEx) {
+            previousModifiersEx = modifEx;
+            modifierExListeners.fireEvent(m -> m.modifiersExChanged(modifEx));
         }
 
         processKeyEvent(ke);

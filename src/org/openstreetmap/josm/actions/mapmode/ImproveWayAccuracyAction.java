@@ -45,7 +45,7 @@ import org.openstreetmap.josm.gui.draw.SymbolShape;
 import org.openstreetmap.josm.gui.layer.AbstractMapViewPaintable;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.util.ModifierListener;
+import org.openstreetmap.josm.gui.util.ModifierExListener;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -54,7 +54,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * @author Alexander Kachkaev &lt;alexander@kachkaev.ru&gt;, 2011
  */
 public class ImproveWayAccuracyAction extends MapMode implements
-        SelectionChangedListener, ModifierListener {
+        SelectionChangedListener, ModifierExListener {
 
     private static final String CROSSHAIR = "crosshair";
 
@@ -149,7 +149,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
         Main.map.mapView.addTemporaryLayer(temporaryLayer);
         DataSet.addSelectionListener(this);
 
-        Main.map.keyDetector.addModifierListener(this);
+        Main.map.keyDetector.addModifierExListener(this);
     }
 
     @Override
@@ -166,7 +166,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
         Main.map.mapView.removeTemporaryLayer(temporaryLayer);
         DataSet.removeSelectionListener(this);
 
-        Main.map.keyDetector.removeModifierListener(this);
+        Main.map.keyDetector.removeModifierExListener(this);
         temporaryLayer.invalidate();
     }
 
@@ -343,11 +343,11 @@ public class ImproveWayAccuracyAction extends MapMode implements
     // Event handlers
     // -------------------------------------------------------------------------
     @Override
-    public void modifiersChanged(int modifiers) {
+    public void modifiersExChanged(int modifiers) {
         if (!Main.isDisplayingMapView() || !Main.map.mapView.isActiveLayerDrawable()) {
             return;
         }
-        updateKeyModifiers(modifiers);
+        updateKeyModifiersEx(modifiers);
         updateCursorDependentObjectsIfNeeded();
         updateCursor();
         updateStatusLine();

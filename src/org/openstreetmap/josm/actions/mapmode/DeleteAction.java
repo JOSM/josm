@@ -25,7 +25,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
-import org.openstreetmap.josm.gui.util.ModifierListener;
+import org.openstreetmap.josm.gui.util.ModifierExListener;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -44,7 +44,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-public class DeleteAction extends MapMode implements ModifierListener {
+public class DeleteAction extends MapMode implements ModifierExListener {
     // Cache previous mouse event (needed when only the modifier keys are pressed but the mouse isn't moved)
     private MouseEvent oldEvent;
 
@@ -112,7 +112,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
         Main.map.mapView.addMouseListener(this);
         Main.map.mapView.addMouseMotionListener(this);
         // This is required to update the cursors when ctrl/shift/alt is pressed
-        Main.map.keyDetector.addModifierListener(this);
+        Main.map.keyDetector.addModifierExListener(this);
     }
 
     @Override
@@ -120,7 +120,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
         super.exitMode();
         Main.map.mapView.removeMouseListener(this);
         Main.map.mapView.removeMouseMotionListener(this);
-        Main.map.keyDetector.removeModifierListener(this);
+        Main.map.keyDetector.removeModifierExListener(this);
         removeHighlighting();
     }
 
@@ -187,7 +187,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
      * handles everything related to highlighting primitives and way
      * segments for the given pointer position (via MouseEvent) and modifiers.
      * @param e current mouse event
-     * @param modifiers mouse modifiers, not necessarly taken from the given mouse event
+     * @param modifiers extended mouse modifiers, not necessarly taken from the given mouse event
      */
     private void addHighlighting(MouseEvent e, int modifiers) {
         if (!drawTargetHighlight)
@@ -241,7 +241,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
      * This function handles all work related to updating the cursor and highlights
      *
      * @param e current mouse event
-     * @param modifiers mouse modifiers, not necessarly taken from the given mouse event
+     * @param modifiers extended mouse modifiers, not necessarly taken from the given mouse event
      */
     private void updateCursor(MouseEvent e, int modifiers) {
         if (!Main.isDisplayingMapView())
@@ -277,7 +277,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
      * @param e mouse event
      */
     private void giveUserFeedback(MouseEvent e) {
-        giveUserFeedback(e, e.getModifiers());
+        giveUserFeedback(e, e.getModifiersEx());
     }
 
     /**
@@ -358,7 +358,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
     }
 
     private DeleteParameters getDeleteParameters(MouseEvent e, int modifiers) {
-        updateKeyModifiers(modifiers);
+        updateKeyModifiersEx(modifiers);
 
         DeleteParameters result = new DeleteParameters();
 
@@ -418,7 +418,7 @@ public class DeleteAction extends MapMode implements ModifierListener {
      * This is required to update the cursors when ctrl/shift/alt is pressed
      */
     @Override
-    public void modifiersChanged(int modifiers) {
+    public void modifiersExChanged(int modifiers) {
         if (oldEvent == null)
             return;
         // We don't have a mouse event, so we pass the old mouse event but the new modifiers.
