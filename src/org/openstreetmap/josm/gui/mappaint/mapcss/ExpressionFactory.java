@@ -1033,6 +1033,18 @@ public final class ExpressionFactory {
         public static boolean outside(Environment env, String codes) { // NO_UCD (unused code)
             return !inside(env, codes);
         }
+
+        /**
+         * Determines if the object centroid lies at given lat/lon coordinates.
+         * @param env the environment
+         * @param lat latitude
+         * @param lon longitude
+         * @return {@code true} if the object centroid lies at given lat/lon coordinates
+         * @since 12514
+         */
+        public static boolean at(Environment env, double lat, double lon) { // NO_UCD (unused code)
+            return new LatLon(lat, lon).equalsEpsilon(center(env));
+        }
     }
 
     /**
@@ -1307,9 +1319,14 @@ public final class ExpressionFactory {
         public String toString() {
             StringBuilder b = new StringBuilder("ParameterFunction~");
             b.append(m.getName()).append('(');
-            for (int i = 0; i < args.size(); ++i) {
+            for (int i = 0; i < expectedParameterTypes.length; ++i) {
                 if (i > 0) b.append(',');
-                b.append(expectedParameterTypes[i]).append(' ').append(args.get(i));
+                b.append(expectedParameterTypes[i]);
+                if (!needsEnvironment) {
+                    b.append(' ').append(args.get(i));
+                } else if (i > 0) {
+                    b.append(' ').append(args.get(i-1));
+                }
             }
             b.append(')');
             return b.toString();
