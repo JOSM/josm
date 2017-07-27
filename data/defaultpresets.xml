@@ -294,6 +294,7 @@
         <link href="http://wiki.openstreetmap.org/wiki/Tag:power=generator"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:power=generator"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:power=generator"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:power=generator"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=generator"
                   it.href="http://wiki.openstreetmap.org/wiki/IT:Tag:power=generator"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:power=generator"
@@ -1316,6 +1317,7 @@
         <item name="Stop" icon="presets/vehicle/restriction/stop.svg" type="node" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:highway=stop"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:highway=stop"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:highway=stop"
                   es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:highway=stop"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:highway=stop"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:highway=stop"
@@ -1698,6 +1700,7 @@
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:barrier=cattle_grid"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:barrier=cattle_grid"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:barrier=cattle_grid"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:barrier=cattle_grid"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:barrier=cattle_grid" />
             <key key="barrier" value="cattle_grid" />
             <reference ref="barrier_4" />
@@ -6607,7 +6610,8 @@
     <group name="Motorsport" icon="presets/vehicle/motorbike.svg">
         <item name="Motorsport" icon="presets/sport/motor.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:sport=motor"
-                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:sport=motor" />
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:sport=motor"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:sport=motor" />
             <space />
             <key key="sport" value="motor" />
             <text key="name" text="Name" />
@@ -6901,6 +6905,7 @@
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=mineshaft"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:man_made=mineshaft"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=mineshaft"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:man_made=mineshaft"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:man_made=mineshaft"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=mineshaft" />
             <space />
@@ -7085,6 +7090,7 @@
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:man_made=beacon"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:man_made=beacon"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:man_made=beacon"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:man_made=beacon"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:man_made=beacon"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=beacon" />
             <space />
@@ -8218,6 +8224,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=shoes"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:shop=shoes"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=shoes"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:shop=shoes"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=shoes"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=shoes"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:shop=shoes"
@@ -8802,6 +8809,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=jewelry"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:shop=jewelry"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=jewelry"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:shop=jewelry"
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:shop=jewelry"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=jewelry"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:shop=jewelry"
@@ -9208,6 +9216,7 @@
     <item name="Private company" icon="presets/office/private_company.svg" name_context="office" type="node,closedway,multipolygon" preset_name_label="true">
         <link href="http://wiki.openstreetmap.org/wiki/Tag:office=company"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:office=company"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:office=company"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:office=company"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:office=company"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:office=company"
@@ -9556,6 +9565,7 @@
         <link href="http://wiki.openstreetmap.org/wiki/Tag:craft=tiler"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:craft=tiler"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:craft=tiler"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:craft=tiler"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:craft=tiler"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:craft=tiler" />
         <space />
@@ -10785,6 +10795,7 @@
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=landfill"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:landuse=landfill"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:landuse=landfill"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Tag:landuse=landfill"
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=landfill"
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:landuse=landfill"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:landuse=landfill"
