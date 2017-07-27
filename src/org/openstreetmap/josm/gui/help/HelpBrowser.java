@@ -576,6 +576,8 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
                 HTMLDocument doc = (HTMLDocument) d;
                 Element element = doc.getElement(id);
                 try {
+                    // Deprecated API to replace only when migrating to Java 9 (replacement not available in Java 8)
+                    @SuppressWarnings("deprecation")
                     Rectangle r = help.modelToView(element.getStartOffset());
                     if (r != null) {
                         Rectangle vis = help.getVisibleRect();
