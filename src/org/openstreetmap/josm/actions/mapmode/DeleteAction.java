@@ -141,7 +141,7 @@ public class DeleteAction extends MapMode implements ModifierExListener {
             return;
         }
 
-        updateKeyModifiers(e.getModifiers());
+        updateKeyModifiers(e);
 
         Command c;
         if (ctrl) {
@@ -294,7 +294,7 @@ public class DeleteAction extends MapMode implements ModifierExListener {
         //
         Main.map.mapView.requestFocus();
 
-        Command c = buildDeleteCommands(e, e.getModifiers(), false);
+        Command c = buildDeleteCommands(e, e.getModifiersEx(), false);
         if (c != null) {
             Main.main.undoRedo.add(c);
         }
