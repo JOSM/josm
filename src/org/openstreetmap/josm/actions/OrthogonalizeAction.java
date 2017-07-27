@@ -193,7 +193,9 @@ public final class OrthogonalizeAction extends JosmAction {
             if (p instanceof Node) {
                 nodeList.add((Node) p);
             } else if (p instanceof Way) {
-                wayDataList.add(new WayData(((Way) p).getNodes()));
+                if (!p.isIncomplete()) {
+                    wayDataList.add(new WayData(((Way) p).getNodes()));
+                }
             } else {
                 throw new InvalidUserInputException(tr("Selection must consist only of ways and nodes."));
             }

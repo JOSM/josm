@@ -101,6 +101,7 @@ public class SimplifyWayAction extends JosmAction {
         ds.beginUpdate();
         try {
             List<Way> ways = OsmPrimitive.getFilteredList(ds.getSelected(), Way.class);
+            ways.removeIf(OsmPrimitive::isIncomplete);
             if (ways.isEmpty()) {
                 alertSelectAtLeastOneWay();
                 return;

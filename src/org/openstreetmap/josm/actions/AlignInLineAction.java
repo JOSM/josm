@@ -172,6 +172,7 @@ public final class AlignInLineAction extends JosmAction {
         DataSet ds = getLayerManager().getEditDataSet();
         List<Node> selectedNodes = new ArrayList<>(ds.getSelectedNodes());
         List<Way> selectedWays = new ArrayList<>(ds.getSelectedWays());
+        selectedWays.removeIf(OsmPrimitive::isIncomplete);
 
         try {
             Command cmd;
