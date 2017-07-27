@@ -1713,7 +1713,7 @@ public class ImageProvider {
         ImageReader reader = iter.next();
         ImageReadParam param = reader.getDefaultReadParam();
         reader.setInput(stream, true, !readMetadata && !enforceTransparency);
-        BufferedImage bi;
+        BufferedImage bi = null;
         try {
             bi = reader.read(0, param);
             if (bi.getTransparency() != Transparency.TRANSLUCENT && (readMetadata || enforceTransparency)) {
@@ -1730,6 +1730,10 @@ public class ImageProvider {
                     }
                 }
             }
+        } catch (LinkageError e) {
+            // On Windows, ComponentColorModel.getRGBComponent can fail with "UnsatisfiedLinkError: no awt in java.library.path", see #13973
+            // Then it can leads to "NoClassDefFoundError: Could not initialize class sun.awt.image.ShortInterleavedRaster", see #15079
+            Main.error(e);
         } finally {
             reader.dispose();
             stream.close();
@@ -1790,9 +1794,6 @@ public class ImageProvider {
         } catch (IIOException | NumberFormatException e) {
             // JAI doesn't like some JPEG files with error "Inconsistent metadata read from stream" (see #10267)
             Main.warn(e);
-        } catch (UnsatisfiedLinkError e) {
-            // On Windows, ComponentColorModel.getRGBComponent can fail with "UnsatisfiedLinkError: no awt in java.library.path", see #13973
-            Main.error(e);
         }
         return null;
     }
