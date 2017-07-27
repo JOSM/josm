@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -112,7 +113,8 @@ public final class ReverseWayAction extends JosmAction {
         if (!isEnabled() || ds == null)
             return;
 
-        final Collection<Way> sel = ds.getSelectedWays();
+        final Collection<Way> sel = new LinkedHashSet<>(ds.getSelectedWays());
+        sel.removeIf(w -> w.isIncomplete());
         if (sel.isEmpty()) {
             new Notification(
                     tr("Please select at least one way."))
@@ -162,6 +164,6 @@ public final class ReverseWayAction extends JosmAction {
 
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
-        setEnabled(selection.stream().anyMatch(Way.class::isInstance));
+        setEnabled(selection.stream().anyMatch(o -> o instanceof Way && !o.isIncomplete()));
     }
 }

@@ -106,6 +106,11 @@ public class CombineWayAction extends JosmAction {
 
         // remove duplicates, preserving order
         ways = new LinkedHashSet<>(ways);
+        // remove incomplete ways
+        ways.removeIf(OsmPrimitive::isIncomplete);
+        // we need at least two ways
+        if (ways.size() < 2)
+            return null;
 
         List<DataSet> dataSets = ways.stream().map(Way::getDataSet).distinct().collect(Collectors.toList());
         if (dataSets.size() != 1) {
@@ -244,8 +249,8 @@ public class CombineWayAction extends JosmAction {
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         int numWays = 0;
         for (OsmPrimitive osm : selection) {
-            if (osm instanceof Way) {
-                numWays++;
+            if (osm instanceof Way && !osm.isIncomplete() && ++numWays >= 2) {
+                break;
             }
         }
         setEnabled(numWays >= 2);

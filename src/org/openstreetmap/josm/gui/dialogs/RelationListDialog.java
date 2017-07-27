@@ -420,7 +420,7 @@ public class RelationListDialog extends ToggleDialog
         }
 
         private boolean isValid(Relation r) {
-            return !r.isDeleted() && r.isVisible() && !r.isIncomplete();
+            return !r.isDeleted() && !r.isIncomplete();
         }
 
         public void setRelations(Collection<Relation> relations) {
