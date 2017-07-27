@@ -448,7 +448,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         tagTable.setTransferHandler(null);
 
         tagTable.getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-                .put(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_MASK), "onCopy");
+                .put(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK), "onCopy");
         tagTable.getActionMap().put("onCopy", copyKeyValueAction);
 
         // allow using enter to add tags for all look&feel configurations

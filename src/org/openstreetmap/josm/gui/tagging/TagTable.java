@@ -353,7 +353,7 @@ public class TagTable extends JosmTable implements EndEditListener {
         //
         addAction = new AddAction();
         getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT)
-        .put(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, KeyEvent.CTRL_MASK), "addTag");
+        .put(KeyStroke.getKeyStroke(KeyEvent.VK_ADD, KeyEvent.CTRL_DOWN_MASK), "addTag");
         getActionMap().put("addTag", addAction);
 
         pasteAction = new PasteAction();

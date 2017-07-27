@@ -721,7 +721,7 @@ public class TagEditHelper {
 
             // Add tag on Shift-Enter
             mainPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                        KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_MASK), "addAndContinue");
+                        KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, InputEvent.SHIFT_DOWN_MASK), "addAndContinue");
                 mainPanel.getActionMap().put("addAndContinue", new AbstractAction() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -813,7 +813,7 @@ public class TagEditHelper {
             Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask).ifPresent(sc ->
                     lines.add(sc.getKeyText() + ' ' + tr("to apply first suggestion"))
             );
-            lines.add(KeyEvent.getKeyModifiersText(KeyEvent.SHIFT_MASK)+'+'+KeyEvent.getKeyText(KeyEvent.VK_ENTER) + ' '
+            lines.add(Shortcut.getKeyText(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.SHIFT_DOWN_MASK)) + ' '
                     +tr("to add without closing the dialog"));
             Shortcut.findShortcut(KeyEvent.VK_1, commandDownMask | KeyEvent.SHIFT_DOWN_MASK).ifPresent(sc ->
                     lines.add(sc.getKeyText() + ' ' + tr("to add first suggestion without closing the dialog"))

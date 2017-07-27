@@ -241,7 +241,7 @@ public class DownloadDialog extends JDialog {
         getContentPane().add(buildButtonPanel(), BorderLayout.SOUTH);
 
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_MASK), "checkClipboardContents");
+                KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK), "checkClipboardContents");
 
         getRootPane().getActionMap().put("checkClipboardContents", new AbstractAction() {
             @Override
