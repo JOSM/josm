@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
  * An abstract imagery panel used to add WMS/TMS imagery sources. See implementations.
  * @see AddTMSLayerPanel
  * @see AddWMSLayerPanel
+ * @see AddWMTSLayerPanel
  * @since 5617
  */
 public abstract class AddImageryPanel extends JPanel {
