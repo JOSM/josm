@@ -10,7 +10,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.preferences.imagery.AddImageryPanel.ContentValidationListener;
 
 /**
- * Dialog shown to add a new imagery (WMS/TMS) source from imagery preferences.
+ * Dialog shown to add a new imagery (WMS/TMS/WMTS) source from imagery preferences.
  * @since 5731
  */
 public class AddImageryDialog extends ExtendedDialog implements ContentValidationListener {
@@ -24,7 +24,7 @@ public class AddImageryDialog extends ExtendedDialog implements ContentValidatio
         super(parent, tr("Add Imagery URL"), tr("OK"), tr("Cancel"));
         setButtonIcons("ok", "cancel");
         setCancelButton(2);
-        configureContextsensitiveHelp("/Dialog/AddImagery", true /* show help button */);
+        configureContextsensitiveHelp("/Preferences/Imagery", true /* show help button */);
         setContent(panel, false);
         setMinimumSize(new Dimension(300, 400));
         panel.addContentValidationListener(this);
