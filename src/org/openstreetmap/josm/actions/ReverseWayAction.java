@@ -114,7 +114,7 @@ public final class ReverseWayAction extends JosmAction {
             return;
 
         final Collection<Way> sel = new LinkedHashSet<>(ds.getSelectedWays());
-        sel.removeIf(w -> w.isIncomplete());
+        sel.removeIf(Way::isIncomplete);
         if (sel.isEmpty()) {
             new Notification(
                     tr("Please select at least one way."))

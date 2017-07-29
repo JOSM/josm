@@ -1037,8 +1037,8 @@ public final class ExpressionFactory {
         /**
          * Determines if the object centroid lies at given lat/lon coordinates.
          * @param env the environment
-         * @param lat latitude
-         * @param lon longitude
+         * @param lat latitude, i.e., the north-south position in degrees
+         * @param lon longitude, i.e., the east-west position in degrees
          * @return {@code true} if the object centroid lies at given lat/lon coordinates
          * @since 12514
          */
