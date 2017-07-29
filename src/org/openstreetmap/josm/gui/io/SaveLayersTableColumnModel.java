@@ -26,7 +26,7 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
         private final JPanel pnlEmpty = new JPanel();
         private final JLabel needsUpload = new JLabel(tr("should be uploaded"));
         private final JLabel needsSave = new JLabel(tr("should be saved"));
-        private static final GBC defaultCellStyle = GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 0);
+        private static final GBC DEFAULT_CELL_STYLE = GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 0);
 
         /**
          * Constructs a new {@code RecommendedActionsTableCell}.
@@ -47,12 +47,12 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
             if (info != null) {
                 String htmlInfoName = Utils.escapeReservedCharactersHTML(info.getName());
                 if (info.getLayer().requiresUploadToServer() && !info.getLayer().isUploadDiscouraged()) {
-                    panel.add(needsUpload, defaultCellStyle);
+                    panel.add(needsUpload, DEFAULT_CELL_STYLE);
                     sb.append(tr("Layer ''{0}'' has modifications which should be uploaded to the server.", htmlInfoName));
 
                 } else {
                     if (info.isUploadable()) {
-                        panel.add(pnlEmpty, defaultCellStyle);
+                        panel.add(pnlEmpty, DEFAULT_CELL_STYLE);
                     }
                     if (info.getLayer().requiresUploadToServer()) {
                         sb.append(tr("Layer ''{0}'' has modifications which are discouraged to be uploaded.", htmlInfoName));
@@ -63,12 +63,12 @@ class SaveLayersTableColumnModel extends DefaultTableColumnModel {
                 sb.append("<br/>");
 
                 if (info.getLayer().requiresSaveToFile()) {
-                    panel.add(needsSave, defaultCellStyle);
+                    panel.add(needsSave, DEFAULT_CELL_STYLE);
                     sb.append(tr("Layer ''{0}'' has modifications which should be saved to its associated file ''{1}''.",
                             htmlInfoName, info.getFile().toString()));
                 } else {
                     if (info.isSavable()) {
-                        panel.add(pnlEmpty, defaultCellStyle);
+                        panel.add(pnlEmpty, DEFAULT_CELL_STYLE);
                     }
                     sb.append(tr("Layer ''{0}'' has no modifications to be saved.", htmlInfoName));
                 }

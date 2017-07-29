@@ -78,13 +78,13 @@ public final class OsmValidator {
     /** Grid detail, multiplier of east,north values for valuable cell sizing */
     private static double griddetail;
 
-    private static final Collection<String> ignoredErrors = new TreeSet<>();
+    private static final Collection<String> IGNORED_ERRORS = new TreeSet<>();
 
     /**
      * All registered tests
      */
-    private static final Collection<Class<? extends Test>> allTests = new ArrayList<>();
-    private static final Map<String, Test> allTestsMap = new HashMap<>();
+    private static final Collection<Class<? extends Test>> ALL_TESTS = new ArrayList<>();
+    private static final Map<String, Test> ALL_TESTS_MAP = new HashMap<>();
 
     /**
      * All available tests in core
@@ -138,9 +138,9 @@ public final class OsmValidator {
      * @param testClass The test class
      */
     public static void addTest(Class<? extends Test> testClass) {
-        allTests.add(testClass);
+        ALL_TESTS.add(testClass);
         try {
-            allTestsMap.put(testClass.getName(), testClass.getConstructor().newInstance());
+            ALL_TESTS_MAP.put(testClass.getName(), testClass.getConstructor().newInstance());
         } catch (ReflectiveOperationException e) {
             Main.error(e);
         }
@@ -181,12 +181,12 @@ public final class OsmValidator {
     }
 
     private static void loadIgnoredErrors() {
-        ignoredErrors.clear();
+        IGNORED_ERRORS.clear();
         if (ValidatorPreference.PREF_USE_IGNORE.get()) {
             Path path = Paths.get(getValidatorDir()).resolve("ignorederrors");
             if (path.toFile().exists()) {
                 try {
-                    ignoredErrors.addAll(Files.readAllLines(path, StandardCharsets.UTF_8));
+                    IGNORED_ERRORS.addAll(Files.readAllLines(path, StandardCharsets.UTF_8));
                 } catch (final FileNotFoundException e) {
                     Main.debug(Main.getErrorMessage(e));
                 } catch (final IOException e) {
@@ -203,7 +203,7 @@ public final class OsmValidator {
      * @see TestError#getIgnoreSubGroup()
      */
     public static void addIgnoredError(String s) {
-        ignoredErrors.add(s);
+        IGNORED_ERRORS.add(s);
     }
 
     /**
@@ -212,7 +212,7 @@ public final class OsmValidator {
      * @return <code>true</code> to ignore that error
      */
     public static boolean hasIgnoredError(String s) {
-        return ignoredErrors.contains(s);
+        return IGNORED_ERRORS.contains(s);
     }
 
     /**
@@ -220,7 +220,7 @@ public final class OsmValidator {
      */
     public static void saveIgnoredErrors() {
         try (PrintWriter out = new PrintWriter(new File(getValidatorDir(), "ignorederrors"), StandardCharsets.UTF_8.name())) {
-            for (String e : ignoredErrors) {
+            for (String e : IGNORED_ERRORS) {
                 out.println(e);
             }
         } catch (IOException e) {
@@ -253,9 +253,9 @@ public final class OsmValidator {
      * @return A map of all tests, indexed and sorted by the name of their Java class
      */
     public static SortedMap<String, Test> getAllTestsMap() {
-        applyPrefs(allTestsMap, false);
-        applyPrefs(allTestsMap, true);
-        return new TreeMap<>(allTestsMap);
+        applyPrefs(ALL_TESTS_MAP, false);
+        applyPrefs(ALL_TESTS_MAP, true);
+        return new TreeMap<>(ALL_TESTS_MAP);
     }
 
     /**
@@ -270,7 +270,7 @@ public final class OsmValidator {
         if (testClass == null) {
             return null;
         }
-        return (T) allTestsMap.get(testClass.getName());
+        return (T) ALL_TESTS_MAP.get(testClass.getName());
     }
 
     private static void applyPrefs(Map<String, Test> tests, boolean beforeUpload) {
@@ -317,7 +317,7 @@ public final class OsmValidator {
      * @return A collection of the test classes
      */
     public static Collection<Class<? extends Test>> getAllAvailableTestClasses() {
-        return Collections.unmodifiableCollection(allTests);
+        return Collections.unmodifiableCollection(ALL_TESTS);
     }
 
     /**

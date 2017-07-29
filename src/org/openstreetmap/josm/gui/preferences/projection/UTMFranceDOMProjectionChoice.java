@@ -15,25 +15,25 @@ import org.openstreetmap.josm.Main;
  */
 public class UTMFranceDOMProjectionChoice extends ListProjectionChoice {
 
-    private static final String FortMarigotName = tr("Guadeloupe Fort-Marigot 1949");
-    private static final String SainteAnneName = tr("Guadeloupe Ste-Anne 1948");
-    private static final String MartiniqueName = tr("Martinique Fort Desaix 1952");
-    private static final String Reunion92Name = tr("Reunion RGR92");
-    private static final String Guyane92Name = tr("Guyane RGFG95");
-    private static final String[] utmGeodesicsNames = {FortMarigotName, SainteAnneName, MartiniqueName, Reunion92Name, Guyane92Name};
+    private static final String FORT_MARIGOT_NAME = tr("Guadeloupe Fort-Marigot 1949");
+    private static final String SAINTE_ANNE_NAME = tr("Guadeloupe Ste-Anne 1948");
+    private static final String MARTINIQUE_NAME = tr("Martinique Fort Desaix 1952");
+    private static final String REUNION_92_NAME = tr("Reunion RGR92");
+    private static final String GUYANE_92_NAME = tr("Guyane RGFG95");
+    private static final String[] UTM_GEODESIC_NAMES = {FORT_MARIGOT_NAME, SAINTE_ANNE_NAME, MARTINIQUE_NAME, REUNION_92_NAME, GUYANE_92_NAME};
 
-    private static final Integer FortMarigotEPSG = 2969;
-    private static final Integer SainteAnneEPSG = 2970;
-    private static final Integer MartiniqueEPSG = 2973;
-    private static final Integer ReunionEPSG = 2975;
-    private static final Integer GuyaneEPSG = 2972;
-    private static final Integer[] utmEPSGs = {FortMarigotEPSG, SainteAnneEPSG, MartiniqueEPSG, ReunionEPSG, GuyaneEPSG };
+    private static final Integer FORT_MARIGOT_EPSG = 2969;
+    private static final Integer SAINTE_ANNE_EPSG = 2970;
+    private static final Integer MARTINIQUE_EPSG = 2973;
+    private static final Integer REUNION_EPSG = 2975;
+    private static final Integer GUYANE_EPSG = 2972;
+    private static final Integer[] UTM_EPSGS = {FORT_MARIGOT_EPSG, SAINTE_ANNE_EPSG, MARTINIQUE_EPSG, REUNION_EPSG, GUYANE_EPSG };
 
     /**
      * Constructs a new {@code UTMFranceDOMProjectionChoice}.
      */
     public UTMFranceDOMProjectionChoice() {
-        super(tr("UTM France (DOM)"), /* NO-ICON */ "core:utmfrancedom", utmGeodesicsNames, tr("UTM Geodesic system"));
+        super(tr("UTM France (DOM)"), /* NO-ICON */ "core:utmfrancedom", UTM_GEODESIC_NAMES, tr("UTM Geodesic system"));
     }
 
     @Override
@@ -53,27 +53,27 @@ public class UTMFranceDOMProjectionChoice extends ListProjectionChoice {
 
     @Override
     public String getProjectionName() {
-        return utmGeodesicsNames[index];
+        return UTM_GEODESIC_NAMES[index];
     }
 
     @Override
     public String getCurrentCode() {
-        return "EPSG:" + utmEPSGs[index];
+        return "EPSG:" + UTM_EPSGS[index];
     }
 
     @Override
     public String[] allCodes() {
-        String[] res = new String[utmEPSGs.length];
-        for (int i = 0; i < utmEPSGs.length; ++i) {
-            res[i] = "EPSG:" + utmEPSGs[i];
+        String[] res = new String[UTM_EPSGS.length];
+        for (int i = 0; i < UTM_EPSGS.length; ++i) {
+            res[i] = "EPSG:" + UTM_EPSGS[i];
         }
         return res;
     }
 
     @Override
     public Collection<String> getPreferencesFromCode(String code) {
-        for (int i = 0; i < utmEPSGs.length; i++) {
-            if (("EPSG:" + utmEPSGs[i]).equals(code))
+        for (int i = 0; i < UTM_EPSGS.length; i++) {
+            if (("EPSG:" + UTM_EPSGS[i]).equals(code))
                 return Collections.singleton(Integer.toString(i+1));
         }
         return null;

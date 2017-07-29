@@ -52,16 +52,16 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
         }
     }
 
-    private static final Collection<Pattern> ignoredKeys = new ArrayList<>();
+    private static final Collection<Pattern> IGNORED_KEYS = new ArrayList<>();
     static {
         for (String s : OsmPrimitive.getUninterestingKeys()) {
-            ignoredKeys.add(getPatternFor(s));
+            IGNORED_KEYS.add(getPatternFor(s));
         }
         for (String s : new String[]{"name", "ref", "tiger:county"}) {
-            ignoredKeys.add(getPatternFor(s, false));
+            IGNORED_KEYS.add(getPatternFor(s, false));
         }
         for (String s : new String[]{"tiger:county", "turn:lanes", "change:lanes", "placement"}) {
-            ignoredKeys.add(getPatternFor(s, true));
+            IGNORED_KEYS.add(getPatternFor(s, true));
         }
     }
 
@@ -291,7 +291,7 @@ public class ReverseWayTagCorrector extends TagCorrector<Way> {
     }
 
     private static boolean ignoreKeyForCorrection(String key) {
-        for (Pattern ignoredKey : ignoredKeys) {
+        for (Pattern ignoredKey : IGNORED_KEYS) {
             if (ignoredKey.matcher(key).matches()) {
                 return true;
             }

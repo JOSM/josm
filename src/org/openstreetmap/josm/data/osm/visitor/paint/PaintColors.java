@@ -92,7 +92,7 @@ public enum PaintColors {
 
     private static volatile Color backgroundColorCache;
 
-    private static final MapPaintSylesUpdateListener styleOverrideListener = new MapPaintSylesUpdateListener() {
+    private static final MapPaintSylesUpdateListener STYLE_OVERRIDE_LISTENER = new MapPaintSylesUpdateListener() {
         //TODO: Listen to wireframe map mode changes.
         @Override
         public void mapPaintStylesUpdated() {
@@ -106,7 +106,7 @@ public enum PaintColors {
     };
 
     static {
-        MapPaintStyles.addMapPaintSylesUpdateListener(styleOverrideListener);
+        MapPaintStyles.addMapPaintSylesUpdateListener(STYLE_OVERRIDE_LISTENER);
     }
 
     PaintColors(String name, Color defaultColor) {

@@ -76,7 +76,7 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
 
     private final transient HelpContentReader reader;
 
-    private static final JosmAction focusAction = new JosmAction(tr("JOSM Help Browser"), "help", "", null, false, false) {
+    private static final JosmAction FOCUS_ACTION = new JosmAction(tr("JOSM Help Browser"), "help", "", null, false, false) {
         @Override
         public void actionPerformed(ActionEvent e) {
             HelpBrowser.getInstance().setVisible(true);
@@ -220,7 +220,7 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
                 windowMenuItem = null;
             }
             if (windowMenuItem == null && visible) {
-                windowMenuItem = MainMenu.add(Main.main.menu.windowMenu, focusAction, MainMenu.WINDOW_MENU_GROUP.VOLATILE);
+                windowMenuItem = MainMenu.add(Main.main.menu.windowMenu, FOCUS_ACTION, MainMenu.WINDOW_MENU_GROUP.VOLATILE);
             }
         }
         super.setVisible(visible);

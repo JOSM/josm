@@ -44,7 +44,7 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
     private static final Pattern PATTERN_PARAM  = Pattern.compile("\\{([^}]+)\\}");
     // CHECKSTYLE.ON: SingleSpaceSeparator
 
-    private static final NumberFormat latLonFormat = new DecimalFormat("###0.0000000", new DecimalFormatSymbols(Locale.US));
+    private static final NumberFormat LATLON_FORMAT = new DecimalFormat("###0.0000000", new DecimalFormatSymbols(Locale.US));
 
     private static final Pattern[] ALL_PATTERNS = {
         PATTERN_HEADER, PATTERN_PROJ, PATTERN_WKID, PATTERN_BBOX, PATTERN_W, PATTERN_S, PATTERN_E, PATTERN_N, PATTERN_WIDTH, PATTERN_HEIGHT
@@ -110,9 +110,11 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
         }
         String bbox;
         if (switchLatLon) {
-            bbox = String.format("%s,%s,%s,%s", latLonFormat.format(s), latLonFormat.format(w), latLonFormat.format(n), latLonFormat.format(e));
+            bbox = String.format("%s,%s,%s,%s",
+                    LATLON_FORMAT.format(s), LATLON_FORMAT.format(w), LATLON_FORMAT.format(n), LATLON_FORMAT.format(e));
         } else {
-            bbox = String.format("%s,%s,%s,%s", latLonFormat.format(w), latLonFormat.format(s), latLonFormat.format(e), latLonFormat.format(n));
+            bbox = String.format("%s,%s,%s,%s",
+                    LATLON_FORMAT.format(w), LATLON_FORMAT.format(s), LATLON_FORMAT.format(e), LATLON_FORMAT.format(n));
         }
 
         // Using StringBuffer and generic PATTERN_PARAM matcher gives 2x performance improvement over replaceAll
@@ -131,16 +133,16 @@ public class TemplatedWMSTileSource extends AbstractWMSTileSource implements Tem
                 replacement = bbox;
                 break;
             case "w":
-                replacement = latLonFormat.format(w);
+                replacement = LATLON_FORMAT.format(w);
                 break;
             case "s":
-                replacement = latLonFormat.format(s);
+                replacement = LATLON_FORMAT.format(s);
                 break;
             case "e":
-                replacement = latLonFormat.format(e);
+                replacement = LATLON_FORMAT.format(e);
                 break;
             case "n":
-                replacement = latLonFormat.format(n);
+                replacement = LATLON_FORMAT.format(n);
                 break;
             case "width":
             case "height":

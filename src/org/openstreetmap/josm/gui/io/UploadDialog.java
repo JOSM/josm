@@ -74,7 +74,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     private static UploadDialog uploadDialog;
 
     /** list of custom components that can be added by plugins at JOSM startup */
-    private static final Collection<Component> customComponents = new ArrayList<>();
+    private static final Collection<Component> CUSTOM_COMPONENTS = new ArrayList<>();
 
     /** the "created_by" changeset OSM key */
     private static final String CREATED_BY = "created_by";
@@ -135,7 +135,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         pnl.add(pnlUploadedObjects, GBC.eol().fill(GBC.BOTH));
 
         // Custom components
-        for (Component c : customComponents) {
+        for (Component c : CUSTOM_COMPONENTS) {
             pnl.add(c, GBC.eol().fill(GBC.HORIZONTAL));
         }
 
@@ -405,7 +405,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
      */
     public static boolean addCustomComponent(Component c) {
         if (c != null) {
-            return customComponents.add(c);
+            return CUSTOM_COMPONENTS.add(c);
         }
         return false;
     }

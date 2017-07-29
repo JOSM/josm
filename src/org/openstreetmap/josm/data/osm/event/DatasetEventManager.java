@@ -28,7 +28,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListen
  */
 public class DatasetEventManager implements ActiveLayerChangeListener, Listener {
 
-    private static final DatasetEventManager instance = new DatasetEventManager();
+    private static final DatasetEventManager INSTANCE = new DatasetEventManager();
 
     private final class EdtRunnable implements Runnable {
         @Override
@@ -138,7 +138,7 @@ public class DatasetEventManager implements ActiveLayerChangeListener, Listener 
      * @return the unique instance
      */
     public static DatasetEventManager getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     private final Queue<AbstractDatasetChangedEvent> eventsInEDT = new LinkedBlockingQueue<>();

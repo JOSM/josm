@@ -31,14 +31,14 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListen
  */
 public class SelectionEventManager implements DataSelectionListener, ActiveLayerChangeListener {
 
-    private static final SelectionEventManager instance = new SelectionEventManager();
+    private static final SelectionEventManager INSTANCE = new SelectionEventManager();
 
     /**
      * Returns the unique instance.
      * @return the unique instance
      */
     public static SelectionEventManager getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     private interface ListenerInfo {

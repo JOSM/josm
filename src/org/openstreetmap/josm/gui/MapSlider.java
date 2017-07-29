@@ -19,7 +19,7 @@ import org.openstreetmap.josm.gui.help.Helpful;
  */
 class MapSlider extends JSlider implements PropertyChangeListener, ChangeListener, Helpful {
 
-    private static final double zoomStep = 1.1;
+    private static final double ZOOM_STEP = 1.1;
     private final MapView mv;
     private boolean preventChange;
     private int lastValue;
@@ -39,7 +39,7 @@ class MapSlider extends JSlider implements PropertyChangeListener, ChangeListene
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
         double maxScale = this.mv.getMaxScale();
-        int zoom = (int) Math.round(Math.log(maxScale/mv.getScale())/Math.log(zoomStep));
+        int zoom = (int) Math.round(Math.log(maxScale/mv.getScale())/Math.log(ZOOM_STEP));
         preventChange = true;
         setValue(zoom);
         lastValue = zoom;
@@ -58,7 +58,7 @@ class MapSlider extends JSlider implements PropertyChangeListener, ChangeListene
             }
         } else {
             double maxScale = this.mv.getMaxScale();
-            double scale = maxScale/Math.pow(zoomStep, getValue());
+            double scale = maxScale/Math.pow(ZOOM_STEP, getValue());
             double snapped = mv.scaleFloor(scale);
             mv.zoomTo(this.mv.getCenter(), snapped);
         }

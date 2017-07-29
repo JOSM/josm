@@ -52,7 +52,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
     private static DefaultNameFormatter instance;
 
-    private static final List<NameFormatterHook> formatHooks = new LinkedList<>();
+    private static final List<NameFormatterHook> FORMAT_HOOKS = new LinkedList<>();
 
     /**
      * Replies the unique instance of this formatter
@@ -74,8 +74,8 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      */
     public static void registerFormatHook(NameFormatterHook hook) {
         if (hook == null) return;
-        if (!formatHooks.contains(hook)) {
-            formatHooks.add(0, hook);
+        if (!FORMAT_HOOKS.contains(hook)) {
+            FORMAT_HOOKS.add(0, hook);
         }
     }
 
@@ -86,8 +86,8 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      */
     public static void unregisterFormatHook(NameFormatterHook hook) {
         if (hook == null) return;
-        if (formatHooks.contains(hook)) {
-            formatHooks.remove(hook);
+        if (FORMAT_HOOKS.contains(hook)) {
+            FORMAT_HOOKS.remove(hook);
         }
     }
 
@@ -202,7 +202,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
 
         String result = name.toString();
-        for (NameFormatterHook hook: formatHooks) {
+        for (NameFormatterHook hook: FORMAT_HOOKS) {
             String hookResult = hook.checkFormat(node, result);
             if (hookResult != null)
                 return hookResult;
@@ -294,7 +294,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         decorateNameWithId(name, way);
 
         String result = name.toString();
-        for (NameFormatterHook hook: formatHooks) {
+        for (NameFormatterHook hook: FORMAT_HOOKS) {
             String hookResult = hook.checkFormat(way, result);
             if (hookResult != null)
                 return hookResult;
@@ -332,7 +332,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         decorateNameWithId(name, relation);
 
         String result = name.toString();
-        for (NameFormatterHook hook: formatHooks) {
+        for (NameFormatterHook hook: FORMAT_HOOKS) {
             String hookResult = hook.checkFormat(relation, result);
             if (hookResult != null)
                 return hookResult;
@@ -429,7 +429,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             name += '['+adminLevel+']';
         }
 
-        for (NameFormatterHook hook: formatHooks) {
+        for (NameFormatterHook hook: FORMAT_HOOKS) {
             String hookResult = hook.checkRelationTypeName(relation, name);
             if (hookResult != null)
                 return hookResult;

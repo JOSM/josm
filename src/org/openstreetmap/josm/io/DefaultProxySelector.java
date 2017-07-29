@@ -40,11 +40,11 @@ public class DefaultProxySelector extends ProxySelector {
      *
      * We therefore read the property at class loading time and remember it's value.
      */
-    private static boolean JVM_WILL_USE_SYSTEM_PROXIES;
+    private static boolean jvmWillUseSystemProxies;
     static {
         String v = System.getProperty("java.net.useSystemProxies");
         if (v != null && v.equals(Boolean.TRUE.toString())) {
-            JVM_WILL_USE_SYSTEM_PROXIES = true;
+            jvmWillUseSystemProxies = true;
         }
     }
 
@@ -58,7 +58,7 @@ public class DefaultProxySelector extends ProxySelector {
      *
      */
     public static boolean willJvmRetrieveSystemProxies() {
-        return JVM_WILL_USE_SYSTEM_PROXIES;
+        return jvmWillUseSystemProxies;
     }
 
     private ProxyPolicy proxyPolicy;
@@ -201,7 +201,7 @@ public class DefaultProxySelector extends ProxySelector {
         }
         switch(proxyPolicy) {
         case USE_SYSTEM_SETTINGS:
-            if (!JVM_WILL_USE_SYSTEM_PROXIES) {
+            if (!jvmWillUseSystemProxies) {
                 Main.warn(tr("The JVM is not configured to lookup proxies from the system settings. "+
                         "The property ''java.net.useSystemProxies'' was missing at startup time.  Will not use a proxy."));
                 return NO_PROXY_LIST;

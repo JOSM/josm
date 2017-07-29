@@ -30,7 +30,7 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 public final class TaggingPresets {
 
     /** The collection of tagging presets */
-    private static final Collection<TaggingPreset> taggingPresets = new ArrayList<>();
+    private static final Collection<TaggingPreset> TAGGING_PRESETS = new ArrayList<>();
 
     /** cache for key/value pairs found in the preset */
     private static final MultiMap<String, String> PRESET_TAG_CACHE = new MultiMap<>();
@@ -38,7 +38,7 @@ public final class TaggingPresets {
     private static final Set<String> PRESET_ROLE_CACHE = new HashSet<>();
 
     /** The collection of listeners */
-    private static final Collection<TaggingPresetListener> listeners = new ArrayList<>();
+    private static final Collection<TaggingPresetListener> LISTENERS = new ArrayList<>();
 
     private TaggingPresets() {
         // Hide constructor for utility classes
@@ -48,9 +48,9 @@ public final class TaggingPresets {
      * Initializes tagging presets from preferences.
      */
     public static void readFromPreferences() {
-        taggingPresets.clear();
-        taggingPresets.addAll(TaggingPresetReader.readFromPreferences(false, false));
-        cachePresets(taggingPresets);
+        TAGGING_PRESETS.clear();
+        TAGGING_PRESETS.addAll(TaggingPresetReader.readFromPreferences(false, false));
+        cachePresets(TAGGING_PRESETS);
     }
 
     /**
@@ -58,16 +58,16 @@ public final class TaggingPresets {
      */
     public static void initialize() {
         readFromPreferences();
-        for (TaggingPreset tp: taggingPresets) {
+        for (TaggingPreset tp: TAGGING_PRESETS) {
             if (!(tp instanceof TaggingPresetSeparator)) {
                 Main.toolbar.register(tp);
             }
         }
-        if (taggingPresets.isEmpty()) {
+        if (TAGGING_PRESETS.isEmpty()) {
             Main.main.menu.presetsMenu.setVisible(false);
         } else {
             Map<TaggingPresetMenu, JMenu> submenus = new HashMap<>();
-            for (final TaggingPreset p : taggingPresets) {
+            for (final TaggingPreset p : TAGGING_PRESETS) {
                 JMenu m = p.group != null ? submenus.get(p.group) : Main.main.menu.presetsMenu;
                 if (m == null && p.group != null) {
                     Main.error("No tagging preset submenu for " + p.group);
@@ -135,7 +135,7 @@ public final class TaggingPresets {
      * @return a new collection containing all tagging presets. Empty if presets are not initialized (never null)
      */
     public static Collection<TaggingPreset> getTaggingPresets() {
-        return Collections.unmodifiableCollection(taggingPresets);
+        return Collections.unmodifiableCollection(TAGGING_PRESETS);
     }
 
     /**
@@ -198,8 +198,8 @@ public final class TaggingPresets {
      * @param presets The tagging presets to add
      */
     public static void addTaggingPresets(Collection<TaggingPreset> presets) {
-        if (presets != null && taggingPresets.addAll(presets)) {
-            for (TaggingPresetListener listener : listeners) {
+        if (presets != null && TAGGING_PRESETS.addAll(presets)) {
+            for (TaggingPresetListener listener : LISTENERS) {
                 listener.taggingPresetsModified();
             }
         }
@@ -211,7 +211,7 @@ public final class TaggingPresets {
      */
     public static void addListener(TaggingPresetListener listener) {
         if (listener != null) {
-            listeners.add(listener);
+            LISTENERS.add(listener);
         }
     }
 
@@ -221,7 +221,7 @@ public final class TaggingPresets {
      */
     public static void removeListener(TaggingPresetListener listener) {
         if (listener != null) {
-            listeners.remove(listener);
+            LISTENERS.remove(listener);
         }
     }
 }

@@ -30,7 +30,7 @@ import org.xml.sax.SAXException;
  */
 public class PlatformHookOsx implements PlatformHook, InvocationHandler {
 
-    private static final PlatformHookOsx ivhandler = new PlatformHookOsx();
+    private static final PlatformHookOsx INVOCATION_HANDLER = new PlatformHookOsx();
 
     private String oSBuildNumber;
 
@@ -58,7 +58,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
             Class<?> openFilesHandler = findHandlerClass("OpenFilesHandler");
             Class<?> preferencesHandler = findHandlerClass("PreferencesHandler");
             Object proxy = Proxy.newProxyInstance(PlatformHookOsx.class.getClassLoader(), new Class<?>[] {
-                quitHandler, aboutHandler, openFilesHandler, preferencesHandler}, ivhandler);
+                quitHandler, aboutHandler, openFilesHandler, preferencesHandler}, INVOCATION_HANDLER);
             Object appli = eawtApplication.getConstructor((Class[]) null).newInstance((Object[]) null);
             if (Utils.getJavaVersion() >= 9) {
                 setHandlers(Desktop.class, quitHandler, aboutHandler, openFilesHandler, preferencesHandler, proxy, Desktop.getDesktop());

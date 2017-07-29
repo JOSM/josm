@@ -96,7 +96,7 @@ public final class I18n {
     private static volatile String loadedCode = "en";
 
     /* Localization keys for file chooser (and color chooser). */
-    private static final String[] javaInternalMessageKeys = new String[] {
+    private static final String[] JAVA_INTERNAL_MESSAGE_KEYS = new String[] {
         /* JFileChooser windows laf */
         "FileChooser.detailsViewActionLabelText",
         "FileChooser.detailsViewButtonAccessibleName",
@@ -690,7 +690,7 @@ public final class I18n {
         AbstractFileChooser.setDefaultLocale(l);
         JFileChooser.setDefaultLocale(l);
         JColorChooser.setDefaultLocale(l);
-        for (String key : javaInternalMessageKeys) {
+        for (String key : JAVA_INTERNAL_MESSAGE_KEYS) {
             String us = UIManager.getString(key, Locale.US);
             String loc = UIManager.getString(key, l);
             // only provide custom translation if it is not already localized by Java
