@@ -37,7 +37,7 @@ import org.openstreetmap.josm.tools.GBC;
  * by subsequent calls to the renderer (#12462).
  */
 class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer, TableCellEditor {
-    private static final Color colorError = new Color(255, 197, 197);
+    private static final Color COLOR_ERROR = new Color(255, 197, 197);
     private static final String ELLIPSIS = '…' + File.separator;
 
     private final JLabel lblLayerName = new JLabel();
@@ -45,7 +45,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
     private final JosmTextField tfFilename = new JosmTextField();
     private final JButton btnFileChooser = new JButton(new LaunchFileChooserAction());
 
-    private static final GBC defaultCellStyle = GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 0);
+    private static final GBC DEFAULT_CELL_STYLE = GBC.eol().fill(GBC.HORIZONTAL).insets(2, 0, 2, 0);
 
     private final transient CellEditorSupport cellEditorSupport = new CellEditorSupport(this);
     private File value;
@@ -136,7 +136,7 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
     private String addLblLayerName(SaveLayerInfo info) {
         lblLayerName.setIcon(info.getLayer().getIcon());
         lblLayerName.setText(info.getName());
-        add(lblLayerName, defaultCellStyle);
+        add(lblLayerName, DEFAULT_CELL_STYLE);
         return tr("The bold text is the name of the layer.");
     }
 
@@ -163,10 +163,10 @@ class LayerNameAndFilePathTableCell extends JPanel implements TableCellRenderer,
             }
         }
 
-        lblFilename.setBackground(error ? colorError : getBackground());
-        btnFileChooser.setBackground(error ? colorError : getBackground());
+        lblFilename.setBackground(error ? COLOR_ERROR : getBackground());
+        btnFileChooser.setBackground(error ? COLOR_ERROR : getBackground());
 
-        add(lblFilename, defaultCellStyle);
+        add(lblFilename, DEFAULT_CELL_STYLE);
         return tr("Click cell to change the file path.") + "<br/>" + tooltip;
     }
 

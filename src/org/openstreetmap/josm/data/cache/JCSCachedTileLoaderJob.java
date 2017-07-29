@@ -80,8 +80,8 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
 
 
 
-    private static final ConcurrentMap<String, Set<ICachedLoaderListener>> inProgress = new ConcurrentHashMap<>();
-    private static final ConcurrentMap<String, Boolean> useHead = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, Set<ICachedLoaderListener>> IN_PROGRESS = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, Boolean> USE_HEAD = new ConcurrentHashMap<>();
 
     protected final long now; // when the job started
 
@@ -161,11 +161,11 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             LOG.log(Level.WARNING, "No url returned for: {0}, skipping", getCacheKey());
             throw new IllegalArgumentException("No url returned");
         }
-        synchronized (inProgress) {
-            Set<ICachedLoaderListener> newListeners = inProgress.get(deduplicationKey);
+        synchronized (IN_PROGRESS) {
+            Set<ICachedLoaderListener> newListeners = IN_PROGRESS.get(deduplicationKey);
             if (newListeners == null) {
                 newListeners = new HashSet<>();
-                inProgress.put(deduplicationKey, newListeners);
+                IN_PROGRESS.put(deduplicationKey, newListeners);
                 first = true;
             }
             newListeners.add(listener);
@@ -258,9 +258,9 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
 
     private void finishLoading(LoadResult result) {
         Set<ICachedLoaderListener> listeners;
-        synchronized (inProgress) {
+        synchronized (IN_PROGRESS) {
             try {
-                listeners = inProgress.remove(getUrl().toString());
+                listeners = IN_PROGRESS.remove(getUrl().toString());
             } catch (IOException e) {
                 listeners = null;
                 Main.trace(e);
@@ -311,7 +311,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             // if we have object in cache, and host doesn't support If-Modified-Since nor If-None-Match
             // then just use HEAD request and check returned values
             if (isObjectLoadable() &&
-                    Boolean.TRUE.equals(useHead.get(getServerKey())) &&
+                    Boolean.TRUE.equals(USE_HEAD.get(getServerKey())) &&
                     isCacheValidUsingHead()) {
                 LOG.log(Level.FINE, "JCS - cache entry verified using HEAD request: {0}", getUrl());
                 return true;
@@ -345,7 +345,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 String serverKey = getServerKey();
                 LOG.log(Level.INFO, "JCS - Host: {0} found not to return 304 codes for If-Modified-Since or If-None-Match headers",
                         serverKey);
-                useHead.put(serverKey, Boolean.TRUE);
+                USE_HEAD.put(serverKey, Boolean.TRUE);
             }
 
             attributes = parseHeaders(urlConn);

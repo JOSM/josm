@@ -51,34 +51,34 @@ public class UploadAction extends JosmAction {
      * dialog is the last thing shown before upload really starts; on occasion
      * however, a plugin might also want to insert something after that.
      */
-    private static final List<UploadHook> uploadHooks = new LinkedList<>();
-    private static final List<UploadHook> lateUploadHooks = new LinkedList<>();
+    private static final List<UploadHook> UPLOAD_HOOKS = new LinkedList<>();
+    private static final List<UploadHook> LATE_UPLOAD_HOOKS = new LinkedList<>();
 
     static {
         /**
          * Calls validator before upload.
          */
-        uploadHooks.add(new ValidateUploadHook());
+        UPLOAD_HOOKS.add(new ValidateUploadHook());
 
         /**
          * Fixes database errors
          */
-        uploadHooks.add(new FixDataHook());
+        UPLOAD_HOOKS.add(new FixDataHook());
 
         /**
          * Checks server capabilities before upload.
          */
-        uploadHooks.add(new ApiPreconditionCheckerHook());
+        UPLOAD_HOOKS.add(new ApiPreconditionCheckerHook());
 
         /**
          * Adjusts the upload order of new relations
          */
-        uploadHooks.add(new RelationUploadOrderHook());
+        UPLOAD_HOOKS.add(new RelationUploadOrderHook());
 
         /**
          * Removes discardable tags like created_by on modified objects
          */
-        lateUploadHooks.add(new DiscardTagsHook());
+        LATE_UPLOAD_HOOKS.add(new DiscardTagsHook());
     }
 
     /**
@@ -101,12 +101,12 @@ public class UploadAction extends JosmAction {
     public static void registerUploadHook(UploadHook hook, boolean late) {
         if (hook == null) return;
         if (late) {
-            if (!lateUploadHooks.contains(hook)) {
-                lateUploadHooks.add(0, hook);
+            if (!LATE_UPLOAD_HOOKS.contains(hook)) {
+                LATE_UPLOAD_HOOKS.add(0, hook);
             }
         } else {
-            if (!uploadHooks.contains(hook)) {
-                uploadHooks.add(0, hook);
+            if (!UPLOAD_HOOKS.contains(hook)) {
+                UPLOAD_HOOKS.add(0, hook);
             }
         }
     }
@@ -118,11 +118,11 @@ public class UploadAction extends JosmAction {
      */
     public static void unregisterUploadHook(UploadHook hook) {
         if (hook == null) return;
-        if (uploadHooks.contains(hook)) {
-            uploadHooks.remove(hook);
+        if (UPLOAD_HOOKS.contains(hook)) {
+            UPLOAD_HOOKS.remove(hook);
         }
-        if (lateUploadHooks.contains(hook)) {
-            lateUploadHooks.remove(hook);
+        if (LATE_UPLOAD_HOOKS.contains(hook)) {
+            LATE_UPLOAD_HOOKS.remove(hook);
         }
     }
 
@@ -203,7 +203,7 @@ public class UploadAction extends JosmAction {
         // FIXME: this should become an asynchronous task
         //
         if (apiData != null) {
-            for (UploadHook hook : uploadHooks) {
+            for (UploadHook hook : UPLOAD_HOOKS) {
                 if (!hook.checkUpload(apiData))
                     return false;
             }
@@ -239,7 +239,7 @@ public class UploadAction extends JosmAction {
         if (dialog.isCanceled())
             return;
 
-        for (UploadHook hook : lateUploadHooks) {
+        for (UploadHook hook : LATE_UPLOAD_HOOKS) {
             if (!hook.checkUpload(apiData))
                 return;
         }

@@ -44,7 +44,7 @@ public class GeoJSONWriter {
 
     private final OsmDataLayer layer;
     private final Projection projection;
-    private static final boolean skipEmptyNodes = true;
+    private static final boolean SKIP_EMPTY_NODES = true;
 
     /**
      * Constructs a new {@code GeoJSONWriter}.
@@ -164,7 +164,7 @@ public class GeoJSONWriter {
     protected void appendPrimitive(OsmPrimitive p, JsonArrayBuilder array) {
         if (p.isIncomplete()) {
             return;
-        } else if (skipEmptyNodes && p instanceof Node && p.getKeys().isEmpty()) {
+        } else if (SKIP_EMPTY_NODES && p instanceof Node && p.getKeys().isEmpty()) {
             return;
         }
 

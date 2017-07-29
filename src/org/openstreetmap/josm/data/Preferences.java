@@ -1456,11 +1456,11 @@ public class Preferences {
         } catch (ReflectiveOperationException ex) {
             throw new IllegalArgumentException(ex);
         }
-        for (Entry<String, String> key_value : hash.entrySet()) {
+        for (Entry<String, String> keyValue : hash.entrySet()) {
             Object value;
             Field f;
             try {
-                f = klass.getDeclaredField(key_value.getKey().replace('-', '_'));
+                f = klass.getDeclaredField(keyValue.getKey().replace('-', '_'));
             } catch (NoSuchFieldException ex) {
                 Main.trace(ex);
                 continue;
@@ -1470,25 +1470,25 @@ public class Preferences {
             }
             Utils.setObjectsAccessible(f);
             if (f.getType() == Boolean.class || f.getType() == boolean.class) {
-                value = Boolean.valueOf(key_value.getValue());
+                value = Boolean.valueOf(keyValue.getValue());
             } else if (f.getType() == Integer.class || f.getType() == int.class) {
                 try {
-                    value = Integer.valueOf(key_value.getValue());
+                    value = Integer.valueOf(keyValue.getValue());
                 } catch (NumberFormatException nfe) {
                     continue;
                 }
             } else if (f.getType() == Double.class || f.getType() == double.class) {
                 try {
-                    value = Double.valueOf(key_value.getValue());
+                    value = Double.valueOf(keyValue.getValue());
                 } catch (NumberFormatException nfe) {
                     continue;
                 }
             } else if (f.getType() == String.class) {
-                value = key_value.getValue();
+                value = keyValue.getValue();
             } else if (f.getType().isAssignableFrom(Map.class)) {
-                value = mapFromJson(key_value.getValue());
+                value = mapFromJson(keyValue.getValue());
             } else if (f.getType().isAssignableFrom(MultiMap.class)) {
-                value = multiMapFromJson(key_value.getValue());
+                value = multiMapFromJson(keyValue.getValue());
             } else
                 throw new JosmRuntimeException("unsupported preference primitive type");
 

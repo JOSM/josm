@@ -19,7 +19,7 @@ import org.openstreetmap.josm.tools.TextTagParser;
  * @since 10604
  */
 public final class TextTagPaster extends AbstractTagPaster {
-    private static final String help = ht("/Action/PasteTags");
+    private static final String HELP = ht("/Action/PasteTags");
 
     /**
      * Create a new {@link TextTagPaster}
@@ -46,7 +46,7 @@ public final class TextTagPaster extends AbstractTagPaster {
     protected Map<String, String> getTags(TransferSupport support) throws UnsupportedFlavorException, IOException {
         Map<String, String> tags = getTagsImpl(support);
         if (tags.isEmpty()) {
-            TextTagParser.showBadBufferMessage(help);
+            TextTagParser.showBadBufferMessage(HELP);
             throw new IOException("Invalid tags to paste.");
         }
         if (!TextTagParser.validateTags(tags)) {

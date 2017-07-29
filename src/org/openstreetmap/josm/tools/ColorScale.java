@@ -61,9 +61,9 @@ public final class ColorScale {
             angle -= quadrant;
             quadrant = Utils.mod(quadrant+1, 4);
 
-            float vh = h[quadrant] * w(angle) + h[quadrant+1] * (1 - w(angle));
-            float vs = s[quadrant] * w(angle) + s[Utils.mod(quadrant+1, 4)] * (1 - w(angle));
-            float vb = b[quadrant] * w(angle) + b[Utils.mod(quadrant+1, 4)] * (1 - w(angle));
+            float vh = h[quadrant] * weighted(angle) + h[quadrant+1] * (1 - weighted(angle));
+            float vs = s[quadrant] * weighted(angle) + s[Utils.mod(quadrant+1, 4)] * (1 - weighted(angle));
+            float vb = b[quadrant] * weighted(angle) + b[Utils.mod(quadrant+1, 4)] * (1 - weighted(angle));
 
             sc.colors[i] = Color.getHSBColor(vh/360f, vs/100f, vb/100f);
         }
@@ -78,7 +78,7 @@ public final class ColorScale {
      * @param x number: 0&lt;=x&lt;=1
      * @return the weighted value
      */
-    private static float w(float x) {
+    private static float weighted(float x) {
         if (x < 0.5)
             return 1 - 2*x*x;
         else

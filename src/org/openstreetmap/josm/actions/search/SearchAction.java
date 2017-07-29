@@ -124,12 +124,12 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
     }
 
-    private static final LinkedList<SearchSetting> searchHistory = new LinkedList<>();
+    private static final LinkedList<SearchSetting> SEARCH_HISTORY = new LinkedList<>();
     static {
         for (String s: Main.pref.getCollection("search.history", Collections.<String>emptyList())) {
             SearchSetting ss = SearchSetting.readFromString(s);
             if (ss != null) {
-                searchHistory.add(ss);
+                SEARCH_HISTORY.add(ss);
             }
         }
     }
@@ -139,7 +139,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
      * @return The last searched terms. Do not modify it.
      */
     public static Collection<SearchSetting> getSearchHistory() {
-        return searchHistory;
+        return SEARCH_HISTORY;
     }
 
     /**
@@ -147,19 +147,19 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
      * @param s The search to save
      */
     public static void saveToHistory(SearchSetting s) {
-        if (searchHistory.isEmpty() || !s.equals(searchHistory.getFirst())) {
-            searchHistory.addFirst(new SearchSetting(s));
-        } else if (searchHistory.contains(s)) {
+        if (SEARCH_HISTORY.isEmpty() || !s.equals(SEARCH_HISTORY.getFirst())) {
+            SEARCH_HISTORY.addFirst(new SearchSetting(s));
+        } else if (SEARCH_HISTORY.contains(s)) {
             // move existing entry to front, fixes #8032 - search history loses entries when re-using queries
-            searchHistory.remove(s);
-            searchHistory.addFirst(new SearchSetting(s));
+            SEARCH_HISTORY.remove(s);
+            SEARCH_HISTORY.addFirst(new SearchSetting(s));
         }
         int maxsize = Main.pref.getInteger("search.history-size", DEFAULT_SEARCH_HISTORY_SIZE);
-        while (searchHistory.size() > maxsize) {
-            searchHistory.removeLast();
+        while (SEARCH_HISTORY.size() > maxsize) {
+            SEARCH_HISTORY.removeLast();
         }
-        Set<String> savedHistory = new LinkedHashSet<>(searchHistory.size());
-        for (SearchSetting item: searchHistory) {
+        Set<String> savedHistory = new LinkedHashSet<>(SEARCH_HISTORY.size());
+        for (SearchSetting item: SEARCH_HISTORY) {
             savedHistory.add(item.writeToString());
         }
         Main.pref.putCollection("search.history", savedHistory);

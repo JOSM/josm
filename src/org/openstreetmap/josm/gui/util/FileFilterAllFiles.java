@@ -13,17 +13,17 @@ import javax.swing.filechooser.FileFilter;
  */
 public class FileFilterAllFiles extends FileFilter {
 
-    private static FileFilterAllFiles INSTANCE;
+    private static FileFilterAllFiles instance;
 
     /**
      * Replies the unique instance.
      * @return the unique instance
      */
     public static synchronized FileFilterAllFiles getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new FileFilterAllFiles();
+        if (instance == null) {
+            instance = new FileFilterAllFiles();
         }
-        return INSTANCE;
+        return instance;
     }
 
     @Override

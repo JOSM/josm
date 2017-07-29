@@ -30,7 +30,7 @@ import org.openstreetmap.josm.Main;
 public class SlippyMapControler extends MouseAdapter {
 
     /** A Timer for smoothly moving the map area */
-    private static final Timer timer = new Timer(true);
+    private static final Timer TIMER = new Timer(true);
 
     /** Does the moving */
     private MoveTask moveTask = new MoveTask();
@@ -228,7 +228,7 @@ public class SlippyMapControler extends MouseAdapter {
             if (newMoveTaskState != scheduled) {
                 scheduled = newMoveTaskState;
                 if (newMoveTaskState) {
-                    timer.schedule(this, 0, timerInterval);
+                    TIMER.schedule(this, 0, timerInterval);
                 } else {
                     // We have to create a new instance because rescheduling a
                     // once canceled TimerTask is not possible

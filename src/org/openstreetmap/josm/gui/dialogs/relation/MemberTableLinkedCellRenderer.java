@@ -16,11 +16,11 @@ import org.openstreetmap.josm.tools.ImageProvider;
 
 public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
 
-    private static final Image arrowUp = ImageProvider.get("dialogs/relation", "arrowup").getImage();
-    private static final Image arrowDown = ImageProvider.get("dialogs/relation", "arrowdown").getImage();
-    private static final Image corners = ImageProvider.get("dialogs/relation", "roundedcorners").getImage();
-    private static final Image roundabout_right = ImageProvider.get("dialogs/relation", "roundabout_right_tiny").getImage();
-    private static final Image roundabout_left = ImageProvider.get("dialogs/relation", "roundabout_left_tiny").getImage();
+    private static final Image ARROW_UP = ImageProvider.get("dialogs/relation", "arrowup").getImage();
+    private static final Image ARROW_DOWN = ImageProvider.get("dialogs/relation", "arrowdown").getImage();
+    private static final Image CORNERS = ImageProvider.get("dialogs/relation", "roundedcorners").getImage();
+    private static final Image ROUNDABOUT_RIGHT = ImageProvider.get("dialogs/relation", "roundabout_right_tiny").getImage();
+    private static final Image ROUNDABOUT_LEFT = ImageProvider.get("dialogs/relation", "roundabout_left_tiny").getImage();
     private transient WayConnectionType value = new WayConnectionType();
 
     @Override
@@ -74,8 +74,8 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
             if (value.isLoop) {
                 g.setColor(Color.black);
                 y1 = 5;
-                g.drawImage(corners, xoff, y1-3, xoff+3, y1, 0, 0, 3, 3, new Color(0, 0, 0, 0), null);
-                g.drawImage(corners, xoff+xloop-2, y1-3, xoff+xloop+1, y1, 2, 0, 5, 3, new Color(0, 0, 0, 0), null);
+                g.drawImage(CORNERS, xoff, y1-3, xoff+3, y1, 0, 0, 3, 3, new Color(0, 0, 0, 0), null);
+                g.drawImage(CORNERS, xoff+xloop-2, y1-3, xoff+xloop+1, y1, 2, 0, 5, 3, new Color(0, 0, 0, 0), null);
                 g.drawLine(xoff+3, y1-3, xoff+xloop-3, y1-3);
             } else {
                 g.setColor(Color.red);
@@ -102,7 +102,7 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
                 y2 = ymax - 5;
                 g.fillRect(xoff-1, y2+2, 3, 3);
                 g.drawLine(xoff, y2, xoff, y2+2);
-                g.drawImage(corners, xoff+xloop-2, y2+1, xoff+xloop+1, y2+4, 2, 2, 5, 5, new Color(0, 0, 0, 0), null);
+                g.drawImage(CORNERS, xoff+xloop-2, y2+1, xoff+xloop+1, y2+4, 2, 2, 5, 5, new Color(0, 0, 0, 0), null);
                 g.drawLine(xoff+3-1, y2+3, xoff+xloop-3, y2+3);
             } else {
                 g.setColor(Color.red);
@@ -159,18 +159,18 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
         Image arrow;
         switch (value.direction) {
         case FORWARD:
-            arrow = arrowDown;
+            arrow = ARROW_DOWN;
             break;
         case BACKWARD:
-            arrow = arrowUp;
+            arrow = ARROW_UP;
             break;
         default:
             arrow = null;
         }
         if (value.direction == Direction.ROUNDABOUT_LEFT) {
-            g.drawImage(roundabout_left, xoff-6, 1, null);
+            g.drawImage(ROUNDABOUT_LEFT, xoff-6, 1, null);
         } else if (value.direction == Direction.ROUNDABOUT_RIGHT) {
-            g.drawImage(roundabout_right, xoff-6, 1, null);
+            g.drawImage(ROUNDABOUT_RIGHT, xoff-6, 1, null);
         }
 
         if (!value.isOnewayLoopForwardPart && !value.isOnewayLoopBackwardPart &&
@@ -179,10 +179,10 @@ public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
         }
 
         if (value.isOnewayLoopBackwardPart && value.isOnewayLoopForwardPart) {
-            if (arrow == arrowDown) {
-                arrow = arrowUp;
-            } else if (arrow == arrowUp) {
-                arrow = arrowDown;
+            if (arrow == ARROW_DOWN) {
+                arrow = ARROW_UP;
+            } else if (arrow == ARROW_UP) {
+                arrow = ARROW_DOWN;
             }
         }
 

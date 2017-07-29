@@ -23,7 +23,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  */
 public final class PasteTagsAction extends JosmAction {
 
-    private static final String help = ht("/Action/PasteTags");
+    private static final String HELP = ht("/Action/PasteTags");
     private final OsmTransferHandler transferHandler = new OsmTransferHandler();
 
     /**
@@ -34,7 +34,7 @@ public final class PasteTagsAction extends JosmAction {
                 tr("Apply tags of contents of paste buffer to all selected items."),
                 Shortcut.registerShortcut("system:pastestyle", tr("Edit: {0}", tr("Paste Tags")),
                 KeyEvent.VK_V, Shortcut.CTRL_SHIFT), true);
-        putValue("help", help);
+        putValue("help", HELP);
     }
 
     @Override

@@ -61,7 +61,7 @@ public class XmlWriter implements Closeable {
             for (int i = 0; i < unencoded.length(); ++i) {
                 String encS = null;
                 if (!keepApos || unencoded.charAt(i) != '\'') {
-                    encS = XmlWriter.encoding.get(unencoded.charAt(i));
+                    encS = ENCODING.get(unencoded.charAt(i));
                 }
                 if (encS != null) {
                     if (buffer == null) {
@@ -79,16 +79,16 @@ public class XmlWriter implements Closeable {
     /**
      * The output writer to save the values to.
      */
-    private static final Map<Character, String> encoding = new HashMap<>();
+    private static final Map<Character, String> ENCODING = new HashMap<>();
     static {
-        encoding.put('<', "&lt;");
-        encoding.put('>', "&gt;");
-        encoding.put('"', "&quot;");
-        encoding.put('\'', "&apos;");
-        encoding.put('&', "&amp;");
-        encoding.put('\n', "&#xA;");
-        encoding.put('\r', "&#xD;");
-        encoding.put('\t', "&#x9;");
+        ENCODING.put('<', "&lt;");
+        ENCODING.put('>', "&gt;");
+        ENCODING.put('"', "&quot;");
+        ENCODING.put('\'', "&apos;");
+        ENCODING.put('&', "&amp;");
+        ENCODING.put('\n', "&#xA;");
+        ENCODING.put('\r', "&#xD;");
+        ENCODING.put('\t', "&#x9;");
     }
 
     @Override

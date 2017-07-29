@@ -55,7 +55,7 @@ public class DeleteAction extends MapMode implements ModifierExListener {
      */
     private transient WaySegment oldHighlightedWaySegment;
 
-    private static final HighlightHelper highlightHelper = new HighlightHelper();
+    private static final HighlightHelper HIGHLIGHT_HELPER = new HighlightHelper();
     private boolean drawTargetHighlight;
 
     enum DeleteMode {
@@ -176,7 +176,7 @@ public class DeleteAction extends MapMode implements ModifierExListener {
      * removes any highlighting that may have been set beforehand.
      */
     private void removeHighlighting() {
-        highlightHelper.clear();
+        HIGHLIGHT_HELPER.clear();
         DataSet ds = getLayerManager().getEditDataSet();
         if (ds != null) {
             ds.clearHighlightedWaySegments();
@@ -231,7 +231,7 @@ public class DeleteAction extends MapMode implements ModifierExListener {
             }
             oldHighlightedWaySegment = newHighlightedWaySegment;
         }
-        needsRepaint |= highlightHelper.highlightOnly(newHighlights);
+        needsRepaint |= HIGHLIGHT_HELPER.highlightOnly(newHighlights);
         if (needsRepaint && editLayer != null) {
             editLayer.invalidate();
         }

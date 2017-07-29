@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.gui.dialogs.relation.sort;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -25,13 +26,12 @@ public class RelationSorter {
         List<RelationMember> sortMembers(List<RelationMember> list);
     }
 
-    private static final Collection<AdditionalSorter> additionalSorters = new ArrayList<>();
-    static {
+    private static final Collection<AdditionalSorter> ADDITIONAL_SORTERS = Arrays.asList(
         // first adequate sorter is used, so order matters
-        additionalSorters.add(new AssociatedStreetRoleStreetSorter());
-        additionalSorters.add(new AssociatedStreetRoleAddressHouseSorter());
-        additionalSorters.add(new PublicTransportRoleStopPlatformSorter());
-    }
+        new AssociatedStreetRoleStreetSorter(),
+        new AssociatedStreetRoleAddressHouseSorter(),
+        new PublicTransportRoleStopPlatformSorter()
+    );
 
     /**
      * Class that sorts the {@code street} members of
@@ -143,7 +143,7 @@ public class RelationSorter {
         // Dispatch members to the first adequate sorter
         for (RelationMember m : relationMembers) {
             boolean wasAdded = false;
-            for (AdditionalSorter sorter : additionalSorters) {
+            for (AdditionalSorter sorter : ADDITIONAL_SORTERS) {
                 if (sorter.acceptsMember(m)) {
                     List<RelationMember> list;
                     list = customMap.get(sorter);

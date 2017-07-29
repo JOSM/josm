@@ -47,7 +47,7 @@ public final class JCSCacheManager {
     private static final String PREFERENCE_PREFIX = "jcs.cache";
     public static final BooleanProperty USE_BLOCK_CACHE = new BooleanProperty(PREFERENCE_PREFIX + ".use_block_cache", true);
 
-    private static final AuxiliaryCacheFactory diskCacheFactory =
+    private static final AuxiliaryCacheFactory DISK_CACHE_FACTORY =
             USE_BLOCK_CACHE.get() ? new BlockDiskCacheFactory() : new IndexedDiskCacheFactory();
     private static FileLock cacheDirLock;
 
@@ -176,8 +176,8 @@ public final class JCSCacheManager {
             IDiskCacheAttributes diskAttributes = getDiskCacheAttributes(maxDiskObjects, cachePath, cacheName);
             try {
                 if (cc.getAuxCaches().length == 0) {
-                    AuxiliaryCache<K, V> diskCache = diskCacheFactory.createCache(diskAttributes, cacheManager, null, new StandardSerializer());
-                    cc.setAuxCaches(new AuxiliaryCache[]{diskCache});
+                    cc.setAuxCaches(new AuxiliaryCache[]{DISK_CACHE_FACTORY.createCache(
+                            diskAttributes, cacheManager, null, new StandardSerializer())});
                 }
             } catch (IOException e) {
                 throw e;

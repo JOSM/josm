@@ -33,7 +33,7 @@ public final class User {
      * The anonymous user is a local user used in places where no user is known.
      * @see #getAnonymous()
      */
-    private static final User anonymous = createLocalUser(tr("<anonymous>"));
+    private static final User ANONYMOUS = createLocalUser(tr("<anonymous>"));
 
     private static long getNextLocalUid() {
         uidCounter--;
@@ -130,7 +130,7 @@ public final class User {
      * @return The anonymous user
      */
     public static User getAnonymous() {
-        return anonymous;
+        return ANONYMOUS;
     }
 
     /** the user name */

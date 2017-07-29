@@ -36,7 +36,7 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
  */
 public final class ChangesetCache implements PreferenceChangedListener {
     /** the unique instance */
-    private static final ChangesetCache instance = new ChangesetCache();
+    private static final ChangesetCache INSTANCE = new ChangesetCache();
 
     /** the cached changesets */
     private final Map<Integer, Changeset> cache = new HashMap<>();
@@ -55,7 +55,7 @@ public final class ChangesetCache implements PreferenceChangedListener {
      * @return the unique instance of the cache
      */
     public static ChangesetCache getInstance() {
-        return instance;
+        return INSTANCE;
     }
 
     /**

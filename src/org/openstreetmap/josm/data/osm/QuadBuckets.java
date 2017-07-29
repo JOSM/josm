@@ -22,7 +22,7 @@ import org.openstreetmap.josm.data.coor.QuadTiling;
  * @since 2165
  */
 public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
-    private static final boolean consistency_testing = false;
+    private static final boolean CONSISTENCY_TESTING = false;
     private static final byte NW_INDEX = 1;
     private static final byte NE_INDEX = 3;
     private static final byte SE_INDEX = 2;
@@ -270,7 +270,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
         }
 
         void doAdd(T o) {
-            if (consistency_testing) {
+            if (CONSISTENCY_TESTING) {
                 if (o instanceof Node && !matches(o, this)) {
                     o.getBBox().getIndex(level);
                     o.getBBox().getIndex(level - 1);

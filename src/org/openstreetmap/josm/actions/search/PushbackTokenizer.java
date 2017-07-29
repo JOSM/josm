@@ -147,11 +147,11 @@ public class PushbackTokenizer {
         }
     }
 
-    private static final List<Character> specialChars = Arrays.asList('"', ':', '(', ')', '|', '^', '=', '?', '<', '>');
-    private static final List<Character> specialCharsQuoted = Arrays.asList('"');
+    private static final List<Character> SPECIAL_CHARS = Arrays.asList('"', ':', '(', ')', '|', '^', '=', '?', '<', '>');
+    private static final List<Character> SPECIAL_CHARS_QUOTED = Arrays.asList('"');
 
     private String getString(boolean quoted) {
-        List<Character> sChars = quoted ? specialCharsQuoted : specialChars;
+        List<Character> sChars = quoted ? SPECIAL_CHARS_QUOTED : SPECIAL_CHARS;
         StringBuilder s = new StringBuilder();
         boolean escape = false;
         while (c != -1 && (escape || (!sChars.contains((char) c) && (quoted || !Character.isWhitespace(c))))) {

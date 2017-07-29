@@ -21,19 +21,19 @@ public class SharpenImageProcessor implements ImageProcessor {
     private float sharpenLevel = 1;
     private ConvolveOp op;
 
-    private static float[] KERNEL_IDENTITY = new float[] {
+    private static final float[] KERNEL_IDENTITY = new float[] {
         0, 0, 0,
         0, 1, 0,
         0, 0, 0
     };
 
-    private static float[] KERNEL_BLUR = new float[] {
+    private static final float[] KERNEL_BLUR = new float[] {
         1f / 16, 2f / 16, 1f / 16,
         2f / 16, 4f / 16, 2f / 16,
         1f / 16, 2f / 16, 1f / 16
     };
 
-    private static float[] KERNEL_SHARPEN = new float[] {
+    private static final float[] KERNEL_SHARPEN = new float[] {
         -.5f, -1f, -.5f,
          -1f, 7, -1f,
         -.5f, -1f, -.5f

@@ -250,8 +250,8 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
 
     // all created tabs
     private final transient List<PreferenceTab> tabs = new ArrayList<>();
-    private static final Collection<PreferenceSettingFactory> settingsFactories = new LinkedList<>();
-    private static final PreferenceSettingFactory advancedPreferenceFactory = new AdvancedPreference.Factory();
+    private static final Collection<PreferenceSettingFactory> SETTINGS_FACTORIES = new LinkedList<>();
+    private static final PreferenceSettingFactory ADVANCED_PREFERENCE_FACTORY = new AdvancedPreference.Factory();
     private final transient List<PreferenceSetting> settings = new ArrayList<>();
 
     // distinct list of tabs that have been initialized (we do not initialize tabs until they are displayed to speed up dialog startup)
@@ -438,9 +438,9 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
     }
 
     public void buildGui() {
-        Collection<PreferenceSettingFactory> factories = new ArrayList<>(settingsFactories);
+        Collection<PreferenceSettingFactory> factories = new ArrayList<>(SETTINGS_FACTORIES);
         factories.addAll(PluginHandler.getPreferenceSetting());
-        factories.add(advancedPreferenceFactory);
+        factories.add(ADVANCED_PREFERENCE_FACTORY);
 
         for (PreferenceSettingFactory factory : factories) {
             if (factory != null) {
@@ -530,29 +530,29 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
 
     static {
         // order is important!
-        settingsFactories.add(new DisplayPreference.Factory());
-        settingsFactories.add(new DrawingPreference.Factory());
-        settingsFactories.add(new ColorPreference.Factory());
-        settingsFactories.add(new LafPreference.Factory());
-        settingsFactories.add(new LanguagePreference.Factory());
-        settingsFactories.add(new ServerAccessPreference.Factory());
-        settingsFactories.add(new AuthenticationPreference.Factory());
-        settingsFactories.add(new ProxyPreference.Factory());
-        settingsFactories.add(new OverpassServerPreference.Factory());
-        settingsFactories.add(new MapPreference.Factory());
-        settingsFactories.add(new ProjectionPreference.Factory());
-        settingsFactories.add(new MapPaintPreference.Factory());
-        settingsFactories.add(new TaggingPresetPreference.Factory());
-        settingsFactories.add(new BackupPreference.Factory());
-        settingsFactories.add(new PluginPreference.Factory());
-        settingsFactories.add(Main.toolbar);
-        settingsFactories.add(new AudioPreference.Factory());
-        settingsFactories.add(new ShortcutPreference.Factory());
-        settingsFactories.add(new ValidatorPreference.Factory());
-        settingsFactories.add(new ValidatorTestsPreference.Factory());
-        settingsFactories.add(new ValidatorTagCheckerRulesPreference.Factory());
-        settingsFactories.add(new RemoteControlPreference.Factory());
-        settingsFactories.add(new ImageryPreference.Factory());
+        SETTINGS_FACTORIES.add(new DisplayPreference.Factory());
+        SETTINGS_FACTORIES.add(new DrawingPreference.Factory());
+        SETTINGS_FACTORIES.add(new ColorPreference.Factory());
+        SETTINGS_FACTORIES.add(new LafPreference.Factory());
+        SETTINGS_FACTORIES.add(new LanguagePreference.Factory());
+        SETTINGS_FACTORIES.add(new ServerAccessPreference.Factory());
+        SETTINGS_FACTORIES.add(new AuthenticationPreference.Factory());
+        SETTINGS_FACTORIES.add(new ProxyPreference.Factory());
+        SETTINGS_FACTORIES.add(new OverpassServerPreference.Factory());
+        SETTINGS_FACTORIES.add(new MapPreference.Factory());
+        SETTINGS_FACTORIES.add(new ProjectionPreference.Factory());
+        SETTINGS_FACTORIES.add(new MapPaintPreference.Factory());
+        SETTINGS_FACTORIES.add(new TaggingPresetPreference.Factory());
+        SETTINGS_FACTORIES.add(new BackupPreference.Factory());
+        SETTINGS_FACTORIES.add(new PluginPreference.Factory());
+        SETTINGS_FACTORIES.add(Main.toolbar);
+        SETTINGS_FACTORIES.add(new AudioPreference.Factory());
+        SETTINGS_FACTORIES.add(new ShortcutPreference.Factory());
+        SETTINGS_FACTORIES.add(new ValidatorPreference.Factory());
+        SETTINGS_FACTORIES.add(new ValidatorTestsPreference.Factory());
+        SETTINGS_FACTORIES.add(new ValidatorTagCheckerRulesPreference.Factory());
+        SETTINGS_FACTORIES.add(new RemoteControlPreference.Factory());
+        SETTINGS_FACTORIES.add(new ImageryPreference.Factory());
     }
 
     /**

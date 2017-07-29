@@ -29,16 +29,16 @@ public class ExpertToggleAction extends ToggleAction {
     }
 
     // TODO: Switch to checked list. We can do this as soon as we do not see any more warnings.
-    private static final ListenerList<ExpertModeChangeListener> listeners = ListenerList.createUnchecked();
-    private static final ListenerList<Component> visibilityToggleListeners = ListenerList.createUnchecked();
+    private static final ListenerList<ExpertModeChangeListener> LISTENERS = ListenerList.createUnchecked();
+    private static final ListenerList<Component> VISIBILITY_TOGGLE_LISTENERS = ListenerList.createUnchecked();
 
     private static final BooleanProperty PREF_EXPERT = new BooleanProperty("expert", false);
 
     private static final ExpertToggleAction INSTANCE = new ExpertToggleAction();
 
     private static synchronized void fireExpertModeChanged(boolean isExpert) {
-        listeners.fireEvent(listener -> listener.expertChanged(isExpert));
-        visibilityToggleListeners.fireEvent(c -> c.setVisible(isExpert));
+        LISTENERS.fireEvent(listener -> listener.expertChanged(isExpert));
+        VISIBILITY_TOGGLE_LISTENERS.fireEvent(c -> c.setVisible(isExpert));
     }
 
     /**
@@ -52,7 +52,7 @@ public class ExpertToggleAction extends ToggleAction {
 
     public static synchronized void addExpertModeChangeListener(ExpertModeChangeListener listener, boolean fireWhenAdding) {
         if (listener == null) return;
-        listeners.addWeakListener(listener);
+        LISTENERS.addWeakListener(listener);
         if (fireWhenAdding) {
             listener.expertChanged(isExpert());
         }
@@ -65,7 +65,7 @@ public class ExpertToggleAction extends ToggleAction {
      */
     public static synchronized void removeExpertModeChangeListener(ExpertModeChangeListener listener) {
         if (listener == null) return;
-        listeners.removeListener(listener);
+        LISTENERS.removeListener(listener);
     }
 
     /**
@@ -74,7 +74,7 @@ public class ExpertToggleAction extends ToggleAction {
      */
     public static synchronized void addVisibilitySwitcher(Component c) {
         if (c == null) return;
-        visibilityToggleListeners.addWeakListener(c);
+        VISIBILITY_TOGGLE_LISTENERS.addWeakListener(c);
         c.setVisible(isExpert());
     }
 
@@ -85,7 +85,7 @@ public class ExpertToggleAction extends ToggleAction {
      */
     public static synchronized void removeVisibilitySwitcher(Component c) {
         if (c == null) return;
-        visibilityToggleListeners.removeListener(c);
+        VISIBILITY_TOGGLE_LISTENERS.removeListener(c);
     }
 
     /**

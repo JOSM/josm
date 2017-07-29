@@ -50,7 +50,7 @@ public class AddTagsDialog extends ExtendedDialog {
     private final int[] count;
 
     private final String sender;
-    private static final Set<String> trustedSenders = new HashSet<>();
+    private static final Set<String> TRUSTED_SENDERS = new HashSet<>();
 
     static final class PropertyTableModel extends DefaultTableModel {
         private final Class<?>[] types = {Boolean.class, String.class, Object.class, ExistingValues.class};
@@ -226,14 +226,14 @@ public class AddTagsDialog extends ExtendedDialog {
         JPanel tablePanel = new JPanel(new GridBagLayout());
         tablePanel.add(propertyTable.getTableHeader(), GBC.eol().fill(GBC.HORIZONTAL));
         tablePanel.add(propertyTable, GBC.eol().fill(GBC.BOTH));
-        if (!sender.isEmpty() && !trustedSenders.contains(sender)) {
+        if (!sender.isEmpty() && !TRUSTED_SENDERS.contains(sender)) {
             final JCheckBox c = new JCheckBox();
             c.setAction(new AbstractAction(tr("Accept all tags from {0} for this session", sender)) {
                 @Override public void actionPerformed(ActionEvent e) {
                     if (c.isSelected())
-                        trustedSenders.add(sender);
+                        TRUSTED_SENDERS.add(sender);
                     else
-                        trustedSenders.remove(sender);
+                        TRUSTED_SENDERS.remove(sender);
                 }
             });
             tablePanel.add(c, GBC.eol().insets(20, 10, 0, 0));
@@ -262,7 +262,7 @@ public class AddTagsDialog extends ExtendedDialog {
             }
         }
         if (buttonIndex == 2) {
-            trustedSenders.remove(sender);
+            TRUSTED_SENDERS.remove(sender);
         }
         setVisible(false);
     }
@@ -307,7 +307,7 @@ public class AddTagsDialog extends ExtendedDialog {
      * @since 7521
      */
     public static void addTags(String[][] keyValue, String sender, Collection<? extends OsmPrimitive> primitives) {
-        if (trustedSenders.contains(sender)) {
+        if (TRUSTED_SENDERS.contains(sender)) {
             if (Main.getLayerManager().getEditDataSet() != null) {
                 for (String[] row : keyValue) {
                     Main.main.undoRedo.add(new ChangePropertyCommand(primitives, row[0], row[1]));

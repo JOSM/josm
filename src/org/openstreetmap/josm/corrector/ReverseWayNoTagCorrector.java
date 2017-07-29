@@ -35,7 +35,7 @@ public final class ReverseWayNoTagCorrector {
     /**
      * Tags that imply a semantic meaning from the way direction and cannot be changed.
      */
-    private static final TagCollection directionalTags = new TagCollection(Arrays.asList(
+    private static final TagCollection DIRECTIONAL_TAGS = new TagCollection(Arrays.asList(
             new Tag("natural", "coastline"),
             new Tag("natural", "cliff"),
             new Tag("barrier", "guard_rail"),
@@ -53,7 +53,7 @@ public final class ReverseWayNoTagCorrector {
         final TagCollection collection = new TagCollection();
         for (Map.Entry<String, String> entry : way.getKeys().entrySet()) {
             final Tag tag = new Tag(entry.getKey(), entry.getValue());
-            final boolean isDirectional = directionalTags.contains(tag) || tag.isDirectionKey();
+            final boolean isDirectional = DIRECTIONAL_TAGS.contains(tag) || tag.isDirectionKey();
             if (isDirectional) {
                 final boolean cannotBeCorrected = ReverseWayTagCorrector.getTagCorrections(tag).isEmpty();
                 if (cannotBeCorrected) {
