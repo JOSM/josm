@@ -15,8 +15,41 @@
   <rule ref="rulesets/java/empty.xml"/>
   <rule ref="rulesets/java/finalizers.xml"/>
   <rule ref="rulesets/java/imports.xml"/>
-  <rule ref="rulesets/java/migrating.xml"/>
-  <rule ref="rulesets/java/naming.xml"/>-->
+  <rule ref="rulesets/java/migrating.xml"/>-->
+  <rule ref="rulesets/java/naming.xml">
+  	<exclude name="AbstractNaming"/>
+  	<exclude name="AvoidFieldNameMatchingMethodName"/>
+  	<exclude name="AvoidFieldNameMatchingTypeName"/>
+  	<exclude name="BooleanGetMethodName"/>
+  	<exclude name="LongVariable"/>
+  	<exclude name="ShortClassName"/>
+  	<exclude name="ShortMethodName"/>
+  	<exclude name="ShortVariable"/>
+  	<exclude name="MethodNamingConventions"/>
+  	<exclude name="VariableNamingConventions"/>
+  </rule>
+  <rule ref="rulesets/java/naming.xml/ShortMethodName">
+    <properties>
+        <property name="violationSuppressXPath" value="//MethodDeclarator[@Image='at' or @Image='ht' or @Image='of' or @Image='ok' or @Image='tr']
+        	| //MethodDeclarator/../../Annotation/MarkerAnnotation/Name[@Image='Deprecated']
+        	| //MethodDeclarator/../../../..[@Image='LambertConformalConic']"/>
+    </properties>
+  </rule>
+  <rule ref="rulesets/java/naming.xml/MethodNamingConventions">
+    <properties>
+        <property name="violationSuppressXPath" value="//MethodDeclarator/../../../..[@Image='Functions' or @Image='PseudoClasses' or @Image='Role' or @Image='TaggingPreset']"/>
+    </properties>
+  </rule>
+  <rule ref="rulesets/java/naming.xml/VariableNamingConventions">
+    <properties>
+        <property name="violationSuppressXPath" value="//FieldDeclaration[@Public='true']|//FieldDeclaration/../Annotation/MarkerAnnotation/Name[@Image='pref']"/>
+    </properties>
+  </rule>
+  <rule ref="rulesets/java/naming.xml/LongVariable">
+    <properties>
+        <property name="minimum" value="44"/>
+    </properties>
+  </rule>
   <rule ref="rulesets/java/optimizations.xml">
   	<exclude name="LocalVariableCouldBeFinal"/>
   	<exclude name="MethodArgumentCouldBeFinal"/>

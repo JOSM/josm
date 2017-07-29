@@ -29,7 +29,7 @@ public class InternetTags extends Test {
     /**
      * List of keys subject to URL validation.
      */
-    private static String[] URL_KEYS = new String[] {
+    private static final String[] URL_KEYS = new String[] {
         "url", "source:url",
         "website", "contact:website", "heritage:website", "source:website"
     };
@@ -37,7 +37,7 @@ public class InternetTags extends Test {
     /**
      * List of keys subject to email validation.
      */
-    private static String[] EMAIL_KEYS = new String[] {
+    private static final String[] EMAIL_KEYS = new String[] {
         "email", "contact:email"
     };
 

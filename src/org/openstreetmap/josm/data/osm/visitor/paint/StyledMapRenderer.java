@@ -205,7 +205,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
         }
     }
 
-    private static Map<Font, Boolean> IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = new HashMap<>();
+    private static final Map<Font, Boolean> IS_GLYPH_VECTOR_DOUBLE_TRANSLATION_BUG = new HashMap<>();
 
     /**
      * Check, if this System has the GlyphVector double translation bug.
