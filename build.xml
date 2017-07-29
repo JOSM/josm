@@ -486,18 +486,20 @@ Build-Date: ${build.tstamp}
         </sequential>
     </macrodef>
     <target name="test" depends="test-compile" unless="test.notRequired"
-        description="Run unit, functional and performance tests. OSM API (TEST) account shall be set with -Dosm.username and -Dosm.password">
+        description="Run unit and functional tests. OSM API (TEST) account shall be set with -Dosm.username and -Dosm.password">
         <call-junit testfamily="unit"/>
         <call-junit testfamily="functional"/>
-        <call-junit testfamily="performance" coverage="false"/>
     </target>
     <target name="test-it" depends="test-compile" unless="test-it.notRequired"
         description="Run integration tests. OSM API (TEST) account shall be set with -Dosm.username and -Dosm.password">
         <call-junit testfamily="unit" testITsuffix="IT"/>
         <call-junit testfamily="functional" testITsuffix="IT"/>
-        <call-junit testfamily="performance" testITsuffix="IT" coverage="false"/>
     </target>
-    <target name="test-html" depends="test, test-it" description="Generate HTML test reports">
+    <target name="test-perf" depends="test-compile" unless="test-perf.notRequired"
+        description="Run performance tests. OSM API (TEST) account shall be set with -Dosm.username and -Dosm.password">
+        <call-junit testfamily="performance" coverage="false"/>
+    </target>
+    <target name="test-html" depends="test, test-it, test-perf" description="Generate HTML test reports">
         <!-- May require additional ant dependencies like ant-trax package -->
         <junitreport todir="${test.dir}/report">
             <fileset dir="${test.dir}/report">
