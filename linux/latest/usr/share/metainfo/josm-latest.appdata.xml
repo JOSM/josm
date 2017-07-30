@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<application>
-  <id type="desktop">josm.desktop</id>
+<component type="desktop-application">
+  <id>josm-latest.desktop</id>
   <metadata_license>CC-BY-SA-3.0</metadata_license>
   <project_license>GPL-2.0+</project_license>
   <name>JOSM</name>
@@ -14,9 +14,14 @@
     editing existing nodes, ways, metadata tags and relations from the OSM database.
     </p>
   </description>
+  <categories>
+    <category>Education</category>
+    <category>Geoscience</category>
+    <category>Maps</category>
+  </categories>
   <screenshots>
     <screenshot type="default" width="1024" height="576">https://josm.openstreetmap.de/svn/trunk/linux/josm-screenshot.png</screenshot>
   </screenshots>
   <url type="homepage">https://josm.openstreetmap.de</url>
   <updatecontact>josm-dev_at_openstreetmap.org</updatecontact>
-</application>
+</component>
