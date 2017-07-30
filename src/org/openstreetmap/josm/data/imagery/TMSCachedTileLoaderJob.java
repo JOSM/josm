@@ -50,7 +50,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
 
     // we need another deduplication of Tile Loader listeners, as for each submit, new TMSCachedTileLoaderJob was created
     // that way, we reduce calls to tileLoadingFinished, and general CPU load due to surplus Map repaints
-    private static final ConcurrentMap<String, Set<TileLoaderListener>> IN_PROGRESS = new ConcurrentHashMap<>();
+    private static final ConcurrentMap<String, Set<TileLoaderListener>> inProgress = new ConcurrentHashMap<>();
 
     /**
      * Constructor for creating a job, to get a specific tile from cache
@@ -70,11 +70,11 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         this.tile = tile;
         if (listener != null) {
             String deduplicationKey = getCacheKey();
-            synchronized (IN_PROGRESS) {
-                Set<TileLoaderListener> newListeners = IN_PROGRESS.get(deduplicationKey);
+            synchronized (inProgress) {
+                Set<TileLoaderListener> newListeners = inProgress.get(deduplicationKey);
                 if (newListeners == null) {
                     newListeners = new HashSet<>();
-                    IN_PROGRESS.put(deduplicationKey, newListeners);
+                    inProgress.put(deduplicationKey, newListeners);
                 }
                 newListeners.add(listener);
             }
@@ -161,8 +161,8 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
     public void loadingFinished(CacheEntry object, CacheEntryAttributes attributes, LoadResult result) {
         this.attributes = attributes; // as we might get notification from other object than our selfs, pass attributes along
         Set<TileLoaderListener> listeners;
-        synchronized (IN_PROGRESS) {
-            listeners = IN_PROGRESS.remove(getCacheKey());
+        synchronized (inProgress) {
+            listeners = inProgress.remove(getCacheKey());
         }
         boolean status = result.equals(LoadResult.SUCCESS);
 

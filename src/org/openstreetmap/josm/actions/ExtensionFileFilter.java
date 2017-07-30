@@ -41,13 +41,13 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      * List of supported formats for import.
      * @since 4869
      */
-    private static final ArrayList<FileImporter> IMPORTERS;
+    private static final ArrayList<FileImporter> importers;
 
     /**
      * List of supported formats for export.
      * @since 4869
      */
-    private static final ArrayList<FileExporter> EXPORTERS;
+    private static final ArrayList<FileExporter> exporters;
 
     // add some file types only if the relevant classes are there.
     // this gives us the option to painlessly drop them from the .jar
@@ -55,7 +55,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
 
     static {
 
-        IMPORTERS = new ArrayList<>();
+        importers = new ArrayList<>();
 
         final List<Class<? extends FileImporter>> importerNames = Arrays.asList(
                 OsmImporter.class,
@@ -72,7 +72,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
         for (final Class<? extends FileImporter> importerClass : importerNames) {
             try {
                 FileImporter importer = importerClass.getConstructor().newInstance();
-                IMPORTERS.add(importer);
+                importers.add(importer);
             } catch (ReflectiveOperationException e) {
                 Main.debug(e);
             } catch (ServiceConfigurationError e) {
@@ -94,7 +94,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
             }
         }
 
-        EXPORTERS = new ArrayList<>();
+        exporters = new ArrayList<>();
 
         final List<Class<? extends FileExporter>> exporterClasses = Arrays.asList(
                 org.openstreetmap.josm.io.GpxExporter.class,
@@ -109,7 +109,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
         for (final Class<? extends FileExporter> exporterClass : exporterClasses) {
             try {
                 FileExporter exporter = exporterClass.getConstructor().newInstance();
-                EXPORTERS.add(exporter);
+                exporters.add(exporter);
                 Main.getLayerManager().addAndFireActiveLayerChangeListener(exporter);
             } catch (ReflectiveOperationException e) {
                 Main.debug(e);
@@ -146,7 +146,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      */
     public static void addImporter(FileImporter importer) {
         if (importer != null) {
-            IMPORTERS.add(importer);
+            importers.add(importer);
         }
     }
 
@@ -157,7 +157,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      */
     public static void addImporterFirst(FileImporter importer) {
         if (importer != null) {
-            IMPORTERS.add(0, importer);
+            importers.add(0, importer);
         }
     }
 
@@ -168,7 +168,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      */
     public static void addExporter(FileExporter exporter) {
         if (exporter != null) {
-            EXPORTERS.add(exporter);
+            exporters.add(exporter);
         }
     }
 
@@ -179,7 +179,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      */
     public static void addExporterFirst(FileExporter exporter) {
         if (exporter != null) {
-            EXPORTERS.add(0, exporter);
+            exporters.add(0, exporter);
         }
     }
 
@@ -189,7 +189,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      * @since 10407
      */
     public static List<FileImporter> getImporters() {
-        return Collections.unmodifiableList(IMPORTERS);
+        return Collections.unmodifiableList(importers);
     }
 
     /**
@@ -198,7 +198,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      * @since 10407
      */
     public static List<FileExporter> getExporters() {
-        return Collections.unmodifiableList(EXPORTERS);
+        return Collections.unmodifiableList(exporters);
     }
 
     /**
@@ -212,9 +212,9 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      * @since 5131
      */
     public static void updateAllFormatsImporter() {
-        for (int i = 0; i < IMPORTERS.size(); i++) {
-            if (IMPORTERS.get(i) instanceof AllFormatsImporter) {
-                IMPORTERS.set(i, new AllFormatsImporter());
+        for (int i = 0; i < importers.size(); i++) {
+            if (importers.get(i) instanceof AllFormatsImporter) {
+                importers.set(i, new AllFormatsImporter());
             }
         }
     }
@@ -230,7 +230,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
     public static List<ExtensionFileFilter> getImportExtensionFileFilters() {
         updateAllFormatsImporter();
         List<ExtensionFileFilter> filters = new LinkedList<>();
-        for (FileImporter importer : IMPORTERS) {
+        for (FileImporter importer : importers) {
             filters.add(importer.filter);
         }
         sort(filters);
@@ -247,7 +247,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      */
     public static List<ExtensionFileFilter> getExportExtensionFileFilters() {
         List<ExtensionFileFilter> filters = new LinkedList<>();
-        for (FileExporter exporter : EXPORTERS) {
+        for (FileExporter exporter : exporters) {
             if (filters.contains(exporter.filter) || !exporter.isEnabled()) {
                 continue;
             }
@@ -266,7 +266,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      */
     public static ExtensionFileFilter getDefaultImportExtensionFileFilter(String extension) {
         if (extension == null) return new AllFormatsImporter().filter;
-        for (FileImporter importer : IMPORTERS) {
+        for (FileImporter importer : importers) {
             if (extension.equals(importer.filter.getDefaultExtension()))
                 return importer.filter;
         }
@@ -282,14 +282,14 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
      */
     public static ExtensionFileFilter getDefaultExportExtensionFileFilter(String extension) {
         if (extension == null) return new AllFormatsImporter().filter;
-        for (FileExporter exporter : EXPORTERS) {
+        for (FileExporter exporter : exporters) {
             if (extension.equals(exporter.filter.getDefaultExtension()))
                 return exporter.filter;
         }
         // if extension did not match defaultExtension of any exporter,
         // scan all supported extensions
         File file = new File("file." + extension);
-        for (FileExporter exporter : EXPORTERS) {
+        for (FileExporter exporter : exporters) {
             if (exporter.filter.accept(file))
                 return exporter.filter;
         }

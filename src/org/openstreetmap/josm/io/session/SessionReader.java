@@ -146,7 +146,7 @@ public class SessionReader {
         }
     }
 
-    private static final Map<String, Class<? extends SessionLayerImporter>> SESSION_LAYER_IMPORTERS = new HashMap<>();
+    private static final Map<String, Class<? extends SessionLayerImporter>> sessionLayerImporters = new HashMap<>();
 
     private URI sessionFileURI;
     private boolean zip; // true, if session file is a .joz file; false if it is a .jos file
@@ -173,7 +173,7 @@ public class SessionReader {
      * @param importer importer for this layer class
      */
     public static void registerSessionLayerImporter(String layerType, Class<? extends SessionLayerImporter> importer) {
-        SESSION_LAYER_IMPORTERS.put(layerType, importer);
+        sessionLayerImporters.put(layerType, importer);
     }
 
     /**
@@ -182,7 +182,7 @@ public class SessionReader {
      * @return session layer importer for the given layer
      */
     public static SessionLayerImporter getSessionLayerImporter(String layerType) {
-        Class<? extends SessionLayerImporter> importerClass = SESSION_LAYER_IMPORTERS.get(layerType);
+        Class<? extends SessionLayerImporter> importerClass = sessionLayerImporters.get(layerType);
         if (importerClass == null)
             return null;
         SessionLayerImporter importer = null;

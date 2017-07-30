@@ -637,7 +637,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      * themselves for any dataset selection changes that occur, regardless of the current active
      * dataset. (However, the selection does only change in the active layer)
      */
-    private static final Collection<SelectionChangedListener> SEL_LISTENERS = new CopyOnWriteArrayList<>();
+    private static final Collection<SelectionChangedListener> selListeners = new CopyOnWriteArrayList<>();
 
     /**
      * Adds a new selection listener.
@@ -646,7 +646,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      * @see SelectionEventManager#removeSelectionListener(SelectionChangedListener)
      */
     public static void addSelectionListener(SelectionChangedListener listener) {
-        ((CopyOnWriteArrayList<SelectionChangedListener>) SEL_LISTENERS).addIfAbsent(listener);
+        ((CopyOnWriteArrayList<SelectionChangedListener>) selListeners).addIfAbsent(listener);
     }
 
     /**
@@ -656,7 +656,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      * @see SelectionEventManager#removeSelectionListener(SelectionChangedListener)
      */
     public static void removeSelectionListener(SelectionChangedListener listener) {
-        SEL_LISTENERS.remove(listener);
+        selListeners.remove(listener);
     }
 
     /**
@@ -670,7 +670,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     }
 
     private static void fireDreprecatedSelectionChange(Collection<? extends OsmPrimitive> currentSelection) {
-        for (SelectionChangedListener l : SEL_LISTENERS) {
+        for (SelectionChangedListener l : selListeners) {
             l.selectionChanged(currentSelection);
         }
     }
