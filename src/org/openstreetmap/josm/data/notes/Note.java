@@ -78,7 +78,10 @@ public class Note {
         this.latLon = latLon;
     }
 
-    /** @return The unique OSM ID of this note */
+    /**
+     * Returns the unique OSM ID of this note.
+     * @return The unique OSM ID of this note
+     */
     public long getId() {
         return id;
     }
@@ -91,12 +94,18 @@ public class Note {
         this.id = id;
     }
 
-    /** @return The geographic location of the note */
+    /**
+     * Returns the geographic location of the note.
+     * @return The geographic location of the note
+     */
     public LatLon getLatLon() {
         return latLon;
     }
 
-    /** @return Date that this note was submitted */
+    /**
+     * Returns the date at which this note was submitted.
+     * @return Date that this note was submitted
+     */
     public Date getCreatedAt() {
         return DateUtils.cloneDate(createdAt);
     }
@@ -109,7 +118,10 @@ public class Note {
         this.createdAt = DateUtils.cloneDate(createdAt);
     }
 
-    /** @return Date that this note was closed. Null if it is still open. */
+    /**
+     * Returns the date at which this note was closed.
+     * @return Date that this note was closed. Null if it is still open.
+     */
     public Date getClosedAt() {
         return DateUtils.cloneDate(closedAt);
     }
@@ -122,7 +134,10 @@ public class Note {
         this.closedAt = DateUtils.cloneDate(closedAt);
     }
 
-    /** @return The open or closed state of this note */
+    /**
+     * Returns the open or closed state of this note.
+     * @return The open or closed state of this note
+     */
     public State getState() {
         return state;
     }
@@ -135,7 +150,10 @@ public class Note {
         this.state = state;
     }
 
-    /** @return An ordered list of comments associated with this note */
+    /**
+     * Returns the list of comments associated with this note.
+     * @return An ordered list of comments associated with this note
+     */
     public List<NoteComment> getComments() {
         return comments;
     }

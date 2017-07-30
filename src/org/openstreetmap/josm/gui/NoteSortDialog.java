@@ -72,7 +72,10 @@ public class NoteSortDialog extends ExtendedDialog {
         showDialog();
     }
 
-    /** @return Note comparator that the user has selected */
+    /**
+     * Returns the Note comparator that the user has selected.
+     * @return Note comparator that the user has selected
+     */
     public Comparator<Note> getSelectedComparator() {
         if (dateSort.isSelected()) {
             return Note.DATE_COMPARATOR;

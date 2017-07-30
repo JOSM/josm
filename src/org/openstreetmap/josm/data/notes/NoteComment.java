@@ -57,22 +57,34 @@ public class NoteComment {
         this.isNew = isNew;
     }
 
-    /** @return Plain text of user's comment */
+    /**
+     * Returns Plain text of user's comment.
+     * @return Plain text of user's comment
+     */
     public String getText() {
         return text;
     }
 
-    /** @return JOSM's User object for the user who made this comment */
+    /**
+     * Returns the user who made this comment.
+     * @return JOSM's User object for the user who made this comment
+     */
     public User getUser() {
         return user;
     }
 
-    /** @return The time at which this comment was created */
+    /**
+     * Returns the time at which this comment was created.
+     * @return The time at which this comment was created
+     */
     public Date getCommentTimestamp() {
         return DateUtils.cloneDate(commentTimestamp);
     }
 
-    /** @return the action associated with this note */
+    /**
+     * Returns the action associated with this note.
+     * @return the action associated with this note
+     */
     public Action getNoteAction() {
         return action;
     }
@@ -85,7 +97,10 @@ public class NoteComment {
         this.isNew = isNew;
     }
 
-    /** @return true if this is a new comment/action and needs to be uploaded to the API */
+    /**
+     * Determines if this is a new comment/action and needs to be uploaded to the API
+     * @return true if this is a new comment/action and needs to be uploaded to the API
+     */
     public boolean isNew() {
         return isNew;
     }
