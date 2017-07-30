@@ -136,18 +136,18 @@ public abstract class StyleElement implements StyleKeys {
      * FIXME: cached preference values are not updated if the user changes them during
      * a JOSM session. Should have a listener listening to preference changes.
      */
-    private static volatile String DEFAULT_FONT_NAME;
-    private static volatile Float DEFAULT_FONT_SIZE;
+    private static volatile String defaultFontName;
+    private static volatile Float defaultFontSize;
     private static final Object lock = new Object();
 
     // thread save access (double-checked locking)
     private static Float getDefaultFontSize() {
-        Float s = DEFAULT_FONT_SIZE;
+        Float s = defaultFontSize;
         if (s == null) {
             synchronized (lock) {
-                s = DEFAULT_FONT_SIZE;
+                s = defaultFontSize;
                 if (s == null) {
-                    DEFAULT_FONT_SIZE = s = (float) Main.pref.getInteger("mappaint.fontsize", 8);
+                    defaultFontSize = s = (float) Main.pref.getInteger("mappaint.fontsize", 8);
                 }
             }
         }
@@ -155,12 +155,12 @@ public abstract class StyleElement implements StyleKeys {
     }
 
     private static String getDefaultFontName() {
-        String n = DEFAULT_FONT_NAME;
+        String n = defaultFontName;
         if (n == null) {
             synchronized (lock) {
-                n = DEFAULT_FONT_NAME;
+                n = defaultFontName;
                 if (n == null) {
-                    DEFAULT_FONT_NAME = n = Main.pref.get("mappaint.font", "Droid Sans");
+                    defaultFontName = n = Main.pref.get("mappaint.font", "Droid Sans");
                 }
             }
         }
