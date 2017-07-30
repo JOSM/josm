@@ -74,7 +74,7 @@ public final class OrthogonalizeAction extends JosmAction {
     /**
      * Remember movements, so the user can later undo it for certain nodes
      */
-    private static final Map<Node, EastNorth> REMEMBER_MOVEMENTS = new HashMap<>();
+    private static final Map<Node, EastNorth> rememberMovements = new HashMap<>();
 
     /**
      * Undo the previous orthogonalization for certain nodes.
@@ -107,10 +107,10 @@ public final class OrthogonalizeAction extends JosmAction {
                 for (OsmPrimitive p : sel) {
                     if (!(p instanceof Node)) throw new InvalidUserInputException("selected object is not a node");
                     Node n = (Node) p;
-                    if (REMEMBER_MOVEMENTS.containsKey(n)) {
-                        EastNorth tmp = REMEMBER_MOVEMENTS.get(n);
+                    if (rememberMovements.containsKey(n)) {
+                        EastNorth tmp = rememberMovements.get(n);
                         commands.add(new MoveCommand(n, -tmp.east(), -tmp.north()));
-                        REMEMBER_MOVEMENTS.remove(n);
+                        rememberMovements.remove(n);
                     }
                 }
                 if (!commands.isEmpty()) {
@@ -208,7 +208,7 @@ public final class OrthogonalizeAction extends JosmAction {
             throw new InvalidUserInputException("usage");
         } else {
             if (nodeList.size() == 2 || nodeList.isEmpty()) {
-                REMEMBER_MOVEMENTS.clear();
+                OrthogonalizeAction.rememberMovements.clear();
                 final Collection<Command> commands = new LinkedList<>();
 
                 if (nodeList.size() == 2) {  // fixed direction
@@ -423,7 +423,7 @@ public final class OrthogonalizeAction extends JosmAction {
                     Math.abs(dy) > Math.abs(EPSILON * tmp.east()))
                     throw new AssertionError("heading node has changed");
             } else {
-                REMEMBER_MOVEMENTS.put(n, new EastNorth(dx, dy));
+                OrthogonalizeAction.rememberMovements.put(n, new EastNorth(dx, dy));
                 commands.add(new MoveCommand(n, dx, dy));
             }
         }

@@ -46,14 +46,14 @@ public abstract class AbstractPrimitive implements IPrimitive {
         void visitKeyValue(AbstractPrimitive primitive, String key, String value);
     }
 
-    private static final AtomicLong ID_COUNTER = new AtomicLong(0);
+    private static final AtomicLong idCounter = new AtomicLong(0);
 
     /**
      * Generates a new primitive unique id.
      * @return new primitive unique (negative) id
      */
     static long generateUniqueId() {
-        return ID_COUNTER.decrementAndGet();
+        return idCounter.decrementAndGet();
     }
 
     /**
@@ -62,7 +62,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
      * @since 12536
      */
     public static long currentUniqueId() {
-        return ID_COUNTER.get();
+        return idCounter.get();
     }
 
     /**
@@ -75,7 +75,7 @@ public abstract class AbstractPrimitive implements IPrimitive {
         if (newId > currentUniqueId()) {
             throw new IllegalArgumentException("Cannot modify the id counter backwards");
         }
-        ID_COUNTER.set(newId);
+        idCounter.set(newId);
     }
 
     /**

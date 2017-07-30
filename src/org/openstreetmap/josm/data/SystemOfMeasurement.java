@@ -79,7 +79,7 @@ public class SystemOfMeasurement {
         ALL_SYSTEMS = Collections.unmodifiableMap(map);
     }
 
-    private static final CopyOnWriteArrayList<SoMChangeListener> SOM_CHANGE_LISTENERS = new CopyOnWriteArrayList<>();
+    private static final CopyOnWriteArrayList<SoMChangeListener> somChangeListeners = new CopyOnWriteArrayList<>();
 
     /**
      * Removes a global SoM change listener.
@@ -88,7 +88,7 @@ public class SystemOfMeasurement {
      * @since 8554
      */
     public static void removeSoMChangeListener(SoMChangeListener listener) {
-        SOM_CHANGE_LISTENERS.remove(listener);
+        somChangeListeners.remove(listener);
     }
 
     /**
@@ -99,12 +99,12 @@ public class SystemOfMeasurement {
      */
     public static void addSoMChangeListener(SoMChangeListener listener) {
         if (listener != null) {
-            SOM_CHANGE_LISTENERS.addIfAbsent(listener);
+            somChangeListeners.addIfAbsent(listener);
         }
     }
 
     protected static void fireSoMChanged(String oldSoM, String newSoM) {
-        for (SoMChangeListener l : SOM_CHANGE_LISTENERS) {
+        for (SoMChangeListener l : somChangeListeners) {
             l.systemOfMeasurementChanged(oldSoM, newSoM);
         }
     }

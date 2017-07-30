@@ -42,7 +42,20 @@
   </rule>
   <rule ref="rulesets/java/naming.xml/VariableNamingConventions">
     <properties>
-        <property name="violationSuppressXPath" value="//FieldDeclaration[@Public='true']|//FieldDeclaration/../Annotation/MarkerAnnotation/Name[@Image='pref']"/>
+        <property name="violationSuppressXPath" value="//FieldDeclaration[@Public='true']
+        	| //FieldDeclaration/../Annotation/MarkerAnnotation/Name[@Image='pref']
+        	| //FieldDeclaration/Type/ReferenceType/ClassOrInterfaceType[@Image!='Boolean' and 
+        	                                                             @Image!='Byte' and 
+        	                                                             @Image!='Character' and 
+        	                                                             @Image!='Class' and 
+        	                                                             @Image!='Double' and 
+        	                                                             @Image!='Enum' and 
+        	                                                             @Image!='Float' and 
+        	                                                             @Image!='Integer' and
+        	                                                             @Image!='Long' and
+        	                                                             @Image!='Number' and
+        	                                                             @Image!='Short' and 
+        	                                                             @Image!='String' ]"/>
     </properties>
   </rule>
   <rule ref="rulesets/java/naming.xml/LongVariable">
