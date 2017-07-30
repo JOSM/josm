@@ -26,6 +26,7 @@ import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MemoryManagerTest;
+import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -50,6 +51,7 @@ public class JOSMTestRules implements TestRule {
     private boolean allowMemoryManagerLeaks;
     private boolean useMapStyles;
     private boolean useHttps;
+    private boolean territories;
 
     /**
      * Disable the default timeout for this test. Use with care.
@@ -155,9 +157,9 @@ public class JOSMTestRules implements TestRule {
     }
 
     /**
-      * Allow the execution of commands using {@link Main#undoRedo}
-      * @return this instance, for easy chaining
-      */
+     * Allow the execution of commands using {@link Main#undoRedo}
+     * @return this instance, for easy chaining
+     */
     public JOSMTestRules commands() {
         commands = true;
         return this;
@@ -180,6 +182,16 @@ public class JOSMTestRules implements TestRule {
     public JOSMTestRules mapStyles() {
         preferences();
         useMapStyles = true;
+        return this;
+    }
+
+    /**
+     * Use boundaries dataset in this test.
+     * @return this instance, for easy chaining
+     * @since 12545
+     */
+    public JOSMTestRules territories() {
+        territories = true;
         return this;
     }
 
@@ -273,6 +285,10 @@ public class JOSMTestRules implements TestRule {
         if (useMapStyles) {
             // Reset the map paint styles.
             MapPaintStyles.readFromPreferences();
+        }
+
+        if (territories) {
+            Territories.initialize();
         }
 
         if (commands) {
