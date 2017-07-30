@@ -264,7 +264,10 @@ public class NoteData {
         dataUpdated();
     }
 
-    /** @return The current comparator being used to sort the note list */
+    /**
+     * Returns the current comparator being used to sort the note list.
+     * @return The current comparator being used to sort the note list
+     */
     public Comparator<Note> getCurrentSortMethod() {
         return comparator;
     }

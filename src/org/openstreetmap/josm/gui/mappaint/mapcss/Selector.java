@@ -264,11 +264,10 @@ public interface Selector {
 
             @Override
             public void visit(Way w) {
-                if (e.child == null && left.matches(new Environment(w).withParent(e.osm))) {
-                    if (e.osm instanceof Way && Geometry.PolygonIntersection.CROSSING.equals(
+                if (e.child == null && left.matches(new Environment(w).withParent(e.osm))
+                    && e.osm instanceof Way && Geometry.PolygonIntersection.CROSSING.equals(
                             Geometry.polygonIntersection(w.getNodes(), ((Way) e.osm).getNodes()))) {
-                        e.child = w;
-                    }
+                    e.child = w;
                 }
             }
         }
@@ -281,25 +280,23 @@ public interface Selector {
 
             @Override
             public void visit(Node n) {
-                if (e.child == null && left.matches(new Environment(n).withParent(e.osm))) {
-                    if ((e.osm instanceof Way && Geometry.nodeInsidePolygon(n, ((Way) e.osm).getNodes()))
+                if (e.child == null && left.matches(new Environment(n).withParent(e.osm))
+                    && (e.osm instanceof Way && Geometry.nodeInsidePolygon(n, ((Way) e.osm).getNodes()))
                             || (e.osm instanceof Relation && (
                                     (Relation) e.osm).isMultipolygon() && Geometry.isNodeInsideMultiPolygon(n, (Relation) e.osm, null))) {
-                        e.child = n;
-                    }
+                    e.child = n;
                 }
             }
 
             @Override
             public void visit(Way w) {
-                if (e.child == null && left.matches(new Environment(w).withParent(e.osm))) {
-                    if ((e.osm instanceof Way && Geometry.PolygonIntersection.FIRST_INSIDE_SECOND.equals(
+                if (e.child == null && left.matches(new Environment(w).withParent(e.osm))
+                    && (e.osm instanceof Way && Geometry.PolygonIntersection.FIRST_INSIDE_SECOND.equals(
                             Geometry.polygonIntersection(w.getNodes(), ((Way) e.osm).getNodes())))
                             || (e.osm instanceof Relation && (
                                     (Relation) e.osm).isMultipolygon()
                                     && Geometry.isPolygonInsideMultiPolygon(w.getNodes(), (Relation) e.osm, null))) {
-                        e.child = w;
-                    }
+                    e.child = w;
                 }
             }
         }
@@ -399,26 +396,24 @@ public interface Selector {
                     List<Node> wayNodes = ((Way) e.osm).getNodes();
                     for (int i = 0; i < wayNodes.size(); i++) {
                         Node n = wayNodes.get(i);
-                        if (left.matches(e.withPrimitive(n))) {
-                            if (link.matches(e.withChildAndIndexAndLinkContext(n, i, wayNodes.size()))) {
-                                e.child = n;
-                                e.index = i;
-                                e.count = wayNodes.size();
-                                return true;
-                            }
+                        if (left.matches(e.withPrimitive(n))
+                            && link.matches(e.withChildAndIndexAndLinkContext(n, i, wayNodes.size()))) {
+                            e.child = n;
+                            e.index = i;
+                            e.count = wayNodes.size();
+                            return true;
                         }
                     }
                 } else if (e.osm instanceof Relation) {
                     List<RelationMember> members = ((Relation) e.osm).getMembers();
                     for (int i = 0; i < members.size(); i++) {
                         OsmPrimitive member = members.get(i).getMember();
-                        if (left.matches(e.withPrimitive(member))) {
-                            if (link.matches(e.withChildAndIndexAndLinkContext(member, i, members.size()))) {
-                                e.child = member;
-                                e.index = i;
-                                e.count = members.size();
-                                return true;
-                            }
+                        if (left.matches(e.withPrimitive(member))
+                            && link.matches(e.withChildAndIndexAndLinkContext(member, i, members.size()))) {
+                            e.child = member;
+                            e.index = i;
+                            e.count = members.size();
+                            return true;
                         }
                     }
                 }

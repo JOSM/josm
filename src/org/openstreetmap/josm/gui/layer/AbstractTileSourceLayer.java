@@ -992,16 +992,14 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 //cannot paint in parallel
                 drawImageInside(g, img, anchorImage, anchorScreen, null);
             }
-            if (tile instanceof ReprojectionTile) {
+            if (tile instanceof ReprojectionTile && ((ReprojectionTile) tile).needsUpdate(Main.map.mapView.getScale())) {
                 // This means we have a reprojected tile in memory cache, but not at
                 // current scale. Generally, the positioning of the tile will still
                 // be correct, but for best image quality, the tile should be
                 // reprojected to the target scale. The original tile image should
                 // still be in disk cache, so this is fairly cheap.
-                if (((ReprojectionTile) tile).needsUpdate(Main.map.mapView.getScale())) {
-                    ((ReprojectionTile) tile).invalidate();
-                    loadTile(tile, false);
-                }
+                ((ReprojectionTile) tile).invalidate();
+                loadTile(tile, false);
             }
 
         }, missed::add);
