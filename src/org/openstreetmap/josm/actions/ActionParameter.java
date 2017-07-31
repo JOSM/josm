@@ -1,8 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
-
 /**
  * Abstract class for <i>key=value</i> parameters, used in {@link ParameterizedAction}.
  * <p>
@@ -73,30 +71,6 @@ public abstract class ActionParameter<T> {
         @Override
         public String writeToString(String value) {
             return value;
-        }
-    }
-
-    public static class SearchSettingsActionParameter extends ActionParameter<SearchSetting> {
-
-        public SearchSettingsActionParameter(String name) {
-            super(name);
-        }
-
-        @Override
-        public Class<SearchSetting> getType() {
-            return SearchSetting.class;
-        }
-
-        @Override
-        public SearchSetting readFromString(String s) {
-            return SearchSetting.readFromString(s);
-        }
-
-        @Override
-        public String writeToString(SearchSetting value) {
-            if (value == null)
-                return "";
-            return value.writeToString();
         }
     }
 }

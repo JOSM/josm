@@ -42,7 +42,6 @@ import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ActionParameter;
-import org.openstreetmap.josm.actions.ActionParameter.SearchSettingsActionParameter;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.ParameterizedAction;
@@ -994,6 +993,34 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             result.append(' ')
                   .append(text);
             return result.toString();
+        }
+    }
+
+    /**
+     * {@link ActionParameter} implementation with {@link SearchSetting} as value type.
+     * @since 12547 (moved from {@link ActionParameter})
+     */
+    public static class SearchSettingsActionParameter extends ActionParameter<SearchSetting> {
+
+        public SearchSettingsActionParameter(String name) {
+            super(name);
+        }
+
+        @Override
+        public Class<SearchSetting> getType() {
+            return SearchSetting.class;
+        }
+
+        @Override
+        public SearchSetting readFromString(String s) {
+            return SearchSetting.readFromString(s);
+        }
+
+        @Override
+        public String writeToString(SearchSetting value) {
+            if (value == null)
+                return "";
+            return value.writeToString();
         }
     }
 
