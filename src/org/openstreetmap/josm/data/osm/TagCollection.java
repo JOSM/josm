@@ -376,7 +376,7 @@ public class TagCollection implements Iterable<Tag>, Serializable {
      * @return true it there is at least one tag with a non empty value for key.
      */
     public boolean hasValuesFor(String key) {
-        return generateStreamForKey(key).filter(t -> !t.getValue().isEmpty()).findAny().isPresent();
+        return generateStreamForKey(key).anyMatch(t -> !t.getValue().isEmpty());
     }
 
     /**
