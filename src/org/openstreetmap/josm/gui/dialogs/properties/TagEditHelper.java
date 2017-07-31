@@ -205,9 +205,8 @@ public class TagEditHelper {
     @SuppressWarnings("unchecked")
     private boolean containsDataKey(String key) {
         return IntStream.range(0, tagData.getRowCount())
-                .filter(i -> key.equals(tagData.getValueAt(i, 0)) /* sic! do not use getDataKey*/
-                    && !((Map<String, Integer>) tagData.getValueAt(i, 1)).containsKey("") /* sic! do not use getDataValues*/)
-                .findAny().isPresent();
+                .anyMatch(i -> key.equals(tagData.getValueAt(i, 0)) /* sic! do not use getDataKey*/
+                    && !((Map<String, Integer>) tagData.getValueAt(i, 1)).containsKey("") /* sic! do not use getDataValues*/);
     }
 
     /**
