@@ -106,14 +106,16 @@ public class TemplateParserTest {
                 else
                     return null;
             } else {
-                if ("name".equals(name))
+                switch (name) {
+                case "name":
                     return "waypointName";
-                else if ("number".equals(name))
+                case "number":
                     return 10;
-                else if ("special:key".equals(name))
+                case "special:key":
                     return "specialKey";
-                else
+                default:
                     return null;
+                }
             }
         }
 
