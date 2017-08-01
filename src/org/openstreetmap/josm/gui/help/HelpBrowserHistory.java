@@ -79,23 +79,25 @@ public class HelpBrowserHistory extends ChangeNotifier {
      * @param url the new current URL
      */
     public void setCurrentUrl(String url) {
-        boolean add = true;
+        if (url != null) {
+            boolean add = true;
 
-        if (historyPos >= 0 && historyPos < history.size() && history.get(historyPos).equals(url)) {
-            add = false;
-        } else if (historyPos == history.size() -1) {
-            // do nothing just append
-        } else if (historyPos == 0 && !history.isEmpty()) {
-            history = new ArrayList<>(Collections.singletonList(history.get(0)));
-        } else if (historyPos < history.size() -1 && historyPos > 0) {
-            history = new ArrayList<>(history.subList(0, historyPos));
-        } else {
-            history = new ArrayList<>();
+            if (historyPos >= 0 && historyPos < history.size() && history.get(historyPos).equals(url)) {
+                add = false;
+            } else if (historyPos == history.size() -1) {
+                // do nothing just append
+            } else if (historyPos == 0 && !history.isEmpty()) {
+                history = new ArrayList<>(Collections.singletonList(history.get(0)));
+            } else if (historyPos < history.size() -1 && historyPos > 0) {
+                history = new ArrayList<>(history.subList(0, historyPos));
+            } else {
+                history = new ArrayList<>();
+            }
+            if (add) {
+                history.add(url);
+                historyPos = history.size()-1;
+            }
+            fireStateChanged();
         }
-        if (add) {
-            history.add(url);
-            historyPos = history.size()-1;
-        }
-        fireStateChanged();
     }
 }
