@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.osm.visitor.paint;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.awt.Point;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -15,7 +16,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.NavigatableComponent;
@@ -54,11 +54,29 @@ public abstract class AbstractMapRendererPerformanceTestParent {
         JOSMFixture.createPerformanceTestFixture().init(true);
         img = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, BufferedImage.TYPE_INT_ARGB);
         g = (Graphics2D) img.getGraphics();
-        g.setClip(0, 0, IMG_WIDTH, IMG_WIDTH);
+        g.setClip(0, 0, IMG_WIDTH, IMG_HEIGHT);
         g.setColor(Color.BLACK);
-        g.fillRect(0, 0, IMG_WIDTH, IMG_WIDTH);
-        nc = Main.map.mapView;
-        nc.setBounds(0, 0, IMG_WIDTH, IMG_HEIGHT);
+        g.fillRect(0, 0, IMG_WIDTH, IMG_HEIGHT);
+        nc = new NavigatableComponent() {
+            {
+                setBounds(0, 0, IMG_WIDTH, IMG_HEIGHT);
+                updateLocationState();
+            }
+
+            @Override
+            protected boolean isVisibleOnScreen() {
+                return true;
+            }
+
+            @Override
+            public Point getLocationOnScreen() {
+                return new Point(0, 0);
+            }
+        };
+
+        // Force reset of preferences
+        StyledMapRenderer.PREFERENCE_ANTIALIASING_USE.put(true);
+        StyledMapRenderer.PREFERENCE_TEXT_ANTIALIASING.put("gasp");
 
         try (
             InputStream fisR = new FileInputStream("data_nodist/restriction.osm");
@@ -83,8 +101,8 @@ public abstract class AbstractMapRendererPerformanceTestParent {
     protected abstract Rendering buildRenderer();
 
     protected final void test(int iterations, DataSet ds, Bounds bounds) throws Exception {
-        Rendering visitor = buildRenderer();
         nc.zoomTo(bounds);
+        Rendering visitor = buildRenderer();
         for (int i = 0; i < iterations; i++) {
             visitor.render(ds, true, bounds);
         }
