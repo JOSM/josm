@@ -4,7 +4,7 @@ package org.openstreetmap.josm.actions;
 /**
  * Abstract class for <i>key=value</i> parameters, used in {@link ParameterizedAction}.
  * <p>
- * The key ({@link #name}) is a string and the value of class {@link T}. The value can be
+ * The key ({@link #name}) is a string and the value of class {@code T}. The value can be
  * converted to and from a string.
  * @param <T> the value type
  */
@@ -54,6 +54,10 @@ public abstract class ActionParameter<T> {
      */
     public static class StringActionParameter extends ActionParameter<String> {
 
+        /**
+         * Constructs a new {@code StringActionParameter}.
+         * @param name parameter name (the key)
+         */
         public StringActionParameter(String name) {
             super(name);
         }
