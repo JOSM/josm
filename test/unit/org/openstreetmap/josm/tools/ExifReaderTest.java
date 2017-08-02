@@ -103,8 +103,8 @@ public class ExifReaderTest {
         LatLon latlon = ExifReader.readLatLon(directionSampleFile);
         assertNotNull(latlon);
         DecimalFormat f = new DecimalFormat("00.0");
-        assertEquals("51°46'"+f.format(43.0)+"\"", LatLon.dms(latlon.lat()));
-        assertEquals("8°21'"+f.format(56.3)+"\"", LatLon.dms(latlon.lon()));
+        assertEquals("51°46'"+f.format(43.0)+"\"", LatLon.degreesMinutesSeconds(latlon.lat()));
+        assertEquals("8°21'"+f.format(56.3)+"\"", LatLon.degreesMinutesSeconds(latlon.lon()));
     }
 
     /**

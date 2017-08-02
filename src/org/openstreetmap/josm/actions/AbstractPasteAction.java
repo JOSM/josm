@@ -93,7 +93,7 @@ public abstract class AbstractPasteAction extends JosmAction implements FlavorLi
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(getLayerManager().getEditDataSet() != null && transferHandler.isDataAvailable());
+        setEnabled(getLayerManager().getEditDataSet() != null && transferHandler != null && transferHandler.isDataAvailable());
     }
 
     @Override
