@@ -7,26 +7,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.ExecutionException;
 
-import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link DownloadOsmTask}.
  */
-public class DownloadOsmTaskTest {
-
-    private static final String REMOTE_FILE = "https://josm.openstreetmap.de/export/head/josm/trunk/data_nodist/direction-arrows.osm";
-
-    /**
-     * Setup test.
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().https();
+public class DownloadOsmTaskTest extends AbstractDownloadTaskTest {
 
     /**
      * Unit test of {@code DownloadOsmTask#acceptsUrl} method.
@@ -42,7 +29,7 @@ public class DownloadOsmTaskTest {
         assertTrue(task.acceptsUrl("http://api.openstreetmap.org/api/0.6/nodes?nodes=101,102,103"));
         assertTrue(task.acceptsUrl("http://api.openstreetmap.org/api/0.6/ways?ways=101,102,103"));
         assertTrue(task.acceptsUrl("http://api.openstreetmap.org/api/0.6/relations?relations=101,102,103"));
-        assertTrue(task.acceptsUrl(REMOTE_FILE));
+        assertTrue(task.acceptsUrl(getRemoteFileUrl()));
     }
 
     /**
@@ -52,11 +39,17 @@ public class DownloadOsmTaskTest {
      */
     @Test
     public void testDownloadExternalFile() throws InterruptedException, ExecutionException {
+        mockHttp();
         DownloadOsmTask task = new DownloadOsmTask();
-        task.loadUrl(false, REMOTE_FILE, null).get();
+        task.loadUrl(false, getRemoteFileUrl(), null).get();
         DataSet ds = task.getDownloadedData();
         assertNotNull(ds);
         assertFalse(ds.getNodes().isEmpty());
         assertFalse(ds.getWays().isEmpty());
+    }
+
+    @Override
+    protected String getRemoteFile() {
+        return "samples/data.osm";
     }
 }

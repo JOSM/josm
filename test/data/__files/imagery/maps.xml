@@ -1,0 +1,92 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<imagery xmlns="http://josm.openstreetmap.de/maps-1.0">
+	<entry>
+		<name>Landsat</name>
+		<id>landsat</id>
+		<type>wms</type>
+		<url><![CDATA[http://irs.gis-lab.info/?layers=landsat&SRS={proj}&WIDTH={width}&HEIGHT={height}&BBOX={bbox}]]></url>
+		<icon>data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQAgMAAABinRfyAAAADFBMVEUTPmdaXSdnXUmdcyo9AbYLAAAAFklEQVQI12NYtYqBgYEI4v//0FAiCAA8TB/hMzHkwAAAAABJRU5ErkJggg==
+		</icon>
+		<projections>
+			<code>NASA:4326</code>
+			<code>EPSG:32641</code>
+			<code>EPSG:3857</code>
+			<code>EPSG:3785</code>
+			<code>EPSG:32642</code>
+			<code>EPSG:32640</code>
+			<code>EPSG:4326</code>
+			<code>EPSG:900913</code>
+			<code>EPSG:3395</code>
+			<code>EPSG:32639</code>
+			<code>EPSG:32638</code>
+			<code>EPSG:32637</code>
+			<code>EPSG:32636</code>
+			<code>EPSG:32635</code>
+		</projections>
+	</entry>
+	<entry>
+		<name>Bing aerial imagery</name>
+		<id>Bing</id>
+		<type>bing</type>
+		<default>true</default>
+		<url>http://www.bing.com/maps/</url>
+		<max-zoom>22</max-zoom>
+		<permission-ref>http://wiki.openstreetmap.org/wiki/Bing_Maps
+		</permission-ref>
+		<icon>data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgBAMAAACBVGfHAAAALVBMVEUMhIT///8jj4/Z7Ozl8vJUqal/vr6+3t6Tycmo1NQxl5dutbXz+flBn5/M5eX9gIKtAAAAjUlEQVR4XmMgD6gFoQkoC7eiCQgKK6AJiNBEQGkBmoBW5S40LROFZyugCMQICloEIQuoCwoKCicgCbAJCgoKGiEJMCWjCTAwpaAJsBaiCnC1CCILCCslCwoKijQgVKQLCgoKliLcAQbWCqgCFgin6wkKCgqevIDwHO8cQUHxAAYkwFoonMSAArS7GCgAAKZlGg8L4DPrAAAAAElFTkSuQmCC
+		</icon>
+		<no-tile-header name="X-VE-Tile-Info" value="no-tile" />
+		<metadata-header header-name="X-VE-TILEMETA-CaptureDatesRange"
+			metadata-key="Capture Date" />
+	</entry>
+	<entry>
+		<name>Mapbox Satellite</name>
+		<id>Mapbox</id>
+		<default>true</default>
+		<type>tms</type>
+		<attribution-text mandatory="true">Terms &amp; Feedback
+		</attribution-text>
+		<attribution-url>http://www.mapbox.com/about/maps/</attribution-url>
+		<url>https://{switch:a,b,c}.tiles.mapbox.com/v4/openstreetmap.map-inh7ifmo/{zoom}/{x}/{y}.png?access_token=pk.eyJ1Ijoib3BlbnN0cmVldG1hcCIsImEiOiJncjlmd0t3In0.DmZsIeOW-3x-C5eX-wAqTw
+		</url>
+		<max-zoom>19</max-zoom>
+		<icon>data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAMAAABEpIrGAAAAhFBMVEVHcEz///9CZPtphPtFZ/uMof1KavvO0uJifvtQcPuLn/1ng/ve4euQnv36+vtIaPtXdfvt7vTr7PG2v+jl5/BaePuhrv1devugrOC7wNdxi/uap96uuOXKzeDc3/O9xuqfrfzY2+ilsOLEy+xEZfuQntuwttG+w9mpsM2Zp/x3j/t0jfvA+Y0kAAAAAXRSTlMAQObYZgAAASRJREFUeF6Fk+eSwyAMhC2Be+9Ob9fv/d/viBQgDLnx98cedi2JNQTPhHkqZSrC4CVZjYYo8+SzRAdZunqCHsmznuILUk/3HX79fPmMN7vE7XK2n5yAuTVI8KRm/qYATSd4L7R/rddH0i4VObjGPY9IGxYgfvbchRNTBq2PFQkxzvzCk6r8teFKy+0WcSHHjlbDIEdGtne5pIbzXlk2tCxMSFtQ9DMSvxeAwyOsN2RK6lD1jfLGALpCbQwfwPQYtWBnkKZFDEw1TkDkjxYCGZNi39HjhIQw2xzAoXhUDk1QnaMfG2RUkrVuYakWXuSoMzsk015H1GT2d7/HxTAUh69J8Mbt7w6+8V9K58j5JGuHdv3Yr18cy7Ry9RRZ5F1ej1D41/8P1QwO53k2L5oAAAAASUVORK5CYII=
+		</icon>
+		<permission-ref>http://wiki.openstreetmap.org/wiki/Vertical_Aerial_Photographs#DigitalGlobe_.2F_MapBox
+		</permission-ref>
+		<no-tile-header name="ETag"
+			value="&quot;067736a547cafe90014b4e59b6510abe&quot;|&quot;ee1f6802b0234046b553cbbc672ac7d9&quot;|&quot;9f5a2f1d7cc131e58befc2052c71c827&quot;" />
+		<no-tile-checksum type="MD5"
+			value="811bb5f56a0e672f674a2a820d340c61" />
+	</entry>
+	<entry>
+		<name>IGN orthophoto AMBA a (WMTS)</name>
+		<id>ign-amba-a</id>
+		<type>wmts</type>
+		<url>
+<![CDATA[
+https://ide.ign.gob.ar/geoservicios/rest/services/sensores_remotos/amba_a/ImageServer/WMTS?
+]]>
+		</url>
+		<permission-ref>http://www.ign.gob.ar/descargas/tyc1.html
+		</permission-ref>
+		<projections>
+			<code>CRS:84</code>
+			<code>EPSG:4326</code>
+			<code>EPSG:3857</code>
+			<code>EPSG:102100</code>
+		</projections>
+		<country-code>AR</country-code>
+		<bounds min-lat="-34.668416" min-lon="-59.251080" max-lat="-34.331591"
+			max-lon="-58.498165" />
+		<attribution-text>
+			Instituto Geográfico Nacional de la República Argentina
+		</attribution-text>
+		<attribution-url>http://www.ign.gob.ar</attribution-url>
+		<icon>
+			http://www.ign.gob.ar/sites/default/files/favicon.png
+		</icon>
+		<min-zoom>1</min-zoom>
+		<max-zoom>20</max-zoom>
+	</entry>
+</imagery>

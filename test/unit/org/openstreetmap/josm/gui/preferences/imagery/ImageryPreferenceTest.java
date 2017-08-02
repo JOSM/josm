@@ -3,8 +3,13 @@ package org.openstreetmap.josm.gui.preferences.imagery;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
+import java.util.Arrays;
+
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.preferences.PreferencesTestUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -20,7 +25,7 @@ public class ImageryPreferenceTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().commands();
+    public JOSMTestRules test = new JOSMTestRules().platform().mainMenu();
 
     /**
      * Unit test of {@link ImageryPreference#ImageryPreference}.
@@ -35,6 +40,8 @@ public class ImageryPreferenceTest {
      */
     @Test
     public void testAddGui() {
+        String fileUrl = new File(TestUtils.getTestDataRoot()+"__files/imagery/maps.xml").toURI().toString();
+        Main.pref.putCollection("imagery.layers.sites", Arrays.asList(fileUrl));
         PreferencesTestUtils.doTestPreferenceSettingAddGui(new ImageryPreference.Factory(), null);
     }
 }

@@ -16,6 +16,8 @@ import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CertificateAmendment;
@@ -54,6 +56,8 @@ public class JOSMTestRules implements TestRule {
     private boolean useHttps;
     private boolean territories;
     private boolean rlTraffic;
+    private boolean main;
+    private boolean mainMenu;
 
     /**
      * Disable the default timeout for this test. Use with care.
@@ -207,6 +211,27 @@ public class JOSMTestRules implements TestRule {
         return this;
     }
 
+    /**
+     * Use the {@link Main#main} application in this test.
+     * @return this instance, for easy chaining
+     * @since xxx
+     */
+    public JOSMTestRules main() {
+        main = true;
+        return this;
+    }
+
+    /**
+     * Use the {@link Main#menu} in this test.
+     * @return this instance, for easy chaining
+     * @since xxx
+     */
+    public JOSMTestRules mainMenu() {
+        main();
+        mainMenu = true;
+        return this;
+    }
+
     @Override
     public Statement apply(Statement base, Description description) {
         Statement statement = base;
@@ -310,6 +335,16 @@ public class JOSMTestRules implements TestRule {
         if (commands) {
             // TODO: Implement a more selective version of this once Main is restructured.
             JOSMFixture.createUnitTestFixture().init(true);
+        } else {
+            if (main) {
+                new MainApplication();
+            }
+
+            if (mainMenu) {
+                JOSMFixture.initContentPane();
+                JOSMFixture.initToolbar();
+                Main.main.menu = new MainMenu();
+            }
         }
     }
 

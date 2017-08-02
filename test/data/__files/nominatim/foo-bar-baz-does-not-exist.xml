@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<searchresults timestamp='Tue, 01 Aug 17 20:32:17 +0000'
+	attribution='Data © OpenStreetMap contributors, ODbL 1.0. http://www.openstreetmap.org/copyright'
+	querystring='foo-bar-baz-does-not-exist' polygon='false'
+	more_url='https://nominatim.openstreetmap.org/search.php?q=foo-bar-baz-does-not-exist&amp;format=xml&amp;accept-language=fr-FR%2Cfr%3Bq%3D0.8%2Cen-US%3Bq%3D0.6%2Cen%3Bq%3D0.4'>
+</searchresults>

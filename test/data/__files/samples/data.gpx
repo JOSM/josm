@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<gpx xmlns="http://www.topografix.com/GPX/1/0" xmlns:osm="http://www.openstreetmap.org" version="1.0" creator="JOSM">
+  <trk>
+    <name>105241</name>
+    <extensions>
+      <osm:property key="trkseg" value="&#xA;      &#xA;        146791&#xA;      &#xA;      &#xA;        146797&#xA;      &#xA;    " />
+    </extensions>
+    <trkseg>
+      <trkpt lat="48.08120346069336" lon="11.736961364746094">
+        <name>146791</name>
+      </trkpt>
+      <trkpt lat="48.07872009277344" lon="11.734161376953125">
+        <name>146797</name>
+      </trkpt>
+    </trkseg>
+  </trk>
+  <trk>
+    <name>85964</name>
+    <extensions>
+      <osm:property key="trkseg" value="&#xA;      &#xA;        128286&#xA;      &#xA;      &#xA;        128287&#xA;      &#xA;    " />
+    </extensions>
+    <trkseg>
+      <trkpt lat="48.155582427978516" lon="11.422438621520996">
+        <name>128286</name>
+      </trkpt>
+      <trkpt lat="48.1555061340332" lon="11.422523498535156">
+        <name>128287</name>
+      </trkpt>
+    </trkseg>
+  </trk>
+  <wpt lat="48.17121887207031" lon="11.717523574829102" />
+  <wpt lat="48.17500686645508" lon="11.753143310546875" />
+  <wpt lat="48.176429748535156" lon="11.752127647399902" />
+  <wpt lat="48.1754264831543" lon="11.754337310791016" />
+  <wpt lat="48.174217224121094" lon="11.424162864685059">
+    <name>128957</name>
+  </wpt>
+</gpx>

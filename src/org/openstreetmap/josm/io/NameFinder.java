@@ -17,7 +17,9 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.HttpClient.Response;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.Utils;
@@ -33,9 +35,15 @@ import org.xml.sax.helpers.DefaultHandler;
 public final class NameFinder {
 
     /**
-     * Nominatim URL.
+     * Nominatim default URL.
      */
     public static final String NOMINATIM_URL = "https://nominatim.openstreetmap.org/search?format=xml&q=";
+
+    /**
+     * Nominatim URL property.
+     * @since xxx
+     */
+    public static final StringProperty NOMINATIM_URL_PROP = new StringProperty("nominatim-url", NOMINATIM_URL);
 
     private NameFinder() {
     }
@@ -47,7 +55,7 @@ public final class NameFinder {
      * @throws IOException if any IO error occurs.
      */
     public static List<SearchResult> queryNominatim(final String searchExpression) throws IOException {
-        return query(new URL(NOMINATIM_URL + Utils.encodeUrl(searchExpression)));
+        return query(new URL(NOMINATIM_URL_PROP.get() + Utils.encodeUrl(searchExpression)));
     }
 
     /**
@@ -58,8 +66,11 @@ public final class NameFinder {
      */
     public static List<SearchResult> query(final URL url) throws IOException {
         final HttpClient connection = HttpClient.create(url);
-        connection.connect();
-        try (Reader reader = connection.getResponse().getContentReader()) {
+        Response response = connection.connect();
+        if (response.getResponseCode() >= 400) {
+            throw new IOException(response.getResponseMessage() + ": " + response.fetchContent());
+        }
+        try (Reader reader = response.getContentReader()) {
             return parseSearchResults(reader);
         } catch (ParserConfigurationException | SAXException ex) {
             throw new UncheckedParseException(ex);

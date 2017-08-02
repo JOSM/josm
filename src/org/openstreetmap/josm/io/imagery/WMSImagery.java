@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.HttpClient.Response;
 import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -225,9 +226,14 @@ public class WMSImagery {
             return;
         }
 
-        final String incomingData = HttpClient.create(getCapabilitiesUrl).connect().fetchContent();
+        final Response response = HttpClient.create(getCapabilitiesUrl).connect();
+        final String incomingData = response.fetchContent();
         Main.debug("Server response to Capabilities request:");
         Main.debug(incomingData);
+
+        if (response.getResponseCode() >= 400) {
+            throw new WMSGetCapabilitiesException(response.getResponseMessage(), incomingData);
+        }
 
         try {
             DocumentBuilder builder = Utils.newSafeDOMBuilder();

@@ -7,26 +7,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.ExecutionException;
 
-import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.NoteData;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link DownloadNotesTask}.
  */
-public class DownloadNotesTaskTest {
-
-    private static final String REMOTE_FILE = "https://josm.openstreetmap.de/export/head/josm/trunk/test/data/planet-notes-extract.osn";
-
-    /**
-     * Setup test.
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().https();
+public class DownloadNotesTaskTest extends AbstractDownloadTaskTest {
 
     /**
      * Unit test of {@code DownloadNotesTask#acceptsUrl} method.
@@ -40,7 +27,7 @@ public class DownloadNotesTaskTest {
         assertTrue(task.acceptsUrl("http://api.openstreetmap.org/api/0.6/notes.json?bbox=-0.65094,51.312159,0.374908,51.669148"));
         assertTrue(task.acceptsUrl("http://api.openstreetmap.org/api/0.6/notes.xml?bbox=-0.65094,51.312159,0.374908,51.669148"));
         assertTrue(task.acceptsUrl("http://api.openstreetmap.org/api/0.6/notes.gpx?bbox=-0.65094,51.312159,0.374908,51.669148"));
-        assertTrue(task.acceptsUrl(REMOTE_FILE));
+        assertTrue(task.acceptsUrl(getRemoteFileUrl()));
     }
 
     /**
@@ -50,10 +37,16 @@ public class DownloadNotesTaskTest {
      */
     @Test
     public void testDownloadExternalFile() throws InterruptedException, ExecutionException {
+        mockHttp();
         DownloadNotesTask task = new DownloadNotesTask();
-        task.loadUrl(false, REMOTE_FILE, null).get();
+        task.loadUrl(false, getRemoteFileUrl(), null).get();
         NoteData data = task.getDownloadedData();
         assertNotNull(data);
         assertFalse(data.getNotes().isEmpty());
+    }
+
+    @Override
+    protected String getRemoteFile() {
+        return "samples/data.osn";
     }
 }
