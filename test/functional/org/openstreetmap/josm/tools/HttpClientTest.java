@@ -58,6 +58,9 @@ public class HttpClientTest {
         }
     };
 
+    /**
+     * Setup test.
+     */
     @Before
     public void setUp() {
         progress = TestUtils.newTestProgressMonitor();
@@ -239,16 +242,23 @@ public class HttpClientTest {
         assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
     }
 
-
+    /**
+     * Checks that a slow request is well handled if it completes before the timeout.
+     * @throws IOException if any I/O error occurs
+     */
     @Test
     public void testRequestInTime() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/delay/3")).setReadTimeout(3500).connect(progress);
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/delay/1")).setReadTimeout(1500).connect(progress);
         assertThat(response.getResponseCode(), is(200));
     }
 
+    /**
+     * Checks that a slow request results in the expected exception if it exceeds the timeout.
+     * @throws IOException always
+     */
     @Test(expected = IOException.class)
     public void testTakesTooLong() throws IOException {
-        HttpClient.create(new URL("https://httpbin.org/delay/3")).setReadTimeout(2500).connect(progress);
+        HttpClient.create(new URL("https://httpbin.org/delay/1")).setReadTimeout(500).connect(progress);
     }
 
     /**

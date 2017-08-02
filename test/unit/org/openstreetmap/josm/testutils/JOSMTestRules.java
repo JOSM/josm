@@ -26,6 +26,7 @@ import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MemoryManagerTest;
+import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -52,6 +53,7 @@ public class JOSMTestRules implements TestRule {
     private boolean useMapStyles;
     private boolean useHttps;
     private boolean territories;
+    private boolean rlTraffic;
 
     /**
      * Disable the default timeout for this test. Use with care.
@@ -195,6 +197,16 @@ public class JOSMTestRules implements TestRule {
         return this;
     }
 
+    /**
+     * Use right and lefthand traffic dataset in this test.
+     * @return this instance, for easy chaining
+     * @since 12556
+     */
+    public JOSMTestRules rlTraffic() {
+        rlTraffic = true;
+        return this;
+    }
+
     @Override
     public Statement apply(Statement base, Description description) {
         Statement statement = base;
@@ -289,6 +301,10 @@ public class JOSMTestRules implements TestRule {
 
         if (territories) {
             Territories.initialize();
+        }
+
+        if (rlTraffic) {
+            RightAndLefthandTraffic.initialize();
         }
 
         if (commands) {
