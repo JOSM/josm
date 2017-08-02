@@ -214,7 +214,7 @@ public class JOSMTestRules implements TestRule {
     /**
      * Use the {@link Main#main} application in this test.
      * @return this instance, for easy chaining
-     * @since xxx
+     * @since 12557
      */
     public JOSMTestRules main() {
         main = true;
@@ -224,10 +224,11 @@ public class JOSMTestRules implements TestRule {
     /**
      * Use the {@link Main#menu} in this test.
      * @return this instance, for easy chaining
-     * @since xxx
+     * @since 12557
      */
     public JOSMTestRules mainMenu() {
         main();
+        platform();
         mainMenu = true;
         return this;
     }
