@@ -1,0 +1,120 @@
+<presets xmlns="http://josm.openstreetmap.de/tagging-preset-1.0"
+         author="Adiac"
+         description="Bicycle network related waypoints"
+         shortdescription="Bicycle waypoints"
+         version="1.3_2012-11-27">
+	<group name="Bicyclejunction" de.name="Fahrradknotenpunkt">
+		<item name="International (icn): Guidepost" de.name="International (icn): Wegweiser" type="node">
+			<label text="International (icn): Guidepost" de.text="International (icn): Wegweiser" />
+			<key key="tourism" value="information" />
+			<key key="information" value="guidepost" />
+			<key key="network" value="icn" />
+			<key key="bicycle" value="yes" />
+			<key key="icn" value="yes" />
+			<text key="icn_ref" text="Junctionnr." de.text="Knotenpunkt-Nr." />
+			<text key="note" text="Note" de.text="Bemerkung" default="Fahrradknotenpunkt ##" />
+			<link href="http://wiki.openstreetmap.org/wiki/Radverkehrsnetz_NRW#Beispiel" />
+		</item>
+		<item name="International (icn): Map" de.name="International (icn): Karte" type="node">
+			<label text="International (icn): Map" de.text="International (icn): Karte" />
+			<key key="tourism" value="information" />
+			<key key="information" value="map" />
+			<key key="network" value="icn" />
+			<key key="bicycle" value="yes" />
+			<combo key="map_size" text="Mapsize" de.text="Kartengröße" values="site,city,region" default="" delete_if_empty="true" />
+			<combo key="map_type" text="Maptype" de.text="Kartentyp" values="topo,street,scheme" default="" delete_if_empty="true" />
+			<link href="http://wiki.openstreetmap.org/wiki/Radverkehrsnetz_NRW#Beispiel" />
+		</item>
+		<item name="Local (lcn): Guidepost" de.name="Lokal (lcn): Wegweiser" type="node">
+			<label text="Local (lcn): Guidepost" de.text="Lokal (lcn): Wegweiser" />
+			<key key="tourism" value="information" />
+			<key key="information" value="guidepost" />
+			<key key="network" value="lcn" />
+			<key key="bicycle" value="yes" />
+			<key key="lcn" value="yes" />
+			<text key="lcn_ref" text="Junctionnr." de.text="Knotenpunkt-Nr." />
+			<text key="note" text="Note" de.text="Bemerkung" default="Fahrradknotenpunkt ##" />
+			<link href="http://wiki.openstreetmap.org/wiki/Radverkehrsnetz_NRW#Beispiel" />
+		</item>
+		<item name="Local (lcn): Map" de.name="Lokal (lcn): Karte " type="node">
+			<label text="Local (lcn): Map" de.text="Lokal (lcn): Karte" />
+			<key key="tourism" value="information" />
+			<key key="information" value="map" />
+			<key key="network" value="lcn" />
+			<key key="bicycle" value="yes" />
+			<combo key="map_size" text="Mapsize" de.text="Kartengröße" values="site,city,region" default="" delete_if_empty="true" />
+			<combo key="map_type" text="Maptype" de.text="Kartentyp" values="topo,street,scheme" default="" delete_if_empty="true" />
+			<link href="http://wiki.openstreetmap.org/wiki/Radverkehrsnetz_NRW#Beispiel" />
+		</item>
+		<item name="National (ncn): Guidepost" de.name="National (ncn): Wegweiser" type="node">
+			<label text="National (ncn): Guidepost" de.text="National (ncn): Wegweiser" />
+			<key key="tourism" value="information" />
+			<key key="information" value="guidepost" />
+			<key key="network" value="ncn" />
+			<key key="bicycle" value="yes" />
+			<key key="ncn" value="yes" />
+			<text key="ncn_ref" text="Junctionnr." de.text="Knotenpunkt-Nr." />
+			<text key="note" text="Note" de.text="Bemerkung" default="Fahrradknotenpunkt ##" />
+			<link href="http://wiki.openstreetmap.org/wiki/Radverkehrsnetz_NRW#Beispiel" />
+		</item>
+		<item name="National (ncn): Map" de.name="National (ncn): Karte" type="node">
+			<label text="National (ncn): Map" de.text="National (ncn): Karte" />
+			<key key="tourism" value="information" />
+			<key key="information" value="map" />
+			<key key="network" value="ncn" />
+			<key key="bicycle" value="yes" />
+			<combo key="map_size" text="Mapsize" de.text="Kartengröße" values="site,city,region" default="" delete_if_empty="true" />
+			<combo key="map_type" text="Maptype" de.text="Kartentyp" values="topo,street,scheme" default="" delete_if_empty="true" />
+			<link href="http://wiki.openstreetmap.org/wiki/Radverkehrsnetz_NRW#Beispiel" />
+		</item>
+		<item name="Regional (rcn): Guidepost" de.name="Regional (rcn): Wegweiser" type="node">
+			<label text="Regional (rcn): Guidepost" de.text="Regional (rcn): Wegweiser" />
+			<key key="tourism" value="information" />
+			<key key="information" value="guidepost" />
+			<key key="network" value="rcn" />
+			<key key="bicycle" value="yes" />
+			<key key="rcn" value="yes" />
+			<text key="rcn_ref" text="Junctionnr." de.text="Knotenpunkt-Nr." />
+			<text key="note" text="Note" de.text="Bemerkung" default="Fahrradknotenpunkt ##" />
+			<link href="http://wiki.openstreetmap.org/wiki/Radverkehrsnetz_NRW#Beispiel" />
+		</item>
+		<item name="Regional (rcn): Map" de.name="Regional (rcn): Karte" type="node">
+			<label text="Regional (rcn): Map" de.text="Regional (rcn): Karte" />
+			<key key="tourism" value="information" />
+			<key key="information" value="map" />
+			<key key="network" value="rcn" />
+			<key key="bicycle" value="yes" />
+			<combo key="map_size" text="Mapsize" de.text="Kartengröße" values="site,city,region" default="" delete_if_empty="true" />
+			<combo key="map_type" text="Maptype" de.text="Kartentyp" values="topo,street,scheme" default="" delete_if_empty="true" />
+			<link href="http://wiki.openstreetmap.org/wiki/Radverkehrsnetz_NRW#Beispiel" />
+		</item>
+	</group>
+        <item name="LF bicycle relation ncn" type="relation"
+            name_template="route(?{'{network} '}?{'{ref} '}?{'{name} '}?{'{from} - {via} - {to} ' | '{from} - {to} ' | '{from} ' | '{to} '}?{'{note} '})"
+            name_template_filter="type=route network=ncn route=bicycle">
+        </item>
+        <item name="Node Network Route relation" type="relation"
+            name_template="route(?{'{network} '}!{parent() type=network(network=rcn|network=rwn|network=rhn)'?{'{ref}' | ''}'}?{'{ref} '}?{'{note} '}?{'{name}'}"
+            name_template_filter="type=route (route=bicycle | route=foot | route = hiking | route = walking | route = horse)">
+        </item>
+        <item name="Node Network Network relation" type="relation"
+            name_template="network(rcn ?{'{addr:country} '}?{'{addr:province} '}?{'{name}'}"
+            name_template_filter="type=network network=rcn">
+        </item>
+        <item name="Node Network node" type="node"
+            name_template="?{'FKp {rcn_ref}'}?{' / WKp {rwn_ref}'}"
+            name_template_filter="type:node rcn_ref rwn_ref">
+        </item>
+        <item name="Node Network node" type="node"
+            name_template="FKp {rcn_ref}"
+            name_template_filter="type:node rcn_ref">
+        </item>
+        <item name="Node Network node" type="node"
+            name_template="WKp {rwn_ref}"
+            name_template_filter="type:node rwn_ref">
+        </item>
+        <item name="Node Network node" type="node"
+            name_template="PKp {rhn_ref}"
+            name_template_filter="type:node rhn_ref">
+        </item>
+</presets>

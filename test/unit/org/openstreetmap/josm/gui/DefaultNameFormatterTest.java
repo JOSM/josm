@@ -1,6 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
@@ -9,9 +13,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -23,7 +26,10 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.xml.sax.SAXException;
+
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -33,12 +39,17 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 public class DefaultNameFormatterTest {
 
     /**
-     * Setup tests
+     * Setup test.
      */
-    @BeforeClass
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().platform();
+
+    /**
+     * HTTP mock.
+     */
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(options().dynamicPort().usingFilesUnderDirectory(TestUtils.getTestDataRoot()));
 
     /**
      * Non-regression test for ticket <a href="https://josm.openstreetmap.de/ticket/9632">#9632</a>.
@@ -49,8 +60,13 @@ public class DefaultNameFormatterTest {
     @Test
     @SuppressFBWarnings(value = "ITA_INEFFICIENT_TO_ARRAY")
     public void testTicket9632() throws IllegalDataException, IOException, SAXException {
-        String source = "http://josm.openstreetmap.de/josmfile?page=Presets/BicycleJunction&amp;preset";
-        TaggingPresets.addTaggingPresets(TaggingPresetReader.readAll(source, true));
+        String source = "presets/Presets_BicycleJunction-preset.xml";
+        wireMockRule.stubFor(get(urlEqualTo("/" + source))
+                .willReturn(aResponse()
+                    .withStatus(200)
+                    .withHeader("Content-Type", "text/xml")
+                    .withBodyFile(source)));
+        TaggingPresets.addTaggingPresets(TaggingPresetReader.readAll("http://localhost:" + wireMockRule.port() + "/" + source, true));
 
         Comparator<Relation> comparator = DefaultNameFormatter.getInstance().getRelationComparator();
 

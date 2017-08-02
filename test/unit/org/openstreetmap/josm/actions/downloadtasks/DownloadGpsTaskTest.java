@@ -7,26 +7,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.concurrent.ExecutionException;
 
-import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.gpx.GpxData;
-import org.openstreetmap.josm.testutils.JOSMTestRules;
-
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link DownloadGpsTask}.
  */
-public class DownloadGpsTaskTest {
-
-    private static final String REMOTE_FILE = "https://josm.openstreetmap.de/export/head/josm/trunk/data_nodist/munich.gpx";
-
-    /**
-     * Setup test.
-     */
-    @Rule
-    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().https();
+public class DownloadGpsTaskTest extends AbstractDownloadTaskTest {
 
     /**
      * Unit test of {@code DownloadGpsTask#acceptsUrl} method.
@@ -44,7 +31,7 @@ public class DownloadGpsTaskTest {
         assertTrue(task.acceptsUrl("https://www.openstreetmap.org/user/simon04/traces/750057"));
         assertTrue(task.acceptsUrl("https://www.openstreetmap.org/edit?gpx=750057"));
         assertTrue(task.acceptsUrl("http://www.openstreetmap.org/edit?gpx=2277313#map=14/-20.7321/-40.5328"));
-        assertTrue(task.acceptsUrl(REMOTE_FILE));
+        assertTrue(task.acceptsUrl(getRemoteFileUrl()));
     }
 
     /**
@@ -54,11 +41,17 @@ public class DownloadGpsTaskTest {
      */
     @Test
     public void testDownloadExternalFile() throws InterruptedException, ExecutionException {
+        mockHttp();
         DownloadGpsTask task = new DownloadGpsTask();
-        task.loadUrl(false, REMOTE_FILE, null).get();
+        task.loadUrl(false, getRemoteFileUrl(), null).get();
         GpxData data = task.getDownloadedData();
         assertNotNull(data);
         assertFalse(data.waypoints.isEmpty());
         assertFalse(data.tracks.isEmpty());
+    }
+
+    @Override
+    protected String getRemoteFile() {
+        return "samples/data.gpx";
     }
 }
