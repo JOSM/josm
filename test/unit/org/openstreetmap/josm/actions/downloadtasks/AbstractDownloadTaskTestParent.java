@@ -17,7 +17,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 /**
  * Superclass of {@link DownloadGpsTaskTest}, {@link DownloadOsmTaskTest} and {@link DownloadNotesTaskTest}.
  */
-public abstract class AbstractDownloadTaskTest {
+public abstract class AbstractDownloadTaskTestParent {
 
     /**
      * Setup test.

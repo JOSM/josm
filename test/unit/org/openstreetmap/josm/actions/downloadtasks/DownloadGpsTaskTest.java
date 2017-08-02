@@ -13,7 +13,7 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 /**
  * Unit tests for class {@link DownloadGpsTask}.
  */
-public class DownloadGpsTaskTest extends AbstractDownloadTaskTest {
+public class DownloadGpsTaskTest extends AbstractDownloadTaskTestParent {
 
     /**
      * Unit test of {@code DownloadGpsTask#acceptsUrl} method.

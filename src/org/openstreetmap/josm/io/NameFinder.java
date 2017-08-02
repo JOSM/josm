@@ -41,7 +41,7 @@ public final class NameFinder {
 
     /**
      * Nominatim URL property.
-     * @since xxx
+     * @since 12557
      */
     public static final StringProperty NOMINATIM_URL_PROP = new StringProperty("nominatim-url", NOMINATIM_URL);
 

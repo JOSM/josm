@@ -13,7 +13,7 @@ import org.openstreetmap.josm.data.osm.NoteData;
 /**
  * Unit tests for class {@link DownloadNotesTask}.
  */
-public class DownloadNotesTaskTest extends AbstractDownloadTaskTest {
+public class DownloadNotesTaskTest extends AbstractDownloadTaskTestParent {
 
     /**
      * Unit test of {@code DownloadNotesTask#acceptsUrl} method.
