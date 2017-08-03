@@ -207,6 +207,7 @@ public class JOSMTestRules implements TestRule {
      * @since 12556
      */
     public JOSMTestRules rlTraffic() {
+        territories();
         rlTraffic = true;
         return this;
     }
