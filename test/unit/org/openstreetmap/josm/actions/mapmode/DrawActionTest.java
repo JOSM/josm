@@ -38,7 +38,7 @@ public class DrawActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().commands();
+    public JOSMTestRules test = new JOSMTestRules().platform().mainMenu().projection();
 
     /**
      * Non regression test case for bug #12011.

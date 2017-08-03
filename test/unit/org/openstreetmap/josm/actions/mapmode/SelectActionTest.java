@@ -58,7 +58,7 @@ public class SelectActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().projection().commands();
+    public JOSMTestRules test = new JOSMTestRules().platform().projection().mainMenu();
 
     /**
      * Test case: Move a two nodes way near a third node.

@@ -33,7 +33,7 @@ public class FixDataHookTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().commands();
+    public JOSMTestRules test = new JOSMTestRules().main();
 
     /**
      * Test of {@link FixDataHook#checkUpload} method.
