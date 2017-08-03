@@ -24,7 +24,7 @@ public class SelfIntersectingWayTest {
      */
     @BeforeClass
     public static void setUp() throws Exception {
-        JOSMFixture.createUnitTestFixture().init(false);
+        JOSMFixture.createUnitTestFixture().init();
     }
 
     private static List<Node> createNodes() {

@@ -9,7 +9,6 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.URL;
 
-import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.io.audio.AudioPlayer;
@@ -23,7 +22,7 @@ import org.openstreetmap.josm.tools.Utils;
  * If fast forwarding or slow forwarding, resume normal speed.
  * @since 547
  */
-public class AudioPlayPauseAction extends JosmAction {
+public class AudioPlayPauseAction extends AbstractAudioAction {
 
     /**
      * Constructs a new {@code AudioPlayPauseAction}.

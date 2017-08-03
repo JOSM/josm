@@ -5,7 +5,6 @@ import java.awt.event.ActionEvent;
 import java.io.IOException;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.io.audio.AudioPlayer;
 import org.openstreetmap.josm.io.audio.AudioUtil;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -14,7 +13,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * Abstract superclass of {@link AudioFasterAction} and {@link AudioSlowerAction}.
  * @since 563
  */
-public abstract class AudioFastSlowAction extends JosmAction {
+public abstract class AudioFastSlowAction extends AbstractAudioAction {
 
     private double multiplier;
 

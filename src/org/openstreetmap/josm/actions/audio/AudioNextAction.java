@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.trc;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -16,7 +15,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  * Play from the first such Marker if none has been played, or repeat the last marker if at the end.
  * @since 547
  */
-public class AudioNextAction extends JosmAction {
+public class AudioNextAction extends AbstractAudioAction {
 
     /**
      * Constructs a new {@code AudioNextAction}.

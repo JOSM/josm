@@ -11,11 +11,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.dialogs.ConflictDialog.ConflictPainter;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -30,7 +32,7 @@ public class ConflictDialogTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().commands();
+    public JOSMTestRules test = new JOSMTestRules().mainMenu().platform().projection();
 
     /**
      * Unit test of {@link ConflictDialog#ConflictDialog}.
@@ -53,6 +55,7 @@ public class ConflictDialogTest {
      */
     @Test
     public void testConflictPainter() {
+        Main.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "", null));
         ConflictPainter cp = new ConflictPainter(Main.map.mapView, new BufferedImage(800, 600, BufferedImage.TYPE_3BYTE_BGR).createGraphics());
         Node n1 = new Node(1, 1);
         n1.setCoor(new LatLon(1, 1));
