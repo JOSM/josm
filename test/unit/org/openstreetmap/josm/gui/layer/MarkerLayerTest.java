@@ -8,6 +8,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -23,7 +24,7 @@ public class MarkerLayerTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().commands();
+    public JOSMTestRules test = new JOSMTestRules().mainMenu().platform().projection();
 
     /**
      * Unit test of {@code Main.map.mapView.playHeadMarker}.
@@ -31,6 +32,7 @@ public class MarkerLayerTest {
     @Test
     public void testPlayHeadMarker() {
         try {
+            Main.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "", null));
             MarkerLayer layer = new MarkerLayer(new GpxData(), null, null, null);
             assertNull(Main.map.mapView.playHeadMarker);
             Main.getLayerManager().addLayer(layer);

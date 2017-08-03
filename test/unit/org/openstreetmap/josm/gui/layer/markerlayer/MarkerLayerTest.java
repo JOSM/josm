@@ -8,15 +8,18 @@ import static org.junit.Assert.assertTrue;
 import java.awt.Color;
 import java.util.Arrays;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link MarkerLayer} class.
@@ -26,9 +29,15 @@ public class MarkerLayerTest {
     /**
      * Setup tests
      */
-    @BeforeClass
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init(true);
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().mainMenu().platform().preferences().projection();
+
+    /**
+     * Setup tests
+     */
+    @Before
+    public void setUp() {
         Main.pref.put("marker.traceaudio", true);
     }
 
@@ -39,6 +48,7 @@ public class MarkerLayerTest {
     public void testMarkerLayer() {
         assertEquals(Color.magenta, MarkerLayer.getGenericColor());
         MarkerLayer layer = new MarkerLayer(new GpxData(), "foo", null, null);
+        Main.getLayerManager().addLayer(layer);
 
         assertEquals("foo", layer.getName());
         assertEquals(Color.magenta, layer.getColorProperty().get());

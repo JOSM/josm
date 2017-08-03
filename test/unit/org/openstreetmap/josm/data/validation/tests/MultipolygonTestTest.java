@@ -34,7 +34,7 @@ public class MultipolygonTestTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().commands();
+    public JOSMTestRules test = new JOSMTestRules().projection().preferences();
 
     private static Way createUnclosedWay(String tags) {
         List<Node> nodes = new ArrayList<>();

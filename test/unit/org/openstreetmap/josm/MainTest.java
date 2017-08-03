@@ -45,7 +45,7 @@ public class MainTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().https().devAPI().main();
+    public JOSMTestRules test = new JOSMTestRules().platform().https().devAPI().mainMenu().projection();
 
     /**
      * Unit test of {@link DownloadParamType#paramType} method.

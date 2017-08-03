@@ -13,11 +13,13 @@ import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
 
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Utils;
 import org.reflections.Reflections;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Checks if all classes implementing the {@link TableCellRenderer} interface do
@@ -46,10 +48,9 @@ public class TableCellRendererTest {
     /**
      * Setup test.
      */
-    @BeforeClass
-    public static void setUp() {
-        JOSMFixture.createFunctionalTestFixture().init(true);
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().platform().mainMenu();
 
     /**
      * Unit test of all table cell renderers against null values.

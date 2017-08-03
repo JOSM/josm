@@ -7,12 +7,16 @@ import static org.junit.Assert.assertNull;
 
 import java.awt.Color;
 
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MapScaler.AccessibleMapScaler;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests of {@link MapScaler} class.
@@ -22,16 +26,16 @@ public class MapScalerTest {
     /**
      * Setup tests
      */
-    @BeforeClass
-    public static void setUpBeforeClass() {
-        JOSMFixture.createUnitTestFixture().init(true);
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().mainMenu().platform().projection();
 
     /**
      * Unit test of {@link MapScaler#MapScaler}.
      */
     @Test
     public void testMapScaler() {
+        Main.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "", null));
         assertEquals(Color.WHITE, MapScaler.getColor());
         MapScaler ms = new MapScaler(Main.map.mapView);
         assertEquals("/MapView/Scaler", ms.helpTopic());

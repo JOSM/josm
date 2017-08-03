@@ -185,6 +185,9 @@ public class JOSMFixture {
         if (reAddListeners) {
             Main.mainPanel.reAddListeners();
         }
+        if (Main.main != null) {
+            Main.main.panel = Main.mainPanel;
+        }
     }
 
     /**

@@ -26,7 +26,7 @@ public class RelationEditorActionsTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().preferences().platform().commands();
+    public JOSMTestRules test = new JOSMTestRules().preferences().platform().main();
 
     /**
      * Check that all actions do not crash.

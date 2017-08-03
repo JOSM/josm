@@ -12,9 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.SplashScreen.SplashProgressMonitor;
 import org.openstreetmap.josm.plugins.PluginHandler;
@@ -22,6 +21,7 @@ import org.openstreetmap.josm.plugins.PluginHandlerTestIT;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.PluginListParseException;
 import org.openstreetmap.josm.plugins.PluginListParser;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -33,10 +33,9 @@ public class MainApplicationTest {
     /**
      * Setup test.
      */
-    @BeforeClass
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init(true);
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().platform().mainMenu();
 
     @SuppressFBWarnings(value = "DM_DEFAULT_ENCODING")
     private void testShow(final String arg, String expected) throws InterruptedException, IOException {
