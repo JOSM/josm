@@ -167,7 +167,7 @@ public final class AudioPlayer extends Thread implements AudioListener {
      */
     public static boolean paused() {
         AudioPlayer instance = AudioPlayer.getInstance();
-        return instance == null ? false : (instance.state == State.PAUSED);
+        return instance != null && instance.state == State.PAUSED;
     }
 
     /**
@@ -176,7 +176,7 @@ public final class AudioPlayer extends Thread implements AudioListener {
      */
     public static boolean playing() {
         AudioPlayer instance = AudioPlayer.getInstance();
-        return instance == null ? false : (instance.state == State.PLAYING);
+        return instance != null && instance.state == State.PLAYING;
     }
 
     /**
