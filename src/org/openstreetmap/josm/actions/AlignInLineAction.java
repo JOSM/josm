@@ -169,48 +169,52 @@ public final class AlignInLineAction extends JosmAction {
         if (!isEnabled())
             return;
 
-        DataSet ds = getLayerManager().getEditDataSet();
-        List<Node> selectedNodes = new ArrayList<>(ds.getSelectedNodes());
-        List<Way> selectedWays = new ArrayList<>(ds.getSelectedWays());
-        selectedWays.removeIf(OsmPrimitive::isIncomplete);
-
         try {
-            Command cmd;
-            // Decide what to align based on selection:
-
-            if (selectedNodes.isEmpty() && !selectedWays.isEmpty()) {
-                // Only ways selected -> For each way align their nodes taking care of intersection
-                cmd = alignMultiWay(selectedWays);
-            } else if (selectedNodes.size() == 1) {
-                // Only 1 node selected -> align this node relative to referers way
-                Node selectedNode = selectedNodes.get(0);
-                List<Way> involvedWays;
-                if (selectedWays.isEmpty())
-                    // No selected way, all way containing this node are used
-                    involvedWays = selectedNode.getParentWays();
-                else
-                    // Selected way, use only these ways
-                    involvedWays = selectedWays;
-                List<Line> lines = getInvolvedLines(selectedNode, involvedWays);
-                if (lines.size() > 2 || lines.isEmpty())
-                    throw new InvalidSelection();
-                cmd = alignSingleNode(selectedNodes.get(0), lines);
-            } else if (selectedNodes.size() >= 3) {
-                // More than 3 nodes and way(s) selected -> align selected nodes. Don't care of way(s).
-                cmd = alignOnlyNodes(selectedNodes);
-            } else {
-                // All others cases are invalid
-                throw new InvalidSelection();
-            }
-
-            // Do it!
-            Main.main.undoRedo.add(cmd);
-
+            Main.main.undoRedo.add(buildCommand());
         } catch (InvalidSelection except) {
             Main.debug(except);
             new Notification(except.getMessage())
                 .setIcon(JOptionPane.INFORMATION_MESSAGE)
                 .show();
+        }
+    }
+
+    /**
+     * Builds "align in line" command depending on the selected objects.
+     * @return the resulting command to execute to perform action
+     * @throws InvalidSelection if a polygon is selected, or if a node is used by 3 or more ways
+     * @since 12562
+     */
+    public Command buildCommand() throws InvalidSelection {
+        DataSet ds = getLayerManager().getEditDataSet();
+        List<Node> selectedNodes = new ArrayList<>(ds.getSelectedNodes());
+        List<Way> selectedWays = new ArrayList<>(ds.getSelectedWays());
+        selectedWays.removeIf(OsmPrimitive::isIncomplete);
+
+        // Decide what to align based on selection:
+        if (selectedNodes.isEmpty() && !selectedWays.isEmpty()) {
+            // Only ways selected -> For each way align their nodes taking care of intersection
+            return alignMultiWay(selectedWays);
+        } else if (selectedNodes.size() == 1) {
+            // Only 1 node selected -> align this node relative to referers way
+            Node selectedNode = selectedNodes.get(0);
+            List<Way> involvedWays;
+            if (selectedWays.isEmpty())
+                // No selected way, all way containing this node are used
+                involvedWays = selectedNode.getParentWays();
+            else
+                // Selected way, use only these ways
+                involvedWays = selectedWays;
+            List<Line> lines = getInvolvedLines(selectedNode, involvedWays);
+            if (lines.size() > 2 || lines.isEmpty())
+                throw new InvalidSelection();
+            return alignSingleNode(selectedNodes.get(0), lines);
+        } else if (selectedNodes.size() >= 3) {
+            // More than 3 nodes and way(s) selected -> align selected nodes. Don't care of way(s).
+            return alignOnlyNodes(selectedNodes);
+        } else {
+            // All others cases are invalid
+            throw new InvalidSelection();
         }
     }
 

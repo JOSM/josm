@@ -9,9 +9,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.stream.Stream;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -20,7 +20,10 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Utils;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link SimplifyWayAction}.
@@ -33,11 +36,19 @@ public final class SimplifyWayActionTest {
     /**
      * Setup test.
      */
-    @BeforeClass
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init(true);
-        action = Main.main.menu.simplifyWay;
-        action.setEnabled(true);
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().mainMenu();
+
+    /**
+     * Setup test.
+     */
+    @Before
+    public void setUp() {
+        if (action == null) {
+            action = Main.main.menu.simplifyWay;
+            action.setEnabled(true);
+        }
     }
 
     private static Way createWaySelected(DataSet ds, double latStart) {

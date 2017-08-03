@@ -153,21 +153,21 @@ public class HttpClientTest {
 
     @Test
     public void testRelativeRedirects() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/relative-redirect/5")).connect(progress);
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/relative-redirect/3")).connect(progress);
         assertThat(response.getResponseCode(), is(200));
         assertThat(response.getContentLength() > 100, is(true));
     }
 
     @Test
     public void testAbsoluteRedirects() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/absolute-redirect/5")).connect(progress);
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/absolute-redirect/3")).connect(progress);
         assertThat(response.getResponseCode(), is(200));
         assertThat(response.getContentLength() > 100, is(true));
     }
 
     @Test(expected = IOException.class)
     public void testTooMuchRedirects() throws IOException {
-        HttpClient.create(new URL("https://httpbin.org/redirect/5")).setMaxRedirects(4).connect(progress);
+        HttpClient.create(new URL("https://httpbin.org/redirect/3")).setMaxRedirects(2).connect(progress);
     }
 
     @Test
