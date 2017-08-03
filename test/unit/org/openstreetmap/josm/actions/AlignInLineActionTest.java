@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AlignInLineAction.InvalidSelection;
 import org.openstreetmap.josm.actions.AlignInLineAction.Line;
@@ -16,11 +16,21 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link AlignInLineAction}.
  */
 public final class AlignInLineActionTest {
+
+    /**
+     * Setup test.
+     */
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().mainMenu().projection();
 
     /** Class under test. */
     private static AlignInLineAction action;
@@ -30,8 +40,6 @@ public final class AlignInLineActionTest {
      */
     @Before
     public void setUp() {
-        JOSMFixture.createUnitTestFixture().init(true);
-
         // Enable "Align in line" feature.
         action = Main.main.menu.alignInLine;
         action.setEnabled(true);
@@ -42,9 +50,10 @@ public final class AlignInLineActionTest {
      * nodes (the most distant in the way sequence, not the most euclidean-distant). See
      * https://josm.openstreetmap.de/ticket/9605#comment:3. Note that in this test, after alignment, way is overlapping
      * itself.
+     * @throws InvalidSelection never
      */
     @Test
-    public void testNodesOpenWay() {
+    public void testNodesOpenWay() throws InvalidSelection {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 
@@ -66,7 +75,7 @@ public final class AlignInLineActionTest {
             // Select nodes to align.
             dataSet.addSelected(point1, point2, point3);
 
-            action.actionPerformed(null);
+            action.buildCommand().executeCommand();
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
             Main.getLayerManager().removeLayer(layer);
@@ -81,9 +90,10 @@ public final class AlignInLineActionTest {
     /**
      * Test case: only nodes selected, part of a closed way: align these nodes on the line passing through the most
      * distant nodes.
+     * @throws InvalidSelection never
      */
     @Test
-    public void testNodesClosedWay() {
+    public void testNodesClosedWay() throws InvalidSelection {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 
@@ -105,7 +115,7 @@ public final class AlignInLineActionTest {
             // Select nodes to align (point1 must be in the second position to exhibit the bug).
             dataSet.addSelected(point4, point1, point2);
 
-            action.actionPerformed(null);
+            action.buildCommand().executeCommand();
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
             Main.getLayerManager().removeLayer(layer);
@@ -121,9 +131,10 @@ public final class AlignInLineActionTest {
     /**
      * Test case: only nodes selected, part of multiple ways: align these nodes on the line passing through the most
      * distant nodes.
+     * @throws InvalidSelection never
      */
     @Test
-    public void testNodesOpenWays() {
+    public void testNodesOpenWays() throws InvalidSelection {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
 
@@ -148,7 +159,7 @@ public final class AlignInLineActionTest {
             dataSet.addSelected(point1, point2, point3, point4);
 
             // Points must align between points 1 and 4.
-            action.actionPerformed(null);
+            action.buildCommand().executeCommand();
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
             Main.getLayerManager().removeLayer(layer);

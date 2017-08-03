@@ -212,7 +212,7 @@ public class JOSMTestRules implements TestRule {
     }
 
     /**
-     * Use the {@link Main#main} application in this test.
+     * Use the {@link Main#main}, {@code Main.contentPanePrivate}, {@code Main.mainPanel}, {@link Main#toolbar} global variables in this test.
      * @return this instance, for easy chaining
      * @since 12557
      */
@@ -339,11 +339,12 @@ public class JOSMTestRules implements TestRule {
         } else {
             if (main) {
                 new MainApplication();
+                JOSMFixture.initContentPane();
+                JOSMFixture.initMainPanel();
+                JOSMFixture.initToolbar();
             }
 
             if (mainMenu) {
-                JOSMFixture.initContentPane();
-                JOSMFixture.initToolbar();
                 Main.main.menu = new MainMenu();
             }
         }

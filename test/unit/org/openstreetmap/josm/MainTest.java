@@ -19,7 +19,6 @@ import java.util.concurrent.Future;
 
 import javax.swing.UIManager;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main.DownloadParamType;
@@ -46,16 +45,7 @@ public class MainTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().https().devAPI();
-
-    /**
-     * Setup test.
-     */
-    @Before
-    public void setUp() {
-        JOSMFixture.initContentPane();
-        JOSMFixture.initMainPanel();
-    }
+    public JOSMTestRules test = new JOSMTestRules().platform().https().devAPI().main();
 
     /**
      * Unit test of {@link DownloadParamType#paramType} method.

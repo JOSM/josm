@@ -9,6 +9,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.layer.LayerManagerTest.TestLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -25,7 +26,7 @@ public class MergeLayerActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().commands();
+    public JOSMTestRules test = new JOSMTestRules().platform().mainMenu();
 
     private MergeLayerAction action;
 
@@ -34,6 +35,12 @@ public class MergeLayerActionTest {
      */
     @Before
     public void setUp() {
+        try {
+            LayerListDialog.getInstance();
+        } catch (IllegalStateException e) {
+            LayerListDialog.createInstance(Main.getLayerManager());
+            Main.trace(e);
+        }
         if (action == null) {
             action = new MergeLayerAction();
         }

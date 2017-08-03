@@ -10,9 +10,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SplitWayAction.Strategy;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -24,6 +24,9 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit tests for class {@link SplitWayAction}.
@@ -36,11 +39,19 @@ public final class SplitWayActionTest {
     /**
      * Setup test.
      */
-    @BeforeClass
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init(true);
-        action = Main.main.menu.splitWay;
-        action.setEnabled(true);
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().mainMenu().projection();
+
+    /**
+     * Setup test.
+     */
+    @Before
+    public void setUp() {
+        if (action == null) {
+            action = Main.main.menu.splitWay;
+            action.setEnabled(true);
+        }
     }
 
     /**
