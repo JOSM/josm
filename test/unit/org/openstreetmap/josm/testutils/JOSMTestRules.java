@@ -340,7 +340,7 @@ public class JOSMTestRules implements TestRule {
             if (main) {
                 new MainApplication();
                 JOSMFixture.initContentPane();
-                JOSMFixture.initMainPanel();
+                JOSMFixture.initMainPanel(true);
                 JOSMFixture.initToolbar();
             }
 

@@ -25,7 +25,7 @@ public class DeleteActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().commands();
+    public JOSMTestRules test = new JOSMTestRules().platform().mainMenu().projection();
 
     /**
      * Unit test of {@link DeleteAction#enterMode} and {@link DeleteAction#exitMode}.

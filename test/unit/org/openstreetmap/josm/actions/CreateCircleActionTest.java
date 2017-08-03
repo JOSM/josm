@@ -37,7 +37,7 @@ public final class CreateCircleActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().projection().main();
+    public JOSMTestRules test = new JOSMTestRules().platform().projection().mainMenu();
 
     /**
      * Test case: When Create Circle action is performed with a single way selected,
