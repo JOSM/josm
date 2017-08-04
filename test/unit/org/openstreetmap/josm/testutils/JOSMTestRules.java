@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CertificateAmendment;
 import org.openstreetmap.josm.io.OsmApi;
@@ -53,6 +54,7 @@ public class JOSMTestRules implements TestRule {
     private boolean commands;
     private boolean allowMemoryManagerLeaks;
     private boolean useMapStyles;
+    private boolean usePresets;
     private boolean useHttps;
     private boolean territories;
     private boolean rlTraffic;
@@ -192,6 +194,17 @@ public class JOSMTestRules implements TestRule {
     }
 
     /**
+     * Use presets in this test.
+     * @return this instance, for easy chaining
+     * @since 12568
+     */
+    public JOSMTestRules presets() {
+        preferences();
+        usePresets = true;
+        return this;
+    }
+
+    /**
      * Use boundaries dataset in this test.
      * @return this instance, for easy chaining
      * @since 12545
@@ -324,6 +337,11 @@ public class JOSMTestRules implements TestRule {
         if (useMapStyles) {
             // Reset the map paint styles.
             MapPaintStyles.readFromPreferences();
+        }
+
+        if (usePresets) {
+            // Reset the presets.
+            TaggingPresets.readFromPreferences();
         }
 
         if (territories) {

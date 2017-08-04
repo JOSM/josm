@@ -9,14 +9,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.BeforeClass;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * JUnit Test of {@link TagChecker}.
@@ -26,11 +27,9 @@ public class TagCheckerTest {
     /**
      * Setup test.
      */
-    @BeforeClass
-    public static void setUp() {
-        JOSMFixture.createUnitTestFixture().init();
-        TaggingPresets.readFromPreferences();
-    }
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules rule = new JOSMTestRules().presets();
 
     List<TestError> test(OsmPrimitive primitive) throws IOException {
         final TagChecker checker = new TagChecker();
