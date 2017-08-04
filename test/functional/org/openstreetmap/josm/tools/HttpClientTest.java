@@ -248,7 +248,7 @@ public class HttpClientTest {
      */
     @Test
     public void testRequestInTime() throws IOException {
-        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/delay/1")).setReadTimeout(1500).connect(progress);
+        final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/delay/1")).setReadTimeout(2000).connect(progress);
         assertThat(response.getResponseCode(), is(200));
     }
 

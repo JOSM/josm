@@ -176,6 +176,13 @@ public class JOSMFixture {
 
     /**
      * Make sure {@code Main.mainPanel} is initialized.
+     */
+    public static void initMainPanel() {
+        initMainPanel(false);
+    }
+
+    /**
+     * Make sure {@code Main.mainPanel} is initialized.
      * @param reAddListeners {@code true} to re-add listeners
      */
     public static void initMainPanel(boolean reAddListeners) {
