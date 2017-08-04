@@ -5,9 +5,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit test of {@link ConditionalKeys}.
@@ -18,12 +20,17 @@ public class ConditionalKeysTest {
 
     /**
      * Setup test
+     */
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules rule = new JOSMTestRules().presets();
+
+    /**
+     * Setup test
      * @throws Exception if an error occurs
      */
     @Before
     public void setUp() throws Exception {
-        JOSMFixture.createUnitTestFixture().init();
-        TaggingPresets.readFromPreferences();
         test.initialize();
     }
 
