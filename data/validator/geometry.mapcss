@@ -322,3 +322,31 @@ way[highway][area!=yes][!tunnel][!covered] > node {
 way[building][building!=no] > node.node_in_highway!.first_last_node {
   throwWarning: tr("node connects highway and building");
 }
+
+/* #15035, must not warn for node 3815077900*/
+node[man_made!=monitoring_station][at(0.0,0.0)] {
+  throwError: tr("Object at Position 0.00E 0.00N. There is nothing at this position except an already mapped weather buoy.");
+  fixDeleteObject: this;
+}
+
+/* #15097 */
+way[highway][area!=yes] > node,
+way[man_made=pier] > node {
+  set node_in_highway_pier;
+}
+way[route=ferry][tunnel=yes] > node,
+way[route=ferry][bridge=yes] > node {
+  set node_in_ferry_bridge_tunnel;
+}
+way[route=ferry]!:closed >[index= 1] node!.node_in_highway_pier!.node_in_ferry_bridge_tunnel:in-downloaded-area,
+way[route=ferry]!:closed >[index=-1] node!.node_in_highway_pier!.node_in_ferry_bridge_tunnel:in-downloaded-area { 
+  throwWarning: tr("Ferry route is not connected to the road network or branches.");
+}
+way[amenity=ferry_terminal] > node,
+way[man_made=pier] > node {
+  set node_in_terminal_pier;
+}
+way[route=ferry]!:closed >[index= 1] node[amenity!=ferry_terminal][man_made!=pier]!.node_in_terminal_pier!.node_in_ferry_bridge_tunnel:in-downloaded-area,
+way[route=ferry]!:closed >[index=-1] node[amenity!=ferry_terminal][man_made!=pier]!.node_in_terminal_pier!.node_in_ferry_bridge_tunnel:in-downloaded-area { 
+  throwWarning: tr("Ferry route is not connected to a ferry terminal or branches.");
+}
