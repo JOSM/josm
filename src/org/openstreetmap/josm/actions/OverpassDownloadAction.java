@@ -105,7 +105,7 @@ public class OverpassDownloadAction extends JosmAction {
          * has finished. According to the number of errors happened, their type we decide whether we
          * want to save the last query in OverpassQueryList.
          */
-        Consumer<Collection> errorReporter = (errors) -> {
+        Consumer<Collection<Object>> errorReporter = errors -> {
 
             boolean onlyNoDataError = errors.size() == 1 &&
                     errors.contains("No data found in this area.");
@@ -220,7 +220,7 @@ public class OverpassDownloadAction extends JosmAction {
 
                 @Override
                 public void focusLost(FocusEvent e) {
-
+                    // ignored
                 }
             });
 
@@ -232,7 +232,7 @@ public class OverpassDownloadAction extends JosmAction {
             BasicArrowButton arrowButton = new BasicArrowButton(overpassQueryList.isVisible()
                 ? BasicArrowButton.EAST
                 : BasicArrowButton.WEST);
-            arrowButton.addActionListener(e ->  {
+            arrowButton.addActionListener(e -> {
                 if (overpassQueryList.isVisible()) {
                     overpassQueryList.setVisible(false);
                     arrowButton.setDirection(BasicArrowButton.WEST);
@@ -287,6 +287,12 @@ public class OverpassDownloadAction extends JosmAction {
 
     private static final class QueryWizardDialog extends ExtendedDialog {
 
+        private static final String HEADLINE_START = "<h3>";
+        private static final String HEADLINE_END = "</h3>";
+        private static final String TR_START = "<tr>";
+        private static final String TR_END = "</tr>";
+        private static final String TD_START = "<td>";
+        private static final String TD_END = "</td>";
         private static QueryWizardDialog dialog;
         private final HistoryComboBox queryWizard;
         private final OverpassTurboQueryWizard overpassQueryBuilder;
@@ -328,7 +334,7 @@ public class OverpassDownloadAction extends JosmAction {
             JPanel panel = new JPanel(new GridBagLayout());
 
             JLabel searchLabel = new JLabel(tr("Search :"));
-            JTextComponent descPane = this.buildDescriptionSection();
+            JTextComponent descPane = buildDescriptionSection();
             JScrollPane scroll = GuiHelper.embedInVerticalScrollPane(descPane);
             scroll.getVerticalScrollBar().setUnitIncrement(10); // make scrolling smooth
 
@@ -421,8 +427,8 @@ public class OverpassDownloadAction extends JosmAction {
             return false;
         }
 
-        private JTextComponent buildDescriptionSection() {
-            JEditorPane descriptionSection = new JEditorPane("text/html", this.getDescriptionContent());
+        private static JTextComponent buildDescriptionSection() {
+            JEditorPane descriptionSection = new JEditorPane("text/html", getDescriptionContent());
             descriptionSection.setEditable(false);
             descriptionSection.addHyperlinkListener(e -> {
                 if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
@@ -433,31 +439,31 @@ public class OverpassDownloadAction extends JosmAction {
             return descriptionSection;
         }
 
-        private String getDescriptionContent() {
+        private static String getDescriptionContent() {
             return new StringBuilder("<html>")
                     .append(DESCRIPTION_STYLE)
                     .append("<body>")
-                    .append("<h3>")
+                    .append(HEADLINE_START)
                     .append(tr("Query Wizard"))
-                    .append("</h3>")
+                    .append(HEADLINE_END)
                     .append("<p>")
                     .append(tr("Allows you to interact with <i>Overpass API</i> by writing declarative, human-readable terms."))
                     .append(tr("The <i>Query Wizard</i> tool will transform those to a valid overpass query."))
                     .append(tr("For more detailed description see "))
                     .append(tr("<a href=\"{0}\">OSM Wiki</a>.", Main.getOSMWebsite() + "/wiki/Overpass_turbo/Wizard"))
                     .append("</p>")
-                    .append("<h3>").append(tr("Hints")).append("</h3>")
-                    .append("<table>").append("<tr>").append("<td>")
+                    .append(HEADLINE_START).append(tr("Hints")).append(HEADLINE_END)
+                    .append("<table>").append(TR_START).append(TD_START)
                     .append(Utils.joinAsHtmlUnorderedList(Arrays.asList("<i>type:node</i>", "<i>type:relation</i>", "<i>type:way</i>")))
-                    .append("</td>").append("<td>")
+                    .append(TD_END).append(TD_START)
                     .append("<span>").append(tr("Download objects of a certain type.")).append("</span>")
-                    .append("</td>").append("</tr>")
-                    .append("<tr>").append("<td>")
+                    .append(TD_END).append(TR_END)
+                    .append(TR_START).append(TD_START)
                     .append(Utils.joinAsHtmlUnorderedList(
                             Arrays.asList("<i>key=value in <u>location</u></i>",
                                     "<i>key=value around <u>location</u></i>",
                                     "<i>key=value in bbox</i>")))
-                    .append("</td>").append("<td>")
+                    .append(TD_END).append(TD_START)
                     .append(tr("Download object by specifying a specific location. For example,"))
                     .append(Utils.joinAsHtmlUnorderedList(Arrays.asList(
                             tr("{0} all objects having {1} as attribute are downloaded.", "<i>tourism=hotel in Berlin</i> -", "'tourism=hotel'"),
@@ -468,24 +474,24 @@ public class OverpassDownloadAction extends JosmAction {
                     .append("<span>")
                     .append(tr("Instead of <i>location</i> any valid place name can be used like address, city, etc."))
                     .append("</span>")
-                    .append("</td>").append("</tr>")
-                    .append("<tr>").append("<td>")
+                    .append(TD_END).append(TR_END)
+                    .append(TR_START).append(TD_START)
                     .append(Utils.joinAsHtmlUnorderedList(Arrays.asList("<i>key=value</i>", "<i>key=*</i>", "<i>key~regex</i>",
                             "<i>key!=value</i>", "<i>key!~regex</i>", "<i>key=\"combined value\"</i>")))
-                    .append("</td>").append("<td>")
+                    .append(TD_END).append(TD_START)
                     .append(tr("<span>Download objects that have some concrete key/value pair, only the key with any contents for the value, " +
                             "the value matching some regular expression. 'Not equal' operators are supported as well.</span>"))
-                    .append("</td>").append("</tr>")
-                    .append("<tr>").append("<td>")
+                    .append(TD_END).append(TR_END)
+                    .append(TR_START).append(TD_START)
                     .append(Utils.joinAsHtmlUnorderedList(Arrays.asList(
                             tr("<i>expression1 {0} expression2</i>", "or"),
                             tr("<i>expression1 {0} expression2</i>", "and"))))
-                    .append("</td>").append("<td>")
+                    .append(TD_END).append(TD_START)
                     .append("<span>")
                     .append(tr("Basic logical operators can be used to create more sophisticated queries. Instead of 'or' - '|', '||' " +
                             "can be used, and instead of 'and' - '&', '&&'."))
                     .append("</span>")
-                    .append("</td>").append("</tr>").append("</table>")
+                    .append(TD_END).append(TR_END).append("</table>")
                     .append("</body>")
                     .append("</html>")
                     .toString();

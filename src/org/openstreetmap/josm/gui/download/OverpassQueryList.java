@@ -55,7 +55,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQueryList.SelectorItem> {
 
-    private final DateTimeFormatter format = DateTimeFormatter.ofPattern("HH:mm:ss, dd-MM-yyyy");
+    private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss, dd-MM-yyyy");
 
     /*
      * GUI elements
@@ -84,7 +84,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
     public OverpassQueryList(Component parent, JTextComponent target) {
         this.target = target;
         this.componentParent = parent;
-        this.items = this.restorePreferences();
+        this.items = restorePreferences();
 
         OverpassQueryListMouseAdapter mouseHandler = new OverpassQueryListMouseAdapter(lsResult, lsResultModel);
         super.lsResult.setCellRenderer(new OverpassQueryCellRendered());
@@ -133,7 +133,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
 
         if (!historicExist) {
             SelectorItem item = new SelectorItem(
-                    "history " + LocalDateTime.now().format(this.format),
+                    "history " + LocalDateTime.now().format(FORMAT),
                     query);
 
             this.items.put(item.getKey(), item);
@@ -260,7 +260,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
      * Loads the user saved items from {@link Main#pref}.
      * @return A set of the user saved items.
      */
-    private Map<String, SelectorItem> restorePreferences() {
+    private static Map<String, SelectorItem> restorePreferences() {
         Collection<Map<String, String>> toRetrieve =
                 Main.pref.getListOfStructs(PREFERENCE_ITEMS, Collections.emptyList());
         Map<String, SelectorItem> result = new HashMap<>();
@@ -278,13 +278,12 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
 
     private class OverpassQueryListMouseAdapter extends MouseAdapter {
 
-        private final JList list;
-        private final ResultListModel model;
+        private final JList<SelectorItem> list;
+        private final ResultListModel<SelectorItem> model;
         private final JPopupMenu emptySelectionPopup = new JPopupMenu();
         private final JPopupMenu elementPopup = new JPopupMenu();
-        private final JPopupMenu queryLookup = new JPopupMenu();
 
-        OverpassQueryListMouseAdapter(JList list, ResultListModel listModel) {
+        OverpassQueryListMouseAdapter(JList<SelectorItem> list, ResultListModel<SelectorItem> listModel) {
             this.list = list;
             this.model = listModel;
 
@@ -330,7 +329,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
                 return;
             }
 
-            SelectorItem item = (SelectorItem) model.getElementAt(idx);
+            SelectorItem item = model.getElementAt(idx);
             list.setToolTipText("<html><pre style='width:300px;'>" +
                     Utils.escapeReservedCharactersHTML(Utils.restrictStringLines(item.getQuery(), 9)));
         }
@@ -606,19 +605,41 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (!(o instanceof SelectorItem)) return false;
-
-            SelectorItem that = (SelectorItem) o;
-
-            return itemKey.equals(that.itemKey) &&
-                    query.equals(that.getKey());
+        public int hashCode() {
+            final int prime = 31;
+            int result = 1;
+            result = prime * result + ((itemKey == null) ? 0 : itemKey.hashCode());
+            result = prime * result + ((query == null) ? 0 : query.hashCode());
+            return result;
         }
 
         @Override
-        public int hashCode() {
-            return itemKey.hashCode();
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            SelectorItem other = (SelectorItem) obj;
+            if (itemKey == null) {
+                if (other.itemKey != null) {
+                    return false;
+                }
+            } else if (!itemKey.equals(other.itemKey)) {
+                return false;
+            }
+            if (query == null) {
+                if (other.query != null) {
+                    return false;
+                }
+            } else if (!query.equals(other.query)) {
+                return false;
+            }
+            return true;
         }
     }
 }

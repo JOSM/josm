@@ -29,10 +29,10 @@ import org.openstreetmap.josm.tools.Utils;
 public class PostDownloadHandler implements Runnable {
     private final DownloadTask task;
     private final Future<?> future;
-    private Consumer<Collection> errorReporter;
+    private Consumer<Collection<Object>> errorReporter;
 
     /**
-     * constructor
+     * Creates a new {@link PostDownloadHandler}
      * @param task the asynchronous download task
      * @param future the future on which the completion of the download task can be synchronized
      */
@@ -42,13 +42,13 @@ public class PostDownloadHandler implements Runnable {
     }
 
     /**
-     * constructor
+     * Creates a new {@link PostDownloadHandler} using a custom error reporter
      * @param task the asynchronous download task
      * @param future the future on which the completion of the download task can be synchronized
      * @param errorReporter a callback to inform about the number errors happened during the download
      *                      task
      */
-    public PostDownloadHandler(DownloadTask task, Future<?> future, Consumer<Collection> errorReporter) {
+    public PostDownloadHandler(DownloadTask task, Future<?> future, Consumer<Collection<Object>> errorReporter) {
         this(task, future);
         this.errorReporter = errorReporter;
     }
