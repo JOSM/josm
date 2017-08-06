@@ -88,7 +88,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
 
         OverpassQueryListMouseAdapter mouseHandler = new OverpassQueryListMouseAdapter(lsResult, lsResultModel);
         super.lsResult.setCellRenderer(new OverpassQueryCellRendered());
-        super.setDblClickListener(this::getDblClickListener);
+        super.setDblClickListener(e -> doubleClickEvent());
         super.lsResult.addMouseListener(mouseHandler);
         super.lsResult.addMouseMotionListener(mouseHandler);
 
@@ -228,7 +228,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
                 .collect(Collectors.toList()));
     }
 
-    private void getDblClickListener(ActionEvent e) {
+    private void doubleClickEvent() {
         Optional<SelectorItem> selectedItem = this.getSelectedItem();
 
         if (!selectedItem.isPresent()) {
