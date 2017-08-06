@@ -227,11 +227,11 @@ public class OverpassDownloadAction extends JosmAction {
                 if (overpassQueryList.isVisible()) {
                     overpassQueryList.setVisible(false);
                     arrowButton.setDirection(BasicArrowButton.WEST);
-                    OVERPASS_QUERY_LIST_OPENED.put(false);
+                    OVERPASS_QUERY_LIST_OPENED.put(Boolean.FALSE);
                 } else {
                     overpassQueryList.setVisible(true);
                     arrowButton.setDirection(BasicArrowButton.EAST);
-                    OVERPASS_QUERY_LIST_OPENED.put(false);
+                    OVERPASS_QUERY_LIST_OPENED.put(Boolean.FALSE);
                 }
             });
 
