@@ -1002,6 +1002,10 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
      */
     public static class SearchSettingsActionParameter extends ActionParameter<SearchSetting> {
 
+        /**
+         * Constructs a new {@code SearchSettingsActionParameter}.
+         * @param name parameter name (the key)
+         */
         public SearchSettingsActionParameter(String name) {
             super(name);
         }

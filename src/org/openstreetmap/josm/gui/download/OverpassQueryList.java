@@ -88,7 +88,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
 
         OverpassQueryListMouseAdapter mouseHandler = new OverpassQueryListMouseAdapter(lsResult, lsResultModel);
         super.lsResult.setCellRenderer(new OverpassQueryCellRendered());
-        super.setDblClickListener(this::getDblClickListener);
+        super.setDblClickListener(e -> doubleClickEvent());
         super.lsResult.addMouseListener(mouseHandler);
         super.lsResult.addMouseMotionListener(mouseHandler);
 
@@ -183,9 +183,8 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
         EditItemDialog dialog = new EditItemDialog(
                 componentParent,
                 tr("Edit item"),
-                item.getKey(),
-                item.getQuery(),
-                new String[] {tr("Save")});
+                item,
+                tr("Save"));
         dialog.showDialog();
 
         Optional<SelectorItem> editedItem = dialog.getOutputItem();
@@ -228,7 +227,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
                 .collect(Collectors.toList()));
     }
 
-    private void getDblClickListener(ActionEvent e) {
+    private void doubleClickEvent() {
         Optional<SelectorItem> selectedItem = this.getSelectedItem();
 
         if (!selectedItem.isPresent()) {
@@ -427,17 +426,18 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
         private transient Optional<SelectorItem> outputItem = Optional.empty();
 
         EditItemDialog(Component parent, String title, String... buttonTexts) {
-            this(parent, title, "", "", buttonTexts);
+            this(parent, title, null, buttonTexts);
         }
 
         EditItemDialog(
                 Component parent,
                 String title,
-                String nameToEdit,
-                String queryToEdit,
+                SelectorItem itemToEdit,
                 String... buttonTexts) {
             super(parent, title, buttonTexts);
 
+            String nameToEdit = itemToEdit != null ? itemToEdit.getKey() : "";
+            String queryToEdit = itemToEdit != null ? itemToEdit.getQuery() : "";
             this.initialNameHash = nameToEdit.hashCode();
 
             this.name = new JTextField(nameToEdit);
