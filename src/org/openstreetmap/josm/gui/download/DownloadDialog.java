@@ -19,6 +19,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.AbstractAction;
 import javax.swing.JButton;
@@ -457,11 +458,12 @@ public class DownloadDialog extends JDialog {
     }
 
     /**
-     * Replies the currently selected download area.
-     * @return the currently selected download area. May be {@code null}, if no download area is selected yet.
+     * Returns an {@link Optional} of the currently selected download area.
+     * @return An {@link Optional} of the currently selected download area.
+     * @since 12574 Return type changed to optional
      */
-    public Bounds getSelectedDownloadArea() {
-        return currentBounds;
+    public Optional<Bounds> getSelectedDownloadArea() {
+        return Optional.ofNullable(currentBounds);
     }
 
     @Override
@@ -524,20 +526,16 @@ public class DownloadDialog extends JDialog {
         }
 
         public void run() {
-            if (currentBounds == null) {
-                JOptionPane.showMessageDialog(
-                        DownloadDialog.this,
-                        tr("Please select a download area first."),
-                        tr("Error"),
-                        JOptionPane.ERROR_MESSAGE
-                );
-                return;
-            }
+            /*
+             * Checks if the user selected the type of data to download. At least one the following
+             * must be chosen : raw osm data, gpx data, notes.
+             * If none of those are selected, then the corresponding dialog is shown to inform the user.
+             */
             if (!isDownloadOsmData() && !isDownloadGpxData() && !isDownloadNotes()) {
                 JOptionPane.showMessageDialog(
                         DownloadDialog.this,
                         tr("<html>Neither <strong>{0}</strong> nor <strong>{1}</strong> nor <strong>{2}</strong> is enabled.<br>"
-                                + "Please choose to either download OSM data, or GPX data, or Notes, or all.</html>",
+                                        + "Please choose to either download OSM data, or GPX data, or Notes, or all.</html>",
                                 cbDownloadOsmData.getText(),
                                 cbDownloadGpxData.getText(),
                                 cbDownloadNotes.getText()
@@ -547,6 +545,7 @@ public class DownloadDialog extends JDialog {
                 );
                 return;
             }
+
             setCanceled(false);
             setVisible(false);
         }
