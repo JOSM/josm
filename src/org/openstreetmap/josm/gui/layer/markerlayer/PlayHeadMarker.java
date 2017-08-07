@@ -122,7 +122,9 @@ public final class PlayHeadMarker extends Marker {
         }
         Main.map.selectMapMode(oldMode);
         Main.map.mapView.repaint();
-        timer.start();
+        if (timer != null) {
+            timer.start();
+        }
     }
 
     /**
