@@ -31,6 +31,13 @@ import org.openstreetmap.josm.gui.draw.SymbolShape;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * Class that enables the user to draw way segments in angles of exactly 30, 45,
+ * 60, 90 degrees.
+ *
+ * With enabled snapping, the new way node will be projected onto the helper line
+ * that indicates a certain fixed angle relative to the previous segment.
+ */
 class DrawSnapHelper {
 
     private final DrawAction drawAction;

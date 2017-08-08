@@ -11,6 +11,9 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * User action to select all primitives in the current dataset.
+ */
 public class SelectAllAction extends JosmAction {
 
     /**

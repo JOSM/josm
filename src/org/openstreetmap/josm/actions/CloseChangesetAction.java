@@ -29,6 +29,12 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.xml.sax.SAXException;
 
+/**
+ * User action to close open changesets.
+ *
+ * The list of open changesets will be downloaded from the server and presented
+ * to the user.
+ */
 public class CloseChangesetAction extends JosmAction {
 
     /**

@@ -8,11 +8,24 @@ import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 
+/**
+ * User action to toggle a custom boolean preference value.
+ *
+ * A user action will just change a preference value. To take any real action,
+ * register another {@link PreferenceChangedListener} for the given preference key.
+ */
 public class PreferenceToggleAction extends JosmAction implements PreferenceChangedListener {
 
     private final JCheckBoxMenuItem checkbox;
     private final BooleanProperty pref;
 
+    /**
+     * Create a new PreferenceToggleAction.
+     * @param name the (translated) title
+     * @param tooltip tooltip text
+     * @param prefKey the preference key to toggle
+     * @param prefDefault default value for the preference entry
+     */
     public PreferenceToggleAction(String name, String tooltip, String prefKey, boolean prefDefault) {
         super(name, null, tooltip, null, false);
         putValue("toolbar", "toggle-" + prefKey);

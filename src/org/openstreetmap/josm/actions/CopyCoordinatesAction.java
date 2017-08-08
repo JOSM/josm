@@ -14,6 +14,9 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * User action to copy the coordinates of one or several node(s) to the clipboard.
+ */
 public class CopyCoordinatesAction extends JosmAction {
 
     public CopyCoordinatesAction() {
