@@ -23,6 +23,7 @@
         <property name="javacc.home" location="${base.dir}/tools"/>
         <property name="mapcss.dir" location="${src.dir}/org/openstreetmap/josm/gui/mappaint/mapcss"/>
         <property name="proj-build.dir" location="${base.dir}/build2"/>
+        <property name="checkstyle-build.dir" location="${base.dir}/build2"/>
         <property name="epsg.output" location="${base.dir}/data/projection/custom-epsg"/>
         <property name="groovy.jar" location="${base.dir}/tools/groovy-all.jar"/>
         <property name="error_prone_ant.jar" location="${base.dir}/tools/error_prone_ant.jar"/>
@@ -301,7 +302,7 @@ Build-Date: ${build.tstamp}
             <compilerarg line="-Xmaxwarns 1000"/>
         </javac>
         <!-- JOSM -->
-        <javac compiler="${javac.compiler}" sourcepath="" srcdir="${src.dir}" 
+        <javac compiler="${javac.compiler}" sourcepath="" srcdir="${src.dir}"
             excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/**"
             destdir="build" target="1.8" source="1.8" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerclasspath>
@@ -365,6 +366,7 @@ Build-Date: ${build.tstamp}
     <target name="clean" depends="init-properties">
         <delete dir="${build.dir}"/>
         <delete dir="${proj-build.dir}"/>
+        <delete dir="${checkstyle-build.dir}"/>
         <delete dir="${dist.dir}"/>
         <delete dir="${mapcss.dir}/parsergen"/>
         <delete file="${src.dir}/org/w3/_2001/xmlschema/Adapter1.java"/>
@@ -759,9 +761,17 @@ Build-Date: ${build.tstamp}
         <antcall target="imageryindex"/>
     </target>
 
-    <target name="checkstyle" depends="init-properties">
+    <target name="checkstyle-compile" depends="init-properties">
+        <mkdir dir="${checkstyle-build.dir}"/>
+        <javac sourcepath="" srcdir="${base.dir}/tools/checkstyle/checks" failonerror="true"
+            destdir="${checkstyle-build.dir}" target="1.8" source="1.8" debug="on"
+            includeantruntime="false" createMissingPackageInfoClass="false"
+            encoding="UTF-8" classpath="tools/checkstyle/checkstyle-all.jar">
+        </javac>
+    </target>
+    <target name="checkstyle" depends="checkstyle-compile">
         <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
-             classpath="tools/checkstyle/checkstyle-all.jar"/>
+             classpath="tools/checkstyle/checkstyle-all.jar:dist/josm-custom.jar:${checkstyle-build.dir}"/>
         <checkstyle config="tools/checkstyle/josm_checks.xml">
             <fileset dir="${base.dir}/src/org/openstreetmap/josm" includes="**/*.java"
                 excludes="gui/mappaint/mapcss/parsergen/*.java"/>
