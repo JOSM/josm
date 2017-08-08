@@ -102,6 +102,7 @@ JOSM Checkstyle rules
     <module name="OuterTypeFilename"/>
     <module name="FinalClass"/>
     <module name="HideUtilityClassConstructor"/>
+    <module name="org.openstreetmap.josm.TopLevelJavadocCheck"/>
   </module>
   <module name="Header">
     <property name="header" value="// License: GPL. For details, see LICENSE file."/>
