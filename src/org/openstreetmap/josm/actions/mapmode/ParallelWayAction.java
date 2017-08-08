@@ -52,8 +52,13 @@ import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
-//// TODO: (list below)
-/* == Functionality ==
+/**
+ * MapMode for making parallel ways.
+ *
+ * All calculations are done in projected coordinates.
+ *
+ * TODO:
+ * == Functionality ==
  *
  * 1. Use selected nodes as split points for the selected ways.
  *
@@ -80,12 +85,6 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * Current code doesn't not take into account that ways might been highlighted
  * by other than us. Don't think that situation should ever happen though.
- */
-
-/**
- * MapMode for making parallel ways.
- *
- * All calculations are done in projected coordinates.
  *
  * @author Ole Jørgen Brønner (olejorgenb)
  */

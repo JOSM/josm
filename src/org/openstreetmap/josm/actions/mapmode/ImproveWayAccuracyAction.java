@@ -51,6 +51,9 @@ import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
+ * A special map mode that is optimized for improving way geometry.
+ * (by efficiently moving, adding and deleting way-nodes)
+ *
  * @author Alexander Kachkaev &lt;alexander@kachkaev.ru&gt;, 2011
  */
 public class ImproveWayAccuracyAction extends MapMode implements

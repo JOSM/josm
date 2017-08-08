@@ -43,10 +43,10 @@ import org.openstreetmap.josm.tools.bugreport.BugReportSender;
 import org.openstreetmap.josm.tools.bugreport.DebugTextDisplay;
 
 /**
- * @author xeen
- *
  * Opens a dialog with useful status information like version numbers for Java, JOSM and plugins
- * Also includes preferences with stripped username and password
+ * Also includes preferences with stripped username and password.
+ *
+ * @author xeen
  */
 public final class ShowStatusReportAction extends JosmAction {
 

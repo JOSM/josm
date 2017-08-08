@@ -10,6 +10,10 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 
+/**
+ * Command, to scale a given set of primitives.
+ * The relative distance of the nodes will be increased/decreased.
+ */
 public class ScaleCommand extends TransformNodesCommand {
     /**
      * Pivot point

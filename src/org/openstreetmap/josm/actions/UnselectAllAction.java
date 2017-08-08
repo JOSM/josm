@@ -9,6 +9,9 @@ import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * User action to clear the current selection.
+ */
 public class UnselectAllAction extends JosmAction {
 
     /**

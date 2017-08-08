@@ -25,7 +25,7 @@ import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTable;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * An action that zooms to the selected OSM primitive in a table of primitives
+ * An action that zooms to the selected OSM primitive in a table of primitives.
  */
 public class ZoomToAction extends AbstractAction implements LayerChangeListener, ActiveLayerChangeListener, ListSelectionListener {
 

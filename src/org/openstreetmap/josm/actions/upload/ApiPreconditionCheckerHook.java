@@ -19,6 +19,10 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 
+/**
+ * Checks certain basic conditions, that are listed in the OSM API
+ * {@link org.openstreetmap.josm.io.Capabilities}.
+ */
 public class ApiPreconditionCheckerHook implements UploadHook {
 
     @Override
