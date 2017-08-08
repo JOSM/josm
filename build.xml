@@ -771,7 +771,7 @@ Build-Date: ${build.tstamp}
     </target>
     <target name="checkstyle" depends="checkstyle-compile">
         <taskdef resource="com/puppycrawl/tools/checkstyle/ant/checkstyle-ant-task.properties"
-             classpath="tools/checkstyle/checkstyle-all.jar:dist/josm-custom.jar:${checkstyle-build.dir}"/>
+             classpath="tools/checkstyle/checkstyle-all.jar:${checkstyle-build.dir}"/>
         <checkstyle config="tools/checkstyle/josm_checks.xml">
             <fileset dir="${base.dir}/src/org/openstreetmap/josm" includes="**/*.java"
                 excludes="gui/mappaint/mapcss/parsergen/*.java"/>
