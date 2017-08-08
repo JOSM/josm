@@ -223,7 +223,7 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
                         "<i>key!=value</i>", "<i>key!~regex</i>", "<i>key=\"combined value\"</i>")))
                 .append(TD_END).append(TD_START)
                 .append(tr("<span>Download objects that have some concrete key/value pair, only the key with any contents for the value, " +
-                        "the value matching some regular expression. 'Not equal' operators are supported as well.</span>"))
+                        "the value matching some regular expression. \"Not equal\" operators are supported as well.</span>"))
                 .append(TD_END).append(TR_END)
                 .append(TR_START).append(TD_START)
                 .append(Utils.joinAsHtmlUnorderedList(Arrays.asList(
@@ -231,8 +231,8 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
                         tr("<i>expression1 {0} expression2</i>", "and"))))
                 .append(TD_END).append(TD_START)
                 .append("<span>")
-                .append(tr("Basic logical operators can be used to create more sophisticated queries. Instead of 'or' - '|', '||' " +
-                        "can be used, and instead of 'and' - '&', '&&'."))
+                .append(tr("Basic logical operators can be used to create more sophisticated queries. Instead of \"or\" - \"|\", \"||\" " +
+                        "can be used, and instead of \"and\" - \"&\", \"&&\"."))
                 .append("</span>")
                 .append(TD_END).append(TR_END).append("</table>")
                 .append("</body>")
