@@ -44,4 +44,5 @@
   <suppress checks="HeaderCheck" files="DNSName(Fix)?\.java" />
   <suppress checks="FileLengthCheck" files="DomainValidator\.java" />
   <suppress checks="org.openstreetmap.josm.TopLevelJavadocCheck" files="package-info\.java" />
+  <suppress checks="org.openstreetmap.josm.TopLevelJavadocCheck" files="[\\/]test[\\/]" />
 </suppressions>
