@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE checkstyle-packages PUBLIC
+    "-//Puppy Crawl//DTD Package Names 1.0//EN"
+    "http://www.puppycrawl.com/dtds/packages_1_0.dtd">
+
+<checkstyle-packages>
+    <!--
+      Define the Java packages where your custom Checkstyle module classes (checks, filters) reside here.
+      See http://checkstyle.sourceforge.net/config.html#Packages for more info.
+      -->
+    <package name="org.openstreetmap.josm">
+    </package>
+</checkstyle-packages>

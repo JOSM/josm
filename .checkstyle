@@ -21,6 +21,7 @@
     <filter-data value=".svn"/>
     <filter-data value="data"/>
     <filter-data value="images"/>
+    <filter-data value="javadoc"/>
     <filter-data value="resources"/>
     <filter-data value="styles"/>
     <filter-data value="scripts"/>

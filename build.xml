@@ -763,7 +763,7 @@ Build-Date: ${build.tstamp}
 
     <target name="checkstyle-compile" depends="init-properties">
         <mkdir dir="${checkstyle-build.dir}"/>
-        <javac sourcepath="" srcdir="${base.dir}/tools/checkstyle/checks" failonerror="true"
+        <javac sourcepath="" srcdir="${base.dir}/tools/checkstyle/src" failonerror="true"
             destdir="${checkstyle-build.dir}" target="1.8" source="1.8" debug="on"
             includeantruntime="false" createMissingPackageInfoClass="false"
             encoding="UTF-8" classpath="tools/checkstyle/checkstyle-all.jar">

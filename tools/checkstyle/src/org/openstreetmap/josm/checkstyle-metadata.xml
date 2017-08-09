@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE checkstyle-metadata PUBLIC
+"-//eclipse-cs//DTD Check Metadata 1.1//EN"
+"http://eclipse-cs.sourceforge.net/dtds/checkstyle-metadata_1_1.dtd">
+<checkstyle-metadata>
+    <rule-group-metadata name="JOSM custom checks"  priority="1600">
+        <description>%JosmCustomChecks.desc</description>
+
+        <rule-metadata name="%TopLevelJavadoc.name" internal-name="TopLevelJavadoc" parent="TreeWalker">
+            <alternative-name internal-name="org.openstreetmap.josm.TopLevelJavadocCheck" />
+            <description>%TopLevelJavadoc.desc</description>
+        </rule-metadata>
+    </rule-group-metadata>
+</checkstyle-metadata>
