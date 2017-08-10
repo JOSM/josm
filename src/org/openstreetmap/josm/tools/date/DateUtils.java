@@ -83,6 +83,7 @@ public final class DateUtils {
         if (checkLayout(str, "xxxx-xx-xxTxx:xx:xxZ") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx") ||
                 checkLayout(str, "xxxx:xx:xx xx:xx:xx") ||
+                checkLayout(str, "xxxx-xx-xx xx:xx:xxZ") ||
                 checkLayout(str, "xxxx-xx-xx xx:xx:xx UTC") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx+xx") ||
                 checkLayout(str, "xxxx-xx-xxTxx:xx:xx-xx") ||
