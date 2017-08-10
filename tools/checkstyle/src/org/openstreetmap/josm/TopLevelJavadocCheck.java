@@ -71,6 +71,7 @@ public class TopLevelJavadocCheck extends AbstractCheck {
     }
 
     private boolean hasProperText(DetailNode javadoc) {
+        if (javadoc == null) return false;
         for (DetailNode child : javadoc.getChildren()) {
             if (child.getType() == JavadocTokenTypes.TEXT) {
                 if (!child.getText().trim().isEmpty())
@@ -88,7 +89,7 @@ public class TopLevelJavadocCheck extends AbstractCheck {
         if (parent == null || parent.getType() == TokenTypes.EOF) {
             foundTopLevelClass = true;
             if (!hasJavadoc(ast)) {
-                this.log(ast.getLineNo(), "no/incomplete Javadoc for top level class or interface");
+                this.log(ast.getLineNo(), "incomplete or missing Javadoc for top level class or interface");
             }
         }
    }
