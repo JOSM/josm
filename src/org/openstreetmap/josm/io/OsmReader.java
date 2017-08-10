@@ -42,6 +42,7 @@ import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -630,7 +631,7 @@ public class OsmReader extends AbstractReader {
             return getDataSet();
         } catch (IllegalDataException e) {
             throw e;
-        } catch (XmlStreamParsingException e) {
+        } catch (XmlStreamParsingException | UncheckedParseException e) {
             throw new IllegalDataException(e.getMessage(), e);
         } catch (XMLStreamException e) {
             String msg = e.getMessage();
