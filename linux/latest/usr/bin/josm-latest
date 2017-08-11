@@ -46,6 +46,9 @@ fi
 
 if [ "$JAVACMD" ]; then
     echo "Using $JAVACMD to execute josm-latest." || true
+    if [[ $JAVACMD == *"java-9"* ]]; then
+        JAVA_OPTS="--add-modules java.se.ee $JAVA_OPTS"
+    fi
     set +e
     while true; do
         $JAVACMD $JAVA_OPTS -jar /usr/share/josm-latest/josm-latest.jar "$@"
