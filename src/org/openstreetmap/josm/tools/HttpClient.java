@@ -653,15 +653,17 @@ public final class HttpClient {
     }
 
     private static void disconnect(final HttpURLConnection connection) {
-        // Fix upload aborts - see #263
-        connection.setConnectTimeout(100);
-        connection.setReadTimeout(100);
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException ex) {
-            Main.warn("InterruptedException in " + HttpClient.class + " during cancel");
-            Thread.currentThread().interrupt();
+        if (connection != null) {
+            // Fix upload aborts - see #263
+            connection.setConnectTimeout(100);
+            connection.setReadTimeout(100);
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException ex) {
+                Main.warn("InterruptedException in " + HttpClient.class + " during cancel");
+                Thread.currentThread().interrupt();
+            }
+            connection.disconnect();
         }
-        connection.disconnect();
     }
 }
