@@ -180,7 +180,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
      * to remove the highlight from them again as otherwise the whole data
      * set would have to be checked.
      */
-    private transient Set<OsmPrimitive> oldHighlights = new HashSet<>();
+    private transient Optional<OsmPrimitive> currentHighlight = Optional.empty();
 
     /**
      * Create a new SelectAction
@@ -256,7 +256,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         updateKeyModifiersEx(modifiers);
         determineMapMode(c.isPresent());
 
-        Set<OsmPrimitive> newHighlights = new HashSet<>();
+        Optional<OsmPrimitive> newHighlight = Optional.empty();
 
         virtualManager.clear();
         if (mode == Mode.MOVE && !dragInProgress() && virtualManager.activateVirtualNodeNearPoint(e.getPoint())) {
@@ -266,14 +266,14 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             }
             mv.setNewCursor(SelectActionCursor.virtual_node.cursor(), this);
             // don't highlight anything else if a virtual node will be
-            return repaintIfRequired(newHighlights);
+            return repaintIfRequired(newHighlight);
         }
 
         mv.setNewCursor(getCursor(c), this);
 
         // return early if there can't be any highlights
         if (!drawTargetHighlight || mode != Mode.MOVE || !c.isPresent())
-            return repaintIfRequired(newHighlights);
+            return repaintIfRequired(newHighlight);
 
         // CTRL toggles selection, but if while dragging CTRL means merge
         final boolean isToggleMode = ctrl && !dragInProgress();
@@ -281,9 +281,9 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             // only highlight primitives that will change the selection
             // when clicked. I.e. don't highlight selected elements unless
             // we are in toggle mode.
-            newHighlights.add(c.get());
+            newHighlight = c;
         }
-        return repaintIfRequired(newHighlights);
+        return repaintIfRequired(newHighlight);
     }
 
     /**
@@ -353,35 +353,22 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             needsRepaint = true;
             ds.clearHighlightedVirtualNodes();
         }
-        if (oldHighlights.isEmpty())
+        if (!currentHighlight.isPresent()) {
             return needsRepaint;
-
-        for (OsmPrimitive prim : oldHighlights) {
-            prim.setHighlighted(false);
+        } else {
+            currentHighlight.get().setHighlighted(false);
         }
-        oldHighlights = new HashSet<>();
+        currentHighlight = Optional.empty();
         return true;
     }
 
-    private boolean repaintIfRequired(Set<OsmPrimitive> newHighlights) {
-        if (!drawTargetHighlight)
+    private boolean repaintIfRequired(Optional<OsmPrimitive> newHighlight) {
+        if (!drawTargetHighlight || currentHighlight.equals(newHighlight))
             return false;
-
-        boolean needsRepaint = false;
-        for (OsmPrimitive x : newHighlights) {
-            if (oldHighlights.contains(x)) {
-                continue;
-            }
-            needsRepaint = true;
-            x.setHighlighted(true);
-        }
-        oldHighlights.removeAll(newHighlights);
-        for (OsmPrimitive x : oldHighlights) {
-            x.setHighlighted(false);
-            needsRepaint = true;
-        }
-        oldHighlights = newHighlights;
-        return needsRepaint;
+        currentHighlight.ifPresent(osm -> osm.setHighlighted(false));
+        newHighlight.ifPresent(osm -> osm.setHighlighted(true));
+        currentHighlight = newHighlight;
+        return true;
     }
 
     /**
@@ -520,7 +507,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             boolean needsRepaint = removeHighlighting();
             if (p != null) {
                 p.setHighlighted(true);
-                oldHighlights.add(p);
+                currentHighlight = Optional.of(p);
                 needsRepaint = true;
             }
             mv.setNewCursor(getCursor(Optional.ofNullable(p)), this);
