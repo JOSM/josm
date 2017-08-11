@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
@@ -249,11 +250,11 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
      * @return {@code true} if repaint is required
      */
     private boolean giveUserFeedback(MouseEvent e, int modifiers) {
-        Collection<OsmPrimitive> c = asColl(
+        Optional<OsmPrimitive> c = Optional.ofNullable(
                 mv.getNearestNodeOrWay(e.getPoint(), mv.isSelectablePredicate, true));
 
         updateKeyModifiersEx(modifiers);
-        determineMapMode(!c.isEmpty());
+        determineMapMode(c.isPresent());
 
         Set<OsmPrimitive> newHighlights = new HashSet<>();
 
@@ -271,18 +272,16 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         mv.setNewCursor(getCursor(c), this);
 
         // return early if there can't be any highlights
-        if (!drawTargetHighlight || mode != Mode.MOVE || c.isEmpty())
+        if (!drawTargetHighlight || mode != Mode.MOVE || !c.isPresent())
             return repaintIfRequired(newHighlights);
 
         // CTRL toggles selection, but if while dragging CTRL means merge
         final boolean isToggleMode = ctrl && !dragInProgress();
-        for (OsmPrimitive x : c) {
+        if (c.isPresent() && (isToggleMode || !c.get().isSelected())) {
             // only highlight primitives that will change the selection
             // when clicked. I.e. don't highlight selected elements unless
             // we are in toggle mode.
-            if (isToggleMode || !x.isSelected()) {
-                newHighlights.add(x);
-            }
+            newHighlights.add(c.get());
         }
         return repaintIfRequired(newHighlights);
     }
@@ -294,7 +293,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
      * @param nearbyStuff  primitives near the cursor
      * @return the cursor that should be displayed
      */
-    private Cursor getCursor(Collection<OsmPrimitive> nearbyStuff) {
+    private Cursor getCursor(Optional<OsmPrimitive> nearbyStuff) {
         String c = "rect";
         switch(mode) {
         case MOVE:
@@ -302,8 +301,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                 c = "virtual_node";
                 break;
             }
-            final Iterator<OsmPrimitive> it = nearbyStuff.iterator();
-            final OsmPrimitive osm = it.hasNext() ? it.next() : null;
+            final OsmPrimitive osm = nearbyStuff.orElse(null);
 
             if (dragInProgress()) {
                 // only consider merge if ctrl is pressed and there are nodes in
@@ -525,7 +523,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                 oldHighlights.add(p);
                 needsRepaint = true;
             }
-            mv.setNewCursor(getCursor(asColl(p)), this);
+            mv.setNewCursor(getCursor(Optional.ofNullable(p)), this);
             // also update the stored mouse event, so we can display the correct cursor
             // when dragging a node onto another one and then press CTRL to merge
             oldEvent = e;
