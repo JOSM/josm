@@ -118,7 +118,7 @@ public abstract class OsmServerReader extends OsmConnection {
     }
 
     /**
-     * Open a connection to the given url and return a reader on the input stream
+     * Open a connection to the given url (if HTTP, trough a GET request) and return a reader on the input stream
      * from that connection. In case of user cancel, return <code>null</code>.
      * @param urlStr The exact url to connect to.
      * @param progressMonitor progress monitoring and abort handler
@@ -128,9 +128,28 @@ public abstract class OsmServerReader extends OsmConnection {
      * @return An reader reading the input stream (servers answer) or <code>null</code>.
      * @throws OsmTransferException if data transfer errors occur
      */
-    @SuppressWarnings("resource")
     protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor, String reason,
             boolean uncompressAccordingToContentDisposition) throws OsmTransferException {
+        return getInputStreamRaw(urlStr, progressMonitor, reason, uncompressAccordingToContentDisposition, "GET", null);
+    }
+
+    /**
+     * Open a connection to the given url (if HTTP, with the specified method) and return a reader on the input stream
+     * from that connection. In case of user cancel, return <code>null</code>.
+     * @param urlStr The exact url to connect to.
+     * @param progressMonitor progress monitoring and abort handler
+     * @param reason The reason to show on console. Can be {@code null} if no reason is given
+     * @param uncompressAccordingToContentDisposition Whether to inspect the HTTP header {@code Content-Disposition}
+     *                                                for {@code filename} and uncompress a gzip/bzip2 stream.
+     * @param httpMethod HTTP method ("GET", "POST" or "PUT")
+     * @param requestBody HTTP request body (for "POST" and "PUT" methods only). Must be null for "GET" method.
+     * @return An reader reading the input stream (servers answer) or <code>null</code>.
+     * @throws OsmTransferException if data transfer errors occur
+     * @since 12596
+     */
+    @SuppressWarnings("resource")
+    protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor, String reason,
+            boolean uncompressAccordingToContentDisposition, String httpMethod, byte[] requestBody) throws OsmTransferException {
         try {
             OnlineResource.JOSM_WEBSITE.checkOfflineAccess(urlStr, Main.getJOSMWebsite());
             OnlineResource.OSM_API.checkOfflineAccess(urlStr, OsmApi.getOsmApi().getServerUrl());
@@ -150,9 +169,11 @@ public abstract class OsmServerReader extends OsmConnection {
                 }
             }
 
-            final HttpClient client = HttpClient.create(url);
+            final HttpClient client = HttpClient.create(url, httpMethod)
+                    .setFinishOnCloseOutput(false)
+                    .setReasonForRequest(reason)
+                    .setRequestBody(requestBody);
             activeConnection = client;
-            client.setReasonForRequest(reason);
             adaptRequest(client);
             if (doAuthenticate) {
                 addAuth(client);

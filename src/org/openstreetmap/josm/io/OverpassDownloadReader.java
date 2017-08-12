@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -34,6 +35,8 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 8744
  */
 public class OverpassDownloadReader extends BoundingBoxDownloader {
+
+    private static final String DATA_PREFIX = "?data=";
 
     static final class OverpassOsmReader extends OsmReader {
         @Override
@@ -143,7 +146,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         else {
             final String query = this.overpassQuery.replace("{{bbox}}", lat1 + "," + lon1 + "," + lat2 + "," + lon2);
             final String expandedOverpassQuery = expandExtendedQueries(query);
-            return "interpreter?data=" + Utils.encodeUrl(expandedOverpassQuery);
+            return "interpreter" + DATA_PREFIX + Utils.encodeUrl(expandedOverpassQuery);
         }
     }
 
@@ -194,7 +197,11 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
     protected InputStream getInputStreamRaw(String urlStr, ProgressMonitor progressMonitor, String reason,
                                             boolean uncompressAccordingToContentDisposition) throws OsmTransferException {
         try {
-            return super.getInputStreamRaw(urlStr, progressMonitor, reason, uncompressAccordingToContentDisposition);
+            int index = urlStr.indexOf(DATA_PREFIX);
+            // Make an HTTP POST request instead of a simple GET, allows more complex queries
+            return super.getInputStreamRaw(urlStr.substring(0, index),
+                    progressMonitor, reason, uncompressAccordingToContentDisposition,
+                    "POST", Utils.decodeUrl(urlStr.substring(index + DATA_PREFIX.length())).getBytes(StandardCharsets.UTF_8));
         } catch (OsmApiException ex) {
             final String errorIndicator = "Error</strong>: ";
             if (ex.getMessage() != null && ex.getMessage().contains(errorIndicator)) {
