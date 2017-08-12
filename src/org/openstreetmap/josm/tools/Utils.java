@@ -54,6 +54,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -1688,5 +1689,20 @@ public final class Utils {
             Main.error(e);
         }
         return null;
+    }
+
+    /**
+     * Get a function that converts an object to a singleton stream of a certain
+     * class (or null if the object cannot be cast to that class).
+     *
+     * Can be useful in relation with streams, but be aware of the performance
+     * implications of creating a stream for each element.
+     * @param <T> type of the objects to convert
+     * @param <U> type of the elements in the resulting stream
+     * @param klass the class U
+     * @return function converting an object to a singleton stream or null
+     */
+    public static <T, U> Function<T, Stream<U>> castToStream(Class<U> klass) {
+        return x -> klass.isInstance(x) ? Stream.of(klass.cast(x)) : null;
     }
 }

@@ -17,9 +17,11 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.gui.layer.WMTSLayer;
+import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.session.SessionReader.ImportSupport;
+import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -44,18 +46,31 @@ public class ImagerySessionImporter implements SessionLayerImporter {
         if (layer instanceof AbstractTileSourceLayer) {
             AbstractTileSourceLayer<?> tsLayer = (AbstractTileSourceLayer<?>) layer;
             tsLayer.getDisplaySettings().loadFrom(attributes);
-            NodeList nodes = elem.getChildNodes();
-            for (int i = 0; i < nodes.getLength(); ++i) {
-                Node node = nodes.item(i);
-                if (node.getNodeType() == Node.ELEMENT_NODE && "offset".equals(node.getLocalName())) {
-                    Map<String, String> offsetAttributes = readProperties((Element) node);
-                    OffsetBookmark offset = OffsetBookmark.fromPropertiesMap(offsetAttributes);
-                    tsLayer.getDisplaySettings().setOffsetBookmark(offset);
-                    break;
-                }
+            Element offsetEl = getFirstElementByTagName(elem, "offset");
+            if (offsetEl != null) {
+                Map<String, String> offsetAttributes = readProperties(offsetEl);
+                OffsetBookmark offset = OffsetBookmark.fromPropertiesMap(offsetAttributes);
+                tsLayer.getDisplaySettings().setOffsetBookmark(offset);
+            }
+        }
+        Element filtersEl = getFirstElementByTagName(elem, "filters");
+        if (filtersEl != null) {
+            ImageryFilterSettings filterSettings = layer.getFilterSettings();
+            if (filterSettings != null) {
+                Map<String, String> filtersProps = readProperties(filtersEl);
+                filterSettings.getProcessors().stream()
+                        .flatMap(Utils.castToStream(SessionAwareReadApply.class))
+                        .forEach(proc -> proc.applyFromPropertiesMap(filtersProps));
             }
         }
         return layer;
+    }
+
+    private static Element getFirstElementByTagName(Element el, String name) {
+        NodeList nl = el.getElementsByTagName(name);
+        if (nl.getLength() == 0)
+            return null;
+        return (Element) nl.item(0);
     }
 
     private static Map<String, String> readProperties(Element elem) {
