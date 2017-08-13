@@ -3,6 +3,11 @@ package org.openstreetmap.josm.gui.download;
 
 import org.openstreetmap.josm.data.Bounds;
 
+/**
+ * A mean to select a download area in the download dialog.
+ * Currently each selector implementation is accessible through its dedicated tab.
+ * @since 2344
+ */
 public interface DownloadSelection {
 
     /**

@@ -72,7 +72,9 @@ public class GammaImageProcessor implements ImageProcessor, SessionAwareReadAppl
             try {
                 setGamma(Double.parseDouble(cStr));
             } catch (NumberFormatException e) {
-                // nothing
+                if (Main.isTraceEnabled()) {
+                    Main.trace(e);
+                }
             }
         }
     }
