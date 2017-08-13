@@ -115,6 +115,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
      */
     public OverpassDownloadReader(Bounds downloadArea, String overpassServer, String overpassQuery) {
         super(downloadArea);
+        setDoAuthenticate(false);
         this.overpassServer = overpassServer;
         this.overpassQuery = overpassQuery.trim();
     }
