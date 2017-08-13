@@ -21,6 +21,10 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * Button that allows to choose the imagery source used for slippy map background.
+ * @since 1390
+ */
 public class SourceButton extends JComponent {
 
     private static final int LAYER_HEIGHT = 20;
@@ -44,6 +48,11 @@ public class SourceButton extends JComponent {
     private int currentMap;
     private final SlippyMapBBoxChooser slippyMapBBoxChooser;
 
+    /**
+     * Constructs a new {@code SourceButton}.
+     * @param slippyMapBBoxChooser parent slippy map
+     * @param sources list of imagery sources to display
+     */
     public SourceButton(SlippyMapBBoxChooser slippyMapBBoxChooser, Collection<TileSource> sources) {
         this.slippyMapBBoxChooser = slippyMapBBoxChooser;
         setSources(sources);
@@ -123,6 +132,9 @@ public class SourceButton extends JComponent {
         }
     }
 
+    /**
+     * Toggle the visibility of imagery source list.
+     */
     public void toggle() {
         this.isEnlarged = !this.isEnlarged;
         calculateShownDimension();
@@ -130,6 +142,10 @@ public class SourceButton extends JComponent {
         revalidate();
     }
 
+    /**
+     * Changes the current imagery source used for slippy map background.
+     * @param tileSource the new imagery source to use
+     */
     public void setCurrentMap(TileSource tileSource) {
         for (int i = 0; i < sources.length; i++) {
             if (sources[i].equals(tileSource)) {
