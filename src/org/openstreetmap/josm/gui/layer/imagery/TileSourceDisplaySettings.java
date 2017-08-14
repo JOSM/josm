@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.layer.imagery;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -10,6 +11,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
+import org.openstreetmap.josm.io.session.SessionAwareReadApply;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
@@ -21,7 +23,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
  * @author michael
  * @since 10568
  */
-public class TileSourceDisplaySettings {
+public class TileSourceDisplaySettings implements SessionAwareReadApply {
     /**
      * A string returned by {@link DisplaySettingsChangeEvent#getChangedSetting()} if auto load was changed.
      * @see TileSourceDisplaySettings#isAutoLoad()
@@ -248,24 +250,27 @@ public class TileSourceDisplaySettings {
     /**
      * Stores the current settings object to the given hashmap.
      * The offset data is not stored and needs to be handled separately.
-     * @param data The map to store the settings to.
-     * @see #loadFrom(Map)
+     * @see #applyFromPropertiesMap(Map)
      * @see OffsetBookmark#toPropertiesMap()
      */
-    public void storeTo(Map<String, String> data) {
+    @Override
+    public Map<String, String> toPropertiesMap() {
+        Map<String, String> data = new HashMap<>();
         data.put(AUTO_LOAD, Boolean.toString(autoLoad));
         data.put(AUTO_ZOOM, Boolean.toString(autoZoom));
         data.put(SHOW_ERRORS, Boolean.toString(showErrors));
+        return data;
     }
 
     /**
      * Load the settings from the given data instance.
      * The offset data is not loaded and needs to be handled separately.
      * @param data The data
-     * @see #storeTo(Map)
+     * @see #toPropertiesMap()
      * @see OffsetBookmark#fromPropertiesMap(java.util.Map)
      */
-    public void loadFrom(Map<String, String> data) {
+    @Override
+    public void applyFromPropertiesMap(Map<String, String> data) {
         try {
             String doAutoLoad = data.get(AUTO_LOAD);
             if (doAutoLoad != null) {
