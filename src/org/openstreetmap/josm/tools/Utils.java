@@ -1277,7 +1277,7 @@ public final class Utils {
     public static String updateSystemProperty(String key, String value) {
         if (value != null) {
             String old = System.setProperty(key, value);
-            if (Main.isDebugEnabled()) {
+            if (Main.isDebugEnabled() && !value.equals(old)) {
                 if (!key.toLowerCase(Locale.ENGLISH).contains("password")) {
                     Main.debug("System property '" + key + "' set to '" + value + "'. Old value was '" + old + '\'');
                 } else {
