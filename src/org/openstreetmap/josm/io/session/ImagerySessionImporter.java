@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
@@ -43,16 +44,27 @@ public class ImagerySessionImporter implements SessionLayerImporter {
         ImageryPreferenceEntry prefEntry = Preferences.deserializeStruct(attributes, ImageryPreferenceEntry.class);
         ImageryInfo info = new ImageryInfo(prefEntry);
         ImageryLayer layer = ImageryLayer.create(info);
-        if (layer instanceof AbstractTileSourceLayer) {
-            AbstractTileSourceLayer<?> tsLayer = (AbstractTileSourceLayer<?>) layer;
+        Utils.instanceOfThen(layer, AbstractTileSourceLayer.class, tsLayer -> {
             tsLayer.getDisplaySettings().applyFromPropertiesMap(attributes);
+            if (!tsLayer.getDisplaySettings().isAutoZoom()) {
+                String zoomStr = attributes.get("zoom-level");
+                if (zoomStr != null) {
+                        support.addPostLayersTask(() -> {
+                            try {
+                                tsLayer.setZoomLevel(Integer.parseInt(zoomStr));
+                            } catch (NumberFormatException e) {
+                                Main.warn(e);
+                            }
+                        });
+                }
+            }
             Element offsetEl = getFirstElementByTagName(elem, "offset");
             if (offsetEl != null) {
                 Map<String, String> offsetAttributes = readProperties(offsetEl);
                 OffsetBookmark offset = OffsetBookmark.fromPropertiesMap(offsetAttributes);
                 tsLayer.getDisplaySettings().setOffsetBookmark(offset);
             }
-        }
+        });
         Element filtersEl = getFirstElementByTagName(elem, "filters");
         if (filtersEl != null) {
             ImageryFilterSettings filterSettings = layer.getFilterSettings();

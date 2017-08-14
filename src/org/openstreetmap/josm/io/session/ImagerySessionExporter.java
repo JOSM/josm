@@ -84,19 +84,22 @@ public class ImagerySessionExporter extends AbstractSessionExporter<ImageryLayer
         layerElem.setAttribute("version", "0.1");
         ImageryPreferenceEntry e = new ImageryPreferenceEntry(layer.getInfo());
         Map<String, String> data = new LinkedHashMap<>(Preferences.serializeStruct(e, ImageryPreferenceEntry.class));
-        if (layer instanceof AbstractTileSourceLayer) {
-            data.putAll(((AbstractTileSourceLayer<?>) layer).getDisplaySettings().toPropertiesMap());
-        }
+        Utils.instanceOfThen(layer, AbstractTileSourceLayer.class, tsLayer -> {
+            data.putAll(tsLayer.getDisplaySettings().toPropertiesMap());
+            if (!tsLayer.getDisplaySettings().isAutoZoom()) {
+                data.put("zoom-level", Integer.toString(tsLayer.getZoomLevel()));
+            }
+        });
         addAttributes(layerElem, data, support);
-        if (layer instanceof AbstractTileSourceLayer) {
-            OffsetBookmark offset = ((AbstractTileSourceLayer<?>) layer).getDisplaySettings().getOffsetBookmark();
+        Utils.instanceOfThen(layer, AbstractTileSourceLayer.class, tsLayer -> {
+            OffsetBookmark offset = tsLayer.getDisplaySettings().getOffsetBookmark();
             if (offset != null) {
                 Map<String, String> offsetProps = offset.toPropertiesMap();
                 Element offsetEl = support.createElement("offset");
                 layerElem.appendChild(offsetEl);
                 addAttributes(offsetEl, offsetProps, support);
             }
-        }
+        });
         ImageryFilterSettings filters = layer.getFilterSettings();
         if (filters != null) {
             Map<String, String> filterProps = new HashMap<>();
