@@ -29,7 +29,7 @@ public class ZoomToNativeLevelAction extends AbstractAction {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-        double newFactor = Math.sqrt(layer.getScaleFactor(layer.currentZoomLevel));
+        double newFactor = Math.sqrt(layer.getScaleFactor(layer.getZoomLevel()));
         Main.map.mapView.zoomToFactor(newFactor);
         layer.invalidate();
     }

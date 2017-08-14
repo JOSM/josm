@@ -24,7 +24,7 @@ public class ZoomToBestAction extends AbstractAction {
     public ZoomToBestAction(AbstractTileSourceLayer<?> layer) {
         super(tr("Change resolution"));
         this.layer = layer;
-        setEnabled(!layer.getDisplaySettings().isAutoZoom() && layer.getBestZoom() != layer.currentZoomLevel);
+        setEnabled(!layer.getDisplaySettings().isAutoZoom() && layer.getBestZoom() != layer.getZoomLevel());
     }
 
     @Override
