@@ -55,7 +55,7 @@ public class PluginProxy extends Plugin {
         return classLoader;
     }
 
-    private void handlePluginException(Exception e) {
+    private void handlePluginException(Throwable e) {
         PluginHandler.pluginLoadingExceptions.put(getPluginInformation().name, e);
         BugReportExceptionHandler.handleException(new PluginException(this, getPluginInformation().name, e));
     }
@@ -67,7 +67,7 @@ public class PluginProxy extends Plugin {
         } catch (NoSuchMethodException e) {
             Main.trace(e);
             Main.debug("Plugin "+plugin+" does not define mapFrameInitialized");
-        } catch (ReflectiveOperationException | IllegalArgumentException e) {
+        } catch (ReflectiveOperationException | IllegalArgumentException | NoClassDefFoundError e) {
             handlePluginException(e);
         }
     }
@@ -80,7 +80,7 @@ public class PluginProxy extends Plugin {
             Main.trace(e);
             Main.debug("Plugin "+plugin+" does not define getPreferenceSetting");
             return null;
-        } catch (ReflectiveOperationException | IllegalArgumentException e) {
+        } catch (ReflectiveOperationException | IllegalArgumentException | NoClassDefFoundError e) {
             handlePluginException(e);
         }
         return null;
@@ -93,7 +93,7 @@ public class PluginProxy extends Plugin {
         } catch (NoSuchMethodException e) {
             Main.trace(e);
             Main.debug("Plugin "+plugin+" does not define addDownloadSelection");
-        } catch (ReflectiveOperationException | IllegalArgumentException e) {
+        } catch (ReflectiveOperationException | IllegalArgumentException | NoClassDefFoundError e) {
             handlePluginException(e);
         }
     }
