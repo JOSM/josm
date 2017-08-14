@@ -100,9 +100,9 @@ public class PurgeCommand extends Command {
         getAffectedDataSet().beginUpdate();
         try {
             purgedConflicts.get().clear();
-            /**
-             * Loop from back to front to keep referential integrity.
-             */
+            // unselect primitives in advance to not fire a selection change for every one of them
+            getAffectedDataSet().clearSelection(toPurge);
+            // Loop from back to front to keep referential integrity.
             for (int i = toPurge.size()-1; i >= 0; --i) {
                 OsmPrimitive osm = toPurge.get(i);
                 if (makeIncompleteDataByPrimId.containsKey(osm)) {
