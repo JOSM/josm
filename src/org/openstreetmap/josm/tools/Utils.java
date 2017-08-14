@@ -50,6 +50,7 @@ import java.util.concurrent.ForkJoinWorkerThread;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -674,7 +675,7 @@ public final class Utils {
             public Iterator<B> iterator() {
                 return new Iterator<B>() {
 
-                    private Iterator<? extends A> it = c.iterator();
+                    private final Iterator<? extends A> it = c.iterator();
 
                     @Override
                     public boolean hasNext() {
@@ -1701,8 +1702,27 @@ public final class Utils {
      * @param <U> type of the elements in the resulting stream
      * @param klass the class U
      * @return function converting an object to a singleton stream or null
+     * @since 12594
      */
     public static <T, U> Function<T, Stream<U>> castToStream(Class<U> klass) {
         return x -> klass.isInstance(x) ? Stream.of(klass.cast(x)) : null;
+    }
+
+    /**
+     * Helper method to replace the "<code>instanceof</code>-check and cast" pattern.
+     * Checks if an object is instance of class T and performs an action if that
+     * is the case.
+     * Syntactic sugar to avoid typing the class name two times, when one time
+     * would suffice.
+     * @param <T> the type for the instanceof check and cast
+     * @param o the object to check and cast
+     * @param klass the class T
+     * @param consumer action to take when o is and instance of T
+     * @since 12604
+     */
+    public static <T> void instanceOfThen(Object o, Class<T> klass, Consumer<? super T> consumer) {
+        if (klass.isInstance(o)) {
+            consumer.accept((T) o);
+        }
     }
 }
