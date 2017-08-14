@@ -152,7 +152,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
     //public static final BooleanProperty PROP_DRAW_DEBUG = new BooleanProperty(PREFERENCE_PREFIX + ".draw_debug", false);
     /** Zoomlevel at which tiles is currently downloaded. Initial zoom lvl is set to bestZoom */
-    public int currentZoomLevel;
+    private int currentZoomLevel;
 
     private final AttributionSupport attribution = new AttributionSupport();
     private final TileHolder clickedTileHolder = new TileHolder();
@@ -756,6 +756,15 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             return false;
         }
         return true;
+    }
+
+    /**
+     * Get the current zoom level of the layer
+     * @return the current zoom level
+     * @since 12603
+     */
+    public int getZoomLevel() {
+        return currentZoomLevel;
     }
 
     /**

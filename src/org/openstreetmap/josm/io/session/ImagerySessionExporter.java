@@ -85,7 +85,7 @@ public class ImagerySessionExporter extends AbstractSessionExporter<ImageryLayer
         ImageryPreferenceEntry e = new ImageryPreferenceEntry(layer.getInfo());
         Map<String, String> data = new LinkedHashMap<>(Preferences.serializeStruct(e, ImageryPreferenceEntry.class));
         if (layer instanceof AbstractTileSourceLayer) {
-            ((AbstractTileSourceLayer<?>) layer).getDisplaySettings().storeTo(data);
+            data.putAll(((AbstractTileSourceLayer<?>) layer).getDisplaySettings().toPropertiesMap());
         }
         addAttributes(layerElem, data, support);
         if (layer instanceof AbstractTileSourceLayer) {

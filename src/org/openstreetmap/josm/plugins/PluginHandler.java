@@ -286,7 +286,7 @@ public final class PluginHandler {
     /**
      * All exceptions that occured during plugin loading
      */
-    static final Map<String, Exception> pluginLoadingExceptions = new HashMap<>();
+    static final Map<String, Throwable> pluginLoadingExceptions = new HashMap<>();
 
     /**
      * Class loader to locate resources from plugins.

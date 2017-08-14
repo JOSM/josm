@@ -670,20 +670,20 @@ public class Preferences {
     }
 
     private static void setCorrectPermissions(File file) {
-        if (!file.setReadable(false, false) && Main.isDebugEnabled()) {
-            Main.debug(tr("Unable to set file non-readable {0}", file.getAbsolutePath()));
+        if (!file.setReadable(false, false) && Main.isTraceEnabled()) {
+            Main.trace(tr("Unable to set file non-readable {0}", file.getAbsolutePath()));
         }
-        if (!file.setWritable(false, false) && Main.isDebugEnabled()) {
-            Main.debug(tr("Unable to set file non-writable {0}", file.getAbsolutePath()));
+        if (!file.setWritable(false, false) && Main.isTraceEnabled()) {
+            Main.trace(tr("Unable to set file non-writable {0}", file.getAbsolutePath()));
         }
-        if (!file.setExecutable(false, false) && Main.isDebugEnabled()) {
-            Main.debug(tr("Unable to set file non-executable {0}", file.getAbsolutePath()));
+        if (!file.setExecutable(false, false) && Main.isTraceEnabled()) {
+            Main.trace(tr("Unable to set file non-executable {0}", file.getAbsolutePath()));
         }
-        if (!file.setReadable(true, true) && Main.isDebugEnabled()) {
-            Main.debug(tr("Unable to set file readable {0}", file.getAbsolutePath()));
+        if (!file.setReadable(true, true) && Main.isTraceEnabled()) {
+            Main.trace(tr("Unable to set file readable {0}", file.getAbsolutePath()));
         }
-        if (!file.setWritable(true, true) && Main.isDebugEnabled()) {
-            Main.debug(tr("Unable to set file writable {0}", file.getAbsolutePath()));
+        if (!file.setWritable(true, true) && Main.isTraceEnabled()) {
+            Main.trace(tr("Unable to set file writable {0}", file.getAbsolutePath()));
         }
     }
 

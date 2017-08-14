@@ -85,14 +85,14 @@ public class PurgeAction extends JosmAction {
 
     /**
      * Constructs a new {@code PurgeAction} with optional shortcut.
-     * @param addShortcut controls whether the shortcut should be registered or not
+     * @param addShortcut controls whether the shortcut should be registered or not, as for toolbar registration
      * @since 11611
      */
     public PurgeAction(boolean addShortcut) {
         /* translator note: other expressions for "purge" might be "forget", "clean", "obliterate", "prune" */
         super(tr("Purge..."), "purge", tr("Forget objects but do not delete them on server when uploading."), addShortcut ?
                 Shortcut.registerShortcut("system:purge", tr("Edit: {0}", tr("Purge")), KeyEvent.VK_P, Shortcut.CTRL_SHIFT)
-                : null, true);
+                : null, addShortcut);
         putValue("help", HelpUtil.ht("/Action/Purge"));
     }
 

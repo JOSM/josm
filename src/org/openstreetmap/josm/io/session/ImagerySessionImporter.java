@@ -45,7 +45,7 @@ public class ImagerySessionImporter implements SessionLayerImporter {
         ImageryLayer layer = ImageryLayer.create(info);
         if (layer instanceof AbstractTileSourceLayer) {
             AbstractTileSourceLayer<?> tsLayer = (AbstractTileSourceLayer<?>) layer;
-            tsLayer.getDisplaySettings().loadFrom(attributes);
+            tsLayer.getDisplaySettings().applyFromPropertiesMap(attributes);
             Element offsetEl = getFirstElementByTagName(elem, "offset");
             if (offsetEl != null) {
                 Map<String, String> offsetAttributes = readProperties(offsetEl);
