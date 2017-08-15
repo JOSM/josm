@@ -202,7 +202,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
             if (zoom <= 3) {
                 // 3 is the default zoom level in OSM database, but the real zoom level was not correct
                 // for a long time, see https://github.com/openstreetmap/openstreetmap-website/issues/1592
-                zoom = 12;
+                zoom = 15;
             }
             Projection mercator = Projections.getProjectionByCode("EPSG:3857");
             setArea(MapViewState.createDefaultState(430, 400) // Size of map on osm.org user profile settings
