@@ -15,10 +15,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -73,8 +75,10 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
      */
     private static final String KEY_KEY = "key";
     private static final String QUERY_KEY = "query";
-    private static final String USE_COUNT_KEY = "useCount";
+    private static final String LAST_EDIT_KEY = "lastEdit";
     private static final String PREFERENCE_ITEMS = "download.overpass.query";
+
+    private static final String TRANSLATED_HISTORY = tr("history");
 
     /**
      * Constructs a new {@code OverpassQueryList}.
@@ -102,16 +106,11 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
      */
     public synchronized Optional<SelectorItem> getSelectedItem() {
         int idx = lsResult.getSelectedIndex();
-        if (lsResultModel.getSize() == 0 || idx == -1) {
+        if (lsResultModel.getSize() <= idx || idx == -1) {
             return Optional.empty();
         }
 
         SelectorItem item = lsResultModel.getElementAt(idx);
-        item.increaseUsageCount();
-
-        this.items.values().stream()
-                .filter(it -> !it.getKey().equals(item.getKey()))
-                .forEach(SelectorItem::decreaseUsageCount);
 
         filterItems();
 
@@ -127,14 +126,12 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
      */
     public synchronized void saveHistoricItem(String query) {
         boolean historicExist = this.items.values().stream()
-                .filter(it -> it.getKey().contains("history"))
                 .map(SelectorItem::getQuery)
                 .anyMatch(q -> q.equals(query));
 
         if (!historicExist) {
             SelectorItem item = new SelectorItem(
-                    "history " + LocalDateTime.now().format(FORMAT),
-                    query);
+                    TRANSLATED_HISTORY + " " + LocalDateTime.now().format(FORMAT), query);
 
             this.items.put(item.getKey(), item);
 
@@ -147,7 +144,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
      * Removes currently selected item, saves the current state to preferences and
      * updates the view.
      */
-    private synchronized void removeSelectedItem() {
+    public synchronized void removeSelectedItem() {
         Optional<SelectorItem> it = this.getSelectedItem();
 
         if (!it.isPresent()) {
@@ -159,6 +156,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
 
         SelectorItem item = it.get();
         if (this.items.remove(item.getKey(), item)) {
+            clearSelection();
             savePreferences();
             filterItems();
         }
@@ -168,7 +166,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
      * Opens {@link EditItemDialog} for the selected item, saves the current state
      * to preferences and updates the view.
      */
-    private synchronized void editSelectedItem() {
+    public synchronized void editSelectedItem() {
         Optional<SelectorItem> it = this.getSelectedItem();
 
         if (!it.isPresent()) {
@@ -184,7 +182,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
                 componentParent,
                 tr("Edit item"),
                 item,
-                tr("Save"));
+                tr("Save"), tr("Cancel"));
         dialog.showDialog();
 
         Optional<SelectorItem> editedItem = dialog.getOutputItem();
@@ -201,13 +199,13 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
      * Opens {@link EditItemDialog}, saves the state to preferences if a new item is added
      * and updates the view.
      */
-    private synchronized void createNewItem() {
+    public synchronized void createNewItem() {
         EditItemDialog dialog = new EditItemDialog(componentParent, tr("Add snippet"), tr("Add"));
         dialog.showDialog();
 
         Optional<SelectorItem> newItem = dialog.getOutputItem();
         newItem.ifPresent(i -> {
-            items.put(i.getKey(), new SelectorItem(i.getKey(), i.getQuery()));
+            items.put(i.getKey(), i);
             savePreferences();
             filterItems();
         });
@@ -221,10 +219,12 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
     @Override
     protected void filterItems() {
         String text = edSearchText.getText().toLowerCase(Locale.ENGLISH);
-
-        super.lsResultModel.setItems(this.items.values().stream()
+        List<SelectorItem> matchingItems = this.items.values().stream()
+                .sorted((i1, i2) -> i2.getLastEdit().compareTo(i1.getLastEdit()))
                 .filter(item -> item.getKey().contains(text))
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
+
+        super.lsResultModel.setItems(matchingItems);
     }
 
     private void doubleClickEvent() {
@@ -247,7 +247,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
             Map<String, String> it = new HashMap<>();
             it.put(KEY_KEY, item.getKey());
             it.put(QUERY_KEY, item.getQuery());
-            it.put(USE_COUNT_KEY, Integer.toString(item.getUsageCount()));
+            it.put(LAST_EDIT_KEY, item.getLastEdit().format(FORMAT));
 
             toSave.add(it);
         }
@@ -265,11 +265,18 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
         Map<String, SelectorItem> result = new HashMap<>();
 
         for (Map<String, String> entry : toRetrieve) {
-            String key = entry.get(KEY_KEY);
-            String query = entry.get(QUERY_KEY);
-            int usageCount = Integer.parseInt(entry.get(USE_COUNT_KEY));
+            try {
+                String key = entry.get(KEY_KEY);
+                String query = entry.get(QUERY_KEY);
+                String lastEditText = entry.get(LAST_EDIT_KEY);
+                // Compatibility: Some entries may not have a last edit set.
+                LocalDateTime lastEdit = lastEditText == null ? LocalDateTime.MIN : LocalDateTime.parse(lastEditText, FORMAT);
 
-            result.put(key, new SelectorItem(key, query, usageCount));
+                result.put(key, new SelectorItem(key, query, lastEdit));
+            } catch (IllegalArgumentException | DateTimeParseException e) {
+                // skip any corrupted item
+                Main.error(e);
+            }
         }
 
         return result;
@@ -411,13 +418,14 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
 
         private final JTextField name;
         private final JosmTextArea query;
-        private final int initialNameHash;
 
         private final transient AbstractTextComponentValidator queryValidator;
         private final transient AbstractTextComponentValidator nameValidator;
 
         private static final int SUCCESS_BTN = 0;
         private static final int CANCEL_BTN = 1;
+
+        private final transient SelectorItem itemToEdit;
 
         /**
          * Added/Edited object to be returned. If {@link Optional#empty()} then probably
@@ -436,9 +444,10 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
                 String... buttonTexts) {
             super(parent, title, buttonTexts);
 
-            String nameToEdit = itemToEdit != null ? itemToEdit.getKey() : "";
-            String queryToEdit = itemToEdit != null ? itemToEdit.getQuery() : "";
-            this.initialNameHash = nameToEdit.hashCode();
+            this.itemToEdit = itemToEdit;
+
+            String nameToEdit = itemToEdit == null ? "" : itemToEdit.getKey();
+            String queryToEdit = itemToEdit == null ? "" : itemToEdit.getQuery();
 
             this.name = new JTextField(nameToEdit);
             this.query = new JosmTextArea(queryToEdit);
@@ -457,11 +466,12 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
                 @Override
                 public boolean isValid() {
                     String currentName = name.getText();
-                    int currentHash = currentName.hashCode();
 
-                    return !Utils.isStripEmpty(currentName) &&
-                            !(currentHash != initialNameHash &&
-                                    items.containsKey(currentName));
+                    boolean notEmpty = !Utils.isStripEmpty(currentName);
+                    boolean exist = !currentName.equals(nameToEdit) &&
+                                        items.containsKey(currentName);
+
+                    return notEmpty && !exist;
                 }
             };
 
@@ -477,8 +487,8 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
             panel.add(this.name, GBC.eol().insets(5).anchor(GBC.SOUTHEAST).fill(GBC.HORIZONTAL));
             panel.add(queryScrollPane, constraint);
 
-            setDefaultButton(SUCCESS_BTN);
-            setCancelButton(CANCEL_BTN);
+            setDefaultButton(SUCCESS_BTN + 1);
+            setCancelButton(CANCEL_BTN + 1);
             setPreferredSize(new Dimension(400, 400));
             setContent(panel, false);
         }
@@ -500,19 +510,38 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
                             tr("The item cannot be created with provided name"),
                             tr("Warning"),
                             JOptionPane.WARNING_MESSAGE);
+
+                    return;
                 } else if (!this.queryValidator.isValid()) {
                     JOptionPane.showMessageDialog(
                             componentParent,
                             tr("The item cannot be created with an empty query"),
                             tr("Warning"),
                             JOptionPane.WARNING_MESSAGE);
-                } else {
-                    this.outputItem = Optional.of(new SelectorItem(this.name.getText(), this.query.getText()));
-                    super.buttonAction(buttonIndex, evt);
+
+                    return;
+                } else if (this.itemToEdit != null) { // editing the item
+                    String newKey = this.name.getText();
+                    String newQuery = this.query.getText();
+
+                    String itemKey = this.itemToEdit.getKey();
+                    String itemQuery = this.itemToEdit.getQuery();
+
+                    this.outputItem = Optional.of(new SelectorItem(
+                            this.name.getText(),
+                            this.query.getText(),
+                            !newKey.equals(itemKey) || !newQuery.equals(itemQuery)
+                                ? LocalDateTime.now()
+                                : this.itemToEdit.getLastEdit()));
+
+                } else { // creating new
+                    this.outputItem = Optional.of(new SelectorItem(
+                            this.name.getText(),
+                            this.query.getText()));
                 }
-            } else {
-                super.buttonAction(buttonIndex, evt);
             }
+
+            super.buttonAction(buttonIndex, evt);
         }
     }
 
@@ -523,7 +552,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
     public static class SelectorItem {
         private final String itemKey;
         private final String query;
-        private int usageCount;
+        private final LocalDateTime lastEdit;
 
         /**
          * Constructs a new {@code SelectorItem}.
@@ -533,20 +562,21 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
          * @exception IllegalArgumentException if any parameter is empty.
          */
         public SelectorItem(String key, String query) {
-            this(key, query, 1);
+            this(key, query, LocalDateTime.now());
         }
 
         /**
          * Constructs a new {@code SelectorItem}.
          * @param key The key of this item.
          * @param query The query of the item.
-         * @param usageCount The number of times this query was used.
+         * @param lastEdit The latest when the item was
          * @exception NullPointerException if any parameter is {@code null}.
          * @exception IllegalArgumentException if any parameter is empty.
          */
-        public SelectorItem(String key, String query, int usageCount) {
-            Objects.requireNonNull(key);
-            Objects.requireNonNull(query);
+        public SelectorItem(String key, String query, LocalDateTime lastEdit) {
+            Objects.requireNonNull(key, "The name of the item cannot be null");
+            Objects.requireNonNull(query, "The query of the item cannot be null");
+            Objects.requireNonNull(lastEdit, "The last edit date time cannot be null");
 
             if (Utils.isStripEmpty(key)) {
                 throw new IllegalArgumentException("The key of the item cannot be empty");
@@ -557,7 +587,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
 
             this.itemKey = key;
             this.query = query;
-            this.usageCount = usageCount;
+            this.lastEdit = lastEdit;
         }
 
         /**
@@ -577,31 +607,11 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
         }
 
         /**
-         * Gets the number of times the query was used by the user.
-         * @return The usage count of this item.
+         * Gets the latest date time when the item was created/changed.
+         * @return The latest date time when the item was created/changed.
          */
-        public int getUsageCount() {
-            return this.usageCount;
-        }
-
-        /**
-         * Increments the {@link SelectorItem#usageCount} by one till
-         * it reaches {@link Integer#MAX_VALUE}.
-         */
-        public void increaseUsageCount() {
-            if (this.usageCount < Integer.MAX_VALUE) {
-                this.usageCount++;
-            }
-        }
-
-        /**
-         * Decrements the {@link SelectorItem#usageCount} ny one till
-         * it reaches 0.
-         */
-        public void decreaseUsageCount() {
-            if (this.usageCount > 0) {
-                this.usageCount--;
-            }
+        public LocalDateTime getLastEdit() {
+            return lastEdit;
         }
 
         @Override
