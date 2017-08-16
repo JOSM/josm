@@ -36,16 +36,18 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public final class OverpassQueryWizardDialog extends ExtendedDialog {
 
+    private final HistoryComboBox queryWizard;
     private static final String HEADLINE_START = "<h3>";
     private static final String HEADLINE_END = "</h3>";
     private static final String TR_START = "<tr>";
     private static final String TR_END = "</tr>";
     private static final String TD_START = "<td>";
     private static final String TD_END = "</td>";
-    private final HistoryComboBox queryWizard;
-    private final OverpassTurboQueryWizard overpassQueryBuilder;
+    private static final String SPAN_START = "<span>";
+    private static final String SPAN_END = "</span>";
     private static final CollectionProperty OVERPASS_WIZARD_HISTORY =
             new CollectionProperty("download.overpass.wizard", new ArrayList<String>());
+    private final transient OverpassTurboQueryWizard overpassQueryBuilder;
 
     // dialog buttons
     private static final int BUILD_QUERY = 0;
@@ -199,7 +201,7 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
                 .append("<table>").append(TR_START).append(TD_START)
                 .append(Utils.joinAsHtmlUnorderedList(Arrays.asList("<i>type:node</i>", "<i>type:relation</i>", "<i>type:way</i>")))
                 .append(TD_END).append(TD_START)
-                .append("<span>").append(tr("Download objects of a certain type.")).append("</span>")
+                .append(SPAN_START).append(tr("Download objects of a certain type.")).append(SPAN_END)
                 .append(TD_END).append(TR_END)
                 .append(TR_START).append(TD_START)
                 .append(Utils.joinAsHtmlUnorderedList(
@@ -214,9 +216,9 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
                                 "is set to 1000m, but it can be changed in the generated query.", "<i>tourism=hotel around Berlin</i> -"),
                         tr("{0} all objects within the current selection that have {1} as attribute.", "<i>tourism=hotel in bbox</i> -",
                                 "'tourism=hotel'"))))
-                .append("<span>")
+                .append(SPAN_START)
                 .append(tr("Instead of <i>location</i> any valid place name can be used like address, city, etc."))
-                .append("</span>")
+                .append(SPAN_END)
                 .append(TD_END).append(TR_END)
                 .append(TR_START).append(TD_START)
                 .append(Utils.joinAsHtmlUnorderedList(Arrays.asList("<i>key=value</i>", "<i>key=*</i>", "<i>key~regex</i>",
@@ -230,10 +232,10 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
                         tr("<i>expression1 {0} expression2</i>", "or"),
                         tr("<i>expression1 {0} expression2</i>", "and"))))
                 .append(TD_END).append(TD_START)
-                .append("<span>")
+                .append(SPAN_START)
                 .append(tr("Basic logical operators can be used to create more sophisticated queries. Instead of \"or\" - \"|\", \"||\" " +
                         "can be used, and instead of \"and\" - \"&\", \"&&\"."))
-                .append("</span>")
+                .append(SPAN_END)
                 .append(TD_END).append(TR_END).append("</table>")
                 .append("</body>")
                 .append("</html>")

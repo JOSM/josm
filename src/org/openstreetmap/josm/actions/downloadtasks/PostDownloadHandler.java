@@ -19,6 +19,7 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -67,8 +68,9 @@ public class PostDownloadHandler implements Runnable {
         // make sure errors are reported only once
         //
         Set<Object> errors = new LinkedHashSet<>(task.getErrorObjects());
+
         if (this.errorReporter != null) {
-            errorReporter.accept(errors);
+            GuiHelper.runInEDT(() -> errorReporter.accept(errors));
         }
 
         if (errors.isEmpty()) {
