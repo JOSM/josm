@@ -31,6 +31,7 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.download.OverpassQueryList;
 import org.openstreetmap.josm.gui.download.OverpassQueryWizardDialog;
@@ -71,7 +72,7 @@ public class OverpassDownloadAction extends JosmAction {
 
         dialog.rememberSettings();
         Optional<Bounds> selectedArea = dialog.getSelectedDownloadArea();
-        String overpassQuery = dialog.getOverpassQuery();
+        String overpassQuery = dialog.getRepairedOverpassQuery();
 
         /*
          * Absence of the selected area can be justified only if the overpass query
@@ -98,7 +99,7 @@ public class OverpassDownloadAction extends JosmAction {
                     errors.contains("No data found in this area.");
 
             if (errors.isEmpty() || onlyNoDataError) {
-                dialog.saveHistoricItemOnSuccess();
+                dialog.saveHistoricItemOnSuccess(overpassQuery);
             }
         };
 
@@ -110,7 +111,7 @@ public class OverpassDownloadAction extends JosmAction {
         DownloadOsmTask task = new DownloadOsmTask();
         task.setZoomAfterDownload(dialog.isZoomToDownloadedDataRequired());
         Future<?> future = task.download(
-                new OverpassDownloadReader(area, OverpassServerPreference.getOverpassServer(), dialog.getOverpassQuery()),
+                new OverpassDownloadReader(area, OverpassServerPreference.getOverpassServer(), overpassQuery),
                 dialog.isNewLayerRequired(), area, null);
         Main.worker.submit(new PostDownloadHandler(task, future, errorReporter));
     }
@@ -252,6 +253,33 @@ public class OverpassDownloadAction extends JosmAction {
             return overpassQuery.getText();
         }
 
+        String getRepairedOverpassQuery() {
+            String query = getOverpassQuery();
+            if (query.matches("(/\\*(\\*[^/]|[^\\*/])*\\*/|\\s)*")) {
+                // Empty query. User might want to download everything
+                boolean doFix = ConditionalOptionPaneUtil.showConfirmationDialog(
+                        "download.overpass.fix.emptytoall",
+                        this,
+                        tr("You entered an empty query. Do you want to download all data in this area instead?"),
+                        tr("Download all data?"),
+                        JOptionPane.YES_NO_OPTION,
+                        JOptionPane.QUESTION_MESSAGE,
+                        JOptionPane.YES_OPTION);
+                if (doFix) {
+                    return "[out:xml]; \n"
+                            + query + "\n"
+                            + "(\n"
+                            + "    node({{bbox}});\n"
+                            + "<;\n"
+                            + ");\n"
+                            + "(._;>;);"
+                            + "out meta;";
+                }
+            }
+            // Note: We can add more repairs here. We might e.g. want to intercept missing 'out meta'.
+            return query;
+        }
+
         /**
          * Sets the query that is displayed
          * @param text The multiline query text.
@@ -263,9 +291,10 @@ public class OverpassDownloadAction extends JosmAction {
 
         /**
          * Adds the current query to {@link OverpassQueryList}.
+         * @param overpassQueryToSave The query to save
          */
-        void saveHistoricItemOnSuccess() {
-            overpassQueryList.saveHistoricItem(overpassQuery.getText());
+        void saveHistoricItemOnSuccess(String overpassQueryToSave) {
+            overpassQueryList.saveHistoricItem(overpassQueryToSave);
         }
 
         @Override
