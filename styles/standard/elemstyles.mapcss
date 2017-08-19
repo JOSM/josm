@@ -1899,6 +1899,7 @@ area[shop=travel_agency],
 area[shop=toys],
 area[shop=vacuum_cleaner],
 area[shop=variety_store],
+area[shop=charity],
 area[shop=video],
 area[shop=bookmaker],
 area[shop=lottery],
@@ -2176,6 +2177,10 @@ node[shop=vacuum_cleaner] {
 }
 node[shop=variety_store] {
     icon-image: "presets/shop/variety_store.svg";
+    set icon_z17;
+}
+node[shop=charity] {
+    icon-image: "presets/shop/charity.svg";
     set icon_z17;
 }
 node[shop=video] {

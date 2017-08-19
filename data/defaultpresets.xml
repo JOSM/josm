@@ -9008,6 +9008,18 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Variety Store -->
+        <item name="Charity" icon="presets/shop/charity.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=charity"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:shop=charity"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=charity"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=charity"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:shop=charity"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=charity" />
+            <space />
+            <key key="shop" value="charity" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Charity -->
         <item name="Bookmaker" icon="presets/shop/lottery.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=bookmaker"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:shop=bookmaker"
