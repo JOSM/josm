@@ -5500,6 +5500,22 @@
     </group> <!-- Emergency -->
     <group name="Social Facility" icon="presets/social_facility/outreach.svg">
         <item name="Nursing Home" icon="presets/social_facility/nursing_home.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Key:social_facility"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:social_facility"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:social_facility"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Key:social_facility"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:social_facility"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:social_facility"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:social_facility"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:social_facility" />
+            <space />
+            <key key="amenity" value="social_facility" />
+            <key key="social_facility" value="nursing_home" />
+            <reference ref="name_operator" />
+            <text key="capacity" text="Capacity" />
+            <reference ref="link_contact_address" />
+        </item> <!-- Nursing Home -->
+        <item name="Nursing Home (Legacy)" icon="presets/social_facility/nursing_home.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=nursing_home"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:amenity=nursing_home"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=nursing_home"
@@ -5511,7 +5527,7 @@
             <reference ref="name_operator" />
             <text key="capacity" text="Capacity" />
             <reference ref="link_contact_address" />
-        </item> <!-- Nursing Home -->
+        </item> <!-- Nursing Home (Legacy)-->
         <item name="Group Home" icon="presets/social_facility/group_home.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:social_facility"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:social_facility"
