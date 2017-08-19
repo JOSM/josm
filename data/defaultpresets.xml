@@ -10713,6 +10713,7 @@
             <space />
             <key key="landuse" value="industrial" />
             <text key="name" text="Name" />
+            <combo key="industrial" text="Type" values="bakery,brewery,brickyard,depot,distributor,factory,grinding_mill,heating_station,machine_shop,mine,oil,port,salt_pond,sawmill,scrap_yard,shipyard,slaughterhouse,warehouse" values_context="industrial" />
         </item> <!-- Industrial -->
         <item name="Garages" icon="presets/landuse/garages.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=garages"
