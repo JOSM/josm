@@ -5500,6 +5500,22 @@
     </group> <!-- Emergency -->
     <group name="Social Facility" icon="presets/social_facility/outreach.svg">
         <item name="Nursing Home" icon="presets/social_facility/nursing_home.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Key:social_facility"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:social_facility"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Key:social_facility"
+                  es.href="http://wiki.openstreetmap.org/wiki/ES:Key:social_facility"
+                  fr.href="http://wiki.openstreetmap.org/wiki/FR:Key:social_facility"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Key:social_facility"
+                  pl.href="http://wiki.openstreetmap.org/wiki/Pl:Key:social_facility"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Key:social_facility" />
+            <space />
+            <key key="amenity" value="social_facility" />
+            <key key="social_facility" value="nursing_home" />
+            <reference ref="name_operator" />
+            <text key="capacity" text="Capacity" />
+            <reference ref="link_contact_address" />
+        </item> <!-- Nursing Home -->
+        <item name="Nursing Home (Legacy)" icon="presets/social_facility/nursing_home.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=nursing_home"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:amenity=nursing_home"
                   de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:amenity=nursing_home"
@@ -5511,7 +5527,7 @@
             <reference ref="name_operator" />
             <text key="capacity" text="Capacity" />
             <reference ref="link_contact_address" />
-        </item> <!-- Nursing Home -->
+        </item> <!-- Nursing Home (Legacy)-->
         <item name="Group Home" icon="presets/social_facility/group_home.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Key:social_facility"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Key:social_facility"
@@ -9008,6 +9024,18 @@
             <reference ref="name_operator_oh_wheelchair" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Variety Store -->
+        <item name="Charity" icon="presets/shop/charity.svg" type="node,closedway,multipolygon" preset_name_label="true">
+            <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=charity"
+                  cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:shop=charity"
+                  de.href="http://wiki.openstreetmap.org/wiki/DE:Tag:shop=charity"
+                  ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:shop=charity"
+                  pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:shop=charity"
+                  ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:shop=charity" />
+            <space />
+            <key key="shop" value="charity" />
+            <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="link_contact_address_payment" />
+        </item> <!-- Charity -->
         <item name="Bookmaker" icon="presets/shop/lottery.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:shop=bookmaker"
                   cs.href="http://wiki.openstreetmap.org/wiki/Cs:Tag:shop=bookmaker"
