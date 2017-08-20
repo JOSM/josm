@@ -9,6 +9,12 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+/**
+ * Helper class to ensure that two (or more) {@link javax.swing.JTable}s always
+ * have the same entries selected.
+ * 
+ * The tables are usually displayed side-by-side.
+ */
 public class SelectionSynchronizer implements ListSelectionListener {
 
     private final Set<ListSelectionModel> participants;
@@ -21,6 +27,13 @@ public class SelectionSynchronizer implements ListSelectionListener {
         participants = new HashSet<>();
     }
 
+    /**
+     * Add {@link ListSelectionModel} of the table to participate in selection
+     * synchronization.
+     * 
+     * Call this method for all tables that should have their selection synchronized.
+     * @param model the selection model of the table
+     */
     public void participateInSynchronizedSelection(ListSelectionModel model) {
         if (model == null)
             return;

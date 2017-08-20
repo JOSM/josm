@@ -15,6 +15,12 @@ import org.openstreetmap.josm.gui.history.TwoColumnDiff.Item.DiffItemType;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * A {@link TableCellRenderer} for the {@link NodeListViewer}.
+ * 
+ * Renders information about a node when comparing the node list of two
+ * historical versions of a way.
+ */
 public class NodeListTableCellRenderer extends JLabel implements TableCellRenderer {
 
     public static final Color BGCOLOR_SELECTED = new Color(143, 170, 255);
