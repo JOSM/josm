@@ -299,6 +299,8 @@ way["addr:interpolation"=alphabetic] {
 area[building][!building?!] {
     fill-color: building#cb9999;
 }
+area[building=roof],
+area[building][!building?!][wall?!],
 area[building:part][!building:part?!] {
     fill-color: buildingpart#dcbbbb;
 }
