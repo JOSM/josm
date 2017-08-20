@@ -12,6 +12,9 @@ import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.preferences.CollectionProperty;
 
+/**
+ * Manages list of recently used tags that will be displayed in the {@link PropertiesDialog}.
+ */
 class RecentTagCollection {
 
     /**

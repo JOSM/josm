@@ -22,8 +22,21 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.xml.sax.SAXException;
 
+/**
+ * The <code>roles</code> element in tagging presets definition.
+ * <p>
+ * A list of {@link Role} elements. Describes the roles that are expected for
+ * the members of a relation.
+ * <p>
+ * Used for data validation, auto completion, among others.
+ */
 public class Roles extends TaggingPresetItem {
 
+    /**
+     * The <code>role</code> element in tagging preset definition.
+     * 
+     * Information on a certain role, which is expected for the relation members.
+     */
     public static class Role {
         public Set<TaggingPresetType> types; // NOSONAR
         /** Role name used in a relation */
