@@ -22,7 +22,6 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.io.IllegalDataException;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -134,11 +133,11 @@ public class NmeaReader {
     private final SimpleDateFormat rmcTimeFmt = new SimpleDateFormat("ddMMyyHHmmss.SSS", Locale.ENGLISH);
     private final SimpleDateFormat rmcTimeFmtStd = new SimpleDateFormat("ddMMyyHHmmss", Locale.ENGLISH);
 
-    private Date readTime(String p) {
+    private Date readTime(String p) throws IllegalDataException {
         Date d = Optional.ofNullable(rmcTimeFmt.parse(p, new ParsePosition(0)))
                 .orElseGet(() -> rmcTimeFmtStd.parse(p, new ParsePosition(0)));
         if (d == null)
-            throw new JosmRuntimeException("Date is malformed");
+            throw new IllegalDataException("Date is malformed: '" + p + "'");
         return d;
     }
 
@@ -479,8 +478,11 @@ public class NmeaReader {
             return true;
 
         } catch (IllegalArgumentException | IndexOutOfBoundsException | IllegalDataException ex) {
-            // out of bounds and such
-            Main.debug(ex);
+            if (ps.malformed < 5) {
+                Main.warn(ex);
+            } else {
+                Main.debug(ex);
+            }
             ps.malformed++;
             ps.pWp = null;
             return false;
