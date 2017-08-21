@@ -1720,6 +1720,7 @@ public final class Utils {
      * @param consumer action to take when o is and instance of T
      * @since 12604
      */
+    @SuppressWarnings("unchecked")
     public static <T> void instanceOfThen(Object o, Class<T> klass, Consumer<? super T> consumer) {
         if (klass.isInstance(o)) {
             consumer.accept((T) o);
