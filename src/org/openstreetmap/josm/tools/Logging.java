@@ -198,7 +198,7 @@ public final class Logging {
      * @since 12620
      */
     public static void debug(Throwable t) {
-        logWithStackTrace(Logging.LEVEL_DEBUG, t);
+        log(Logging.LEVEL_DEBUG, t);
     }
 
     /**
@@ -225,7 +225,7 @@ public final class Logging {
      * @since 12620
      */
     public static void trace(Throwable t) {
-        logWithStackTrace(Logging.LEVEL_TRACE, t);
+        log(Logging.LEVEL_TRACE, t);
     }
 
     /**
