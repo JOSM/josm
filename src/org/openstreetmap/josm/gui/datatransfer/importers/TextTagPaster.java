@@ -10,7 +10,7 @@ import java.util.Map;
 
 import javax.swing.TransferHandler.TransferSupport;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.TextTagParser;
 
 /**
@@ -33,7 +33,7 @@ public final class TextTagPaster extends AbstractTagPaster {
         try {
             return super.supports(support) && containsValidTags(support);
         } catch (UnsupportedFlavorException | IOException e) {
-            Main.warn(e);
+            Logging.warn(e);
             return false;
         }
     }

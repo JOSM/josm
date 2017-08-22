@@ -63,6 +63,7 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
 /**
@@ -498,7 +499,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                     }
                 }
             } else if (!(setting instanceof SubPreferenceSetting)) {
-                Main.warn("Ignoring preferences "+setting);
+                Logging.warn("Ignoring preferences "+setting);
             }
         }
         try {
@@ -506,7 +507,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                 setSelectedComponent(sel);
             }
         } catch (IllegalArgumentException e) {
-            Main.warn(e);
+            Logging.warn(e);
         }
     }
 
@@ -599,7 +600,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                         setSelectedIndex(index);
                     }
                 } catch (SecurityException ex) {
-                    Main.error(ex);
+                    Logging.error(ex);
                 } catch (RuntimeException ex) { // NOPMD
                     // allow to change most settings even if e.g. a plugin fails
                     BugReportExceptionHandler.handleException(ex);
@@ -616,7 +617,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
             try {
                 sps.addGui(this);
             } catch (SecurityException ex) {
-                Main.error(ex);
+                Logging.error(ex);
             } catch (RuntimeException ex) { // NOPMD
                 BugReportExceptionHandler.handleException(ex);
             } finally {

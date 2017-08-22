@@ -37,6 +37,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Task allowing to download OsmChange data (http://wiki.openstreetmap.org/wiki/OsmChange).
@@ -184,7 +185,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                             // Forget this primitive
                             it.remove();
                         } catch (AssertionError e) {
-                            Main.error(e, "Cannot load "+p+':');
+                            Logging.log(Logging.LEVEL_ERROR, "Cannot load "+p+':', e);
                         }
                     }
                 }

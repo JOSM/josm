@@ -114,6 +114,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.WMSLayerImporter;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MemoryManager;
 import org.openstreetmap.josm.tools.MemoryManager.MemoryHandle;
 import org.openstreetmap.josm.tools.MemoryManager.NotEnoughMemoryException;
@@ -274,9 +275,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             }
         } catch (MalformedURLException e) {
             // ignore, assume that this is not a file
-            if (Main.isDebugEnabled()) {
-                Main.debug(e.getMessage());
-            }
+            Logging.log(Logging.LEVEL_DEBUG, e);
         }
 
         if (tileLoader == null)
@@ -293,9 +292,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         }
         tile.setLoaded(success);
         invalidateLater();
-        if (Main.isDebugEnabled()) {
-            Main.debug("tileLoadingFinished() tile: " + tile + " success: " + success);
-        }
+        Logging.debug("tileLoadingFinished() tile: {0} success: {1}", tile, success);
     }
 
     /**
@@ -436,7 +433,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                     url = clickedTile.getUrl();
                 } catch (IOException e) {
                     // silence exceptions
-                    Main.trace(e);
+                    Logging.trace(e);
                 }
 
                 List<List<String>> content = new ArrayList<>();
@@ -594,7 +591,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         int ret = (int) Math.ceil(
                 Math.pow(2d, ZOOM_OFFSET.get()) * visibileTiles // use offset to decide, how many tiles are visible
                 * 4);
-        Main.info("AbstractTileSourceLayer: estimated visible tiles: {0}, estimated cache size: {1}", visibileTiles, ret);
+        Logging.info("AbstractTileSourceLayer: estimated visible tiles: {0}, estimated cache size: {1}", visibileTiles, ret);
         return ret;
     }
 
@@ -701,9 +698,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     }
 
     private void zoomChanged(boolean invalidate) {
-        if (Main.isDebugEnabled()) {
-            Main.debug("zoomChanged(): " + currentZoomLevel);
-        }
+        Logging.debug("zoomChanged(): {0}", currentZoomLevel);
         if (tileLoader instanceof TMSCachedTileLoader) {
             ((TMSCachedTileLoader) tileLoader).cancelOutstandingTasks();
         }
@@ -732,9 +727,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      */
     public boolean zoomIncreaseAllowed() {
         boolean zia = currentZoomLevel < this.getMaxZoomLvl();
-        if (Main.isDebugEnabled()) {
-            Main.debug("zoomIncreaseAllowed(): " + zia + ' ' + currentZoomLevel + " vs. " + this.getMaxZoomLvl());
-        }
+        Logging.debug("zoomIncreaseAllowed(): {0} {1} vs. {2}", zia, currentZoomLevel, this.getMaxZoomLvl());
         return zia;
     }
 
@@ -746,12 +739,10 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     public boolean increaseZoomLevel() {
         if (zoomIncreaseAllowed()) {
             currentZoomLevel++;
-            if (Main.isDebugEnabled()) {
-                Main.debug("increasing zoom level to: " + currentZoomLevel);
-            }
+            Logging.debug("increasing zoom level to: {0}", currentZoomLevel);
             zoomChanged();
         } else {
-            Main.warn("Current zoom level ("+currentZoomLevel+") could not be increased. "+
+            Logging.warn("Current zoom level ("+currentZoomLevel+") could not be increased. "+
                     "Max.zZoom Level "+this.getMaxZoomLvl()+" reached.");
             return false;
         }
@@ -792,9 +783,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      */
     public boolean zoomDecreaseAllowed() {
         boolean zda = currentZoomLevel > this.getMinZoomLvl();
-        if (Main.isDebugEnabled()) {
-            Main.debug("zoomDecreaseAllowed(): " + zda + ' ' + currentZoomLevel + " vs. " + this.getMinZoomLvl());
-        }
+        Logging.debug("zoomDecreaseAllowed(): {0} {1} vs. {2}", zda, currentZoomLevel, this.getMinZoomLvl());
         return zda;
     }
 
@@ -805,9 +794,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      */
     public boolean decreaseZoomLevel() {
         if (zoomDecreaseAllowed()) {
-            if (Main.isDebugEnabled()) {
-                Main.debug("decreasing zoom level to: " + currentZoomLevel);
-            }
+            Logging.debug("decreasing zoom level to: {0}", currentZoomLevel);
             currentZoomLevel--;
             zoomChanged();
         } else {
@@ -878,7 +865,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
 
         // if there is more than 18 tiles on screen in any direction, do not load all tiles!
         if (ts.tooLarge()) {
-            Main.warn("Not downloading all tiles because there is more than 18 tiles on an axis!");
+            Logging.warn("Not downloading all tiles because there is more than 18 tiles on an axis!");
             return;
         }
         ts.loadAllTiles(force);
@@ -899,9 +886,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     @Override
     public boolean imageUpdate(Image img, int infoflags, int x, int y, int width, int height) {
         boolean done = (infoflags & (ERROR | FRAMEBITS | ALLBITS)) != 0;
-        if (Main.isDebugEnabled()) {
-            Main.debug("imageUpdate() done: " + done + " calling repaint");
-        }
+        Logging.debug("imageUpdate() done: {0} calling repaint", done);
 
         if (done) {
             invalidate();
@@ -1135,7 +1120,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             //texty += 1 + fontHeight;
         }
 
-        if (Main.isDebugEnabled()) {
+        if (Logging.isDebugEnabled()) {
             // draw tile outline in semi-transparent red
             g.setColor(new Color(255, 0, 0, 50));
             g.draw(coordinateConverter.getTileShapeScreen(tile));
@@ -1494,8 +1479,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
             }
             missedTiles = newlyMissedTiles;
         }
-        if (Main.isDebugEnabled() && !missedTiles.isEmpty()) {
-            Main.debug("still missed "+missedTiles.size()+" in the end");
+        if (Logging.isDebugEnabled() && !missedTiles.isEmpty()) {
+            Logging.debug("still missed {0} in the end", missedTiles.size());
         }
         g.setColor(Color.red);
         g.setFont(InfoFont);
@@ -1522,7 +1507,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         if (noTilesAtZoom) {
             myDrawString(g, tr("No tiles at this zoom level"), 120, 120);
         }
-        if (Main.isDebugEnabled()) {
+        if (Logging.isDebugEnabled()) {
             myDrawString(g, tr("Current zoom: {0}", currentZoomLevel), 50, 140);
             myDrawString(g, tr("Display zoom: {0}", displayZoomLevel), 50, 155);
             myDrawString(g, tr("Pixel scale: {0}", getScaleFactor(currentZoomLevel)), 50, 170);
@@ -1546,9 +1531,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
      * @return Tile at pixel position
      */
     private Tile getTileForPixelpos(int px, int py) {
-        if (Main.isDebugEnabled()) {
-            Main.debug("getTileForPixelpos("+px+", "+py+')');
-        }
+        Logging.debug("getTileForPixelpos({0}, {1})", px, py);
         TileXY xy = coordinateConverter.getTileforPixel(px, py, currentZoomLevel);
         return getTile(xy.getXIndex(), xy.getYIndex(), currentZoomLevel);
     }
@@ -1728,7 +1711,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 this.progressMonitor.worked(1);
                 this.progressMonitor.setCustomText(tr("Downloaded {0}/{1} tiles", processed, totalCount));
             } else {
-                Main.warn("Tile loading failure: " + tile + " - " + tile.getErrorMessage());
+                Logging.warn("Tile loading failure: " + tile + " - " + tile.getErrorMessage());
             }
         }
 
@@ -1824,7 +1807,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                     try {
                         memory = manager.allocateMemory("tile source layer", getEstimatedCacheSize(), Object::new);
                     } catch (NotEnoughMemoryException e) {
-                        Main.warn("Could not allocate tile source memory", e);
+                        Logging.warn("Could not allocate tile source memory", e);
                     }
                 }
             }

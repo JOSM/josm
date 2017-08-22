@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * A property that stores a {@link BasicStroke}.
@@ -77,7 +77,7 @@ public class StrokeProperty extends AbstractToStringProperty<BasicStroke> {
             double sumAbs = dashes.stream().mapToDouble(Math::abs).sum();
 
             if (sumAbs < 1e-1) {
-                Main.error("Error in stroke dash format (all zeros): " + code);
+                Logging.error("Error in stroke dash format (all zeros): " + code);
                 dashes = Collections.emptyList();
             }
         }

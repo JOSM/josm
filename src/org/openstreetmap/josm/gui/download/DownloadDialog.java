@@ -48,6 +48,7 @@ import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -146,7 +147,7 @@ public class DownloadDialog extends JDialog {
         try {
             tpDownloadAreaSelectors.setSelectedIndex(DOWNLOAD_TAB.get());
         } catch (IndexOutOfBoundsException ex) {
-            Main.trace(ex);
+            Logging.trace(ex);
             DOWNLOAD_TAB.put(0);
         }
 
@@ -433,7 +434,7 @@ public class DownloadDialog extends JDialog {
             try {
                 return new Bounds(value, ";");
             } catch (IllegalArgumentException e) {
-                Main.warn(e);
+                Logging.warn(e);
             }
         }
         return null;

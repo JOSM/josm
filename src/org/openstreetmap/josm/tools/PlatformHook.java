@@ -280,7 +280,7 @@ public interface PlatformHook {
                 try {
                     openUrl(url);
                 } catch (IOException e) {
-                    Main.warn(e);
+                    Logging.warn(e);
                 }
             }
         }

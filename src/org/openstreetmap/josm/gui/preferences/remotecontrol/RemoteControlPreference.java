@@ -38,6 +38,7 @@ import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControlHttpsServer;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
 
 /**
@@ -126,10 +127,10 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
                     String msg = changed ?
                             tr("Certificate has been successfully installed.") :
                             tr("Certificate is already installed. Nothing to do.");
-                    Main.info(msg);
+                    Logging.info(msg);
                     JOptionPane.showMessageDialog(wrapper, msg);
                 } catch (IOException | GeneralSecurityException ex) {
-                    Main.error(ex);
+                    Logging.error(ex);
                 }
             });
             uninstallCertificate.addActionListener(e -> {
@@ -137,16 +138,16 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
                     String msg;
                     KeyStore ks = PlatformHookWindows.getRootKeystore();
                     if (ks.containsAlias(RemoteControlHttpsServer.ENTRY_ALIAS)) {
-                        Main.info(tr("Removing certificate {0} from root keystore.", RemoteControlHttpsServer.ENTRY_ALIAS));
+                        Logging.info(tr("Removing certificate {0} from root keystore.", RemoteControlHttpsServer.ENTRY_ALIAS));
                         ks.deleteEntry(RemoteControlHttpsServer.ENTRY_ALIAS);
                         msg = tr("Certificate has been successfully uninstalled.");
                     } else {
                         msg = tr("Certificate is not installed. Nothing to do.");
                     }
-                    Main.info(msg);
+                    Logging.info(msg);
                     JOptionPane.showMessageDialog(wrapper, msg);
                 } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException ex) {
-                    Main.error(ex);
+                    Logging.error(ex);
                 }
             });
             installCertificate.setEnabled(https);

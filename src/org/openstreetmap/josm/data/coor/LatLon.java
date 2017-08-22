@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -395,7 +396,7 @@ public class LatLon extends Coordinate implements ILatLon {
         // rounding errors could make the argument of asin greater than 1
         // (This should almost never happen.)
         if (java.lang.Double.isNaN(d)) {
-            Main.error("NaN in greatCircleDistance");
+            Logging.error("NaN in greatCircleDistance");
             d = PI * WGS84.a;
         }
         return d;

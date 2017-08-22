@@ -39,6 +39,7 @@ import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -103,7 +104,7 @@ public class LafPreference implements SubPreferenceSetting {
                 );
             } catch (ReflectiveOperationException ex) {
                 // just debug, Quaqua may not even be installed...
-                Main.debug(ex);
+                Logging.debug(ex);
             }
         }
 

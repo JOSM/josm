@@ -10,13 +10,13 @@ import java.util.Collections;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 
 /**
@@ -66,7 +66,7 @@ public class WebMarker extends ButtonMarker {
             try {
                 setErroneous(path.isEmpty() || !new File(path).exists());
             } catch (SecurityException e) {
-                Main.warn(e);
+                Logging.warn(e);
                 setErroneous(true);
             }
         } else {

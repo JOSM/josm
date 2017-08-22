@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -119,7 +120,7 @@ public final class OrthogonalizeAction extends JosmAction {
                     throw new InvalidUserInputException("Commands are empty");
                 }
             } catch (InvalidUserInputException ex) {
-                Main.debug(ex);
+                Logging.debug(ex);
                 new Notification(
                         tr("Orthogonalize Shape / Undo<br>"+
                         "Please select nodes that were moved by the previous Orthogonalize Shape action!"))
@@ -165,7 +166,7 @@ public final class OrthogonalizeAction extends JosmAction {
             final SequenceCommand command = orthogonalize(sel);
             Main.main.undoRedo.add(new SequenceCommand(tr("Orthogonalize"), command));
         } catch (InvalidUserInputException ex) {
-            Main.debug(ex);
+            Logging.debug(ex);
             String msg;
             if ("usage".equals(ex.getMessage())) {
                 msg = "<h2>" + tr("Usage") + "</h2>" + USAGE;

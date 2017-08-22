@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Condition;
@@ -41,6 +40,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.LinkSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Subpart;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -393,7 +393,7 @@ void pp_media(boolean ignore):
         if (sheet != null) {
             String msg = tr("Detected deprecated ''{0}'' in ''{1}'' which will be removed shortly. Use ''{2}'' instead.",
                             "@media", sheet.getDisplayString(), "@supports");
-            Main.error(msg);
+            Logging.error(msg);
             sheet.logWarning(msg);
         }
     }
@@ -625,7 +625,7 @@ void sheet(MapCSSStyleSource sheet):
         try {
             rule() w()
         } catch (MapCSSException mex) {
-            Main.error(mex);
+            Logging.error(mex);
             error_skipto(RBRACE, mex);
             w();
         } catch (ParseException ex) {
@@ -1206,8 +1206,8 @@ void error_skipto(int kind, MapCSSException me) {
         e = new ParseException(pe.getMessage()); // prevent memory leak
     }
     
-    Main.error("Skipping to the next rule, because of an error:");
-    Main.error(e);
+    Logging.error("Skipping to the next rule, because of an error:");
+    Logging.error(e);
     if (sheet != null) {
         sheet.logError(e);
     }
@@ -1231,7 +1231,7 @@ String readRaw() {
         if ((t.kind == S || t.kind == STRING || t.kind == UNEXPECTED_CHAR) &&
                 t.image.contains("\n")) {
             ParseException e = new ParseException(String.format("Warning: end of line while reading an unquoted string at line %s column %s.", t.beginLine, t.beginColumn));
-            Main.error(e);
+            Logging.error(e);
             if (sheet != null) {
                 sheet.logError(e);
             }

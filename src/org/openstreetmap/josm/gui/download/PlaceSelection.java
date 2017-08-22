@@ -56,6 +56,7 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -266,7 +267,7 @@ public class PlaceSelection implements DownloadSelection {
             } catch (SAXParseException e) {
                 if (!canceled) {
                     // Nominatim sometimes returns garbage, see #5934, #10643
-                    Main.warn(e, tr("Error occured with query ''{0}'': ''{1}''", urlString, e.getMessage()));
+                    Logging.log(Logging.LEVEL_WARN, tr("Error occured with query ''{0}'': ''{1}''", urlString, e.getMessage()), e);
                     GuiHelper.runInEDTAndWait(() -> HelpAwareOptionPane.showOptionDialog(
                             Main.parent,
                             tr("Name server returned invalid data. Please try again."),

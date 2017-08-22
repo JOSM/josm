@@ -30,6 +30,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -192,7 +193,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
                         addWMSLayer(s.name + " (" + text + ')', text);
                         break outer;
                     } catch (IllegalStateException ex) {
-                        Main.error(ex, false);
+                        Logging.log(Logging.LEVEL_ERROR, ex);
                     }
                 }
 
@@ -239,7 +240,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
             try {
                 info = AddImageryLayerAction.getWMSLayerInfo(info);
             } catch (IOException | WMSGetCapabilitiesException e) {
-                Main.error(e);
+                Logging.error(e);
                 JOptionPane.showMessageDialog(Main.parent, e.getMessage(), tr("No valid WMS URL or id"), JOptionPane.ERROR_MESSAGE);
                 return;
             }

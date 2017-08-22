@@ -12,8 +12,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JToggleButton;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -78,7 +78,7 @@ public abstract class ToggleAction extends JosmAction {
         if (selected instanceof Boolean) {
             return (Boolean) selected;
         } else {
-            Main.warn(getClass().getName() + " does not define a boolean for SELECTED_KEY but " + selected +
+            Logging.warn(getClass().getName() + " does not define a boolean for SELECTED_KEY but " + selected +
                     ". You should report it to JOSM developers.");
             return false;
         }

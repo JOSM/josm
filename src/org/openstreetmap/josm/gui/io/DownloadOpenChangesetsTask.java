@@ -24,6 +24,7 @@ import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.io.OsmServerChangesetReader;
 import org.openstreetmap.josm.io.OsmServerUserInfoReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
 
 /**
@@ -64,7 +65,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
                     + "JOSM does not know your identity.<br>"
                     + "You have either chosen to work anonymously or you are not entitled<br>"
                     + "to know the identity of the user on whose behalf you are working.");
-            Main.warn(msg);
+            Logging.warn(msg);
             if (!GraphicsEnvironment.isHeadless()) {
                 JOptionPane.showMessageDialog(GuiHelper.getFrameForComponent(parent),
                         "<html>" + msg + "</html>", tr("Missing user identity"), JOptionPane.ERROR_MESSAGE);
@@ -112,7 +113,8 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
             if (im.isFullyIdentified()) {
                 im.setPartiallyIdentified(im.getUserName());
             }
-            Main.warn(e, tr("Failed to retrieve user infos for the current JOSM user. Exception was: {0}", e.toString()));
+            Logging.log(Logging.LEVEL_WARN,
+                    tr("Failed to retrieve user infos for the current JOSM user. Exception was: {0}", e.toString()), e);
         }
     }
 

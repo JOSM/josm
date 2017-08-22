@@ -12,7 +12,6 @@ import java.util.function.IntFunction;
 import java.util.function.IntSupplier;
 import java.util.regex.PatternSyntaxException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -26,6 +25,7 @@ import org.openstreetmap.josm.gui.mappaint.Range;
 import org.openstreetmap.josm.gui.mappaint.mapcss.ConditionFactory.OpenEndPseudoClassCondition;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
@@ -335,7 +335,7 @@ public interface Selector {
                         }
                     };
                 } catch (NoSuchElementException ignore) {
-                    Main.trace(ignore);
+                    Logging.trace(ignore);
                     containsFinder = new ContainsFinder(e);
                 }
                 e.parent = e.osm;
@@ -472,7 +472,7 @@ public interface Selector {
                 try {
                     if (!c.applies(env)) return false;
                 } catch (PatternSyntaxException e) {
-                    Main.error(e, "PatternSyntaxException while applying condition" + c + ':');
+                    Logging.log(Logging.LEVEL_ERROR, "PatternSyntaxException while applying condition" + c + ':', e);
                     return false;
                 }
             }

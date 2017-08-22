@@ -37,6 +37,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.preferences.server.OverpassServerPreference;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -50,10 +51,10 @@ import org.openstreetmap.josm.tools.Utils;
  *         .append(new Node(72343));
  *    reader.parseOsm();
  *    if (!reader.getMissingPrimitives().isEmpty()) {
- *        Main.info("There are missing primitives: " + reader.getMissingPrimitives());
+ *        Logging.info("There are missing primitives: " + reader.getMissingPrimitives());
  *    }
  *    if (!reader.getSkippedWays().isEmpty()) {
- *       Main.info("There are skipped ways: " + reader.getMissingPrimitives());
+ *       Logging.info("There are skipped ways: " + reader.getMissingPrimitives());
  *    }
  * </pre>
  */
@@ -342,7 +343,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
                     merge(result.dataSet);
                 }
             } catch (InterruptedException | ExecutionException e) {
-                Main.error(e);
+                Logging.error(e);
             }
         }
         exec.shutdown();
@@ -486,7 +487,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
                 return multiGetIdPackage(type, pkg, progressMonitor);
             } catch (OsmApiException e) {
                 if (e.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                    Main.info(tr("Server replied with response code 404, retrying with an individual request for each object."));
+                    Logging.info(tr("Server replied with response code 404, retrying with an individual request for each object."));
                     return singleGetIdPackage(type, pkg, progressMonitor);
                 } else {
                     throw e;
@@ -523,7 +524,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
                     throw new OsmTransferException(e);
                 }
             } catch (IOException ex) {
-                Main.warn(ex);
+                Logging.warn(ex);
             }
             return result;
         }
@@ -551,7 +552,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
                     throw new OsmTransferException(e);
                 }
             } catch (IOException ex) {
-                Main.warn(ex);
+                Logging.warn(ex);
             }
             return result;
         }
@@ -590,7 +591,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
                     result.dataSet.mergeFrom(singleGetId(type, id, progressMonitor));
                 } catch (OsmApiException e) {
                     if (e.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
-                        Main.info(tr("Server replied with response code 404 for id {0}. Skipping.", Long.toString(id)));
+                        Logging.info(tr("Server replied with response code 404 for id {0}. Skipping.", Long.toString(id)));
                         result.missingPrimitives.add(new SimplePrimitiveId(id, type));
                     } else {
                         throw e;

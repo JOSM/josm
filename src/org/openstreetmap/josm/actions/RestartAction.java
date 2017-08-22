@@ -19,6 +19,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -58,7 +59,7 @@ public class RestartAction extends JosmAction {
         try {
             restartJOSM();
         } catch (IOException ex) {
-            Main.error(ex);
+            Logging.error(ex);
         }
     }
 
@@ -92,9 +93,9 @@ public class RestartAction extends JosmAction {
         } else {
             cmd = getCommands();
         }
-        Main.info("Restart "+cmd);
-        if (Main.isDebugEnabled() && Main.pref.getBoolean("restart.debug.simulation")) {
-            Main.debug("Restart cancelled to get debug info");
+        Logging.info("Restart "+cmd);
+        if (Logging.isDebugEnabled() && Main.pref.getBoolean("restart.debug.simulation")) {
+            Logging.debug("Restart cancelled to get debug info");
             return;
         }
         // execute the command in a shutdown hook, to be sure that all the
@@ -105,7 +106,7 @@ public class RestartAction extends JosmAction {
                 try {
                     Runtime.getRuntime().exec(cmd.toArray(new String[cmd.size()]));
                 } catch (IOException e) {
-                    Main.error(e);
+                    Logging.error(e);
                 }
             }
         });
@@ -137,9 +138,7 @@ public class RestartAction extends JosmAction {
         String[] mainCommand = javaCommand.split(" ");
         if (javaCommand.endsWith(".jnlp") && jnlp == null) {
             // see #11751 - jnlp on Linux
-            if (Main.isDebugEnabled()) {
-                Main.debug("Detected jnlp without jnlpx.origFilenameArg property set");
-            }
+            Logging.debug("Detected jnlp without jnlpx.origFilenameArg property set");
             cmd.addAll(Arrays.asList(mainCommand));
         } else {
             // look for a .jar in all chunks to support paths with spaces (fix #9077)
@@ -180,9 +179,7 @@ public class RestartAction extends JosmAction {
 
     private static void addVMArguments(Collection<String> cmd) {
         List<String> arguments = ManagementFactory.getRuntimeMXBean().getInputArguments();
-        if (Main.isDebugEnabled()) {
-            Main.debug("VM arguments: "+arguments);
-        }
+        Logging.debug("VM arguments: {0}", arguments);
         for (String arg : arguments) {
             // When run from jp2launcher.exe, jnlpx.remove is true, while it is not when run from javaws
             // Always set it to false to avoid error caused by a missing jnlp file on the second restart

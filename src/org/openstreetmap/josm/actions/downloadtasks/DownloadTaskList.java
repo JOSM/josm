@@ -35,6 +35,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -243,7 +244,7 @@ public class DownloadTaskList {
                 try {
                     future.get();
                 } catch (InterruptedException | ExecutionException | CancellationException e) {
-                    Main.error(e);
+                    Logging.error(e);
                     return;
                 }
             }

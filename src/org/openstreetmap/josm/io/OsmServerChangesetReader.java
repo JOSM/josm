@@ -12,13 +12,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetDataSet;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.XmlParsingException;
 
 /**
@@ -68,7 +68,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
                 monitor.indeterminateSubTask(tr("Downloading changesets ..."));
                 result = OsmChangesetParser.parse(in, monitor.createSubTaskMonitor(1, true));
             } catch (IOException e) {
-                Main.warn(e);
+                Logging.warn(e);
             }
         } catch (OsmTransferException e) {
             throw e;
@@ -109,7 +109,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
                     return null;
                 result = changesets.get(0);
             } catch (IOException e) {
-                Main.warn(e);
+                Logging.warn(e);
             }
         } catch (OsmTransferException e) {
             throw e;
@@ -159,7 +159,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
                     }
                     ret.addAll(changesets);
                 } catch (IOException e) {
-                    Main.warn(e);
+                    Logging.warn(e);
                 }
                 monitor.worked(1);
             }
@@ -200,7 +200,7 @@ public class OsmServerChangesetReader extends OsmServerReader {
                 OsmChangesetContentParser parser = new OsmChangesetContentParser(in);
                 result = parser.parse(monitor.createSubTaskMonitor(1, true));
             } catch (IOException e) {
-                Main.warn(e);
+                Logging.warn(e);
             }
         } catch (XmlParsingException e) {
             throw new OsmTransferException(e);

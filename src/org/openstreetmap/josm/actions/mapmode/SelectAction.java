@@ -50,6 +50,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
 import org.openstreetmap.josm.gui.util.ModifierExListener;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -630,8 +631,8 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
     public void doKeyPressed(KeyEvent e) {
         if (!repeatedKeySwitchLassoOption || !Main.isDisplayingMapView() || !getShortcut().isEvent(e))
             return;
-        if (Main.isDebugEnabled()) {
-            Main.debug(getClass().getName()+" consuming event "+e);
+        if (Logging.isDebugEnabled()) {
+            Logging.debug("{0} consuming event {1}", getClass().getName(), e);
         }
         e.consume();
         if (!lassoMode) {

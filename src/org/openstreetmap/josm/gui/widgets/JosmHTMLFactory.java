@@ -9,7 +9,7 @@ import javax.swing.text.View;
 import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTMLEditorKit.HTMLFactory;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Specialized HTML Factory allowing to display SVG images.
@@ -28,7 +28,7 @@ public class JosmHTMLFactory extends HTMLFactory {
                 try {
                     return new JosmImageView(elem);
                 } catch (NoSuchFieldException | SecurityException e) {
-                    Main.error(e);
+                    Logging.error(e);
                 }
             }
         }

@@ -47,6 +47,7 @@ import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Color preferences.
@@ -117,7 +118,7 @@ public class ColorPreference implements SubPreferenceSetting {
             String html = colorMap.get(value);
             Color color = ColorHelper.html2color(html);
             if (color == null) {
-                Main.warn("Unable to get color from '"+html+"' for color preference '"+value+'\'');
+                Logging.warn("Unable to get color from '"+html+"' for color preference '"+value+'\'');
             }
             row.add(value);
             row.add(color);

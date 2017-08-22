@@ -34,6 +34,7 @@ import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
@@ -57,7 +58,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
                             TaggingPresetReader.readAll(source.url, false);
                             canLoad = true;
                         } catch (IOException e) {
-                            Main.warn(e, tr("Could not read tagging preset source: {0}", source));
+                            Logging.log(Logging.LEVEL_WARN, tr("Could not read tagging preset source: {0}", source), e);
                             ExtendedDialog ed = new ExtendedDialog(Main.parent, tr("Error"),
                                     tr("Yes"), tr("No"), tr("Cancel"));
                             ed.setContent(tr("Could not read tagging preset source: {0}\nDo you want to keep it?", source));
@@ -72,7 +73,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
                             }
                         } catch (SAXException e) {
                             // We will handle this in step with validation
-                            Main.trace(e);
+                            Logging.trace(e);
                         }
 
                         String errorMessage = null;
@@ -82,7 +83,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
                         } catch (IOException e) {
                             // Should not happen, but at least show message
                             String msg = tr("Could not read tagging preset source {0}", source);
-                            Main.error(e, msg);
+                            Logging.log(Logging.LEVEL_ERROR, msg, e);
                             JOptionPane.showMessageDialog(Main.parent, msg);
                             return false;
                         } catch (SAXParseException e) {
@@ -95,7 +96,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
                                         "Do you really want to use it?<br><br><table width=400>Error is: [{1}:{2}] {3}</table></html>",
                                         source, e.getLineNumber(), e.getColumnNumber(), Utils.escapeReservedCharactersHTML(e.getMessage()));
                             }
-                            Main.warn(e, errorMessage);
+                            Logging.log(Logging.LEVEL_WARN, errorMessage, e);
                         } catch (SAXException e) {
                             if (canLoad) {
                                 errorMessage = tr("<html>Tagging preset source {0} can be loaded but it contains errors. " +
@@ -106,11 +107,11 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
                                         "Do you really want to use it?<br><br><table width=600>Error is: {1}</table></html>",
                                         source, Utils.escapeReservedCharactersHTML(e.getMessage()));
                             }
-                            Main.warn(e, errorMessage);
+                            Logging.log(Logging.LEVEL_ERROR, errorMessage, e);
                         }
 
                         if (errorMessage != null) {
-                            Main.error(errorMessage);
+                            Logging.error(errorMessage);
                             int result = JOptionPane.showConfirmDialog(Main.parent, new JLabel(errorMessage), tr("Error"),
                                     JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.ERROR_MESSAGE);
 

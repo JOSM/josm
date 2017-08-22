@@ -51,7 +51,7 @@ public class MemoryManager {
             if (content == null) {
                 throw new IllegalArgumentException("Factory did not return a content element.");
             }
-            Main.info(MessageFormat.format("Allocate for {0}: {1} MB of memory. Available: {2} MB.",
+            Logging.info(MessageFormat.format("Allocate for {0}: {1} MB of memory. Available: {2} MB.",
                     name, maxBytes / 1024 / 1024, getAvailableMemory() / 1024 / 1024));
             MemoryHandle<T> handle = new ManualFreeMemoryHandle<>(name, content, maxBytes);
             activeHandles.add(handle);

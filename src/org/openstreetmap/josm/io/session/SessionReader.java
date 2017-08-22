@@ -44,6 +44,7 @@ import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Document;
@@ -446,7 +447,7 @@ public class SessionReader {
         try {
             active = !activeAtt.isEmpty() ? (Integer.parseInt(activeAtt)-1) : -1;
         } catch (NumberFormatException e) {
-            Main.warn("Unsupported value for 'active' layer attribute. Ignoring it. Error was: "+e.getMessage());
+            Logging.warn("Unsupported value for 'active' layer attribute. Ignoring it. Error was: "+e.getMessage());
             active = -1;
         }
 
@@ -467,7 +468,7 @@ public class SessionReader {
                     try {
                         idx = Integer.valueOf(e.getAttribute("index"));
                     } catch (NumberFormatException ex) {
-                        Main.warn(ex);
+                        Logging.warn(ex);
                     }
                     if (idx == null) {
                         error(tr("unexpected format of attribute ''index'' for element ''layer''"));
@@ -484,7 +485,7 @@ public class SessionReader {
                             try {
                                 d = Integer.valueOf(sd);
                             } catch (NumberFormatException ex) {
-                                Main.warn(ex);
+                                Logging.warn(ex);
                             }
                             if (d != null) {
                                 deps.put(idx, d);
@@ -566,7 +567,7 @@ public class SessionReader {
                     exception = ex;
                 }
                 if (exception != null) {
-                    Main.error(exception);
+                    Logging.error(exception);
                     if (!GraphicsEnvironment.isHeadless()) {
                         CancelOrContinueDialog dialog = new CancelOrContinueDialog();
                         dialog.show(
@@ -606,7 +607,7 @@ public class SessionReader {
                     double opacity = Double.parseDouble(el.getAttribute("opacity"));
                     layer.setOpacity(opacity);
                 } catch (NumberFormatException ex) {
-                    Main.warn(ex);
+                    Logging.warn(ex);
                 }
             }
             layer.setName(names.get(entry.getKey()));
@@ -624,7 +625,7 @@ public class SessionReader {
             center = new LatLon(Double.parseDouble(centerEl.getAttribute("lat")),
                     Double.parseDouble(centerEl.getAttribute("lon")));
         } catch (NumberFormatException ex) {
-            Main.warn(ex);
+            Logging.warn(ex);
         }
         if (center == null) return null;
         Element scaleEl = getElementByTagName(viewportEl, "scale");
@@ -633,7 +634,7 @@ public class SessionReader {
             double scale = Double.parseDouble(scaleEl.getAttribute("meter-per-pixel"));
             return new SessionViewportData(center, scale);
         } catch (NumberFormatException ex) {
-            Main.warn(ex);
+            Logging.warn(ex);
             return null;
         }
     }

@@ -20,6 +20,7 @@ import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.Filter.FilterPreferenceEntry;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.OSDLabel;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -50,7 +51,7 @@ public class FilterModel {
             try {
                 filterMatcher.add(filter);
             } catch (ParseError e) {
-                Main.error(e);
+                Logging.error(e);
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("<html>Error in filter <code>{0}</code>:<br>{1}",

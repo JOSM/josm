@@ -37,6 +37,7 @@ import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.AllFormatsImporter;
 import org.openstreetmap.josm.io.FileImporter;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -319,7 +320,7 @@ public class OpenFileAction extends DiskAccessAction {
                             }
                         }
                     } catch (IOException | PatternSyntaxException | IllegalStateException | IndexOutOfBoundsException e) {
-                        Main.error(e);
+                        Logging.error(e);
                     }
                 }
             }
@@ -366,7 +367,7 @@ public class OpenFileAction extends DiskAccessAction {
                             failedAll.add(f.getCanonicalPath());
                         }
                     } catch (IOException e) {
-                        Main.warn(e);
+                        Logging.warn(e);
                     }
                 }
             }

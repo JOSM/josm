@@ -11,7 +11,6 @@ import java.net.URL;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.data.osm.UserInfo;
@@ -24,6 +23,7 @@ import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlParsingException;
 import org.w3c.dom.Document;
@@ -252,11 +252,11 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
             notifySuccess(userInfo);
         } catch (OsmOAuthAuthorizationException e) {
             if (canceled) return;
-            Main.error(e);
+            Logging.error(e);
             alertFailedSigning();
         } catch (OsmApiException e) {
             if (canceled) return;
-            Main.error(e);
+            Logging.error(e);
             if (e.getResponseCode() == HttpURLConnection.HTTP_INTERNAL_ERROR) {
                 alertInternalError();
                 return;
@@ -270,7 +270,7 @@ public class TestAccessTokenTask extends PleaseWaitRunnable {
             alertFailedConnection();
         } catch (OsmTransferException e) {
             if (canceled) return;
-            Main.error(e);
+            Logging.error(e);
             alertFailedConnection();
         }
     }

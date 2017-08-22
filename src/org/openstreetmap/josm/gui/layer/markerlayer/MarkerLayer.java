@@ -50,6 +50,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.gpx.ConvertToDataLayerAction;
 import org.openstreetmap.josm.io.audio.AudioPlayer;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -126,7 +127,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                 try {
                     offset = Double.valueOf(exts.get("offset"));
                 } catch (NumberFormatException nfe) {
-                    Main.warn(nfe);
+                    Logging.warn(nfe);
                 }
             }
             if (offset == null) {
@@ -275,7 +276,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                 }
             }
         } catch (URISyntaxException e) {
-            Main.warn(e);
+            Logging.warn(e);
         }
         return true;
     }

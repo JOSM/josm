@@ -20,7 +20,6 @@ import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -42,6 +41,7 @@ import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
@@ -201,7 +201,7 @@ public class OsmReader extends AbstractReader {
             if (bounds.isOutOfTheWorld()) {
                 Bounds copy = new Bounds(bounds);
                 bounds.normalize();
-                Main.info("Bbox " + copy + " is out of the world, normalized to " + bounds);
+                Logging.info("Bbox " + copy + " is out of the world, normalized to " + bounds);
             }
             DataSource src = new DataSource(bounds, origin);
             ds.addDataSource(src);
@@ -224,7 +224,7 @@ public class OsmReader extends AbstractReader {
                 ll = new LatLon(Double.parseDouble(lat), Double.parseDouble(lon));
                 nd.setCoor(ll);
             } catch (NumberFormatException e) {
-                Main.trace(e);
+                Logging.trace(e);
             }
         }
         readCommon(nd);
@@ -276,7 +276,7 @@ public class OsmReader extends AbstractReader {
             }
         }
         if (w.isDeleted() && !nodeIds.isEmpty()) {
-            Main.info(tr("Deleted way {0} contains nodes", w.getUniqueId()));
+            Logging.info(tr("Deleted way {0} contains nodes", w.getUniqueId()));
             nodeIds = new ArrayList<>();
         }
         ways.put(wd.getUniqueId(), nodeIds);
@@ -326,7 +326,7 @@ public class OsmReader extends AbstractReader {
             }
         }
         if (r.isDeleted() && !members.isEmpty()) {
-            Main.info(tr("Deleted relation {0} contains members", r.getUniqueId()));
+            Logging.info(tr("Deleted relation {0} contains members", r.getUniqueId()));
             members = new ArrayList<>();
         }
         relations.put(rd.getUniqueId(), members);
@@ -409,9 +409,9 @@ public class OsmReader extends AbstractReader {
         final String element = parser.getLocalName();
         if (printWarning && ("note".equals(element) || "meta".equals(element))) {
             // we know that Overpass API returns those elements
-            Main.debug(tr("Undefined element ''{0}'' found in input stream. Skipping.", element));
+            Logging.debug(tr("Undefined element ''{0}'' found in input stream. Skipping.", element));
         } else if (printWarning) {
-            Main.info(tr("Undefined element ''{0}'' found in input stream. Skipping.", element));
+            Logging.info(tr("Undefined element ''{0}'' found in input stream. Skipping.", element));
         }
         while (true) {
             int event = parser.next();
@@ -504,7 +504,7 @@ public class OsmReader extends AbstractReader {
                     throwException(tr("Illegal value for attribute ''version'' on OSM primitive with ID {0}. Got {1}.",
                             Long.toString(current.getUniqueId()), versionString));
                 } else if (version < 0 && current.isNew()) {
-                    Main.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.",
+                    Logging.warn(tr("Normalizing value of attribute ''version'' of element {0} to {2}, API version is ''{3}''. Got {1}.",
                             current.getUniqueId(), version, 0, "0.6"));
                     version = 0;
                 }
@@ -538,10 +538,10 @@ public class OsmReader extends AbstractReader {
             try {
                 current.setChangesetId(Integer.parseInt(v));
             } catch (IllegalArgumentException e) {
-                Main.debug(e.getMessage());
+                Logging.debug(e.getMessage());
                 if (current.isNew()) {
                     // for a new primitive we just log a warning
-                    Main.info(tr("Illegal value for attribute ''changeset'' on new object {1}. Got {0}. Resetting to 0.",
+                    Logging.info(tr("Illegal value for attribute ''changeset'' on new object {1}. Got {0}. Resetting to 0.",
                             v, current.getUniqueId()));
                     current.setChangesetId(0);
                 } else {
@@ -550,14 +550,14 @@ public class OsmReader extends AbstractReader {
                 }
             } catch (IllegalStateException e) {
                 // thrown for positive changeset id on new primitives
-                Main.debug(e);
-                Main.info(e.getMessage());
+                Logging.debug(e);
+                Logging.info(e.getMessage());
                 current.setChangesetId(0);
             }
             if (current.getChangesetId() <= 0) {
                 if (current.isNew()) {
                     // for a new primitive we just log a warning
-                    Main.info(tr("Illegal value for attribute ''changeset'' on new object {1}. Got {0}. Resetting to 0.",
+                    Logging.info(tr("Illegal value for attribute ''changeset'' on new object {1}. Got {0}. Resetting to 0.",
                             v, current.getUniqueId()));
                     current.setChangesetId(0);
                 } else {

@@ -22,10 +22,10 @@ import java.util.concurrent.RecursiveTask;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.PolygonIntersection;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
@@ -202,7 +202,7 @@ public class MultipolygonBuilder {
             //analyze witch way is inside witch outside.
             return makeFromPolygons(joinedWays);
         } catch (JoinedPolygonCreationException ex) {
-            Main.debug(ex);
+            Logging.debug(ex);
             return ex.getMessage();
         }
     }

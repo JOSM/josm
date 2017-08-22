@@ -78,6 +78,7 @@ import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -489,7 +490,7 @@ public class MapPaintDialog extends ToggleDialog {
                         Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
                     }
                 } catch (IOException e) {
-                    Main.warn(e);
+                    Logging.warn(e);
                     error = true;
                 }
             }
@@ -637,7 +638,7 @@ public class MapPaintDialog extends ToggleDialog {
                     s.closeSourceInputStream(is);
                 }
             } catch (IOException ex) {
-                Main.error(ex);
+                Logging.error(ex);
                 txtSource.append("<ERROR: failed to read file!>");
             }
             txtSource.setCaretPosition(0);

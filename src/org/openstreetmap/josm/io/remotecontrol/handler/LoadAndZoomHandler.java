@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -113,7 +114,7 @@ public class LoadAndZoomHandler extends RequestHandler {
 
             if (command.equals(myCommand)) {
                 if (!PermissionPrefWithDefault.LOAD_DATA.isAllowed()) {
-                    Main.info("RemoteControl: download forbidden by preferences");
+                    Logging.info("RemoteControl: download forbidden by preferences");
                 } else {
                     Area toDownload = null;
                     if (!newLayer) {
@@ -137,7 +138,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                         }
                     }
                     if (toDownload != null && toDownload.isEmpty()) {
-                        Main.info("RemoteControl: no download necessary");
+                        Logging.info("RemoteControl: no download necessary");
                     } else {
                         Future<?> future = osmTask.download(newLayer, new Bounds(minlat, minlon, maxlat, maxlon),
                                 null /* let the task manage the progress monitor */);
@@ -146,8 +147,8 @@ public class LoadAndZoomHandler extends RequestHandler {
                 }
             }
         } catch (RuntimeException ex) { // NOPMD
-            Main.warn("RemoteControl: Error parsing load_and_zoom remote control request:");
-            Main.error(ex);
+            Logging.warn("RemoteControl: Error parsing load_and_zoom remote control request:");
+            Logging.error(ex);
             throw new RequestHandlerErrorException(ex);
         }
 
@@ -199,7 +200,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                     zoom(filteredPrimitives, bbox);
                 });
             } catch (SearchCompiler.ParseError ex) {
-                Main.error(ex);
+                Logging.error(ex);
                 throw new RequestHandlerErrorException(ex);
             }
         } else {
@@ -283,7 +284,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                     try {
                         toSelect.add(SimplePrimitiveId.fromString(item));
                     } catch (IllegalArgumentException ex) {
-                        Main.warn(ex, "RemoteControl: invalid selection '" + item + "' ignored");
+                        Logging.log(Logging.LEVEL_WARN, "RemoteControl: invalid selection '" + item + "' ignored", ex);
                     }
                 }
             }

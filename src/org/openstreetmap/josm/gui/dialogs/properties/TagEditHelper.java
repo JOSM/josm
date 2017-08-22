@@ -87,6 +87,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -341,7 +342,7 @@ public class TagEditHelper {
     }
 
     private static void warnAboutParseError(SearchCompiler.ParseError parseError) {
-        Main.warn(parseError);
+        Logging.warn(parseError);
         JOptionPane.showMessageDialog(
                 Main.parent,
                 parseError.getMessage(),
@@ -636,9 +637,7 @@ public class TagEditHelper {
 
                    List<AutoCompletionListItem> valueList = autocomplete.getValues(getAutocompletionKeys(key));
                    valueList.sort(comparator);
-                   if (Main.isTraceEnabled()) {
-                       Main.trace("Focus gained by {0}, e={1}", values, e);
-                   }
+                   Logging.trace("Focus gained by {0}, e={1}", values, e);
                    values.setPossibleACItems(valueList);
                    values.getEditor().selectAll();
                    objKey = key;
@@ -837,7 +836,7 @@ public class TagEditHelper {
                         return;
                     }
                 } catch (NumberFormatException ex) {
-                    Main.warn(ex);
+                    Logging.warn(ex);
                 }
                 JOptionPane.showMessageDialog(this, tr("Please enter integer number between 0 and {0}", MAX_LRU_TAGS_NUMBER));
             }

@@ -14,7 +14,6 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -22,6 +21,7 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Tests the correct usage of the opening hour syntax of the tags
@@ -71,7 +71,7 @@ public class OpeningHourTest extends Test.TagTest {
                         "};");
             }
         } else {
-            Main.warn("Unable to initialize OpeningHourTest because no JavaScript engine has been found");
+            Logging.warn("Unable to initialize OpeningHourTest because no JavaScript engine has been found");
         }
     }
 
@@ -206,7 +206,7 @@ public class OpeningHourTest extends Test.TagTest {
             try {
                 prettifiedValue = (String) ((Invocable) ENGINE).invokeMethod(r, "prettifyValue");
             } catch (ScriptException | NoSuchMethodException e) {
-                Main.warn(e);
+                Logging.warn(e);
             }
             for (final Object i : getList(((Invocable) ENGINE).invokeMethod(r, "getErrors"))) {
                 errors.add(new OpeningHoursTestError(getErrorMessage(key, i), Severity.ERROR, prettifiedValue));
@@ -218,7 +218,7 @@ public class OpeningHourTest extends Test.TagTest {
                 errors.add(new OpeningHoursTestError(tr("opening_hours value can be prettified"), Severity.OTHER, prettifiedValue));
             }
         } catch (ScriptException | NoSuchMethodException ex) {
-            Main.error(ex);
+            Logging.error(ex);
         }
         return errors;
     }

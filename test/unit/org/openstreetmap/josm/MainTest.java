@@ -31,6 +31,7 @@ import org.openstreetmap.josm.gui.ProgramArguments;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -62,9 +63,11 @@ public class MainTest {
 
     /**
      * Unit tests on log messages.
+     * @deprecated to remove end of 2017
      */
     @Test
     @SuppressFBWarnings(value = "ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD")
+    @Deprecated
     public void testLogs() {
 
         assertNull(Main.getErrorMessage(null));
@@ -121,7 +124,7 @@ public class MainTest {
             try {
                 f.get();
             } catch (InterruptedException | ExecutionException e) {
-                Main.error(e);
+                Logging.error(e);
             }
         }
         DataSet ds = Main.getLayerManager().getEditDataSet();

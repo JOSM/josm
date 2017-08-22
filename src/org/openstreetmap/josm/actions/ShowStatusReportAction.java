@@ -36,6 +36,7 @@ import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRules
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.plugins.PluginHandler;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -168,7 +169,7 @@ public final class ShowStatusReportAction extends JosmAction {
                 text.append("VM arguments: ").append(vmArguments.toString().replace("\\\\", "\\")).append('\n');
             }
         } catch (SecurityException e) {
-            Main.trace(e);
+            Logging.trace(e);
         }
         List<String> commandLineArgs = MainApplication.getCommandLineArgs();
         if (!commandLineArgs.isEmpty()) {
@@ -190,7 +191,7 @@ public final class ShowStatusReportAction extends JosmAction {
         appendCollection(text, "Tagging presets", getCustomUrls(TaggingPresetPreference.PresetPrefHelper.INSTANCE));
         appendCollection(text, "Map paint styles", getCustomUrls(MapPaintPreference.MapPaintPrefHelper.INSTANCE));
         appendCollection(text, "Validator rules", getCustomUrls(ValidatorTagCheckerRulesPreference.RulePrefHelper.INSTANCE));
-        appendCollection(text, "Last errors/warnings", Utils.transform(Main.getLastErrorAndWarnings(), i -> "- " + i));
+        appendCollection(text, "Last errors/warnings", Utils.transform(Logging.getLastErrorAndWarnings(), i -> "- " + i));
 
         String osmApi = OsmApi.getOsmApi().getServerUrl();
         if (!OsmApi.DEFAULT_API_URL.equals(osmApi.trim())) {

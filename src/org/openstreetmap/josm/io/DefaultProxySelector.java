@@ -20,6 +20,7 @@ import java.util.TreeSet;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel.ProxyPolicy;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This is the default proxy selector used in JOSM.
@@ -92,13 +93,13 @@ public class DefaultProxySelector extends ProxySelector {
         try {
             port = Integer.parseInt(value);
         } catch (NumberFormatException e) {
-            Main.error(tr("Unexpected format for port number in preference ''{0}''. Got ''{1}''.", property, value));
-            Main.error(tr("The proxy will not be used."));
+            Logging.error(tr("Unexpected format for port number in preference ''{0}''. Got ''{1}''.", property, value));
+            Logging.error(tr("The proxy will not be used."));
             return 0;
         }
         if (port <= 0 || port > 65_535) {
-            Main.error(tr("Illegal port number in preference ''{0}''. Got {1}.", property, port));
-            Main.error(tr("The proxy will not be used."));
+            Logging.error(tr("Illegal port number in preference ''{0}''. Got {1}.", property, port));
+            Logging.error(tr("The proxy will not be used."));
             return 0;
         }
         return port;
@@ -115,7 +116,7 @@ public class DefaultProxySelector extends ProxySelector {
         } else {
             proxyPolicy = ProxyPolicy.fromName(value);
             if (proxyPolicy == null) {
-                Main.warn(tr("Unexpected value for preference ''{0}'' found. Got ''{1}''. Will use no proxy.",
+                Logging.warn(tr("Unexpected value for preference ''{0}'' found. Got ''{1}''. Will use no proxy.",
                         ProxyPreferencesPanel.PROXY_POLICY, value));
                 proxyPolicy = ProxyPolicy.NO_PROXY;
             }
@@ -127,8 +128,8 @@ public class DefaultProxySelector extends ProxySelector {
             if (host != null && !host.trim().isEmpty() && port > 0) {
                 httpProxySocketAddress = new InetSocketAddress(host, port);
             } else {
-                Main.warn(tr("Unexpected parameters for HTTP proxy. Got host ''{0}'' and port ''{1}''.", host, port));
-                Main.warn(tr("The proxy will not be used."));
+                Logging.warn(tr("Unexpected parameters for HTTP proxy. Got host ''{0}'' and port ''{1}''.", host, port));
+                Logging.warn(tr("The proxy will not be used."));
             }
         }
 
@@ -139,8 +140,8 @@ public class DefaultProxySelector extends ProxySelector {
             if (host != null && !host.trim().isEmpty() && port > 0) {
                 socksProxySocketAddress = new InetSocketAddress(host, port);
             } else {
-                Main.warn(tr("Unexpected parameters for SOCKS proxy. Got host ''{0}'' and port ''{1}''.", host, port));
-                Main.warn(tr("The proxy will not be used."));
+                Logging.warn(tr("Unexpected parameters for SOCKS proxy. Got host ''{0}'' and port ''{1}''.", host, port));
+                Logging.warn(tr("The proxy will not be used."));
             }
         }
         proxyExceptions = new HashSet<>(
@@ -152,7 +153,8 @@ public class DefaultProxySelector extends ProxySelector {
     @Override
     public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
         // Just log something. The network stack will also throw an exception which will be caught somewhere else
-        Main.error(tr("Connection to proxy ''{0}'' for URI ''{1}'' failed. Exception was: {2}", sa.toString(), uri.toString(), ioe.toString()));
+        Logging.error(tr("Connection to proxy ''{0}'' for URI ''{1}'' failed. Exception was: {2}",
+                sa.toString(), uri.toString(), ioe.toString()));
         // Remember errors to give a friendly user message asking to review proxy configuration
         errorResources.add(uri.toString());
         errorMessages.add(ioe.toString());
@@ -202,7 +204,7 @@ public class DefaultProxySelector extends ProxySelector {
         switch(proxyPolicy) {
         case USE_SYSTEM_SETTINGS:
             if (!jvmWillUseSystemProxies) {
-                Main.warn(tr("The JVM is not configured to lookup proxies from the system settings. "+
+                Logging.warn(tr("The JVM is not configured to lookup proxies from the system settings. "+
                         "The property ''java.net.useSystemProxies'' was missing at startup time.  Will not use a proxy."));
                 return NO_PROXY_LIST;
             }

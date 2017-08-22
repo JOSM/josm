@@ -41,6 +41,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListen
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -198,7 +199,7 @@ public class UserListDialog extends ToggleDialog implements DataSelectionListene
             if (users.isEmpty())
                 return;
             if (users.size() > 10) {
-                Main.warn(tr("Only launching info browsers for the first {0} of {1} selected users", 10, users.size()));
+                Logging.warn(tr("Only launching info browsers for the first {0} of {1} selected users", 10, users.size()));
             }
             int num = Math.min(10, users.size());
             Iterator<User> it = users.iterator();

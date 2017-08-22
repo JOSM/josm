@@ -67,6 +67,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.JpgImporter;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -194,7 +195,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
             try {
                 addRecursiveFiles(files, selection);
             } catch (IllegalStateException e) {
-                Main.debug(e);
+                Logging.debug(e);
                 rememberError(e.getMessage());
             }
 
@@ -240,7 +241,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
                     try {
                         canonical = f.getCanonicalPath();
                     } catch (IOException e) {
-                        Main.error(e);
+                        Logging.error(e);
                         rememberError(tr("Unable to get canonical path for directory {0}\n",
                                 f.getAbsolutePath()));
                     }
@@ -734,7 +735,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
                 }
 
                 if (Utils.deleteFile(toDelete.getFile())) {
-                    Main.info("File "+toDelete.getFile()+" deleted. ");
+                    Logging.info("File "+toDelete.getFile()+" deleted. ");
                 } else {
                     JOptionPane.showMessageDialog(
                             Main.parent,

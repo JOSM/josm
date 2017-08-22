@@ -15,11 +15,11 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -266,7 +266,7 @@ public class ChangesetQuery {
     public ChangesetQuery forChangesetIds(Collection<Long> changesetIds) {
         CheckParameterUtil.ensureParameterNotNull(changesetIds, "changesetIds");
         if (changesetIds.size() > MAX_CHANGESETS_NUMBER) {
-            Main.warn("Changeset query built with more than " + MAX_CHANGESETS_NUMBER + " changeset ids (" + changesetIds.size() + ')');
+            Logging.warn("Changeset query built with more than " + MAX_CHANGESETS_NUMBER + " changeset ids (" + changesetIds.size() + ')');
         }
         this.changesetIds = changesetIds;
         return this;
@@ -470,7 +470,7 @@ public class ChangesetQuery {
                         csQuery.closedAfterAndCreatedBefore(dates[0], dates[1]);
                         break;
                     default:
-                        Main.warn("Unable to parse time: " + entry.getValue());
+                        Logging.warn("Unable to parse time: " + entry.getValue());
                     }
                     break;
                 case "bbox":

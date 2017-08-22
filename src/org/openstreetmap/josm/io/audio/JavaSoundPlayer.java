@@ -14,10 +14,10 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.audio.AudioPlayer.Execute;
 import org.openstreetmap.josm.io.audio.AudioPlayer.State;
 import org.openstreetmap.josm.tools.ListenerList;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -89,7 +89,7 @@ class JavaSoundPlayer implements SoundPlayer {
                     bytesToSkip -= skippedBytes;
                     if (skippedBytes == 0) {
                         // Avoid inifinite loop
-                        Main.warn("Unable to skip bytes from audio input stream");
+                        Logging.warn("Unable to skip bytes from audio input stream");
                         bytesToSkip = 0;
                     }
                 }

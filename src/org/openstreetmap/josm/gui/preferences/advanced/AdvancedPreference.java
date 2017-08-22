@@ -50,6 +50,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -337,7 +338,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                     try {
                         Main.pref.save();
                     } catch (IOException e) {
-                        Main.warn(e, "IOException while saving preferences:");
+                        Logging.log(Logging.LEVEL_WARN, "IOException while saving preferences:", e);
                     }
                     readPreferences(Main.pref);
                     applyFilter();

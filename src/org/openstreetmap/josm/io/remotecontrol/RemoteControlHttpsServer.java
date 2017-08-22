@@ -40,6 +40,7 @@ import javax.net.ssl.TrustManagerFactory;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.StringProperty;
+import org.openstreetmap.josm.tools.Logging;
 
 import sun.security.util.ObjectIdentifier;
 import sun.security.x509.AlgorithmId;
@@ -207,7 +208,7 @@ public class RemoteControlHttpsServer extends Thread {
         Files.createDirectories(dir);
 
         if (!path.toFile().exists()) {
-            Main.debug("No keystore found, creating a new one");
+            Logging.debug("No keystore found, creating a new one");
 
             // Create new keystore like previous one generated with JDK keytool as follows:
             // keytool -genkeypair -storepass josm_ssl -keypass josm_ssl -alias josm_localhost -dname "CN=localhost, OU=JOSM, O=OpenStreetMap"
@@ -251,9 +252,9 @@ public class RemoteControlHttpsServer extends Thread {
             KeyStore ks = KeyStore.getInstance("JKS");
             ks.load(in, KEYSTORE_PASSWORD.get().toCharArray());
 
-            if (Main.isDebugEnabled()) {
+            if (Logging.isDebugEnabled()) {
                 for (Enumeration<String> aliases = ks.aliases(); aliases.hasMoreElements();) {
-                    Main.debug("Alias in JOSM keystore: "+aliases.nextElement());
+                    Logging.debug("Alias in JOSM keystore: {0}", aliases.nextElement());
                 }
             }
             return ks;
@@ -277,9 +278,9 @@ public class RemoteControlHttpsServer extends Thread {
         sslContext = SSLContext.getInstance("TLS");
         sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
 
-        if (Main.isTraceEnabled()) {
-            Main.trace("SSL Context protocol: " + sslContext.getProtocol());
-            Main.trace("SSL Context provider: " + sslContext.getProvider());
+        if (Logging.isTraceEnabled()) {
+            Logging.trace("SSL Context protocol: {0}", sslContext.getProtocol());
+            Logging.trace("SSL Context provider: {0}", sslContext.getProvider());
         }
 
         setupPlatform(ks);
@@ -315,8 +316,8 @@ public class RemoteControlHttpsServer extends Thread {
                 instance4 = new RemoteControlHttpsServer(port, false);
                 instance4.start();
             } catch (IOException | GeneralSecurityException ex) {
-                Main.debug(ex);
-                Main.warn(marktr("Cannot start IPv4 remotecontrol https server on port {0}: {1}"),
+                Logging.debug(ex);
+                Logging.warn(marktr("Cannot start IPv4 remotecontrol https server on port {0}: {1}"),
                         Integer.toString(port), ex.getLocalizedMessage());
             }
             try {
@@ -325,8 +326,8 @@ public class RemoteControlHttpsServer extends Thread {
             } catch (IOException | GeneralSecurityException ex) {
                 /* only show error when we also have no IPv4 */
                 if (instance4 == null) {
-                    Main.debug(ex);
-                    Main.warn(marktr("Cannot start IPv6 remotecontrol https server on port {0}: {1}"),
+                    Logging.debug(ex);
+                    Logging.warn(marktr("Cannot start IPv6 remotecontrol https server on port {0}: {1}"),
                         Integer.toString(port), ex.getLocalizedMessage());
                 }
             }
@@ -341,7 +342,7 @@ public class RemoteControlHttpsServer extends Thread {
             try {
                 instance4.stopServer();
             } catch (IOException ioe) {
-                Main.error(ioe);
+                Logging.error(ioe);
             }
             instance4 = null;
         }
@@ -349,7 +350,7 @@ public class RemoteControlHttpsServer extends Thread {
             try {
                 instance6.stopServer();
             } catch (IOException ioe) {
-                Main.error(ioe);
+                Logging.error(ioe);
             }
             instance6 = null;
         }
@@ -371,21 +372,21 @@ public class RemoteControlHttpsServer extends Thread {
 
         // Create SSL Server factory
         SSLServerSocketFactory factory = sslContext.getServerSocketFactory();
-        if (Main.isTraceEnabled()) {
-            Main.trace("SSL factory - Supported Cipher suites: "+Arrays.toString(factory.getSupportedCipherSuites()));
+        if (Logging.isTraceEnabled()) {
+            Logging.trace("SSL factory - Supported Cipher suites: {0}", Arrays.toString(factory.getSupportedCipherSuites()));
         }
 
         this.server = factory.createServerSocket(port, 1, ipv6 ?
             RemoteControl.getInet6Address() : RemoteControl.getInet4Address());
 
-        if (Main.isTraceEnabled() && server instanceof SSLServerSocket) {
+        if (Logging.isTraceEnabled() && server instanceof SSLServerSocket) {
             SSLServerSocket sslServer = (SSLServerSocket) server;
-            Main.trace("SSL server - Enabled Cipher suites: "+Arrays.toString(sslServer.getEnabledCipherSuites()));
-            Main.trace("SSL server - Enabled Protocols: "+Arrays.toString(sslServer.getEnabledProtocols()));
-            Main.trace("SSL server - Enable Session Creation: "+sslServer.getEnableSessionCreation());
-            Main.trace("SSL server - Need Client Auth: "+sslServer.getNeedClientAuth());
-            Main.trace("SSL server - Want Client Auth: "+sslServer.getWantClientAuth());
-            Main.trace("SSL server - Use Client Mode: "+sslServer.getUseClientMode());
+            Logging.trace("SSL server - Enabled Cipher suites: {0}", Arrays.toString(sslServer.getEnabledCipherSuites()));
+            Logging.trace("SSL server - Enabled Protocols: {0}", Arrays.toString(sslServer.getEnabledProtocols()));
+            Logging.trace("SSL server - Enable Session Creation: {0}", sslServer.getEnableSessionCreation());
+            Logging.trace("SSL server - Need Client Auth: {0}", sslServer.getNeedClientAuth());
+            Logging.trace("SSL server - Want Client Auth: {0}", sslServer.getWantClientAuth());
+            Logging.trace("SSL server - Use Client Mode: {0}", sslServer.getUseClientMode());
         }
     }
 
@@ -394,29 +395,29 @@ public class RemoteControlHttpsServer extends Thread {
      */
     @Override
     public void run() {
-        Main.info(marktr("RemoteControl::Accepting secure remote connections on {0}:{1}"),
+        Logging.info(marktr("RemoteControl::Accepting secure remote connections on {0}:{1}"),
                 server.getInetAddress(), Integer.toString(server.getLocalPort()));
         while (true) {
             try {
                 @SuppressWarnings("resource")
                 Socket request = server.accept();
-                if (Main.isTraceEnabled() && request instanceof SSLSocket) {
+                if (Logging.isTraceEnabled() && request instanceof SSLSocket) {
                     SSLSocket sslSocket = (SSLSocket) request;
-                    Main.trace("SSL socket - Enabled Cipher suites: "+Arrays.toString(sslSocket.getEnabledCipherSuites()));
-                    Main.trace("SSL socket - Enabled Protocols: "+Arrays.toString(sslSocket.getEnabledProtocols()));
-                    Main.trace("SSL socket - Enable Session Creation: "+sslSocket.getEnableSessionCreation());
-                    Main.trace("SSL socket - Need Client Auth: "+sslSocket.getNeedClientAuth());
-                    Main.trace("SSL socket - Want Client Auth: "+sslSocket.getWantClientAuth());
-                    Main.trace("SSL socket - Use Client Mode: "+sslSocket.getUseClientMode());
-                    Main.trace("SSL socket - Session: "+sslSocket.getSession());
+                    Logging.trace("SSL socket - Enabled Cipher suites: {0}", Arrays.toString(sslSocket.getEnabledCipherSuites()));
+                    Logging.trace("SSL socket - Enabled Protocols: {0}", Arrays.toString(sslSocket.getEnabledProtocols()));
+                    Logging.trace("SSL socket - Enable Session Creation: {0}", sslSocket.getEnableSessionCreation());
+                    Logging.trace("SSL socket - Need Client Auth: {0}", sslSocket.getNeedClientAuth());
+                    Logging.trace("SSL socket - Want Client Auth: {0}", sslSocket.getWantClientAuth());
+                    Logging.trace("SSL socket - Use Client Mode: {0}", sslSocket.getUseClientMode());
+                    Logging.trace("SSL socket - Session: {0}", sslSocket.getSession());
                 }
                 RequestProcessor.processRequest(request);
             } catch (SocketException e) {
                 if (!server.isClosed()) {
-                    Main.error(e);
+                    Logging.error(e);
                 }
             } catch (IOException ioe) {
-                Main.error(ioe);
+                Logging.error(ioe);
             }
         }
     }
@@ -427,7 +428,7 @@ public class RemoteControlHttpsServer extends Thread {
      * @throws IOException if any I/O error occurs
      */
     public void stopServer() throws IOException {
-        Main.info(marktr("RemoteControl::Server {0}:{1} stopped."),
+        Logging.info(marktr("RemoteControl::Server {0}:{1} stopped."),
         server.getInetAddress(), Integer.toString(server.getLocalPort()));
         server.close();
     }

@@ -15,6 +15,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
@@ -88,7 +89,7 @@ public abstract class FileImporter implements Comparable<FileImporter> {
      */
     public boolean importDataHandleExceptions(File f, ProgressMonitor progressMonitor) {
         try {
-            Main.info("Open file: " + f.getAbsolutePath() + " (" + f.length() + " bytes)");
+            Logging.info("Open file: " + f.getAbsolutePath() + " (" + f.length() + " bytes)");
             importData(f, progressMonitor);
             return true;
         } catch (IllegalDataException e) {
@@ -109,7 +110,7 @@ public abstract class FileImporter implements Comparable<FileImporter> {
     }
 
     private static void displayError(File f, Exception e) {
-        Main.error(e);
+        Logging.error(e);
         HelpAwareOptionPane.showMessageDialogInEDT(
                 Main.parent,
                 tr("<html>Could not read file ''{0}''.<br>Error is:<br>{1}</html>",
@@ -136,11 +137,11 @@ public abstract class FileImporter implements Comparable<FileImporter> {
      */
     public boolean importDataHandleExceptions(List<File> files, ProgressMonitor progressMonitor) {
         try {
-            Main.info("Open "+files.size()+" files");
+            Logging.info("Open "+files.size()+" files");
             importData(files, progressMonitor);
             return true;
         } catch (IOException | IllegalDataException e) {
-            Main.error(e);
+            Logging.error(e);
             HelpAwareOptionPane.showMessageDialogInEDT(
                     Main.parent,
                     tr("<html>Could not read files.<br>Error is:<br>{0}</html>", Utils.escapeReservedCharactersHTML(e.getMessage())),

@@ -28,6 +28,7 @@ import java.util.zip.ZipFile;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -326,7 +327,7 @@ public class CachedFile implements Closeable {
         try {
             file = getFile();
         } catch (IOException ex) {
-            Main.warn(ex, false);
+            Logging.log(Logging.LEVEL_WARN, ex);
         }
         if (file == null)
             return null;
@@ -350,8 +351,9 @@ public class CachedFile implements Closeable {
             }
         } catch (IOException e) {
             if (file.getName().endsWith(".zip")) {
-                Main.warn(e, tr("Failed to open file with extension ''{2}'' and namepart ''{3}'' in zip file ''{0}''. Exception was: {1}",
-                        file.getName(), e.toString(), extension, namepart));
+                Logging.log(Logging.LEVEL_WARN,
+                        tr("Failed to open file with extension ''{2}'' and namepart ''{3}'' in zip file ''{0}''. Exception was: {1}",
+                        file.getName(), e.toString(), extension, namepart), e);
             }
         }
         return res;
@@ -388,7 +390,7 @@ public class CachedFile implements Closeable {
                 Main.pref.putCollection(prefKey, null);
             }
         } catch (MalformedURLException e) {
-            Main.warn(e);
+            Logging.warn(e);
         }
     }
 
@@ -421,7 +423,7 @@ public class CachedFile implements Closeable {
         try {
             checkOfflineAccess(urlStr);
         } catch (OfflineAccessException e) {
-            Main.trace(e);
+            Logging.trace(e);
             offline = true;
         }
         if (localPathEntry.size() == 2) {
@@ -470,9 +472,7 @@ public class CachedFile implements Closeable {
             }
             final HttpClient.Response con = activeConnection.connect();
             if (ifModifiedSince != null && con.getResponseCode() == HttpURLConnection.HTTP_NOT_MODIFIED) {
-                if (Main.isDebugEnabled()) {
-                    Main.debug("304 Not Modified ("+urlStr+')');
-                }
+                Logging.debug("304 Not Modified ({0})", urlStr);
                 if (localFile == null)
                     throw new AssertionError();
                 Main.pref.putCollection(prefKey,
@@ -490,12 +490,12 @@ public class CachedFile implements Closeable {
                 Main.pref.putCollection(prefKey,
                         Arrays.asList(Long.toString(System.currentTimeMillis()), localFile.toString()));
             } else {
-                Main.warn(tr("Failed to rename file {0} to {1}.",
+                Logging.warn(tr("Failed to rename file {0} to {1}.",
                 destDirFile.getPath(), localFile.getPath()));
             }
         } catch (IOException e) {
             if (age >= maxAgeMillis && age < maxAgeMillis*2) {
-                Main.warn(tr("Failed to load {0}, use cached file and retry next time: {1}", urlStr, e));
+                Logging.warn(tr("Failed to load {0}, use cached file and retry next time: {1}", urlStr, e));
                 return localFile;
             } else {
                 throw e;

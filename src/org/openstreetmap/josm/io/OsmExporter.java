@@ -18,6 +18,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -90,7 +91,7 @@ public class OsmExporter extends FileExporter {
             }
             layer.onPostSaveToFile();
         } catch (IOException e) {
-            Main.error(e);
+            Logging.error(e);
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("<html>An error occurred while saving.<br>Error is:<br>{0}</html>",
@@ -105,7 +106,7 @@ public class OsmExporter extends FileExporter {
                     Utils.copyFile(tmpFile, file);
                 }
             } catch (IOException e2) {
-                Main.error(e2);
+                Logging.error(e2);
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         tr("<html>An error occurred while restoring backup file.<br>Error is:<br>{0}</html>",

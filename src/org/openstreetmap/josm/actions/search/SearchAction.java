@@ -61,6 +61,7 @@ import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -415,7 +416,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                         SearchCompiler.compile(ss);
                         super.buttonAction(buttonIndex, evt);
                     } catch (ParseError e) {
-                        Main.debug(e);
+                        Logging.debug(e);
                         JOptionPane.showMessageDialog(
                                 Main.parent,
                                 tr("Search expression is not valid: \n\n {0}", e.getMessage()),
@@ -824,7 +825,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 }
                 subMonitor.finishTask();
             } catch (ParseError e) {
-                Main.debug(e);
+                Logging.debug(e);
                 JOptionPane.showMessageDialog(
                         Main.parent,
                         e.getMessage(),
@@ -952,7 +953,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 } else if (s.charAt(index) == ' ') {
                     break;
                 } else {
-                    Main.warn("Unknown char in SearchSettings: " + s);
+                    Logging.warn("Unknown char in SearchSettings: " + s);
                     break;
                 }
                 index++;

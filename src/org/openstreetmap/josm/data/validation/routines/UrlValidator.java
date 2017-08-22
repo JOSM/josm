@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * <p><b>URL Validation</b> routines.</p>
@@ -449,7 +449,7 @@ public class UrlValidator extends AbstractValidator {
                 return false;
             }
         } catch (URISyntaxException e) {
-            Main.trace(e);
+            Logging.trace(e);
             return false;
         }
 

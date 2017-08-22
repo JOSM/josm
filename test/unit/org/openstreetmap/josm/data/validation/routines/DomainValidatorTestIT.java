@@ -47,7 +47,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -83,7 +83,7 @@ public class DomainValidatorTestIT {
         try {
             timestamp = download(txtFile, "http://data.iana.org/TLD/tlds-alpha-by-domain.txt", 0L);
         } catch (ConnectException e) {
-            Main.error(e);
+            Logging.error(e);
             // Try again one more time in case of random network issue
             timestamp = download(txtFile, "http://data.iana.org/TLD/tlds-alpha-by-domain.txt", 0L);
         }

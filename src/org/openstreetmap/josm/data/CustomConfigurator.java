@@ -54,6 +54,7 @@ import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
@@ -99,7 +100,7 @@ public final class CustomConfigurator {
      * @since 10469
      */
     public static void log(Exception e, String s) {
-        summary.append(s).append(' ').append(Main.getErrorMessage(e)).append('\n');
+        summary.append(s).append(' ').append(Logging.getErrorMessage(e)).append('\n');
     }
 
     /**
@@ -205,7 +206,7 @@ public final class CustomConfigurator {
             case 'e': JOptionPane.showMessageDialog(Main.parent, text, tr("Error"), JOptionPane.ERROR_MESSAGE); break;
             case 'q': JOptionPane.showMessageDialog(Main.parent, text, tr("Question"), JOptionPane.QUESTION_MESSAGE); break;
             case 'p': JOptionPane.showMessageDialog(Main.parent, text, tr("Message"), JOptionPane.PLAIN_MESSAGE); break;
-            default: Main.warn("Unsupported messageBox type: " + c);
+            default: Logging.warn("Unsupported messageBox type: " + c);
         }
     }
 
@@ -280,7 +281,7 @@ public final class CustomConfigurator {
             exportDocument = builder.newDocument();
             root = document.getDocumentElement();
         } catch (SAXException | IOException | ParserConfigurationException ex) {
-            Main.warn(ex, "Error getting preferences to save:");
+            Logging.log(Logging.LEVEL_WARN, "Error getting preferences to save:", ex);
         }
         if (root == null || exportDocument == null)
             return;
@@ -309,8 +310,8 @@ public final class CustomConfigurator {
             ts.setOutputProperty(OutputKeys.INDENT, "yes");
             ts.transform(new DOMSource(exportDocument), new StreamResult(f.toURI().getPath()));
         } catch (DOMException | TransformerFactoryConfigurationError | TransformerException ex) {
-            Main.warn("Error saving preferences part:");
-            Main.error(ex);
+            Logging.warn("Error saving preferences part:");
+            Logging.error(ex);
         }
     }
 
@@ -374,7 +375,7 @@ public final class CustomConfigurator {
                 try { // proceed only after all other tasks were finished
                     while (busy) CustomConfigurator.class.wait();
                 } catch (InterruptedException ex) {
-                    Main.warn(ex, "InterruptedException while reading local plugin information");
+                    Logging.log(Logging.LEVEL_WARN, "InterruptedException while reading local plugin information", ex);
                     Thread.currentThread().interrupt();
                 }
 
@@ -494,7 +495,7 @@ public final class CustomConfigurator {
                 engine.eval("API.pluginDelete = function(names) { "+className+".pluginOperation('','',names);}");
             } catch (ScriptException ex) {
                 log("Error: initializing script engine: "+ex.getMessage());
-                Main.error(ex);
+                Logging.error(ex);
             }
         }
 
@@ -960,7 +961,7 @@ public final class CustomConfigurator {
     }
 
     private static void showPrefs(Preferences tmpPref) {
-        Main.info("properties: " + tmpPref.settingsMap);
+        Logging.info("properties: " + tmpPref.settingsMap);
     }
 
     private static void modifyPreferencesByScript(ScriptEngine engine, Preferences tmpPref, String js) throws ScriptException {

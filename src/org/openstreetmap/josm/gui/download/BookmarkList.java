@@ -39,6 +39,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * List class that read and save its content from the bookmark file.
@@ -254,8 +255,8 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
             try {
                 model.addElement(new HomeLocationBookmark());
             } catch (IllegalStateException e) {
-                Main.info(e.getMessage());
-                Main.trace(e);
+                Logging.info(e.getMessage());
+                Logging.trace(e);
             }
         }
         // Then add manual bookmarks previously saved in local preferences
@@ -266,7 +267,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
                 try {
                     bookmarks.add(new Bookmark(entry));
                 } catch (IllegalArgumentException e) {
-                    Main.error(e, tr("Error reading bookmark entry: %s", e.getMessage()));
+                    Logging.log(Logging.LEVEL_ERROR, tr("Error reading bookmark entry: %s", e.getMessage()), e);
                 }
             }
             Collections.sort(bookmarks);

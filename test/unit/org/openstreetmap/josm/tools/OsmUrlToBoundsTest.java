@@ -4,7 +4,6 @@ package org.openstreetmap.josm.tools;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -98,7 +97,7 @@ public class OsmUrlToBoundsTest {
                 bounds = OsmUrlToBounds.parse(item.url);
             } catch (IllegalArgumentException e) {
                 // Ignore. check if bounds is null after
-                Main.trace(e);
+                Logging.trace(e);
             }
             Assert.assertEquals(item.url, item.bounds, bounds);
         }

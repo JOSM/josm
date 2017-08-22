@@ -6,8 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.tools.Logging;
 
 /** The error severity */
 public enum Severity {
@@ -47,9 +47,7 @@ public enum Severity {
      */
     public static void getColors() {
         for (Severity c : values()) {
-            if (Main.isDebugEnabled()) {
-                Main.debug(c.toString());
-            }
+            Logging.debug("{0}", c);
         }
     }
 

@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.notes.Note.State;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.tools.ListenerList;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Class to hold and perform operations on a set of notes
@@ -136,7 +137,7 @@ public class NoteData {
                     noteList.put(newNote);
                 } else {
                     // TODO merge comments?
-                    Main.info("Keeping existing note id={0} with uncommitted changes", String.valueOf(newNote.getId()));
+                    Logging.info("Keeping existing note id={0} with uncommitted changes", String.valueOf(newNote.getId()));
                 }
             }
             if (newNote.getId() <= newNoteId) {
@@ -161,8 +162,8 @@ public class NoteData {
         note.setId(newNoteId--);
         NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.OPENED, true);
         note.addComment(comment);
-        if (Main.isDebugEnabled()) {
-            Main.debug("Created note {0} with comment: {1}", note.getId(), text);
+        if (Logging.isDebugEnabled()) {
+            Logging.debug("Created note {0} with comment: {1}", note.getId(), text);
         }
         noteList.add(note);
         dataUpdated();
@@ -180,8 +181,8 @@ public class NoteData {
         if (note.getState() == State.CLOSED) {
             throw new IllegalStateException("Cannot add a comment to a closed note");
         }
-        if (Main.isDebugEnabled()) {
-            Main.debug("Adding comment to note {0}: {1}", note.getId(), text);
+        if (Logging.isDebugEnabled()) {
+            Logging.debug("Adding comment to note {0}: {1}", note.getId(), text);
         }
         NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.COMMENTED, true);
         note.addComment(comment);
@@ -200,8 +201,8 @@ public class NoteData {
         if (note.getState() != State.OPEN) {
             throw new IllegalStateException("Cannot close a note that isn't open");
         }
-        if (Main.isDebugEnabled()) {
-            Main.debug("closing note {0} with comment: {1}", note.getId(), text);
+        if (Logging.isDebugEnabled()) {
+            Logging.debug("closing note {0} with comment: {1}", note.getId(), text);
         }
         NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.CLOSED, true);
         note.addComment(comment);
@@ -222,9 +223,7 @@ public class NoteData {
         if (note.getState() != State.CLOSED) {
             throw new IllegalStateException("Cannot reopen a note that isn't closed");
         }
-        if (Main.isDebugEnabled()) {
-            Main.debug("reopening note {0} with comment: {1}", note.getId(), text);
-        }
+        Logging.debug("reopening note {0} with comment: {1}", note.getId(), text);
         NoteComment comment = new NoteComment(new Date(), getCurrentUser(), text, NoteComment.Action.REOPENED, true);
         note.addComment(comment);
         note.setState(State.OPEN);

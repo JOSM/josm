@@ -19,6 +19,7 @@ import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * <p>Abstract common superclass for {@link Rendering} implementations.</p>
@@ -156,7 +157,7 @@ public abstract class AbstractMapRenderer implements Rendering {
             // avoid the WaySegment class and add another data class with { Way way; Node firstNode, secondNode; int firstIdx; }.
             // On read, it would first check, if the way still has firstIdx+2 nodes, then check if the corresponding way nodes are still
             // the same and report changes in a more controlled manner.
-            Main.trace(e);
+            Logging.trace(e);
         }
     }
 

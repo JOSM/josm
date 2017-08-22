@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -62,7 +63,7 @@ public class RemoteControlTest {
             Files.deleteIfExists(Paths.get(
                     RemoteControl.getRemoteControlDir()).resolve(RemoteControlHttpsServer.KEYSTORE_FILENAME));
         } catch (IOException e) {
-            Main.error(e);
+            Logging.error(e);
         }
     }
 

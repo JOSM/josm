@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.gui.datatransfer.importers.AbstractOsmDataPaster;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
@@ -50,14 +51,15 @@ public abstract class AbstractStackTransferHandler extends TransferHandler {
         for (AbstractOsmDataPaster df : getSupportedPasters()) {
             if (df.supports(support)) {
                 try {
-                    if (Main.isDebugEnabled()) {
-                        Main.debug("{0} pasting {1} at {2}", df.getClass().getSimpleName(), Arrays.toString(support.getDataFlavors()), center);
+                    if (Logging.isDebugEnabled()) {
+                        Logging.debug("{0} pasting {1} at {2}",
+                                df.getClass().getSimpleName(), Arrays.toString(support.getDataFlavors()), center);
                     }
                     if (df.importData(support, layer, center)) {
                         return true;
                     }
                 } catch (UnsupportedFlavorException | IOException e) {
-                    Main.warn(e);
+                    Logging.warn(e);
                 } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
                     BugReport.intercept(e).put("paster", df).put("flavors", support::getDataFlavors).warn();
                 }

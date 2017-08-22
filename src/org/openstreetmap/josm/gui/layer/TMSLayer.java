@@ -12,7 +12,6 @@ import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.ScanexTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.TMSTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.TemplatedTMSTileSource;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.imagery.CachedAttributionBingAerialTileSource;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
@@ -20,6 +19,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Class that displays a slippy map layer.
@@ -70,7 +70,7 @@ public class TMSLayer extends AbstractCachedTileSourceLayer<TMSTileSource> imple
     @Override
     protected TMSTileSource getTileSource() {
         return getTileSourceStatic(info, () -> {
-            Main.debug("Attribution loaded, running loadAllErrorTiles");
+            Logging.debug("Attribution loaded, running loadAllErrorTiles");
             this.loadAllErrorTiles(false);
         });
     }

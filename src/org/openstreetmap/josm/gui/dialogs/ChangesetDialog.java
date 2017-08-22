@@ -57,6 +57,7 @@ import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
@@ -522,10 +523,10 @@ public class ChangesetDialog extends ToggleDialog {
                     try {
                         future.get();
                     } catch (InterruptedException e1) {
-                        Main.warn(e1, "InterruptedException in ChangesetDialog while downloading changeset header");
+                        Logging.log(Logging.LEVEL_WARN, "InterruptedException in ChangesetDialog while downloading changeset header", e1);
                         Thread.currentThread().interrupt();
                     } catch (ExecutionException e2) {
-                        Main.error(e2);
+                        Logging.error(e2);
                         BugReportExceptionHandler.handleException(e2.getCause());
                         return;
                     }

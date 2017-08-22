@@ -54,6 +54,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UserCancelException;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -445,7 +446,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                 setUserAction(UserAction.PROCEED);
                 closeDialog();
             } catch (UserCancelException ignore) {
-                Main.trace(ignore);
+                Logging.trace(ignore);
             }
         }
     }
@@ -574,17 +575,17 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     // wait for the asynchronous task to complete
                     currentFuture.get();
                 } catch (CancellationException e) {
-                    Main.trace(e);
+                    Logging.trace(e);
                     model.setUploadState(layer, UploadOrSaveState.CANCELED);
                 } catch (InterruptedException | ExecutionException e) {
-                    Main.error(e);
+                    Logging.error(e);
                     model.setUploadState(layer, UploadOrSaveState.FAILED);
                     ExceptionDialogUtil.explainException(e);
                 }
                 if (currentTask.isCanceled()) {
                     model.setUploadState(layer, UploadOrSaveState.CANCELED);
                 } else if (currentTask.isFailed()) {
-                    Main.error(currentTask.getLastException());
+                    Logging.error(currentTask.getLastException());
                     ExceptionDialogUtil.explainException(currentTask.getLastException());
                     model.setUploadState(layer, UploadOrSaveState.FAILED);
                 } else {
@@ -615,10 +616,10 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     //
                     currentFuture.get();
                 } catch (CancellationException e) {
-                    Main.trace(e);
+                    Logging.trace(e);
                     model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
                 } catch (InterruptedException | ExecutionException e) {
-                    Main.error(e);
+                    Logging.error(e);
                     model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.FAILED);
                     ExceptionDialogUtil.explainException(e);
                 }
@@ -626,7 +627,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
                     model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.CANCELED);
                 } else if (currentTask.isFailed()) {
                     if (currentTask.getLastException() != null) {
-                        Main.error(currentTask.getLastException());
+                        Logging.error(currentTask.getLastException());
                         ExceptionDialogUtil.explainException(currentTask.getLastException());
                     }
                     model.setSaveState(layerInfo.getLayer(), UploadOrSaveState.FAILED);
@@ -641,7 +642,7 @@ public class SaveLayersDialog extends JDialog implements TableModelListener {
             int numProblems = model.getNumCancel() + model.getNumFailed();
             if (numProblems == 0)
                 return;
-            Main.warn(numProblems + " problems occured during upload/save");
+            Logging.warn(numProblems + " problems occured during upload/save");
             String msg = trn(
                     "<html>An upload and/or save operation of one layer with modifications<br>"
                     + "was canceled or has failed.</html>",

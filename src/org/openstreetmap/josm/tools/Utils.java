@@ -404,7 +404,7 @@ public final class Utils {
         CheckParameterUtil.ensureParameterNotNull(in, "in");
         CheckParameterUtil.ensureParameterNotNull(out, "out");
         if (!out.exists() && !out.mkdirs()) {
-            Main.warn("Unable to create directory "+out.getPath());
+            Logging.warn("Unable to create directory "+out.getPath());
         }
         File[] files = in.listFiles();
         if (files != null) {
@@ -476,7 +476,7 @@ public final class Utils {
     public static boolean deleteFile(File file, String warnMsg) {
         boolean result = file.delete();
         if (!result) {
-            Main.warn(tr(warnMsg, file.getPath()));
+            Logging.warn(tr(warnMsg, file.getPath()));
         }
         return result;
     }
@@ -502,7 +502,7 @@ public final class Utils {
     public static boolean mkDirs(File dir, String warnMsg) {
         boolean result = dir.mkdirs();
         if (!result) {
-            Main.warn(tr(warnMsg, dir.getPath()));
+            Logging.warn(tr(warnMsg, dir.getPath()));
         }
         return result;
     }
@@ -517,7 +517,7 @@ public final class Utils {
         try {
             c.close();
         } catch (IOException e) {
-            Main.warn(e);
+            Logging.warn(e);
         }
     }
 
@@ -541,7 +541,7 @@ public final class Utils {
             try {
                 return f.toURI().toURL();
             } catch (MalformedURLException ex) {
-                Main.error("Unable to convert filename " + f.getAbsolutePath() + " to URL");
+                Logging.error("Unable to convert filename " + f.getAbsolutePath() + " to URL");
             }
         }
         return null;
@@ -762,8 +762,8 @@ public final class Utils {
         ZipInputStream zis = new ZipInputStream(in, StandardCharsets.UTF_8);
         // Positions the stream at the beginning of first entry
         ZipEntry ze = zis.getNextEntry();
-        if (ze != null && Main.isDebugEnabled()) {
-            Main.debug("Zip entry: "+ze.getName());
+        if (ze != null && Logging.isDebugEnabled()) {
+            Logging.debug("Zip entry: {0}", ze.getName());
         }
         return zis;
     }
@@ -877,8 +877,8 @@ public final class Utils {
      * @throws IOException when there was an error, e.g. command does not exist
      */
     public static String execOutput(List<String> command) throws IOException {
-        if (Main.isDebugEnabled()) {
-            Main.debug(join(" ", command));
+        if (Logging.isDebugEnabled()) {
+            Logging.debug(join(" ", command));
         }
         Process p = new ProcessBuilder(command).start();
         try (BufferedReader input = new BufferedReader(new InputStreamReader(p.getInputStream(), StandardCharsets.UTF_8))) {
@@ -908,7 +908,7 @@ public final class Utils {
         }
         File josmTmpDir = new File(tmpDir, "JOSM");
         if (!josmTmpDir.exists() && !josmTmpDir.mkdirs()) {
-            Main.warn("Unable to create temp directory " + josmTmpDir);
+            Logging.warn("Unable to create temp directory " + josmTmpDir);
         }
         return josmTmpDir;
     }
@@ -1215,7 +1215,7 @@ public final class Utils {
                 new URL(url);
                 return true;
             } catch (MalformedURLException e) {
-                Main.trace(e);
+                Logging.trace(e);
             }
         }
         return false;
@@ -1278,11 +1278,11 @@ public final class Utils {
     public static String updateSystemProperty(String key, String value) {
         if (value != null) {
             String old = System.setProperty(key, value);
-            if (Main.isDebugEnabled() && !value.equals(old)) {
+            if (Logging.isDebugEnabled() && !value.equals(old)) {
                 if (!key.toLowerCase(Locale.ENGLISH).contains("password")) {
-                    Main.debug("System property '" + key + "' set to '" + value + "'. Old value was '" + old + '\'');
+                    Logging.debug("System property '" + key + "' set to '" + value + "'. Old value was '" + old + '\'');
                 } else {
-                    Main.debug("System property '" + key + "' changed.");
+                    Logging.debug("System property '" + key + "' changed.");
                 }
             }
             return old;
@@ -1317,12 +1317,10 @@ public final class Utils {
      */
     public static Document parseSafeDOM(InputStream is) throws ParserConfigurationException, IOException, SAXException {
         long start = System.currentTimeMillis();
-        if (Main.isDebugEnabled()) {
-            Main.debug("Starting DOM parsing of " + is);
-        }
+        Logging.debug("Starting DOM parsing of {0}", is);
         Document result = newSafeDOMBuilder().parse(is);
-        if (Main.isDebugEnabled()) {
-            Main.debug("DOM parsing done in " + getDurationString(System.currentTimeMillis() - start));
+        if (Logging.isDebugEnabled()) {
+            Logging.debug("DOM parsing done in {0}", getDurationString(System.currentTimeMillis() - start));
         }
         return result;
     }
@@ -1354,12 +1352,10 @@ public final class Utils {
      */
     public static void parseSafeSAX(InputSource is, DefaultHandler dh) throws ParserConfigurationException, SAXException, IOException {
         long start = System.currentTimeMillis();
-        if (Main.isDebugEnabled()) {
-            Main.debug("Starting SAX parsing of " + is + " using " + dh);
-        }
+        Logging.debug("Starting SAX parsing of {0} using {1}", is, dh);
         newSafeSAXParser().parse(is, dh);
-        if (Main.isDebugEnabled()) {
-            Main.debug("SAX parsing done in " + getDurationString(System.currentTimeMillis() - start));
+        if (Logging.isDebugEnabled()) {
+            Logging.debug("SAX parsing done in {0}", getDurationString(System.currentTimeMillis() - start));
         }
     }
 
@@ -1664,14 +1660,14 @@ public final class Utils {
                 value = c.getDeclaredField("JRE_EXPIRATION_DATE").get(null);
             } catch (NoSuchFieldException e) {
                 // Field is gone with Java 9, there's a method instead
-                Main.trace(e);
+                Logging.trace(e);
                 value = c.getDeclaredMethod("getProperty", String.class).invoke(null, "JRE_EXPIRATION_DATE");
             }
             if (value instanceof String) {
                 return DateFormat.getDateInstance(3, Locale.US).parse((String) value);
             }
         } catch (IllegalArgumentException | ReflectiveOperationException | SecurityException | ParseException e) {
-            Main.debug(e);
+            Logging.debug(e);
         }
         return null;
     }
@@ -1687,7 +1683,7 @@ public final class Utils {
                     new URL(Main.pref.get("java.baseline.version.url", "http://javadl-esd-secure.oracle.com/update/baseline.version")))
                     .connect().fetchContent().split("\n")[0];
         } catch (IOException e) {
-            Main.error(e);
+            Logging.error(e);
         }
         return null;
     }

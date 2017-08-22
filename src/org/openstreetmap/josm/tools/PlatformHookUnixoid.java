@@ -89,7 +89,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                 }
                 return;
             } catch (IOException | URISyntaxException e) {
-                Main.warn(e);
+                Logging.warn(e);
             }
         }
     }
@@ -124,7 +124,7 @@ public class PlatformHookUnixoid implements PlatformHook {
             return "Debian".equalsIgnoreCase(dist) || "Ubuntu".equalsIgnoreCase(dist) || "Mint".equalsIgnoreCase(dist);
         } catch (IOException e) {
             // lsb_release is not available on all Linux systems, so don't log at warning level
-            Main.debug(e);
+            Logging.debug(e);
             return false;
         }
     }
@@ -163,7 +163,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                 }
             }
         } catch (IOException e) {
-            Main.warn(e);
+            Logging.warn(e);
         }
         return null;
     }
@@ -240,7 +240,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                         return "Linux " + line;
                 }
             } catch (IOException e) {
-                Main.debug(e);
+                Logging.debug(e);
                 // Non LSB-compliant Linux system. List of common fallback release files: http://linuxmafia.com/faq/Admin/release-files.html
                 for (LinuxReleaseInfo info : new LinuxReleaseInfo[]{
                         new LinuxReleaseInfo("/etc/lsb-release", "DISTRIB_DESCRIPTION", "DISTRIB_ID", "DISTRIB_RELEASE"),
@@ -342,7 +342,7 @@ public class PlatformHookUnixoid implements PlatformHook {
                         }
                     } catch (IOException e) {
                         // Ignore
-                        Main.trace(e);
+                        Logging.trace(e);
                     }
                 }
             }

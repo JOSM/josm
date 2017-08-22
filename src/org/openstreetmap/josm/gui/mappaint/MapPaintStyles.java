@@ -34,6 +34,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ListenerList;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -156,7 +157,7 @@ public final class MapPaintStyles {
         if (test && i.get() == null) {
             String msg = "Mappaint style \""+namespace+"\" ("+ref.source.getDisplayString()+") icon \"" + ref.iconName + "\" not found.";
             ref.source.logWarning(msg);
-            Main.warn(msg);
+            Logging.warn(msg);
             return null;
         }
         return i;
@@ -175,7 +176,7 @@ public final class MapPaintStyles {
         final String namespace = ref.source.getPrefName();
         ImageIcon i = getIconProvider(ref, false).setSize(width, height).get();
         if (i == null) {
-            Main.warn("Mappaint style \""+namespace+"\" ("+ref.source.getDisplayString()+") icon \"" + ref.iconName + "\" not found.");
+            Logging.warn("Mappaint style \""+namespace+"\" ("+ref.source.getDisplayString()+") icon \"" + ref.iconName + "\" not found.");
             return null;
         }
         return i;
@@ -307,16 +308,16 @@ public final class MapPaintStyles {
             try {
                 Main.fileWatcher.registerStyleSource(source);
             } catch (IOException | IllegalStateException | IllegalArgumentException e) {
-                Main.error(e);
+                Logging.error(e);
             }
         }
-        if (Main.isDebugEnabled() || !source.isValid()) {
+        if (Logging.isDebugEnabled() || !source.isValid()) {
             final long elapsedTime = System.currentTimeMillis() - startTime;
             String message = "Initializing map style " + source.url + " completed in " + Utils.getDurationString(elapsedTime);
             if (!source.isValid()) {
-                Main.warn(message + " (" + source.getErrors().size() + " errors, " + source.getWarnings().size() + " warnings)");
+                Logging.warn(message + " (" + source.getErrors().size() + " errors, " + source.getWarnings().size() + " warnings)");
             } else {
-                Main.debug(message);
+                Logging.debug(message);
             }
         }
     }

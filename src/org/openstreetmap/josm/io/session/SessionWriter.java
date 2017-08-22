@@ -42,6 +42,7 @@ import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Document;
@@ -240,7 +241,7 @@ public class SessionWriter {
                 for (Layer depLayer : deps) {
                     int depIndex = layers.indexOf(depLayer);
                     if (depIndex == -1) {
-                        Main.warn("Unable to find " + depLayer);
+                        Logging.warn("Unable to find " + depLayer);
                     } else {
                         depsInt.add(depIndex+1);
                     }

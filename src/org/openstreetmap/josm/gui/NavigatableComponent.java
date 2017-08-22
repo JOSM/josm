@@ -60,6 +60,7 @@ import org.openstreetmap.josm.gui.layer.NativeScaleLayer.ScaleList;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.util.CursorManager;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -717,7 +718,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
                         try {
                             Thread.sleep(1000L / fps);
                         } catch (InterruptedException ex) {
-                            Main.warn("InterruptedException in "+NavigatableComponent.class.getSimpleName()+" during smooth scrolling");
+                            Logging.warn("InterruptedException in "+NavigatableComponent.class.getSimpleName()+" during smooth scrolling");
                             Thread.currentThread().interrupt();
                         }
                     }

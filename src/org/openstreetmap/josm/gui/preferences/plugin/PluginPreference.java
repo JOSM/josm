@@ -61,6 +61,7 @@ import org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask;
 import org.openstreetmap.josm.plugins.ReadRemotePluginInformationTask;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -385,7 +386,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                         null // FIXME: provide help context
                         ));
             } catch (InterruptedException | InvocationTargetException e) {
-                Main.error(e);
+                Logging.error(e);
             }
         }
 

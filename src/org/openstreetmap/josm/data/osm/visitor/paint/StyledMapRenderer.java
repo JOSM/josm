@@ -240,8 +240,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
             GlyphVector gv = font.createGlyphVector(frc, "x");
             gv.setGlyphTransform(0, AffineTransform.getTranslateInstance(1000, 1000));
             Shape shape = gv.getGlyphOutline(0);
-            if (Main.isTraceEnabled()) {
-                Main.trace("#10446: shape: "+shape.getBounds());
+            if (Logging.isTraceEnabled()) {
+                Logging.trace("#10446: shape: {0}", shape.getBounds());
             }
             // x is about 1000 on normal stystems and about 2000 when the bug occurs
             int x = shape.getBounds().x;
@@ -1128,8 +1128,8 @@ public class StyledMapRenderer extends AbstractMapRenderer {
                                 (p, gv) -> p.append(gv.getOutline(0, 0), false),
                                 (p1, p2) -> p1.append(p2, false)),
                         osm.isDisabled(), text);
-            } else if (Main.isTraceEnabled()) {
-                Main.trace("Couldn't find a correct label placement for " + osm + " / " + name);
+            } else {
+                Logging.trace("Couldn't find a correct label placement for {0} / {1}", osm, name);
             }
         });
         g.setFont(defaultFont);

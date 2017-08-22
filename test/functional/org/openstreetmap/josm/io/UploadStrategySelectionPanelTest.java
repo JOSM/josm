@@ -12,9 +12,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.junit.Ignore;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.io.UploadStrategySelectionPanel;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.tools.Logging;
 
 @Ignore
 public class UploadStrategySelectionPanelTest extends JFrame {
@@ -42,7 +42,7 @@ public class UploadStrategySelectionPanelTest extends JFrame {
                         try {
                             n = Integer.parseInt(tf.getText());
                         } catch (NumberFormatException e) {
-                            Main.error(e);
+                            Logging.error(e);
                             return;
                         }
                         uploadStrategySelectionPanel.setNumUploadedObjects(n);

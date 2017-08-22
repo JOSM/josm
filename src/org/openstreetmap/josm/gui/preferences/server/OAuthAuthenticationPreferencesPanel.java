@@ -33,6 +33,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UserCancelException;
 
 /**
@@ -317,7 +318,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             try {
                 wizard.showDialog();
             } catch (UserCancelException ignore) {
-                Main.trace(ignore);
+                Logging.trace(ignore);
                 return;
             }
             pnlAdvancedProperties.setAdvancedParameters(wizard.getOAuthParameters());

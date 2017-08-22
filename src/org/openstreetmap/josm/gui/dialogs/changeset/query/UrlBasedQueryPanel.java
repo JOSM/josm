@@ -26,6 +26,7 @@ import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.io.ChangesetQuery.ChangesetQueryUrlException;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This panel allows to build a changeset query from an URL.
@@ -137,7 +138,7 @@ public class UrlBasedQueryPanel extends JPanel {
         try {
             return ChangesetQuery.buildFromUrlQuery(url.getQuery());
         } catch (ChangesetQueryUrlException e) {
-            Main.warn(e);
+            Logging.warn(e);
             return null;
         }
     }

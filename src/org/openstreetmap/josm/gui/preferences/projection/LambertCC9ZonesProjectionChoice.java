@@ -10,9 +10,9 @@ import java.util.Collections;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * ProjectionChoice for Lambert CC (9 zones, EPSG:3942-3950).
@@ -82,7 +82,7 @@ public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice {
                 if (zoneval >= 0 && zoneval <= 8)
                     return Collections.singleton(String.valueOf(zoneval+1));
             } catch (NumberFormatException ex) {
-                Main.warn(ex);
+                Logging.warn(ex);
             }
         }
         return null;
@@ -98,7 +98,7 @@ public class LambertCC9ZonesProjectionChoice extends ListProjectionChoice {
         try {
             return Integer.parseInt(zone) - 1;
         } catch (NumberFormatException e) {
-            Main.warn(e);
+            Logging.warn(e);
         }
         return defaultIndex;
     }

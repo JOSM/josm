@@ -7,8 +7,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -185,11 +185,11 @@ public class DatasetConsistencyTest {
     }
 
     private void printElapsedTime(long startTime) {
-        if (Main.isDebugEnabled()) {
+        if (Logging.isDebugEnabled()) {
             StackTraceElement item = Thread.currentThread().getStackTrace()[2];
             String operation = getClass().getSimpleName() + '.' + item.getMethodName();
             long elapsedTime = System.currentTimeMillis() - startTime;
-            Main.debug(tr("Test ''{0}'' completed in {1}",
+            Logging.debug(tr("Test ''{0}'' completed in {1}",
                     operation, Utils.getDurationString(elapsedTime)));
         }
     }
@@ -215,7 +215,7 @@ public class DatasetConsistencyTest {
         } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             writer.println("Exception during dataset integrity test:");
             e.printStackTrace(writer);
-            Main.warn(e);
+            Logging.warn(e);
         }
     }
 

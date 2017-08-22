@@ -7,8 +7,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 
 /**
@@ -64,7 +64,7 @@ public final class DefaultAuthenticator extends Authenticator {
             }
             return new PasswordAuthentication(response.getUsername(), response.getPassword());
         } catch (CredentialsAgentException e) {
-            Main.error(e);
+            Logging.error(e);
             return null;
         }
     }

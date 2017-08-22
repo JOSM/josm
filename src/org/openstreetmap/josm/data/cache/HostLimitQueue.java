@@ -11,7 +11,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Queue for ThreadPoolExecutor that implements per-host limit. It will acquire a semaphore for each task
@@ -66,9 +66,9 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
                     try {
                         url = job.getUrl();
                     } catch (IOException e) {
-                        Main.debug(e);
+                        Logging.debug(e);
                     }
-                    Main.debug("TMS - Skipping job {0} because host limit reached", url);
+                    Logging.debug("TMS - Skipping job {0} because host limit reached", url);
                 }
             }
         }
@@ -89,7 +89,7 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
             } catch (InterruptedException e) {
                 // acquire my got interrupted, first offer back what was taken
                 if (!offer(job)) {
-                    Main.warn("Unable to offer back " + job);
+                    Logging.warn("Unable to offer back " + job);
                 }
                 throw e;
             }
@@ -109,7 +109,7 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
         } catch (InterruptedException e) {
             // acquire my got interrupted, first offer back what was taken
             if (!offer(job)) {
-                Main.warn("Unable to offer back " + job);
+                Logging.warn("Unable to offer back " + job);
             }
             throw e;
         }
@@ -208,7 +208,7 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
         if (limit != null) {
             limit.release();
             if (limit.availablePermits() > hostLimit) {
-                Main.warn("More permits than it should be");
+                Logging.warn("More permits than it should be");
             }
         }
     }

@@ -3,9 +3,9 @@ package org.openstreetmap.josm.io.remotecontrol.handler;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.io.remotecontrol.RequestProcessor;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Reports available commands, their parameters and examples
@@ -36,7 +36,7 @@ public class FeaturesHandler extends RequestHandler {
                if (info != null) {
                    buf.append(info);
                } else {
-                   Main.warn("Unknown handler {0} passed to /features request", s);
+                   Logging.warn("Unknown handler {0} passed to /features request", s);
                }
             }
             buf.append(']');

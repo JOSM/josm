@@ -12,7 +12,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferByte;
 import java.util.Optional;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Colorful filter.
@@ -39,13 +39,13 @@ public class ColorfulFilter implements BufferedImageOp {
         DataBuffer srcBuffer = src.getRaster().getDataBuffer();
         DataBuffer destBuffer = dest.getRaster().getDataBuffer();
         if (!(srcBuffer instanceof DataBufferByte) || !(destBuffer instanceof DataBufferByte)) {
-            Main.trace("Cannot apply color filter: Images do not use DataBufferByte.");
+            Logging.trace("Cannot apply color filter: Images do not use DataBufferByte.");
             return src;
         }
 
         int type = src.getType();
         if (type != dest.getType()) {
-            Main.trace("Cannot apply color filter: Src / Dest differ in type (" + type + '/' + dest.getType() + ')');
+            Logging.trace("Cannot apply color filter: Src / Dest differ in type (" + type + '/' + dest.getType() + ')');
             return src;
         }
         int redOffset;
@@ -72,7 +72,7 @@ public class ColorfulFilter implements BufferedImageOp {
             alphaOffset = 3;
             break;
         default:
-            Main.trace("Cannot apply color filter: Source image is of wrong type (" + type + ").");
+            Logging.trace("Cannot apply color filter: Source image is of wrong type (" + type + ").");
             return src;
         }
         doFilter((DataBufferByte) srcBuffer, (DataBufferByte) destBuffer, redOffset, greenOffset, blueOffset,
@@ -85,7 +85,7 @@ public class ColorfulFilter implements BufferedImageOp {
         byte[] srcPixels = src.getData();
         byte[] destPixels = dest.getData();
         if (srcPixels.length != destPixels.length) {
-            Main.trace("Cannot apply color filter: Source/Dest lengths differ.");
+            Logging.trace("Cannot apply color filter: Source/Dest lengths differ.");
             return;
         }
         int entries = hasAlpha ? 4 : 3;

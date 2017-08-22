@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Text field type.
@@ -83,7 +84,7 @@ public class Text extends KeyedItem {
                             LAST_VALUES.get(key)) + auto_increment_selected));
                 } catch (NumberFormatException ex) {
                     // Ignore - cannot auto-increment if last was non-numeric
-                    Main.trace(ex);
+                    Logging.trace(ex);
                 }
             } else if (!usage.hadKeys() || PROP_FILL_DEFAULT.get() || "force".equals(use_last_as_default)) {
                 // selected osm primitives are untagged or filling default values feature is enabled
@@ -141,7 +142,7 @@ public class Text extends KeyedItem {
                     aibutton.addActionListener(e -> auto_increment_selected = buttonvalue);
                     pnl.add(aibutton, GBC.std());
                 } catch (ParseException ex) {
-                    Main.error("Cannot parse auto-increment value of '" + ai + "' into an integer");
+                    Logging.error("Cannot parse auto-increment value of '" + ai + "' into an integer");
                 }
             }
 
@@ -201,7 +202,7 @@ public class Text extends KeyedItem {
         // return if unchanged
         String v = getValue(value);
         if (v == null) {
-            Main.error("No 'last value' support for component " + value);
+            Logging.error("No 'last value' support for component " + value);
             return;
         }
 

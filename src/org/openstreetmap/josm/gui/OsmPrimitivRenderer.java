@@ -12,10 +12,10 @@ import javax.swing.ListCellRenderer;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Renderer that renders the objects from an OsmPrimitive as data.
@@ -81,7 +81,7 @@ public class OsmPrimitivRenderer implements ListCellRenderer<OsmPrimitive>, Tabl
             if (icon != null) {
                 ((JLabel) def).setIcon(icon);
             } else {
-                Main.warn("Null icon for "+value.getDisplayType());
+                Logging.warn("Null icon for "+value.getDisplayType());
             }
             ((JLabel) def).setToolTipText(getComponentToolTipText(value));
         }

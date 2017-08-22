@@ -24,7 +24,6 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddNodeHandler;
 import org.openstreetmap.josm.io.remotecontrol.handler.AddWayHandler;
@@ -40,6 +39,7 @@ import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHan
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerErrorException;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler.RequestHandlerForbiddenException;
 import org.openstreetmap.josm.io.remotecontrol.handler.VersionHandler;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -118,11 +118,11 @@ public class RequestProcessor extends Thread {
         }
         String commandWithSlash = '/' + command;
         if (handlers.get(commandWithSlash) != null) {
-            Main.info("RemoteControl: ignoring duplicate command " + command
+            Logging.info("RemoteControl: ignoring duplicate command " + command
                     + " with handler " + handler.getName());
         } else {
             if (!silent) {
-                Main.info("RemoteControl: adding command \"" +
+                Logging.info("RemoteControl: adding command \"" +
                     command + "\" (handled by " + handler.getSimpleName() + ')');
             }
             handlers.put(commandWithSlash, handler);
@@ -160,7 +160,7 @@ public class RequestProcessor extends Thread {
                 sendError(out);
                 return;
             }
-            Main.info("RemoteControl received: " + get);
+            Logging.info("RemoteControl received: " + get);
 
             StringTokenizer st = new StringTokenizer(get);
             if (!st.hasMoreTokens()) {
@@ -246,31 +246,31 @@ public class RequestProcessor extends Thread {
                     out.write(handler.getContent());
                     out.flush();
                 } catch (RequestHandlerErrorException ex) {
-                    Main.debug(ex);
+                    Logging.debug(ex);
                     sendError(out);
                 } catch (RequestHandlerBadRequestException ex) {
-                    Main.debug(ex);
+                    Logging.debug(ex);
                     sendBadRequest(out, ex.getMessage());
                 } catch (RequestHandlerForbiddenException ex) {
-                    Main.debug(ex);
+                    Logging.debug(ex);
                     sendForbidden(out, ex.getMessage());
                 }
             }
 
         } catch (IOException ioe) {
-            Main.debug(Main.getErrorMessage(ioe));
+            Logging.debug(Logging.getErrorMessage(ioe));
         } catch (ReflectiveOperationException e) {
-            Main.error(e);
+            Logging.error(e);
             try {
                 sendError(out);
             } catch (IOException e1) {
-                Main.warn(e1);
+                Logging.warn(e1);
             }
         } finally {
             try {
                 request.close();
             } catch (IOException e) {
-                Main.debug(Main.getErrorMessage(e));
+                Logging.debug(Logging.getErrorMessage(e));
             }
         }
     }
@@ -401,7 +401,7 @@ public class RequestProcessor extends Thread {
                 if (c == null) return null;
                 handler = handlers.get(cmd).getConstructor().newInstance();
             } catch (ReflectiveOperationException ex) {
-                Main.error(ex);
+                Logging.error(ex);
                 return null;
             }
 
@@ -409,7 +409,7 @@ public class RequestProcessor extends Thread {
             printJsonInfo(cmd, r, handler);
             return w.toString();
         } catch (IOException e) {
-            Main.error(e);
+            Logging.error(e);
             return null;
         }
     }

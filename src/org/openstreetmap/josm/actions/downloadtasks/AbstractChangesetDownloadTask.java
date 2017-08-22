@@ -18,6 +18,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmServerChangesetReader;
 import org.openstreetmap.josm.tools.ExceptionUtil;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
 /**
@@ -67,7 +68,7 @@ public abstract class AbstractChangesetDownloadTask extends AbstractDownloadTask
                 try {
                     SwingUtilities.invokeAndWait(r);
                 } catch (InterruptedException e) {
-                    Main.warn("InterruptedException in "+getClass().getSimpleName()+" while updating changeset cache");
+                    Logging.warn("InterruptedException in "+getClass().getSimpleName()+" while updating changeset cache");
                     Thread.currentThread().interrupt();
                 } catch (InvocationTargetException e) {
                     Throwable t = e.getTargetException();

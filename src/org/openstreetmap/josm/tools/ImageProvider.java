@@ -641,7 +641,7 @@ public class ImageProvider {
                                 name + ext));
             } else {
                 if (!suppressWarnings) {
-                    Main.error(tr("Failed to locate image ''{0}''", name));
+                    Logging.error(tr("Failed to locate image ''{0}''", name));
                 }
                 return null;
             }
@@ -916,14 +916,14 @@ public class ImageProvider {
                 try {
                     img = read(Utils.fileToURL(cf.getFile()), false, false);
                 } catch (IOException e) {
-                    Main.warn(e, "IOException while reading HTTP image:");
+                    Logging.log(Logging.LEVEL_WARN, "IOException while reading HTTP image:", e);
                 }
                 return img == null ? null : new ImageResource(img);
             default:
                 throw new AssertionError("Unsupported type: " + type);
             }
         } catch (IOException e) {
-            Main.debug(e);
+            Logging.debug(e);
             return null;
         }
     }
@@ -946,7 +946,7 @@ public class ImageProvider {
                 try {
                     bytes = Utils.decodeUrl(data).getBytes(StandardCharsets.UTF_8);
                 } catch (IllegalArgumentException ex) {
-                    Main.warn(ex, "Unable to decode URL data part: "+ex.getMessage() + " (" + data + ')');
+                    Logging.log(Logging.LEVEL_WARN, "Unable to decode URL data part: "+ex.getMessage() + " (" + data + ')', ex);
                     return null;
                 }
             }
@@ -959,7 +959,7 @@ public class ImageProvider {
                     svg = getSvgUniverse().getDiagram(uri);
                 }
                 if (svg == null) {
-                    Main.warn("Unable to process svg: "+s);
+                    Logging.warn("Unable to process svg: "+s);
                     return null;
                 }
                 return new ImageResource(svg);
@@ -973,7 +973,7 @@ public class ImageProvider {
                     Image img = read(new ByteArrayInputStream(bytes), false, true);
                     return img == null ? null : new ImageResource(img);
                 } catch (IOException e) {
-                    Main.warn(e, "IOException while reading image:");
+                    Logging.log(Logging.LEVEL_WARN, "IOException while reading image:", e);
                 }
             }
         }
@@ -1058,7 +1058,7 @@ public class ImageProvider {
                         try {
                             img = read(new ByteArrayInputStream(buf), false, false);
                         } catch (IOException e) {
-                            Main.warn(e);
+                            Logging.warn(e);
                         }
                         return img == null ? null : new ImageResource(img);
                     default:
@@ -1067,7 +1067,7 @@ public class ImageProvider {
                 }
             }
         } catch (IOException e) {
-            Main.warn(e, tr("Failed to handle zip file ''{0}''. Exception was: {1}", archive.getName(), e.toString()));
+            Logging.log(Logging.LEVEL_WARN, tr("Failed to handle zip file ''{0}''. Exception was: {1}", archive.getName(), e.toString()), e);
         }
         return null;
     }
@@ -1095,11 +1095,11 @@ public class ImageProvider {
                 // This can be removed if someday Oracle fixes https://bugs.openjdk.java.net/browse/JDK-6788458
                 // hg.openjdk.java.net/jdk8u/jdk8u/jdk/file/dc4322602480/src/share/classes/com/sun/imageio/plugins/png/PNGImageReader.java#l656
                 img = read(path, false, true);
-                if (Main.isDebugEnabled() && isTransparencyForced(img)) {
-                    Main.debug("Transparency has been forced for image "+path.toExternalForm());
+                if (Logging.isDebugEnabled() && isTransparencyForced(img)) {
+                    Logging.debug("Transparency has been forced for image {0}", path);
                 }
             } catch (IOException e) {
-                Main.warn(e);
+                Logging.warn(e);
             }
             return img == null ? null : new ImageResource(img);
         default:
@@ -1138,9 +1138,9 @@ public class ImageProvider {
                     if (u != null)
                         return u;
                 } catch (SecurityException e) {
-                    Main.warn(e, tr(
+                    Logging.log(Logging.LEVEL_WARN, tr(
                             "Failed to access directory ''{0}'' for security reasons. Exception was: {1}",
-                            name, e.toString()));
+                            name, e.toString()), e);
                 }
 
             }
@@ -1153,9 +1153,9 @@ public class ImageProvider {
                 if (u != null)
                     return u;
             } catch (SecurityException e) {
-                Main.warn(e, tr(
+                Logging.log(Logging.LEVEL_WARN, tr(
                         "Failed to access directory ''{0}'' for security reasons. Exception was: {1}", dir, e
-                        .toString()));
+                        .toString()), e);
             }
         }
 
@@ -1225,13 +1225,13 @@ public class ImageProvider {
                 parser.parse(new InputSource(is));
             }
         } catch (SAXReturnException e) {
-            Main.trace(e);
+            Logging.trace(e);
             return e.getResult();
         } catch (IOException | SAXException | ParserConfigurationException e) {
-            Main.warn("Parsing " + base + fn + " failed:\n" + e);
+            Logging.warn("Parsing " + base + fn + " failed:\n" + e);
             return null;
         }
-        Main.warn("Parsing " + base + fn + " failed: Unexpected content.");
+        Logging.warn("Parsing " + base + fn + " failed: Unexpected content.");
         return null;
     }
 
@@ -1250,9 +1250,7 @@ public class ImageProvider {
                     .setMaxSize(ImageSizes.CURSOROVERLAY))).get();
         }
         if (GraphicsEnvironment.isHeadless()) {
-            if (Main.isDebugEnabled()) {
-                Main.debug("Cursors are not available in headless mode. Returning null for '"+name+'\'');
-            }
+            Logging.debug("Cursors are not available in headless mode. Returning null for '{0}'", name);
             return null;
         }
         return Toolkit.getDefaultToolkit().createCustomCursor(img.getImage(),
@@ -1464,8 +1462,8 @@ public class ImageProvider {
      * @return an image from the given SVG data at the desired dimension.
      */
     public static BufferedImage createImageFromSvg(SVGDiagram svg, Dimension dim) {
-        if (Main.isTraceEnabled()) {
-            Main.trace(String.format("createImageFromSvg: %s %s", svg.getXMLBase(), dim));
+        if (Logging.isTraceEnabled()) {
+            Logging.trace("createImageFromSvg: {0} {1}", svg.getXMLBase(), dim);
         }
         float sourceWidth = svg.getWidth();
         float sourceHeight = svg.getHeight();
@@ -1503,7 +1501,7 @@ public class ImageProvider {
                 svg.render(g);
             }
         } catch (SVGException ex) {
-            Main.error(ex, "Unable to load svg:");
+            Logging.log(Logging.LEVEL_ERROR, "Unable to load svg:", ex);
             return null;
         }
         return img;
@@ -1723,9 +1721,7 @@ public class ImageProvider {
                     properties.put(PROP_TRANSPARENCY_COLOR, color);
                     bi = new BufferedImage(bi.getColorModel(), bi.getRaster(), bi.isAlphaPremultiplied(), properties);
                     if (enforceTransparency) {
-                        if (Main.isTraceEnabled()) {
-                            Main.trace("Enforcing image transparency of "+stream+" for "+color);
-                        }
+                        Logging.trace("Enforcing image transparency of {0} for {1}", stream, color);
                         bi = makeImageTransparent(bi, color);
                     }
                 }
@@ -1733,7 +1729,7 @@ public class ImageProvider {
         } catch (LinkageError e) {
             // On Windows, ComponentColorModel.getRGBComponent can fail with "UnsatisfiedLinkError: no awt in java.library.path", see #13973
             // Then it can leads to "NoClassDefFoundError: Could not initialize class sun.awt.image.ShortInterleavedRaster", see #15079
-            Main.error(e);
+            Logging.error(e);
         } finally {
             reader.dispose();
             stream.close();
@@ -1780,7 +1776,7 @@ public class ImageProvider {
                                                 int b = model.getBlue(pixel);
                                                 return new Color(r, g, b);
                                             } else {
-                                                Main.warn("Unable to translate TransparentColor '"+value+"' with color model "+model);
+                                                Logging.warn("Unable to translate TransparentColor '"+value+"' with color model "+model);
                                             }
                                         }
                                     }
@@ -1793,7 +1789,7 @@ public class ImageProvider {
             }
         } catch (IIOException | NumberFormatException e) {
             // JAI doesn't like some JPEG files with error "Inconsistent metadata read from stream" (see #10267)
-            Main.warn(e);
+            Logging.warn(e);
         }
         return null;
     }
@@ -1806,7 +1802,7 @@ public class ImageProvider {
             }
             return new Color(rgb[0], rgb[1], rgb[2]);
         } catch (IllegalArgumentException e) {
-            Main.error(e);
+            Logging.error(e);
             return null;
         }
     }

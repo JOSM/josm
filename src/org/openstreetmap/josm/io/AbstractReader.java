@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -24,6 +23,7 @@ import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Abstract Reader, allowing other implementations than OsmReader (PbfReader in PBF plugin for example)
@@ -104,14 +104,14 @@ public abstract class AbstractReader {
                     }
                 }
                 if (n.isDeleted()) {
-                    Main.info(tr("Deleted node {0} is part of way {1}", id, w.getId()));
+                    Logging.info(tr("Deleted node {0} is part of way {1}", id, w.getId()));
                 } else {
                     wayNodes.add(n);
                 }
             }
             w.setNodes(wayNodes);
             if (w.hasIncompleteNodes()) {
-                Main.info(tr("Way {0} with {1} nodes has incomplete nodes because at least one node was missing in the loaded data.",
+                Logging.info(tr("Way {0} with {1} nodes has incomplete nodes because at least one node was missing in the loaded data.",
                           externalWayId, w.getNodesCount()));
             }
             ds.addPrimitive(w);
@@ -175,7 +175,7 @@ public abstract class AbstractReader {
                     }
                 }
                 if (primitive.isDeleted()) {
-                    Main.info(tr("Deleted member {0} is used by relation {1}", primitive.getId(), relation.getId()));
+                    Logging.info(tr("Deleted member {0} is used by relation {1}", primitive.getId(), relation.getId()));
                 } else {
                     relationMembers.add(new RelationMember(rm.getRole(), primitive));
                 }

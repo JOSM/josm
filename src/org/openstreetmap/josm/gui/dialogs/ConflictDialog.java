@@ -67,6 +67,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -317,7 +318,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
 
     @Override
     public void onConflictsRemoved(ConflictCollection conflicts) {
-        Main.info("1 conflict has been resolved.");
+        Logging.info("1 conflict has been resolved.");
         refreshView();
     }
 

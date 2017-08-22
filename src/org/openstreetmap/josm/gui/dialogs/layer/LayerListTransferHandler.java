@@ -14,12 +14,12 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.TransferHandler;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.datatransfer.LayerTransferable;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog.LayerListModel;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This class allows the user to transfer layers using drag+drop.
@@ -123,10 +123,10 @@ public class LayerListTransferHandler extends TransferHandler {
 
             return true;
         } catch (UnsupportedFlavorException e) {
-            Main.warn("Flavor not supported", e);
+            Logging.warn("Flavor not supported", e);
             return false;
         } catch (IOException e) {
-            Main.warn("Error while pasting layer", e);
+            Logging.warn("Error while pasting layer", e);
             return false;
         }
     }

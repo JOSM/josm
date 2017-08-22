@@ -32,6 +32,7 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Checks if a way has an endpoint very near to another way.
@@ -317,7 +318,7 @@ public abstract class UnconnectedWays extends Test {
 
         public boolean nearby(Node n, double dist) {
             if (w == null) {
-                Main.debug("way null");
+                Logging.debug("way null");
                 return false;
             }
             if (w.containsNode(n))

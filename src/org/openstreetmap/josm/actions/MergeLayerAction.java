@@ -17,6 +17,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -68,7 +69,7 @@ public class MergeLayerAction extends AbstractMergeAction {
                 }
                 if (layerMerged) {
                     Main.getLayerManager().setActiveLayer(targetLayer);
-                    Main.info(tr("{0} completed in {1}", actionName, Utils.getDurationString(System.currentTimeMillis() - start)));
+                    Logging.info(tr("{0} completed in {1}", actionName, Utils.getDurationString(System.currentTimeMillis() - start)));
                 }
         });
     }
@@ -117,7 +118,7 @@ public class MergeLayerAction extends AbstractMergeAction {
                     } catch (IllegalStateException e) {
                         // May occur when destroying last layer / exiting JOSM, see #14476
                         setEnabled(false);
-                        Main.error(e);
+                        Logging.error(e);
                     }
                 }
         });

@@ -9,13 +9,13 @@ import org.apache.commons.jcs.access.CacheAccess;
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.data.imagery.CachedTileLoaderFactory;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.TileLoaderFactory;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  *
@@ -90,7 +90,7 @@ public abstract class AbstractCachedTileSourceLayer<T extends AbstractTMSTileSou
                     CachedTileLoaderFactory.PROP_TILECACHE_DIR.get());
             return cache;
         } catch (IOException e) {
-            Main.warn(e);
+            Logging.warn(e);
             return null;
         }
     }
@@ -130,7 +130,7 @@ public abstract class AbstractCachedTileSourceLayer<T extends AbstractTMSTileSou
                         MAX_DISK_CACHE_SIZE.get() * 1024, // MAX_DISK_CACHE_SIZE is in MB, needs to by in sync with getDiskCacheSize
                         CachedTileLoaderFactory.PROP_TILECACHE_DIR.get());
             } catch (IOException e) {
-                Main.warn(e);
+                Logging.warn(e);
                 return null;
             }
     }

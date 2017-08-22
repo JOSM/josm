@@ -27,6 +27,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
 
 /**
@@ -122,8 +123,8 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
             if (isCanceled() || isFailed() || notesData == null || notesData.isEmpty()) {
                 return;
             }
-            if (Main.isDebugEnabled()) {
-                Main.debug("Notes downloaded: " + notesData.size());
+            if (Logging.isDebugEnabled()) {
+                Logging.debug("Notes downloaded: {0}", notesData.size());
             }
 
             noteLayer = new NoteLayer(notesData, tr("Notes"));
@@ -165,7 +166,7 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
             try {
                 notesData = reader.parseNotes(DOWNLOAD_LIMIT.get(), DAYS_CLOSED.get(), subMonitor);
             } catch (MoreNotesException e) {
-                Main.debug(e);
+                Logging.debug(e);
                 notesData = e.notes;
                 JOptionPane.showMessageDialog(Main.parent, "<html>"
                                 + trn("{0} note has been downloaded.", "{0} notes have been downloaded.", e.limit, e.limit)

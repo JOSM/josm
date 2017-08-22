@@ -14,7 +14,6 @@ import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
@@ -22,6 +21,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.auth.CredentialsAgent;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * The preferences panel for parameters necessary for the Basic Authentication Scheme.
@@ -106,9 +106,9 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
                 tfOsmPassword.setText(pa.getPassword() == null ? "" : String.valueOf(pa.getPassword()));
             }
         } catch (CredentialsAgentException e) {
-            Main.error(e);
-            Main.warn(tr("Failed to retrieve OSM credentials from credential manager."));
-            Main.warn(tr("Current credential manager is of type ''{0}''", cm.getClass().getName()));
+            Logging.error(e);
+            Logging.warn(tr("Failed to retrieve OSM credentials from credential manager."));
+            Logging.warn(tr("Current credential manager is of type ''{0}''", cm.getClass().getName()));
             tfOsmUserName.setText("");
             tfOsmPassword.setText("");
         }
@@ -126,9 +126,9 @@ public class BasicAuthenticationPreferencesPanel extends JPanel {
             );
             cm.store(RequestorType.SERVER, OsmApi.getOsmApi().getHost(), pa);
         } catch (CredentialsAgentException e) {
-            Main.error(e);
-            Main.warn(tr("Failed to save OSM credentials to credential manager."));
-            Main.warn(tr("Current credential manager is of type ''{0}''", cm.getClass().getName()));
+            Logging.error(e);
+            Logging.warn(tr("Failed to save OSM credentials to credential manager."));
+            Logging.warn(tr("Current credential manager is of type ''{0}''", cm.getClass().getName()));
         }
     }
 

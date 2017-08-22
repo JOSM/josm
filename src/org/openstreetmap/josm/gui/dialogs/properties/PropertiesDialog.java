@@ -104,6 +104,7 @@ import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -1171,7 +1172,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
 
                 Main.worker.execute(() -> displayHelp(uris));
             } catch (URISyntaxException e1) {
-                Main.error(e1);
+                Logging.error(e1);
             }
         }
 
@@ -1201,7 +1202,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
                          *  content lengths, so we have to be fuzzy.. (this is UGLY, recode if u know better)
                          */
                         if (osize > -1 && conn.getContentLength() != -1 && Math.abs(conn.getContentLength() - osize) > 200) {
-                            Main.info("{0} is a mediawiki redirect", u);
+                            Logging.info("{0} is a mediawiki redirect", u);
                             conn.disconnect();
                         } else {
                             conn.disconnect();
@@ -1212,7 +1213,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
                     }
                 }
             } catch (URISyntaxException | IOException e1) {
-                Main.error(e1);
+                Logging.error(e1);
             }
         }
     }
@@ -1414,8 +1415,8 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
             try {
                 tagRowSorter.convertRowIndexToModel(tagTable.getSelectedRow());
             } catch (IndexOutOfBoundsException ignore) {
-                Main.trace(ignore);
-                Main.trace("Clearing tagTable selection");
+                Logging.trace(ignore);
+                Logging.trace("Clearing tagTable selection");
                 tagTable.clearSelection();
             }
         }

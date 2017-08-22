@@ -11,8 +11,8 @@ import java.time.format.FormatStyle;
 
 import javax.swing.text.JTextComponent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Validates dates entered as text in a {@link JTextComponent}. Validates the input
@@ -95,7 +95,7 @@ public class DateValidator extends AbstractTextComponentValidator {
                 return LocalDate.parse(getComponent().getText(), df);
             } catch (DateTimeParseException e) {
                 // Try next format
-                Main.trace(e);
+                Logging.trace(e);
             }
         }
         return null;

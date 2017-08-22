@@ -24,12 +24,12 @@ import javax.imageio.ImageIO;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.HttpClient.Response;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -222,14 +222,14 @@ public class WMSImagery {
             }
             serviceUrl = new URL(serviceUrlStr);
         } catch (HeadlessException e) {
-            Main.warn(e);
+            Logging.warn(e);
             return;
         }
 
         final Response response = HttpClient.create(getCapabilitiesUrl).connect();
         final String incomingData = response.fetchContent();
-        Main.debug("Server response to Capabilities request:");
-        Main.debug(incomingData);
+        Logging.debug("Server response to Capabilities request:");
+        Logging.debug(incomingData);
 
         if (response.getResponseCode() >= 400) {
             throw new WMSGetCapabilitiesException(response.getResponseMessage(), incomingData);
@@ -238,7 +238,7 @@ public class WMSImagery {
         try {
             DocumentBuilder builder = Utils.newSafeDOMBuilder();
             builder.setEntityResolver((publicId, systemId) -> {
-                Main.info("Ignoring DTD " + publicId + ", " + systemId);
+                Logging.info("Ignoring DTD " + publicId + ", " + systemId);
                 return new InputSource(new StringReader(""));
             });
             Document document = builder.parse(new InputSource(new StringReader(incomingData)));
@@ -266,7 +266,7 @@ public class WMSImagery {
             if (child != null) {
                 String baseURL = child.getAttribute("xlink:href");
                 if (!baseURL.equals(serviceUrlStr)) {
-                    Main.info("GetCapabilities specifies a different service URL: " + baseURL);
+                    Logging.info("GetCapabilities specifies a different service URL: " + baseURL);
                     serviceUrl = new URL(baseURL);
                 }
             }
@@ -282,7 +282,7 @@ public class WMSImagery {
     private static boolean isImageFormatSupportedWarn(String format) {
         boolean isFormatSupported = isImageFormatSupported(format);
         if (!isFormatSupported) {
-            Main.info("Skipping unsupported image format {0}", format);
+            Logging.info("Skipping unsupported image format {0}", format);
         }
         return isFormatSupported;
     }

@@ -28,6 +28,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -200,7 +201,7 @@ public class PluginInformation {
         className = attr.getValue("Plugin-Class");
         String s = Optional.ofNullable(attr.getValue(lang+"Plugin-Link")).orElseGet(() -> attr.getValue("Plugin-Link"));
         if (s != null && !Utils.isValidUrl(s)) {
-            Main.info(tr("Invalid URL ''{0}'' in plugin {1}", s, name));
+            Logging.info(tr("Invalid URL ''{0}'' in plugin {1}", s, name));
             s = null;
         }
         link = s;
@@ -212,8 +213,8 @@ public class PluginInformation {
                 try {
                     s = tr(s);
                 } catch (IllegalArgumentException e) {
-                    Main.debug(e);
-                    Main.info(tr("Invalid plugin description ''{0}'' in plugin {1}", s, name));
+                    Logging.debug(e);
+                    Logging.info(tr("Invalid plugin description ''{0}'' in plugin {1}", s, name));
                 }
             }
         } else {
@@ -229,10 +230,10 @@ public class PluginInformation {
             try {
                 mainversion = Integer.parseInt(s);
             } catch (NumberFormatException e) {
-                Main.warn(tr("Invalid plugin main version ''{0}'' in plugin {1}", s, name));
+                Logging.warn(tr("Invalid plugin main version ''{0}'' in plugin {1}", s, name));
             }
         } else {
-            Main.warn(tr("Missing plugin main version in plugin {0}", name));
+            Logging.warn(tr("Missing plugin main version in plugin {0}", name));
         }
         author = attr.getValue("Author");
         iconPath = attr.getValue("Plugin-Icon");
@@ -264,7 +265,7 @@ public class PluginInformation {
                         }
                     }
                 } catch (NumberFormatException e) {
-                    Main.error(e);
+                    Logging.error(e);
                 }
             }
         }
@@ -390,7 +391,7 @@ public class PluginInformation {
                 return new PluginInformation(manifestStream, pluginName, null);
             }
         } catch (IOException e) {
-            Main.warn(e);
+            Logging.warn(e);
         }
 
         Collection<String> locations = getPluginLocations();

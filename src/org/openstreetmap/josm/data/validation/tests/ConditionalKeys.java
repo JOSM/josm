@@ -12,12 +12,12 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
@@ -206,7 +206,7 @@ public class ConditionalKeys extends Test.TagTest {
                 }
             }
         } catch (ConditionalParsingException ex) {
-            Main.debug(ex);
+            Logging.debug(ex);
             return ex.getMessage();
         }
         return null;

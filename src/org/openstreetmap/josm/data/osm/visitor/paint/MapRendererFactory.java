@@ -16,6 +16,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * <p>MapRendererFactory manages a list of map renderer classes and associated
@@ -137,10 +138,10 @@ public final class MapRendererFactory {
             try {
                 return Class.forName(className, true, cl);
             } catch (final NoClassDefFoundError | ClassNotFoundException e) {
-                Main.trace(e);
+                Logging.trace(e);
             }
         }
-        Main.error(tr("Failed to load map renderer class ''{0}''. The class wasn''t found.", className));
+        Logging.error(tr("Failed to load map renderer class ''{0}''. The class wasn''t found.", className));
         return null;
     }
 
@@ -160,19 +161,20 @@ public final class MapRendererFactory {
     private void activateMapRenderer(String rendererClassName) {
         Class<?> c = loadRendererClass(rendererClassName);
         if (c == null) {
-            Main.error(tr("Can''t activate map renderer class ''{0}'', because the class wasn''t found.", rendererClassName));
-            Main.error(tr("Activating the standard map renderer instead."));
+            Logging.error(tr("Can''t activate map renderer class ''{0}'', because the class wasn''t found.", rendererClassName));
+            Logging.error(tr("Activating the standard map renderer instead."));
             activateDefault();
         } else if (!AbstractMapRenderer.class.isAssignableFrom(c)) {
-            Main.error(tr("Can''t activate map renderer class ''{0}'', because it isn''t a subclass of ''{1}''.",
+            Logging.error(tr("Can''t activate map renderer class ''{0}'', because it isn''t a subclass of ''{1}''.",
                     rendererClassName, AbstractMapRenderer.class.getName()));
-            Main.error(tr("Activating the standard map renderer instead."));
+            Logging.error(tr("Activating the standard map renderer instead."));
             activateDefault();
         } else {
             Class<? extends AbstractMapRenderer> renderer = c.asSubclass(AbstractMapRenderer.class);
             if (!isRegistered(renderer)) {
-                Main.error(tr("Can''t activate map renderer class ''{0}'', because it isn''t registered as map renderer.", rendererClassName));
-                Main.error(tr("Activating the standard map renderer instead."));
+                Logging.error(tr("Can''t activate map renderer class ''{0}'', because it isn''t registered as map renderer.",
+                        rendererClassName));
+                Logging.error(tr("Activating the standard map renderer instead."));
                 activateDefault();
             } else {
                 activate(renderer);
@@ -305,7 +307,7 @@ public final class MapRendererFactory {
             Constructor<?> c = activeRenderer.getConstructor(Graphics2D.class, NavigatableComponent.class, boolean.class);
             return AbstractMapRenderer.class.cast(c.newInstance(g, viewport, isInactiveMode));
         } catch (InvocationTargetException e) {
-            Main.debug(e);
+            Logging.debug(e);
             throw new MapRendererFactoryException(e.getCause());
         } catch (ReflectiveOperationException | IllegalArgumentException e) {
             throw new MapRendererFactoryException(e);

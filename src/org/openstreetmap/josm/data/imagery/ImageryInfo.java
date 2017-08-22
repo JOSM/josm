@@ -33,6 +33,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -420,7 +421,7 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
                         bounds.addShape(new Shape(s, ","));
                     }
                 } catch (IllegalArgumentException ex) {
-                    Main.warn(ex);
+                    Logging.warn(ex);
                 }
             }
         }

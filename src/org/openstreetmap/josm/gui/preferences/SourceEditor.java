@@ -93,6 +93,7 @@ import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
@@ -992,7 +993,7 @@ public abstract class SourceEditor extends JPanel {
                     ff = new ExtensionFileFilter("validator.mapcss,zip", "validator.mapcss", tr("Tag checker rule (*.validator.mapcss, *.zip)"));
                     break;
                 default:
-                    Main.error("Unsupported source type: "+sourceType);
+                    Logging.error("Unsupported source type: "+sourceType);
                     return;
                 }
                 FileChooserManager fcm = new FileChooserManager(true)
@@ -1514,7 +1515,7 @@ public abstract class SourceEditor extends JPanel {
                 readFile();
                 for (Iterator<ExtendedSourceEntry> it = sources.iterator(); it.hasNext();) {
                     if ("xml".equals(it.next().styleType)) {
-                        Main.debug("Removing XML source entry");
+                        Logging.debug("Removing XML source entry");
                         it.remove();
                     }
                 }
@@ -1543,7 +1544,7 @@ public abstract class SourceEditor extends JPanel {
                     if (line.startsWith("\t")) {
                         Matcher m = Pattern.compile("^\t([^:]+): *(.+)$").matcher(line);
                         if (!m.matches()) {
-                            Main.error(tr(getStr(I18nString.ILLEGAL_FORMAT_OF_ENTRY), url, line));
+                            Logging.error(tr(getStr(I18nString.ILLEGAL_FORMAT_OF_ENTRY), url, line));
                             continue;
                         }
                         if (last != null) {
@@ -1578,7 +1579,7 @@ public abstract class SourceEditor extends JPanel {
                                     last.minJosmVersion = Integer.valueOf(value);
                                 } catch (NumberFormatException e) {
                                     // ignore
-                                    Main.trace(e);
+                                    Logging.trace(e);
                                 }
                             } else if ("style-type".equals(key)) {
                                 last.styleType = value;
@@ -1591,7 +1592,7 @@ public abstract class SourceEditor extends JPanel {
                             last = new ExtendedSourceEntry(m.group(1), m.group(2));
                             sources.add(last);
                         } else {
-                            Main.error(tr(getStr(I18nString.ILLEGAL_FORMAT_OF_ENTRY), url, line));
+                            Logging.error(tr(getStr(I18nString.ILLEGAL_FORMAT_OF_ENTRY), url, line));
                         }
                     }
                 }

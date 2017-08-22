@@ -28,6 +28,7 @@ import org.openstreetmap.josm.io.OsmChangeImporter;
 import org.openstreetmap.josm.io.OsmImporter;
 import org.openstreetmap.josm.io.WMSLayerImporter;
 import org.openstreetmap.josm.io.session.SessionImporter;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -74,7 +75,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
                 FileImporter importer = importerClass.getConstructor().newInstance();
                 importers.add(importer);
             } catch (ReflectiveOperationException e) {
-                Main.debug(e);
+                Logging.debug(e);
             } catch (ServiceConfigurationError e) {
                 // error seen while initializing WMSLayerImporter in plugin unit tests:
                 // -
@@ -90,7 +91,7 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
                 // http://thierrywasyl.wordpress.com/2009/07/24/jai-how-to-solve-vendorname-null-exception/
                 // -
                 // that can lead to various problems, see #8583 comments
-                Main.error(e);
+                Logging.error(e);
             }
         }
 
@@ -112,10 +113,10 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
                 exporters.add(exporter);
                 Main.getLayerManager().addAndFireActiveLayerChangeListener(exporter);
             } catch (ReflectiveOperationException e) {
-                Main.debug(e);
+                Logging.debug(e);
             } catch (ServiceConfigurationError e) {
                 // see above in importers initialization
-                Main.error(e);
+                Logging.error(e);
             }
         }
     }

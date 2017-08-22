@@ -81,6 +81,7 @@ import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
@@ -290,7 +291,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     data.storageFile = sel;
 
                 } catch (SAXException ex) {
-                    Main.error(ex);
+                    Logging.error(ex);
                     JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("Error while parsing {0}", sel.getName())+": "+ex.getMessage(),
@@ -299,7 +300,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                     );
                     return;
                 } catch (IOException ex) {
-                    Main.error(ex);
+                    Logging.error(ex);
                     JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("Could not read \"{0}\"", sel.getName())+'\n'+ex.getMessage(),
@@ -933,7 +934,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 final long deciSeconds = timezoneOffsetPair.b.getMilliseconds() / 100;
                 sldSeconds.setValue((int) (deciSeconds % 60));
             } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
-                Main.warn(e);
+                Logging.warn(e);
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("An error occurred while trying to match the photos to the GPX track."
                                 +" You can adjust the sliders to manually match the photos."),
@@ -1013,13 +1014,13 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 timezone = r.a;
                 delta = r.b;
             } catch (IndexOutOfBoundsException ex) {
-                Main.debug(ex);
+                Logging.debug(ex);
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("The selected photos do not contain time information."),
                         tr("Photos do not contain time information"), JOptionPane.WARNING_MESSAGE);
                 return;
             } catch (NoGpxTimestamps ex) {
-                Main.debug(ex);
+                Logging.debug(ex);
                 JOptionPane.showMessageDialog(Main.parent,
                         tr("The selected GPX track does not contain timestamps. Please select another one."),
                         tr("GPX Track has no time information"), JOptionPane.WARNING_MESSAGE);
@@ -1132,7 +1133,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             try {
                 return Double.valueOf(value);
             } catch (NumberFormatException e) {
-                Main.warn(e);
+                Logging.warn(e);
             }
         }
         return null;

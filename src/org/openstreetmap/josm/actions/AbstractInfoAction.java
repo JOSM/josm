@@ -20,6 +20,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -138,7 +139,7 @@ public abstract class AbstractInfoAction extends JosmAction {
         if (url != null) {
             String result = OpenBrowser.displayUrl(url);
             if (result != null) {
-                Main.warn(result);
+                Logging.warn(result);
             }
         }
     }

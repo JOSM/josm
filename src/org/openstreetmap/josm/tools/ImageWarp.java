@@ -62,7 +62,7 @@ public class ImageWarp {
             this.trfm = trfm;
             this.stride = stride;
             this.cache = new HashMap<>();
-            this.consistencyTest = Main.isDebugEnabled();
+            this.consistencyTest = Logging.isDebugEnabled();
             if (consistencyTest) {
                 deletedRows = new HashSet<>();
             } else {

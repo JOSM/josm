@@ -19,7 +19,6 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.data.oauth.OsmPrivileges;
@@ -28,6 +27,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 import oauth.signpost.OAuth;
@@ -179,10 +179,10 @@ public class OsmOAuthAuthorizationClient {
                 }
             }
         } catch (IOException e) {
-            Main.error(e);
+            Logging.error(e);
             return null;
         }
-        Main.warn("No authenticity_token found in response!");
+        Logging.warn("No authenticity_token found in response!");
         return null;
     }
 
@@ -192,7 +192,7 @@ public class OsmOAuthAuthorizationClient {
                 .get(connection.getURL().toURI(), Collections.<String, List<String>>emptyMap())
                 .get("Cookie");
         if (setCookies == null) {
-            Main.warn("No 'Set-Cookie' in response header!");
+            Logging.warn("No 'Set-Cookie' in response header!");
             return null;
         }
 
@@ -219,7 +219,7 @@ public class OsmOAuthAuthorizationClient {
                 }
             }
         }
-        Main.warn("No suitable 'Set-Cookie' in response header found! {0}", setCookies);
+        Logging.warn("No suitable 'Set-Cookie' in response header found! {0}", setCookies);
         return null;
     }
 
@@ -328,7 +328,7 @@ public class OsmOAuthAuthorizationClient {
                 throw new OsmOAuthAuthorizationException(tr("Failed to authenticate user ''{0}'' with password ''***'' as OAuth user",
                         userName));
         } catch (OsmOAuthAuthorizationException e) {
-            Main.debug(e);
+            Logging.debug(e);
             throw new OsmLoginFailedException(e.getCause());
         } catch (IOException e) {
             throw new OsmLoginFailedException(e);

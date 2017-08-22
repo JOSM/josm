@@ -61,7 +61,7 @@ public final class Territories {
     public static synchronized boolean isIso3166Code(String code, LatLon ll) {
         GeoPropertyIndex<Boolean> gpi = iso3166Cache.get(code);
         if (gpi == null) {
-            Main.warn(tr("Unknown territory id: {0}", code));
+            Logging.warn(tr("Unknown territory id: {0}", code));
             return false;
         }
         return gpi.get(ll);

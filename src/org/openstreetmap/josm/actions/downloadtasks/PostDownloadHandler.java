@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.ExceptionUtil;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -61,7 +62,7 @@ public class PostDownloadHandler implements Runnable {
         try {
             future.get();
         } catch (InterruptedException | ExecutionException | CancellationException e) {
-            Main.error(e);
+            Logging.error(e);
             return;
         }
 

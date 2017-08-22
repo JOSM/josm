@@ -36,6 +36,7 @@ import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
@@ -359,7 +360,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                 dataSet = parseDataSet();
             } catch (OsmTransferException e) {
                 if (isCanceled()) {
-                    Main.info(tr("Ignoring exception because download has been canceled. Exception was: {0}", e.toString()));
+                    Logging.info(tr("Ignoring exception because download has been canceled. Exception was: {0}", e.toString()));
                     return;
                 }
                 if (e instanceof OsmTransferCanceledException) {

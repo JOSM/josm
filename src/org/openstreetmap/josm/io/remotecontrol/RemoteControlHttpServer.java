@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.net.SocketException;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Simple HTTP server that spawns a {@link RequestProcessor} for every
@@ -36,8 +37,8 @@ public class RemoteControlHttpServer extends Thread {
             instance4 = new RemoteControlHttpServer(port, false);
             instance4.start();
         } catch (IOException ex) {
-            Main.debug(ex);
-            Main.warn(marktr("Cannot start IPv4 remotecontrol server on port {0}: {1}"),
+            Logging.debug(ex);
+            Logging.warn(marktr("Cannot start IPv4 remotecontrol server on port {0}: {1}"),
                     Integer.toString(port), ex.getLocalizedMessage());
         }
         try {
@@ -46,8 +47,8 @@ public class RemoteControlHttpServer extends Thread {
         } catch (IOException ex) {
             /* only show error when we also have no IPv4 */
             if (instance4 == null) {
-                Main.debug(ex);
-                Main.warn(marktr("Cannot start IPv6 remotecontrol server on port {0}: {1}"),
+                Logging.debug(ex);
+                Logging.warn(marktr("Cannot start IPv6 remotecontrol server on port {0}: {1}"),
                     Integer.toString(port), ex.getLocalizedMessage());
             }
         }
@@ -62,7 +63,7 @@ public class RemoteControlHttpServer extends Thread {
             try {
                 instance4.stopServer();
             } catch (IOException ioe) {
-                Main.error(ioe);
+                Logging.error(ioe);
             }
             instance4 = null;
         }
@@ -70,7 +71,7 @@ public class RemoteControlHttpServer extends Thread {
             try {
                 instance6.stopServer();
             } catch (IOException ioe) {
-                Main.error(ioe);
+                Logging.error(ioe);
             }
             instance6 = null;
         }
@@ -95,7 +96,7 @@ public class RemoteControlHttpServer extends Thread {
      */
     @Override
     public void run() {
-        Main.info(marktr("RemoteControl::Accepting remote connections on {0}:{1}"),
+        Logging.info(marktr("RemoteControl::Accepting remote connections on {0}:{1}"),
                 server.getInetAddress(), Integer.toString(server.getLocalPort()));
         while (true) {
             try {
@@ -104,13 +105,13 @@ public class RemoteControlHttpServer extends Thread {
                 RequestProcessor.processRequest(request);
             } catch (SocketException e) {
                 if (!server.isClosed()) {
-                    Main.error(e);
+                    Logging.error(e);
                 } else {
                     // stop the thread automatically if server is stopped
                     return;
                 }
             } catch (IOException ioe) {
-                Main.error(ioe);
+                Logging.error(ioe);
             }
         }
     }
@@ -121,7 +122,7 @@ public class RemoteControlHttpServer extends Thread {
      * @throws IOException if any I/O error occurs
      */
     public void stopServer() throws IOException {
-        Main.info(marktr("RemoteControl::Server {0}:{1} stopped."),
+        Logging.info(marktr("RemoteControl::Server {0}:{1} stopped."),
         server.getInetAddress(), Integer.toString(server.getLocalPort()));
         server.close();
     }

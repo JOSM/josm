@@ -6,11 +6,11 @@ import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
 import java.util.Objects;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * CredentialManager is a factory for the single credential agent used.
@@ -103,7 +103,7 @@ public class CredentialsManager implements CredentialsAgent {
                 username = auth.getUserName();
             }
         } catch (CredentialsAgentException ex) {
-            Main.debug(ex);
+            Logging.debug(ex);
             return null;
         }
         if (username == null) return null;

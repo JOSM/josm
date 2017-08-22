@@ -15,13 +15,13 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Optional;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.io.IllegalDataException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -208,7 +208,7 @@ public class NmeaReader {
             data.tracks.add(new ImmutableGpxTrack(currentTrack, Collections.<String, Object>emptyMap()));
 
         } catch (IllegalDataException e) {
-            Main.warn(e);
+            Logging.warn(e);
         }
     }
 
@@ -479,9 +479,9 @@ public class NmeaReader {
 
         } catch (IllegalArgumentException | IndexOutOfBoundsException | IllegalDataException ex) {
             if (ps.malformed < 5) {
-                Main.warn(ex);
+                Logging.warn(ex);
             } else {
-                Main.debug(ex);
+                Logging.debug(ex);
             }
             ps.malformed++;
             ps.pWp = null;

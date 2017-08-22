@@ -36,6 +36,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.Capabilities.CapabilitiesParser;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlParsingException;
 import org.xml.sax.InputSource;
@@ -154,7 +155,7 @@ public class OsmApi extends OsmConnection {
         try {
             host = (new URL(serverUrl)).getHost();
         } catch (MalformedURLException e) {
-            Main.warn(e);
+            Logging.warn(e);
         }
         return host;
     }
@@ -211,21 +212,21 @@ public class OsmApi extends OsmConnection {
             try {
                 initializeCapabilities(cache.updateIfRequiredString());
             } catch (SAXParseException parseException) {
-                Main.trace(parseException);
+                Logging.trace(parseException);
                 // XML parsing may fail if JOSM previously stored a corrupted capabilities document (see #8278)
                 // In that case, force update and try again
                 initializeCapabilities(cache.updateForceString());
             }
             if (capabilities == null) {
                 if (Main.isOffline(OnlineResource.OSM_API)) {
-                    Main.warn(tr("{0} not available (offline mode)", tr("OSM API")));
+                    Logging.warn(tr("{0} not available (offline mode)", tr("OSM API")));
                 } else {
-                    Main.error(tr("Unable to initialize OSM API."));
+                    Logging.error(tr("Unable to initialize OSM API."));
                 }
                 return;
             } else if (!capabilities.supportsVersion("0.6")) {
-                Main.error(tr("This version of JOSM is incompatible with the configured server."));
-                Main.error(tr("It supports protocol version 0.6, while the server says it supports {0} to {1}.",
+                Logging.error(tr("This version of JOSM is incompatible with the configured server."));
+                Logging.error(tr("It supports protocol version 0.6, while the server says it supports {0} to {1}.",
                         capabilities.get("version", "minimum"), capabilities.get("version", "maximum")));
                 return;
             } else {
@@ -242,7 +243,7 @@ public class OsmApi extends OsmConnection {
             if (Main.isDisplayingMapView()) {
                 for (Layer l : Main.getLayerManager().getLayersOfType(ImageryLayer.class)) {
                     if (((ImageryLayer) l).getInfo().isBlacklisted()) {
-                        Main.info(tr("Removed layer {0} because it is not allowed by the configured API.", l.getName()));
+                        Logging.info(tr("Removed layer {0} because it is not allowed by the configured API.", l.getName()));
                         Main.getLayerManager().removeLayer(l);
                     }
                 }
@@ -283,7 +284,7 @@ public class OsmApi extends OsmConnection {
             osmWriter.footer();
             osmWriter.flush();
         } catch (IOException e) {
-            Main.warn(e);
+            Logging.warn(e);
         }
         return swriter.toString();
     }
@@ -302,7 +303,7 @@ public class OsmApi extends OsmConnection {
             osmWriter.footer();
             osmWriter.flush();
         } catch (IOException e) {
-            Main.warn(e);
+            Logging.warn(e);
         }
         return swriter.toString();
     }
@@ -551,7 +552,7 @@ public class OsmApi extends OsmConnection {
     }
 
     private void sleepAndListen(int retry, ProgressMonitor monitor) throws OsmTransferCanceledException {
-        Main.info(tr("Waiting 10 seconds ... "));
+        Logging.info(tr("Waiting 10 seconds ... "));
         for (int i = 0; i < 10; i++) {
             if (monitor != null) {
                 monitor.setCustomText(tr("Starting retry {0} of {1} in {2} seconds ...", getMaxRetries() - retry, getMaxRetries(), 10-i));
@@ -561,11 +562,11 @@ public class OsmApi extends OsmConnection {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException ex) {
-                Main.warn("InterruptedException in "+getClass().getSimpleName()+" during sleep");
+                Logging.warn("InterruptedException in "+getClass().getSimpleName()+" during sleep");
                 Thread.currentThread().interrupt();
             }
         }
-        Main.info(tr("OK - trying again."));
+        Logging.info(tr("OK - trying again."));
     }
 
     /**
@@ -651,12 +652,12 @@ public class OsmApi extends OsmConnection {
                 }
 
                 final HttpClient.Response response = client.connect();
-                Main.info(response.getResponseMessage());
+                Logging.info(response.getResponseMessage());
                 int retCode = response.getResponseCode();
 
                 if (retCode >= 500 && retries-- > 0) {
                     sleepAndListen(retries, monitor);
-                    Main.info(tr("Starting retry {0} of {1}.", getMaxRetries() - retries, getMaxRetries()));
+                    Logging.info(tr("Starting retry {0} of {1}.", getMaxRetries() - retries, getMaxRetries()));
                     continue;
                 }
 
@@ -666,9 +667,9 @@ public class OsmApi extends OsmConnection {
                 // Look for a detailed error message from the server
                 if (response.getHeaderField("Error") != null) {
                     errorHeader = response.getHeaderField("Error");
-                    Main.error("Error header: " + errorHeader);
+                    Logging.error("Error header: " + errorHeader);
                 } else if (retCode != HttpURLConnection.HTTP_OK && responseBody.length() > 0) {
-                    Main.error("Error body: " + responseBody);
+                    Logging.error("Error body: " + responseBody);
                 }
                 activeConnection.disconnect();
 
@@ -858,7 +859,7 @@ public class OsmApi extends OsmConnection {
             // Shouldn't ever execute. Server will either respond with an error (caught elsewhere) or one note
             throw new OsmTransferException(tr("Note upload failed"));
         } catch (SAXException | IOException e) {
-            Main.error(e, true);
+            Logging.error(e);
             throw new OsmTransferException(tr("Error parsing note response from server"), e);
         }
     }

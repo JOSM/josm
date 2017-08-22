@@ -14,7 +14,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -32,6 +31,7 @@ import org.openstreetmap.josm.data.projection.proj.Mercator;
 import org.openstreetmap.josm.data.projection.proj.Proj;
 import org.openstreetmap.josm.data.projection.proj.ProjParameters;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
@@ -230,7 +230,7 @@ public class CustomProjection extends AbstractProjection {
         try {
             update(pref);
         } catch (ProjectionConfigurationException ex) {
-            Main.trace(ex);
+            Logging.trace(ex);
             try {
                 update(null);
             } catch (ProjectionConfigurationException ex1) {
@@ -700,7 +700,7 @@ public class CustomProjection extends AbstractProjection {
             try {
                 return Integer.valueOf(code.substring(5));
             } catch (NumberFormatException e) {
-                Main.warn(e);
+                Logging.warn(e);
             }
         }
         return null;
@@ -857,7 +857,7 @@ public class CustomProjection extends AbstractProjection {
                         }
                     }
                 } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
-                    Main.error(e);
+                    Logging.error(e);
                 }
             }
         }

@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.Preferences.pref;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 
 /**
@@ -215,7 +216,7 @@ public final class TagConflictResolutionUtil {
                 } catch (PatternSyntaxException e) {
                     // Can happen if a particular resolver has an invalid regular expression pattern
                     // but it should not stop the other automatic tag conflict resolution.
-                    Main.error(e);
+                    Logging.error(e);
                 }
             }
         }

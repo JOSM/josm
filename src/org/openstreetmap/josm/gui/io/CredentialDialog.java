@@ -38,6 +38,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -112,7 +113,7 @@ public class CredentialDialog extends JDialog {
         try {
             setAlwaysOnTop(true);
         } catch (SecurityException e) {
-            Main.warn(e, tr("Failed to put Credential Dialog always on top. Caught security exception."));
+            Logging.log(Logging.LEVEL_WARN, tr("Failed to put Credential Dialog always on top. Caught security exception."), e);
         }
         build();
     }

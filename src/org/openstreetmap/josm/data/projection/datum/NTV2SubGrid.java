@@ -24,7 +24,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -151,7 +151,7 @@ public class NTV2SubGrid implements Serializable {
 
     private static void readBytes(InputStream in, byte[] b) throws IOException {
         if (in.read(b) < b.length) {
-            Main.error("Failed to read expected amount of bytes ("+ b.length +") from stream");
+            Logging.error("Failed to read expected amount of bytes ("+ b.length +") from stream");
         }
     }
 

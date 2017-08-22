@@ -44,12 +44,12 @@ import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -109,7 +109,7 @@ public class PrefJPanel extends JPanel {
                         list.put(Integer.valueOf(i), s);
                     }
                 } catch (IllegalArgumentException | IllegalAccessException e) {
-                    Main.error(e);
+                    Logging.error(e);
                 }
             }
         }
@@ -389,7 +389,7 @@ public class PrefJPanel extends JPanel {
                 }
                 model.fireTableDataChanged();
             } catch (PatternSyntaxException | ClassCastException ex) {
-                Main.warn(ex);
+                Logging.warn(ex);
             }
         }
 

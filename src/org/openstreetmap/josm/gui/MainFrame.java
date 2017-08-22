@@ -27,6 +27,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.LayerStateChangeListener;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
@@ -143,7 +144,7 @@ public class MainFrame extends JFrame {
                 windowState = JFrame.MAXIMIZED_BOTH;
                 setExtendedState(windowState);
             } else {
-                Main.debug("Main window: maximizing not supported");
+                Logging.debug("Main window: maximizing not supported");
             }
         } else {
             throw new UnsupportedOperationException("Unimplemented.");

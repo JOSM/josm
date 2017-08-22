@@ -14,7 +14,6 @@ import java.util.Stack;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryBounds;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
@@ -23,6 +22,7 @@ import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
@@ -96,7 +96,7 @@ public class ImageryReader implements Closeable {
         } catch (SAXException e) {
             throw e;
         } catch (ParserConfigurationException e) {
-            Main.error(e); // broken SAXException chaining
+            Logging.error(e); // broken SAXException chaining
             throw new SAXException(e);
         }
     }
@@ -218,7 +218,7 @@ public class ImageryReader implements Closeable {
                                         atts.getValue("max-lat") + ',' +
                                         atts.getValue("max-lon"), ",");
                     } catch (IllegalArgumentException e) {
-                        Main.trace(e);
+                        Logging.trace(e);
                         break;
                     }
                     newState = State.BOUNDS;
@@ -251,7 +251,7 @@ public class ImageryReader implements Closeable {
                     try {
                         shape.addPoint(atts.getValue("lat"), atts.getValue("lon"));
                     } catch (IllegalArgumentException e) {
-                        Main.trace(e);
+                        Logging.trace(e);
                         break;
                     }
                 }

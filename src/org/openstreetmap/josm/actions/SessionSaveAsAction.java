@@ -41,6 +41,7 @@ import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.session.SessionLayerExporter;
 import org.openstreetmap.josm.io.session.SessionWriter;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.UserCancelException;
 import org.openstreetmap.josm.tools.Utils;
@@ -80,7 +81,7 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
         try {
             saveSession();
         } catch (UserCancelException ignore) {
-            Main.trace(ignore);
+            Logging.trace(ignore);
         }
     }
 
@@ -166,7 +167,7 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
             sw.write(file);
             SaveActionBase.addToFileOpenHistory(file);
         } catch (IOException ex) {
-            Main.error(ex);
+            Logging.error(ex);
             HelpAwareOptionPane.showMessageDialogInEDT(
                     Main.parent,
                     tr("<html>Could not save session file ''{0}''.<br>Error is:<br>{1}</html>",

@@ -28,7 +28,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive.KeyValueVisitor;
@@ -61,6 +60,7 @@ import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -436,16 +436,16 @@ public class MapCSSStyleSource extends StyleSource {
                     closeSourceInputStream(in);
                 }
             } catch (IOException e) {
-                Main.warn(tr("Failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
-                Main.error(e);
+                Logging.warn(tr("Failed to load Mappaint styles from ''{0}''. Exception was: {1}", url, e.toString()));
+                Logging.error(e);
                 logError(e);
             } catch (TokenMgrError e) {
-                Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
-                Main.error(e);
+                Logging.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
+                Logging.error(e);
                 logError(e);
             } catch (ParseException e) {
-                Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
-                Main.error(e);
+                Logging.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
+                Logging.error(e);
                 logError(new ParseException(e.getMessage())); // allow e to be garbage collected, it links to the entire token stream
             }
             // optimization: filter rules for different primitive types
@@ -488,8 +488,8 @@ public class MapCSSStyleSource extends StyleSource {
                         break;
                     default:
                         final RuntimeException e = new JosmRuntimeException(MessageFormat.format("Unknown MapCSS base selector {0}", base));
-                        Main.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
-                        Main.error(e);
+                        Logging.warn(tr("Failed to parse Mappaint styles from ''{0}''. Error was: {1}", url, e.getMessage()));
+                        Logging.error(e);
                         logError(e);
                 }
             }
@@ -582,7 +582,7 @@ public class MapCSSStyleSource extends StyleSource {
         }
         for (Entry<String, Cascade> e : mc.getLayers()) {
             if ("default".equals(e.getKey())) {
-                Main.warn("setting requires layer identifier e.g. 'setting::my_setting {...}'");
+                Logging.warn("setting requires layer identifier e.g. 'setting::my_setting {...}'");
                 continue;
             }
             Cascade c = e.getValue();
@@ -591,7 +591,7 @@ public class MapCSSStyleSource extends StyleSource {
             if ("boolean".equals(type)) {
                 set = BooleanStyleSetting.create(c, this, e.getKey());
             } else {
-                Main.warn("Unkown setting type: "+type);
+                Logging.warn("Unkown setting type: "+type);
             }
             if (set != null) {
                 settings.add(set);

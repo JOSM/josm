@@ -6,7 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * ProjectionChoice for various French overseas territories (EPSG:2969,2970,2972,2973,2975).
@@ -46,7 +46,7 @@ public class UTMFranceDOMProjectionChoice extends ListProjectionChoice {
         try {
             return Integer.parseInt(zone) - 1;
         } catch (NumberFormatException e) {
-            Main.warn(e);
+            Logging.warn(e);
         }
         return defaultIndex;
     }

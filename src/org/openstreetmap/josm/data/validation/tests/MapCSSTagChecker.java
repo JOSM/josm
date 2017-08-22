@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.FixCommand.evaluateObject;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
@@ -63,6 +64,7 @@ import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -318,7 +320,8 @@ public class MapCSSTagChecker extends Test.TagTest {
                             try {
                                 check.errors.put(ai, Severity.valueOf(ai.key.substring("throw".length()).toUpperCase(Locale.ENGLISH)));
                             } catch (IllegalArgumentException e) {
-                                Main.warn(e, "Unsupported "+ai.key+" instruction. Allowed instructions are "+POSSIBLE_THROWS+'.');
+                                Logging.log(Logging.LEVEL_WARN,
+                                        "Unsupported "+ai.key+" instruction. Allowed instructions are "+POSSIBLE_THROWS+'.', e);
                             }
                         } else if ("fixAdd".equals(ai.key)) {
                             check.fixCommands.add(FixCommand.fixAdd(ai.val));
@@ -387,7 +390,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                     parseChecks.add(TagCheck.ofMapCSSRule(
                             new GroupedMapCSSRule(map.getValue(), map.getKey())));
                 } catch (IllegalDataException e) {
-                    Main.error("Cannot add MapCss rule: "+e.getMessage());
+                    Logging.error("Cannot add MapCss rule: "+e.getMessage());
                     source.logError(e);
                 }
             }
@@ -451,7 +454,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                     return tag.toString();
                 }
             } catch (IndexOutOfBoundsException ignore) {
-                Main.debug(ignore);
+                Logging.debug(ignore);
             }
             return null;
         }
@@ -479,7 +482,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                     // Perform replacement with null-safe + regex-safe handling
                     m.appendReplacement(sb, String.valueOf(argument).replace("^(", "").replace(")$", ""));
                 } catch (IndexOutOfBoundsException | IllegalArgumentException e) {
-                    Main.error(e, tr("Unable to replace argument {0} in {1}: {2}", argument, sb, e.getMessage()));
+                    Logging.log(Logging.LEVEL_ERROR, tr("Unable to replace argument {0} in {1}: {2}", argument, sb, e.getMessage()), e);
                 }
             }
             m.appendTail(sb);
@@ -734,7 +737,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             // Check assertions, useful for development of local files
             if (Main.pref.getBoolean("validator.check_assert_local_rules", false) && Utils.isLocalUrl(url)) {
                 for (String msg : checkAsserts(result.parseChecks)) {
-                    Main.warn(msg);
+                    Logging.warn(msg);
                 }
             }
         }
@@ -751,20 +754,20 @@ public class MapCSSTagChecker extends Test.TagTest {
             String i = source.url;
             try {
                 if (!i.startsWith("resource:")) {
-                    Main.info(tr("Adding {0} to tag checker", i));
-                } else if (Main.isDebugEnabled()) {
-                    Main.debug(tr("Adding {0} to tag checker", i));
+                    Logging.info(tr("Adding {0} to tag checker", i));
+                } else if (Logging.isDebugEnabled()) {
+                    Logging.debug(tr("Adding {0} to tag checker", i));
                 }
                 addMapCSS(i);
                 if (Main.pref.getBoolean("validator.auto_reload_local_rules", true) && source.isLocal()) {
                     Main.fileWatcher.registerValidatorRule(source);
                 }
             } catch (IOException | IllegalStateException | IllegalArgumentException ex) {
-                Main.warn(tr("Failed to add {0} to tag checker", i));
-                Main.warn(ex, false);
+                Logging.warn(tr("Failed to add {0} to tag checker", i));
+                Logging.log(Logging.LEVEL_WARN, ex);
             } catch (ParseException ex) {
-                Main.warn(tr("Failed to add {0} to tag checker", i));
-                Main.warn(ex);
+                Logging.warn(tr("Failed to add {0} to tag checker", i));
+                Logging.warn(ex);
             }
         }
     }
@@ -779,13 +782,9 @@ public class MapCSSTagChecker extends Test.TagTest {
         Set<String> assertionErrors = new LinkedHashSet<>();
         final DataSet ds = new DataSet();
         for (final TagCheck check : schecks) {
-            if (Main.isDebugEnabled()) {
-                Main.debug("Check: "+check);
-            }
+            Logging.debug("Check: {0}", check);
             for (final Map.Entry<String, Boolean> i : check.assertions.entrySet()) {
-                if (Main.isDebugEnabled()) {
-                    Main.debug("- Assertion: "+i);
-                }
+                Logging.debug("- Assertion: {0}", i);
                 final OsmPrimitive p = OsmUtils.createPrimitive(i.getKey());
                 // Build minimal ordered list of checks to run to test the assertion
                 List<Set<TagCheck>> checksToRun = new ArrayList<>();
@@ -797,9 +796,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 // Add primitive to dataset to avoid DataIntegrityProblemException when evaluating selectors
                 ds.addPrimitive(p);
                 final Collection<TestError> pErrors = getErrorsForPrimitive(p, true, checksToRun);
-                if (Main.isDebugEnabled()) {
-                    Main.debug("- Errors: "+pErrors);
-                }
+                Logging.debug("- Errors: {0}", pErrors);
                 @SuppressWarnings({"EqualsBetweenInconvertibleTypes", "EqualsIncompatibleType"})
                 final boolean isError = pErrors.stream().anyMatch(e -> e.getTester().equals(check.rule));
                 if (isError != i.getValue()) {

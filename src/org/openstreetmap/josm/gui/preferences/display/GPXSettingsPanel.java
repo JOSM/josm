@@ -31,6 +31,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane.ValidationLis
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.template_engine.ParseError;
 import org.openstreetmap.josm.tools.template_engine.TemplateParser;
 
@@ -429,7 +430,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             case 3: colorTypeDirection.setSelected(true); break;
             case 4: colorTypeTime.setSelected(true); break;
             case 5: colorTypeHeatMap.setSelected(true); break;
-            default: Main.warn("Unknown color type: " + colorType);
+            default: Logging.warn("Unknown color type: " + colorType);
             }
             int ccts = Main.pref.getInteger("draw.rawgps.colorTracksTune", layerName, 45);
             colorTypeVelocityTune.setSelectedIndex(ccts == 10 ? 2 : (ccts == 20 ? 1 : 0));
@@ -556,7 +557,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         try {
             parser.parse();
         } catch (ParseError e) {
-            Main.warn(e);
+            Logging.warn(e);
             JOptionPane.showMessageDialog(Main.parent,
                     tr("Incorrect waypoint label pattern: {0}", e.getMessage()), tr("Incorrect pattern"), JOptionPane.ERROR_MESSAGE);
             waypointLabelPattern.requestFocus();
@@ -566,7 +567,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         try {
             parser.parse();
         } catch (ParseError e) {
-            Main.warn(e);
+            Logging.warn(e);
             JOptionPane.showMessageDialog(Main.parent,
                     tr("Incorrect audio waypoint label pattern: {0}", e.getMessage()), tr("Incorrect pattern"), JOptionPane.ERROR_MESSAGE);
             audioWaypointLabelPattern.requestFocus();

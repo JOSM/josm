@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -22,6 +21,7 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.ValUtil;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Tests if there are segments that crosses in the same layer
@@ -267,7 +267,7 @@ public abstract class CrossingWays extends Test {
             final EastNorth en1 = es1.getFirstNode().getEastNorth();
             final EastNorth en2 = es1.getSecondNode().getEastNorth();
             if (en1 == null || en2 == null) {
-                Main.warn("Crossing ways test skipped "+es1);
+                Logging.warn("Crossing ways test skipped "+es1);
                 continue;
             }
             for (List<WaySegment> segments : getSegments(cellSegments, en1, en2)) {

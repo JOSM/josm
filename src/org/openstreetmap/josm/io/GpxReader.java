@@ -16,7 +16,6 @@ import java.util.Stack;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.Extensions;
@@ -26,6 +25,7 @@ import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.GpxRoute;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -580,12 +580,12 @@ public class GpxReader implements GpxConstants {
                     SAXParseException spe = (SAXParseException) e;
                     message += ' ' + tr("(at line {0}, column {1})", spe.getLineNumber(), spe.getColumnNumber());
                 }
-                Main.warn(message);
+                Logging.warn(message);
                 return false;
             } else
                 throw e;
         } catch (ParserConfigurationException e) {
-            Main.error(e); // broken SAXException chaining
+            Logging.error(e); // broken SAXException chaining
             throw new SAXException(e);
         }
     }

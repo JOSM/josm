@@ -21,10 +21,11 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.tools.ExifReader;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Loads thumbnail previews for a list of images from a {@link GeoImageLayer}.
- * 
+ *
  * Thumbnails are loaded in the background and cached on disk for the next session.
  */
 public class ThumbsLoader implements Runnable {
@@ -68,15 +69,15 @@ public class ThumbsLoader implements Runnable {
                 cache = JCSCacheManager.getCache("geoimage-thumbnails", 0, 120,
                         Main.pref.getCacheDirectory().getPath() + File.separator + "geoimage-thumbnails");
             } catch (IOException e) {
-                Main.warn("Failed to initialize cache for geoimage-thumbnails");
-                Main.warn(e);
+                Logging.warn("Failed to initialize cache for geoimage-thumbnails");
+                Logging.warn(e);
             }
         }
     }
 
     @Override
     public void run() {
-        Main.debug("Load Thumbnails");
+        Logging.debug("Load Thumbnails");
         tracker = new MediaTracker(Main.map.mapView);
         for (ImageEntry entry : data) {
             if (stop) return;
@@ -103,11 +104,11 @@ public class ThumbsLoader implements Runnable {
             try {
                 BufferedImageCacheEntry cacheEntry = cache.get(cacheIdent);
                 if (cacheEntry != null && cacheEntry.getImage() != null) {
-                    Main.debug(" from cache");
+                    Logging.debug(" from cache");
                     return cacheEntry.getImage();
                 }
             } catch (IOException e) {
-                Main.warn(e);
+                Logging.warn(e);
             }
         }
 
@@ -116,12 +117,12 @@ public class ThumbsLoader implements Runnable {
         try {
             tracker.waitForID(0);
         } catch (InterruptedException e) {
-            Main.error(" InterruptedException while loading thumb");
+            Logging.error(" InterruptedException while loading thumb");
             Thread.currentThread().interrupt();
             return null;
         }
         if (tracker.isErrorID(1) || img.getWidth(null) <= 0 || img.getHeight(null) <= 0) {
-            Main.error(" Invalid image");
+            Logging.error(" Invalid image");
             return null;
         }
 
@@ -153,7 +154,7 @@ public class ThumbsLoader implements Runnable {
             try {
                 Thread.sleep(10);
             } catch (InterruptedException e) {
-                Main.warn("InterruptedException while drawing thumb");
+                Logging.warn("InterruptedException while drawing thumb");
                 Thread.currentThread().interrupt();
             }
         }
@@ -161,7 +162,7 @@ public class ThumbsLoader implements Runnable {
         tracker.removeImage(img);
 
         if (scaledBI.getWidth() <= 0 || scaledBI.getHeight() <= 0) {
-            Main.error(" Invalid image");
+            Logging.error(" Invalid image");
             return null;
         }
 
@@ -170,8 +171,8 @@ public class ThumbsLoader implements Runnable {
                 ImageIO.write(scaledBI, "png", output);
                 cache.put(cacheIdent, new BufferedImageCacheEntry(output.toByteArray()));
             } catch (IOException e) {
-                Main.warn("Failed to save geoimage thumb to cache");
-                Main.warn(e);
+                Logging.warn("Failed to save geoimage thumb to cache");
+                Logging.warn(e);
             }
         }
 

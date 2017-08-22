@@ -18,6 +18,7 @@ import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
 
 /**
@@ -54,9 +55,7 @@ public class UploadNotesTask {
 
         @Override
         protected void cancel() {
-            if (Main.isDebugEnabled()) {
-                Main.debug("note upload canceled");
-            }
+            Logging.debug("note upload canceled");
             isCanceled = true;
         }
 
@@ -66,14 +65,12 @@ public class UploadNotesTask {
             OsmApi api = OsmApi.getOsmApi();
             for (Note note : noteData.getNotes()) {
                 if (isCanceled) {
-                    Main.info("Note upload interrupted by user");
+                    Logging.info("Note upload interrupted by user");
                     break;
                 }
                 for (NoteComment comment : note.getComments()) {
                     if (comment.isNew()) {
-                        if (Main.isDebugEnabled()) {
-                            Main.debug("found note change to upload");
-                        }
+                        Logging.debug("found note change to upload");
                         processNoteComment(monitor, api, note, comment);
                     }
                 }
@@ -89,27 +86,19 @@ public class UploadNotesTask {
                 Note newNote;
                 switch (comment.getNoteAction()) {
                 case OPENED:
-                    if (Main.isDebugEnabled()) {
-                        Main.debug("opening new note");
-                    }
+                    Logging.debug("opening new note");
                     newNote = api.createNote(note.getLatLon(), comment.getText(), monitor);
                     break;
                 case CLOSED:
-                    if (Main.isDebugEnabled()) {
-                        Main.debug("closing note " + note.getId());
-                    }
+                    Logging.debug("closing note {0}", note.getId());
                     newNote = api.closeNote(note, comment.getText(), monitor);
                     break;
                 case COMMENTED:
-                    if (Main.isDebugEnabled()) {
-                        Main.debug("adding comment to note " + note.getId());
-                    }
+                    Logging.debug("adding comment to note {0}", note.getId());
                     newNote = api.addCommentToNote(note, comment.getText(), monitor);
                     break;
                 case REOPENED:
-                    if (Main.isDebugEnabled()) {
-                        Main.debug("reopening note " + note.getId());
-                    }
+                    Logging.debug("reopening note {0}", note.getId());
                     newNote = api.reopenNote(note, comment.getText(), monitor);
                     break;
                 default:
@@ -117,8 +106,8 @@ public class UploadNotesTask {
                 }
                 updatedNotes.put(note, newNote);
             } catch (OsmTransferException e) {
-                Main.error("Failed to upload note to server: " + note.getId());
-                Main.error(e);
+                Logging.error("Failed to upload note to server: {0}", note.getId());
+                Logging.error(e);
                 failedNotes.put(note, e);
             }
         }
@@ -126,8 +115,8 @@ public class UploadNotesTask {
         /** Updates the note layer with uploaded notes and notifies the user of any upload failures */
         @Override
         protected void finish() {
-            if (Main.isDebugEnabled()) {
-                Main.debug("finish called in notes upload task. Notes to update: " + updatedNotes.size());
+            if (Logging.isDebugEnabled()) {
+                Logging.debug("finish called in notes upload task. Notes to update: {0}", updatedNotes.size());
             }
             noteData.updateNotes(updatedNotes);
             if (!failedNotes.isEmpty()) {
@@ -136,7 +125,7 @@ public class UploadNotesTask {
                     sb.append(tr("Note {0} failed: {1}", entry.getKey().getId(), entry.getValue().getMessage()));
                     sb.append('\n');
                 }
-                Main.error("Notes failed to upload: " + sb.toString());
+                Logging.error("Notes failed to upload: " + sb.toString());
                 JOptionPane.showMessageDialog(Main.map, sb.toString(), tr("Notes failed to upload"), JOptionPane.ERROR_MESSAGE);
                 ExceptionDialogUtil.explainException(failedNotes.values().iterator().next());
             }

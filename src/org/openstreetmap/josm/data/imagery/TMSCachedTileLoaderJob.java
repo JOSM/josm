@@ -26,7 +26,6 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.CacheEntry;
 import org.openstreetmap.josm.data.cache.CacheEntryAttributes;
@@ -34,6 +33,7 @@ import org.openstreetmap.josm.data.cache.ICachedLoaderListener;
 import org.openstreetmap.josm.data.cache.JCSCachedTileLoaderJob;
 import org.openstreetmap.josm.data.preferences.LongProperty;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Class bridging TMS requests to JCS cache requests
@@ -123,7 +123,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                 return content.length > 0 || cacheData.getImage() != null || isNoTileAtZoom();
             } catch (IOException e) {
                 LOG.log(Level.WARNING, "JCS TMS - error loading from cache for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
-                Main.warn(e);
+                Logging.warn(e);
             }
         }
         return false;
@@ -151,7 +151,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             super.submit(this, force);
         } catch (IOException | IllegalArgumentException e) {
             // if we fail to submit the job, mark tile as loaded and set error message
-            Main.warn(e, false);
+            Logging.log(Logging.LEVEL_WARN, e);
             tile.finishLoading();
             tile.setError(e.getMessage());
         }

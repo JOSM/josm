@@ -199,24 +199,24 @@ public class ListenerList<T> {
 
         @Override
         protected void failAdd(T listener) {
-            Main.trace("Previous addition of the listener");
+            Logging.trace("Previous addition of the listener");
             dumpStack(listenersAdded.get(listener));
             super.failAdd(listener);
         }
 
         @Override
         protected void failRemove(T listener) {
-            Main.trace("Previous removal of the listener");
+            Logging.trace("Previous removal of the listener");
             dumpStack(listenersRemoved.get(listener));
             super.failRemove(listener);
         }
 
         private static void dumpStack(StackTraceElement ... stackTraceElements) {
             if (stackTraceElements == null) {
-                Main.trace("  - (no trace recorded)");
+                Logging.trace("  - (no trace recorded)");
             } else {
                 Stream.of(stackTraceElements).limit(20).forEach(
-                        e -> Main.trace(e.getClassName() + "." + e.getMethodName() + " line " + e.getLineNumber()));
+                        e -> Logging.trace(e.getClassName() + "." + e.getMethodName() + " line " + e.getLineNumber()));
             }
         }
     }
@@ -241,7 +241,7 @@ public class ListenerList<T> {
      * @return A new list. A tracing list is created if trace is enabled.
      */
     public static <T> ListenerList<T> create() {
-        if (Main.isTraceEnabled()) {
+        if (Logging.isTraceEnabled()) {
             return new TracingListenerList<>();
         } else {
             return new ListenerList<>();

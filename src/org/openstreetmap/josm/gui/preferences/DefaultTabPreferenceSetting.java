@@ -9,8 +9,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Abstract base class for {@link TabPreferenceSetting} implementations.
@@ -104,7 +104,7 @@ public abstract class DefaultTabPreferenceSetting extends DefaultPreferenceSetti
                     return true;
                 } catch (IllegalArgumentException e) {
                     // Ignore exception and return false below
-                    Main.debug(Main.getErrorMessage(e));
+                    Logging.debug(Logging.getErrorMessage(e));
                 }
             }
         }

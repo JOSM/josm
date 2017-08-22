@@ -13,10 +13,10 @@ import javax.swing.JTable;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellRenderer;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This is a {@link TableCellRenderer} for {@link MultiValueResolutionDecision}s.
@@ -70,7 +70,7 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
                         setBackground(ConflictColors.BGCOLOR_TAG_SUM_ALL_NUM.get());
                         break;
                     default:
-                        Main.error("Unknown decision type in renderColors(): "+decision.getDecisionType());
+                        Logging.error("Unknown decision type in renderColors(): "+decision.getDecisionType());
                     }
                 } else {
                     setForeground(UIManager.getColor("Table.foreground"));
@@ -102,7 +102,7 @@ public class MultiValueCellRenderer extends JLabel implements TableCellRenderer 
             cbDecisionRenderer.setSelectedIndex(0);
             break;
         default:
-            Main.error("Unknown decision type in renderValue(): "+decision.getDecisionType());
+            Logging.error("Unknown decision type in renderValue(): "+decision.getDecisionType());
         }
     }
 

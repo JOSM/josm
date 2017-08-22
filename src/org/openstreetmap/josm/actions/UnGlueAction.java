@@ -42,6 +42,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.UserCancelException;
 import org.openstreetmap.josm.tools.Utils;
@@ -80,7 +81,7 @@ public class UnGlueAction extends JosmAction {
         try {
             unglue(e);
         } catch (UserCancelException ignore) {
-            Main.trace(ignore);
+            Logging.trace(ignore);
         } finally {
             cleanup();
         }
@@ -293,7 +294,7 @@ public class UnGlueAction extends JosmAction {
         try {
             dialog = PropertiesMembershipDialog.showIfNecessary(Collections.singleton(selectedNode), true);
         } catch (UserCancelException ex) {
-            Main.trace(ex);
+            Logging.trace(ex);
             return;
         }
 
@@ -506,7 +507,7 @@ public class UnGlueAction extends JosmAction {
         try {
             dialog = PropertiesMembershipDialog.showIfNecessary(Collections.singleton(selectedNode), false);
         } catch (UserCancelException e) {
-            Main.trace(e);
+            Logging.trace(e);
             return;
         }
 
@@ -605,7 +606,7 @@ public class UnGlueAction extends JosmAction {
             execCommands(cmds, addNodes);
             return true;
         } catch (UserCancelException ignore) {
-            Main.trace(ignore);
+            Logging.trace(ignore);
         }
         return false;
     }
@@ -621,7 +622,7 @@ public class UnGlueAction extends JosmAction {
         try {
             dialog = PropertiesMembershipDialog.showIfNecessary(selectedNodes, false);
         } catch (UserCancelException e) {
-            Main.trace(e);
+            Logging.trace(e);
             return;
         }
 

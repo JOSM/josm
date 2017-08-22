@@ -15,8 +15,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * ProjectionChoice for UTM.
@@ -138,7 +138,7 @@ public class UTMProjectionChoice extends ListProjectionChoice {
                 if (zoneval > 0 && zoneval <= 60)
                     return Arrays.asList(zonestring, hem.toString());
             } catch (NumberFormatException e) {
-                Main.warn(e);
+                Logging.warn(e);
             }
         }
         return null;
@@ -169,7 +169,7 @@ public class UTMProjectionChoice extends ListProjectionChoice {
         try {
             return Integer.parseInt(zone) - 1;
         } catch (NumberFormatException e) {
-            Main.warn(e);
+            Logging.warn(e);
         }
         return defaultIndex;
     }

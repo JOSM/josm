@@ -16,6 +16,7 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.WikiReader;
 
 /**
@@ -62,7 +63,7 @@ public class JosmUpdatePanel extends JPanel {
             String testedString = new WikiReader().read(Main.getJOSMWebsite() + "/wiki/TestedVersion?format=txt");
             return Integer.parseInt(testedString.trim());
         } catch (NumberFormatException | IOException e) {
-            Main.warn(e, "Unable to detect latest version of JOSM:");
+            Logging.log(Logging.LEVEL_WARN, "Unable to detect latest version of JOSM:", e);
             return -1;
         }
     }
@@ -97,7 +98,7 @@ public class JosmUpdatePanel extends JPanel {
         try {
             Main.platform.openUrl(Main.getJOSMWebsite());
         } catch (IOException ex) {
-            Main.warn(ex, "Unable to access JOSM website:");
+            Logging.log(Logging.LEVEL_WARN, "Unable to access JOSM website:", ex);
         }
     }
 }

@@ -11,6 +11,7 @@ import java.util.Properties;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Provides basic information about the currently used JOSM build.
@@ -59,7 +60,7 @@ public class Version {
         try {
             properties.load(revisionInfo);
         } catch (IOException e) {
-            Main.warn(e, tr("Error reading revision info from revision file: {0}", e.getMessage()));
+            Logging.log(Logging.LEVEL_WARN, tr("Error reading revision info from revision file: {0}", e.getMessage()), e);
         }
         String value = Optional.ofNullable(properties.getProperty("Revision")).orElse("").trim();
         if (!value.isEmpty()) {
@@ -67,7 +68,7 @@ public class Version {
                 version = Integer.parseInt(value);
             } catch (NumberFormatException e) {
                 version = 0;
-                Main.warn(tr("Unexpected JOSM version number in revision file, value is ''{0}''", value));
+                Logging.warn(tr("Unexpected JOSM version number in revision file, value is ''{0}''", value));
             }
         } else {
             version = JOSM_UNKNOWN_VERSION;
@@ -104,14 +105,14 @@ public class Version {
     public void init() {
         try (InputStream stream = Main.class.getResourceAsStream("/REVISION")) {
             if (stream == null) {
-                Main.warn(tr("The revision file ''/REVISION'' is missing."));
+                Logging.warn(tr("The revision file ''/REVISION'' is missing."));
                 version = 0;
                 releaseDescription = "";
                 return;
             }
             initFromRevisionInfo(stream);
         } catch (IOException e) {
-            Main.warn(e);
+            Logging.warn(e);
         }
     }
 

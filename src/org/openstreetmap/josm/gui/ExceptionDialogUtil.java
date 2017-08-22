@@ -25,6 +25,7 @@ import org.openstreetmap.josm.io.OsmApiException;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ExceptionUtil;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
 /**
@@ -91,7 +92,7 @@ public final class ExceptionDialogUtil {
      * @param e the exception
      */
     public static void explainGeneric(Exception e) {
-        Main.error(e);
+        Logging.error(e);
         BugReportExceptionHandler.handleException(e);
     }
 

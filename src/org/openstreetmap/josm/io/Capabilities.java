@@ -12,7 +12,7 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -160,7 +160,7 @@ public class Capabilities {
     }
 
     private static void warnIllegalValue(String attr, String elem, Object val) {
-        Main.warn(tr("Illegal value of attribute ''{0}'' of element ''{1}'' in server capabilities. Got ''{2}''", attr, elem, val));
+        Logging.warn(tr("Illegal value of attribute ''{0}'' of element ''{1}'' in server capabilities. Got ''{2}''", attr, elem, val));
     }
 
     /**

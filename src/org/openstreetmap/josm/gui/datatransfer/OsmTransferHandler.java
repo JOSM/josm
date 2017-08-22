@@ -20,6 +20,7 @@ import org.openstreetmap.josm.gui.datatransfer.importers.PrimitiveTagTransferPas
 import org.openstreetmap.josm.gui.datatransfer.importers.TagTransferPaster;
 import org.openstreetmap.josm.gui.datatransfer.importers.TextTagPaster;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This transfer hanlder provides the ability to transfer OSM data. It allows you to receive files, primitives or tags.
@@ -46,7 +47,7 @@ public class OsmTransferHandler extends AbstractStackTransferHandler {
                         return true;
                     }
                 } catch (UnsupportedFlavorException | IOException e) {
-                    Main.warn(e);
+                    Logging.warn(e);
                 }
             }
         }
@@ -95,10 +96,10 @@ public class OsmTransferHandler extends AbstractStackTransferHandler {
                 }
             }
         } catch (IllegalStateException e) {
-            Main.debug(e);
+            Logging.debug(e);
         } catch (NullPointerException e) { // NOPMD
             // JDK-6322854: On Linux/X11, NPE can happen for unknown reasons, on all versions of Java
-            Main.error(e);
+            Logging.error(e);
         }
         return false;
     }

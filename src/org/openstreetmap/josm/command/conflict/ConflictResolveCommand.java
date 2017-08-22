@@ -10,6 +10,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This is the common base class for {@link Command}s which manipulate {@link Conflict}s in
@@ -71,7 +72,7 @@ public abstract class ConflictResolveCommand extends Command {
 
         if (Main.isDisplayingMapView()) {
             if (!Main.getLayerManager().containsLayer(getLayer())) {
-                Main.warn(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
+                Logging.warn(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
                         this.toString(),
                         getLayer().toString()
                 ));

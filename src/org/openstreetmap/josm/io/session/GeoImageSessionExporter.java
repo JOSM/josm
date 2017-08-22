@@ -11,11 +11,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.ImageEntry;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.w3c.dom.Element;
 
 /**
@@ -65,7 +65,7 @@ public class GeoImageSessionExporter extends AbstractSessionExporter<GeoImageLay
             Element imgElem = support.createElement("geoimage");
 
             if (entry.getFile() == null) {
-                Main.warn("No file attribute for image - skipping entry");
+                Logging.warn("No file attribute for image - skipping entry");
                 break;
             }
             addAttr("file", entry.getFile().getPath(), imgElem, support);

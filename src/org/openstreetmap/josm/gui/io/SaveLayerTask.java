@@ -5,12 +5,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Optional;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SaveAction;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * SaveLayerTask saves the data managed by an {@link org.openstreetmap.josm.gui.layer.AbstractModifiableLayer} to the
@@ -56,7 +56,7 @@ public class SaveLayerTask extends AbstractIOTask {
                 layerInfo.getLayer().onPostSaveToFile();
             }
         } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
-            Main.error(e);
+            Logging.error(e);
             setLastException(e);
         }
     }

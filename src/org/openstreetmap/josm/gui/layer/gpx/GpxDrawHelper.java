@@ -54,6 +54,7 @@ import org.openstreetmap.josm.gui.layer.MapViewPaintable.PaintableInvalidationLi
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.ColorScale;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -279,7 +280,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
             int i = Main.pref.getInteger("draw.rawgps.colors", specName(layerName), 0);
             return ColorMode.fromIndex(i);
         } catch (IndexOutOfBoundsException e) {
-            Main.warn(e);
+            Logging.warn(e);
         }
         return ColorMode.NONE;
     }
@@ -471,10 +472,10 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         g.setComposite(oldComposite);
 
         // show some debug info
-        if (Main.isDebugEnabled() && !visibleSegments.isEmpty()) {
+        if (Logging.isDebugEnabled() && !visibleSegments.isEmpty()) {
             final long timeDiff = System.currentTimeMillis() - timeStart;
 
-            Main.debug("gpxdraw::draw takes " +
+            Logging.debug("gpxdraw::draw takes " +
                          Utils.getDurationString(timeDiff) +
                          "(" +
                          "segments= " + visibleSegments.size() +

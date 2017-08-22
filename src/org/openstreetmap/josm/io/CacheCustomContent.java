@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -98,7 +99,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
             checkOfflineAccess();
             return false;
         } catch (OfflineAccessException e) {
-            Main.trace(e);
+            Logging.trace(e);
             return true;
         }
     }
@@ -186,10 +187,10 @@ public abstract class CacheCustomContent<T extends Throwable> {
         try (BufferedInputStream input = new BufferedInputStream(new FileInputStream(path))) {
             this.data = new byte[input.available()];
             if (input.read(this.data) < this.data.length) {
-                Main.error("Failed to read expected contents from "+path);
+                Logging.error("Failed to read expected contents from "+path);
             }
         } catch (IOException e) {
-            Main.trace(e);
+            Logging.trace(e);
             if (!isOffline()) {
                 this.data = updateForce();
             }
@@ -204,7 +205,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
             output.write(this.data);
             output.flush();
         } catch (IOException e) {
-            Main.error(e);
+            Logging.error(e);
         }
     }
 

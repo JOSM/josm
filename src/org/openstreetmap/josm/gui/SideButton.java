@@ -16,10 +16,10 @@ import javax.swing.JButton;
 import javax.swing.SwingConstants;
 import javax.swing.plaf.basic.BasicArrowButton;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageResource;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Button that is usually used in toggle dialogs.
@@ -41,7 +41,7 @@ public class SideButton extends JButton implements Destroyable {
             setIcon(icon.getImageIconBounded(
                 ImageProvider.ImageSizes.SIDEBUTTON.getImageDimension()));
         } else if (getIcon() != null) { /* TODO: remove when calling code is fixed, replace by exception */
-            Main.warn("Old style SideButton usage for action " + action);
+            Logging.warn("Old style SideButton usage for action " + action);
             fixIcon(action);
         }
         doStyle();

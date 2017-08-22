@@ -34,6 +34,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.ValidatorDialog.ValidatorBoundingXYVisitor;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -228,7 +229,7 @@ public class AutoScaleAction extends JosmAction {
             if (!layers.isEmpty())
                 return layers.get(0);
         } catch (IllegalStateException e) {
-            Main.error(e);
+            Logging.error(e);
         }
         return null;
     }

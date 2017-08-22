@@ -24,6 +24,7 @@ import javax.swing.undo.UndoManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * A popup menu designed for text components. It displays the following actions:
@@ -195,7 +196,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
             try {
                 undo.undo();
             } catch (CannotUndoException ex) {
-                Main.trace(ex);
+                Logging.trace(ex);
             } finally {
                 updateUndoState();
                 redoAction.updateRedoState();
@@ -228,7 +229,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
             try {
                 undo.redo();
             } catch (CannotRedoException ex) {
-                Main.trace(ex);
+                Logging.trace(ex);
             } finally {
                 updateRedoState();
                 undoAction.updateUndoState();

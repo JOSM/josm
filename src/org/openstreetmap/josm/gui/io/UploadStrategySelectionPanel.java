@@ -35,6 +35,7 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.Capabilities;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * UploadStrategySelectionPanel is a panel for selecting an upload strategy.
@@ -335,7 +336,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
             Main.pref.putInteger("osm-server.upload-strategy.chunk-size", chunkSize);
         } catch (NumberFormatException e) {
             // don't save invalid value to preferences
-            Main.trace(e);
+            Logging.trace(e);
         }
     }
 

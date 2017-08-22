@@ -50,6 +50,7 @@ import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.gui.widgets.EditableList;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -204,13 +205,13 @@ public class TagChecker extends TagTest {
                         if (line.startsWith("# JOSM TagChecker")) {
                             tagcheckerfile = true;
                             if (!DEFAULT_SOURCES.contains(source)) {
-                                Main.info(tr("Adding {0} to tag checker", source));
+                                Logging.info(tr("Adding {0} to tag checker", source));
                             }
                         } else
                         if (line.startsWith("# JOSM IgnoreTags")) {
                             ignorefile = true;
                             if (!DEFAULT_SOURCES.contains(source)) {
-                                Main.info(tr("Adding {0} to ignore tags", source));
+                                Logging.info(tr("Adding {0} to ignore tags", source));
                             }
                         }
                     } else if (ignorefile) {
@@ -237,7 +238,7 @@ public class TagChecker extends TagTest {
                             break;
                         default:
                             if (!key.startsWith(";")) {
-                                Main.warn("Unsupported TagChecker key: " + key);
+                                Logging.warn("Unsupported TagChecker key: " + key);
                             }
                         }
                     } else if (tagcheckerfile) {
@@ -248,7 +249,7 @@ public class TagChecker extends TagTest {
                             if (err == null) {
                                 checkerData.add(d);
                             } else {
-                                Main.error(tr("Invalid tagchecker line - {0}: {1}", err, line));
+                                Logging.error(tr("Invalid tagchecker line - {0}: {1}", err, line));
                             }
                         }
                     } else if (line.charAt(0) == '+') {
@@ -256,17 +257,17 @@ public class TagChecker extends TagTest {
                     } else if (line.charAt(0) == '-' && okValue != null) {
                         harmonizedKeys.put(harmonizeKey(line.substring(1)), okValue);
                     } else {
-                        Main.error(tr("Invalid spellcheck line: {0}", line));
+                        Logging.error(tr("Invalid spellcheck line: {0}", line));
                     }
                     if (isFirstLine) {
                         isFirstLine = false;
                         if (!(tagcheckerfile || ignorefile) && !DEFAULT_SOURCES.contains(source)) {
-                            Main.info(tr("Adding {0} to spellchecker", source));
+                            Logging.info(tr("Adding {0} to spellchecker", source));
                         }
                     }
                 }
             } catch (IOException e) {
-                Main.error(e);
+                Logging.error(e);
                 errorSources.append(source).append('\n');
             }
         }
@@ -827,7 +828,7 @@ public class TagChecker extends TagTest {
                     description = null;
                 }
             } catch (IllegalStateException e) {
-                Main.error(e);
+                Logging.error(e);
                 description = null;
             }
             String[] n = SPLIT_TRIMMED_PATTERN.split(trimmed, 3);
@@ -870,10 +871,10 @@ public class TagChecker extends TagTest {
                 try {
                     data.add(new CheckerElement(exp));
                 } catch (IllegalStateException e) {
-                    Main.trace(e);
+                    Logging.trace(e);
                     return tr("Illegal expression ''{0}''", exp);
                 } catch (PatternSyntaxException e) {
-                    Main.trace(e);
+                    Logging.trace(e);
                     return tr("Illegal regular expression ''{0}''", exp);
                 }
             }

@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -54,7 +55,7 @@ public class ConflictAddCommand extends Command {
         try {
             getLayer().getConflicts().add(conflict);
         } catch (IllegalStateException e) {
-            Main.error(e);
+            Logging.error(e);
             warnBecauseOfDoubleConflict();
         }
         return true;
@@ -63,7 +64,7 @@ public class ConflictAddCommand extends Command {
     @Override
     public void undoCommand() {
         if (Main.isDisplayingMapView() && !Main.getLayerManager().containsLayer(getLayer())) {
-            Main.warn(tr("Layer ''{0}'' does not exist any more. Cannot remove conflict for object ''{1}''.",
+            Logging.warn(tr("Layer ''{0}'' does not exist any more. Cannot remove conflict for object ''{1}''.",
                     getLayer().getName(),
                     conflict.getMy().getDisplayName(DefaultNameFormatter.getInstance())
             ));

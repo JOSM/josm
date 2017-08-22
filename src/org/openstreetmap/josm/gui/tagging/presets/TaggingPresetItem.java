@@ -23,6 +23,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
 
 /**
@@ -118,7 +119,7 @@ public abstract class TaggingPresetItem {
         try {
             return Integer.valueOf(str);
         } catch (NumberFormatException e) {
-            Main.trace(e);
+            Logging.trace(e);
         }
         return null;
     }

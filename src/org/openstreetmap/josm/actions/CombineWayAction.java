@@ -34,6 +34,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.UserCancelException;
@@ -227,7 +228,7 @@ public class CombineWayAction extends JosmAction {
         try {
             combineResult = combineWaysWorker(selectedWays);
         } catch (UserCancelException ex) {
-            Main.trace(ex);
+            Logging.trace(ex);
             return;
         }
 

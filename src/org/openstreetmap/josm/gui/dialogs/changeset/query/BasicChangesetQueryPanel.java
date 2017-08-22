@@ -24,6 +24,7 @@ import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.io.ChangesetQuery;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This panel presents a list of basic queries for changesets.
@@ -203,8 +204,8 @@ public class BasicChangesetQueryPanel extends JPanel {
             try {
                 q = BasicQuery.valueOf(BasicQuery.class, value);
             } catch (IllegalArgumentException e) {
-                Main.warn(e, tr("Unexpected value for preference ''{0}'', got ''{1}''. Resetting to default query.",
-                        "changeset-query.basic.query", value));
+                Logging.log(Logging.LEVEL_WARN, tr("Unexpected value for preference ''{0}'', got ''{1}''. Resetting to default query.",
+                        "changeset-query.basic.query", value), e);
                 q = BasicQuery.MOST_RECENT_CHANGESETS;
             }
         }

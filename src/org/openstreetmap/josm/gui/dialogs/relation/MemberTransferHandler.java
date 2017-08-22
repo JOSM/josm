@@ -13,7 +13,6 @@ import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.TransferHandler;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
@@ -21,6 +20,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.gui.datatransfer.RelationMemberTransferable;
 import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * A transfer handler that helps with importing / exporting members for relations.
@@ -90,7 +90,7 @@ public class MemberTransferHandler extends TransferHandler {
                 return false;
             }
         } catch (IOException | UnsupportedFlavorException e) {
-            Main.warn(e);
+            Logging.warn(e);
             return false;
         }
     }
@@ -146,7 +146,7 @@ public class MemberTransferHandler extends TransferHandler {
         protected RelationMember importPrimitive(MemberTable destination, T data) {
             final OsmPrimitive p = destination.getLayer().data.getPrimitiveById(data);
             if (p == null) {
-                Main.warn(tr("Cannot add {0} since it is not part of dataset", data));
+                Logging.warn(tr("Cannot add {0} since it is not part of dataset", data));
                 return null;
             } else {
                 return getMember(destination, data, p);

@@ -8,10 +8,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Exporter to write note data to an XML file
@@ -36,7 +36,7 @@ public class NoteExporter extends FileExporter {
 
     @Override
     public void exportData(File file, Layer layer) throws IOException {
-        Main.info("exporting notes to file: " + file);
+        Logging.info("exporting notes to file: " + file);
         if (layer instanceof NoteLayer) {
             try (OutputStream os = new FileOutputStream(file);
                  NoteWriter writer = new NoteWriter(os)) {

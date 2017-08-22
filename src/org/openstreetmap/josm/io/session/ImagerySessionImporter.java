@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
@@ -22,6 +21,7 @@ import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.session.SessionReader.ImportSupport;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -49,13 +49,13 @@ public class ImagerySessionImporter implements SessionLayerImporter {
             if (!tsLayer.getDisplaySettings().isAutoZoom()) {
                 String zoomStr = attributes.get("zoom-level");
                 if (zoomStr != null) {
-                        support.addPostLayersTask(() -> {
-                            try {
-                                tsLayer.setZoomLevel(Integer.parseInt(zoomStr));
-                            } catch (NumberFormatException e) {
-                                Main.warn(e);
-                            }
-                        });
+                    support.addPostLayersTask(() -> {
+                        try {
+                            tsLayer.setZoomLevel(Integer.parseInt(zoomStr));
+                        } catch (NumberFormatException e) {
+                            Logging.warn(e);
+                        }
+                    });
                 }
             }
             Element offsetEl = getFirstElementByTagName(elem, "offset");

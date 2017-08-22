@@ -28,7 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Models the NTv2 format Grid Shift File and exposes methods to shift
@@ -84,7 +84,7 @@ public class NTV2GridShiftFile implements Serializable {
 
     private static void readBytes(InputStream in, byte[] b) throws IOException {
         if (in.read(b) < b.length) {
-            Main.error("Failed to read expected amount of bytes ("+ b.length +") from stream");
+            Logging.error("Failed to read expected amount of bytes ("+ b.length +") from stream");
         }
     }
 

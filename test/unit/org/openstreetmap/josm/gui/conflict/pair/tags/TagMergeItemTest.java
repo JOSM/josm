@@ -7,10 +7,10 @@ import static org.junit.Assert.fail;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -93,7 +93,7 @@ public class TagMergeItemTest {
             fail("expected IllegalArgumentException not thrown");
         } catch (IllegalArgumentException e) {
             // OK
-            Main.trace(e);
+            Logging.trace(e);
         }
     }
 
@@ -140,7 +140,7 @@ public class TagMergeItemTest {
             fail("expected IllegalStateException");
         } catch (IllegalStateException e) {
             // OK
-            Main.trace(e);
+            Logging.trace(e);
         }
     }
 
@@ -153,7 +153,7 @@ public class TagMergeItemTest {
             fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // OK
-            Main.trace(e);
+            Logging.trace(e);
         }
     }
 }

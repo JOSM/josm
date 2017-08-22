@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import javax.swing.text.JTextComponent;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * A text field designed to enter a single OSM changeset ID.
@@ -83,7 +83,7 @@ public class ChangesetIdTextField extends AbstractIdTextField<ChangesetIdTextFie
                     }
                 } catch (NumberFormatException e) {
                     // Ignored
-                    Main.trace(e);
+                    Logging.trace(e);
                 }
             }
             return false;
