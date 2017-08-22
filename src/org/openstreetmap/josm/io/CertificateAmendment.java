@@ -60,7 +60,7 @@ public final class CertificateAmendment {
 
         /**
          * Returns the certificate identifier.
-         * @return path for JOSM embedded certificate, alias for platform certificate
+         * @return path for JOSM embedded certificate, alias for Windows platform certificate
          */
         public final String getId() {
             return id;
@@ -68,7 +68,7 @@ public final class CertificateAmendment {
 
         /**
          * Returns the certificate filename.
-         * @return filename for both JOSM embedded certificate and platform certificate
+         * @return filename for both JOSM embedded certificate and Unix platform certificate
          * @since 12241
          */
         public final String getFilename() {
@@ -94,13 +94,18 @@ public final class CertificateAmendment {
 
     /**
      * Certificates looked into platform native keystore and not embedded in JOSM.
-     * Identifiers must match Windows keystore aliases for efficient search.
+     * Identifiers must match Windows keystore aliases and Unix filenames for efficient search.
      */
     private static final CertAmend[] PLATFORM_CERT_AMEND = {
+        // Government of Netherlands
         new CertAmend("Staat der Nederlanden Root CA - G2", "Staat_der_Nederlanden_Root_CA_-_G2.crt",
                 "668c83947da63b724bece1743c31a0e6aed0db8ec5b31be377bb784f91b6716f"),
+        // Government of Netherlands
         new CertAmend("Government of Netherlands G3", "Staat_der_Nederlanden_Root_CA_-_G3.crt",
-                "3c4fb0b95ab8b30032f432b86f535fe172c185d0fd39865837cf36187fa6f428")
+                "3c4fb0b95ab8b30032f432b86f535fe172c185d0fd39865837cf36187fa6f428"),
+        // Trusted and used by French Government - https://www.certigna.fr/autorites/index.xhtml?ac=Racine#lracine
+        new CertAmend("Certigna", "Certigna.crt",
+                "e3b6a2db2ed7ce48842f7ac53241c7b71d54144bfb40c11f3f1d0b42f5eea12d"),
     };
 
     private CertificateAmendment() {

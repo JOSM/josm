@@ -9,8 +9,6 @@ import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Stream;
 
-import org.openstreetmap.josm.Main;
-
 /**
  * This is a list of listeners. It does error checking and allows you to fire all listeners.
  *

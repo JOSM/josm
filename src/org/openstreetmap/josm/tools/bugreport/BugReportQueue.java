@@ -8,7 +8,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
