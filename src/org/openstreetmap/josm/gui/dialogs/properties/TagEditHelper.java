@@ -107,7 +107,7 @@ public class TagEditHelper {
     private String changedKey;
     private String objKey;
 
-    private final Comparator<AutoCompletionListItem> defaultACItemComparator =
+    static final Comparator<AutoCompletionListItem> DEFAULT_AC_ITEM_COMPARATOR =
             (o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getValue(), o2.getValue());
 
     /** Default number of recent tags */
@@ -203,7 +203,7 @@ public class TagEditHelper {
      * @return {@code true} if the key is used by all selected primitives (key not unset for at least one primitive)
      */
     @SuppressWarnings("unchecked")
-    private boolean containsDataKey(String key) {
+    boolean containsDataKey(String key) {
         return IntStream.range(0, tagData.getRowCount())
                 .anyMatch(i -> key.equals(tagData.getValueAt(i, 0)) /* sic! do not use getDataKey*/
                     && !((Map<String, Integer>) tagData.getValueAt(i, 1)).containsKey("") /* sic! do not use getDataValues*/);
@@ -443,7 +443,7 @@ public class TagEditHelper {
 
             AutoCompletionManager autocomplete = Main.getLayerManager().getEditLayer().data.getAutoCompletionManager();
             List<AutoCompletionListItem> keyList = autocomplete.getKeys();
-            keyList.sort(defaultACItemComparator);
+            keyList.sort(DEFAULT_AC_ITEM_COMPARATOR);
 
             keys = new AutoCompletingComboBox(key);
             keys.setPossibleACItems(keyList);
@@ -695,7 +695,7 @@ public class TagEditHelper {
             // remove the object's tag keys from the list
             keyList.removeIf(item -> containsDataKey(item.getValue()));
 
-            keyList.sort(defaultACItemComparator);
+            keyList.sort(DEFAULT_AC_ITEM_COMPARATOR);
             keys.setPossibleACItems(keyList);
             keys.setEditable(true);
 
@@ -714,7 +714,7 @@ public class TagEditHelper {
                         values.setSelectedItem(tag.getValue());
                     });
 
-            focus = addFocusAdapter(autocomplete, defaultACItemComparator);
+            focus = addFocusAdapter(autocomplete, DEFAULT_AC_ITEM_COMPARATOR);
             // fire focus event in advance or otherwise the popup list will be too small at first
             focus.focusGained(null);
 
