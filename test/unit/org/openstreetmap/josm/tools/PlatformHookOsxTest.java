@@ -69,7 +69,7 @@ public class PlatformHookOsxTest {
                 hook.openUrl(Main.getJOSMWebsite());
                 fail("Expected IOException");
             } catch (IOException e) {
-                Main.info(e.getMessage());
+                Logging.info(e.getMessage());
             }
         }
     }

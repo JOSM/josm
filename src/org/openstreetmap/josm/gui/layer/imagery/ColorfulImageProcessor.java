@@ -5,9 +5,9 @@ import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.Map;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.ImageProcessor;
 import org.openstreetmap.josm.io.session.SessionAwareReadApply;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -62,9 +62,7 @@ public class ColorfulImageProcessor implements ImageProcessor, SessionAwareReadA
             try {
                 setColorfulness(Double.parseDouble(cStr));
             } catch (NumberFormatException e) {
-                if (Main.isTraceEnabled()) {
-                    Main.trace(e);
-                }
+                Logging.trace(e);
             }
         }
     }

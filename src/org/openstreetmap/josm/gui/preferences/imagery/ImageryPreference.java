@@ -71,6 +71,7 @@ import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 
 /**
@@ -790,13 +791,13 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
                 try {
                     htmlPane = new JosmEditorPane(url);
                 } catch (IOException e1) {
-                    Main.trace(e1);
+                    Logging.trace(e1);
                     // give a second chance with a default Locale 'en'
                     try {
                         url = new URL(eulaUrl.replaceAll("\\{lang\\}", ""));
                         htmlPane = new JosmEditorPane(url);
                     } catch (IOException e2) {
-                        Main.debug(e2);
+                        Logging.debug(e2);
                         JOptionPane.showMessageDialog(gui, tr("EULA license URL not available: {0}", eulaUrl));
                         return false;
                     }

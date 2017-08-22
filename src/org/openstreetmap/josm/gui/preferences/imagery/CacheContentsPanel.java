@@ -34,6 +34,7 @@ import org.openstreetmap.josm.gui.layer.WMTSLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.ButtonColumn;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 
 /**
@@ -96,7 +97,7 @@ public class CacheContentsPanel extends JPanel {
                     counter[0]++;
                 }
             } else {
-                Main.warn("Could not parse the key: {0}. No colon found", key);
+                Logging.warn("Could not parse the key: {0}. No colon found", key);
             }
         }
 

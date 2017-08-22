@@ -77,6 +77,7 @@ import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.ListenerList;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
@@ -413,7 +414,7 @@ public class Preferences {
             }
         }
         if (!cacheDir.exists() && !cacheDir.mkdirs()) {
-            Main.warn(tr("Failed to create missing cache directory: {0}", cacheDir.getAbsoluteFile()));
+            Logging.warn(tr("Failed to create missing cache directory: {0}", cacheDir.getAbsoluteFile()));
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("<html>Failed to create missing cache directory: {0}</html>", cacheDir.getAbsoluteFile()),
@@ -670,20 +671,20 @@ public class Preferences {
     }
 
     private static void setCorrectPermissions(File file) {
-        if (!file.setReadable(false, false) && Main.isTraceEnabled()) {
-            Main.trace(tr("Unable to set file non-readable {0}", file.getAbsolutePath()));
+        if (!file.setReadable(false, false) && Logging.isTraceEnabled()) {
+            Logging.trace(tr("Unable to set file non-readable {0}", file.getAbsolutePath()));
         }
-        if (!file.setWritable(false, false) && Main.isTraceEnabled()) {
-            Main.trace(tr("Unable to set file non-writable {0}", file.getAbsolutePath()));
+        if (!file.setWritable(false, false) && Logging.isTraceEnabled()) {
+            Logging.trace(tr("Unable to set file non-writable {0}", file.getAbsolutePath()));
         }
-        if (!file.setExecutable(false, false) && Main.isTraceEnabled()) {
-            Main.trace(tr("Unable to set file non-executable {0}", file.getAbsolutePath()));
+        if (!file.setExecutable(false, false) && Logging.isTraceEnabled()) {
+            Logging.trace(tr("Unable to set file non-executable {0}", file.getAbsolutePath()));
         }
-        if (!file.setReadable(true, true) && Main.isTraceEnabled()) {
-            Main.trace(tr("Unable to set file readable {0}", file.getAbsolutePath()));
+        if (!file.setReadable(true, true) && Logging.isTraceEnabled()) {
+            Logging.trace(tr("Unable to set file readable {0}", file.getAbsolutePath()));
         }
-        if (!file.setWritable(true, true) && Main.isTraceEnabled()) {
-            Main.trace(tr("Unable to set file writable {0}", file.getAbsolutePath()));
+        if (!file.setWritable(true, true) && Logging.isTraceEnabled()) {
+            Logging.trace(tr("Unable to set file writable {0}", file.getAbsolutePath()));
         }
     }
 
@@ -750,7 +751,7 @@ public class Preferences {
         File prefDir = getPreferencesDirectory();
         if (prefDir.exists()) {
             if (!prefDir.isDirectory()) {
-                Main.warn(tr("Failed to initialize preferences. Preference directory ''{0}'' is not a directory.",
+                Logging.warn(tr("Failed to initialize preferences. Preference directory ''{0}'' is not a directory.",
                         prefDir.getAbsoluteFile()));
                 JOptionPane.showMessageDialog(
                         Main.parent,
@@ -763,7 +764,7 @@ public class Preferences {
             }
         } else {
             if (!prefDir.mkdirs()) {
-                Main.warn(tr("Failed to initialize preferences. Failed to create missing preference directory: {0}",
+                Logging.warn(tr("Failed to initialize preferences. Failed to create missing preference directory: {0}",
                         prefDir.getAbsoluteFile()));
                 JOptionPane.showMessageDialog(
                         Main.parent,
@@ -779,18 +780,18 @@ public class Preferences {
         File preferenceFile = getPreferenceFile();
         try {
             if (!preferenceFile.exists()) {
-                Main.info(tr("Missing preference file ''{0}''. Creating a default preference file.", preferenceFile.getAbsoluteFile()));
+                Logging.info(tr("Missing preference file ''{0}''. Creating a default preference file.", preferenceFile.getAbsoluteFile()));
                 resetToDefault();
                 save();
             } else if (reset) {
                 File backupFile = new File(prefDir, "preferences.xml.bak");
                 Main.platform.rename(preferenceFile, backupFile);
-                Main.warn(tr("Replacing existing preference file ''{0}'' with default preference file.", preferenceFile.getAbsoluteFile()));
+                Logging.warn(tr("Replacing existing preference file ''{0}'' with default preference file.", preferenceFile.getAbsoluteFile()));
                 resetToDefault();
                 save();
             }
         } catch (IOException e) {
-            Main.error(e);
+            Logging.error(e);
             JOptionPane.showMessageDialog(
                     Main.parent,
                     tr("<html>Failed to initialize preferences.<br>Failed to reset preference file to default: {0}</html>",
@@ -804,7 +805,7 @@ public class Preferences {
             load();
             initSuccessful = true;
         } catch (IOException | SAXException | XMLStreamException e) {
-            Main.error(e);
+            Logging.error(e);
             File backupFile = new File(prefDir, "preferences.xml.bak");
             JOptionPane.showMessageDialog(
                     Main.parent,
@@ -819,8 +820,8 @@ public class Preferences {
                 resetToDefault();
                 save();
             } catch (IOException e1) {
-                Main.error(e1);
-                Main.warn(tr("Failed to initialize preferences. Failed to reset preference file to default: {0}", getPreferenceFile()));
+                Logging.error(e1);
+                Logging.warn(tr("Failed to initialize preferences. Failed to reset preference file to default: {0}", getPreferenceFile()));
             }
         }
         File def = getDefaultsCacheFile();
@@ -828,11 +829,11 @@ public class Preferences {
             try {
                 loadDefaults();
             } catch (IOException | XMLStreamException | SAXException e) {
-                Main.error(e);
-                Main.warn(tr("Failed to load defaults cache file: {0}", def));
+                Logging.error(e);
+                Logging.warn(tr("Failed to load defaults cache file: {0}", def));
                 defaultsMap.clear();
                 if (!def.delete()) {
-                    Main.warn(tr("Failed to delete faulty defaults cache file: {0}", def));
+                    Logging.warn(tr("Failed to delete faulty defaults cache file: {0}", def));
                 }
             }
         }
@@ -965,7 +966,7 @@ public class Preferences {
             return Integer.parseInt(v);
         } catch (NumberFormatException e) {
             // fall out
-            Main.trace(e);
+            Logging.trace(e);
         }
         return def;
     }
@@ -988,7 +989,7 @@ public class Preferences {
             return Integer.parseInt(v);
         } catch (NumberFormatException e) {
             // fall out
-            Main.trace(e);
+            Logging.trace(e);
         }
         return def;
     }
@@ -1009,7 +1010,7 @@ public class Preferences {
             return Long.parseLong(v);
         } catch (NumberFormatException e) {
             // fall out
-            Main.trace(e);
+            Logging.trace(e);
         }
         return def;
     }
@@ -1030,7 +1031,7 @@ public class Preferences {
             return Double.parseDouble(v);
         } catch (NumberFormatException e) {
             // fall out
-            Main.trace(e);
+            Logging.trace(e);
         }
         return def;
     }
@@ -1098,7 +1099,7 @@ public class Preferences {
                 try {
                     save();
                 } catch (IOException e) {
-                    Main.warn(e, tr("Failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()));
+                    Logging.log(Logging.LEVEL_WARN, tr("Failed to persist preferences to ''{0}''", getPreferenceFile().getAbsoluteFile()), e);
                 }
             }
         }
@@ -1132,7 +1133,7 @@ public class Preferences {
         CheckParameterUtil.ensureParameterNotNull(def);
         Setting<?> oldDef = defaultsMap.get(key);
         if (oldDef != null && oldDef.isNew() && oldDef.getValue() != null && def.getValue() != null && !def.equals(oldDef)) {
-            Main.info("Defaults for " + key + " differ: " + def + " != " + defaultsMap.get(key));
+            Logging.info("Defaults for " + key + " differ: " + def + " != " + defaultsMap.get(key));
         }
         if (def.getValue() != null || oldDef == null) {
             Setting<?> defCopy = def.copy();
@@ -1462,7 +1463,7 @@ public class Preferences {
             try {
                 f = klass.getDeclaredField(keyValue.getKey().replace('-', '_'));
             } catch (NoSuchFieldException ex) {
-                Main.trace(ex);
+                Logging.trace(ex);
                 continue;
             }
             if (f.getAnnotation(pref.class) == null) {
@@ -1525,7 +1526,7 @@ public class Preferences {
     public void updateSystemProperties() {
         if ("true".equals(get("prefer.ipv6", "auto")) && !"true".equals(Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true"))) {
             // never set this to false, only true!
-            Main.info(tr("Try enabling IPv6 network, prefering IPv6 over IPv4 (only works on early startup)."));
+            Logging.info(tr("Try enabling IPv6 network, prefering IPv6 over IPv4 (only works on early startup)."));
         }
         Utils.updateSystemProperty("http.agent", Version.getInstance().getAgentString());
         Utils.updateSystemProperty("user.language", get("language"));
@@ -1539,7 +1540,7 @@ public class Preferences {
                 field.set(null, ResourceBundle.getBundle("sun.awt.resources.awt"));
             } catch (ReflectiveOperationException | RuntimeException e) { // NOPMD
                 // Catch RuntimeException in order to catch InaccessibleObjectException, new in Java 9
-                Main.warn(e);
+                Logging.warn(e);
             }
         }
         // Possibility to disable SNI (not by default) in case of misconfigured https servers
@@ -1570,7 +1571,7 @@ public class Preferences {
             try {
                 OnlineResource.JOSM_WEBSITE.checkOfflineAccess(it.next(), Main.getJOSMWebsite());
             } catch (OfflineAccessException ex) {
-                Main.warn(ex, false);
+                Logging.log(Logging.LEVEL_WARN, ex);
                 it.remove();
             }
         }
@@ -1612,7 +1613,7 @@ public class Preferences {
             sw.flush();
             return sw.toString();
         } catch (IOException e) {
-            Main.error(e);
+            Logging.error(e);
             return null;
         }
     }
@@ -1642,7 +1643,7 @@ public class Preferences {
         for (String key : OBSOLETE_PREF_KEYS) {
             if (settingsMap.containsKey(key)) {
                 settingsMap.remove(key);
-                Main.info(tr("Preference setting {0} has been removed since it is no longer used.", key));
+                Logging.info(tr("Preference setting {0} has been removed since it is no longer used.", key));
             }
         }
     }
@@ -1655,7 +1656,7 @@ public class Preferences {
                 .forEach(entry -> {
                     final String oldKey = entry.getKey();
                     final String newKey = entry.getValue();
-                    Main.info("Migrating old color key {0} => {1}", oldKey, newKey);
+                    Logging.info("Migrating old color key {0} => {1}", oldKey, newKey);
                     put(newKey, get(oldKey));
                     put(oldKey, null);
                 });

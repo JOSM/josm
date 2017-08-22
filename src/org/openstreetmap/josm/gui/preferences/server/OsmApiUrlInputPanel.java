@@ -36,6 +36,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -155,7 +156,7 @@ public class OsmApiUrlInputPanel extends JPanel {
             try {
                 OsmApi.getOsmApi().initialize(null);
             } catch (OsmTransferCanceledException | OsmApiInitializationException ex) {
-                Main.warn(ex);
+                Logging.warn(ex);
             }
         }
     }

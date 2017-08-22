@@ -13,9 +13,9 @@ import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.ICachedLoaderListener.LoadResult;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -120,7 +120,7 @@ public class JCSCachedTileLoaderJobTest {
                     listener.wait();
                 } catch (InterruptedException e1) {
                     // do nothing, still wait
-                    Main.trace(e1);
+                    Logging.trace(e1);
                 }
             }
         }
@@ -142,7 +142,7 @@ public class JCSCachedTileLoaderJobTest {
                     listener.wait();
                 } catch (InterruptedException e1) {
                     // do nothing, wait
-                    Main.trace(e1);
+                    Logging.trace(e1);
                 }
             }
         }

@@ -45,6 +45,7 @@ import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.UserCancelException;
@@ -563,7 +564,7 @@ public class JoinAreasAction extends JosmAction {
                         .show();
             }
         } catch (UserCancelException exception) {
-            Main.trace(exception);
+            Logging.trace(exception);
             //revert changes
             //FIXME: this is dirty hack
             makeCommitsOneAction(tr("Reverting changes"));
@@ -734,7 +735,7 @@ public class JoinAreasAction extends JosmAction {
             commitCommands(marktr("Fix tag conflicts"));
             return true;
         } catch (UserCancelException ex) {
-            Main.trace(ex);
+            Logging.trace(ex);
             return false;
         }
     }

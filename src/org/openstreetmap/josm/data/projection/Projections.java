@@ -44,6 +44,7 @@ import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -180,7 +181,7 @@ public final class Projections {
                     nadgrids.put(nadgridsId, new NTV2GridShiftFileWrapper(nadgridsId));
                 }
             } catch (ProjectionConfigurationException e) {
-                Main.trace(e);
+                Logging.trace(e);
             }
         }
     }
@@ -315,7 +316,7 @@ public final class Projections {
                     String definition = m.group(2).trim();
                     result.add(new ProjectionDefinition(code, name, definition));
                 } else {
-                    Main.warn("Failed to parse line from the EPSG projection definition: "+line);
+                    Logging.warn("Failed to parse line from the EPSG projection definition: "+line);
                 }
             }
             lastline = line;
@@ -338,7 +339,7 @@ public final class Projections {
             try {
                 proj = pc.getProjection();
             } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
-                Main.warn(e, "Unable to get projection "+code+" with "+pc+':');
+                Logging.log(Logging.LEVEL_WARN, "Unable to get projection "+code+" with "+pc+':', e);
             }
         }
         if (proj == null) {

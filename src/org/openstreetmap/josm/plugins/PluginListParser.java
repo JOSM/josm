@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * A parser for the plugin list provided by a JOSM Plugin Download Site.
@@ -102,7 +102,7 @@ public class PluginListParser {
                 ret.add(info);
             }
         } catch (PluginListParseException ex) {
-            Main.error(ex);
+            Logging.error(ex);
         }
     }
 

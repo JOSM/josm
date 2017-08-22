@@ -25,6 +25,7 @@ import javax.swing.text.StyleConstants;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Auto-completing ComboBox.
@@ -326,15 +327,15 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
         useFixedLocale = f;
         if (useFixedLocale) {
             Locale oldLocale = privateInputContext.getLocale();
-            Main.info("Using English input method");
+            Logging.info("Using English input method");
             if (!privateInputContext.selectInputMethod(new Locale("en", "US"))) {
                 // Unable to use English keyboard layout, disable the feature
-                Main.warn("Unable to use English input method");
+                Logging.warn("Unable to use English input method");
                 useFixedLocale = false;
                 if (oldLocale != null) {
-                    Main.info("Restoring input method to " + oldLocale);
+                    Logging.info("Restoring input method to " + oldLocale);
                     if (!privateInputContext.selectInputMethod(oldLocale)) {
-                        Main.warn("Unable to restore input method to " + oldLocale);
+                        Logging.warn("Unable to restore input method to " + oldLocale);
                     }
                 }
             }

@@ -26,7 +26,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.JTextComponent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.TagMap;
 import org.openstreetmap.josm.gui.datatransfer.OsmTransferHandler;
@@ -35,6 +34,7 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.widgets.JosmTable;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This is the tabular editor component for OSM tags.
@@ -420,8 +420,8 @@ public class TagTable extends JosmTable implements EndEditListener {
      */
     public void setAutoCompletionManager(AutoCompletionManager autocomplete) {
         if (autocomplete == null) {
-            Main.warn("argument autocomplete should not be null. Aborting.");
-            Thread.dumpStack();
+            Logging.warn("argument autocomplete should not be null. Aborting.");
+            Logging.error(new Exception());
             return;
         }
         if (editor != null) {

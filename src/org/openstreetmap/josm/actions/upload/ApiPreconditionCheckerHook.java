@@ -18,6 +18,7 @@ import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Checks certain basic conditions, that are listed in the OSM API
@@ -45,7 +46,7 @@ public class ApiPreconditionCheckerHook implements UploadHook {
                     return false;
             }
         } catch (OsmTransferCanceledException e) {
-            Main.trace(e);
+            Logging.trace(e);
             return false;
         } catch (OsmApiInitializationException e) {
             ExceptionDialogUtil.explainOsmTransferException(e);
@@ -61,7 +62,7 @@ public class ApiPreconditionCheckerHook implements UploadHook {
                 if (key.length() > 255) {
                     if (osmPrimitive.isDeleted()) {
                         // if OsmPrimitive is going to be deleted we automatically shorten the value
-                        Main.warn(
+                        Logging.warn(
                                 tr("Automatically truncating value of tag ''{0}'' on deleted object {1}",
                                         key,
                                         Long.toString(osmPrimitive.getId())

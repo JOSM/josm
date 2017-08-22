@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Handler for add_node request.
@@ -76,7 +77,7 @@ public class AddNodeHandler extends RequestHandler {
     private void addNode(Map<String, String> args) {
 
         // Parse the arguments
-        Main.info("Adding node at (" + lat + ", " + lon + ')');
+        Logging.info("Adding node at (" + lat + ", " + lon + ')');
 
         // Create a new node
         LatLon ll = new LatLon(lat, lon);

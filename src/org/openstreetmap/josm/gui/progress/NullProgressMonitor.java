@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.progress;
 import java.awt.Component;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * A singleton progress monitor that does nothing.
@@ -25,16 +26,12 @@ public final class NullProgressMonitor implements ProgressMonitor {
 
     @Override
     public void beginTask(String title) {
-        if (Main.isDebugEnabled()) {
-            Main.debug(title);
-        }
+        Logging.debug(title);
     }
 
     @Override
     public void beginTask(String title, int ticks) {
-        if (Main.isDebugEnabled()) {
-            Main.debug(title);
-        }
+        Logging.debug(title);
     }
 
     @Override
@@ -59,9 +56,7 @@ public final class NullProgressMonitor implements ProgressMonitor {
 
     @Override
     public void indeterminateSubTask(String title) {
-        if (Main.isDebugEnabled()) {
-            Main.debug(title);
-        }
+        Logging.debug(title);
     }
 
     @Override
@@ -106,9 +101,7 @@ public final class NullProgressMonitor implements ProgressMonitor {
 
     @Override
     public void subTask(String title) {
-        if (Main.isDebugEnabled()) {
-            Main.debug(title);
-        }
+        Logging.debug(title);
     }
 
     @Override

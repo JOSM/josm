@@ -50,6 +50,7 @@ import org.openstreetmap.josm.gui.util.ModifierExListener;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -521,7 +522,7 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
             getLayerManager().getEditDataSet().setSelected(pWays.getWays());
             return true;
         } catch (IllegalArgumentException e) {
-            Main.debug(e);
+            Logging.debug(e);
             new Notification(tr("ParallelWayAction\n" +
                     "The ways selected must form a simple branchless path"))
                     .setIcon(JOptionPane.INFORMATION_MESSAGE)
@@ -583,7 +584,7 @@ public class ParallelWayAction extends MapMode implements ModifierExListener {
                 if (mod.isPresent()) {
                     ret.put(mod.get(), Character.isUpperCase(c));
                 } else {
-                    Main.debug("Ignoring unknown modifier {0}", c);
+                    Logging.debug("Ignoring unknown modifier {0}", c);
                 }
             }
             return Collections.unmodifiableMap(ret);

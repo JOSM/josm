@@ -28,6 +28,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -143,7 +144,7 @@ public final class CertificateAmendment {
                 }
             }
         } catch (KeyStoreException | NoSuchAlgorithmException | CertificateException | IOException | IllegalStateException e) {
-            Main.error(e);
+            Logging.error(e);
         }
 
         if (certificateAdded) {
@@ -165,8 +166,8 @@ public final class CertificateAmendment {
                             certAmend.id, certAmend.sha256, sha256));
             }
             if (certificateIsMissing(keyStore, cert)) {
-                if (Main.isDebugEnabled()) {
-                    Main.debug(tr("Adding certificate for TLS connections: {0}", cert.getSubjectX500Principal().getName()));
+                if (Logging.isDebugEnabled()) {
+                    Logging.debug(tr("Adding certificate for TLS connections: {0}", cert.getSubjectX500Principal().getName()));
                 }
                 String alias = "josm:" + new File(certAmend.id).getName();
                 keyStore.setCertificateEntry(alias, cert);

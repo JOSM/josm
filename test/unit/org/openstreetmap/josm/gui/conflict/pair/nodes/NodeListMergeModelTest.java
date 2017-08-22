@@ -19,11 +19,11 @@ import javax.swing.DefaultListSelectionModel;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.testutils.DatasetFactory;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -359,7 +359,7 @@ public class NodeListMergeModelTest {
             fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // OK
-            Main.trace(e);
+            Logging.trace(e);
         }
 
         try {
@@ -367,7 +367,7 @@ public class NodeListMergeModelTest {
             fail("expected IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             // OK
-            Main.trace(e);
+            Logging.trace(e);
         }
     }
 

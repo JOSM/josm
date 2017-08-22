@@ -45,6 +45,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSeparator;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.Geometry;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
@@ -111,7 +112,7 @@ public class SearchCompiler {
             } else
                 throw new AssertionError("Unknown match factory");
             if (existing != null) {
-                Main.warn("SearchCompiler: for key ''{0}'', overriding match factory ''{1}'' with ''{2}''", keyword, existing, factory);
+                Logging.warn("SearchCompiler: for key ''{0}'', overriding match factory ''{1}'' with ''{2}''", keyword, existing, factory);
             }
         }
     }
@@ -715,7 +716,7 @@ public class SearchCompiler {
                     v = Double.valueOf(referenceValue);
                 }
             } catch (NumberFormatException ignore) {
-                Main.trace(ignore);
+                Logging.trace(ignore);
             }
             this.referenceNumber = v;
             this.compareMode = compareMode;
@@ -1695,7 +1696,7 @@ public class SearchCompiler {
         Match m = Optional.ofNullable(parseExpression()).orElse(Always.INSTANCE);
         if (!tokenizer.readIfEqual(Token.EOF))
             throw new ParseError(tr("Unexpected token: {0}", tokenizer.nextToken()));
-        Main.debug("Parsed search expression is {0}", m);
+        Logging.debug("Parsed search expression is {0}", m);
         return m;
     }
 

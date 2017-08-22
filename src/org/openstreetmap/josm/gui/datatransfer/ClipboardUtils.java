@@ -12,8 +12,8 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -49,7 +49,7 @@ public final class ClipboardUtils {
             try {
                 clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
             } catch (HeadlessException e) {
-                Main.warn("Headless. Using fake clipboard.", e);
+                Logging.warn("Headless. Using fake clipboard.", e);
                 clipboard = new Clipboard("fake");
             }
         }
@@ -82,7 +82,7 @@ public final class ClipboardUtils {
                 return (String) t.getTransferData(DataFlavor.stringFlavor);
             }
         } catch (UnsupportedFlavorException | IOException ex) {
-            Main.error(ex);
+            Logging.error(ex);
         }
         return null;
     }
@@ -108,17 +108,17 @@ public final class ClipboardUtils {
             } catch (IllegalStateException e) {
                 // Clipboard currently unavailable.
                 // On some platforms, the system clipboard is unavailable while it is accessed by another application.
-                Main.trace("Clipboard unavailable.", e);
+                Logging.trace("Clipboard unavailable.", e);
                 try {
                     Thread.sleep(1);
                 } catch (InterruptedException ex) {
-                    Main.warn(ex, "InterruptedException in " + Utils.class.getSimpleName()
-                            + " while getting clipboard content");
+                    Logging.log(Logging.LEVEL_WARN, "InterruptedException in " + Utils.class.getSimpleName()
+                            + " while getting clipboard content", ex);
                     Thread.currentThread().interrupt();
                 }
             } catch (NullPointerException e) { // NOPMD
                 // JDK-6322854: On Linux/X11, NPE can happen for unknown reasons, on all versions of Java
-                Main.error(e);
+                Logging.error(e);
             }
         }
         return t;
@@ -144,7 +144,7 @@ public final class ClipboardUtils {
                 getClipboard().setContents(transferable, new DoNothingClipboardOwner());
                 return Boolean.TRUE;
             } catch (IllegalStateException ex) {
-                Main.error(ex);
+                Logging.error(ex);
                 return Boolean.FALSE;
             }
         });

@@ -7,7 +7,6 @@ import javax.swing.JFrame;
 
 import org.junit.BeforeClass;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
@@ -15,6 +14,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmServerHistoryReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.Logging;
 
 public class HistoryBrowserTestFT extends JFrame {
 
@@ -38,7 +38,7 @@ public class HistoryBrowserTestFT extends JFrame {
         try {
             ds = reader.parseHistory(NullProgressMonitor.INSTANCE);
         } catch (OsmTransferException e) {
-            Main.error(e);
+            Logging.error(e);
             return;
         }
         History h = ds.getHistory(new SimplePrimitiveId(id, type));

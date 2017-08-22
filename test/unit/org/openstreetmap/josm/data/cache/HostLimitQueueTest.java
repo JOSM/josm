@@ -13,8 +13,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -63,7 +63,7 @@ public class HostLimitQueueTest {
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
-                Main.trace(e);
+                Logging.trace(e);
             } finally {
                 this.counter.incrementAndGet();
                 executionFinished();

@@ -20,6 +20,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
 
 /**
@@ -104,7 +105,7 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
             });
         } catch (OsmTransferException | InvocationTargetException | InterruptedException e) {
             if (canceled) {
-                Main.warn(tr("Ignoring exception because task was canceled. Exception: {0}", e.toString()));
+                Logging.warn(tr("Ignoring exception because task was canceled. Exception: {0}", e.toString()));
                 return;
             }
             lastException = e;

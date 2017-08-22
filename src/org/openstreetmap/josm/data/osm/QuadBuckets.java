@@ -9,9 +9,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.QuadTiling;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Note: bbox of primitives added to QuadBuckets has to stay the same. In case of coordinate change, primitive must
@@ -597,7 +597,7 @@ public class QuadBuckets<T extends OsmPrimitive> implements Collection<T> {
 
         if (searchCache == null) {
             searchCache = root;
-            Main.info("bbox: " + searchBbox + " is out of the world");
+            Logging.info("bbox: " + searchBbox + " is out of the world");
         }
 
         // Save parent because searchCache might change during search call

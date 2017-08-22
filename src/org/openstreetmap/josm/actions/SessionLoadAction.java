@@ -33,6 +33,7 @@ import org.openstreetmap.josm.io.session.SessionReader.SessionProjectionChoiceDa
 import org.openstreetmap.josm.io.session.SessionReader.SessionViewportData;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -195,7 +196,7 @@ public class SessionLoadAction extends DiskAccessAction {
         }
 
         private void handleException(String dialogTitle, Exception e) {
-            Main.error(e);
+            Logging.error(e);
             HelpAwareOptionPane.showMessageDialogInEDT(
                     Main.parent,
                     tr("<html>Could not load session file ''{0}''.<br>Error is:<br>{1}</html>",

@@ -3,10 +3,10 @@ package org.openstreetmap.josm.plugins;
 
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.download.DownloadSelection;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 
 /**
@@ -65,8 +65,8 @@ public class PluginProxy extends Plugin {
         try {
             plugin.getClass().getMethod("mapFrameInitialized", MapFrame.class, MapFrame.class).invoke(plugin, oldFrame, newFrame);
         } catch (NoSuchMethodException e) {
-            Main.trace(e);
-            Main.debug("Plugin "+plugin+" does not define mapFrameInitialized");
+            Logging.trace(e);
+            Logging.debug("Plugin "+plugin+" does not define mapFrameInitialized");
         } catch (ReflectiveOperationException | IllegalArgumentException | NoClassDefFoundError e) {
             handlePluginException(e);
         }
@@ -77,8 +77,8 @@ public class PluginProxy extends Plugin {
         try {
             return (PreferenceSetting) plugin.getClass().getMethod("getPreferenceSetting").invoke(plugin);
         } catch (NoSuchMethodException e) {
-            Main.trace(e);
-            Main.debug("Plugin "+plugin+" does not define getPreferenceSetting");
+            Logging.trace(e);
+            Logging.debug("Plugin "+plugin+" does not define getPreferenceSetting");
             return null;
         } catch (ReflectiveOperationException | IllegalArgumentException | NoClassDefFoundError e) {
             handlePluginException(e);
@@ -91,8 +91,8 @@ public class PluginProxy extends Plugin {
         try {
             plugin.getClass().getMethod("addDownloadSelection", List.class).invoke(plugin, list);
         } catch (NoSuchMethodException e) {
-            Main.trace(e);
-            Main.debug("Plugin "+plugin+" does not define addDownloadSelection");
+            Logging.trace(e);
+            Logging.debug("Plugin "+plugin+" does not define addDownloadSelection");
         } catch (ReflectiveOperationException | IllegalArgumentException | NoClassDefFoundError e) {
             handlePluginException(e);
         }

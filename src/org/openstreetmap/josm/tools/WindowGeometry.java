@@ -88,7 +88,7 @@ public class WindowGeometry {
         try {
             initFromPreferences(preferenceKey);
         } catch (WindowGeometryException e) {
-            Main.debug(e);
+            Logging.debug(e);
             initFromWindowGeometry(defaultGeometry);
         }
     }
@@ -247,7 +247,7 @@ public class WindowGeometry {
                 }
                 return new WindowGeometry(new Point(x, y), new Dimension(w, h));
             } else {
-                Main.warn(tr("Ignoring malformed geometry: {0}", arg));
+                Logging.warn(tr("Ignoring malformed geometry: {0}", arg));
             }
         }
         WindowGeometry def;

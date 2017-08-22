@@ -5,10 +5,10 @@ import java.text.DateFormat;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -93,7 +93,7 @@ public final class VersionTableModel extends AbstractTableModel {
                 return;
             }
         } catch (IllegalArgumentException e) {
-            Main.error(e);
+            Logging.error(e);
         }
         fireTableDataChanged();
     }

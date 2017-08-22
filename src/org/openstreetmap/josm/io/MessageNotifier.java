@@ -29,6 +29,7 @@ import org.openstreetmap.josm.io.auth.CredentialsAgentResponse;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.io.auth.JosmPreferencesCredentialAgent;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -85,7 +86,7 @@ public final class MessageNotifier {
                     }
                 }
             } catch (OsmTransferException e) {
-                Main.warn(e);
+                Logging.warn(e);
             }
         }
     }
@@ -96,10 +97,10 @@ public final class MessageNotifier {
     public static void start() {
         int interval = PROP_INTERVAL.get();
         if (Main.isOffline(OnlineResource.OSM_API)) {
-            Main.info(tr("{0} not available (offline mode)", tr("Message notifier")));
+            Logging.info(tr("{0} not available (offline mode)", tr("Message notifier")));
         } else if (!isRunning() && interval > 0 && isUserEnoughIdentified()) {
             task = EXECUTOR.scheduleAtFixedRate(WORKER, 0, TimeUnit.MINUTES.toSeconds(interval), TimeUnit.SECONDS);
-            Main.info("Message notifier active (checks every "+interval+" minute"+(interval > 1 ? "s" : "")+')');
+            Logging.info("Message notifier active (checks every "+interval+" minute"+(interval > 1 ? "s" : "")+')');
         }
     }
 
@@ -109,7 +110,7 @@ public final class MessageNotifier {
     public static void stop() {
         if (isRunning()) {
             task.cancel(false);
-            Main.info("Message notifier inactive");
+            Logging.info("Message notifier inactive");
             task = null;
         }
     }
@@ -152,7 +153,7 @@ public final class MessageNotifier {
                     }
                 }
             } catch (CredentialsAgentException e) {
-                Main.warn(e, "Unable to get credentials:");
+                Logging.log(Logging.LEVEL_WARN, "Unable to get credentials:", e);
             }
         }
         return false;

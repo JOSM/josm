@@ -55,9 +55,9 @@ public class BugReportQueue {
     public synchronized void submit(ReportedException report) {
         Logging.logWithStackTrace(Logging.LEVEL_ERROR, "Handled by bug report queue", report.getCause());
         if (suppressAllMessages || suppressFor.stream().anyMatch(report::isSame)) {
-            Main.info("User requested to skip error " + report);
+            Logging.info("User requested to skip error " + report);
         } else if (reportsToDisplay.size() > 100 || reportsToDisplay.stream().filter(report::isSame).count() >= 10) {
-            Main.warn("Too many errors. Dropping " + report);
+            Logging.warn("Too many errors. Dropping " + report);
         } else {
             reportsToDisplay.add(report);
             if (displayThread == null) {
@@ -108,7 +108,7 @@ public class BugReportQueue {
 
     private SuppressionMode displayFor(ReportedException e) {
         if (handlers.stream().anyMatch(p -> p.test(e))) {
-            Main.trace("Intercepted by handler.");
+            Logging.trace("Intercepted by handler.");
             return SuppressionMode.NONE;
         }
         return bugReportHandler.apply(e, getDisplayedErrors());

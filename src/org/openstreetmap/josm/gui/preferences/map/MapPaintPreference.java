@@ -32,6 +32,7 @@ import org.openstreetmap.josm.gui.preferences.SourceType;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -165,7 +166,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
                 return css.title;
             }
         } catch (RuntimeException ignore) { // NOPMD
-            Main.debug(ignore);
+            Logging.debug(ignore);
         }
         return null;
     }

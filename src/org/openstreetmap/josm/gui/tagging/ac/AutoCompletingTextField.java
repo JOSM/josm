@@ -22,6 +22,7 @@ import javax.swing.text.StyleConstants;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.CellEditorSupport;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * AutoCompletingTextField is a text field with autocompletion behaviour. It
@@ -90,7 +91,7 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
                     return;
                 } catch (NumberFormatException e) {
                     // either the new text or the current text isn't a number. We continue with autocompletion
-                    Main.trace(e);
+                    Logging.trace(e);
                 }
             }
             String prefix = currentText.substring(0, offs);

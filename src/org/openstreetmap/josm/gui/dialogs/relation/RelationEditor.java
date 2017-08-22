@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Abstract relation editor.
@@ -106,7 +107,7 @@ public abstract class RelationEditor extends ExtendedDialog implements IRelation
                     return e.getConstructor(Relation.class, Collection.class).newInstance(layer, r, selectedMembers);
                 }
             } catch (ReflectiveOperationException ex) {
-                Main.warn(ex);
+                Logging.warn(ex);
             }
         }
         if (RelationDialogManager.getRelationDialogManager().isOpenInEditor(layer, r))

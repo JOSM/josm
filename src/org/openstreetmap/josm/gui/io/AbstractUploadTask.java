@@ -33,6 +33,7 @@ import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmApiPrimitiveGoneException;
 import org.openstreetmap.josm.tools.ExceptionUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -297,7 +298,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
                 return;
             }
         }
-        Main.warn(tr("Error header \"{0}\" did not match with an expected pattern", errorHeader));
+        Logging.warn(tr("Error header \"{0}\" did not match with an expected pattern", errorHeader));
         handleUploadConflictForUnknownConflict();
     }
 
@@ -312,7 +313,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
         if (conflict != null) {
             handleUploadPreconditionFailedConflict(e, conflict);
         } else {
-            Main.warn(tr("Error header \"{0}\" did not match with an expected pattern", e.getErrorHeader()));
+            Logging.warn(tr("Error header \"{0}\" did not match with an expected pattern", e.getErrorHeader()));
             ExceptionDialogUtil.explainPreconditionFailed(e);
         }
     }

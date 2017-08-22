@@ -20,6 +20,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlParsingException;
 import org.w3c.dom.Document;
@@ -47,7 +48,7 @@ public abstract class OsmServerReader extends OsmConnection {
         try {
             doAuthenticate = OsmApi.isUsingOAuth() && CredentialsManager.getInstance().lookupOAuthAccessToken() != null;
         } catch (CredentialsAgentException e) {
-            Main.warn(e);
+            Logging.warn(e);
         }
     }
 
@@ -185,7 +186,7 @@ public abstract class OsmServerReader extends OsmConnection {
             try {
                 response = client.connect(progressMonitor);
             } catch (IOException e) {
-                Main.error(e);
+                Logging.error(e);
                 OsmTransferException ote = new OsmTransferException(
                         tr("Could not connect to the OSM server. Please check your internet connection."), e);
                 ote.setUrl(url.toString());
@@ -220,7 +221,7 @@ public abstract class OsmServerReader extends OsmConnection {
         try {
             return response.fetchContent();
         } catch (IOException e) {
-            Main.error(e);
+            Logging.error(e);
             return tr("Reading error text failed.");
         }
     }

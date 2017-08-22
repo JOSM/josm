@@ -931,8 +931,8 @@ public final class Geometry {
         try {
             outerInner = MultipolygonBuilder.joinWays(multiPolygon);
         } catch (MultipolygonBuilder.JoinedPolygonCreationException ex) {
-            Main.trace(ex);
-            Main.debug("Invalid multipolygon " + multiPolygon);
+            Logging.trace(ex);
+            Logging.debug("Invalid multipolygon " + multiPolygon);
             return false;
         }
         // Test if object is inside an outer member

@@ -29,8 +29,8 @@ import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.validation.routines.DomainValidator.ArrayType;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Tests for the DomainValidator.
@@ -341,28 +341,28 @@ public class DomainValidatorTest {
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException iae) {
             // expected
-            Main.debug(iae.getMessage());
+            Logging.debug(iae.getMessage());
         }
         try {
             DomainValidator.updateTLDOverride(ArrayType.GENERIC_RO, new String[]{"com"});
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException iae) {
             // expected
-            Main.debug(iae.getMessage());
+            Logging.debug(iae.getMessage());
         }
         try {
             DomainValidator.updateTLDOverride(ArrayType.INFRASTRUCTURE_RO, new String[]{"com"});
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException iae) {
             // expected
-            Main.debug(iae.getMessage());
+            Logging.debug(iae.getMessage());
         }
         try {
             DomainValidator.updateTLDOverride(ArrayType.LOCAL_RO, new String[]{"com"});
             fail("Expected IllegalArgumentException");
         } catch (IllegalArgumentException iae) {
             // expected
-            Main.debug(iae.getMessage());
+            Logging.debug(iae.getMessage());
         }
     }
 
@@ -430,7 +430,7 @@ public class DomainValidatorTest {
             fail("Expected IllegalStateException");
         } catch (IllegalStateException ise) {
             // expected
-            Main.debug(ise.getMessage());
+            Logging.debug(ise.getMessage());
         }
     }
 

@@ -7,9 +7,9 @@ import java.awt.image.Kernel;
 import java.util.Collections;
 import java.util.Map;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.ImageProcessor;
 import org.openstreetmap.josm.io.session.SessionAwareReadApply;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -99,9 +99,7 @@ public class SharpenImageProcessor implements ImageProcessor, SessionAwareReadAp
             try {
                 setSharpenLevel(Float.parseFloat(vStr));
             } catch (NumberFormatException e) {
-                if (Main.isTraceEnabled()) {
-                    Main.trace(e);
-                }
+                Logging.trace(e);
             }
         }
     }

@@ -9,11 +9,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.gpx.Extensions;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -50,7 +50,7 @@ public final class DefaultMarkerProducers implements MarkerProducers {
                 try {
                     audioMarker.syncOffset = Double.parseDouble(exts.get("sync-offset"));
                 } catch (NumberFormatException nfe) {
-                    Main.warn(nfe);
+                    Logging.warn(nfe);
                 }
             }
             return Arrays.asList(marker, audioMarker);

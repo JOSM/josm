@@ -29,6 +29,7 @@ import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.draw.SymbolShape;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -245,7 +246,7 @@ class DrawSnapHelper {
         try {
             return Double.parseDouble(string);
         } catch (NumberFormatException e) {
-            Main.warn("Incorrect number in draw.anglesnap.angles preferences: {0}", string);
+            Logging.warn("Incorrect number in draw.anglesnap.angles preferences: {0}", string);
             return 0;
         }
     }

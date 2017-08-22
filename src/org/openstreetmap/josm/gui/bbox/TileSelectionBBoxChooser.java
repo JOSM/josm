@@ -68,7 +68,7 @@ import org.openstreetmap.josm.tools.Utils;
  *        public void propertyChange(PropertyChangeEvent evt) {
  *            // listen for BBOX events
  *            if (evt.getPropertyName().equals(BBoxChooser.BBOX_PROP)) {
- *               Main.info("new bbox based on OSM tiles selected: " + (Bounds)evt.getNewValue());
+ *               Logging.info("new bbox based on OSM tiles selected: " + (Bounds)evt.getNewValue());
  *            }
  *        }
  *    });

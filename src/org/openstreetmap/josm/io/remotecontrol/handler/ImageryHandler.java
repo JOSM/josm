@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -76,7 +77,7 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
             try {
                 imgInfo.setDefaultMinZoom(Integer.parseInt(minZoom));
             } catch (NumberFormatException e) {
-                Main.error(e);
+                Logging.error(e);
             }
         }
         String maxZoom = args.get("max_zoom");
@@ -84,7 +85,7 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
             try {
                 imgInfo.setDefaultMaxZoom(Integer.parseInt(maxZoom));
             } catch (NumberFormatException e) {
-                Main.error(e);
+                Logging.error(e);
             }
         }
         return imgInfo;
@@ -96,7 +97,7 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
         if (Main.isDisplayingMapView()) {
             for (ImageryLayer layer : Main.getLayerManager().getLayersOfType(ImageryLayer.class)) {
                 if (layer.getInfo().equals(imgInfo)) {
-                    Main.info("Imagery layer already exists: "+imgInfo);
+                    Logging.info("Imagery layer already exists: "+imgInfo);
                     return;
                 }
             }
@@ -105,7 +106,7 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
             try {
                 Main.getLayerManager().addLayer(ImageryLayer.create(imgInfo));
             } catch (IllegalArgumentException e) {
-                Main.error(e, false);
+                Logging.log(Logging.LEVEL_ERROR, e);
             }
         });
     }

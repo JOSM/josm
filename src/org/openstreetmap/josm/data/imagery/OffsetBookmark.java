@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Class to save a displacement of background imagery as a bookmark.
@@ -77,7 +78,7 @@ public class OffsetBookmark {
             this.center_lat = Double.parseDouble(array.get(6));
         }
         if (projection_code == null) {
-            Main.error(tr("Projection ''{0}'' is not found, bookmark ''{1}'' is not usable", projection_code, name));
+            Logging.error(tr("Projection ''{0}'' is not found, bookmark ''{1}'' is not usable", projection_code, name));
         }
     }
 

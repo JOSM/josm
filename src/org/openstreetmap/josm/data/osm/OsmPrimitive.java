@@ -26,6 +26,7 @@ import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.mappaint.StyleCache;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
@@ -760,7 +761,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
         try {
             return SearchCompiler.compile(Main.pref.get(prefName, defaultValue));
         } catch (ParseError e) {
-            Main.error(e, "Unable to compile pattern for " + prefName + ", trying default pattern:");
+            Logging.log(Logging.LEVEL_ERROR, "Unable to compile pattern for " + prefName + ", trying default pattern:", e);
         }
 
         try {

@@ -13,12 +13,12 @@ import java.util.Optional;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.data.notes.NoteComment.Action;
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.xml.sax.Attributes;
@@ -217,7 +217,7 @@ public class NoteReader {
         try {
             Utils.parseSafeSAX(inputSource, parser);
         } catch (ParserConfigurationException e) {
-            Main.error(e); // broken SAXException chaining
+            Logging.error(e); // broken SAXException chaining
             throw new SAXException(e);
         }
         return parsedNotes;

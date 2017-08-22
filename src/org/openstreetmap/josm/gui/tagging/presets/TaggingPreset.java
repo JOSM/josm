@@ -59,6 +59,7 @@ import org.openstreetmap.josm.gui.tagging.presets.items.Space;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.template_engine.ParseError;
 import org.openstreetmap.josm.tools.template_engine.TemplateEntry;
@@ -216,7 +217,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             if (result != null) {
                 GuiHelper.runInEDT(() -> result.attachImageIcon(this));
             } else {
-                Main.warn(toString() + ": " + PRESET_ICON_ERROR_MSG_PREFIX + iconName);
+                Logging.warn(toString() + ": " + PRESET_ICON_ERROR_MSG_PREFIX + iconName);
             }
         });
     }
@@ -235,7 +236,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         try {
             this.nameTemplate = new TemplateParser(pattern).parse();
         } catch (ParseError e) {
-            Main.error("Error while parsing " + pattern + ": " + e.getMessage());
+            Logging.error("Error while parsing " + pattern + ": " + e.getMessage());
             throw new SAXException(e);
         }
     }
@@ -244,7 +245,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         try {
             this.nameTemplateFilter = SearchCompiler.compile(filter);
         } catch (SearchCompiler.ParseError e) {
-            Main.error("Error while parsing" + filter + ": " + e.getMessage());
+            Logging.error("Error while parsing" + filter + ": " + e.getMessage());
             throw new SAXException(e);
         }
     }

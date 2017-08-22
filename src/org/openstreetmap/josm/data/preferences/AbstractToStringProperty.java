@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.preferences;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
@@ -88,7 +88,7 @@ public abstract class AbstractToStringProperty<T> extends AbstractProperty<T> {
             try {
                 return fromString(string);
             } catch (InvalidPreferenceValueException e) {
-                Main.warn(BugReport.intercept(e).put("key", key).put("value", string));
+                Logging.warn(BugReport.intercept(e).put("key", key).put("value", string));
             }
         }
         return getDefaultValue();

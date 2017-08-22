@@ -18,7 +18,6 @@ import java.util.regex.Pattern;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -26,6 +25,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -167,11 +167,11 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
                         matcher.appendReplacement(sb, geocodeArea(matcher.group(2)));
                         break;
                     default:
-                        Main.warn("Unsupported syntax: " + matcher.group(1));
+                        Logging.warn("Unsupported syntax: " + matcher.group(1));
                 }
             } catch (UncheckedParseException ex) {
                 final String msg = tr("Failed to evaluate {0}", matcher.group());
-                Main.warn(ex, msg);
+                Logging.log(Logging.LEVEL_WARN, msg, ex);
                 matcher.appendReplacement(sb, "// " + msg + "\n");
             }
         }
@@ -244,7 +244,7 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
                 try {
                     reader = readerClass.getDeclaredConstructor().newInstance();
                 } catch (ReflectiveOperationException | IllegalArgumentException | SecurityException e) {
-                    Main.error(e);
+                    Logging.error(e);
                 }
             }
         }

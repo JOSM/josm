@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -77,11 +77,11 @@ public class ChangesetClosedException extends OsmTransferException {
             try {
                 closedOn = DateUtils.newOsmApiDateTimeFormat().parse(m.group(2));
             } catch (ParseException ex) {
-                Main.error(tr("Failed to parse date ''{0}'' replied by server.", m.group(2)));
-                Main.error(ex);
+                Logging.error(tr("Failed to parse date ''{0}'' replied by server.", m.group(2)));
+                Logging.error(ex);
             }
         } else {
-            Main.error(tr("Unexpected format of error header for conflict in changeset update. Got ''{0}''", errorHeader));
+            Logging.error(tr("Unexpected format of error header for conflict in changeset update. Got ''{0}''", errorHeader));
         }
     }
 

@@ -19,6 +19,7 @@ import org.openstreetmap.josm.gui.util.ChangeNotifier;
 import org.openstreetmap.josm.plugins.PluginException;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * The plugin model behind a {@code PluginListPanel}.
@@ -349,7 +350,7 @@ public class PluginPreferencesModel extends ChangeNotifier {
                         oldinfo.updateLocalInfo(newinfo);
                     }
                 } catch (PluginException e) {
-                    Main.error(e);
+                    Logging.error(e);
                 }
             }
         }

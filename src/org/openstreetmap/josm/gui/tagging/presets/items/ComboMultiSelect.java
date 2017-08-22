@@ -37,6 +37,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSelector;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -396,17 +397,17 @@ public abstract class ComboMultiSelect extends KeyedItem {
             initListEntriesFromAttributes();
         } else {
             if (values != null) {
-                Main.warn(tr("Warning in tagging preset \"{0}-{1}\": "
+                Logging.warn(tr("Warning in tagging preset \"{0}-{1}\": "
                         + "Ignoring ''{2}'' attribute as ''{3}'' elements are given.",
                         key, text, "values", "list_entry"));
             }
             if (display_values != null || locale_display_values != null) {
-                Main.warn(tr("Warning in tagging preset \"{0}-{1}\": "
+                Logging.warn(tr("Warning in tagging preset \"{0}-{1}\": "
                         + "Ignoring ''{2}'' attribute as ''{3}'' elements are given.",
                         key, text, "display_values", "list_entry"));
             }
             if (short_descriptions != null || locale_short_descriptions != null) {
-                Main.warn(tr("Warning in tagging preset \"{0}-{1}\": "
+                Logging.warn(tr("Warning in tagging preset \"{0}-{1}\": "
                         + "Ignoring ''{2}'' attribute as ''{3}'' elements are given.",
                         key, text, "short_descriptions", "list_entry"));
             }
@@ -438,13 +439,13 @@ public abstract class ComboMultiSelect extends KeyedItem {
                             && method.getReturnType().equals(String[].class) && method.getParameterTypes().length == 0) {
                         valueArray = (String[]) method.invoke(null);
                     } else {
-                        Main.error(tr("Broken tagging preset \"{0}-{1}\" - Java method given in ''values_from'' is not \"{2}\"", key, text,
+                        Logging.error(tr("Broken tagging preset \"{0}-{1}\" - Java method given in ''values_from'' is not \"{2}\"", key, text,
                                 "public static String[] methodName()"));
                     }
                 } catch (ReflectiveOperationException e) {
-                    Main.error(tr("Broken tagging preset \"{0}-{1}\" - Java method given in ''values_from'' threw {2} ({3})", key, text,
+                    Logging.error(tr("Broken tagging preset \"{0}-{1}\" - Java method given in ''values_from'' threw {2} ({3})", key, text,
                             e.getClass().getName(), e.getMessage()));
-                    Main.debug(e);
+                    Logging.debug(e);
                 }
             }
         }
@@ -463,16 +464,16 @@ public abstract class ComboMultiSelect extends KeyedItem {
         String[] shortDescriptionsArray = descr == null ? null : splitEscaped(delChar, descr);
 
         if (displayArray.length != valueArray.length) {
-            Main.error(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''display_values'' must be the same as in ''values''",
+            Logging.error(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''display_values'' must be the same as in ''values''",
                             key, text));
-            Main.error(tr("Detailed information: {0} <> {1}", Arrays.toString(displayArray), Arrays.toString(valueArray)));
+            Logging.error(tr("Detailed information: {0} <> {1}", Arrays.toString(displayArray), Arrays.toString(valueArray)));
             displayArray = valueArray;
         }
 
         if (shortDescriptionsArray != null && shortDescriptionsArray.length != valueArray.length) {
-            Main.error(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''short_descriptions'' must be the same as in ''values''",
+            Logging.error(tr("Broken tagging preset \"{0}-{1}\" - number of items in ''short_descriptions'' must be the same as in ''values''",
                             key, text));
-            Main.error(tr("Detailed information: {0} <> {1}", Arrays.toString(shortDescriptionsArray), Arrays.toString(valueArray)));
+            Logging.error(tr("Detailed information: {0} <> {1}", Arrays.toString(shortDescriptionsArray), Arrays.toString(valueArray)));
             shortDescriptionsArray = null;
         }
 

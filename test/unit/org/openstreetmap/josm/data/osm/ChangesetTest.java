@@ -16,12 +16,12 @@ import java.util.Map;
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -49,7 +49,7 @@ public class ChangesetTest {
             cs.setKeys(null);
             Assert.fail("Should have thrown an IllegalArgumentException as we gave a null argument.");
         } catch (IllegalArgumentException e) {
-            Main.trace(e);
+            Logging.trace(e);
             // Was expected
         }
 
@@ -75,7 +75,7 @@ public class ChangesetTest {
             cs.setKeys(keys);
             Assert.fail("Should have thrown an IllegalArgumentException as we gave a too long value.");
         } catch (IllegalArgumentException e) {
-            Main.trace(e);
+            Logging.trace(e);
             // Was expected
         }
     }

@@ -64,6 +64,7 @@ import org.openstreetmap.josm.io.ChangesetQuery;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.StreamUtils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
@@ -403,7 +404,7 @@ public class ChangesetCacheManager extends JFrame {
                         ChangesetCacheManager.getInstance().runDownloadTask(new ChangesetQueryTask(parent, query));
                     }
                 } catch (IllegalStateException e) {
-                    Main.error(e);
+                    Logging.error(e);
                     JOptionPane.showMessageDialog(parent, e.getMessage(), tr("Error"), JOptionPane.ERROR_MESSAGE);
                 }
             }
@@ -641,7 +642,7 @@ public class ChangesetCacheManager extends JFrame {
                 }
             } catch (IllegalStateException ex) {
                 alertAnonymousUser(parent);
-                Main.trace(ex);
+                Logging.trace(ex);
             }
         }
     }

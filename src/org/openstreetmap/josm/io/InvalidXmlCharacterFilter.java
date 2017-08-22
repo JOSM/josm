@@ -4,7 +4,7 @@ package org.openstreetmap.josm.io;
 import java.io.IOException;
 import java.io.Reader;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * FilterInputStream that gets rid of characters that are invalid in an XML 1.0
@@ -63,7 +63,7 @@ public class InvalidXmlCharacterFilter extends Reader {
     private static char filter(char in) {
         if (in < 0x20 && INVALID_CHARS[in]) {
             if (firstWarning) {
-                Main.warn("Invalid xml character encountered: '"+in+"'.");
+                Logging.warn("Invalid xml character encountered: '"+in+"'.");
                 firstWarning = false;
             }
             return 0x20;

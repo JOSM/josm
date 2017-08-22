@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.preferences;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Abstract base class for properties with {@link Enum} value, where the preference
@@ -32,7 +33,7 @@ public abstract class ParametrizedEnumProperty<T extends Enum<T>> {
         try {
             return Enum.valueOf(enumClass, s);
         } catch (IllegalArgumentException e) {
-            Main.trace(e);
+            Logging.trace(e);
             return defaultValue;
         }
     }

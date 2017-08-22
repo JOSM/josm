@@ -7,11 +7,11 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 
 import com.drew.imaging.jpeg.JpegMetadataReader;
 import com.drew.lang.CompoundException;
@@ -439,7 +439,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         try {
             metadata = JpegMetadataReader.readMetadata(file);
         } catch (CompoundException | IOException ex) {
-            Main.error(ex);
+            Logging.error(ex);
             setExifTime(null);
             setExifCoor(null);
             setPos(null);
@@ -451,7 +451,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
         try {
             setExifTime(ExifReader.readTime(metadata));
         } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException ex) {
-            Main.warn(ex);
+            Logging.warn(ex);
             setExifTime(null);
         }
 
@@ -464,7 +464,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
                 setExifOrientation(orientation);
             }
         } catch (MetadataException ex) {
-            Main.debug(ex);
+            Logging.debug(ex);
         }
 
         if (dirGps == null) {
@@ -488,7 +488,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
             setExifCoor(latlon);
             setPos(getExifCoor());
         } catch (MetadataException | IndexOutOfBoundsException ex) { // (other exceptions, e.g. #5271)
-            Main.error("Error reading EXIF from file: " + ex);
+            Logging.error("Error reading EXIF from file: " + ex);
             setExifCoor(null);
             setPos(null);
         }
@@ -499,7 +499,7 @@ public final class ImageEntry implements Comparable<ImageEntry>, Cloneable {
                 setExifImgDir(direction);
             }
         } catch (IndexOutOfBoundsException ex) { // (other exceptions, e.g. #5271)
-            Main.debug(ex);
+            Logging.debug(ex);
         }
 
         final Date gpsDate = dirGps.getGpsDate();

@@ -13,11 +13,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
 
 /**
@@ -95,8 +95,8 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
             try {
                 processLocalPluginInformationFile(f);
             } catch (PluginListParseException e) {
-                Main.warn(tr("Failed to scan file ''{0}'' for plugin information. Skipping.", fname));
-                Main.error(e);
+                Logging.warn(tr("Failed to scan file ''{0}'' for plugin information. Skipping.", fname));
+                Logging.error(e);
             }
             monitor.worked(1);
         }
@@ -122,8 +122,8 @@ public class ReadLocalPluginInformationTask extends PleaseWaitRunnable {
                     processJarFile(f, pluginName);
                 }
             } catch (PluginException e) {
-                Main.warn(e, "PluginException: ");
-                Main.warn(tr("Failed to scan file ''{0}'' for plugin information. Skipping.", fname));
+                Logging.log(Logging.LEVEL_WARN, "PluginException: ", e);
+                Logging.warn(tr("Failed to scan file ''{0}'' for plugin information. Skipping.", fname));
             }
             monitor.worked(1);
         }

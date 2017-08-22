@@ -12,7 +12,6 @@ import java.util.Set;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.ChangesetDataSet.ChangesetDataSetEntry;
@@ -47,7 +46,7 @@ public class ChangesetDataSetTest {
             cds.getPrimitivesByModificationType(null);
             fail("Should have thrown an IllegalArgumentException as we gave a null argument.");
         } catch (IllegalArgumentException e) {
-            Main.trace(e);
+            Logging.trace(e);
             // Was expected
         }
 

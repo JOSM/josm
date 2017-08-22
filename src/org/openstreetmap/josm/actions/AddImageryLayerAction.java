@@ -38,6 +38,7 @@ import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Action displayed in imagery menu to add a new imagery layer.
@@ -114,19 +115,19 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
                 JOptionPane.showMessageDialog(Main.parent, tr("Invalid service URL."),
                         tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
             }
-            Main.error(ex, false);
+            Logging.log(Logging.LEVEL_ERROR, ex);
         } catch (IOException ex) {
             if (!GraphicsEnvironment.isHeadless()) {
                 JOptionPane.showMessageDialog(Main.parent, tr("Could not retrieve WMS layer list."),
                         tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
             }
-            Main.error(ex, false);
+            Logging.log(Logging.LEVEL_ERROR, ex);
         } catch (WMSGetCapabilitiesException ex) {
             if (!GraphicsEnvironment.isHeadless()) {
                 JOptionPane.showMessageDialog(Main.parent, tr("Could not parse WMS layer list."),
                         tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
             }
-            Main.error(ex, "Could not parse WMS layer list. Incoming data:\n"+ex.getIncomingData());
+            Logging.log(Logging.LEVEL_ERROR, "Could not parse WMS layer list. Incoming data:\n"+ex.getIncomingData(), ex);
         }
         return null;
     }

@@ -15,6 +15,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Utils functions for audio.
@@ -45,7 +46,7 @@ public final class AudioUtil {
             double calibration = Main.pref.getDouble("audio.calibration", 1.0 /* default, ratio */);
             return naturalLength / calibration;
         } catch (UnsupportedAudioFileException | IOException e) {
-            Main.debug(e);
+            Logging.debug(e);
             return 0.0;
         }
     }
@@ -61,7 +62,7 @@ public final class AudioUtil {
             msg = tr("unspecified reason");
         else
             msg = tr(msg);
-        Main.error(msg);
+        Logging.error(msg);
         if (!GraphicsEnvironment.isHeadless()) {
             JOptionPane.showMessageDialog(Main.parent,
                     "<html><p>" + msg + "</p></html>",

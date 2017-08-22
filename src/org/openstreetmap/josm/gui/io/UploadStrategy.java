@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Locale;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * The chunk mode to use when uploading
@@ -95,7 +96,7 @@ public enum UploadStrategy {
         }
         UploadStrategy strategy = fromPreference(v);
         if (strategy == null) {
-            Main.warn(tr("Unexpected value for key ''{0}'' in preferences, got ''{1}''", "osm-server.upload-strategy", v));
+            Logging.warn(tr("Unexpected value for key ''{0}'' in preferences, got ''{1}''", "osm-server.upload-strategy", v));
             return DEFAULT_UPLOAD_STRATEGY;
         }
         return strategy;

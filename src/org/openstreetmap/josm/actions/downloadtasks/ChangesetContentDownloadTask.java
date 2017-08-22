@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.osm.ChangesetDataSet;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
 
 /**
@@ -75,7 +76,7 @@ public class ChangesetContentDownloadTask extends AbstractChangesetDownloadTask 
             } catch (OsmTransferCanceledException e) {
                 // the download was canceled by the user. This exception is caught if the user canceled the authentication dialog.
                 setCanceled(true);
-                Main.trace(e);
+                Logging.trace(e);
                 return;
             } catch (OsmTransferException e) {
                 if (isCanceled())

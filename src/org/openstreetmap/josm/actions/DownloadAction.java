@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -119,7 +120,7 @@ public class DownloadAction extends JosmAction {
                             bounds.extend(b);
                         }
                     } catch (InterruptedException | ExecutionException ex) {
-                        Main.warn(ex);
+                        Logging.warn(ex);
                     }
                 }
                 // Zoom to the larger download bounds

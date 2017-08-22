@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Action to initiate uploading changed notes to the OSM server.
@@ -35,14 +36,14 @@ public class UploadNotesAction extends JosmAction {
         if (!noteLayers.isEmpty()) {
             layer = noteLayers.get(0);
         } else {
-            Main.error("No note layer found");
+            Logging.error("No note layer found");
             return;
         }
-        Main.debug("uploading note changes");
+        Logging.debug("uploading note changes");
         NoteData noteData = layer.getNoteData();
 
         if (noteData == null || !noteData.isModified()) {
-            Main.debug("No changed notes to upload");
+            Logging.debug("No changed notes to upload");
             return;
         }
         new UploadNotesTask().uploadNotes(noteData, new PleaseWaitProgressMonitor(tr("Uploading notes to server")));

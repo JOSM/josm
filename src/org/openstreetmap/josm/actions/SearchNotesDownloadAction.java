@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -86,7 +87,7 @@ public class SearchNotesDownloadAction extends JosmAction {
             new DownloadNotesTask().download(id, null);
             return;
         } catch (NumberFormatException ignore) {
-            Main.trace(ignore);
+            Logging.trace(ignore);
         }
 
         int noteLimit = Main.pref.getInteger("osm.notes.downloadLimit", 1000);

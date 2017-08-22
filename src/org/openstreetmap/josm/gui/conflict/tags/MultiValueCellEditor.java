@@ -20,8 +20,8 @@ import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 import javax.swing.table.TableCellEditor;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This is a table cell editor for selecting a possible tag value from a list of
@@ -166,7 +166,7 @@ public class MultiValueCellEditor extends AbstractCellEditor implements TableCel
             editor.setSelectedItem(MultiValueDecisionType.SUM_ALL_NUMERIC);
             break;
         default:
-            Main.error("Unknown decision type in initEditor(): "+decision.getDecisionType());
+            Logging.error("Unknown decision type in initEditor(): "+decision.getDecisionType());
         }
     }
 

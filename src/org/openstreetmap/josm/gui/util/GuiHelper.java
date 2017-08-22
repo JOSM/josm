@@ -57,6 +57,7 @@ import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 import org.openstreetmap.josm.tools.bugreport.ReportedException;
 
@@ -121,7 +122,7 @@ public final class GuiHelper {
             try {
                 SwingUtilities.invokeAndWait(task);
             } catch (InterruptedException | InvocationTargetException e) {
-                Main.error(e);
+                Logging.error(e);
             }
         }
     }
@@ -162,7 +163,7 @@ public final class GuiHelper {
             try {
                 return callable.call();
             } catch (Exception e) { // NOPMD
-                Main.error(e);
+                Logging.error(e);
                 return null;
             }
         } else {
@@ -171,7 +172,7 @@ public final class GuiHelper {
             try {
                 return task.get();
             } catch (InterruptedException | ExecutionException e) {
-                Main.error(e);
+                Logging.error(e);
                 return null;
             }
         }
@@ -388,7 +389,7 @@ public final class GuiHelper {
      */
     public static void setUIFont(String name) {
         CheckParameterUtil.ensureParameterNotNull(name, "name");
-        Main.info("Setting "+name+" as the default UI font");
+        Logging.info("Setting "+name+" as the default UI font");
         Enumeration<?> keys = UIManager.getDefaults().keys();
         while (keys.hasMoreElements()) {
             Object key = keys.nextElement();
@@ -519,7 +520,7 @@ public final class GuiHelper {
         try {
             return JOptionPane.getFrameForComponent(parentComponent);
         } catch (HeadlessException e) {
-            Main.debug(e);
+            Logging.debug(e);
             return null;
         }
     }

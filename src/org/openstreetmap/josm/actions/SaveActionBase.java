@@ -20,6 +20,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.FileExporter;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -116,7 +117,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
             }
             Main.parent.repaint();
         } catch (IOException e) {
-            Main.error(e);
+            Logging.error(e);
             return false;
         }
         addToFileOpenHistory(file);
@@ -223,7 +224,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
         try {
             filepath = file.getCanonicalPath();
         } catch (IOException ign) {
-            Main.warn(ign);
+            Logging.warn(ign);
             return;
         }
 

@@ -12,8 +12,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.notes.Note;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * A dialog to allow the user to choose a sorting method for the list of notes
@@ -50,7 +50,7 @@ public class NoteSortDialog extends ExtendedDialog {
         } else if (currentSortMode == Note.LAST_ACTION_COMPARATOR) {
             lastActionSort.setSelected(true);
         } else {
-            Main.warn("sort mode not recognized");
+            Logging.warn("sort mode not recognized");
         }
 
         ButtonGroup bg = new ButtonGroup();

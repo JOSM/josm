@@ -56,6 +56,7 @@ import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
 import org.openstreetmap.josm.gui.util.ModifierExListener;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -270,7 +271,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             else if (mode == Mode.extrude || mode == Mode.create_new)
                 rv = new StringBuilder(tr("Draw a rectangle of the desired size, then release the mouse button."));
             else {
-                Main.warn("Extrude: unknown mode " + mode);
+                Logging.warn("Extrude: unknown mode " + mode);
                 rv = new StringBuilder();
             }
             if (dualAlignActive) {
@@ -540,7 +541,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                         performExtrusion();
                     } catch (DataIntegrityProblemException ex) {
                         // Can occur if calling undo while extruding, see #12870
-                        Main.error(ex);
+                        Logging.error(ex);
                     }
                 }
             } else if (mode == Mode.translate || mode == Mode.translate_node) {
@@ -1190,7 +1191,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             return new Line2D.Double(start, new Point2D.Double(start.getX() + (unitvector.getX() * linelength), start.getY()
                     + (unitvector.getY() * linelength)));
         } catch (NoninvertibleTransformException e) {
-            Main.debug(e);
+            Logging.debug(e);
             return new Line2D.Double(start, new Point2D.Double(start.getX() + (unitvector.getX() * 10), start.getY()
                     + (unitvector.getY() * 10)));
         }

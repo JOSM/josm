@@ -68,6 +68,7 @@ import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.WindowGeometry;
 import org.openstreetmap.josm.tools.WindowGeometry.WindowGeometryException;
@@ -109,7 +110,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 return super.parse(s);
             } catch (IllegalArgumentException e) {
                 // Legacy settings
-                Main.trace(e);
+                Logging.trace(e);
                 return Boolean.parseBoolean(s) ? ButtonHidingType.DYNAMIC : ButtonHidingType.ALWAYS_SHOWN;
             }
         }
@@ -707,7 +708,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             try {
                 new WindowGeometry(preferencePrefix+".geometry").applySafe(this);
             } catch (WindowGeometryException e) {
-                Main.debug(e);
+                Logging.debug(e);
                 ToggleDialog.this.setPreferredSize(ToggleDialog.this.getDefaultDetachedSize());
                 pack();
                 setLocationRelativeTo(Main.parent);
@@ -931,8 +932,8 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                     if (action != null) {
                         buttonActions.add(action);
                     } else {
-                        Main.warn("Button " + button + " doesn't have action defined");
-                        Main.error(new Exception());
+                        Logging.warn("Button " + button + " doesn't have action defined");
+                        Logging.error(new Exception());
                     }
                 }
             }

@@ -12,7 +12,6 @@ import java.net.URL;
 import javax.swing.JOptionPane;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -20,6 +19,7 @@ import org.openstreetmap.josm.io.Capabilities;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -190,7 +190,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
             try {
                 Capabilities.CapabilitiesParser.parse(new InputSource(connection.getResponse().getContent()));
             } catch (SAXException | ParserConfigurationException e) {
-                Main.warn(e);
+                Logging.warn(e);
                 alertInvalidCapabilities();
                 return;
             }
@@ -199,7 +199,7 @@ public class ApiUrlTestTask extends PleaseWaitRunnable {
             if (canceled)
                 // ignore exceptions
                 return;
-            Main.error(e);
+            Logging.error(e);
             alertConnectionFailed();
             return;
         }

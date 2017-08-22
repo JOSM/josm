@@ -21,11 +21,11 @@ import java.util.logging.Logger;
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.ICachedLoaderListener.LoadResult;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -215,7 +215,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         try {
             return getUrl().getHost();
         } catch (IOException e) {
-            Main.trace(e);
+            Logging.trace(e);
             return null;
         }
     }
@@ -263,7 +263,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 listeners = inProgress.remove(getUrl().toString());
             } catch (IOException e) {
                 listeners = null;
-                Main.trace(e);
+                Logging.trace(e);
             }
         }
         if (listeners == null) {
@@ -405,7 +405,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         } catch (InterruptedException e) {
             attributes.setError(e);
             LOG.log(Level.WARNING, "JCS - Exception during download {0}", getUrlNoException());
-            Main.warn(e);
+            Logging.warn(e);
             Thread.currentThread().interrupt();
         }
         LOG.log(Level.WARNING, "JCS - Silent failure during download: {0}", getUrlNoException());
@@ -445,7 +445,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 }
             } catch (NumberFormatException e) {
                 // ignore malformed Cache-Control headers
-                Main.trace(e);
+                Logging.trace(e);
             }
         }
 

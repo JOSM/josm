@@ -14,8 +14,8 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.Element;
 import javax.swing.text.html.ImageView;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -67,7 +67,7 @@ public class JosmImageView extends ImageView {
                 setPropertiesFromAttributes();
             }
         } catch (IllegalArgumentException | ReflectiveOperationException | SecurityException e) {
-           Main.error(e);
+           Logging.error(e);
        }
     }
 

@@ -16,7 +16,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.bbox.SlippyMapBBoxChooser;
@@ -24,6 +23,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.imagery.WMSImagery;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -78,18 +78,18 @@ public class AddWMSLayerPanel extends AddImageryPanel {
                 formats.setModel(new DefaultComboBoxModel<>(wmsFormats.toArray(new String[wmsFormats.size()])));
                 formats.setSelectedItem(wms.getPreferredFormats());
             } catch (MalformedURLException ex1) {
-                Main.error(ex1, false);
+                Logging.log(Logging.LEVEL_ERROR, ex1);
                 JOptionPane.showMessageDialog(getParent(), tr("Invalid service URL."),
                         tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
             } catch (IOException ex2) {
-                Main.error(ex2, false);
+                Logging.log(Logging.LEVEL_ERROR, ex2);
                 JOptionPane.showMessageDialog(getParent(), tr("Could not retrieve WMS layer list."),
                         tr("WMS Error"), JOptionPane.ERROR_MESSAGE);
             } catch (WMSImagery.WMSGetCapabilitiesException ex3) {
                 String incomingData = ex3.getIncomingData().trim();
                 String title = tr("WMS Error");
                 StringBuilder message = new StringBuilder(tr("Could not parse WMS layer list."));
-                Main.error(ex3, "Could not parse WMS layer list. Incoming data:\n"+incomingData);
+                Logging.log(Logging.LEVEL_ERROR, "Could not parse WMS layer list. Incoming data:\n"+incomingData, ex3);
                 if ((incomingData.startsWith("<html>") || incomingData.startsWith("<HTML>"))
                   && (incomingData.endsWith("</html>") || incomingData.endsWith("</HTML>"))) {
                     GuiHelper.notifyUserHtmlError(this, title, message.toString(), incomingData);

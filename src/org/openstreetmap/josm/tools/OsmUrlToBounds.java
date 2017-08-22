@@ -41,7 +41,7 @@ public final class OsmUrlToBounds {
                 url = Utils.decodeUrl(url);
             }
         } catch (IllegalArgumentException ex) {
-            Main.error(ex);
+            Logging.error(ex);
         }
         Bounds b = parseShortLink(url);
         if (b != null)
@@ -81,7 +81,7 @@ public final class OsmUrlToBounds {
                         z == null ? 18 : Integer.parseInt(z));
             }
         } catch (IllegalArgumentException | ArrayIndexOutOfBoundsException ex) {
-            Main.error(ex, url);
+            Logging.log(Logging.LEVEL_ERROR, url, ex);
         }
         return b;
     }
@@ -101,27 +101,27 @@ public final class OsmUrlToBounds {
         String coordPart = url.substring(startIndex+(url.contains("#map=") ? "#map=".length() : "#".length()), endIndex);
         String[] parts = coordPart.split("/");
         if (parts.length < 3) {
-            Main.warn(tr("URL does not contain {0}/{1}/{2}", tr("zoom"), tr("latitude"), tr("longitude")));
+            Logging.warn(tr("URL does not contain {0}/{1}/{2}", tr("zoom"), tr("latitude"), tr("longitude")));
             return null;
         }
         int zoom;
         try {
             zoom = Integer.parseInt(parts[0]);
         } catch (NumberFormatException e) {
-            Main.warn(tr("URL does not contain valid {0}", tr("zoom")), e);
+            Logging.warn(tr("URL does not contain valid {0}", tr("zoom")), e);
             return null;
         }
         double lat, lon;
         try {
             lat = Double.parseDouble(parts[1]);
         } catch (NumberFormatException e) {
-            Main.warn(tr("URL does not contain valid {0}", tr("latitude")), e);
+            Logging.warn(tr("URL does not contain valid {0}", tr("latitude")), e);
             return null;
         }
         try {
             lon = Double.parseDouble(parts[2]);
         } catch (NumberFormatException e) {
-            Main.warn(tr("URL does not contain valid {0}", tr("longitude")), e);
+            Logging.warn(tr("URL does not contain valid {0}", tr("longitude")), e);
             return null;
         }
         return positionToBounds(lat, lon, zoom);

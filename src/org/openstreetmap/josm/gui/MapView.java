@@ -173,7 +173,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         @Override
         public void paint(MapViewGraphics graphics) {
             if (!warningPrinted) {
-                Main.debug("A layer triggered a repaint while being added: " + layer);
+                Logging.debug("A layer triggered a repaint while being added: " + layer);
                 warningPrinted = true;
             }
         }
@@ -336,7 +336,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             LayerPainter painter = layer.attachToMapView(new MapViewEvent(this, false));
             if (!registeredLayers.containsKey(layer)) {
                 // The layer may have removed itself during attachToMapView()
-                Main.warn("Layer was removed during attachToMapView()");
+                Logging.warn("Layer was removed during attachToMapView()");
             } else {
                 registeredLayers.put(layer, painter);
 
@@ -384,7 +384,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
         LayerPainter painter = registeredLayers.remove(layer);
         if (painter == null) {
-            Main.error("The painter for layer " + layer + " was not registered.");
+            Logging.error("The painter for layer " + layer + " was not registered.");
             return;
         }
         painter.detachFromMapView(new MapViewEvent(this, false));
@@ -413,7 +413,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     /**
      * Checks if virtual nodes should be drawn. Default is <code>false</code>
      * @return The virtual nodes property.
-     * @see Rendering#render(DataSet, boolean, Bounds)
+     * @see Rendering#render
      */
     public boolean isVirtualNodesEnabled() {
         return virtualNodesEnabled;
@@ -597,7 +597,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             // - addition/removal of a secondary monitor
             //
             // But the application seems to work fine after, so let's just log the error
-            Main.error(e);
+            Logging.error(e);
         }
     }
 
@@ -842,7 +842,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
     @Override
     public void repaint() {
-        if (Main.isTraceEnabled()) {
+        if (Logging.isTraceEnabled()) {
             invalidatedListener.traceRandomRepaint();
         }
         super.repaint();

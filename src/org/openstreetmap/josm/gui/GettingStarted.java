@@ -29,12 +29,13 @@ import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.io.CacheCustomContent;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.LanguageInfo;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.WikiReader;
 
 /**
  * Panel that fills the main part of the program window when JOSM has just started.
- * 
+ *
  * It downloads and displays the so called <em>message of the day</em>, which
  * contains news about recent major changes, warning in case of outdated versions, etc.
  */
@@ -150,7 +151,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
                     contentInitialized = true;
                     ProxyPreference.removeProxyPreferenceListener(this);
                 } catch (IOException ex) {
-                    Main.warn(ex, tr("Failed to read MOTD. Exception was: {0}", ex.toString()));
+                    Logging.log(Logging.LEVEL_WARN, tr("Failed to read MOTD. Exception was: {0}", ex.toString()), ex);
                     content = "<html>" + STYLE + "<h1>" + "JOSM - " + tr("Java OpenStreetMap Editor")
                             + "</h1>\n<h2 align=\"center\">(" + tr("Message of the day not available") + ")</h2></html>";
                     // In case of MOTD not loaded because of proxy error, listen to preference changes to retry after update

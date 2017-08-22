@@ -6,6 +6,7 @@ import java.net.URL;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Creates and controls a separate audio player thread.
@@ -209,7 +210,7 @@ public final class AudioPlayer extends Thread implements AudioListener {
             audioPlayer = new AudioPlayer();
             return audioPlayer;
         } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException ex) {
-            Main.error(ex);
+            Logging.error(ex);
             return null;
         }
     }
@@ -222,7 +223,7 @@ public final class AudioPlayer extends Thread implements AudioListener {
             try {
                 pause();
             } catch (InterruptedException | IOException e) {
-                Main.warn(e);
+                Logging.warn(e);
             }
             audioPlayer.playingUrl = null;
         }
@@ -237,8 +238,8 @@ public final class AudioPlayer extends Thread implements AudioListener {
         try {
             soundPlayer = new JavaFxMediaPlayer();
         } catch (NoClassDefFoundError | InterruptedException e) {
-            Main.debug(e);
-            Main.warn("Java FX is unavailable. Falling back to Java Sound API");
+            Logging.debug(e);
+            Logging.warn("Java FX is unavailable. Falling back to Java Sound API");
             soundPlayer = new JavaSoundPlayer(leadIn, calibration);
         }
         soundPlayer.addAudioListener(this);
@@ -297,12 +298,12 @@ public final class AudioPlayer extends Thread implements AudioListener {
                     }
                     command.ok(stateChange);
                 } catch (AudioException | IOException | SecurityException | IllegalArgumentException startPlayingException) {
-                    Main.error(startPlayingException);
+                    Logging.error(startPlayingException);
                     command.failed(startPlayingException); // sets state
                 }
             } catch (AudioException | IOException e) {
                 state = State.NOTPLAYING;
-                Main.error(e);
+                Logging.error(e);
             }
         }
     }

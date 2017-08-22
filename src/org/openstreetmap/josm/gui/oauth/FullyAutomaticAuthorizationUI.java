@@ -28,7 +28,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 import javax.swing.text.html.HTMLEditorKit;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
@@ -49,6 +48,7 @@ import org.openstreetmap.josm.io.auth.CredentialsAgent;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
@@ -184,7 +184,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                 tfPassword.setText(pa.getPassword() == null ? "" : String.valueOf(pa.getPassword()));
             }
         } catch (CredentialsAgentException e) {
-            Main.error(e);
+            Logging.error(e);
             tfUserName.setText("");
             tfPassword.setText("");
         }
@@ -471,7 +471,7 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
                     alertAuthorisationFailed();
                 }
             };
-            Main.error(e);
+            Logging.error(e);
             GuiHelper.runInEDT(r);
         }
 

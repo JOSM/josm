@@ -29,9 +29,9 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.XmlStreamParsingException;
+import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
 
 /**
@@ -145,9 +145,7 @@ public class PreferencesReader {
                 try {
                     version = Integer.parseInt(parser.getAttributeValue(null, "version"));
                 } catch (NumberFormatException e) {
-                    if (Main.isDebugEnabled()) {
-                        Main.debug(e.getMessage());
-                    }
+                    Logging.log(Logging.LEVEL_DEBUG, e);
                 }
                 parseRoot();
             } else if (event == XMLStreamConstants.END_ELEMENT) {

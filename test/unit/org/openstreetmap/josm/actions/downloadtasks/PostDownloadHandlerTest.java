@@ -14,10 +14,10 @@ import java.util.concurrent.TimeoutException;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -119,10 +119,10 @@ public class PostDownloadHandlerTest {
      */
     @Test
     public void testRunExceptionFuture() {
-        Main.clearLastErrorAndWarnings();
+        Logging.clearLastErrorAndWarnings();
         new PostDownloadHandler(null, newFuture("testRunExceptionFuture")).run();
-        assertTrue(Main.getLastErrorAndWarnings().toString(),
-                Main.getLastErrorAndWarnings().contains("E: java.util.concurrent.ExecutionException: testRunExceptionFuture"));
+        assertTrue(Logging.getLastErrorAndWarnings().toString(),
+                Logging.getLastErrorAndWarnings().contains("E: java.util.concurrent.ExecutionException: testRunExceptionFuture"));
     }
 
     /**
@@ -130,9 +130,9 @@ public class PostDownloadHandlerTest {
      */
     @Test
     public void testRunNoError() {
-        Main.clearLastErrorAndWarnings();
+        Logging.clearLastErrorAndWarnings();
         new PostDownloadHandler(newTask(Collections.emptyList()), newFuture(null)).run();
-        assertTrue(Main.getLastErrorAndWarnings().toString(), Main.getLastErrorAndWarnings().isEmpty());
+        assertTrue(Logging.getLastErrorAndWarnings().toString(), Logging.getLastErrorAndWarnings().isEmpty());
     }
 
     /**
@@ -140,9 +140,9 @@ public class PostDownloadHandlerTest {
      */
     @Test
     public void testRunOneError() {
-        Main.clearLastErrorAndWarnings();
+        Logging.clearLastErrorAndWarnings();
         new PostDownloadHandler(newTask(Collections.singletonList(new Object())), newFuture(null)).run();
-        assertTrue(Main.getLastErrorAndWarnings().toString(), Main.getLastErrorAndWarnings().isEmpty());
+        assertTrue(Logging.getLastErrorAndWarnings().toString(), Logging.getLastErrorAndWarnings().isEmpty());
     }
 
     /**
@@ -150,9 +150,9 @@ public class PostDownloadHandlerTest {
      */
     @Test
     public void testRunMultipleErrors() {
-        Main.clearLastErrorAndWarnings();
+        Logging.clearLastErrorAndWarnings();
         new PostDownloadHandler(newTask(Arrays.asList("foo", new Exception("bar"), new Object())), newFuture(null)).run();
-        assertTrue(Main.getLastErrorAndWarnings().toString(),
-                Main.getLastErrorAndWarnings().contains("E: java.lang.Exception: bar"));
+        assertTrue(Logging.getLastErrorAndWarnings().toString(),
+                Logging.getLastErrorAndWarnings().contains("E: java.lang.Exception: bar"));
     }
 }

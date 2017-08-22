@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -131,13 +132,13 @@ public class WMSLayer extends AbstractCachedTileSourceLayer<AbstractWMSTileSourc
             for (String code : serverProjections) {
                 Projection proj = Projections.getProjectionByCode(code);
                 if (proj != null) {
-                    Main.info(tr("Reprojecting layer {0} from {1} to {2}. For best image quality and performance,"
+                    Logging.info(tr("Reprojecting layer {0} from {1} to {2}. For best image quality and performance,"
                             + " switch to one of the supported projections: {3}",
                             getName(), proj.toCode(), Main.getProjection().toCode(), Utils.join(", ", getNativeProjections())));
                     return proj;
                 }
             }
-            Main.warn(tr("Unable to find supported projection for layer {0}. Using {1}.", getName(), requested.toCode()));
+            Logging.warn(tr("Unable to find supported projection for layer {0}. Using {1}.", getName(), requested.toCode()));
             return requested;
         }
     }

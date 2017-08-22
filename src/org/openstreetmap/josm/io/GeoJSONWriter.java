@@ -17,7 +17,6 @@ import javax.json.JsonObjectBuilder;
 import javax.json.JsonWriter;
 import javax.json.stream.JsonGenerator;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -33,6 +32,7 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 
 /**
@@ -134,8 +134,8 @@ public class GeoJSONWriter {
                 final JsonArrayBuilder multiPolygon = Json.createArrayBuilder().add(polygon);
                 geomObj.add("coordinates", multiPolygon);
             } catch (MultipolygonBuilder.JoinedPolygonCreationException ex) {
-                Main.warn("GeoJSON: Failed to export multipolygon {0}", r.getUniqueId());
-                Main.warn(ex);
+                Logging.warn("GeoJSON: Failed to export multipolygon {0}", r.getUniqueId());
+                Logging.warn(ex);
             }
         }
     }

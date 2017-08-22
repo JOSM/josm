@@ -15,6 +15,7 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * TileLoaderFactory creating JCS cached TileLoaders
@@ -46,7 +47,7 @@ public class CachedTileLoaderFactory implements TileLoaderFactory {
                     int.class,
                     Map.class);
         } catch (NoSuchMethodException | SecurityException e) {
-            Main.warn(e);
+            Logging.warn(e);
             throw new IllegalArgumentException(e);
         }
     }
@@ -56,7 +57,7 @@ public class CachedTileLoaderFactory implements TileLoaderFactory {
         try {
             defPath = new File(Main.pref.getCacheDirectory(), "tiles").getAbsolutePath();
         } catch (SecurityException e) {
-            Main.warn(e);
+            Logging.warn(e);
         }
         return new StringProperty("imagery.generic.loader.cachedir", defPath);
     }
@@ -85,10 +86,10 @@ public class CachedTileLoaderFactory implements TileLoaderFactory {
                     readTimeout,
                     headers);
         } catch (IllegalArgumentException e) {
-            Main.warn(e);
+            Logging.warn(e);
             throw e;
         } catch (ReflectiveOperationException e) {
-            Main.warn(e);
+            Logging.warn(e);
             throw new IllegalArgumentException(e);
         }
     }

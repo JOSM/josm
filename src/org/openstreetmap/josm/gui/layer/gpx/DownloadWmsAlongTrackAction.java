@@ -26,6 +26,7 @@ import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.gui.progress.ProgressTaskIds;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
 
 /**
@@ -65,7 +66,7 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
                         wait(200);
                     }
                 } catch (InterruptedException ex) {
-                    Main.warn("InterruptedException in "+getClass().getSimpleName()+" while precaching WMS");
+                    Logging.warn("InterruptedException in "+getClass().getSimpleName()+" while precaching WMS");
                     Thread.currentThread().interrupt();
                 }
             }

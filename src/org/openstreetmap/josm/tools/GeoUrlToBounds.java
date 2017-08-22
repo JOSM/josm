@@ -40,19 +40,19 @@ public final class GeoUrlToBounds {
             try {
                 lat = Double.parseDouble(m.group("lat"));
             } catch (NumberFormatException e) {
-                Main.warn(tr("URL does not contain valid {0}", tr("latitude")), e);
+                Logging.warn(tr("URL does not contain valid {0}", tr("latitude")), e);
                 return null;
             }
             try {
                 lon = Double.parseDouble(m.group("lon"));
             } catch (NumberFormatException e) {
-                Main.warn(tr("URL does not contain valid {0}", tr("longitude")), e);
+                Logging.warn(tr("URL does not contain valid {0}", tr("longitude")), e);
                 return null;
             }
             try {
                 zoom = m.group("zoom") != null ? Integer.parseInt(m.group("zoom")) : 18;
             } catch (NumberFormatException e) {
-                Main.warn(tr("URL does not contain valid {0}", tr("zoom")), e);
+                Logging.warn(tr("URL does not contain valid {0}", tr("zoom")), e);
                 return null;
             }
             return OsmUrlToBounds.positionToBounds(lat, lon, zoom);

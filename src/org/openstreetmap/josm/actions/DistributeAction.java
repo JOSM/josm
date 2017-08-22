@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -70,7 +71,7 @@ public final class DistributeAction extends JosmAction {
 
         Set<Node> ignoredNodes = removeNodesWithoutCoordinates(nodes);
         if (!ignoredNodes.isEmpty()) {
-            Main.warn(tr("Ignoring {0} nodes with null coordinates", ignoredNodes.size()));
+            Logging.warn(tr("Ignoring {0} nodes with null coordinates", ignoredNodes.size()));
             ignoredNodes.clear();
         }
 

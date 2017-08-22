@@ -7,12 +7,12 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projecting;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.date.DateUtils;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
@@ -156,7 +156,7 @@ public class WayPoint extends WithAttributes implements Comparable<WayPoint>, Te
                 this.time = time.getTime() / 1000.;
                 return time;
             } catch (UncheckedParseException e) {
-                Main.warn(e);
+                Logging.warn(e);
                 time = 0;
             }
         }

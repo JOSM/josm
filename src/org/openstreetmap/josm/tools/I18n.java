@@ -486,7 +486,7 @@ public final class I18n {
             }
         } catch (IOException e) {
             // Ignore
-            Main.trace(e);
+            Logging.trace(e);
         }
     }
 
@@ -516,7 +516,7 @@ public final class I18n {
             }
         } catch (IOException e) {
             // Ignore exception
-            Main.trace(e);
+            Logging.trace(e);
         }
         return false;
     }
@@ -642,7 +642,7 @@ public final class I18n {
                 }
             }
         } catch (IOException e) {
-            Main.trace(e);
+            Logging.trace(e);
             return false;
         }
         if (!s.isEmpty()) {
@@ -669,7 +669,7 @@ public final class I18n {
                 Locale.setDefault(l);
             } else {
                 if (!"en".equals(l.getLanguage())) {
-                    Main.info(tr("Unable to find translation for the locale {0}. Reverting to {1}.",
+                    Logging.info(tr("Unable to find translation for the locale {0}. Reverting to {1}.",
                             LanguageInfo.getDisplayName(l), LanguageInfo.getDisplayName(Locale.getDefault())));
                 } else {
                     strings = null;

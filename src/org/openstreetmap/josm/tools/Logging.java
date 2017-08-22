@@ -112,6 +112,15 @@ public final class Logging {
     }
 
     /**
+     * Prints an error message for the given Throwable if logging is on.
+     * @param t The throwable object causing the error.
+     * @since 12620
+     */
+    public static void error(Throwable t) {
+        logWithStackTrace(Logging.LEVEL_ERROR, t);
+    }
+
+    /**
      * Prints a warning message if logging is on.
      * @param message The message to print.
      */
@@ -127,6 +136,15 @@ public final class Logging {
      */
     public static void warn(String pattern, Object... args) {
         logPrivate(LEVEL_WARN, pattern, args);
+    }
+
+    /**
+     * Prints a warning message for the given Throwable if logging is on.
+     * @param t The throwable object causing the error.
+     * @since 12620
+     */
+    public static void warn(Throwable t) {
+        logWithStackTrace(Logging.LEVEL_WARN, t);
     }
 
     /**
@@ -148,6 +166,15 @@ public final class Logging {
     }
 
     /**
+     * Prints a info message for the given Throwable if logging is on.
+     * @param t The throwable object causing the error.
+     * @since 12620
+     */
+    public static void info(Throwable t) {
+        logWithStackTrace(Logging.LEVEL_INFO, t);
+    }
+
+    /**
      * Prints a debug message if logging is on.
      * @param message The message to print.
      */
@@ -163,6 +190,15 @@ public final class Logging {
      */
     public static void debug(String pattern, Object... args) {
         logPrivate(LEVEL_DEBUG, pattern, args);
+    }
+
+    /**
+     * Prints a debug message for the given Throwable if logging is on.
+     * @param t The throwable object causing the error.
+     * @since 12620
+     */
+    public static void debug(Throwable t) {
+        logWithStackTrace(Logging.LEVEL_DEBUG, t);
     }
 
     /**
@@ -184,19 +220,30 @@ public final class Logging {
     }
 
     /**
-     * Logs a throwable that happened.
+     * Prints a trace message for the given Throwable if logging is on.
+     * @param t The throwable object causing the error.
+     * @since 12620
+     */
+    public static void trace(Throwable t) {
+        logWithStackTrace(Logging.LEVEL_TRACE, t);
+    }
+
+    /**
+     * Logs a throwable that happened. The stack trace is not added to the log.
      * @param level The level.
      * @param t The throwable that should be logged.
+     * @see #logWithStackTrace(Level, Throwable)
      */
     public static void log(Level level, Throwable t) {
         logPrivate(level, () -> getErrorLog(null, t));
     }
 
     /**
-     * Logs a throwable that happened.
+     * Logs a throwable that happened. The stack trace is not added to the log.
      * @param level The level.
      * @param message An additional error message
      * @param t The throwable that caused the message
+     * @see #logWithStackTrace(Level, String, Throwable)
      */
     public static void log(Level level, String message, Throwable t) {
         logPrivate(level, () -> getErrorLog(message, t));
@@ -206,6 +253,7 @@ public final class Logging {
      * Logs a throwable that happened. Adds the stack trace to the log.
      * @param level The level.
      * @param t The throwable that should be logged.
+     * @see #log(Level, Throwable)
      */
     public static void logWithStackTrace(Level level, Throwable t) {
         logPrivate(level, () -> getErrorLogWithStack(null, t));
@@ -216,6 +264,7 @@ public final class Logging {
      * @param level The level.
      * @param message An additional error message
      * @param t The throwable that should be logged.
+     * @see #logWithStackTrace(Level, Throwable)
      */
     public static void logWithStackTrace(Level level, String message, Throwable t) {
         logPrivate(level, () -> getErrorLogWithStack(message, t));
@@ -230,7 +279,7 @@ public final class Logging {
     }
 
     private static void logPrivate(Level level, Supplier<String> supplier) {
-        // all log methods immeadiately call one of the logPrivate methods.
+        // all log methods immediately call one of the logPrivate methods.
         if (LOGGER.isLoggable(level)) {
             StackTraceElement callingMethod = BugReport.getCallingMethod(1, Logging.class.getName(), name -> !"logPrivate".equals(name));
             LOGGER.logp(level, callingMethod.getClassName(), callingMethod.getMethodName(), supplier);
@@ -241,11 +290,31 @@ public final class Logging {
      * Tests if a given log level is enabled. This can be used to avoid constructing debug data if required.
      *
      * For formatting text, you should use the {@link #debug(String, Object...)} message
-     * @param level A lvele constant. You can e.g. use {@link Logging#LEVEL_ERROR}
-     * @return <code>true</code> if debug is enabled.
+     * @param level A level constant. You can e.g. use {@link Logging#LEVEL_ERROR}
+     * @return <code>true</code> if log level is enabled.
      */
     public static boolean isLoggingEnabled(Level level) {
         return LOGGER.isLoggable(level);
+    }
+
+    /**
+     * Determines if debug log level is enabled.
+     * Useful to avoid costly construction of debug messages when not enabled.
+     * @return {@code true} if log level is at least debug, {@code false} otherwise
+     * @since 12620
+     */
+    public static boolean isDebugEnabled() {
+        return isLoggingEnabled(Logging.LEVEL_DEBUG);
+    }
+
+    /**
+     * Determines if trace log level is enabled.
+     * Useful to avoid costly construction of trace messages when not enabled.
+     * @return {@code true} if log level is at least trace, {@code false} otherwise
+     * @since 12620
+     */
+    public static boolean isTraceEnabled() {
+        return isLoggingEnabled(Logging.LEVEL_TRACE);
     }
 
     private static String getErrorLog(String message, Throwable t) {

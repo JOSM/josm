@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.jcs.engine.ElementAttributes;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Class that contains attributes for JCS cache entries. Parameters are used to properly handle HTTP caching,
@@ -161,7 +161,7 @@ public class CacheEntryAttributes extends ElementAttributes {
     public void setMetadata(Map<String, String> map) {
         for (Entry<String, String> e: map.entrySet()) {
             if (RESERVED_KEYS.contains(e.getKey())) {
-                Main.info("Metadata key configuration contains key {0} which is reserved for internal use");
+                Logging.info("Metadata key configuration contains key {0} which is reserved for internal use");
             } else {
                 attrs.put(e.getKey(), e.getValue());
             }
@@ -190,7 +190,7 @@ public class CacheEntryAttributes extends ElementAttributes {
      * @since 10469
      */
     public void setError(Exception error) {
-        setErrorMessage(Main.getErrorMessage(error));
+        setErrorMessage(Logging.getErrorMessage(error));
     }
 
     /**

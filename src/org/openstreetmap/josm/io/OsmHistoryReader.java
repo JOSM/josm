@@ -10,12 +10,12 @@ import java.nio.charset.StandardCharsets;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -93,7 +93,7 @@ public class OsmHistoryReader {
         try {
             Utils.parseSafeSAX(inputSource, new Parser());
         } catch (ParserConfigurationException e) {
-            Main.error(e); // broken SAXException chaining
+            Logging.error(e); // broken SAXException chaining
             throw new SAXException(e);
         } finally {
             progressMonitor.finishTask();

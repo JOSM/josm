@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -152,7 +152,7 @@ public class SourceEntry {
         if (m.find()) {
             return m.group(1);
         } else {
-            Main.warn("Unexpected URL format: "+url);
+            Logging.warn("Unexpected URL format: "+url);
             return url;
         }
     }

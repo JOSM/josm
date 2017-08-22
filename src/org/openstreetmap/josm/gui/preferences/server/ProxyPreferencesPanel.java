@@ -36,6 +36,7 @@ import org.openstreetmap.josm.io.auth.CredentialsAgent;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Component allowing input of proxy settings.
@@ -344,7 +345,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
         tfProxySocksPort.setText(Main.pref.get(PROXY_SOCKS_PORT, ""));
 
         if (pp.equals(ProxyPolicy.USE_SYSTEM_SETTINGS) && !DefaultProxySelector.willJvmRetrieveSystemProxies()) {
-            Main.warn(tr("JOSM is configured to use proxies from the system setting, but the JVM is not configured to retrieve them. " +
+            Logging.warn(tr("JOSM is configured to use proxies from the system setting, but the JVM is not configured to retrieve them. " +
                          "Resetting preferences to ''No proxy''"));
             pp = ProxyPolicy.NO_PROXY;
             rbProxyPolicy.get(pp).setSelected(true);
@@ -363,7 +364,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
                 tfProxyHttpPassword.setText(pa.getPassword() == null ? "" : String.valueOf(pa.getPassword()));
             }
         } catch (CredentialsAgentException e) {
-            Main.error(e);
+            Logging.error(e);
             tfProxyHttpUser.setText("");
             tfProxyHttpPassword.setText("");
         }
@@ -435,7 +436,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
             );
             cm.store(RequestorType.PROXY, tfProxyHttpHost.getText(), pa);
         } catch (CredentialsAgentException e) {
-            Main.error(e);
+            Logging.error(e);
         }
     }
 }

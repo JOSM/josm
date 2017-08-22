@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.Poly
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.AreaAndPerimeter;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Multipolygon data used to represent complex areas, see <a href="https://wiki.openstreetmap.org/wiki/Relation:multipolygon">wiki</a>.
@@ -404,7 +405,7 @@ public class Multipolygon {
                 nodes.clear();
                 if (ds == null) {
                     // DataSet still not found. This should not happen, but a warning does no harm
-                    Main.warn("DataSet not found while resetting nodes in Multipolygon. " +
+                    Logging.warn("DataSet not found while resetting nodes in Multipolygon. " +
                             "This should not happen, you may report it to JOSM developers.");
                 } else if (wayIds.size() == 1) {
                     Way w = (Way) ds.getPrimitiveById(wayIds.iterator().next(), OsmPrimitiveType.WAY);

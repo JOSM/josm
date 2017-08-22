@@ -22,6 +22,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This is the preference panel for the authentication method and the authentication parameters.
@@ -120,7 +121,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         } else if ("oauth".equals(authMethod)) {
             rbOAuth.setSelected(true);
         } else {
-            Main.warn(tr("Unsupported value in preference ''{0}'', got ''{1}''. Using authentication method ''Basic Authentication''.",
+            Logging.warn(tr("Unsupported value in preference ''{0}'', got ''{1}''. Using authentication method ''Basic Authentication''.",
                     "osm-server.auth-method", authMethod));
             rbBasicAuthentication.setSelected(true);
         }

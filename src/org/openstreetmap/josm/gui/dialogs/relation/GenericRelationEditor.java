@@ -97,6 +97,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
@@ -840,7 +841,7 @@ public class GenericRelationEditor extends RelationEditor {
         int mods = shortcut.getModifiers();
         int code = shortcut.getKeyCode();
         if (code != KeyEvent.VK_INSERT && (mods == 0 || mods == InputEvent.SHIFT_DOWN_MASK)) {
-            Main.info(tr("Sorry, shortcut \"{0}\" can not be enabled in Relation editor dialog"), shortcut);
+            Logging.info(tr("Sorry, shortcut \"{0}\" can not be enabled in Relation editor dialog"), shortcut);
             return;
         }
         rootPane.getActionMap().put(actionName, action);
@@ -946,7 +947,7 @@ public class GenericRelationEditor extends RelationEditor {
             }
             return modified ? new ChangeCommand(orig, relation) : null;
         } catch (AddAbortException ign) {
-            Main.trace(ign);
+            Logging.trace(ign);
             return null;
         }
     }

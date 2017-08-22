@@ -23,6 +23,7 @@ import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.OfflineAccessException;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.imagery.ImageryReader;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
@@ -81,7 +82,7 @@ public class ImageryLayerInfo {
                     ImageryInfo i = new ImageryInfo(prefEntry);
                     add(i);
                 } catch (IllegalArgumentException e) {
-                    Main.warn("Unable to load imagery preference entry:"+e);
+                    Logging.warn("Unable to load imagery preference entry:"+e);
                 }
             }
             Collections.sort(layers);
@@ -149,7 +150,7 @@ public class ImageryLayerInfo {
             try {
                 OnlineResource.JOSM_WEBSITE.checkOfflineAccess(source, Main.getJOSMWebsite());
             } catch (OfflineAccessException e) {
-                Main.warn(e, false);
+                Logging.log(Logging.LEVEL_WARN, e);
                 online = false;
             }
             if (clearCache && online) {
@@ -162,10 +163,10 @@ public class ImageryLayerInfo {
                 newLayers.addAll(result);
             } catch (IOException ex) {
                 loadError = true;
-                Main.error(ex, false);
+                Logging.log(Logging.LEVEL_ERROR, ex);
             } catch (SAXException ex) {
                 loadError = true;
-                Main.error(ex);
+                Logging.error(ex);
             }
         }
 
@@ -204,7 +205,7 @@ public class ImageryLayerInfo {
             if (i.getId() != null) {
                 if (idMap.containsKey(i.getId())) {
                     notUnique.add(i.getId());
-                    Main.error("Id ''{0}'' is not unique - used by ''{1}'' and ''{2}''!",
+                    Logging.error("Id ''{0}'' is not unique - used by ''{1}'' and ''{2}''!",
                             i.getId(), i.getName(), idMap.get(i.getId()).getName());
                     continue;
                 }
@@ -255,7 +256,7 @@ public class ImageryLayerInfo {
                             }
                         }
                     } else {
-                        Main.error("Default imagery ''{0}'' has no id. Skipping.", def.getName());
+                        Logging.error("Default imagery ''{0}'' has no id. Skipping.", def.getName());
                     }
                 }
                 if (!isKnownDefault && !isInUserList) {
@@ -278,7 +279,7 @@ public class ImageryLayerInfo {
             ImageryInfo matchingDefault = defaultLayerIds.get(info.getId());
             if (matchingDefault != null && !matchingDefault.equalsPref(info)) {
                 layers.set(i, matchingDefault);
-                Main.info(tr("Update imagery ''{0}''", info.getName()));
+                Logging.info(tr("Update imagery ''{0}''", info.getName()));
                 changed = true;
             }
         }
@@ -299,7 +300,7 @@ public class ImageryLayerInfo {
             if (!defaultLayerIds.containsKey(info.getKey())) {
                 remove(info.getValue());
                 drop.add(info.getKey());
-                Main.info(tr("Drop old imagery ''{0}''", info.getValue().getName()));
+                Logging.info(tr("Drop old imagery ''{0}''", info.getValue().getName()));
             }
         }
 

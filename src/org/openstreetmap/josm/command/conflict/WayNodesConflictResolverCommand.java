@@ -9,12 +9,12 @@ import java.util.Objects;
 
 import javax.swing.Icon;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Represents the resolution of conflicts in the node list of two {@link Way}s.
@@ -59,7 +59,7 @@ public class WayNodesConflictResolverCommand extends ConflictResolveCommand {
         //
         for (Node n:mergedNodeList) {
             if (!getAffectedDataSet().getNodes().contains(n)) {
-                Main.warn(tr("Main dataset does not include node {0}", n.toString()));
+                Logging.warn(tr("Main dataset does not include node {0}", n.toString()));
             }
         }
         conflict.getMy().setNodes(mergedNodeList);

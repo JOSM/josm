@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Supplier;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.StreamUtils;
 
 /**
@@ -218,7 +218,7 @@ public class ReportedException extends RuntimeException {
                 string = value.toString();
             }
         } catch (RuntimeException t) { // NOPMD
-            Main.warn(t);
+            Logging.warn(t);
             string = "<Error calling toString()>";
         }
         sections.getLast().put(key, string);

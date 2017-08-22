@@ -71,6 +71,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -661,7 +662,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     movingComponent = "";
                     return true;
                 } catch (IOException | UnsupportedFlavorException e) {
-                    Main.error(e);
+                    Logging.error(e);
                 }
                 return false;
             }
@@ -680,7 +681,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                             }
                         }
                     } catch (IOException | UnsupportedFlavorException e) {
-                        Main.error(e);
+                        Logging.error(e);
                     }
                     movingComponent = "";
                 }
@@ -1021,12 +1022,12 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                     userObject = action;
                     Object tb = action.getValue("toolbar");
                     if (tb == null) {
-                        Main.info(tr("Toolbar action without name: {0}",
+                        Logging.info(tr("Toolbar action without name: {0}",
                         action.getClass().getName()));
                         continue;
                     } else if (!(tb instanceof String)) {
                         if (!(tb instanceof Boolean) || (Boolean) tb) {
-                            Main.info(tr("Strange toolbar value: {0}",
+                            Logging.info(tr("Strange toolbar value: {0}",
                             action.getClass().getName()));
                         }
                         continue;
@@ -1034,7 +1035,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                         String toolbar = (String) tb;
                         Action r = actions.get(toolbar);
                         if (r != null && r != action && !toolbar.startsWith(IMAGERY_PREFIX)) {
-                            Main.info(tr("Toolbar action {0} overwritten: {1} gets {2}",
+                            Logging.info(tr("Toolbar action {0} overwritten: {1} gets {2}",
                             toolbar, r.getClass().getName(), action.getClass().getName()));
                         }
                         actions.put(toolbar, action);
@@ -1095,7 +1096,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 if (a != null) {
                     result.add(a);
                 } else {
-                    Main.info("Could not load tool definition "+s);
+                    Logging.info("Could not load tool definition "+s);
                 }
             }
         }
@@ -1111,12 +1112,12 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
     public Action register(Action action) {
         String toolbar = (String) action.getValue("toolbar");
         if (toolbar == null) {
-            Main.info(tr("Registered toolbar action without name: {0}",
+            Logging.info(tr("Registered toolbar action without name: {0}",
                 action.getClass().getName()));
         } else {
             Action r = regactions.get(toolbar);
             if (r != null) {
-                Main.info(tr("Registered toolbar action {0} overwritten: {1} gets {2}",
+                Logging.info(tr("Registered toolbar action {0} overwritten: {1} gets {2}",
                     toolbar, r.getClass().getName(), action.getClass().getName()));
             }
         }

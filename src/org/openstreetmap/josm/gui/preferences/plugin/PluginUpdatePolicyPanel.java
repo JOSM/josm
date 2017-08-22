@@ -24,6 +24,7 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.plugins.PluginHandler;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * A panel for configuring whether JOSM shall update plugins at startup.
@@ -187,7 +188,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
                 days = Integer.parseInt(pref.trim());
             } catch (NumberFormatException e) {
                 // ignore - load from preference pluginmanager.time-based-update.interval
-                Main.trace(e);
+                Logging.trace(e);
             }
             if (days <= 0) {
                 days = PluginHandler.DEFAULT_TIME_BASED_UPDATE_INTERVAL;

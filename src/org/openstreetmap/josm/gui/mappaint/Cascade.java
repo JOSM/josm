@@ -10,9 +10,9 @@ import java.util.Map.Entry;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.mappaint.mapcss.CSSColors;
 import org.openstreetmap.josm.tools.ColorHelper;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -74,7 +74,7 @@ public final class Cascade {
         T res = convertTo(o, klass);
         if (res == null) {
             if (!suppressWarnings) {
-                Main.warn(String.format("Unable to convert property %s to type %s: found %s of type %s!", key, klass, o, o.getClass()));
+                Logging.warn(String.format("Unable to convert property %s to type %s: found %s of type %s!", key, klass, o, o.getClass()));
             }
             return def;
         } else
@@ -180,9 +180,7 @@ public final class Cascade {
             try {
                 return Float.valueOf((String) o);
             } catch (NumberFormatException e) {
-                if (Main.isDebugEnabled()) {
-                    Main.debug('\'' + (String) o + "' cannot be converted to float");
-                }
+                Logging.debug("'{0}' cannot be converted to float", o);
             }
         }
         return null;

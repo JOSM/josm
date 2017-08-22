@@ -20,6 +20,7 @@ import org.openstreetmap.josm.gui.tagging.presets.items.CheckGroup;
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
@@ -70,9 +71,9 @@ public final class TaggingPresets {
             for (final TaggingPreset p : taggingPresets) {
                 JMenu m = p.group != null ? submenus.get(p.group) : Main.main.menu.presetsMenu;
                 if (m == null && p.group != null) {
-                    Main.error("No tagging preset submenu for " + p.group);
+                    Logging.error("No tagging preset submenu for " + p.group);
                 } else if (m == null) {
-                    Main.error("No tagging preset menu. Tagging preset " + p + " won't be available there");
+                    Logging.error("No tagging preset menu. Tagging preset " + p + " won't be available there");
                 } else if (p instanceof TaggingPresetSeparator) {
                     m.add(new JSeparator());
                 } else if (p instanceof TaggingPresetMenu) {

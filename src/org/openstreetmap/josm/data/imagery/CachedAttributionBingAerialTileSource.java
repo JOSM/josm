@@ -11,11 +11,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.openstreetmap.gui.jmapviewer.tilesources.BingAerialTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.TileSourceInfo;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CacheCustomContent;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.InputSource;
 
 /**
@@ -56,7 +56,7 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
         protected byte[] updateData() throws IOException {
             URL u = getAttributionUrl();
             final String r = HttpClient.create(u).connect().fetchContent();
-            Main.info("Successfully loaded Bing attribution data.");
+            Logging.info("Successfully loaded Bing attribution data.");
             return r.getBytes("UTF-8");
         }
 
@@ -66,7 +66,7 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
                 String attributionUrl = getAttributionUrl().toExternalForm();
                 OnlineResource.ALL.checkOfflineAccess(attributionUrl, attributionUrl);
             } catch (MalformedURLException e) {
-                Main.error(e);
+                Logging.error(e);
             }
         }
     }
@@ -86,7 +86,7 @@ public class CachedAttributionBingAerialTileSource extends BingAerialTileSource 
                     }
                     return ret;
                 } catch (IOException ex) {
-                    Main.warn(ex, "Could not connect to Bing API. Will retry in " + waitTimeSec + " seconds.");
+                    Logging.log(Logging.LEVEL_WARN, "Could not connect to Bing API. Will retry in " + waitTimeSec + " seconds.", ex);
                     Thread.sleep(TimeUnit.SECONDS.toMillis(waitTimeSec));
                     waitTimeSec *= 2;
                 }

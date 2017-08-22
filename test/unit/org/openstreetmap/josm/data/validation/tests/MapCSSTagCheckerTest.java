@@ -18,7 +18,6 @@ import java.util.Set;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
@@ -37,6 +36,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -184,7 +184,7 @@ public class MapCSSTagCheckerTest {
             assertionErrors.addAll(c.checkAsserts(schecks));
         }
         for (String msg : assertionErrors) {
-            Main.error(msg);
+            Logging.error(msg);
         }
         assertTrue("not all assertions included in the tests are met", assertionErrors.isEmpty());
     }

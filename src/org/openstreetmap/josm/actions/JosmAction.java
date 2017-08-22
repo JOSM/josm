@@ -27,6 +27,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListen
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -275,7 +276,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
                         try {
                             future.get();
                         } catch (InterruptedException | ExecutionException | CancellationException e) {
-                            Main.error(e);
+                            Logging.error(e);
                             return;
                         }
                         monitor.close();

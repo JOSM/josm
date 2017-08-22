@@ -40,6 +40,7 @@ import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
@@ -412,8 +413,9 @@ public class ExtendedDialog extends JDialog implements IExtendedDialog {
                 // We need to set it to zero again, in case the dialog has been re-used
                 // and the result differs from its default value
                 result = ExtendedDialog.DialogClosedOtherwise;
-                if (Main.isDebugEnabled()) {
-                    Main.debug(getClass().getName()+" ESC action performed ("+actionEvent+") from "+new Exception().getStackTrace()[1]);
+                if (Logging.isDebugEnabled()) {
+                    Logging.debug("{0} ESC action performed ({1}) from {2}",
+                            getClass().getName(), actionEvent, new Exception().getStackTrace()[1]);
                 }
                 setVisible(false);
             }
@@ -441,8 +443,8 @@ public class ExtendedDialog extends JDialog implements IExtendedDialog {
             repaint();
         }
 
-        if (Main.isDebugEnabled()) {
-            Main.debug(getClass().getName()+".setVisible("+visible+") from "+new Exception().getStackTrace()[1]);
+        if (Logging.isDebugEnabled()) {
+            Logging.debug(getClass().getName()+".setVisible("+visible+") from "+new Exception().getStackTrace()[1]);
         }
 
         // Ensure all required variables are available

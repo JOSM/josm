@@ -59,7 +59,7 @@ public class PlatformHookWindowsTest {
                 PlatformHookWindows.getRootKeystore();
                 fail("Expected KeyStoreException");
             } catch (KeyStoreException e) {
-                Main.info(e.getMessage());
+                Logging.info(e.getMessage());
             }
         }
     }
@@ -77,7 +77,7 @@ public class PlatformHookWindowsTest {
                 PlatformHookWindows.removeInsecureCertificates();
                 fail("Expected KeyStoreException");
             } catch (KeyStoreException e) {
-                Main.info(e.getMessage());
+                Logging.info(e.getMessage());
             }
         }
     }
@@ -98,7 +98,7 @@ public class PlatformHookWindowsTest {
                 hook.setupHttpsCertificate(RemoteControlHttpsServer.ENTRY_ALIAS, trustedCert);
                 fail("Expected KeyStoreException");
             } catch (KeyStoreException e) {
-                Main.info(e.getMessage());
+                Logging.info(e.getMessage());
             }
         }
     }
@@ -124,7 +124,7 @@ public class PlatformHookWindowsTest {
                 hook.openUrl(Main.getJOSMWebsite());
                 fail("Expected IOException");
             } catch (IOException e) {
-                Main.info(e.getMessage());
+                Logging.info(e.getMessage());
             }
         }
     }

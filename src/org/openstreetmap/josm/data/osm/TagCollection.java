@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -724,7 +724,7 @@ public class TagCollection implements Iterable<Tag>, Serializable {
             try {
                 result += Integer.parseInt(value);
             } catch (NumberFormatException e) {
-                Main.trace(e);
+                Logging.trace(e);
             }
         }
         return Integer.toString(result);

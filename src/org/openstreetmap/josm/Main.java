@@ -231,7 +231,9 @@ public abstract class Main {
      * Replies the first lines of last 5 error and warning messages, used for bug reports
      * @return the first lines of last 5 error and warning messages
      * @since 7420
+     * @deprecated Use {@link Logging#getLastErrorAndWarnings}.
      */
+    @Deprecated
     public static final Collection<String> getLastErrorAndWarnings() {
         return Logging.getLastErrorAndWarnings();
     }
@@ -239,7 +241,9 @@ public abstract class Main {
     /**
      * Clears the list of last error and warning messages.
      * @since 8959
+     * @deprecated Use {@link Logging#clearLastErrorAndWarnings}.
      */
+    @Deprecated
     public static void clearLastErrorAndWarnings() {
         Logging.clearLastErrorAndWarnings();
     }
@@ -248,7 +252,9 @@ public abstract class Main {
      * Prints an error message if logging is on.
      * @param msg The message to print.
      * @since 6248
+     * @deprecated Use {@link Logging#error(String)}.
      */
+    @Deprecated
     public static void error(String msg) {
         Logging.error(msg);
     }
@@ -256,7 +262,9 @@ public abstract class Main {
     /**
      * Prints a warning message if logging is on.
      * @param msg The message to print.
+     * @deprecated Use {@link Logging#warn(String)}.
      */
+    @Deprecated
     public static void warn(String msg) {
         Logging.warn(msg);
     }
@@ -264,7 +272,9 @@ public abstract class Main {
     /**
      * Prints an informational message if logging is on.
      * @param msg The message to print.
+     * @deprecated Use {@link Logging#info(String)}.
      */
+    @Deprecated
     public static void info(String msg) {
         Logging.info(msg);
     }
@@ -272,7 +282,9 @@ public abstract class Main {
     /**
      * Prints a debug message if logging is on.
      * @param msg The message to print.
+     * @deprecated Use {@link Logging#debug(String)}.
      */
+    @Deprecated
     public static void debug(String msg) {
         Logging.debug(msg);
     }
@@ -280,7 +292,9 @@ public abstract class Main {
     /**
      * Prints a trace message if logging is on.
      * @param msg The message to print.
+     * @deprecated Use {@link Logging#trace(String)}.
      */
+    @Deprecated
     public static void trace(String msg) {
         Logging.trace(msg);
     }
@@ -290,9 +304,11 @@ public abstract class Main {
      * Useful to avoid costly construction of debug messages when not enabled.
      * @return {@code true} if log level is at least debug, {@code false} otherwise
      * @since 6852
+     * @deprecated Use {@link Logging#isDebugEnabled}.
      */
+    @Deprecated
     public static boolean isDebugEnabled() {
-        return Logging.isLoggingEnabled(Logging.LEVEL_DEBUG);
+        return Logging.isDebugEnabled();
     }
 
     /**
@@ -300,9 +316,11 @@ public abstract class Main {
      * Useful to avoid costly construction of trace messages when not enabled.
      * @return {@code true} if log level is at least trace, {@code false} otherwise
      * @since 6852
+     * @deprecated Use {@link Logging#isTraceEnabled}.
      */
+    @Deprecated
     public static boolean isTraceEnabled() {
-        return Logging.isLoggingEnabled(Logging.LEVEL_TRACE);
+        return Logging.isTraceEnabled();
     }
 
     /**
@@ -311,7 +329,9 @@ public abstract class Main {
      * @param msg The formatted message to print.
      * @param objects The objects to insert into format string.
      * @since 6248
+     * @deprecated Use {@link Logging#error(String, Object...)}.
      */
+    @Deprecated
     public static void error(String msg, Object... objects) {
         Logging.error(msg, objects);
     }
@@ -321,7 +341,9 @@ public abstract class Main {
      * function to format text.
      * @param msg The formatted message to print.
      * @param objects The objects to insert into format string.
+     * @deprecated Use {@link Logging#warn(String, Object...)}.
      */
+    @Deprecated
     public static void warn(String msg, Object... objects) {
         Logging.warn(msg, objects);
     }
@@ -331,7 +353,9 @@ public abstract class Main {
      * function to format text.
      * @param msg The formatted message to print.
      * @param objects The objects to insert into format string.
+     * @deprecated Use {@link Logging#info(String, Object...)}.
      */
+    @Deprecated
     public static void info(String msg, Object... objects) {
         Logging.info(msg, objects);
     }
@@ -341,7 +365,9 @@ public abstract class Main {
      * function to format text.
      * @param msg The formatted message to print.
      * @param objects The objects to insert into format string.
+     * @deprecated Use {@link Logging#debug(String, Object...)}.
      */
+    @Deprecated
     public static void debug(String msg, Object... objects) {
         Logging.debug(msg, objects);
     }
@@ -351,7 +377,9 @@ public abstract class Main {
      * function to format text.
      * @param msg The formatted message to print.
      * @param objects The objects to insert into format string.
+     * @deprecated Use {@link Logging#trace(String, Object...)}.
      */
+    @Deprecated
     public static void trace(String msg, Object... objects) {
         Logging.trace(msg, objects);
     }
@@ -360,36 +388,44 @@ public abstract class Main {
      * Prints an error message for the given Throwable.
      * @param t The throwable object causing the error
      * @since 6248
+     * @deprecated Use {@link Logging#error(Throwable)}.
      */
+    @Deprecated
     public static void error(Throwable t) {
-        Logging.logWithStackTrace(Logging.LEVEL_ERROR, t);
+        Logging.error(t);
     }
 
     /**
      * Prints a warning message for the given Throwable.
      * @param t The throwable object causing the error
      * @since 6248
+     * @deprecated Use {@link Logging#warn(Throwable)}.
      */
+    @Deprecated
     public static void warn(Throwable t) {
-        Logging.logWithStackTrace(Logging.LEVEL_WARN, t);
+        Logging.warn(t);
     }
 
     /**
      * Prints a debug message for the given Throwable. Useful for exceptions usually ignored
      * @param t The throwable object causing the error
      * @since 10420
+     * @deprecated Use {@link Logging#debug(Throwable)}.
      */
+    @Deprecated
     public static void debug(Throwable t) {
-        Logging.log(Logging.LEVEL_DEBUG, t);
+        Logging.debug(t);
     }
 
     /**
      * Prints a trace message for the given Throwable. Useful for exceptions usually ignored
      * @param t The throwable object causing the error
      * @since 10420
+     * @deprecated Use {@link Logging#trace(Throwable)}.
      */
+    @Deprecated
     public static void trace(Throwable t) {
-        Logging.log(Logging.LEVEL_TRACE, t);
+        Logging.trace(t);
     }
 
     /**
@@ -397,7 +433,10 @@ public abstract class Main {
      * @param t The throwable object causing the error
      * @param stackTrace {@code true}, if the stacktrace should be displayed
      * @since 6642
+     * @deprecated Use {@link Logging#log(java.util.logging.Level, Throwable)}
+     *              or {@link Logging#logWithStackTrace(java.util.logging.Level, Throwable)}.
      */
+    @Deprecated
     public static void error(Throwable t, boolean stackTrace) {
         if (stackTrace) {
             Logging.log(Logging.LEVEL_ERROR, t);
@@ -411,7 +450,9 @@ public abstract class Main {
      * @param t The throwable object causing the error
      * @param message additional error message
      * @since 10420
+     * @deprecated Use {@link Logging#log(java.util.logging.Level, String, Throwable)}.
      */
+    @Deprecated
     public static void error(Throwable t, String message) {
         Logging.log(Logging.LEVEL_ERROR, message, t);
     }
@@ -421,7 +462,10 @@ public abstract class Main {
      * @param t The throwable object causing the error
      * @param stackTrace {@code true}, if the stacktrace should be displayed
      * @since 6642
+     * @deprecated Use {@link Logging#log(java.util.logging.Level, Throwable)}
+     *              or {@link Logging#logWithStackTrace(java.util.logging.Level, Throwable)}.
      */
+    @Deprecated
     public static void warn(Throwable t, boolean stackTrace) {
         if (stackTrace) {
             Logging.log(Logging.LEVEL_WARN, t);
@@ -435,7 +479,9 @@ public abstract class Main {
      * @param t The throwable object causing the error
      * @param message additional error message
      * @since 10420
+     * @deprecated Use {@link Logging#log(java.util.logging.Level, String, Throwable)}.
      */
+    @Deprecated
     public static void warn(Throwable t, String message) {
         Logging.log(Logging.LEVEL_WARN, message, t);
     }
@@ -445,7 +491,9 @@ public abstract class Main {
      * @param t The error
      * @return The human-readable error message
      * @since 6642
+     * @deprecated Use {@link Logging#getErrorMessage}.
      */
+    @Deprecated
     public static String getErrorMessage(Throwable t) {
         if (t == null) {
             return null;
@@ -542,7 +590,7 @@ public abstract class Main {
                 try {
                     OsmApi.getOsmApi().initialize(null, true);
                 } catch (OsmTransferCanceledException | OsmApiInitializationException e) {
-                    Main.warn(getErrorMessage(Utils.getRootCause(e)));
+                    Logging.warn(getErrorMessage(Utils.getRootCause(e)));
                 }
             }));
 
@@ -666,7 +714,7 @@ public abstract class Main {
         InputMap inputMap = contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
         Object existing = inputMap.get(keyStroke);
         if (existing != null && !existing.equals(action)) {
-            info(String.format("Keystroke %s is already assigned to %s, will be overridden by %s", keyStroke, existing, action));
+            Logging.info(String.format("Keystroke %s is already assigned to %s, will be overridden by %s", keyStroke, existing, action));
         }
         inputMap.put(keyStroke, action);
 
@@ -739,36 +787,36 @@ public abstract class Main {
             UIManager.setLookAndFeel(laf);
         } catch (final NoClassDefFoundError | ClassNotFoundException e) {
             // Try to find look and feel in plugin classloaders
-            Main.trace(e);
+            Logging.trace(e);
             Class<?> klass = null;
             for (ClassLoader cl : PluginHandler.getResourceClassLoaders()) {
                 try {
                     klass = cl.loadClass(laf);
                     break;
                 } catch (ClassNotFoundException ex) {
-                    Main.trace(ex);
+                    Logging.trace(ex);
                 }
             }
             if (klass != null && LookAndFeel.class.isAssignableFrom(klass)) {
                 try {
                     UIManager.setLookAndFeel((LookAndFeel) klass.getConstructor().newInstance());
                 } catch (ReflectiveOperationException ex) {
-                    warn(ex, "Cannot set Look and Feel: " + laf + ": "+ex.getMessage());
+                    Logging.log(Logging.LEVEL_WARN, "Cannot set Look and Feel: " + laf + ": "+ex.getMessage(), ex);
                 } catch (UnsupportedLookAndFeelException ex) {
-                    info("Look and Feel not supported: " + laf);
+                    Logging.info("Look and Feel not supported: " + laf);
                     LafPreference.LAF.put(defaultlaf);
-                    trace(ex);
+                    Logging.trace(ex);
                 }
             } else {
-                info("Look and Feel not found: " + laf);
+                Logging.info("Look and Feel not found: " + laf);
                 LafPreference.LAF.put(defaultlaf);
             }
         } catch (UnsupportedLookAndFeelException e) {
-            info("Look and Feel not supported: " + laf);
+            Logging.info("Look and Feel not supported: " + laf);
             LafPreference.LAF.put(defaultlaf);
-            trace(e);
+            Logging.trace(e);
         } catch (InstantiationException | IllegalAccessException e) {
-            error(e);
+            Logging.error(e);
         }
         toolbar = new ToolbarPreferences();
 
@@ -790,7 +838,7 @@ public abstract class Main {
         try {
             CoordinateFormat.setCoordinateFormat(CoordinateFormat.valueOf(Main.pref.get("coordinates")));
         } catch (IllegalArgumentException iae) {
-            Main.trace(iae);
+            Logging.trace(iae);
             CoordinateFormat.setCoordinateFormat(CoordinateFormat.DECIMAL_DEGREES);
         }
     }
@@ -866,7 +914,7 @@ public abstract class Main {
         try {
             pref.saveDefaults();
         } catch (IOException ex) {
-            Main.warn(ex, tr("Failed to save default preferences."));
+            Logging.log(Logging.LEVEL_WARN, tr("Failed to save default preferences."), ex);
         }
         if (!GraphicsEnvironment.isHeadless()) {
             worker.shutdownNow();
@@ -906,7 +954,7 @@ public abstract class Main {
                 try {
                     f = new File(new URI(s));
                 } catch (URISyntaxException e) {
-                    Main.warn(e);
+                    Logging.warn(e);
                     JOptionPane.showMessageDialog(
                             Main.parent,
                             tr("Ignoring malformed file URL: \"{0}\"", s),
@@ -1017,7 +1065,7 @@ public abstract class Main {
     public static void determinePlatformHook() {
         String os = System.getProperty("os.name");
         if (os == null) {
-            warn("Your operating system has no name, so I'm guessing its some kind of *nix.");
+            Logging.warn("Your operating system has no name, so I'm guessing its some kind of *nix.");
             platform = new PlatformHookUnixoid();
         } else if (os.toLowerCase(Locale.ENGLISH).startsWith("windows")) {
             platform = new PlatformHookWindows();
@@ -1028,7 +1076,7 @@ public abstract class Main {
         } else if (os.toLowerCase(Locale.ENGLISH).startsWith("mac os x")) {
             platform = new PlatformHookOsx();
         } else {
-            warn("I don't know your operating system '"+os+"', so I'm guessing its some kind of *nix.");
+            Logging.warn("I don't know your operating system '"+os+"', so I'm guessing its some kind of *nix.");
             platform = new PlatformHookUnixoid();
         }
     }
@@ -1195,7 +1243,7 @@ public abstract class Main {
         if (url != null && t != null) {
             Throwable old = addNetworkError(url.toExternalForm(), t);
             if (old != null) {
-                Main.warn("Already here "+old);
+                Logging.warn("Already here "+old);
             }
             return old;
         }

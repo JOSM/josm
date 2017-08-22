@@ -6,8 +6,8 @@ import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * List of tagging presets with name templates, allows to find appropriate template based on existing primitive
@@ -36,7 +36,7 @@ public final class TaggingPresetNameTemplateList implements TaggingPresetListene
 
     private void buildPresetsWithPattern() {
         synchronized (this) {
-            Main.debug("Building list of presets with name template");
+            Logging.debug("Building list of presets with name template");
             presetsWithPattern.clear();
             for (TaggingPreset tp : TaggingPresets.getTaggingPresets()) {
                 if (tp.nameTemplate != null) {

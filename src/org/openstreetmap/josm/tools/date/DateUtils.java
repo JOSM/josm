@@ -17,9 +17,9 @@ import java.util.concurrent.TimeUnit;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 
 /**
@@ -50,7 +50,7 @@ public final class DateUtils {
         try {
             fact = DatatypeFactory.newInstance();
         } catch (DatatypeConfigurationException e) {
-            Main.error(e);
+            Logging.error(e);
         }
         XML_DATE = fact;
     }

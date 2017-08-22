@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -147,7 +148,7 @@ public abstract class RequestHandler {
         PermissionPrefWithDefault permissionPref = getPermissionPref();
         if (permissionPref != null && permissionPref.pref != null && !Main.pref.getBoolean(permissionPref.pref, permissionPref.defaultVal)) {
             String err = MessageFormat.format("RemoteControl: ''{0}'' forbidden by preferences", myCommand);
-            Main.info(err);
+            Logging.info(err);
             throw new RequestHandlerForbiddenException(err);
         }
 
@@ -227,7 +228,7 @@ public abstract class RequestHandler {
                 String value = args.get(key);
                 if (value == null || value.isEmpty()) {
                     error = true;
-                    Main.warn('\'' + myCommand + "' remote control request must have '" + key + "' parameter");
+                    Logging.warn('\'' + myCommand + "' remote control request must have '" + key + "' parameter");
                     missingKeys.add(key);
                 }
             }
@@ -240,7 +241,7 @@ public abstract class RequestHandler {
         if (args != null) {
             for (String par: args.keySet()) {
                 if (!knownParams.contains(par)) {
-                    Main.warn("Unknown remote control parameter {0}, skipping it", par);
+                    Logging.warn("Unknown remote control parameter {0}, skipping it", par);
                 }
             }
         }

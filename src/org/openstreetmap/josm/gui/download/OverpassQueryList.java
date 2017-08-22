@@ -49,6 +49,7 @@ import org.openstreetmap.josm.gui.widgets.DefaultTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.SearchTextResultListPanel;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -275,7 +276,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
                 result.put(key, new SelectorItem(key, query, lastEdit));
             } catch (IllegalArgumentException | DateTimeParseException e) {
                 // skip any corrupted item
-                Main.error(e);
+                Logging.error(e);
             }
         }
 

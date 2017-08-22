@@ -30,6 +30,7 @@ import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -136,14 +137,14 @@ public final class AboutAction extends JosmAction {
                     ta.append(line+'\n');
                 }
             } catch (IOException e) {
-                Main.warn(e);
+                Logging.warn(e);
                 displayErrorMessage(ta, tr("Failed to load resource ''{0}'', error is {1}.", filePath, e.toString()));
             }
         }
     }
 
     private static void displayErrorMessage(JTextArea ta, String msg) {
-        Main.warn(msg);
+        Logging.warn(msg);
         ta.setForeground(new Color(200, 0, 0));
         ta.setText(msg);
     }

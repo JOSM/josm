@@ -30,6 +30,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
@@ -248,7 +249,7 @@ public class LatLonDialog extends ExtendedDialog {
                 latLon = null;
             }
         } catch (IllegalArgumentException e) {
-            Main.trace(e);
+            Logging.trace(e);
             latLon = null;
         }
         if (latLon == null) {
@@ -267,7 +268,7 @@ public class LatLonDialog extends ExtendedDialog {
         try {
             en = parseEastNorth(tfEastNorth.getText());
         } catch (IllegalArgumentException e) {
-            Main.trace(e);
+            Logging.trace(e);
             en = null;
         }
         if (en == null) {

@@ -40,7 +40,7 @@ public final class OpenBrowser {
     public static String displayUrl(URI uri) {
         CheckParameterUtil.ensureParameterNotNull(uri, "uri");
 
-        Main.info(tr("Opening URL: {0}", uri));
+        Logging.info(tr("Opening URL: {0}", uri));
 
         if (Desktop.isDesktopSupported()) {
             try {
@@ -58,20 +58,20 @@ public final class OpenBrowser {
                     } catch (IOException e) {
                         // Workaround for KDE (Desktop API is severely flawed)
                         // see https://bugs.openjdk.java.net/browse/JDK-6486393
-                        Main.warn(e, "Desktop class failed. Platform dependent fall back for open url in browser.");
+                        Logging.log(Logging.LEVEL_WARN, "Desktop class failed. Platform dependent fall back for open url in browser.", e);
                         displayUrlFallback(uri);
                     }
                 }
             } catch (IOException e) {
-                Main.warn(e);
+                Logging.warn(e);
                 return e.getMessage();
             }
         } else {
             try {
-                Main.warn("Desktop class is not supported. Platform dependent fall back for open url in browser.");
+                Logging.warn("Desktop class is not supported. Platform dependent fall back for open url in browser.");
                 displayUrlFallback(uri);
             } catch (IOException e) {
-                Main.debug(e);
+                Logging.debug(e);
                 return e.getMessage();
             }
         }
@@ -90,7 +90,7 @@ public final class OpenBrowser {
         try {
             return displayUrl(new URI(url));
         } catch (URISyntaxException e) {
-            Main.debug(e);
+            Logging.debug(e);
             return e.getMessage();
         }
     }

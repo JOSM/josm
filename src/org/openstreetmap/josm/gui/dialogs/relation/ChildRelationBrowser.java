@@ -45,6 +45,7 @@ import org.openstreetmap.josm.io.OsmServerObjectReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
@@ -421,7 +422,7 @@ public class ChildRelationBrowser extends JPanel {
                 SwingUtilities.invokeLater(Main.map::repaint);
             } catch (OsmTransferException e) {
                 if (canceled) {
-                    Main.warn(tr("Ignoring exception because task was canceled. Exception: {0}", e.toString()));
+                    Logging.warn(tr("Ignoring exception because task was canceled. Exception: {0}", e.toString()));
                     return;
                 }
                 lastException = e;
@@ -470,7 +471,7 @@ public class ChildRelationBrowser extends JPanel {
                 }
             } catch (OsmTransferException e) {
                 if (canceled) {
-                    Main.warn(tr("Ignoring exception because task was canceled. Exception: {0}", e.toString()));
+                    Logging.warn(tr("Ignoring exception because task was canceled. Exception: {0}", e.toString()));
                     return;
                 }
                 lastException = e;

@@ -26,6 +26,7 @@ import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.BoxProvid
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.SimpleBoxProvider;
 import org.openstreetmap.josm.gui.util.RotationAngle;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -129,7 +130,7 @@ public class NodeElement extends StyleElement {
                     try {
                         rotationAngle = RotationAngle.buildStaticRotation(rotationKW.val);
                     } catch (IllegalArgumentException ignore) {
-                        Main.trace(ignore);
+                        Logging.trace(ignore);
                     }
                 }
             }

@@ -8,12 +8,12 @@ import java.util.Optional;
 
 import javax.swing.TransferHandler.TransferSupport;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTransferHandler;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Paste members.
@@ -37,7 +37,7 @@ public class PasteMembersAction extends AddFromSelectionAction implements Flavor
         try {
             new MemberTransferHandler().importData(getSupport());
         } catch (IllegalStateException ex) {
-            Main.error(ex);
+            Logging.error(ex);
         }
     }
 
@@ -51,7 +51,7 @@ public class PasteMembersAction extends AddFromSelectionAction implements Flavor
         try {
             setEnabled(new MemberTransferHandler().canImport(getSupport()));
         } catch (IllegalStateException ex) {
-            Main.error(ex);
+            Logging.error(ex);
         }
     }
 

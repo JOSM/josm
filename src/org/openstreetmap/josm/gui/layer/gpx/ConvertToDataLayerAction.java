@@ -36,6 +36,7 @@ import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -83,7 +84,7 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
                             try {
                                 n.setTimestamp(DateUtils.fromString(timestr));
                             } catch (UncheckedParseException e) {
-                                Main.warn(e, false);
+                                Logging.log(Logging.LEVEL_WARN, e);
                             }
                         }
                         ds.addPrimitive(n);
@@ -132,7 +133,7 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
                                 .ifPresent(s -> node.put(osmKey, s));
                     }
                 } else {
-                    Main.warn("Invalid gpx.to-osm-mapping Einstein setting: expecting even number of entries");
+                    Logging.warn("Invalid gpx.to-osm-mapping Einstein setting: expecting even number of entries");
                 }
                 ds.addPrimitive(node);
             }

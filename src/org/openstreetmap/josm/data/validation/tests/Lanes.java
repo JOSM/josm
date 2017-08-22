@@ -7,11 +7,11 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -63,7 +63,7 @@ public class Lanes extends Test.TagTest {
                             .build());
                 }
             } catch (NumberFormatException ignore) {
-                Main.debug(ignore.getMessage());
+                Logging.debug(ignore.getMessage());
             }
         }
     }
@@ -81,7 +81,7 @@ public class Lanes extends Test.TagTest {
                     .build());
         }
         } catch (NumberFormatException ignore) {
-            Main.debug(ignore.getMessage());
+            Logging.debug(ignore.getMessage());
         }
     }
 

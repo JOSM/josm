@@ -107,6 +107,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -534,7 +535,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
         try {
             visitor.merge(progressMonitor);
         } catch (DataIntegrityProblemException e) {
-            Main.error(e);
+            Logging.error(e);
             JOptionPane.showMessageDialog(
                     Main.parent,
                     e.getHtmlMessage() != null ? e.getHtmlMessage() : e.getMessage(),
@@ -815,7 +816,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
                         break;
                     }
                 } catch (NumberFormatException e) {
-                    Main.trace(e);
+                    Logging.trace(e);
                 }
             }
         }
@@ -835,7 +836,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
                         break;
                     }
                 } catch (NumberFormatException e) {
-                    Main.trace(e);
+                    Logging.trace(e);
                 }
             }
         }

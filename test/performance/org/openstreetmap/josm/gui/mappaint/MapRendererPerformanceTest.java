@@ -44,6 +44,7 @@ import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -208,7 +209,7 @@ public class MapRendererPerformanceTest {
                 try {
                     Thread.sleep(300);
                 } catch (InterruptedException ex) {
-                    Main.warn(ex);
+                    Logging.warn(ex);
                 }
                 BenchmarkData data = new BenchmarkData();
                 renderer.setBenchmarkFactory(() -> data);

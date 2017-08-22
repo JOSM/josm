@@ -22,6 +22,7 @@ import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsAgentResponse;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 import oauth.signpost.OAuthConsumer;
@@ -147,7 +148,7 @@ public class OsmConnection {
             addOAuthAuthorizationHeader(connection);
         } else {
             String msg = tr("Unexpected value for preference ''{0}''. Got ''{1}''.", "osm-server.auth-method", authMethod);
-            Main.warn(msg);
+            Logging.warn(msg);
             throw new OsmTransferException(msg);
         }
     }

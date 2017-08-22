@@ -8,9 +8,9 @@ import java.awt.image.ShortLookupTable;
 import java.util.Collections;
 import java.util.Map;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.ImageProcessor;
 import org.openstreetmap.josm.io.session.SessionAwareReadApply;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -57,7 +57,7 @@ public class GammaImageProcessor implements ImageProcessor, SessionAwareReadAppl
                 return op4.filter(image, null);
             }
         } catch (IllegalArgumentException ignore) {
-            Main.trace(ignore);
+            Logging.trace(ignore);
         }
         final int type = image.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
         final BufferedImage to = new BufferedImage(image.getWidth(), image.getHeight(), type);
@@ -72,9 +72,7 @@ public class GammaImageProcessor implements ImageProcessor, SessionAwareReadAppl
             try {
                 setGamma(Double.parseDouble(cStr));
             } catch (NumberFormatException e) {
-                if (Main.isTraceEnabled()) {
-                    Main.trace(e);
-                }
+                Logging.trace(e);
             }
         }
     }

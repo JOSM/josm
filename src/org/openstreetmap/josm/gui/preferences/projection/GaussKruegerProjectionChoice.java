@@ -6,7 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * ProjectionChoice for Gauß-Krüger coordinate system (zones 2-5, EPSG:31466-31469).
@@ -39,7 +39,7 @@ public class GaussKruegerProjectionChoice extends ListProjectionChoice {
         try {
             return Integer.parseInt(zone) - 2;
         } catch (NumberFormatException e) {
-            Main.warn(e);
+            Logging.warn(e);
         }
         return defaultIndex;
     }

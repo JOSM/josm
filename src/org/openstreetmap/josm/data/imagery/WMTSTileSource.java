@@ -57,6 +57,7 @@ import org.openstreetmap.josm.gui.layer.NativeScaleLayer.ScaleList;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -292,7 +293,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         this.baseUrl = GetCapabilitiesParseHelper.normalizeCapabilitiesUrl(handleTemplate(info.getUrl()));
         this.layers = getCapabilities();
         if (info.getDefaultLayers().isEmpty()) {
-            Main.warn(tr("No default layer selected, choosing first layer."));
+            Logging.warn(tr("No default layer selected, choosing first layer."));
             if (!layers.isEmpty()) {
                 Layer first = layers.iterator().next();
                 this.defaultLayer = new WMTSDefaultLayer(first.identifier, first.tileMatrixSet.identifier);
@@ -382,7 +383,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                 return ret;
             } catch (XMLStreamException e) {
                 cf.clear();
-                Main.warn(new String(data, StandardCharsets.UTF_8));
+                Logging.warn(new String(data, StandardCharsets.UTF_8));
                 throw new IllegalArgumentException(e);
             }
         }
@@ -490,7 +491,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         }
         if (layer.format == null) {
             // no format found - it's mandatory parameter - can't use this layer
-            Main.warn(tr("Can''t use layer {0} because no supported formats where found. Layer is available in formats: {1}",
+            Logging.warn(tr("Can''t use layer {0} because no supported formats where found. Layer is available in formats: {1}",
                     layer.getUserTitle(),
                     String.join(", ", unsupportedFormats)));
             return null;
@@ -724,7 +725,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
             return projLayers.iterator().next().tileMatrixSet.tileMatrix.get(0).tileHeight;
         }
         // if no layers is found, fallback to default mercator tile size. Maybe it will work
-        Main.warn("WMTS: Could not determine tile size. Using default tile size of: {0}", getDefaultTileSize());
+        Logging.warn("WMTS: Could not determine tile size. Using default tile size of: {0}", getDefaultTileSize());
         return getDefaultTileSize();
     }
 

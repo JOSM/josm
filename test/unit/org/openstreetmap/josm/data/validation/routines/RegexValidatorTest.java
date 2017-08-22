@@ -26,7 +26,7 @@ import java.util.Arrays;
 import java.util.regex.PatternSyntaxException;
 
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Test Case for RegexValidatorTest.
@@ -243,7 +243,7 @@ public class RegexValidatorTest {
             new RegexValidator(invalidRegex);
         } catch (PatternSyntaxException e) {
             // expected
-            Main.debug(e.getMessage());
+            Logging.debug(e.getMessage());
         }
     }
 

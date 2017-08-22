@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * File importer that reads *.osm data files. (main storage format for OSM data
@@ -78,7 +79,7 @@ public class OsmImporter extends FileImporter {
         try (InputStream in = Compression.getUncompressedFileInputStream(file)) {
             importData(in, file, progressMonitor);
         } catch (FileNotFoundException e) {
-            Main.error(e);
+            Logging.error(e);
             throw new IOException(tr("File ''{0}'' does not exist.", file.getName()), e);
         }
     }

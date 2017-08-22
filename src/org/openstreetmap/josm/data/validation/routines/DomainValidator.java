@@ -20,7 +20,7 @@ import java.net.IDN;
 import java.util.Arrays;
 import java.util.Locale;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * <p><b>Domain name</b> validation routines.</p>
@@ -2051,7 +2051,7 @@ public final class DomainValidator extends AbstractValidator {
                     return ascii;
             }
         } catch (IllegalArgumentException e) { // input is not valid
-            Main.trace(e);
+            Logging.trace(e);
             return input;
         }
     }

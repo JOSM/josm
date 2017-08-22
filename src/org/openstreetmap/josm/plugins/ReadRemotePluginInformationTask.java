@@ -38,6 +38,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
@@ -163,7 +164,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             return content;
         } catch (MalformedURLException e) {
             if (canceled) return null;
-            Main.error(e);
+            Logging.error(e);
             return null;
         } catch (IOException e) {
             if (canceled) return null;
@@ -183,9 +184,9 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
     private void handleIOException(final ProgressMonitor monitor, IOException e, String details) {
         final String msg = e.getMessage();
         if (details == null || details.isEmpty()) {
-            Main.error(e.getClass().getSimpleName()+": " + msg);
+            Logging.error(e.getClass().getSimpleName()+": " + msg);
         } else {
-            Main.error(msg + " - Details:\n" + details);
+            Logging.error(msg + " - Details:\n" + details);
         }
 
         if (displayErrMsg) {
@@ -226,7 +227,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
     protected void cachePluginList(String site, String list) {
         File pluginDir = Main.pref.getPluginsDirectory();
         if (!pluginDir.exists() && !pluginDir.mkdirs()) {
-            Main.warn(tr("Failed to create plugin directory ''{0}''. Cannot cache plugin list from plugin site ''{1}''.",
+            Logging.warn(tr("Failed to create plugin directory ''{0}''. Cannot cache plugin list from plugin site ''{1}''.",
                     pluginDir.toString(), site));
         }
         File cacheFile = createSiteCacheFile(pluginDir, site);
@@ -236,7 +237,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             writer.flush();
         } catch (IOException e) {
             // just failed to write the cache file. No big deal, but log the exception anyway
-            Main.error(e);
+            Logging.error(e);
         }
     }
 
@@ -275,8 +276,8 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             List<PluginInformation> pis = new PluginListParser().parse(in);
             availablePlugins.addAll(filterDeprecatedPlugins(pis));
         } catch (PluginListParseException e) {
-            Main.error(tr("Failed to parse plugin list document from site ''{0}''. Skipping site. Exception was: {1}", site, e.toString()));
-            Main.error(e);
+            Logging.error(tr("Failed to parse plugin list document from site ''{0}''. Skipping site. Exception was: {1}", site, e.toString()));
+            Logging.error(e);
         }
     }
 

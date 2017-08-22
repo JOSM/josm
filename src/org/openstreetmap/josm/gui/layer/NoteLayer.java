@@ -43,6 +43,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.XmlWriter;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -182,7 +183,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
                     } catch (IllegalArgumentException e) {
                         // See #11123 - https://bugs.openjdk.java.net/browse/JDK-6719550
                         // Ignore the exception, as Netbeans does: http://hg.netbeans.org/main-silver/rev/c96f4d5fbd20
-                        Main.error(e, false);
+                        Logging.log(Logging.LEVEL_ERROR, e);
                     }
                 }
             }

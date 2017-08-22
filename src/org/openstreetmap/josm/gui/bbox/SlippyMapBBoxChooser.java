@@ -43,6 +43,7 @@ import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.layer.AbstractCachedTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This panel displays a map and lets the user chose a {@link BBox}.
@@ -85,7 +86,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
                         sources.add(source);
                     }
                 } catch (IllegalArgumentException ex) {
-                    Main.warn(ex);
+                    Logging.warn(ex);
                     if (ex.getMessage() != null && !ex.getMessage().isEmpty()) {
                         JOptionPane.showMessageDialog(Main.parent,
                                 ex.getMessage(), tr("Warning"),
@@ -133,7 +134,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
      * Constructs a new {@code SlippyMapBBoxChooser}.
      */
     public SlippyMapBBoxChooser() {
-        debug = Main.isDebugEnabled();
+        debug = Logging.isDebugEnabled();
         SpringLayout springLayout = new SpringLayout();
         setLayout(springLayout);
 

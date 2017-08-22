@@ -34,6 +34,7 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Adjust the position of an imagery layer.
@@ -101,7 +102,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         try {
             Toolkit.getDefaultToolkit().addAWTEventListener(this, AWTEvent.KEY_EVENT_MASK);
         } catch (SecurityException ex) {
-            Main.error(ex);
+            Logging.error(ex);
         }
     }
 
@@ -122,7 +123,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
         try {
             Toolkit.getDefaultToolkit().removeAWTEventListener(this);
         } catch (SecurityException ex) {
-            Main.error(ex);
+            Logging.error(ex);
         }
         if (Main.isDisplayingMapView()) {
             Main.map.mapView.removeMouseMotionListener(this);
@@ -156,8 +157,8 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
             if (offsetDialog != null) {
                 offsetDialog.updateOffset();
             }
-            if (Main.isDebugEnabled()) {
-                Main.debug(getClass().getName()+" consuming event "+kev);
+            if (Logging.isDebugEnabled()) {
+                Logging.debug("{0} consuming event {1}", getClass().getName(), kev);
             }
             kev.consume();
         }
@@ -260,7 +261,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
                     layer.getDisplaySettings().setOffsetBookmark(tempOffset);
                 } catch (NumberFormatException nfe) {
                     // we repaint offset numbers in any case
-                    Main.trace(nfe);
+                    Logging.trace(nfe);
                 }
             }
             updateOffsetIntl();

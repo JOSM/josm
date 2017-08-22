@@ -26,6 +26,7 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -152,7 +153,7 @@ public class Test extends AbstractVisitor {
         this.progressMonitor = Optional.ofNullable(progressMonitor).orElse(NullProgressMonitor.INSTANCE);
         String startMessage = tr("Running test {0}", name);
         this.progressMonitor.beginTask(startMessage);
-        Main.debug(startMessage);
+        Logging.debug(startMessage);
         this.errors = new ArrayList<>(30);
         this.startTime = System.currentTimeMillis();
     }
@@ -186,7 +187,7 @@ public class Test extends AbstractVisitor {
         if (startTime > 0) {
             // fix #11567 where elapsedTime is < 0
             long elapsedTime = Math.max(0, System.currentTimeMillis() - startTime);
-            Main.debug(tr("Test ''{0}'' completed in {1}", getName(), Utils.getDurationString(elapsedTime)));
+            Logging.debug(tr("Test ''{0}'' completed in {1}", getName(), Utils.getDurationString(elapsedTime)));
         }
     }
 

@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -66,7 +67,7 @@ public class TaggingPresetPreferenceTestIT {
                 testPresets(allMessages, source);
             } catch (IOException e) {
                 try {
-                    Main.warn(e);
+                    Logging.warn(e);
                     // try again in case of temporary network error
                     testPresets(allMessages, source);
                 } catch (SAXException | IOException e1) {
@@ -94,7 +95,7 @@ public class TaggingPresetPreferenceTestIT {
     private static void testPresets(Set<String> allMessages, ExtendedSourceEntry source) throws SAXException, IOException {
         Collection<TaggingPreset> presets = TaggingPresetReader.readAll(source.url, true);
         assertFalse(presets.isEmpty());
-        Collection<String> errorsAndWarnings = Main.getLastErrorAndWarnings();
+        Collection<String> errorsAndWarnings = Logging.getLastErrorAndWarnings();
         boolean error = false;
         for (String message : errorsAndWarnings) {
             if (message.contains(TaggingPreset.PRESET_ICON_ERROR_MSG_PREFIX)) {
@@ -107,7 +108,7 @@ public class TaggingPresetPreferenceTestIT {
         }
         System.out.println(error ? " => KO" : " => OK");
         if (error) {
-            Main.clearLastErrorAndWarnings();
+            Logging.clearLastErrorAndWarnings();
         }
     }
 }

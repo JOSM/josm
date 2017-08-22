@@ -27,6 +27,7 @@ import javax.swing.JComponent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.ExifReader;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * GUI component to display an image (photograph).
@@ -85,7 +86,7 @@ public class ImageDisplay extends JComponent {
                 try {
                     Thread.sleep(5);
                 } catch (InterruptedException e) {
-                    Main.warn("InterruptedException in "+getClass().getSimpleName()+" while loading image "+file.getPath());
+                    Logging.warn("InterruptedException in "+getClass().getSimpleName()+" while loading image "+file.getPath());
                     Thread.currentThread().interrupt();
                 }
             }

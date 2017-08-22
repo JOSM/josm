@@ -12,7 +12,6 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
@@ -20,6 +19,7 @@ import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.HttpClient.Response;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.UncheckedParseException;
 import org.openstreetmap.josm.tools.Utils;
@@ -249,10 +249,10 @@ public final class NameFinder {
                     data.add(currentResult);
                 }
             } catch (NumberFormatException ex) {
-                Main.error(ex); // SAXException does not chain correctly
+                Logging.error(ex); // SAXException does not chain correctly
                 throw new SAXException(ex.getMessage(), ex);
             } catch (NullPointerException ex) { // NOPMD
-                Main.error(ex); // SAXException does not chain correctly
+                Logging.error(ex); // SAXException does not chain correctly
                 throw new SAXException(tr("Null pointer exception, possibly some missing tags."), ex);
             }
         }

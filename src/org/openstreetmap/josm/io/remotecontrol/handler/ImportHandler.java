@@ -13,6 +13,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -35,7 +36,7 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
                 // It should maybe be better to reject the request in that case ?
                 // For compatibility reasons with older instances of JOSM, arbitrary choice of DownloadOsmTask
                 // As of 2015-04, Overpass Turbo requires this branch of code ...
-                Main.debug("Remote control, /import: defaulting to DownloadOsmTask");
+                Logging.debug("Remote control, /import: defaulting to DownloadOsmTask");
                 new DownloadOsmTask().loadUrl(isLoadInNewLayer(), url.toExternalForm(), null);
             } else if (Main.pref.getBoolean("remotecontrol.import.interactive", true)) {
                 // OpenLocationAction queries the user if more than one task is suitable
@@ -47,8 +48,8 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
                 }
             }
         } catch (RuntimeException ex) { // NOPMD
-            Main.warn("RemoteControl: Error parsing import remote control request:");
-            Main.error(ex);
+            Logging.warn("RemoteControl: Error parsing import remote control request:");
+            Logging.error(ex);
             throw new RequestHandlerErrorException(ex);
         }
     }

@@ -39,6 +39,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 
@@ -232,9 +233,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
         @Override
         public void beginTask(String title) {
             if (title != null && !title.isEmpty()) {
-                if (Main.isDebugEnabled()) {
-                    Main.debug(title);
-                }
+                Logging.debug(title);
                 final MeasurableTask task = new MeasurableTask(title);
                 tasks.add(task);
                 listener.stateChanged(null);
@@ -263,9 +262,7 @@ public class SplashScreen extends JFrame implements ChangeListener {
 
         @Override
         public void subTask(String title) {
-            if (Main.isDebugEnabled()) {
-                Main.debug(title);
-            }
+            Logging.debug(title);
             latestSubtask = new SplashProgressMonitor(title, listener);
             tasks.add(latestSubtask);
             listener.stateChanged(null);
@@ -298,8 +295,8 @@ public class SplashScreen extends JFrame implements ChangeListener {
             final Task task = Utils.find(tasks, new MeasurableTask(title)::equals);
             if (task instanceof MeasurableTask) {
                 ((MeasurableTask) task).finish();
-                if (Main.isDebugEnabled()) {
-                    Main.debug(tr("{0} completed in {1}", title, ((MeasurableTask) task).duration));
+                if (Logging.isDebugEnabled()) {
+                    Logging.debug(tr("{0} completed in {1}", title, ((MeasurableTask) task).duration));
                 }
                 listener.stateChanged(null);
             }

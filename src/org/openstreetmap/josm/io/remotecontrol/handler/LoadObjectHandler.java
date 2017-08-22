@@ -17,6 +17,7 @@ import org.openstreetmap.josm.gui.io.DownloadPrimitivesWithReferrersTask;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Loads OSM primitives using their ID
@@ -58,7 +59,7 @@ public class LoadObjectHandler extends RequestHandler {
     @Override
     protected void handleRequest() throws RequestHandlerErrorException, RequestHandlerBadRequestException {
         if (!PermissionPrefWithDefault.LOAD_DATA.isAllowed()) {
-            Main.info("RemoteControl: download forbidden by preferences");
+            Logging.info("RemoteControl: download forbidden by preferences");
         }
         if (!ps.isEmpty()) {
             final boolean newLayer = isLoadInNewLayer();
@@ -101,7 +102,7 @@ public class LoadObjectHandler extends RequestHandler {
                 try {
                     ps.add(SimplePrimitiveId.fromString(i));
                 } catch (IllegalArgumentException e) {
-                    Main.warn(e, "RemoteControl: invalid selection '"+i+"' ignored.");
+                    Logging.log(Logging.LEVEL_WARN, "RemoteControl: invalid selection '"+i+"' ignored.", e);
                 }
             }
         }

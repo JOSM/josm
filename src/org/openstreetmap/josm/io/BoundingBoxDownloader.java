@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.net.SocketException;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.gpx.GpxData;
@@ -17,6 +16,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
 
 /**
@@ -74,7 +74,7 @@ public class BoundingBoxDownloader extends OsmServerReader {
                 if (isCanceled()) {
                     final OsmTransferCanceledException canceledException = new OsmTransferCanceledException("Operation canceled");
                     canceledException.initCause(ex);
-                    Main.warn(canceledException);
+                    Logging.warn(canceledException);
                 }
             }
             activeConnection = null;

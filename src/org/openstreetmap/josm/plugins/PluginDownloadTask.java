@@ -22,6 +22,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
 
 /**
@@ -116,7 +117,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
         try {
             if (pi.downloadlink == null) {
                 String msg = tr("Cannot download plugin ''{0}''. Its download link is not known. Skipping download.", pi.name);
-                Main.warn(msg);
+                Logging.warn(msg);
                 throw new PluginDownloadException(msg);
             }
             URL url = new URL(pi.downloadlink);
@@ -130,7 +131,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
         } catch (MalformedURLException e) {
             String msg = tr("Cannot download plugin ''{0}''. Its download link ''{1}'' is not a valid URL. Skipping download.",
                     pi.name, pi.downloadlink);
-            Main.warn(msg);
+            Logging.warn(msg);
             throw new PluginDownloadException(msg, e);
         } catch (IOException e) {
             if (canceled)
@@ -149,7 +150,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
         if (!pluginDir.exists() && !pluginDir.mkdirs()) {
             String message = tr("Failed to create plugin directory ''{0}''", pluginDir.toString());
             lastException = new PluginDownloadException(message);
-            Main.error(message);
+            Logging.error(message);
             failed.addAll(toUpdate);
             return;
         }
@@ -158,7 +159,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
             if (canceled)
                 return;
             String message = tr("Downloading Plugin {0}...", d.name);
-            Main.info(message);
+            Logging.info(message);
             progressMonitor.subTask(message);
             progressMonitor.worked(1);
             File pluginFile = new File(pluginDir, d.name + ".jar.new");
@@ -166,7 +167,7 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
                 download(d, pluginFile);
             } catch (PluginDownloadException e) {
                 lastException = e;
-                Main.error(e);
+                Logging.error(e);
                 failed.add(d);
                 continue;
             }

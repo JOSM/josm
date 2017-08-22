@@ -12,7 +12,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -25,6 +24,7 @@ import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -353,7 +353,7 @@ public abstract class HistoryOsmPrimitive implements Tagged, Comparable<HistoryO
         try {
             data.setVisible(visible);
         } catch (IllegalStateException e) {
-            Main.error(e, "Cannot change visibility for "+data+':');
+            Logging.log(Logging.LEVEL_ERROR, "Cannot change visibility for "+data+':', e);
         }
         data.setTimestamp(timestamp);
         data.setKeys(tags);

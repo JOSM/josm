@@ -222,7 +222,7 @@ public class MainApplication extends Main {
         Level logLevel = args.getLogLevel();
         Logging.setLogLevel(logLevel);
         if (!args.showVersion() && !args.showHelp()) {
-            Main.info(tr("Log level is at {0} ({1}, {2})", logLevel.getLocalizedName(), logLevel.getName(), logLevel.intValue()));
+            Logging.info(tr("Log level is at {0} ({1}, {2})", logLevel.getLocalizedName(), logLevel.getName(), logLevel.intValue()));
         }
 
         Optional<String> language = args.getSingle(Option.LANGUAGE);
@@ -262,13 +262,13 @@ public class MainApplication extends Main {
 
         boolean skipLoadingPlugins = args.hasOption(Option.SKIP_PLUGINS);
         if (skipLoadingPlugins) {
-            Main.info(tr("Plugin loading skipped"));
+            Logging.info(tr("Plugin loading skipped"));
         }
 
         if (Logging.isLoggingEnabled(Logging.LEVEL_TRACE)) {
             // Enable debug in OAuth signpost via system preference, but only at trace level
             Utils.updateSystemProperty("debug", "true");
-            Main.info(tr("Enabled detailed debug level (trace)"));
+            Logging.info(tr("Enabled detailed debug level (trace)"));
         }
 
         Main.pref.init(args.hasOption(Option.RESET_PREFERENCES));
@@ -305,7 +305,7 @@ public class MainApplication extends Main {
         if (args.hasOption(Option.LOAD_PREFERENCES)) {
             CustomConfigurator.XMLCommandProcessor config = new CustomConfigurator.XMLCommandProcessor(Main.pref);
             for (String i : args.get(Option.LOAD_PREFERENCES)) {
-                info("Reading preferences from " + i);
+                Logging.info("Reading preferences from " + i);
                 try (InputStream is = openStream(new URL(i))) {
                     config.openAndReadXML(is);
                 } catch (IOException ex) {
@@ -317,8 +317,8 @@ public class MainApplication extends Main {
         try {
             CertificateAmendment.addMissingCertificates();
         } catch (IOException | GeneralSecurityException ex) {
-            Main.warn(ex);
-            Main.warn(getErrorMessage(Utils.getRootCause(ex)));
+            Logging.warn(ex);
+            Logging.warn(Logging.getErrorMessage(Utils.getRootCause(ex)));
         }
         Authenticator.setDefault(DefaultAuthenticator.getInstance());
         DefaultProxySelector proxySelector = new DefaultProxySelector(ProxySelector.getDefault());
@@ -386,7 +386,7 @@ public class MainApplication extends Main {
                 // neither startupHook (need to be called before remote control)
                 PlatformHookWindows.removeInsecureCertificates();
             } catch (NoSuchAlgorithmException | CertificateException | KeyStoreException | IOException e) {
-                error(e);
+                Logging.error(e);
             }
         }
 
@@ -401,7 +401,7 @@ public class MainApplication extends Main {
         if (Main.pref.getBoolean("debug.edt-checker.enable", Version.getInstance().isLocalBuild())) {
             // Repaint manager is registered so late for a reason - there is lots of violation during startup process
             // but they don't seem to break anything and are difficult to fix
-            info("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to console");
+            Logging.info("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to console");
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
         }
     }
@@ -442,8 +442,9 @@ public class MainApplication extends Main {
                 try {
                     Main.setOffline(OnlineResource.valueOf(s.toUpperCase(Locale.ENGLISH)));
                 } catch (IllegalArgumentException e) {
-                    Main.error(e, tr("''{0}'' is not a valid value for argument ''{1}''. Possible values are {2}, possibly delimited by commas.",
-                            s.toUpperCase(Locale.ENGLISH), Option.OFFLINE.getName(), Arrays.toString(OnlineResource.values())));
+                    Logging.log(Logging.LEVEL_ERROR,
+                            tr("''{0}'' is not a valid value for argument ''{1}''. Possible values are {2}, possibly delimited by commas.",
+                            s.toUpperCase(Locale.ENGLISH), Option.OFFLINE.getName(), Arrays.toString(OnlineResource.values())), e);
                     System.exit(1);
                     return;
                 }
@@ -451,7 +452,7 @@ public class MainApplication extends Main {
         }
         Set<OnlineResource> offline = Main.getOfflineResources();
         if (!offline.isEmpty()) {
-            Main.warn(trn("JOSM is running in offline mode. This resource will not be available: {0}",
+            Logging.warn(trn("JOSM is running in offline mode. This resource will not be available: {0}",
                     "JOSM is running in offline mode. These resources will not be available: {0}",
                     offline.size(), offline.size() == 1 ? offline.iterator().next() : Arrays.toString(offline.toArray())));
         }
@@ -479,9 +480,9 @@ public class MainApplication extends Main {
                                 SSLSocketFactory.getDefault().createSocket(a, 443).close();
                                 Utils.updateSystemProperty("java.net.preferIPv6Addresses", "true");
                                 if (!wasv6) {
-                                    Main.info(tr("Detected useable IPv6 network, prefering IPv6 over IPv4 after next restart."));
+                                    Logging.info(tr("Detected useable IPv6 network, prefering IPv6 over IPv4 after next restart."));
                                 } else {
-                                    Main.info(tr("Detected useable IPv6 network, prefering IPv6 over IPv4."));
+                                    Logging.info(tr("Detected useable IPv6 network, prefering IPv6 over IPv4."));
                                 }
                                 hasv6 = true;
                             }
@@ -489,18 +490,16 @@ public class MainApplication extends Main {
                         }
                     }
                 } catch (IOException | SecurityException e) {
-                    if (Main.isDebugEnabled()) {
-                        Main.debug("Exception while checking IPv6 connectivity: "+e);
-                    }
-                    Main.trace(e);
+                    Logging.debug("Exception while checking IPv6 connectivity: {0}", e);
+                    Logging.trace(e);
                 }
                 if (wasv6 && !hasv6) {
-                    Main.info(tr("Detected no useable IPv6 network, prefering IPv4 over IPv6 after next restart."));
+                    Logging.info(tr("Detected no useable IPv6 network, prefering IPv4 over IPv6 after next restart."));
                     Main.pref.put("validated.ipv6", hasv6); // be sure it is stored before the restart!
                     try {
                         RestartAction.restartJOSM();
                     } catch (IOException e) {
-                        Main.error(e);
+                        Logging.error(e);
                     }
                 }
                 Main.pref.put("validated.ipv6", hasv6);

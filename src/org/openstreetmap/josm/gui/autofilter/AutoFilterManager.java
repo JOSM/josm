@@ -53,6 +53,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.widgets.OSDLabel;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * The auto filter manager keeps track of registered auto filter rules and applies the active one on the fly,
@@ -181,7 +182,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
                 Integer.parseInt(s);
                 values.add(s);
             } catch (NumberFormatException e) {
-                Main.trace(e);
+                Logging.trace(e);
             }
         }
         return values;
