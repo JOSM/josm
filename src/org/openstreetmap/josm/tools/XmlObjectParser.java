@@ -24,7 +24,6 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.ValidatorHandler;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.CachedFile;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;

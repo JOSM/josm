@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
-import org.openstreetmap.josm.Main;
-
 /**
  * This class allows all components of JOSM to register reclaimable amounts to memory.
  * <p>
