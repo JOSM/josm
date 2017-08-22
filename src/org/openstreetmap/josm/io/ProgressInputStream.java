@@ -44,7 +44,9 @@ public class ProgressInputStream extends InputStream {
      * @param con the connection to monitor
      * @param progressMonitor the monitor to report to
      * @throws OsmTransferException if any I/O error occurs
+     * @deprecated use {@link org.openstreetmap.josm.tools.HttpClient.Response#getContent}
      */
+    @Deprecated
     public ProgressInputStream(URLConnection con, ProgressMonitor progressMonitor) throws OsmTransferException {
         if (progressMonitor == null) {
             progressMonitor = NullProgressMonitor.INSTANCE;
