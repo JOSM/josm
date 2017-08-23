@@ -175,8 +175,8 @@ There are some third party libraries which are directly included in the source c
     -> https://github.com/arenn/java-getopt
 * MultiSplitPane: Small lib for GUI layout management
     src/org/openstreetmap/josm/gui/MultiSplitLayout.java, MultiSplitPane.java
-    -> http://today.java.net/pub/a/today/2006/03/23/multi-split-pane.html
+    -> https://github.com/floscher/multi-split
     -> https://community.oracle.com/docs/DOC-983539
 * swinghelper: Class CheckThreadViolationRepaintManager to find classpath violations
     src/org/jdesktop/swinghelper/debug/CheckThreadViolationRepaintManager.java
-    -> https://java.net/projects/swinghelper
+    -> https://github.com/floscher/swinghelper
