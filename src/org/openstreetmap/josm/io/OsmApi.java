@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -240,7 +241,7 @@ public class OsmApi extends OsmConnection {
              * in the preferences menu. Otherwise they would not have been able
              * to load the layers in the first place because they would have
              * been disabled! */
-            if (Main.isDisplayingMapView()) {
+            if (MainApplication.isDisplayingMapView()) {
                 for (Layer l : Main.getLayerManager().getLayersOfType(ImageryLayer.class)) {
                     if (((ImageryLayer) l).getInfo().isBlacklisted()) {
                         Logging.info(tr("Removed layer {0} because it is not allowed by the configured API.", l.getName()));

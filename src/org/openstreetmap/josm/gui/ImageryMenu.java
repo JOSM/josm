@@ -159,8 +159,8 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
 
         // list all imagery entries where the current map location
         // is within the imagery bounds
-        if (Main.isDisplayingMapView()) {
-            MapView mv = Main.map.mapView;
+        if (MainApplication.isDisplayingMapView()) {
+            MapView mv = MainApplication.getMap().mapView;
             LatLon pos = mv.getProjection().eastNorth2latlon(mv.getCenter());
             final List<ImageryInfo> inViewLayers = new ArrayList<>();
 

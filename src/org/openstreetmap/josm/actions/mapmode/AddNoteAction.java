@@ -12,6 +12,8 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.NoteData;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.NoteInputDialog;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
@@ -47,15 +49,17 @@ public class AddNoteAction extends MapMode implements KeyPressReleaseListener {
     @Override
     public void enterMode() {
         super.enterMode();
-        Main.map.mapView.addMouseListener(this);
-        Main.map.keyDetector.addKeyListener(this);
+        MapFrame map = MainApplication.getMap();
+        map.mapView.addMouseListener(this);
+        map.keyDetector.addKeyListener(this);
     }
 
     @Override
     public void exitMode() {
         super.exitMode();
-        Main.map.mapView.removeMouseListener(this);
-        Main.map.keyDetector.removeKeyListener(this);
+        MapFrame map = MainApplication.getMap();
+        map.mapView.removeMouseListener(this);
+        map.keyDetector.removeKeyListener(this);
     }
 
     @Override
@@ -64,7 +68,8 @@ public class AddNoteAction extends MapMode implements KeyPressReleaseListener {
             // allow to pan without distraction
             return;
         }
-        Main.map.selectMapMode(Main.map.mapModeSelect);
+        MapFrame map = MainApplication.getMap();
+        map.selectMapMode(map.mapModeSelect);
 
         NoteInputDialog dialog = new NoteInputDialog(Main.parent, tr("Create new note"), tr("Create note"));
         dialog.showNoteDialog(tr("Enter a detailed comment to create a note"), ImageProvider.get("dialogs/notes", "note_new"));
@@ -75,7 +80,7 @@ public class AddNoteAction extends MapMode implements KeyPressReleaseListener {
         }
         String input = dialog.getInputText();
         if (input != null && !input.isEmpty()) {
-            LatLon latlon = Main.map.mapView.getLatLon(e.getPoint().x, e.getPoint().y);
+            LatLon latlon = map.mapView.getLatLon(e.getPoint().x, e.getPoint().y);
             noteData.createNote(latlon, input);
         } else {
             new Notification(tr("You must enter a comment to create a new note")).setIcon(JOptionPane.WARNING_MESSAGE).show();
@@ -85,7 +90,8 @@ public class AddNoteAction extends MapMode implements KeyPressReleaseListener {
     @Override
     public void doKeyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-            Main.map.selectMapMode(Main.map.mapModeSelect);
+            MapFrame map = MainApplication.getMap();
+            map.selectMapMode(map.mapModeSelect);
         }
     }
 

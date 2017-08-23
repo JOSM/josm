@@ -6,11 +6,11 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Collections;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.audio.AudioPlayer;
 import org.openstreetmap.josm.io.audio.AudioUtil;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
@@ -55,7 +55,7 @@ public class AudioMarker extends ButtonMarker {
     public void play(double after) {
         try {
             // first enable tracing the audio along the track
-            Main.map.mapView.playHeadMarker.animate();
+            MainApplication.getMap().mapView.playHeadMarker.animate();
 
             AudioPlayer.play(audioUrl, offset + syncOffset + after);
             recentlyPlayedMarker = this;

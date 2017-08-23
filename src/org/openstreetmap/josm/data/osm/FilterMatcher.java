@@ -5,12 +5,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
 import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.actions.search.SearchCompiler.Not;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
@@ -223,9 +224,9 @@ public class FilterMatcher {
     }
 
     private static FilterType test(List<FilterInfo> filters, OsmPrimitive primitive, boolean hidden) {
-
+        MapFrame map = MainApplication.getMap();
         if (primitive.isIncomplete() ||
-                (Main.map != null && Main.map.mapMode != null && Main.map.mapMode.getPreservedPrimitives().contains(primitive)))
+                (map != null && map.mapMode != null && map.mapMode.getPreservedPrimitives().contains(primitive)))
             return FilterType.NOT_FILTERED;
 
         boolean filtered = false;

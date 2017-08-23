@@ -11,6 +11,7 @@ import java.util.List;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.notes.Note;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Logging;
@@ -62,7 +63,7 @@ public class NoteImporter extends FileImporter {
             throws SAXException, IOException {
         final List<Note> fileNotes = new NoteReader(in).parse();
         List<NoteLayer> noteLayers = null;
-        if (Main.map != null) {
+        if (MainApplication.getMap() != null) {
             noteLayers = Main.getLayerManager().getLayersOfType(NoteLayer.class);
         }
         final NoteLayer layer;

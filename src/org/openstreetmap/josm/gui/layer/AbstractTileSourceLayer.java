@@ -88,6 +88,7 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent.ZoomChangeListener;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -260,7 +261,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     }
 
     protected void initTileSource(T tileSource) {
-        coordinateConverter = new TileCoordinateConverter(Main.map.mapView, tileSource, getDisplaySettings());
+        coordinateConverter = new TileCoordinateConverter(MainApplication.getMap().mapView, tileSource, getDisplaySettings());
         attribution.initialize(tileSource);
 
         currentZoomLevel = getBestZoom();
@@ -851,7 +852,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     }
 
     private TileSet getVisibleTileSet() {
-        ProjectionBounds bounds = Main.map.mapView.getState().getViewArea().getProjectionBounds();
+        ProjectionBounds bounds = MainApplication.getMap().mapView.getState().getViewArea().getProjectionBounds();
         return getTileSet(bounds, currentZoomLevel);
     }
 
@@ -986,7 +987,8 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 //cannot paint in parallel
                 drawImageInside(g, img, anchorImage, anchorScreen, null);
             }
-            if (tile instanceof ReprojectionTile && ((ReprojectionTile) tile).needsUpdate(Main.map.mapView.getScale())) {
+            MapView mapView = MainApplication.getMap().mapView;
+            if (tile instanceof ReprojectionTile && ((ReprojectionTile) tile).needsUpdate(mapView.getScale())) {
                 // This means we have a reprojected tile in memory cache, but not at
                 // current scale. Generally, the positioning of the tile will still
                 // be correct, but for best image quality, the tile should be

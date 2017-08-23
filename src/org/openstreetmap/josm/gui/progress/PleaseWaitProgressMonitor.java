@@ -11,6 +11,7 @@ import java.awt.event.WindowListener;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapStatus.BackgroundProgressMonitor;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
@@ -106,7 +107,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     private ProgressMonitorDialog getDialog() {
 
         BackgroundProgressMonitor backgroundMonitor = null;
-        MapFrame map = Main.map;
+        MapFrame map = MainApplication.getMap();
         if (map != null) {
             backgroundMonitor = map.statusLine.progressMonitor;
         }
@@ -313,7 +314,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
             dialog.setIndeterminate(indeterminate && currentProgressValue == 0);
         }
         BackgroundProgressMonitor backgroundMonitor = null;
-        MapFrame map = Main.map;
+        MapFrame map = MainApplication.getMap();
         if (map != null) {
             backgroundMonitor = map.statusLine.progressMonitor;
         }
@@ -338,7 +339,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
                 dialog.dispose();
                 dialog = null;
                 Main.currentProgressMonitor = null;
-                MapFrame map = Main.map;
+                MapFrame map = MainApplication.getMap();
                 if (map != null) {
                     map.statusLine.progressMonitor.setVisible(false);
                 }
@@ -353,7 +354,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         isInBackground = false;
         doInEDT(() -> {
             if (dialog != null) {
-                dialog.setInBackgroundPossible(taskId != null && Main.isDisplayingMapView());
+                dialog.setInBackgroundPossible(taskId != null && MainApplication.isDisplayingMapView());
                 reset();
                 getDialog();
             }
@@ -365,7 +366,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
         this.taskId = taskId;
         doInEDT(() -> {
             if (dialog != null) {
-                dialog.setInBackgroundPossible(taskId != null && Main.isDisplayingMapView());
+                dialog.setInBackgroundPossible(taskId != null && MainApplication.isDisplayingMapView());
             }
         });
     }

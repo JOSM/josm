@@ -10,6 +10,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 /**
@@ -29,7 +30,7 @@ public class NoteImporterTest {
     @Test
     public void testTicket12531() {
         Main.getLayerManager().resetState();
-        assertNull(Main.map);
+        assertNull(MainApplication.getMap());
         assertTrue(new NoteImporter().importDataHandleExceptions(
                 new File(TestUtils.getRegressionDataFile(12531, "notes.osn")), null));
     }

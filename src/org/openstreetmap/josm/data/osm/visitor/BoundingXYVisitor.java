@@ -14,6 +14,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 
 /**
  * Calculates the total bounding rectangle of a series of {@link OsmPrimitive} objects, using the
@@ -196,7 +198,8 @@ public class BoundingXYVisitor extends AbstractVisitor {
         if (bounds == null)
             return;
         // convert size from meters to east/north units
-        double enSize = size * Main.map.mapView.getScale() / Main.map.mapView.getDist100Pixel() * 100;
+        MapFrame map = MainApplication.getMap();
+        double enSize = size * map.mapView.getScale() / map.mapView.getDist100Pixel() * 100;
         visit(bounds.getMin().add(-enSize/2, -enSize/2));
         visit(bounds.getMax().add(+enSize/2, +enSize/2));
     }

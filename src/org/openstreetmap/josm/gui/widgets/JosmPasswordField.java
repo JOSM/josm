@@ -12,7 +12,8 @@ import javax.swing.TransferHandler;
 import javax.swing.text.Document;
 import javax.swing.text.JTextComponent;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -98,15 +99,17 @@ public class JosmPasswordField extends JPasswordField implements FocusListener {
 
     @Override
     public void focusGained(FocusEvent e) {
-        if (Main.map != null) {
-            Main.map.keyDetector.setEnabled(false);
+        MapFrame map = MainApplication.getMap();
+        if (map != null) {
+            map.keyDetector.setEnabled(false);
         }
     }
 
     @Override
     public void focusLost(FocusEvent e) {
-        if (Main.map != null) {
-            Main.map.keyDetector.setEnabled(true);
+        MapFrame map = MainApplication.getMap();
+        if (map != null) {
+            map.keyDetector.setEnabled(true);
         }
     }
 

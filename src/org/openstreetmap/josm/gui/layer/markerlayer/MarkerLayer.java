@@ -38,6 +38,7 @@ import org.openstreetmap.josm.data.gpx.GpxLink;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
@@ -350,7 +351,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                 }
             }
         }
-        Main.map.mapView.zoomTo(currentMarker.getEastNorth());
+        MainApplication.getMap().mapView.zoomTo(currentMarker.getEastNorth());
     }
 
     @Override
@@ -369,7 +370,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                 }
             }
         }
-        Main.map.mapView.zoomTo(currentMarker.getEastNorth());
+        MainApplication.getMap().mapView.zoomTo(currentMarker.getEastNorth());
     }
 
     public static void playAudio() {
@@ -412,7 +413,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
     }
 
     private static void playAdjacentMarker(Marker startMarker, boolean next) {
-        if (!Main.isDisplayingMapView())
+        if (!MainApplication.isDisplayingMapView())
             return;
         Marker m = null;
         Layer l = Main.getLayerManager().getActiveLayer();
@@ -564,7 +565,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                         );
                 return;
             }
-            PlayHeadMarker playHeadMarker = Main.map.mapView.playHeadMarker;
+            PlayHeadMarker playHeadMarker = MainApplication.getMap().mapView.playHeadMarker;
             if (playHeadMarker == null)
                 return;
             addAudioMarker(playHeadMarker.time, playHeadMarker.getCoor());

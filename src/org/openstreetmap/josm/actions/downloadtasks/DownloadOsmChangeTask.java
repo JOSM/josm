@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.history.HistoryLoadTask;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmApi;
@@ -194,7 +195,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
             if (toLoadNext.isEmpty()) {
                 // No more primitive to update. Processing is finished
                 // Be sure all updated primitives are correctly drawn
-                Main.map.repaint();
+                MainApplication.getMap().repaint();
             } else {
                 // Some primitives still need to be loaded
                 // Let's load all required history

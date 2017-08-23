@@ -7,8 +7,9 @@ import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -37,14 +38,16 @@ public class PlayHeadDragMode extends MapMode {
 
     @Override public void enterMode() {
         super.enterMode();
-        Main.map.mapView.addMouseListener(this);
-        Main.map.mapView.addMouseMotionListener(this);
+        MapFrame map = MainApplication.getMap();
+        map.mapView.addMouseListener(this);
+        map.mapView.addMouseMotionListener(this);
     }
 
     @Override public void exitMode() {
         super.exitMode();
-        Main.map.mapView.removeMouseListener(this);
-        Main.map.mapView.removeMouseMotionListener(this);
+        MapFrame map = MainApplication.getMap();
+        map.mapView.removeMouseListener(this);
+        map.mapView.removeMouseMotionListener(this);
     }
 
     @Override public void mousePressed(MouseEvent ev) {
@@ -61,7 +64,7 @@ public class PlayHeadDragMode extends MapMode {
             dragging = true;
         }
         if (p.distance(mousePos) == 0) return;
-        playHeadMarker.drag(Main.map.mapView.getEastNorth(ev.getX(), ev.getY()));
+        playHeadMarker.drag(MainApplication.getMap().mapView.getEastNorth(ev.getX(), ev.getY()));
         mousePos = p;
     }
 
@@ -73,7 +76,7 @@ public class PlayHeadDragMode extends MapMode {
         requestFocusInMapView();
         updateKeyModifiers(ev);
 
-        EastNorth en = Main.map.mapView.getEastNorth(ev.getX(), ev.getY());
+        EastNorth en = MainApplication.getMap().mapView.getEastNorth(ev.getX(), ev.getY());
         if (!shift) {
             playHeadMarker.reposition(en);
         } else {

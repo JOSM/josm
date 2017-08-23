@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -278,7 +279,7 @@ public class ChooseTrackVisibilityAction extends AbstractAction {
             // cancel for unknown buttons and copy back original settings
             if (v != 1 && v != 2) {
                 layer.trackVisibility = Arrays.copyOf(trackVisibilityBackup, layer.trackVisibility.length);
-                Main.map.repaint();
+                MainApplication.getMap().repaint();
                 return;
             }
         }

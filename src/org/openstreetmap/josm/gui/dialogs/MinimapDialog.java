@@ -7,8 +7,8 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.bbox.BBoxChooser;
@@ -54,8 +54,8 @@ public class MinimapDialog extends ToggleDialog implements NavigatableComponent.
 
     @Override
     public void zoomChanged() {
-        if (!skipEvents && Main.isDisplayingMapView()) {
-            MapView mv = Main.map.mapView;
+        if (!skipEvents && MainApplication.isDisplayingMapView()) {
+            MapView mv = MainApplication.getMap().mapView;
             final Bounds currentBounds = new Bounds(
                     mv.getLatLon(0, mv.getHeight()),
                     mv.getLatLon(mv.getWidth(), 0)
@@ -71,7 +71,7 @@ public class MinimapDialog extends ToggleDialog implements NavigatableComponent.
     public void propertyChange(PropertyChangeEvent evt) {
         if (!skipEvents) {
             skipEvents = true;
-            Main.map.mapView.zoomTo(slippyMap.getBoundingBox());
+            MainApplication.getMap().mapView.zoomTo(slippyMap.getBoundingBox());
             skipEvents = false;
         }
     }

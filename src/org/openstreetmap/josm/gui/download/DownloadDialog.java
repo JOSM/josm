@@ -38,6 +38,7 @@ import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
@@ -407,8 +408,8 @@ public class DownloadDialog extends JDialog {
         int idx = Utils.clamp(DOWNLOAD_TAB.get(), 0, tpDownloadAreaSelectors.getTabCount() - 1);
         tpDownloadAreaSelectors.setSelectedIndex(idx);
 
-        if (Main.isDisplayingMapView()) {
-            MapView mv = Main.map.mapView;
+        if (MainApplication.isDisplayingMapView()) {
+            MapView mv = MainApplication.getMap().mapView;
             currentBounds = new Bounds(
                     mv.getLatLon(0, mv.getHeight()),
                     mv.getLatLon(mv.getWidth(), 0)

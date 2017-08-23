@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.Filter.FilterPreferenceEntry;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.OSDLabel;
 import org.openstreetmap.josm.tools.Logging;
@@ -322,7 +323,7 @@ public class FilterModel {
         lblOSD.setText(message);
         lblOSD.setSize(lblOSD.getPreferredSize());
 
-        int dx = Main.map.mapView.getWidth() - lblOSD.getPreferredSize().width - 15;
+        int dx = MainApplication.getMap().mapView.getWidth() - lblOSD.getPreferredSize().width - 15;
         int dy = 15;
         g.translate(dx, dy);
         lblOSD.paintComponent(g);

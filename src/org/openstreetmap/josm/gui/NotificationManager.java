@@ -113,11 +113,12 @@ class NotificationManager {
             if (parentWindow != null) {
                 int x;
                 int y;
-                if (Main.isDisplayingMapView() && Main.map.mapView.getHeight() > 0) {
-                    MapView mv = Main.map.mapView;
+                MapFrame map = MainApplication.getMap();
+                if (MainApplication.isDisplayingMapView() && map.mapView.getHeight() > 0) {
+                    MapView mv = map.mapView;
                     Point mapViewPos = SwingUtilities.convertPoint(mv.getParent(), mv.getX(), mv.getY(), Main.parent);
                     x = mapViewPos.x + margin;
-                    y = mapViewPos.y + mv.getHeight() - Main.map.statusLine.getHeight() - size.height - margin;
+                    y = mapViewPos.y + mv.getHeight() - map.statusLine.getHeight() - size.height - margin;
                 } else {
                     x = margin;
                     y = parentWindow.getHeight() - Main.toolbar.control.getSize().height - size.height - margin;

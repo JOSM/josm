@@ -3,8 +3,9 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -26,24 +27,26 @@ public class LassoModeAction extends MapMode {
 
     @Override
     public void enterMode() {
-        if (Main.isDisplayingMapView()) {
-            Main.map.mapModeSelect.setLassoMode(true);
-            Main.map.mapModeSelect.enterMode();
+        if (MainApplication.isDisplayingMapView()) {
+            MapFrame map = MainApplication.getMap();
+            map.mapModeSelect.setLassoMode(true);
+            map.mapModeSelect.enterMode();
         }
         super.enterMode();
     }
 
     @Override
     public void exitMode() {
-        if (Main.isDisplayingMapView()) {
-            Main.map.mapModeSelect.setLassoMode(false);
-            Main.map.mapModeSelect.exitMode();
+        if (MainApplication.isDisplayingMapView()) {
+            MapFrame map = MainApplication.getMap();
+            map.mapModeSelect.setLassoMode(false);
+            map.mapModeSelect.exitMode();
         }
         super.exitMode();
     }
 
     @Override
     public boolean layerIsSupported(Layer l) {
-        return Main.map.mapModeSelect.layerIsSupported(l);
+        return MainApplication.getMap().mapModeSelect.layerIsSupported(l);
     }
 }

@@ -70,6 +70,7 @@ import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
@@ -193,7 +194,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 if (!boundingBoxedLayerFound) {
                     BoundingXYVisitor bbox = new BoundingXYVisitor();
                     yLayer.visitBoundingBox(bbox);
-                    Main.map.mapView.zoomTo(bbox);
+                    MainApplication.getMap().mapView.zoomTo(bbox);
                 }
 
                 if (yLayer.data != null) {

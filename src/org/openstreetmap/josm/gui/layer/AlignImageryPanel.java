@@ -14,9 +14,10 @@ import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
@@ -53,8 +54,8 @@ public class AlignImageryPanel extends JPanel {
         closeButton.setBorderPainted(false);
         closeButton.setToolTipText(tr("Hide this message and never show it again"));
         closeButton.addActionListener(e -> {
-            if (Main.isDisplayingMapView()) {
-                Main.map.removeTopPanel(AlignImageryPanel.class);
+            if (MainApplication.isDisplayingMapView()) {
+                MainApplication.getMap().removeTopPanel(AlignImageryPanel.class);
                 if (doNotShowAgain.isSelected()) {
                     showAgain.put(Boolean.FALSE);
                 }
@@ -82,10 +83,11 @@ public class AlignImageryPanel extends JPanel {
      */
     public static void addNagPanelIfNeeded(ImageryInfo infoToAdd) {
         BooleanProperty showAgain = new BooleanProperty("message.imagery.nagPanel." + infoToAdd.getUrl(), true);
-        if (Main.isDisplayingMapView() && showAgain.get() && !infoToAdd.isGeoreferenceValid()
-                && Main.map.getTopPanel(AlignImageryPanel.class) == null) {
+        MapFrame map = MainApplication.getMap();
+        if (MainApplication.isDisplayingMapView() && showAgain.get() && !infoToAdd.isGeoreferenceValid()
+                && map.getTopPanel(AlignImageryPanel.class) == null) {
             double w = GuiHelper.getScreenSize().getWidth();
-            Main.map.addTopPanel(new AlignImageryPanel(w > 1300, showAgain, infoToAdd));
+            map.addTopPanel(new AlignImageryPanel(w > 1300, showAgain, infoToAdd));
         }
     }
 }

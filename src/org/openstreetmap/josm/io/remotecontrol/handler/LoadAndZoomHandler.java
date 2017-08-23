@@ -25,6 +25,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
@@ -183,10 +185,11 @@ public class LoadAndZoomHandler extends RequestHandler {
                 toSelect.clear();
                 ds.setSelected(newSel);
                 zoom(newSel, bbox);
-                if (Main.isDisplayingMapView() && Main.map.relationListDialog != null) {
-                    Main.map.relationListDialog.selectRelations(null); // unselect all relations to fix #7342
-                    Main.map.relationListDialog.dataChanged(null);
-                    Main.map.relationListDialog.selectRelations(Utils.filteredCollection(newSel, Relation.class));
+                MapFrame map = MainApplication.getMap();
+                if (MainApplication.isDisplayingMapView() && map.relationListDialog != null) {
+                    map.relationListDialog.selectRelations(null); // unselect all relations to fix #7342
+                    map.relationListDialog.dataChanged(null);
+                    map.relationListDialog.selectRelations(Utils.filteredCollection(newSel, Relation.class));
                 }
             });
         } else if (args.containsKey("search") && PermissionPrefWithDefault.CHANGE_SELECTION.isAllowed()) {
@@ -232,12 +235,12 @@ public class LoadAndZoomHandler extends RequestHandler {
         // zoom_mode=(download|selection), defaults to selection
         if (!"download".equals(args.get("zoom_mode")) && !primitives.isEmpty()) {
             AutoScaleAction.autoScale("selection");
-        } else if (Main.isDisplayingMapView()) {
+        } else if (MainApplication.isDisplayingMapView()) {
             // make sure this isn't called unless there *is* a MapView
             GuiHelper.executeByMainWorkerInEDT(() -> {
                 BoundingXYVisitor bbox1 = new BoundingXYVisitor();
                 bbox1.visit(bbox);
-                Main.map.mapView.zoomTo(bbox1);
+                MainApplication.getMap().mapView.zoomTo(bbox1);
             });
         }
     }

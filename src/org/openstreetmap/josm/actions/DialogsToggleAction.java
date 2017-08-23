@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -46,14 +48,15 @@ public class DialogsToggleAction extends ToggleAction {
     }
 
     protected void setMode() {
-        if (Main.isDisplayingMapView()) {
+        if (MainApplication.isDisplayingMapView()) {
             boolean selected = isSelected();
             if (!selected) {
                 toolbarPreviouslyVisible = Main.pref.getBoolean("toolbar.visible", true);
                 sideToolbarPreviouslyVisible = Main.pref.getBoolean("sidetoolbar.visible", true);
             }
-            Main.map.setDialogsPanelVisible(selected);
-            Main.map.statusLine.setVisible(selected || Main.pref.getBoolean("statusbar.always-visible", true));
+            MapFrame map = MainApplication.getMap();
+            map.setDialogsPanelVisible(selected);
+            map.statusLine.setVisible(selected || Main.pref.getBoolean("statusbar.always-visible", true));
             Main.main.menu.setVisible(selected || Main.pref.getBoolean("menu.always-visible", true));
             // Toolbars listen to preference changes, use it here
             if (!Main.pref.getBoolean("toolbar.always-visible", true) && (!selected || toolbarPreviouslyVisible)) {
@@ -62,7 +65,7 @@ public class DialogsToggleAction extends ToggleAction {
             if (!Main.pref.getBoolean("sidetoolbar.always-visible", true) && (!selected || sideToolbarPreviouslyVisible)) {
                 Main.pref.put("sidetoolbar.visible", selected);
             }
-            Main.map.mapView.rememberLastPositionOnScreen();
+            map.mapView.rememberLastPositionOnScreen();
         }
     }
 }

@@ -28,9 +28,11 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.ValidatorDialog.ValidatorBoundingXYVisitor;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -101,7 +103,7 @@ public class AutoScaleAction extends JosmAction {
         // in most other cases as well.
         bboxCalculator.enlargeBoundingBox();
         if (bboxCalculator.getBounds() != null) {
-            Main.map.mapView.zoomTo(bboxCalculator);
+            MainApplication.getMap().mapView.zoomTo(bboxCalculator);
         }
     }
 
@@ -190,18 +192,19 @@ public class AutoScaleAction extends JosmAction {
      * Performs this auto scale operation for the mode this action is in.
      */
     public void autoScale() {
-        if (Main.isDisplayingMapView()) {
+        if (MainApplication.isDisplayingMapView()) {
+            MapView mapView = MainApplication.getMap().mapView;
             switch (mode) {
             case "previous":
-                Main.map.mapView.zoomPrevious();
+                mapView.zoomPrevious();
                 break;
             case "next":
-                Main.map.mapView.zoomNext();
+                mapView.zoomNext();
                 break;
             default:
                 BoundingXYVisitor bbox = getBoundingBox();
                 if (bbox != null && bbox.getBounds() != null) {
-                    Main.map.mapView.zoomTo(bbox);
+                    mapView.zoomTo(bbox);
                 }
             }
         }
@@ -253,7 +256,7 @@ public class AutoScaleAction extends JosmAction {
     }
 
     private static BoundingXYVisitor modeProblem(ValidatorBoundingXYVisitor v) {
-        TestError error = Main.map.validatorDialog.getSelectedError();
+        TestError error = MainApplication.getMap().validatorDialog.getSelectedError();
         if (error == null)
             return null;
         v.visit(error);
@@ -287,11 +290,12 @@ public class AutoScaleAction extends JosmAction {
                 sel = dataSet.getSelected();
             }
         } else {
-            Conflict<? extends OsmPrimitive> c = Main.map.conflictDialog.getSelectedConflict();
+            ConflictDialog conflictDialog = MainApplication.getMap().conflictDialog;
+            Conflict<? extends OsmPrimitive> c = conflictDialog.getSelectedConflict();
             if (c != null) {
                 sel.add(c.getMy());
-            } else if (Main.map.conflictDialog.getConflicts() != null) {
-                sel = Main.map.conflictDialog.getConflicts().getMyConflictParties();
+            } else if (conflictDialog.getConflicts() != null) {
+                sel = conflictDialog.getConflicts().getMyConflictParties();
             }
         }
         if (sel.isEmpty()) {
@@ -349,6 +353,7 @@ public class AutoScaleAction extends JosmAction {
     @Override
     protected void updateEnabledState() {
         DataSet ds = getLayerManager().getEditDataSet();
+        MapFrame map = MainApplication.getMap();
         switch (mode) {
         case "selection":
             setEnabled(ds != null && !ds.selectionEmpty());
@@ -357,19 +362,19 @@ public class AutoScaleAction extends JosmAction {
             setEnabled(getFirstSelectedLayer() != null);
             break;
         case "conflict":
-            setEnabled(Main.map != null && Main.map.conflictDialog.getSelectedConflict() != null);
+            setEnabled(map != null && map.conflictDialog.getSelectedConflict() != null);
             break;
         case "download":
             setEnabled(ds != null && !ds.getDataSources().isEmpty());
             break;
         case "problem":
-            setEnabled(Main.map != null && Main.map.validatorDialog.getSelectedError() != null);
+            setEnabled(map != null && map.validatorDialog.getSelectedError() != null);
             break;
         case "previous":
-            setEnabled(Main.isDisplayingMapView() && Main.map.mapView.hasZoomUndoEntries());
+            setEnabled(MainApplication.isDisplayingMapView() && map.mapView.hasZoomUndoEntries());
             break;
         case "next":
-            setEnabled(Main.isDisplayingMapView() && Main.map.mapView.hasZoomRedoEntries());
+            setEnabled(MainApplication.isDisplayingMapView() && map.mapView.hasZoomRedoEntries());
             break;
         default:
             setEnabled(!getLayerManager().getLayers().isEmpty());

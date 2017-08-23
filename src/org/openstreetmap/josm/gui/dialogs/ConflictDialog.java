@@ -55,6 +55,7 @@ import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
@@ -129,7 +130,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
             lstConflicts.setCellRenderer(new OsmPrimitivRenderer());
             lstConflicts.addMouseListener(new MouseEventHandler());
         }
-        addListSelectionListener(e -> Main.map.mapView.repaint());
+        addListSelectionListener(e -> MainApplication.getMap().mapView.repaint());
 
         SideButton btnResolve = new SideButton(actResolve);
         addListSelectionListener(actResolve);
@@ -209,7 +210,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
 
             lstConflicts.setSelectedIndex(index);
         }
-        Main.map.mapView.repaint();
+        MainApplication.getMap().mapView.repaint();
     }
 
     /**
@@ -631,7 +632,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
                         ht("/Concepts/Conflict#WarningAboutDetectedConflicts")
                 );
                 unfurlDialog();
-                Main.map.repaint();
+                MainApplication.getMap().repaint();
             });
         }
     }

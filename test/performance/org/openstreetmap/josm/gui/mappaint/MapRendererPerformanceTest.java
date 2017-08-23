@@ -25,7 +25,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
@@ -35,6 +34,7 @@ import org.openstreetmap.josm.data.osm.visitor.paint.RenderBenchmarkCollector.Ca
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer.StyleRecord;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.StyleSetting.BooleanStyleSetting;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
@@ -94,7 +94,7 @@ public class MapRendererPerformanceTest {
         g.setClip(0, 0, IMG_WIDTH, IMG_WIDTH);
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, IMG_WIDTH, IMG_WIDTH);
-        nc = Main.map.mapView;
+        nc = MainApplication.getMap().mapView;
         nc.setBounds(0, 0, IMG_WIDTH, IMG_HEIGHT);
 
         MapPaintStyles.readFromPreferences();

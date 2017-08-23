@@ -12,6 +12,7 @@ import javax.swing.border.Border;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
@@ -37,7 +38,7 @@ public class ButtonMarker extends Marker {
     }
 
     @Override public boolean containsPoint(Point p) {
-        Point screen = Main.map.mapView.getPoint(getEastNorth());
+        Point screen = MainApplication.getMap().mapView.getPoint(getEastNorth());
         buttonRectangle.setLocation(screen.x+4, screen.y+2);
         return buttonRectangle.contains(p);
     }

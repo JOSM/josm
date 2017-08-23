@@ -9,6 +9,8 @@ import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -31,15 +33,16 @@ public class MarkerLayerTest {
      */
     @Test
     public void testPlayHeadMarker() {
+        MapFrame map = MainApplication.getMap();
         try {
             Main.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "", null));
             MarkerLayer layer = new MarkerLayer(new GpxData(), null, null, null);
-            assertNull(Main.map.mapView.playHeadMarker);
+            assertNull(map.mapView.playHeadMarker);
             Main.getLayerManager().addLayer(layer);
-            assertNotNull(Main.map.mapView.playHeadMarker);
+            assertNotNull(map.mapView.playHeadMarker);
             Main.getLayerManager().removeLayer(layer);
         } finally {
-            Main.map.mapView.playHeadMarker = null;
+            map.mapView.playHeadMarker = null;
         }
     }
 }

@@ -32,6 +32,8 @@ import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.AllFormatsImporter;
@@ -177,8 +179,9 @@ public class OpenFileAction extends DiskAccessAction {
 
         @Override
         protected void finish() {
-            if (Main.map != null) {
-                Main.map.repaint();
+            MapFrame map = MainApplication.getMap();
+            if (map != null) {
+                map.repaint();
             }
         }
 

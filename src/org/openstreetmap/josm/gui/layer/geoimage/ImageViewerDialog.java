@@ -22,6 +22,7 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.DialogsPanel.Action;
 import org.openstreetmap.josm.gui.dialogs.ToggleDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -235,7 +236,7 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
                 final JToggleButton button = (JToggleButton) e.getSource();
                 centerView = button.isEnabled() && button.isSelected();
                 if (centerView && currentEntry != null && currentEntry.getPos() != null) {
-                    Main.map.mapView.zoomTo(currentEntry.getPos());
+                    MainApplication.getMap().mapView.zoomTo(currentEntry.getPos());
                 }
             } else if (COMMAND_ZOOM.equals(action)) {
                 imgDisplay.zoomBestFitOrOne();
@@ -308,8 +309,8 @@ public final class ImageViewerDialog extends ToggleDialog implements LayerChange
 
             imageChanged = currentEntry != entry;
 
-            if (centerView && entry != null && Main.isDisplayingMapView() && entry.getPos() != null) {
-                Main.map.mapView.zoomTo(entry.getPos());
+            if (centerView && entry != null && MainApplication.isDisplayingMapView() && entry.getPos() != null) {
+                MainApplication.getMap().mapView.zoomTo(entry.getPos());
             }
 
             currentLayer = layer;

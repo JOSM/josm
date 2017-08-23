@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
@@ -1550,10 +1551,10 @@ public class SearchCompiler {
 
         @Override
         protected Collection<Bounds> getBounds(OsmPrimitive primitive) {
-            if (!Main.isDisplayingMapView()) {
+            if (!MainApplication.isDisplayingMapView()) {
                 return null;
             }
-            return Collections.singleton(Main.map.mapView.getRealBounds());
+            return Collections.singleton(MainApplication.getMap().mapView.getRealBounds());
         }
 
         @Override

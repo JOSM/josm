@@ -13,6 +13,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.WMSCachedTileLoader;
 import org.openstreetmap.josm.data.imagery.WMTSTileSource;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -70,13 +71,13 @@ public class WMTSLayer extends AbstractCachedTileSourceLayer<WMTSTileSource> imp
 
     @Override
     public int getBestZoom() {
-        if (!Main.isDisplayingMapView())
+        if (!MainApplication.isDisplayingMapView())
             return 0;
         ScaleList scaleList = getNativeScales();
         if (scaleList == null) {
             return getMaxZoomLvl();
         }
-        double displayScale = Main.map.mapView.getScale();
+        double displayScale = MainApplication.getMap().mapView.getScale();
         if (coordinateConverter.requiresReprojection()) {
             displayScale *= Main.getProjection().getMetersPerUnit();
         }

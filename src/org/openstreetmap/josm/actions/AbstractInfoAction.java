@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -104,7 +105,7 @@ public abstract class AbstractInfoAction extends JosmAction {
             primitivesToShow.addAll(ds.getAllSelected());
         }
 
-        Note noteToShow = Main.isDisplayingMapView() ? Main.map.noteDialog.getSelectedNote() : null;
+        Note noteToShow = MainApplication.isDisplayingMapView() ? MainApplication.getMap().noteDialog.getSelectedNote() : null;
 
         // filter out new primitives which are not yet uploaded to the server
         //

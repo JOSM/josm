@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType.Direction;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
@@ -107,7 +108,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
     }
 
     private transient ListSelectionListener highlighterListener = lse -> {
-        if (Main.isDisplayingMapView()) {
+        if (MainApplication.isDisplayingMapView()) {
             Collection<RelationMember> sel = getMemberTableModel().getSelectedMembers();
             final Set<OsmPrimitive> toHighlight = new HashSet<>();
             for (RelationMember r: sel) {
@@ -116,8 +117,8 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
                 }
             }
             SwingUtilities.invokeLater(() -> {
-                if (Main.isDisplayingMapView() && highlightHelper.highlightOnly(toHighlight)) {
-                    Main.map.mapView.repaint();
+                if (MainApplication.isDisplayingMapView() && highlightHelper.highlightOnly(toHighlight)) {
+                    MainApplication.getMap().mapView.repaint();
                 }
             });
         }
@@ -127,9 +128,9 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
         if (!highlightEnabled) return;
         getMemberTableModel().getSelectionModel().addListSelectionListener(highlighterListener);
-        if (Main.isDisplayingMapView()) {
+        if (MainApplication.isDisplayingMapView()) {
             HighlightHelper.clearAllHighlighted();
-            Main.map.mapView.repaint();
+            MainApplication.getMap().mapView.repaint();
         }
     }
 
@@ -152,9 +153,9 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
         if (!highlightEnabled) return;
         getMemberTableModel().getSelectionModel().removeListSelectionListener(highlighterListener);
         highlighterListener = null;
-        if (Main.isDisplayingMapView()) {
+        if (MainApplication.isDisplayingMapView()) {
             HighlightHelper.clearAllHighlighted();
-            Main.map.mapView.repaint();
+            MainApplication.getMap().mapView.repaint();
         }
     }
 

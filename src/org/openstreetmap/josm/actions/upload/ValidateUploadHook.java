@@ -21,6 +21,8 @@ import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.AggregatePrimitivesVisitor;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.dialogs.validator.ValidatorTreePanel;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.ValidatorLayer;
@@ -76,8 +78,9 @@ public class ValidateUploadHook implements UploadHook {
             editLayer.validationErrors.clear();
             editLayer.validationErrors.addAll(errors);
         }
-        if (Main.map != null) {
-            Main.map.validatorDialog.tree.setErrors(errors);
+        MapFrame map = MainApplication.getMap();
+        if (map != null) {
+            map.validatorDialog.tree.setErrors(errors);
         }
         if (errors.isEmpty())
             return true;
@@ -147,7 +150,7 @@ public class ValidateUploadHook implements UploadHook {
         if (ed.showDialog().getValue() != 1) {
             OsmValidator.initializeTests();
             OsmValidator.initializeErrorLayer();
-            Main.map.validatorDialog.unfurlDialog();
+            MainApplication.getMap().validatorDialog.unfurlDialog();
             Main.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
             return false;
         }

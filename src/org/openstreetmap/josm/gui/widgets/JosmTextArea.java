@@ -8,7 +8,8 @@ import java.awt.event.FocusListener;
 import javax.swing.JTextArea;
 import javax.swing.text.Document;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 
 /**
  * Subclass of {@link JTextArea} that adds a "native" context menu (cut/copy/paste/select all).
@@ -104,15 +105,17 @@ public class JosmTextArea extends JTextArea implements FocusListener {
 
     @Override
     public void focusGained(FocusEvent e) {
-        if (Main.map != null) {
-            Main.map.keyDetector.setEnabled(false);
+        MapFrame map = MainApplication.getMap();
+        if (map != null) {
+            map.keyDetector.setEnabled(false);
         }
     }
 
     @Override
     public void focusLost(FocusEvent e) {
-        if (Main.map != null) {
-            Main.map.keyDetector.setEnabled(true);
+        MapFrame map = MainApplication.getMap();
+        if (map != null) {
+            map.keyDetector.setEnabled(true);
         }
     }
 }

@@ -41,6 +41,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.PseudoCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
@@ -462,7 +463,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
                 Main.main.undoRedo.redo(numRedo);
                 break;
             }
-            Main.map.repaint();
+            MainApplication.getMap().repaint();
         }
 
         @Override

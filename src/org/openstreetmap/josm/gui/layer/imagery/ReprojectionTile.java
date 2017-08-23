@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.ImageWarp;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -100,11 +101,11 @@ public class ReprojectionTile extends Tile {
      * @param imageIn tile image to reproject
      */
     protected void transform(BufferedImage imageIn) {
-        if (!Main.isDisplayingMapView()) {
+        if (!MainApplication.isDisplayingMapView()) {
             reset();
             return;
         }
-        double scaleMapView = Main.map.mapView.getScale();
+        double scaleMapView = MainApplication.getMap().mapView.getScale();
         ImageWarp.Interpolation interpolation;
         switch (Main.pref.get("imagery.warp.pixel-interpolation", "bilinear")) {
             case "nearest_neighbor":

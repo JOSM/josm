@@ -34,6 +34,8 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
@@ -552,7 +554,8 @@ public final class Geometry {
      * @return Area for the multipolygon (LatLon coordinates)
      */
     public static Area getAreaLatLon(Relation multipolygon) {
-        final Multipolygon mp = Main.map == null || Main.map.mapView == null
+        MapFrame map = MainApplication.getMap();
+        final Multipolygon mp = map == null || map.mapView == null
                 ? new Multipolygon(multipolygon)
                 : MultipolygonCache.getInstance().get(multipolygon);
         Path2D path = new Path2D.Double();
@@ -692,7 +695,8 @@ public final class Geometry {
      */
     public static double multipolygonArea(Relation multipolygon) {
         double area = 0.0;
-        final Multipolygon mp = Main.map == null || Main.map.mapView == null
+        MapFrame map = MainApplication.getMap();
+        final Multipolygon mp = map == null || map.mapView == null
                 ? new Multipolygon(multipolygon)
                 : MultipolygonCache.getInstance().get(multipolygon);
         for (Multipolygon.PolyData pd : mp.getCombinedPolygons()) {

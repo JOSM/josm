@@ -66,6 +66,8 @@ import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
@@ -211,8 +213,8 @@ public class SelectionListDialog extends ToggleDialog {
                     // else open relation editor if applicable
                     actEditRelationSelection.actionPerformed(null);
                 }
-            } else if (highlightEnabled && Main.isDisplayingMapView() && helper.highlightOnly(model.getElementAt(idx))) {
-                Main.map.mapView.repaint();
+            } else if (highlightEnabled && MainApplication.isDisplayingMapView() && helper.highlightOnly(model.getElementAt(idx))) {
+                MainApplication.getMap().mapView.repaint();
             }
         }
 
@@ -441,7 +443,7 @@ public class SelectionListDialog extends ToggleDialog {
             if (box.getBounds() == null)
                 return;
             box.enlargeBoundingBox();
-            Main.map.mapView.zoomTo(box);
+            MainApplication.getMap().mapView.zoomTo(box);
         }
 
         protected void updateEnabledState() {
@@ -614,6 +616,7 @@ public class SelectionListDialog extends ToggleDialog {
                     fireContentsChanged(this, 0, getSize());
                     if (selection != null) {
                         remember(selection);
+                        MapFrame map = MainApplication.getMap();
                         if (selection.size() == 2) {
                             Iterator<? extends OsmPrimitive> it = selection.iterator();
                             OsmPrimitive n1 = it.next();
@@ -623,12 +626,12 @@ public class SelectionListDialog extends ToggleDialog {
                                 LatLon c1 = ((Node) n1).getCoor();
                                 LatLon c2 = ((Node) n2).getCoor();
                                 if (c1 != null && c2 != null) {
-                                    Main.map.statusLine.setDist(c1.greatCircleDistance(c2));
+                                    map.statusLine.setDist(c1.greatCircleDistance(c2));
                                     return;
                                 }
                             }
                         }
-                        Main.map.statusLine.setDist(
+                        map.statusLine.setDist(
                                 new SubclassFilteredCollection<OsmPrimitive, Way>(selection, Way.class::isInstance));
                     }
                 }

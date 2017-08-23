@@ -15,6 +15,7 @@ import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -98,7 +99,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
         putValue("active", Boolean.TRUE);
         Main.pref.addPreferenceChangeListener(this);
         readPreferences();
-        Main.map.mapView.setNewCursor(cursor, this);
+        MainApplication.getMap().mapView.setNewCursor(cursor, this);
         updateStatusLine();
     }
 
@@ -108,13 +109,14 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     public void exitMode() {
         putValue("active", Boolean.FALSE);
         Main.pref.removePreferenceChangeListener(this);
-        Main.map.mapView.resetCursor(this);
+        MainApplication.getMap().mapView.resetCursor(this);
     }
 
     protected void updateStatusLine() {
-        if (Main.map != null && Main.map.statusLine != null) {
-            Main.map.statusLine.setHelpText(getModeHelpText());
-            Main.map.statusLine.repaint();
+        MapFrame map = MainApplication.getMap();
+        if (map != null && map.statusLine != null) {
+            map.statusLine.setHelpText(getModeHelpText());
+            map.statusLine.repaint();
         }
     }
 
@@ -133,8 +135,8 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (Main.isDisplayingMapView()) {
-            Main.map.selectMapMode(this);
+        if (MainApplication.isDisplayingMapView()) {
+            MainApplication.getMap().selectMapMode(this);
         }
     }
 
@@ -224,7 +226,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
     protected void requestFocusInMapView() {
         if (isEnabled()) {
             // request focus in order to enable the expected keyboard shortcuts (see #8710)
-            Main.map.mapView.requestFocus();
+            MainApplication.getMap().mapView.requestFocus();
         }
     }
 

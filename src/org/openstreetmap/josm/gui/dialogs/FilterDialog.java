@@ -39,6 +39,7 @@ import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrame.MapModeChangeListener;
 import org.openstreetmap.josm.gui.SideButton;
@@ -87,7 +88,7 @@ public class FilterDialog extends ToggleDialog implements DataSetListener, MapMo
         DatasetEventManager.getInstance().removeDatasetListener(this);
         MapFrame.removeMapModeChangeListener(this);
         filterModel.model.clearFilterFlags();
-        Main.map.mapView.repaint();
+        MainApplication.getMap().mapView.repaint();
     }
 
     private static final Shortcut ENABLE_FILTER_SHORTCUT

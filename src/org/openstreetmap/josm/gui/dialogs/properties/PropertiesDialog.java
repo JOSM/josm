@@ -82,6 +82,7 @@ import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
@@ -384,10 +385,10 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
             @Override
             public void mouseClicked(MouseEvent e) {
                 //update highlights
-                if (Main.isDisplayingMapView()) {
+                if (MainApplication.isDisplayingMapView()) {
                     int row = membershipTable.rowAtPoint(e.getPoint());
                     if (row >= 0 && highlightHelper.highlightOnly((Relation) membershipTable.getValueAt(row, 0))) {
-                        Main.map.mapView.repaint();
+                        MainApplication.getMap().mapView.repaint();
                     }
                 }
                 super.mouseClicked(e);
@@ -483,7 +484,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
      */
     private void editMembership(int row) {
         Relation relation = (Relation) membershipData.getValueAt(row, 0);
-        Main.map.relationListDialog.selectRelation(relation);
+        MainApplication.getMap().relationListDialog.selectRelation(relation);
         RelationEditor.getEditor(
                 Main.getLayerManager().getEditLayer(),
                 relation,

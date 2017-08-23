@@ -26,6 +26,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.io.UpdatePrimitivesTask;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -227,7 +229,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
         }
 
         protected OsmDataLayer getEditLayer() {
-            if (!Main.isDisplayingMapView()) return null;
+            if (!MainApplication.isDisplayingMapView()) return null;
             return Main.getLayerManager().getEditLayer();
         }
 
@@ -279,8 +281,9 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                 layer = Optional.ofNullable(getEditLayer()).orElseGet(this::getFirstDataLayer);
                 Collection<OsmPrimitive> primitivesToUpdate = searchPrimitivesToUpdate(bounds, layer.data);
                 layer.mergeFrom(dataSet);
-                if (Main.map != null && zoomAfterDownload && bounds != null) {
-                    Main.map.mapView.zoomTo(new ViewportData(computeBbox(bounds)));
+                MapFrame map = MainApplication.getMap();
+                if (map != null && zoomAfterDownload && bounds != null) {
+                    map.mapView.zoomTo(new ViewportData(computeBbox(bounds)));
                 }
                 if (!primitivesToUpdate.isEmpty()) {
                     Main.worker.submit(new UpdatePrimitivesTask(layer, primitivesToUpdate));

@@ -9,6 +9,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
@@ -94,7 +95,7 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
     @Override
     protected void handleRequest() throws RequestHandlerErrorException {
         final ImageryInfo imgInfo = buildImageryInfo();
-        if (Main.isDisplayingMapView()) {
+        if (MainApplication.isDisplayingMapView()) {
             for (ImageryLayer layer : Main.getLayerManager().getLayersOfType(ImageryLayer.class)) {
                 if (layer.getInfo().equals(imgInfo)) {
                     Logging.info("Imagery layer already exists: "+imgInfo);

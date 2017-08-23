@@ -14,6 +14,8 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
@@ -203,8 +205,9 @@ public final class OsmUrlToBounds {
     }
 
     private static Dimension getScreenSize() {
-        if (Main.isDisplayingMapView()) {
-            return new Dimension(Main.map.mapView.getWidth(), Main.map.mapView.getHeight());
+        if (MainApplication.isDisplayingMapView()) {
+            MapView mapView = MainApplication.getMap().mapView;
+            return new Dimension(mapView.getWidth(), mapView.getHeight());
         } else {
             return GuiHelper.getScreenSize();
         }

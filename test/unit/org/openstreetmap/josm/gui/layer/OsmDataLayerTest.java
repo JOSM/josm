@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
 
 /**
  * Unit tests of {@link OsmDataLayer} class.
@@ -135,7 +136,7 @@ public class OsmDataLayerTest {
         try {
             Main.getLayerManager().addLayer(layer);
             assertTrue(layer.getMenuEntries().length > 0);
-            layer.paint(TestUtils.newGraphics(), Main.map.mapView, new Bounds(LatLon.ZERO));
+            layer.paint(TestUtils.newGraphics(), MainApplication.getMap().mapView, new Bounds(LatLon.ZERO));
         } finally {
             Main.getLayerManager().removeLayer(layer);
         }

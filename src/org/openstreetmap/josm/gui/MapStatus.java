@@ -405,7 +405,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
                 for (;;) {
                     try {
                         final MouseState ms = incomingMouseState.take();
-                        if (parent != Main.map)
+                        if (parent != MainApplication.getMap())
                             return; // exit, if new parent.
 
                         // Do nothing, if required data is missing

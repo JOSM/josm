@@ -13,7 +13,8 @@ import java.awt.event.FocusListener;
 import javax.swing.JTextField;
 import javax.swing.text.Document;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 
 /**
  * Subclass of {@link JTextField} that:<ul>
@@ -167,16 +168,18 @@ public class JosmTextField extends JTextField implements FocusListener {
 
     @Override
     public void focusGained(FocusEvent e) {
-        if (Main.map != null) {
-            Main.map.keyDetector.setEnabled(false);
+        MapFrame map = MainApplication.getMap();
+        if (map != null) {
+            map.keyDetector.setEnabled(false);
         }
         repaint();
     }
 
     @Override
     public void focusLost(FocusEvent e) {
-        if (Main.map != null) {
-            Main.map.keyDetector.setEnabled(true);
+        MapFrame map = MainApplication.getMap();
+        if (map != null) {
+            map.keyDetector.setEnabled(true);
         }
         repaint();
     }
