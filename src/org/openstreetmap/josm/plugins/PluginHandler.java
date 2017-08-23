@@ -733,7 +733,7 @@ public final class PluginHandler {
     private static synchronized DynamicURLClassLoader getJoinedPluginResourceCL() {
         if (joinedPluginResourceCL == null) {
             joinedPluginResourceCL = AccessController.doPrivileged((PrivilegedAction<DynamicURLClassLoader>)
-                    () -> new DynamicURLClassLoader(new URL[0], Main.class.getClassLoader()));
+                    () -> new DynamicURLClassLoader(new URL[0], PluginHandler.class.getClassLoader()));
             sources.add(0, joinedPluginResourceCL);
         }
         return joinedPluginResourceCL;
@@ -830,7 +830,7 @@ public final class PluginHandler {
                 PluginClassLoader cl = AccessController.doPrivileged((PrivilegedAction<PluginClassLoader>)
                     () -> new PluginClassLoader(
                         info.libraries.toArray(new URL[0]),
-                        Main.class.getClassLoader(),
+                        PluginHandler.class.getClassLoader(),
                         null));
                 classLoaders.put(info, cl);
             }

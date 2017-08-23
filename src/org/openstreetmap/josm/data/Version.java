@@ -103,7 +103,7 @@ public class Version {
      * Initializes version info
      */
     public void init() {
-        try (InputStream stream = Main.class.getResourceAsStream("/REVISION")) {
+        try (InputStream stream = Version.class.getResourceAsStream("/REVISION")) {
             if (stream == null) {
                 Logging.warn(tr("The revision file ''/REVISION'' is missing."));
                 version = 0;

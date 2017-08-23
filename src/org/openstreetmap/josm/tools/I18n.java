@@ -27,7 +27,6 @@ import javax.swing.JFileChooser;
 import javax.swing.UIManager;
 
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter.TranslationAdapter;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 
@@ -362,7 +361,7 @@ public final class I18n {
     }
 
     private static URL getTranslationFile(String lang) {
-        return Main.class.getResource("/data/"+lang.replace('@', '-')+".lang");
+        return I18n.class.getResource("/data/"+lang.replace('@', '-')+".lang");
     }
 
     /**

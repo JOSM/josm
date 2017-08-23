@@ -9,7 +9,6 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.CachedFile;
 
 /**
@@ -42,7 +41,7 @@ public final class OverpassTurboQueryWizard {
         }
         try (CachedFile file = new CachedFile("resource://data/overpass-wizard.js");
              Reader reader = file.getContentReader()) {
-            engine.eval("var console = {error: " + Main.class.getCanonicalName() + ".warn};");
+            engine.eval("var console = {error: " + Logging.class.getCanonicalName() + ".warn};");
             engine.eval("var global = {};");
             engine.eval(reader);
             engine.eval("var overpassWizard = function(query) {" +
