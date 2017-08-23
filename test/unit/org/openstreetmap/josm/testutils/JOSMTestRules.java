@@ -59,7 +59,6 @@ public class JOSMTestRules implements TestRule {
     private boolean territories;
     private boolean rlTraffic;
     private boolean main;
-    private boolean mainMenu;
 
     /**
      * Disable the default timeout for this test. Use with care.
@@ -226,24 +225,14 @@ public class JOSMTestRules implements TestRule {
     }
 
     /**
-     * Use the {@link Main#main}, {@code Main.contentPanePrivate}, {@code Main.mainPanel}, {@link Main#toolbar} global variables in this test.
+     * Use the {@link Main#main}, {@code Main.contentPanePrivate}, {@code Main.mainPanel},
+     *         {@link Main#menu}, {@link Main#toolbar} global variables in this test.
      * @return this instance, for easy chaining
      * @since 12557
      */
     public JOSMTestRules main() {
-        main = true;
-        return this;
-    }
-
-    /**
-     * Use the {@link Main#menu} in this test.
-     * @return this instance, for easy chaining
-     * @since 12557
-     */
-    public JOSMTestRules mainMenu() {
-        main();
         platform();
-        mainMenu = true;
+        main = true;
         return this;
     }
 
@@ -361,9 +350,6 @@ public class JOSMTestRules implements TestRule {
                 JOSMFixture.initContentPane();
                 JOSMFixture.initMainPanel(true);
                 JOSMFixture.initToolbar();
-            }
-
-            if (mainMenu) {
                 Main.main.menu = new MainMenu();
             }
         }

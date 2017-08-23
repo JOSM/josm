@@ -50,7 +50,7 @@ public class TableCellRendererTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().mainMenu();
+    public JOSMTestRules test = new JOSMTestRules().platform().main();
 
     /**
      * Unit test of all table cell renderers against null values.

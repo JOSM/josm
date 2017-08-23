@@ -38,7 +38,7 @@ public final class SimplifyWayActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().mainMenu();
+    public JOSMTestRules test = new JOSMTestRules().main();
 
     /**
      * Setup test.

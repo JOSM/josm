@@ -30,7 +30,7 @@ public class InspectPrimitiveDialogTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().mainMenu().platform().projection().mapStyles();
+    public JOSMTestRules test = new JOSMTestRules().main().platform().projection().mapStyles();
 
     /**
      * Unit test of {@link InspectPrimitiveDialog#genericMonospacePanel}.

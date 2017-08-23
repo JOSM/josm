@@ -41,7 +41,7 @@ public class GpxLayerTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().mainMenu().projection().i18n();
+    public JOSMTestRules test = new JOSMTestRules().platform().main().projection().i18n();
 
     private static String getHtml(GpxLayer layer) {
         return ((HtmlPanel) ((JScrollPane) layer.getInfoComponent()).getViewport().getView()).getEditorPane().getText();
