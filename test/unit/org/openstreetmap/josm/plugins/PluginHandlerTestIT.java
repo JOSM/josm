@@ -69,7 +69,7 @@ public class PluginHandlerTestIT {
         assertFalse(info.getClass().getName().isEmpty());
 
         // Filter deprecated and unmaintained ones, or those not responsive enough to match our continuous integration needs
-        List<String> uncooperatingPlugins = Arrays.asList("ebdirigo", "scoutsigns");
+        List<String> uncooperatingPlugins = Arrays.asList("ebdirigo", "scoutsigns", "josm-config");
         Set<String> deprecatedPlugins = PluginHandler.getDeprecatedAndUnmaintainedPlugins();
         for (Iterator<PluginInformation> it = plugins.iterator(); it.hasNext();) {
             PluginInformation pi = it.next();
