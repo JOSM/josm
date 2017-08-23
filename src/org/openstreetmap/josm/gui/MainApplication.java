@@ -4,7 +4,9 @@ package org.openstreetmap.josm.gui;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,6 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -43,22 +46,31 @@ import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
 
 import org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager;
+import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.actions.RestartAction;
 import org.openstreetmap.josm.data.AutosaveTask;
 import org.openstreetmap.josm.data.CustomConfigurator;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.gui.ProgramArguments.Option;
 import org.openstreetmap.josm.gui.SplashScreen.SplashProgressMonitor;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
+import org.openstreetmap.josm.gui.layer.TMSLayer;
+import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
+import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CertificateAmendment;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.MessageNotifier;
 import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.io.OsmApiInitializationException;
+import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
 import org.openstreetmap.josm.io.protocols.data.Handler;
@@ -69,8 +81,13 @@ import org.openstreetmap.josm.tools.FontsManager;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
+import org.openstreetmap.josm.tools.OverpassTurboQueryWizard;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
+import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
+import org.openstreetmap.josm.tools.Shortcut;
+import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.WindowGeometry;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
@@ -94,7 +111,6 @@ public class MainApplication extends Main {
      * Constructs a new {@code MainApplication} without a window.
      */
     public MainApplication() {
-        // Allow subclassing (see JOSM.java)
         this(null);
     }
 
@@ -105,6 +121,77 @@ public class MainApplication extends Main {
      */
     public MainApplication(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
+    }
+
+    @Override
+    protected List<InitializationTask> beforeInitializationTasks() {
+        return Arrays.asList(
+            new InitializationTask(tr("Starting file watcher"), fileWatcher::start),
+            new InitializationTask(tr("Executing platform startup hook"), platform::startupHook),
+            new InitializationTask(tr("Building main menu"), this::initializeMainWindow),
+            new InitializationTask(tr("Updating user interface"), () -> {
+                undoRedo.addCommandQueueListener(redoUndoListener);
+                // creating toolbar
+                GuiHelper.runInEDTAndWait(() -> contentPanePrivate.add(toolbar.control, BorderLayout.NORTH));
+                // help shortcut
+                registerActionShortcut(menu.help, Shortcut.registerShortcut("system:help", tr("Help"),
+                        KeyEvent.VK_F1, Shortcut.DIRECT));
+            }),
+            // This needs to be done before RightAndLefthandTraffic::initialize is called
+            new InitializationTask(tr("Initializing internal boundaries data"), Territories::initialize)
+        );
+    }
+
+    @Override
+    protected Collection<InitializationTask> parallelInitializationTasks() {
+        return Arrays.asList(
+            new InitializationTask(tr("Initializing OSM API"), () -> {
+                    // We try to establish an API connection early, so that any API
+                    // capabilities are already known to the editor instance. However
+                    // if it goes wrong that's not critical at this stage.
+                    try {
+                        OsmApi.getOsmApi().initialize(null, true);
+                    } catch (OsmTransferCanceledException | OsmApiInitializationException e) {
+                        Logging.warn(Logging.getErrorMessage(Utils.getRootCause(e)));
+                    }
+                }),
+            new InitializationTask(tr("Initializing internal traffic data"), RightAndLefthandTraffic::initialize),
+            new InitializationTask(tr("Initializing validator"), OsmValidator::initialize),
+            new InitializationTask(tr("Initializing presets"), TaggingPresets::initialize),
+            new InitializationTask(tr("Initializing map styles"), MapPaintPreference::initialize),
+            new InitializationTask(tr("Loading imagery preferences"), ImageryPreference::initialize)
+        );
+    }
+
+    @Override
+    protected List<Callable<?>> asynchronousCallableTasks() {
+        return Arrays.asList(
+                OverpassTurboQueryWizard::getInstance
+            );
+    }
+
+    @Override
+    protected List<Runnable> asynchronousRunnableTasks() {
+        return Arrays.asList(
+                TMSLayer::getCache,
+                OsmValidator::initializeTests
+            );
+    }
+
+    @Override
+    protected List<InitializationTask> afterInitializationTasks() {
+        return Arrays.asList(
+            new InitializationTask(tr("Updating user interface"), () -> GuiHelper.runInEDTAndWait(() -> {
+                // hooks for the jmapviewer component
+                FeatureAdapter.registerBrowserAdapter(OpenBrowser::displayUrl);
+                FeatureAdapter.registerTranslationAdapter(I18n.getTranslationAdapter());
+                FeatureAdapter.registerLoggingAdapter(name -> Logging.getLogger());
+                // UI update
+                toolbar.refreshToolbarControl();
+                toolbar.control.updateUI();
+                contentPanePrivate.updateUI();
+            }))
+        );
     }
 
     @Override

@@ -3,10 +3,8 @@ package org.openstreetmap.josm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.GraphicsEnvironment;
-import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -42,7 +40,6 @@ import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.actions.OpenLocationAction;
@@ -62,7 +59,6 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
-import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MainPanel;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -72,38 +68,28 @@ import org.openstreetmap.josm.gui.ProgramArguments.Option;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
-import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.display.LafPreference;
-import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
-import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitorExecutor;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
-import org.openstreetmap.josm.io.OsmApiInitializationException;
-import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
-import org.openstreetmap.josm.tools.OverpassTurboQueryWizard;
 import org.openstreetmap.josm.tools.PlatformHook;
 import org.openstreetmap.josm.tools.PlatformHookOsx;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
-import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.Shortcut;
-import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
@@ -557,78 +543,82 @@ public abstract class Main {
      * @since 10340
      */
     public void initialize() {
-        fileWatcher.start();
+        // Initializes tasks that must be run before parallel tasks
+        runInitializationTasks(beforeInitializationTasks());
 
-        new InitializationTask(tr("Executing platform startup hook"), platform::startupHook).call();
-
-        new InitializationTask(tr("Building main menu"), this::initializeMainWindow).call();
-
-        undoRedo.addCommandQueueListener(redoUndoListener);
-
-        // creating toolbar
-        GuiHelper.runInEDTAndWait(() -> contentPanePrivate.add(toolbar.control, BorderLayout.NORTH));
-
-        registerActionShortcut(menu.help, Shortcut.registerShortcut("system:help", tr("Help"),
-                KeyEvent.VK_F1, Shortcut.DIRECT));
-
-        // This needs to be done before RightAndLefthandTraffic::initialize is called
-        try {
-            new InitializationTask(tr("Initializing internal boundaries data"), Territories::initialize).call();
-        } catch (JosmRuntimeException e) {
-            // Can happen if the current projection needs NTV2 grid which is not available
-            // In this case we want the user be able to change his projection
-            BugReport.intercept(e).warn();
-        }
-
-        // contains several initialization tasks to be executed (in parallel) by a ExecutorService
-        List<Callable<Void>> tasks = new ArrayList<>();
-
-        tasks.add(new InitializationTask(tr("Initializing OSM API"), () -> {
-                // We try to establish an API connection early, so that any API
-                // capabilities are already known to the editor instance. However
-                // if it goes wrong that's not critical at this stage.
-                try {
-                    OsmApi.getOsmApi().initialize(null, true);
-                } catch (OsmTransferCanceledException | OsmApiInitializationException e) {
-                    Logging.warn(getErrorMessage(Utils.getRootCause(e)));
-                }
-            }));
-
-        tasks.add(new InitializationTask(tr("Initializing internal traffic data"), RightAndLefthandTraffic::initialize));
-
-        tasks.add(new InitializationTask(tr("Initializing validator"), OsmValidator::initialize));
-
-        tasks.add(new InitializationTask(tr("Initializing presets"), TaggingPresets::initialize));
-
-        tasks.add(new InitializationTask(tr("Initializing map styles"), MapPaintPreference::initialize));
-
-        tasks.add(new InitializationTask(tr("Loading imagery preferences"), ImageryPreference::initialize));
-
+        // Initializes tasks to be executed (in parallel) by a ExecutorService
         try {
             ExecutorService service = Executors.newFixedThreadPool(
                     Runtime.getRuntime().availableProcessors(), Utils.newThreadFactory("main-init-%d", Thread.NORM_PRIORITY));
-            for (Future<Void> i : service.invokeAll(tasks)) {
+            for (Future<Void> i : service.invokeAll(parallelInitializationTasks())) {
                 i.get();
             }
             // asynchronous initializations to be completed eventually
-            service.submit((Runnable) TMSLayer::getCache);
-            service.submit((Runnable) OsmValidator::initializeTests);
-            service.submit(OverpassTurboQueryWizard::getInstance);
+            asynchronousRunnableTasks().forEach(service::submit);
+            asynchronousCallableTasks().forEach(service::submit);
             service.shutdown();
         } catch (InterruptedException | ExecutionException ex) {
             throw new JosmRuntimeException(ex);
         }
 
-        // hooks for the jmapviewer component
-        FeatureAdapter.registerBrowserAdapter(OpenBrowser::displayUrl);
-        FeatureAdapter.registerTranslationAdapter(I18n.getTranslationAdapter());
-        FeatureAdapter.registerLoggingAdapter(name -> Logging.getLogger());
+        // Initializes tasks that must be run after parallel tasks
+        runInitializationTasks(afterInitializationTasks());
+    }
 
-        new InitializationTask(tr("Updating user interface"), () -> GuiHelper.runInEDTAndWait(() -> {
-            toolbar.refreshToolbarControl();
-            toolbar.control.updateUI();
-            contentPanePrivate.updateUI();
-        })).call();
+    private static void runInitializationTasks(List<InitializationTask> tasks) {
+        for (InitializationTask task : tasks) {
+            try {
+                task.call();
+            } catch (JosmRuntimeException e) {
+                // Can happen if the current projection needs NTV2 grid which is not available
+                // In this case we want the user be able to change his projection
+                BugReport.intercept(e).warn();
+            }
+        }
+    }
+
+    /**
+     * Returns tasks that must be run before parallel tasks.
+     * @return tasks that must be run before parallel tasks
+     * @see #afterInitializationTasks
+     * @see #parallelInitializationTasks
+     */
+    protected List<InitializationTask> beforeInitializationTasks() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Returns tasks to be executed (in parallel) by a ExecutorService.
+     * @return tasks to be executed (in parallel) by a ExecutorService
+     */
+    protected Collection<InitializationTask> parallelInitializationTasks() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Returns asynchronous callable initializations to be completed eventually
+     * @return asynchronous callable initializations to be completed eventually
+     */
+    protected List<Callable<?>> asynchronousCallableTasks() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Returns asynchronous runnable initializations to be completed eventually
+     * @return asynchronous runnable initializations to be completed eventually
+     */
+    protected List<Runnable> asynchronousRunnableTasks() {
+        return Collections.emptyList();
+    }
+
+    /**
+     * Returns tasks that must be run after parallel tasks.
+     * @return tasks that must be run after parallel tasks
+     * @see #beforeInitializationTasks
+     * @see #parallelInitializationTasks
+     */
+    protected List<InitializationTask> afterInitializationTasks() {
+        return Collections.emptyList();
     }
 
     /**
@@ -637,12 +627,17 @@ public abstract class Main {
      */
     protected abstract void initializeMainWindow();
 
-    static final class InitializationTask implements Callable<Void> {
+    protected static final class InitializationTask implements Callable<Void> {
 
         private final String name;
         private final Runnable task;
 
-        protected InitializationTask(String name, Runnable task) {
+        /**
+         * Constructs a new {@code InitializationTask}.
+         * @param name translated name to be displayed to user
+         * @param task runnable initialization task
+         */
+        public InitializationTask(String name, Runnable task) {
             this.name = name;
             this.task = task;
         }
