@@ -123,7 +123,7 @@ public abstract class Main {
      */
     @Deprecated
     public static boolean isDisplayingMapView() {
-        return map != null && map.mapView != null;
+        return MainApplication.isDisplayingMapView();
     }
 
     /**
@@ -680,13 +680,9 @@ public abstract class Main {
      * @since 6546
      */
     public Collection<OsmPrimitive> getInProgressSelection() {
-        if (map != null && map.mapMode instanceof DrawAction) {
-            return ((DrawAction) map.mapMode).getInProgressSelection();
-        } else {
-            DataSet ds = getLayerManager().getEditDataSet();
-            if (ds == null) return null;
-            return ds.getSelected();
-        }
+        DataSet ds = getLayerManager().getEditDataSet();
+        if (ds == null) return null;
+        return ds.getSelected();
     }
 
     public static void redirectToMainContentPane(JComponent source) {
@@ -906,9 +902,6 @@ public abstract class Main {
             ImageProvider.shutdown(false);
             JCSCacheManager.shutdown();
         }
-        if (map != null) {
-            map.rememberToggleDialogWidth();
-        }
         // Remove all layers because somebody may rely on layerRemoved events (like AutosaveTask)
         getLayerManager().resetState();
         try {
@@ -1089,7 +1082,7 @@ public abstract class Main {
     /* ----------------------------------------------------------------------------------------- */
     /**
      * The projection method used.
-     * use {@link #getProjection()} and {@link #setProjection(Projection)} for access.
+     * Use {@link #getProjection()} and {@link #setProjection(Projection)} for access.
      * Use {@link #setProjection(Projection)} in order to trigger a projection change event.
      */
     private static volatile Projection proj;
@@ -1111,9 +1104,28 @@ public abstract class Main {
     public static void setProjection(Projection p) {
         CheckParameterUtil.ensureParameterNotNull(p);
         Projection oldValue = proj;
-        Bounds b = isDisplayingMapView() ? map.mapView.getRealBounds() : null;
+        Bounds b = main != null ? main.getRealBounds() : null;
         proj = p;
         fireProjectionChanged(oldValue, proj, b);
+    }
+
+    /**
+     * Returns the bounds for the current projection. Used for projection events.
+     * @return the bounds for the current projection
+     * @see #restoreOldBounds
+     */
+    protected Bounds getRealBounds() {
+        // To be overriden
+        return null;
+    }
+
+    /**
+     * Restore clean state corresponding to old bounds after a projection change event.
+     * @param oldBounds bounds previously returned by {@link #getRealBounds}, before the change of projection
+     * @see #getRealBounds
+     */
+    protected void restoreOldBounds(Bounds oldBounds) {
+        // To be overriden
     }
 
     /*
@@ -1138,8 +1150,8 @@ public abstract class Main {
                     listener.projectionChanged(oldValue, newValue);
                 }
             }
-            if (newValue != null && oldBounds != null) {
-                MainApplication.getMap().mapView.zoomTo(oldBounds);
+            if (newValue != null && oldBounds != null && main != null) {
+                main.restoreOldBounds(oldBounds);
             }
             /* TODO - remove layers with fixed projection */
         }
