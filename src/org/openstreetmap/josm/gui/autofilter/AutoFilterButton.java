@@ -10,9 +10,9 @@ import java.awt.event.ActionEvent;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.gui.MainApplication;
 
 /**
  * A button associated to an auto filter. If clicked twice, the filter is reset.
@@ -35,7 +35,7 @@ public class AutoFilterButton extends JButton {
                 AutoFilterManager afm = AutoFilterManager.getInstance();
                 if (filter.equals(afm.getCurrentAutoFilter())) {
                     afm.setCurrentAutoFilter(null);
-                    Main.map.filterDialog.getFilterModel().executeFilters();
+                    MainApplication.getMap().filterDialog.getFilterModel().executeFilters();
                 } else {
                     afm.setCurrentAutoFilter(filter);
                 }

@@ -23,6 +23,8 @@ import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.ViewportData;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Logging;
@@ -124,9 +126,10 @@ public class DownloadAction extends JosmAction {
                     }
                 }
                 // Zoom to the larger download bounds
-                if (Main.map != null && bounds != null) {
+                MapFrame map = MainApplication.getMap();
+                if (map != null && bounds != null) {
                     final ProjectionBounds pb = bounds;
-                    GuiHelper.runInEDTAndWait(() -> Main.map.mapView.zoomTo(new ViewportData(pb)));
+                    GuiHelper.runInEDTAndWait(() -> map.mapView.zoomTo(new ViewportData(pb)));
                 }
             });
         }

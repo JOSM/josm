@@ -561,10 +561,11 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             BugReport.intercept(e).put("bounds", () -> getProjection().getWorldBoundsLatLon()).warn();
         }
 
+        MapFrame map = MainApplication.getMap();
         if (AutoFilterManager.getInstance().getCurrentAutoFilter() != null) {
             AutoFilterManager.getInstance().drawOSDText(tempG);
-        } else if (Main.isDisplayingMapView() && Main.map.filterDialog != null) {
-            Main.map.filterDialog.drawOSDText(tempG);
+        } else if (MainApplication.isDisplayingMapView() && map.filterDialog != null) {
+            map.filterDialog.drawOSDText(tempG);
         }
 
         if (playHeadMarker != null) {
@@ -659,13 +660,14 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
 
     @Override
     public void activeOrEditLayerChanged(ActiveLayerChangeEvent e) {
-        if (Main.map != null) {
+        MapFrame map = MainApplication.getMap();
+        if (map != null) {
             /* This only makes the buttons look disabled. Disabling the actions as well requires
              * the user to re-select the tool after i.e. moving a layer. While testing I found
              * that I switch layers and actions at the same time and it was annoying to mind the
              * order. This way it works as visual clue for new users */
             // FIXME: This does not belong here.
-            for (final AbstractButton b: Main.map.allMapModeButtons) {
+            for (final AbstractButton b: map.allMapModeButtons) {
                 MapMode mode = (MapMode) b.getAction();
                 final boolean activeLayerSupported = mode.layerIsSupported(layerManager.getActiveLayer());
                 if (activeLayerSupported) {

@@ -39,6 +39,7 @@ import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.WireframeMapRenderer;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
@@ -208,8 +209,9 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         cycleManager.init();
         virtualManager.init();
         // This is required to update the cursors when ctrl/shift/alt is pressed
-        Main.map.keyDetector.addModifierExListener(this);
-        Main.map.keyDetector.addKeyListener(this);
+        MapFrame map = MainApplication.getMap();
+        map.keyDetector.addModifierExListener(this);
+        map.keyDetector.addKeyListener(this);
     }
 
     @Override
@@ -219,14 +221,15 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         mv.removeMouseListener(this);
         mv.removeMouseMotionListener(this);
         mv.setVirtualNodesEnabled(false);
-        Main.map.keyDetector.removeModifierExListener(this);
-        Main.map.keyDetector.removeKeyListener(this);
+        MapFrame map = MainApplication.getMap();
+        map.keyDetector.removeModifierExListener(this);
+        map.keyDetector.removeKeyListener(this);
         removeHighlighting();
     }
 
     @Override
     public void modifiersExChanged(int modifiers) {
-        if (!Main.isDisplayingMapView() || oldEvent == null) return;
+        if (!MainApplication.isDisplayingMapView() || oldEvent == null) return;
         if (giveUserFeedback(oldEvent, modifiers)) {
             mv.repaint();
         }
@@ -567,6 +570,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
 
         startingDraggingPos = null;
         mouseReleaseTime = System.currentTimeMillis();
+        MapFrame map = MainApplication.getMap();
 
         if (mode == Mode.SELECT) {
             if (e.getButton() != MouseEvent.BUTTON1) {
@@ -577,7 +581,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
 
             // Select Draw Tool if no selection has been made
             if (!cancelDrawMode && getLayerManager().getEditDataSet().selectionEmpty()) {
-                Main.map.selectDrawTool(true);
+                map.selectDrawTool(true);
                 updateStatusLine();
                 return;
             }
@@ -598,7 +602,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                     if (e.getClickCount() >= 2 && c.size() == 1 && c.iterator().next() instanceof Node) {
                         // We need to do it like this as otherwise drawAction will see a double
                         // click and switch back to SelectMode
-                        Main.worker.execute(() -> Main.map.selectDrawTool(true));
+                        Main.worker.execute(() -> map.selectDrawTool(true));
                         return;
                     }
                 }
@@ -629,16 +633,17 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
 
     @Override
     public void doKeyPressed(KeyEvent e) {
-        if (!repeatedKeySwitchLassoOption || !Main.isDisplayingMapView() || !getShortcut().isEvent(e))
+        if (!repeatedKeySwitchLassoOption || !MainApplication.isDisplayingMapView() || !getShortcut().isEvent(e))
             return;
         if (Logging.isDebugEnabled()) {
             Logging.debug("{0} consuming event {1}", getClass().getName(), e);
         }
         e.consume();
+        MapFrame map = MainApplication.getMap();
         if (!lassoMode) {
-            Main.map.selectMapMode(Main.map.mapModeSelectLasso);
+            map.selectMapMode(map.mapModeSelectLasso);
         } else {
-            Main.map.selectMapMode(Main.map.mapModeSelect);
+            map.selectMapMode(map.mapModeSelect);
         }
     }
 
@@ -750,7 +755,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
 
                 Collection<Way> ways = ds.getSelectedWays();
                 if (doesImpactStatusLine(affectedNodes, ways)) {
-                    Main.map.statusLine.setDist(ways);
+                    MainApplication.getMap().statusLine.setDist(ways);
                 }
             } finally {
                 ds.endUpdate();

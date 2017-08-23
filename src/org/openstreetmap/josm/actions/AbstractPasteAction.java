@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.datatransfer.OsmTransferHandler;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -67,16 +69,17 @@ public abstract class AbstractPasteAction extends JosmAction implements FlavorLi
      */
     protected EastNorth computePastePosition(ActionEvent e) {
         // default to paste in center of map (pasted via menu or cursor not in MapView)
-        EastNorth mPosition = Main.map.mapView.getCenter();
+        MapView mapView = MainApplication.getMap().mapView;
+        EastNorth mPosition = mapView.getCenter();
         // We previously checked for modifier to know if the action has been trigerred via shortcut or via menu
         // But this does not work if the shortcut is changed to a single key (see #9055)
         // Observed behaviour: getActionCommand() returns Action.NAME when triggered via menu, but shortcut text when triggered with it
         if (e != null && !getValue(NAME).equals(e.getActionCommand())) {
             final Point mp = MouseInfo.getPointerInfo().getLocation();
-            final Point tl = Main.map.mapView.getLocationOnScreen();
+            final Point tl = mapView.getLocationOnScreen();
             final Point pos = new Point(mp.x-tl.x, mp.y-tl.y);
-            if (Main.map.mapView.contains(pos)) {
-                mPosition = Main.map.mapView.getEastNorth(pos.x, pos.y);
+            if (mapView.contains(pos)) {
+                mPosition = mapView.getEastNorth(pos.x, pos.y);
             }
         }
         return mPosition;

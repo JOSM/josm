@@ -59,6 +59,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MainPanel;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -118,7 +119,9 @@ public abstract class Main {
      * You do not need this when accessing the layer manager. The layer manager will be empty if no map view is shown.
      *
      * @return <code>true</code> if JOSM currently displays a map view
+     * @deprecated use {@link org.openstreetmap.josm.gui.MainApplication#isDisplayingMapView()}
      */
+    @Deprecated
     public static boolean isDisplayingMapView() {
         return map != null && map.mapView != null;
     }
@@ -150,8 +153,10 @@ public abstract class Main {
      * <p>
      * There should be no need to access this to access any map data. Use {@link #layerManager} instead.
      *
+     * @deprecated Use {@link org.openstreetmap.josm.gui.MainApplication#getMap()} instead
      * @see MainPanel
      */
+    @Deprecated
     public static MapFrame map;
 
     /**
@@ -1134,7 +1139,7 @@ public abstract class Main {
                 }
             }
             if (newValue != null && oldBounds != null) {
-                Main.map.mapView.zoomTo(oldBounds);
+                MainApplication.getMap().mapView.zoomTo(oldBounds);
             }
             /* TODO - remove layers with fixed projection */
         }

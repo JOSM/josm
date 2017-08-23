@@ -18,6 +18,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.Layer.LayerAction;
@@ -110,7 +111,7 @@ public class CustomizeDrawingAction extends AbstractAction implements LayerActio
             }
             panel.savePreferences(layer.getName(), f);
         }
-        Main.map.repaint();
+        MainApplication.getMap().repaint();
     }
 
 }

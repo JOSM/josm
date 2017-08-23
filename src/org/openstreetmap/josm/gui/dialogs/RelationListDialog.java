@@ -56,6 +56,7 @@ import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
@@ -208,8 +209,8 @@ public class RelationListDialog extends ToggleDialog
         Component focused = FocusManager.getCurrentKeyboardFocusManager().getFocusOwner();
 
         //update highlights
-        if (highlightEnabled && focused == displaylist && Main.isDisplayingMapView() && highlightHelper.highlightOnly(sel)) {
-            Main.map.mapView.repaint();
+        if (highlightEnabled && focused == displaylist && MainApplication.isDisplayingMapView() && highlightHelper.highlightOnly(sel)) {
+            MainApplication.getMap().mapView.repaint();
         }
     }
 

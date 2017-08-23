@@ -34,6 +34,8 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MenuScroller;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
@@ -80,10 +82,11 @@ public abstract class ImageryLayer extends Layer {
     }
 
     public double getPPD() {
-        if (!Main.isDisplayingMapView())
+        if (!MainApplication.isDisplayingMapView())
             return Main.getProjection().getDefaultZoomInPPD();
-        ProjectionBounds bounds = Main.map.mapView.getProjectionBounds();
-        return Main.map.mapView.getWidth() / (bounds.maxEast - bounds.minEast);
+        MapView mapView = MainApplication.getMap().mapView;
+        ProjectionBounds bounds = mapView.getProjectionBounds();
+        return mapView.getWidth() / (bounds.maxEast - bounds.minEast);
     }
 
     /**
@@ -205,7 +208,7 @@ public abstract class ImageryLayer extends Layer {
         public void actionPerformed(ActionEvent ev) {
             setOffset(b);
             Main.main.menu.imageryMenu.refreshOffsetMenu();
-            Main.map.repaint();
+            MainApplication.getMap().repaint();
         }
     }
 

@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
@@ -114,7 +115,7 @@ public class ImportAudioAction extends AbstractAction {
                 importAudio(file, ml, firstStartTime, m);
             }
             Main.getLayerManager().addLayer(ml);
-            Main.map.repaint();
+            MainApplication.getMap().repaint();
         }
     }
 

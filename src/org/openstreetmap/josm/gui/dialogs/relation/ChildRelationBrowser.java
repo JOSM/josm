@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
@@ -419,7 +420,7 @@ public class ChildRelationBrowser extends JPanel {
                     mergeDataSet(dataSet);
                     refreshView(r);
                 }
-                SwingUtilities.invokeLater(Main.map::repaint);
+                SwingUtilities.invokeLater(MainApplication.getMap()::repaint);
             } catch (OsmTransferException e) {
                 if (canceled) {
                     Logging.warn(tr("Ignoring exception because task was canceled. Exception: {0}", e.toString()));

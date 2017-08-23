@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -31,8 +32,8 @@ public final class ZoomOutAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!Main.isDisplayingMapView()) return;
-        Main.map.mapView.zoomOut();
+        if (!MainApplication.isDisplayingMapView()) return;
+        MainApplication.getMap().mapView.zoomOut();
     }
 
     @Override

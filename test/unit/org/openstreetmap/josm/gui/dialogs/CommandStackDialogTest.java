@@ -10,6 +10,8 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -56,11 +58,12 @@ public class CommandStackDialogTest {
             assertFalse(Main.main.undoRedo.commands.isEmpty());
             assertFalse(Main.main.undoRedo.redoCommands.isEmpty());
 
+            MapFrame map = MainApplication.getMap();
             CommandStackDialog dlg = new CommandStackDialog();
-            Main.map.addToggleDialog(dlg);
+            map.addToggleDialog(dlg);
             dlg.unfurlDialog();
             assertTrue(dlg.isVisible());
-            Main.map.removeToggleDialog(dlg);
+            map.removeToggleDialog(dlg);
             dlg.hideDialog();
             assertFalse(dlg.isVisible());
         } finally {

@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.tools.Logging;
@@ -245,8 +246,8 @@ public class OffsetBookmark {
 
     public static void bookmarkOffset(String name, AbstractTileSourceLayer layer) {
         LatLon center;
-        if (Main.isDisplayingMapView()) {
-            center = Main.getProjection().eastNorth2latlon(Main.map.mapView.getCenter());
+        if (MainApplication.isDisplayingMapView()) {
+            center = Main.getProjection().eastNorth2latlon(MainApplication.getMap().mapView.getCenter());
         } else {
             center = LatLon.ZERO;
         }

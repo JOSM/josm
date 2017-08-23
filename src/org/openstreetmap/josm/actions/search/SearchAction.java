@@ -50,6 +50,8 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSException;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
@@ -695,6 +697,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         @Override
         public void receiveSearchResult(DataSet ds, Collection<OsmPrimitive> result, int foundMatches, SearchSetting setting) {
             ds.setSelected(result);
+            MapFrame map = MainApplication.getMap();
             if (foundMatches == 0) {
                 final String msg;
                 final String text = Utils.shortenString(setting.text, MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY);
@@ -709,8 +712,8 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 } else {
                     msg = null;
                 }
-                if (Main.map != null) {
-                    Main.map.statusLine.setHelpText(msg);
+                if (map != null) {
+                    map.statusLine.setHelpText(msg);
                 }
                 if (!GraphicsEnvironment.isHeadless()) {
                     JOptionPane.showMessageDialog(
@@ -721,7 +724,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     );
                 }
             } else {
-                Main.map.statusLine.setHelpText(tr("Found {0} matches", foundMatches));
+                map.statusLine.setHelpText(tr("Found {0} matches", foundMatches));
             }
         }
     }

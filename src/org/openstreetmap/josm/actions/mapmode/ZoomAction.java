@@ -7,7 +7,7 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.SelectionManager;
@@ -52,20 +52,20 @@ public class ZoomAction extends MapMode implements SelectionEnded {
      */
     @Override
     public void selectionEnded(Rectangle r, MouseEvent e) {
-        if (r.width >= 3 && r.height >= 3 && Main.isDisplayingMapView()) {
-            MapView mv = Main.map.mapView;
+        if (r.width >= 3 && r.height >= 3 && MainApplication.isDisplayingMapView()) {
+            MapView mv = MainApplication.getMap().mapView;
             mv.zoomToFactor(mv.getEastNorth(r.x+r.width/2, r.y+r.height/2), r.getWidth()/mv.getWidth());
         }
     }
 
     @Override public void enterMode() {
         super.enterMode();
-        selectionManager.register(Main.map.mapView, false);
+        selectionManager.register(MainApplication.getMap().mapView, false);
     }
 
     @Override public void exitMode() {
         super.exitMode();
-        selectionManager.unregister(Main.map.mapView);
+        selectionManager.unregister(MainApplication.getMap().mapView);
     }
 
     @Override public String getModeHelpText() {

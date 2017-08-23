@@ -13,6 +13,8 @@ import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
@@ -84,9 +86,10 @@ public class AddNodeHandler extends RequestHandler {
 
         Node node = null;
 
-        if (Main.isDisplayingMapView()) {
-            Point p = Main.map.mapView.getPoint(ll);
-            node = Main.map.mapView.getNearestNode(p, OsmPrimitive::isUsable);
+        if (MainApplication.isDisplayingMapView()) {
+            MapView mapView = MainApplication.getMap().mapView;
+            Point p = mapView.getPoint(ll);
+            node = mapView.getNearestNode(p, OsmPrimitive::isUsable);
             if (node != null && node.getCoor().greatCircleDistance(ll) > Main.pref.getDouble("remotecontrol.tolerance", 0.1)) {
                 node = null; // node is too far
             }
@@ -102,7 +105,7 @@ public class AddNodeHandler extends RequestHandler {
         if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
             AutoScaleAction.autoScale("selection");
         } else {
-            Main.map.mapView.repaint();
+            MainApplication.getMap().mapView.repaint();
         }
         // parse parameter addtags=tag1=value1|tag2=vlaue2
         AddTagsDialog.addTags(args, sender, Collections.singleton(node));

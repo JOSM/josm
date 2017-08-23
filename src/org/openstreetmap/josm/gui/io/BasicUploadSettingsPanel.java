@@ -27,6 +27,7 @@ import javax.swing.event.HyperlinkEvent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -83,7 +84,7 @@ public class BasicUploadSettingsPanel extends JPanel {
                 + "</b> (<a href=\"urn:changeset-source\">" + tr("obtain from current layers") + "</a>)<b>:</b>");
         sourceLabel.addHyperlinkListener(e -> {
             if (HyperlinkEvent.EventType.ACTIVATED.equals(e.getEventType())) {
-                final String source = Main.map.mapView.getLayerInformationForSourceTag();
+                final String source = MainApplication.getMap().mapView.getLayerInformationForSourceTag();
                 hcbUploadSource.setText(Utils.shortenString(source, Changeset.MAX_CHANGESET_TAG_LENGTH));
                 // Fix #9965
                 changesetSourceModel.setComment(hcbUploadSource.getText());

@@ -10,6 +10,7 @@ import java.util.Set;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -35,7 +36,7 @@ public class SelectMembersAction extends AbstractRelationAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled() || relations.isEmpty() || !Main.isDisplayingMapView()) return;
+        if (!isEnabled() || relations.isEmpty() || !MainApplication.isDisplayingMapView()) return;
 
         Set<OsmPrimitive> members = new HashSet<>();
         for (Relation r: relations) {

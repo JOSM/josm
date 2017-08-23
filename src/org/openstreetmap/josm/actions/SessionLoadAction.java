@@ -20,6 +20,7 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
@@ -132,7 +133,7 @@ public class SessionLoadAction extends DiskAccessAction {
 
         private void addLayers() {
             if (layers != null && !layers.isEmpty()) {
-                boolean noMap = Main.map == null;
+                boolean noMap = MainApplication.getMap() == null;
                 for (Layer l : layers) {
                     if (canceled)
                         return;
@@ -142,7 +143,7 @@ public class SessionLoadAction extends DiskAccessAction {
                     Main.getLayerManager().setActiveLayer(active);
                 }
                 if (noMap && viewport != null) {
-                    Main.map.mapView.scheduleZoomTo(viewport.getEastNorthViewport(Main.getProjection()));
+                    MainApplication.getMap().mapView.scheduleZoomTo(viewport.getEastNorthViewport(Main.getProjection()));
                 }
             }
         }

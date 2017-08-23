@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -30,9 +32,10 @@ public class UndoAction extends JosmAction implements OsmDataLayer.CommandQueueL
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (Main.map == null)
+        MapFrame map = MainApplication.getMap();
+        if (map == null)
             return;
-        Main.map.repaint();
+        map.repaint();
         Main.main.undoRedo.undo();
     }
 

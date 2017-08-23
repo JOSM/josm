@@ -11,7 +11,8 @@ import java.util.Objects;
 
 import javax.swing.ImageIcon;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.BoxProvider;
@@ -148,8 +149,9 @@ public class MapImage {
                         }
                         if (temporary) {
                             disabledImgCache = null;
-                            Main.map.mapView.preferenceChanged(null); // otherwise repaint is ignored, because layer hasn't changed
-                            Main.map.mapView.repaint();
+                            MapView mapView = MainApplication.getMap().mapView;
+                            mapView.preferenceChanged(null); // otherwise repaint is ignored, because layer hasn't changed
+                            mapView.repaint();
                         }
                         temporary = false;
                     }

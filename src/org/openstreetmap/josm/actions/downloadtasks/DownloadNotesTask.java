@@ -18,6 +18,8 @@ import org.openstreetmap.josm.data.ViewportData;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -131,8 +133,9 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
             List<NoteLayer> noteLayers = Main.getLayerManager().getLayersOfType(NoteLayer.class);
             if (!noteLayers.isEmpty()) {
                 noteLayers.get(0).getNoteData().addNotes(notesData);
-                if (Main.map != null && zoomAfterDownload) {
-                    Main.map.mapView.scheduleZoomTo(new ViewportData(noteLayer.getViewProjectionBounds()));
+                MapFrame map = MainApplication.getMap();
+                if (map != null && zoomAfterDownload) {
+                    map.mapView.scheduleZoomTo(new ViewportData(noteLayer.getViewProjectionBounds()));
                 }
             } else {
                 Main.getLayerManager().addLayer(noteLayer, zoomAfterDownload);

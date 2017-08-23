@@ -19,6 +19,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
@@ -178,7 +179,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
         if (reload) {
             MapPaintStyles.readFromPreferences();
         }
-        if (Main.isDisplayingMapView()) {
+        if (MainApplication.isDisplayingMapView()) {
             MapPaintStyles.getStyles().clearCached();
         }
         return false;

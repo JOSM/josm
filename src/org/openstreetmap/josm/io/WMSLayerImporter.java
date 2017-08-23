@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -87,7 +88,7 @@ public class WMSLayerImporter extends FileImporter {
         GuiHelper.runInEDT(() -> {
             Main.getLayerManager().addLayer(layer);
             if (zoomTo != null) {
-                Main.map.mapView.zoomTo(zoomTo);
+                MainApplication.getMap().mapView.zoomTo(zoomTo);
             }
         });
     }

@@ -18,6 +18,8 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -101,14 +103,15 @@ public class MoveAction extends JosmAction {
     public void actionPerformed(ActionEvent event) {
         DataSet ds = getLayerManager().getEditDataSet();
 
-        if (!Main.isDisplayingMapView() || ds == null)
+        if (!MainApplication.isDisplayingMapView() || ds == null)
             return;
 
         // find out how many "real" units the objects have to be moved in order to
         // achive an 1-pixel movement
 
-        EastNorth en1 = Main.map.mapView.getEastNorth(100, 100);
-        EastNorth en2 = Main.map.mapView.getEastNorth(101, 101);
+        MapView mapView = MainApplication.getMap().mapView;
+        EastNorth en1 = mapView.getEastNorth(100, 100);
+        EastNorth en2 = mapView.getEastNorth(101, 101);
 
         double distx = en2.east() - en1.east();
         double disty = en2.north() - en1.north();
@@ -161,7 +164,7 @@ public class MoveAction extends JosmAction {
             }
         }
 
-        Main.map.mapView.repaint();
+        mapView.repaint();
     }
 
     @Override

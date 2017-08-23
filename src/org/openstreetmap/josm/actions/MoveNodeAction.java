@@ -12,6 +12,7 @@ import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.LatLonDialog;
 
 /**
@@ -49,7 +50,7 @@ public final class MoveNodeAction extends JosmAction {
 
         // move the node
         Main.main.undoRedo.add(new MoveCommand(n, coordinates));
-        Main.map.mapView.repaint();
+        MainApplication.getMap().mapView.repaint();
     }
 
     @Override

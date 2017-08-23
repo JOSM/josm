@@ -23,6 +23,8 @@ import javax.swing.text.PlainDocument;
 import javax.swing.text.StyleConstants;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.Logging;
@@ -50,15 +52,17 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
 
         @Override
         public void focusLost(FocusEvent e) {
-            if (Main.map != null) {
-                Main.map.keyDetector.setEnabled(true);
+            MapFrame map = MainApplication.getMap();
+            if (map != null) {
+                map.keyDetector.setEnabled(true);
             }
         }
 
         @Override
         public void focusGained(FocusEvent e) {
-            if (Main.map != null) {
-                Main.map.keyDetector.setEnabled(false);
+            MapFrame map = MainApplication.getMap();
+            if (map != null) {
+                map.keyDetector.setEnabled(false);
             }
             // save unix system selection (middle mouse paste)
             Clipboard sysSel = ClipboardUtils.getSystemSelection();

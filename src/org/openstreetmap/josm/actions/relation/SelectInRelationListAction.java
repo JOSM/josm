@@ -5,7 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -25,8 +26,9 @@ public class SelectInRelationListAction extends AbstractRelationAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled() || relations.isEmpty() || Main.map == null || Main.map.relationListDialog == null) return;
-        Main.map.relationListDialog.unfurlDialog();
-        Main.map.relationListDialog.selectRelations(relations);
+        MapFrame map = MainApplication.getMap();
+        if (!isEnabled() || relations.isEmpty() || map == null || map.relationListDialog == null) return;
+        map.relationListDialog.unfurlDialog();
+        map.relationListDialog.selectRelations(relations);
     }
 }

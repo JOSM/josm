@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.data.osm.NoteData.NoteDataUpdateListener;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -72,12 +73,12 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
 
     @Override
     public void hookUpMapView() {
-        Main.map.mapView.addMouseListener(this);
+        MainApplication.getMap().mapView.addMouseListener(this);
     }
 
     @Override
     public synchronized void destroy() {
-        Main.map.mapView.removeMouseListener(this);
+        MainApplication.getMap().mapView.removeMouseListener(this);
         noteData.removeNoteDataUpdateListener(this);
         super.destroy();
     }
@@ -133,7 +134,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
             }
             int width = icon.getIconWidth();
             int height = icon.getIconHeight();
-            g.drawImage(icon.getImage(), p.x - (width / 2), p.y - height, Main.map.mapView);
+            g.drawImage(icon.getImage(), p.x - (width / 2), p.y - height, MainApplication.getMap().mapView);
         }
         if (noteData.getSelectedNote() != null) {
             StringBuilder sb = new StringBuilder("<html>");
@@ -259,7 +260,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
         final int iconHeight = ImageProvider.ImageSizes.SMALLICON.getAdjustedHeight();
         Note closestNote = null;
         for (Note note : noteData.getNotes()) {
-            Point notePoint = Main.map.mapView.getPoint(note.getLatLon());
+            Point notePoint = MainApplication.getMap().mapView.getPoint(note.getLatLon());
             //move the note point to the center of the icon where users are most likely to click when selecting
             notePoint.setLocation(notePoint.getX(), notePoint.getY() - iconHeight / 2);
             double dist = clickPoint.distanceSq(notePoint);

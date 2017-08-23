@@ -5,6 +5,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -28,6 +29,6 @@ public class MapPaintDialogTest {
     @Test
     public void testInfoAction() {
         Main.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "", null));
-        Main.map.mapPaintDialog.new InfoAction().actionPerformed(null);
+        MainApplication.getMap().mapPaintDialog.new InfoAction().actionPerformed(null);
     }
 }

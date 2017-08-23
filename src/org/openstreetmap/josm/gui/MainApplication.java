@@ -105,6 +105,11 @@ public class MainApplication extends Main {
      */
     private static final List<String> COMMAND_LINE_ARGS = new ArrayList<>();
 
+    /**
+     * The MapFrame.
+     */
+    static MapFrame map;
+
     private final MainFrame mainFrame;
 
     /**
@@ -224,6 +229,32 @@ public class MainApplication extends Main {
      */
     public static List<String> getCommandLineArgs() {
         return Collections.unmodifiableList(COMMAND_LINE_ARGS);
+    }
+
+    /**
+     * Returns the MapFrame.
+     * <p>
+     * There should be no need to access this to access any map data. Use {@link #layerManager} instead.
+     * @return the MapFrame
+     * @see MainPanel
+     * @since 12630 (as a replacement to {@code Main.map})
+     */
+    public static MapFrame getMap() {
+        return map;
+    }
+
+    /**
+     * Replies true if JOSM currently displays a map view. False, if it doesn't, i.e. if
+     * it only shows the MOTD panel.
+     * <p>
+     * You do not need this when accessing the layer manager. The layer manager will be empty if no map view is shown.
+     *
+     * @return <code>true</code> if JOSM currently displays a map view
+     * @since 12630 (as a replacement to {@code Main.isDisplayingMapView()})
+     */
+    @SuppressWarnings("deprecation")
+    public static boolean isDisplayingMapView() {
+        return map != null && map.mapView != null;
     }
 
     /**

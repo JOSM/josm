@@ -38,6 +38,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.GBC;
@@ -307,14 +308,14 @@ public class UnGlueAction extends JosmAction {
         }
 
         // If this wasn't called from menu, place it where the cursor is/was
+        MapView mv = MainApplication.getMap().mapView;
         if (e.getSource() instanceof JPanel) {
-            MapView mv = Main.map.mapView;
             n.setCoor(mv.getLatLon(mv.lastMEvent.getX(), mv.lastMEvent.getY()));
         }
 
         Main.main.undoRedo.add(new SequenceCommand(tr("Unglued Node"), cmds));
         getLayerManager().getEditDataSet().setSelected(n);
-        Main.map.mapView.repaint();
+        mv.repaint();
     }
 
     /**

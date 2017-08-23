@@ -15,6 +15,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -41,7 +42,7 @@ public class EditRelationAction extends AbstractRelationAction {
      */
     public static Set<RelationMember> getMembersForCurrentSelection(Relation r) {
         Set<RelationMember> members = new HashSet<>();
-        if (Main.isDisplayingMapView()) {
+        if (MainApplication.isDisplayingMapView()) {
             OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
             if (editLayer != null && editLayer.data != null) {
                 Collection<OsmPrimitive> selection = editLayer.data.getSelected();
@@ -60,7 +61,7 @@ public class EditRelationAction extends AbstractRelationAction {
      * @param toEdit The relation to edit
      */
     public static void launchEditor(Relation toEdit) {
-        if (toEdit == null || toEdit.isDeleted() || !Main.isDisplayingMapView()) return;
+        if (toEdit == null || toEdit.isDeleted() || !MainApplication.isDisplayingMapView()) return;
         RelationEditor.getEditor(Main.getLayerManager().getEditLayer(), toEdit,
                 getMembersForCurrentSelection(toEdit)).setVisible(true);
     }

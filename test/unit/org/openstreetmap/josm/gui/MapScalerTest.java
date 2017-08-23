@@ -37,7 +37,7 @@ public class MapScalerTest {
     public void testMapScaler() {
         Main.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "", null));
         assertEquals(Color.WHITE, MapScaler.getColor());
-        MapScaler ms = new MapScaler(Main.map.mapView);
+        MapScaler ms = new MapScaler(MainApplication.getMap().mapView);
         assertEquals("/MapView/Scaler", ms.helpTopic());
         ms.paint(TestUtils.newGraphics());
         AccessibleMapScaler ams = (AccessibleMapScaler) ms.getAccessibleContext();

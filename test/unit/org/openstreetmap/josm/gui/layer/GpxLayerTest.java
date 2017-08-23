@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
 import org.openstreetmap.josm.data.gpx.WayPoint;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.GpxReaderTest;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -210,7 +211,7 @@ public class GpxLayerTest {
         try {
             Main.getLayerManager().addLayer(layer);
             assertTrue(layer.getMenuEntries().length > 0);
-            layer.paint(TestUtils.newGraphics(), Main.map.mapView, layer.data.getMetaBounds());
+            layer.paint(TestUtils.newGraphics(), MainApplication.getMap().mapView, layer.data.getMetaBounds());
         } finally {
             Main.getLayerManager().removeLayer(layer);
         }

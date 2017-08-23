@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
@@ -112,7 +113,7 @@ public class CreateMultipolygonAction extends JosmAction {
                     // (Yes, we are already in event dispatch thread. But DatasetEventManager
                     // uses 'SwingUtilities.invokeLater' to fire events so we have to do the same.)
                     SwingUtilities.invokeLater(() -> {
-                            Main.map.relationListDialog.selectRelation(relation);
+                            MainApplication.getMap().relationListDialog.selectRelation(relation);
                             if (Main.pref.getBoolean("multipoly.show-relation-editor", false)) {
                                 //Open relation edit window, if set up in preferences
                                 RelationEditor editor = RelationEditor.getEditor(Main.getLayerManager().getEditLayer(), relation, null);

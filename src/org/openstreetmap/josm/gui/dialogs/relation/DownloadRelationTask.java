@@ -9,12 +9,12 @@ import java.util.Collection;
 
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmServerObjectReader;
@@ -101,7 +101,7 @@ public class DownloadRelationTask extends PleaseWaitRunnable {
             SwingUtilities.invokeAndWait(() -> {
                 layer.mergeFrom(allDownloads);
                 layer.onPostDownloadFromServer();
-                Main.map.repaint();
+                MainApplication.getMap().repaint();
             });
         } catch (OsmTransferException | InvocationTargetException | InterruptedException e) {
             if (canceled) {

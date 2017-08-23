@@ -86,6 +86,8 @@ import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
@@ -175,8 +177,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
      */
     public void setRecentRelation(Relation relation) {
         recentRelations.put(relation, null);
-        if (Main.map != null && Main.map.relationListDialog != null) {
-            Main.map.relationListDialog.enableRecentRelations();
+        MapFrame map = MainApplication.getMap();
+        if (map != null && map.relationListDialog != null) {
+            map.relationListDialog.enableRecentRelations();
         }
     }
 
@@ -187,8 +190,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
      */
     public void removeRecentRelation(Relation relation) {
         recentRelations.remove(relation);
-        if (Main.map != null && Main.map.relationListDialog != null) {
-            Main.map.relationListDialog.enableRecentRelations();
+        MapFrame map = MainApplication.getMap();
+        if (map != null && map.relationListDialog != null) {
+            map.relationListDialog.enableRecentRelations();
         }
     }
 
@@ -477,7 +481,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
 
         Rendering painter = MapRendererFactory.getInstance().createActiveRenderer(g, mv, inactive);
         painter.render(data, virtual, box);
-        Main.map.conflictDialog.paintConflicts(g, mv);
+        MainApplication.getMap().conflictDialog.paintConflicts(g, mv);
     }
 
     @Override public String getToolTipText() {
@@ -570,8 +574,9 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
         // repaint to make sure new data is displayed properly.
         invalidate();
         // warn about new conflicts
-        if (numNewConflicts > 0 && Main.map != null && Main.map.conflictDialog != null) {
-            Main.map.conflictDialog.warnNumNewConflicts(numNewConflicts);
+        MapFrame map = MainApplication.getMap();
+        if (numNewConflicts > 0 && map != null && map.conflictDialog != null) {
+            map.conflictDialog.warnNumNewConflicts(numNewConflicts);
         }
     }
 

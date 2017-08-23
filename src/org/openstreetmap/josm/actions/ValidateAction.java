@@ -17,6 +17,8 @@ import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.AggregatePrimitivesVisitor;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.ValidatorLayer;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
@@ -61,7 +63,8 @@ public class ValidateAction extends JosmAction {
      * @param getSelectedItems If selected or last selected items must be validated
      */
     public void doValidate(boolean getSelectedItems) {
-        if (Main.map == null || !Main.map.isVisible())
+        MapFrame map = MainApplication.getMap();
+        if (map == null || !map.isVisible())
             return;
 
         OsmValidator.initializeTests();
@@ -139,8 +142,9 @@ public class ValidateAction extends JosmAction {
             // update GUI on Swing EDT
             //
             GuiHelper.runInEDT(() -> {
-                Main.map.validatorDialog.tree.setErrors(errors);
-                Main.map.validatorDialog.unfurlDialog();
+                MapFrame map = MainApplication.getMap();
+                map.validatorDialog.tree.setErrors(errors);
+                map.validatorDialog.unfurlDialog();
                 //FIXME: nicer way to find / invalidate the corresponding error layer
                 Main.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
             });

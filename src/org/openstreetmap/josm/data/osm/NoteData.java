@@ -9,12 +9,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.Note.State;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -84,21 +85,24 @@ public class NoteData {
         return list;
     }
 
-    /** Returns the currently selected note
+    /**
+     * Returns the currently selected note
      * @return currently selected note
      */
     public Note getSelectedNote() {
         return selectedNote;
     }
 
-    /** Set a selected note. Causes the dialog to select the note and
+    /**
+     * Set a selected note. Causes the dialog to select the note and
      * the note layer to draw the selected note's comments.
      * @param note Selected note. Null indicates no selection
      */
     public void setSelectedNote(Note note) {
         selectedNote = note;
-        if (Main.map != null) {
-            Main.map.noteDialog.selectionChanged();
+        MapFrame map = MainApplication.getMap();
+        if (map != null) {
+            map.noteDialog.selectionChanged();
         }
         listeners.fireEvent(l -> l.selectedNoteChanged(this));
     }
@@ -231,8 +235,8 @@ public class NoteData {
     }
 
     private void dataUpdated() {
-        if (Main.isDisplayingMapView()) {
-            Main.map.noteDialog.setNotes(getSortedNotes());
+        if (MainApplication.isDisplayingMapView()) {
+            MainApplication.getMap().noteDialog.setNotes(getSortedNotes());
         }
         listeners.fireEvent(l -> l.noteDataUpdated(this));
     }

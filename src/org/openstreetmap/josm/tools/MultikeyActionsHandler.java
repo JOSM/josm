@@ -23,6 +23,7 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.MultikeyShortcutAction.MultikeyInfo;
 
 public final class MultikeyActionsHandler {
@@ -41,7 +42,7 @@ public final class MultikeyActionsHandler {
 
             @Override
             public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-                Main.map.statusLine.resetHelpText(STATUS_BAR_ID);
+                MainApplication.getMap().statusLine.resetHelpText(STATUS_BAR_ID);
             }
 
             @Override
@@ -113,7 +114,7 @@ public final class MultikeyActionsHandler {
                     lastAction.action.executeMultikeyAction(index, e.getKeyCode() == lastAction.shortcut.getKeyStroke().getKeyCode());
                 }
                 lastAction = null;
-                Main.map.statusLine.resetHelpText(STATUS_BAR_ID);
+                MainApplication.getMap().statusLine.resetHelpText(STATUS_BAR_ID);
                 return true;
             }
             return false;
@@ -146,7 +147,7 @@ public final class MultikeyActionsHandler {
             lastTimestamp = e.getWhen();
             lastAction = this;
             timer.schedule(new MyTimerTask(lastTimestamp, lastAction), DIALOG_DELAY);
-            Main.map.statusLine.setHelpText(STATUS_BAR_ID, tr("{0}... [please type its number]", (String) action.getValue(SHORT_DESCRIPTION)));
+            MainApplication.getMap().statusLine.setHelpText(STATUS_BAR_ID, tr("{0}... [please type its number]", (String) action.getValue(SHORT_DESCRIPTION)));
         }
 
         @Override

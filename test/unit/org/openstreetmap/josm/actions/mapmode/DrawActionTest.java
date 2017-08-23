@@ -22,6 +22,8 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -55,7 +57,8 @@ public class DrawActionTest {
         Main.getLayerManager().addLayer(layer);
 
         // fix map view position
-        Main.map.mapView.zoomTo(new EastNorth(0, 0), 1);
+        MapFrame map = MainApplication.getMap();
+        map.mapView.zoomTo(new EastNorth(0, 0), 1);
 
         Node n1 = new Node(new EastNorth(0, 0));
         Node n2 = new Node(new EastNorth(100, 0));
@@ -68,10 +71,10 @@ public class DrawActionTest {
         dataSet.addPrimitive(w);
 
         try {
-            assertTrue(Main.map.selectDrawTool(false));
+            assertTrue(map.selectDrawTool(false));
 
-            Main.map.mapModeDraw.mouseReleased(new MouseEvent(
-                    Main.map,
+            map.mapModeDraw.mouseReleased(new MouseEvent(
+                    map,
                     MouseEvent.MOUSE_RELEASED,
                     2000,
                     InputEvent.BUTTON1_DOWN_MASK,

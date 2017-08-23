@@ -34,6 +34,7 @@ import javax.swing.filechooser.FileFilter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -282,7 +283,7 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(Main.isDisplayingMapView());
+        setEnabled(MainApplication.isDisplayingMapView());
     }
 
     @Override

@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
@@ -115,7 +116,7 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
     protected static String buildMapPaintText() {
         final Collection<OsmPrimitive> sel = Main.getLayerManager().getEditDataSet().getAllSelected();
         ElemStyles elemstyles = MapPaintStyles.getStyles();
-        NavigatableComponent nc = Main.map.mapView;
+        NavigatableComponent nc = MainApplication.getMap().mapView;
         double scale = nc.getDist100Pixel();
 
         final StringBuilder txtMappaint = new StringBuilder();

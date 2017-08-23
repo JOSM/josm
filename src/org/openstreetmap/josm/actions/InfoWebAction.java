@@ -11,6 +11,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -58,7 +59,7 @@ public class InfoWebAction extends AbstractInfoAction {
 
     private void updateEnabledStateWithNotes() {
         // Allows enabling if a note is selected, even if no OSM object is selected
-        if (!isEnabled() && Main.isDisplayingMapView() && Main.map.noteDialog.getSelectedNote() != null) {
+        if (!isEnabled() && MainApplication.isDisplayingMapView() && MainApplication.getMap().noteDialog.getSelectedNote() != null) {
             setEnabled(true);
         }
     }

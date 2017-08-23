@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.PaintVisitor;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
@@ -48,7 +49,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
     public ValidatorLayer() {
         super(tr("Validation errors"));
         Main.getLayerManager().addLayerChangeListener(this);
-        Main.map.validatorDialog.tree.addInvalidationListener(invalidator);
+        MainApplication.getMap().validatorDialog.tree.addInvalidationListener(invalidator);
     }
 
     /**
@@ -67,7 +68,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
     @SuppressWarnings("unchecked")
     @Override
     public void paint(final Graphics2D g, final MapView mv, Bounds bounds) {
-        DefaultMutableTreeNode root = Main.map.validatorDialog.tree.getRoot();
+        DefaultMutableTreeNode root = MainApplication.getMap().validatorDialog.tree.getRoot();
         if (root == null || root.getChildCount() == 0)
             return;
 
@@ -93,7 +94,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
     @Override
     public String getToolTipText() {
         MultiMap<Severity, TestError> errorTree = new MultiMap<>();
-        List<TestError> errors = Main.map.validatorDialog.tree.getErrors();
+        List<TestError> errors = MainApplication.getMap().validatorDialog.tree.getErrors();
         for (TestError e : errors) {
             errorTree.put(e.getSeverity(), e);
         }
@@ -172,7 +173,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
 
     @Override
     public synchronized void destroy() {
-        Main.map.validatorDialog.tree.removeInvalidationListener(invalidator);
+        MainApplication.getMap().validatorDialog.tree.removeInvalidationListener(invalidator);
         Main.getLayerManager().removeLayerChangeListener(this);
         super.destroy();
     }

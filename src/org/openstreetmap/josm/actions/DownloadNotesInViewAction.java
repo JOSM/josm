@@ -10,6 +10,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.OnlineResource;
 
 /**
@@ -42,7 +43,7 @@ public final class DownloadNotesInViewAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final Bounds bounds = Main.map.mapView.getRealBounds();
+        final Bounds bounds = MainApplication.getMap().mapView.getRealBounds();
         DownloadNotesTask task = new DownloadNotesTask();
         task.setZoomAfterDownload(false);
         Future<?> future = task.download(false, bounds, null);

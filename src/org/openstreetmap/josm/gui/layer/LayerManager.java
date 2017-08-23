@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Utils;
@@ -231,7 +231,7 @@ public class LayerManager {
         checkPosition(position);
         insertLayerAt(layer, position);
         fireLayerAdded(layer, initialZoom);
-        if (Main.map != null) {
+        if (MainApplication.getMap() != null) {
             layer.hookUpMapView(); // needs to be after fireLayerAdded
         }
     }

@@ -8,8 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -29,9 +30,10 @@ public final class DeleteAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (!isEnabled() || !Main.map.mapView.isActiveLayerVisible())
+        MapFrame map = MainApplication.getMap();
+        if (!isEnabled() || !map.mapView.isActiveLayerVisible())
             return;
-        Main.map.mapModeDelete.doActionPerformed(e);
+        map.mapModeDelete.doActionPerformed(e);
     }
 
     @Override

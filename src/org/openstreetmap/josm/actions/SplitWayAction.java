@@ -42,6 +42,8 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -254,7 +256,7 @@ public class SplitWayAction extends JosmAction {
             list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
             list.addListSelectionListener(e -> {
                 final Way selected = list.getSelectedValue();
-                if (selected != null && Main.isDisplayingMapView() && selected.getNodesCount() > 1) {
+                if (selected != null && MainApplication.isDisplayingMapView() && selected.getNodesCount() > 1) {
                     final Collection<WaySegment> segments = new ArrayList<>(selected.getNodesCount() - 1);
                     final Iterator<Node> it = selected.getNodes().iterator();
                     Node previousNode = it.next();
@@ -271,7 +273,7 @@ public class SplitWayAction extends JosmAction {
 
         protected void setHighlightedWaySegments(Collection<WaySegment> segments) {
             selectedWay.getDataSet().setHighlightedWaySegments(segments);
-            Main.map.mapView.repaint();
+            MainApplication.getMap().mapView.repaint();
         }
 
         @Override
@@ -541,7 +543,8 @@ public class SplitWayAction extends JosmAction {
         Collection<String> nowarnroles = Main.pref.getCollection("way.split.roles.nowarn",
                 Arrays.asList("outer", "inner", "forward", "backward", "north", "south", "east", "west"));
 
-        final boolean isMapModeDraw = Main.map != null && Main.map.mapMode == Main.map.mapModeDraw;
+        final MapFrame map = MainApplication.getMap();
+        final boolean isMapModeDraw = map != null && map.mapMode == map.mapModeDraw;
 
         // Change the original way
         final Way changedWay = new Way(way);

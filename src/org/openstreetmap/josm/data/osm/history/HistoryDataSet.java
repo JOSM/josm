@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
@@ -225,7 +226,7 @@ public class HistoryDataSet implements LayerChangeListener {
 
     @Override
     public void layerRemoving(LayerRemoveEvent e) {
-        if (!Main.isDisplayingMapView()) return;
+        if (!MainApplication.isDisplayingMapView()) return;
         if (Main.getLayerManager().getLayers().isEmpty()) {
             data.clear();
             fireCacheCleared();

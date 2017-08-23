@@ -21,6 +21,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -122,7 +123,7 @@ public class RecentRelationsAction extends JosmAction implements CommandQueueLis
      * @return the list of recent relations on active layer
      */
     public static List<Relation> getRecentRelationsOnActiveLayer() {
-        if (!Main.isDisplayingMapView())
+        if (!MainApplication.isDisplayingMapView())
             return Collections.emptyList();
         Layer activeLayer = Main.getLayerManager().getActiveLayer();
         if (!(activeLayer instanceof OsmDataLayer)) {

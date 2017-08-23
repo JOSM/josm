@@ -20,6 +20,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
@@ -97,10 +98,10 @@ public class JumpToAction extends JosmAction {
      * Displays the "Jump to" dialog.
      */
     public void showJumpToDialog() {
-        if (!Main.isDisplayingMapView()) {
+        if (!MainApplication.isDisplayingMapView()) {
             return;
         }
-        MapView mv = Main.map.mapView;
+        MapView mv = MainApplication.getMap().mapView;
 
         final Optional<Bounds> boundsFromClipboard = Optional
                 .ofNullable(ClipboardUtils.getClipboardStringContent())
@@ -207,7 +208,7 @@ public class JumpToAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(Main.isDisplayingMapView());
+        setEnabled(MainApplication.isDisplayingMapView());
     }
 
     @Override

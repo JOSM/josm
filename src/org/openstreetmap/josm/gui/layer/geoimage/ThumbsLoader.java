@@ -20,6 +20,7 @@ import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -78,7 +79,7 @@ public class ThumbsLoader implements Runnable {
     @Override
     public void run() {
         Logging.debug("Load Thumbnails");
-        tracker = new MediaTracker(Main.map.mapView);
+        tracker = new MediaTracker(MainApplication.getMap().mapView);
         for (ImageEntry entry : data) {
             if (stop) return;
 
@@ -86,7 +87,7 @@ public class ThumbsLoader implements Runnable {
             if (!entry.hasThumbnail()) {
                 entry.setThumbnail(loadThumb(entry));
 
-                if (layer != null && Main.isDisplayingMapView()) {
+                if (layer != null && MainApplication.isDisplayingMapView()) {
                     layer.updateBufferAndRepaint();
                 }
             }

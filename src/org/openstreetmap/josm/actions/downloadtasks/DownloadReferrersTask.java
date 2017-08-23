@@ -24,6 +24,8 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -130,8 +132,9 @@ public class DownloadReferrersTask extends PleaseWaitRunnable {
                 trn("Conflict during download", "Conflicts during download", visitor.getConflicts().size()),
                 JOptionPane.WARNING_MESSAGE
         );
-        Main.map.conflictDialog.unfurlDialog();
-        Main.map.repaint();
+        MapFrame map = MainApplication.getMap();
+        map.conflictDialog.unfurlDialog();
+        map.repaint();
     }
 
     protected void downloadParents(long id, OsmPrimitiveType type, ProgressMonitor progressMonitor) throws OsmTransferException {

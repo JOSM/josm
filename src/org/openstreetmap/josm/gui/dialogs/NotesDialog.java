@@ -35,6 +35,8 @@ import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.Note.State;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.data.osm.NoteData;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.NoteInputDialog;
 import org.openstreetmap.josm.gui.NoteSortDialog;
 import org.openstreetmap.josm.gui.SideButton;
@@ -98,7 +100,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (SwingUtilities.isLeftMouseButton(e) && e.getClickCount() == 2 && noteData != null && noteData.getSelectedNote() != null) {
-                    Main.map.mapView.zoomTo(noteData.getSelectedNote().getLatLon());
+                    MainApplication.getMap().mapView.zoomTo(noteData.getSelectedNote().getLatLon());
                 }
             }
         });
@@ -160,8 +162,9 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         if (e.getRemovedLayer() instanceof NoteLayer) {
             noteData = null;
             model.clearData();
-            if (Main.map.mapMode instanceof AddNoteAction) {
-                Main.map.selectMapMode(Main.map.mapModeSelect);
+            MapFrame map = MainApplication.getMap();
+            if (map.mapMode instanceof AddNoteAction) {
+                map.selectMapMode(map.mapModeSelect);
             }
         }
     }
@@ -296,7 +299,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         public void actionPerformed(ActionEvent e) {
             Note note = displayList.getSelectedValue();
             if (note == null) {
-                JOptionPane.showMessageDialog(Main.map,
+                JOptionPane.showMessageDialog(MainApplication.getMap(),
                         "You must select a note first",
                         "No note selected",
                         JOptionPane.ERROR_MESSAGE);
@@ -354,7 +357,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
             if (noteData == null) { //there is no notes layer. Create one first
                 Main.getLayerManager().addLayer(new NoteLayer());
             }
-            Main.map.selectMapMode(new AddNoteAction(noteData));
+            MainApplication.getMap().selectMapMode(new AddNoteAction(noteData));
         }
     }
 

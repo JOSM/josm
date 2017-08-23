@@ -42,6 +42,8 @@ import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.ValidatorVisitor;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.PopupMenuHandler;
 import org.openstreetmap.josm.gui.SideButton;
@@ -314,7 +316,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         if (changed) {
             tree.resetErrors();
             OsmValidator.saveIgnoredErrors();
-            Main.map.repaint();
+            MainApplication.getMap().repaint();
         }
     }
 
@@ -523,8 +525,9 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
             boolean hasFixes = setSelection(sel, true);
             fixButton.setEnabled(hasFixes);
             popupMenuHandler.setPrimitives(sel);
-            if (Main.map != null) {
-                Main.map.repaint();
+            MapFrame map = MainApplication.getMap();
+            if (map != null) {
+                map.repaint();
             }
         }
     }
