@@ -27,7 +27,10 @@
         <property name="epsg.output" location="${base.dir}/data/projection/custom-epsg"/>
         <property name="groovy.jar" location="${base.dir}/tools/groovy-all.jar"/>
         <property name="error_prone_ant.jar" location="${base.dir}/tools/error_prone_ant.jar"/>
+        <property name="dist.jar" location="${dist.dir}/josm-custom.jar"/>
+        <property name="dist-optimized.jar" location="${dist.dir}/josm-custom-optimized.jar"/>
         <property name="javac.compiler" value="com.google.errorprone.ErrorProneAntCompilerAdapter" />
+        <property name="java.lang.version" value="1.8" />
         <!-- build parameter: compression level (ant -Dclevel=N)
                  N ranges from 0 (no compression) to 9 (maximum compression)
                  default: 9 -->
@@ -42,7 +45,7 @@
             <fileset dir="${test.dir}/lib">
                 <include name="**/*.jar"/>
             </fileset>
-            <pathelement path="${dist.dir}/josm-custom.jar"/>
+            <pathelement path="${dist.jar}"/>
             <pathelement path="${groovy.jar}"/>
             <pathelement path="tools/findbugs/annotations.jar"/>
         </path>
@@ -133,8 +136,8 @@ Build-Date: ${build.tstamp}
         <copy file="README" todir="build"/>
         <copy file="LICENSE" todir="build"/>
         <!-- create josm-custom.jar -->
-        <delete file="${dist.dir}/josm-custom.jar"/>
-        <jar destfile="${dist.dir}/josm-custom.jar" basedir="${build.dir}" level="${clevel}">
+        <delete file="${dist.jar}"/>
+        <jar destfile="${dist.jar}" basedir="${build.dir}" level="${clevel}">
             <!-- add attribute excludes="**/*BZip2*,**/*Bzip2*" to create a non-bzip2 supporting jar -->
             <manifest>
                 <attribute name="Main-class" value="org.openstreetmap.josm.gui.MainApplication"/>
@@ -204,14 +207,14 @@ Build-Date: ${build.tstamp}
     <target name="distmac" depends="dist">
         <antcall target="mac">
             <param name="bundle.outdir" value="${dist.dir}"/>
-            <param name="bundle.jar" value="${dist.dir}/josm-custom.jar"/>
+            <param name="bundle.jar" value="${dist.jar}"/>
         </antcall>
     </target>
     <!-- Windows target -->
     <target name="distwin" depends="dist">
         <exec dir="windows" executable="./josm-setup-unix.sh">
             <arg value="${version.entry.commit.revision}"/>
-            <arg value="../dist/josm-custom.jar"/>
+            <arg value="${dist.jar}"/>
         </exec>
     </target>
     <target name="javacc" depends="init" unless="javacc.notRequired">
@@ -220,7 +223,7 @@ Build-Date: ${build.tstamp}
             <classpath path="${javacc.home}/javacc.jar"/>
             <arg value="-DEBUG_PARSER=false"/>
             <arg value="-DEBUG_TOKEN_MANAGER=false"/>
-            <arg value="-JDK_VERSION=1.8"/>
+            <arg value="-JDK_VERSION=${java.lang.version}"/>
             <arg value="-GRAMMAR_ENCODING=UTF-8"/>
             <arg value="-OUTPUT_DIRECTORY=${mapcss.dir}/parsergen"/>
             <arg value="${mapcss.dir}/MapCSSParser.jj"/>
@@ -229,7 +232,7 @@ Build-Date: ${build.tstamp}
     <target name="compile" depends="init,javacc">
         <!-- COTS -->
         <javac srcdir="${src.dir}" includes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**" nowarn="on" encoding="iso-8859-1"
-            destdir="build" target="1.8" source="1.8" debug="on" includeAntRuntime="false" createMissingPackageInfoClass="false">
+            destdir="build" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeAntRuntime="false" createMissingPackageInfoClass="false">
             <!-- get rid of "internal proprietary API" warning -->
             <compilerarg value="-XDignore.symbol.file"/>
             <exclude name="org/apache/commons/compress/PasswordRequiredException.java"/>
@@ -281,7 +284,7 @@ Build-Date: ${build.tstamp}
         <!-- JMapViewer -->
         <javac compiler="${javac.compiler}" sourcepath="" srcdir="${src.dir}" 
             excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java,org/openstreetmap/gui/jmapviewer/JMapViewerTree.java,org/openstreetmap/gui/jmapviewer/checkBoxTree/**,org/openstreetmap/josm/**,gnu/**"
-            destdir="build" target="1.8" source="1.8" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
+            destdir="build" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerclasspath>
                 <pathelement location="${error_prone_ant.jar}"/>
             </compilerclasspath>
@@ -304,7 +307,7 @@ Build-Date: ${build.tstamp}
         <!-- JOSM -->
         <javac compiler="${javac.compiler}" sourcepath="" srcdir="${src.dir}"
             excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/**"
-            destdir="build" target="1.8" source="1.8" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
+            destdir="build" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerclasspath>
                 <pathelement location="${error_prone_ant.jar}"/>
             </compilerclasspath>
@@ -409,7 +412,7 @@ Build-Date: ${build.tstamp}
                 <classpath>
                     <cp-elements/>
                 </classpath>
-                <javac target="1.8" source="1.8" debug="on" encoding="UTF-8">
+                <javac target="${java.lang.version}" source="${java.lang.version}" debug="on" encoding="UTF-8">
                     <compilerarg value="-Xlint:all"/>
                     <compilerarg value="-Xlint:-serial"/>
                 </javac>
@@ -528,8 +531,8 @@ Build-Date: ${build.tstamp}
     <target name="dist-optimized" depends="dist" unless="isJava9">
         <taskdef resource="proguard/ant/task.properties" classpath="tools/proguard.jar"/>
         <proguard>
-        -injars dist/josm-custom.jar
-        -outjars dist/josm-custom-optimized.jar
+        -injars ${dist.jar}
+        -outjars ${dist-optimized.jar}
 
         -libraryjars ${java.home}/lib/rt.jar
         -libraryjars ${java.home}/lib/jce.jar
@@ -585,8 +588,8 @@ Build-Date: ${build.tstamp}
             <arg value="--v1=${version.entry.commit.revision}"/>
             <arg value="--v2=${version.entry.commit.revision}-optimized"/>
             <arg value="--report-path=${dist.dir}/compat_report.html"/>
-            <arg value="${dist.dir}/josm-custom.jar"/>
-            <arg value="${dist.dir}/josm-custom-optimized.jar"/>
+            <arg value="${dist.jar}"/>
+            <arg value="${dist-optimized.jar}"/>
         </exec>
     </target>
     <target name="check-plugins" depends="dist-optimized">
@@ -658,7 +661,7 @@ Build-Date: ${build.tstamp}
         <!-- Check plugins -->
         <as:build-signatures destfile="${dir}/api.sig">
             <path>
-                <fileset file="${dist.dir}/josm-custom-optimized.jar"/>
+                <fileset file="${dist-optimized.jar}"/>
                 <fileset file="${java.home}/lib/rt.jar"/>
                 <fileset file="${java.home}/lib/jce.jar"/>
             </path>
@@ -705,7 +708,7 @@ Build-Date: ${build.tstamp}
         <attribute name="output"/>
         <sequential>
             <echo message="Generating Taginfo for type @{type} to @{output}"/>
-            <groovy src="${taginfoextract}" classpath="${dist.dir}/josm-custom.jar:tools/findbugs/annotations.jar">
+            <groovy src="${taginfoextract}" classpath="${dist.jar}:tools/findbugs/annotations.jar">
                 <arg value="-t"/>
                 <arg value="@{type}"/>
                 <arg value="--noexit"/>
@@ -730,7 +733,7 @@ Build-Date: ${build.tstamp}
     <target name="imageryindex" depends="init-properties">
         <taskdef name="groovy" classname="org.codehaus.groovy.ant.Groovy" classpath="${groovy.jar};tools/commons-cli-1.3.1.jar"/>
         <echo message="Checking editor imagery difference"/>
-        <groovy src="scripts/SyncEditorLayerIndex.groovy" classpath="${dist.dir}/josm-custom.jar">
+        <groovy src="scripts/SyncEditorLayerIndex.groovy" classpath="${dist.jar}">
                 <arg value="-noeli"/>
                 <arg value="-p"/>
                 <arg value="imagery_eliout.imagery.xml"/>
@@ -764,7 +767,7 @@ Build-Date: ${build.tstamp}
     <target name="checkstyle-compile" depends="init-properties">
         <mkdir dir="${checkstyle-build.dir}"/>
         <javac sourcepath="" srcdir="${base.dir}/tools/checkstyle/src" failonerror="true"
-            destdir="${checkstyle-build.dir}" target="1.8" source="1.8" debug="on"
+            destdir="${checkstyle-build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on"
             includeantruntime="false" createMissingPackageInfoClass="false"
             encoding="UTF-8" classpath="tools/checkstyle/checkstyle-all.jar">
         </javac>
@@ -798,14 +801,14 @@ Build-Date: ${build.tstamp}
                 reportLevel="low"
                 >
             <sourcePath path="${base.dir}/src" />
-            <class location="${dist.dir}/josm-custom.jar" />
+            <class location="${dist.jar}" />
         </findbugs>
     </target>
 
     <target name="pmd" depends="init-properties">
         <taskdef name="pmd" classname="net.sourceforge.pmd.ant.PMDTask" classpath="${toString:pmd.classpath}"/>
         <pmd shortFilenames="true" encoding="UTF-8">
-            <sourceLanguage name="java" version="1.8" />
+            <sourceLanguage name="java" version="${java.lang.version}" />
             <ruleset>${base.dir}/tools/pmd/josm-ruleset.xml</ruleset>
             <formatter type="text" toConsole="true" />
             <formatter type="xml" toFile="pmd-josm.xml">
@@ -819,7 +822,7 @@ Build-Date: ${build.tstamp}
     </target>
 
     <target name="run" depends="dist">
-        <java jar="${dist.dir}/josm-custom.jar" fork="true">
+        <java jar="${dist.jar}" fork="true">
             <arg value="--set=expert=true"/>
             <arg value="--set=remotecontrol.enabled=true"/>
             <arg value="--set=debug.edt-checker.enable=false"/>
@@ -833,7 +836,7 @@ Build-Date: ${build.tstamp}
         <property name="proj-classpath" location="${build.dir}"/>
         <mkdir dir="${proj-build.dir}"/>
         <javac sourcepath="" srcdir="${base.dir}/scripts" failonerror="true"
-            destdir="${proj-build.dir}" target="1.8" source="1.8" debug="on"
+            destdir="${proj-build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on"
             includeantruntime="false" createMissingPackageInfoClass="false"
             encoding="UTF-8" classpath="${proj-classpath}">
         </javac>
