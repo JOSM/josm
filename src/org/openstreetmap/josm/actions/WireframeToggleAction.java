@@ -6,10 +6,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapRendererFactory;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.osm.visitor.paint.WireframeMapRenderer;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -30,7 +30,7 @@ public class WireframeToggleAction extends ToggleAction {
               false /* register toolbar */
         );
         putValue("toolbar", "wireframe");
-        Main.toolbar.register(this);
+        MainApplication.getToolbar().register(this);
         setSelected(MapRendererFactory.getInstance().isWireframeMapRendererActive());
         notifySelectedState();
     }

@@ -9,6 +9,7 @@ import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.OsmIdSelectionDialog;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
 import org.openstreetmap.josm.io.OnlineResource;
@@ -30,7 +31,7 @@ public class HistoryInfoAction extends JosmAction {
                         tr("History"), KeyEvent.VK_H, Shortcut.CTRL), false);
         putValue("help", ht("/Action/ObjectHistory"));
         putValue("toolbar", "action/historyinfo");
-        Main.toolbar.register(this);
+        MainApplication.getToolbar().register(this);
         setEnabled(true);
     }
 

@@ -19,6 +19,7 @@ import javax.swing.JFrame;
 import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -42,7 +43,7 @@ public class FullscreenToggleAction extends ToggleAction {
         );
         putValue("help", ht("/Action/FullscreenView"));
         putValue("toolbar", "fullscreen");
-        Main.toolbar.register(this);
+        MainApplication.getToolbar().register(this);
         gd = GraphicsEnvironment.isHeadless() ? null : GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         setSelected(Main.pref.getBoolean("draw.fullscreen", false));
         notifySelectedState();

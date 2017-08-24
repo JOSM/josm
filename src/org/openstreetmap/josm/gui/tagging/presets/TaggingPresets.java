@@ -15,6 +15,7 @@ import javax.swing.JSeparator;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MenuScroller;
 import org.openstreetmap.josm.gui.tagging.presets.items.CheckGroup;
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
@@ -61,7 +62,7 @@ public final class TaggingPresets {
         readFromPreferences();
         for (TaggingPreset tp: taggingPresets) {
             if (!(tp instanceof TaggingPresetSeparator)) {
-                Main.toolbar.register(tp);
+                MainApplication.getToolbar().register(tp);
             }
         }
         if (taggingPresets.isEmpty()) {

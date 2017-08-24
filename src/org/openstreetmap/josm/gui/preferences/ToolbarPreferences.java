@@ -67,6 +67,7 @@ import org.openstreetmap.josm.actions.ParameterizedAction;
 import org.openstreetmap.josm.actions.ParameterizedActionDecorator;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.GBC;
@@ -501,7 +502,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 // remove the button from toolbar preferences
                 t.remove(res);
                 Main.pref.putCollection("toolbar", t);
-                Main.toolbar.refreshToolbarControl();
+                MainApplication.getToolbar().refreshToolbarControl();
             }
         });
 
@@ -522,7 +523,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 p.selectPreferencesTabByName("shortcuts");
                 p.setVisible(true);
                 // refresh toolbar to try using changed shortcuts without restart
-                Main.toolbar.refreshToolbarControl();
+                MainApplication.getToolbar().refreshToolbarControl();
             }
         });
 
@@ -986,7 +987,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 t = Collections.singletonList(EMPTY_TOOLBAR_MARKER);
             }
             Main.pref.putCollection("toolbar", t);
-            Main.toolbar.refreshToolbarControl();
+            MainApplication.getToolbar().refreshToolbarControl();
             return false;
         }
 
@@ -1213,7 +1214,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             }
         }
         Main.pref.putCollection("toolbar", t);
-        Main.toolbar.refreshToolbarControl();
+        MainApplication.getToolbar().refreshToolbarControl();
     }
 
     private JButton addButtonAndShortcut(ActionDefinition action) {

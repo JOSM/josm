@@ -52,7 +52,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
         AdjustImageryOffsetAction() {
             super(tr("Imagery offset"), "mapmode/adjustimg", tr("Adjust imagery offset"), null, false, false);
             putValue("toolbar", "imagery-offset");
-            Main.toolbar.register(this);
+            MainApplication.getToolbar().register(this);
         }
 
         @Override
@@ -270,7 +270,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
     private void removeDynamicItems() {
         for (Object item : dynamicItems) {
             if (item instanceof JMenuItem) {
-                Optional.ofNullable(((JMenuItem) item).getAction()).ifPresent(Main.toolbar::unregister);
+                Optional.ofNullable(((JMenuItem) item).getAction()).ifPresent(MainApplication.getToolbar()::unregister);
                 remove((JMenuItem) item);
             } else if (item instanceof MenuComponent) {
                 remove((MenuComponent) item);

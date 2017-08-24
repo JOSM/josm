@@ -10,7 +10,6 @@ import java.lang.ref.WeakReference;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
@@ -31,9 +30,6 @@ import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
-import javax.swing.LookAndFeel;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.Bounds;
@@ -53,13 +49,11 @@ import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
-import org.openstreetmap.josm.gui.preferences.display.LafPreference;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
-import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -131,9 +125,9 @@ public abstract class Main {
     /**
      * The MapFrame.
      * <p>
-     * There should be no need to access this to access any map data. Use {@link #layerManager} instead.
+     * There should be no need to access this to access any map data. Use {@link MainApplication#getLayerManager} instead.
      *
-     * @deprecated Use {@link org.openstreetmap.josm.gui.MainApplication#getMap()} instead
+     * @deprecated Use {@link MainApplication#getMap()} instead
      * @see MainPanel
      */
     @Deprecated
@@ -141,7 +135,9 @@ public abstract class Main {
 
     /**
      * The toolbar preference control to register new actions.
+     * @deprecated Use {@link MainApplication#getToolbar} instead
      */
+    @Deprecated
     public static volatile ToolbarPreferences toolbar;
 
     /**
@@ -743,61 +739,9 @@ public abstract class Main {
      */
     public static void preConstructorInit() {
         ProjectionPreference.setProjection();
-
-        String defaultlaf = platform.getDefaultStyle();
-        String laf = LafPreference.LAF.get();
-        try {
-            UIManager.setLookAndFeel(laf);
-        } catch (final NoClassDefFoundError | ClassNotFoundException e) {
-            // Try to find look and feel in plugin classloaders
-            Logging.trace(e);
-            Class<?> klass = null;
-            for (ClassLoader cl : PluginHandler.getResourceClassLoaders()) {
-                try {
-                    klass = cl.loadClass(laf);
-                    break;
-                } catch (ClassNotFoundException ex) {
-                    Logging.trace(ex);
-                }
-            }
-            if (klass != null && LookAndFeel.class.isAssignableFrom(klass)) {
-                try {
-                    UIManager.setLookAndFeel((LookAndFeel) klass.getConstructor().newInstance());
-                } catch (ReflectiveOperationException ex) {
-                    Logging.log(Logging.LEVEL_WARN, "Cannot set Look and Feel: " + laf + ": "+ex.getMessage(), ex);
-                } catch (UnsupportedLookAndFeelException ex) {
-                    Logging.info("Look and Feel not supported: " + laf);
-                    LafPreference.LAF.put(defaultlaf);
-                    Logging.trace(ex);
-                }
-            } else {
-                Logging.info("Look and Feel not found: " + laf);
-                LafPreference.LAF.put(defaultlaf);
-            }
-        } catch (UnsupportedLookAndFeelException e) {
-            Logging.info("Look and Feel not supported: " + laf);
-            LafPreference.LAF.put(defaultlaf);
-            Logging.trace(e);
-        } catch (InstantiationException | IllegalAccessException e) {
-            Logging.error(e);
-        }
-        toolbar = new ToolbarPreferences();
-
-        UIManager.put("OptionPane.okIcon", ImageProvider.get("ok"));
-        UIManager.put("OptionPane.yesIcon", UIManager.get("OptionPane.okIcon"));
-        UIManager.put("OptionPane.cancelIcon", ImageProvider.get("cancel"));
-        UIManager.put("OptionPane.noIcon", UIManager.get("OptionPane.cancelIcon"));
-        // Ensures caret color is the same than text foreground color, see #12257
-        // See http://docs.oracle.com/javase/8/docs/api/javax/swing/plaf/synth/doc-files/componentProperties.html
-        for (String p : Arrays.asList(
-                "EditorPane", "FormattedTextField", "PasswordField", "TextArea", "TextField", "TextPane")) {
-            UIManager.put(p+".caretForeground", UIManager.getColor(p+".foreground"));
-        }
-
         I18n.translateJavaInternalMessages();
 
         // init default coordinate format
-        //
         try {
             CoordinateFormat.setCoordinateFormat(CoordinateFormat.valueOf(Main.pref.get("coordinates")));
         } catch (IllegalArgumentException iae) {

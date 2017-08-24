@@ -18,13 +18,17 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.swing.UIManager;
+
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.SplashScreen.SplashProgressMonitor;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
+import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginHandlerTestIT;
 import org.openstreetmap.josm.plugins.PluginInformation;
@@ -46,6 +50,15 @@ public class MainApplicationTest {
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().main().https().devAPI().timeout(20000);
+
+    /**
+     * Make sure {@link MainApplication#toolbar} is initialized.
+     */
+    public static void initToolbar() {
+        if (MainApplication.toolbar == null) {
+            MainApplication.toolbar = new ToolbarPreferences();
+        }
+    }
 
     @SuppressFBWarnings(value = "DM_DEFAULT_ENCODING")
     private void testShow(final String arg, String expected) throws InterruptedException, IOException {
@@ -129,6 +142,15 @@ public class MainApplicationTest {
                 System.clearProperty("josm.plugins");
             }
         }
+    }
+
+    /**
+     * Unit test of {@link MainApplication#setupUIManager}.
+     */
+    @Test
+    public void testSetupUIManager() {
+        MainApplication.setupUIManager();
+        assertEquals(Main.pref.get("laf", Main.platform.getDefaultStyle()), UIManager.getLookAndFeel().getClass().getCanonicalName());
     }
 
     private static PluginInformation newPluginInformation(String plugin) throws PluginListParseException {

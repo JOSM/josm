@@ -218,7 +218,7 @@ public class TaggingPresetSelector extends SearchTextResultListPanel<TaggingPres
             public void actionPerformed(ActionEvent ae) {
                 final TaggingPreset preset = getSelectedPreset();
                 if (preset != null) {
-                    Main.toolbar.addCustomButton(preset.getToolbarString(), -1, false);
+                    MainApplication.getToolbar().addCustomButton(preset.getToolbarString(), -1, false);
                 }
             }
         });
