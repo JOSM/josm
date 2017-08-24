@@ -138,7 +138,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
     static final class ShowMonitorDialogMouseAdapter extends MouseAdapter {
         @Override
         public void mouseClicked(MouseEvent e) {
-            PleaseWaitProgressMonitor monitor = Main.currentProgressMonitor;
+            PleaseWaitProgressMonitor monitor = PleaseWaitProgressMonitor.getCurrent();
             if (monitor != null) {
                 monitor.showForegroundDialog();
             }
