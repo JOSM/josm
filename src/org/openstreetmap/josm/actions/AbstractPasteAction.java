@@ -8,7 +8,6 @@ import java.awt.datatransfer.FlavorListener;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
@@ -91,7 +90,7 @@ public abstract class AbstractPasteAction extends JosmAction implements FlavorLi
     }
 
     protected void doPaste(ActionEvent e, Transferable contents) {
-        transferHandler.pasteOn(Main.getLayerManager().getEditLayer(), computePastePosition(e), contents);
+        transferHandler.pasteOn(getLayerManager().getEditLayer(), computePastePosition(e), contents);
     }
 
     @Override

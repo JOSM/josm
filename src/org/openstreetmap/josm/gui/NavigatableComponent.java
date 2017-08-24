@@ -901,7 +901,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     private Map<Double, List<Node>> getNearestNodesImpl(Point p, Predicate<OsmPrimitive> predicate) {
         Map<Double, List<Node>> nearestMap = new TreeMap<>();
-        DataSet ds = Main.getLayerManager().getEditDataSet();
+        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
 
         if (ds != null) {
             double dist, snapDistanceSq = PROP_SNAP_DISTANCE.get();
@@ -1110,7 +1110,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     private Map<Double, List<WaySegment>> getNearestWaySegmentsImpl(Point p, Predicate<OsmPrimitive> predicate) {
         Map<Double, List<WaySegment>> nearestMap = new TreeMap<>();
-        DataSet ds = Main.getLayerManager().getEditDataSet();
+        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
 
         if (ds != null) {
             double snapDistanceSq = Main.pref.getInteger("mappaint.segment.snap-distance", 10);
@@ -1471,7 +1471,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
      */
     public final OsmPrimitive getNearestNodeOrWay(Point p, Predicate<OsmPrimitive> predicate, boolean useSelected) {
         Collection<OsmPrimitive> sel;
-        DataSet ds = Main.getLayerManager().getEditDataSet();
+        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
         if (useSelected && ds != null) {
             sel = ds.getSelected();
         } else {

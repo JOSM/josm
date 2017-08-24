@@ -6,7 +6,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.upload.UploadNotesTask;
 import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
@@ -31,7 +30,7 @@ public class UploadNotesAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        List<NoteLayer> noteLayers = Main.getLayerManager().getLayersOfType(NoteLayer.class);
+        List<NoteLayer> noteLayers = getLayerManager().getLayersOfType(NoteLayer.class);
         NoteLayer layer;
         if (!noteLayers.isEmpty()) {
             layer = noteLayers.get(0);

@@ -38,6 +38,6 @@ public final class ZoomOutAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(!Main.getLayerManager().getLayers().isEmpty());
+        setEnabled(!getLayerManager().getLayers().isEmpty());
     }
 }

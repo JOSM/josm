@@ -47,7 +47,7 @@ public class CommandStackDialogTest {
     @Test
     public void testCommandStackDialogNotEmpty() {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
-        Main.getLayerManager().addLayer(layer);
+        MainApplication.getLayerManager().addLayer(layer);
         try {
             Command cmd1 = TestUtils.newCommand();
             Command cmd2 = TestUtils.newCommand();
@@ -68,7 +68,7 @@ public class CommandStackDialogTest {
             assertFalse(dlg.isVisible());
         } finally {
             Main.main.undoRedo.clean();
-            Main.getLayerManager().removeLayer(layer);
+            MainApplication.getLayerManager().removeLayer(layer);
         }
     }
 }

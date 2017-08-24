@@ -16,8 +16,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.gpx.GpxData;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.markerlayer.Marker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
@@ -43,7 +43,7 @@ public class MarkerSessionExporter extends AbstractSessionExporter<MarkerLayer> 
     @Override
     public Collection<Layer> getDependencies() {
         Layer gpxLayer = layer.fromLayer;
-        if (gpxLayer != null && Main.getLayerManager().containsLayer(gpxLayer))
+        if (gpxLayer != null && MainApplication.getLayerManager().containsLayer(gpxLayer))
             return Collections.singleton(gpxLayer);
         return Collections.emptySet();
     }

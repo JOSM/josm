@@ -721,7 +721,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         // If the dual alignment moved two nodes to the same point, merge them
         Node targetNode = MergeNodesAction.selectTargetNode(changedNodes);
         Node locNode = MergeNodesAction.selectTargetLocationNode(changedNodes);
-        Command mergeCmd = MergeNodesAction.mergeNodes(Main.getLayerManager().getEditLayer(), changedNodes, targetNode, locNode);
+        Command mergeCmd = MergeNodesAction.mergeNodes(MainApplication.getLayerManager().getEditLayer(), changedNodes, targetNode, locNode);
         if (mergeCmd != null) {
             Main.main.undoRedo.add(mergeCmd);
         } else {

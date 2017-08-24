@@ -62,13 +62,16 @@ import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.gui.ProgramArguments.Option;
 import org.openstreetmap.josm.gui.SplashScreen.SplashProgressMonitor;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.io.CustomConfigurator.XMLCommandProcessor;
+import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.AutosaveTask;
+import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
@@ -77,6 +80,7 @@ import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitorExecutor;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.io.CertificateAmendment;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.MessageNotifier;
@@ -131,6 +135,11 @@ public class MainApplication extends Main {
      * @since 12634 (as a replacement to {@code Main.worker})
      */
     public static final ExecutorService worker = new ProgressMonitorExecutor("main-worker-%d", Thread.NORM_PRIORITY);
+
+    /**
+     * Provides access to the layers displayed in the main view.
+     */
+    private static final MainLayerManager layerManager = new MainLayerManager();
 
     /**
      * Constructs a new {@code MainApplication} without a window.
@@ -227,7 +236,7 @@ public class MainApplication extends Main {
             menu = mainFrame.getMenu();
         } else {
             // required for running some tests.
-            panel = new MainPanel(Main.getLayerManager());
+            panel = new MainPanel(MainApplication.getLayerManager());
             menu = new MainMenu();
         }
         panel.addMapFrameListener((o, n) -> redoUndoListener.commandChanged(0, 0));
@@ -245,6 +254,8 @@ public class MainApplication extends Main {
         if (map != null) {
             map.rememberToggleDialogWidth();
         }
+        // Remove all layers because somebody may rely on layerRemoved events (like AutosaveTask)
+        getLayerManager().resetState();
         super.shutdown();
         if (!GraphicsEnvironment.isHeadless()) {
             worker.shutdownNow();
@@ -263,12 +274,23 @@ public class MainApplication extends Main {
         }
     }
 
+    /**
+     * Replies the current selected primitives, from a end-user point of view.
+     * It is not always technically the same collection of primitives than {@link DataSet#getSelected()}.
+     * Indeed, if the user is currently in drawing mode, only the way currently being drawn is returned,
+     * see {@link DrawAction#getInProgressSelection()}.
+     *
+     * @return The current selected primitives, from a end-user point of view. Can be {@code null}.
+     * @since 6546
+     */
     @Override
     public Collection<OsmPrimitive> getInProgressSelection() {
         if (map != null && map.mapMode instanceof DrawAction) {
             return ((DrawAction) map.mapMode).getInProgressSelection();
         } else {
-            return super.getInProgressSelection();
+            DataSet ds = getLayerManager().getEditDataSet();
+            if (ds == null) return null;
+            return ds.getSelected();
         }
     }
 
@@ -279,6 +301,16 @@ public class MainApplication extends Main {
      */
     public static List<String> getCommandLineArgs() {
         return Collections.unmodifiableList(COMMAND_LINE_ARGS);
+    }
+
+    /**
+     * Returns the main layer manager that is used by the map view.
+     * @return The layer manager. The value returned will never change.
+     * @since 12636 (as a replacement to {@code MainApplication.getLayerManager()})
+     */
+    @SuppressWarnings("deprecation")
+    public static MainLayerManager getLayerManager() {
+        return layerManager;
     }
 
     /**
@@ -305,6 +337,29 @@ public class MainApplication extends Main {
     @SuppressWarnings("deprecation")
     public static boolean isDisplayingMapView() {
         return map != null && map.mapView != null;
+    }
+
+    /**
+     * Closes JOSM and optionally terminates the Java Virtual Machine (JVM).
+     * If there are some unsaved data layers, asks first for user confirmation.
+     * @param exit If {@code true}, the JVM is terminated by running {@link System#exit} with a given return code.
+     * @param exitCode The return code
+     * @param reason the reason for exiting
+     * @return {@code true} if JOSM has been closed, {@code false} if the user has cancelled the operation.
+     * @since 12636 (specialized version of {@link Main#exitJosm})
+     */
+    public static boolean exitJosm(boolean exit, int exitCode, SaveLayersDialog.Reason reason) {
+        final boolean proceed = Boolean.TRUE.equals(GuiHelper.runInEDTAndWaitAndReturn(() ->
+                SaveLayersDialog.saveUnsavedModifications(MainApplication.getLayerManager().getLayers(),
+                        reason != null ? reason : SaveLayersDialog.Reason.EXIT)));
+        if (proceed) {
+            return Main.exitJosm(exit, exitCode);
+        }
+        return false;
+    }
+
+    public static void redirectToMainContentPane(JComponent source) {
+        RedirectInputMap.redirect(source, contentPanePrivate);
     }
 
     /**

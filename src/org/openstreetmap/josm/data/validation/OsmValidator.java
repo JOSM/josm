@@ -57,6 +57,7 @@ import org.openstreetmap.josm.data.validation.tests.UntaggedNode;
 import org.openstreetmap.josm.data.validation.tests.UntaggedWay;
 import org.openstreetmap.josm.data.validation.tests.WayConnectedToArea;
 import org.openstreetmap.josm.data.validation.tests.WronglyOrderedWays;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.ValidatorLayer;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
@@ -237,7 +238,7 @@ public final class OsmValidator {
             return;
         if (errorLayer == null) {
             errorLayer = new ValidatorLayer();
-            Main.getLayerManager().addLayer(errorLayer);
+            MainApplication.getLayerManager().addLayer(errorLayer);
         }
     }
 

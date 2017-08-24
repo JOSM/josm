@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -38,8 +37,8 @@ public class NoteImporter extends FileImporter {
         }
         try (InputStream is = Compression.getUncompressedFileInputStream(file)) {
             final NoteLayer layer = loadLayer(is, file, file.getName(), progressMonitor);
-            if (!Main.getLayerManager().containsLayer(layer)) {
-                Main.getLayerManager().addLayer(layer);
+            if (!MainApplication.getLayerManager().containsLayer(layer)) {
+                MainApplication.getLayerManager().addLayer(layer);
             }
         } catch (SAXException e) {
             Logging.error("error opening up notes file");
@@ -64,7 +63,7 @@ public class NoteImporter extends FileImporter {
         final List<Note> fileNotes = new NoteReader(in).parse();
         List<NoteLayer> noteLayers = null;
         if (MainApplication.getMap() != null) {
-            noteLayers = Main.getLayerManager().getLayersOfType(NoteLayer.class);
+            noteLayers = MainApplication.getLayerManager().getLayersOfType(NoteLayer.class);
         }
         final NoteLayer layer;
         if (noteLayers != null && !noteLayers.isEmpty()) {

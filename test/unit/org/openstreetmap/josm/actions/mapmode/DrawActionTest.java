@@ -54,7 +54,7 @@ public class DrawActionTest {
     public void testTicket12011() throws IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
         DataSet dataSet = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
-        Main.getLayerManager().addLayer(layer);
+        MainApplication.getLayerManager().addLayer(layer);
 
         // fix map view position
         MapFrame map = MainApplication.getMap();
@@ -100,7 +100,7 @@ public class DrawActionTest {
             assertNotNull(renderer.getListCellRendererComponent(lstPrimitives, n3, 0, false, false));
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.getLayerManager().removeLayer(layer);
+            MainApplication.getLayerManager().removeLayer(layer);
         }
     }
 

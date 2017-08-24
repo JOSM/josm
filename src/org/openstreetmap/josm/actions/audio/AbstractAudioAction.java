@@ -1,8 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.audio;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -32,7 +32,7 @@ public abstract class AbstractAudioAction extends JosmAction {
      * layout, {@code false} otherwise.
      */
     protected static boolean isAudioMarkerPresent() {
-        return Main.getLayerManager().getLayersOfType(MarkerLayer.class).stream()
+        return MainApplication.getLayerManager().getLayersOfType(MarkerLayer.class).stream()
                 .flatMap(ml -> ml.data.stream())
                 .anyMatch(m -> m instanceof AudioMarker);
     }

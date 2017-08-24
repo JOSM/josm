@@ -52,7 +52,7 @@ public final class DownloadNotesInViewAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(Main.getLayerManager().getActiveLayer() != null
+        setEnabled(getLayerManager().getActiveLayer() != null
                 && !Main.isOffline(OnlineResource.OSM_API));
     }
 }

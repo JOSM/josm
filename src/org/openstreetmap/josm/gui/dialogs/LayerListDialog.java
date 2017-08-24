@@ -1160,7 +1160,7 @@ public class LayerListDialog extends ToggleDialog {
      * @return the layer at given index, or {@code null} if index out of range
      */
     public static Layer getLayerForIndex(int index) {
-        List<Layer> layers = Main.getLayerManager().getLayers();
+        List<Layer> layers = MainApplication.getLayerManager().getLayers();
 
         if (index < layers.size() && index >= 0)
             return layers.get(index);
@@ -1177,7 +1177,7 @@ public class LayerListDialog extends ToggleDialog {
     public static List<MultikeyInfo> getLayerInfoByClass(Class<?> layerClass) {
         List<MultikeyInfo> result = new ArrayList<>();
 
-        List<Layer> layers = Main.getLayerManager().getLayers();
+        List<Layer> layers = MainApplication.getLayerManager().getLayers();
 
         int index = 0;
         for (Layer l: layers) {
@@ -1199,7 +1199,7 @@ public class LayerListDialog extends ToggleDialog {
         if (l == null)
             return false;
 
-        return Main.getLayerManager().containsLayer(l);
+        return MainApplication.getLayerManager().containsLayer(l);
     }
 
     /**
@@ -1211,7 +1211,7 @@ public class LayerListDialog extends ToggleDialog {
         if (l == null)
             return null;
 
-        int index = Main.getLayerManager().getLayers().indexOf(l);
+        int index = MainApplication.getLayerManager().getLayers().indexOf(l);
         if (index < 0)
             return null;
 

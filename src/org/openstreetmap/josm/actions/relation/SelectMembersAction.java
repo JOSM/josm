@@ -7,7 +7,6 @@ import java.awt.event.ActionEvent;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -43,9 +42,9 @@ public class SelectMembersAction extends AbstractRelationAction {
             members.addAll(r.getMemberPrimitivesList());
         }
         if (add) {
-            Main.getLayerManager().getEditLayer().data.addSelected(members);
+            MainApplication.getLayerManager().getEditLayer().data.addSelected(members);
         } else {
-            Main.getLayerManager().getEditLayer().data.setSelected(members);
+            MainApplication.getLayerManager().getEditLayer().data.setSelected(members);
         }
     }
 }

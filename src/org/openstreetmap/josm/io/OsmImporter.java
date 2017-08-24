@@ -14,6 +14,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -98,7 +99,7 @@ public class OsmImporter extends FileImporter {
         // FIXME: remove UI stuff from IO subsystem
         GuiHelper.runInEDT(() -> {
             OsmDataLayer layer = data.getLayer();
-            Main.getLayerManager().addLayer(layer);
+            MainApplication.getLayerManager().addLayer(layer);
             data.getPostLayerTask().run();
             data.getLayer().onPostLoadFromFile();
         });

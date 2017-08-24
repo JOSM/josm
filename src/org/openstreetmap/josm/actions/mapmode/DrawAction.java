@@ -950,7 +950,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
      */
     @Override
     public void mouseExited(MouseEvent e) {
-        OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
+        OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
         if (editLayer == null)
             return;
         mousePos = e.getPoint();

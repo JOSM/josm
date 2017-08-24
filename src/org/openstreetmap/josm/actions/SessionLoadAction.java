@@ -137,10 +137,10 @@ public class SessionLoadAction extends DiskAccessAction {
                 for (Layer l : layers) {
                     if (canceled)
                         return;
-                    Main.getLayerManager().addLayer(l);
+                    MainApplication.getLayerManager().addLayer(l);
                 }
                 if (active != null) {
-                    Main.getLayerManager().setActiveLayer(active);
+                    MainApplication.getLayerManager().setActiveLayer(active);
                 }
                 if (noMap && viewport != null) {
                     MainApplication.getMap().mapView.scheduleZoomTo(viewport.getEastNorthViewport(Main.getProjection()));

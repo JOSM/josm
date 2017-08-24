@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Arrays;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
@@ -96,7 +95,7 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
     protected void handleRequest() throws RequestHandlerErrorException {
         final ImageryInfo imgInfo = buildImageryInfo();
         if (MainApplication.isDisplayingMapView()) {
-            for (ImageryLayer layer : Main.getLayerManager().getLayersOfType(ImageryLayer.class)) {
+            for (ImageryLayer layer : MainApplication.getLayerManager().getLayersOfType(ImageryLayer.class)) {
                 if (layer.getInfo().equals(imgInfo)) {
                     Logging.info("Imagery layer already exists: "+imgInfo);
                     return;
@@ -105,7 +104,7 @@ public class ImageryHandler extends RequestHandler.RawURLParseRequestHandler {
         }
         GuiHelper.runInEDT(() -> {
             try {
-                Main.getLayerManager().addLayer(ImageryLayer.create(imgInfo));
+                MainApplication.getLayerManager().addLayer(ImageryLayer.create(imgInfo));
             } catch (IllegalArgumentException e) {
                 Logging.log(Logging.LEVEL_ERROR, e);
             }

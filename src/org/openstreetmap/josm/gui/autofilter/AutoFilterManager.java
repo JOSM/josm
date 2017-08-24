@@ -125,7 +125,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
         MapFrame.addMapModeChangeListener(this);
         Main.pref.addPreferenceChangeListener(this);
         NavigatableComponent.addZoomChangeListener(this);
-        Main.getLayerManager().addLayerChangeListener(this);
+        MainApplication.getLayerManager().addLayerChangeListener(this);
         DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT_CONSOLIDATED);
         registerAutoFilterRules(AutoFilterRule.defaultRules());
     }
@@ -193,7 +193,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
     }
 
     private static Set<String> getTagValues(String key) {
-        DataSet ds = Main.getLayerManager().getEditDataSet();
+        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
         Set<String> values = new TreeSet<>();
         if (ds != null) {
             BBox bbox = MainApplication.getMap().mapView.getState().getViewArea().getLatLonBoundsBox().toBBox();
@@ -370,7 +370,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
             model.addFilter(autoFilter.getFilter());
             model.executeFilters();
             if (model.isChanged()) {
-                OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
+                OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
                 if (editLayer != null) {
                     editLayer.invalidate();
                 }
@@ -421,7 +421,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
 
     @Override
     public void layerRemoving(LayerRemoveEvent e) {
-        if (Main.getLayerManager().getEditLayer() == null) {
+        if (MainApplication.getLayerManager().getEditLayer() == null) {
             resetCurrentAutoFilter();
         }
     }

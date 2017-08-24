@@ -72,8 +72,8 @@ public class DownloadTaskList {
         this.progressMonitor = progressMonitor;
         if (newLayer) {
             Layer l = new OsmDataLayer(new DataSet(), OsmDataLayer.createNewName(), null);
-            Main.getLayerManager().addLayer(l);
-            Main.getLayerManager().setActiveLayer(l);
+            MainApplication.getLayerManager().addLayer(l);
+            MainApplication.getLayerManager().setActiveLayer(l);
         }
 
         int n = (osmData && gpxData ? 2 : 1)*rects.size();
@@ -287,7 +287,7 @@ public class DownloadTaskList {
                         return;
                 }
             }
-            final OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
+            final OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
             if (editLayer != null && osmData) {
                 final Set<OsmPrimitive> myPrimitives = getCompletePrimitives(editLayer.data);
                 for (DownloadTask task : tasks) {

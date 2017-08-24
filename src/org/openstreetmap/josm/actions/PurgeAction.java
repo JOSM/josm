@@ -138,7 +138,7 @@ public class PurgeAction extends JosmAction {
      * @since 11252
      */
     public PurgeCommand getPurgeCommand(Collection<OsmPrimitive> sel) {
-        layer = Main.getLayerManager().getEditLayer();
+        layer = getLayerManager().getEditLayer();
 
         toPurge = new HashSet<>(sel);
         toPurgeAdditionally = new ArrayList<>();

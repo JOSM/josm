@@ -43,7 +43,7 @@ public class EditRelationAction extends AbstractRelationAction {
     public static Set<RelationMember> getMembersForCurrentSelection(Relation r) {
         Set<RelationMember> members = new HashSet<>();
         if (MainApplication.isDisplayingMapView()) {
-            OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
+            OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
             if (editLayer != null && editLayer.data != null) {
                 Collection<OsmPrimitive> selection = editLayer.data.getSelected();
                 for (RelationMember member: r.getMembers()) {
@@ -62,7 +62,7 @@ public class EditRelationAction extends AbstractRelationAction {
      */
     public static void launchEditor(Relation toEdit) {
         if (toEdit == null || toEdit.isDeleted() || !MainApplication.isDisplayingMapView()) return;
-        RelationEditor.getEditor(Main.getLayerManager().getEditLayer(), toEdit,
+        RelationEditor.getEditor(MainApplication.getLayerManager().getEditLayer(), toEdit,
                 getMembersForCurrentSelection(toEdit)).setVisible(true);
     }
 

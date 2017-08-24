@@ -5,8 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -33,7 +33,7 @@ public class DuplicateRelationAction extends AbstractRelationAction {
         Relation copy = new Relation(original, true);
         copy.setModified(true);
         RelationEditor editor = RelationEditor.getEditor(
-                Main.getLayerManager().getEditLayer(),
+                MainApplication.getLayerManager().getEditLayer(),
                 copy,
                 null /* no selected members */
                 );

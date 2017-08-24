@@ -140,7 +140,7 @@ public class DeleteAction extends MapMode implements ModifierExListener {
      * @param e Action event
      */
     public void doActionPerformed(ActionEvent e) {
-        MainLayerManager lm = Main.getLayerManager();
+        MainLayerManager lm = MainApplication.getLayerManager();
         OsmDataLayer editLayer = lm.getEditLayer();
         if (editLayer == null) {
             return;

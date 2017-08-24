@@ -9,13 +9,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -44,7 +44,7 @@ public class CoordinateConflictResolveCommandTest {
     @Before
     public void setUp() {
         layer = new OsmDataLayer(new DataSet(), null, null);
-        Main.getLayerManager().addLayer(layer);
+        MainApplication.getLayerManager().addLayer(layer);
     }
 
     /**
@@ -52,7 +52,7 @@ public class CoordinateConflictResolveCommandTest {
      */
     @After
     public void tearDown() {
-        Main.getLayerManager().removeLayer(layer);
+        MainApplication.getLayerManager().removeLayer(layer);
     }
 
     private static Conflict<Node> createConflict() {

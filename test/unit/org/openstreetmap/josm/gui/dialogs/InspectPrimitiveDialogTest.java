@@ -10,11 +10,11 @@ import javax.swing.JPanel;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.User;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -112,7 +112,7 @@ public class InspectPrimitiveDialogTest {
         // CHECKSTYLE.ON: LineLength
 
         try {
-            Main.getLayerManager().addLayer(layer);
+            MainApplication.getLayerManager().addLayer(layer);
             assertEquals("", InspectPrimitiveDialog.buildMapPaintText());
             Node n = new Node(LatLon.ZERO);
             n.setUser(User.getAnonymous());
@@ -127,7 +127,7 @@ public class InspectPrimitiveDialogTest {
             assertEquals(baseText + baseText + "The 2 selected objects have identical style caches.",
                     InspectPrimitiveDialog.buildMapPaintText().replaceAll("@(\\p{XDigit})+", ""));
         } finally {
-            Main.getLayerManager().removeLayer(layer);
+            MainApplication.getLayerManager().removeLayer(layer);
         }
     }
 }

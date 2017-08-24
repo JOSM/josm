@@ -9,12 +9,12 @@ import java.awt.event.MouseListener;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.relation.SelectionTable.DoubleClickAdapter;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -49,7 +49,7 @@ public class SelectionTableTest {
         // Add a new layer as active one
         OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         try {
-            Main.getLayerManager().addLayer(layer);
+            MainApplication.getLayerManager().addLayer(layer);
             // Constructs models and table
             MemberTableModel memberTableModel = new MemberTableModel(r, layer, null);
             memberTableModel.populate(r);
@@ -84,7 +84,7 @@ public class SelectionTableTest {
                 memberTableModel.unregister();
             }
         } finally {
-            Main.getLayerManager().removeLayer(layer);
+            MainApplication.getLayerManager().removeLayer(layer);
         }
     }
 }

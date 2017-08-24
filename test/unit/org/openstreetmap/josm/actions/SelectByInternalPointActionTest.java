@@ -8,13 +8,13 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -48,7 +48,7 @@ public final class SelectByInternalPointActionTest {
      */
     @Test
     public void testNoDataSet() {
-        assertNull(Main.getLayerManager().getEditDataSet());
+        assertNull(MainApplication.getLayerManager().getEditDataSet());
         assertEquals(0, SelectByInternalPointAction.getSurroundingObjects(null).size());
         assertNull(SelectByInternalPointAction.getSmallestSurroundingObject(null));
         SelectByInternalPointAction.performSelection(null, false, false);
@@ -76,7 +76,7 @@ public final class SelectByInternalPointActionTest {
         r.addMember(new RelationMember("outer", w));
         ds.addPrimitive(r);
         OsmDataLayer layer = new OsmDataLayer(ds, "", null);
-        Main.getLayerManager().addLayer(layer);
+        MainApplication.getLayerManager().addLayer(layer);
         return layer;
     }
 
@@ -108,7 +108,7 @@ public final class SelectByInternalPointActionTest {
     @Test
     public void testPerformSelection() {
         initDataSet();
-        DataSet ds = Main.getLayerManager().getEditDataSet();
+        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
 
         assertEquals(0, ds.getSelected().size());
         SelectByInternalPointAction.performSelection(null, false, false);

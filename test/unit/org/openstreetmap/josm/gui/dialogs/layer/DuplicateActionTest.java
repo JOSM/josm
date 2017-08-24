@@ -10,8 +10,8 @@ import java.io.InputStream;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -37,11 +37,11 @@ public class DuplicateActionTest {
     public void testTicket4539() throws Exception {
         try (InputStream is = TestUtils.getRegressionDataStream(4539, "josm_error_#4539.osm.zip")) {
             OsmDataLayer layer = new OsmDataLayer(OsmReader.parseDataSet(is, null), null, null);
-            OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
+            OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
             assertNull(editLayer);
             try {
                 new DuplicateAction(layer, null).actionPerformed(null);
-                editLayer = Main.getLayerManager().getEditLayer();
+                editLayer = MainApplication.getLayerManager().getEditLayer();
                 assertNotNull(editLayer);
                 assertFalse(layer.equals(editLayer));
                 assertEquals(layer.data.getNodes().size(), editLayer.data.getNodes().size());
@@ -50,7 +50,7 @@ public class DuplicateActionTest {
             } finally {
                 // Ensure we clean the place before leaving, even if test fails.
                 if (editLayer != null) {
-                    Main.getLayerManager().removeLayer(editLayer);
+                    MainApplication.getLayerManager().removeLayer(editLayer);
                 }
             }
         }

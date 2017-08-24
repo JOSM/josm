@@ -293,7 +293,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
                         );
             }
             if (layer != null) {
-                Main.getLayerManager().addLayer(layer);
+                MainApplication.getLayerManager().addLayer(layer);
 
                 if (!canceled && layer.data != null && !layer.data.isEmpty()) {
                     boolean noGeotagFound = true;
@@ -887,7 +887,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
      */
     private void clearOtherCurrentPhotos() {
         for (GeoImageLayer layer:
-                 Main.getLayerManager().getLayersOfType(GeoImageLayer.class)) {
+                 MainApplication.getLayerManager().getLayersOfType(GeoImageLayer.class)) {
             if (layer != this) {
                 layer.clearCurrentPhoto(false);
             }
@@ -991,14 +991,14 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
         MapFrame.addMapModeChangeListener(mapModeListener);
         mapModeListener.mapModeChange(null, MainApplication.getMap().mapMode);
 
-        Main.getLayerManager().addActiveLayerChangeListener(e -> {
-            if (Main.getLayerManager().getActiveLayer() == this) {
+        MainApplication.getLayerManager().addActiveLayerChangeListener(e -> {
+            if (MainApplication.getLayerManager().getActiveLayer() == this) {
                 // only in select mode it is possible to click the images
                 MainApplication.getMap().selectSelectTool(false);
             }
         });
 
-        Main.getLayerManager().addLayerChangeListener(new LayerChangeListener() {
+        MainApplication.getLayerManager().addLayerChangeListener(new LayerChangeListener() {
             @Override
             public void layerAdded(LayerAddEvent e) {
                 // Do nothing
@@ -1018,7 +1018,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
                     }
                     data = null;
                     // stop listening to layer change events
-                    Main.getLayerManager().removeLayerChangeListener(this);
+                    MainApplication.getLayerManager().removeLayerChangeListener(this);
                 }
             }
 

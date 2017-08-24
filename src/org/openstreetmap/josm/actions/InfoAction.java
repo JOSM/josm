@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.dialogs.InspectPrimitiveDialog;
@@ -36,7 +35,7 @@ public class InfoAction extends JosmAction {
     public void actionPerformed(ActionEvent ae) {
         DataSet set = getLayerManager().getEditDataSet();
         if (set != null) {
-            new InspectPrimitiveDialog(set.getAllSelected(), Main.getLayerManager().getEditLayer()).showDialog();
+            new InspectPrimitiveDialog(set.getAllSelected(), getLayerManager().getEditLayer()).showDialog();
         }
     }
 

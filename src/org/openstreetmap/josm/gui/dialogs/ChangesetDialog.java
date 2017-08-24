@@ -120,8 +120,8 @@ public class ChangesetDialog extends ToggleDialog {
         // let the model for changesets in the current layer listen to various
         // events and bootstrap it's content
         ChangesetCache.getInstance().addChangesetCacheListener(inActiveDataLayerModel);
-        Main.getLayerManager().addActiveLayerChangeListener(inActiveDataLayerModel);
-        OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
+        MainApplication.getLayerManager().addActiveLayerChangeListener(inActiveDataLayerModel);
+        OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
         if (editLayer != null) {
             editLayer.data.addDataSetListener(inActiveDataLayerModel);
             inActiveDataLayerModel.initFromDataSet(editLayer.data);
@@ -133,8 +133,8 @@ public class ChangesetDialog extends ToggleDialog {
         // remove the list model for the current edit layer as listener
         //
         ChangesetCache.getInstance().removeChangesetCacheListener(inActiveDataLayerModel);
-        Main.getLayerManager().removeActiveLayerChangeListener(inActiveDataLayerModel);
-        OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
+        MainApplication.getLayerManager().removeActiveLayerChangeListener(inActiveDataLayerModel);
+        OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
         if (editLayer != null) {
             editLayer.data.removeDataSetListener(inActiveDataLayerModel);
         }
@@ -233,7 +233,7 @@ public class ChangesetDialog extends ToggleDialog {
     }
 
     protected void initWithCurrentData() {
-        OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
+        OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
         if (editLayer != null) {
             inSelectionModel.initFromPrimitives(editLayer.data.getAllSelected());
             inActiveDataLayerModel.initFromDataSet(editLayer.data);
@@ -264,9 +264,9 @@ public class ChangesetDialog extends ToggleDialog {
             Set<Integer> sel = getCurrentChangesetListModel().getSelectedChangesetIds();
             if (sel.isEmpty())
                 return;
-            if (Main.getLayerManager().getEditDataSet() == null)
+            if (MainApplication.getLayerManager().getEditDataSet() == null)
                 return;
-            new SelectObjectsAction().selectObjectsByChangesetIds(Main.getLayerManager().getEditDataSet(), sel);
+            new SelectObjectsAction().selectObjectsByChangesetIds(MainApplication.getLayerManager().getEditDataSet(), sel);
         }
 
     }
@@ -312,14 +312,14 @@ public class ChangesetDialog extends ToggleDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if (Main.getLayerManager().getEditLayer() == null)
+            if (MainApplication.getLayerManager().getEditLayer() == null)
                 return;
             ChangesetListModel model = getCurrentChangesetListModel();
             Set<Integer> sel = model.getSelectedChangesetIds();
             if (sel.isEmpty())
                 return;
 
-            DataSet ds = Main.getLayerManager().getEditLayer().data;
+            DataSet ds = MainApplication.getLayerManager().getEditLayer().data;
             selectObjectsByChangesetIds(ds, sel);
         }
 

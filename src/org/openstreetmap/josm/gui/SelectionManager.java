@@ -17,7 +17,6 @@ import java.util.LinkedList;
 
 import javax.swing.Action;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SelectByInternalPointAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.Node;
@@ -182,7 +181,7 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
      */
     @Override
     public void mousePressed(MouseEvent e) {
-        if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1 && Main.getLayerManager().getEditDataSet() != null) {
+        if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() > 1 && MainApplication.getLayerManager().getEditDataSet() != null) {
             SelectByInternalPointAction.performSelection(MainApplication.getMap().mapView.getEastNorth(e.getX(), e.getY()),
                     (e.getModifiersEx() & MouseEvent.SHIFT_DOWN_MASK) != 0,
                     (e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) != 0);
@@ -381,14 +380,14 @@ public class SelectionManager implements MouseListener, MouseMotionListener, Pro
             }
         } else {
             // nodes
-            for (Node n : Main.getLayerManager().getEditDataSet().getNodes()) {
+            for (Node n : MainApplication.getLayerManager().getEditDataSet().getNodes()) {
                 if (n.isSelectable() && selectionResult.contains(nc.getPoint2D(n))) {
                     selection.add(n);
                 }
             }
 
             // ways
-            for (Way w : Main.getLayerManager().getEditDataSet().getWays()) {
+            for (Way w : MainApplication.getLayerManager().getEditDataSet().getWays()) {
                 if (!w.isSelectable() || w.getNodesCount() == 0) {
                     continue;
                 }

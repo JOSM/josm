@@ -136,16 +136,16 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
 
     @Override
     public void registerListeners() {
-        Main.getLayerManager().addLayerChangeListener(zoomToGap);
-        Main.getLayerManager().addActiveLayerChangeListener(zoomToGap);
+        MainApplication.getLayerManager().addLayerChangeListener(zoomToGap);
+        MainApplication.getLayerManager().addActiveLayerChangeListener(zoomToGap);
         super.registerListeners();
     }
 
     @Override
     public void unregisterListeners() {
         super.unregisterListeners();
-        Main.getLayerManager().removeLayerChangeListener(zoomToGap);
-        Main.getLayerManager().removeActiveLayerChangeListener(zoomToGap);
+        MainApplication.getLayerManager().removeLayerChangeListener(zoomToGap);
+        MainApplication.getLayerManager().removeActiveLayerChangeListener(zoomToGap);
     }
 
     public void stopHighlighting() {
@@ -238,7 +238,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
 
         private void updateEnabledState() {
             setEnabled(Main.main != null
-                    && Main.getLayerManager().getEditLayer() == getLayer()
+                    && MainApplication.getLayerManager().getEditLayer() == getLayer()
                     && getSelectedRowCount() == 1
                     && hasGap());
         }

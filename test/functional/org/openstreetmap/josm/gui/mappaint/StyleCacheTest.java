@@ -16,12 +16,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -92,7 +92,7 @@ public class StyleCacheTest {
         g.setClip(0, 0, IMG_WIDTH, IMG_WIDTH);
         g.setColor(Color.BLACK);
         g.fillRect(0, 0, IMG_WIDTH, IMG_WIDTH);
-        nc = new MapView(Main.getLayerManager(), null);
+        nc = new MapView(MainApplication.getLayerManager(), null);
         nc.setBounds(0, 0, IMG_WIDTH, IMG_HEIGHT);
     }
 

@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.TreeMap;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -38,7 +37,7 @@ public final class SelectByInternalPointAction {
      * @return the surrounding polygons/multipolygons
      */
     public static Collection<OsmPrimitive> getSurroundingObjects(EastNorth internalPoint) {
-        return getSurroundingObjects(Main.getLayerManager().getEditDataSet(), internalPoint, false);
+        return getSurroundingObjects(MainApplication.getLayerManager().getEditDataSet(), internalPoint, false);
     }
 
     /**
@@ -103,7 +102,7 @@ public final class SelectByInternalPointAction {
      */
     public static void performSelection(EastNorth internalPoint, boolean doAdd, boolean doRemove) {
         final Collection<OsmPrimitive> surroundingObjects = getSurroundingObjects(internalPoint);
-        final DataSet ds = Main.getLayerManager().getEditDataSet();
+        final DataSet ds = MainApplication.getLayerManager().getEditDataSet();
         if (surroundingObjects.isEmpty()) {
             return;
         } else if (doRemove) {

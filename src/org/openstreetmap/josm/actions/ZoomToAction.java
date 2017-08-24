@@ -11,6 +11,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.conflict.pair.nodes.NodeListTable;
 import org.openstreetmap.josm.gui.conflict.pair.relation.RelationMemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
@@ -103,7 +104,7 @@ public class ZoomToAction extends AbstractAction implements LayerChangeListener,
     }
 
     protected final void updateEnabledState() {
-        if (Main.main == null || Main.getLayerManager().getEditLayer() != this.table.getLayer()) {
+        if (Main.main == null || MainApplication.getLayerManager().getEditLayer() != this.table.getLayer()) {
             setEnabled(false);
             putValue(SHORT_DESCRIPTION, descriptionInactiveLayer);
             return;

@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.mapmode.ExtrudeAction.Mode;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -36,7 +35,7 @@ public class ExtrudeActionTest {
     public void testMode() {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
-            Main.getLayerManager().addLayer(layer);
+            MainApplication.getLayerManager().addLayer(layer);
             ExtrudeAction mapMode = new ExtrudeAction();
             MapFrame map = MainApplication.getMap();
             MapMode oldMapMode = map.mapMode;
@@ -44,7 +43,7 @@ public class ExtrudeActionTest {
             assertEquals(mapMode, map.mapMode);
             assertTrue(map.selectMapMode(oldMapMode));
         } finally {
-            Main.getLayerManager().removeLayer(layer);
+            MainApplication.getLayerManager().removeLayer(layer);
         }
     }
 

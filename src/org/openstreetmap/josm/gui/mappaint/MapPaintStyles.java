@@ -425,7 +425,7 @@ public final class MapPaintStyles {
             styles.clearCached();
 
             // Trigger a repaint of all data layers
-            Main.getLayerManager().getLayers()
+            MainApplication.getLayerManager().getLayers()
                 .stream()
                 .filter(layer -> layer instanceof OsmDataLayer)
                 .forEach(Layer::invalidate);

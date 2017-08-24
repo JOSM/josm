@@ -57,7 +57,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Collection<ImageryLayer> layers = Main.getLayerManager().getLayersOfType(ImageryLayer.class);
+            Collection<ImageryLayer> layers = MainApplication.getLayerManager().getLayersOfType(ImageryLayer.class);
             if (layers.isEmpty()) {
                 setEnabled(false);
                 return;
@@ -111,7 +111,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
         /* I18N: mnemonic: I */
         super(trc("menu", "Imagery"));
         setupMenuScroller();
-        Main.getLayerManager().addLayerChangeListener(this);
+        MainApplication.getLayerManager().addLayerChangeListener(this);
         // build dynamically
         addMenuListener(new MenuListener() {
             @Override
@@ -210,7 +210,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
     }
 
     private JMenuItem getNewOffsetMenu() {
-        Collection<ImageryLayer> layers = Main.getLayerManager().getLayersOfType(ImageryLayer.class);
+        Collection<ImageryLayer> layers = MainApplication.getLayerManager().getLayersOfType(ImageryLayer.class);
         if (layers.isEmpty()) {
             offsetAction.setEnabled(false);
             return singleOffset;

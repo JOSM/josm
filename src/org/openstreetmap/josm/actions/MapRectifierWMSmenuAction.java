@@ -24,6 +24,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
@@ -245,11 +246,11 @@ public class MapRectifierWMSmenuAction extends JosmAction {
                 return;
             }
         }
-        Main.getLayerManager().addLayer(new WMSLayer(info));
+        MainApplication.getLayerManager().addLayer(new WMSLayer(info));
     }
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(!Main.getLayerManager().getLayers().isEmpty());
+        setEnabled(!getLayerManager().getLayers().isEmpty());
     }
 }

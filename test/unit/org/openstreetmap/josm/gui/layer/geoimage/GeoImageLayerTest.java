@@ -11,9 +11,9 @@ import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer.Loader;
@@ -44,13 +44,13 @@ public class GeoImageLayerTest {
             GpxReader reader = new GpxReader(in);
             assertTrue(reader.parse(true));
             GpxLayer gpxLayer = new GpxLayer(reader.getGpxData());
-            Main.getLayerManager().addLayer(gpxLayer);
-            assertEquals(1, Main.getLayerManager().getLayers().size());
+            MainApplication.getLayerManager().addLayer(gpxLayer);
+            assertEquals(1, MainApplication.getLayerManager().getLayers().size());
             new Loader(
                     Collections.singleton(new File(TestUtils.getRegressionDataFile(12255, "G0016941.JPG"))),
                     gpxLayer).run();
-            assertEquals(2, Main.getLayerManager().getLayers().size());
-            GeoImageLayer layer = Main.getLayerManager().getLayersOfType(GeoImageLayer.class).iterator().next();
+            assertEquals(2, MainApplication.getLayerManager().getLayers().size());
+            GeoImageLayer layer = MainApplication.getLayerManager().getLayersOfType(GeoImageLayer.class).iterator().next();
             assertEquals(gpxLayer, layer.getGpxLayer());
             List<ImageEntry> images = layer.getImages();
             assertEquals(1, images.size());

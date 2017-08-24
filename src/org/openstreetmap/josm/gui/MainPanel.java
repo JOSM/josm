@@ -94,7 +94,7 @@ public class MainPanel extends JPanel {
         mapFrame.fillPanel(this);
 
         //TODO: Move this to some better place
-        List<Layer> layers = Main.getLayerManager().getLayers();
+        List<Layer> layers = MainApplication.getLayerManager().getLayers();
         if (!layers.isEmpty()) {
             mapFrame.selectMapMode((MapMode) mapFrame.getDefaultButtonAction(), layers.get(0));
         }

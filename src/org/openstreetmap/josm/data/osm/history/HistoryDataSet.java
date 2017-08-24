@@ -11,7 +11,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -41,7 +40,7 @@ public class HistoryDataSet implements LayerChangeListener {
     public static synchronized HistoryDataSet getInstance() {
         if (historyDataSet == null) {
             historyDataSet = new HistoryDataSet();
-            Main.getLayerManager().addLayerChangeListener(historyDataSet);
+            MainApplication.getLayerManager().addLayerChangeListener(historyDataSet);
         }
         return historyDataSet;
     }
@@ -227,7 +226,7 @@ public class HistoryDataSet implements LayerChangeListener {
     @Override
     public void layerRemoving(LayerRemoveEvent e) {
         if (!MainApplication.isDisplayingMapView()) return;
-        if (Main.getLayerManager().getLayers().isEmpty()) {
+        if (MainApplication.getLayerManager().getLayers().isEmpty()) {
             data.clear();
             fireCacheCleared();
         }

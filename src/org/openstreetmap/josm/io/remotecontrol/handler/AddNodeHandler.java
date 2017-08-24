@@ -101,7 +101,7 @@ public class AddNodeHandler extends RequestHandler {
             Main.main.undoRedo.add(new AddCommand(node));
         }
 
-        Main.getLayerManager().getEditDataSet().setSelected(node);
+        MainApplication.getLayerManager().getEditDataSet().setSelected(node);
         if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
             AutoScaleAction.autoScale("selection");
         } else {
@@ -119,7 +119,7 @@ public class AddNodeHandler extends RequestHandler {
         } catch (NumberFormatException e) {
             throw new RequestHandlerBadRequestException("NumberFormatException ("+e.getMessage()+')', e);
         }
-        if (Main.getLayerManager().getEditLayer() == null) {
+        if (MainApplication.getLayerManager().getEditLayer() == null) {
              throw new RequestHandlerBadRequestException(tr("There is no layer opened to add node"));
         }
     }

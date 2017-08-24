@@ -763,7 +763,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         }
 
         static SearchTask newSearchTask(SearchSetting setting, SearchReceiver resultReceiver) {
-            final DataSet ds = Main.getLayerManager().getEditDataSet();
+            final DataSet ds = MainApplication.getLayerManager().getEditDataSet();
             return newSearchTask(setting, ds, resultReceiver);
         }
 

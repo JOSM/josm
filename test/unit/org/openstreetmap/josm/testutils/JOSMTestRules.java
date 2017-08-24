@@ -375,7 +375,7 @@ public class JOSMTestRules implements TestRule {
     public static void cleanLayerEnvironment() {
         // Get the instance before cleaning - this ensures that it is initialized.
         SelectionEventManager eventManager = SelectionEventManager.getInstance();
-        Main.getLayerManager().resetState();
+        MainApplication.getLayerManager().resetState();
         eventManager.resetState();
     }
 

@@ -8,7 +8,6 @@ import java.util.Collections;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.NoteData;
@@ -38,7 +37,7 @@ public class AddNoteActionTest {
     public void testMode() {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
-            Main.getLayerManager().addLayer(layer);
+            MainApplication.getLayerManager().addLayer(layer);
             AddNoteAction mapMode = new AddNoteAction(new NoteData(Collections.<Note>emptyList()));
             MapFrame map = MainApplication.getMap();
             MapMode oldMapMode = map.mapMode;
@@ -46,7 +45,7 @@ public class AddNoteActionTest {
             assertEquals(mapMode, map.mapMode);
             assertTrue(map.selectMapMode(oldMapMode));
         } finally {
-            Main.getLayerManager().removeLayer(layer);
+            MainApplication.getLayerManager().removeLayer(layer);
         }
     }
 }

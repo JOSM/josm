@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -35,7 +34,7 @@ public class PlayHeadDragModeTest {
     public void testMode() {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
-            Main.getLayerManager().addLayer(layer);
+            MainApplication.getLayerManager().addLayer(layer);
             PlayHeadDragMode mapMode = new PlayHeadDragMode(PlayHeadMarker.create());
             MapFrame map = MainApplication.getMap();
             MapMode oldMapMode = map.mapMode;
@@ -43,7 +42,7 @@ public class PlayHeadDragModeTest {
             assertEquals(mapMode, map.mapMode);
             assertTrue(map.selectMapMode(oldMapMode));
         } finally {
-            Main.getLayerManager().removeLayer(layer);
+            MainApplication.getLayerManager().removeLayer(layer);
         }
     }
 }

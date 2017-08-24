@@ -43,7 +43,7 @@ public class GpxExportAction extends DiskAccessAction {
      * @return The layer to export, either a {@link GpxLayer} or {@link OsmDataLayer}.
      */
     protected Layer getLayer() {
-        Layer layer = Main.getLayerManager().getActiveLayer();
+        Layer layer = getLayerManager().getActiveLayer();
         return (layer instanceof GpxLayer || layer instanceof OsmDataLayer) ? layer : null;
     }
 

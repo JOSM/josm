@@ -6,10 +6,10 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
@@ -43,7 +43,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
      */
     public void register() {
         DataSet.addSelectionListener(this);
-        Main.getLayerManager().addActiveLayerChangeListener(this);
+        MainApplication.getLayerManager().addActiveLayerChangeListener(this);
     }
 
     /**
@@ -51,7 +51,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
      */
     public void unregister() {
         DataSet.removeSelectionListener(this);
-        Main.getLayerManager().removeActiveLayerChangeListener(this);
+        MainApplication.getLayerManager().removeActiveLayerChangeListener(this);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
 
     @Override
     public int getRowCount() {
-        if (Main.getLayerManager().getEditLayer() != layer)
+        if (MainApplication.getLayerManager().getEditLayer() != layer)
             return 0;
         return cache.size();
     }
@@ -103,7 +103,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
 
     @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        if (layer == Main.getLayerManager().getEditLayer()) {
+        if (layer == MainApplication.getLayerManager().getEditLayer()) {
             cache.clear();
             cache.addAll(newSelection);
         } else {

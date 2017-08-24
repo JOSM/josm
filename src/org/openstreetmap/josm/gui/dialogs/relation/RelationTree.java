@@ -14,7 +14,6 @@ import javax.swing.event.TreeWillExpandListener;
 import javax.swing.tree.ExpandVetoException;
 import javax.swing.tree.TreePath;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -136,10 +135,10 @@ public class RelationTree extends JTree {
                 Logging.error(lastException);
                 return;
             }
-            DataSetMerger visitor = new DataSetMerger(Main.getLayerManager().getEditLayer().data, ds);
+            DataSetMerger visitor = new DataSetMerger(MainApplication.getLayerManager().getEditLayer().data, ds);
             visitor.merge();
             if (!visitor.getConflicts().isEmpty()) {
-                Main.getLayerManager().getEditLayer().getConflicts().add(visitor.getConflicts());
+                MainApplication.getLayerManager().getEditLayer().getConflicts().add(visitor.getConflicts());
             }
             final RelationTreeModel model = (RelationTreeModel) getModel();
             SwingUtilities.invokeLater(() -> model.refreshNode(path));

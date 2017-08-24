@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -64,12 +63,12 @@ public class MergeLayerAction extends AbstractMergeAction {
                             break;
                         }
                         targetLayer.mergeFrom(sourceLayer);
-                        GuiHelper.runInEDTAndWait(() -> Main.getLayerManager().removeLayer(sourceLayer));
+                        GuiHelper.runInEDTAndWait(() -> getLayerManager().removeLayer(sourceLayer));
                         layerMerged = true;
                     }
                 }
                 if (layerMerged) {
-                    Main.getLayerManager().setActiveLayer(targetLayer);
+                    getLayerManager().setActiveLayer(targetLayer);
                     Logging.info(tr("{0} completed in {1}", actionName, Utils.getDurationString(System.currentTimeMillis() - start)));
                 }
         });
@@ -130,7 +129,7 @@ public class MergeLayerAction extends AbstractMergeAction {
      * @return the source layer
      */
     protected Layer getSourceLayer() {
-        return Main.getLayerManager().getActiveLayer();
+        return getLayerManager().getActiveLayer();
     }
 
     /**

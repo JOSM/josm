@@ -115,7 +115,7 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     protected AbstractTileSourceLayer<? extends AbstractTMSTileSource> askedLayer() {
-        List<AbstractTileSourceLayer> targetLayers = Main.getLayerManager().getLayersOfType(AbstractTileSourceLayer.class);
+        List<AbstractTileSourceLayer> targetLayers = MainApplication.getLayerManager().getLayersOfType(AbstractTileSourceLayer.class);
         if (targetLayers.isEmpty()) {
             if (!GraphicsEnvironment.isHeadless()) {
                 warnNoImageryLayers();

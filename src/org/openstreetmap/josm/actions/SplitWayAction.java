@@ -293,11 +293,11 @@ public class SplitWayAction extends JosmAction {
             super.buttonAction(buttonIndex, evt);
             toggleSaveState(); // necessary since #showDialog() does not handle it due to the non-modal dialog
             if (getValue() == 1) {
-                SplitWayResult result = doSplitWay(Main.getLayerManager().getEditLayer(),
+                SplitWayResult result = doSplitWay(MainApplication.getLayerManager().getEditLayer(),
                         selectedWay, list.getSelectedValue(), newWays, selection);
                 Main.main.undoRedo.add(result.getCommand());
                 if (!result.getNewSelection().isEmpty()) {
-                    Main.getLayerManager().getEditDataSet().setSelected(result.getNewSelection());
+                    MainApplication.getLayerManager().getEditDataSet().setSelected(result.getNewSelection());
                 }
             }
         }

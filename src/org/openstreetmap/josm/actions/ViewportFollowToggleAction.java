@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -42,6 +41,6 @@ public class ViewportFollowToggleAction extends ToggleAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(Main.getLayerManager().getEditDataSet() != null);
+        setEnabled(getLayerManager().getEditDataSet() != null);
     }
 }

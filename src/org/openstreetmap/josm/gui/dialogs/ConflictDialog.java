@@ -154,13 +154,13 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
 
     @Override
     public void showNotify() {
-        Main.getLayerManager().addAndFireActiveLayerChangeListener(this);
+        MainApplication.getLayerManager().addAndFireActiveLayerChangeListener(this);
     }
 
     @Override
     public void hideNotify() {
-        Main.getLayerManager().removeActiveLayerChangeListener(this);
-        removeEditLayerListeners(Main.getLayerManager().getEditLayer());
+        MainApplication.getLayerManager().removeActiveLayerChangeListener(this);
+        removeEditLayerListeners(MainApplication.getLayerManager().getEditLayer());
     }
 
     /**
@@ -217,7 +217,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
      * refreshes the view of this dialog
      */
     public void refreshView() {
-        OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
+        OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
         synchronized (this) {
             conflicts = editLayer == null ? new ConflictCollection() : editLayer.getConflicts();
         }
@@ -482,7 +482,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
                     sel.add(o);
                 }
             }
-            DataSet ds = Main.getLayerManager().getEditDataSet();
+            DataSet ds = MainApplication.getLayerManager().getEditDataSet();
             if (ds != null) { // Can't see how it is possible but it happened in #7942
                 ds.setSelected(sel);
             }

@@ -12,9 +12,9 @@ import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -57,11 +57,11 @@ public final class AddImageryLayerActionTest {
      */
     @Test
     public void testActionPerformedEnabledTms() {
-        assertTrue(Main.getLayerManager().getLayersOfType(TMSLayer.class).isEmpty());
+        assertTrue(MainApplication.getLayerManager().getLayersOfType(TMSLayer.class).isEmpty());
         new AddImageryLayerAction(new ImageryInfo("foo_tms", "http://bar", "tms", null, null)).actionPerformed(null);
-        List<TMSLayer> tmsLayers = Main.getLayerManager().getLayersOfType(TMSLayer.class);
+        List<TMSLayer> tmsLayers = MainApplication.getLayerManager().getLayersOfType(TMSLayer.class);
         assertEquals(1, tmsLayers.size());
-        Main.getLayerManager().removeLayer(tmsLayers.get(0));
+        MainApplication.getLayerManager().removeLayer(tmsLayers.get(0));
     }
 
     /**
@@ -76,10 +76,10 @@ public final class AddImageryLayerActionTest {
                     .withBodyFile("imagery/wms-capabilities.xml")));
         new AddImageryLayerAction(new ImageryInfo("localhost", "http://localhost:" + wireMockRule.port() + "/wms?",
                 "wms_endpoint", null, null)).actionPerformed(null);
-        List<WMSLayer> wmsLayers = Main.getLayerManager().getLayersOfType(WMSLayer.class);
+        List<WMSLayer> wmsLayers = MainApplication.getLayerManager().getLayersOfType(WMSLayer.class);
         assertEquals(1, wmsLayers.size());
 
-        Main.getLayerManager().removeLayer(wmsLayers.get(0));
+        MainApplication.getLayerManager().removeLayer(wmsLayers.get(0));
     }
 
     /**
@@ -87,12 +87,12 @@ public final class AddImageryLayerActionTest {
      */
     @Test
     public void testActionPerformedDisabled() {
-        assertTrue(Main.getLayerManager().getLayersOfType(TMSLayer.class).isEmpty());
+        assertTrue(MainApplication.getLayerManager().getLayersOfType(TMSLayer.class).isEmpty());
         try {
             new AddImageryLayerAction(new ImageryInfo("foo")).actionPerformed(null);
         } catch (IllegalArgumentException expected) {
             assertEquals("Parameter 'info.url' must not be null", expected.getMessage());
         }
-        assertTrue(Main.getLayerManager().getLayersOfType(TMSLayer.class).isEmpty());
+        assertTrue(MainApplication.getLayerManager().getLayersOfType(TMSLayer.class).isEmpty());
     }
 }

@@ -5,14 +5,14 @@ import java.awt.Cursor;
 import java.awt.event.MouseListener;
 import java.awt.geom.Point2D;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 
 class MapViewMock extends MapView {
     MapViewMock() {
-        this(Main.getLayerManager());
+        this(MainApplication.getLayerManager());
     }
 
     MapViewMock(MainLayerManager layerManager) {

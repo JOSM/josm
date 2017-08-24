@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.mapmode.ParallelWayAction.Mode;
 import org.openstreetmap.josm.actions.mapmode.ParallelWayAction.Modifier;
@@ -37,7 +36,7 @@ public class ParallelWayActionTest {
     public void testMode() {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
         try {
-            Main.getLayerManager().addLayer(layer);
+            MainApplication.getLayerManager().addLayer(layer);
             MapFrame map = MainApplication.getMap();
             ParallelWayAction mapMode = new ParallelWayAction(map);
             MapMode oldMapMode = map.mapMode;
@@ -45,7 +44,7 @@ public class ParallelWayActionTest {
             assertEquals(mapMode, map.mapMode);
             assertTrue(map.selectMapMode(oldMapMode));
         } finally {
-            Main.getLayerManager().removeLayer(layer);
+            MainApplication.getLayerManager().removeLayer(layer);
         }
     }
 

@@ -171,16 +171,16 @@ public class SelectionListDialog extends ToggleDialog {
         SelectionEventManager.getInstance().addSelectionListener(actShowHistory, FireMode.IN_EDT_CONSOLIDATED);
         SelectionEventManager.getInstance().addSelectionListener(model, FireMode.IN_EDT_CONSOLIDATED);
         DatasetEventManager.getInstance().addDatasetListener(model, FireMode.IN_EDT);
-        Main.getLayerManager().addActiveLayerChangeListener(actSearch);
+        MainApplication.getLayerManager().addActiveLayerChangeListener(actSearch);
         // editLayerChanged also gets the selection history of the level. Listener calls setJOSMSelection when fired.
-        Main.getLayerManager().addAndFireActiveLayerChangeListener(model);
+        MainApplication.getLayerManager().addAndFireActiveLayerChangeListener(model);
         actSearch.updateEnabledState();
     }
 
     @Override
     public void hideNotify() {
-        Main.getLayerManager().removeActiveLayerChangeListener(actSearch);
-        Main.getLayerManager().removeActiveLayerChangeListener(model);
+        MainApplication.getLayerManager().removeActiveLayerChangeListener(actSearch);
+        MainApplication.getLayerManager().removeActiveLayerChangeListener(model);
         SelectionEventManager.getInstance().removeSelectionListener(actShowHistory);
         SelectionEventManager.getInstance().removeSelectionListener(model);
         DatasetEventManager.getInstance().removeDatasetListener(model);
@@ -202,7 +202,7 @@ public class SelectionListDialog extends ToggleDialog {
             int idx = lstPrimitives.locationToIndex(e.getPoint());
             if (idx < 0) return;
             if (isDoubleClick(e)) {
-                OsmDataLayer layer = Main.getLayerManager().getEditLayer();
+                OsmDataLayer layer = MainApplication.getLayerManager().getEditLayer();
                 if (layer == null) return;
                 OsmPrimitive osm = model.getElementAt(idx);
                 Collection<OsmPrimitive> sel = layer.data.getSelected();
@@ -298,7 +298,7 @@ public class SelectionListDialog extends ToggleDialog {
         }
 
         protected void updateEnabledState() {
-            setEnabled(Main.getLayerManager().getEditLayer() != null);
+            setEnabled(MainApplication.getLayerManager().getEditLayer() != null);
         }
 
         @Override
@@ -323,7 +323,7 @@ public class SelectionListDialog extends ToggleDialog {
         public void actionPerformed(ActionEvent e) {
             Collection<OsmPrimitive> sel = model.getSelected();
             if (sel.isEmpty()) return;
-            OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
+            OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
             if (editLayer == null) return;
             editLayer.data.setSelected(sel);
             model.selectionModel.setSelectionInterval(0, sel.size()-1);
@@ -844,7 +844,7 @@ public class SelectionListDialog extends ToggleDialog {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Main.getLayerManager().getEditDataSet().setSelected(sel);
+            MainApplication.getLayerManager().getEditDataSet().setSelected(sel);
         }
     }
 

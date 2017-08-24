@@ -7,8 +7,8 @@ import static org.junit.Assert.assertNull;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.LayerManagerTest.TestLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -37,8 +37,8 @@ public class MergeLayerActionTest {
         if (action == null) {
             action = new MergeLayerAction();
         }
-        for (TestLayer testLayer : Main.getLayerManager().getLayersOfType(TestLayer.class)) {
-            Main.getLayerManager().removeLayer(testLayer);
+        for (TestLayer testLayer : MainApplication.getLayerManager().getLayersOfType(TestLayer.class)) {
+            MainApplication.getLayerManager().removeLayer(testLayer);
         }
     }
 
@@ -47,9 +47,9 @@ public class MergeLayerActionTest {
      */
     @Test
     public void testMergeNoSourceLayer() {
-        assertNull(Main.getLayerManager().getActiveLayer());
+        assertNull(MainApplication.getLayerManager().getActiveLayer());
         action.actionPerformed(null);
-        assertEquals(0, Main.getLayerManager().getLayers().size());
+        assertEquals(0, MainApplication.getLayerManager().getLayers().size());
     }
 
     /**
@@ -58,10 +58,10 @@ public class MergeLayerActionTest {
     @Test
     public void testMergeNoTargetLayer() {
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
-        Main.getLayerManager().addLayer(layer);
-        assertEquals(1, Main.getLayerManager().getLayers().size());
+        MainApplication.getLayerManager().addLayer(layer);
+        assertEquals(1, MainApplication.getLayerManager().getLayers().size());
         assertNull(action.merge(layer));
-        assertEquals(1, Main.getLayerManager().getLayers().size());
+        assertEquals(1, MainApplication.getLayerManager().getLayers().size());
     }
 
     /**
@@ -72,10 +72,10 @@ public class MergeLayerActionTest {
     public void testMergeTwoEmptyLayers() throws Exception {
         OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "1", null);
         OsmDataLayer layer2 = new OsmDataLayer(new DataSet(), "2", null);
-        Main.getLayerManager().addLayer(layer1);
-        Main.getLayerManager().addLayer(layer2);
-        assertEquals(2, Main.getLayerManager().getLayers().size());
+        MainApplication.getLayerManager().addLayer(layer1);
+        MainApplication.getLayerManager().addLayer(layer2);
+        assertEquals(2, MainApplication.getLayerManager().getLayers().size());
         action.merge(layer2).get();
-        assertEquals(1, Main.getLayerManager().getLayers().size());
+        assertEquals(1, MainApplication.getLayerManager().getLayers().size());
     }
 }

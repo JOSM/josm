@@ -469,7 +469,7 @@ public class JoinAreasAction extends JosmAction {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        join(Main.getLayerManager().getEditDataSet().getSelectedWays());
+        join(getLayerManager().getEditDataSet().getSelectedWays());
     }
 
     /**
@@ -691,7 +691,7 @@ public class JoinAreasAction extends JosmAction {
 
         // Delete the discarded inner ways
         if (!discardedWays.isEmpty()) {
-            Command deleteCmd = DeleteCommand.delete(Main.getLayerManager().getEditLayer(), discardedWays, true);
+            Command deleteCmd = DeleteCommand.delete(getLayerManager().getEditLayer(), discardedWays, true);
             if (deleteCmd != null) {
                 cmds.add(deleteCmd);
                 commitCommands(marktr("Delete Ways that are not part of an inner multipolygon"));
@@ -1458,7 +1458,7 @@ public class JoinAreasAction extends JosmAction {
      */
     private RelationRole addOwnMultipolygonRelation(Collection<Way> inner) {
         if (inner.isEmpty()) return null;
-        OsmDataLayer layer = Main.getLayerManager().getEditLayer();
+        OsmDataLayer layer = getLayerManager().getEditLayer();
         // Create new multipolygon relation and add all inner ways to it
         Relation newRel = new Relation();
         newRel.put("type", "multipolygon");
@@ -1536,7 +1536,7 @@ public class JoinAreasAction extends JosmAction {
             cmds.add(new ChangeCommand(r.rel, newRel));
         }
 
-        OsmDataLayer layer = Main.getLayerManager().getEditLayer();
+        OsmDataLayer layer = getLayerManager().getEditLayer();
         Relation newRel;
         switch (multiouters.size()) {
         case 0:
