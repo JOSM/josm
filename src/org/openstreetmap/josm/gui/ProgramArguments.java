@@ -19,7 +19,7 @@ import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
 
 /**
- * This class holds the arguments passed on to Main.
+ * This class holds the arguments passed on to {@link MainApplication#main}.
  * @author Michael Zangl
  * @since 10899
  */

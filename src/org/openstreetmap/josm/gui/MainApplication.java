@@ -35,6 +35,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -48,9 +49,15 @@ import javax.swing.SwingUtilities;
 import org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager;
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.actions.RestartAction;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
+import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
+import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
+import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.AutosaveTask;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.CustomConfigurator;
@@ -650,6 +657,48 @@ public class MainApplication extends Main {
                 Main.pref.put("validated.ipv6", hasv6);
             }, "IPv6-checker").start();
         }
+    }
+
+    /**
+     * Download area specified as Bounds value.
+     * @param rawGps Flag to download raw GPS tracks
+     * @param b The bounds value
+     * @return the complete download task (including post-download handler)
+     */
+    static List<Future<?>> downloadFromParamBounds(final boolean rawGps, Bounds b) {
+        DownloadTask task = rawGps ? new DownloadGpsTask() : new DownloadOsmTask();
+        // asynchronously launch the download task ...
+        Future<?> future = task.download(true, b, null);
+        // ... and the continuation when the download is finished (this will wait for the download to finish)
+        return Collections.singletonList(Main.worker.submit(new PostDownloadHandler(task, future)));
+    }
+
+    /**
+     * Handle command line instructions after GUI has been initialized.
+     * @param args program arguments
+     * @return the list of submitted tasks
+     */
+    static List<Future<?>> postConstructorProcessCmdLine(ProgramArguments args) {
+        List<Future<?>> tasks = new ArrayList<>();
+        List<File> fileList = new ArrayList<>();
+        for (String s : args.get(Option.DOWNLOAD)) {
+            tasks.addAll(DownloadParamType.paramType(s).download(s, fileList));
+        }
+        if (!fileList.isEmpty()) {
+            tasks.add(OpenFileAction.openFiles(fileList, true));
+        }
+        for (String s : args.get(Option.DOWNLOADGPS)) {
+            tasks.addAll(DownloadParamType.paramType(s).downloadGps(s));
+        }
+        final Collection<String> selectionArguments = args.get(Option.SELECTION);
+        if (!selectionArguments.isEmpty()) {
+            tasks.add(Main.worker.submit(() -> {
+                for (String s : selectionArguments) {
+                    SearchAction.search(s, SearchAction.SearchMode.add);
+                }
+            }));
+        }
+        return tasks;
     }
 
     private static class GuiFinalizationWorker implements Runnable {
