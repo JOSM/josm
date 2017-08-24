@@ -160,7 +160,8 @@ public class CreateMultipolygonAction extends JosmAction {
         // download incomplete relation or incomplete members if necessary
         if (multipolygonRelation != null) {
             if (!multipolygonRelation.isNew() && multipolygonRelation.isIncomplete()) {
-                MainApplication.worker.submit(new DownloadRelationTask(Collections.singleton(multipolygonRelation), Main.getLayerManager().getEditLayer()));
+                MainApplication.worker.submit(
+                        new DownloadRelationTask(Collections.singleton(multipolygonRelation), Main.getLayerManager().getEditLayer()));
             } else if (multipolygonRelation.hasIncompleteMembers()) {
                 MainApplication.worker.submit(new DownloadRelationMemberTask(multipolygonRelation,
                         DownloadSelectedIncompleteMembersAction.buildSetOfIncompleteMembers(Collections.singleton(multipolygonRelation)),

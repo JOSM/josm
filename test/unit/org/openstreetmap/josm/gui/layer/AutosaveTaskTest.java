@@ -25,8 +25,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.gui.layer.AutosaveTask;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.AutosaveTask.AutosaveLayerInfo;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
