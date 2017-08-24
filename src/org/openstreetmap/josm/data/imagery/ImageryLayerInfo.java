@@ -106,7 +106,8 @@ public class ImageryLayerInfo {
      * Entries marked as "default" are added to the user selection, if not already present.
      *
      * @param clearCache if true, clear the cache and start a fresh download.
-     * @param worker executor service which will perform the loading. If null, it should be performed using a {@link PleaseWaitRunnable} in the background
+     * @param worker executor service which will perform the loading.
+     * If null, it should be performed using a {@link PleaseWaitRunnable} in the background
      * @param fastFail whether opening HTTP connections should fail fast, see {@link ImageryReader#setFastFail(boolean)}
      * @since 12634
      */
