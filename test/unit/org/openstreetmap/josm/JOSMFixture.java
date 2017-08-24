@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -14,12 +13,9 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import javax.swing.JPanel;
-
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainApplicationTest;
-import org.openstreetmap.josm.gui.MainPanel;
 import org.openstreetmap.josm.gui.layer.LayerManagerTest.TestLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CertificateAmendment;
@@ -157,7 +153,7 @@ public class JOSMFixture {
         } else {
             if (Main.main.panel == null) {
                 initMainPanel(false);
-                Main.main.panel = Main.mainPanel;
+                Main.main.panel = MainApplicationTest.getMainPanel();
             }
             Main.main.panel.reAddListeners();
         }
@@ -166,45 +162,31 @@ public class JOSMFixture {
     }
 
     /**
-     * Make sure {@code Main.contentPanePrivate} is initialized.
+     * Make sure {@code MainApplication.contentPanePrivate} is initialized.
      */
     public static void initContentPane() {
-        if (Main.contentPanePrivate == null) {
-            Main.contentPanePrivate = new JPanel(new BorderLayout());
-        }
+        MainApplicationTest.initContentPane();
     }
 
     /**
-     * Make sure {@code Main.mainPanel} is initialized.
+     * Make sure {@code MainApplication.mainPanel} is initialized.
      */
     public static void initMainPanel() {
         initMainPanel(false);
     }
 
     /**
-     * Make sure {@code Main.mainPanel} is initialized.
+     * Make sure {@code MainApplication.mainPanel} is initialized.
      * @param reAddListeners {@code true} to re-add listeners
      */
     public static void initMainPanel(boolean reAddListeners) {
-        if (Main.mainPanel == null) {
-            Main.mainPanel = new MainPanel(MainApplication.getLayerManager());
-        }
-        if (reAddListeners) {
-            Main.mainPanel.reAddListeners();
-        }
-        if (Main.main != null) {
-            Main.main.panel = Main.mainPanel;
-        }
+        MainApplicationTest.initMainPanel(reAddListeners);
     }
 
     /**
-     * Make sure {@code Main.toolbar} is initialized.
+     * Make sure {@code MainApplication.toolbar} is initialized.
      */
-    @SuppressWarnings("deprecation")
     public static void initToolbar() {
         MainApplicationTest.initToolbar();
-        if (Main.toolbar == null) {
-            Main.toolbar = MainApplication.getToolbar();
-        }
     }
 }

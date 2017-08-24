@@ -211,7 +211,7 @@ public final class MultikeyActionsHandler {
         if (action.getMultikeyShortcut() != null) {
             MyAction myAction = new MyAction(action);
             myActions.put(action, myAction);
-            Main.registerActionShortcut(myAction, myAction.shortcut);
+            MainApplication.registerActionShortcut(myAction, myAction.shortcut);
         }
     }
 
@@ -222,7 +222,7 @@ public final class MultikeyActionsHandler {
     public void removeAction(MultikeyShortcutAction action) {
         MyAction a = myActions.get(action);
         if (a != null) {
-            Main.unregisterActionShortcut(a, a.shortcut);
+            MainApplication.unregisterActionShortcut(a, a.shortcut);
             myActions.remove(action);
         }
     }

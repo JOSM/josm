@@ -7,7 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.KeyEvent;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -24,7 +24,7 @@ public final class PasteAction extends AbstractPasteAction {
                 Shortcut.registerShortcut("system:paste", tr("Edit: {0}", tr("Paste")), KeyEvent.VK_V, Shortcut.CTRL), true);
         putValue("help", ht("/Action/Paste"));
         // CUA shortcut for paste (https://en.wikipedia.org/wiki/IBM_Common_User_Access#Description)
-        Main.registerActionShortcut(this,
+        MainApplication.registerActionShortcut(this,
                 Shortcut.registerShortcut("system:paste:cua", tr("Edit: {0}", tr("Paste")), KeyEvent.VK_INSERT, Shortcut.SHIFT));
     }
 }

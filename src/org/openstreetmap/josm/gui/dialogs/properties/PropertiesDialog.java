@@ -514,7 +514,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         SelectionEventManager.getInstance().addSelectionListener(this, FireMode.IN_EDT_CONSOLIDATED);
         MainApplication.getLayerManager().addActiveLayerChangeListener(this);
         for (JosmAction action : josmActions) {
-            Main.registerActionShortcut(action);
+            MainApplication.registerActionShortcut(action);
         }
         updateSelection();
     }
@@ -525,7 +525,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         SelectionEventManager.getInstance().removeSelectionListener(this);
         MainApplication.getLayerManager().removeActiveLayerChangeListener(this);
         for (JosmAction action : josmActions) {
-            Main.unregisterActionShortcut(action);
+            MainApplication.unregisterActionShortcut(action);
         }
     }
 
@@ -1334,7 +1334,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
             putValue(NAME, tr("Copy all Keys/Values"));
             putValue(SHORT_DESCRIPTION, tr("Copy the key and value of all the tags to clipboard"));
             Shortcut sc = Shortcut.registerShortcut("system:copytags", tr("Edit: {0}", tr("Copy Tags")), KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
-            Main.registerActionShortcut(this, sc);
+            MainApplication.registerActionShortcut(this, sc);
             sc.setAccelerator(this);
         }
 

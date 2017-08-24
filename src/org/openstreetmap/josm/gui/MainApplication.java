@@ -43,8 +43,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.net.ssl.SSLSocketFactory;
+import javax.swing.Action;
+import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.KeyStroke;
 import javax.swing.LookAndFeel;
 import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
@@ -54,6 +57,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager;
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.actions.RestartAction;
@@ -128,6 +132,16 @@ public class MainApplication extends Main {
      * Command-line arguments used to run the application.
      */
     private static final List<String> COMMAND_LINE_ARGS = new ArrayList<>();
+
+    /**
+     * The same panel as {@link Main#panel}, required to be static for {@link MapFrameListener} handling.
+     */
+    static MainPanel mainPanel;
+
+    /**
+     * The private content pane of {@link MainFrame}, required to be static for shortcut handling.
+     */
+    static JComponent contentPanePrivate;
 
     /**
      * The MapFrame.
@@ -392,6 +406,125 @@ public class MainApplication extends Main {
     }
 
     /**
+     * Registers a new {@code MapFrameListener} that will be notified of MapFrame changes.
+     * <p>
+     * It will fire an initial mapFrameInitialized event when the MapFrame is present.
+     * Otherwise will only fire when the MapFrame is created or destroyed.
+     * @param listener The MapFrameListener
+     * @return {@code true} if the listeners collection changed as a result of the call
+     * @see #addMapFrameListener
+     * @since 12639 (as a replacement to {@code Main.addAndFireMapFrameListener})
+     */
+    @SuppressWarnings("deprecation")
+    public static boolean addAndFireMapFrameListener(MapFrameListener listener) {
+        return mainPanel != null && mainPanel.addAndFireMapFrameListener(listener);
+    }
+
+    /**
+     * Registers a new {@code MapFrameListener} that will be notified of MapFrame changes
+     * @param listener The MapFrameListener
+     * @return {@code true} if the listeners collection changed as a result of the call
+     * @see #addAndFireMapFrameListener
+     * @since 12639 (as a replacement to {@code Main.addMapFrameListener})
+     */
+    @SuppressWarnings("deprecation")
+    public static boolean addMapFrameListener(MapFrameListener listener) {
+        return mainPanel != null && mainPanel.addMapFrameListener(listener);
+    }
+
+    /**
+     * Unregisters the given {@code MapFrameListener} from MapFrame changes
+     * @param listener The MapFrameListener
+     * @return {@code true} if the listeners collection changed as a result of the call
+     * @since 12639 (as a replacement to {@code Main.removeMapFrameListener})
+     */
+    @SuppressWarnings("deprecation")
+    public static boolean removeMapFrameListener(MapFrameListener listener) {
+        return mainPanel != null && mainPanel.removeMapFrameListener(listener);
+    }
+
+    /**
+     * Registers a {@code JosmAction} and its shortcut.
+     * @param action action defining its own shortcut
+     * @since 12639 (as a replacement to {@code Main.registerActionShortcut})
+     */
+    @SuppressWarnings("deprecation")
+    public static void registerActionShortcut(JosmAction action) {
+        registerActionShortcut(action, action.getShortcut());
+    }
+
+    /**
+     * Registers an action and its shortcut.
+     * @param action action to register
+     * @param shortcut shortcut to associate to {@code action}
+     * @since 12639 (as a replacement to {@code Main.registerActionShortcut})
+     */
+    @SuppressWarnings("deprecation")
+    public static void registerActionShortcut(Action action, Shortcut shortcut) {
+        KeyStroke keyStroke = shortcut.getKeyStroke();
+        if (keyStroke == null)
+            return;
+
+        InputMap inputMap = contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
+        Object existing = inputMap.get(keyStroke);
+        if (existing != null && !existing.equals(action)) {
+            Logging.info(String.format("Keystroke %s is already assigned to %s, will be overridden by %s", keyStroke, existing, action));
+        }
+        inputMap.put(keyStroke, action);
+
+        contentPanePrivate.getActionMap().put(action, action);
+    }
+
+    /**
+     * Unregisters a shortcut.
+     * @param shortcut shortcut to unregister
+     * @since 12639 (as a replacement to {@code Main.unregisterShortcut})
+     */
+    @SuppressWarnings("deprecation")
+    public static void unregisterShortcut(Shortcut shortcut) {
+        contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(shortcut.getKeyStroke());
+    }
+
+    /**
+     * Unregisters a {@code JosmAction} and its shortcut.
+     * @param action action to unregister
+     * @since 12639 (as a replacement to {@code Main.unregisterActionShortcut})
+     */
+    @SuppressWarnings("deprecation")
+    public static void unregisterActionShortcut(JosmAction action) {
+        unregisterActionShortcut(action, action.getShortcut());
+    }
+
+    /**
+     * Unregisters an action and its shortcut.
+     * @param action action to unregister
+     * @param shortcut shortcut to unregister
+     * @since 12639 (as a replacement to {@code Main.unregisterActionShortcut})
+     */
+    @SuppressWarnings("deprecation")
+    public static void unregisterActionShortcut(Action action, Shortcut shortcut) {
+        unregisterShortcut(shortcut);
+        contentPanePrivate.getActionMap().remove(action);
+    }
+
+    /**
+     * Replies the registered action for the given shortcut
+     * @param shortcut The shortcut to look for
+     * @return the registered action for the given shortcut
+     * @since 12639 (as a replacement to {@code Main.getRegisteredActionShortcut})
+     */
+    @SuppressWarnings("deprecation")
+    public static Action getRegisteredActionShortcut(Shortcut shortcut) {
+        KeyStroke keyStroke = shortcut.getKeyStroke();
+        if (keyStroke == null)
+            return null;
+        Object action = contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).get(keyStroke);
+        if (action instanceof Action)
+            return (Action) action;
+        return null;
+    }
+
+    /**
      * Displays help on the console
      * @since 2748
      */
@@ -550,9 +683,9 @@ public class MainApplication extends Main {
                 !args.hasOption(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
         final MainFrame mainFrame = new MainFrame(geometry);
         if (mainFrame.getContentPane() instanceof JComponent) {
-            Main.contentPanePrivate = (JComponent) mainFrame.getContentPane();
+            contentPanePrivate = (JComponent) mainFrame.getContentPane();
         }
-        Main.mainPanel = mainFrame.getPanel();
+        mainPanel = mainFrame.getPanel();
         Main.parent = mainFrame;
 
         if (args.hasOption(Option.LOAD_PREFERENCES)) {

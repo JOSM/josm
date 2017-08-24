@@ -5,7 +5,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
+import java.awt.BorderLayout;
+import java.awt.event.KeyEvent;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -18,12 +21,15 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 import javax.swing.UIManager;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
+import org.openstreetmap.josm.actions.AboutAction;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.SplashScreen.SplashProgressMonitor;
@@ -36,6 +42,7 @@ import org.openstreetmap.josm.plugins.PluginListParseException;
 import org.openstreetmap.josm.plugins.PluginListParser;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Shortcut;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -52,11 +59,56 @@ public class MainApplicationTest {
     public JOSMTestRules test = new JOSMTestRules().main().https().devAPI().timeout(20000);
 
     /**
+     * Make sure {@link MainApplication#contentPanePrivate} is initialized.
+     */
+    public static void initContentPane() {
+        if (MainApplication.contentPanePrivate == null) {
+            MainApplication.contentPanePrivate = new JPanel(new BorderLayout());
+        }
+    }
+
+    /**
+     * Returns {@link MainApplication#contentPanePrivate} (not public).
+     * @return {@link MainApplication#contentPanePrivate}
+     */
+    public static JComponent getContentPane() {
+        return MainApplication.contentPanePrivate;
+    }
+
+    /**
+     * Make sure {@code MainApplication.mainPanel} is initialized.
+     * @param reAddListeners {@code true} to re-add listeners
+     */
+    public static void initMainPanel(boolean reAddListeners) {
+        if (MainApplication.mainPanel == null) {
+            MainApplication.mainPanel = new MainPanel(MainApplication.getLayerManager());
+        }
+        if (reAddListeners) {
+            MainApplication.mainPanel.reAddListeners();
+        }
+        if (Main.main != null) {
+            Main.main.panel = MainApplication.mainPanel;
+        }
+    }
+
+    /**
+     * Returns {@link MainApplication#mainPanel} (not public).
+     * @return {@link MainApplication#mainPanel}
+     */
+    public static MainPanel getMainPanel() {
+        return MainApplication.mainPanel;
+    }
+
+    /**
      * Make sure {@link MainApplication#toolbar} is initialized.
      */
+    @SuppressWarnings("deprecation")
     public static void initToolbar() {
         if (MainApplication.toolbar == null) {
             MainApplication.toolbar = new ToolbarPreferences();
+        }
+        if (Main.toolbar == null) {
+            Main.toolbar = MainApplication.getToolbar();
         }
     }
 
@@ -232,6 +284,33 @@ public class MainApplicationTest {
         doTestPostConstructorProcessCmdLine(
                 Paths.get(TestUtils.getTestDataRoot() + "multipolygon.osm").toFile().getAbsolutePath(),
                 Paths.get(TestUtils.getTestDataRoot() + "minimal.gpx").toFile().getAbsolutePath(), false);
+    }
+
+    /**
+     * Unit test of {@link MainApplication#getRegisteredActionShortcut}.
+     */
+    @Test
+    public void testGetRegisteredActionShortcut() {
+        Shortcut noKeystroke = Shortcut.registerShortcut("no", "keystroke", 0, 0);
+        assertNull(noKeystroke.getKeyStroke());
+        assertNull(MainApplication.getRegisteredActionShortcut(noKeystroke));
+        Shortcut noAction = Shortcut.registerShortcut("foo", "bar", KeyEvent.VK_AMPERSAND, Shortcut.SHIFT);
+        assertNotNull(noAction.getKeyStroke());
+        assertNull(MainApplication.getRegisteredActionShortcut(noAction));
+        AboutAction about = new AboutAction();
+        assertEquals(about, MainApplication.getRegisteredActionShortcut(about.getShortcut()));
+    }
+
+    /**
+     * Unit test of {@link MainApplication#addMapFrameListener} and {@link MainApplication#removeMapFrameListener}.
+     */
+    @Test
+    public void testMapFrameListener() {
+        MapFrameListener listener = (o, n) -> { };
+        assertTrue(MainApplication.addMapFrameListener(listener));
+        assertFalse(MainApplication.addMapFrameListener(null));
+        assertTrue(MainApplication.removeMapFrameListener(listener));
+        assertFalse(MainApplication.removeMapFrameListener(null));
     }
 
     /**

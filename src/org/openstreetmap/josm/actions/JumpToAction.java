@@ -215,6 +215,6 @@ public class JumpToAction extends JosmAction {
     protected void installAdapters() {
         super.installAdapters();
         // make this action listen to mapframe change events
-        Main.addMapFrameListener((o, n) -> updateEnabledState());
+        MainApplication.addMapFrameListener((o, n) -> updateEnabledState());
     }
 }

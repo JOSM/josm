@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.event.KeyEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
@@ -17,11 +16,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main.InitStatusListener;
 import org.openstreetmap.josm.Main.InitializationTask;
-import org.openstreetmap.josm.actions.AboutAction;
-import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.tools.Shortcut;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -122,33 +118,6 @@ public class MainTest {
         assertTrue(Main.isOffline(OnlineResource.JOSM_WEBSITE));
         assertTrue(Main.isOffline(OnlineResource.OSM_API));
         Main.setOnline(OnlineResource.ALL);
-    }
-
-    /**
-     * Unit test of {@link Main#getRegisteredActionShortcut}.
-     */
-    @Test
-    public void testGetRegisteredActionShortcut() {
-        Shortcut noKeystroke = Shortcut.registerShortcut("no", "keystroke", 0, 0);
-        assertNull(noKeystroke.getKeyStroke());
-        assertNull(Main.getRegisteredActionShortcut(noKeystroke));
-        Shortcut noAction = Shortcut.registerShortcut("foo", "bar", KeyEvent.VK_AMPERSAND, Shortcut.SHIFT);
-        assertNotNull(noAction.getKeyStroke());
-        assertNull(Main.getRegisteredActionShortcut(noAction));
-        AboutAction about = new AboutAction();
-        assertEquals(about, Main.getRegisteredActionShortcut(about.getShortcut()));
-    }
-
-    /**
-     * Unit test of {@link Main#addMapFrameListener} and {@link Main#removeMapFrameListener}.
-     */
-    @Test
-    public void testMapFrameListener() {
-        MapFrameListener listener = (o, n) -> { };
-        assertTrue(Main.addMapFrameListener(listener));
-        assertFalse(Main.addMapFrameListener(null));
-        assertTrue(Main.removeMapFrameListener(listener));
-        assertFalse(Main.removeMapFrameListener(null));
     }
 
     private static class InitStatusListenerStub implements InitStatusListener {

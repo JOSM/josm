@@ -152,7 +152,7 @@ public class MapMover extends MouseAdapter implements Destroyable {
     }
 
     private void registerActionShortcut(ZoomerAction action, Shortcut shortcut) {
-        Main.registerActionShortcut(action, shortcut);
+        MainApplication.registerActionShortcut(action, shortcut);
         registeredShortcuts.add(new Pair<>(action, shortcut));
     }
 
@@ -270,7 +270,7 @@ public class MapMover extends MouseAdapter implements Destroyable {
     @Override
     public void destroy() {
         for (Pair<ZoomerAction, Shortcut> shortcut : registeredShortcuts) {
-            Main.unregisterActionShortcut(shortcut.a, shortcut.b);
+            MainApplication.unregisterActionShortcut(shortcut.a, shortcut.b);
         }
     }
 }

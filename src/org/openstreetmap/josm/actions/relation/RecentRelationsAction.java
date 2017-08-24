@@ -58,7 +58,7 @@ public class RecentRelationsAction extends JosmAction implements CommandQueueLis
             Shortcut.SHIFT
         );
         launchAction = new LaunchEditorAction();
-        Main.registerActionShortcut(launchAction, shortcut);
+        MainApplication.registerActionShortcut(launchAction, shortcut);
     }
 
     /**
@@ -114,7 +114,7 @@ public class RecentRelationsAction extends JosmAction implements CommandQueueLis
 
     @Override
     public void destroy() {
-        Main.unregisterActionShortcut(launchAction, shortcut);
+        MainApplication.unregisterActionShortcut(launchAction, shortcut);
         super.destroy();
     }
 

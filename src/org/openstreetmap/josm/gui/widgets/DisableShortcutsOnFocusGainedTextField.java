@@ -16,6 +16,7 @@ import javax.swing.text.Document;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -146,9 +147,9 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField {
         for (Shortcut shortcut : Shortcut.listAll()) {
             KeyStroke ks = shortcut.getKeyStroke();
             if (hasToBeDisabled(ks)) {
-                Action action = Main.getRegisteredActionShortcut(shortcut);
+                Action action = MainApplication.getRegisteredActionShortcut(shortcut);
                 if (action != null) {
-                    Main.unregisterActionShortcut(action, shortcut);
+                    MainApplication.unregisterActionShortcut(action, shortcut);
                     unregisteredActionShortcuts.add(new Pair<>(action, shortcut));
                 }
             }
@@ -181,7 +182,7 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField {
      */
     protected void restoreActionShortcuts() {
         for (Pair<Action, Shortcut> p : unregisteredActionShortcuts) {
-            Main.registerActionShortcut(p.a, p.b);
+            MainApplication.registerActionShortcut(p.a, p.b);
         }
         unregisteredActionShortcuts.clear();
     }

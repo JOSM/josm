@@ -393,7 +393,7 @@ public class AutoScaleAction extends JosmAction {
         // make this action listen to zoom and mapframe change events
         //
         MapView.addZoomChangeListener(new ZoomChangeAdapter());
-        Main.addMapFrameListener(new MapFrameAdapter());
+        MainApplication.addMapFrameListener(new MapFrameAdapter());
         initEnabledState();
     }
 

@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.datatransfer.PrimitiveTransferable;
 import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
@@ -35,7 +36,7 @@ public class CopyAction extends JosmAction {
                 Shortcut.registerShortcut("system:copy", tr("Edit: {0}", tr("Copy")), KeyEvent.VK_C, Shortcut.CTRL), true);
         putValue("help", ht("/Action/Copy"));
         // CUA shortcut for copy (https://en.wikipedia.org/wiki/IBM_Common_User_Access#Description)
-        Main.registerActionShortcut(this,
+        MainApplication.registerActionShortcut(this,
                 Shortcut.registerShortcut("system:copy:cua", tr("Edit: {0}", tr("Copy")), KeyEvent.VK_INSERT, Shortcut.CTRL));
     }
 
