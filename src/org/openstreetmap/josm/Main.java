@@ -47,10 +47,8 @@ import org.openstreetmap.josm.gui.MainPanel;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
-import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
@@ -144,11 +142,6 @@ public abstract class Main {
      * The commands undo/redo handler.
      */
     public final UndoRedoHandler undoRedo = new UndoRedoHandler();
-
-    /**
-     * The progress monitor being currently displayed.
-     */
-    public static PleaseWaitProgressMonitor currentProgressMonitor;
 
     /**
      * The main menu bar at top of screen.
@@ -725,14 +718,6 @@ public abstract class Main {
     ///////////////////////////////////////////////////////////////////////////
     //  Implementation part
     ///////////////////////////////////////////////////////////////////////////
-
-    /**
-     * Listener that sets the enabled state of undo/redo menu entries.
-     */
-    protected final CommandQueueListener redoUndoListener = (queueSize, redoSize) -> {
-            menu.undo.setEnabled(queueSize > 0);
-            menu.redo.setEnabled(redoSize > 0);
-        };
 
     /**
      * Should be called before the main constructor to setup some parameter stuff

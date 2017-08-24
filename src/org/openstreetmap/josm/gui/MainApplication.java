@@ -75,6 +75,7 @@ import org.openstreetmap.josm.gui.io.CustomConfigurator.XMLCommandProcessor;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.AutosaveTask;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.display.LafPreference;
@@ -151,6 +152,14 @@ public class MainApplication extends Main {
      * Provides access to the layers displayed in the main view.
      */
     private static final MainLayerManager layerManager = new MainLayerManager();
+
+    /**
+     * Listener that sets the enabled state of undo/redo menu entries.
+     */
+    private final CommandQueueListener redoUndoListener = (queueSize, redoSize) -> {
+            menu.undo.setEnabled(queueSize > 0);
+            menu.redo.setEnabled(redoSize > 0);
+        };
 
     /**
      * Constructs a new {@code MainApplication} without a window.

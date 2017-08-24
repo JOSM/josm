@@ -13,6 +13,7 @@ import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.LayerAvailabilityEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.LayerAvailabilityListener;
+import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
@@ -79,8 +80,8 @@ public class MainPanel extends JPanel {
         for (MapFrameListener listener : mapFrameListeners) {
             listener.mapFrameInitialized(old, map);
         }
-        if (map == null && Main.currentProgressMonitor != null) {
-            Main.currentProgressMonitor.showForegroundDialog();
+        if (map == null && PleaseWaitProgressMonitor.getCurrent() != null) {
+            PleaseWaitProgressMonitor.getCurrent().showForegroundDialog();
         }
     }
 

@@ -72,6 +72,12 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
      * The maximum value the progress bar that displays the current progress should have.
      */
     public static final int PROGRESS_BAR_MAX = 10_000;
+
+    /**
+     * The progress monitor being currently displayed.
+     */
+    static PleaseWaitProgressMonitor currentProgressMonitor;
+
     private final Component dialogParent;
 
     private int currentProgressValue;
@@ -85,6 +91,15 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     protected ProgressTaskId taskId;
 
     private boolean cancelable;
+
+    /**
+     * Returns the progress monitor being currently displayed.
+     * @return the progress monitor being currently displayed
+     * @since 12638
+     */
+    public static PleaseWaitProgressMonitor getCurrent() {
+        return currentProgressMonitor;
+    }
 
     private void doInEDT(Runnable runnable) {
         // This must be invoke later even if current thread is EDT because inside there is dialog.setVisible
@@ -214,7 +229,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
     @Override
     public void doBeginTask() {
         doInEDT(() -> {
-            Main.currentProgressMonitor = this;
+            currentProgressMonitor = this;
             if (GraphicsEnvironment.isHeadless()) {
                 return;
             }
@@ -338,7 +353,7 @@ public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
                 dialog.removeWindowListener(windowListener);
                 dialog.dispose();
                 dialog = null;
-                Main.currentProgressMonitor = null;
+                currentProgressMonitor = null;
                 MapFrame map = MainApplication.getMap();
                 if (map != null) {
                     map.statusLine.progressMonitor.setVisible(false);

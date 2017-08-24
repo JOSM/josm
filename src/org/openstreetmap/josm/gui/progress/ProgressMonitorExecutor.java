@@ -5,7 +5,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -29,9 +28,9 @@ public class ProgressMonitorExecutor extends ThreadPoolExecutor {
 
     @Override
     public void execute(Runnable command) {
-        if (Main.currentProgressMonitor != null) {
+        if (PleaseWaitProgressMonitor.currentProgressMonitor != null) {
             //TODO show only if this can't be in background or better if always in background is not checked
-            Main.currentProgressMonitor.showForegroundDialog();
+            PleaseWaitProgressMonitor.currentProgressMonitor.showForegroundDialog();
         }
         super.execute(command);
     }
