@@ -60,6 +60,7 @@ import org.openstreetmap.josm.data.imagery.ImageryLayerInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.imagery.Shape;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
@@ -656,7 +657,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
 
             @Override
             public void actionPerformed(ActionEvent evt) {
-                layerInfo.loadDefaults(true, false, false);
+                layerInfo.loadDefaults(true, MainApplication.worker, false);
                 defaultModel.fireTableDataChanged();
                 defaultTable.getSelectionModel().clearSelection();
                 defaultTableListener.clearMap();

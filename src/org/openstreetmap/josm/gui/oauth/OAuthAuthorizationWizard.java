@@ -35,7 +35,6 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.text.html.HTMLEditorKit;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.CustomConfigurator;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
@@ -305,7 +304,7 @@ public class OAuthAuthorizationWizard extends JDialog {
      */
     public void initFromPreferences() {
         // Copy current JOSM preferences to update API url with the one used in this wizard
-        Preferences copyPref = CustomConfigurator.clonePreferences(Main.pref);
+        Preferences copyPref = new Preferences(Main.pref);
         copyPref.put("osm-server.url", apiUrl);
         pnlFullyAutomaticAuthorisationUI.initFromPreferences(copyPref);
         pnlSemiAutomaticAuthorisationUI.initFromPreferences(copyPref);

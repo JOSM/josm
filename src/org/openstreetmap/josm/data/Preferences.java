@@ -234,6 +234,24 @@ public class Preferences {
     private final HashMap<String, ListenerList<PreferenceChangedListener>> keyListeners = new HashMap<>();
 
     /**
+     * Constructs a new {@code Preferences}.
+     */
+    public Preferences() {
+        // Default constructor
+    }
+
+    /**
+     * Constructs a new {@code Preferences} from an existing instance.
+     * @param pref existing preferences to copy
+     * @since 12634
+     */
+    public Preferences(Preferences pref) {
+        settingsMap.putAll(pref.settingsMap);
+        defaultsMap.putAll(pref.defaultsMap);
+        colornames.putAll(pref.colornames);
+    }
+
+    /**
      * Adds a new preferences listener.
      * @param listener The listener to add
      */

@@ -50,7 +50,7 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationAct
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled() || relations.isEmpty() || !MainApplication.isDisplayingMapView()) return;
-        Main.worker.submit(new DownloadRelationMemberTask(
+        MainApplication.worker.submit(new DownloadRelationMemberTask(
                 relations,
                 incompleteMembers,
                 Main.getLayerManager().getEditLayer()));

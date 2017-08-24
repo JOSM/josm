@@ -5,9 +5,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.concurrent.Future;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -60,6 +60,6 @@ public class DownloadOsmCompressedTask extends DownloadOsmTask {
         currentBounds = null;
         // Extract .osm.gz/bz/bz2/zip filename from URL to set the new layer name
         extractOsmFilename("https?://.*/(.*\\.osm.(gz|bz2?|zip))", url);
-        return Main.worker.submit(downloadTask);
+        return MainApplication.worker.submit(downloadTask);
     }
 }

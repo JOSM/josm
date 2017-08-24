@@ -35,6 +35,7 @@ import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.download.OverpassQueryList;
 import org.openstreetmap.josm.gui.download.OverpassQueryWizardDialog;
@@ -117,7 +118,7 @@ public class OverpassDownloadAction extends JosmAction {
         Future<?> future = task.download(
                 new OverpassDownloadReader(area, OverpassServerPreference.getOverpassServer(), overpassQuery),
                 dialog.isNewLayerRequired(), area, null);
-        Main.worker.submit(new PostDownloadHandler(task, future, errorReporter));
+        MainApplication.worker.submit(new PostDownloadHandler(task, future, errorReporter));
     }
 
     private static final class DisableActionsFocusListener implements FocusListener {

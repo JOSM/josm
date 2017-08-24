@@ -78,6 +78,7 @@ import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.util.FileFilterAllFiles;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -532,7 +533,7 @@ public abstract class SourceEditor extends JPanel {
      * @param sourceProviders the list of source providers
      */
     protected void reloadAvailableSources(String url, List<SourceProvider> sourceProviders) {
-        Main.worker.submit(new SourceLoader(url, sourceProviders));
+        MainApplication.worker.submit(new SourceLoader(url, sourceProviders));
     }
 
     /**

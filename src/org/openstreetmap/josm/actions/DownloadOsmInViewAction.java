@@ -35,7 +35,7 @@ public final class DownloadOsmInViewAction extends JosmAction {
         DownloadOsmInViewTask task = new DownloadOsmInViewTask();
         task.setZoomAfterDownload(false);
         Future<?> future = task.download(bounds);
-        Main.worker.submit(new PostDownloadHandler(task, future));
+        MainApplication.worker.submit(new PostDownloadHandler(task, future));
     }
 
     @Override

@@ -9,9 +9,9 @@ import java.util.List;
 
 import javax.swing.TransferHandler.TransferSupport;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
@@ -34,7 +34,7 @@ public final class FilePaster extends AbstractOsmDataPaster {
         List<File> files = (List<File>) support.getTransferable().getTransferData(df);
         OpenFileAction.OpenFileTask task = new OpenFileAction.OpenFileTask(files, null);
         task.setRecordHistory(true);
-        Main.worker.submit(task);
+        MainApplication.worker.submit(task);
         return true;
     }
 }

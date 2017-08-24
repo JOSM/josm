@@ -315,7 +315,7 @@ public class GeoImageLayer extends AbstractModifiableLayer implements
     }
 
     public static void create(Collection<File> files, GpxLayer gpxLayer) {
-        Main.worker.execute(new Loader(files, gpxLayer));
+        MainApplication.worker.execute(new Loader(files, gpxLayer));
     }
 
     @Override

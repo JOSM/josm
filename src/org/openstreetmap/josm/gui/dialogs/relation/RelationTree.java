@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DataSetMerger;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -94,7 +95,7 @@ public class RelationTree extends JTree {
                 // we don't load complete  or new relations
                 return;
             // launch the download task
-            Main.worker.submit(new RelationLoader(getParentDialog(), parent, path));
+            MainApplication.worker.submit(new RelationLoader(getParentDialog(), parent, path));
         }
     }
 

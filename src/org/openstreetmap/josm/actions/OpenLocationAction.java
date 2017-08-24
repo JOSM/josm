@@ -40,6 +40,7 @@ import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.tools.GBC;
@@ -232,7 +233,7 @@ public class OpenLocationAction extends JosmAction {
         List<Future<?>> result = new ArrayList<>();
         for (final DownloadTask task : tasks) {
             try {
-                result.add(Main.worker.submit(new PostDownloadHandler(task, task.loadUrl(newLayer, url, monitor))));
+                result.add(MainApplication.worker.submit(new PostDownloadHandler(task, task.loadUrl(newLayer, url, monitor))));
             } catch (IllegalArgumentException e) {
                 Logging.error(e);
             }

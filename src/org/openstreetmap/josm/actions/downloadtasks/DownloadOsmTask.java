@@ -115,7 +115,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
      *           doSomethingAfterTheTaskCompleted();
      *       }
      *    }
-     *    Main.worker.submit(runAfterTask);
+     *    MainApplication.worker.submit(runAfterTask);
      * </pre>
      * @param reader the reader used to parse OSM data (see {@link OsmServerReader#parseOsm})
      * @param newLayer true, if the data is to be downloaded into a new layer. If false, the task
@@ -133,7 +133,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
         this.currentBounds = new Bounds(downloadArea);
         // We need submit instead of execute so we can wait for it to finish and get the error
         // message if necessary. If no one calls getErrorMessage() it just behaves like execute.
-        return Main.worker.submit(downloadTask);
+        return MainApplication.worker.submit(downloadTask);
     }
 
     /**
@@ -159,7 +159,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
         currentBounds = null;
         // Extract .osm filename from URL to set the new layer name
         extractOsmFilename("https?://.*/(.*\\.osm)", newUrl);
-        return Main.worker.submit(downloadTask);
+        return MainApplication.worker.submit(downloadTask);
     }
 
     protected final void extractOsmFilename(String pattern, String url) {
@@ -286,7 +286,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                     map.mapView.zoomTo(new ViewportData(computeBbox(bounds)));
                 }
                 if (!primitivesToUpdate.isEmpty()) {
-                    Main.worker.submit(new UpdatePrimitivesTask(layer, primitivesToUpdate));
+                    MainApplication.worker.submit(new UpdatePrimitivesTask(layer, primitivesToUpdate));
                 }
                 layer.onPostDownloadFromServer();
             }

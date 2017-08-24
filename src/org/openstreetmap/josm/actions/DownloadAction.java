@@ -82,7 +82,7 @@ public class DownloadAction extends JosmAction {
             DownloadOsmTask task = new DownloadOsmTask();
             task.setZoomAfterDownload(zoom && !dialog.isDownloadGpxData() && !dialog.isDownloadNotes());
             Future<?> future = task.download(dialog.isNewLayerRequired(), area, null);
-            Main.worker.submit(new PostDownloadHandler(task, future));
+            MainApplication.worker.submit(new PostDownloadHandler(task, future));
             if (zoom) {
                 tasks.add(new Pair<>(task, future));
             }
@@ -92,7 +92,7 @@ public class DownloadAction extends JosmAction {
             DownloadGpsTask task = new DownloadGpsTask();
             task.setZoomAfterDownload(zoom && !dialog.isDownloadOsmData() && !dialog.isDownloadNotes());
             Future<?> future = task.download(dialog.isNewLayerRequired(), area, null);
-            Main.worker.submit(new PostDownloadHandler(task, future));
+            MainApplication.worker.submit(new PostDownloadHandler(task, future));
             if (zoom) {
                 tasks.add(new Pair<>(task, future));
             }
@@ -102,14 +102,14 @@ public class DownloadAction extends JosmAction {
             DownloadNotesTask task = new DownloadNotesTask();
             task.setZoomAfterDownload(zoom && !dialog.isDownloadOsmData() && !dialog.isDownloadGpxData());
             Future<?> future = task.download(false, area, null);
-            Main.worker.submit(new PostDownloadHandler(task, future));
+            MainApplication.worker.submit(new PostDownloadHandler(task, future));
             if (zoom) {
                 tasks.add(new Pair<>(task, future));
             }
         }
 
         if (zoom && tasks.size() > 1) {
-            Main.worker.submit(() -> {
+            MainApplication.worker.submit(() -> {
                 ProjectionBounds bounds = null;
                 // Wait for completion of download jobs
                 for (Pair<AbstractDownloadTask<?>, Future<?>> p : tasks) {

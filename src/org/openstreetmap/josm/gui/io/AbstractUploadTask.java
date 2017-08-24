@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -91,7 +92,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
         if (p == null)
             throw new IllegalStateException(
                     tr("Failed to update primitive with id {0} because current edit layer does not include such a primitive", id));
-        Main.worker.execute(new UpdatePrimitivesTask(layer, Collections.singleton(p)));
+        MainApplication.worker.execute(new UpdatePrimitivesTask(layer, Collections.singleton(p)));
     }
 
     /**

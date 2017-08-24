@@ -10,10 +10,10 @@ import java.util.concurrent.Future;
 
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmServerChangesetReader;
@@ -118,18 +118,18 @@ public abstract class AbstractChangesetDownloadTask extends AbstractDownloadTask
      *           doSomethingAfterTheTaskCompleted();
      *       }
      *    }
-     *    Main.worker.submit(runAfterTask);
+     *    MainApplication.worker.submit(runAfterTask);
      * </pre>
      *
      * @return the future representing the asynchronous task
      */
     public final Future<?> download() {
-        return downloadTaskRunnable != null ? Main.worker.submit(downloadTaskRunnable) : null;
+        return downloadTaskRunnable != null ? MainApplication.worker.submit(downloadTaskRunnable) : null;
     }
 
     @Override
     public final Future<?> loadUrl(boolean newLayer, String url, ProgressMonitor progressMonitor) {
-        return downloadTaskRunnable != null ? Main.worker.submit(downloadTaskRunnable) : null;
+        return downloadTaskRunnable != null ? MainApplication.worker.submit(downloadTaskRunnable) : null;
     }
 
     @Override

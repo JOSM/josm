@@ -8,10 +8,10 @@ import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.DownloadPrimitivesWithReferrersTask;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 
@@ -39,7 +39,7 @@ public class DownloadOsmIdTask extends DownloadOsmTask {
             final PrimitiveId primitiveId = new SimplePrimitiveId(id, type);
             final DownloadPrimitivesWithReferrersTask downloadTask = new DownloadPrimitivesWithReferrersTask(
                     newLayer, Collections.singletonList(primitiveId), true, true, null, null);
-            return Main.worker.submit(downloadTask);
+            return MainApplication.worker.submit(downloadTask);
         } else {
             throw new IllegalStateException("Failed to parse id from " + url);
         }

@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -51,7 +52,7 @@ public class MergeLayerAction extends AbstractMergeAction {
         if (targetLayer == null)
             return null;
         final Object actionName = getValue(NAME);
-        return Main.worker.submit(() -> {
+        return MainApplication.worker.submit(() -> {
                 final long start = System.currentTimeMillis();
                 boolean layerMerged = false;
                 for (final Layer sourceLayer: sourceLayers) {

@@ -21,8 +21,8 @@ import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
@@ -114,7 +114,7 @@ public class ReferringRelationsBrowser extends JPanel {
                         return;
                     model.populate(task.getParents());
                 });
-            Main.worker.submit(task);
+            MainApplication.worker.submit(task);
         }
 
         @Override

@@ -226,7 +226,7 @@ public class ChildRelationBrowser extends JPanel {
         }
 
         public void run() {
-            Main.worker.submit(new DownloadAllChildrenTask(getParentDialog(), (Relation) model.getRoot()));
+            MainApplication.worker.submit(new DownloadAllChildrenTask(getParentDialog(), (Relation) model.getRoot()));
         }
 
         @Override
@@ -263,7 +263,7 @@ public class ChildRelationBrowser extends JPanel {
             for (TreePath aSelection : selection) {
                 relations.add((Relation) aSelection.getLastPathComponent());
             }
-            Main.worker.submit(new DownloadRelationSetTask(getParentDialog(), relations));
+            MainApplication.worker.submit(new DownloadRelationSetTask(getParentDialog(), relations));
         }
 
         @Override

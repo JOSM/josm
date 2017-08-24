@@ -46,6 +46,7 @@ import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
@@ -327,8 +328,8 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                 });
             }
         };
-        Main.worker.submit(task);
-        Main.worker.submit(r);
+        MainApplication.worker.submit(task);
+        MainApplication.worker.submit(r);
     }
 
     /**
@@ -361,8 +362,8 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                     });
                 }
             };
-            Main.worker.submit(task);
-            Main.worker.submit(continuation);
+            MainApplication.worker.submit(task);
+            MainApplication.worker.submit(continuation);
         }
     }
 
@@ -435,12 +436,12 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                     return;
                 }
                 pluginDownloadTask.setPluginsToDownload(toUpdate);
-                Main.worker.submit(pluginDownloadTask);
-                Main.worker.submit(pluginDownloadContinuation);
+                MainApplication.worker.submit(pluginDownloadTask);
+                MainApplication.worker.submit(pluginDownloadContinuation);
             };
 
-            Main.worker.submit(pluginInfoDownloadTask);
-            Main.worker.submit(pluginInfoDownloadContinuation);
+            MainApplication.worker.submit(pluginInfoDownloadTask);
+            MainApplication.worker.submit(pluginInfoDownloadContinuation);
         }
     }
 

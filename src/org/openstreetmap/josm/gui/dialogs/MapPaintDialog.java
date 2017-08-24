@@ -56,6 +56,7 @@ import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
@@ -416,7 +417,7 @@ public class MapPaintDialog extends ToggleDialog {
         public void actionPerformed(ActionEvent e) {
             final int[] rows = tblStyles.getSelectedRows();
             MapPaintStyles.reloadStyles(rows);
-            Main.worker.submit(() -> SwingUtilities.invokeLater(() -> {
+            MainApplication.worker.submit(() -> SwingUtilities.invokeLater(() -> {
                 selectionModel.setValueIsAdjusting(true);
                 selectionModel.clearSelection();
                 for (int r: rows) {
@@ -460,7 +461,7 @@ public class MapPaintDialog extends ToggleDialog {
             AbstractFileChooser fc = fcm.openFileChooser();
             if (fc == null)
                 return;
-            Main.worker.submit(new SaveToFileTask(s, fc.getSelectedFile()));
+            MainApplication.worker.submit(new SaveToFileTask(s, fc.getSelectedFile()));
         }
 
         private class SaveToFileTask extends PleaseWaitRunnable {

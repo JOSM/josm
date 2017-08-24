@@ -17,6 +17,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
@@ -272,7 +273,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
     }
 
     protected static void waitFuture(final Future<?> future, final PleaseWaitProgressMonitor monitor) {
-        Main.worker.submit(() -> {
+        MainApplication.worker.submit(() -> {
                         try {
                             future.get();
                         } catch (InterruptedException | ExecutionException | CancellationException e) {

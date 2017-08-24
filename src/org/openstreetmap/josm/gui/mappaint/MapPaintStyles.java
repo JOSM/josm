@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -348,7 +349,7 @@ public final class MapPaintStyles {
         for (int i : sel) {
             toReload.add(data.get(i));
         }
-        Main.worker.submit(new MapPaintStyleLoader(toReload));
+        MainApplication.worker.submit(new MapPaintStyleLoader(toReload));
     }
 
     /**

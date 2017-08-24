@@ -47,7 +47,7 @@ public final class DownloadNotesInViewAction extends JosmAction {
         DownloadNotesTask task = new DownloadNotesTask();
         task.setZoomAfterDownload(false);
         Future<?> future = task.download(false, bounds, null);
-        Main.worker.submit(new PostDownloadHandler(task, future));
+        MainApplication.worker.submit(new PostDownloadHandler(task, future));
     }
 
     @Override

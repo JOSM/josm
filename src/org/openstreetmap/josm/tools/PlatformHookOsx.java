@@ -16,6 +16,7 @@ import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Executors;
 
 import javax.swing.UIManager;
 
@@ -147,7 +148,8 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
                 try {
                     Object oFiles = args[0].getClass().getMethod("getFiles").invoke(args[0]);
                     if (oFiles instanceof List) {
-                        Main.worker.submit(new OpenFileTask((List<File>) oFiles, null) {
+                        Executors.newSingleThreadExecutor(Utils.newThreadFactory("openFiles-%d", Thread.NORM_PRIORITY)).submit(
+                                new OpenFileTask((List<File>) oFiles, null) {
                             @Override
                             protected void realRun() throws SAXException, IOException, OsmTransferException {
                                 // Wait for JOSM startup is advanced enough to load a file

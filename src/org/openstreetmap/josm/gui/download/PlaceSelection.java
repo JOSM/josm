@@ -46,6 +46,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
@@ -189,7 +190,7 @@ public class PlaceSelection implements DownloadSelection {
             cbSearchExpression.addCurrentItemToHistory();
             Main.pref.putCollection(HISTORY_KEY, cbSearchExpression.getHistory());
             NameQueryTask task = new NameQueryTask(cbSearchExpression.getText());
-            Main.worker.submit(task);
+            MainApplication.worker.submit(task);
         }
 
         protected final void updateEnabledState() {

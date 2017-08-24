@@ -7,6 +7,7 @@ import java.awt.Dialog;
 import java.awt.event.ActionEvent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
 import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
@@ -42,7 +43,7 @@ public class DownloadSelectedIncompleteMembersAction extends AbstractRelationEdi
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        Main.worker.submit(new DownloadRelationMemberTask(
+        MainApplication.worker.submit(new DownloadRelationMemberTask(
                 editor.getRelation(),
                 memberTableModel.getSelectedIncompleteMemberPrimitives(),
                 layer,

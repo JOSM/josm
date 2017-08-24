@@ -11,6 +11,7 @@ import java.util.concurrent.Future;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SessionLoadAction.Loader;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
@@ -46,7 +47,7 @@ public class DownloadSessionTask extends AbstractDownloadTask<Object> {
             try {
                 URL u = new URL(url);
                 loader = new Loader(HttpClient.create(u).connect().getContent(), u.toURI(), url.endsWith(".joz"));
-                return Main.worker.submit(loader);
+                return MainApplication.worker.submit(loader);
             } catch (URISyntaxException | IOException e) {
                 Logging.error(e);
             }

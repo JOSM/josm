@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.data;
+package org.openstreetmap.josm.gui.layer;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -36,12 +36,12 @@ import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter.Listener;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmExporter;
 import org.openstreetmap.josm.io.OsmImporter;
@@ -370,8 +370,8 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     public Future<?> recoverUnsavedLayers() {
         List<File> files = getUnsavedLayersFiles();
         final OpenFileTask openFileTsk = new OpenFileTask(files, null, tr("Restoring files"));
-        final Future<?> openFilesFuture = Main.worker.submit(openFileTsk);
-        return Main.worker.submit(() -> {
+        final Future<?> openFilesFuture = MainApplication.worker.submit(openFileTsk);
+        return MainApplication.worker.submit(() -> {
             try {
                 // Wait for opened tasks to be generated.
                 openFilesFuture.get();

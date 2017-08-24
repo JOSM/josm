@@ -42,7 +42,7 @@ import org.xml.sax.SAXException;
  *      .add(relation)
  *      .add(aHistoryItem);
  *
- *   Main.worker.execute(task);
+ *   MainApplication.worker.execute(task);
  * </pre>
  */
 public class HistoryLoadTask extends PleaseWaitRunnable {

@@ -144,7 +144,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                     } else {
                         Future<?> future = osmTask.download(newLayer, new Bounds(minlat, minlon, maxlat, maxlon),
                                 null /* let the task manage the progress monitor */);
-                        Main.worker.submit(new PostDownloadHandler(osmTask, future));
+                        MainApplication.worker.submit(new PostDownloadHandler(osmTask, future));
                     }
                 }
             }
@@ -195,7 +195,7 @@ public class LoadAndZoomHandler extends RequestHandler {
         } else if (args.containsKey("search") && PermissionPrefWithDefault.CHANGE_SELECTION.isAllowed()) {
             try {
                 final SearchCompiler.Match search = SearchCompiler.compile(args.get("search"));
-                Main.worker.submit(() -> {
+                MainApplication.worker.submit(() -> {
                     final DataSet ds = Main.getLayerManager().getEditDataSet();
                     final Collection<OsmPrimitive> filteredPrimitives = SubclassFilteredCollection.filter(ds.allPrimitives(), search);
                     ds.setSelected(filteredPrimitives);
@@ -213,7 +213,7 @@ public class LoadAndZoomHandler extends RequestHandler {
 
         // add changeset tags after download if necessary
         if (args.containsKey("changeset_comment") || args.containsKey("changeset_source")) {
-            Main.worker.submit(() -> {
+            MainApplication.worker.submit(() -> {
                 if (Main.getLayerManager().getEditDataSet() != null) {
                     if (args.containsKey("changeset_comment")) {
                         Main.getLayerManager().getEditDataSet().addChangeSetTag("comment", args.get("changeset_comment"));

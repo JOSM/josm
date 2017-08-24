@@ -5,7 +5,7 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -27,6 +27,6 @@ public class ManualAuthorizationUITest {
      */
     @Test
     public void testManualAuthorizationUI() {
-        assertNotNull(new ManualAuthorizationUI("", Main.worker));
+        assertNotNull(new ManualAuthorizationUI("", MainApplication.worker));
     }
 }

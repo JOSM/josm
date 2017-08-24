@@ -36,7 +36,7 @@ public class UploadNotesTask {
      */
     public void uploadNotes(NoteData noteData, ProgressMonitor progressMonitor) {
         this.noteData = noteData;
-        Main.worker.submit(new UploadTask(tr("Uploading modified notes"), progressMonitor));
+        MainApplication.worker.submit(new UploadTask(tr("Uploading modified notes"), progressMonitor));
     }
 
     private class UploadTask extends PleaseWaitRunnable {

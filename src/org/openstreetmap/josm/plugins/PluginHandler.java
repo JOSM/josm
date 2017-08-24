@@ -56,6 +56,7 @@ import org.openstreetmap.josm.actions.RestartAction;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.download.DownloadSelection;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -589,10 +590,10 @@ public final class PluginHandler {
         // Update plugin list
         final ReadRemotePluginInformationTask pluginInfoDownloadTask = new ReadRemotePluginInformationTask(
                 Main.pref.getOnlinePluginSites());
-        Main.worker.submit(pluginInfoDownloadTask);
+        MainApplication.worker.submit(pluginInfoDownloadTask);
 
         // Continuation
-        Main.worker.submit(() -> {
+        MainApplication.worker.submit(() -> {
             // Build list of plugins to download
             Set<PluginInformation> toDownload = new HashSet<>(pluginInfoDownloadTask.getAvailablePlugins());
             toDownload.removeIf(info -> !missingRequiredPlugin.contains(info.getName()));
@@ -600,8 +601,8 @@ public final class PluginHandler {
             if (!toDownload.isEmpty()) {
                 // download plugins
                 final PluginDownloadTask task = new PluginDownloadTask(parent, toDownload, tr("Download plugins"));
-                Main.worker.submit(task);
-                Main.worker.submit(() -> {
+                MainApplication.worker.submit(task);
+                MainApplication.worker.submit(() -> {
                     // restart if some plugins have been downloaded
                     if (!task.getDownloadedPlugins().isEmpty()) {
                         // update plugin list in preferences

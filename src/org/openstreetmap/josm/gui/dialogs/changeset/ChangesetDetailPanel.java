@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
@@ -315,7 +316,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
                     ChangesetDetailPanel.this,
                     Collections.singleton(currentChangeset.getId())
             );
-            Main.worker.submit(new PostDownloadHandler(task, task.download()));
+            MainApplication.worker.submit(new PostDownloadHandler(task, task.download()));
         }
 
         public void initProperties(Changeset cs) {

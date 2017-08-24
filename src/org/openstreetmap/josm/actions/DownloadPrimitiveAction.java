@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.download.DownloadObjectDialog;
 import org.openstreetmap.josm.gui.io.DownloadPrimitivesWithReferrersTask;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -53,8 +54,8 @@ public class DownloadPrimitiveAction extends JosmAction {
     public static void processItems(boolean newLayer, final List<PrimitiveId> ids, boolean downloadReferrers, boolean full) {
         final DownloadPrimitivesWithReferrersTask task =
                 new DownloadPrimitivesWithReferrersTask(newLayer, ids, downloadReferrers, full, null, null);
-        Main.worker.submit(task);
-        Main.worker.submit(() -> {
+        MainApplication.worker.submit(task);
+        MainApplication.worker.submit(() -> {
                 final List<PrimitiveId> downloaded = task.getDownloadedId();
                 if (downloaded != null) {
                     GuiHelper.runInEDT(() -> Main.getLayerManager().getEditDataSet().setSelected(downloaded));

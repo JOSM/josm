@@ -13,6 +13,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.DownloadPrimitivesWithReferrersTask;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
@@ -67,8 +68,8 @@ public class LoadObjectHandler extends RequestHandler {
             final boolean referrers = Boolean.parseBoolean(args.get("referrers"));
             final DownloadPrimitivesWithReferrersTask task = new DownloadPrimitivesWithReferrersTask(
                     newLayer, ps, referrers, relationMembers, args.get("layer_name"), null);
-            Main.worker.submit(task);
-            Main.worker.submit(() -> {
+            MainApplication.worker.submit(task);
+            MainApplication.worker.submit(() -> {
                 final List<PrimitiveId> downloaded = task.getDownloadedId();
                 final DataSet ds = Main.getLayerManager().getEditDataSet();
                 if (downloaded != null) {

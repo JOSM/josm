@@ -23,6 +23,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetHeaderDownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -77,7 +78,7 @@ public class ChangesetDiscussionPanel extends JPanel implements PropertyChangeLi
                     Collections.singleton(current.getId()),
                     true /* include discussion */
             );
-            Main.worker.submit(new PostDownloadHandler(task, task.download()));
+            MainApplication.worker.submit(new PostDownloadHandler(task, task.download()));
         }
 
         public void initProperties(Changeset cs) {

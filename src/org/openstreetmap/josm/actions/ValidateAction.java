@@ -90,7 +90,7 @@ public class ValidateAction extends JosmAction {
                     () -> Main.getLayerManager().getEditDataSet().allNonDeletedPrimitives());
         }
 
-        Main.worker.submit(new ValidationTask(tests, selection, lastSelection));
+        MainApplication.worker.submit(new ValidationTask(tests, selection, lastSelection));
     }
 
     @Override

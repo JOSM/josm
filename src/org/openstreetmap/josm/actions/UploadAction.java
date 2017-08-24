@@ -245,7 +245,7 @@ public class UploadAction extends JosmAction {
                 return;
         }
 
-        Main.worker.execute(
+        MainApplication.worker.execute(
                 new UploadPrimitivesTask(
                         UploadDialog.getUploadDialog().getUploadStrategySpecification(),
                         layer,

@@ -43,6 +43,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetInSelectionListModel;
@@ -357,7 +358,7 @@ public class ChangesetDialog extends ToggleDialog {
             if (sel.isEmpty())
                 return;
             ChangesetHeaderDownloadTask task = new ChangesetHeaderDownloadTask(sel);
-            Main.worker.submit(new PostDownloadHandler(task, task.download()));
+            MainApplication.worker.submit(new PostDownloadHandler(task, task.download()));
         }
 
         protected void updateEnabledState() {
@@ -392,7 +393,7 @@ public class ChangesetDialog extends ToggleDialog {
             List<Changeset> sel = getCurrentChangesetListModel().getSelectedOpenChangesets();
             if (sel.isEmpty())
                 return;
-            Main.worker.submit(new CloseChangesetTask(sel));
+            MainApplication.worker.submit(new CloseChangesetTask(sel));
         }
 
         protected void updateEnabledState() {
@@ -514,7 +515,7 @@ public class ChangesetDialog extends ToggleDialog {
                 future = null;
             } else {
                 task = new ChangesetHeaderDownloadTask(toDownload);
-                future = Main.worker.submit(new PostDownloadHandler(task, task.download()));
+                future = MainApplication.worker.submit(new PostDownloadHandler(task, task.download()));
             }
 
             Runnable r = () -> {
@@ -542,7 +543,7 @@ public class ChangesetDialog extends ToggleDialog {
                 // launch the task
                 GuiHelper.runInEDT(() -> launchChangesetManager(sel));
             };
-            Main.worker.submit(r);
+            MainApplication.worker.submit(r);
         }
     }
 
