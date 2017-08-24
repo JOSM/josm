@@ -46,7 +46,7 @@ public class JoinAreasActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().mainMenu().projection();
+    public JOSMTestRules test = new JOSMTestRules().platform().main().projection();
 
     /**
      * Non-regression test for bug #10511.

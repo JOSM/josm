@@ -87,7 +87,7 @@ public class SessionWriterTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().projection().mainMenu();
+    public JOSMTestRules test = new JOSMTestRules().platform().projection().main();
 
     /**
      * Setup tests.

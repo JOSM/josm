@@ -41,7 +41,7 @@ public final class SplitWayActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().mainMenu().projection();
+    public JOSMTestRules test = new JOSMTestRules().main().projection();
 
     /**
      * Setup test.

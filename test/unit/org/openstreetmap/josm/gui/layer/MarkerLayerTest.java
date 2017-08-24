@@ -26,23 +26,25 @@ public class MarkerLayerTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().mainMenu().platform().projection();
+    public JOSMTestRules test = new JOSMTestRules().main().projection();
 
     /**
      * Unit test of {@code Main.map.mapView.playHeadMarker}.
      */
     @Test
     public void testPlayHeadMarker() {
-        MapFrame map = MainApplication.getMap();
         try {
             Main.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "", null));
+            MapFrame map = MainApplication.getMap();
             MarkerLayer layer = new MarkerLayer(new GpxData(), null, null, null);
             assertNull(map.mapView.playHeadMarker);
             Main.getLayerManager().addLayer(layer);
             assertNotNull(map.mapView.playHeadMarker);
             Main.getLayerManager().removeLayer(layer);
         } finally {
-            map.mapView.playHeadMarker = null;
+            if (MainApplication.isDisplayingMapView()) {
+                MainApplication.getMap().mapView.playHeadMarker = null;
+            }
         }
     }
 }

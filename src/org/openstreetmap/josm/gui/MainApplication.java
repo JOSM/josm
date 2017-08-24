@@ -50,9 +50,12 @@ import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.actions.RestartAction;
+import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.data.AutosaveTask;
+import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.CustomConfigurator;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.gui.ProgramArguments.Option;
 import org.openstreetmap.josm.gui.SplashScreen.SplashProgressMonitor;
@@ -219,7 +222,31 @@ public class MainApplication extends Main {
         if (mainFrame != null) {
             mainFrame.storeState();
         }
+        if (map != null) {
+            map.rememberToggleDialogWidth();
+        }
         super.shutdown();
+    }
+
+    @Override
+    protected Bounds getRealBounds() {
+        return isDisplayingMapView() ? map.mapView.getRealBounds() : null;
+    }
+
+    @Override
+    protected void restoreOldBounds(Bounds oldBounds) {
+        if (isDisplayingMapView()) {
+            map.mapView.zoomTo(oldBounds);
+        }
+    }
+
+    @Override
+    public Collection<OsmPrimitive> getInProgressSelection() {
+        if (map != null && map.mapMode instanceof DrawAction) {
+            return ((DrawAction) map.mapMode).getInProgressSelection();
+        } else {
+            return super.getInProgressSelection();
+        }
     }
 
     /**

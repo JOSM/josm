@@ -35,7 +35,7 @@ public class MainApplicationTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().mainMenu();
+    public JOSMTestRules test = new JOSMTestRules().platform().main();
 
     @SuppressFBWarnings(value = "DM_DEFAULT_ENCODING")
     private void testShow(final String arg, String expected) throws InterruptedException, IOException {

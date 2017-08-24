@@ -32,7 +32,7 @@ public final class SelectByInternalPointActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules rules = new JOSMTestRules().preferences().projection();
+    public JOSMTestRules rules = new JOSMTestRules().preferences().projection().main();
 
     /**
      * Tests that {@code SelectByInternalPointAction} satisfies utility class criterias.

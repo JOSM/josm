@@ -27,7 +27,7 @@ public class ImproveWayAccuracyActionTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().platform().mainMenu().projection();
+    public JOSMTestRules test = new JOSMTestRules().platform().platform().main().projection();
 
     /**
      * Unit test of {@link ImproveWayAccuracyAction#enterMode} and {@link ImproveWayAccuracyAction#exitMode}.
