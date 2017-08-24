@@ -5,11 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Component;
 import java.awt.GraphicsEnvironment;
-import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
@@ -24,7 +21,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import java.util.StringTokenizer;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -34,27 +30,18 @@ import java.util.concurrent.Future;
 import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
-import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
 import javax.swing.LookAndFeel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.actions.OpenFileAction;
-import org.openstreetmap.josm.actions.OpenLocationAction;
-import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
-import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
-import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
-import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
-import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
-import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -64,8 +51,6 @@ import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MainPanel;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
-import org.openstreetmap.josm.gui.ProgramArguments;
-import org.openstreetmap.josm.gui.ProgramArguments.Option;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
@@ -85,7 +70,6 @@ import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.PlatformHook;
 import org.openstreetmap.josm.tools.PlatformHookOsx;
 import org.openstreetmap.josm.tools.PlatformHookUnixoid;
@@ -840,34 +824,6 @@ public abstract class Main {
     }
 
     /**
-     * Handle command line instructions after GUI has been initialized.
-     * @param args program arguments
-     * @return the list of submitted tasks
-     */
-    protected static List<Future<?>> postConstructorProcessCmdLine(ProgramArguments args) {
-        List<Future<?>> tasks = new ArrayList<>();
-        List<File> fileList = new ArrayList<>();
-        for (String s : args.get(Option.DOWNLOAD)) {
-            tasks.addAll(DownloadParamType.paramType(s).download(s, fileList));
-        }
-        if (!fileList.isEmpty()) {
-            tasks.add(OpenFileAction.openFiles(fileList, true));
-        }
-        for (String s : args.get(Option.DOWNLOADGPS)) {
-            tasks.addAll(DownloadParamType.paramType(s).downloadGps(s));
-        }
-        final Collection<String> selectionArguments = args.get(Option.SELECTION);
-        if (!selectionArguments.isEmpty()) {
-            tasks.add(Main.worker.submit(() -> {
-                for (String s : selectionArguments) {
-                    SearchAction.search(s, SearchAction.SearchMode.add);
-                }
-            }));
-        }
-        return tasks;
-    }
-
-    /**
      * Closes JOSM and optionally terminates the Java Virtual Machine (JVM).
      * If there are some unsaved data layers, asks first for user confirmation.
      * @param exit If {@code true}, the JVM is terminated by running {@link System#exit} with a given return code.
@@ -913,142 +869,6 @@ public abstract class Main {
             worker.shutdownNow();
             ImageProvider.shutdown(true);
         }
-    }
-
-    /**
-     * The type of a command line parameter, to be used in switch statements.
-     * @see #paramType
-     */
-    enum DownloadParamType {
-        httpUrl {
-            @Override
-            List<Future<?>> download(String s, Collection<File> fileList) {
-                return new OpenLocationAction().openUrl(false, s);
-            }
-
-            @Override
-            List<Future<?>> downloadGps(String s) {
-                final Bounds b = OsmUrlToBounds.parse(s);
-                if (b == null) {
-                    JOptionPane.showMessageDialog(
-                            Main.parent,
-                            tr("Ignoring malformed URL: \"{0}\"", s),
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE
-                    );
-                    return Collections.emptyList();
-                }
-                return downloadFromParamBounds(true, b);
-            }
-        }, fileUrl {
-            @Override
-            List<Future<?>> download(String s, Collection<File> fileList) {
-                File f = null;
-                try {
-                    f = new File(new URI(s));
-                } catch (URISyntaxException e) {
-                    Logging.warn(e);
-                    JOptionPane.showMessageDialog(
-                            Main.parent,
-                            tr("Ignoring malformed file URL: \"{0}\"", s),
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE
-                    );
-                }
-                if (f != null) {
-                    fileList.add(f);
-                }
-                return Collections.emptyList();
-            }
-        }, bounds {
-
-            /**
-             * Download area specified on the command line as bounds string.
-             * @param rawGps Flag to download raw GPS tracks
-             * @param s The bounds parameter
-             * @return the complete download task (including post-download handler), or {@code null}
-             */
-            private List<Future<?>> downloadFromParamBounds(final boolean rawGps, String s) {
-                final StringTokenizer st = new StringTokenizer(s, ",");
-                if (st.countTokens() == 4) {
-                    return Main.downloadFromParamBounds(rawGps, new Bounds(
-                            new LatLon(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken())),
-                            new LatLon(Double.parseDouble(st.nextToken()), Double.parseDouble(st.nextToken()))
-                    ));
-                }
-                return Collections.emptyList();
-            }
-
-            @Override
-            List<Future<?>> download(String param, Collection<File> fileList) {
-                return downloadFromParamBounds(false, param);
-            }
-
-            @Override
-            List<Future<?>> downloadGps(String param) {
-                return downloadFromParamBounds(true, param);
-            }
-        }, fileName {
-            @Override
-            List<Future<?>> download(String s, Collection<File> fileList) {
-                fileList.add(new File(s));
-                return Collections.emptyList();
-            }
-        };
-
-        /**
-         * Performs the download
-         * @param param represents the object to be downloaded
-         * @param fileList files which shall be opened, should be added to this collection
-         * @return the download task, or {@code null}
-         */
-        abstract List<Future<?>> download(String param, Collection<File> fileList);
-
-        /**
-         * Performs the GPS download
-         * @param param represents the object to be downloaded
-         * @return the download task, or {@code null}
-         */
-        List<Future<?>> downloadGps(String param) {
-            if (!GraphicsEnvironment.isHeadless()) {
-                JOptionPane.showMessageDialog(
-                        Main.parent,
-                        tr("Parameter \"downloadgps\" does not accept file names or file URLs"),
-                        tr("Warning"),
-                        JOptionPane.WARNING_MESSAGE
-                );
-            }
-            return Collections.emptyList();
-        }
-
-        /**
-         * Guess the type of a parameter string specified on the command line with --download= or --downloadgps.
-         *
-         * @param s A parameter string
-         * @return The guessed parameter type
-         */
-        static DownloadParamType paramType(String s) {
-            if (s.startsWith("http:") || s.startsWith("https:")) return DownloadParamType.httpUrl;
-            if (s.startsWith("file:")) return DownloadParamType.fileUrl;
-            String coorPattern = "\\s*[+-]?[0-9]+(\\.[0-9]+)?\\s*";
-            if (s.matches(coorPattern + "(," + coorPattern + "){3}")) return DownloadParamType.bounds;
-            // everything else must be a file name
-            return DownloadParamType.fileName;
-        }
-    }
-
-    /**
-     * Download area specified as Bounds value.
-     * @param rawGps Flag to download raw GPS tracks
-     * @param b The bounds value
-     * @return the complete download task (including post-download handler)
-     */
-    private static List<Future<?>> downloadFromParamBounds(final boolean rawGps, Bounds b) {
-        DownloadTask task = rawGps ? new DownloadGpsTask() : new DownloadOsmTask();
-        // asynchronously launch the download task ...
-        Future<?> future = task.download(true, b, null);
-        // ... and the continuation when the download is finished (this will wait for the download to finish)
-        return Collections.singletonList(Main.worker.submit(new PostDownloadHandler(task, future)));
     }
 
     /**

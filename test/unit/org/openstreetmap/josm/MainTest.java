@@ -10,28 +10,20 @@ import static org.junit.Assert.assertTrue;
 import java.awt.event.KeyEvent;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 import javax.swing.UIManager;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main.DownloadParamType;
 import org.openstreetmap.josm.Main.InitStatusListener;
 import org.openstreetmap.josm.Main.InitializationTask;
 import org.openstreetmap.josm.actions.AboutAction;
-import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.DownloadParamType;
 import org.openstreetmap.josm.gui.MapFrameListener;
-import org.openstreetmap.josm.gui.ProgramArguments;
-import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
-import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -104,90 +96,6 @@ public class MainTest {
         assertNotNull(Main.getProjection());
         assertEquals(Main.pref.get("laf", Main.platform.getDefaultStyle()), UIManager.getLookAndFeel().getClass().getCanonicalName());
         assertNotNull(Main.toolbar);
-    }
-
-    /**
-     * Unit test of {@link Main#postConstructorProcessCmdLine} - empty case.
-     */
-    @Test
-    public void testPostConstructorProcessCmdLineEmpty() {
-        // Check the method accepts no arguments
-        Main.postConstructorProcessCmdLine(new ProgramArguments(new String[0]));
-    }
-
-    private static void doTestPostConstructorProcessCmdLine(String download, String downloadGps, boolean gpx) {
-        assertNull(Main.getLayerManager().getEditDataSet());
-        for (Future<?> f : Main.postConstructorProcessCmdLine(new ProgramArguments(new String[]{
-                "--download=" + download,
-                "--downloadgps=" + downloadGps,
-                "--selection=type: node"}))) {
-            try {
-                f.get();
-            } catch (InterruptedException | ExecutionException e) {
-                Logging.error(e);
-            }
-        }
-        DataSet ds = Main.getLayerManager().getEditDataSet();
-        assertNotNull(ds);
-        assertFalse(ds.getSelected().isEmpty());
-        Main.getLayerManager().removeLayer(Main.getLayerManager().getEditLayer());
-        if (gpx) {
-            List<GpxLayer> gpxLayers = Main.getLayerManager().getLayersOfType(GpxLayer.class);
-            assertEquals(1, gpxLayers.size());
-            Main.getLayerManager().removeLayer(gpxLayers.iterator().next());
-        }
-    }
-
-    /**
-     * Unit test of {@link Main#postConstructorProcessCmdLine} - nominal case with bounds.
-     * This test assumes the DEV API contains nodes around 0,0 and GPX tracks around London
-     */
-    @Test
-    public void testPostConstructorProcessCmdLineBounds() {
-        doTestPostConstructorProcessCmdLine(
-                "0.01,0.01,0.05,0.05",
-                "51.35,-0.4,51.60,0.2", true);
-    }
-
-    /**
-     * Unit test of {@link Main#postConstructorProcessCmdLine} - nominal case with http/https URLs.
-     * This test assumes the DEV API contains nodes around 0,0 and GPX tracks around London
-     */
-    @Test
-    public void testPostConstructorProcessCmdLineHttpUrl() {
-        doTestPostConstructorProcessCmdLine(
-                "http://api06.dev.openstreetmap.org/api/0.6/map?bbox=0.01,0.01,0.05,0.05",
-                "https://master.apis.dev.openstreetmap.org/api/0.6/trackpoints?bbox=-0.4,51.35,0.2,51.6&page=0", true);
-    }
-
-    /**
-     * Unit test of {@link Main#postConstructorProcessCmdLine} - nominal case with file URLs.
-     * @throws MalformedURLException if an error occurs
-     */
-    @Test
-    public void testPostConstructorProcessCmdLineFileUrl() throws MalformedURLException {
-        doTestPostConstructorProcessCmdLine(
-                Paths.get(TestUtils.getTestDataRoot() + "multipolygon.osm").toUri().toURL().toExternalForm(),
-                Paths.get(TestUtils.getTestDataRoot() + "minimal.gpx").toUri().toURL().toExternalForm(), false);
-    }
-
-    /**
-     * Unit test of {@link Main#postConstructorProcessCmdLine} - nominal case with file names.
-     * @throws MalformedURLException if an error occurs
-     */
-    @Test
-    public void testPostConstructorProcessCmdLineFilename() throws MalformedURLException {
-        doTestPostConstructorProcessCmdLine(
-                Paths.get(TestUtils.getTestDataRoot() + "multipolygon.osm").toFile().getAbsolutePath(),
-                Paths.get(TestUtils.getTestDataRoot() + "minimal.gpx").toFile().getAbsolutePath(), false);
-    }
-
-    /**
-     * Unit test of {@link DownloadParamType} enum.
-     */
-    @Test
-    public void testEnumDownloadParamType() {
-        TestUtils.superficialEnumCodeCoverage(DownloadParamType.class);
     }
 
     /**
