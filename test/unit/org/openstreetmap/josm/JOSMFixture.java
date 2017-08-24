@@ -18,9 +18,9 @@ import javax.swing.JPanel;
 
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.MainApplicationTest;
 import org.openstreetmap.josm.gui.MainPanel;
 import org.openstreetmap.josm.gui.layer.LayerManagerTest.TestLayer;
-import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CertificateAmendment;
 import org.openstreetmap.josm.io.OsmApi;
@@ -200,9 +200,11 @@ public class JOSMFixture {
     /**
      * Make sure {@code Main.toolbar} is initialized.
      */
+    @SuppressWarnings("deprecation")
     public static void initToolbar() {
+        MainApplicationTest.initToolbar();
         if (Main.toolbar == null) {
-            Main.toolbar = new ToolbarPreferences();
+            Main.toolbar = MainApplication.getToolbar();
         }
     }
 }

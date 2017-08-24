@@ -624,7 +624,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         @Override
         public void actionPerformed(ActionEvent ae) {
             String res = getToolbarString();
-            Main.toolbar.addCustomButton(res, toolbarIndex, true);
+            MainApplication.getToolbar().addCustomButton(res, toolbarIndex, true);
         }
     }
 

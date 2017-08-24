@@ -13,8 +13,6 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.swing.UIManager;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main.InitStatusListener;
@@ -80,8 +78,6 @@ public class MainTest {
     public void testPreConstructorInit() {
         Main.preConstructorInit();
         assertNotNull(Main.getProjection());
-        assertEquals(Main.pref.get("laf", Main.platform.getDefaultStyle()), UIManager.getLookAndFeel().getClass().getCanonicalName());
-        assertNotNull(Main.toolbar);
     }
 
     /**

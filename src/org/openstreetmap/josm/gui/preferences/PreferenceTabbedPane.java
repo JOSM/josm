@@ -547,7 +547,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
         SETTINGS_FACTORIES.add(new TaggingPresetPreference.Factory());
         SETTINGS_FACTORIES.add(new BackupPreference.Factory());
         SETTINGS_FACTORIES.add(new PluginPreference.Factory());
-        SETTINGS_FACTORIES.add(Main.toolbar);
+        SETTINGS_FACTORIES.add(MainApplication.getToolbar());
         SETTINGS_FACTORIES.add(new AudioPreference.Factory());
         SETTINGS_FACTORIES.add(new ShortcutPreference.Factory());
         SETTINGS_FACTORIES.add(new ValidatorPreference.Factory());

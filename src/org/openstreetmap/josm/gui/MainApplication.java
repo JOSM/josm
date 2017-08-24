@@ -45,8 +45,11 @@ import java.util.stream.Stream;
 import javax.net.ssl.SSLSocketFactory;
 import javax.swing.JComponent;
 import javax.swing.JOptionPane;
+import javax.swing.LookAndFeel;
 import javax.swing.RepaintManager;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager;
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
@@ -73,6 +76,8 @@ import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.AutosaveTask;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
+import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
+import org.openstreetmap.josm.gui.preferences.display.LafPreference;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
@@ -97,6 +102,7 @@ import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.FontsManager;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.I18n;
+import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
@@ -126,6 +132,11 @@ public class MainApplication extends Main {
      * The MapFrame.
      */
     static MapFrame map;
+
+    /**
+     * The toolbar preference control to register new actions.
+     */
+    static volatile ToolbarPreferences toolbar;
 
     private final MainFrame mainFrame;
 
@@ -236,7 +247,7 @@ public class MainApplication extends Main {
             menu = mainFrame.getMenu();
         } else {
             // required for running some tests.
-            panel = new MainPanel(MainApplication.getLayerManager());
+            panel = new MainPanel(layerManager);
             menu = new MainMenu();
         }
         panel.addMapFrameListener((o, n) -> redoUndoListener.commandChanged(0, 0));
@@ -255,7 +266,7 @@ public class MainApplication extends Main {
             map.rememberToggleDialogWidth();
         }
         // Remove all layers because somebody may rely on layerRemoved events (like AutosaveTask)
-        getLayerManager().resetState();
+        layerManager.resetState();
         super.shutdown();
         if (!GraphicsEnvironment.isHeadless()) {
             worker.shutdownNow();
@@ -288,7 +299,7 @@ public class MainApplication extends Main {
         if (map != null && map.mapMode instanceof DrawAction) {
             return ((DrawAction) map.mapMode).getInProgressSelection();
         } else {
-            DataSet ds = getLayerManager().getEditDataSet();
+            DataSet ds = layerManager.getEditDataSet();
             if (ds == null) return null;
             return ds.getSelected();
         }
@@ -306,7 +317,7 @@ public class MainApplication extends Main {
     /**
      * Returns the main layer manager that is used by the map view.
      * @return The layer manager. The value returned will never change.
-     * @since 12636 (as a replacement to {@code MainApplication.getLayerManager()})
+     * @since 12636 (as a replacement to {@code Main.getLayerManager()})
      */
     @SuppressWarnings("deprecation")
     public static MainLayerManager getLayerManager() {
@@ -323,6 +334,15 @@ public class MainApplication extends Main {
      */
     public static MapFrame getMap() {
         return map;
+    }
+
+    /**
+     * Returns the toolbar preference control to register new actions.
+     * @return the toolbar preference control
+     * @since 12637 (as a replacement to {@code Main.toolbar})
+     */
+    public static ToolbarPreferences getToolbar() {
+        return toolbar;
     }
 
     /**
@@ -350,7 +370,7 @@ public class MainApplication extends Main {
      */
     public static boolean exitJosm(boolean exit, int exitCode, SaveLayersDialog.Reason reason) {
         final boolean proceed = Boolean.TRUE.equals(GuiHelper.runInEDTAndWaitAndReturn(() ->
-                SaveLayersDialog.saveUnsavedModifications(MainApplication.getLayerManager().getLayers(),
+                SaveLayersDialog.saveUnsavedModifications(layerManager.getLayers(),
                         reason != null ? reason : SaveLayersDialog.Reason.EXIT)));
         if (proceed) {
             return Main.exitJosm(exit, exitCode);
@@ -429,6 +449,7 @@ public class MainApplication extends Main {
      * Main application Startup
      * @param argArray Command-line arguments
      */
+    @SuppressWarnings("deprecation")
     public static void main(final String[] argArray) {
         I18n.init();
 
@@ -575,6 +596,9 @@ public class MainApplication extends Main {
         }
 
         monitor.indeterminateSubTask(tr("Setting defaults"));
+        setupUIManager();
+        toolbar = new ToolbarPreferences();
+        Main.toolbar = toolbar;
         preConstructorInit();
 
         monitor.indeterminateSubTask(tr("Creating main GUI"));
@@ -626,6 +650,57 @@ public class MainApplication extends Main {
             // but they don't seem to break anything and are difficult to fix
             Logging.info("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to console");
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
+        }
+    }
+
+    static void setupUIManager() {
+        String defaultlaf = platform.getDefaultStyle();
+        String laf = LafPreference.LAF.get();
+        try {
+            UIManager.setLookAndFeel(laf);
+        } catch (final NoClassDefFoundError | ClassNotFoundException e) {
+            // Try to find look and feel in plugin classloaders
+            Logging.trace(e);
+            Class<?> klass = null;
+            for (ClassLoader cl : PluginHandler.getResourceClassLoaders()) {
+                try {
+                    klass = cl.loadClass(laf);
+                    break;
+                } catch (ClassNotFoundException ex) {
+                    Logging.trace(ex);
+                }
+            }
+            if (klass != null && LookAndFeel.class.isAssignableFrom(klass)) {
+                try {
+                    UIManager.setLookAndFeel((LookAndFeel) klass.getConstructor().newInstance());
+                } catch (ReflectiveOperationException ex) {
+                    Logging.log(Logging.LEVEL_WARN, "Cannot set Look and Feel: " + laf + ": "+ex.getMessage(), ex);
+                } catch (UnsupportedLookAndFeelException ex) {
+                    Logging.info("Look and Feel not supported: " + laf);
+                    LafPreference.LAF.put(defaultlaf);
+                    Logging.trace(ex);
+                }
+            } else {
+                Logging.info("Look and Feel not found: " + laf);
+                LafPreference.LAF.put(defaultlaf);
+            }
+        } catch (UnsupportedLookAndFeelException e) {
+            Logging.info("Look and Feel not supported: " + laf);
+            LafPreference.LAF.put(defaultlaf);
+            Logging.trace(e);
+        } catch (InstantiationException | IllegalAccessException e) {
+            Logging.error(e);
+        }
+
+        UIManager.put("OptionPane.okIcon", ImageProvider.get("ok"));
+        UIManager.put("OptionPane.yesIcon", UIManager.get("OptionPane.okIcon"));
+        UIManager.put("OptionPane.cancelIcon", ImageProvider.get("cancel"));
+        UIManager.put("OptionPane.noIcon", UIManager.get("OptionPane.cancelIcon"));
+        // Ensures caret color is the same than text foreground color, see #12257
+        // See http://docs.oracle.com/javase/8/docs/api/javax/swing/plaf/synth/doc-files/componentProperties.html
+        for (String p : Arrays.asList(
+                "EditorPane", "FormattedTextField", "PasswordField", "TextArea", "TextField", "TextPane")) {
+            UIManager.put(p+".caretForeground", UIManager.getColor(p+".foreground"));
         }
     }
 

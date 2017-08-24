@@ -96,7 +96,7 @@ public class MoveAction extends JosmAction {
         } else { //dir == Direction.RIGHT
             putValue("toolbar", "action/move/right");
         }
-        Main.toolbar.register(this);
+        MainApplication.getToolbar().register(this);
     }
 
     @Override

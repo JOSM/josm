@@ -464,7 +464,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             String res = actionParser.saveAction(aDef);
 
             // add custom search button to toolbar preferences
-            Main.toolbar.addCustomButton(res, -1, false);
+            MainApplication.getToolbar().addCustomButton(res, -1, false);
         }
 
         return initialValues;

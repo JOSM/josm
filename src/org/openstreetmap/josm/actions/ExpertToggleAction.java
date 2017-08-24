@@ -6,8 +6,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.ListenerList;
 
 /**
@@ -99,8 +99,8 @@ public class ExpertToggleAction extends ToggleAction {
               false /* register toolbar */
         );
         putValue("toolbar", "expertmode");
-        if (Main.toolbar != null) {
-            Main.toolbar.register(this);
+        if (MainApplication.getToolbar() != null) {
+            MainApplication.getToolbar().register(this);
         }
         setSelected(PREF_EXPERT.get());
         notifySelectedState();

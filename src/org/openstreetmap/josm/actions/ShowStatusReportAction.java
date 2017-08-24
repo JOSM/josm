@@ -64,7 +64,7 @@ public final class ShowStatusReportAction extends JosmAction {
 
         putValue("help", ht("/Action/ShowStatusReport"));
         putValue("toolbar", "help/showstatusreport");
-        Main.toolbar.register(this);
+        MainApplication.getToolbar().register(this);
     }
 
     private static boolean isRunningJavaWebStart() {

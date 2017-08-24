@@ -84,8 +84,8 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
         if (getValue("toolbar") == null) {
             putValue("toolbar", toolbarId);
         }
-        if (registerInToolbar && Main.toolbar != null) {
-            Main.toolbar.register(this);
+        if (registerInToolbar && MainApplication.getToolbar() != null) {
+            MainApplication.getToolbar().register(this);
         }
         if (installAdapters) {
             installAdapters();
