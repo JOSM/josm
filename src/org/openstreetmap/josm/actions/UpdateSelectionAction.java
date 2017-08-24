@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.UpdatePrimitivesTask;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.MultiFetchServerObjectReader;
@@ -58,7 +59,7 @@ public class UpdateSelectionAction extends JosmAction {
      *
      */
     public static void updatePrimitives(final Collection<OsmPrimitive> selection) {
-        Main.worker.submit(new UpdatePrimitivesTask(Main.getLayerManager().getEditLayer(), selection));
+        MainApplication.worker.submit(new UpdatePrimitivesTask(Main.getLayerManager().getEditLayer(), selection));
     }
 
     /**

@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthParameters;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.oauth.AdvancedOAuthPropertiesPanel;
 import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.gui.oauth.TestAccessTokenTask;
@@ -314,7 +315,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
             OAuthAuthorizationWizard wizard = new OAuthAuthorizationWizard(
                     OAuthAuthenticationPreferencesPanel.this,
                     apiUrl,
-                    Main.worker);
+                    MainApplication.worker);
             try {
                 wizard.showDialog();
             } catch (UserCancelException ignore) {
@@ -363,7 +364,7 @@ public class OAuthAuthenticationPreferencesPanel extends JPanel implements Prope
                     parameters,
                     token
             );
-            Main.worker.submit(task);
+            MainApplication.worker.submit(task);
         }
     }
 

@@ -26,8 +26,8 @@ import org.apache.commons.jcs.access.CacheAccess;
 import org.apache.commons.jcs.engine.stats.behavior.ICacheStats;
 import org.apache.commons.jcs.engine.stats.behavior.IStatElement;
 import org.apache.commons.jcs.engine.stats.behavior.IStats;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.layer.WMSLayer;
 import org.openstreetmap.josm.gui.layer.WMTSLayer;
@@ -50,7 +50,7 @@ public class CacheContentsPanel extends JPanel {
      */
     public CacheContentsPanel() {
         super(new GridBagLayout());
-        Main.worker.submit(() -> {
+        MainApplication.worker.submit(() -> {
             addToPanel(TMSLayer.getCache(), "TMS");
             addToPanel(WMSLayer.getCache(), "WMS");
             addToPanel(WMTSLayer.getCache(), "WMTS");

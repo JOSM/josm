@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +36,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -58,20 +60,21 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
-import org.openstreetmap.josm.data.AutosaveTask;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.CustomConfigurator;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.gui.ProgramArguments.Option;
 import org.openstreetmap.josm.gui.SplashScreen.SplashProgressMonitor;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
+import org.openstreetmap.josm.gui.io.CustomConfigurator.XMLCommandProcessor;
+import org.openstreetmap.josm.gui.layer.AutosaveTask;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
+import org.openstreetmap.josm.gui.progress.ProgressMonitorExecutor;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.CertificateAmendment;
@@ -121,6 +124,13 @@ public class MainApplication extends Main {
     static MapFrame map;
 
     private final MainFrame mainFrame;
+
+    /**
+     * The worker thread slave. This is for executing all long and intensive
+     * calculations. The executed runnables are guaranteed to be executed separately and sequential.
+     * @since 12634 (as a replacement to {@code Main.worker})
+     */
+    public static final ExecutorService worker = new ProgressMonitorExecutor("main-worker-%d", Thread.NORM_PRIORITY);
 
     /**
      * Constructs a new {@code MainApplication} without a window.
@@ -226,6 +236,9 @@ public class MainApplication extends Main {
 
     @Override
     protected void shutdown() {
+        if (!GraphicsEnvironment.isHeadless()) {
+            worker.shutdown();
+        }
         if (mainFrame != null) {
             mainFrame.storeState();
         }
@@ -233,6 +246,9 @@ public class MainApplication extends Main {
             map.rememberToggleDialogWidth();
         }
         super.shutdown();
+        if (!GraphicsEnvironment.isHeadless()) {
+            worker.shutdownNow();
+        }
     }
 
     @Override
@@ -455,7 +471,7 @@ public class MainApplication extends Main {
         Main.parent = mainFrame;
 
         if (args.hasOption(Option.LOAD_PREFERENCES)) {
-            CustomConfigurator.XMLCommandProcessor config = new CustomConfigurator.XMLCommandProcessor(Main.pref);
+            XMLCommandProcessor config = new XMLCommandProcessor(Main.pref);
             for (String i : args.get(Option.LOAD_PREFERENCES)) {
                 Logging.info("Reading preferences from " + i);
                 try (InputStream is = openStream(new URL(i))) {
@@ -670,7 +686,7 @@ public class MainApplication extends Main {
         // asynchronously launch the download task ...
         Future<?> future = task.download(true, b, null);
         // ... and the continuation when the download is finished (this will wait for the download to finish)
-        return Collections.singletonList(Main.worker.submit(new PostDownloadHandler(task, future)));
+        return Collections.singletonList(MainApplication.worker.submit(new PostDownloadHandler(task, future)));
     }
 
     /**
@@ -692,7 +708,7 @@ public class MainApplication extends Main {
         }
         final Collection<String> selectionArguments = args.get(Option.SELECTION);
         if (!selectionArguments.isEmpty()) {
-            tasks.add(Main.worker.submit(() -> {
+            tasks.add(MainApplication.worker.submit(() -> {
                 for (String s : selectionArguments) {
                     SearchAction.search(s, SearchAction.SearchMode.add);
                 }

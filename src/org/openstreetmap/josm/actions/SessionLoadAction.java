@@ -60,7 +60,7 @@ public class SessionLoadAction extends DiskAccessAction {
             return;
         File file = fc.getSelectedFile();
         boolean zip = Utils.hasExtension(file, "joz");
-        Main.worker.submit(new Loader(file, zip));
+        MainApplication.worker.submit(new Loader(file, zip));
     }
 
     /**

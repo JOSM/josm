@@ -76,7 +76,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
         downloadTask = new DownloadTask(newLayer, new OsmServerLocationReader(url), progressMonitor);
         // Extract .osc filename from URL to set the new layer name
         extractOsmFilename("https?://.*/(.*\\.osc)", url);
-        return Main.worker.submit(downloadTask);
+        return MainApplication.worker.submit(downloadTask);
     }
 
     /**
@@ -122,7 +122,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
                 }
                 if (isCanceled()) return;
                 // Let's load all required history
-                Main.worker.submit(new HistoryLoaderAndListener(toLoad));
+                MainApplication.worker.submit(new HistoryLoaderAndListener(toLoad));
             } catch (RejectedExecutionException e) {
                 rememberException(e);
                 setFailed(true);
@@ -199,7 +199,7 @@ public class DownloadOsmChangeTask extends DownloadOsmTask {
             } else {
                 // Some primitives still need to be loaded
                 // Let's load all required history
-                Main.worker.submit(new HistoryLoaderAndListener(toLoadNext));
+                MainApplication.worker.submit(new HistoryLoaderAndListener(toLoadNext));
             }
         }
 

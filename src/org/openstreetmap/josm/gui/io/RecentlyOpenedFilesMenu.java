@@ -18,6 +18,7 @@ import javax.swing.event.MenuListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.OpenFileAction.OpenFileTask;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -84,7 +85,7 @@ public class RecentlyOpenedFilesMenu extends JMenu {
         public void actionPerformed(ActionEvent e) {
             OpenFileTask task = new OpenFileTask(Collections.singletonList(new File(file)), null);
             task.setRecordHistory(true);
-            Main.worker.submit(task);
+            MainApplication.worker.submit(task);
         }
     }
 

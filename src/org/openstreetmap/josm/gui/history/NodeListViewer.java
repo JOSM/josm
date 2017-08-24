@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.AdjustmentSynchronizer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -301,9 +302,9 @@ public class NodeListViewer extends JPanel {
 
         public void run() {
             if (HistoryDataSet.getInstance().getHistory(primitiveId) == null) {
-                Main.worker.submit(new HistoryLoadTask().add(primitiveId));
+                MainApplication.worker.submit(new HistoryLoadTask().add(primitiveId));
             }
-            Main.worker.submit(() -> {
+            MainApplication.worker.submit(() -> {
                 final History h = HistoryDataSet.getInstance().getHistory(primitiveId);
                 if (h == null)
                     return;

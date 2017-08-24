@@ -53,6 +53,7 @@ import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.changeset.query.ChangesetQueryDialog;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -458,7 +459,7 @@ public class ChangesetCacheManager extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Main.worker.submit(new CloseChangesetTask(model.getSelectedChangesets()));
+            MainApplication.worker.submit(new CloseChangesetTask(model.getSelectedChangesets()));
         }
 
         protected void updateEnabledState() {
@@ -567,7 +568,7 @@ public class ChangesetCacheManager extends JFrame {
         public void actionPerformed(ActionEvent e) {
             if (!GraphicsEnvironment.isHeadless()) {
                 actDownloadSelectedContent.actionPerformed(e);
-                Main.worker.submit(() -> {
+                MainApplication.worker.submit(() -> {
                     final List<PrimitiveId> primitiveIds = model.getSelectedChangesets().stream()
                             .map(Changeset::getContent)
                             .filter(Objects::nonNull)
@@ -753,8 +754,8 @@ public class ChangesetCacheManager extends JFrame {
      * @param task The changeset download task to run
      */
     public void runDownloadTask(final AbstractChangesetDownloadTask task) {
-        Main.worker.submit(new PostDownloadHandler(task, task.download()));
-        Main.worker.submit(() -> {
+        MainApplication.worker.submit(new PostDownloadHandler(task, task.download()));
+        MainApplication.worker.submit(() -> {
             if (task.isCanceled() || task.isFailed())
                 return;
             GuiHelper.runInEDT(() -> setSelectedChangesets(task.getDownloadedData()));

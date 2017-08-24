@@ -37,11 +37,11 @@ import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DiskAccessAction;
-import org.openstreetmap.josm.data.CustomConfigurator;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.preferences.Setting;
 import org.openstreetmap.josm.data.preferences.StringSetting;
 import org.openstreetmap.josm.gui.dialogs.LogShowDialog;
+import org.openstreetmap.josm.gui.io.CustomConfigurator;
 import org.openstreetmap.josm.gui.preferences.DefaultTabPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
@@ -257,7 +257,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         if (files.length == 0)
             return;
 
-        Preferences tmpPrefs = CustomConfigurator.clonePreferences(Main.pref);
+        Preferences tmpPrefs = new Preferences(Main.pref);
 
         StringBuilder log = new StringBuilder();
         log.append("<html>");
@@ -407,7 +407,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
 
         @Override
         public void actionPerformed(ActionEvent ae) {
-            Preferences tmpPrefs = CustomConfigurator.clonePreferences(Main.pref);
+            Preferences tmpPrefs = new Preferences(Main.pref);
             CustomConfigurator.readXML(file, tmpPrefs);
             readPreferences(tmpPrefs);
             String prefRegex = profileTypes.get(type);

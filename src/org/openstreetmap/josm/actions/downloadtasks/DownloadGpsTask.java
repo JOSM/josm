@@ -74,7 +74,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
                 new BoundingBoxDownloader(downloadArea), progressMonitor);
         // We need submit instead of execute so we can wait for it to finish and get the error
         // message if necessary. If no one calls getErrorMessage() it just behaves like execute.
-        return Main.worker.submit(downloadTask);
+        return MainApplication.worker.submit(downloadTask);
     }
 
     @Override
@@ -98,7 +98,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
             newLayerName = matcher.matches() ? matcher.group(1) : null;
             // We need submit instead of execute so we can wait for it to finish and get the error
             // message if necessary. If no one calls getErrorMessage() it just behaves like execute.
-            return Main.worker.submit(downloadTask);
+            return MainApplication.worker.submit(downloadTask);
 
         } else if (url.matches(PATTERN_TRACKPOINTS_BBOX)) {
             String[] table = url.split("\\?|=|&");

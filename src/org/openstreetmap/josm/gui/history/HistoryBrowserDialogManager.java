@@ -22,6 +22,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
@@ -212,7 +213,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
             for (PrimitiveId p : notNewPrimitives) {
                 task.add(p);
             }
-            Main.worker.submit(task);
+            MainApplication.worker.submit(task);
         }
 
         Runnable r = () -> {
@@ -228,6 +229,6 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
                 BugReportExceptionHandler.handleException(e);
             }
         };
-        Main.worker.submit(r);
+        MainApplication.worker.submit(r);
     }
 }

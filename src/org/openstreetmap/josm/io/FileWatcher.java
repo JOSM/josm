@@ -13,8 +13,8 @@ import java.nio.file.WatchService;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintStyleLoader;
@@ -23,6 +23,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Background thread that monitors certain files and perform relevant actions when they change.
@@ -139,7 +140,8 @@ public class FileWatcher {
                     SourceEntry rule = ruleMap.get(fullPath);
                     if (style != null) {
                         Logging.info("Map style "+style.getDisplayString()+" has been modified. Reloading style...");
-                        Main.worker.submit(new MapPaintStyleLoader(Collections.singleton(style)));
+                        Executors.newSingleThreadExecutor(Utils.newThreadFactory("mapstyle-reload-%d", Thread.NORM_PRIORITY)).submit(
+                                new MapPaintStyleLoader(Collections.singleton(style)));
                     } else if (rule != null) {
                         Logging.info("Validator rule "+rule.getDisplayString()+" has been modified. Reloading rule...");
                         MapCSSTagChecker tagChecker = OsmValidator.getTest(MapCSSTagChecker.class);

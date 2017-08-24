@@ -42,6 +42,7 @@ import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.history.HistoryBrowserDialogManager;
 import org.openstreetmap.josm.gui.history.HistoryLoadTask;
@@ -267,10 +268,10 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                 for (HistoryOsmPrimitive p: toLoad) {
                     task.add(p);
                 }
-                Main.worker.submit(task);
+                MainApplication.worker.submit(task);
             }
 
-            Main.worker.submit(new ShowHistoryTask(primitives));
+            MainApplication.worker.submit(new ShowHistoryTask(primitives));
         }
 
         protected final void updateEnabledState() {
@@ -303,7 +304,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         public void actionPerformed(ActionEvent arg0) {
             final List<PrimitiveId> primitiveIds = model.getSelectedPrimitives().stream().map(HistoryOsmPrimitive::getPrimitiveId)
                     .collect(Collectors.toList());
-            Main.worker.submit(new DownloadPrimitivesWithReferrersTask(false, primitiveIds, true, true, null, null));
+            MainApplication.worker.submit(new DownloadPrimitivesWithReferrersTask(false, primitiveIds, true, true, null, null));
         }
 
         protected final void updateEnabledState() {

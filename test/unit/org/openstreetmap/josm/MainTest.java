@@ -20,7 +20,6 @@ import org.junit.Test;
 import org.openstreetmap.josm.Main.InitStatusListener;
 import org.openstreetmap.josm.Main.InitializationTask;
 import org.openstreetmap.josm.actions.AboutAction;
-import org.openstreetmap.josm.gui.DownloadParamType;
 import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -39,19 +38,6 @@ public class MainTest {
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().platform().https().devAPI().main().projection();
-
-    /**
-     * Unit test of {@link DownloadParamType#paramType} method.
-     */
-    @Test
-    public void testParamType() {
-        assertEquals(DownloadParamType.bounds, DownloadParamType.paramType("48.000,16.000,48.001,16.001"));
-        assertEquals(DownloadParamType.fileName, DownloadParamType.paramType("data.osm"));
-        assertEquals(DownloadParamType.fileUrl, DownloadParamType.paramType("file:///home/foo/data.osm"));
-        assertEquals(DownloadParamType.fileUrl, DownloadParamType.paramType("file://C:\\Users\\foo\\data.osm"));
-        assertEquals(DownloadParamType.httpUrl, DownloadParamType.paramType("http://somewhere.com/data.osm"));
-        assertEquals(DownloadParamType.httpUrl, DownloadParamType.paramType("https://somewhere.com/data.osm"));
-    }
 
     /**
      * Unit tests on log messages.

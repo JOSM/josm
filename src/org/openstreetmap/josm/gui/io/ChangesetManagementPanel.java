@@ -25,6 +25,7 @@ import javax.swing.event.ListDataListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -298,8 +299,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            DownloadOpenChangesetsTask task = new DownloadOpenChangesetsTask(ChangesetManagementPanel.this);
-            Main.worker.submit(task);
+            MainApplication.worker.submit(new DownloadOpenChangesetsTask(ChangesetManagementPanel.this));
         }
     }
 
@@ -318,8 +318,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         public void actionPerformed(ActionEvent e) {
             Changeset cs = (Changeset) cbOpenChangesets.getSelectedItem();
             if (cs == null) return;
-            CloseChangesetTask task = new CloseChangesetTask(Collections.singletonList(cs));
-            Main.worker.submit(task);
+            MainApplication.worker.submit(new CloseChangesetTask(Collections.singletonList(cs)));
         }
 
         protected void refreshEnabledState() {

@@ -22,6 +22,7 @@ import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSetListener;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -181,7 +182,7 @@ public class HistoryBrowserDialog extends JDialog implements HistoryDataSetListe
         public void actionPerformed(ActionEvent e) {
             HistoryLoadTask task = new HistoryLoadTask();
             task.add(browser.getHistory());
-            Main.worker.submit(task);
+            MainApplication.worker.submit(task);
         }
     }
 

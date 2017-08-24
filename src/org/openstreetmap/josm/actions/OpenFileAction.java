@@ -75,7 +75,7 @@ public class OpenFileAction extends DiskAccessAction {
         File[] files = fc.getSelectedFiles();
         OpenFileTask task = new OpenFileTask(Arrays.asList(files), fc.getFileFilter());
         task.setRecordHistory(true);
-        Main.worker.submit(task);
+        MainApplication.worker.submit(task);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class OpenFileAction extends DiskAccessAction {
     public static Future<?> openFiles(List<File> fileList, boolean recordHistory) {
         OpenFileTask task = new OpenFileTask(fileList, null);
         task.setRecordHistory(recordHistory);
-        return Main.worker.submit(task);
+        return MainApplication.worker.submit(task);
     }
 
     /**

@@ -7,13 +7,13 @@ import java.awt.event.ActionEvent;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DownloadAlongAction;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -196,7 +196,7 @@ public class DownloadAlongTrackAction extends DownloadAlongAction {
     public void actionPerformed(ActionEvent e) {
         PleaseWaitRunnable task = createTask();
         if (task != null) {
-            Main.worker.submit(task);
+            MainApplication.worker.submit(task);
         }
     }
 }

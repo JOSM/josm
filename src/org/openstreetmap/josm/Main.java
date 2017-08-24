@@ -58,7 +58,6 @@ import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.display.LafPreference;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
-import org.openstreetmap.josm.gui.progress.ProgressMonitorExecutor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.io.FileWatcher;
@@ -122,10 +121,11 @@ public abstract class Main {
 
     /**
      * The worker thread slave. This is for executing all long and intensive
-     * calculations. The executed runnables are guaranteed to be executed separately
-     * and sequential.
+     * calculations. The executed runnables are guaranteed to be executed separately and sequential.
+     * @deprecated use {@link MainApplication#worker} instead
      */
-    public static final ExecutorService worker = new ProgressMonitorExecutor("main-worker-%d", Thread.NORM_PRIORITY);
+    @Deprecated
+    public static final ExecutorService worker = MainApplication.worker;
 
     /**
      * Global application preferences
@@ -854,7 +854,6 @@ public abstract class Main {
      */
     protected void shutdown() {
         if (!GraphicsEnvironment.isHeadless()) {
-            worker.shutdown();
             ImageProvider.shutdown(false);
             JCSCacheManager.shutdown();
         }
@@ -866,7 +865,6 @@ public abstract class Main {
             Logging.log(Logging.LEVEL_WARN, tr("Failed to save default preferences."), ex);
         }
         if (!GraphicsEnvironment.isHeadless()) {
-            worker.shutdownNow();
             ImageProvider.shutdown(true);
         }
     }

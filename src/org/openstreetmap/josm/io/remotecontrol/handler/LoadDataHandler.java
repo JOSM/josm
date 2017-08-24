@@ -6,9 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
@@ -39,7 +39,7 @@ public class LoadDataHandler extends RequestHandler {
 
     @Override
     protected void handleRequest() throws RequestHandlerErrorException {
-        Main.worker.submit(new LoadDataTask(isLoadInNewLayer(), dataSet, args.get("layer_name")));
+        MainApplication.worker.submit(new LoadDataTask(isLoadInNewLayer(), dataSet, args.get("layer_name")));
     }
 
     @Override

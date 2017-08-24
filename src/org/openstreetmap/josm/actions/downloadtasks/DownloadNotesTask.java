@@ -59,13 +59,13 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
     public Future<?> download(long id, ProgressMonitor progressMonitor) {
         final String url = OsmApi.getOsmApi().getBaseUrl() + "notes/" + id;
         downloadTask = new DownloadRawUrlTask(new OsmServerLocationReader(url), progressMonitor);
-        return Main.worker.submit(downloadTask);
+        return MainApplication.worker.submit(downloadTask);
     }
 
     @Override
     public Future<?> download(boolean newLayer, Bounds downloadArea, ProgressMonitor progressMonitor) {
         downloadTask = new DownloadBoundingBoxTask(new BoundingBoxDownloader(downloadArea), progressMonitor);
-        return Main.worker.submit(downloadTask);
+        return MainApplication.worker.submit(downloadTask);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
         } else {
             downloadTask = new DownloadRawUrlTask(new OsmServerLocationReader(url), progressMonitor);
         }
-        return Main.worker.submit(downloadTask);
+        return MainApplication.worker.submit(downloadTask);
     }
 
     @Override

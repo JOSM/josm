@@ -32,6 +32,7 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapViewState;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
@@ -333,7 +334,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
             if (!GraphicsEnvironment.isHeadless()) {
                 final ChangesetQueryTask task = new ChangesetQueryTask(this, query);
                 ChangesetCacheManager.getInstance().runDownloadTask(task);
-                Main.worker.submit(() -> {
+                MainApplication.worker.submit(() -> {
                     if (task.isCanceled() || task.isFailed())
                         return;
                     GuiHelper.runInEDT(() -> task.getDownloadedData().stream()

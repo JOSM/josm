@@ -47,7 +47,7 @@ import org.xml.sax.SAXException;
  *   );
  *
  *   // start the task
- *   Main.worker.submit(task);
+ *   MainApplication.worker.submit(task);
  * </pre>
  *
  */

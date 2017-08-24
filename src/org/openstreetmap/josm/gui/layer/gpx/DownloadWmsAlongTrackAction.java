@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.GpxTrack;
 import org.openstreetmap.josm.data.gpx.GpxTrackSegment;
 import org.openstreetmap.josm.data.gpx.WayPoint;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.progress.ProgressTaskId;
@@ -108,7 +109,7 @@ public class DownloadWmsAlongTrackAction extends AbstractAction {
     public void actionPerformed(ActionEvent e) {
         PrecacheWmsTask task = createTask();
         if (task != null) {
-            Main.worker.execute(task);
+            MainApplication.worker.execute(task);
         }
     }
 

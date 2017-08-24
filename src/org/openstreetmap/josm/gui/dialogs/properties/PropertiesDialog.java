@@ -1171,7 +1171,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
                     uris.add(new URI(String.format("%sMap_Features", base)));
                 }
 
-                Main.worker.execute(() -> displayHelp(uris));
+                MainApplication.worker.execute(() -> displayHelp(uris));
             } catch (URISyntaxException e1) {
                 Logging.error(e1);
             }

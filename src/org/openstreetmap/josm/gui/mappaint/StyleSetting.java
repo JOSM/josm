@@ -10,6 +10,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -69,7 +70,7 @@ public interface StyleSetting {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     setValue(item.isSelected());
-                    Main.worker.submit(new MapPaintStyles.MapPaintStyleLoader(Arrays.asList(parentStyle)));
+                    MainApplication.worker.submit(new MapPaintStyles.MapPaintStyleLoader(Arrays.asList(parentStyle)));
                 }
             };
             item.setAction(a);

@@ -236,7 +236,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         // run fix task asynchronously
         //
         FixTask fixTask = new FixTask(errorsToFix);
-        Main.worker.submit(fixTask);
+        MainApplication.worker.submit(fixTask);
     }
 
     /**

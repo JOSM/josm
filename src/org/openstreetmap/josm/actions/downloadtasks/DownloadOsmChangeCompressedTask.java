@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions.downloadtasks;
 
-import java.util.concurrent.Future;
-
 import static org.openstreetmap.josm.tools.I18n.tr;
 
-import org.openstreetmap.josm.Main;
+import java.util.concurrent.Future;
+
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -49,6 +49,6 @@ public class DownloadOsmChangeCompressedTask extends DownloadOsmChangeTask {
         currentBounds = null;
         // Extract .osc.gz/bz/bz2 filename from URL to set the new layer name
         extractOsmFilename("https?://.*/(.*\\.osc.(gz|bz2?))", url);
-        return Main.worker.submit(downloadTask);
+        return MainApplication.worker.submit(downloadTask);
     }
 }

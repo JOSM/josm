@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -92,7 +93,7 @@ public class DownloadTaskList {
                 dt.cancel();
             }
         });
-        return Main.worker.submit(new PostDownloadProcessor(osmData));
+        return MainApplication.worker.submit(new PostDownloadProcessor(osmData));
     }
 
     /**

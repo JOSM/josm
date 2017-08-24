@@ -602,7 +602,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                     if (e.getClickCount() >= 2 && c.size() == 1 && c.iterator().next() instanceof Node) {
                         // We need to do it like this as otherwise drawAction will see a double
                         // click and switch back to SelectMode
-                        Main.worker.execute(() -> map.selectDrawTool(true));
+                        MainApplication.worker.execute(() -> map.selectDrawTool(true));
                         return;
                     }
                 }

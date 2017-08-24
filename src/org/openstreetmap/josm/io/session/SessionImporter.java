@@ -6,9 +6,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.File;
 import java.io.IOException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.actions.SessionLoadAction.Loader;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.FileImporter;
 import org.openstreetmap.josm.io.IllegalDataException;
@@ -36,6 +36,6 @@ public class SessionImporter extends FileImporter {
     @Override
     public void importData(File file, ProgressMonitor progressMonitor) throws IOException, IllegalDataException {
         boolean zip = Utils.hasExtension(file, "joz");
-        Main.worker.submit(new Loader(file, zip));
+        MainApplication.worker.submit(new Loader(file, zip));
     }
 }

@@ -49,6 +49,7 @@ import javax.swing.plaf.FontUIResource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.StrokeProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
@@ -92,7 +93,7 @@ public final class GuiHelper {
      * @param task The task to run
      */
     public static void executeByMainWorkerInEDT(final Runnable task) {
-        Main.worker.submit(() -> runInEDTAndWait(task));
+        MainApplication.worker.submit(() -> runInEDTAndWait(task));
     }
 
     /**

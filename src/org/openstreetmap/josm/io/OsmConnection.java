@@ -120,8 +120,8 @@ public class OsmConnection {
                 throw new MissingOAuthAccessTokenException();
             }
             final Runnable authTask = new FutureTask<>(() -> {
-                // Concerning Utils.newDirectExecutor: Main.worker cannot be used since this connection is already
-                // executed via Main.worker. The OAuth connections would block otherwise.
+                // Concerning Utils.newDirectExecutor: Main worker cannot be used since this connection is already
+                // executed via main worker. The OAuth connections would block otherwise.
                 final OAuthAuthorizationWizard wizard = new OAuthAuthorizationWizard(
                         Main.parent, apiUrl.toExternalForm(), Utils.newDirectExecutor());
                 wizard.showDialog();

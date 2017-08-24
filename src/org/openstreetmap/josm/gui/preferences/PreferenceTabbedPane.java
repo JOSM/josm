@@ -34,6 +34,7 @@ import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListene
 import org.openstreetmap.josm.actions.RestartAction;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.preferences.advanced.AdvancedPreference;
 import org.openstreetmap.josm.gui.preferences.audio.AudioPreference;
 import org.openstreetmap.josm.gui.preferences.display.ColorPreference;
@@ -417,8 +418,8 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
             if (task != null) {
                 // if we have to launch a plugin download task we do it asynchronously, followed
                 // by the remaining "save preferences" activites run on the Swing EDT.
-                Main.worker.submit(task);
-                Main.worker.submit(() -> SwingUtilities.invokeLater(continuation));
+                MainApplication.worker.submit(task);
+                MainApplication.worker.submit(() -> SwingUtilities.invokeLater(continuation));
             } else {
                 // no need for asynchronous activities. Simply run the remaining "save preference"
                 // activities on this thread (we are already on the Swing EDT

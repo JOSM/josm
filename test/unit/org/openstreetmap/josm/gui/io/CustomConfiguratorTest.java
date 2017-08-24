@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.data;
+package org.openstreetmap.josm.gui.io;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -17,7 +17,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.data.CustomConfigurator.PreferencesUtils;
+import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.PreferencesUtils;
+import org.openstreetmap.josm.gui.io.CustomConfigurator;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Utils;
 

@@ -46,7 +46,7 @@ public class MainApplicationTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform().main();
+    public JOSMTestRules test = new JOSMTestRules().main().https().devAPI().timeout(20000);
 
     @SuppressFBWarnings(value = "DM_DEFAULT_ENCODING")
     private void testShow(final String arg, String expected) throws InterruptedException, IOException {
@@ -84,6 +84,19 @@ public class MainApplicationTest {
     @Test
     public void testShowHelp() throws Exception {
         testShow("--help", MainApplication.getHelp().trim());
+    }
+
+    /**
+     * Unit test of {@link DownloadParamType#paramType} method.
+     */
+    @Test
+    public void testParamType() {
+        assertEquals(DownloadParamType.bounds, DownloadParamType.paramType("48.000,16.000,48.001,16.001"));
+        assertEquals(DownloadParamType.fileName, DownloadParamType.paramType("data.osm"));
+        assertEquals(DownloadParamType.fileUrl, DownloadParamType.paramType("file:///home/foo/data.osm"));
+        assertEquals(DownloadParamType.fileUrl, DownloadParamType.paramType("file://C:\\Users\\foo\\data.osm"));
+        assertEquals(DownloadParamType.httpUrl, DownloadParamType.paramType("http://somewhere.com/data.osm"));
+        assertEquals(DownloadParamType.httpUrl, DownloadParamType.paramType("https://somewhere.com/data.osm"));
     }
 
     /**

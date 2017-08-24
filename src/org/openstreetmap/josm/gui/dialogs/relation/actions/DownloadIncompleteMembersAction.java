@@ -8,10 +8,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationMemberTask;
+import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -47,7 +48,7 @@ public class DownloadIncompleteMembersAction extends AbstractRelationEditorActio
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        Main.worker.submit(new DownloadRelationMemberTask(
+        MainApplication.worker.submit(new DownloadRelationMemberTask(
                 editor.getRelation(),
                 memberTableModel.getIncompleteMemberPrimitives(),
                 layer,

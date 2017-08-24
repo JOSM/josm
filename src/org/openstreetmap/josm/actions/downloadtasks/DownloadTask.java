@@ -42,7 +42,7 @@ public interface DownloadTask {
      *           doSomethingAfterTheTaskCompleted();
      *       }
      *    }
-     *    Main.worker.submit(runAfterTask);
+     *    MainApplication.worker.submit(runAfterTask);
      * </pre>
      *
      * @param newLayer true, if the data is to be downloaded into a new layer. If false, the task
