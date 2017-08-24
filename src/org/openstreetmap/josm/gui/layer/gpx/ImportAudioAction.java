@@ -114,7 +114,7 @@ public class ImportAudioAction extends AbstractAction {
             for (File file : sel) {
                 importAudio(file, ml, firstStartTime, m);
             }
-            Main.getLayerManager().addLayer(ml);
+            MainApplication.getLayerManager().addLayer(ml);
             MainApplication.getMap().repaint();
         }
     }

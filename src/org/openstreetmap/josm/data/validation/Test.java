@@ -14,7 +14,6 @@ import java.util.function.Predicate;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.search.SearchCompiler.NotOutsideDataSourceArea;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
@@ -23,6 +22,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.GBC;
@@ -330,7 +330,7 @@ public class Test extends AbstractVisitor {
             }
         }
         if (!primitivesToDelete.isEmpty()) {
-            return DeleteCommand.delete(Main.getLayerManager().getEditLayer(), primitivesToDelete);
+            return DeleteCommand.delete(MainApplication.getLayerManager().getEditLayer(), primitivesToDelete);
         } else {
             return null;
         }

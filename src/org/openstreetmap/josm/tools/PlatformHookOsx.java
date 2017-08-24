@@ -22,6 +22,7 @@ import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.OpenFileAction.OpenFileTask;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.xml.sax.SAXException;
 
@@ -171,7 +172,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
             }
             break;
         case "handleQuitRequestWith":
-            boolean closed = Main.exitJosm(false, 0, null);
+            boolean closed = MainApplication.exitJosm(false, 0, null);
             if (args[1] != null) {
                 try {
                     args[1].getClass().getDeclaredMethod(closed ? "performQuit" : "cancelQuit").invoke(args[1]);

@@ -82,10 +82,10 @@ public class RestartAction extends JosmAction {
         // Request for restart is indicated by exit code 9.
         String scriptRestart = System.getProperty("josm.restart");
         if ("true".equals(scriptRestart)) {
-            Main.exitJosm(true, 9, SaveLayersDialog.Reason.RESTART);
+            MainApplication.exitJosm(true, 9, SaveLayersDialog.Reason.RESTART);
         }
 
-        if (isRestartSupported() && !Main.exitJosm(false, 0, SaveLayersDialog.Reason.RESTART)) return;
+        if (isRestartSupported() && !MainApplication.exitJosm(false, 0, SaveLayersDialog.Reason.RESTART)) return;
         final List<String> cmd;
         // special handling for OSX .app package
         if (Main.isPlatformOsx() && System.getProperty("java.library.path").contains("/JOSM.app/Contents/MacOS")) {

@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadReferrersTask;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -52,7 +51,7 @@ public class DownloadReferrersAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        OsmDataLayer layer = Main.getLayerManager().getEditLayer();
+        OsmDataLayer layer = getLayerManager().getEditLayer();
         if (layer == null)
             return;
         Collection<OsmPrimitive> primitives = layer.data.getSelected();

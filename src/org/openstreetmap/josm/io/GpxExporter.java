@@ -27,6 +27,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.gpx.GpxConstants;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -171,7 +172,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         } else if (layer instanceof GpxLayer) {
             gpxData = ((GpxLayer) layer).data;
         } else {
-            gpxData = OsmDataLayer.toGpxData(Main.getLayerManager().getEditDataSet(), file);
+            gpxData = OsmDataLayer.toGpxData(MainApplication.getLayerManager().getEditDataSet(), file);
         }
 
         // add author and copyright details to the gpx data

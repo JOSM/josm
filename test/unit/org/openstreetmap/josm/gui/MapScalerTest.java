@@ -9,7 +9,6 @@ import java.awt.Color;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MapScaler.AccessibleMapScaler;
@@ -35,7 +34,7 @@ public class MapScalerTest {
      */
     @Test
     public void testMapScaler() {
-        Main.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "", null));
+        MainApplication.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "", null));
         assertEquals(Color.WHITE, MapScaler.getColor());
         MapScaler ms = new MapScaler(MainApplication.getMap().mapView);
         assertEquals("/MapView/Scaler", ms.helpTopic());

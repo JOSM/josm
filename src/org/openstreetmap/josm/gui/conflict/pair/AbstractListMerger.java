@@ -30,12 +30,12 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.conflict.ConflictResolveCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.AdjustmentSynchronizer;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
@@ -900,7 +900,7 @@ implements PropertyChangeListener, ChangeListener, IConflictResolver {
 
     protected final <P extends OsmPrimitive> OsmDataLayer findLayerFor(P primitive) {
         if (primitive != null) {
-            Iterable<OsmDataLayer> layers = Main.getLayerManager().getLayersOfType(OsmDataLayer.class);
+            Iterable<OsmDataLayer> layers = MainApplication.getLayerManager().getLayersOfType(OsmDataLayer.class);
             // Find layer with same dataset
             for (OsmDataLayer layer : layers) {
                 if (layer.data == primitive.getDataSet()) {

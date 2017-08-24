@@ -10,10 +10,10 @@ import java.io.InputStream;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
@@ -44,7 +44,7 @@ public class PurgeActionTest {
         try (InputStream is = TestUtils.getRegressionDataStream(12038, "data.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             OsmDataLayer layer = new OsmDataLayer(ds, null, null);
-            Main.getLayerManager().addLayer(layer);
+            MainApplication.getLayerManager().addLayer(layer);
             try {
                 for (Way w : ds.getWays()) {
                     if (w.getId() == 222191929L) {
@@ -60,7 +60,7 @@ public class PurgeActionTest {
                 }
             } finally {
                 // Ensure we clean the place before leaving, even if test fails.
-                Main.getLayerManager().removeLayer(layer);
+                MainApplication.getLayerManager().removeLayer(layer);
             }
         }
     }

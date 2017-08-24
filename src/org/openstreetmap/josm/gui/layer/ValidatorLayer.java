@@ -13,7 +13,6 @@ import javax.swing.Icon;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.RenameLayerAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
@@ -48,7 +47,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
      */
     public ValidatorLayer() {
         super(tr("Validation errors"));
-        Main.getLayerManager().addLayerChangeListener(this);
+        MainApplication.getLayerManager().addLayerChangeListener(this);
         MainApplication.getMap().validatorDialog.tree.addInvalidationListener(invalidator);
     }
 
@@ -174,7 +173,7 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
     @Override
     public synchronized void destroy() {
         MainApplication.getMap().validatorDialog.tree.removeInvalidationListener(invalidator);
-        Main.getLayerManager().removeLayerChangeListener(this);
+        MainApplication.getLayerManager().removeLayerChangeListener(this);
         super.destroy();
     }
 }

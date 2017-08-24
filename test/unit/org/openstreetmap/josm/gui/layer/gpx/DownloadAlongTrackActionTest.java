@@ -6,10 +6,10 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.io.GpxReaderTest;
@@ -32,13 +32,13 @@ public class DownloadAlongTrackActionTest {
     private static PleaseWaitRunnable createTask(String file) throws Exception {
         final OsmDataLayer layer = new OsmDataLayer(new DataSet(), DownloadAlongTrackActionTest.class.getName(), null);
         try {
-            Main.getLayerManager().addLayer(layer);
+            MainApplication.getLayerManager().addLayer(layer);
             // Perform action
             final GpxData gpx = GpxReaderTest.parseGpxData(TestUtils.getTestDataRoot() + file);
             return new DownloadAlongTrackAction(gpx).createTask();
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.getLayerManager().removeLayer(layer);
+            MainApplication.getLayerManager().removeLayer(layer);
         }
     }
 

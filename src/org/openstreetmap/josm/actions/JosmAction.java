@@ -269,7 +269,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
      * @since 10353
      */
     public MainLayerManager getLayerManager() {
-        return Main.getLayerManager();
+        return MainApplication.getLayerManager();
     }
 
     protected static void waitFuture(final Future<?> future, final PleaseWaitProgressMonitor monitor) {

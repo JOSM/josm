@@ -416,12 +416,12 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         if (!MainApplication.isDisplayingMapView())
             return;
         Marker m = null;
-        Layer l = Main.getLayerManager().getActiveLayer();
+        Layer l = MainApplication.getLayerManager().getActiveLayer();
         if (l != null) {
             m = getAdjacentMarker(startMarker, next, l);
         }
         if (m == null) {
-            for (Layer layer : Main.getLayerManager().getLayers()) {
+            for (Layer layer : MainApplication.getLayerManager().getLayers()) {
                 m = getAdjacentMarker(startMarker, next, layer);
                 if (m != null) {
                     break;

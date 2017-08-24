@@ -70,12 +70,11 @@ public class AutoScaleAction extends JosmAction {
 
     /**
      * Zooms the current map view to the currently selected primitives.
-     * Does nothing if there either isn't a current map view or if there isn't a current data
-     * layer.
+     * Does nothing if there either isn't a current map view or if there isn't a current data layer.
      *
      */
     public static void zoomToSelection() {
-        DataSet dataSet = Main.getLayerManager().getEditDataSet();
+        DataSet dataSet = MainApplication.getLayerManager().getEditDataSet();
         if (dataSet == null) {
             return;
         }
@@ -224,7 +223,7 @@ public class AutoScaleAction extends JosmAction {
      * @return the first selected layer in the layer list dialog
      */
     protected Layer getFirstSelectedLayer() {
-        if (Main.getLayerManager().getActiveLayer() == null) {
+        if (getLayerManager().getActiveLayer() == null) {
             return null;
         }
         try {
@@ -267,7 +266,7 @@ public class AutoScaleAction extends JosmAction {
     }
 
     private static BoundingXYVisitor modeData(BoundingXYVisitor v) {
-        for (Layer l : Main.getLayerManager().getLayers()) {
+        for (Layer l : MainApplication.getLayerManager().getLayers()) {
             l.visitBoundingBox(v);
         }
         return v;
@@ -336,7 +335,7 @@ public class AutoScaleAction extends JosmAction {
                     v.visit(dataSources.get(lastZoomArea).bounds);
                 } else {
                     lastZoomArea = -1;
-                    Area sourceArea = Main.getLayerManager().getEditDataSet().getDataSourceArea();
+                    Area sourceArea = getLayerManager().getEditDataSet().getDataSourceArea();
                     if (sourceArea != null) {
                         v.visit(new Bounds(sourceArea.getBounds2D()));
                     }

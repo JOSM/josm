@@ -1,14 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.actions;
 
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.tools.Shortcut;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
+import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * This allows to select a sequence of non-branching connected ways.
@@ -19,7 +18,6 @@ public class SelectNonBranchingWaySequencesAction extends JosmAction {
 
     /**
      * Creates a new {@link SelectNonBranchingWaySequencesAction}
-     *
      */
     public SelectNonBranchingWaySequencesAction() {
         super(tr("Non-branching way sequences"),
@@ -31,18 +29,17 @@ public class SelectNonBranchingWaySequencesAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent ev) {
-        DataSet ds = Main.getLayerManager().getEditDataSet();
+        DataSet ds = getLayerManager().getEditDataSet();
         SelectNonBranchingWaySequences ws = new SelectNonBranchingWaySequences(ds.getSelectedWays());
         ws.extend(ds);
     }
 
     /**
      * Update the enabled state of the action when something in
-     * the JOSM state changes, i.e. when a layer is removed or
-     * added.
+     * the JOSM state changes, i.e. when a layer is removed or added.
      */
     @Override
     protected void updateEnabledState() {
-        setEnabled(Main.getLayerManager().getEditDataSet() != null);
+        setEnabled(getLayerManager().getEditDataSet() != null);
     }
 }

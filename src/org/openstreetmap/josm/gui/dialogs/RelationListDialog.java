@@ -216,8 +216,8 @@ public class RelationListDialog extends ToggleDialog
 
     @Override
     public void showNotify() {
-        Main.getLayerManager().addLayerChangeListener(newAction);
-        Main.getLayerManager().addActiveLayerChangeListener(newAction);
+        MainApplication.getLayerManager().addLayerChangeListener(newAction);
+        MainApplication.getLayerManager().addActiveLayerChangeListener(newAction);
         MapView.addZoomChangeListener(this);
         newAction.updateEnabledState();
         DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT);
@@ -229,8 +229,8 @@ public class RelationListDialog extends ToggleDialog
 
     @Override
     public void hideNotify() {
-        Main.getLayerManager().removeActiveLayerChangeListener(newAction);
-        Main.getLayerManager().removeLayerChangeListener(newAction);
+        MainApplication.getLayerManager().removeActiveLayerChangeListener(newAction);
+        MainApplication.getLayerManager().removeLayerChangeListener(newAction);
         MapView.removeZoomChangeListener(this);
         DatasetEventManager.getInstance().removeDatasetListener(this);
         DataSet.removeSelectionListener(addSelectionToRelations);
@@ -325,7 +325,7 @@ public class RelationListDialog extends ToggleDialog
         }
 
         protected void setCurrentRelationAsSelection() {
-            Main.getLayerManager().getEditDataSet().setSelected(displaylist.getSelectedValue());
+            MainApplication.getLayerManager().getEditDataSet().setSelected(displaylist.getSelectedValue());
         }
 
         protected void editCurrentRelation() {
@@ -334,7 +334,7 @@ public class RelationListDialog extends ToggleDialog
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            if (Main.getLayerManager().getEditLayer() == null) return;
+            if (MainApplication.getLayerManager().getEditLayer() == null) return;
             if (isDoubleClick(e)) {
                 if (e.isControlDown()) {
                     editCurrentRelation();
@@ -357,7 +357,7 @@ public class RelationListDialog extends ToggleDialog
         }
 
         public void run() {
-            RelationEditor.getEditor(Main.getLayerManager().getEditLayer(), null, null).setVisible(true);
+            RelationEditor.getEditor(MainApplication.getLayerManager().getEditLayer(), null, null).setVisible(true);
         }
 
         @Override
@@ -366,7 +366,7 @@ public class RelationListDialog extends ToggleDialog
         }
 
         protected void updateEnabledState() {
-            setEnabled(Main.getLayerManager().getEditLayer() != null);
+            setEnabled(MainApplication.getLayerManager().getEditLayer() != null);
         }
 
         @Override
@@ -695,7 +695,7 @@ public class RelationListDialog extends ToggleDialog
 
     @Override
     public void dataChanged(DataChangedEvent event) {
-        initFromLayer(Main.getLayerManager().getEditLayer());
+        initFromLayer(MainApplication.getLayerManager().getEditLayer());
     }
 
     @Override

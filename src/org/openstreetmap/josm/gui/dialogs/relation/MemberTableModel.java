@@ -20,7 +20,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -35,6 +34,7 @@ import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.RelationSorter;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionTypeCalculator;
@@ -110,7 +110,7 @@ implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPri
     /* --------------------------------------------------------------------------- */
     @Override
     public void selectionChanged(Collection<? extends OsmPrimitive> newSelection) {
-        if (Main.getLayerManager().getEditLayer() != this.layer) return;
+        if (MainApplication.getLayerManager().getEditLayer() != this.layer) return;
         // just trigger a repaint
         Collection<RelationMember> sel = getSelectedMembers();
         fireTableDataChanged();

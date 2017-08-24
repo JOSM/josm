@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Future;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
@@ -122,7 +121,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                     if (!newLayer) {
                         // find out whether some data has already been downloaded
                         Area present = null;
-                        DataSet ds = Main.getLayerManager().getEditDataSet();
+                        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
                         if (ds != null) {
                             present = ds.getDataSourceArea();
                         }
@@ -159,7 +158,7 @@ public class LoadAndZoomHandler extends RequestHandler {
          */
         if (args.containsKey("addtags")) {
             GuiHelper.executeByMainWorkerInEDT(() -> {
-                DataSet ds = Main.getLayerManager().getEditDataSet();
+                DataSet ds = MainApplication.getLayerManager().getEditDataSet();
                 if (ds == null) // e.g. download failed
                     return;
                 ds.clearSelection();
@@ -172,7 +171,7 @@ public class LoadAndZoomHandler extends RequestHandler {
             // select objects after downloading, zoom to selection.
             GuiHelper.executeByMainWorkerInEDT(() -> {
                 Set<OsmPrimitive> newSel = new HashSet<>();
-                DataSet ds = Main.getLayerManager().getEditDataSet();
+                DataSet ds = MainApplication.getLayerManager().getEditDataSet();
                 if (ds == null) // e.g. download failed
                     return;
                 for (SimplePrimitiveId id : toSelect) {
@@ -196,7 +195,7 @@ public class LoadAndZoomHandler extends RequestHandler {
             try {
                 final SearchCompiler.Match search = SearchCompiler.compile(args.get("search"));
                 MainApplication.worker.submit(() -> {
-                    final DataSet ds = Main.getLayerManager().getEditDataSet();
+                    final DataSet ds = MainApplication.getLayerManager().getEditDataSet();
                     final Collection<OsmPrimitive> filteredPrimitives = SubclassFilteredCollection.filter(ds.allPrimitives(), search);
                     ds.setSelected(filteredPrimitives);
                     forTagAdd.addAll(filteredPrimitives);
@@ -214,12 +213,12 @@ public class LoadAndZoomHandler extends RequestHandler {
         // add changeset tags after download if necessary
         if (args.containsKey("changeset_comment") || args.containsKey("changeset_source")) {
             MainApplication.worker.submit(() -> {
-                if (Main.getLayerManager().getEditDataSet() != null) {
+                if (MainApplication.getLayerManager().getEditDataSet() != null) {
                     if (args.containsKey("changeset_comment")) {
-                        Main.getLayerManager().getEditDataSet().addChangeSetTag("comment", args.get("changeset_comment"));
+                        MainApplication.getLayerManager().getEditDataSet().addChangeSetTag("comment", args.get("changeset_comment"));
                     }
                     if (args.containsKey("changeset_source")) {
-                        Main.getLayerManager().getEditDataSet().addChangeSetTag("source", args.get("changeset_source"));
+                        MainApplication.getLayerManager().getEditDataSet().addChangeSetTag("source", args.get("changeset_source"));
                     }
                 }
             });

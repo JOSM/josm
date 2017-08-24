@@ -138,7 +138,7 @@ public class AddImageryLayerAction extends JosmAction implements AdaptableAction
         try {
             final ImageryInfo infoToAdd = convertImagery(info);
             if (infoToAdd != null) {
-                Main.getLayerManager().addLayer(ImageryLayer.create(infoToAdd));
+                getLayerManager().addLayer(ImageryLayer.create(infoToAdd));
                 AlignImageryPanel.addNagPanelIfNeeded(infoToAdd);
             }
         } catch (IllegalArgumentException ex) {

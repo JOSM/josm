@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -59,12 +60,12 @@ public class JoinAreasActionTest {
         try (InputStream is = TestUtils.getRegressionDataStream(10511, "10511_mini.osm")) {
             DataSet ds = OsmReader.parseDataSet(is, null);
             Layer layer = new OsmDataLayer(ds, null, null);
-            Main.getLayerManager().addLayer(layer);
+            MainApplication.getLayerManager().addLayer(layer);
             try {
                 new JoinAreasAction().join(ds.getWays());
             } finally {
                 // Ensure we clean the place before leaving, even if test fails.
-                Main.getLayerManager().removeLayer(layer);
+                MainApplication.getLayerManager().removeLayer(layer);
             }
         }
     }
@@ -80,7 +81,7 @@ public class JoinAreasActionTest {
             DataSet ds = OsmReader.parseDataSet(is, null);
             assertEquals(10, ds.getWays().size());
             Layer layer = new OsmDataLayer(ds, null, null);
-            Main.getLayerManager().addLayer(layer);
+            MainApplication.getLayerManager().addLayer(layer);
             for (String ref : new String[]{"A", "B", "C", "D", "E"}) {
                 System.out.print("Joining ways " + ref);
                 Collection<OsmPrimitive> found = SearchAction.searchAndReturn("type:way ref="+ref, SearchAction.SearchMode.replace);
@@ -111,7 +112,7 @@ public class JoinAreasActionTest {
         }
 
         // set current edit layer
-        Main.getLayerManager().addLayer(new OsmDataLayer(dsToJoin, "join", null));
+        MainApplication.getLayerManager().addLayer(new OsmDataLayer(dsToJoin, "join", null));
 
         Collection<OsmPrimitive> testPrims = dsToJoin.getPrimitives(osm -> osm.get("test") != null);
         MultiMap<String, OsmPrimitive> tests = new MultiMap<>();

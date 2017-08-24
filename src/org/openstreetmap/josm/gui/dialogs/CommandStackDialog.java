@@ -257,7 +257,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
      */
     private void buildTrees() {
         setTitle(tr("Command Stack"));
-        if (Main.getLayerManager().getEditLayer() == null)
+        if (MainApplication.getLayerManager().getEditLayer() == null)
             return;
 
         List<Command> undoCommands = Main.main.undoRedo.commands;
@@ -334,7 +334,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
      */
     protected static Collection<? extends OsmPrimitive> getAffectedPrimitives(TreePath path) {
         PseudoCommand c = ((CommandListMutableTreeNode) path.getLastPathComponent()).getCommand();
-        final OsmDataLayer currentLayer = Main.getLayerManager().getEditLayer();
+        final OsmDataLayer currentLayer = MainApplication.getLayerManager().getEditLayer();
         return new SubclassFilteredCollection<>(
                 c.getParticipatingPrimitives(),
                 o -> {
@@ -375,7 +375,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             } else
                 throw new IllegalStateException();
 
-            DataSet dataSet = Main.getLayerManager().getEditDataSet();
+            DataSet dataSet = MainApplication.getLayerManager().getEditDataSet();
             if (dataSet == null) return;
             dataSet.setSelected(getAffectedPrimitives(path));
         }

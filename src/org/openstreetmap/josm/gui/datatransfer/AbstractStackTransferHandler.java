@@ -9,8 +9,8 @@ import java.util.Collection;
 import javax.swing.JComponent;
 import javax.swing.TransferHandler;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.importers.AbstractOsmDataPaster;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -44,7 +44,7 @@ public abstract class AbstractStackTransferHandler extends TransferHandler {
 
     @Override
     public boolean importData(TransferSupport support) {
-        return importData(support, Main.getLayerManager().getEditLayer(), null);
+        return importData(support, MainApplication.getLayerManager().getEditLayer(), null);
     }
 
     protected boolean importData(TransferSupport support, OsmDataLayer layer, EastNorth center) {

@@ -10,12 +10,12 @@ import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.CommandTest.CommandTestDataWithRelation;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -60,8 +60,8 @@ public class SelectionEventManagerTest {
         // automatically adds the layers
         CommandTestDataWithRelation testData1 = new CommandTestDataWithRelation();
         CommandTestDataWithRelation testData2 = new CommandTestDataWithRelation();
-        Main.getLayerManager().setActiveLayer(testData1.layer);
-        assertEquals(testData1.layer, Main.getLayerManager().getEditLayer());
+        MainApplication.getLayerManager().setActiveLayer(testData1.layer);
+        assertEquals(testData1.layer, MainApplication.getLayerManager().getEditLayer());
 
         SelectionListener listener1 = new SelectionListener("IMMEDIATELY");
         SelectionListener listener2 = new SelectionListener("IN_EDT_CONSOLIDATED");
@@ -86,7 +86,7 @@ public class SelectionEventManagerTest {
         assertSelectionEquals(listeners, new HashSet<OsmPrimitive>(Arrays.asList(testData1.existingNode2)));
 
         // changing to other dataset should trigger a empty selection
-        Main.getLayerManager().setActiveLayer(testData2.layer);
+        MainApplication.getLayerManager().setActiveLayer(testData2.layer);
         assertSelectionEquals(listeners, new HashSet<OsmPrimitive>(Arrays.asList()));
 
         // This should not trigger anything, since the layer is not active any more.

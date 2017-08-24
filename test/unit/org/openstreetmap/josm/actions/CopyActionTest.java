@@ -16,11 +16,11 @@ import java.util.Arrays;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -65,7 +65,7 @@ public class CopyActionTest {
         action.actionPerformed(null);
         assertTrue(action.warningShown);
 
-        Main.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "test", null));
+        MainApplication.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "test", null));
         action.warningShown = false;
 
         action.updateEnabledState();
@@ -96,7 +96,7 @@ public class CopyActionTest {
         data.addPrimitive(way);
         data.setSelected(way);
 
-        Main.getLayerManager().addLayer(new OsmDataLayer(data, "test", null));
+        MainApplication.getLayerManager().addLayer(new OsmDataLayer(data, "test", null));
 
         CopyAction action = new CopyAction() {
             @Override

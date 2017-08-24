@@ -13,6 +13,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -65,7 +66,7 @@ public class OsmChangeImporter extends FileImporter {
                         tr("Open OsmChange file"),
                         JOptionPane.INFORMATION_MESSAGE);
             }
-            Main.getLayerManager().addLayer(layer);
+            MainApplication.getLayerManager().addLayer(layer);
             layer.onPostLoadFromFile();
         });
     }

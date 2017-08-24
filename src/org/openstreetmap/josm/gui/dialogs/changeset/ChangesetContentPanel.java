@@ -32,7 +32,6 @@ import javax.swing.JToolBar;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetContentDownloadTask;
 import org.openstreetmap.josm.data.osm.Changeset;
@@ -92,25 +91,25 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
 
         actSelectInCurrentLayerAction = new SelectInCurrentLayerAction();
         model.getSelectionModel().addListSelectionListener(actSelectInCurrentLayerAction);
-        Main.getLayerManager().addActiveLayerChangeListener(actSelectInCurrentLayerAction);
+        MainApplication.getLayerManager().addActiveLayerChangeListener(actSelectInCurrentLayerAction);
 
         actZoomInCurrentLayerAction = new ZoomInCurrentLayerAction();
         model.getSelectionModel().addListSelectionListener(actZoomInCurrentLayerAction);
-        Main.getLayerManager().addActiveLayerChangeListener(actZoomInCurrentLayerAction);
+        MainApplication.getLayerManager().addActiveLayerChangeListener(actZoomInCurrentLayerAction);
 
         addComponentListener(
                 new ComponentAdapter() {
                     @Override
                     public void componentShown(ComponentEvent e) {
-                        Main.getLayerManager().addAndFireActiveLayerChangeListener(actSelectInCurrentLayerAction);
-                        Main.getLayerManager().addAndFireActiveLayerChangeListener(actZoomInCurrentLayerAction);
+                        MainApplication.getLayerManager().addAndFireActiveLayerChangeListener(actSelectInCurrentLayerAction);
+                        MainApplication.getLayerManager().addAndFireActiveLayerChangeListener(actZoomInCurrentLayerAction);
                     }
 
                     @Override
                     public void componentHidden(ComponentEvent e) {
                         // make sure the listener is unregistered when the panel becomes invisible
-                        Main.getLayerManager().removeActiveLayerChangeListener(actSelectInCurrentLayerAction);
-                        Main.getLayerManager().removeActiveLayerChangeListener(actZoomInCurrentLayerAction);
+                        MainApplication.getLayerManager().removeActiveLayerChangeListener(actSelectInCurrentLayerAction);
+                        MainApplication.getLayerManager().removeActiveLayerChangeListener(actZoomInCurrentLayerAction);
                     }
                 }
         );
@@ -200,7 +199,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                         "<html>None of the selected objects is available in the current<br>"
                         + "edit layer ''{0}''.</html>",
                         primitives.size(),
-                        Utils.escapeReservedCharactersHTML(Main.getLayerManager().getEditLayer().getName())
+                        Utils.escapeReservedCharactersHTML(MainApplication.getLayerManager().getEditLayer().getName())
                 ),
                 title, JOptionPane.WARNING_MESSAGE, helpTopic
         );
@@ -323,7 +322,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
             if (!isEnabled()) {
                 return null;
             }
-            OsmDataLayer layer = Main.getLayerManager().getEditLayer();
+            OsmDataLayer layer = MainApplication.getLayerManager().getEditLayer();
             if (layer == null) {
                 return null;
             }
@@ -338,7 +337,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
         }
 
         public final void updateEnabledState() {
-            setEnabled(Main.getLayerManager().getEditLayer() != null && model.hasSelectedPrimitives());
+            setEnabled(MainApplication.getLayerManager().getEditLayer() != null && model.hasSelectedPrimitives());
         }
 
         @Override
@@ -372,7 +371,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                         HelpUtil.ht("/Dialog/ChangesetCacheManager#NothingToSelectInLayer"));
                 return;
             }
-            Main.getLayerManager().getEditLayer().data.setSelected(target);
+            MainApplication.getLayerManager().getEditLayer().data.setSelected(target);
         }
     }
 
@@ -395,7 +394,7 @@ public class ChangesetContentPanel extends JPanel implements PropertyChangeListe
                         HelpUtil.ht("/Dialog/ChangesetCacheManager#NothingToZoomTo"));
                 return;
             }
-            Main.getLayerManager().getEditLayer().data.setSelected(target);
+            MainApplication.getLayerManager().getEditLayer().data.setSelected(target);
             AutoScaleAction.zoomToSelection();
         }
     }

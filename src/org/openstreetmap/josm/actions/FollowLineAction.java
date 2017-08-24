@@ -61,7 +61,7 @@ public class FollowLineAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent evt) {
-        OsmDataLayer osmLayer = Main.getLayerManager().getEditLayer();
+        OsmDataLayer osmLayer = getLayerManager().getEditLayer();
         if (osmLayer == null)
             return;
         MapFrame map = MainApplication.getMap();

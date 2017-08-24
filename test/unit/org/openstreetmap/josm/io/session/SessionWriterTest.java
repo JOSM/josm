@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -94,7 +95,7 @@ public class SessionWriterTest {
      */
     @Before
     public void setUp() {
-        Main.getLayerManager().addLayer(createOsmLayer());
+        MainApplication.getLayerManager().addLayer(createOsmLayer());
     }
 
     private void testWrite(List<Layer> layers, final boolean zip) throws IOException {

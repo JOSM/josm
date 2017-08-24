@@ -25,6 +25,7 @@ import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -97,13 +98,13 @@ public class PluginHandlerTestIT {
         List<PluginInformation> loadedPlugins = PluginHandler.getPlugins();
         for (int i = 0; i < 2; i++) {
             OsmDataLayer layer = new OsmDataLayer(new DataSet(), "Layer "+i, null);
-            testPlugin(Main.getLayerManager()::addLayer, layer, layerExceptions, loadedPlugins);
-            testPlugin(Main.getLayerManager()::removeLayer, layer, layerExceptions, loadedPlugins);
+            testPlugin(MainApplication.getLayerManager()::addLayer, layer, layerExceptions, loadedPlugins);
+            testPlugin(MainApplication.getLayerManager()::removeLayer, layer, layerExceptions, loadedPlugins);
         }
         for (int i = 0; i < 2; i++) {
             GpxLayer layer = new GpxLayer(new GpxData());
-            testPlugin(Main.getLayerManager()::addLayer, layer, layerExceptions, loadedPlugins);
-            testPlugin(Main.getLayerManager()::removeLayer, layer, layerExceptions, loadedPlugins);
+            testPlugin(MainApplication.getLayerManager()::addLayer, layer, layerExceptions, loadedPlugins);
+            testPlugin(MainApplication.getLayerManager()::removeLayer, layer, layerExceptions, loadedPlugins);
         }
 
         MapUtils.debugPrint(System.out, null, loadingExceptions);

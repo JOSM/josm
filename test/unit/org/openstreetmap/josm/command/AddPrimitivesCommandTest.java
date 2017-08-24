@@ -13,7 +13,6 @@ import java.util.List;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -23,6 +22,7 @@ import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WayData;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -48,7 +48,7 @@ public class AddPrimitivesCommandTest {
     @Test
     public void testAdd() {
         OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
-        Main.getLayerManager().addLayer(layer1);
+        MainApplication.getLayerManager().addLayer(layer1);
 
         List<PrimitiveData> testData = createTestData();
         assertTrue(new AddPrimitivesCommand(testData).executeCommand());
@@ -63,7 +63,7 @@ public class AddPrimitivesCommandTest {
     @Test
     public void testAddSetSelection() {
         OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
-        Main.getLayerManager().addLayer(layer1);
+        MainApplication.getLayerManager().addLayer(layer1);
 
         List<PrimitiveData> testData = createTestData();
         assertTrue(new AddPrimitivesCommand(testData, testData.subList(2, 3)).executeCommand());
@@ -82,8 +82,8 @@ public class AddPrimitivesCommandTest {
         OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
         OsmDataLayer layer2 = new OsmDataLayer(new DataSet(), "l1", null);
 
-        Main.getLayerManager().addLayer(layer1);
-        Main.getLayerManager().addLayer(layer2);
+        MainApplication.getLayerManager().addLayer(layer1);
+        MainApplication.getLayerManager().addLayer(layer2);
 
         List<PrimitiveData> testData = createTestData();
         assertTrue(new AddPrimitivesCommand(testData, testData.subList(2, 3), layer1).executeCommand());
@@ -101,7 +101,7 @@ public class AddPrimitivesCommandTest {
     @Test
     public void testAddIgnoresExisting() {
         OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
-        Main.getLayerManager().addLayer(layer1);
+        MainApplication.getLayerManager().addLayer(layer1);
 
         List<PrimitiveData> testData = createTestData();
         assertTrue(new AddPrimitivesCommand(testData).executeCommand());
@@ -121,7 +121,7 @@ public class AddPrimitivesCommandTest {
     @Test
     public void testDescription() {
         OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
-        Main.getLayerManager().addLayer(layer1);
+        MainApplication.getLayerManager().addLayer(layer1);
 
         List<PrimitiveData> testData = createTestData();
         NodeData data2 = createTestNode(7);
@@ -146,7 +146,7 @@ public class AddPrimitivesCommandTest {
     @Test
     public void testUndo() {
         OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
-        Main.getLayerManager().addLayer(layer1);
+        MainApplication.getLayerManager().addLayer(layer1);
 
         List<PrimitiveData> testData = createTestData();
 
@@ -181,7 +181,7 @@ public class AddPrimitivesCommandTest {
     @Test
     public void testUndoIgnoresExisting() {
         OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
-        Main.getLayerManager().addLayer(layer1);
+        MainApplication.getLayerManager().addLayer(layer1);
 
         List<PrimitiveData> testData = createTestData();
 
@@ -219,7 +219,7 @@ public class AddPrimitivesCommandTest {
     @Test
     public void testParticipatingPrimitives() {
         OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
-        Main.getLayerManager().addLayer(layer1);
+        MainApplication.getLayerManager().addLayer(layer1);
 
         List<PrimitiveData> testData = createTestData();
         AddPrimitivesCommand command = new AddPrimitivesCommand(testData);

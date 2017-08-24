@@ -6,7 +6,6 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -34,13 +33,13 @@ public class MarkerLayerTest {
     @Test
     public void testPlayHeadMarker() {
         try {
-            Main.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "", null));
+            MainApplication.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "", null));
             MapFrame map = MainApplication.getMap();
             MarkerLayer layer = new MarkerLayer(new GpxData(), null, null, null);
             assertNull(map.mapView.playHeadMarker);
-            Main.getLayerManager().addLayer(layer);
+            MainApplication.getLayerManager().addLayer(layer);
             assertNotNull(map.mapView.playHeadMarker);
-            Main.getLayerManager().removeLayer(layer);
+            MainApplication.getLayerManager().removeLayer(layer);
         } finally {
             if (MainApplication.isDisplayingMapView()) {
                 MainApplication.getMap().mapView.playHeadMarker = null;

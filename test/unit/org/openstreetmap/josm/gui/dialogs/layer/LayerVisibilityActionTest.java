@@ -7,7 +7,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog.LayerListModel;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
@@ -33,7 +33,7 @@ public class LayerVisibilityActionTest {
     @Test
     public void testLayerVisibilityAction() {
         TMSLayer layer = TMSLayerTest.createTmsLayer();
-        LayerListModel model = new LayerListDialog(Main.getLayerManager()) {
+        LayerListModel model = new LayerListDialog(MainApplication.getLayerManager()) {
             @Override
             protected void registerInWindowMenu() {
                 // ignore
@@ -43,7 +43,7 @@ public class LayerVisibilityActionTest {
         action.updateEnabledState();
         assertFalse(action.isEnabled());
 
-        Main.getLayerManager().addLayer(layer);
+        MainApplication.getLayerManager().addLayer(layer);
         model.setSelectedLayer(layer);
         action.updateEnabledState();
         assertTrue(action.isEnabled());

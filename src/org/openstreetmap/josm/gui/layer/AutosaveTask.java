@@ -150,7 +150,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
             }
 
             new Timer(true).schedule(this, TimeUnit.SECONDS.toMillis(1), TimeUnit.SECONDS.toMillis(PROP_INTERVAL.get()));
-            Main.getLayerManager().addAndFireLayerChangeListener(this);
+            MainApplication.getLayerManager().addAndFireLayerChangeListener(this);
         }
     }
 

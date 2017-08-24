@@ -145,9 +145,9 @@ public class JOSMFixture {
 
     private void setupGUI() {
         JOSMTestRules.cleanLayerEnvironment();
-        assertTrue(Main.getLayerManager().getLayers().isEmpty());
-        assertNull(Main.getLayerManager().getEditLayer());
-        assertNull(Main.getLayerManager().getActiveLayer());
+        assertTrue(MainApplication.getLayerManager().getLayers().isEmpty());
+        assertNull(MainApplication.getLayerManager().getEditLayer());
+        assertNull(MainApplication.getLayerManager().getActiveLayer());
 
         initContentPane();
         initMainPanel(false);
@@ -162,7 +162,7 @@ public class JOSMFixture {
             Main.main.panel.reAddListeners();
         }
         // Add a test layer to the layer manager to get the MapFrame
-        Main.getLayerManager().addLayer(new TestLayer());
+        MainApplication.getLayerManager().addLayer(new TestLayer());
     }
 
     /**
@@ -187,7 +187,7 @@ public class JOSMFixture {
      */
     public static void initMainPanel(boolean reAddListeners) {
         if (Main.mainPanel == null) {
-            Main.mainPanel = new MainPanel(Main.getLayerManager());
+            Main.mainPanel = new MainPanel(MainApplication.getLayerManager());
         }
         if (reAddListeners) {
             Main.mainPanel.reAddListeners();

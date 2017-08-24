@@ -166,7 +166,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
         private <L extends Layer> L addOrMergeLayer(L layer, L mergeLayer) {
             if (layer == null) return null;
             if (newLayer || mergeLayer == null) {
-                Main.getLayerManager().addLayer(layer, zoomAfterDownload);
+                MainApplication.getLayerManager().addLayer(layer, zoomAfterDownload);
                 return layer;
             } else {
                 mergeLayer.mergeFrom(layer);
@@ -181,10 +181,10 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
 
         private GpxLayer findGpxMergeLayer() {
             boolean merge = Main.pref.getBoolean("download.gps.mergeWithLocal", false);
-            Layer active = Main.getLayerManager().getActiveLayer();
+            Layer active = MainApplication.getLayerManager().getActiveLayer();
             if (active instanceof GpxLayer && (merge || ((GpxLayer) active).data.fromServer))
                 return (GpxLayer) active;
-            for (GpxLayer l : Main.getLayerManager().getLayersOfType(GpxLayer.class)) {
+            for (GpxLayer l : MainApplication.getLayerManager().getLayersOfType(GpxLayer.class)) {
                 if (merge || l.data.fromServer)
                     return l;
             }
@@ -192,7 +192,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
         }
 
         private MarkerLayer findMarkerMergeLayer(GpxLayer fromLayer) {
-            for (MarkerLayer l : Main.getLayerManager().getLayersOfType(MarkerLayer.class)) {
+            for (MarkerLayer l : MainApplication.getLayerManager().getLayersOfType(MarkerLayer.class)) {
                 if (fromLayer != null && l.fromLayer == fromLayer)
                     return l;
             }

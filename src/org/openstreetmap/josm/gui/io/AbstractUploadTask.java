@@ -85,7 +85,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
     protected void synchronizePrimitive(final OsmPrimitiveType type, final long id) {
         // FIXME: should now about the layer this task is running for. might
         // be different from the current edit layer
-        OsmDataLayer layer = Main.getLayerManager().getEditLayer();
+        OsmDataLayer layer = MainApplication.getLayerManager().getEditLayer();
         if (layer == null)
             throw new IllegalStateException(tr("Failed to update primitive with id {0} because current edit layer is null", id));
         OsmPrimitive p = layer.data.getPrimitiveById(id, type);
@@ -274,7 +274,7 @@ public abstract class AbstractUploadTask extends PleaseWaitRunnable {
                 "/Action/Upload#NodeStillInUseInWay"
         );
         if (ret == 0) {
-            DownloadReferrersAction.downloadReferrers(Main.getLayerManager().getEditLayer(), Arrays.asList(conflict.a));
+            DownloadReferrersAction.downloadReferrers(MainApplication.getLayerManager().getEditLayer(), Arrays.asList(conflict.a));
         }
     }
 

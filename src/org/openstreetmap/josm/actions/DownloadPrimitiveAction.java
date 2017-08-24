@@ -8,7 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.download.DownloadObjectDialog;
@@ -58,7 +57,7 @@ public class DownloadPrimitiveAction extends JosmAction {
         MainApplication.worker.submit(() -> {
                 final List<PrimitiveId> downloaded = task.getDownloadedId();
                 if (downloaded != null) {
-                    GuiHelper.runInEDT(() -> Main.getLayerManager().getEditDataSet().setSelected(downloaded));
+                    GuiHelper.runInEDT(() -> MainApplication.getLayerManager().getEditDataSet().setSelected(downloaded));
                 }
         });
     }

@@ -229,7 +229,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
             + tr("Select objects for which to change tags.") + "</p></html>");
 
     private final PreferenceChangedListener preferenceListener = e -> {
-                if (Main.getLayerManager().getEditDataSet() != null) {
+                if (MainApplication.getLayerManager().getEditDataSet() != null) {
                     // Re-load data when display preference change
                     updateSelection();
                 }
@@ -486,7 +486,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         Relation relation = (Relation) membershipData.getValueAt(row, 0);
         MainApplication.getMap().relationListDialog.selectRelation(relation);
         RelationEditor.getEditor(
-                Main.getLayerManager().getEditLayer(),
+                MainApplication.getLayerManager().getEditLayer(),
                 relation,
                 ((MemberInfo) membershipData.getValueAt(row, 1)).role
         ).setVisible(true);
@@ -512,7 +512,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
     public void showNotify() {
         DatasetEventManager.getInstance().addDatasetListener(dataChangedAdapter, FireMode.IN_EDT_CONSOLIDATED);
         SelectionEventManager.getInstance().addSelectionListener(this, FireMode.IN_EDT_CONSOLIDATED);
-        Main.getLayerManager().addActiveLayerChangeListener(this);
+        MainApplication.getLayerManager().addActiveLayerChangeListener(this);
         for (JosmAction action : josmActions) {
             Main.registerActionShortcut(action);
         }
@@ -523,7 +523,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
     public void hideNotify() {
         DatasetEventManager.getInstance().removeDatasetListener(dataChangedAdapter);
         SelectionEventManager.getInstance().removeSelectionListener(this);
-        Main.getLayerManager().removeActiveLayerChangeListener(this);
+        MainApplication.getLayerManager().removeActiveLayerChangeListener(this);
         for (JosmAction action : josmActions) {
             Main.unregisterActionShortcut(action);
         }
@@ -532,7 +532,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
     @Override
     public void setVisible(boolean b) {
         super.setVisible(b);
-        if (b && Main.getLayerManager().getEditDataSet() != null) {
+        if (b && MainApplication.getLayerManager().getEditDataSet() != null) {
             updateSelection();
         }
     }

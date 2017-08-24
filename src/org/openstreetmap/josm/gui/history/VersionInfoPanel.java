@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.ChangesetDialog;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetDiscussionPanel;
@@ -154,7 +155,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
     protected String getInfoText(final Date timestamp, final long version, final boolean isLatest) {
         String text;
         if (isLatest) {
-            OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
+            OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
             text = tr("<html>Version <strong>{0}</strong> currently edited in layer ''{1}''</html>",
                     Long.toString(version),
                     editLayer == null ? tr("unknown") : Utils.escapeReservedCharactersHTML(editLayer.getName())

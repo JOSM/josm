@@ -7,8 +7,8 @@ import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractAction;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.IEnabledStateUpdating;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog.LayerListModel;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -52,9 +52,9 @@ public final class DuplicateAction extends AbstractAction implements IEnabledSta
 
     private static void duplicate(Layer layer) {
         if (layer instanceof OsmDataLayer) {
-            String newName = LayerListTransferHandler.suggestNewLayerName(layer.getName(), Main.getLayerManager().getLayers());
+            String newName = LayerListTransferHandler.suggestNewLayerName(layer.getName(), MainApplication.getLayerManager().getLayers());
             OsmDataLayer oldLayer = (OsmDataLayer) layer;
-            Main.getLayerManager().addLayer(new OsmDataLayer(new DataSet(oldLayer.data), newName, null));
+            MainApplication.getLayerManager().addLayer(new OsmDataLayer(new DataSet(oldLayer.data), newName, null));
         }
     }
 

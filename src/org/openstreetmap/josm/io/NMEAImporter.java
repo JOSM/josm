@@ -13,6 +13,7 @@ import javax.swing.SwingUtilities;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
@@ -51,11 +52,11 @@ public class NMEAImporter extends FileImporter {
                 final File fileFinal = file;
 
                 GuiHelper.runInEDT(() -> {
-                    Main.getLayerManager().addLayer(gpxLayer);
+                    MainApplication.getLayerManager().addLayer(gpxLayer);
                     if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
                         MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), fileFinal, gpxLayer);
                         if (!ml.data.isEmpty()) {
-                            Main.getLayerManager().addLayer(ml);
+                            MainApplication.getLayerManager().addLayer(ml);
                         }
                     }
                 });

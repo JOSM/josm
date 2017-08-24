@@ -42,10 +42,10 @@ public class UpdateSelectionAction extends JosmAction {
      */
     public static void handlePrimitiveGoneException(long id, OsmPrimitiveType type) {
         MultiFetchServerObjectReader reader = MultiFetchServerObjectReader.create();
-        reader.append(Main.getLayerManager().getEditDataSet(), id, type);
+        reader.append(MainApplication.getLayerManager().getEditDataSet(), id, type);
         try {
             DataSet ds = reader.parseOsm(NullProgressMonitor.INSTANCE);
-            Main.getLayerManager().getEditLayer().mergeFrom(ds);
+            MainApplication.getLayerManager().getEditLayer().mergeFrom(ds);
         } catch (OsmTransferException e) {
             ExceptionDialogUtil.explainException(e);
         }
@@ -59,7 +59,7 @@ public class UpdateSelectionAction extends JosmAction {
      *
      */
     public static void updatePrimitives(final Collection<OsmPrimitive> selection) {
-        MainApplication.worker.submit(new UpdatePrimitivesTask(Main.getLayerManager().getEditLayer(), selection));
+        MainApplication.worker.submit(new UpdatePrimitivesTask(MainApplication.getLayerManager().getEditLayer(), selection));
     }
 
     /**
@@ -74,7 +74,7 @@ public class UpdateSelectionAction extends JosmAction {
     public static void updatePrimitive(PrimitiveId id) {
         ensureParameterNotNull(id, "id");
         updatePrimitives(Collections.<OsmPrimitive>singleton(Optional.ofNullable(Optional.ofNullable(
-                Main.getLayerManager().getEditLayer()).orElseThrow(
+                MainApplication.getLayerManager().getEditLayer()).orElseThrow(
                         () -> new IllegalStateException(tr("No current dataset found")))
                 .data.getPrimitiveById(id)).orElseThrow(
                         () -> new IllegalStateException(tr("Did not find an object with id {0} in the current dataset", id)))));

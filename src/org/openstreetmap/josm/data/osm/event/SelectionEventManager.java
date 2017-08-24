@@ -10,11 +10,11 @@ import java.util.stream.Stream;
 
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSelectionListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
@@ -104,7 +104,7 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
      * Constructs a new {@code SelectionEventManager}.
      */
     protected SelectionEventManager() {
-        MainLayerManager layerManager = Main.getLayerManager();
+        MainLayerManager layerManager = MainApplication.getLayerManager();
         // We do not allow for destructing this object.
         // Currently, this is a singleton class, so this is not required.
         layerManager.addAndFireActiveLayerChangeListener(this);
@@ -211,6 +211,6 @@ public class SelectionEventManager implements DataSelectionListener, ActiveLayer
     public void resetState() {
         inEDTListeners.clear();
         immedatelyListeners.clear();
-        Main.getLayerManager().addAndFireActiveLayerChangeListener(this);
+        MainApplication.getLayerManager().addAndFireActiveLayerChangeListener(this);
     }
 }

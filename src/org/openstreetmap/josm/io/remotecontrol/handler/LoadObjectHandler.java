@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
@@ -71,7 +70,7 @@ public class LoadObjectHandler extends RequestHandler {
             MainApplication.worker.submit(task);
             MainApplication.worker.submit(() -> {
                 final List<PrimitiveId> downloaded = task.getDownloadedId();
-                final DataSet ds = Main.getLayerManager().getEditDataSet();
+                final DataSet ds = MainApplication.getLayerManager().getEditDataSet();
                 if (downloaded != null) {
                     GuiHelper.runInEDT(() -> ds.setSelected(downloaded));
                     Collection<OsmPrimitive> downlPrim = new HashSet<>();

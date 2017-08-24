@@ -9,7 +9,6 @@ import java.awt.image.BufferedImage;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -56,7 +55,7 @@ public class ConflictDialogTest {
      */
     @Test
     public void testConflictPainter() {
-        Main.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "", null));
+        MainApplication.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "", null));
         ConflictPainter cp = new ConflictPainter(MainApplication.getMap().mapView,
                 new BufferedImage(800, 600, BufferedImage.TYPE_3BYTE_BGR).createGraphics());
         Node n1 = new Node(1, 1);

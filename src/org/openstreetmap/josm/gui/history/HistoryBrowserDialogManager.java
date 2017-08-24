@@ -65,7 +65,7 @@ public final class HistoryBrowserDialogManager implements LayerChangeListener {
 
     protected HistoryBrowserDialogManager() {
         dialogs = new HashMap<>();
-        Main.getLayerManager().addLayerChangeListener(this);
+        MainApplication.getLayerManager().addLayerChangeListener(this);
     }
 
     /**

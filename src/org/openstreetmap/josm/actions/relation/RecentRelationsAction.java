@@ -94,7 +94,7 @@ public class RecentRelationsAction extends JosmAction implements CommandQueueLis
     public static boolean isRelationListable(Relation relation) {
         return relation != null &&
             !relation.isDeleted() &&
-            Main.getLayerManager().getEditDataSet().containsRelation(relation);
+            MainApplication.getLayerManager().getEditDataSet().containsRelation(relation);
     }
 
     @Override
@@ -125,7 +125,7 @@ public class RecentRelationsAction extends JosmAction implements CommandQueueLis
     public static List<Relation> getRecentRelationsOnActiveLayer() {
         if (!MainApplication.isDisplayingMapView())
             return Collections.emptyList();
-        Layer activeLayer = Main.getLayerManager().getActiveLayer();
+        Layer activeLayer = MainApplication.getLayerManager().getActiveLayer();
         if (!(activeLayer instanceof OsmDataLayer)) {
             return Collections.emptyList();
         } else {

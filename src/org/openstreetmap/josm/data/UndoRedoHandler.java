@@ -10,6 +10,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
@@ -43,7 +44,7 @@ public class UndoRedoHandler implements LayerChangeListener {
      * Constructs a new {@code UndoRedoHandler}.
      */
     public UndoRedoHandler() {
-        Main.getLayerManager().addLayerChangeListener(this);
+        MainApplication.getLayerManager().addLayerChangeListener(this);
     }
 
     /**
@@ -84,7 +85,7 @@ public class UndoRedoHandler implements LayerChangeListener {
      * @param c The command to execute. Must not be {@code null}.
      */
     public synchronized void add(final Command c) {
-        DataSet ds = Optional.ofNullable(c.getAffectedDataSet()).orElseGet(() -> Main.getLayerManager().getEditDataSet());
+        DataSet ds = Optional.ofNullable(c.getAffectedDataSet()).orElseGet(() -> MainApplication.getLayerManager().getEditDataSet());
         Collection<? extends OsmPrimitive> oldSelection = null;
         if (ds != null) {
             oldSelection = ds.getSelected();
@@ -113,7 +114,7 @@ public class UndoRedoHandler implements LayerChangeListener {
     public synchronized void undo(int num) {
         if (commands.isEmpty())
             return;
-        DataSet ds = Main.getLayerManager().getEditDataSet();
+        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
         Collection<? extends OsmPrimitive> oldSelection = null;
         if (ds != null) {
             oldSelection = ds.getSelected();
@@ -154,7 +155,7 @@ public class UndoRedoHandler implements LayerChangeListener {
     public void redo(int num) {
         if (redoCommands.isEmpty())
             return;
-        DataSet ds = Main.getLayerManager().getEditDataSet();
+        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
         Collection<? extends OsmPrimitive> oldSelection = ds.getSelected();
         for (int i = 0; i < num; ++i) {
             final Command c = redoCommands.removeFirst();

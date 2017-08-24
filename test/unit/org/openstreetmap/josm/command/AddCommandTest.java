@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -16,6 +15,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -41,7 +41,7 @@ public class AddCommandTest {
     @Test
     public void testAdd() {
         OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
-        Main.getLayerManager().addLayer(layer1);
+        MainApplication.getLayerManager().addLayer(layer1);
         assertArrayEquals(new Object[0], layer1.data.allPrimitives().toArray());
 
         Node osm = new Node(LatLon.ZERO);
@@ -60,8 +60,8 @@ public class AddCommandTest {
         OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
         OsmDataLayer layer2 = new OsmDataLayer(new DataSet(), "l1", null);
 
-        Main.getLayerManager().addLayer(layer1);
-        Main.getLayerManager().addLayer(layer2);
+        MainApplication.getLayerManager().addLayer(layer1);
+        MainApplication.getLayerManager().addLayer(layer2);
 
         Node osm = new Node(LatLon.ZERO);
         assertTrue(new AddCommand(layer2, osm).executeCommand());
@@ -76,7 +76,7 @@ public class AddCommandTest {
     @Test
     public void testUndo() {
         OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
-        Main.getLayerManager().addLayer(layer1);
+        MainApplication.getLayerManager().addLayer(layer1);
         Node osm = new Node(LatLon.ZERO);
         layer1.data.addPrimitive(osm);
 

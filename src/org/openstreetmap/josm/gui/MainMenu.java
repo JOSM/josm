@@ -892,7 +892,7 @@ public class MainMenu extends JMenuBar {
 
         PresetsMenuEnabler(JMenu presetsMenu) {
             this.presetsMenu = presetsMenu;
-            Main.getLayerManager().addAndFireActiveLayerChangeListener(this);
+            MainApplication.getLayerManager().addAndFireActiveLayerChangeListener(this);
         }
 
         @Override

@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
@@ -143,7 +144,7 @@ public abstract class Command implements PseudoCommand {
      * Creates a new command in the context of the current edit layer, if any
      */
     public Command() {
-        this.layer = Main.getLayerManager().getEditLayer();
+        this.layer = MainApplication.getLayerManager().getEditLayer();
         this.data = layer != null ? layer.data : null;
     }
 

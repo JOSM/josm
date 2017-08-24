@@ -76,6 +76,7 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.IExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
@@ -442,7 +443,7 @@ public class TagEditHelper {
             JPanel p = new JPanel(new GridBagLayout());
             mainPanel.add(p, BorderLayout.CENTER);
 
-            AutoCompletionManager autocomplete = Main.getLayerManager().getEditLayer().data.getAutoCompletionManager();
+            AutoCompletionManager autocomplete = MainApplication.getLayerManager().getEditLayer().data.getAutoCompletionManager();
             List<AutoCompletionListItem> keyList = autocomplete.getKeys();
             keyList.sort(DEFAULT_AC_ITEM_COMPARATOR);
 
@@ -688,7 +689,7 @@ public class TagEditHelper {
                 +"<br><br>"+tr("Please select a key")), GBC.eol().fill(GBC.HORIZONTAL));
 
             cacheRecentTags();
-            AutoCompletionManager autocomplete = Main.getLayerManager().getEditLayer().data.getAutoCompletionManager();
+            AutoCompletionManager autocomplete = MainApplication.getLayerManager().getEditLayer().data.getAutoCompletionManager();
             List<AutoCompletionListItem> keyList = autocomplete.getKeys();
 
             // remove the object's tag keys from the list

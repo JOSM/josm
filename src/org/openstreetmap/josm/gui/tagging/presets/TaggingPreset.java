@@ -44,6 +44,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
@@ -127,7 +128,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
      * Use this as default item for "do not select anything".
      */
     public TaggingPreset() {
-        Main.getLayerManager().addActiveLayerChangeListener(this);
+        MainApplication.getLayerManager().addActiveLayerChangeListener(this);
         updateEnabledState();
     }
 
@@ -379,7 +380,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         if (Main.main == null) {
             return;
         }
-        DataSet ds = Main.getLayerManager().getEditDataSet();
+        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
         Collection<OsmPrimitive> participants = Collections.emptyList();
         if (Main.main != null && ds != null) {
             participants = ds.getSelected();
@@ -410,7 +411,8 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
                 r.addMember(rm);
                 members.add(rm);
             }
-            SwingUtilities.invokeLater(() -> RelationEditor.getEditor(Main.getLayerManager().getEditLayer(), r, members).setVisible(true));
+            SwingUtilities.invokeLater(() -> RelationEditor.getEditor(
+                    MainApplication.getLayerManager().getEditLayer(), r, members).setVisible(true));
         }
         ds.setSelected(ds.getSelected()); // force update
     }
@@ -552,7 +554,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     }
 
     protected final void updateEnabledState() {
-        setEnabled(Main.main != null && Main.getLayerManager().getEditDataSet() != null);
+        setEnabled(Main.main != null && MainApplication.getLayerManager().getEditDataSet() != null);
     }
 
     @Override

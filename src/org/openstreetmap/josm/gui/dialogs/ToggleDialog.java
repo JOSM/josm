@@ -53,6 +53,7 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.ParametrizedEnumProperty;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.ShowHideButtonListener;
 import org.openstreetmap.josm.gui.SideButton;
@@ -254,7 +255,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
         setBorder(BorderFactory.createEtchedBorder());
 
-        Main.redirectToMainContentPane(this);
+        MainApplication.redirectToMainContentPane(this);
         Main.pref.addPreferenceChangeListener(this);
 
         registerInWindowMenu();

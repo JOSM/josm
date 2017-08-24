@@ -6,8 +6,8 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -35,9 +35,9 @@ public final class DeleteLayerActionTest {
         action.actionPerformed(null);
         // OsmDataLayer
         OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
-        Main.getLayerManager().addLayer(layer);
-        assertNotNull(Main.getLayerManager().getActiveLayer());
+        MainApplication.getLayerManager().addLayer(layer);
+        assertNotNull(MainApplication.getLayerManager().getActiveLayer());
         action.actionPerformed(null);
-        assertNull(Main.getLayerManager().getActiveLayer());
+        assertNull(MainApplication.getLayerManager().getActiveLayer());
     }
 }

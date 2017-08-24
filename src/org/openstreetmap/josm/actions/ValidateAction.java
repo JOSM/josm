@@ -11,7 +11,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Test;
@@ -76,9 +75,9 @@ public class ValidateAction extends JosmAction {
 
         Collection<OsmPrimitive> selection;
         if (getSelectedItems) {
-            selection = Main.getLayerManager().getEditDataSet().getAllSelected();
+            selection = getLayerManager().getEditDataSet().getAllSelected();
             if (selection.isEmpty()) {
-                selection = Main.getLayerManager().getEditDataSet().allNonDeletedPrimitives();
+                selection = getLayerManager().getEditDataSet().allNonDeletedPrimitives();
                 lastSelection = null;
             } else {
                 AggregatePrimitivesVisitor v = new AggregatePrimitivesVisitor();
@@ -87,7 +86,7 @@ public class ValidateAction extends JosmAction {
             }
         } else {
             selection = Optional.ofNullable(lastSelection).orElseGet(
-                    () -> Main.getLayerManager().getEditDataSet().allNonDeletedPrimitives());
+                    () -> getLayerManager().getEditDataSet().allNonDeletedPrimitives());
         }
 
         MainApplication.worker.submit(new ValidationTask(tests, selection, lastSelection));
@@ -146,7 +145,7 @@ public class ValidateAction extends JosmAction {
                 map.validatorDialog.tree.setErrors(errors);
                 map.validatorDialog.unfurlDialog();
                 //FIXME: nicer way to find / invalidate the corresponding error layer
-                Main.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
+                MainApplication.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
             });
         }
 

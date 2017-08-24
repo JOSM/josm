@@ -52,7 +52,7 @@ public final class ZoomInAction extends JosmAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(!Main.getLayerManager().getLayers().isEmpty());
+        setEnabled(!getLayerManager().getLayers().isEmpty());
     }
 
 }

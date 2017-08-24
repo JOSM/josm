@@ -15,7 +15,6 @@ import java.util.concurrent.Future;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.ProjectionBounds;
@@ -230,15 +229,15 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
 
         protected OsmDataLayer getEditLayer() {
             if (!MainApplication.isDisplayingMapView()) return null;
-            return Main.getLayerManager().getEditLayer();
+            return MainApplication.getLayerManager().getEditLayer();
         }
 
         protected int getNumDataLayers() {
-            return Main.getLayerManager().getLayersOfType(OsmDataLayer.class).size();
+            return MainApplication.getLayerManager().getLayersOfType(OsmDataLayer.class).size();
         }
 
         protected OsmDataLayer getFirstDataLayer() {
-            return Utils.find(Main.getLayerManager().getLayers(), OsmDataLayer.class);
+            return Utils.find(MainApplication.getLayerManager().getLayers(), OsmDataLayer.class);
         }
 
         protected OsmDataLayer createNewLayer(String layerName) {
@@ -269,7 +268,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
                 // or it is not clear which layer to merge to
                 //
                 final OsmDataLayer layer = createNewLayer(newLayerName);
-                Main.getLayerManager().addLayer(layer, zoomAfterDownload);
+                MainApplication.getLayerManager().addLayer(layer, zoomAfterDownload);
                 return layer;
             }
             return null;

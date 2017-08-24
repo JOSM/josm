@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -90,11 +91,11 @@ public final class SplitWayActionTest {
         dataSet.addSelected(w2);
 
         try {
-            Main.getLayerManager().addLayer(layer);
+            MainApplication.getLayerManager().addLayer(layer);
             action.actionPerformed(null);
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.getLayerManager().removeLayer(layer);
+            MainApplication.getLayerManager().removeLayer(layer);
         }
 
         // Ensures 3 ways.

@@ -20,7 +20,6 @@ import java.util.concurrent.Future;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -147,7 +146,7 @@ public class MainApplicationTest {
     }
 
     private static void doTestPostConstructorProcessCmdLine(String download, String downloadGps, boolean gpx) {
-        assertNull(Main.getLayerManager().getEditDataSet());
+        assertNull(MainApplication.getLayerManager().getEditDataSet());
         for (Future<?> f : MainApplication.postConstructorProcessCmdLine(new ProgramArguments(new String[]{
                 "--download=" + download,
                 "--downloadgps=" + downloadGps,
@@ -158,14 +157,14 @@ public class MainApplicationTest {
                 Logging.error(e);
             }
         }
-        DataSet ds = Main.getLayerManager().getEditDataSet();
+        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
         assertNotNull(ds);
         assertFalse(ds.getSelected().isEmpty());
-        Main.getLayerManager().removeLayer(Main.getLayerManager().getEditLayer());
+        MainApplication.getLayerManager().removeLayer(MainApplication.getLayerManager().getEditLayer());
         if (gpx) {
-            List<GpxLayer> gpxLayers = Main.getLayerManager().getLayersOfType(GpxLayer.class);
+            List<GpxLayer> gpxLayers = MainApplication.getLayerManager().getLayersOfType(GpxLayer.class);
             assertEquals(1, gpxLayers.size());
-            Main.getLayerManager().removeLayer(gpxLayers.iterator().next());
+            MainApplication.getLayerManager().removeLayer(gpxLayers.iterator().next());
         }
     }
 

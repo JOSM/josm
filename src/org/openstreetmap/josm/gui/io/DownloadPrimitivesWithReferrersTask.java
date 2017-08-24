@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
@@ -128,9 +129,9 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
         }
 
         // Append downloaded data to JOSM
-        OsmDataLayer layer = Main.getLayerManager().getEditLayer();
+        OsmDataLayer layer = MainApplication.getLayerManager().getEditLayer();
         if (layer == null || this.newLayer)
-            Main.getLayerManager().addLayer(tmpLayer);
+            MainApplication.getLayerManager().addLayer(tmpLayer);
         else
             layer.mergeFrom(tmpLayer);
 
@@ -151,7 +152,7 @@ public class DownloadPrimitivesWithReferrersTask extends PleaseWaitRunnable {
 
         // Warm about deleted primitives
         final Set<PrimitiveId> del = new HashSet<>();
-        DataSet ds = Main.getLayerManager().getEditDataSet();
+        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
         for (PrimitiveId id : ids) {
             OsmPrimitive osm = ds.getPrimitiveById(id);
             if (osm != null && osm.isDeleted()) {

@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Utils;
@@ -72,11 +73,11 @@ public final class SimplifyWayActionTest {
         DataSet ds = new DataSet();
         OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         try {
-            Main.getLayerManager().addLayer(layer);
+            MainApplication.getLayerManager().addLayer(layer);
             assertTrue(ds.getSelected().isEmpty());
             action.actionPerformed(null);
         } finally {
-            Main.getLayerManager().removeLayer(layer);
+            MainApplication.getLayerManager().removeLayer(layer);
         }
     }
 
@@ -89,11 +90,11 @@ public final class SimplifyWayActionTest {
         createWaySelected(ds, 0.0);
         OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         try {
-            Main.getLayerManager().addLayer(layer);
+            MainApplication.getLayerManager().addLayer(layer);
             assertEquals(1, ds.getSelected().size());
             action.actionPerformed(null);
         } finally {
-            Main.getLayerManager().removeLayer(layer);
+            MainApplication.getLayerManager().removeLayer(layer);
         }
     }
 
@@ -108,11 +109,11 @@ public final class SimplifyWayActionTest {
         }
         OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         try {
-            Main.getLayerManager().addLayer(layer);
+            MainApplication.getLayerManager().addLayer(layer);
             assertEquals(11, ds.getSelected().size());
             action.actionPerformed(null);
         } finally {
-            Main.getLayerManager().removeLayer(layer);
+            MainApplication.getLayerManager().removeLayer(layer);
         }
     }
 

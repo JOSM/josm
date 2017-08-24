@@ -116,11 +116,12 @@ public class CreateMultipolygonAction extends JosmAction {
                             MainApplication.getMap().relationListDialog.selectRelation(relation);
                             if (Main.pref.getBoolean("multipoly.show-relation-editor", false)) {
                                 //Open relation edit window, if set up in preferences
-                                RelationEditor editor = RelationEditor.getEditor(Main.getLayerManager().getEditLayer(), relation, null);
+                                RelationEditor editor = RelationEditor.getEditor(
+                                        MainApplication.getLayerManager().getEditLayer(), relation, null);
                                 editor.setModal(true);
                                 editor.setVisible(true);
                             } else {
-                                Main.getLayerManager().getEditLayer().setRecentRelation(relation);
+                                MainApplication.getLayerManager().getEditLayer().setRecentRelation(relation);
                             }
                     });
             });
@@ -129,7 +130,7 @@ public class CreateMultipolygonAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        DataSet dataSet = Main.getLayerManager().getEditDataSet();
+        DataSet dataSet = getLayerManager().getEditDataSet();
         if (dataSet == null) {
             new Notification(
                     tr("No data loaded."))
@@ -161,11 +162,11 @@ public class CreateMultipolygonAction extends JosmAction {
         if (multipolygonRelation != null) {
             if (!multipolygonRelation.isNew() && multipolygonRelation.isIncomplete()) {
                 MainApplication.worker.submit(
-                        new DownloadRelationTask(Collections.singleton(multipolygonRelation), Main.getLayerManager().getEditLayer()));
+                        new DownloadRelationTask(Collections.singleton(multipolygonRelation), getLayerManager().getEditLayer()));
             } else if (multipolygonRelation.hasIncompleteMembers()) {
                 MainApplication.worker.submit(new DownloadRelationMemberTask(multipolygonRelation,
                         DownloadSelectedIncompleteMembersAction.buildSetOfIncompleteMembers(Collections.singleton(multipolygonRelation)),
-                        Main.getLayerManager().getEditLayer()));
+                        getLayerManager().getEditLayer()));
             }
         }
         // create/update multipolygon relation

@@ -11,8 +11,8 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.TagModel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -98,7 +98,7 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
      * Initializes the panel for user input
      */
     public void startUserInput() {
-        pnlTagEditor.initAutoCompletion(Main.getLayerManager().getEditLayer());
+        pnlTagEditor.initAutoCompletion(MainApplication.getLayerManager().getEditLayer());
     }
 
     /* -------------------------------------------------------------------------- */

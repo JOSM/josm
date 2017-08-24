@@ -30,6 +30,7 @@ import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Logging;
@@ -167,7 +168,7 @@ public abstract class UnconnectedWays extends Test {
         othernodes = new HashSet<>();
         mindist = Main.pref.getDouble(PREFIX + ".node_way_distance", 10.0);
         minmiddledist = Main.pref.getDouble(PREFIX + ".way_way_distance", 0.0);
-        DataSet dataSet = Main.getLayerManager().getEditDataSet();
+        DataSet dataSet = MainApplication.getLayerManager().getEditDataSet();
         dsArea = dataSet == null ? null : dataSet.getDataSourceArea();
     }
 

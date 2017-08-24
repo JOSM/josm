@@ -88,7 +88,7 @@ public class SelectActionTest {
         dataSet.addSelected(w);
 
         Main.pref.put("edit.initial-move-delay", "0");
-        Main.getLayerManager().addLayer(layer);
+        MainApplication.getLayerManager().addLayer(layer);
         try {
             MapFrame map = MainApplication.getMap();
             SelectAction action = new SelectActionMock(map, dataSet, layer);
@@ -144,7 +144,7 @@ public class SelectActionTest {
                        Double.compare(r2.getEastNorth().east(), 100), 0);
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
-            Main.getLayerManager().removeLayer(layer);
+            MainApplication.getLayerManager().removeLayer(layer);
         }
     }
 

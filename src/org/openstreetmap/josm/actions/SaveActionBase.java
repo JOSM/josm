@@ -52,7 +52,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
      * @return {@code true} if the save operation succeeds
      */
     public boolean doSave() {
-        Layer layer = Main.getLayerManager().getActiveLayer();
+        Layer layer = getLayerManager().getActiveLayer();
         if (layer != null && layer.isSavable()) {
             return doSave(layer);
         }
@@ -132,7 +132,7 @@ public abstract class SaveActionBase extends DiskAccessAction {
      */
     @Override
     protected void updateEnabledState() {
-        Layer activeLayer = Main.getLayerManager().getActiveLayer();
+        Layer activeLayer = getLayerManager().getActiveLayer();
         setEnabled(activeLayer != null && activeLayer.isSavable());
     }
 

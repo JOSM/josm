@@ -7,10 +7,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.gui.MainApplication;
 
 /**
  * This class stores the set of highlighted primitives and
@@ -121,7 +121,7 @@ public class HighlightHelper {
      * Slow method to import all currently highlighted primitives into this instance
      */
     public void findAllHighlighted() {
-        DataSet ds = Main.getLayerManager().getEditDataSet();
+        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
         if (ds != null) {
             highlightedPrimitives.addAll(ds.allNonDeletedPrimitives());
         }
@@ -131,7 +131,7 @@ public class HighlightHelper {
      * Slow method to remove highlights from all primitives
      */
     public static void clearAllHighlighted() {
-        DataSet ds = Main.getLayerManager().getEditDataSet();
+        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
         if (ds != null) {
             for (OsmPrimitive p: ds.allNonDeletedPrimitives()) {
                 p.setHighlighted(false);

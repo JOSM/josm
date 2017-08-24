@@ -201,7 +201,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         setSize(400, 400);
         setLayout(new BorderLayout());
 
-        mapView = new MapView(Main.getLayerManager(), viewportData);
+        mapView = new MapView(MainApplication.getLayerManager(), viewportData);
 
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true);
 
@@ -281,8 +281,8 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
 
         // status line below the map
         statusLine = new MapStatus(this);
-        Main.getLayerManager().addLayerChangeListener(this);
-        Main.getLayerManager().addActiveLayerChangeListener(this);
+        MainApplication.getLayerManager().addLayerChangeListener(this);
+        MainApplication.getLayerManager().addActiveLayerChangeListener(this);
 
         boolean unregisterTab = Shortcut.findShortcut(KeyEvent.VK_TAB, 0).isPresent();
         if (unregisterTab) {
@@ -341,8 +341,8 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
      */
     @Override
     public void destroy() {
-        Main.getLayerManager().removeLayerChangeListener(this);
-        Main.getLayerManager().removeActiveLayerChangeListener(this);
+        MainApplication.getLayerManager().removeLayerChangeListener(this);
+        MainApplication.getLayerManager().removeActiveLayerChangeListener(this);
         dialogsPanel.destroy();
         Main.pref.removePreferenceChangeListener(sidetoolbarPreferencesChangedListener);
         for (int i = 0; i < toolBarActions.getComponentCount(); ++i) {

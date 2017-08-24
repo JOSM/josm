@@ -181,7 +181,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 // Search whether an other layer has yet defined some bounding box.
                 // If none, we'll zoom to the bounding box of the layer with the photos.
                 boolean boundingBoxedLayerFound = false;
-                for (Layer l: Main.getLayerManager().getLayers()) {
+                for (Layer l: MainApplication.getLayerManager().getLayers()) {
                     if (l != yLayer) {
                         BoundingXYVisitor bbox = new BoundingXYVisitor();
                         l.visitBoundingBox(bbox);
@@ -543,7 +543,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent ae) {
         // Construct the list of loaded GPX tracks
-        Collection<Layer> layerLst = Main.getLayerManager().getLayers();
+        Collection<Layer> layerLst = MainApplication.getLayerManager().getLayers();
         GpxDataWrapper defaultItem = null;
         for (Layer cur : layerLst) {
             if (cur instanceof GpxLayer) {

@@ -26,10 +26,10 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTMSTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.TileSourceInfo;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.TileLoaderFactory;
 import org.openstreetmap.josm.data.osm.DataSet;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -148,7 +148,7 @@ public class AbstractTileSourceLayerTest {
      */
     @Before
     public void setUp() {
-        Main.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "", null));
+        MainApplication.getLayerManager().addLayer(new OsmDataLayer(new DataSet(), "", null));
         testLayer = new TileSourceStubLayer();
         testLayer.addInvalidationListener(l -> invalidated.set(true));
     }

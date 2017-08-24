@@ -73,7 +73,7 @@ public class ValidateUploadHook implements UploadHook {
                 }
             }
         }
-        OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
+        OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
         if (editLayer != null) {
             editLayer.validationErrors.clear();
             editLayer.validationErrors.addAll(errors);
@@ -151,7 +151,7 @@ public class ValidateUploadHook implements UploadHook {
             OsmValidator.initializeTests();
             OsmValidator.initializeErrorLayer();
             MainApplication.getMap().validatorDialog.unfurlDialog();
-            Main.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
+            MainApplication.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
             return false;
         }
         return true;

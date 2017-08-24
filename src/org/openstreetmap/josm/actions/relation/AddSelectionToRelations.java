@@ -16,6 +16,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.dialogs.relation.GenericRelationEditor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -38,7 +39,7 @@ public class AddSelectionToRelations extends AbstractRelationAction implements S
     public void actionPerformed(ActionEvent e) {
         Collection<Command> cmds = new LinkedList<>();
         for (Relation orig : relations) {
-            Command c = GenericRelationEditor.addPrimitivesToRelation(orig, Main.getLayerManager().getEditDataSet().getSelected());
+            Command c = GenericRelationEditor.addPrimitivesToRelation(orig, MainApplication.getLayerManager().getEditDataSet().getSelected());
             if (c != null) {
                 cmds.add(c);
             }

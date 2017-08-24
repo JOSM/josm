@@ -130,7 +130,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                final DataSet ds = Main.getLayerManager().getEditDataSet();
+                final DataSet ds = MainApplication.getLayerManager().getEditDataSet();
                 if (ds == null) {
                     return;
                 }
@@ -179,16 +179,16 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
     @Override
     public void showNotify() {
         DataSet.addSelectionListener(this);
-        DataSet ds = Main.getLayerManager().getEditDataSet();
+        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
         if (ds != null) {
             updateSelection(ds.getAllSelected());
         }
-        Main.getLayerManager().addAndFireActiveLayerChangeListener(this);
+        MainApplication.getLayerManager().addAndFireActiveLayerChangeListener(this);
     }
 
     @Override
     public void hideNotify() {
-        Main.getLayerManager().removeActiveLayerChangeListener(this);
+        MainApplication.getLayerManager().removeActiveLayerChangeListener(this);
         DataSet.removeSelectionListener(this);
     }
 
@@ -348,7 +348,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 }
             }
         }
-        DataSet ds = Main.getLayerManager().getEditDataSet();
+        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
         if (ds != null) {
             ds.setSelected(sel);
         }
@@ -487,7 +487,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
             fixButton.setEnabled(hasFixes);
 
             if (isDblClick) {
-                DataSet ds = Main.getLayerManager().getEditDataSet();
+                DataSet ds = MainApplication.getLayerManager().getEditDataSet();
                 if (ds != null) {
                     ds.setSelected(sel);
                 }
@@ -626,7 +626,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
             ProgressMonitor monitor = getProgressMonitor();
             try {
                 monitor.setTicksCount(testErrors.size());
-                final DataSet ds = Main.getLayerManager().getEditDataSet();
+                final DataSet ds = MainApplication.getLayerManager().getEditDataSet();
                 int i = 0;
                 SwingUtilities.invokeAndWait(ds::beginUpdate);
                 try {
@@ -644,7 +644,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 monitor.subTask(tr("Updating map ..."));
                 SwingUtilities.invokeAndWait(() -> {
                     Main.main.undoRedo.afterAdd();
-                    Main.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
+                    MainApplication.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
                     tree.resetErrors();
                 });
             } catch (InterruptedException | InvocationTargetException e) {

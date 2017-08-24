@@ -7,7 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -27,6 +27,6 @@ public class ExitAction extends JosmAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Main.exitJosm(true, 0, null);
+        MainApplication.exitJosm(true, 0, null);
     }
 }

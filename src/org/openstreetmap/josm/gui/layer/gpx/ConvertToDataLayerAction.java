@@ -28,6 +28,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -165,7 +166,7 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
             osmLayer.setAssociatedFile(new File(layer.getAssociatedFile().getParentFile(), layer.getAssociatedFile().getName() + ".osm"));
         }
         osmLayer.setUploadDiscouraged(true);
-        Main.getLayerManager().addLayer(osmLayer);
-        Main.getLayerManager().removeLayer(layer);
+        MainApplication.getLayerManager().addLayer(osmLayer);
+        MainApplication.getLayerManager().removeLayer(layer);
     }
 }

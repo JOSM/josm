@@ -36,7 +36,6 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.openstreetmap.josm.actions.JosmAction;
-import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.UndoRedoHandler;
@@ -51,15 +50,12 @@ import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.MainPanel;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
-import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.display.LafPreference;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
-import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
@@ -142,12 +138,6 @@ public abstract class Main {
      */
     @Deprecated
     public static MapFrame map;
-
-    /**
-     * Provides access to the layers displayed in the main view.
-     * @since 10271
-     */
-    private static final MainLayerManager layerManager = new MainLayerManager();
 
     /**
      * The toolbar preference control to register new actions.
@@ -649,28 +639,21 @@ public abstract class Main {
      * Returns the main layer manager that is used by the map view.
      * @return The layer manager. The value returned will never change.
      * @since 10279
+     * @deprecated use {@link MainApplication#getLayerManager} instead
      */
+    @Deprecated
     public static MainLayerManager getLayerManager() {
-        return layerManager;
+        return MainApplication.getLayerManager();
     }
 
     /**
      * Replies the current selected primitives, from a end-user point of view.
      * It is not always technically the same collection of primitives than {@link DataSet#getSelected()}.
-     * Indeed, if the user is currently in drawing mode, only the way currently being drawn is returned,
-     * see {@link DrawAction#getInProgressSelection()}.
-     *
      * @return The current selected primitives, from a end-user point of view. Can be {@code null}.
      * @since 6546
      */
     public Collection<OsmPrimitive> getInProgressSelection() {
-        DataSet ds = getLayerManager().getEditDataSet();
-        if (ds == null) return null;
-        return ds.getSelected();
-    }
-
-    public static void redirectToMainContentPane(JComponent source) {
-        RedirectInputMap.redirect(source, contentPanePrivate);
+        return Collections.emptyList();
     }
 
     /**
@@ -825,28 +808,20 @@ public abstract class Main {
 
     /**
      * Closes JOSM and optionally terminates the Java Virtual Machine (JVM).
-     * If there are some unsaved data layers, asks first for user confirmation.
      * @param exit If {@code true}, the JVM is terminated by running {@link System#exit} with a given return code.
      * @param exitCode The return code
-     * @param reason the reason for exiting
-     * @return {@code true} if JOSM has been closed, {@code false} if the user has cancelled the operation.
-     * @since 11093 (3378 with a different function signature)
+     * @return {@code true}
+     * @since 12636
      */
-    public static boolean exitJosm(boolean exit, int exitCode, SaveLayersDialog.Reason reason) {
-        final boolean proceed = Boolean.TRUE.equals(GuiHelper.runInEDTAndWaitAndReturn(() ->
-                SaveLayersDialog.saveUnsavedModifications(getLayerManager().getLayers(),
-                        reason != null ? reason : SaveLayersDialog.Reason.EXIT)));
-        if (proceed) {
-            if (Main.main != null) {
-                Main.main.shutdown();
-            }
-
-            if (exit) {
-                System.exit(exitCode);
-            }
-            return true;
+    public static boolean exitJosm(boolean exit, int exitCode) {
+        if (Main.main != null) {
+            Main.main.shutdown();
         }
-        return false;
+
+        if (exit) {
+            System.exit(exitCode);
+        }
+        return true;
     }
 
     /**
@@ -857,8 +832,6 @@ public abstract class Main {
             ImageProvider.shutdown(false);
             JCSCacheManager.shutdown();
         }
-        // Remove all layers because somebody may rely on layerRemoved events (like AutosaveTask)
-        getLayerManager().resetState();
         try {
             pref.saveDefaults();
         } catch (IOException ex) {

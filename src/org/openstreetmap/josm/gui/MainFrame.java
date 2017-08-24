@@ -66,7 +66,7 @@ public class MainFrame extends JFrame {
     public MainFrame(WindowGeometry geometry) {
         super();
         this.geometry = geometry;
-        this.panel = new MainPanel(Main.getLayerManager());
+        this.panel = new MainPanel(MainApplication.getLayerManager());
         setContentPane(new JPanel(new BorderLayout()));
     }
 
@@ -93,8 +93,8 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
         // This listener is never removed, since the main frame exists forever.
-        Main.getLayerManager().addActiveLayerChangeListener(e -> refreshTitle());
-        Main.getLayerManager().addAndFireLayerChangeListener(new ManageLayerListeners());
+        MainApplication.getLayerManager().addActiveLayerChangeListener(e -> refreshTitle());
+        MainApplication.getLayerManager().addAndFireLayerChangeListener(new ManageLayerListeners());
 
         refreshTitle();
 
@@ -155,7 +155,7 @@ public class MainFrame extends JFrame {
      * Update the title of the window to reflect the current content.
      */
     public void refreshTitle() {
-        OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
+        OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
         boolean dirty = editLayer != null && (editLayer.requiresSaveToFile()
                 || (editLayer.requiresUploadToServer() && !editLayer.isUploadDiscouraged()));
         setTitle((dirty ? "* " : "") + tr("Java OpenStreetMap Editor"));
@@ -163,7 +163,7 @@ public class MainFrame extends JFrame {
     }
 
     private void onLayerChange(OsmDataLayer layer) {
-        if (layer == Main.getLayerManager().getEditLayer()) {
+        if (layer == MainApplication.getLayerManager().getEditLayer()) {
             refreshTitle();
         }
     }
@@ -171,7 +171,7 @@ public class MainFrame extends JFrame {
     static final class ExitWindowAdapter extends WindowAdapter {
         @Override
         public void windowClosing(final WindowEvent evt) {
-            Main.exitJosm(true, 0, null);
+            MainApplication.exitJosm(true, 0, null);
         }
     }
 

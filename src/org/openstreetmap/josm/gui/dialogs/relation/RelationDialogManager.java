@@ -12,8 +12,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
@@ -38,7 +38,7 @@ public class RelationDialogManager extends WindowAdapter implements LayerChangeL
     public static RelationDialogManager getRelationDialogManager() {
         if (RelationDialogManager.relationDialogManager == null) {
             RelationDialogManager.relationDialogManager = new RelationDialogManager();
-            Main.getLayerManager().addLayerChangeListener(RelationDialogManager.relationDialogManager);
+            MainApplication.getLayerManager().addLayerChangeListener(RelationDialogManager.relationDialogManager);
         }
         return RelationDialogManager.relationDialogManager;
     }

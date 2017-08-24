@@ -37,7 +37,7 @@ public class WireframeToggleAction extends ToggleAction {
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(Main.getLayerManager().getEditLayer() != null);
+        setEnabled(getLayerManager().getEditLayer() != null);
     }
 
     @Override
@@ -50,6 +50,6 @@ public class WireframeToggleAction extends ToggleAction {
         }
 
         notifySelectedState();
-        Main.getLayerManager().getLayersOfType(OsmDataLayer.class).forEach(OsmDataLayer::invalidate);
+        getLayerManager().getLayersOfType(OsmDataLayer.class).forEach(OsmDataLayer::invalidate);
     }
 }

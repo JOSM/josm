@@ -13,6 +13,7 @@ import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
@@ -78,7 +79,7 @@ public class ApiPreconditionCheckerHook implements UploadHook {
                             tr("Precondition Violation"),
                             JOptionPane.ERROR_MESSAGE
                     );
-                    Main.getLayerManager().getEditDataSet().setSelected(Collections.singleton(osmPrimitive));
+                    MainApplication.getLayerManager().getEditDataSet().setSelected(Collections.singleton(osmPrimitive));
                     return false;
                 }
             }
@@ -95,7 +96,7 @@ public class ApiPreconditionCheckerHook implements UploadHook {
                         tr("API Capabilities Violation"),
                         JOptionPane.ERROR_MESSAGE
                 );
-                Main.getLayerManager().getEditDataSet().setSelected(Collections.singleton(osmPrimitive));
+                MainApplication.getLayerManager().getEditDataSet().setSelected(Collections.singleton(osmPrimitive));
                 return false;
             }
         }

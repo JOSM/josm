@@ -11,9 +11,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter.Listener;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 
@@ -151,7 +151,7 @@ public class DatasetEventManager implements ActiveLayerChangeListener, Listener 
      * Constructs a new {@code DatasetEventManager}.
      */
     public DatasetEventManager() {
-        Main.getLayerManager().addActiveLayerChangeListener(this);
+        MainApplication.getLayerManager().addActiveLayerChangeListener(this);
     }
 
     /**

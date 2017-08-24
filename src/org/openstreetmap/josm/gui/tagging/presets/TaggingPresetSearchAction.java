@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -29,7 +30,7 @@ public class TaggingPresetSearchAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
 
-        if (Main.getLayerManager().getEditLayer() == null)
+        if (MainApplication.getLayerManager().getEditLayer() == null)
             return;
 
         TaggingPresetSearchDialog.getInstance().showDialog();

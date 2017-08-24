@@ -102,7 +102,7 @@ public final class Geometry {
             changedWays[pos] = false;
         }
 
-        OsmDataLayer layer = Main.getLayerManager().getEditLayer();
+        OsmDataLayer layer = MainApplication.getLayerManager().getEditLayer();
         DataSet dataset = ways.get(0).getDataSet();
 
         //iterate over all way pairs and introduce the intersections

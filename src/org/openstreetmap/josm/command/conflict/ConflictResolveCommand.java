@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Objects;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
@@ -72,7 +71,7 @@ public abstract class ConflictResolveCommand extends Command {
         super.undoCommand();
 
         if (MainApplication.isDisplayingMapView()) {
-            if (!Main.getLayerManager().containsLayer(getLayer())) {
+            if (!MainApplication.getLayerManager().containsLayer(getLayer())) {
                 Logging.warn(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
                         this.toString(),
                         getLayer().toString()
@@ -80,7 +79,7 @@ public abstract class ConflictResolveCommand extends Command {
                 return;
             }
 
-            Main.getLayerManager().setActiveLayer(getLayer());
+            MainApplication.getLayerManager().setActiveLayer(getLayer());
         }
         reconstituteConflicts();
     }

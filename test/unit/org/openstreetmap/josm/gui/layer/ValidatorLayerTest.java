@@ -9,7 +9,7 @@ import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.MainApplication;
 
 /**
  * Unit tests of {@link ValidatorLayer} class.
@@ -32,7 +32,7 @@ public class ValidatorLayerTest {
         ValidatorLayer layer = null;
         try {
             layer = new ValidatorLayer();
-            Main.getLayerManager().addLayer(layer);
+            MainApplication.getLayerManager().addLayer(layer);
             assertFalse(layer.isMergable(null));
             assertNotNull(layer.getIcon());
             assertEquals("<html>No validation errors</html>", layer.getToolTipText());
@@ -41,7 +41,7 @@ public class ValidatorLayerTest {
         } finally {
             // Ensure we clean the place before leaving, even if test fails.
             if (layer != null) {
-                Main.getLayerManager().removeLayer(layer);
+                MainApplication.getLayerManager().removeLayer(layer);
             }
         }
     }

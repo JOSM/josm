@@ -81,7 +81,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         openInBrowserAction = new OpenInBrowserAction();
         uploadAction = new UploadNotesAction();
         buildDialog();
-        Main.getLayerManager().addLayerChangeListener(this);
+        MainApplication.getLayerManager().addLayerChangeListener(this);
     }
 
     private void buildDialog() {
@@ -355,7 +355,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             if (noteData == null) { //there is no notes layer. Create one first
-                Main.getLayerManager().addLayer(new NoteLayer());
+                MainApplication.getLayerManager().addLayer(new NoteLayer());
             }
             MainApplication.getMap().selectMapMode(new AddNoteAction(noteData));
         }

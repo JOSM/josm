@@ -16,7 +16,6 @@ import javax.swing.JScrollPane;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.gpx.ImmutableGpxTrack;
@@ -209,11 +208,11 @@ public class GpxLayerTest {
     public void testPaint() throws Exception {
         GpxLayer layer = getMinimalGpxLayer();
         try {
-            Main.getLayerManager().addLayer(layer);
+            MainApplication.getLayerManager().addLayer(layer);
             assertTrue(layer.getMenuEntries().length > 0);
             layer.paint(TestUtils.newGraphics(), MainApplication.getMap().mapView, layer.data.getMetaBounds());
         } finally {
-            Main.getLayerManager().removeLayer(layer);
+            MainApplication.getLayerManager().removeLayer(layer);
         }
     }
 }

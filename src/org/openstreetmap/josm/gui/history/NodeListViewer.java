@@ -20,7 +20,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -249,7 +248,7 @@ public class NodeListViewer extends JPanel {
                 return;
             OsmPrimitive p = getPrimitiveToZoom();
             if (p != null) {
-                OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
+                OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
                 if (editLayer != null) {
                     editLayer.data.setSelected(p.getPrimitiveId());
                     AutoScaleAction.autoScale("selection");
@@ -265,14 +264,14 @@ public class NodeListViewer extends JPanel {
         protected OsmPrimitive getPrimitiveToZoom() {
             if (primitiveId == null)
                 return null;
-            OsmDataLayer editLayer = Main.getLayerManager().getEditLayer();
+            OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
             if (editLayer == null)
                 return null;
             return editLayer.data.getPrimitiveById(primitiveId);
         }
 
         public void updateEnabledState() {
-            setEnabled(Main.getLayerManager().getEditLayer() != null && getPrimitiveToZoom() != null);
+            setEnabled(MainApplication.getLayerManager().getEditLayer() != null && getPrimitiveToZoom() != null);
         }
     }
 
