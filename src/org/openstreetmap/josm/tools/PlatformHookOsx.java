@@ -184,10 +184,10 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
             }
             break;
         case "handleAbout":
-            Main.main.menu.about.actionPerformed(null);
+            MainApplication.getMenu().about.actionPerformed(null);
             break;
         case "handlePreferences":
-            Main.main.menu.preferences.actionPerformed(null);
+            MainApplication.getMenu().preferences.actionPerformed(null);
             break;
         default:
             Logging.warn("OSX unsupported method: "+method.getName());

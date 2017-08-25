@@ -24,7 +24,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AddImageryLayerAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.MapRectifierWMSmenuAction;
@@ -195,7 +194,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
         }
 
         addDynamicSeparator();
-        JMenu subMenu = Main.main.menu.imagerySubMenu;
+        JMenu subMenu = MainApplication.getMenu().imagerySubMenu;
         int heightUnrolled = 30*(getItemCount()+subMenu.getItemCount());
         if (heightUnrolled < MainApplication.getMainPanel().getHeight()) {
             // add all items of submenu if they will fit on screen

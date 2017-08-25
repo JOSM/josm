@@ -14,7 +14,6 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import javax.swing.text.Document;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.Pair;
@@ -114,8 +113,8 @@ public class DisableShortcutsOnFocusGainedTextField extends JosmTextField {
      */
     protected void disableMenuActions() {
         disabledMenuActions.clear();
-        for (int i = 0; i < Main.main.menu.getMenuCount(); i++) {
-            JMenu menu = Main.main.menu.getMenu(i);
+        for (int i = 0; i < MainApplication.getMenu().getMenuCount(); i++) {
+            JMenu menu = MainApplication.getMenu().getMenu(i);
             if (menu != null) {
                 for (int j = 0; j < menu.getItemCount(); j++) {
                     JMenuItem item = menu.getItem(j);

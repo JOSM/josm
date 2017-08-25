@@ -58,6 +58,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.ScrollViewport;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
@@ -767,7 +768,7 @@ public class GenericRelationEditor extends RelationEditor {
             memberTableModel.unregister();
             memberTable.unregisterListeners();
             if (windowMenuItem != null) {
-                Main.main.menu.windowMenu.remove(windowMenuItem);
+                MainApplication.getMenu().windowMenu.remove(windowMenuItem);
                 windowMenuItem = null;
             }
             for (FlavorListener listener : clipboardListeners) {
@@ -797,7 +798,7 @@ public class GenericRelationEditor extends RelationEditor {
             }
         };
         focusAction.putValue("relationEditor", re);
-        return MainMenu.add(Main.main.menu.windowMenu, focusAction, MainMenu.WINDOW_MENU_GROUP.VOLATILE);
+        return MainMenu.add(MainApplication.getMenu().windowMenu, focusAction, MainMenu.WINDOW_MENU_GROUP.VOLATILE);
     }
 
     /**

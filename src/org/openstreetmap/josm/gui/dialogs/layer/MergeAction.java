@@ -10,7 +10,8 @@ import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.MergeLayerAction;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.IEnabledStateUpdating;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog.LayerListModel;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -68,16 +69,17 @@ public final class MergeAction extends AbstractAction implements IEnabledStateUp
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        MergeLayerAction mergeLayerAction = MainApplication.getMenu().merge;
         if (layer != null) {
-            Main.main.menu.merge.merge(layer);
+            mergeLayerAction.merge(layer);
         } else if (layers != null) {
-            Main.main.menu.merge.merge(layers);
+            mergeLayerAction.merge(layers);
         } else {
             if (model.getSelectedLayers().size() == 1) {
                 Layer selectedLayer = model.getSelectedLayers().get(0);
-                Main.main.menu.merge.merge(selectedLayer);
+                mergeLayerAction.merge(selectedLayer);
             } else {
-                Main.main.menu.merge.merge(model.getSelectedLayers());
+                mergeLayerAction.merge(model.getSelectedLayers());
             }
         }
     }

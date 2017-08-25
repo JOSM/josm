@@ -1053,7 +1053,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
     private void loadActions() {
         rootActionsNode.removeAllChildren();
-        loadAction(rootActionsNode, Main.main.menu);
+        loadAction(rootActionsNode, MainApplication.getMenu());
         for (Map.Entry<String, Action> a : regactions.entrySet()) {
             if (actions.get(a.getKey()) == null) {
                 rootActionsNode.add(new DefaultMutableTreeNode(a.getValue()));

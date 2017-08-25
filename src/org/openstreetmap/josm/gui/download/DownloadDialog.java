@@ -455,7 +455,7 @@ public class DownloadDialog extends JDialog {
      */
     public static void autostartIfNeeded() {
         if (isAutorunEnabled()) {
-            Main.main.menu.download.actionPerformed(null);
+            MainApplication.getMenu().download.actionPerformed(null);
         }
     }
 

@@ -197,7 +197,7 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
         }
         updateButtonStates();
         // TODO make a proper listener mechanism to handle change of note selection
-        Main.main.menu.infoweb.noteSelectionChanged();
+        MainApplication.getMenu().infoweb.noteSelectionChanged();
     }
 
     /**

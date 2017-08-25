@@ -23,6 +23,7 @@ import javax.swing.JTextArea;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
@@ -115,7 +116,7 @@ public final class AboutAction extends JosmAction {
             .setContent(panel, false)
             .showDialog().getValue();
         if (2 == ret) {
-            Main.main.menu.reportbug.actionPerformed(null);
+            MainApplication.getMenu().reportbug.actionPerformed(null);
         }
     }
 

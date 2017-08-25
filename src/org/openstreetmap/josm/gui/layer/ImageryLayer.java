@@ -207,7 +207,7 @@ public abstract class ImageryLayer extends Layer {
         @Override
         public void actionPerformed(ActionEvent ev) {
             setOffset(b);
-            Main.main.menu.imageryMenu.refreshOffsetMenu();
+            MainApplication.getMenu().imageryMenu.refreshOffsetMenu();
             MainApplication.getMap().repaint();
         }
     }

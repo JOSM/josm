@@ -126,7 +126,7 @@ public final class PreferenceTabbedPane extends JTabbedPane implements MouseWhee
                         options[0],
                         null /* no special help */
                         )) {
-                    Main.main.menu.restart.actionPerformed(null);
+                    MainApplication.getMenu().restart.actionPerformed(null);
                 }
             } else if (task != null && !task.isCanceled()) {
                 JOptionPane.showMessageDialog(

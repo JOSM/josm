@@ -44,6 +44,7 @@ import javax.swing.text.html.StyleSheet;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.gui.widgets.JosmHTMLEditorKit;
@@ -215,13 +216,14 @@ public class HelpBrowser extends JFrame implements IHelpBrowser {
         } else if (isShowing()) { // Avoid IllegalComponentStateException like in #8775
             new WindowGeometry(this).remember(getClass().getName() + ".geometry");
         }
-        if (Main.main != null && Main.main.menu != null && Main.main.menu.windowMenu != null) {
+        MainMenu menu = MainApplication.getMenu();
+        if (menu != null && menu.windowMenu != null) {
             if (windowMenuItem != null && !visible) {
-                Main.main.menu.windowMenu.remove(windowMenuItem);
+                menu.windowMenu.remove(windowMenuItem);
                 windowMenuItem = null;
             }
             if (windowMenuItem == null && visible) {
-                windowMenuItem = MainMenu.add(Main.main.menu.windowMenu, FOCUS_ACTION, MainMenu.WINDOW_MENU_GROUP.VOLATILE);
+                windowMenuItem = MainMenu.add(menu.windowMenu, FOCUS_ACTION, MainMenu.WINDOW_MENU_GROUP.VOLATILE);
             }
         }
         super.setVisible(visible);

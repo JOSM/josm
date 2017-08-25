@@ -100,7 +100,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 Shortcut.registerShortcut("subwindow:validator", tr("Toggle: {0}", tr("Validation results")),
                         KeyEvent.VK_V, Shortcut.ALT_SHIFT), 150, false, ValidatorPreference.class);
 
-        popupMenuHandler.addAction(Main.main.menu.autoScaleActions.get("problem"));
+        popupMenuHandler.addAction(MainApplication.getMenu().autoScaleActions.get("problem"));
         popupMenuHandler.addAction(new EditRelationAction());
 
         tree = new ValidatorTreePanel();

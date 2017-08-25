@@ -133,7 +133,7 @@ public class MapPaintDialog extends ToggleDialog {
                 downAction.updateEnabledState();
             }
         });
-        cbWireframe.addActionListener(e -> Main.main.menu.wireFrameToggleAction.actionPerformed(null));
+        cbWireframe.addActionListener(e -> MainApplication.getMenu().wireFrameToggleAction.actionPerformed(null));
         cbWireframe.setBorder(new EmptyBorder(new Insets(1, 1, 1, 1)));
 
         tblStyles = new ScrollableTable(model);
@@ -179,12 +179,12 @@ public class MapPaintDialog extends ToggleDialog {
     @Override
     public void showNotify() {
         MapPaintStyles.addMapPaintSylesUpdateListener(model);
-        Main.main.menu.wireFrameToggleAction.addButtonModel(cbWireframe.getModel());
+        MainApplication.getMenu().wireFrameToggleAction.addButtonModel(cbWireframe.getModel());
     }
 
     @Override
     public void hideNotify() {
-        Main.main.menu.wireFrameToggleAction.removeButtonModel(cbWireframe.getModel());
+        MainApplication.getMenu().wireFrameToggleAction.removeButtonModel(cbWireframe.getModel());
         MapPaintStyles.removeMapPaintSylesUpdateListener(model);
     }
 

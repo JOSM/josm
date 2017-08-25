@@ -149,7 +149,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
         @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getButton() != MouseEvent.BUTTON3) {
-                Main.main.menu.jumpToAct.showJumpToDialog();
+                MainApplication.getMenu().jumpToAct.showJumpToDialog();
             }
         }
     }
@@ -758,7 +758,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
 
     private class MapStatusPopupMenu extends JPopupMenu {
 
-        private final JMenuItem jumpButton = add(Main.main.menu.jumpToAct);
+        private final JMenuItem jumpButton = add(MainApplication.getMenu().jumpToAct);
 
         /** Icons for selecting {@link SystemOfMeasurement} */
         private final Collection<JCheckBoxMenuItem> somItems = new ArrayList<>();

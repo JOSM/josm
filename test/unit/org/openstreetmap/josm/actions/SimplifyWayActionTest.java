@@ -12,7 +12,6 @@ import java.util.stream.Stream;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -47,7 +46,7 @@ public final class SimplifyWayActionTest {
     @Before
     public void setUp() {
         if (action == null) {
-            action = Main.main.menu.simplifyWay;
+            action = MainApplication.getMenu().simplifyWay;
             action.setEnabled(true);
         }
     }

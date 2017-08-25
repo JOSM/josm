@@ -163,7 +163,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
         layerInfo.save();
         ImageryLayerInfo.instance.clear();
         ImageryLayerInfo.instance.load(false);
-        Main.main.menu.imageryMenu.refreshOffsetMenu();
+        MainApplication.getMenu().imageryMenu.refreshOffsetMenu();
         OffsetBookmark.saveBookmarks();
 
         if (!GraphicsEnvironment.isHeadless()) {
@@ -957,7 +957,7 @@ public final class ImageryPreference extends DefaultTabPreferenceSetting {
     public static void initialize() {
         ImageryLayerInfo.instance.load(false);
         OffsetBookmark.loadBookmarks();
-        Main.main.menu.imageryMenu.refreshImageryMenu();
-        Main.main.menu.imageryMenu.refreshOffsetMenu();
+        MainApplication.getMenu().imageryMenu.refreshImageryMenu();
+        MainApplication.getMenu().imageryMenu.refreshOffsetMenu();
     }
 }

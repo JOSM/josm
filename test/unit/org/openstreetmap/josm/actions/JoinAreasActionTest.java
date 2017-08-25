@@ -16,7 +16,6 @@ import java.util.Set;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -87,7 +86,7 @@ public class JoinAreasActionTest {
                 Collection<OsmPrimitive> found = SearchAction.searchAndReturn("type:way ref="+ref, SearchAction.SearchMode.replace);
                 assertEquals(2, found.size());
 
-                Main.main.menu.joinAreas.join(Utils.filteredCollection(found, Way.class));
+                MainApplication.getMenu().joinAreas.join(Utils.filteredCollection(found, Way.class));
 
                 Collection<OsmPrimitive> found2 = SearchAction.searchAndReturn("type:way ref="+ref, SearchAction.SearchMode.replace);
                 assertEquals(1, found2.size());
