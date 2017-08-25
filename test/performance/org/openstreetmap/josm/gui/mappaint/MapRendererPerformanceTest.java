@@ -307,6 +307,15 @@ public class MapRendererPerformanceTest {
         }
     }
 
+    /**
+     * Resets MapPaintStyles to a single source.
+     * @param source new map paint style source
+     */
+    public static void resetStylesToSingle(StyleSource source) {
+        MapPaintStyles.getStyles().clear();
+        MapPaintStyles.getStyles().add(source);
+    }
+
     private static void setFilterStyleActive(boolean active) {
         if (filterStyle.active != active) {
             MapPaintStyles.toggleStyleActive(filterStyleIdx);
