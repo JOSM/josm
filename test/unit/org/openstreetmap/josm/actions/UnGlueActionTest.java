@@ -7,7 +7,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -39,7 +38,7 @@ public final class UnGlueActionTest {
     @Before
     public void setUp() {
         if (action == null) {
-            action = Main.main.menu.unglueNodes;
+            action = MainApplication.getMenu().unglueNodes;
             action.setEnabled(true);
         }
     }

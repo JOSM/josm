@@ -135,6 +135,11 @@ public class MainApplication extends Main {
     private static final List<String> COMMAND_LINE_ARGS = new ArrayList<>();
 
     /**
+     * The main menu bar at top of screen.
+     */
+    static MainMenu menu;
+
+    /**
      * The main panel, required to be static for {@link MapFrameListener} handling.
      */
     static MainPanel mainPanel;
@@ -277,11 +282,13 @@ public class MainApplication extends Main {
             panel = mainPanel;
             mainFrame.initialize();
             menu = mainFrame.getMenu();
+            super.menu = menu;
         } else {
             // required for running some tests.
             mainPanel = new MainPanel(layerManager);
             panel = mainPanel;
             menu = new MainMenu();
+            super.menu = menu;
         }
         mainPanel.addMapFrameListener((o, n) -> redoUndoListener.commandChanged(0, 0));
         mainPanel.reAddListeners();
@@ -376,6 +383,15 @@ public class MainApplication extends Main {
      */
     public static MainPanel getMainPanel() {
         return mainPanel;
+    }
+
+    /**
+     * Returns the main menu, at top of screen.
+     * @return the main menu
+     * @since 12643 (as a replacement to {@code MainApplication.getMenu()})
+     */
+    public static MainMenu getMenu() {
+        return menu;
     }
 
     /**

@@ -17,7 +17,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -350,7 +349,7 @@ public class JOSMTestRules implements TestRule {
                 JOSMFixture.initContentPane();
                 JOSMFixture.initMainPanel(true);
                 JOSMFixture.initToolbar();
-                Main.main.menu = new MainMenu();
+                JOSMFixture.initMainMenu();
             }
         }
     }

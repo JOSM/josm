@@ -144,7 +144,9 @@ public abstract class Main {
 
     /**
      * The main menu bar at top of screen.
+     * @deprecated Use {@link MainApplication#getMenu} instead
      */
+    @Deprecated
     public MainMenu menu;
 
     /**

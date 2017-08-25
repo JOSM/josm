@@ -337,7 +337,7 @@ public class ImageryAdjustAction extends MapMode implements AWTEventListener {
                     OffsetBookmark.bookmarkOffset(tBookmarkName.getText(), layer);
                 }
             }
-            Main.main.menu.imageryMenu.refreshOffsetMenu();
+            MainApplication.getMenu().imageryMenu.refreshOffsetMenu();
         }
 
         private void restoreMapModeState() {

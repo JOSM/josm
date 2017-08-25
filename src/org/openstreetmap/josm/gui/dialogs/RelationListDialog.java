@@ -181,7 +181,7 @@ public class RelationListDialog extends ToggleDialog
         displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, KeyEvent.CTRL_DOWN_MASK), "edit");
 
         // Do not hide copy action because of default JList override (fix #9815)
-        displaylist.getActionMap().put("copy", Main.main.menu.copy);
+        displaylist.getActionMap().put("copy", MainApplication.getMenu().copy);
         displaylist.getInputMap().put(KeyStroke.getKeyStroke(KeyEvent.VK_C, GuiHelper.getMenuShortcutKeyMaskEx()), "copy");
 
         updateActionsRelationLists();

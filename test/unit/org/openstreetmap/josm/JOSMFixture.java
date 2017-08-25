@@ -190,4 +190,11 @@ public class JOSMFixture {
     public static void initToolbar() {
         MainApplicationTest.initToolbar();
     }
+
+    /**
+     * Make sure {@code MainApplication.menu} is initialized.
+     */
+    public static void initMainMenu() {
+        MainApplicationTest.initMainMenu();
+    }
 }

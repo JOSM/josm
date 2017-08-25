@@ -12,6 +12,7 @@ import java.util.Set;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -40,7 +41,7 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
                 new DownloadOsmTask().loadUrl(isLoadInNewLayer(), url.toExternalForm(), null);
             } else if (Main.pref.getBoolean("remotecontrol.import.interactive", true)) {
                 // OpenLocationAction queries the user if more than one task is suitable
-                Main.main.menu.openLocation.openUrl(isLoadInNewLayer(), url.toExternalForm());
+                MainApplication.getMenu().openLocation.openUrl(isLoadInNewLayer(), url.toExternalForm());
             } else {
                 // Otherwise perform all tasks
                 for (DownloadTask task : suitableDownloadTasks) {
@@ -109,6 +110,6 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
             throw new RequestHandlerBadRequestException("MalformedURLException: "+e.getMessage(), e);
         }
         // Find download tasks for the given URL
-        suitableDownloadTasks = Main.main.menu.openLocation.findDownloadTasks(urlString, true);
+        suitableDownloadTasks = MainApplication.getMenu().openLocation.findDownloadTasks(urlString, true);
     }
 }

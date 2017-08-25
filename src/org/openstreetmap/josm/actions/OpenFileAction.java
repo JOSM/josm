@@ -319,7 +319,7 @@ public class OpenFileAction extends DiskAccessAction {
                             Matcher m = Pattern.compile(".*(https?://.*)").matcher(line);
                             if (m.matches()) {
                                 String url = m.group(1);
-                                Main.main.menu.openLocation.openUrl(false, url);
+                                MainApplication.getMenu().openLocation.openUrl(false, url);
                             }
                         }
                     } catch (IOException | PatternSyntaxException | IllegalStateException | IndexOutOfBoundsException e) {

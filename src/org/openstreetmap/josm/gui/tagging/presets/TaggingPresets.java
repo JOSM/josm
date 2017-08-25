@@ -66,11 +66,11 @@ public final class TaggingPresets {
             }
         }
         if (taggingPresets.isEmpty()) {
-            Main.main.menu.presetsMenu.setVisible(false);
+            MainApplication.getMenu().presetsMenu.setVisible(false);
         } else {
             Map<TaggingPresetMenu, JMenu> submenus = new HashMap<>();
             for (final TaggingPreset p : taggingPresets) {
-                JMenu m = p.group != null ? submenus.get(p.group) : Main.main.menu.presetsMenu;
+                JMenu m = p.group != null ? submenus.get(p.group) : MainApplication.getMenu().presetsMenu;
                 if (m == null && p.group != null) {
                     Logging.error("No tagging preset submenu for " + p.group);
                 } else if (m == null) {
@@ -96,7 +96,7 @@ public final class TaggingPresets {
             }
         }
         if (Main.pref.getBoolean("taggingpreset.sortmenu")) {
-            TaggingPresetMenu.sortMenu(Main.main.menu.presetsMenu);
+            TaggingPresetMenu.sortMenu(MainApplication.getMenu().presetsMenu);
         }
     }
 

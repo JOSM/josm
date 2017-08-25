@@ -7,7 +7,6 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AlignInLineAction.InvalidSelection;
 import org.openstreetmap.josm.actions.AlignInLineAction.Line;
 import org.openstreetmap.josm.data.coor.EastNorth;
@@ -42,7 +41,7 @@ public final class AlignInLineActionTest {
     @Before
     public void setUp() {
         // Enable "Align in line" feature.
-        action = Main.main.menu.alignInLine;
+        action = MainApplication.getMenu().alignInLine;
         action.setEnabled(true);
     }
 

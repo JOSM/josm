@@ -93,6 +93,15 @@ public class MainApplicationTest {
     }
 
     /**
+     * Make sure {@code MainApplication.menu} is initialized.
+     */
+    @SuppressWarnings("deprecation")
+    public static void initMainMenu() {
+        MainApplication.menu = new MainMenu();
+        Main.main.menu = MainApplication.menu;
+    }
+
+    /**
      * Make sure {@link MainApplication#toolbar} is initialized.
      */
     @SuppressWarnings("deprecation")

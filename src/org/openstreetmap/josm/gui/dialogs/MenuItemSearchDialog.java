@@ -16,6 +16,7 @@ import javax.swing.ListCellRenderer;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
 import org.openstreetmap.josm.gui.widgets.SearchTextResultListPanel;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -26,7 +27,7 @@ import org.openstreetmap.josm.tools.Shortcut;
 public final class MenuItemSearchDialog extends ExtendedDialog {
 
     private final Selector selector;
-    private static final MenuItemSearchDialog INSTANCE = new MenuItemSearchDialog(Main.main.menu);
+    private static final MenuItemSearchDialog INSTANCE = new MenuItemSearchDialog(MainApplication.getMenu());
 
     private MenuItemSearchDialog(MainMenu menu) {
         super(Main.parent, tr("Search menu items"), tr("Select"), tr("Cancel"));

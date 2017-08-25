@@ -140,7 +140,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
 
         createLayout(lstConflicts, true, Arrays.asList(btnResolve, btnSelect));
 
-        popupMenuHandler.addAction(Main.main.menu.autoScaleActions.get("conflict"));
+        popupMenuHandler.addAction(MainApplication.getMenu().autoScaleActions.get("conflict"));
 
         ResolveToMyVersionAction resolveToMyVersionAction = new ResolveToMyVersionAction();
         ResolveToTheirVersionAction resolveToTheirVersionAction = new ResolveToTheirVersionAction();

@@ -13,7 +13,6 @@ import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SplitWayAction.Strategy;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -50,7 +49,7 @@ public final class SplitWayActionTest {
     @Before
     public void setUp() {
         if (action == null) {
-            action = Main.main.menu.splitWay;
+            action = MainApplication.getMenu().splitWay;
             action.setEnabled(true);
         }
     }

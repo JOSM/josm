@@ -57,7 +57,7 @@ public class DialogsToggleAction extends ToggleAction {
             MapFrame map = MainApplication.getMap();
             map.setDialogsPanelVisible(selected);
             map.statusLine.setVisible(selected || Main.pref.getBoolean("statusbar.always-visible", true));
-            Main.main.menu.setVisible(selected || Main.pref.getBoolean("menu.always-visible", true));
+            MainApplication.getMenu().setVisible(selected || Main.pref.getBoolean("menu.always-visible", true));
             // Toolbars listen to preference changes, use it here
             if (!Main.pref.getBoolean("toolbar.always-visible", true) && (!selected || toolbarPreviouslyVisible)) {
                 Main.pref.put("toolbar.visible", selected);
