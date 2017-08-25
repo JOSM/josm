@@ -11,8 +11,8 @@ import java.util.Collections;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.actions.search.SearchAction;
-import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.data.preferences.CollectionProperty;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -33,10 +33,10 @@ public class RecentTagCollectionTest {
     /**
      * Performs various tests on a {@link RecentTagCollection}.
      *
-     * @throws SearchCompiler.ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testVarious() throws SearchCompiler.ParseError {
+    public void testVarious() throws SearchParseError {
         final RecentTagCollection recentTags = new RecentTagCollection(2);
         assertTrue(recentTags.isEmpty());
 

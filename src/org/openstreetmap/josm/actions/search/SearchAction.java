@@ -45,10 +45,11 @@ import org.openstreetmap.josm.actions.ActionParameter;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.ParameterizedAction;
-import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.search.SearchParseError;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -379,7 +380,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     ss.mapCSSSearch = mapCSSSearch.isSelected();
                     SearchCompiler.compile(ss);
                     return true;
-                } catch (ParseError | MapCSSException e) {
+                } catch (SearchParseError | MapCSSException e) {
                     return false;
                 }
             }
@@ -417,7 +418,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                         ss.mapCSSSearch = mapCSSSearch.isSelected();
                         SearchCompiler.compile(ss);
                         super.buttonAction(buttonIndex, evt);
-                    } catch (ParseError e) {
+                    } catch (SearchParseError e) {
                         Logging.debug(e);
                         JOptionPane.showMessageDialog(
                                 Main.parent,
@@ -827,7 +828,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     subMonitor.worked(1);
                 }
                 subMonitor.finishTask();
-            } catch (ParseError e) {
+            } catch (SearchParseError e) {
                 Logging.debug(e);
                 JOptionPane.showMessageDialog(
                         Main.parent,

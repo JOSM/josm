@@ -16,9 +16,9 @@ import java.util.List;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
-import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Filter.FilterPreferenceEntry;
+import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -40,7 +40,7 @@ public class FilterTest {
     public JOSMTestRules test = new JOSMTestRules();
 
     @Test
-    public void testBasic() throws ParseError {
+    public void testBasic() throws SearchParseError {
         DataSet ds = new DataSet();
         Node n1 = new Node(LatLon.ZERO);
         n1.put("amenity", "parking");

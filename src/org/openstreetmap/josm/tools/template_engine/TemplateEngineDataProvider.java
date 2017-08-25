@@ -3,7 +3,7 @@ package org.openstreetmap.josm.tools.template_engine;
 
 import java.util.Collection;
 
-import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 
 public interface TemplateEngineDataProvider {
     Collection<String> getTemplateKeys();

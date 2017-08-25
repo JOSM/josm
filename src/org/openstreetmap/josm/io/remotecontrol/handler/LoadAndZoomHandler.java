@@ -15,7 +15,6 @@ import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
-import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.BBox;
@@ -23,6 +22,8 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
+import org.openstreetmap.josm.data.osm.search.SearchParseError;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -201,7 +202,7 @@ public class LoadAndZoomHandler extends RequestHandler {
                     forTagAdd.addAll(filteredPrimitives);
                     zoom(filteredPrimitives, bbox);
                 });
-            } catch (SearchCompiler.ParseError ex) {
+            } catch (SearchParseError ex) {
                 Logging.error(ex);
                 throw new RequestHandlerErrorException(ex);
             }

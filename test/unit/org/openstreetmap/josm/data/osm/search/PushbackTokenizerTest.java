@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.actions.search;
+package org.openstreetmap.josm.data.osm.search;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.actions.search.PushbackTokenizer.Token;
+import org.openstreetmap.josm.data.osm.search.PushbackTokenizer.Token;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;

@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.actions.search;
+package org.openstreetmap.josm.data.osm.search;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -19,9 +19,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
-import org.openstreetmap.josm.actions.search.SearchCompiler.ExactKeyValue;
-import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
-import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -34,6 +31,8 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WayData;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.ExactKeyValue;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetMenu;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
@@ -68,7 +67,7 @@ public class SearchCompilerTest {
         private final Match m;
         private final Match n;
 
-        private SearchContext(String state) throws ParseError {
+        private SearchContext(String state) throws SearchParseError {
             m = SearchCompiler.compile(state);
             n = SearchCompiler.compile('-' + state);
             ds.addPrimitive(n1);
@@ -106,10 +105,10 @@ public class SearchCompilerTest {
 
     /**
      * Search anything.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testAny() throws ParseError {
+    public void testAny() throws SearchParseError {
         final SearchCompiler.Match c = SearchCompiler.compile("foo");
         assertTrue(c.match(newPrimitive("foobar", "true")));
         assertTrue(c.match(newPrimitive("name", "hello-foo-xy")));
@@ -119,10 +118,10 @@ public class SearchCompilerTest {
 
     /**
      * Search by equality key=value.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testEquals() throws ParseError {
+    public void testEquals() throws SearchParseError {
         final SearchCompiler.Match c = SearchCompiler.compile("foo=bar");
         assertFalse(c.match(newPrimitive("foobar", "true")));
         assertTrue(c.match(newPrimitive("foo", "bar")));
@@ -133,10 +132,10 @@ public class SearchCompilerTest {
 
     /**
      * Search by comparison.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testCompare() throws ParseError {
+    public void testCompare() throws SearchParseError {
         final SearchCompiler.Match c1 = SearchCompiler.compile("start_date>1950");
         assertTrue(c1.match(newPrimitive("start_date", "1950-01-01")));
         assertTrue(c1.match(newPrimitive("start_date", "1960")));
@@ -173,10 +172,10 @@ public class SearchCompilerTest {
 
     /**
      * Search by nth.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testNth() throws ParseError {
+    public void testNth() throws SearchParseError {
         final DataSet dataSet = new DataSet();
         final Way way = new Way();
         final Node node0 = new Node(new LatLon(1, 1));
@@ -201,19 +200,19 @@ public class SearchCompilerTest {
 
     /**
      * Search by negative nth.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testNthParseNegative() throws ParseError {
+    public void testNthParseNegative() throws SearchParseError {
         assertEquals("Nth{nth=-1, modulo=false}", SearchCompiler.compile("nth:-1").toString());
     }
 
     /**
      * Search by modified status.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testModified() throws ParseError {
+    public void testModified() throws SearchParseError {
         SearchContext sc = new SearchContext("modified");
         // Not modified but new
         for (OsmPrimitive p : new OsmPrimitive[]{sc.n1, sc.w1, sc.r1}) {
@@ -246,10 +245,10 @@ public class SearchCompilerTest {
 
     /**
      * Search by selected status.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testSelected() throws ParseError {
+    public void testSelected() throws SearchParseError {
         SearchContext sc = new SearchContext("selected");
         // Not selected
         for (OsmPrimitive p : new OsmPrimitive[]{sc.n1, sc.w1, sc.r1}) {
@@ -266,10 +265,10 @@ public class SearchCompilerTest {
 
     /**
      * Search by incomplete status.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testIncomplete() throws ParseError {
+    public void testIncomplete() throws SearchParseError {
         SearchContext sc = new SearchContext("incomplete");
         // Not incomplete
         for (OsmPrimitive p : new OsmPrimitive[]{sc.n1, sc.w1, sc.r1}) {
@@ -292,10 +291,10 @@ public class SearchCompilerTest {
 
     /**
      * Search by untagged status.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testUntagged() throws ParseError {
+    public void testUntagged() throws SearchParseError {
         SearchContext sc = new SearchContext("untagged");
         // Untagged
         for (OsmPrimitive p : new OsmPrimitive[]{sc.n1, sc.w1, sc.r1}) {
@@ -312,10 +311,10 @@ public class SearchCompilerTest {
 
     /**
      * Search by closed status.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testClosed() throws ParseError {
+    public void testClosed() throws SearchParseError {
         SearchContext sc = new SearchContext("closed");
         // Closed
         sc.w1.addNode(sc.n1);
@@ -331,10 +330,10 @@ public class SearchCompilerTest {
 
     /**
      * Search by new status.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testNew() throws ParseError {
+    public void testNew() throws SearchParseError {
         SearchContext sc = new SearchContext("new");
         // New
         for (OsmPrimitive p : new OsmPrimitive[]{sc.n1, sc.w1, sc.r1}) {
@@ -351,10 +350,10 @@ public class SearchCompilerTest {
 
     /**
      * Search for node objects.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testTypeNode() throws ParseError {
+    public void testTypeNode() throws SearchParseError {
         final SearchContext sc = new SearchContext("type:node");
         for (OsmPrimitive p : new OsmPrimitive[]{sc.n1, sc.n2, sc.w1, sc.w2, sc.r1, sc.r2}) {
             sc.match(p, OsmPrimitiveType.NODE.equals(p.getType()));
@@ -363,10 +362,10 @@ public class SearchCompilerTest {
 
     /**
      * Search for way objects.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testTypeWay() throws ParseError {
+    public void testTypeWay() throws SearchParseError {
         final SearchContext sc = new SearchContext("type:way");
         for (OsmPrimitive p : new OsmPrimitive[]{sc.n1, sc.n2, sc.w1, sc.w2, sc.r1, sc.r2}) {
             sc.match(p, OsmPrimitiveType.WAY.equals(p.getType()));
@@ -375,10 +374,10 @@ public class SearchCompilerTest {
 
     /**
      * Search for relation objects.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testTypeRelation() throws ParseError {
+    public void testTypeRelation() throws SearchParseError {
         final SearchContext sc = new SearchContext("type:relation");
         for (OsmPrimitive p : new OsmPrimitive[]{sc.n1, sc.n2, sc.w1, sc.w2, sc.r1, sc.r2}) {
             sc.match(p, OsmPrimitiveType.RELATION.equals(p.getType()));
@@ -387,10 +386,10 @@ public class SearchCompilerTest {
 
     /**
      * Search for users.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testUser() throws ParseError {
+    public void testUser() throws SearchParseError {
         final SearchContext foobar = new SearchContext("user:foobar");
         foobar.n1.setUser(User.createLocalUser("foobar"));
         foobar.match(foobar.n1, true);
@@ -409,17 +408,17 @@ public class SearchCompilerTest {
         try {
             SearchCompiler.compile("foo type bar");
             fail();
-        } catch (ParseError parseError) {
+        } catch (SearchParseError parseError) {
             assertEquals("<html>Expecting <code>:</code> after <i>type</i>", parseError.getMessage());
         }
     }
 
     /**
      * Search for primitive timestamps.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testTimestamp() throws ParseError {
+    public void testTimestamp() throws SearchParseError {
         final Match search = SearchCompiler.compile("timestamp:2010/2011");
         final Node n1 = new Node();
         n1.setTimestamp(DateUtils.fromString("2010-01-22"));
@@ -430,10 +429,10 @@ public class SearchCompilerTest {
 
     /**
      * Tests the implementation of the Boolean logic.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testBooleanLogic() throws ParseError {
+    public void testBooleanLogic() throws SearchParseError {
         final SearchCompiler.Match c1 = SearchCompiler.compile("foo AND bar AND baz");
         assertTrue(c1.match(newPrimitive("foobar", "baz")));
         assertEquals("foo && bar && baz", c1.toString());
@@ -453,10 +452,10 @@ public class SearchCompilerTest {
 
     /**
      * Tests {@code buildSearchStringForTag}.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testBuildSearchStringForTag() throws ParseError {
+    public void testBuildSearchStringForTag() throws SearchParseError {
         final Tag tag1 = new Tag("foo=", "bar\"");
         final Tag tag2 = new Tag("foo=", "=bar");
         final String search1 = SearchCompiler.buildSearchStringForTag(tag1.getKey(), tag1.getValue());
@@ -471,10 +470,10 @@ public class SearchCompilerTest {
 
     /**
      * Non-regression test for <a href="https://josm.openstreetmap.de/ticket/13870">Bug #13870</a>.
-     * @throws ParseError always
+     * @throws SearchParseError always
      */
-    @Test(expected = ParseError.class)
-    public void testPattern13870() throws ParseError {
+    @Test(expected = SearchParseError.class)
+    public void testPattern13870() throws SearchParseError {
         // https://bugs.openjdk.java.net/browse/JI-9044959
         SearchSetting setting = new SearchSetting();
         setting.regexSearch = true;
@@ -502,11 +501,11 @@ public class SearchCompilerTest {
 
     /**
      * Robustness test for preset searching. Ensures that the query 'preset:' is not accepted.
-     * @throws ParseError always
+     * @throws SearchParseError always
      * @since 12464
      */
-    @Test(expected = ParseError.class)
-    public void testPresetSearchMissingValue() throws ParseError {
+    @Test(expected = SearchParseError.class)
+    public void testPresetSearchMissingValue() throws SearchParseError {
         SearchSetting settings = new SearchSetting();
         settings.text = "preset:";
         settings.mapCSSSearch = false;
@@ -519,11 +518,11 @@ public class SearchCompilerTest {
     /**
      * Robustness test for preset searching. Validates that it is not possible to search for
      * non existing presets.
-     * @throws ParseError always
+     * @throws SearchParseError always
      * @since 12464
      */
-    @Test(expected = ParseError.class)
-    public void testPresetNotExist() throws ParseError {
+    @Test(expected = SearchParseError.class)
+    public void testPresetNotExist() throws SearchParseError {
         String testPresetName = "groupnamethatshouldnotexist/namethatshouldnotexist";
         SearchSetting settings = new SearchSetting();
         settings.text = "preset:" + testPresetName;
@@ -538,11 +537,11 @@ public class SearchCompilerTest {
     /**
      * Robustness tests for preset searching. Ensures that combined preset names (having more than
      * 1 word) must be enclosed with " .
-     * @throws ParseError always
+     * @throws SearchParseError always
      * @since 12464
      */
-    @Test(expected = ParseError.class)
-    public void testPresetMultipleWords() throws ParseError {
+    @Test(expected = SearchParseError.class)
+    public void testPresetMultipleWords() throws SearchParseError {
         TaggingPreset testPreset = new TaggingPreset();
         testPreset.name = "Test Combined Preset Name";
         testPreset.group = new TaggingPresetMenu();
@@ -561,15 +560,15 @@ public class SearchCompilerTest {
 
 
     /**
-     * Ensures that correct presets are stored in the {@link org.openstreetmap.josm.actions.search.SearchCompiler.Preset}
+     * Ensures that correct presets are stored in the {@link org.openstreetmap.josm.data.osm.search.SearchCompiler.Preset}
      * class against which the osm primitives are tested.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      * @throws NoSuchFieldException if there is no field called 'presets'
      * @throws IllegalAccessException if cannot access the field where all matching presets are stored
      * @since 12464
      */
     @Test
-    public void testPresetLookup() throws ParseError, NoSuchFieldException, IllegalAccessException {
+    public void testPresetLookup() throws SearchParseError, NoSuchFieldException, IllegalAccessException {
         TaggingPreset testPreset = new TaggingPreset();
         testPreset.name = "Test Preset Name";
         testPreset.group = new TaggingPresetMenu();
@@ -600,15 +599,15 @@ public class SearchCompilerTest {
 
     /**
      * Ensures that the wildcard search works and that correct presets are stored in
-     * the {@link org.openstreetmap.josm.actions.search.SearchCompiler.Preset} class against which
+     * the {@link org.openstreetmap.josm.data.osm.search.SearchCompiler.Preset} class against which
      * the osm primitives are tested.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      * @throws NoSuchFieldException if there is no field called 'presets'
      * @throws IllegalAccessException if cannot access the field where all matching presets are stored
      * @since 12464
      */
     @Test
-    public void testPresetLookupWildcard() throws ParseError, NoSuchFieldException, IllegalAccessException {
+    public void testPresetLookupWildcard() throws SearchParseError, NoSuchFieldException, IllegalAccessException {
         TaggingPresetMenu group = new TaggingPresetMenu();
         group.name = "TestPresetGroup";
 
@@ -649,11 +648,11 @@ public class SearchCompilerTest {
 
     /**
      * Ensures that correct primitives are matched against the specified preset.
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      * @since 12464
      */
     @Test
-    public void testPreset() throws ParseError {
+    public void testPreset() throws SearchParseError {
         final String presetName = "Test Preset Name";
         final String presetGroupName = "Test Preset Group";
         final String key = "test_key1";
@@ -688,4 +687,3 @@ public class SearchCompilerTest {
         }
     }
 }
-

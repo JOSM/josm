@@ -12,13 +12,13 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
-import org.openstreetmap.josm.actions.search.SearchCompiler;
-import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.search.SearchParseError;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Pair;
@@ -55,7 +55,7 @@ public class CreateMultipolygonActionTest {
 
     @SuppressWarnings("unchecked")
     private static Pair<SequenceCommand, Relation> createMultipolygonCommand(Collection<Way> ways, String pattern, Relation r)
-            throws ParseError {
+            throws SearchParseError {
         return CreateMultipolygonAction.createMultipolygonCommand(
             (Collection<Way>) (Collection<?>) SubclassFilteredCollection.filter(ways, SearchCompiler.compile(regexpSearch(pattern))), r);
     }

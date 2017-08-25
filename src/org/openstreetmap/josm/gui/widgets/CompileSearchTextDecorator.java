@@ -8,7 +8,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
-import org.openstreetmap.josm.actions.search.SearchCompiler;
+import org.openstreetmap.josm.data.osm.search.SearchParseError;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -42,7 +43,7 @@ public final class CompileSearchTextDecorator implements DocumentListener {
             textComponent.setBackground(UIManager.getColor("TextField.background"));
             textComponent.setToolTipText(originalToolTipText);
             filter = SearchCompiler.compile(textComponent.getText());
-        } catch (SearchCompiler.ParseError ex) {
+        } catch (SearchParseError ex) {
             textComponent.setBackground(new Color(255, 224, 224));
             textComponent.setToolTipText(ex.getMessage());
             filter = SearchCompiler.Always.INSTANCE;

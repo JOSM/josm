@@ -20,9 +20,9 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.search.SearchCompiler;
-import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
-import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
+import org.openstreetmap.josm.data.osm.search.SearchParseError;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.gui.mappaint.StyleCache;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -760,13 +760,13 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     private static Match compileDirectionKeys(String prefName, String defaultValue) throws AssertionError {
         try {
             return SearchCompiler.compile(Main.pref.get(prefName, defaultValue));
-        } catch (ParseError e) {
+        } catch (SearchParseError e) {
             Logging.log(Logging.LEVEL_ERROR, "Unable to compile pattern for " + prefName + ", trying default pattern:", e);
         }
 
         try {
             return SearchCompiler.compile(defaultValue);
-        } catch (ParseError e2) {
+        } catch (SearchParseError e2) {
             throw new AssertionError("Unable to compile default pattern for direction keys: " + e2.getMessage(), e2);
         }
     }

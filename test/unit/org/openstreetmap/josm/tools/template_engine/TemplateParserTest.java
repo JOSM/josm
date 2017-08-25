@@ -8,11 +8,12 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.actions.search.SearchCompiler;
-import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
+import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.testutils.DatasetFactory;
 import org.unitils.reflectionassert.ReflectionAssert;
 
@@ -78,17 +79,17 @@ public class TemplateParserTest {
         ReflectionAssert.assertReflectionEquals(condition, parser.parse());
     }
 
-    private static Match compile(String expression) throws SearchCompiler.ParseError {
+    private static Match compile(String expression) throws SearchParseError {
         return SearchCompiler.compile(expression);
     }
 
     /**
      * Test to parse a search expression condition.
      * @throws ParseError if the template cannot be parsed
-     * @throws SearchCompiler.ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      */
     @Test
-    public void testConditionSearchExpression() throws ParseError, SearchCompiler.ParseError {
+    public void testConditionSearchExpression() throws ParseError, SearchParseError {
         TemplateParser parser = new TemplateParser("?{ admin_level = 2 'NUTS 1' | admin_level = 4 'NUTS 2' |  '{admin_level}'}");
         Condition condition = new Condition();
         condition.getEntries().add(new SearchExpressionCondition(compile("admin_level = 2"), new StaticText("NUTS 1")));

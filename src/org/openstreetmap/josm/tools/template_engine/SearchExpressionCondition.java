@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools.template_engine;
 
-import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 
 public class SearchExpressionCondition implements TemplateEntry {
 

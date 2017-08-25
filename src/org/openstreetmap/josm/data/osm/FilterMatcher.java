@@ -6,10 +6,10 @@ import java.util.Collection;
 import java.util.List;
 
 import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
-import org.openstreetmap.josm.actions.search.SearchCompiler;
-import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
-import org.openstreetmap.josm.actions.search.SearchCompiler.Not;
-import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
+import org.openstreetmap.josm.data.osm.search.SearchParseError;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.Not;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
@@ -78,7 +78,7 @@ public class FilterMatcher {
         private final boolean isDelete;
         private final boolean isInverted;
 
-        FilterInfo(Filter filter) throws ParseError {
+        FilterInfo(Filter filter) throws SearchParseError {
             if (filter.mode == SearchMode.remove || filter.mode == SearchMode.in_selection) {
                 isDelete = true;
             } else {
@@ -97,9 +97,9 @@ public class FilterMatcher {
     /**
      * Clears the current filters, and adds the given filters
      * @param filters the filters to add
-     * @throws ParseError if the search expression in one of the filters cannot be parsed
+     * @throws SearchParseError if the search expression in one of the filters cannot be parsed
      */
-    public void update(Collection<Filter> filters) throws ParseError {
+    public void update(Collection<Filter> filters) throws SearchParseError {
         reset();
         for (Filter filter : filters) {
             add(filter);
@@ -117,9 +117,9 @@ public class FilterMatcher {
     /**
      * Adds a filter to the currently used filters
      * @param filter the filter to add
-     * @throws ParseError if the search expression in the filter cannot be parsed
+     * @throws SearchParseError if the search expression in the filter cannot be parsed
      */
-    public void add(final Filter filter) throws ParseError {
+    public void add(final Filter filter) throws SearchParseError {
         if (!filter.enable) {
             return;
         }
@@ -329,10 +329,10 @@ public class FilterMatcher {
      * Returns a new {@code FilterMatcher} containing the given filters.
      * @param filters filters to add to the resulting filter matcher
      * @return a new {@code FilterMatcher} containing the given filters
-     * @throws ParseError if the search expression in a filter cannot be parsed
+     * @throws SearchParseError if the search expression in a filter cannot be parsed
      * @since 12383
      */
-    public static FilterMatcher of(Filter... filters) throws ParseError {
+    public static FilterMatcher of(Filter... filters) throws SearchParseError {
         FilterMatcher result = new FilterMatcher();
         for (Filter filter : filters) {
             result.add(filter);

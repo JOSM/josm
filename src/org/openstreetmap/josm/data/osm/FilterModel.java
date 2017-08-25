@@ -16,8 +16,8 @@ import java.util.Stack;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.Filter.FilterPreferenceEntry;
+import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.OSDLabel;
@@ -51,7 +51,7 @@ public class FilterModel {
         for (Filter filter : filters) {
             try {
                 filterMatcher.add(filter);
-            } catch (ParseError e) {
+            } catch (SearchParseError e) {
                 Logging.error(e);
                 JOptionPane.showMessageDialog(
                         Main.parent,

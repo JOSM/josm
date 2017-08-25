@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.actions.search;
+package org.openstreetmap.josm.data.osm.search;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -23,8 +23,7 @@ import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.search.PushbackTokenizer.Range;
-import org.openstreetmap.josm.actions.search.PushbackTokenizer.Token;
+import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
@@ -35,6 +34,8 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.search.PushbackTokenizer.Range;
+import org.openstreetmap.josm.data.osm.search.PushbackTokenizer.Token;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
@@ -52,25 +53,26 @@ import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
- Implements a google-like search.
- <br>
- Grammar:
-<pre>
-expression =
-  fact | expression
-  fact expression
-  fact
-
-fact =
- ( expression )
- -fact
- term?
- term=term
- term:term
- term
- </pre>
-
- @author Imi
+ * Implements a google-like search.
+ * <br>
+ * Grammar:
+ * <pre>
+ * expression =
+ *   fact | expression
+ *   fact expression
+ *   fact
+ * 
+ * fact =
+ *  ( expression )
+ *  -fact
+ *  term?
+ *  term=term
+ *  term:term
+ *  term
+ *  </pre>
+ * 
+ * @author Imi
+ * @since 12656 (moved from actions.search package)
  */
 public class SearchCompiler {
 
@@ -125,7 +127,7 @@ public class SearchCompiler {
                 "allindownloadedarea", "inview", "allinview", "timestamp", "nth", "nth%", "hasRole", "preset");
 
         @Override
-        public Match get(String keyword, PushbackTokenizer tokenizer) throws ParseError {
+        public Match get(String keyword, PushbackTokenizer tokenizer) throws SearchParseError {
             switch(keyword) {
             case "modified":
                 return new Modified();
@@ -197,21 +199,21 @@ public class SearchCompiler {
                                 // if min timestap is empty: use lowest possible date
                                 minDate = DateUtils.fromString(rangeA1.isEmpty() ? "1980" : rangeA1).getTime();
                             } catch (UncheckedParseException ex) {
-                                throw new ParseError(tr("Cannot parse timestamp ''{0}''", rangeA1), ex);
+                                throw new SearchParseError(tr("Cannot parse timestamp ''{0}''", rangeA1), ex);
                             }
                             try {
                                 // if max timestamp is empty: use "now"
                                 maxDate = rangeA2.isEmpty() ? System.currentTimeMillis() : DateUtils.fromString(rangeA2).getTime();
                             } catch (UncheckedParseException ex) {
-                                throw new ParseError(tr("Cannot parse timestamp ''{0}''", rangeA2), ex);
+                                throw new SearchParseError(tr("Cannot parse timestamp ''{0}''", rangeA2), ex);
                             }
                             return new TimestampRange(minDate, maxDate);
                         } else {
-                            throw new ParseError("<html>" + tr("Expecting {0} after {1}", "<i>min</i>/<i>max</i>", "<i>timestamp</i>"));
+                            throw new SearchParseError("<html>" + tr("Expecting {0} after {1}", "<i>min</i>/<i>max</i>", "<i>timestamp</i>"));
                         }
                     }
                 } else {
-                    throw new ParseError("<html>" + tr("Expecting {0} after {1}", "<code>:</code>", "<i>" + keyword + "</i>"));
+                    throw new SearchParseError("<html>" + tr("Expecting {0} after {1}", "<code>:</code>", "<i>" + keyword + "</i>"));
                 }
             }
             throw new IllegalStateException("Not expecting keyword " + keyword);
@@ -251,20 +253,20 @@ public class SearchCompiler {
     }
 
     public interface SimpleMatchFactory extends MatchFactory {
-        Match get(String keyword, PushbackTokenizer tokenizer) throws ParseError;
+        Match get(String keyword, PushbackTokenizer tokenizer) throws SearchParseError;
     }
 
     public interface UnaryMatchFactory extends MatchFactory {
-        UnaryMatch get(String keyword, Match matchOperand, PushbackTokenizer tokenizer) throws ParseError;
+        UnaryMatch get(String keyword, Match matchOperand, PushbackTokenizer tokenizer) throws SearchParseError;
     }
 
     public interface BinaryMatchFactory extends MatchFactory {
-        AbstractBinaryMatch get(String keyword, Match lhs, Match rhs, PushbackTokenizer tokenizer) throws ParseError;
+        AbstractBinaryMatch get(String keyword, Match lhs, Match rhs, PushbackTokenizer tokenizer) throws SearchParseError;
     }
 
     /**
      * Base class for all search criteria. If the criterion only depends on an object's tags,
-     * inherit from {@link org.openstreetmap.josm.actions.search.SearchCompiler.TaggedMatch}.
+     * inherit from {@link org.openstreetmap.josm.data.osm.search.SearchCompiler.TaggedMatch}.
      */
     public abstract static class Match implements Predicate<OsmPrimitive> {
 
@@ -535,7 +537,7 @@ public class SearchCompiler {
             super(range);
         }
 
-        Id(PushbackTokenizer tokenizer) throws ParseError {
+        Id(PushbackTokenizer tokenizer) throws SearchParseError {
             this(tokenizer.readRange(tr("Range of primitive ids expected")));
         }
 
@@ -558,7 +560,7 @@ public class SearchCompiler {
             super(range);
         }
 
-        ChangesetId(PushbackTokenizer tokenizer) throws ParseError {
+        ChangesetId(PushbackTokenizer tokenizer) throws SearchParseError {
             this(tokenizer.readRange(tr("Range of changeset ids expected")));
         }
 
@@ -581,7 +583,7 @@ public class SearchCompiler {
             super(range);
         }
 
-        Version(PushbackTokenizer tokenizer) throws ParseError {
+        Version(PushbackTokenizer tokenizer) throws SearchParseError {
             this(tokenizer.readRange(tr("Range of versions expected")));
         }
 
@@ -606,7 +608,7 @@ public class SearchCompiler {
         private final Pattern valuePattern;
         private final boolean caseSensitive;
 
-        KeyValue(String key, String value, boolean regexSearch, boolean caseSensitive) throws ParseError {
+        KeyValue(String key, String value, boolean regexSearch, boolean caseSensitive) throws SearchParseError {
             this.caseSensitive = caseSensitive;
             if (regexSearch) {
                 int searchFlags = regexFlags(caseSensitive);
@@ -614,16 +616,16 @@ public class SearchCompiler {
                 try {
                     this.keyPattern = Pattern.compile(key, searchFlags);
                 } catch (PatternSyntaxException e) {
-                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
+                    throw new SearchParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
                 } catch (IllegalArgumentException e) {
-                    throw new ParseError(tr(rxErrorMsgNoPos, key, e.getMessage()), e);
+                    throw new SearchParseError(tr(rxErrorMsgNoPos, key, e.getMessage()), e);
                 }
                 try {
                     this.valuePattern = Pattern.compile(value, searchFlags);
                 } catch (PatternSyntaxException e) {
-                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
+                    throw new SearchParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
                 } catch (IllegalArgumentException | StringIndexOutOfBoundsException e) {
-                    throw new ParseError(tr(rxErrorMsgNoPos, value, e.getMessage()), e);
+                    throw new SearchParseError(tr(rxErrorMsgNoPos, value, e.getMessage()), e);
                 }
                 this.key = key;
                 this.value = value;
@@ -770,11 +772,11 @@ public class SearchCompiler {
          * @param regexp regular expression
          * @param key key
          * @param value value
-         * @throws ParseError if a parse error occurs
+         * @throws SearchParseError if a parse error occurs
          */
-        public ExactKeyValue(boolean regexp, String key, String value) throws ParseError {
+        public ExactKeyValue(boolean regexp, String key, String value) throws SearchParseError {
             if ("".equals(key))
-                throw new ParseError(tr("Key cannot be empty when tag operator is used. Sample use: key=value"));
+                throw new SearchParseError(tr("Key cannot be empty when tag operator is used. Sample use: key=value"));
             this.key = key;
             this.value = value == null ? "" : value;
             if ("".equals(this.value) && "*".equals(key)) {
@@ -811,9 +813,9 @@ public class SearchCompiler {
                 try {
                     keyPattern = Pattern.compile(key, regexFlags(false));
                 } catch (PatternSyntaxException e) {
-                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
+                    throw new SearchParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
                 } catch (IllegalArgumentException e) {
-                    throw new ParseError(tr(rxErrorMsgNoPos, key, e.getMessage()), e);
+                    throw new SearchParseError(tr(rxErrorMsgNoPos, key, e.getMessage()), e);
                 }
             } else {
                 keyPattern = null;
@@ -822,9 +824,9 @@ public class SearchCompiler {
                 try {
                     valuePattern = Pattern.compile(this.value, regexFlags(false));
                 } catch (PatternSyntaxException e) {
-                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
+                    throw new SearchParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
                 } catch (IllegalArgumentException e) {
-                    throw new ParseError(tr(rxErrorMsgNoPos, value, e.getMessage()), e);
+                    throw new SearchParseError(tr(rxErrorMsgNoPos, value, e.getMessage()), e);
                 }
             } else {
                 valuePattern = null;
@@ -892,18 +894,18 @@ public class SearchCompiler {
         private final Pattern searchRegex;
         private final boolean caseSensitive;
 
-        Any(String s, boolean regexSearch, boolean caseSensitive) throws ParseError {
+        Any(String s, boolean regexSearch, boolean caseSensitive) throws SearchParseError {
             s = Normalizer.normalize(s, Normalizer.Form.NFC);
             this.caseSensitive = caseSensitive;
             if (regexSearch) {
                 try {
                     this.searchRegex = Pattern.compile(s, regexFlags(caseSensitive));
                 } catch (PatternSyntaxException e) {
-                    throw new ParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
+                    throw new SearchParseError(tr(rxErrorMsg, e.getPattern(), e.getIndex(), e.getMessage()), e);
                 } catch (IllegalArgumentException | StringIndexOutOfBoundsException e) {
                     // StringIndexOutOfBoundsException catched because of https://bugs.openjdk.java.net/browse/JI-9044959
                     // See #13870: To remove after we switch to a version of Java which resolves this bug
-                    throw new ParseError(tr(rxErrorMsgNoPos, s, e.getMessage()), e);
+                    throw new SearchParseError(tr(rxErrorMsgNoPos, s, e.getMessage()), e);
                 }
                 this.search = s;
             } else if (caseSensitive) {
@@ -958,10 +960,10 @@ public class SearchCompiler {
     private static class ExactType extends Match {
         private final OsmPrimitiveType type;
 
-        ExactType(String type) throws ParseError {
+        ExactType(String type) throws SearchParseError {
             this.type = OsmPrimitiveType.from(type);
             if (this.type == null)
-                throw new ParseError(tr("Unknown primitive type: {0}. Allowed values are node, way or relation", type));
+                throw new SearchParseError(tr("Unknown primitive type: {0}. Allowed values are node, way or relation", type));
         }
 
         @Override
@@ -1047,7 +1049,7 @@ public class SearchCompiler {
         private final int nth;
         private final boolean modulo;
 
-        Nth(PushbackTokenizer tokenizer, boolean modulo) throws ParseError {
+        Nth(PushbackTokenizer tokenizer, boolean modulo) throws SearchParseError {
             this((int) tokenizer.readNumber(tr("Positive integer expected")), modulo);
         }
 
@@ -1130,7 +1132,7 @@ public class SearchCompiler {
             super(range);
         }
 
-        NodeCountRange(PushbackTokenizer tokenizer) throws ParseError {
+        NodeCountRange(PushbackTokenizer tokenizer) throws SearchParseError {
             this(tokenizer.readRange(tr("Range of numbers expected")));
         }
 
@@ -1159,7 +1161,7 @@ public class SearchCompiler {
             super(range);
         }
 
-        WayCountRange(PushbackTokenizer tokenizer) throws ParseError {
+        WayCountRange(PushbackTokenizer tokenizer) throws SearchParseError {
             this(tokenizer.readRange(tr("Range of numbers expected")));
         }
 
@@ -1188,7 +1190,7 @@ public class SearchCompiler {
             super(range);
         }
 
-        TagCountRange(PushbackTokenizer tokenizer) throws ParseError {
+        TagCountRange(PushbackTokenizer tokenizer) throws SearchParseError {
             this(tokenizer.readRange(tr("Range of numbers expected")));
         }
 
@@ -1413,7 +1415,7 @@ public class SearchCompiler {
             super(range);
         }
 
-        AreaSize(PushbackTokenizer tokenizer) throws ParseError {
+        AreaSize(PushbackTokenizer tokenizer) throws SearchParseError {
             this(tokenizer.readRange(tr("Range of numbers expected")));
         }
 
@@ -1438,7 +1440,7 @@ public class SearchCompiler {
             super(range);
         }
 
-        WayLength(PushbackTokenizer tokenizer) throws ParseError {
+        WayLength(PushbackTokenizer tokenizer) throws SearchParseError {
             this(tokenizer.readRange(tr("Range of numbers expected")));
         }
 
@@ -1570,10 +1572,10 @@ public class SearchCompiler {
     private static class Preset extends Match {
         private final List<TaggingPreset> presets;
 
-        Preset(String presetName) throws ParseError {
+        Preset(String presetName) throws SearchParseError {
 
             if (presetName == null || presetName.isEmpty()) {
-                throw new ParseError("The name of the preset is required");
+                throw new SearchParseError("The name of the preset is required");
             }
 
             int wildCardIdx = presetName.lastIndexOf('*');
@@ -1592,7 +1594,7 @@ public class SearchCompiler {
                     .collect(Collectors.toList());
 
             if (this.presets.isEmpty()) {
-                throw new ParseError(tr("Unknown preset name: ") + presetName);
+                throw new SearchParseError(tr("Unknown preset name: ") + presetName);
             }
         }
 
@@ -1623,28 +1625,14 @@ public class SearchCompiler {
         }
     }
 
-    public static class ParseError extends Exception {
-        public ParseError(String msg) {
-            super(msg);
-        }
-
-        public ParseError(String msg, Throwable cause) {
-            super(msg, cause);
-        }
-
-        public ParseError(Token expected, Token found) {
-            this(tr("Unexpected token. Expected {0}, found {1}", expected, found));
-        }
-    }
-
     /**
      * Compiles the search expression.
      * @param searchStr the search expression
      * @return a {@link Match} object for the expression
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      * @see #compile(org.openstreetmap.josm.actions.search.SearchAction.SearchSetting)
      */
-    public static Match compile(String searchStr) throws ParseError {
+    public static Match compile(String searchStr) throws SearchParseError {
         return new SearchCompiler(false, false,
                 new PushbackTokenizer(
                         new PushbackReader(new StringReader(searchStr))))
@@ -1655,10 +1643,10 @@ public class SearchCompiler {
      * Compiles the search expression.
      * @param setting the settings to use
      * @return a {@link Match} object for the expression
-     * @throws ParseError if an error has been encountered while compiling
+     * @throws SearchParseError if an error has been encountered while compiling
      * @see #compile(String)
      */
-    public static Match compile(SearchAction.SearchSetting setting) throws ParseError {
+    public static Match compile(SearchAction.SearchSetting setting) throws SearchParseError {
         if (setting.mapCSSSearch) {
             return compileMapCSS(setting.text);
         }
@@ -1668,7 +1656,7 @@ public class SearchCompiler {
                 .parse();
     }
 
-    static Match compileMapCSS(String mapCSS) throws ParseError {
+    static Match compileMapCSS(String mapCSS) throws SearchParseError {
         try {
             final List<Selector> selectors = new MapCSSParser(new StringReader(mapCSS)).selectors();
             return new Match() {
@@ -1683,7 +1671,7 @@ public class SearchCompiler {
                 }
             };
         } catch (ParseException e) {
-            throw new ParseError(tr("Failed to parse MapCSS selector"), e);
+            throw new SearchParseError(tr("Failed to parse MapCSS selector"), e);
         }
     }
 
@@ -1691,12 +1679,12 @@ public class SearchCompiler {
      * Parse search string.
      *
      * @return match determined by search string
-     * @throws org.openstreetmap.josm.actions.search.SearchCompiler.ParseError if search expression cannot be parsed
+     * @throws org.openstreetmap.josm.data.osm.search.SearchParseError if search expression cannot be parsed
      */
-    public Match parse() throws ParseError {
+    public Match parse() throws SearchParseError {
         Match m = Optional.ofNullable(parseExpression()).orElse(Always.INSTANCE);
         if (!tokenizer.readIfEqual(Token.EOF))
-            throw new ParseError(tr("Unexpected token: {0}", tokenizer.nextToken()));
+            throw new SearchParseError(tr("Unexpected token: {0}", tokenizer.nextToken()));
         Logging.debug("Parsed search expression is {0}", m);
         return m;
     }
@@ -1705,9 +1693,9 @@ public class SearchCompiler {
      * Parse expression.
      *
      * @return match determined by parsing expression
-     * @throws ParseError if search expression cannot be parsed
+     * @throws SearchParseError if search expression cannot be parsed
      */
-    private Match parseExpression() throws ParseError {
+    private Match parseExpression() throws SearchParseError {
         // Step 1: parse the whole expression and build a list of factors and logical tokens
         List<Object> list = parseExpressionStep1();
         // Step 2: iterate the list in reverse order to build the logical expression
@@ -1715,7 +1703,7 @@ public class SearchCompiler {
         return parseExpressionStep2(list);
     }
 
-    private List<Object> parseExpressionStep1() throws ParseError {
+    private List<Object> parseExpressionStep1() throws SearchParseError {
         Match factor;
         String token = null;
         String errorMessage = null;
@@ -1738,7 +1726,7 @@ public class SearchCompiler {
                     errorMessage = null;
                 }
             } else if (errorMessage != null) {
-                throw new ParseError(errorMessage);
+                throw new SearchParseError(errorMessage);
             }
         } while (factor != null);
         return list;
@@ -1776,13 +1764,13 @@ public class SearchCompiler {
      * Parse next factor (a search operator or search term).
      *
      * @return match determined by parsing factor string
-     * @throws ParseError if search expression cannot be parsed
+     * @throws SearchParseError if search expression cannot be parsed
      */
-    private Match parseFactor() throws ParseError {
+    private Match parseFactor() throws SearchParseError {
         if (tokenizer.readIfEqual(Token.LEFT_PARENT)) {
             Match expression = parseExpression();
             if (!tokenizer.readIfEqual(Token.RIGHT_PARENT))
-                throw new ParseError(Token.RIGHT_PARENT, tokenizer.nextToken());
+                throw new SearchParseError(Token.RIGHT_PARENT, tokenizer.nextToken());
             return expression;
         } else if (tokenizer.readIfEqual(Token.NOT)) {
             return new Not(parseFactor(tr("Missing operator for NOT")));
@@ -1826,8 +1814,8 @@ public class SearchCompiler {
             return null;
     }
 
-    private Match parseFactor(String errorMessage) throws ParseError {
-        return Optional.ofNullable(parseFactor()).orElseThrow(() -> new ParseError(errorMessage));
+    private Match parseFactor(String errorMessage) throws SearchParseError {
+        return Optional.ofNullable(parseFactor()).orElseThrow(() -> new SearchParseError(errorMessage));
     }
 
     private static int regexFlags(boolean caseSensitive) {
@@ -1873,4 +1861,3 @@ public class SearchCompiler {
         }
     }
 }
-

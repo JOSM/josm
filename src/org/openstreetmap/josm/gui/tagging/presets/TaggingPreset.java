@@ -33,8 +33,6 @@ import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AdaptableAction;
-import org.openstreetmap.josm.actions.search.SearchCompiler;
-import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -43,6 +41,9 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
+import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
@@ -245,7 +246,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
     public void setName_template_filter(String filter) throws SAXException {
         try {
             this.nameTemplateFilter = SearchCompiler.compile(filter);
-        } catch (SearchCompiler.ParseError e) {
+        } catch (SearchParseError e) {
             Logging.error("Error while parsing" + filter + ": " + e.getMessage());
             throw new SAXException(e);
         }

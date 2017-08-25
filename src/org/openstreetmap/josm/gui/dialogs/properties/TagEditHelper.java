@@ -63,12 +63,13 @@ import javax.swing.text.JTextComponent;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
-import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.search.SearchParseError;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.CollectionProperty;
 import org.openstreetmap.josm.data.preferences.EnumProperty;
@@ -334,7 +335,7 @@ public class TagEditHelper {
             try {
                 tagsToIgnore = searchSetting;
                 recentTags.setTagsToIgnore(tagsToIgnore);
-            } catch (SearchCompiler.ParseError parseError) {
+            } catch (SearchParseError parseError) {
                 warnAboutParseError(parseError);
                 tagsToIgnore = new SearchAction.SearchSetting();
                 recentTags.setTagsToIgnore(SearchCompiler.Never.INSTANCE);
@@ -342,7 +343,7 @@ public class TagEditHelper {
         }
     }
 
-    private static void warnAboutParseError(SearchCompiler.ParseError parseError) {
+    private static void warnAboutParseError(SearchParseError parseError) {
         Logging.warn(parseError);
         JOptionPane.showMessageDialog(
                 Main.parent,
@@ -1008,7 +1009,7 @@ public class TagEditHelper {
                         recentTags.ignoreTag(tag, tagsToIgnore);
                         PROPERTY_TAGS_TO_IGNORE.put(tagsToIgnore.writeToString());
                     }
-                } catch (SearchCompiler.ParseError parseError) {
+                } catch (SearchParseError parseError) {
                     throw new IllegalStateException(parseError);
                 }
             }
@@ -1030,7 +1031,7 @@ public class TagEditHelper {
                     tagsToIgnore = newTagsToIngore;
                     recentTags.setTagsToIgnore(tagsToIgnore);
                     PROPERTY_TAGS_TO_IGNORE.put(tagsToIgnore.writeToString());
-                } catch (SearchCompiler.ParseError parseError) {
+                } catch (SearchParseError parseError) {
                     warnAboutParseError(parseError);
                 }
             }
