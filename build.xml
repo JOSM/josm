@@ -132,9 +132,9 @@ Build-Date: ${build.tstamp}
     -->
     <target name="dist" depends="compile,create-revision,check-schemas,epsg">
         <echo>Revision ${version.entry.commit.revision}</echo>
-        <copy file="CONTRIBUTION" todir="build"/>
-        <copy file="README" todir="build"/>
-        <copy file="LICENSE" todir="build"/>
+        <copy file="CONTRIBUTION" todir="${build.dir}"/>
+        <copy file="README" todir="${build.dir}"/>
+        <copy file="LICENSE" todir="${build.dir}"/>
         <!-- create josm-custom.jar -->
         <delete file="${dist.jar}"/>
         <jar destfile="${dist.jar}" basedir="${build.dir}" level="${clevel}">
@@ -229,10 +229,10 @@ Build-Date: ${build.tstamp}
             <arg value="${mapcss.dir}/MapCSSParser.jj"/>
         </java>
     </target>
-    <target name="compile" depends="init,javacc">
+    <target name="compile-cots" depends="init">
         <!-- COTS -->
         <javac srcdir="${src.dir}" includes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**" nowarn="on" encoding="iso-8859-1"
-            destdir="build" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeAntRuntime="false" createMissingPackageInfoClass="false">
+            destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeAntRuntime="false" createMissingPackageInfoClass="false">
             <!-- get rid of "internal proprietary API" warning -->
             <compilerarg value="-XDignore.symbol.file"/>
             <exclude name="org/apache/commons/compress/PasswordRequiredException.java"/>
@@ -281,10 +281,12 @@ Build-Date: ${build.tstamp}
             <exclude name="org/apache/commons/logging/impl/LogKitLogger.java"/>
             <exclude name="org/apache/commons/logging/impl/ServletContextCleaner.java"/>
         </javac>
+    </target>
+    <target name="compile-jmapviewer" depends="init">
         <!-- JMapViewer -->
         <javac compiler="${javac.compiler}" sourcepath="" srcdir="${src.dir}" 
             excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/Demo.java,org/openstreetmap/gui/jmapviewer/JMapViewerTree.java,org/openstreetmap/gui/jmapviewer/checkBoxTree/**,org/openstreetmap/josm/**,gnu/**"
-            destdir="build" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
+            destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerclasspath>
                 <pathelement location="${error_prone_ant.jar}"/>
             </compilerclasspath>
@@ -304,10 +306,12 @@ Build-Date: ${build.tstamp}
             <compilerarg value="-Xep:ReferenceEquality:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
             <compilerarg line="-Xmaxwarns 1000"/>
         </javac>
+    </target>
+    <target name="compile" depends="init,javacc,compile-cots,compile-jmapviewer">
         <!-- JOSM -->
         <javac compiler="${javac.compiler}" sourcepath="" srcdir="${src.dir}"
             excludes="com/**,oauth/**,org/apache/commons/**,org/glassfish/**,org/openstreetmap/gui/jmapviewer/**"
-            destdir="build" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
+            destdir="${build.dir}" target="${java.lang.version}" source="${java.lang.version}" debug="on" includeantruntime="false" createMissingPackageInfoClass="false" encoding="UTF-8">
             <compilerclasspath>
                 <pathelement location="${error_prone_ant.jar}"/>
             </compilerclasspath>
