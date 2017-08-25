@@ -40,6 +40,9 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTable;
 
+/**
+ * The table of members a selected relation has.
+ */
 public class MemberTable extends OsmPrimitivesTable implements IMemberModelListener {
 
     /** the additional actions in popup menu */

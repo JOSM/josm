@@ -14,6 +14,9 @@ import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType.Direction;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * This class renders the link column of the member table. It shows if the way segments are connected or not.
+ */
 public class MemberTableLinkedCellRenderer extends MemberTableCellRenderer {
 
     private static final Image ARROW_UP = ImageProvider.get("dialogs/relation", "arrowup").getImage();

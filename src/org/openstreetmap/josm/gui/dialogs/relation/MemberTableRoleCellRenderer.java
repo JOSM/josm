@@ -5,6 +5,9 @@ import java.awt.Component;
 
 import javax.swing.JTable;
 
+/**
+ * This renderer renders the role cell.
+ */
 public class MemberTableRoleCellRenderer extends MemberTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus,

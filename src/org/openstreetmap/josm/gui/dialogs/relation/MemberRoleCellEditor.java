@@ -5,6 +5,7 @@ import java.awt.Component;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
+import javax.swing.CellEditor;
 import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 
@@ -13,6 +14,9 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 
+/**
+ * The {@link CellEditor} for the role cell in the table. Supports autocompletion.
+ */
 public class MemberRoleCellEditor extends AbstractCellEditor implements TableCellEditor {
     private final AutoCompletingTextField editor;
     private final transient DataSet ds;

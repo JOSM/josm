@@ -19,6 +19,9 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListen
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
+/**
+ * This table shows the primitives that are currently selected in the main OSM view.
+ */
 public class SelectionTableModel extends AbstractTableModel implements SelectionChangedListener, ActiveLayerChangeListener, LayerChangeListener {
 
     /** this selection table model only displays selected primitives in this layer */
@@ -26,7 +29,7 @@ public class SelectionTableModel extends AbstractTableModel implements Selection
     private final transient List<OsmPrimitive> cache;
 
     /**
-     * constructor
+     * Creates a new {@link SelectionTableModel} for a given layer
      *
      * @param layer  the data layer. Must not be null.
      * @throws IllegalArgumentException if layer is null

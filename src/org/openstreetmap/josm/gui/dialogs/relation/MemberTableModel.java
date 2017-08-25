@@ -48,6 +48,9 @@ import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
+/**
+ * This is the base model used for the {@link MemberTable}. It holds the member data.
+ */
 public class MemberTableModel extends AbstractTableModel
 implements TableModelListener, SelectionChangedListener, DataSetListener, OsmPrimitivesTableModel {
 
