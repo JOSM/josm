@@ -1,18 +1,17 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.actions.search;
+package org.openstreetmap.josm.data.osm.search;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.actions.search.PushbackTokenizer.Token;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Unit tests for class {@link SearchCompiler}.
+ * Unit tests for class {@link SearchMode}.
  */
-public class PushbackTokenizerTest {
+public class SearchModeTest {
 
     /**
      * Setup rules.
@@ -22,10 +21,10 @@ public class PushbackTokenizerTest {
     public JOSMTestRules test = new JOSMTestRules();
 
     /**
-     * Unit test of {@link Token} enum.
+     * Unit test of {@link SearchMode} enum.
      */
     @Test
-    public void testEnumToken() {
-        TestUtils.superficialEnumCodeCoverage(Token.class);
+    public void testEnumSearchMode() {
+        TestUtils.superficialEnumCodeCoverage(SearchMode.class);
     }
 }

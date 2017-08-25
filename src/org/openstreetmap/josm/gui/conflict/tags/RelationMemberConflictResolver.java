@@ -38,6 +38,10 @@ import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
+/**
+ * This component presents the user with the ability to resolve a relation member conflict
+ * @see RelationMemberConflictResolverModel
+ */
 public class RelationMemberConflictResolver extends JPanel {
 
     private final AutoCompletingTextField tfRole = new AutoCompletingTextField(10);

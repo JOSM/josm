@@ -4,8 +4,8 @@ package org.openstreetmap.josm.data.osm;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.data.osm.FilterMatcher.FilterType;
+import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
@@ -27,10 +27,10 @@ public final class FilterWorker {
      * @param all the collection of primitives for that the filter state should be updated
      * @param filters the filters
      * @return true, if the filter state (normal / disabled / hidden) of any primitive has changed in the process
-     * @throws ParseError if the search expression in a filter cannot be parsed
+     * @throws SearchParseError if the search expression in a filter cannot be parsed
      * @since 12383
      */
-    public static boolean executeFilters(Collection<OsmPrimitive> all, Filter... filters) throws ParseError {
+    public static boolean executeFilters(Collection<OsmPrimitive> all, Filter... filters) throws SearchParseError {
         return executeFilters(all, FilterMatcher.of(filters));
     }
 

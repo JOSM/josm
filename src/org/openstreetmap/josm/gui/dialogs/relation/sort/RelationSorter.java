@@ -18,6 +18,11 @@ import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.Utils;
 
+/**
+ * This class sorts the relation members by connectivity.
+ * <p>
+ * Multiple {@link AdditionalSorter}s are implemented to handle special relation types.
+ */
 public class RelationSorter {
 
     private interface AdditionalSorter {
@@ -169,6 +174,11 @@ public class RelationSorter {
         return newMembers;
     }
 
+    /**
+     * Sorts a list of members by connectivity
+     * @param defaultMembers The members to sort
+     * @return A sorted list of the same members
+     */
     public static List<RelationMember> sortMembersByConnectivity(List<RelationMember> defaultMembers) {
 
         List<RelationMember> newMembers = new ArrayList<>();

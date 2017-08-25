@@ -13,8 +13,12 @@ import javax.swing.table.TableColumn;
 
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
+import org.openstreetmap.josm.gui.conflict.pair.relation.RelationMemberTable;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 
+/**
+ * This class defines the columns of a {@link RelationMemberTable}
+ */
 public class RelationMemberConflictResolverColumnModel extends DefaultTableColumnModel {
 
     static final class MemberRenderer extends OsmPrimitivRenderer {

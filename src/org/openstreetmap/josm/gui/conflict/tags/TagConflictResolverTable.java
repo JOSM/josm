@@ -10,6 +10,9 @@ import org.openstreetmap.josm.gui.tagging.TagTableColumnModelBuilder;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTable;
 
+/**
+ * This table presents the tags that are conflicting to the user.
+ */
 public class TagConflictResolverTable extends JosmTable implements MultiValueCellEditor.NavigationListener {
 
     /**

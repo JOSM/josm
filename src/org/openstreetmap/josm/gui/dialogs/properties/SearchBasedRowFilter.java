@@ -4,12 +4,12 @@ package org.openstreetmap.josm.gui.dialogs.properties;
 import javax.swing.RowFilter;
 import javax.swing.table.TableModel;
 
-import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 
 /**
  * A {@link RowFilter} implementation which matches tags w.r.t. the specified filter's
- * {@link org.openstreetmap.josm.actions.search.SearchCompiler.Match#match(org.openstreetmap.josm.data.osm.Tagged)} method.
+ * {@link org.openstreetmap.josm.data.osm.search.SearchCompiler.Match#match(org.openstreetmap.josm.data.osm.Tagged)} method.
  *
  * <p>An {@link javax.swing.RowFilter.Entry}'s column 0 is considered as key, and column 1 is considered as value.</p>
  */

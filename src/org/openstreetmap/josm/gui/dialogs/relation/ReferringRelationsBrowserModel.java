@@ -10,6 +10,11 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 
+/**
+ * This is the model for the {@link ReferringRelationsBrowser}.
+ * <p>
+ * It holds all referrers to a given relation
+ */
 public class ReferringRelationsBrowserModel extends AbstractListModel<Relation> {
 
     /** the relation */

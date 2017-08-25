@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools.template_engine;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.tools.template_engine.Tokenizer.Token;
 import org.openstreetmap.josm.tools.template_engine.Tokenizer.TokenType;
 
@@ -21,7 +22,7 @@ public class ParseError extends Exception {
         this.unexpectedToken = unexpectedToken;
     }
 
-    public ParseError(int position, org.openstreetmap.josm.actions.search.SearchCompiler.ParseError e) {
+    public ParseError(int position, SearchParseError e) {
         super(tr("Error while parsing search expression on position {0}", position), e);
         unexpectedToken = null;
     }

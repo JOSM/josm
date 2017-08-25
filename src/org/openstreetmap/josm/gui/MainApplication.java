@@ -72,6 +72,7 @@ import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.search.SearchMode;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.gui.ProgramArguments.Option;
 import org.openstreetmap.josm.gui.SplashScreen.SplashProgressMonitor;
@@ -1023,7 +1024,7 @@ public class MainApplication extends Main {
         if (!selectionArguments.isEmpty()) {
             tasks.add(MainApplication.worker.submit(() -> {
                 for (String s : selectionArguments) {
-                    SearchAction.search(s, SearchAction.SearchMode.add);
+                    SearchAction.search(s, SearchMode.add);
                 }
             }));
         }

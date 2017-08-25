@@ -9,6 +9,9 @@ import javax.swing.table.TableColumn;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Relation;
 
+/**
+ * This is the column model for the {@link MemberTable}
+ */
 public class MemberTableColumnModel extends DefaultTableColumnModel {
 
     /**

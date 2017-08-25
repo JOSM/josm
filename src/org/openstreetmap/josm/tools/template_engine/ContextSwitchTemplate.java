@@ -8,17 +8,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.openstreetmap.josm.actions.search.SearchCompiler.And;
-import org.openstreetmap.josm.actions.search.SearchCompiler.Child;
-import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
-import org.openstreetmap.josm.actions.search.SearchCompiler.Not;
-import org.openstreetmap.josm.actions.search.SearchCompiler.Or;
-import org.openstreetmap.josm.actions.search.SearchCompiler.Parent;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.And;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.Child;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.Not;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.Or;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.Parent;
 
 /**
  * The context switch offers possibility to use tags of referenced primitive when constructing primitive name.

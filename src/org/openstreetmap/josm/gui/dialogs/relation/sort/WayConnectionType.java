@@ -4,13 +4,17 @@ package org.openstreetmap.josm.gui.dialogs.relation.sort;
 import static org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType.Direction.NONE;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+/**
+ * A class used by the {@link RelationSorter} to store if two ways are already connected
+ */
 public class WayConnectionType {
 
     /** True, if the corresponding primitive is not a way or the way is incomplete */
     private final boolean invalid;
 
-    /** True, if linked to the previous / next member.  */
+    /** True, if linked to the previous member.  */
     public boolean linkPrev;
+    /** True, if linked to the next member.  */
     public boolean linkNext;
 
     /**

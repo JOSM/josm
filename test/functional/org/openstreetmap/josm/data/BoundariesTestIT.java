@@ -11,9 +11,9 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
-import org.openstreetmap.josm.actions.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.io.OsmReader;
 
 /**

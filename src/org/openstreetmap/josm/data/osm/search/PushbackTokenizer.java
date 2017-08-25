@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.actions.search;
+package org.openstreetmap.josm.data.osm.search;
 
 import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
@@ -10,12 +10,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import org.openstreetmap.josm.actions.search.SearchCompiler.ParseError;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 
 /**
  * This class is used to parse a search string and split it into tokens.
  * It provides methods to parse numbers and extract strings.
+ * @since 12656 (moved from actions.search package)
  */
 public class PushbackTokenizer {
 
@@ -299,13 +299,13 @@ public class PushbackTokenizer {
      * Reads a number
      * @param errorMessage The error if the number cannot be read
      * @return The number that was found
-     * @throws ParseError if there is no number
+     * @throws SearchParseError if there is no number
      */
-    public long readNumber(String errorMessage) throws ParseError {
+    public long readNumber(String errorMessage) throws SearchParseError {
         if ((nextToken() == Token.KEY) && (currentNumber != null))
             return currentNumber;
         else
-            throw new ParseError(errorMessage);
+            throw new SearchParseError(errorMessage);
     }
 
     /**
@@ -320,11 +320,11 @@ public class PushbackTokenizer {
      * Reads a range of numbers
      * @param errorMessage The error if the input is malformed
      * @return The range that was found
-     * @throws ParseError If the input is not as expected for a range
+     * @throws SearchParseError If the input is not as expected for a range
      */
-    public Range readRange(String errorMessage) throws ParseError {
+    public Range readRange(String errorMessage) throws SearchParseError {
         if (nextToken() != Token.KEY || (currentNumber == null && currentRange == null)) {
-            throw new ParseError(errorMessage);
+            throw new SearchParseError(errorMessage);
         } else if (!isRange && currentNumber != null) {
             if (currentNumber >= 0) {
                 return new Range(currentNumber, currentNumber);
@@ -336,7 +336,7 @@ public class PushbackTokenizer {
         } else if (currentNumber != null && currentRange != null) {
             return new Range(currentNumber, currentRange);
         } else {
-            throw new ParseError(errorMessage);
+            throw new SearchParseError(errorMessage);
         }
     }
 

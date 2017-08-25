@@ -8,8 +8,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
-import org.openstreetmap.josm.actions.search.SearchCompiler;
-import org.openstreetmap.josm.actions.search.SearchCompiler.Match;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
+import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.tools.template_engine.Tokenizer.Token;
 import org.openstreetmap.josm.tools.template_engine.Tokenizer.TokenType;
 
@@ -101,7 +102,7 @@ public class TemplateParser {
                 try {
                     result.getEntries().add(new SearchExpressionCondition(
                             SearchCompiler.compile(searchText), condition));
-                } catch (SearchCompiler.ParseError e) {
+                } catch (SearchParseError e) {
                     throw new ParseError(searchExpression.getPosition(), e);
                 }
             }
@@ -132,7 +133,7 @@ public class TemplateParser {
             try {
                 Match match = SearchCompiler.compile(searchText);
                 result = new ContextSwitchTemplate(match, template, searchExpression.getPosition());
-            } catch (SearchCompiler.ParseError e) {
+            } catch (SearchParseError e) {
                 throw new ParseError(searchExpression.getPosition(), e);
             }
         }
