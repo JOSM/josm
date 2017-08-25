@@ -27,12 +27,13 @@ import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
 import org.openstreetmap.josm.data.preferences.Setting;
+import org.openstreetmap.josm.data.preferences.sources.MapPaintPrefHelper;
+import org.openstreetmap.josm.data.preferences.sources.PresetPrefHelper;
+import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
+import org.openstreetmap.josm.data.preferences.sources.SourcePrefHelper;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.preferences.SourceEditor;
-import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
-import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
-import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRulesPreference;
+import org.openstreetmap.josm.gui.bugreport.DebugTextDisplay;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.plugins.PluginHandler;
@@ -41,7 +42,6 @@ import org.openstreetmap.josm.tools.PlatformHookUnixoid;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReportSender;
-import org.openstreetmap.josm.tools.bugreport.DebugTextDisplay;
 
 /**
  * Opens a dialog with useful status information like version numbers for Java, JOSM and plugins
@@ -188,9 +188,9 @@ public final class ShowStatusReportAction extends JosmAction {
         }
         text.append('\n');
         appendCollection(text, "Plugins", Utils.transform(PluginHandler.getBugReportInformation(), i -> "+ " + i));
-        appendCollection(text, "Tagging presets", getCustomUrls(TaggingPresetPreference.PresetPrefHelper.INSTANCE));
-        appendCollection(text, "Map paint styles", getCustomUrls(MapPaintPreference.MapPaintPrefHelper.INSTANCE));
-        appendCollection(text, "Validator rules", getCustomUrls(ValidatorTagCheckerRulesPreference.RulePrefHelper.INSTANCE));
+        appendCollection(text, "Tagging presets", getCustomUrls(PresetPrefHelper.INSTANCE));
+        appendCollection(text, "Map paint styles", getCustomUrls(MapPaintPrefHelper.INSTANCE));
+        appendCollection(text, "Validator rules", getCustomUrls(ValidatorPrefHelper.INSTANCE));
         appendCollection(text, "Last errors/warnings", Utils.transform(Logging.getLastErrorAndWarnings(), i -> "- " + i));
 
         String osmApi = OsmApi.getOsmApi().getServerUrl();
@@ -201,7 +201,7 @@ public final class ShowStatusReportAction extends JosmAction {
         return text.toString();
     }
 
-    private static Collection<String> getCustomUrls(SourceEditor.SourcePrefHelper helper) {
+    private static Collection<String> getCustomUrls(SourcePrefHelper helper) {
         final Set<String> defaultUrls = helper.getDefault().stream()
                 .map(i -> i.url)
                 .collect(Collectors.toSet());

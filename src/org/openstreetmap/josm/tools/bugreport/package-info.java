@@ -1,6 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 
 /**
- * Provides classes for the bug report system, allowing users to create tickets on issue tracker directly from JOSM.
+ * Provides core classes for the bug report system, allowing to save technical information used later in tickets on issue tracker.
  */
 package org.openstreetmap.josm.tools.bugreport;

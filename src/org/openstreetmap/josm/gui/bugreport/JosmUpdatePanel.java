@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.tools.bugreport;
+package org.openstreetmap.josm.gui.bugreport;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 

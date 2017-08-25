@@ -29,11 +29,9 @@ import java.util.Collections;
 import java.util.EventObject;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -76,6 +74,11 @@ import javax.swing.table.TableModel;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
+import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
+import org.openstreetmap.josm.data.preferences.sources.SourcePrefHelper;
+import org.openstreetmap.josm.data.preferences.sources.SourceProvider;
+import org.openstreetmap.josm.data.preferences.sources.SourceType;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -786,91 +789,6 @@ public abstract class SourceEditor extends JPanel {
                 selectionModel.addSelectionInterval(row + i, row + i);
             }
             selectionModel.setValueIsAdjusting(false);
-        }
-    }
-
-    /**
-     * Source entry with additional metadata.
-     */
-    public static class ExtendedSourceEntry extends SourceEntry implements Comparable<ExtendedSourceEntry> {
-        /** file name used for display */
-        public String simpleFileName;
-        /** version used for display */
-        public String version;
-        /** author name used for display */
-        public String author;
-        /** webpage link used for display */
-        public String link;
-        /** short description used for display */
-        public String description;
-        /** Style type: can only have one value: "xml". Used to filter out old XML styles. For MapCSS styles, the value is not set. */
-        public String styleType;
-        /** minimum JOSM version required to enable this source entry */
-        public Integer minJosmVersion;
-
-        /**
-         * Constructs a new {@code ExtendedSourceEntry}.
-         * @param simpleFileName file name used for display
-         * @param url URL that {@link org.openstreetmap.josm.io.CachedFile} understands
-         */
-        public ExtendedSourceEntry(String simpleFileName, String url) {
-            super(url, null, null, true);
-            this.simpleFileName = simpleFileName;
-        }
-
-        /**
-         * @return string representation for GUI list or menu entry
-         */
-        public String getDisplayName() {
-            return title == null ? simpleFileName : title;
-        }
-
-        private static void appendRow(StringBuilder s, String th, String td) {
-            s.append("<tr><th>").append(th).append("</th><td>").append(Utils.escapeReservedCharactersHTML(td)).append("</td</tr>");
-        }
-
-        /**
-         * Returns a tooltip containing available metadata.
-         * @return a tooltip containing available metadata
-         */
-        public String getTooltip() {
-            StringBuilder s = new StringBuilder();
-            appendRow(s, tr("Short Description:"), getDisplayName());
-            appendRow(s, tr("URL:"), url);
-            if (author != null) {
-                appendRow(s, tr("Author:"), author);
-            }
-            if (link != null) {
-                appendRow(s, tr("Webpage:"), link);
-            }
-            if (description != null) {
-                appendRow(s, tr("Description:"), description);
-            }
-            if (version != null) {
-                appendRow(s, tr("Version:"), version);
-            }
-            if (minJosmVersion != null) {
-                appendRow(s, tr("Minimum JOSM Version:"), Integer.toString(minJosmVersion));
-            }
-            return "<html><style>th{text-align:right}td{width:400px}</style>"
-                    + "<table>" + s + "</table></html>";
-        }
-
-        @Override
-        public String toString() {
-            return "<html><b>" + getDisplayName() + "</b>"
-                    + (author == null ? "" : " <span color=\"gray\">" + tr("by {0}", author) + "</color>")
-                    + "</html>";
-        }
-
-        @Override
-        public int compareTo(ExtendedSourceEntry o) {
-            if (url.startsWith("resource") && !o.url.startsWith("resource"))
-                return -1;
-            if (o.url.startsWith("resource"))
-                return 1;
-            else
-                return getDisplayName().compareToIgnoreCase(o.getDisplayName());
         }
     }
 
@@ -1761,100 +1679,6 @@ public abstract class SourceEditor extends JPanel {
                     tfFileName.setText(fc.getSelectedFile().toString());
                 }
             }
-        }
-    }
-
-    /**
-     * Helper class for specialized extensions preferences.
-     */
-    public abstract static class SourcePrefHelper {
-
-        private final String pref;
-
-        /**
-         * Constructs a new {@code SourcePrefHelper} for the given preference key.
-         * @param pref The preference key
-         */
-        public SourcePrefHelper(String pref) {
-            this.pref = pref;
-        }
-
-        /**
-         * Returns the default sources provided by JOSM core.
-         * @return the default sources provided by JOSM core
-         */
-        public abstract Collection<ExtendedSourceEntry> getDefault();
-
-        /**
-         * Serializes the given source entry as a map.
-         * @param entry source entry to serialize
-         * @return map (key=value)
-         */
-        public abstract Map<String, String> serialize(SourceEntry entry);
-
-        /**
-         * Deserializes the given map as a source entry.
-         * @param entryStr map (key=value)
-         * @return source entry
-         */
-        public abstract SourceEntry deserialize(Map<String, String> entryStr);
-
-        /**
-         * Returns the list of sources.
-         * @return The list of sources
-         */
-        public List<SourceEntry> get() {
-
-            Collection<Map<String, String>> src = Main.pref.getListOfStructs(pref, (Collection<Map<String, String>>) null);
-            if (src == null)
-                return new ArrayList<>(getDefault());
-
-            List<SourceEntry> entries = new ArrayList<>();
-            for (Map<String, String> sourcePref : src) {
-                SourceEntry e = deserialize(new HashMap<>(sourcePref));
-                if (e != null) {
-                    entries.add(e);
-                }
-            }
-            return entries;
-        }
-
-        /**
-         * Saves a list of sources to JOSM preferences.
-         * @param entries list of sources
-         * @return {@code true}, if something has changed (i.e. value is different than before)
-         */
-        public boolean put(Collection<? extends SourceEntry> entries) {
-            Collection<Map<String, String>> setting = serializeList(entries);
-            boolean unset = Main.pref.getListOfStructs(pref, (Collection<Map<String, String>>) null) == null;
-            if (unset) {
-                Collection<Map<String, String>> def = serializeList(getDefault());
-                if (setting.equals(def))
-                    return false;
-            }
-            return Main.pref.putListOfStructs(pref, setting);
-        }
-
-        private Collection<Map<String, String>> serializeList(Collection<? extends SourceEntry> entries) {
-            Collection<Map<String, String>> setting = new ArrayList<>(entries.size());
-            for (SourceEntry e : entries) {
-                setting.add(serialize(e));
-            }
-            return setting;
-        }
-
-        /**
-         * Returns the set of active source URLs.
-         * @return The set of active source URLs.
-         */
-        public final Set<String> getActiveUrls() {
-            Set<String> urls = new LinkedHashSet<>(); // retain order
-            for (SourceEntry e : get()) {
-                if (e.active) {
-                    urls.add(e.url);
-                }
-            }
-            return urls;
         }
     }
 

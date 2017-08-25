@@ -1,11 +1,13 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.tools.bugreport;
+package org.openstreetmap.josm.gui.bugreport;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import javax.swing.BoxLayout;
 import javax.swing.JCheckBox;
 import javax.swing.JPanel;
+
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * This panel displays the settings that can be changed before submitting a bug report to the web page.

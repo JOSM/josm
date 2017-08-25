@@ -25,6 +25,7 @@ import java.util.TreeSet;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.tests.Addresses;
 import org.openstreetmap.josm.data.validation.tests.ApiCapabilitiesTest;
 import org.openstreetmap.josm.data.validation.tests.BarriersEntrances;
@@ -60,7 +61,6 @@ import org.openstreetmap.josm.data.validation.tests.WronglyOrderedWays;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.ValidatorLayer;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
-import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -184,7 +184,7 @@ public final class OsmValidator {
 
     private static void loadIgnoredErrors() {
         ignoredErrors.clear();
-        if (ValidatorPreference.PREF_USE_IGNORE.get()) {
+        if (ValidatorPrefHelper.PREF_USE_IGNORE.get()) {
             Path path = Paths.get(getValidatorDir()).resolve("ignorederrors");
             if (path.toFile().exists()) {
                 try {
@@ -234,7 +234,7 @@ public final class OsmValidator {
      * Initializes error layer.
      */
     public static synchronized void initializeErrorLayer() {
-        if (!ValidatorPreference.PREF_LAYER.get())
+        if (!ValidatorPrefHelper.PREF_LAYER.get())
             return;
         if (errorLayer == null) {
             errorLayer = new ValidatorLayer();
@@ -277,7 +277,7 @@ public final class OsmValidator {
 
     private static void applyPrefs(Map<String, Test> tests, boolean beforeUpload) {
         for (String testName : Main.pref.getCollection(beforeUpload
-        ? ValidatorPreference.PREF_SKIP_TESTS_BEFORE_UPLOAD : ValidatorPreference.PREF_SKIP_TESTS)) {
+        ? ValidatorPrefHelper.PREF_SKIP_TESTS_BEFORE_UPLOAD : ValidatorPrefHelper.PREF_SKIP_TESTS)) {
             Test test = tests.get(testName);
             if (test != null) {
                 if (beforeUpload) {

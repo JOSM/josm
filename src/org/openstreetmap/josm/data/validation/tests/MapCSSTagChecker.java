@@ -39,6 +39,8 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
+import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -57,9 +59,6 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.AbstractSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector.GeneralSelector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
-import org.openstreetmap.josm.gui.preferences.SourceEntry;
-import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
-import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRulesPreference;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
@@ -713,7 +712,7 @@ public class MapCSSTagChecker extends Test.TagTest {
      */
     @Override
     public void check(OsmPrimitive p) {
-        errors.addAll(getErrorsForPrimitive(p, ValidatorPreference.PREF_OTHER.get()));
+        errors.addAll(getErrorsForPrimitive(p, ValidatorPrefHelper.PREF_OTHER.get()));
     }
 
     /**
@@ -747,7 +746,7 @@ public class MapCSSTagChecker extends Test.TagTest {
     @Override
     public synchronized void initialize() throws Exception {
         checks.clear();
-        for (SourceEntry source : new ValidatorTagCheckerRulesPreference.RulePrefHelper().get()) {
+        for (SourceEntry source : new ValidatorPrefHelper().get()) {
             if (!source.active) {
                 continue;
             }

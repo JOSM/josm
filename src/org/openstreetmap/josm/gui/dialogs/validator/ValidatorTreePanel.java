@@ -38,11 +38,11 @@ import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
+import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.Destroyable;
@@ -183,7 +183,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
         }
 
         Predicate<TestError> filterToUse = e -> !e.isIgnored();
-        if (!ValidatorPreference.PREF_OTHER.get()) {
+        if (!ValidatorPrefHelper.PREF_OTHER.get()) {
             filterToUse = filterToUse.and(e -> e.getSeverity() != Severity.OTHER);
         }
         if (filter != null) {

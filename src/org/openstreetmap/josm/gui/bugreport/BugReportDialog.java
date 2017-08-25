@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.tools.bugreport;
+package org.openstreetmap.josm.gui.bugreport;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -31,7 +31,10 @@ import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 import org.openstreetmap.josm.tools.bugreport.BugReportQueue.SuppressionMode;
+import org.openstreetmap.josm.tools.bugreport.BugReportSender;
+import org.openstreetmap.josm.tools.bugreport.ReportedException;
 
 /**
  * This is a dialog that can be used to display a bug report.

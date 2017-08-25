@@ -35,11 +35,11 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test.TagTest;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.Entities;
-import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetItem;
@@ -79,7 +79,7 @@ public class TagChecker extends TagTest {
     private static final List<Tag> ignoreDataTag = new ArrayList<>();
 
     /** The preferences prefix */
-    protected static final String PREFIX = ValidatorPreference.PREFIX + "." + TagChecker.class.getSimpleName();
+    protected static final String PREFIX = ValidatorPrefHelper.PREFIX + "." + TagChecker.class.getSimpleName();
 
     /**
      * The preference key to check values
@@ -292,7 +292,7 @@ public class TagChecker extends TagTest {
                 additionalPresetsValueData.putVoid(a);
             }
             // TODO directionKeys are no longer in OsmPrimitive (search pattern is used instead)
-            for (String a : Main.pref.getCollection(ValidatorPreference.PREFIX + ".knownkeys",
+            for (String a : Main.pref.getCollection(ValidatorPrefHelper.PREFIX + ".knownkeys",
                     Arrays.asList("is_in", "int_ref", "fixme", "population"))) {
                 additionalPresetsValueData.putVoid(a);
             }

@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
@@ -57,20 +58,20 @@ public class ValidatorTestsPreference implements SubPreferenceSetting {
         JPanel testPanel = new VerticallyScrollablePanel(new GridBagLayout());
         testPanel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
 
-        prefUseIgnore = new JCheckBox(tr("Use ignore list."), ValidatorPreference.PREF_USE_IGNORE.get());
+        prefUseIgnore = new JCheckBox(tr("Use ignore list."), ValidatorPrefHelper.PREF_USE_IGNORE.get());
         prefUseIgnore.setToolTipText(tr("Use the ignore list to suppress warnings."));
         testPanel.add(prefUseIgnore, GBC.eol());
 
-        prefUseLayer = new JCheckBox(tr("Use error layer."), ValidatorPreference.PREF_LAYER.get());
+        prefUseLayer = new JCheckBox(tr("Use error layer."), ValidatorPrefHelper.PREF_LAYER.get());
         prefUseLayer.setToolTipText(tr("Use the error layer to display problematic elements."));
         testPanel.add(prefUseLayer, GBC.eol());
 
-        prefOther = new JCheckBox(tr("Show informational level."), ValidatorPreference.PREF_OTHER.get());
+        prefOther = new JCheckBox(tr("Show informational level."), ValidatorPrefHelper.PREF_OTHER.get());
         prefOther.setToolTipText(tr("Show the informational tests."));
         testPanel.add(prefOther, GBC.eol());
 
         prefOtherUpload = new JCheckBox(tr("Show informational level on upload."),
-                ValidatorPreference.PREF_OTHER_UPLOAD.get());
+                ValidatorPrefHelper.PREF_OTHER_UPLOAD.get());
         prefOtherUpload.setToolTipText(tr("Show the informational tests in the upload check windows."));
         testPanel.add(prefOtherUpload, GBC.eol());
 
@@ -114,12 +115,12 @@ public class ValidatorTestsPreference implements SubPreferenceSetting {
         testsToInitialize.remove(OsmValidator.getTest(MapCSSTagChecker.class));
         OsmValidator.initializeTests(testsToInitialize);
 
-        Main.pref.putCollection(ValidatorPreference.PREF_SKIP_TESTS, tests);
-        Main.pref.putCollection(ValidatorPreference.PREF_SKIP_TESTS_BEFORE_UPLOAD, testsBeforeUpload);
-        ValidatorPreference.PREF_USE_IGNORE.put(prefUseIgnore.isSelected());
-        ValidatorPreference.PREF_OTHER.put(prefOther.isSelected());
-        ValidatorPreference.PREF_OTHER_UPLOAD.put(prefOtherUpload.isSelected());
-        ValidatorPreference.PREF_LAYER.put(prefUseLayer.isSelected());
+        Main.pref.putCollection(ValidatorPrefHelper.PREF_SKIP_TESTS, tests);
+        Main.pref.putCollection(ValidatorPrefHelper.PREF_SKIP_TESTS_BEFORE_UPLOAD, testsBeforeUpload);
+        ValidatorPrefHelper.PREF_USE_IGNORE.put(prefUseIgnore.isSelected());
+        ValidatorPrefHelper.PREF_OTHER.put(prefOther.isSelected());
+        ValidatorPrefHelper.PREF_OTHER_UPLOAD.put(prefOtherUpload.isSelected());
+        ValidatorPrefHelper.PREF_LAYER.put(prefUseLayer.isSelected());
         return false;
     }
 
