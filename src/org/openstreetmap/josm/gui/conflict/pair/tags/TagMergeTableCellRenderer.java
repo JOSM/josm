@@ -10,6 +10,9 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
 
+/**
+ * This is the base class for all cells in the {@link TagMerger}.
+ */
 public abstract class TagMergeTableCellRenderer extends JLabel implements TableCellRenderer {
 
     protected abstract void renderKey(TagMergeItem item, boolean isSelected);

@@ -9,6 +9,9 @@ import javax.swing.ListCellRenderer;
 
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
 
+/**
+ * This {@link ListCellRenderer} renders the value of a {@link ComparePairType}
+ */
 public class ComparePairListCellRenderer extends JLabel implements ListCellRenderer<ComparePairType> {
 
     /**
