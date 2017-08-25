@@ -1,19 +1,17 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.actions.search;
+package org.openstreetmap.josm.data.osm.search;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
-import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
- * Unit tests for class {@link SearchCompiler}.
+ * Unit tests for class {@link SearchMode}.
  */
-public class SearchActionTest {
+public class SearchModeTest {
 
     /**
      * Setup rules.

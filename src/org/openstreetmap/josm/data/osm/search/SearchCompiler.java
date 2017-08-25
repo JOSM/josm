@@ -23,7 +23,6 @@ import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
@@ -61,7 +60,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  *   fact | expression
  *   fact expression
  *   fact
- * 
+ *
  * fact =
  *  ( expression )
  *  -fact
@@ -70,7 +69,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  *  term:term
  *  term
  *  </pre>
- * 
+ *
  * @author Imi
  * @since 12656 (moved from actions.search package)
  */
@@ -1646,7 +1645,7 @@ public class SearchCompiler {
      * @throws SearchParseError if an error has been encountered while compiling
      * @see #compile(String)
      */
-    public static Match compile(SearchAction.SearchSetting setting) throws SearchParseError {
+    public static Match compile(SearchSetting setting) throws SearchParseError {
         if (setting.mapCSSSearch) {
             return compileMapCSS(setting.text);
         }

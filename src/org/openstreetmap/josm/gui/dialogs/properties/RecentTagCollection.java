@@ -7,9 +7,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
+import org.openstreetmap.josm.data.osm.search.SearchSetting;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.preferences.CollectionProperty;
 
@@ -81,11 +81,11 @@ class RecentTagCollection {
         recentTags.keySet().removeIf(tagsToIgnore::match);
     }
 
-    public void setTagsToIgnore(SearchAction.SearchSetting tagsToIgnore) throws SearchParseError {
+    public void setTagsToIgnore(SearchSetting tagsToIgnore) throws SearchParseError {
         setTagsToIgnore(tagsToIgnore.text.isEmpty() ? SearchCompiler.Never.INSTANCE : SearchCompiler.compile(tagsToIgnore));
     }
 
-    public SearchAction.SearchSetting ignoreTag(Tag tagToIgnore, SearchAction.SearchSetting settingToUpdate) throws SearchParseError {
+    public SearchSetting ignoreTag(Tag tagToIgnore, SearchSetting settingToUpdate) throws SearchParseError {
         final String forTag = SearchCompiler.buildSearchStringForTag(tagToIgnore.getKey(), tagToIgnore.getValue());
         settingToUpdate.text = settingToUpdate.text.isEmpty()
                 ? forTag

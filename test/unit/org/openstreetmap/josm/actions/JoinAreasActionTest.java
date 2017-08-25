@@ -24,6 +24,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.search.SearchMode;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -83,12 +84,12 @@ public class JoinAreasActionTest {
             MainApplication.getLayerManager().addLayer(layer);
             for (String ref : new String[]{"A", "B", "C", "D", "E"}) {
                 System.out.print("Joining ways " + ref);
-                Collection<OsmPrimitive> found = SearchAction.searchAndReturn("type:way ref="+ref, SearchAction.SearchMode.replace);
+                Collection<OsmPrimitive> found = SearchAction.searchAndReturn("type:way ref="+ref, SearchMode.replace);
                 assertEquals(2, found.size());
 
                 MainApplication.getMenu().joinAreas.join(Utils.filteredCollection(found, Way.class));
 
-                Collection<OsmPrimitive> found2 = SearchAction.searchAndReturn("type:way ref="+ref, SearchAction.SearchMode.replace);
+                Collection<OsmPrimitive> found2 = SearchAction.searchAndReturn("type:way ref="+ref, SearchMode.replace);
                 assertEquals(1, found2.size());
                 System.out.println(" ==> OK");
             }

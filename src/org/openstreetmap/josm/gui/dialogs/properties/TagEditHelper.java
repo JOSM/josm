@@ -69,6 +69,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
+import org.openstreetmap.josm.data.osm.search.SearchSetting;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.CollectionProperty;
@@ -129,7 +130,7 @@ public class TagEditHelper {
     public static final CollectionProperty PROPERTY_RECENT_TAGS = new CollectionProperty("properties.recent-tags",
             Collections.<String>emptyList());
     public static final StringProperty PROPERTY_TAGS_TO_IGNORE = new StringProperty("properties.recent-tags.ignore",
-            new SearchAction.SearchSetting().writeToString());
+            new SearchSetting().writeToString());
 
     /**
      * What to do with recent tags where keys already exist
@@ -162,7 +163,7 @@ public class TagEditHelper {
         "properties.refresh-recently-added-tags", RefreshRecent.class, RefreshRecent.STATUS);
 
     final RecentTagCollection recentTags = new RecentTagCollection(MAX_LRU_TAGS_NUMBER);
-    SearchAction.SearchSetting tagsToIgnore;
+    SearchSetting tagsToIgnore;
 
     /**
      * Copy of recently added tags in sorted from newest to oldest order.
@@ -329,15 +330,15 @@ public class TagEditHelper {
     }
 
     void loadTagsToIgnore() {
-        final SearchAction.SearchSetting searchSetting = Utils.firstNonNull(
-                SearchAction.SearchSetting.readFromString(PROPERTY_TAGS_TO_IGNORE.get()), new SearchAction.SearchSetting());
+        final SearchSetting searchSetting = Utils.firstNonNull(
+                SearchSetting.readFromString(PROPERTY_TAGS_TO_IGNORE.get()), new SearchSetting());
         if (!Objects.equals(tagsToIgnore, searchSetting)) {
             try {
                 tagsToIgnore = searchSetting;
                 recentTags.setTagsToIgnore(tagsToIgnore);
             } catch (SearchParseError parseError) {
                 warnAboutParseError(parseError);
-                tagsToIgnore = new SearchAction.SearchSetting();
+                tagsToIgnore = new SearchSetting();
                 recentTags.setTagsToIgnore(SearchCompiler.Never.INSTANCE);
             }
         }
@@ -1023,7 +1024,7 @@ public class TagEditHelper {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                final SearchAction.SearchSetting newTagsToIngore = SearchAction.showSearchDialog(tagsToIgnore);
+                final SearchSetting newTagsToIngore = SearchAction.showSearchDialog(tagsToIgnore);
                 if (newTagsToIngore == null) {
                     return;
                 }

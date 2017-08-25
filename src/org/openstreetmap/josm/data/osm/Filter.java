@@ -3,10 +3,10 @@ package org.openstreetmap.josm.data.osm;
 
 import java.util.Objects;
 
-import org.openstreetmap.josm.actions.search.SearchAction.SearchMode;
-import org.openstreetmap.josm.actions.search.SearchAction.SearchSetting;
 import org.openstreetmap.josm.data.Preferences.pref;
 import org.openstreetmap.josm.data.Preferences.writeExplicitly;
+import org.openstreetmap.josm.data.osm.search.SearchMode;
+import org.openstreetmap.josm.data.osm.search.SearchSetting;
 
 /**
  * Data class representing one entry in the filter dialog.

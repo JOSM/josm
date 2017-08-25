@@ -3,7 +3,6 @@ package org.openstreetmap.josm.actions.search;
 
 import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trc;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.Cursor;
@@ -24,7 +23,6 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -49,7 +47,9 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
+import org.openstreetmap.josm.data.osm.search.SearchSetting;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
+import org.openstreetmap.josm.data.osm.search.SearchMode;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -85,47 +85,6 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     public static final int MAX_LENGTH_SEARCH_EXPRESSION_DISPLAY = 100;
 
     private static final String SEARCH_EXPRESSION = "searchExpression";
-
-    /**
-     * Search mode.
-     */
-    public enum SearchMode {
-        /** replace selection */
-        replace('R'),
-        /** add to selection */
-        add('A'),
-        /** remove from selection */
-        remove('D'),
-        /** find in selection */
-        in_selection('S');
-
-        private final char code;
-
-        SearchMode(char code) {
-            this.code = code;
-        }
-
-        /**
-         * Returns the unique character code of this mode.
-         * @return the unique character code of this mode
-         */
-        public char getCode() {
-            return code;
-        }
-
-        /**
-         * Returns the search mode matching the given character code.
-         * @param code character code
-         * @return search mode matching the given character code
-         */
-        public static SearchMode fromCode(char code) {
-            for (SearchMode mode: values()) {
-                if (mode.getCode() == code)
-                    return mode;
-            }
-            return null;
-        }
-    }
 
     private static final LinkedList<SearchSetting> searchHistory = new LinkedList<>();
     static {
@@ -445,13 +404,13 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         initialValues.mapCSSSearch = mapCSSSearch.isSelected();
 
         if (inSelection.isSelected()) {
-            initialValues.mode = SearchAction.SearchMode.in_selection;
+            initialValues.mode = SearchMode.in_selection;
         } else if (replace.isSelected()) {
-            initialValues.mode = SearchAction.SearchMode.replace;
+            initialValues.mode = SearchMode.replace;
         } else if (add.isSelected()) {
-            initialValues.mode = SearchAction.SearchMode.add;
+            initialValues.mode = SearchMode.add;
         } else {
-            initialValues.mode = SearchAction.SearchMode.remove;
+            initialValues.mode = SearchMode.remove;
         }
 
         if (addOnToolbar.isSelected()) {
@@ -845,159 +804,6 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 return;
             }
             resultReceiver.receiveSearchResult(ds, selection, foundMatches, setting);
-        }
-    }
-
-    /**
-     * This class defines a set of parameters that is used to
-     * perform search within the search dialog.
-     */
-    public static class SearchSetting {
-        public String text;
-        public SearchMode mode;
-        public boolean caseSensitive;
-        public boolean regexSearch;
-        public boolean mapCSSSearch;
-        public boolean allElements;
-
-        /**
-         * Constructs a new {@code SearchSetting}.
-         */
-        public SearchSetting() {
-            text = "";
-            mode = SearchMode.replace;
-        }
-
-        /**
-         * Constructs a new {@code SearchSetting} from an existing one.
-         * @param original original search settings
-         */
-        public SearchSetting(SearchSetting original) {
-            text = original.text;
-            mode = original.mode;
-            caseSensitive = original.caseSensitive;
-            regexSearch = original.regexSearch;
-            mapCSSSearch = original.mapCSSSearch;
-            allElements = original.allElements;
-        }
-
-        @Override
-        public String toString() {
-            String cs = caseSensitive ?
-                    /*case sensitive*/  trc("search", "CS") :
-                        /*case insensitive*/  trc("search", "CI");
-            String rx = regexSearch ? ", " +
-                            /*regex search*/ trc("search", "RX") : "";
-            String css = mapCSSSearch ? ", " +
-                            /*MapCSS search*/ trc("search", "CSS") : "";
-            String all = allElements ? ", " +
-                            /*all elements*/ trc("search", "A") : "";
-            return '"' + text + "\" (" + cs + rx + css + all + ", " + mode + ')';
-        }
-
-        @Override
-        public boolean equals(Object other) {
-            if (this == other) return true;
-            if (other == null || getClass() != other.getClass()) return false;
-            SearchSetting that = (SearchSetting) other;
-            return caseSensitive == that.caseSensitive &&
-                    regexSearch == that.regexSearch &&
-                    mapCSSSearch == that.mapCSSSearch &&
-                    allElements == that.allElements &&
-                    mode == that.mode &&
-                    Objects.equals(text, that.text);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(text, mode, caseSensitive, regexSearch, mapCSSSearch, allElements);
-        }
-
-        /**
-         * <p>Transforms a string following a certain format, namely "[R | A | D | S][C?,R?,A?,M?] [a-zA-Z]"
-         * where the first part defines the mode of the search, see {@link SearchMode}, the second defines
-         * a set of attributes within the {@code SearchSetting} class and the second is the search query.
-         * <p>
-         * Attributes are as follows:
-         * <ul>
-         *     <li>C - if search is case sensitive
-         *     <li>R - if the regex syntax is used
-         *     <li>A - if all objects are considered
-         *     <li>M - if the mapCSS syntax is used
-         * </ul>
-         * <p>For example, "RC type:node" is a valid string representation of an object that replaces the
-         * current selection, is case sensitive and searches for all objects of type node.
-         * @param s A string representation of a {@code SearchSetting} object
-         *          from which the object must be built.
-         * @return A {@code SearchSetting} defined by the input string.
-         */
-        public static SearchSetting readFromString(String s) {
-            if (s.isEmpty())
-                return null;
-
-            SearchSetting result = new SearchSetting();
-
-            int index = 1;
-
-            result.mode = SearchMode.fromCode(s.charAt(0));
-            if (result.mode == null) {
-                result.mode = SearchMode.replace;
-                index = 0;
-            }
-
-            while (index < s.length()) {
-                if (s.charAt(index) == 'C') {
-                    result.caseSensitive = true;
-                } else if (s.charAt(index) == 'R') {
-                    result.regexSearch = true;
-                } else if (s.charAt(index) == 'A') {
-                    result.allElements = true;
-                } else if (s.charAt(index) == 'M') {
-                    result.mapCSSSearch = true;
-                } else if (s.charAt(index) == ' ') {
-                    break;
-                } else {
-                    Logging.warn("Unknown char in SearchSettings: " + s);
-                    break;
-                }
-                index++;
-            }
-
-            if (index < s.length() && s.charAt(index) == ' ') {
-                index++;
-            }
-
-            result.text = s.substring(index);
-
-            return result;
-        }
-
-        /**
-         * Builds a string representation of the {@code SearchSetting} object,
-         * see {@link #readFromString(String)} for more details.
-         * @return A string representation of the {@code SearchSetting} object.
-         */
-        public String writeToString() {
-            if (text == null || text.isEmpty())
-                return "";
-
-            StringBuilder result = new StringBuilder();
-            result.append(mode.getCode());
-            if (caseSensitive) {
-                result.append('C');
-            }
-            if (regexSearch) {
-                result.append('R');
-            }
-            if (mapCSSSearch) {
-                result.append('M');
-            }
-            if (allElements) {
-                result.append('A');
-            }
-            result.append(' ')
-                  .append(text);
-            return result.toString();
         }
     }
 
