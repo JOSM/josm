@@ -86,6 +86,7 @@ import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.display.LafPreference;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
+import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitorExecutor;
@@ -264,7 +265,7 @@ public class MainApplication extends Main {
             new InitializationTask(tr("Updating user interface"), () -> GuiHelper.runInEDTAndWait(() -> {
                 // hooks for the jmapviewer component
                 FeatureAdapter.registerBrowserAdapter(OpenBrowser::displayUrl);
-                FeatureAdapter.registerTranslationAdapter(I18n.getTranslationAdapter());
+                FeatureAdapter.registerTranslationAdapter(I18n::tr);
                 FeatureAdapter.registerLoggingAdapter(name -> Logging.getLogger());
                 // UI update
                 toolbar.refreshToolbarControl();
@@ -709,7 +710,7 @@ public class MainApplication extends Main {
 
         FontsManager.initialize();
 
-        I18n.setupLanguageFonts();
+        GuiHelper.setupLanguageFonts();
 
         Handler.install();
 
@@ -776,6 +777,8 @@ public class MainApplication extends Main {
         setupUIManager();
         toolbar = new ToolbarPreferences();
         Main.toolbar = toolbar;
+        ProjectionPreference.setProjection();
+        GuiHelper.translateJavaInternalMessages();
         preConstructorInit();
 
         monitor.indeterminateSubTask(tr("Creating main GUI"));
