@@ -273,7 +273,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
 
         MapFrame map = MainApplication.getMap();
         map.statusLine.getAnglePanel().addMouseListener(snapHelper.anglePopupListener);
-        Main.registerActionShortcut(backspaceAction, backspaceShortcut);
+        MainApplication.registerActionShortcut(backspaceAction, backspaceShortcut);
 
         map.mapView.addMouseListener(this);
         map.mapView.addMouseMotionListener(this);
@@ -293,7 +293,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
         map.mapView.removeMouseMotionListener(this);
         map.mapView.removeTemporaryLayer(this);
         SelectionEventManager.getInstance().removeSelectionListener(this);
-        Main.unregisterActionShortcut(backspaceAction, backspaceShortcut);
+        MainApplication.unregisterActionShortcut(backspaceAction, backspaceShortcut);
         snapHelper.unsetFixedMode();
         snapCheckboxMenuItem.getAction().setEnabled(false);
 

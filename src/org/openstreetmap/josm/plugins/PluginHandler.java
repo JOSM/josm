@@ -780,7 +780,7 @@ public final class PluginHandler {
                 Logging.info(tr("loading plugin ''{0}'' (version {1})", plugin.name, plugin.localversion));
                 PluginProxy pluginProxy = plugin.load(klass, pluginClassLoader);
                 pluginList.add(pluginProxy);
-                Main.addAndFireMapFrameListener(pluginProxy);
+                MainApplication.addAndFireMapFrameListener(pluginProxy);
             }
             msg = null;
         } catch (PluginException e) {

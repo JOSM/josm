@@ -671,9 +671,9 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 MapMode mode = (MapMode) b.getAction();
                 final boolean activeLayerSupported = mode.layerIsSupported(layerManager.getActiveLayer());
                 if (activeLayerSupported) {
-                    Main.registerActionShortcut(mode, mode.getShortcut()); //fix #6876
+                    MainApplication.registerActionShortcut(mode, mode.getShortcut()); //fix #6876
                 } else {
-                    Main.unregisterShortcut(mode.getShortcut());
+                    MainApplication.unregisterShortcut(mode.getShortcut());
                 }
                 b.setEnabled(activeLayerSupported);
             }

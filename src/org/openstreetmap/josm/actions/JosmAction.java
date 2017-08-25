@@ -78,7 +78,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
         setHelpId();
         sc = shortcut;
         if (sc != null && !sc.isAutomatic()) {
-            Main.registerActionShortcut(this, sc);
+            MainApplication.registerActionShortcut(this, sc);
         }
         setTooltip(tooltip);
         if (getValue("toolbar") == null) {
@@ -217,7 +217,7 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
     @Override
     public void destroy() {
         if (sc != null && !sc.isAutomatic()) {
-            Main.unregisterActionShortcut(this);
+            MainApplication.unregisterActionShortcut(this);
         }
         if (layerChangeAdapter != null) {
             getLayerManager().removeLayerChangeListener(layerChangeAdapter);

@@ -74,7 +74,7 @@ public class SessionSaveAsAction extends DiskAccessAction implements MapFrameLis
         super(tr("Save Session As..."), "session", tr("Save the current session to a new file."),
                 null, toolbar, "save_as-session", installAdapters);
         putValue("help", ht("/Action/SessionSaveAs"));
-        Main.addMapFrameListener(this);
+        MainApplication.addMapFrameListener(this);
     }
 
     @Override

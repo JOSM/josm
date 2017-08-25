@@ -160,7 +160,7 @@ public class LayerListDialog extends ToggleDialog {
             visibilityToggleShortcuts[i] = Shortcut.registerShortcut("subwindow:layers:toggleLayer" + i1,
                     tr("Toggle visibility of layer: {0}", i1), KeyEvent.VK_0 + (i1 % 10), Shortcut.ALT);
             visibilityToggleActions[i] = new ToggleLayerIndexVisibility(i);
-            Main.registerActionShortcut(visibilityToggleActions[i], visibilityToggleShortcuts[i]);
+            MainApplication.registerActionShortcut(visibilityToggleActions[i], visibilityToggleShortcuts[i]);
         }
     }
 
@@ -371,7 +371,7 @@ public class LayerListDialog extends ToggleDialog {
     @Override
     public void destroy() {
         for (int i = 0; i < 10; i++) {
-            Main.unregisterActionShortcut(visibilityToggleActions[i], visibilityToggleShortcuts[i]);
+            MainApplication.unregisterActionShortcut(visibilityToggleActions[i], visibilityToggleShortcuts[i]);
         }
         MultikeyActionsHandler.getInstance().removeAction(activateLayerAction);
         MultikeyActionsHandler.getInstance().removeAction(showHideLayerAction);

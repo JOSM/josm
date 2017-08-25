@@ -1244,8 +1244,8 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             String desc = action.getDisplayName() + ((paramCode == 0) ? "" : action.parameters.toString());
             sc = Shortcut.registerShortcut("toolbar:"+name, tr("Toolbar: {0}", desc),
                 KeyEvent.CHAR_UNDEFINED, Shortcut.NONE);
-            Main.unregisterShortcut(sc);
-            Main.registerActionShortcut(act, sc);
+            MainApplication.unregisterShortcut(sc);
+            MainApplication.registerActionShortcut(act, sc);
 
             // add shortcut info to the tooltip if needed
             if (sc.isAssignedUser()) {

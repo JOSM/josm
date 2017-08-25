@@ -7,7 +7,6 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -31,15 +30,15 @@ public final class ZoomInAction extends JosmAction {
         );
         putValue("help", ht("/Action/ZoomIn"));
         // On standard QWERTY, AZERTY and other common layouts the '+' key is obtained with Shift+EQUALS
-        Main.registerActionShortcut(this,
+        MainApplication.registerActionShortcut(this,
                 Shortcut.registerShortcut("view:zoominbis", tr("View: {0}", tr("Zoom In")),
                     KeyEvent.VK_EQUALS, Shortcut.SHIFT));
         // But on some systems (Belgian keyboard under Ubuntu) it seems not to work, so use also EQUALS
-        Main.registerActionShortcut(this,
+        MainApplication.registerActionShortcut(this,
                 Shortcut.registerShortcut("view:zoominter", tr("View: {0}", tr("Zoom In")),
                     KeyEvent.VK_EQUALS, Shortcut.DIRECT));
         // make numpad + behave like +
-        Main.registerActionShortcut(this,
+        MainApplication.registerActionShortcut(this,
             Shortcut.registerShortcut("view:zoominkeypad", tr("View: {0}", tr("Zoom In (Keypad)")),
                 KeyEvent.VK_ADD, Shortcut.DIRECT));
     }

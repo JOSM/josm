@@ -27,9 +27,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import javax.swing.Action;
-import javax.swing.InputMap;
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
 
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.data.Bounds;
@@ -153,16 +150,6 @@ public abstract class Main {
      * @since 12125
      */
     public MainPanel panel;
-
-    /**
-     * The same main panel, required to be static for {@code MapFrameListener} handling.
-     */
-    protected static MainPanel mainPanel;
-
-    /**
-     * The private content pane of {@code MainFrame}, required to be static for shortcut handling.
-     */
-    protected static JComponent contentPanePrivate;
 
     /**
      * The file watcher service.
@@ -648,71 +635,65 @@ public abstract class Main {
     /**
      * Registers a {@code JosmAction} and its shortcut.
      * @param action action defining its own shortcut
+     * @deprecated use {@link MainApplication#registerActionShortcut(JosmAction)} instead
      */
+    @Deprecated
     public static void registerActionShortcut(JosmAction action) {
-        registerActionShortcut(action, action.getShortcut());
+        MainApplication.registerActionShortcut(action);
     }
 
     /**
      * Registers an action and its shortcut.
      * @param action action to register
      * @param shortcut shortcut to associate to {@code action}
+     * @deprecated use {@link MainApplication#registerActionShortcut(Action, Shortcut)} instead
      */
+    @Deprecated
     public static void registerActionShortcut(Action action, Shortcut shortcut) {
-        KeyStroke keyStroke = shortcut.getKeyStroke();
-        if (keyStroke == null)
-            return;
-
-        InputMap inputMap = contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW);
-        Object existing = inputMap.get(keyStroke);
-        if (existing != null && !existing.equals(action)) {
-            Logging.info(String.format("Keystroke %s is already assigned to %s, will be overridden by %s", keyStroke, existing, action));
-        }
-        inputMap.put(keyStroke, action);
-
-        contentPanePrivate.getActionMap().put(action, action);
+        MainApplication.registerActionShortcut(action, shortcut);
     }
 
     /**
      * Unregisters a shortcut.
      * @param shortcut shortcut to unregister
+     * @deprecated use {@link MainApplication#unregisterShortcut(Shortcut)} instead
      */
+    @Deprecated
     public static void unregisterShortcut(Shortcut shortcut) {
-        contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).remove(shortcut.getKeyStroke());
+        MainApplication.unregisterShortcut(shortcut);
     }
 
     /**
      * Unregisters a {@code JosmAction} and its shortcut.
      * @param action action to unregister
+     * @deprecated use {@link MainApplication#unregisterActionShortcut(JosmAction)} instead
      */
+    @Deprecated
     public static void unregisterActionShortcut(JosmAction action) {
-        unregisterActionShortcut(action, action.getShortcut());
+        MainApplication.unregisterActionShortcut(action);
     }
 
     /**
      * Unregisters an action and its shortcut.
      * @param action action to unregister
      * @param shortcut shortcut to unregister
+     * @deprecated use {@link MainApplication#unregisterActionShortcut(Action, Shortcut)} instead
      */
+    @Deprecated
     public static void unregisterActionShortcut(Action action, Shortcut shortcut) {
-        unregisterShortcut(shortcut);
-        contentPanePrivate.getActionMap().remove(action);
+        MainApplication.unregisterActionShortcut(action, shortcut);
     }
 
     /**
      * Replies the registered action for the given shortcut
      * @param shortcut The shortcut to look for
      * @return the registered action for the given shortcut
+     * @deprecated use {@link MainApplication#getRegisteredActionShortcut(Shortcut)} instead
      * @since 5696
      */
+    @Deprecated
     public static Action getRegisteredActionShortcut(Shortcut shortcut) {
-        KeyStroke keyStroke = shortcut.getKeyStroke();
-        if (keyStroke == null)
-            return null;
-        Object action = contentPanePrivate.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).get(keyStroke);
-        if (action instanceof Action)
-            return (Action) action;
-        return null;
+        return MainApplication.getRegisteredActionShortcut(shortcut);
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -935,10 +916,12 @@ public abstract class Main {
      * @param listener The MapFrameListener
      * @return {@code true} if the listeners collection changed as a result of the call
      * @see #addMapFrameListener
+     * @deprecated use {@link MainApplication#addAndFireMapFrameListener} instead
      * @since 11904
      */
+    @Deprecated
     public static boolean addAndFireMapFrameListener(MapFrameListener listener) {
-        return mainPanel != null && mainPanel.addAndFireMapFrameListener(listener);
+        return MainApplication.addAndFireMapFrameListener(listener);
     }
 
     /**
@@ -946,20 +929,24 @@ public abstract class Main {
      * @param listener The MapFrameListener
      * @return {@code true} if the listeners collection changed as a result of the call
      * @see #addAndFireMapFrameListener
+     * @deprecated use {@link MainApplication#addMapFrameListener} instead
      * @since 5957
      */
+    @Deprecated
     public static boolean addMapFrameListener(MapFrameListener listener) {
-        return mainPanel != null && mainPanel.addMapFrameListener(listener);
+        return MainApplication.addMapFrameListener(listener);
     }
 
     /**
      * Unregisters the given {@code MapFrameListener} from MapFrame changes
      * @param listener The MapFrameListener
      * @return {@code true} if the listeners collection changed as a result of the call
+     * @deprecated use {@link MainApplication#removeMapFrameListener} instead
      * @since 5957
      */
+    @Deprecated
     public static boolean removeMapFrameListener(MapFrameListener listener) {
-        return mainPanel != null && mainPanel.removeMapFrameListener(listener);
+        return MainApplication.removeMapFrameListener(listener);
     }
 
     /**
