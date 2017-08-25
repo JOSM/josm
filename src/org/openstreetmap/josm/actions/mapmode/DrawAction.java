@@ -616,7 +616,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
 
         Command c = new SequenceCommand(title, cmds);
 
-        Main.main.undoRedo.add(c);
+        MainApplication.undoRedo.add(c);
         if (!wayIsFinished) {
             lastUsedNode = n;
         }
@@ -1333,8 +1333,8 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Main.main.undoRedo.undo();
-            Command lastCmd = Main.main.undoRedo.getLastCommand();
+            MainApplication.undoRedo.undo();
+            Command lastCmd = MainApplication.undoRedo.getLastCommand();
             if (lastCmd == null) return;
             Node n = null;
             for (OsmPrimitive p: lastCmd.getParticipatingPrimitives()) {

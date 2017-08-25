@@ -9,9 +9,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.importers.AbstractOsmDataPaster;
 import org.openstreetmap.josm.gui.datatransfer.importers.FilePaster;
 import org.openstreetmap.josm.gui.datatransfer.importers.OsmLinkPaster;
@@ -71,7 +71,7 @@ public class OsmTransferHandler extends AbstractStackTransferHandler {
      * @param transferable The transferable to use.
      */
     public void pasteOn(OsmDataLayer editLayer, EastNorth mPosition, Transferable transferable) {
-        importData(new TransferSupport(Main.main.panel, transferable), editLayer, mPosition);
+        importData(new TransferSupport(MainApplication.getMainPanel(), transferable), editLayer, mPosition);
     }
 
     /**
@@ -80,7 +80,7 @@ public class OsmTransferHandler extends AbstractStackTransferHandler {
      */
     public void pasteTags(Collection<? extends OsmPrimitive> primitives) {
         Transferable transferable = ClipboardUtils.getClipboardContent();
-        importTags(new TransferSupport(Main.main.panel, transferable), primitives);
+        importTags(new TransferSupport(MainApplication.getMainPanel(), transferable), primitives);
     }
 
     /**

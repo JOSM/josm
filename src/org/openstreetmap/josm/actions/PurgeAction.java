@@ -37,6 +37,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -124,9 +125,9 @@ public class PurgeAction extends JosmAction {
             Main.pref.put("purge.clear_undo_redo", clearUndoRedo);
         }
 
-        Main.main.undoRedo.add(cmd);
+        MainApplication.undoRedo.add(cmd);
         if (clearUndoRedo) {
-            Main.main.undoRedo.clean();
+            MainApplication.undoRedo.clean();
             getLayerManager().getEditDataSet().clearSelectionHistory();
         }
     }

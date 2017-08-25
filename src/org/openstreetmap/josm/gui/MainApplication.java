@@ -68,6 +68,7 @@ import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -134,7 +135,7 @@ public class MainApplication extends Main {
     private static final List<String> COMMAND_LINE_ARGS = new ArrayList<>();
 
     /**
-     * The same panel as {@link Main#panel}, required to be static for {@link MapFrameListener} handling.
+     * The main panel, required to be static for {@link MapFrameListener} handling.
      */
     static MainPanel mainPanel;
 
@@ -166,6 +167,12 @@ public class MainApplication extends Main {
      * Provides access to the layers displayed in the main view.
      */
     private static final MainLayerManager layerManager = new MainLayerManager();
+
+    /**
+     * The commands undo/redo handler.
+     * @since 12641 (as a replacement to {@code Main.main.undoRedo})
+     */
+    public static final UndoRedoHandler undoRedo = new UndoRedoHandler(); // Must be declared after layerManager
 
     /**
      * Listener that sets the enabled state of undo/redo menu entries.
@@ -263,18 +270,21 @@ public class MainApplication extends Main {
     }
 
     @Override
+    @SuppressWarnings("deprecation")
     protected void initializeMainWindow() {
         if (mainFrame != null) {
-            panel = mainFrame.getPanel();
+            mainPanel = mainFrame.getPanel();
+            panel = mainPanel;
             mainFrame.initialize();
             menu = mainFrame.getMenu();
         } else {
             // required for running some tests.
-            panel = new MainPanel(layerManager);
+            mainPanel = new MainPanel(layerManager);
+            panel = mainPanel;
             menu = new MainMenu();
         }
-        panel.addMapFrameListener((o, n) -> redoUndoListener.commandChanged(0, 0));
-        panel.reAddListeners();
+        mainPanel.addMapFrameListener((o, n) -> redoUndoListener.commandChanged(0, 0));
+        mainPanel.reAddListeners();
     }
 
     @Override
@@ -357,6 +367,15 @@ public class MainApplication extends Main {
      */
     public static MapFrame getMap() {
         return map;
+    }
+
+    /**
+     * Returns the main panel.
+     * @return the main panel
+     * @since 12642 (as a replacement to {@code Main.main.panel})
+     */
+    public static MainPanel getMainPanel() {
+        return mainPanel;
     }
 
     /**

@@ -519,7 +519,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
                     }
                 }
             }
-            Main.main.undoRedo.add(new SequenceCommand(name, commands));
+            MainApplication.undoRedo.add(new SequenceCommand(name, commands));
             refreshView();
         }
     }

@@ -18,7 +18,6 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
@@ -159,7 +158,7 @@ public class JoinNodeWayAction extends JosmAction {
         }
 
         if (cmds.isEmpty()) return;
-        Main.main.undoRedo.add(new SequenceCommand(getValue(NAME).toString(), cmds));
+        MainApplication.undoRedo.add(new SequenceCommand(getValue(NAME).toString(), cmds));
     }
 
     private static SortedSet<Integer> pruneSuccs(Collection<Integer> is) {

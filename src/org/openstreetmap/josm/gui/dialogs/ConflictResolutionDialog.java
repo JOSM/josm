@@ -20,6 +20,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.conflict.pair.ConflictResolver;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -202,7 +203,7 @@ public class ConflictResolutionDialog extends ExtendedDialog implements Property
                     return;
                 }
             }
-            Main.main.undoRedo.add(resolver.buildResolveCommand());
+            MainApplication.undoRedo.add(resolver.buildResolveCommand());
             buttonAction(1, evt);
         }
 

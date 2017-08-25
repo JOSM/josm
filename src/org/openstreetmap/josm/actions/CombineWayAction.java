@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -172,7 +173,7 @@ public class CombineWayAction extends JosmAction {
                 }
                 if (!reverseWayTagCommands.isEmpty()) {
                     // commands need to be executed for CombinePrimitiveResolverDialog
-                    Main.main.undoRedo.add(new SequenceCommand(tr("Reverse Ways"), reverseWayTagCommands));
+                    MainApplication.undoRedo.add(new SequenceCommand(tr("Reverse Ways"), reverseWayTagCommands));
                 }
                 wayTags = TagCollection.unionOfAllPrimitives(reversedTagWays);
                 wayTags.add(TagCollection.unionOfAllPrimitives(unreversedTagWays));
@@ -191,7 +192,7 @@ public class CombineWayAction extends JosmAction {
         } finally {
             if (!reverseWayTagCommands.isEmpty()) {
                 // undo reverseWayTagCorrector and merge into SequenceCommand below
-                Main.main.undoRedo.undo();
+                MainApplication.undoRedo.undo();
             }
         }
 
@@ -235,7 +236,7 @@ public class CombineWayAction extends JosmAction {
         if (combineResult == null)
             return;
         final Way selectedWay = combineResult.a;
-        Main.main.undoRedo.add(combineResult.b);
+        MainApplication.undoRedo.add(combineResult.b);
         if (selectedWay != null) {
             GuiHelper.runInEDT(() -> ds.setSelected(selectedWay));
         }

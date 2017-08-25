@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -115,7 +116,7 @@ public final class OrthogonalizeAction extends JosmAction {
                     }
                 }
                 if (!commands.isEmpty()) {
-                    Main.main.undoRedo.add(new SequenceCommand(tr("Orthogonalize / Undo"), commands));
+                    MainApplication.undoRedo.add(new SequenceCommand(tr("Orthogonalize / Undo"), commands));
                 } else {
                     throw new InvalidUserInputException("Commands are empty");
                 }
@@ -164,7 +165,7 @@ public final class OrthogonalizeAction extends JosmAction {
 
         try {
             final SequenceCommand command = orthogonalize(sel);
-            Main.main.undoRedo.add(new SequenceCommand(tr("Orthogonalize"), command));
+            MainApplication.undoRedo.add(new SequenceCommand(tr("Orthogonalize"), command));
         } catch (InvalidUserInputException ex) {
             Logging.debug(ex);
             String msg;

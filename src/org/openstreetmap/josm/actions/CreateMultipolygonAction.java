@@ -106,7 +106,7 @@ public class CreateMultipolygonAction extends JosmAction {
 
             // to avoid EDT violations
             SwingUtilities.invokeLater(() -> {
-                    Main.main.undoRedo.add(command);
+                    MainApplication.undoRedo.add(command);
 
                     // Use 'SwingUtilities.invokeLater' to make sure the relationListDialog
                     // knows about the new relation before we try to select it.

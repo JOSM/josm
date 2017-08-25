@@ -10,7 +10,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.SelectCommand;
@@ -114,7 +113,7 @@ public class FollowLineAction extends JosmAction {
             } else {
                 newFollower.addNode(newPoint);
             }
-            Main.main.undoRedo.add(new SequenceCommand(tr("Follow line"),
+            MainApplication.undoRedo.add(new SequenceCommand(tr("Follow line"),
                     new ChangeCommand(follower, newFollower),
                     new SelectCommand(newFollower.isClosed() // see #10028 - unselect last node when closing a way
                             ? Arrays.<OsmPrimitive>asList(follower)

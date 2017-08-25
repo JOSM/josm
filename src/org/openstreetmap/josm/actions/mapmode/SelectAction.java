@@ -710,7 +710,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                     ((MoveCommand) c).applyVectorTo(currentEN);
                 } else {
                     c = new MoveCommand(selection, startEN, currentEN);
-                    Main.main.undoRedo.add(c);
+                    MainApplication.undoRedo.add(c);
                 }
                 for (Node n : affectedNodes) {
                     LatLon ll = n.getCoor();
@@ -743,13 +743,13 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                     if (c instanceof RotateCommand && affectedNodes.equals(((RotateCommand) c).getTransformedNodes())) {
                         ((RotateCommand) c).handleEvent(currentEN);
                     } else {
-                        Main.main.undoRedo.add(new RotateCommand(selection, currentEN));
+                        MainApplication.undoRedo.add(new RotateCommand(selection, currentEN));
                     }
                 } else if (mode == Mode.SCALE) {
                     if (c instanceof ScaleCommand && affectedNodes.equals(((ScaleCommand) c).getTransformedNodes())) {
                         ((ScaleCommand) c).handleEvent(currentEN);
                     } else {
-                        Main.main.undoRedo.add(new ScaleCommand(selection, currentEN));
+                        MainApplication.undoRedo.add(new ScaleCommand(selection, currentEN));
                     }
                 }
 
@@ -798,7 +798,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
      * @return last command
      */
     private static Command getLastCommandInDataset(DataSet ds) {
-        Command lastCommand = Main.main.undoRedo.getLastCommand();
+        Command lastCommand = MainApplication.undoRedo.getLastCommand();
         if (lastCommand instanceof SequenceCommand) {
             lastCommand = ((SequenceCommand) lastCommand).getLastCommand();
         }
@@ -824,7 +824,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             ed.toggleEnable("movedHiddenElements");
             ed.showDialog();
             if (ed.getValue() != 1) {
-                Main.main.undoRedo.undo();
+                MainApplication.undoRedo.undo();
             }
         }
         int max = Main.pref.getInteger("warn.move.maxelements", 20), limit = max;
@@ -847,7 +847,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             ed.showDialog();
 
             if (ed.getValue() != 1) {
-                Main.main.undoRedo.undo();
+                MainApplication.undoRedo.undo();
             }
         } else {
             // if small number of elements were moved,
@@ -1246,7 +1246,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
             String text = trn("Add and move a virtual new node to way",
                     "Add and move a virtual new node to {0} ways", virtualWays.size(),
                     virtualWays.size());
-            Main.main.undoRedo.add(new SequenceCommand(text, virtualCmds));
+            MainApplication.undoRedo.add(new SequenceCommand(text, virtualCmds));
             getLayerManager().getEditDataSet().setSelected(Collections.singleton((OsmPrimitive) virtualNode));
             clear();
         }

@@ -79,6 +79,7 @@ public class MainApplicationTest {
      * Make sure {@code MainApplication.mainPanel} is initialized.
      * @param reAddListeners {@code true} to re-add listeners
      */
+    @SuppressWarnings("deprecation")
     public static void initMainPanel(boolean reAddListeners) {
         if (MainApplication.mainPanel == null) {
             MainApplication.mainPanel = new MainPanel(MainApplication.getLayerManager());
@@ -89,14 +90,6 @@ public class MainApplicationTest {
         if (Main.main != null) {
             Main.main.panel = MainApplication.mainPanel;
         }
-    }
-
-    /**
-     * Returns {@link MainApplication#mainPanel} (not public).
-     * @return {@link MainApplication#mainPanel}
-     */
-    public static MainPanel getMainPanel() {
-        return MainApplication.mainPanel;
     }
 
     /**

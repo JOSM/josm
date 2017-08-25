@@ -612,7 +612,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
             if (error.isFixable()) {
                 final Command fixCommand = error.getFix();
                 if (fixCommand != null) {
-                    SwingUtilities.invokeAndWait(() -> Main.main.undoRedo.addNoRedraw(fixCommand));
+                    SwingUtilities.invokeAndWait(() -> MainApplication.undoRedo.addNoRedraw(fixCommand));
                 }
                 // It is wanted to ignore an error if it said fixable, even if fixCommand was null
                 // This is to fix #5764 and #5773:
@@ -643,7 +643,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 }
                 monitor.subTask(tr("Updating map ..."));
                 SwingUtilities.invokeAndWait(() -> {
-                    Main.main.undoRedo.afterAdd();
+                    MainApplication.undoRedo.afterAdd();
                     MainApplication.getLayerManager().getLayersOfType(ValidatorLayer.class).forEach(ValidatorLayer::invalidate);
                     tree.resetErrors();
                 });

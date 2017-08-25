@@ -472,7 +472,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
                         "Add a new node to {0} ways",
                         virtualSegments.size(), virtualSegments.size());
 
-                Main.main.undoRedo.add(new SequenceCommand(text, virtualCmds));
+                MainApplication.undoRedo.add(new SequenceCommand(text, virtualCmds));
 
             } else if (alt && !ctrl && candidateNode != null) {
                 // Deleting the highlighted node
@@ -489,10 +489,10 @@ public class ImproveWayAccuracyAction extends MapMode implements
                     if (nodes.size() < 2) {
                         final Command deleteCmd = DeleteCommand.delete(getLayerManager().getEditLayer(), Collections.singleton(targetWay), true);
                         if (deleteCmd != null) {
-                            Main.main.undoRedo.add(deleteCmd);
+                            MainApplication.undoRedo.add(deleteCmd);
                         }
                     } else {
-                        Main.main.undoRedo.add(new ChangeCommand(targetWay, newWay));
+                        MainApplication.undoRedo.add(new ChangeCommand(targetWay, newWay));
                     }
                 } else if (candidateNode.isTagged()) {
                     JOptionPane.showMessageDialog(Main.parent,
@@ -501,7 +501,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
                 } else {
                     final Command deleteCmd = DeleteCommand.delete(getLayerManager().getEditLayer(), Collections.singleton(candidateNode), true);
                     if (deleteCmd != null) {
-                        Main.main.undoRedo.add(deleteCmd);
+                        MainApplication.undoRedo.add(deleteCmd);
                     }
                 }
 
@@ -511,7 +511,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
                 EastNorth nodeEN = candidateNode.getEastNorth();
                 EastNorth cursorEN = mv.getEastNorth(mousePos.x, mousePos.y);
 
-                Main.main.undoRedo.add(new MoveCommand(candidateNode, cursorEN.east() - nodeEN.east(), cursorEN.north() - nodeEN.north()));
+                MainApplication.undoRedo.add(new MoveCommand(candidateNode, cursorEN.east() - nodeEN.east(), cursorEN.north() - nodeEN.north()));
             }
         }
 

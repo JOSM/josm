@@ -36,23 +36,23 @@ public class RedoAction extends JosmAction implements OsmDataLayer.CommandQueueL
         if (map == null)
             return;
         map.repaint();
-        Main.main.undoRedo.redo();
+        MainApplication.undoRedo.redo();
     }
 
     @Override
     protected void updateEnabledState() {
-        setEnabled(Main.main != null && !Main.main.undoRedo.redoCommands.isEmpty());
+        setEnabled(Main.main != null && !MainApplication.undoRedo.redoCommands.isEmpty());
     }
 
     @Override
     public void commandChanged(int queueSize, int redoSize) {
-        if (Main.main.undoRedo.redoCommands.isEmpty()) {
+        if (MainApplication.undoRedo.redoCommands.isEmpty()) {
             putValue(NAME, tr("Redo"));
             setTooltip(tr("Redo the last undone action."));
         } else {
             putValue(NAME, tr("Redo ..."));
             setTooltip(tr("Redo {0}",
-                    Main.main.undoRedo.redoCommands.getFirst().getDescriptionText()));
+                    MainApplication.undoRedo.redoCommands.getFirst().getDescriptionText()));
         }
     }
 }

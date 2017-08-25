@@ -19,6 +19,7 @@ import org.openstreetmap.josm.data.APIDataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.gui.MainApplication;
 
 /**
  * Fixes defective data entries for all modified objects before upload
@@ -203,7 +204,7 @@ public class FixDataHook implements UploadHook {
             }
 
             if (!cmds.isEmpty()) {
-                Main.main.undoRedo.add(new SequenceCommand(tr("Fix deprecated tags"), cmds));
+                MainApplication.undoRedo.add(new SequenceCommand(tr("Fix deprecated tags"), cmds));
             }
         }
         return true;

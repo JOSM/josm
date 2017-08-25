@@ -214,7 +214,7 @@ public class SplitWayAction extends JosmAction {
             }
             if (wayToKeep != null) {
                 final SplitWayResult result = doSplitWay(getLayerManager().getEditLayer(), selectedWay, wayToKeep, newWays, sel);
-                Main.main.undoRedo.add(result.getCommand());
+                MainApplication.undoRedo.add(result.getCommand());
                 if (!result.getNewSelection().isEmpty()) {
                     getLayerManager().getEditDataSet().setSelected(result.getNewSelection());
                 }
@@ -295,7 +295,7 @@ public class SplitWayAction extends JosmAction {
             if (getValue() == 1) {
                 SplitWayResult result = doSplitWay(MainApplication.getLayerManager().getEditLayer(),
                         selectedWay, list.getSelectedValue(), newWays, selection);
-                Main.main.undoRedo.add(result.getCommand());
+                MainApplication.undoRedo.add(result.getCommand());
                 if (!result.getNewSelection().isEmpty()) {
                     MainApplication.getLayerManager().getEditDataSet().setSelected(result.getNewSelection());
                 }
