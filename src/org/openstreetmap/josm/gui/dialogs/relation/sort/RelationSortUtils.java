@@ -11,6 +11,9 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType.Direction;
 
+/**
+ * Utility classes for the {@link RelationSorter}.
+ */
 final class RelationSortUtils {
 
     private RelationSortUtils() {

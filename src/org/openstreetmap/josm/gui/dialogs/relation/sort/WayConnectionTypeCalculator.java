@@ -15,6 +15,9 @@ import org.openstreetmap.josm.gui.dialogs.relation.sort.WayConnectionType.Direct
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
+/**
+ * This class calculates the {@link WayConnectionType} for a given list of members
+ */
 public class WayConnectionTypeCalculator {
 
     private static final int UNCONNECTED = Integer.MIN_VALUE;
