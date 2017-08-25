@@ -16,6 +16,12 @@ import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 
+/**
+ * Panel to enter username and password for the "fully automatic" authorization
+ * procedure.
+ * 
+ * @see AuthorizationProcedure#FULLY_AUTOMATIC
+ */
 public class FullyAutomaticPropertiesPanel extends JPanel {
 
     private final JosmTextField tfUserName = new JosmTextField();

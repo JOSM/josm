@@ -10,6 +10,12 @@ import java.util.Collections;
 
 import javax.swing.JLabel;
 
+/**
+ * A hyperlink {@link JLabel}.
+ * 
+ * To indicate that the user can click on the text, it displays an appropriate
+ * mouse cursor and dotted underline when the mouse is inside the hover area.
+ */
 public class TaggingPresetLabel extends JLabel {
 
     protected final TaggingPreset t;
