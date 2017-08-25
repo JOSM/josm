@@ -5,6 +5,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import javax.swing.JLabel;
 
+/**
+ * This represents the decision a user can make regarding a relation conflict
+ */
 public enum RelationMemberConflictDecisionType {
     /**
      * keep the respective relation member for the target primitive (the target node
@@ -22,6 +25,11 @@ public enum RelationMemberConflictDecisionType {
      */
     UNDECIDED;
 
+    /**
+     * Sets the label according to the current decision.
+     * @param decision The decision
+     * @param label The label to set
+     */
     public static void prepareLabel(RelationMemberConflictDecisionType decision, JLabel label) {
         switch(decision) {
         case REMOVE:

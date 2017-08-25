@@ -12,6 +12,9 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
+/**
+ * This class stores the decision the user made regarding a relation member conflict
+ */
 public class RelationMemberConflictDecision {
 
     private final Relation relation;

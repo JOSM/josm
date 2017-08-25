@@ -12,6 +12,11 @@ import javax.swing.ListSelectionModel;
 
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 
+/**
+ * The main table displayed in the {@link RelationMemberConflictResolver}
+ *
+ * @see RelationMemberConflictResolverColumnModel
+ */
 public class RelationMemberConflictResolverTable extends JTable implements MultiValueCellEditor.NavigationListener {
 
     private SelectNextColumnCellAction selectNextColumnCellAction;

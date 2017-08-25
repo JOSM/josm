@@ -13,6 +13,9 @@ import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 
+/**
+ * This class renders {@link RelationMemberConflictDecisionType} entries of a list/table
+ */
 public class RelationMemberConflictDecisionRenderer extends JLabel
 implements TableCellRenderer, ListCellRenderer<RelationMemberConflictDecisionType> {
 

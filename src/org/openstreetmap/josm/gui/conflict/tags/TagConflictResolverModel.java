@@ -16,6 +16,9 @@ import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
+/**
+ * This model holds the information about tags that are currently conflicting and the decision of the user regarding them.
+ */
 public class TagConflictResolverModel extends DefaultTableModel {
     public static final String NUM_CONFLICTS_PROP = TagConflictResolverModel.class.getName() + ".numConflicts";
 
