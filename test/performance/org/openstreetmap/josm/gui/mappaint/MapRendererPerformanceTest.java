@@ -38,6 +38,7 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.StyleSetting.BooleanStyleSetting;
+import org.openstreetmap.josm.gui.mappaint.loader.MapPaintStyleLoader;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
@@ -141,7 +142,7 @@ public class MapRendererPerformanceTest {
         }
         Assert.assertNotNull(hideIconsSetting);
         hideIconsSetting.setValue(false);
-        MapPaintStyles.reloadStyles(defaultStyleIdx);
+        MapPaintStyleLoader.reloadStyles(defaultStyleIdx);
 
         try (
             InputStream fisC = Compression.getUncompressedFileInputStream(new File("data_nodist/neubrandenburg.osm.bz2"));
@@ -156,7 +157,7 @@ public class MapRendererPerformanceTest {
         if (hideIconsSetting != null) {
             hideIconsSetting.setValue(true);
         }
-        MapPaintStyles.reloadStyles(defaultStyleIdx);
+        MapPaintStyleLoader.reloadStyles(defaultStyleIdx);
     }
 
     private static class PerformanceTester {
@@ -289,7 +290,7 @@ public class MapRendererPerformanceTest {
             test.label = "all";
             setFilterStyleActive(false);
         }
-        MapPaintStyles.reloadStyles(filterStyleIdx);
+        MapPaintStyleLoader.reloadStyles(filterStyleIdx);
         test.run();
     }
 

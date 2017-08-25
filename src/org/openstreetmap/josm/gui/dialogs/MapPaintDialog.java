@@ -64,6 +64,7 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
 import org.openstreetmap.josm.gui.mappaint.StyleSetting;
 import org.openstreetmap.josm.gui.mappaint.StyleSource;
+import org.openstreetmap.josm.gui.mappaint.loader.MapPaintStyleLoader;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.util.FileFilterAllFiles;
@@ -416,7 +417,7 @@ public class MapPaintDialog extends ToggleDialog {
         @Override
         public void actionPerformed(ActionEvent e) {
             final int[] rows = tblStyles.getSelectedRows();
-            MapPaintStyles.reloadStyles(rows);
+            MapPaintStyleLoader.reloadStyles(rows);
             MainApplication.worker.submit(() -> SwingUtilities.invokeLater(() -> {
                 selectionModel.setValueIsAdjusting(true);
                 selectionModel.clearSelection();

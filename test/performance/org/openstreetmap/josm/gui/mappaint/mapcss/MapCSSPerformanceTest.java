@@ -67,7 +67,7 @@ public class MapCSSPerformanceTest {
     }
 
     void loadStyle() {
-        System.out.println("Loading style '"+STYLE_FILE+"' ...");
+        System.out.print("Loading style '"+STYLE_FILE+"' ...");
         MapCSSStyleSource source = new MapCSSStyleSource(
             new SourceEntry(
                 STYLE_FILE,

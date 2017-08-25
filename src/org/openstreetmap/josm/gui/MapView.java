@@ -33,6 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.swing.AbstractButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
@@ -69,6 +70,8 @@ import org.openstreetmap.josm.gui.layer.MapViewPaintable.PaintableInvalidationLi
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.geoimage.GeoImageLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
+import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
 import org.openstreetmap.josm.io.audio.AudioPlayer;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -91,6 +94,26 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
 public class MapView extends NavigatableComponent
 implements PropertyChangeListener, PreferenceChangedListener,
 LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
+
+    static {
+        MapPaintStyles.addMapPaintSylesUpdateListener(new MapPaintSylesUpdateListener() {
+            @Override
+            public void mapPaintStylesUpdated() {
+                SwingUtilities.invokeLater(() -> {
+                    // Trigger a repaint of all data layers
+                    MainApplication.getLayerManager().getLayers()
+                        .stream()
+                        .filter(layer -> layer instanceof OsmDataLayer)
+                        .forEach(Layer::invalidate);
+                });
+            }
+
+            @Override
+            public void mapPaintStyleEntryUpdated(int index) {
+                mapPaintStylesUpdated();
+            }
+        });
+    }
 
     /**
      * An invalidation listener that simply calls repaint() for now.
