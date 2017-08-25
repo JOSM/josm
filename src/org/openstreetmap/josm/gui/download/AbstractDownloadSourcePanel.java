@@ -12,9 +12,14 @@ import org.openstreetmap.josm.data.Bounds;
  * GUI representation of {@link DownloadSource} that is shown to the user in
  * {@link DownloadDialog}.
  * @param <T> The type of the data that a download source uses.
+ * @since 12652
  */
 public abstract class AbstractDownloadSourcePanel<T> extends JPanel {
 
+    /**
+     * Called when creating a new {@link AbstractDownloadSourcePanel} for the given download source
+     * @param downloadSource The download source this panel is for
+     */
     public AbstractDownloadSourcePanel(final DownloadSource<T> downloadSource) {
         Objects.requireNonNull(downloadSource);
         this.downloadSource = downloadSource;
@@ -52,11 +57,12 @@ public abstract class AbstractDownloadSourcePanel<T> extends JPanel {
     /**
      * Performs the logic needed in case if the user triggered the download
      * action in {@link DownloadDialog}.
+     * @param settings The settings to check.
      * @return Returns {@code true} if the required procedure of handling the
      * download action succeeded and {@link DownloadDialog} can be closed, e.g. validation,
      * otherwise {@code false}.
      */
-    public abstract boolean checkDownload(Bounds bbox, DownloadSettings settings);
+    public abstract boolean checkDownload(DownloadSettings settings);
 
     /**
      * Performs the logic needed in case if the user triggered the cancel
@@ -86,10 +92,9 @@ public abstract class AbstractDownloadSourcePanel<T> extends JPanel {
 
     /**
      * Tells the {@link DownloadSource} to start downloading
-     * @param currentBounds The bounds to download for
-     * @param downloadSettings The remaining download settings
+     * @param downloadSettings The download settings
      */
-    public void triggerDownload(Bounds currentBounds, DownloadSettings downloadSettings) {
-        getDownloadSource().doDownload(currentBounds, getData(), downloadSettings);
+    public void triggerDownload(DownloadSettings downloadSettings) {
+        getDownloadSource().doDownload(getData(), downloadSettings);
     }
 }

@@ -472,7 +472,7 @@ public class DownloadDialog extends JDialog {
      * the download dialog.
      */
     public DownloadSettings getDownloadSettings() {
-        return new DownloadSettings(isNewLayerRequired(), isZoomToDownloadedDataRequired());
+        return new DownloadSettings(currentBounds, isNewLayerRequired(), isZoomToDownloadedDataRequired());
     }
 
     protected void setCanceled(boolean canceled) {
@@ -544,6 +544,9 @@ public class DownloadDialog extends JDialog {
             putValue(SHORT_DESCRIPTION, tr("Click to close the dialog and to abort downloading"));
         }
 
+        /**
+         * Cancels the download
+         */
         public void run() {
             setCanceled(true);
             setVisible(false);
@@ -568,16 +571,19 @@ public class DownloadDialog extends JDialog {
             setEnabled(!Main.isOffline(OnlineResource.OSM_API));
         }
 
+        /**
+         * Starts the download, if possible
+         */
         public void run() {
             Component panel = downloadSourcesTab.getSelectedComponent();
             if (panel instanceof AbstractDownloadSourcePanel) {
                 AbstractDownloadSourcePanel<?> pnl = (AbstractDownloadSourcePanel<?>) panel;
                 DownloadSettings downloadSettings = getDownloadSettings();
-                if (pnl.checkDownload(currentBounds, downloadSettings)) {
+                if (pnl.checkDownload(downloadSettings)) {
                     rememberSettings();
                     setCanceled(false);
                     setVisible(false);
-                    pnl.triggerDownload(currentBounds, downloadSettings);
+                    pnl.triggerDownload(downloadSettings);
                 }
             }
         }

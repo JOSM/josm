@@ -33,6 +33,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * This dialog provides an easy and fast way to create an overpass query.
  * @since 12576
+ * @since 12652: Moved here
  */
 public final class OverpassQueryWizardDialog extends ExtendedDialog {
 

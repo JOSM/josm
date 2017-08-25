@@ -1,12 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.download;
 
-
-import org.openstreetmap.josm.data.Bounds;
-
 /**
  * Defines an interface for different download sources.
+ * <p>
+ * Plugins may implement this to provide new download sources to the main download dialog.
  * @param <T> The type of the data that a download source uses.
+ * @since 12652
  */
 public interface DownloadSource<T> {
 
@@ -18,11 +18,10 @@ public interface DownloadSource<T> {
 
     /**
      * Downloads the data.
-     * @param bbox The bounding box. Can be null if no bounding box selected.
      * @param data The required data for the download source.
      * @param settings The global settings of the download dialog, see {@link DownloadDialog}.
      */
-    void doDownload(Bounds bbox, T data, DownloadSettings settings);
+    void doDownload(T data, DownloadSettings settings);
 
     /**
      * Returns a string representation of this download source.
