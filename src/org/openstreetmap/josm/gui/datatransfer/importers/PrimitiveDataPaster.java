@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.RelationData;
 import org.openstreetmap.josm.data.osm.RelationMemberData;
 import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.gui.ExtendedDialog;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTransferData;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -56,7 +57,7 @@ public final class PrimitiveDataPaster extends AbstractOsmDataPaster {
         AddPrimitivesCommand command = createNewPrimitives(pasteBuffer, offset, layer);
 
         /* Now execute the commands to add the duplicated contents of the paste buffer to the map */
-        Main.main.undoRedo.add(command);
+        MainApplication.undoRedo.add(command);
         return true;
     }
 

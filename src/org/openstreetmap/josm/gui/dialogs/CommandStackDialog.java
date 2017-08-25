@@ -35,7 +35,6 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.PseudoCommand;
@@ -232,7 +231,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         for (IEnabledStateUpdating listener : showNotifyListener) {
             listener.updateEnabledState();
         }
-        Main.main.undoRedo.addCommandQueueListener(this);
+        MainApplication.undoRedo.addCommandQueueListener(this);
     }
 
     /**
@@ -248,7 +247,7 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
     public void hideNotify() {
         undoTreeModel.setRoot(new DefaultMutableTreeNode());
         redoTreeModel.setRoot(new DefaultMutableTreeNode());
-        Main.main.undoRedo.removeCommandQueueListener(this);
+        MainApplication.undoRedo.removeCommandQueueListener(this);
     }
 
     /**
@@ -260,14 +259,14 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
         if (MainApplication.getLayerManager().getEditLayer() == null)
             return;
 
-        List<Command> undoCommands = Main.main.undoRedo.commands;
+        List<Command> undoCommands = MainApplication.undoRedo.commands;
         DefaultMutableTreeNode undoRoot = new DefaultMutableTreeNode();
         for (int i = 0; i < undoCommands.size(); ++i) {
             undoRoot.add(getNodeForCommand(undoCommands.get(i), i));
         }
         undoTreeModel.setRoot(undoRoot);
 
-        List<Command> redoCommands = Main.main.undoRedo.redoCommands;
+        List<Command> redoCommands = MainApplication.undoRedo.redoCommands;
         DefaultMutableTreeNode redoRoot = new DefaultMutableTreeNode();
         for (int i = 0; i < redoCommands.size(); ++i) {
             redoRoot.add(getNodeForCommand(redoCommands.get(i), i));
@@ -456,11 +455,11 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
             switch (type) {
             case UNDO:
                 int numUndo = ((DefaultMutableTreeNode) undoTreeModel.getRoot()).getChildCount() - idx;
-                Main.main.undoRedo.undo(numUndo);
+                MainApplication.undoRedo.undo(numUndo);
                 break;
             case REDO:
                 int numRedo = idx+1;
-                Main.main.undoRedo.redo(numRedo);
+                MainApplication.undoRedo.redo(numRedo);
                 break;
             }
             MainApplication.getMap().repaint();

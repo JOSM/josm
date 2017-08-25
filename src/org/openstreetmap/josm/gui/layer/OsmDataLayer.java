@@ -608,7 +608,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
         if (processed == null || processed.isEmpty())
             return;
 
-        Main.main.undoRedo.clean(this);
+        MainApplication.undoRedo.clean(this);
 
         // if uploaded, clean the modified flags as well
         data.cleanupDeletedPrimitives();

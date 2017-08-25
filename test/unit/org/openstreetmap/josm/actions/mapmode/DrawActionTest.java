@@ -16,7 +16,6 @@ import javax.swing.JList;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
@@ -92,7 +91,7 @@ public class DrawActionTest {
 
             assertNotNull(renderer.getListCellRendererComponent(lstPrimitives, n3, 0, false, false));
 
-            Main.main.undoRedo.undo();
+            MainApplication.undoRedo.undo();
 
             assertEquals(2, w.getNodesCount());
             assertTrue(dataSet.getSelectedNodes().isEmpty());

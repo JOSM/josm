@@ -495,7 +495,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                         moveCommand = new MoveCommand(movingNodeList.get(0), movement1.getX(), movement1.getY());
                         moveCommand2 = new MoveCommand(movingNodeList.get(1), movement2.getX(), movement2.getY());
                         Command c = new SequenceCommand(tr("Extrude Way"), moveCommand, moveCommand2);
-                        Main.main.undoRedo.add(c);
+                        MainApplication.undoRedo.add(c);
                     } else {
                         // reuse existing move commands
                         moveCommand.moveAgainTo(movement1.getX(), movement1.getY());
@@ -510,7 +510,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
                     if (moveCommand == null) {
                         //make a new move command
                         moveCommand = new MoveCommand(new ArrayList<OsmPrimitive>(movingNodeList), bestMovement);
-                        Main.main.undoRedo.add(moveCommand);
+                        MainApplication.undoRedo.add(moveCommand);
                     } else {
                         //reuse existing move command
                         moveCommand.moveAgainTo(bestMovement.getX(), bestMovement.getY());
@@ -593,7 +593,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             wnew.addNode(ws.lowerIndex+1, n);
             SequenceCommand cmds = new SequenceCommand(tr("Add a new node to an existing way"),
                     new AddCommand(n), new ChangeCommand(ws.way, wnew));
-            Main.main.undoRedo.add(cmds);
+            MainApplication.undoRedo.add(cmds);
         }
     }
 
@@ -623,7 +623,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         }
         cmds.add(new AddCommand(wnew));
         Command c = new SequenceCommand(tr("Extrude Way"), cmds);
-        Main.main.undoRedo.add(c);
+        MainApplication.undoRedo.add(c);
         getLayerManager().getEditDataSet().setSelected(wnew);
     }
 
@@ -711,7 +711,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             cmds.add(new ChangeCommand(selectedSegment.way, wnew));
         }
         Command c = new SequenceCommand(tr("Extrude Way"), cmds);
-        Main.main.undoRedo.add(c);
+        MainApplication.undoRedo.add(c);
         joinNodesIfCollapsed(changedNodes);
     }
 
@@ -723,10 +723,10 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         Node locNode = MergeNodesAction.selectTargetLocationNode(changedNodes);
         Command mergeCmd = MergeNodesAction.mergeNodes(MainApplication.getLayerManager().getEditLayer(), changedNodes, targetNode, locNode);
         if (mergeCmd != null) {
-            Main.main.undoRedo.add(mergeCmd);
+            MainApplication.undoRedo.add(mergeCmd);
         } else {
             // undo extruding command itself
-            Main.main.undoRedo.undo();
+            MainApplication.undoRedo.undo();
         }
     }
 

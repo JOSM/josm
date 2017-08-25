@@ -98,7 +98,7 @@ public class AddNodeHandler extends RequestHandler {
         if (node == null) {
             node = new Node(ll);
             // Now execute the commands to add this node.
-            Main.main.undoRedo.add(new AddCommand(node));
+            MainApplication.undoRedo.add(new AddCommand(node));
         }
 
         MainApplication.getLayerManager().getEditDataSet().setSelected(node);

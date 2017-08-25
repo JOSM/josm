@@ -156,7 +156,7 @@ public class DeleteAction extends MapMode implements ModifierExListener {
         }
         // if c is null, an error occurred or the user aborted. Don't do anything in that case.
         if (c != null) {
-            Main.main.undoRedo.add(c);
+            MainApplication.undoRedo.add(c);
             //FIXME: This should not be required, DeleteCommand should update the selection, otherwise undo/redo won't work.
             lm.getEditDataSet().setSelected();
         }
@@ -303,7 +303,7 @@ public class DeleteAction extends MapMode implements ModifierExListener {
 
         Command c = buildDeleteCommands(e, e.getModifiersEx(), false);
         if (c != null) {
-            Main.main.undoRedo.add(c);
+            MainApplication.undoRedo.add(c);
         }
 
         getLayerManager().getEditDataSet().setSelected();
@@ -354,7 +354,7 @@ public class DeleteAction extends MapMode implements ModifierExListener {
         final Command cmd = DeleteCommand.delete(layer, toDelete);
         if (cmd != null) {
             // cmd can be null if the user cancels dialogs DialogCommand displays
-            Main.main.undoRedo.add(cmd);
+            MainApplication.undoRedo.add(cmd);
             for (Relation relation : toDelete) {
                 if (layer.data.getSelectedRelations().contains(relation)) {
                     layer.data.toggleSelected(relation);

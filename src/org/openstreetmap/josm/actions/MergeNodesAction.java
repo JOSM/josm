@@ -94,7 +94,7 @@ public class MergeNodesAction extends JosmAction {
             Node targetLocationNode = selectTargetLocationNode(selectedNodes);
             Command cmd = mergeNodes(getLayerManager().getEditLayer(), selectedNodes, targetNode, targetLocationNode);
             if (cmd != null) {
-                Main.main.undoRedo.add(cmd);
+                MainApplication.undoRedo.add(cmd);
                 getLayerManager().getEditLayer().data.setSelected(targetNode);
             }
         }
@@ -273,7 +273,7 @@ public class MergeNodesAction extends JosmAction {
         if (target != null) {
             Command cmd = mergeNodes(layer, nodes, target, targetLocationNode);
             if (cmd != null) {
-                Main.main.undoRedo.add(cmd);
+                MainApplication.undoRedo.add(cmd);
                 layer.data.setSelected(target);
             }
         }

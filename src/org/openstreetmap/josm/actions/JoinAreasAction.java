@@ -40,6 +40,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -568,8 +569,8 @@ public class JoinAreasAction extends JosmAction {
             //revert changes
             //FIXME: this is dirty hack
             makeCommitsOneAction(tr("Reverting changes"));
-            Main.main.undoRedo.undo();
-            Main.main.undoRedo.redoCommands.clear();
+            MainApplication.undoRedo.undo();
+            MainApplication.undoRedo.redoCommands.clear();
         }
     }
 
@@ -825,7 +826,7 @@ public class JoinAreasAction extends JosmAction {
 
     private static void commitCommand(Command c) {
         if (Main.main != null) {
-            Main.main.undoRedo.add(c);
+            MainApplication.undoRedo.add(c);
         } else {
             c.executeCommand();
         }
@@ -1591,7 +1592,7 @@ public class JoinAreasAction extends JosmAction {
     private void makeCommitsOneAction(String message) {
         cmds.clear();
         if (Main.main != null) {
-            UndoRedoHandler ur = Main.main.undoRedo;
+            UndoRedoHandler ur = MainApplication.undoRedo;
             int i = Math.max(ur.commands.size() - cmdsCount, 0);
             for (; i < ur.commands.size(); i++) {
                 cmds.add(ur.commands.get(i));

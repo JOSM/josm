@@ -11,7 +11,6 @@ import java.util.Collection;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.PseudoCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.APIDataSet;
@@ -19,6 +18,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -41,9 +41,9 @@ public class FixDataHookTest {
     @Test
     public void testCheckUpload() {
         // Empty data set
-        Main.main.undoRedo.commands.clear();
+        MainApplication.undoRedo.commands.clear();
         new FixDataHook().checkUpload(new APIDataSet());
-        assertTrue(Main.main.undoRedo.commands.isEmpty());
+        assertTrue(MainApplication.undoRedo.commands.isEmpty());
 
         // Complete data set
         Node emptyNode = new Node();
@@ -76,11 +76,11 @@ public class FixDataHookTest {
         APIDataSet ads = new APIDataSet();
         ads.init(Arrays.asList(emptyNode, emptyWay, emptyRelation, w1, w2, w3, w4, w5, w6, w7, r1, r2));
 
-        Main.main.undoRedo.commands.clear();
+        MainApplication.undoRedo.commands.clear();
         new FixDataHook().checkUpload(ads);
-        assertEquals(1, Main.main.undoRedo.commands.size());
+        assertEquals(1, MainApplication.undoRedo.commands.size());
 
-        SequenceCommand seq = (SequenceCommand) Main.main.undoRedo.commands.iterator().next();
+        SequenceCommand seq = (SequenceCommand) MainApplication.undoRedo.commands.iterator().next();
         Collection<? extends OsmPrimitive> prims = seq.getParticipatingPrimitives();
         assertNotNull(prims);
         assertEquals(9, prims.size());

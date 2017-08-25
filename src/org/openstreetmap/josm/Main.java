@@ -137,8 +137,10 @@ public abstract class Main {
 
     /**
      * The commands undo/redo handler.
+     * @deprecated Use {@link MainApplication#undoRedo} instead
      */
-    public final UndoRedoHandler undoRedo = new UndoRedoHandler();
+    @Deprecated
+    public final UndoRedoHandler undoRedo = MainApplication.undoRedo;
 
     /**
      * The main menu bar at top of screen.
@@ -445,7 +447,7 @@ public abstract class Main {
 
     /**
      * Platform specific code goes in here.
-     * Plugins may replace it, however, some hooks will be called before any plugins have been loeaded.
+     * Plugins may replace it, however, some hooks will be called before any plugins have been loaded.
      * So if you need to hook into those early ones, split your class and send the one with the early hooks
      * to the JOSM team for inclusion.
      */

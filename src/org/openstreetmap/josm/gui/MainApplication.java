@@ -68,6 +68,7 @@ import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -161,6 +162,12 @@ public class MainApplication extends Main {
      * @since 12634 (as a replacement to {@code Main.worker})
      */
     public static final ExecutorService worker = new ProgressMonitorExecutor("main-worker-%d", Thread.NORM_PRIORITY);
+
+    /**
+     * The commands undo/redo handler.
+     * @since 12641 (as a replacement to {@code Main.main.undoRedo})
+     */
+    public static final UndoRedoHandler undoRedo = new UndoRedoHandler();
 
     /**
      * Provides access to the layers displayed in the main view.

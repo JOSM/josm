@@ -198,7 +198,7 @@ public final class SplitWayActionTest {
             };
         final SplitWayAction.SplitWayResult result = SplitWayAction.splitWay(
                 layer, w2, SplitWayAction.buildSplitChunks(w2, Arrays.asList(n3, n4, n5)), new ArrayList<OsmPrimitive>(), strategy);
-        Main.main.undoRedo.add(result.getCommand());
+        MainApplication.undoRedo.add(result.getCommand());
 
         assertEquals(6, route.getMembersCount());
         assertEquals(w1, route.getMemberPrimitivesList().get(0));

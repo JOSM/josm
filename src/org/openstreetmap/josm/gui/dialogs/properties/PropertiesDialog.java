@@ -829,7 +829,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         public void updateTags(List<Tag> tags) {
             Command command = TaggingPreset.createCommand(getSelection(), tags);
             if (command != null) {
-                Main.main.undoRedo.add(command);
+                MainApplication.undoRedo.add(command);
             }
         }
 
@@ -996,7 +996,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
             }
 
             Collection<OsmPrimitive> sel = Main.main.getInProgressSelection();
-            Main.main.undoRedo.add(new ChangePropertyCommand(sel, tags));
+            MainApplication.undoRedo.add(new ChangePropertyCommand(sel, tags));
 
             membershipTable.clearSelection();
             if (nextKey != null) {
@@ -1027,7 +1027,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
             for (OsmPrimitive primitive: Main.main.getInProgressSelection()) {
                 rel.removeMembersFor(primitive);
             }
-            Main.main.undoRedo.add(new ChangeCommand(cur, rel));
+            MainApplication.undoRedo.add(new ChangeCommand(cur, rel));
 
             tagTable.clearSelection();
             if (nextRelation != null) {
@@ -1265,7 +1265,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
             String clipboard = ClipboardUtils.getClipboardStringContent();
             if (sel.isEmpty() || clipboard == null)
                 return;
-            Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, Utils.strip(clipboard)));
+            MainApplication.undoRedo.add(new ChangePropertyCommand(sel, key, Utils.strip(clipboard)));
         }
     }
 

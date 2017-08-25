@@ -506,7 +506,7 @@ public class TagEditHelper {
             if (key.equals(newkey) && tr("<different>").equals(value))
                 return;
             if (key.equals(newkey) || value == null) {
-                Main.main.undoRedo.add(new ChangePropertyCommand(sel, newkey, value));
+                MainApplication.undoRedo.add(new ChangePropertyCommand(sel, newkey, value));
                 AutoCompletionManager.rememberUserInput(newkey, value, true);
             } else {
                 for (OsmPrimitive osm: sel) {
@@ -540,7 +540,7 @@ public class TagEditHelper {
                     commands.add(new ChangePropertyCommand(sel, newkey, value));
                     AutoCompletionManager.rememberUserInput(newkey, value, false);
                 }
-                Main.main.undoRedo.add(new SequenceCommand(
+                MainApplication.undoRedo.add(new SequenceCommand(
                         trn("Change properties of up to {0} object",
                                 "Change properties of up to {0} objects", sel.size(), sel.size()),
                                 commands));
@@ -1067,7 +1067,7 @@ public class TagEditHelper {
             valueCount.put(key, new TreeMap<String, Integer>());
             AutoCompletionManager.rememberUserInput(key, value, false);
             commandCount++;
-            Main.main.undoRedo.add(new ChangePropertyCommand(sel, key, value));
+            MainApplication.undoRedo.add(new ChangePropertyCommand(sel, key, value));
             changedKey = key;
             clearEntries();
         }
@@ -1078,7 +1078,7 @@ public class TagEditHelper {
         }
 
         public void undoAllTagsAdding() {
-            Main.main.undoRedo.undo(commandCount);
+            MainApplication.undoRedo.undo(commandCount);
         }
 
         private void refreshRecentTags() {

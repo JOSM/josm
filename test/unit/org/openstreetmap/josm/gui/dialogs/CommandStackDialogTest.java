@@ -6,7 +6,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -51,12 +50,12 @@ public class CommandStackDialogTest {
         try {
             Command cmd1 = TestUtils.newCommand();
             Command cmd2 = TestUtils.newCommand();
-            Main.main.undoRedo.add(cmd1);
-            Main.main.undoRedo.add(cmd2);
-            Main.main.undoRedo.undo(1);
+            MainApplication.undoRedo.add(cmd1);
+            MainApplication.undoRedo.add(cmd2);
+            MainApplication.undoRedo.undo(1);
 
-            assertFalse(Main.main.undoRedo.commands.isEmpty());
-            assertFalse(Main.main.undoRedo.redoCommands.isEmpty());
+            assertFalse(MainApplication.undoRedo.commands.isEmpty());
+            assertFalse(MainApplication.undoRedo.redoCommands.isEmpty());
 
             MapFrame map = MainApplication.getMap();
             CommandStackDialog dlg = new CommandStackDialog();
@@ -67,7 +66,7 @@ public class CommandStackDialogTest {
             dlg.hideDialog();
             assertFalse(dlg.isVisible());
         } finally {
-            Main.main.undoRedo.clean();
+            MainApplication.undoRedo.clean();
             MainApplication.getLayerManager().removeLayer(layer);
         }
     }

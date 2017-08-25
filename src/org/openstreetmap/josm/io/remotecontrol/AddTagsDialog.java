@@ -257,7 +257,7 @@ public class AddTagsDialog extends ExtendedDialog {
                 if (buttonIndex == 1 || (Boolean) tm.getValueAt(i, 0)) {
                     String key = (String) tm.getValueAt(i, 1);
                     Object value = tm.getValueAt(i, 2);
-                    Main.main.undoRedo.add(new ChangePropertyCommand(sel,
+                    MainApplication.undoRedo.add(new ChangePropertyCommand(sel,
                             key, value instanceof String ? (String) value : ""));
                 }
             }
@@ -311,7 +311,7 @@ public class AddTagsDialog extends ExtendedDialog {
         if (trustedSenders.contains(sender)) {
             if (MainApplication.getLayerManager().getEditDataSet() != null) {
                 for (String[] row : keyValue) {
-                    Main.main.undoRedo.add(new ChangePropertyCommand(primitives, row[0], row[1]));
+                    MainApplication.undoRedo.add(new ChangePropertyCommand(primitives, row[0], row[1]));
                 }
             }
         } else {

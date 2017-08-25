@@ -13,13 +13,13 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -79,7 +79,7 @@ public final class MirrorAction extends JosmAction {
             cmds.add(new MoveCommand(n, 2 * (middle - n.getEastNorth().east()), 0.0));
         }
 
-        Main.main.undoRedo.add(new SequenceCommand(tr("Mirror"), cmds));
+        MainApplication.undoRedo.add(new SequenceCommand(tr("Mirror"), cmds));
     }
 
     @Override

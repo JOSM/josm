@@ -25,6 +25,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -136,7 +137,7 @@ public final class ReverseWayAction extends JosmAction {
             }
             c.addAll(revResult.getCommands());
         }
-        Main.main.undoRedo.add(new SequenceCommand(tr("Reverse ways"), c));
+        MainApplication.undoRedo.add(new SequenceCommand(tr("Reverse ways"), c));
     }
 
     /**

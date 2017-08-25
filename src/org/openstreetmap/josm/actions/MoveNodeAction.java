@@ -49,7 +49,7 @@ public final class MoveNodeAction extends JosmAction {
             return;
 
         // move the node
-        Main.main.undoRedo.add(new MoveCommand(n, coordinates));
+        MainApplication.undoRedo.add(new MoveCommand(n, coordinates));
         MainApplication.getMap().mapView.repaint();
     }
 

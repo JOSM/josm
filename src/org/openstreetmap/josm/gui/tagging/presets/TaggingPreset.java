@@ -397,7 +397,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
         if (!sel.isEmpty() && answer == DIALOG_ANSWER_APPLY) {
             Command cmd = createCommand(sel, getChangedTags());
             if (cmd != null) {
-                Main.main.undoRedo.add(cmd);
+                MainApplication.undoRedo.add(cmd);
             }
         } else if (answer == DIALOG_ANSWER_NEW_RELATION) {
             final Relation r = new Relation();

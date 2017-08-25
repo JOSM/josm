@@ -65,7 +65,7 @@ public final class AddNodeAction extends JosmAction {
         Node nnew = new Node(coordinates);
 
         // add the node
-        Main.main.undoRedo.add(new AddCommand(nnew));
+        MainApplication.undoRedo.add(new AddCommand(nnew));
         getLayerManager().getEditDataSet().setSelected(nnew);
         MapView mapView = MainApplication.getMap().mapView;
         if (mapView != null && !mapView.getRealBounds().contains(nnew.getCoor())) {

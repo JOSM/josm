@@ -166,7 +166,7 @@ public class AddWayHandler extends RequestHandler {
         }
         allCoordinates.clear();
         commands.add(new AddCommand(way));
-        Main.main.undoRedo.add(new SequenceCommand(tr("Add way"), commands));
+        MainApplication.undoRedo.add(new SequenceCommand(tr("Add way"), commands));
         MainApplication.getLayerManager().getEditDataSet().setSelected(way);
         if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
             AutoScaleAction.autoScale("selection");
