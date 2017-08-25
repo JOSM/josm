@@ -149,8 +149,10 @@ public abstract class Main {
 
     /**
      * The main panel.
+     * @deprecated Use {@link MainApplication#getMainPanel} instead
      * @since 12125
      */
+    @Deprecated
     public MainPanel panel;
 
     /**

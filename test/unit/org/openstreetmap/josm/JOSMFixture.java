@@ -139,6 +139,7 @@ public class JOSMFixture {
             || url.startsWith("https://www.openstreetmap.org") || url.startsWith("https://api.openstreetmap.org");
     }
 
+    @SuppressWarnings("deprecation")
     private void setupGUI() {
         JOSMTestRules.cleanLayerEnvironment();
         assertTrue(MainApplication.getLayerManager().getLayers().isEmpty());
@@ -153,7 +154,7 @@ public class JOSMFixture {
         } else {
             if (Main.main.panel == null) {
                 initMainPanel(false);
-                Main.main.panel = MainApplicationTest.getMainPanel();
+                Main.main.panel = MainApplication.getMainPanel();
             }
             Main.main.panel.reAddListeners();
         }

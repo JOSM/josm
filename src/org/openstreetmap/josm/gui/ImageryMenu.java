@@ -197,7 +197,7 @@ public class ImageryMenu extends JMenu implements LayerChangeListener {
         addDynamicSeparator();
         JMenu subMenu = Main.main.menu.imagerySubMenu;
         int heightUnrolled = 30*(getItemCount()+subMenu.getItemCount());
-        if (heightUnrolled < Main.main.panel.getHeight()) {
+        if (heightUnrolled < MainApplication.getMainPanel().getHeight()) {
             // add all items of submenu if they will fit on screen
             int n = subMenu.getItemCount();
             for (int i = 0; i < n; i++) {
