@@ -136,8 +136,8 @@ public class DownloadDialog extends JDialog {
         PluginHandler.addDownloadSelection(downloadSelections);
 
         // register all default download selections
-        for (int i = 0; i < downloadSelections.size(); i++) {
-            downloadSelections.get(i).addGui(this);
+        for (DownloadSelection s : downloadSelections) {
+            s.addGui(this);
         }
 
         // allow to collapse the panes completely
