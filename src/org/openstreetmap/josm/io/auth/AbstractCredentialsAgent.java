@@ -10,6 +10,12 @@ import java.util.Map;
 import org.openstreetmap.josm.gui.io.CredentialDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 
+/**
+ * Partial implementation of the {@link CredentialsAgent} interface.
+ * <p>
+ * Provides a memory cache for the credentials and means to query the information 
+ * from the user.
+ */
 public abstract class AbstractCredentialsAgent implements CredentialsAgent {
 
     protected Map<RequestorType, PasswordAuthentication> memoryCredentialsCache = new EnumMap<>(RequestorType.class);

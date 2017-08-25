@@ -14,6 +14,10 @@ import javax.swing.JPanel;
 import org.openstreetmap.josm.data.oauth.OsmPrivileges;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 
+/**
+ * Panel letting the user choose from a detailed list of privileges that will be 
+ * requested for the OAuth token.
+ */
 public class OsmPrivilegesPanel extends VerticallyScrollablePanel {
 
     private final JCheckBox cbWriteApi = new JCheckBox();

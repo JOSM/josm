@@ -275,7 +275,10 @@ public class MainApplication extends Main {
         );
     }
 
-    @Override
+    /**
+     * Called once at startup to initialize the main window content.
+     * Should set {@link #menu} and {@link #mainPanel}
+     */
     @SuppressWarnings("deprecation")
     protected void initializeMainWindow() {
         if (mainFrame != null) {

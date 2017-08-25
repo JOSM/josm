@@ -1,6 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.auth;
 
+/**
+ * Exception thrown for errors while handling credentials.
+ * <p>
+ * Missing credentials and discarded password dialog are not considered an error.
+ * At time of writing, methods return <code>null</code> in this case.
+ * @see CredentialsAgent
+ */
 public class CredentialsAgentException extends Exception {
 
     /**

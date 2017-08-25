@@ -1,6 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.oauth;
 
+/**
+ * The type of procedure to use for retrieving OAuth credentials.
+ */
 public enum AuthorizationProcedure {
     /**
      * Run a fully automatic procedure to get an access token from the OSM website.

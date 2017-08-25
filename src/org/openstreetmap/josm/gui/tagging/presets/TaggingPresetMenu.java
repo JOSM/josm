@@ -24,6 +24,11 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 
+/**
+ * Menu that groups several presets from one topic.
+ * <p>
+ * Used, to create the nested directory structure in the preset main menu entry.
+ */
 public class TaggingPresetMenu extends TaggingPreset {
     public JMenu menu; // set by TaggingPresets
 
