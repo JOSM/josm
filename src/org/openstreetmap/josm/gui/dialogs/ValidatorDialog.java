@@ -39,6 +39,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.ValidatorVisitor;
@@ -156,7 +157,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
         fixButton.setEnabled(false);
         buttons.add(fixButton);
 
-        if (ValidatorPreference.PREF_USE_IGNORE.get()) {
+        if (ValidatorPrefHelper.PREF_USE_IGNORE.get()) {
             ignoreButton = new SideButton(new AbstractAction() {
                 {
                     putValue(NAME, tr("Ignore"));
@@ -571,7 +572,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
      * @param newSelection The new selection
      */
     public void updateSelection(Collection<? extends OsmPrimitive> newSelection) {
-        if (!Main.pref.getBoolean(ValidatorPreference.PREF_FILTER_BY_SELECTION, false))
+        if (!Main.pref.getBoolean(ValidatorPrefHelper.PREF_FILTER_BY_SELECTION, false))
             return;
         if (newSelection.isEmpty()) {
             tree.setFilter(null);

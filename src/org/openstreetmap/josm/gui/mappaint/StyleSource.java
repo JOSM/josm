@@ -20,8 +20,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
-import org.openstreetmap.josm.gui.preferences.SourceEntry;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;

@@ -67,9 +67,8 @@ import org.openstreetmap.josm.data.preferences.PreferencesReader;
 import org.openstreetmap.josm.data.preferences.PreferencesWriter;
 import org.openstreetmap.josm.data.preferences.Setting;
 import org.openstreetmap.josm.data.preferences.StringSetting;
-import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
-import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRulesPreference;
-import org.openstreetmap.josm.gui.preferences.validator.ValidatorTagCheckerRulesPreference.RulePrefHelper;
+import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
+import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.io.OfflineAccessException;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -1713,7 +1712,7 @@ public class Preferences {
         if (setting instanceof MapListSetting) {
             List<Map<String, String>> l = new ArrayList<>(((MapListSetting) setting).getValue());
             if (l.stream().noneMatch(x -> x.containsValue(url))) {
-                RulePrefHelper helper = ValidatorTagCheckerRulesPreference.RulePrefHelper.INSTANCE;
+                ValidatorPrefHelper helper = ValidatorPrefHelper.INSTANCE;
                 Optional<ExtendedSourceEntry> val = helper.getDefault().stream().filter(x -> url.equals(x.url)).findFirst();
                 if (val.isPresent()) {
                     l.add(helper.serialize(val.get()));

@@ -24,7 +24,7 @@ import java.util.Set;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
+import org.openstreetmap.josm.data.preferences.sources.PresetPrefHelper;
 import org.openstreetmap.josm.gui.tagging.presets.items.Check;
 import org.openstreetmap.josm.gui.tagging.presets.items.CheckGroup;
 import org.openstreetmap.josm.gui.tagging.presets.items.Combo;
@@ -102,7 +102,7 @@ public final class TaggingPresetReader {
      * @return The set of preset source URLs.
      */
     public static Set<String> getPresetSources() {
-        return new TaggingPresetPreference.PresetPrefHelper().getActiveUrls();
+        return new PresetPrefHelper().getActiveUrls();
     }
 
     private static XmlObjectParser buildParser() {

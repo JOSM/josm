@@ -52,7 +52,7 @@ public final class BugReport implements Serializable {
      * Create a new bug report
      * @param e The {@link ReportedException} to use. No more data should be added after creating the report.
      */
-    BugReport(ReportedException e) {
+    public BugReport(ReportedException e) {
         this.exception = e;
         includeAllStackTraces = e.mayHaveConcurrentSource();
     }

@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.tools.bugreport;
+package org.openstreetmap.josm.gui.bugreport;
 
 import java.awt.Dimension;
 
@@ -8,6 +8,7 @@ import javax.swing.JScrollPane;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * This is a text area that displays the debug text with scroll bars.

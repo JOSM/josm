@@ -26,12 +26,12 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.QuadBuckets;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -137,7 +137,7 @@ public abstract class UnconnectedWays extends Test {
     }
 
     protected static final int UNCONNECTED_WAYS = 1301;
-    protected static final String PREFIX = ValidatorPreference.PREFIX + "." + UnconnectedWays.class.getSimpleName();
+    protected static final String PREFIX = ValidatorPrefHelper.PREFIX + "." + UnconnectedWays.class.getSimpleName();
 
     private Set<MyWaySegment> ways;
     private QuadBuckets<Node> endnodes; // nodes at end of way

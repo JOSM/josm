@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.preferences;
+package org.openstreetmap.josm.data.preferences.sources;
 
 import java.io.File;
 import java.util.Objects;
@@ -12,6 +12,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * A source entry primarily used to save the user's selection of mappaint styles,
  * but also for preset sources or validator rules.
+ * @since 12649 (moved from gui.preferences package)
  * @since 3796
  */
 public class SourceEntry {

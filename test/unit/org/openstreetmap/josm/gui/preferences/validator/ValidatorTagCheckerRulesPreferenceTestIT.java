@@ -11,9 +11,9 @@ import java.util.Collection;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.ParseResult;
-import org.openstreetmap.josm.gui.preferences.SourceEditor.ExtendedSourceEntry;
 
 /**
  * Integration tests of {@link ValidatorTagCheckerRulesPreference} class.

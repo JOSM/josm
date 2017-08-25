@@ -1,8 +1,9 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.preferences;
+package org.openstreetmap.josm.data.preferences.sources;
 
 /**
  * The different types of source entries.
+ * @since 12649 (moved from gui.preferences package)
  * @since 6670
  */
 public enum SourceType {
