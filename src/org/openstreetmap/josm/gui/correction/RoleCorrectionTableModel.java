@@ -6,7 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.List;
 
 import org.openstreetmap.josm.data.correction.RoleCorrection;
-import org.openstreetmap.josm.gui.DefaultNameFormatter;
+import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 
 /**
  * Role correction table model.

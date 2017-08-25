@@ -12,8 +12,8 @@ import javax.swing.border.Border;
 import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.command.conflict.WayNodesConflictResolverCommand;
+import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.gui.DefaultNameFormatter;
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.conflict.pair.AbstractListMergeModel;
 import org.openstreetmap.josm.tools.ImageProvider;

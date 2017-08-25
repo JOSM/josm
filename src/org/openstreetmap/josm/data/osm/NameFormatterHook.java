@@ -1,13 +1,10 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui;
-
-import org.openstreetmap.josm.data.osm.INode;
-import org.openstreetmap.josm.data.osm.IRelation;
-import org.openstreetmap.josm.data.osm.IWay;
+package org.openstreetmap.josm.data.osm;
 
 /**
  * Hooks that allow correcting the name of a OSM primitive
  * @see DefaultNameFormatter
+ * @since 12663 (moved from {@code gui} package)
  */
 public interface NameFormatterHook {
 
