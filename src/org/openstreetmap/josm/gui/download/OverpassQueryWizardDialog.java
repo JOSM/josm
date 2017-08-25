@@ -19,7 +19,6 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.OverpassDownloadAction.OverpassDownloadDialog;
 import org.openstreetmap.josm.data.preferences.CollectionProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -63,16 +62,16 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
             + "#desc {width: 350px;}"
             + "</style>\n";
 
-    private final OverpassDownloadDialog parentDialog;
+    private final OverpassDownloadSource.OverpassDownloadSourcePanel dsPanel;
 
     /**
      * Create a new {@link OverpassQueryWizardDialog}
-     * @param parentDialog The parent this dialog should be displayed for
+     * @param dsPanel The Overpass download source panel.
      */
-    public OverpassQueryWizardDialog(OverpassDownloadDialog parentDialog) {
-        super(parentDialog, tr("Overpass Turbo Query Wizard"),
+    public OverpassQueryWizardDialog(OverpassDownloadSource.OverpassDownloadSourcePanel dsPanel) {
+        super(dsPanel.getParent(), tr("Overpass Turbo Query Wizard"),
                 tr("Build query"), tr("Build query and execute"), tr("Cancel"));
-        this.parentDialog = parentDialog;
+        this.dsPanel = dsPanel;
 
         this.queryWizard = new HistoryComboBox();
         this.overpassQueryBuilder = OverpassTurboQueryWizard.getInstance();
@@ -90,8 +89,8 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
 
         queryWizard.setPossibleItems(OVERPASS_WIZARD_HISTORY.get());
 
-        setCancelButton(CANCEL);
-        setDefaultButton(BUILD_AN_EXECUTE_QUERY + 1); // Build and execute button
+        setCancelButton(CANCEL + 1);
+        setDefaultButton(BUILD_AN_EXECUTE_QUERY + 1);
         setContent(panel, false);
     }
 
@@ -109,7 +108,7 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
                     this.saveHistory();
                     super.buttonAction(BUILD_AN_EXECUTE_QUERY, evt);
 
-                    parentDialog.triggerDownload();
+                    DownloadDialog.getInstance().startDownload();
                 }
                 break;
             default:
@@ -142,7 +141,7 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
         } catch (UncheckedParseException ex) {
             Logging.error(ex);
             JOptionPane.showMessageDialog(
-                    parentDialog,
+                    dsPanel.getParent(),
                     "<html>" +
                      tr("The Overpass wizard could not parse the following query:") +
                      Utils.joinAsHtmlUnorderedList(Collections.singleton(searchTerm)) +
@@ -165,7 +164,7 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
         Optional<String> q = this.tryParseSearchTerm(wizardSearchTerm);
         if (q.isPresent()) {
             String query = q.get();
-            parentDialog.setOverpassQuery(query);
+            dsPanel.setOverpassQuery(query);
 
             return true;
         }

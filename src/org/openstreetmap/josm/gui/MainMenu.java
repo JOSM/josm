@@ -72,7 +72,6 @@ import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.actions.OpenLocationAction;
 import org.openstreetmap.josm.actions.OrthogonalizeAction;
 import org.openstreetmap.josm.actions.OrthogonalizeAction.Undo;
-import org.openstreetmap.josm.actions.OverpassDownloadAction;
 import org.openstreetmap.josm.actions.PasteAction;
 import org.openstreetmap.josm.actions.PasteAtSourcePositionAction;
 import org.openstreetmap.josm.actions.PasteTagsAction;
@@ -159,8 +158,6 @@ public class MainMenu extends JMenuBar {
     public final DownloadAction download = new DownloadAction();
     /** File / Download in current view **/
     public final DownloadOsmInViewAction downloadInView = new DownloadOsmInViewAction();
-    /** File / Download from Overpass API... **/
-    public final OverpassDownloadAction overpassDownload = new OverpassDownloadAction();
     /** File / Download object... **/
     public final DownloadPrimitiveAction downloadPrimitive = new DownloadPrimitiveAction();
     /** File / Download notes in current view **/
@@ -657,7 +654,6 @@ public class MainMenu extends JMenuBar {
         fileMenu.addSeparator();
         add(fileMenu, download);
         add(fileMenu, downloadInView, true);
-        add(fileMenu, overpassDownload, true);
         add(fileMenu, downloadPrimitive);
         add(fileMenu, searchNotes);
         add(fileMenu, downloadNotesInView);
