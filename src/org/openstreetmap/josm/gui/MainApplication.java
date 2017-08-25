@@ -264,7 +264,7 @@ public class MainApplication extends Main {
             new InitializationTask(tr("Updating user interface"), () -> GuiHelper.runInEDTAndWait(() -> {
                 // hooks for the jmapviewer component
                 FeatureAdapter.registerBrowserAdapter(OpenBrowser::displayUrl);
-                FeatureAdapter.registerTranslationAdapter(I18n.getTranslationAdapter());
+                FeatureAdapter.registerTranslationAdapter(I18n::tr);
                 FeatureAdapter.registerLoggingAdapter(name -> Logging.getLogger());
                 // UI update
                 toolbar.refreshToolbarControl();
@@ -709,7 +709,7 @@ public class MainApplication extends Main {
 
         FontsManager.initialize();
 
-        I18n.setupLanguageFonts();
+        GuiHelper.setupLanguageFonts();
 
         Handler.install();
 
@@ -776,6 +776,7 @@ public class MainApplication extends Main {
         setupUIManager();
         toolbar = new ToolbarPreferences();
         Main.toolbar = toolbar;
+        GuiHelper.translateJavaInternalMessages();
         preConstructorInit();
 
         monitor.indeterminateSubTask(tr("Creating main GUI"));

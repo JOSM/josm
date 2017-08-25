@@ -50,7 +50,6 @@ import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -711,7 +710,6 @@ public abstract class Main {
      */
     public static void preConstructorInit() {
         ProjectionPreference.setProjection();
-        I18n.translateJavaInternalMessages();
 
         // init default coordinate format
         try {
