@@ -86,6 +86,7 @@ import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.display.LafPreference;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
+import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitorExecutor;
@@ -776,6 +777,7 @@ public class MainApplication extends Main {
         setupUIManager();
         toolbar = new ToolbarPreferences();
         Main.toolbar = toolbar;
+        ProjectionPreference.setProjection();
         GuiHelper.translateJavaInternalMessages();
         preConstructorInit();
 

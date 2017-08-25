@@ -45,7 +45,6 @@ import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapFrameListener;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
-import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
@@ -709,8 +708,6 @@ public abstract class Main {
      * Should be called before the main constructor to setup some parameter stuff
      */
     public static void preConstructorInit() {
-        ProjectionPreference.setProjection();
-
         // init default coordinate format
         try {
             CoordinateFormat.setCoordinateFormat(CoordinateFormat.valueOf(Main.pref.get("coordinates")));
