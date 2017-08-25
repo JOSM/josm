@@ -580,12 +580,6 @@ public abstract class Main {
         return Collections.emptyList();
     }
 
-    /**
-     * Called once at startup to initialize the main window content.
-     * Should set {@link #menu} and {@link #panel}
-     */
-    protected abstract void initializeMainWindow();
-
     protected static final class InitializationTask implements Callable<Void> {
 
         private final String name;
