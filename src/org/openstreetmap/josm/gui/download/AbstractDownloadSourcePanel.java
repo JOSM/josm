@@ -1,11 +1,12 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.download;
 
-import org.openstreetmap.josm.data.Bounds;
+import java.util.Objects;
 
 import javax.swing.Icon;
 import javax.swing.JPanel;
-import java.util.Objects;
+
+import org.openstreetmap.josm.data.Bounds;
 
 /**
  * GUI representation of {@link DownloadSource} that is shown to the user in
@@ -81,5 +82,14 @@ public abstract class AbstractDownloadSourcePanel<T> extends JPanel {
      */
     public void boudingBoxChanged(Bounds bbox) {
         // override this if the panel must react on bbox changes
+    }
+
+    /**
+     * Tells the {@link DownloadSource} to start downloading
+     * @param currentBounds The bounds to download for
+     * @param downloadSettings The remaining download settings
+     */
+    public void triggerDownload(Bounds currentBounds, DownloadSettings downloadSettings) {
+        getDownloadSource().doDownload(currentBounds, getData(), downloadSettings);
     }
 }
