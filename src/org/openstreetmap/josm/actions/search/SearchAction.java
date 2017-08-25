@@ -46,10 +46,13 @@ import org.openstreetmap.josm.actions.ParameterizedAction;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Filter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.search.PushbackTokenizer;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.SimpleMatchFactory;
+import org.openstreetmap.josm.data.osm.search.SearchMode;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.data.osm.search.SearchSetting;
-import org.openstreetmap.josm.data.osm.search.SearchCompiler;
-import org.openstreetmap.josm.data.osm.search.SearchMode;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -88,6 +91,25 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
     private static final LinkedList<SearchSetting> searchHistory = new LinkedList<>();
     static {
+        SearchCompiler.addMatchFactory(new SimpleMatchFactory() {
+            @Override
+            public Collection<String> getKeywords() {
+                return Arrays.asList("inview", "allinview");
+            }
+
+            @Override
+            public Match get(String keyword, PushbackTokenizer tokenizer) throws SearchParseError {
+                switch(keyword) {
+                case "inview":
+                    return new InView(false);
+                case "allinview":
+                    return new InView(true);
+                default:
+                    throw new IllegalStateException("Not expecting keyword " + keyword);
+                }
+            }
+        });
+
         for (String s: Main.pref.getCollection("search.history", Collections.<String>emptyList())) {
             SearchSetting ss = SearchSetting.readFromString(s);
             if (ss != null) {
