@@ -1,10 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.coor;
 
-import org.openstreetmap.gui.jmapviewer.JMapViewer;
-import org.openstreetmap.gui.jmapviewer.Projected;
-import org.openstreetmap.gui.jmapviewer.interfaces.IProjected;
-
 /**
  * Northing, Easting of the projected coordinates.
  *
@@ -28,14 +24,6 @@ public class EastNorth extends Coordinate {
      */
     public EastNorth(double east, double north) {
         super(east, north);
-    }
-
-    /**
-     * Constructs a new {@code EastNorth} from {@link IProjected}.
-     * @param p projected coordinates
-     */
-    public EastNorth(IProjected p) {
-        super(p.getEast(), p.getNorth());
     }
 
     /**
@@ -185,14 +173,6 @@ public class EastNorth extends Coordinate {
         double ny = -sinPhi * x + cosPhi * y + pivot.north();
         // CHECKSTYLE.ON: SingleSpaceSeparator
         return new EastNorth(nx, ny);
-    }
-
-    /**
-     * Converts this to a {@link IProjected} instance to be used in the {@link JMapViewer}
-     * @return The projected
-     */
-    public IProjected toProjected() {
-        return new Projected(east(), north());
     }
 
     @Override

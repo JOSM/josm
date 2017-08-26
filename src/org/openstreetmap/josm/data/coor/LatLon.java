@@ -22,7 +22,6 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.tools.Logging;
@@ -293,14 +292,6 @@ public class LatLon extends Coordinate implements ILatLon {
         super(coor.lon(), coor.lat());
     }
 
-    /**
-     * Constructs a new object for the given coordinate
-     * @param coor the coordinate
-     */
-    public LatLon(ICoordinate coor) {
-        this(coor.getLat(), coor.getLon());
-    }
-
     @Override
     public double lat() {
         return y;
@@ -565,14 +556,6 @@ public class LatLon extends Coordinate implements ILatLon {
         LatLon that = (LatLon) obj;
         return Double.compare(that.x, x) == 0 &&
                Double.compare(that.y, y) == 0;
-    }
-
-    /**
-     * Converts this latitude/longitude to an instance of {@link ICoordinate}.
-     * @return a {@link ICoordinate} instance of this latitude/longitude
-     */
-    public ICoordinate toCoordinate() {
-        return new org.openstreetmap.gui.jmapviewer.Coordinate(lat(), lon());
     }
 
     private static class LatLonHolder {

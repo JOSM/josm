@@ -128,7 +128,7 @@ public class WMTSTileSourceTest {
     }
 
     private void verifyBounds(Bounds bounds, WMTSTileSource testSource, int z, int x, int y) {
-        LatLon ret = new LatLon(testSource.tileXYToLatLon(x, y, z));
+        LatLon ret = CoordinateConversion.coorToLL(testSource.tileXYToLatLon(x, y, z));
         assertTrue(ret.toDisplayString() + " doesn't lie within: " + bounds.toString(), bounds.contains(ret));
         int tileXmax = testSource.getTileXMax(z);
         int tileYmax = testSource.getTileYMax(z);
@@ -302,7 +302,7 @@ public class WMTSTileSourceTest {
     }
 
     private void verifyTile(LatLon expected, WMTSTileSource source, int x, int y, int z) {
-        LatLon ll = new LatLon(source.tileXYToLatLon(x, y, z));
+        LatLon ll = CoordinateConversion.coorToLL(source.tileXYToLatLon(x, y, z));
         assertEquals("Latitude", expected.lat(), ll.lat(), 1e-05);
         assertEquals("Longitude", expected.lon(), ll.lon(), 1e-05);
     }
@@ -313,8 +313,8 @@ public class WMTSTileSourceTest {
 
     private void verifyMercatorTile(WMTSTileSource testSource, int x, int y, int z, int zoomOffset) {
         TemplatedTMSTileSource verifier = new TemplatedTMSTileSource(testImageryTMS);
-        LatLon result = new LatLon(testSource.tileXYToLatLon(x, y, z));
-        LatLon expected = new LatLon(verifier.tileXYToLatLon(x, y, z + zoomOffset));
+        LatLon result = CoordinateConversion.coorToLL(testSource.tileXYToLatLon(x, y, z));
+        LatLon expected = CoordinateConversion.coorToLL(verifier.tileXYToLatLon(x, y, z + zoomOffset));
         assertEquals("Longitude", LatLon.normalizeLon(expected.lon() - result.lon()), 0.0, 1e-04);
         assertEquals("Latitude", expected.lat(), result.lat(), 1e-04);
     }

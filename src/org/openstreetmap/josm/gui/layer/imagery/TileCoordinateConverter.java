@@ -16,6 +16,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.imagery.CoordinateConversion;
 import org.openstreetmap.josm.data.projection.Projecting;
 import org.openstreetmap.josm.data.projection.ShiftedProjecting;
 import org.openstreetmap.josm.gui.MapView;
@@ -45,11 +46,11 @@ public class TileCoordinateConverter {
     }
 
     private MapViewPoint pos(ICoordinate ll) {
-        return mapView.getState().getPointFor(new LatLon(ll)).add(settings.getDisplacement());
+        return mapView.getState().getPointFor(CoordinateConversion.coorToLL(ll)).add(settings.getDisplacement());
     }
 
     private MapViewPoint pos(IProjected p) {
-        return mapView.getState().getPointFor(new EastNorth(p)).add(settings.getDisplacement());
+        return mapView.getState().getPointFor(CoordinateConversion.projToEn(p)).add(settings.getDisplacement());
     }
 
     /**
@@ -59,7 +60,7 @@ public class TileCoordinateConverter {
      * @return IProjected coordinate as it would e.g. be sent to a WMS server
      */
     public IProjected shiftDisplayToServer(EastNorth en) {
-        return en.subtract(settings.getDisplacement()).toProjected();
+        return CoordinateConversion.enToProj(en.subtract(settings.getDisplacement()));
     }
 
     /**
@@ -101,7 +102,7 @@ public class TileCoordinateConverter {
     public TileXY getTileforPixel(int sx, int sy, int zoom) {
         if (requiresReprojection()) {
             LatLon ll = getProjecting().eastNorth2latlonClamped(mapView.getEastNorth(sx, sy));
-            return tileSource.latLonToTileXY(ll.toCoordinate(), zoom);
+            return tileSource.latLonToTileXY(CoordinateConversion.llToCoor(ll), zoom);
         } else {
             IProjected p = shiftDisplayToServer(mapView.getEastNorth(sx, sy));
             return tileSource.projectedToTileXY(p, zoom);
@@ -164,13 +165,13 @@ public class TileCoordinateConverter {
         if (requiresReprojection()) {
             LatLon topLeft = mapView.getLatLon(0, 0);
             LatLon botRight = mapView.getLatLon(mapView.getWidth(), mapView.getHeight());
-            t1 = tileSource.latLonToTileXY(topLeft.toCoordinate(), zoom);
-            t2 = tileSource.latLonToTileXY(botRight.toCoordinate(), zoom);
+            t1 = tileSource.latLonToTileXY(CoordinateConversion.llToCoor(topLeft), zoom);
+            t2 = tileSource.latLonToTileXY(CoordinateConversion.llToCoor(botRight), zoom);
         } else {
             EastNorth topLeftEN = mapView.getEastNorth(0, 0);
             EastNorth botRightEN = mapView.getEastNorth(mapView.getWidth(), mapView.getHeight());
-            t1 = tileSource.projectedToTileXY(topLeftEN.toProjected(), zoom);
-            t2 = tileSource.projectedToTileXY(botRightEN.toProjected(), zoom);
+            t1 = tileSource.projectedToTileXY(CoordinateConversion.enToProj(topLeftEN), zoom);
+            t2 = tileSource.projectedToTileXY(CoordinateConversion.enToProj(botRightEN), zoom);
         }
         int screenPixels = mapView.getWidth()*mapView.getHeight();
         double tilePixels = Math.abs((t2.getY()-t1.getY())*(t2.getX()-t1.getX())*tileSource.getTileSize()*tileSource.getTileSize());

@@ -109,7 +109,7 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
 
     @Override
     public ICoordinate tileXYToLatLon(int x, int y, int zoom) {
-        return tileProjection.eastNorth2latlon(getTileEastNorth(x, y, zoom)).toCoordinate();
+        return CoordinateConversion.llToCoor(tileProjection.eastNorth2latlon(getTileEastNorth(x, y, zoom)));
     }
 
     private TileXY eastNorthToTileXY(EastNorth enPoint, int zoom) {
@@ -178,7 +178,7 @@ public abstract class AbstractWMSTileSource extends TMSTileSource {
                 anchorPosition.east() + x * scale,
                 anchorPosition.north() - y * scale
                 );
-        return tileProjection.eastNorth2latlon(ret).toCoordinate();
+        return CoordinateConversion.llToCoor(tileProjection.eastNorth2latlon(ret));
     }
 
     protected EastNorth getTileEastNorth(int x, int y, int z) {

@@ -182,8 +182,8 @@ public class PlatformHookWindows implements PlatformHook {
     }
 
     @Override
-    public void startupHook() {
-        checkExpiredJava();
+    public void startupHook(JavaExpirationCallback callback) {
+        checkExpiredJava(callback);
     }
 
     @Override
