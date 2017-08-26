@@ -38,7 +38,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author frsantos
  */
-public class Test extends AbstractVisitor {
+public class Test extends AbstractVisitor implements Comparable<Test> {
 
     protected static final Predicate<OsmPrimitive> IN_DOWNLOADED_AREA = new NotOutsideDataSourceArea();
 
@@ -357,5 +357,10 @@ public class Test extends AbstractVisitor {
         Test test = (Test) obj;
         return Objects.equals(name, test.name) &&
                Objects.equals(description, test.description);
+    }
+
+    @Override
+    public int compareTo(Test t) {
+        return name.compareTo(t.name);
     }
 }

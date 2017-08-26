@@ -8,15 +8,12 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.EnumMap;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
@@ -39,12 +36,12 @@ import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
+import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.data.validation.util.MultipleNameVisitor;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ListenerList;
 
@@ -190,13 +187,7 @@ public class ValidatorTreePanel extends JTree implements Destroyable, DataSetLis
             filterToUse = filterToUse.and(e -> e.getPrimitives().stream().anyMatch(filter::contains));
         }
         Map<Severity, Map<String, Map<String, List<TestError>>>> errorsBySeverityMessageDescription
-            = errors.stream().filter(filterToUse).collect(
-                    Collectors.groupingBy(TestError::getSeverity, () -> new EnumMap<>(Severity.class),
-                            Collectors.groupingBy(TestError::getMessage, () -> new TreeMap<>(AlphanumComparator.getInstance()),
-                                    Collectors.groupingBy(e -> e.getDescription() == null ? "" : e.getDescription(),
-                                            () -> new TreeMap<>(AlphanumComparator.getInstance()),
-                                            Collectors.toList()
-                                    ))));
+            = OsmValidator.getErrorsBySeverityMessageDescription(errors, filterToUse);
 
         final List<TreePath> expandedPaths = new ArrayList<>();
         errorsBySeverityMessageDescription.forEach((severity, errorsByMessageDescription) -> {

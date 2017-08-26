@@ -274,7 +274,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
 
     @Override
     public File createAndOpenSaveFileChooser() {
-        return SaveActionBase.createAndOpenSaveFileChooser(tr("Save GPX file"), NoteExporter.FILE_FILTER);
+        return SaveActionBase.createAndOpenSaveFileChooser(tr("Save Note file"), NoteExporter.FILE_FILTER);
     }
 
     @Override
