@@ -98,7 +98,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             }
 
             @Override
-            public Match get(String keyword, PushbackTokenizer tokenizer) throws SearchParseError {
+            public Match get(String keyword, boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) throws SearchParseError {
                 switch(keyword) {
                 case "inview":
                     return new InView(false);
