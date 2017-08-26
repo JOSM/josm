@@ -1601,7 +1601,7 @@ public class SearchCompiler {
      * @param searchStr the search expression
      * @return a {@link Match} object for the expression
      * @throws SearchParseError if an error has been encountered while compiling
-     * @see #compile(org.openstreetmap.josm.actions.search.SearchAction.SearchSetting)
+     * @see #compile(SearchSetting)
      */
     public static Match compile(String searchStr) throws SearchParseError {
         return new SearchCompiler(false, false,
