@@ -131,7 +131,7 @@ public class ValidatorErrorWriter extends XmlWriter {
     }
 
     private static class ErrorClass {
-        static int idCounter = 0;
+        static int idCounter;
         final Severity severity;
         final String message;
         final int id;
