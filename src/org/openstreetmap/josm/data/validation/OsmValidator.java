@@ -16,11 +16,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -61,6 +65,7 @@ import org.openstreetmap.josm.data.validation.tests.WronglyOrderedWays;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.ValidatorLayer;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
+import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -388,4 +393,21 @@ public final class OsmValidator {
         }
     }
 
+    /**
+     * Groups the given collection of errors by severity, then message, then description.
+     * @param errors list of errors to group
+     * @param filterToUse optional filter
+     * @return collection of errors grouped by severity, then message, then description
+     * @since 12667
+     */
+    public static Map<Severity, Map<String, Map<String, List<TestError>>>> getErrorsBySeverityMessageDescription(
+            Collection<TestError> errors, Predicate<? super TestError> filterToUse) {
+        return errors.stream().filter(filterToUse).collect(
+                Collectors.groupingBy(TestError::getSeverity, () -> new EnumMap<>(Severity.class),
+                        Collectors.groupingBy(TestError::getMessage, () -> new TreeMap<>(AlphanumComparator.getInstance()),
+                                Collectors.groupingBy(e -> e.getDescription() == null ? "" : e.getDescription(),
+                                        () -> new TreeMap<>(AlphanumComparator.getInstance()),
+                                        Collectors.toList()
+                                ))));
+    }
 }

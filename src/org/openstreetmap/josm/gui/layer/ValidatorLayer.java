@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.layer;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Graphics2D;
+import java.io.File;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -14,6 +15,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreeNode;
 
 import org.openstreetmap.josm.actions.RenameLayerAction;
+import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
 import org.openstreetmap.josm.data.validation.OsmValidator;
@@ -28,6 +30,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
+import org.openstreetmap.josm.io.ValidatorErrorExporter;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.MultiMap;
 
@@ -139,7 +142,14 @@ public class ValidatorLayer extends Layer implements LayerChangeListener {
                 SeparatorLayerAction.INSTANCE,
                 new RenameLayerAction(null, this),
                 SeparatorLayerAction.INSTANCE,
-                new LayerListPopup.InfoAction(this) };
+                new LayerListPopup.InfoAction(this),
+                new LayerSaveAsAction(this)
+                };
+    }
+
+    @Override
+    public File createAndOpenSaveFileChooser() {
+        return SaveActionBase.createAndOpenSaveFileChooser(tr("Save Validation errors file"), ValidatorErrorExporter.FILE_FILTER);
     }
 
     @Override
