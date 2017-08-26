@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui;
+package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trc;
@@ -23,15 +23,6 @@ import java.util.stream.Collectors;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.Changeset;
-import org.openstreetmap.josm.data.osm.IPrimitive;
-import org.openstreetmap.josm.data.osm.IRelation;
-import org.openstreetmap.josm.data.osm.NameFormatter;
-import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.OsmUtils;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.history.HistoryNameFormatter;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
@@ -46,6 +37,7 @@ import org.openstreetmap.josm.tools.Utils;
 /**
  * This is the default implementation of a {@link NameFormatter} for names of {@link OsmPrimitive}s
  * and {@link HistoryOsmPrimitive}s.
+ * @since 12663 (moved from {@code gui} package)
  * @since 1990
  */
 public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter {

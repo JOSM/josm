@@ -35,7 +35,6 @@ import org.openstreetmap.josm.data.osm.Tagged;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.search.PushbackTokenizer.Range;
 import org.openstreetmap.josm.data.osm.search.PushbackTokenizer.Token;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.MapCSSParser;
@@ -123,7 +122,7 @@ public class SearchCompiler {
         private final Collection<String> keywords = Arrays.asList("id", "version", "type", "user", "role",
                 "changeset", "nodes", "ways", "tags", "areasize", "waylength", "modified", "deleted", "selected",
                 "incomplete", "untagged", "closed", "new", "indownloadedarea",
-                "allindownloadedarea", "inview", "allinview", "timestamp", "nth", "nth%", "hasRole", "preset");
+                "allindownloadedarea", "timestamp", "nth", "nth%", "hasRole", "preset");
 
         @Override
         public Match get(String keyword, PushbackTokenizer tokenizer) throws SearchParseError {
@@ -146,10 +145,6 @@ public class SearchCompiler {
                 return new InDataSourceArea(false);
             case "allindownloadedarea":
                 return new InDataSourceArea(true);
-            case "inview":
-                return new InView(false);
-            case "allinview":
-                return new InView(true);
             default:
                 if (tokenizer != null) {
                     switch (keyword) {
@@ -1460,14 +1455,14 @@ public class SearchCompiler {
     /**
      * Matches objects within the given bounds.
      */
-    private abstract static class InArea extends Match {
+    public abstract static class InArea extends Match {
 
         protected final boolean all;
 
         /**
          * @param all if true, all way nodes or relation members have to be within source area;if false, one suffices.
          */
-        InArea(boolean all) {
+        protected InArea(boolean all) {
             this.all = all;
         }
 
@@ -1538,29 +1533,6 @@ public class SearchCompiler {
         @Override
         public String toString() {
             return "NotOutsideDataSourceArea";
-        }
-    }
-
-    /**
-     * Matches objects within current map view.
-     */
-    private static class InView extends InArea {
-
-        InView(boolean all) {
-            super(all);
-        }
-
-        @Override
-        protected Collection<Bounds> getBounds(OsmPrimitive primitive) {
-            if (!MainApplication.isDisplayingMapView()) {
-                return null;
-            }
-            return Collections.singleton(MainApplication.getMap().mapView.getRealBounds());
-        }
-
-        @Override
-        public String toString() {
-            return all ? "allinview" : "inview";
         }
     }
 

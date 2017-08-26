@@ -74,6 +74,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @param <T> the type of the list entries
  * @param <C> the type of conflict resolution command
  * @see AbstractListMerger
+ * @see PairTable For the table displaying this model
  */
 public abstract class AbstractListMergeModel<T extends PrimitiveId, C extends ConflictResolveCommand> extends ChangeNotifier {
     /**

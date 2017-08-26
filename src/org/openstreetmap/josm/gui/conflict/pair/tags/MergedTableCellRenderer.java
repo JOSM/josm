@@ -3,9 +3,14 @@ package org.openstreetmap.josm.gui.conflict.pair.tags;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import javax.swing.table.TableCellRenderer;
+
 import org.openstreetmap.josm.gui.conflict.ConflictColors;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 
+/**
+ * This {@link TableCellRenderer} displays the decision a user made regarding a tag conflict
+ */
 public class MergedTableCellRenderer extends TagMergeTableCellRenderer {
     protected void setBackgroundColor(TagMergeItem item, boolean isSelected) {
         if (isSelected) {

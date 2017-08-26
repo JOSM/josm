@@ -12,6 +12,9 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTable;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTableModel;
 
+/**
+ * This is the base class for all tables that display an {@link AbstractListMergeModel}.
+ */
 public abstract class PairTable extends OsmPrimitivesTable {
 
     private final transient AbstractListMergeModel<? extends PrimitiveId, ? extends ConflictResolveCommand> model;
