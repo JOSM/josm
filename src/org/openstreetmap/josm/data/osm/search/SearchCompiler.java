@@ -83,18 +83,15 @@ public class SearchCompiler {
     private static Map<String, UnaryMatchFactory> unaryMatchFactoryMap = new HashMap<>();
     private static Map<String, BinaryMatchFactory> binaryMatchFactoryMap = new HashMap<>();
 
+    static {
+        addMatchFactory(new CoreSimpleMatchFactory());
+        addMatchFactory(new CoreUnaryMatchFactory());
+    }
+
     public SearchCompiler(boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) {
         this.caseSensitive = caseSensitive;
         this.regexSearch = regexSearch;
         this.tokenizer = tokenizer;
-
-        // register core match factories at first instance, so plugins should never be able to generate a NPE
-        if (simpleMatchFactoryMap.isEmpty()) {
-            addMatchFactory(new CoreSimpleMatchFactory());
-        }
-        if (unaryMatchFactoryMap.isEmpty()) {
-            addMatchFactory(new CoreUnaryMatchFactory());
-        }
     }
 
     /**
@@ -118,14 +115,14 @@ public class SearchCompiler {
         }
     }
 
-    public class CoreSimpleMatchFactory implements SimpleMatchFactory {
+    public static class CoreSimpleMatchFactory implements SimpleMatchFactory {
         private final Collection<String> keywords = Arrays.asList("id", "version", "type", "user", "role",
                 "changeset", "nodes", "ways", "tags", "areasize", "waylength", "modified", "deleted", "selected",
                 "incomplete", "untagged", "closed", "new", "indownloadedarea",
                 "allindownloadedarea", "timestamp", "nth", "nth%", "hasRole", "preset");
 
         @Override
-        public Match get(String keyword, PushbackTokenizer tokenizer) throws SearchParseError {
+        public Match get(String keyword, boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) throws SearchParseError {
             switch(keyword) {
             case "modified":
                 return new Modified();
@@ -247,7 +244,7 @@ public class SearchCompiler {
     }
 
     public interface SimpleMatchFactory extends MatchFactory {
-        Match get(String keyword, PushbackTokenizer tokenizer) throws SearchParseError;
+        Match get(String keyword, boolean caseSensitive, boolean regexSearch, PushbackTokenizer tokenizer) throws SearchParseError;
     }
 
     public interface UnaryMatchFactory extends MatchFactory {
@@ -1758,7 +1755,7 @@ public class SearchCompiler {
                 // see if we have a Match that takes a data parameter
                 SimpleMatchFactory factory = simpleMatchFactoryMap.get(key);
                 if (factory != null)
-                    return factory.get(key, tokenizer);
+                    return factory.get(key, caseSensitive, regexSearch, tokenizer);
 
                 UnaryMatchFactory unaryFactory = unaryMatchFactoryMap.get(key);
                 if (unaryFactory != null)
@@ -1772,7 +1769,7 @@ public class SearchCompiler {
             else {
                 SimpleMatchFactory factory = simpleMatchFactoryMap.get(key);
                 if (factory != null)
-                    return factory.get(key, null);
+                    return factory.get(key, caseSensitive, regexSearch, null);
 
                 UnaryMatchFactory unaryFactory = unaryMatchFactoryMap.get(key);
                 if (unaryFactory != null)
