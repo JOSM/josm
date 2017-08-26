@@ -108,7 +108,7 @@ public abstract class Main {
      * @deprecated use {@link MainApplication#worker} instead
      */
     @Deprecated
-    public static final ExecutorService worker = MainApplication.worker;
+    public static ExecutorService worker;
 
     /**
      * Global application preferences
