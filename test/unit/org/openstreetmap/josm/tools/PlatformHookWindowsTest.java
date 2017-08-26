@@ -43,7 +43,7 @@ public class PlatformHookWindowsTest {
      */
     @Test
     public void testStartupHook() {
-        hook.startupHook();
+        hook.startupHook((a,b,c,d) -> System.out.println("callback"));
     }
 
     /**

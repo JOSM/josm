@@ -47,7 +47,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
     }
 
     @Override
-    public void startupHook() {
+    public void startupHook(JavaExpirationCallback callback) {
         // Here we register callbacks for the menu entries in the system menu and file opening through double-click
         // http://openjdk.java.net/jeps/272
         // https://bugs.openjdk.java.net/browse/JDK-8048731
@@ -78,7 +78,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
             // We'll just ignore this for now. The user will still be able to close JOSM by closing all its windows.
             Logging.warn("Failed to register with OSX: " + ex);
         }
-        checkExpiredJava();
+        checkExpiredJava(callback);
     }
 
     /**
