@@ -807,11 +807,11 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     public ICoordinate tileXYToLatLon(int x, int y, int zoom) {
         TileMatrix matrix = getTileMatrix(zoom);
         if (matrix == null) {
-            return tileProjection.getWorldBoundsLatLon().getCenter().toCoordinate();
+            return CoordinateConversion.llToCoor(tileProjection.getWorldBoundsLatLon().getCenter());
         }
         double scale = matrix.scaleDenominator * this.crsScale;
         EastNorth ret = new EastNorth(matrix.topLeftCorner.east() + x * scale, matrix.topLeftCorner.north() - y * scale);
-        return tileProjection.eastNorth2latlon(ret).toCoordinate();
+        return CoordinateConversion.llToCoor(tileProjection.eastNorth2latlon(ret));
     }
 
     @Override
@@ -1013,10 +1013,13 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
                 -(projected.getNorth() - matrix.topLeftCorner.north()) / scale);
     }
 
+    private EastNorth tileToEastNorth(int x, int y, int z) {
+        return CoordinateConversion.projToEn(this.tileXYtoProjected(x, y, z));
+    }
+
     private ProjectionBounds getTileProjectionBounds(Tile tile) {
-        ProjectionBounds pb = new ProjectionBounds(new EastNorth(
-                this.tileXYtoProjected(tile.getXtile(), tile.getYtile(), tile.getZoom())));
-        pb.extend(new EastNorth(this.tileXYtoProjected(tile.getXtile() + 1, tile.getYtile() + 1, tile.getZoom())));
+        ProjectionBounds pb = new ProjectionBounds(tileToEastNorth(tile.getXtile(), tile.getYtile(), tile.getZoom()));
+        pb.extend(tileToEastNorth(tile.getXtile() + 1, tile.getYtile() + 1, tile.getZoom()));
         return pb;
     }
 
@@ -1024,8 +1027,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
     public boolean isInside(Tile inner, Tile outer) {
         ProjectionBounds pbInner = getTileProjectionBounds(inner);
         ProjectionBounds pbOuter = getTileProjectionBounds(outer);
-        // a little tolerance, for when inner tile touches the border of the
-        // outer tile
+        // a little tolerance, for when inner tile touches the border of the outer tile
         double epsilon = 1e-7 * (pbOuter.maxEast - pbOuter.minEast);
         return pbOuter.minEast <= pbInner.minEast + epsilon &&
                 pbOuter.minNorth <= pbInner.minNorth + epsilon &&

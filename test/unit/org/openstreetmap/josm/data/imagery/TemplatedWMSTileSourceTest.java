@@ -158,7 +158,7 @@ public class TemplatedWMSTileSourceTest {
         assertEquals(expected.getLat(), result.lat(), 1e-4);
         assertEquals(LatLon.normalizeLon(expected.getLon() - result.lon()), 0.0, 1e-4);
         LatLon tileCenter = new Bounds(result, getTileLatLon(source, x+1, y+1, z)).getCenter();
-        TileXY backwardsResult = source.latLonToTileXY(tileCenter.toCoordinate(), z);
+        TileXY backwardsResult = source.latLonToTileXY(CoordinateConversion.llToCoor(tileCenter), z);
         assertEquals(x, backwardsResult.getXIndex());
         assertEquals(y, backwardsResult.getYIndex());
     }
@@ -178,7 +178,7 @@ public class TemplatedWMSTileSourceTest {
                 Main.getProjection().getWorldBoundsLatLon().contains(location)
                 );
 
-        TileXY tileIndex = source.latLonToTileXY(location.toCoordinate(), z);
+        TileXY tileIndex = source.latLonToTileXY(CoordinateConversion.llToCoor(location), z);
 
         assertTrue("X index: " + tileIndex.getXIndex() + " greater than tileXmax: " + source.getTileXMax(z) + " at zoom: " + z,
                 tileIndex.getXIndex() <= source.getTileXMax(z));
@@ -212,7 +212,7 @@ public class TemplatedWMSTileSourceTest {
     }
 
     private LatLon getTileLatLon(TemplatedWMSTileSource source, int x, int y, int z) {
-        return new LatLon(source.tileXYToLatLon(x, y, z));
+        return CoordinateConversion.coorToLL(source.tileXYToLatLon(x, y, z));
     }
 
     private void verifyTileSquarness(TemplatedWMSTileSource source, int x, int y, int z) {

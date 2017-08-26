@@ -10,6 +10,7 @@ import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.imagery.CoordinateConversion;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -96,6 +97,10 @@ public class ReprojectionTile extends Tile {
         this.maxZoomReached = false;
     }
 
+    private EastNorth tileToEastNorth(int x, int y, int z) {
+        return CoordinateConversion.projToEn(source.tileXYtoProjected(x, y, z));
+    }
+
     /**
      * Transforms the given image.
      * @param imageIn tile image to reproject
@@ -117,8 +122,8 @@ public class ReprojectionTile extends Tile {
 
         Projection projCurrent = Main.getProjection();
         Projection projServer = Projections.getProjectionByCode(source.getServerCRS());
-        EastNorth en00Server = new EastNorth(source.tileXYtoProjected(xtile, ytile, zoom));
-        EastNorth en11Server = new EastNorth(source.tileXYtoProjected(xtile + 1, ytile + 1, zoom));
+        EastNorth en00Server = tileToEastNorth(xtile, ytile, zoom);
+        EastNorth en11Server = tileToEastNorth(xtile + 1, ytile + 1, zoom);
         ProjectionBounds pbServer = new ProjectionBounds(en00Server);
         pbServer.extend(en11Server);
         // find east-north rectangle in current projection, that will fully contain the tile

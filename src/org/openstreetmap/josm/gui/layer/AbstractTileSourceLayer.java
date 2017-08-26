@@ -79,6 +79,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.imagery.CoordinateConversion;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.imagery.TMSCachedTileLoader;
@@ -1134,7 +1135,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
     }
 
     private ICoordinate getShiftedCoord(EastNorth en) {
-        return getShiftedLatLon(en).toCoordinate();
+        return CoordinateConversion.llToCoor(getShiftedLatLon(en));
     }
 
     private final TileSet nullTileSet = new TileSet();
@@ -1283,17 +1284,17 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
         if (zoom == 0)
             return new TileSet();
         TileXY t1, t2;
+        IProjected topLeftUnshifted = coordinateConverter.shiftDisplayToServer(bounds.getMin());
+        IProjected botRightUnshifted = coordinateConverter.shiftDisplayToServer(bounds.getMax());
         if (coordinateConverter.requiresReprojection()) {
             Projection projServer = Projections.getProjectionByCode(tileSource.getServerCRS());
             ProjectionBounds projBounds = new ProjectionBounds(
-                    new EastNorth(coordinateConverter.shiftDisplayToServer(bounds.getMin())),
-                    new EastNorth(coordinateConverter.shiftDisplayToServer(bounds.getMax())));
+                    CoordinateConversion.projToEn(topLeftUnshifted),
+                    CoordinateConversion.projToEn(botRightUnshifted));
             ProjectionBounds bbox = projServer.getEastNorthBoundsBox(projBounds, Main.getProjection());
-            t1 = tileSource.projectedToTileXY(bbox.getMin().toProjected(), zoom);
-            t2 = tileSource.projectedToTileXY(bbox.getMax().toProjected(), zoom);
+            t1 = tileSource.projectedToTileXY(CoordinateConversion.enToProj(bbox.getMin()), zoom);
+            t2 = tileSource.projectedToTileXY(CoordinateConversion.enToProj(bbox.getMax()), zoom);
         } else {
-            IProjected topLeftUnshifted = coordinateConverter.shiftDisplayToServer(bounds.getMin());
-            IProjected botRightUnshifted = coordinateConverter.shiftDisplayToServer(bounds.getMax());
             t1 = tileSource.projectedToTileXY(topLeftUnshifted, zoom);
             t2 = tileSource.projectedToTileXY(botRightUnshifted, zoom);
         }
@@ -1744,7 +1745,7 @@ implements ImageObserver, TileLoaderListener, ZoomChangeListener, FilterChangeLi
                 (o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getKey(), o2.getKey()));
         for (LatLon point: points) {
             TileXY minTile = tileSource.latLonToTileXY(point.lat() - bufferY, point.lon() - bufferX, currentZoomLevel);
-            TileXY curTile = tileSource.latLonToTileXY(point.toCoordinate(), currentZoomLevel);
+            TileXY curTile = tileSource.latLonToTileXY(CoordinateConversion.llToCoor(point), currentZoomLevel);
             TileXY maxTile = tileSource.latLonToTileXY(point.lat() + bufferY, point.lon() + bufferX, currentZoomLevel);
 
             // take at least one tile of buffer
