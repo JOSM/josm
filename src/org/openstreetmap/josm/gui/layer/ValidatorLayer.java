@@ -26,11 +26,11 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.io.importexport.ValidatorErrorExporter;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
-import org.openstreetmap.josm.io.ValidatorErrorExporter;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.MultiMap;
 

@@ -16,17 +16,17 @@ import java.util.ServiceConfigurationError;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.io.importexport.AllFormatsImporter;
+import org.openstreetmap.josm.gui.io.importexport.FileExporter;
+import org.openstreetmap.josm.gui.io.importexport.FileImporter;
+import org.openstreetmap.josm.gui.io.importexport.GpxImporter;
+import org.openstreetmap.josm.gui.io.importexport.JpgImporter;
+import org.openstreetmap.josm.gui.io.importexport.NMEAImporter;
+import org.openstreetmap.josm.gui.io.importexport.NoteImporter;
+import org.openstreetmap.josm.gui.io.importexport.OsmChangeImporter;
+import org.openstreetmap.josm.gui.io.importexport.OsmImporter;
+import org.openstreetmap.josm.gui.io.importexport.WMSLayerImporter;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
-import org.openstreetmap.josm.io.AllFormatsImporter;
-import org.openstreetmap.josm.io.FileExporter;
-import org.openstreetmap.josm.io.FileImporter;
-import org.openstreetmap.josm.io.GpxImporter;
-import org.openstreetmap.josm.io.JpgImporter;
-import org.openstreetmap.josm.io.NMEAImporter;
-import org.openstreetmap.josm.io.NoteImporter;
-import org.openstreetmap.josm.io.OsmChangeImporter;
-import org.openstreetmap.josm.io.OsmImporter;
-import org.openstreetmap.josm.io.WMSLayerImporter;
 import org.openstreetmap.josm.io.session.SessionImporter;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -98,14 +98,14 @@ public class ExtensionFileFilter extends FileFilter implements java.io.FileFilte
         exporters = new ArrayList<>();
 
         final List<Class<? extends FileExporter>> exporterClasses = Arrays.asList(
-                org.openstreetmap.josm.io.GpxExporter.class,
-                org.openstreetmap.josm.io.OsmExporter.class,
-                org.openstreetmap.josm.io.OsmGzipExporter.class,
-                org.openstreetmap.josm.io.OsmBzip2Exporter.class,
-                org.openstreetmap.josm.io.GeoJSONExporter.class,
-                org.openstreetmap.josm.io.WMSLayerExporter.class,
-                org.openstreetmap.josm.io.NoteExporter.class,
-                org.openstreetmap.josm.io.ValidatorErrorExporter.class
+                org.openstreetmap.josm.gui.io.importexport.GpxExporter.class,
+                org.openstreetmap.josm.gui.io.importexport.OsmExporter.class,
+                org.openstreetmap.josm.gui.io.importexport.OsmGzipExporter.class,
+                org.openstreetmap.josm.gui.io.importexport.OsmBzip2Exporter.class,
+                org.openstreetmap.josm.gui.io.importexport.GeoJSONExporter.class,
+                org.openstreetmap.josm.gui.io.importexport.WMSLayerExporter.class,
+                org.openstreetmap.josm.gui.io.importexport.NoteExporter.class,
+                org.openstreetmap.josm.gui.io.importexport.ValidatorErrorExporter.class
         );
 
         for (final Class<? extends FileExporter> exporterClass : exporterClasses) {

@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.io;
+package org.openstreetmap.josm.gui.io.importexport;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.io.GeoJSONWriter;
 
 /**
  * Exporter to write map data to a GeoJSON file.

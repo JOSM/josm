@@ -30,6 +30,7 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListPopup;
+import org.openstreetmap.josm.gui.io.importexport.GpxImporter;
 import org.openstreetmap.josm.gui.layer.gpx.ChooseTrackVisibilityAction;
 import org.openstreetmap.josm.gui.layer.gpx.ConvertToDataLayerAction;
 import org.openstreetmap.josm.gui.layer.gpx.CustomizeDrawingAction;
@@ -40,7 +41,6 @@ import org.openstreetmap.josm.gui.layer.gpx.ImportAudioAction;
 import org.openstreetmap.josm.gui.layer.gpx.ImportImagesAction;
 import org.openstreetmap.josm.gui.layer.gpx.MarkersFromNamedPointsAction;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
-import org.openstreetmap.josm.io.GpxImporter;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.date.DateUtils;
 

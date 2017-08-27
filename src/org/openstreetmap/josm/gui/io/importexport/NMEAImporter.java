@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.io;
+package org.openstreetmap.josm.gui.io.importexport;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -15,11 +15,12 @@ import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.gui.io.importexport.GpxImporter.GpxImporterData;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.io.GpxImporter.GpxImporterData;
+import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.nmea.NmeaReader;
 
 /**

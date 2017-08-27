@@ -15,11 +15,11 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
+import org.openstreetmap.josm.gui.io.importexport.JpgImporter;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.FileChooserManager;
-import org.openstreetmap.josm.io.JpgImporter;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
