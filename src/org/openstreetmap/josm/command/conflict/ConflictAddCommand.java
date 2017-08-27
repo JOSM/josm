@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.conflict.Conflict;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -37,6 +38,17 @@ public class ConflictAddCommand extends Command {
         this.conflict = conflict;
     }
 
+    /**
+     * Constructs a new {@code ConflictAddCommand}.
+     * @param ds the data set. Must not be null.
+     * @param conflict the conflict to add
+     * @since 12672
+     */
+    public ConflictAddCommand(DataSet ds, Conflict<? extends OsmPrimitive> conflict) {
+        super(ds);
+        this.conflict = conflict;
+    }
+
     protected void warnBecauseOfDoubleConflict() {
         JOptionPane.showMessageDialog(
                 Main.parent,
@@ -54,7 +66,7 @@ public class ConflictAddCommand extends Command {
     @Override
     public boolean executeCommand() {
         try {
-            getLayer().getConflicts().add(conflict);
+            getAffectedDataSet().getConflicts().add(conflict);
         } catch (IllegalStateException e) {
             Logging.error(e);
             warnBecauseOfDoubleConflict();
@@ -71,7 +83,7 @@ public class ConflictAddCommand extends Command {
             ));
             return;
         }
-        getLayer().getConflicts().remove(conflict);
+        getAffectedDataSet().getConflicts().remove(conflict);
     }
 
     @Override

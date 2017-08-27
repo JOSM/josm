@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.actions.upload;
+package org.openstreetmap.josm.data.osm;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -8,10 +8,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
-import org.openstreetmap.josm.data.osm.Relation;
-
 /**
  * This is an exception that is thrown if the user attempts to upload a list of relations with a cyclic dependency in them
+ * @since 12673 (moved from {@code action.upload} package)
  */
 public class CyclicUploadDependencyException extends Exception {
     private final List<Relation> cycle;

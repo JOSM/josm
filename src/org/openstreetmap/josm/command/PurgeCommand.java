@@ -121,12 +121,10 @@ public class PurgeCommand extends Command {
                     osm.load(empty);
                 } else {
                     getAffectedDataSet().removePrimitive(osm);
-                    if (getLayer() != null) {
-                        Conflict<?> conflict = getLayer().getConflicts().getConflictForMy(osm);
-                        if (conflict != null) {
-                            purgedConflicts.add(conflict);
-                            getLayer().getConflicts().remove(conflict);
-                        }
+                    Conflict<?> conflict = getAffectedDataSet().getConflicts().getConflictForMy(osm);
+                    if (conflict != null) {
+                        purgedConflicts.add(conflict);
+                        getAffectedDataSet().getConflicts().remove(conflict);
                     }
                 }
             }
@@ -156,7 +154,7 @@ public class PurgeCommand extends Command {
         }
 
         for (Conflict<?> conflict : purgedConflicts) {
-            getLayer().getConflicts().add(conflict);
+            getAffectedDataSet().getConflicts().add(conflict);
         }
     }
 

@@ -63,7 +63,7 @@ public class VersionConflictResolveCommand extends ConflictResolveCommand {
                 conflict.getMy().setVisible(conflict.getTheir().isVisible());
             }
         }
-        getLayer().getConflicts().remove(conflict);
+        getAffectedDataSet().getConflicts().remove(conflict);
         rememberConflict(conflict);
         return true;
     }

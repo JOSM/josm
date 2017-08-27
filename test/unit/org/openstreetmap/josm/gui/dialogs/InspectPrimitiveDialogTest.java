@@ -46,8 +46,7 @@ public class InspectPrimitiveDialogTest {
     @Test
     public void testBuildDataText() {
         DataSet ds = new DataSet();
-        OsmDataLayer layer = new OsmDataLayer(ds, "", null);
-        assertEquals("", InspectPrimitiveDialog.buildDataText(layer, new ArrayList<>(ds.allPrimitives())));
+        assertEquals("", InspectPrimitiveDialog.buildDataText(ds, new ArrayList<>(ds.allPrimitives())));
         Node n = new Node(LatLon.ZERO);
         n.setOsmId(1, 1);
         ds.addPrimitive(n);
@@ -60,7 +59,7 @@ public class InspectPrimitiveDialogTest {
                 "  In changeset: 0\n" +
                 "  Coordinates: 0.0, 0.0\n" +
                 "  Coordinates (projected): 0.0, -7.081154551613622E-10\n" +
-                "\n", InspectPrimitiveDialog.buildDataText(layer, new ArrayList<>(ds.allPrimitives())));
+                "\n", InspectPrimitiveDialog.buildDataText(ds, new ArrayList<>(ds.allPrimitives())));
     }
 
     /**

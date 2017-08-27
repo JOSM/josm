@@ -272,11 +272,10 @@ public class ProjectionPreference implements SubPreferenceSetting {
     }
 
     private static String projectionChoice;
-    
+
     private static final StringProperty PROP_PROJECTION_DEFAULT = new StringProperty("projection.default", mercator.getId());
     private static final StringProperty PROP_COORDINATES = new StringProperty("coordinates", null);
     private static final CollectionProperty PROP_SUB_PROJECTION_DEFAULT = new CollectionProperty("projection.default.sub", null);
-    public static final StringProperty PROP_SYSTEM_OF_MEASUREMENT = new StringProperty("system_of_measurement", "Metric");
     private static final String[] unitsValues = ALL_SYSTEMS.keySet().toArray(new String[ALL_SYSTEMS.size()]);
     private static final String[] unitsValuesTr = new String[unitsValues.length];
     static {
@@ -338,7 +337,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
         }
 
         for (int i = 0; i < unitsValues.length; ++i) {
-            if (unitsValues[i].equals(PROP_SYSTEM_OF_MEASUREMENT.get())) {
+            if (unitsValues[i].equals(SystemOfMeasurement.PROP_SYSTEM_OF_MEASUREMENT.get())) {
                 unitsCombo.setSelectedIndex(i);
                 break;
             }

@@ -12,16 +12,22 @@ import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
+import org.openstreetmap.josm.data.preferences.StringProperty;
 
 /**
  * A system of units used to express length and area measurements.
  * <p>
- * This class also manages one globally set system of measurement stored in the {@link ProjectionPreference}
+ * This class also manages one globally set system of measurement stored in the {@code ProjectionPreference}
  * @since 3406 (creation)
  * @since 6992 (extraction in this package)
  */
 public class SystemOfMeasurement {
+
+    /**
+     * Preferences entry for system of measurement.
+     * @since 12674 (moved from ProjectionPreference)
+     */
+    public static final StringProperty PROP_SYSTEM_OF_MEASUREMENT = new StringProperty("system_of_measurement", "Metric");
 
     /**
      * Interface to notify listeners of the change of the system of measurement.
@@ -115,7 +121,7 @@ public class SystemOfMeasurement {
      * @since 8554
      */
     public static SystemOfMeasurement getSystemOfMeasurement() {
-        return Optional.ofNullable(SystemOfMeasurement.ALL_SYSTEMS.get(ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get()))
+        return Optional.ofNullable(SystemOfMeasurement.ALL_SYSTEMS.get(PROP_SYSTEM_OF_MEASUREMENT.get()))
                 .orElse(SystemOfMeasurement.METRIC);
     }
 
@@ -129,8 +135,8 @@ public class SystemOfMeasurement {
         if (!SystemOfMeasurement.ALL_SYSTEMS.containsKey(somKey)) {
             throw new IllegalArgumentException("Invalid system of measurement: "+somKey);
         }
-        String oldKey = ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get();
-        if (ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.put(somKey)) {
+        String oldKey = PROP_SYSTEM_OF_MEASUREMENT.get();
+        if (PROP_SYSTEM_OF_MEASUREMENT.put(somKey)) {
             fireSoMChanged(oldKey, somKey);
         }
     }

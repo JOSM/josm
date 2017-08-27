@@ -10,12 +10,12 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.BBox;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -28,10 +28,10 @@ public class InspectPrimitiveDataText {
     private static final char NL = '\n';
 
     private final StringBuilder s = new StringBuilder();
-    private final OsmDataLayer layer;
+    private final DataSet ds;
 
-    InspectPrimitiveDataText(OsmDataLayer layer) {
-        this.layer = layer;
+    InspectPrimitiveDataText(DataSet ds) {
+        this.ds = ds;
     }
 
     private InspectPrimitiveDataText add(String title, String... values) {
@@ -225,7 +225,7 @@ public class InspectPrimitiveDataText {
     }
 
     void addConflicts(OsmPrimitive o) {
-        Conflict<?> c = layer.getConflicts().getConflictForMy(o);
+        Conflict<?> c = ds.getConflicts().getConflictForMy(o);
         if (c != null) {
             add(tr("In conflict with: "));
             addNameAndId(c.getTheir());
