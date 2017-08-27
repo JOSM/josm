@@ -26,10 +26,18 @@ public abstract class AbstractProgressMonitor implements ProgressMonitor {
 
     private final CancelHandler cancelHandler;
 
-    protected enum State {
+    /**
+     * Progress monitor state
+     * @since 12675 (visibility)
+     */
+    public enum State {
+        /** Initialization. Next valid states are {@link #IN_TASK} or {@link #FINISHED} */
         INIT,
+        /** In task. Next valid states are {@link #IN_SUBTASK} or {@link #FINISHED} */
         IN_TASK,
+        /** In subtask. Next valid states is {@link #IN_TASK} */
         IN_SUBTASK,
+        /** Finished. Can't change state after that */
         FINISHED
     }
 

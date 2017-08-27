@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.progress;
+package org.openstreetmap.josm.gui.progress.swing;
 
 import java.awt.Component;
 import java.awt.GraphicsEnvironment;
@@ -15,6 +15,10 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.MapStatus.BackgroundProgressMonitor;
 import org.openstreetmap.josm.gui.PleaseWaitDialog;
+import org.openstreetmap.josm.gui.progress.AbstractProgressMonitor;
+import org.openstreetmap.josm.gui.progress.CancelHandler;
+import org.openstreetmap.josm.gui.progress.ProgressException;
+import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
@@ -22,6 +26,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
  * A progress monitor used in {@link org.openstreetmap.josm.gui.PleaseWaitRunnable}.
  * <p>
  * Progress is displayed in a dialog window ({@link PleaseWaitDialog}).
+ * @since 12675 (moved from {@code gui.progress} package}
  */
 public class PleaseWaitProgressMonitor extends AbstractProgressMonitor {
 

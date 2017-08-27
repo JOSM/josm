@@ -1,9 +1,13 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.progress;
+package org.openstreetmap.josm.gui.progress.swing;
 
 import java.awt.Component;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.progress.AbstractProgressMonitor;
+import org.openstreetmap.josm.gui.progress.CancelHandler;
+import org.openstreetmap.josm.gui.progress.ProgressRenderer;
+import org.openstreetmap.josm.gui.progress.ProgressTaskId;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
@@ -11,7 +15,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * SwingRenderingProgressMonitor is progress monitor which delegates the rendering
  * of progress information to a {@link ProgressRenderer}.
  * Methods of the progress renderer are always called on the Swing EDT.
- *
+ * @since 12675 (moved from {@code gui.progress} package}
  */
 public class SwingRenderingProgressMonitor extends AbstractProgressMonitor {
     private static final int PROGRESS_BAR_MAX = 100;

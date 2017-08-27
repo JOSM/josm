@@ -90,7 +90,7 @@ import org.openstreetmap.josm.gui.preferences.map.MapPaintPreference;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.preferences.server.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.gui.preferences.server.ProxyPreference;
-import org.openstreetmap.josm.gui.progress.ProgressMonitorExecutor;
+import org.openstreetmap.josm.gui.progress.swing.ProgressMonitorExecutor;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
