@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.progress;
+package org.openstreetmap.josm.gui.progress.swing;
 
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -12,6 +12,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * Similar to Executors.newSingleThreadExecutor(), but displays the
  * progress monitor whenever a new task is executed.
+ * @since 12675 (moved from {@code gui.progress} package}
  */
 public class ProgressMonitorExecutor extends ThreadPoolExecutor {
 

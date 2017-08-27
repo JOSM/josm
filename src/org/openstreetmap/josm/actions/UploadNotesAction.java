@@ -9,7 +9,7 @@ import java.util.List;
 import org.openstreetmap.josm.actions.upload.UploadNotesTask;
 import org.openstreetmap.josm.data.osm.NoteData;
 import org.openstreetmap.josm.gui.layer.NoteLayer;
-import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
+import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 

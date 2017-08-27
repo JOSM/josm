@@ -102,7 +102,6 @@ node[map_type                  ][information!=map],
 *[site_type                    ][historic!=archaeological_site],
 *[artwork_type                 ][tourism!=artwork],
 *[castle_type                  ][historic!=castle],
-*[bridge:movable               ][bridge!=movable],
 *[parking                      ][amenity!~/^(parking|parking_space|parking_entrance|motorcycle_parking)$/],
 way[cutline                    ][man_made!=cutline],
 *[bunker_type                  ][military!=bunker] {
@@ -111,6 +110,7 @@ way[cutline                    ][man_made!=cutline],
 }
 
 /* {0.key} without {1.tag} or {2.tag} */
+*[bridge:movable               ][bridge!=movable][man_made!=bridge],
 *[substation                   ][power!=substation][pipeline!=substation],
 *[reservoir_type               ][landuse!=reservoir][water!=reservoir] {
   throwWarning: tr("{0} without {1} or {2}", "{0.key}", "{1.tag}", "{2.tag}");

@@ -20,7 +20,7 @@ import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor.ProgressMonitorDialog;
+import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor.ProgressMonitorDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.tools.GBC;

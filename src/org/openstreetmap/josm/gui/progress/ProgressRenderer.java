@@ -1,6 +1,8 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.progress;
 
+import org.openstreetmap.josm.gui.progress.swing.SwingRenderingProgressMonitor;
+
 /**
  * Swing components can implement this interface and use a {@link SwingRenderingProgressMonitor}
  * to render progress information.
