@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.tools;
+package org.openstreetmap.josm.gui.util;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -19,11 +19,14 @@ import java.util.regex.Pattern;
 import javax.swing.JComponent;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This is a helper class for persisting the geometry of a JOSM window to the preference store
  * and for restoring it from the preference store.
+ * @since 12678 (moved from {@code tools} package
  * @since 2008
  */
 public class WindowGeometry {

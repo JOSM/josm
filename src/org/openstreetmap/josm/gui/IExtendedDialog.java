@@ -6,7 +6,7 @@ import java.awt.Component;
 import javax.swing.Icon;
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.tools.WindowGeometry;
+import org.openstreetmap.josm.gui.util.WindowGeometry;
 
 /**
  * Extracted interface of {@link ExtendedDialog} class.

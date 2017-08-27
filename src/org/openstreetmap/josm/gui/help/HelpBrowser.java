@@ -46,6 +46,7 @@ import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainMenu;
+import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.gui.widgets.JosmHTMLEditorKit;
 import org.openstreetmap.josm.io.CachedFile;
@@ -54,7 +55,6 @@ import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
-import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * Help browser displaying HTML pages fetched from JOSM wiki.
