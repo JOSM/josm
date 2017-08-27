@@ -245,7 +245,7 @@ public interface PlatformHook {
      * @since 12270
      */
     @FunctionalInterface
-    public interface JavaExpirationCallback {
+    interface JavaExpirationCallback {
         /**
          * Asks user to update its version of Java.
          * @param updVersion target update version
