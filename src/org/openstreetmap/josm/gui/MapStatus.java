@@ -70,7 +70,6 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.gui.help.Helpful;
-import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.progress.PleaseWaitProgressMonitor.ProgressMonitorDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -806,7 +805,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
                 public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
                     Component invoker = ((JPopupMenu) e.getSource()).getInvoker();
                     jumpButton.setVisible(latText.equals(invoker) || lonText.equals(invoker));
-                    String currentSOM = ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get();
+                    String currentSOM = SystemOfMeasurement.PROP_SYSTEM_OF_MEASUREMENT.get();
                     for (JMenuItem item : somItems) {
                         item.setSelected(item.getText().equals(currentSOM));
                         item.setVisible(distText.equals(invoker));
@@ -918,7 +917,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     if (!e.isPopupTrigger() && e.getButton() == MouseEvent.BUTTON1) {
-                        String som = ProjectionPreference.PROP_SYSTEM_OF_MEASUREMENT.get();
+                        String som = SystemOfMeasurement.PROP_SYSTEM_OF_MEASUREMENT.get();
                         String newsom = soms.get((soms.indexOf(som)+1) % soms.size());
                         updateSystemOfMeasurement(newsom);
                     }
