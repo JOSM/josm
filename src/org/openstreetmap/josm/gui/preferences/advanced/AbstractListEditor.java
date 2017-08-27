@@ -10,7 +10,7 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.tools.WindowGeometry;
+import org.openstreetmap.josm.gui.util.WindowGeometry;
 
 /**
  * Abstract superclass of {@link ListEditor} and {@link AbstractTableListEditor}.

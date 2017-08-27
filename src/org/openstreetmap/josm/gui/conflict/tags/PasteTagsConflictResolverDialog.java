@@ -39,9 +39,9 @@ import org.openstreetmap.josm.data.osm.TagCollection;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.tagging.TagTableColumnModelBuilder;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
-import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * This conflict resolution dialog is used when tags are pasted from the clipboard that conflict with the existing ones.

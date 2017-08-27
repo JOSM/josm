@@ -26,11 +26,11 @@ import javax.swing.event.ChangeListener;
 import org.openstreetmap.josm.gui.help.HelpBrowser;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * Utility methods that display an option dialog with an additional help button that links to the JOSM help

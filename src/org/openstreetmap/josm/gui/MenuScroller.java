@@ -28,8 +28,8 @@ import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.WindowGeometry;
 
 /**
  * A class that provides scrolling capabilities to a long menu dropdown or
