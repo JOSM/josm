@@ -16,7 +16,6 @@ import javax.swing.JPanel;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.util.WindowGeometry.WindowGeometryException;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 

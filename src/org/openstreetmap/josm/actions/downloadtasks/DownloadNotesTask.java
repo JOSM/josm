@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -27,6 +28,7 @@ import org.openstreetmap.josm.io.BoundingBoxDownloader;
 import org.openstreetmap.josm.io.BoundingBoxDownloader.MoreNotesException;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
+import org.openstreetmap.josm.io.OsmServerLocationReader.NoteUrlPattern;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.tools.Logging;
@@ -40,8 +42,6 @@ import org.xml.sax.SAXException;
  */
 public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
 
-    private static final String PATTERN_API_URL = "https?://.*/api/0.6/notes.*";
-    private static final String PATTERN_DUMP_FILE = "https?://.*/(.*\\.osn(.bz2)?)";
     /** Property defining the number of notes to be downloaded */
     public static final IntegerProperty DOWNLOAD_LIMIT = new IntegerProperty("osm.notes.downloadLimit", 1000);
     /** Property defining number of days a bug needs to be closed to no longer be downloaded */
@@ -97,7 +97,7 @@ public class DownloadNotesTask extends AbstractDownloadTask<NoteData> {
 
     @Override
     public String[] getPatterns() {
-        return new String[] {PATTERN_API_URL, PATTERN_DUMP_FILE};
+        return Arrays.stream(NoteUrlPattern.values()).map(NoteUrlPattern::pattern).toArray(String[]::new);
     }
 
     @Override

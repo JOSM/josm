@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -34,6 +35,7 @@ import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.BoundingBoxDownloader;
 import org.openstreetmap.josm.io.OsmServerLocationReader;
+import org.openstreetmap.josm.io.OsmServerLocationReader.OsmUrlPattern;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
@@ -47,13 +49,6 @@ import org.xml.sax.SAXException;
  */
 public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
 
-    // CHECKSTYLE.OFF: SingleSpaceSeparator
-    protected static final String PATTERN_OSM_API_URL           = "https?://.*/api/0.6/(map|nodes?|ways?|relations?|\\*).*";
-    protected static final String PATTERN_OVERPASS_API_URL      = "https?://.*/interpreter\\?data=.*";
-    protected static final String PATTERN_OVERPASS_API_XAPI_URL = "https?://.*/xapi(\\?.*\\[@meta\\]|_meta\\?).*";
-    protected static final String PATTERN_EXTERNAL_OSM_FILE     = "https?://.*/.*\\.osm";
-    // CHECKSTYLE.ON: SingleSpaceSeparator
-
     protected Bounds currentBounds;
     protected DownloadTask downloadTask;
 
@@ -65,8 +60,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
     @Override
     public String[] getPatterns() {
         if (this.getClass() == DownloadOsmTask.class) {
-            return new String[]{PATTERN_OSM_API_URL, PATTERN_OVERPASS_API_URL,
-                PATTERN_OVERPASS_API_XAPI_URL, PATTERN_EXTERNAL_OSM_FILE};
+            return Arrays.stream(OsmUrlPattern.values()).map(OsmUrlPattern::pattern).toArray(String[]::new);
         } else {
             return super.getPatterns();
         }
@@ -407,7 +401,7 @@ public class DownloadOsmTask extends AbstractDownloadTask<DataSet> {
     public String getConfirmationMessage(URL url) {
         if (url != null) {
             String urlString = url.toExternalForm();
-            if (urlString.matches(PATTERN_OSM_API_URL)) {
+            if (urlString.matches(OsmUrlPattern.OSM_API_URL.pattern())) {
                 // TODO: proper i18n after stabilization
                 Collection<String> items = new ArrayList<>();
                 items.add(tr("OSM Server URL:") + ' ' + url.getHost());

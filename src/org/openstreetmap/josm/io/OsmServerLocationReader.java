@@ -8,7 +8,6 @@ import java.io.InputStream;
 import java.util.Collections;
 import java.util.List;
 
-import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -21,6 +20,89 @@ import org.xml.sax.SAXException;
  * @since 1146
  */
 public class OsmServerLocationReader extends OsmServerReader {
+
+    // CHECKSTYLE.OFF: MethodParamPad
+    // CHECKSTYLE.OFF: SingleSpaceSeparator
+
+    /**
+     * Patterns for OSM data download URLs.
+     * @since 12679
+     */
+    public enum OsmUrlPattern {
+        OSM_API_URL           ("https?://.*/api/0.6/(map|nodes?|ways?|relations?|\\*).*"),
+        OVERPASS_API_URL      ("https?://.*/interpreter\\?data=.*"),
+        OVERPASS_API_XAPI_URL ("https?://.*/xapi(\\?.*\\[@meta\\]|_meta\\?).*"),
+        EXTERNAL_OSM_FILE     ("https?://.*/.*\\.osm");
+
+        private final String urlPattern;
+
+        OsmUrlPattern(String urlPattern) {
+            this.urlPattern = urlPattern;
+        }
+
+        /**
+         * Returns the URL pattern.
+         * @return the URL pattern
+         */
+        public String pattern() {
+            return urlPattern;
+        }
+    }
+
+    /**
+     * Patterns for GPX download URLs.
+     * @since 12679
+     */
+    public enum GpxUrlPattern {
+        TRACE_ID     ("https?://.*(osm|openstreetmap).org/trace/\\p{Digit}+/data"),
+        USER_TRACE_ID("https?://.*(osm|openstreetmap).org/user/[^/]+/traces/(\\p{Digit}+)"),
+        EDIT_TRACE_ID("https?://.*(osm|openstreetmap).org/edit/?\\?gpx=(\\p{Digit}+)(#.*)?"),
+
+        TRACKPOINTS_BBOX("https?://.*/api/0.6/trackpoints\\?bbox=.*,.*,.*,.*"),
+
+        EXTERNAL_GPX_SCRIPT("https?://.*exportgpx.*"),
+        EXTERNAL_GPX_FILE  ("https?://.*/(.*\\.gpx)");
+
+        private final String urlPattern;
+
+        GpxUrlPattern(String urlPattern) {
+            this.urlPattern = urlPattern;
+        }
+
+        /**
+         * Returns the URL pattern.
+         * @return the URL pattern
+         */
+        public String pattern() {
+            return urlPattern;
+        }
+    }
+
+    /**
+     * Patterns for Note download URLs.
+     * @since 12679
+     */
+    public enum NoteUrlPattern {
+        API_URL  ("https?://.*/api/0.6/notes.*"),
+        DUMP_FILE("https?://.*/(.*\\.osn(.bz2)?)");
+
+        private final String urlPattern;
+
+        NoteUrlPattern(String urlPattern) {
+            this.urlPattern = urlPattern;
+        }
+
+        /**
+         * Returns the URL pattern.
+         * @return the URL pattern
+         */
+        public String pattern() {
+            return urlPattern;
+        }
+    }
+
+    // CHECKSTYLE.ON: SingleSpaceSeparator
+    // CHECKSTYLE.ON: MethodParamPad
 
     protected final String url;
 
@@ -162,7 +244,7 @@ public class OsmServerLocationReader extends OsmServerReader {
             GpxReader reader = new GpxReader(compression.getUncompressedInputStream(in));
             gpxParsedProperly = reader.parse(false);
             GpxData result = reader.getGpxData();
-            result.fromServer = DownloadGpsTask.isFromServer(url);
+            result.fromServer = isGpxFromServer(url);
             return result;
         }
     }
@@ -183,5 +265,16 @@ public class OsmServerLocationReader extends OsmServerReader {
             NoteReader reader = new NoteReader(compression.getUncompressedInputStream(in));
             return reader.parse();
         }
+    }
+
+    /**
+     * Determines if the given URL denotes an OSM gpx-related API call.
+     * @param url The url to check
+     * @return true if the url matches "Trace ID" API call or "Trackpoints bbox" API call, false otherwise
+     * @see GpxData#fromServer
+     * @since 12679
+     */
+    public static final boolean isGpxFromServer(String url) {
+        return url != null && (url.matches(GpxUrlPattern.TRACE_ID.pattern()) || url.matches(GpxUrlPattern.TRACKPOINTS_BBOX.pattern()));
     }
 }
