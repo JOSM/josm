@@ -29,6 +29,7 @@ import org.openstreetmap.josm.data.Data;
 import org.openstreetmap.josm.data.DataSource;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.SelectionChangedListener;
+import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSelectionListener.SelectionAddEvent;
@@ -194,6 +195,8 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      * All data sources of this DataSet.
      */
     private final Collection<DataSource> dataSources = new LinkedList<>();
+
+    private final ConflictCollection conflicts = new ConflictCollection();
 
     /**
      * Constructs a new {@code DataSet}.
@@ -1344,6 +1347,16 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
                 }
             }
         }
+    }
+
+    /**
+     * Replies the set of conflicts currently managed in this layer.
+     *
+     * @return the set of conflicts currently managed in this layer
+     * @since 12672
+     */
+    public ConflictCollection getConflicts() {
+        return conflicts;
     }
 
     /* --------------------------------------------------------------------------------- */

@@ -10,6 +10,7 @@ import java.util.Objects;
 import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.conflict.Conflict;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
@@ -80,7 +81,7 @@ public class RelationMemberConflictResolverCommand extends ConflictResolveComman
         }
 
         MainApplication.getLayerManager().setActiveLayer(layer);
-        OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
+        DataSet editDs = MainApplication.getLayerManager().getEditDataSet();
 
         // restore the former state
         //
@@ -88,8 +89,8 @@ public class RelationMemberConflictResolverCommand extends ConflictResolveComman
 
         // restore a conflict if necessary
         //
-        if (!editLayer.getConflicts().hasConflictForMy(conflict.getMy())) {
-            editLayer.getConflicts().add(conflict);
+        if (!editDs.getConflicts().hasConflictForMy(conflict.getMy())) {
+            editDs.getConflicts().add(conflict);
         }
     }
 

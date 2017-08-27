@@ -8,6 +8,7 @@ import java.util.Objects;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Logging;
@@ -58,10 +59,10 @@ public abstract class ConflictResolveCommand extends Command {
      *
      */
     protected void reconstituteConflicts() {
-        OsmDataLayer editLayer = getLayer();
+        DataSet ds = getAffectedDataSet();
         for (Conflict<?> c : resolvedConflicts) {
-            if (!editLayer.getConflicts().hasConflictForMy(c.getMy())) {
-                editLayer.getConflicts().add(c);
+            if (!ds.getConflicts().hasConflictForMy(c.getMy())) {
+                ds.getConflicts().add(c);
             }
         }
     }

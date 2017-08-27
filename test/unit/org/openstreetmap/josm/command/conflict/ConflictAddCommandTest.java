@@ -58,15 +58,15 @@ public class ConflictAddCommandTest {
      */
     @Test
     public void testExecuteUndoCommand() {
-        OsmDataLayer layer = MainApplication.getLayerManager().getEditLayer();
+        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
         Conflict<Node> conflict = new Conflict<>(new Node(), new Node());
-        ConflictAddCommand cmd = new ConflictAddCommand(layer, conflict);
+        ConflictAddCommand cmd = new ConflictAddCommand(ds, conflict);
         assertTrue(cmd.executeCommand());
-        assertFalse(layer.getConflicts().isEmpty());
-        assertTrue(layer.getConflicts().hasConflict(conflict));
+        assertFalse(ds.getConflicts().isEmpty());
+        assertTrue(ds.getConflicts().hasConflict(conflict));
         cmd.undoCommand();
-        assertFalse(layer.getConflicts().hasConflict(conflict));
-        assertTrue(layer.getConflicts().isEmpty());
+        assertFalse(ds.getConflicts().hasConflict(conflict));
+        assertTrue(ds.getConflicts().isEmpty());
     }
 
     /**

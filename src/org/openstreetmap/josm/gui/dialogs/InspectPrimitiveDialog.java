@@ -21,13 +21,13 @@ import javax.swing.JTabbedPane;
 import javax.swing.SingleSelectionModel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveComparator;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.NavigatableComponent;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
@@ -52,26 +52,25 @@ import org.openstreetmap.josm.tools.WindowGeometry;
 public class InspectPrimitiveDialog extends ExtendedDialog {
 
     protected transient List<OsmPrimitive> primitives;
-    protected transient OsmDataLayer layer;
     private boolean mappaintTabLoaded;
     private boolean editcountTabLoaded;
 
     /**
      * Constructs a new {@code InspectPrimitiveDialog}.
      * @param primitives collection of primitives
-     * @param layer data layer
+     * @param data data set
+     * @since 12672 (signature)
      */
-    public InspectPrimitiveDialog(final Collection<OsmPrimitive> primitives, OsmDataLayer layer) {
+    public InspectPrimitiveDialog(final Collection<OsmPrimitive> primitives, DataSet data) {
         super(Main.parent, tr("Advanced object info"), tr("Close"));
         this.primitives = new ArrayList<>(primitives);
-        this.layer = layer;
         setRememberWindowGeometry(getClass().getName() + ".geometry",
                 WindowGeometry.centerInWindow(Main.parent, new Dimension(750, 550)));
 
         setButtonIcons("ok");
         final JTabbedPane tabs = new JTabbedPane();
 
-        tabs.addTab(tr("data"), genericMonospacePanel(new JPanel(), buildDataText(layer, this.primitives)));
+        tabs.addTab(tr("data"), genericMonospacePanel(new JPanel(), buildDataText(data, this.primitives)));
 
         final JPanel pMapPaint = new JPanel();
         tabs.addTab(tr("map style"), pMapPaint);
@@ -105,8 +104,8 @@ public class InspectPrimitiveDialog extends ExtendedDialog {
         return p;
     }
 
-    protected static String buildDataText(OsmDataLayer layer, List<OsmPrimitive> primitives) {
-        InspectPrimitiveDataText dt = new InspectPrimitiveDataText(layer);
+    protected static String buildDataText(DataSet data, List<OsmPrimitive> primitives) {
+        InspectPrimitiveDataText dt = new InspectPrimitiveDataText(data);
         primitives.stream()
                 .sorted(OsmPrimitiveComparator.orderingWaysRelationsNodes().thenComparing(OsmPrimitiveComparator.comparingNames()))
                 .forEachOrdered(dt::addPrimitive);
