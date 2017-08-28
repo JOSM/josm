@@ -34,7 +34,10 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.Capabilities;
+import org.openstreetmap.josm.io.MaxChangesetSizeExceededPolicy;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.io.UploadStrategy;
+import org.openstreetmap.josm.io.UploadStrategySpecification;
 import org.openstreetmap.josm.tools.Logging;
 
 /**

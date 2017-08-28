@@ -20,7 +20,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JoinAreasAction;
 import org.openstreetmap.josm.actions.JoinAreasAction.JoinAreasResult;
 import org.openstreetmap.josm.actions.JoinAreasAction.Multipolygon;
-import org.openstreetmap.josm.actions.PurgeAction;
+import org.openstreetmap.josm.command.PurgeCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -103,7 +103,7 @@ public final class RightAndLefthandTraffic {
             w.removeAll();
         }
         // Purge all other ways and relations so dataset only contains lefthand traffic data
-        new PurgeAction(false).getPurgeCommand(toPurge).executeCommand();
+        PurgeCommand.build(null, toPurge, null).executeCommand();
         // Combine adjacent countries into a single polygon
         Collection<Way> optimizedWays = new ArrayList<>();
         List<Multipolygon> areas = JoinAreasAction.collectMultipolygons(ways);

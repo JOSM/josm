@@ -12,9 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
@@ -31,11 +29,7 @@ import javax.swing.JSeparator;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.PurgeCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
-import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.data.osm.Relation;
-import org.openstreetmap.josm.data.osm.RelationMember;
-import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
@@ -63,15 +57,6 @@ public class PurgeAction extends JosmAction {
     protected JCheckBox cbClearUndoRedo;
     protected boolean modified;
 
-    protected transient Set<OsmPrimitive> toPurge;
-    /**
-     * finally, contains all objects that are purged
-     */
-    protected transient Set<OsmPrimitive> toPurgeChecked;
-    /**
-     * Subset of toPurgeChecked. Marks primitives that remain in the dataset, but incomplete.
-     */
-    protected transient Set<OsmPrimitive> makeIncomplete;
     /**
      * Subset of toPurgeChecked. Those that have not been in the selection.
      */
@@ -81,19 +66,10 @@ public class PurgeAction extends JosmAction {
      * Constructs a new {@code PurgeAction}.
      */
     public PurgeAction() {
-        this(true);
-    }
-
-    /**
-     * Constructs a new {@code PurgeAction} with optional shortcut.
-     * @param addShortcut controls whether the shortcut should be registered or not, as for toolbar registration
-     * @since 11611
-     */
-    public PurgeAction(boolean addShortcut) {
         /* translator note: other expressions for "purge" might be "forget", "clean", "obliterate", "prune" */
-        super(tr("Purge..."), "purge", tr("Forget objects but do not delete them on server when uploading."), addShortcut ?
-                Shortcut.registerShortcut("system:purge", tr("Edit: {0}", tr("Purge")), KeyEvent.VK_P, Shortcut.CTRL_SHIFT)
-                : null, addShortcut);
+        super(tr("Purge..."), "purge", tr("Forget objects but do not delete them on server when uploading."),
+                Shortcut.registerShortcut("system:purge", tr("Edit: {0}", tr("Purge")), KeyEvent.VK_P, Shortcut.CTRL_SHIFT),
+                true);
         putValue("help", HelpUtil.ht("/Action/Purge"));
     }
 
@@ -140,112 +116,10 @@ public class PurgeAction extends JosmAction {
      */
     public PurgeCommand getPurgeCommand(Collection<OsmPrimitive> sel) {
         layer = getLayerManager().getEditLayer();
-
-        toPurge = new HashSet<>(sel);
         toPurgeAdditionally = new ArrayList<>();
-        toPurgeChecked = new HashSet<>();
-
-        // Add referrer, unless the object to purge is not new and the parent is a relation
-        Set<OsmPrimitive> toPurgeRecursive = new HashSet<>();
-        while (!toPurge.isEmpty()) {
-
-            for (OsmPrimitive osm: toPurge) {
-                for (OsmPrimitive parent: osm.getReferrers()) {
-                    if (toPurge.contains(parent) || toPurgeChecked.contains(parent) || toPurgeRecursive.contains(parent)) {
-                        continue;
-                    }
-                    if (parent instanceof Way || (parent instanceof Relation && osm.isNew())) {
-                        toPurgeAdditionally.add(parent);
-                        toPurgeRecursive.add(parent);
-                    }
-                }
-                toPurgeChecked.add(osm);
-            }
-            toPurge = toPurgeRecursive;
-            toPurgeRecursive = new HashSet<>();
-        }
-
-        makeIncomplete = new HashSet<>();
-
-        // Find the objects that will be incomplete after purging.
-        // At this point, all parents of new to-be-purged primitives are
-        // also to-be-purged and
-        // all parents of not-new to-be-purged primitives are either
-        // to-be-purged or of type relation.
-        TOP:
-            for (OsmPrimitive child : toPurgeChecked) {
-                if (child.isNew()) {
-                    continue;
-                }
-                for (OsmPrimitive parent : child.getReferrers()) {
-                    if (parent instanceof Relation && !toPurgeChecked.contains(parent)) {
-                        makeIncomplete.add(child);
-                        continue TOP;
-                    }
-                }
-            }
-
-        // Add untagged way nodes. Do not add nodes that have other referrers not yet to-be-purged.
-        if (Main.pref.getBoolean("purge.add_untagged_waynodes", true)) {
-            Set<OsmPrimitive> wayNodes = new HashSet<>();
-            for (OsmPrimitive osm : toPurgeChecked) {
-                if (osm instanceof Way) {
-                    Way w = (Way) osm;
-                    NODE:
-                        for (Node n : w.getNodes()) {
-                            if (n.isTagged() || toPurgeChecked.contains(n)) {
-                                continue;
-                            }
-                            for (OsmPrimitive ref : n.getReferrers()) {
-                                if (ref != w && !toPurgeChecked.contains(ref)) {
-                                    continue NODE;
-                                }
-                            }
-                            wayNodes.add(n);
-                        }
-                }
-            }
-            toPurgeChecked.addAll(wayNodes);
-            toPurgeAdditionally.addAll(wayNodes);
-        }
-
-        if (Main.pref.getBoolean("purge.add_relations_with_only_incomplete_members", true)) {
-            Set<Relation> relSet = new HashSet<>();
-            for (OsmPrimitive osm : toPurgeChecked) {
-                for (OsmPrimitive parent : osm.getReferrers()) {
-                    if (parent instanceof Relation
-                            && !(toPurgeChecked.contains(parent))
-                            && hasOnlyIncompleteMembers((Relation) parent, toPurgeChecked, relSet)) {
-                        relSet.add((Relation) parent);
-                    }
-                }
-            }
-
-            // Add higher level relations (list gets extended while looping over it)
-            List<Relation> relLst = new ArrayList<>(relSet);
-            for (int i = 0; i < relLst.size(); ++i) { // foreach loop not applicable since list gets extended while looping over it
-                for (OsmPrimitive parent : relLst.get(i).getReferrers()) {
-                    if (!(toPurgeChecked.contains(parent))
-                            && hasOnlyIncompleteMembers((Relation) parent, toPurgeChecked, relLst)) {
-                        relLst.add((Relation) parent);
-                    }
-                }
-            }
-            relSet = new HashSet<>(relLst);
-            toPurgeChecked.addAll(relSet);
-            toPurgeAdditionally.addAll(relSet);
-        }
-
-        modified = false;
-        for (OsmPrimitive osm : toPurgeChecked) {
-            if (osm.isModified()) {
-                modified = true;
-                break;
-            }
-        }
-
-        return layer != null ? new PurgeCommand(layer, toPurgeChecked, makeIncomplete) :
-            new PurgeCommand(toPurgeChecked.iterator().next().getDataSet(), toPurgeChecked, makeIncomplete);
+        PurgeCommand cmd = PurgeCommand.build(layer, sel, toPurgeAdditionally);
+        modified = cmd.getParticipatingPrimitives().stream().anyMatch(OsmPrimitive::isModified);
+        return cmd;
     }
 
     private JPanel buildPanel(boolean modified) {
@@ -321,14 +195,5 @@ public class PurgeAction extends JosmAction {
     @Override
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         setEnabled(selection != null && !selection.isEmpty());
-    }
-
-    private static boolean hasOnlyIncompleteMembers(
-            Relation r, Collection<OsmPrimitive> toPurge, Collection<? extends OsmPrimitive> moreToPurge) {
-        for (RelationMember m : r.getMembers()) {
-            if (!m.getMember().isIncomplete() && !toPurge.contains(m.getMember()) && !moreToPurge.contains(m.getMember()))
-                return false;
-        }
-        return true;
     }
 }

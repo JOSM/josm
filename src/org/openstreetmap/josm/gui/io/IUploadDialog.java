@@ -3,6 +3,8 @@ package org.openstreetmap.josm.gui.io;
 
 import java.util.Map;
 
+import org.openstreetmap.josm.io.UploadStrategySpecification;
+
 /**
  * Upload dialog super interface.
  * @since 9685

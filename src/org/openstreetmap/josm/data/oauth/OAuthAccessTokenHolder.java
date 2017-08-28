@@ -1,10 +1,9 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.preferences.server;
+package org.openstreetmap.josm.data.oauth;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.io.auth.CredentialsAgent;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -12,6 +11,7 @@ import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Class holding OAuth access token key and secret.
+ * @since 12686 (moved from {@code gui.preferences.server} package)
  */
 public class OAuthAccessTokenHolder {
     private static OAuthAccessTokenHolder instance;
