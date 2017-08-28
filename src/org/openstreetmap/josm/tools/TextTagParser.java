@@ -4,7 +4,6 @@ package org.openstreetmap.josm.tools;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.GridBagLayout;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,17 +11,7 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
-import org.openstreetmap.josm.gui.help.HelpUtil;
-import org.openstreetmap.josm.gui.widgets.UrlLabel;
-import org.openstreetmap.josm.io.XmlWriter;
-import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 
 /**
  * Class that helps to parse tags from arbitrary text
@@ -210,11 +199,13 @@ public final class TextTagParser {
     /**
      * Gets a list of tags that are in the given text
      * @param buf The text to parse
+     * @param callback warning callback
      * @return The tags or <code>null</code> if the tags are not valid
+     * @since 12683
      */
-    public static Map<String, String> getValidatedTagsFromText(String buf) {
+    public static Map<String, String> getValidatedTagsFromText(String buf, TagWarningCallback callback) {
         Map<String, String> tags = readTagsFromText(buf);
-        return validateTags(tags) ? tags : null;
+        return validateTags(tags, callback) ? tags : null;
     }
 
     /**
@@ -257,14 +248,16 @@ public final class TextTagParser {
     /**
      * Check tags for correctness and display warnings if needed
      * @param tags - map key-&gt;value to check
+     * @param callback warning callback
      * @return true if the tags should be pasted
+     * @since 12683
      */
-    public static boolean validateTags(Map<String, String> tags) {
+    public static boolean validateTags(Map<String, String> tags, TagWarningCallback callback) {
         int r;
         int s = tags.size();
         if (s > MAX_KEY_COUNT) {
             // Use trn() even if for english it makes no sense, as s > 30
-            r = warning(trn("There was {0} tag found in the buffer, it is suspicious!",
+            r = callback.warning(trn("There was {0} tag found in the buffer, it is suspicious!",
             "There were {0} tags found in the buffer, it is suspicious!", s,
             s), "", "tags.paste.toomanytags");
             if (r == 2 || r == 3) return false; if (r == 4) return true;
@@ -273,69 +266,34 @@ public final class TextTagParser {
             String key = entry.getKey();
             String value = entry.getValue();
             if (key.length() > MAX_KEY_LENGTH) {
-                r = warning(tr("Key is too long (max {0} characters):", MAX_KEY_LENGTH), key+'='+value, "tags.paste.keytoolong");
+                r = callback.warning(tr("Key is too long (max {0} characters):", MAX_KEY_LENGTH), key+'='+value, "tags.paste.keytoolong");
                 if (r == 2 || r == 3) return false; if (r == 4) return true;
             }
             if (!key.matches(KEY_PATTERN)) {
-                r = warning(tr("Suspicious characters in key:"), key, "tags.paste.keydoesnotmatch");
+                r = callback.warning(tr("Suspicious characters in key:"), key, "tags.paste.keydoesnotmatch");
                 if (r == 2 || r == 3) return false; if (r == 4) return true;
             }
             if (value.length() > MAX_VALUE_LENGTH) {
-                r = warning(tr("Value is too long (max {0} characters):", MAX_VALUE_LENGTH), value, "tags.paste.valuetoolong");
+                r = callback.warning(tr("Value is too long (max {0} characters):", MAX_VALUE_LENGTH), value, "tags.paste.valuetoolong");
                 if (r == 2 || r == 3) return false; if (r == 4) return true;
             }
         }
         return true;
     }
 
-    private static int warning(String text, String data, String code) {
-        ExtendedDialog ed = new ExtendedDialog(
-                    Main.parent,
-                    tr("Do you want to paste these tags?"),
-                    tr("Ok"), tr("Cancel"), tr("Clear buffer"), tr("Ignore warnings"));
-        ed.setButtonIcons("ok", "cancel", "dialogs/delete", "pastetags");
-        ed.setContent("<html><b>"+text + "</b><br/><br/><div width=\"300px\">"+XmlWriter.encode(data, true)+"</html>");
-        ed.setDefaultButton(2);
-        ed.setCancelButton(2);
-        ed.setIcon(JOptionPane.WARNING_MESSAGE);
-        ed.toggleEnable(code);
-        ed.showDialog();
-        int r = ed.getValue();
-        if (r == 0) r = 2;
-        // clean clipboard if user asked
-        if (r == 3) ClipboardUtils.copyString("");
-        return r;
-    }
-
     /**
-     * Shows message that the buffer can not be pasted, allowing user to clean the buffer
-     * @param helpTopic the help topic of the parent action
-     * TODO: Replace by proper HelpAwareOptionPane instead of self-made help link
+     * Called when a problematic tag is encountered.
+     * @since 12683
      */
-    public static void showBadBufferMessage(String helpTopic) {
-        String msg = tr("<html><p> Sorry, it is impossible to paste tags from buffer. It does not contain any JOSM object"
-            + " or suitable text. </p></html>");
-        JPanel p = new JPanel(new GridBagLayout());
-        p.add(new JLabel(msg), GBC.eop());
-        String helpUrl = HelpUtil.getHelpTopicUrl(HelpUtil.buildAbsoluteHelpTopic(helpTopic, LocaleType.DEFAULT));
-        if (helpUrl != null) {
-            p.add(new UrlLabel(helpUrl), GBC.eop());
-        }
-
-        ExtendedDialog ed = new ExtendedDialog(
-                    Main.parent,
-                    tr("Warning"),
-                    tr("Ok"), tr("Clear buffer"))
-            .setButtonIcons("ok", "dialogs/delete")
-            .setContent(p)
-            .setDefaultButton(1)
-            .setCancelButton(1)
-            .setIcon(JOptionPane.WARNING_MESSAGE)
-            .toggleEnable("tags.paste.cleanbadbuffer");
-
-        ed.showDialog();
-
-        // clean clipboard if user asked
-        if (ed.getValue() == 2) ClipboardUtils.copyString("");
+    @FunctionalInterface
+    public interface TagWarningCallback {
+        /**
+         * Displays a warning about a problematic tag and ask user what to do about it.
+         * @param text Message to display
+         * @param data Tag key and/or value
+         * @param code to use with {@code ExtendedDialog#toggleEnable(String)}
+         * @return 1 to validate and display next warnings if any, 2 to cancel operation, 3 to clear buffer, 4 to paste tags
+         */
+        int warning(String text, String data, String code);
     }
 }
