@@ -204,6 +204,13 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         }
     }
 
+    void writeLatLon(LatLon ll) {
+        if (ll != null) {
+            out.print(" lat='"+LatLon.cDdHighPecisionFormatter.format(ll.lat())+
+                     "' lon='"+LatLon.cDdHighPecisionFormatter.format(ll.lon())+'\'');
+        }
+    }
+
     @Override
     public void visit(INode n) {
         if (n.isIncomplete()) return;
@@ -211,10 +218,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         if (!withBody) {
             out.println("/>");
         } else {
-            if (n.getCoor() != null) {
-                out.print(" lat='"+LatLon.cDdHighPecisionFormatter.format(n.getCoor().lat())+
-                          "' lon='"+LatLon.cDdHighPecisionFormatter.format(n.getCoor().lon())+'\'');
-            }
+            writeLatLon(n.getCoor());
             addTags(n, "node", true);
         }
     }

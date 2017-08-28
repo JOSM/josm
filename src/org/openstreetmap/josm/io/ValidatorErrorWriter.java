@@ -64,14 +64,14 @@ public class ValidatorErrorWriter extends XmlWriter {
         Set<Test> analysers = validationErrors.stream().map(TestError::getTester).collect(Collectors.toCollection(TreeSet::new));
         String timestamp = DateUtils.fromDate(new Date());
 
-        out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-        out.println("<analysers generator='JOSM' timestamp=\""+timestamp+"\">");
+        out.println("<?xml version='1.0' encoding='UTF-8'?>");
+        out.println("<analysers generator='JOSM' timestamp='"+timestamp+"'>");
 
         OsmWriter osmWriter = OsmWriterFactory.createOsmWriter(out, true, OsmChangeBuilder.DEFAULT_API_VERSION);
         String lang = LanguageInfo.getJOSMLocaleCode();
 
         for (Test test : analysers) {
-            out.println("  <analyser timestamp=\""+timestamp+"\" name=\""+test.getName()+"\">");
+            out.println("  <analyser timestamp='"+timestamp+"' name='"+XmlWriter.encode(test.getName())+"'>");
             // Build map of test error classes for the current test
             Map<ErrorClass, List<TestError>> map = new HashMap<>();
             for (Entry<Severity, Map<String, Map<String, List<TestError>>>> e1 :
@@ -88,8 +88,8 @@ public class ValidatorErrorWriter extends XmlWriter {
             }
             // Write classes
             for (ErrorClass ec : map.keySet()) {
-                out.println("    <class id=\""+ec.id+"\" level=\""+ec.severity.getLevel()+"\">");
-                out.println("      <classtext lang=\""+lang+"\" title=\""+ec.message+"\"/>");
+                out.println("    <class id='"+ec.id+"' level='"+ec.severity.getLevel()+"'>");
+                out.println("      <classtext lang='"+XmlWriter.encode(lang)+"' title='"+XmlWriter.encode(ec.message)+"'/>");
                 out.println("    </class>");
             }
 
@@ -97,12 +97,14 @@ public class ValidatorErrorWriter extends XmlWriter {
             for (Entry<ErrorClass, List<TestError>> entry : map.entrySet()) {
                 for (TestError error : entry.getValue()) {
                     LatLon ll = error.getPrimitives().iterator().next().getBBox().getCenter();
-                    out.println("    <error class=\""+entry.getKey().id+"\">");
-                    out.println("      <location lat=\""+ll.lat()+"\" lon=\""+ll.lon()+"\">");
+                    out.println("    <error class='"+entry.getKey().id+"'>");
+                    out.print("      <location");
+                    osmWriter.writeLatLon(ll);
+                    out.println(">");
                     for (OsmPrimitive p : error.getPrimitives()) {
                         p.accept(osmWriter);
                     }
-                    out.println("      <text lang=\""+lang+"\" value=\""+error.getDescription()+"\">");
+                    out.println("      <text lang='"+XmlWriter.encode(lang)+"' value='"+XmlWriter.encode(error.getDescription())+"'>");
                     if (error.isFixable()) {
                         out.println("      <fixes>");
                         Command fix = error.getFix();
