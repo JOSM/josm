@@ -185,13 +185,6 @@ public class DownloadDialog extends JDialog {
         return mainPanel;
     }
 
-    /* This should not be necessary, but if not here, repaint is not always correct in SlippyMap! */
-    @Override
-    public void paint(Graphics g) {
-        tpDownloadAreaSelectors.getSelectedComponent().paint(g);
-        super.paint(g);
-    }
-
     /**
      * Builds the button pane of the dialog.
      * @return The button panel of the dialog.
