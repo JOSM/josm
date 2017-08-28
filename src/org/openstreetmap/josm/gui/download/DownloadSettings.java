@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.download;
 
-import java.util.Optional;
-
 import org.openstreetmap.josm.data.Bounds;
+
+import java.util.Optional;
 
 /**
  * The global settings of {@link DownloadDialog}.
@@ -51,10 +51,6 @@ public final class DownloadSettings {
      * @return The bounds or an empty {@link Optional} if no bounds are selected
      */
     public Optional<Bounds> getDownloadBounds() {
-        if (downloadBounds == null) {
-            return Optional.empty();
-        } else {
-            return Optional.of(downloadBounds);
-        }
+        return Optional.ofNullable(downloadBounds);
     }
 }
