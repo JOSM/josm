@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -59,6 +60,7 @@ import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.OpenFileAction;
+import org.openstreetmap.josm.actions.OpenFileAction.OpenFileTask;
 import org.openstreetmap.josm.actions.PreferencesAction;
 import org.openstreetmap.josm.actions.RestartAction;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
@@ -102,6 +104,7 @@ import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
+import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
 import org.openstreetmap.josm.io.protocols.data.Handler;
@@ -116,6 +119,7 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 import org.openstreetmap.josm.tools.OverpassTurboQueryWizard;
+import org.openstreetmap.josm.tools.PlatformHook.NativeOsCallback;
 import org.openstreetmap.josm.tools.PlatformHookWindows;
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -123,6 +127,7 @@ import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
+import org.xml.sax.SAXException;
 
 /**
  * Main window class application.
@@ -724,6 +729,7 @@ public class MainApplication extends Main {
 
         // initialize the platform hook, and
         Main.determinePlatformHook();
+        Main.platform.setNativeOsCallback(new DefaultNativeOsCallback());
         // call the really early hook before we do anything else
         Main.platform.preStartupHook();
 
@@ -1185,6 +1191,43 @@ public class MainApplication extends Main {
                         ));
             }
             return false;
+        }
+    }
+
+    private static class DefaultNativeOsCallback implements NativeOsCallback {
+        @Override
+        public void openFiles(List<File> files) {
+            Executors.newSingleThreadExecutor(Utils.newThreadFactory("openFiles-%d", Thread.NORM_PRIORITY)).submit(
+                    new OpenFileTask(files, null) {
+                @Override
+                protected void realRun() throws SAXException, IOException, OsmTransferException {
+                    // Wait for JOSM startup is advanced enough to load a file
+                    while (Main.parent == null || !Main.parent.isVisible()) {
+                        try {
+                            Thread.sleep(25);
+                        } catch (InterruptedException e) {
+                            Logging.warn(e);
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                    super.realRun();
+                }
+            });
+        }
+
+        @Override
+        public boolean handleQuitRequest() {
+            return MainApplication.exitJosm(false, 0, null);
+        }
+
+        @Override
+        public void handleAbout() {
+            MainApplication.getMenu().about.actionPerformed(null);
+        }
+
+        @Override
+        public void handlePreferences() {
+            MainApplication.getMenu().preferences.actionPerformed(null);
         }
     }
 }
