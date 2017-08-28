@@ -92,7 +92,7 @@ public class MergeNodesAction extends JosmAction {
         Node targetNode = selectTargetNode(selectedNodes);
         if (targetNode != null) {
             Node targetLocationNode = selectTargetLocationNode(selectedNodes);
-            Command cmd = mergeNodes(getLayerManager().getEditLayer(), selectedNodes, targetNode, targetLocationNode);
+            Command cmd = mergeNodes(selectedNodes, targetNode, targetLocationNode);
             if (cmd != null) {
                 MainApplication.undoRedo.add(cmd);
                 getLayerManager().getEditLayer().data.setSelected(targetNode);
@@ -271,7 +271,7 @@ public class MergeNodesAction extends JosmAction {
         }
 
         if (target != null) {
-            Command cmd = mergeNodes(layer, nodes, target, targetLocationNode);
+            Command cmd = mergeNodes(nodes, target, targetLocationNode);
             if (cmd != null) {
                 MainApplication.undoRedo.add(cmd);
                 layer.data.setSelected(target);
@@ -280,37 +280,48 @@ public class MergeNodesAction extends JosmAction {
     }
 
     /**
-     * Merges the nodes in {@code nodes} at the specified node's location. Uses the dataset
-     * managed by {@code layer} as reference.
+     * Merges the nodes in {@code nodes} at the specified node's location.
      *
-     * @param layer layer the reference data layer. Must not be null.
+     * @param layer unused
      * @param nodes the collection of nodes. Ignored if null.
      * @param targetLocationNode this node's location will be used for the targetNode.
      * @return The command necessary to run in order to perform action, or {@code null} if there is nothing to do
      * @throws IllegalArgumentException if {@code layer} is null
+     * @deprecated use {@link #mergeNodes(Collection, Node)} instead
      */
+    @Deprecated
     public static Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetLocationNode) {
+        return mergeNodes(nodes, targetLocationNode);
+    }
+
+    /**
+     * Merges the nodes in {@code nodes} at the specified node's location.
+     *
+     * @param nodes the collection of nodes. Ignored if null.
+     * @param targetLocationNode this node's location will be used for the targetNode.
+     * @return The command necessary to run in order to perform action, or {@code null} if there is nothing to do
+     * @throws IllegalArgumentException if {@code layer} is null
+     * @since 12689
+     */
+    public static Command mergeNodes(Collection<Node> nodes, Node targetLocationNode) {
         if (nodes == null) {
             return null;
         }
         Set<Node> allNodes = new HashSet<>(nodes);
         allNodes.add(targetLocationNode);
-        return mergeNodes(layer, nodes, selectTargetNode(allNodes), targetLocationNode);
+        return mergeNodes(nodes, selectTargetNode(allNodes), targetLocationNode);
     }
 
     /**
-     * Merges the nodes in <code>nodes</code> onto one of the nodes. Uses the dataset
-     * managed by <code>layer</code> as reference.
+     * Merges the nodes in <code>nodes</code> onto one of the nodes.
      *
-     * @param layer layer the reference data layer. Must not be null.
      * @param nodes the collection of nodes. Ignored if null.
      * @param targetNode the target node the collection of nodes is merged to. Must not be null.
      * @param targetLocationNode this node's location will be used for the targetNode.
      * @return The command necessary to run in order to perform action, or {@code null} if there is nothing to do
      * @throws IllegalArgumentException if layer is null
      */
-    public static Command mergeNodes(OsmDataLayer layer, Collection<Node> nodes, Node targetNode, Node targetLocationNode) {
-        CheckParameterUtil.ensureParameterNotNull(layer, "layer");
+    public static Command mergeNodes(Collection<Node> nodes, Node targetNode, Node targetLocationNode) {
         CheckParameterUtil.ensureParameterNotNull(targetNode, "targetNode");
         if (nodes == null) {
             return null;

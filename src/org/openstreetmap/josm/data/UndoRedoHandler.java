@@ -85,7 +85,7 @@ public class UndoRedoHandler implements LayerChangeListener {
      * @param c The command to execute. Must not be {@code null}.
      */
     public synchronized void add(final Command c) {
-        DataSet ds = Optional.ofNullable(c.getAffectedDataSet()).orElseGet(() -> MainApplication.getLayerManager().getEditDataSet());
+        DataSet ds = Optional.ofNullable(c.getAffectedDataSet()).orElseGet(() -> Main.main.getEditDataSet());
         Collection<? extends OsmPrimitive> oldSelection = null;
         if (ds != null) {
             oldSelection = ds.getSelected();
@@ -114,7 +114,7 @@ public class UndoRedoHandler implements LayerChangeListener {
     public synchronized void undo(int num) {
         if (commands.isEmpty())
             return;
-        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
+        DataSet ds = Main.main.getEditDataSet();
         Collection<? extends OsmPrimitive> oldSelection = null;
         if (ds != null) {
             oldSelection = ds.getSelected();
@@ -155,7 +155,7 @@ public class UndoRedoHandler implements LayerChangeListener {
     public void redo(int num) {
         if (redoCommands.isEmpty())
             return;
-        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
+        DataSet ds = Main.main.getEditDataSet();
         Collection<? extends OsmPrimitive> oldSelection = ds.getSelected();
         for (int i = 0; i < num; ++i) {
             final Command c = redoCommands.removeFirst();
