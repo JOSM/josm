@@ -70,11 +70,6 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
     }
 
     @Override
-    public void addGui(DownloadDialog dialog) {
-        dialog.addDownloadSource(this);
-    }
-
-    @Override
     public boolean onlyExpert() {
         return true;
     }
@@ -88,6 +83,7 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
         private JosmTextArea overpassQuery;
         private OverpassQueryList overpassQueryList;
 
+        private static final String SIMPLE_NAME = "overpassdownloadpanel";
         private static final BooleanProperty OVERPASS_QUERY_LIST_OPENED =
                 new BooleanProperty("download.overpass.query-list.opened", false);
         private static final String ACTION_IMG_SUBDIR = "dialogs";
@@ -179,6 +175,8 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
             add(leftPanel, BorderLayout.WEST);
             add(innerPanel, BorderLayout.CENTER);
             add(listPanel, BorderLayout.EAST);
+
+            setMinimumSize(new Dimension(450, 240));
         }
 
         @Override
@@ -272,6 +270,11 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
         @Override
         public Icon getIcon() {
             return ImageProvider.get("download-overpass");
+        }
+
+        @Override
+        public String getSimpleName() {
+            return SIMPLE_NAME;
         }
 
         /**

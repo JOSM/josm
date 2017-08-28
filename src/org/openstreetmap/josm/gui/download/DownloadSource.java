@@ -30,12 +30,6 @@ public interface DownloadSource<T> {
     String getLabel();
 
     /**
-     * Add a download source to the dialog, see {@link DownloadDialog}.
-     * @param dialog The download dialog.
-     */
-    void addGui(DownloadDialog dialog);
-
-    /**
      * Defines whether this download source should be visible only in the expert mode.
      * @return Returns {@code true} if the download source should be visible only in the
      * expert mode, {@code false} otherwise.
