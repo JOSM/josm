@@ -16,15 +16,11 @@ import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Executors;
+import java.util.Objects;
 
 import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.actions.OpenFileAction.OpenFileTask;
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.io.OsmTransferException;
-import org.xml.sax.SAXException;
 
 /**
  * {@code PlatformHook} implementation for Apple Mac OS X systems.
@@ -35,6 +31,8 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
     private static final PlatformHookOsx INVOCATION_HANDLER = new PlatformHookOsx();
 
     private String oSBuildNumber;
+
+    private NativeOsCallback osCallback;
 
     @Override
     public void preStartupHook() {
@@ -137,6 +135,11 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
         }
     }
 
+    @Override
+    public void setNativeOsCallback(NativeOsCallback callback) {
+        osCallback = Objects.requireNonNull(callback);
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
@@ -149,22 +152,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
                 try {
                     Object oFiles = args[0].getClass().getMethod("getFiles").invoke(args[0]);
                     if (oFiles instanceof List) {
-                        Executors.newSingleThreadExecutor(Utils.newThreadFactory("openFiles-%d", Thread.NORM_PRIORITY)).submit(
-                                new OpenFileTask((List<File>) oFiles, null) {
-                            @Override
-                            protected void realRun() throws SAXException, IOException, OsmTransferException {
-                                // Wait for JOSM startup is advanced enough to load a file
-                                while (Main.parent == null || !Main.parent.isVisible()) {
-                                    try {
-                                        Thread.sleep(25);
-                                    } catch (InterruptedException e) {
-                                        Logging.warn(e);
-                                        Thread.currentThread().interrupt();
-                                    }
-                                }
-                                super.realRun();
-                            }
-                        });
+                        osCallback.openFiles((List<File>) oFiles);
                     }
                 } catch (ReflectiveOperationException | SecurityException | IllegalArgumentException ex) {
                     Logging.warn("Failed to access open files event: " + ex);
@@ -172,7 +160,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
             }
             break;
         case "handleQuitRequestWith":
-            boolean closed = MainApplication.exitJosm(false, 0, null);
+            boolean closed = osCallback.handleQuitRequest();
             if (args[1] != null) {
                 try {
                     args[1].getClass().getDeclaredMethod(closed ? "performQuit" : "cancelQuit").invoke(args[1]);
@@ -184,10 +172,10 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
             }
             break;
         case "handleAbout":
-            MainApplication.getMenu().about.actionPerformed(null);
+            osCallback.handleAbout();
             break;
         case "handlePreferences":
-            MainApplication.getMenu().preferences.actionPerformed(null);
+            osCallback.handlePreferences();
             break;
         default:
             Logging.warn("OSX unsupported method: "+method.getName());

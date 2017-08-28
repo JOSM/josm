@@ -271,4 +271,43 @@ public interface PlatformHook {
                     DateUtils.getDateFormat(DateFormat.MEDIUM).format(expiration), false);
         }
     }
+
+    /**
+     * Called when interfacing with native OS functions. Currently only used with macOS.
+     * The callback must perform all GUI-related tasks associated to an OS request.
+     * The non-GUI, platform-specific tasks, are usually performed by the {@code PlatformHook}.
+     * @since 12695
+     */
+    interface NativeOsCallback {
+        /**
+         * macOS: Called when JOSM is asked to open a list of files.
+         * @param files list of files to open
+         */
+        void openFiles(List<File> files);
+
+        /**
+         * macOS: Invoked when JOSM is asked to quit.
+         * @return {@code true} if JOSM has been closed, {@code false} if the user has cancelled the operation.
+         */
+        boolean handleQuitRequest();
+
+        /**
+         * macOS: Called when JOSM is asked to show it's about dialog.
+         */
+        void handleAbout();
+
+        /**
+         * macOS: Called when JOSM is asked to show it's preferences UI.
+         */
+        void handlePreferences();
+    }
+
+    /**
+     * Registers the native OS callback. Currently only needed for macOS.
+     * @param callback the native OS callback
+     * @since 12695
+     */
+    default void setNativeOsCallback(NativeOsCallback callback) {
+        // To be implemented if needed
+    }
 }
