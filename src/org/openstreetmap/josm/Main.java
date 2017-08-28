@@ -631,6 +631,15 @@ public abstract class Main {
     }
 
     /**
+     * Gets the data set of the active edit layer.
+     * @return That data set, <code>null</code> if there is no edit layer.
+     * @since 12691
+     */
+    public DataSet getEditDataSet() {
+        return null;
+    }
+
+    /**
      * Registers a {@code JosmAction} and its shortcut.
      * @param action action defining its own shortcut
      * @deprecated use {@link MainApplication#registerActionShortcut(JosmAction)} instead

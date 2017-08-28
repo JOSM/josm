@@ -396,6 +396,11 @@ public class MainApplication extends Main {
         }
     }
 
+    @Override
+    public DataSet getEditDataSet() {
+        return getLayerManager().getEditDataSet();
+    }
+
     /**
      * Returns the command-line arguments used to run the application.
      * @return the command-line arguments used to run the application
