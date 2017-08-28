@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.util;
+package org.openstreetmap.josm.tools;
 
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
@@ -11,6 +11,7 @@ import org.openstreetmap.josm.Main;
  * Support class to handle size information of Gui elements
  * This is needed, because display resolution may vary a lot and a common set
  * of sizes wont work for all users alike.
+ * @since 12682 (moved from {@code gui.util} package)
  * @since 10358
  */
 public final class GuiSizesHelper {
@@ -28,7 +29,7 @@ public final class GuiSizesHelper {
      */
     private static float getScreenDPI() {
         if (screenDPI == -1) {
-            synchronized (GuiHelper.class) {
+            synchronized (GuiSizesHelper.class) {
                 if (screenDPI == -1) {
                     float scalePref = (float) Main.pref.getDouble("gui.scale", 1.0);
                     if (scalePref != 0) {

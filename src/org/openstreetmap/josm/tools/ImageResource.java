@@ -15,8 +15,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 
-import org.openstreetmap.josm.gui.util.GuiSizesHelper;
-
 import com.kitfox.svg.SVGDiagram;
 
 /**
