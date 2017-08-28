@@ -33,7 +33,6 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.MultiMap;
 
@@ -333,7 +332,7 @@ public class DuplicateNode extends Test {
             }
 
             if (Command.checkOutlyingOrIncompleteOperation(nodes, Collections.singleton(target)) == Command.IS_OK)
-                return MergeNodesAction.mergeNodes(MainApplication.getLayerManager().getEditLayer(), nodes, target);
+                return MergeNodesAction.mergeNodes(nodes, target);
         }
 
         return null; // undoRedo handling done in mergeNodes
