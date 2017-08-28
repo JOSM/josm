@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.io;
+package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -10,6 +10,7 @@ import org.openstreetmap.josm.tools.Logging;
 
 /**
  * The chunk mode to use when uploading
+ * @since 12687 (moved from {@code gui.io} package)
  */
 public enum UploadStrategy {
     /**

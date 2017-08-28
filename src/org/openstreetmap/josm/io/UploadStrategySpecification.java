@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.io;
+package org.openstreetmap.josm.io;
 
 import java.util.Objects;
 
@@ -13,6 +13,7 @@ import java.util.Objects;
  * <li>the upload chunk size</li>
  * <li>whether to close the changeset used after the upload</li>
  * </ul>
+ * @since 12687 (moved from {@code gui.io} package)
  */
 public class UploadStrategySpecification {
     /** indicates that the chunk size isn't specified */
