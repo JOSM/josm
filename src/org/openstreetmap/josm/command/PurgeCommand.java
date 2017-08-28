@@ -15,6 +15,7 @@ import java.util.Set;
 
 import javax.swing.Icon;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -25,6 +26,7 @@ import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationData;
+import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Storage;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WayData;
@@ -307,5 +309,129 @@ public class PurgeCommand extends Command {
                 Objects.equals(makeIncompleteData, that.makeIncompleteData) &&
                 Objects.equals(makeIncompleteDataByPrimId, that.makeIncompleteDataByPrimId) &&
                 Objects.equals(purgedConflicts, that.purgedConflicts);
+    }
+
+    /**
+     * Creates a new {@code PurgeCommand} to purge selected OSM primitives.
+     * @param layer optional osm data layer, can be null
+     * @param sel selected OSM primitives
+     * @param toPurgeAdditionally optional list that will be filled with primitives to be purged that have not been in the selection
+     * @return command to purge selected OSM primitives
+     * @since 12688
+     */
+    public static PurgeCommand build(OsmDataLayer layer, Collection<OsmPrimitive> sel, List<OsmPrimitive> toPurgeAdditionally) {
+        Set<OsmPrimitive> toPurge = new HashSet<>(sel);
+        // finally, contains all objects that are purged
+        Set<OsmPrimitive> toPurgeChecked = new HashSet<>();
+
+        // Add referrer, unless the object to purge is not new and the parent is a relation
+        Set<OsmPrimitive> toPurgeRecursive = new HashSet<>();
+        while (!toPurge.isEmpty()) {
+
+            for (OsmPrimitive osm: toPurge) {
+                for (OsmPrimitive parent: osm.getReferrers()) {
+                    if (toPurge.contains(parent) || toPurgeChecked.contains(parent) || toPurgeRecursive.contains(parent)) {
+                        continue;
+                    }
+                    if (parent instanceof Way || (parent instanceof Relation && osm.isNew())) {
+                        if (toPurgeAdditionally != null) {
+                            toPurgeAdditionally.add(parent);
+                        }
+                        toPurgeRecursive.add(parent);
+                    }
+                }
+                toPurgeChecked.add(osm);
+            }
+            toPurge = toPurgeRecursive;
+            toPurgeRecursive = new HashSet<>();
+        }
+
+        // Subset of toPurgeChecked. Marks primitives that remain in the dataset, but incomplete.
+        Set<OsmPrimitive> makeIncomplete = new HashSet<>();
+
+        // Find the objects that will be incomplete after purging.
+        // At this point, all parents of new to-be-purged primitives are
+        // also to-be-purged and
+        // all parents of not-new to-be-purged primitives are either
+        // to-be-purged or of type relation.
+        TOP:
+            for (OsmPrimitive child : toPurgeChecked) {
+                if (child.isNew()) {
+                    continue;
+                }
+                for (OsmPrimitive parent : child.getReferrers()) {
+                    if (parent instanceof Relation && !toPurgeChecked.contains(parent)) {
+                        makeIncomplete.add(child);
+                        continue TOP;
+                    }
+                }
+            }
+
+        // Add untagged way nodes. Do not add nodes that have other referrers not yet to-be-purged.
+        if (Main.pref.getBoolean("purge.add_untagged_waynodes", true)) {
+            Set<OsmPrimitive> wayNodes = new HashSet<>();
+            for (OsmPrimitive osm : toPurgeChecked) {
+                if (osm instanceof Way) {
+                    Way w = (Way) osm;
+                    NODE:
+                        for (Node n : w.getNodes()) {
+                            if (n.isTagged() || toPurgeChecked.contains(n)) {
+                                continue;
+                            }
+                            for (OsmPrimitive ref : n.getReferrers()) {
+                                if (ref != w && !toPurgeChecked.contains(ref)) {
+                                    continue NODE;
+                                }
+                            }
+                            wayNodes.add(n);
+                        }
+                }
+            }
+            toPurgeChecked.addAll(wayNodes);
+            if (toPurgeAdditionally != null) {
+                toPurgeAdditionally.addAll(wayNodes);
+            }
+        }
+
+        if (Main.pref.getBoolean("purge.add_relations_with_only_incomplete_members", true)) {
+            Set<Relation> relSet = new HashSet<>();
+            for (OsmPrimitive osm : toPurgeChecked) {
+                for (OsmPrimitive parent : osm.getReferrers()) {
+                    if (parent instanceof Relation
+                            && !(toPurgeChecked.contains(parent))
+                            && hasOnlyIncompleteMembers((Relation) parent, toPurgeChecked, relSet)) {
+                        relSet.add((Relation) parent);
+                    }
+                }
+            }
+
+            // Add higher level relations (list gets extended while looping over it)
+            List<Relation> relLst = new ArrayList<>(relSet);
+            for (int i = 0; i < relLst.size(); ++i) { // foreach loop not applicable since list gets extended while looping over it
+                for (OsmPrimitive parent : relLst.get(i).getReferrers()) {
+                    if (!(toPurgeChecked.contains(parent))
+                            && hasOnlyIncompleteMembers((Relation) parent, toPurgeChecked, relLst)) {
+                        relLst.add((Relation) parent);
+                    }
+                }
+            }
+            relSet = new HashSet<>(relLst);
+            toPurgeChecked.addAll(relSet);
+            if (toPurgeAdditionally != null) {
+                toPurgeAdditionally.addAll(relSet);
+            }
+        }
+
+        return layer != null ? new PurgeCommand(layer, toPurgeChecked, makeIncomplete)
+                : new PurgeCommand(toPurgeChecked.iterator().next().getDataSet(), toPurgeChecked, makeIncomplete);
+    }
+
+    private static boolean hasOnlyIncompleteMembers(
+            Relation r, Collection<OsmPrimitive> toPurge, Collection<? extends OsmPrimitive> moreToPurge) {
+        for (RelationMember m : r.getMembers()) {
+            if (!m.getMember().isIncomplete() && !toPurge.contains(m.getMember()) && !moreToPurge.contains(m.getMember()))
+                return false;
+        }
+        return true;
     }
 }
