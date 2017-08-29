@@ -135,9 +135,7 @@ public abstract class Main {
 
     /**
      * The commands undo/redo handler.
-     * @deprecated Use {@link MainApplication#undoRedo} instead
      */
-    @Deprecated
     public final UndoRedoHandler undoRedo = MainApplication.undoRedo;
 
     /**
