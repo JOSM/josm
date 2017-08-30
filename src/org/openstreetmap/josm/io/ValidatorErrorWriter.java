@@ -100,7 +100,7 @@ public class ValidatorErrorWriter extends XmlWriter {
                     out.println("    <error class='"+entry.getKey().id+"'>");
                     out.print("      <location");
                     osmWriter.writeLatLon(ll);
-                    out.println(">");
+                    out.println("/>");
                     for (OsmPrimitive p : error.getPrimitives()) {
                         p.accept(osmWriter);
                     }
