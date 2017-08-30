@@ -514,26 +514,32 @@ public class ElemStyles implements PreferenceChangedListener {
     }
 
     /**
-     * Determines whether primitive has <b>only</b> an AreaElement.
+     * Determines whether primitive has area-type {@link StyleElement}s, but
+     * no line-type StyleElements.
+     * 
+     * {@link TextElement} is ignored, as it can be both line and area-type.
      * @param p the OSM primitive
-     * @return {@code true} if primitive has only an AreaElement
-     * @since 7486
+     * @return {@code true} if primitive has area elements, but no line elements
+     * @since 12700
      */
-    public static boolean hasOnlyAreaOrTextStyleElements(OsmPrimitive p) {
+    public static boolean hasOnlyAreaElements(OsmPrimitive p) {
         MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().lock();
         try {
             if (MapPaintStyles.getStyles() == null)
                 return false;
             StyleElementList styles = MapPaintStyles.getStyles().generateStyles(p, 1.0, false).a;
-            if (styles.isEmpty()) {
-                return false;
-            }
+            boolean hasAreaElement = false;
             for (StyleElement s : styles) {
-                if (!(s instanceof AreaElement || s instanceof TextElement)) {
+                if (s instanceof TextElement) {
+                    continue;
+                }
+                if (s instanceof AreaElement) {
+                    hasAreaElement = true;
+                } else {
                     return false;
                 }
             }
-            return true;
+            return hasAreaElement;
         } finally {
             MapCSSStyleSource.STYLE_SOURCE_LOCK.readLock().unlock();
         }
