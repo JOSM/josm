@@ -4772,7 +4772,7 @@ way|z17-[highway=road][setting("highway_labels")] {
     text-halo-radius: 1.5;
 }
 way|z17-[highway=motorway][setting("highway_labels")],
-way|z17-[highway_link=motorway][setting("highway_labels")] {
+way|z17-[highway=motorway_link][setting("highway_labels")] {
     text-halo-color: motorway#809bc0;
 }
 way|z17-[highway=trunk][setting("highway_labels")],
