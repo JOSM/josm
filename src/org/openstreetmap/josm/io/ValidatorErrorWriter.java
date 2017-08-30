@@ -104,7 +104,7 @@ public class ValidatorErrorWriter extends XmlWriter {
                     for (OsmPrimitive p : error.getPrimitives()) {
                         p.accept(osmWriter);
                     }
-                    out.println("      <text lang='"+XmlWriter.encode(lang)+"' value='"+XmlWriter.encode(error.getDescription())+"'>");
+                    out.println("      <text lang='"+XmlWriter.encode(lang)+"' value='"+XmlWriter.encode(error.getDescription())+"'/>");
                     if (error.isFixable()) {
                         out.println("      <fixes>");
                         Command fix = error.getFix();
