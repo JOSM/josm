@@ -4738,11 +4738,16 @@ node.place, way.place, area.place { font-size: 11; }
 /* way text labels */
 /*******************/
 
-way|z17-[highway^=motorway][setting("highway_labels")],
-way|z17-[highway^=trunk][setting("highway_labels")],
-way|z17-[highway^=primary][setting("highway_labels")],
-way|z17-[highway^=secondary][setting("highway_labels")],
-way|z17-[highway^=tertiary][setting("highway_labels")],
+way|z17-[highway=motorway][setting("highway_labels")],
+way|z17-[highway=motorway_link][setting("highway_labels")],
+way|z17-[highway=trunk][setting("highway_labels")],
+way|z17-[highway=trunk_link][setting("highway_labels")],
+way|z17-[highway=primary][setting("highway_labels")],
+way|z17-[highway=primary_link][setting("highway_labels")],
+way|z17-[highway=secondary][setting("highway_labels")],
+way|z17-[highway=secondary_link][setting("highway_labels")],
+way|z17-[highway=tertiary][setting("highway_labels")],
+way|z17-[highway=tertiary_link][setting("highway_labels")],
 way|z17-[highway=unclassified][setting("highway_labels")],
 way|z17-[highway=residential][setting("highway_labels")],
 way|z17-[highway=living_street][setting("highway_labels")],
@@ -4766,19 +4771,24 @@ way|z17-[highway=road][setting("highway_labels")] {
     text-halo-opacity: 1;
     text-halo-radius: 1.5;
 }
-way|z17-[highway^=motorway][setting("highway_labels")] {
+way|z17-[highway=motorway][setting("highway_labels")],
+way|z17-[highway_link=motorway][setting("highway_labels")] {
     text-halo-color: motorway#809bc0;
 }
-way|z17-[highway^=trunk][setting("highway_labels")] {
+way|z17-[highway=trunk][setting("highway_labels")],
+way|z17-[highway=trunk_link][setting("highway_labels")] {
     text-halo-color: trunk#7fc97f;
 }
-way|z17-[highway^=primary][setting("highway_labels")] {
+way|z17-[highway=primary][setting("highway_labels")],
+way|z17-[highway=primary_link][setting("highway_labels")] {
     text-halo-color: primary#fb805f;
 }
-way|z17-[highway^=secondary][setting("highway_labels")] {
+way|z17-[highway=secondary][setting("highway_labels")],
+way|z17-[highway=secondary_link][setting("highway_labels")] {
     text-halo-color: secondary#fdbf6f;
 }
-way|z17-[highway^=tertiary][setting("highway_labels")] {
+way|z17-[highway=tertiary][setting("highway_labels")],
+way|z17-[highway=tertiary_link][setting("highway_labels")] {
     text-halo-color: tertiary#f7f496;
 }
 way|z17-[highway=unclassified][setting("highway_labels")],
