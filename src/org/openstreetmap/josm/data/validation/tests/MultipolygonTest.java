@@ -113,7 +113,7 @@ public class MultipolygonTest extends Test {
 
     @Override
     public void visit(Way w) {
-        if (!w.isArea() && ElemStyles.hasOnlyAreaOrTextStyleElements(w)) {
+        if (!w.isArea() && ElemStyles.hasOnlyAreaElements(w)) {
             List<Node> nodes = w.getNodes();
             if (nodes.isEmpty()) return; // fix zero nodes bug
             for (String key : keysCheckedByAnotherTest) {
