@@ -28,8 +28,6 @@ import org.openstreetmap.josm.Main;
  */
 public class PlatformHookOsx implements PlatformHook, InvocationHandler {
 
-    private static final PlatformHookOsx INVOCATION_HANDLER = new PlatformHookOsx();
-
     private String oSBuildNumber;
 
     private NativeOsCallback osCallback;
@@ -58,7 +56,7 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
             Class<?> openFilesHandler = findHandlerClass("OpenFilesHandler");
             Class<?> preferencesHandler = findHandlerClass("PreferencesHandler");
             Object proxy = Proxy.newProxyInstance(PlatformHookOsx.class.getClassLoader(), new Class<?>[] {
-                quitHandler, aboutHandler, openFilesHandler, preferencesHandler}, INVOCATION_HANDLER);
+                quitHandler, aboutHandler, openFilesHandler, preferencesHandler}, this);
             Object appli = eawtApplication.getConstructor((Class[]) null).newInstance((Object[]) null);
             if (Utils.getJavaVersion() >= 9) {
                 setHandlers(Desktop.class, quitHandler, aboutHandler, openFilesHandler, preferencesHandler, proxy, Desktop.getDesktop());
