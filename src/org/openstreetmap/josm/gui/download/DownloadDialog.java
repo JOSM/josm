@@ -14,7 +14,6 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -61,10 +60,6 @@ import org.openstreetmap.josm.tools.OsmUrlToBounds;
  */
 public class DownloadDialog extends JDialog {
 
-    /**
-     * Preference properties
-     */
-    private static final String TAB_SPLIT_NAMESPACE = "download.tabsplit.";
     private static final IntegerProperty DOWNLOAD_TAB = new IntegerProperty("download.tab", 0);
     private static final IntegerProperty DOWNLOAD_SOURCE_TAB = new IntegerProperty("download-source.tab", 0);
     private static final BooleanProperty DOWNLOAD_AUTORUN = new BooleanProperty("download.autorun", false);
@@ -96,7 +91,7 @@ public class DownloadDialog extends JDialog {
     protected JCheckBox cbZoomToDownloadedData;
     protected SlippyMapChooser slippyMapChooser;
     protected JPanel mainPanel;
-    protected JSplitPane dialogSplit;
+    protected DownloadDialogSplitPane dialogSplit;
 
     /*
      * Keep the reference globally to avoid having it garbage collected
@@ -143,11 +138,9 @@ public class DownloadDialog extends JDialog {
         downloadSourcesTab.setMinimumSize(new Dimension(0, 25));
         tpDownloadAreaSelectors.setMinimumSize(new Dimension(0, 0));
 
-        dialogSplit = new JSplitPane(
-                JSplitPane.VERTICAL_SPLIT,
+        dialogSplit = new DownloadDialogSplitPane(
                 downloadSourcesTab,
                 tpDownloadAreaSelectors);
-        dialogSplit.addPropertyChangeListener(getDividerChangedListener());
 
         ChangeListener tabChangedListener = getDownloadSourceTabChangeListener();
         tabChangedListener.stateChanged(new ChangeEvent(downloadSourcesTab));
@@ -555,28 +548,7 @@ public class DownloadDialog extends JDialog {
             Component selectedComponent = tabbedPane.getSelectedComponent();
             if (selectedComponent instanceof AbstractDownloadSourcePanel) {
                 AbstractDownloadSourcePanel<?> panel = (AbstractDownloadSourcePanel<?>) selectedComponent;
-                dialogSplit.setDividerLocation(Main.pref.getInteger(
-                        TAB_SPLIT_NAMESPACE + panel.getSimpleName(),
-                        panel.getMinimumSize().height));
-            }
-        };
-    }
-
-    /**
-     * Creates a listener that react on dialog splitters movements to save users preferences.
-     * @return A listener to save user preferred split of the dialog.
-     */
-    private PropertyChangeListener getDividerChangedListener() {
-        return evt -> {
-            if (evt.getPropertyName().equalsIgnoreCase(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
-                Component selectedComponent = downloadSourcesTab.getSelectedComponent();
-                if (selectedComponent instanceof AbstractDownloadSourcePanel) {
-                    AbstractDownloadSourcePanel<?> panel = (AbstractDownloadSourcePanel<?>) selectedComponent;
-                    Main.pref.put(
-                            TAB_SPLIT_NAMESPACE + panel.getSimpleName(),
-                            String.valueOf(dialogSplit.getDividerLocation())
-                    );
-                }
+                dialogSplit.setPolicy(panel.getSizingPolicy());
             }
         };
     }
@@ -656,6 +628,52 @@ public class DownloadDialog extends JDialog {
         @Override
         public void windowActivated(WindowEvent e) {
             btnDownload.requestFocusInWindow();
+        }
+    }
+
+    /**
+     * A special split pane that acts according to a {@link DownloadSourceSizingPolicy}
+     *
+     * It attempts to size the top tab content correctly.
+     *
+     * @author Michael Zangl
+     * @since 12705
+     */
+    private static class DownloadDialogSplitPane extends JSplitPane {
+        private DownloadSourceSizingPolicy policy;
+        private JTabbedPane topComponent;
+
+        DownloadDialogSplitPane(JTabbedPane newTopComponent, Component newBottomComponent) {
+            super(VERTICAL_SPLIT, newTopComponent, newBottomComponent);
+            this.topComponent = newTopComponent;
+        }
+
+        public void setPolicy(DownloadSourceSizingPolicy policy) {
+            this.policy = policy;
+
+            super.setDividerLocation(policy.getComponentHeight() + computeOffset());
+            setDividerSize(policy.isHeightAdjustable() ? 10 : 0);
+            setEnabled(policy.isHeightAdjustable());
+        }
+
+        @Override
+        public void doLayout() {
+            // We need to force this height before the layout manager is run.
+            // We cannot do this in the setDividerLocation, since the offset cannot be computed there.
+            int offset = computeOffset();
+            if (policy.isHeightAdjustable()) {
+                policy.storeHeight(Math.max(getDividerLocation() - offset, 0));
+            }
+            super.setDividerLocation(policy.getComponentHeight() + offset);
+            super.doLayout();
+        }
+
+        /**
+         * @return The difference between the content height and the divider location
+         */
+        private int computeOffset() {
+            Component selectedComponent = topComponent.getSelectedComponent();
+            return topComponent.getHeight() - (selectedComponent == null ? 0 : selectedComponent.getHeight());
         }
     }
 }
