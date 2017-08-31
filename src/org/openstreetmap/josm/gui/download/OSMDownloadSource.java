@@ -41,6 +41,11 @@ import org.openstreetmap.josm.tools.Pair;
  * @since 12652
  */
 public class OSMDownloadSource implements DownloadSource<OSMDownloadSource.OSMDownloadData> {
+    /**
+     * The simple name for the {@link OSMDownloadSourcePanel}
+     * @since 12706
+     */
+    public static final String SIMPLE_NAME = "osmdownloadpanel";
 
     @Override
     public AbstractDownloadSourcePanel<OSMDownloadData> createPanel() {
@@ -133,7 +138,6 @@ public class OSMDownloadSource implements DownloadSource<OSMDownloadSource.OSMDo
         private final JCheckBox cbDownloadNotes;
         private final JLabel sizeCheck = new JLabel();
 
-        private static final String SIMPLE_NAME = "osmdownloadpanel";
         private static final BooleanProperty DOWNLOAD_OSM = new BooleanProperty("download.osm.data", true);
         private static final BooleanProperty DOWNLOAD_GPS = new BooleanProperty("download.osm.gps", false);
         private static final BooleanProperty DOWNLOAD_NOTES = new BooleanProperty("download.osm.notes", false);
