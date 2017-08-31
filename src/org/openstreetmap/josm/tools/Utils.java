@@ -1631,6 +1631,9 @@ public final class Utils {
         }
         int firstDotPos = version.indexOf('.');
         int lastDotPos = version.lastIndexOf('.');
+        if (firstDotPos == lastDotPos) {
+            return 0;
+        }
         return firstDotPos > - 1 ? Integer.parseInt(version.substring(firstDotPos + 1,
                 lastDotPos > -1 ? lastDotPos : version.length())) : 0;
     }
@@ -1644,7 +1647,12 @@ public final class Utils {
         String version = System.getProperty("java.runtime.version");
         int bPos = version.indexOf('b');
         int pPos = version.indexOf('+');
-        return Integer.parseInt(version.substring(bPos > -1 ? bPos + 1 : pPos + 1, version.length()));
+        try {
+            return Integer.parseInt(version.substring(bPos > -1 ? bPos + 1 : pPos + 1, version.length()));
+        } catch (NumberFormatException e) {
+            Logging.trace(e);
+            return 0;
+        }
     }
 
     /**
