@@ -224,6 +224,9 @@ public class UtilsTest {
     public void testGetJavaUpdate() {
         String javaVersion = System.getProperty("java.version");
         try {
+            System.setProperty("java.version", "1.8.0");
+            assertEquals(0, Utils.getJavaUpdate());
+
             System.setProperty("java.version", "1.8.0_131");
             assertEquals(131, Utils.getJavaUpdate());
 
@@ -264,6 +267,11 @@ public class UtilsTest {
 
             System.setProperty("java.runtime.version", "9.1.2+62");
             assertEquals(62, Utils.getJavaBuild());
+
+            // IBM version example
+            System.setProperty("java.runtime.version", "pwa6480sr4fp7-20170627_02 (SR4 FP7)");
+            assertEquals(0, Utils.getJavaBuild());
+
         } finally {
             System.setProperty("java.runtime.version", javaVersion);
         }

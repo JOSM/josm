@@ -10,6 +10,7 @@ import java.net.UnknownHostException;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Manager class for remote control operations.
@@ -46,7 +47,9 @@ public class RemoteControl {
      */
     public static void start() {
         RemoteControlHttpServer.restartRemoteControlHttpServer();
-        RemoteControlHttpsServer.restartRemoteControlHttpsServer();
+        if (supportsHttps()) {
+            RemoteControlHttpsServer.restartRemoteControlHttpsServer();
+        }
     }
 
     /**
@@ -55,7 +58,23 @@ public class RemoteControl {
      */
     public static void stop() {
         RemoteControlHttpServer.stopRemoteControlHttpServer();
-        RemoteControlHttpsServer.stopRemoteControlHttpsServer();
+        if (supportsHttps()) {
+            RemoteControlHttpsServer.stopRemoteControlHttpsServer();
+        }
+    }
+
+    /**
+     * Determines if the current JVM support HTTPS remote control.
+     * @return {@code true} if the JVM provides {@code sun.security.x509} classes
+     * @since 12703
+     */
+    public static boolean supportsHttps() {
+        try {
+            return Class.forName("sun.security.x509.GeneralName") != null;
+        } catch (ClassNotFoundException e) {
+            Logging.trace(e);
+            return false;
+        }
     }
 
     /**
