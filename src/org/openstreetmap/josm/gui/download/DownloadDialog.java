@@ -14,11 +14,10 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import javax.swing.AbstractAction;
@@ -40,6 +39,7 @@ import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
@@ -61,12 +61,8 @@ import org.openstreetmap.josm.tools.OsmUrlToBounds;
  */
 public class DownloadDialog extends JDialog {
 
-    /**
-     * Preference properties
-     */
-    private static final String TAB_SPLIT_NAMESPACE = "download.tabsplit.";
     private static final IntegerProperty DOWNLOAD_TAB = new IntegerProperty("download.tab", 0);
-    private static final IntegerProperty DOWNLOAD_SOURCE_TAB = new IntegerProperty("download-source.tab", 0);
+    private static final StringProperty DOWNLOAD_SOURCE_TAB = new StringProperty("download.source.tab", OSMDownloadSource.SIMPLE_NAME);
     private static final BooleanProperty DOWNLOAD_AUTORUN = new BooleanProperty("download.autorun", false);
     private static final BooleanProperty DOWNLOAD_NEWLAYER = new BooleanProperty("download.newlayer", false);
     private static final BooleanProperty DOWNLOAD_ZOOMTODATA = new BooleanProperty("download.zoomtodata", true);
@@ -89,14 +85,14 @@ public class DownloadDialog extends JDialog {
     protected final transient List<DownloadSource<?>> downloadSources = new ArrayList<>();
     protected final transient List<DownloadSelection> downloadSelections = new ArrayList<>();
     protected final JTabbedPane tpDownloadAreaSelectors = new JTabbedPane();
-    protected final JTabbedPane downloadSourcesTab = new JTabbedPane();
+    protected final DownloadSourceTabs downloadSourcesTab = new DownloadSourceTabs();
 
     protected JCheckBox cbNewLayer;
     protected JCheckBox cbStartup;
     protected JCheckBox cbZoomToDownloadedData;
     protected SlippyMapChooser slippyMapChooser;
     protected JPanel mainPanel;
-    protected JSplitPane dialogSplit;
+    protected DownloadDialogSplitPane dialogSplit;
 
     /*
      * Keep the reference globally to avoid having it garbage collected
@@ -143,11 +139,9 @@ public class DownloadDialog extends JDialog {
         downloadSourcesTab.setMinimumSize(new Dimension(0, 25));
         tpDownloadAreaSelectors.setMinimumSize(new Dimension(0, 0));
 
-        dialogSplit = new JSplitPane(
-                JSplitPane.VERTICAL_SPLIT,
+        dialogSplit = new DownloadDialogSplitPane(
                 downloadSourcesTab,
                 tpDownloadAreaSelectors);
-        dialogSplit.addPropertyChangeListener(getDividerChangedListener());
 
         ChangeListener tabChangedListener = getDownloadSourceTabChangeListener();
         tabChangedListener.stateChanged(new ChangeEvent(downloadSourcesTab));
@@ -274,10 +268,8 @@ public class DownloadDialog extends JDialog {
             }
         }
 
-        for (Component ds : downloadSourcesTab.getComponents()) {
-            if (ds instanceof AbstractDownloadSourcePanel) {
-                ((AbstractDownloadSourcePanel<?>) ds).boudingBoxChanged(b);
-            }
+        for (AbstractDownloadSourcePanel<?> ds : downloadSourcesTab.getAllPanels()) {
+            ds.boudingBoxChanged(b);
         }
     }
 
@@ -348,9 +340,7 @@ public class DownloadDialog extends JDialog {
         }
 
         downloadSources.add(downloadSource);
-        if ((ExpertToggleAction.isExpert() && downloadSource.onlyExpert()) || !downloadSource.onlyExpert()) {
-            addNewDownloadSourceTab(downloadSource);
-        }
+        addNewDownloadSourceTab(downloadSource);
     }
 
     /**
@@ -368,7 +358,7 @@ public class DownloadDialog extends JDialog {
      */
     public void rememberSettings() {
         DOWNLOAD_TAB.put(tpDownloadAreaSelectors.getSelectedIndex());
-        DOWNLOAD_SOURCE_TAB.put(downloadSourcesTab.getSelectedIndex());
+        downloadSourcesTab.getSelectedPanel().ifPresent(panel -> DOWNLOAD_SOURCE_TAB.put(panel.getSimpleName()));
         DOWNLOAD_NEWLAYER.put(cbNewLayer.isSelected());
         DOWNLOAD_ZOOMTODATA.put(cbZoomToDownloadedData.isSelected());
         if (currentBounds != null) {
@@ -391,12 +381,7 @@ public class DownloadDialog extends JDialog {
             tpDownloadAreaSelectors.setSelectedIndex(0);
         }
 
-        try {
-            downloadSourcesTab.setSelectedIndex(DOWNLOAD_SOURCE_TAB.get());
-        } catch (IndexOutOfBoundsException e) {
-            Logging.trace(e);
-            downloadSourcesTab.setSelectedIndex(0);
-        }
+        downloadSourcesTab.setSelected(DOWNLOAD_SOURCE_TAB.get());
 
         if (MainApplication.isDisplayingMapView()) {
             MapView mv = MainApplication.getMap().mapView;
@@ -489,35 +474,12 @@ public class DownloadDialog extends JDialog {
     }
 
     /**
-     * Returns position of the download source in the tabbed pane.
-     * @param downloadSource The download source.
-     * @return The index of the download source, or -1 if it not in the pane.
-     */
-    protected int getDownloadSourceIndex(DownloadSource<?> downloadSource) {
-        return Arrays.stream(downloadSourcesTab.getComponents())
-                .filter(it -> it instanceof AbstractDownloadSourcePanel)
-                .map(it -> (AbstractDownloadSourcePanel<?>) it)
-                .filter(it -> it.getDownloadSource().equals(downloadSource))
-                .findAny()
-                .map(downloadSourcesTab::indexOfComponent)
-                .orElse(-1);
-    }
-
-    /**
      * Adds the download source to the download sources tab.
      * @param downloadSource The download source to be added.
      * @param <T> The type of the download data.
      */
     protected <T> void addNewDownloadSourceTab(DownloadSource<T> downloadSource) {
-        AbstractDownloadSourcePanel<T> panel = downloadSource.createPanel();
-        downloadSourcesTab.add(panel, downloadSource.getLabel());
-        Icon icon = panel.getIcon();
-        if (icon != null) {
-            int idx = getDownloadSourceIndex(downloadSource);
-            downloadSourcesTab.setIconAt(
-                    idx != -1 ? idx : downloadSourcesTab.getTabCount() - 1,
-                    icon);
-        }
+        downloadSourcesTab.addPanel(downloadSource.createPanel());
     }
 
     /**
@@ -526,21 +488,7 @@ public class DownloadDialog extends JDialog {
      * @return The expert mode listener.
      */
     private ExpertToggleAction.ExpertModeChangeListener getExpertModeListenerForDownloadSources() {
-        return isExpert -> {
-            if (isExpert) {
-                downloadSources.stream()
-                        .filter(DownloadSource::onlyExpert)
-                        .filter(it -> getDownloadSourceIndex(it) == -1)
-                        .forEach(this::addNewDownloadSourceTab);
-            } else {
-                IntStream.range(0, downloadSourcesTab.getTabCount())
-                        .mapToObj(downloadSourcesTab::getComponentAt)
-                        .filter(it -> it instanceof AbstractDownloadSourcePanel)
-                        .map(it -> (AbstractDownloadSourcePanel<?>) it)
-                        .filter(it -> it.getDownloadSource().onlyExpert())
-                        .forEach(downloadSourcesTab::remove);
-            }
-        };
+        return downloadSourcesTab::updateExpert;
     }
 
     /**
@@ -550,35 +498,8 @@ public class DownloadDialog extends JDialog {
      * @return A listener to adjust dialog division.
      */
     private ChangeListener getDownloadSourceTabChangeListener() {
-        return ec -> {
-            JTabbedPane tabbedPane = (JTabbedPane) ec.getSource();
-            Component selectedComponent = tabbedPane.getSelectedComponent();
-            if (selectedComponent instanceof AbstractDownloadSourcePanel) {
-                AbstractDownloadSourcePanel<?> panel = (AbstractDownloadSourcePanel<?>) selectedComponent;
-                dialogSplit.setDividerLocation(Main.pref.getInteger(
-                        TAB_SPLIT_NAMESPACE + panel.getSimpleName(),
-                        panel.getMinimumSize().height));
-            }
-        };
-    }
-
-    /**
-     * Creates a listener that react on dialog splitters movements to save users preferences.
-     * @return A listener to save user preferred split of the dialog.
-     */
-    private PropertyChangeListener getDividerChangedListener() {
-        return evt -> {
-            if (evt.getPropertyName().equalsIgnoreCase(JSplitPane.DIVIDER_LOCATION_PROPERTY)) {
-                Component selectedComponent = downloadSourcesTab.getSelectedComponent();
-                if (selectedComponent instanceof AbstractDownloadSourcePanel) {
-                    AbstractDownloadSourcePanel<?> panel = (AbstractDownloadSourcePanel<?>) selectedComponent;
-                    Main.pref.put(
-                            TAB_SPLIT_NAMESPACE + panel.getSimpleName(),
-                            String.valueOf(dialogSplit.getDividerLocation())
-                    );
-                }
-            }
-        };
+        return ec -> downloadSourcesTab.getSelectedPanel().ifPresent(
+                panel -> dialogSplit.setPolicy(panel.getSizingPolicy()));
     }
 
     /**
@@ -595,20 +516,16 @@ public class DownloadDialog extends JDialog {
          * Cancels the download
          */
         public void run() {
+            rememberSettings();
             setCanceled(true);
             setVisible(false);
         }
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Component panel = downloadSourcesTab.getSelectedComponent();
-            if (panel instanceof AbstractDownloadSourcePanel) {
-                AbstractDownloadSourcePanel<?> pnl = (AbstractDownloadSourcePanel<?>) panel;
-                run();
-                pnl.checkCancel();
-            } else {
-                run();
-            }
+            Optional<AbstractDownloadSourcePanel<?>> panel = downloadSourcesTab.getSelectedPanel();
+            run();
+            panel.ifPresent(AbstractDownloadSourcePanel::checkCancel);
         }
     }
 
@@ -628,17 +545,15 @@ public class DownloadDialog extends JDialog {
          * Otherwise the download is not started and the dialog remains visible.
          */
         public void run() {
-            Component panel = downloadSourcesTab.getSelectedComponent();
-            if (panel instanceof AbstractDownloadSourcePanel) {
-                AbstractDownloadSourcePanel<?> pnl = (AbstractDownloadSourcePanel<?>) panel;
+            rememberSettings();
+            downloadSourcesTab.getSelectedPanel().ifPresent(panel -> {
                 DownloadSettings downloadSettings = getDownloadSettings();
-                if (pnl.checkDownload(downloadSettings)) {
-                    rememberSettings();
+                if (panel.checkDownload(downloadSettings)) {
                     setCanceled(false);
                     setVisible(false);
-                    pnl.triggerDownload(downloadSettings);
+                    panel.triggerDownload(downloadSettings);
                 }
-            }
+            });
         }
 
         @Override
@@ -656,6 +571,110 @@ public class DownloadDialog extends JDialog {
         @Override
         public void windowActivated(WindowEvent e) {
             btnDownload.requestFocusInWindow();
+        }
+    }
+
+    /**
+     * A special tabbed pane for {@link AbstractDownloadSourcePanel}s
+     * @author Michael Zangl
+     * @since 12706
+     */
+    private static class DownloadSourceTabs extends JTabbedPane {
+        private final List<AbstractDownloadSourcePanel<?>> allPanels = new ArrayList<>();
+
+        List<AbstractDownloadSourcePanel<?>> getAllPanels() {
+            return allPanels;
+        }
+
+        List<AbstractDownloadSourcePanel<?>> getVisiblePanels() {
+            return IntStream.range(0, getTabCount())
+                    .mapToObj(this::getComponentAt)
+                    .map(p -> (AbstractDownloadSourcePanel<?>) p)
+                    .collect(Collectors.toList());
+        }
+
+        void setSelected(String simpleName) {
+            getVisiblePanels().stream()
+                .filter(panel -> simpleName.equals(panel.getSimpleName()))
+                .findFirst()
+                .ifPresent(this::setSelectedComponent);
+        }
+
+        void updateExpert(boolean isExpert) {
+            updateTabs();
+        }
+
+        void addPanel(AbstractDownloadSourcePanel<?> panel) {
+            allPanels.add(panel);
+            updateTabs();
+        }
+
+        private void updateTabs() {
+            // Not the best performance, but we don't do it often
+            removeAll();
+
+            boolean isExpert = ExpertToggleAction.isExpert();
+            allPanels.stream()
+                .filter(panel -> isExpert || !panel.getDownloadSource().onlyExpert())
+                .forEach(panel -> addTab(panel.getDownloadSource().getLabel(), panel.getIcon(), panel));
+        }
+
+        Optional<AbstractDownloadSourcePanel<?>> getSelectedPanel() {
+            return Optional.ofNullable((AbstractDownloadSourcePanel<?>) getSelectedComponent());
+        }
+
+        @Override
+        public void insertTab(String title, Icon icon, Component component, String tip, int index) {
+            if (!(component instanceof AbstractDownloadSourcePanel)) {
+                throw new IllegalArgumentException("Can only add AbstractDownloadSourcePanels");
+            }
+            super.insertTab(title, icon, component, tip, index);
+        }
+    }
+
+    /**
+     * A special split pane that acts according to a {@link DownloadSourceSizingPolicy}
+     *
+     * It attempts to size the top tab content correctly.
+     *
+     * @author Michael Zangl
+     * @since 12705
+     */
+    private static class DownloadDialogSplitPane extends JSplitPane {
+        private DownloadSourceSizingPolicy policy;
+        private JTabbedPane topComponent;
+
+        DownloadDialogSplitPane(JTabbedPane newTopComponent, Component newBottomComponent) {
+            super(VERTICAL_SPLIT, newTopComponent, newBottomComponent);
+            this.topComponent = newTopComponent;
+        }
+
+        public void setPolicy(DownloadSourceSizingPolicy policy) {
+            this.policy = policy;
+
+            super.setDividerLocation(policy.getComponentHeight() + computeOffset());
+            setDividerSize(policy.isHeightAdjustable() ? 10 : 0);
+            setEnabled(policy.isHeightAdjustable());
+        }
+
+        @Override
+        public void doLayout() {
+            // We need to force this height before the layout manager is run.
+            // We cannot do this in the setDividerLocation, since the offset cannot be computed there.
+            int offset = computeOffset();
+            if (policy.isHeightAdjustable()) {
+                policy.storeHeight(Math.max(getDividerLocation() - offset, 0));
+            }
+            super.setDividerLocation(policy.getComponentHeight() + offset);
+            super.doLayout();
+        }
+
+        /**
+         * @return The difference between the content height and the divider location
+         */
+        private int computeOffset() {
+            Component selectedComponent = topComponent.getSelectedComponent();
+            return topComponent.getHeight() - (selectedComponent == null ? 0 : selectedComponent.getHeight());
         }
     }
 }
