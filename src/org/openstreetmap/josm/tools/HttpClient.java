@@ -52,6 +52,7 @@ public final class HttpClient {
     private int maxRedirects = Main.pref.getInteger("socket.maxredirects", 5);
     private boolean useCache;
     private String reasonForRequest;
+    private String outputMessage = tr("Uploading data ...");
     private HttpURLConnection connection; // to allow disconnecting before `response` is set
     private Response response;
     private boolean finishOnCloseOutput = true;
@@ -114,7 +115,8 @@ public final class HttpClient {
             connection.setFixedLengthStreamingMode(requestBody.length);
             connection.setDoOutput(true);
             try (OutputStream out = new BufferedOutputStream(
-                    new ProgressOutputStream(connection.getOutputStream(), requestBody.length, progressMonitor, finishOnCloseOutput))) {
+                    new ProgressOutputStream(connection.getOutputStream(), requestBody.length,
+                            progressMonitor, outputMessage, finishOnCloseOutput))) {
                 out.write(requestBody);
             }
         }
@@ -617,6 +619,18 @@ public final class HttpClient {
      */
     public HttpClient setReasonForRequest(String reasonForRequest) {
         this.reasonForRequest = reasonForRequest;
+        return this;
+    }
+
+    /**
+     * Sets the output message to be displayed in progress monitor for {@code PUT}, {@code POST} and {@code DELETE} methods.
+     * Defaults to "Uploading data ..." (translated). Has no effect for {@code GET} or any other method.
+     * @param outputMessage message to be displayed in progress monitor
+     * @return {@code this}
+     * @since 12711
+     */
+    public HttpClient setOutputMessage(String outputMessage) {
+        this.outputMessage = outputMessage;
         return this;
     }
 
