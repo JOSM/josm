@@ -30,8 +30,22 @@ public class ProgressOutputStream extends OutputStream {
      * @since 10302
      */
     public ProgressOutputStream(OutputStream out, long size, ProgressMonitor progressMonitor, boolean finishOnClose) {
+        this(out, size, progressMonitor, tr("Uploading data ..."), finishOnClose);
+    }
+
+    /**
+     * Constructs a new {@code ProgressOutputStream}.
+     *
+     * @param out the stream to monitor
+     * @param size the total size which will be sent
+     * @param progressMonitor the monitor to report to
+     * @param message the message that will be displayed by the inner {@link StreamProgressUpdater}
+     * @param finishOnClose whether to call {@link ProgressMonitor#finishTask} when this stream is closed
+     * @since 12711
+     */
+    public ProgressOutputStream(OutputStream out, long size, ProgressMonitor progressMonitor, String message, boolean finishOnClose) {
         this.updater = new StreamProgressUpdater(size,
-                progressMonitor != null ? progressMonitor : NullProgressMonitor.INSTANCE, tr("Uploading data ..."));
+                progressMonitor != null ? progressMonitor : NullProgressMonitor.INSTANCE, message);
         this.out = out;
         this.finishOnClose = finishOnClose;
     }

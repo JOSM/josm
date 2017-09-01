@@ -173,6 +173,7 @@ public abstract class OsmServerReader extends OsmConnection {
             final HttpClient client = HttpClient.create(url, httpMethod)
                     .setFinishOnCloseOutput(false)
                     .setReasonForRequest(reason)
+                    .setOutputMessage(tr("Downloading data..."))
                     .setRequestBody(requestBody);
             activeConnection = client;
             adaptRequest(client);
