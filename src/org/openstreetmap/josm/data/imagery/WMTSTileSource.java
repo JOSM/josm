@@ -660,7 +660,7 @@ public class WMTSTileSource extends AbstractTMSTileSource implements TemplatedTi
         if (matchingLayers.size() > 1) {
             this.currentLayer = matchingLayers.stream().filter(
                     l -> l.tileMatrixSet.identifier.equals(defaultLayer.getTileMatrixSet()))
-                    .findFirst().orElse(null);
+                    .findFirst().orElse(matchingLayers.get(0));
             this.tileProjection = proj;
         } else if (matchingLayers.size() == 1) {
             this.currentLayer = matchingLayers.get(0);

@@ -948,8 +948,6 @@ public final class DomainValidator extends AbstractValidator {
         "maserati", // maserati Fiat Chrysler Automobiles N.V.
         "mattel", // mattel Mattel Sites, Inc.
         "mba", // mba Lone Hollow, LLC
-        "mcd", // mcd McDonald's Corporation
-        "mcdonalds", // mcdonalds McDonald's Corporation
         "mckinsey", // mckinsey McKinsey Holdings, Inc.
         "med", // med Medistry LLC
         "media", // media Grand Glen, LLC
