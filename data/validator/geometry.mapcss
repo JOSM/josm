@@ -93,7 +93,8 @@ way[amenity=vending_machine],
 way[natural=peak],
 way[natural=saddle],
 way[natural=volcano],
-way[natural=tree] {
+way[natural=tree],
+way[highway=motorway_junction] {
   throwWarning: tr("{0} on a way. Should be used on a node.", "{0.tag}"); 
 }
 
