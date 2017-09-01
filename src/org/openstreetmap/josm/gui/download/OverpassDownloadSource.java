@@ -47,7 +47,6 @@ import org.openstreetmap.josm.tools.ImageProvider;
  */
 public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSource.OverpassDownloadData> {
 
-
     @Override
     public AbstractDownloadSourcePanel<OverpassDownloadData> createPanel() {
         return new OverpassDownloadSourcePanel(this);
