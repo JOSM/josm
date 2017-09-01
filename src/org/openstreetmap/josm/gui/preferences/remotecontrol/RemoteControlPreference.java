@@ -176,7 +176,8 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
             // FIXME: use QuadStateCheckBox to make checkboxes unset when disabled
             if (installCertificate != null && uninstallCertificate != null) {
                 // Install certificate button is enabled if HTTPS is also enabled
-                installCertificate.setEnabled(enableRemoteControl.isSelected() && enableHttpsSupport.isSelected() && RemoteControl.supportsHttps());
+                installCertificate.setEnabled(enableRemoteControl.isSelected()
+                        && enableHttpsSupport.isSelected() && RemoteControl.supportsHttps());
                 // Uninstall certificate button is always enabled
                 uninstallCertificate.setEnabled(RemoteControl.supportsHttps());
             }

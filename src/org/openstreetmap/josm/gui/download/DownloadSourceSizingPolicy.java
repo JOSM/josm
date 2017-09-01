@@ -15,19 +15,19 @@ public interface DownloadSourceSizingPolicy {
      * Gets the height of the download source panel.
      * @return The height the component should have.
      */
-    public int getComponentHeight();
+    int getComponentHeight();
 
     /**
      * Check whether the user should be allowed to adjust the height of this download source panel
      * @return <code>true</code> if the height should be adjustable
      */
-    public boolean isHeightAdjustable();
+    boolean isHeightAdjustable();
 
     /**
      * Stores the height
      * @param height the height in pixel
      */
-    public default void storeHeight(int height) {
+    default void storeHeight(int height) {
         throw new UnsupportedOperationException(
                 "Setting the height is not supported for " + this.getClass().getCanonicalName());
     }
@@ -36,7 +36,7 @@ public interface DownloadSourceSizingPolicy {
      * The download source has a fixed size provided by the component
      * @author Michael Zangl
      */
-    public class FixedDownloadSourceSizePolicy implements DownloadSourceSizingPolicy {
+    class FixedDownloadSourceSizePolicy implements DownloadSourceSizingPolicy {
         private final Component base;
 
         /**
@@ -63,7 +63,7 @@ public interface DownloadSourceSizingPolicy {
      * <p>
      * Mind that using a preferred component size is not possible in this case, since the preference entry needs to have a onstant default value.
      */
-    public class AdjustableDownloadSizePolicy implements DownloadSourceSizingPolicy {
+    class AdjustableDownloadSizePolicy implements DownloadSourceSizingPolicy {
 
         private final AbstractProperty<Integer> preference;
 
