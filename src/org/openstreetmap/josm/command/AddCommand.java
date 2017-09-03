@@ -44,7 +44,9 @@ public class AddCommand extends Command {
      * Creates the command and specify the element to add in the context of the given data layer.
      * @param layer The data layer. Must not be {@code null}
      * @param osm The primitive to add
+     * @deprecated to be removed end of 2017. Use {@link #AddCommand(DataSet, OsmPrimitive)} instead
      */
+    @Deprecated
     public AddCommand(OsmDataLayer layer, OsmPrimitive osm) {
         super(layer);
         this.osm = Objects.requireNonNull(osm, "osm");

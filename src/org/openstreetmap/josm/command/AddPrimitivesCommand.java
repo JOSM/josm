@@ -58,9 +58,23 @@ public class AddPrimitivesCommand extends Command {
      * @param data The OSM primitives data to add. Must not be {@code null}
      * @param toSelect The OSM primitives to select at the end. Can be {@code null}
      * @param layer The target data layer. Must not be {@code null}
+     * @deprecated to be removed end of 2017. Use {@link #AddPrimitivesCommand(List, List, DataSet)} instead
      */
+    @Deprecated
     public AddPrimitivesCommand(List<PrimitiveData> data, List<PrimitiveData> toSelect, OsmDataLayer layer) {
         super(layer);
+        init(data, toSelect);
+    }
+
+    /**
+     * Constructs a new {@code AddPrimitivesCommand} to add data to the given data set.
+     * @param data The OSM primitives data to add. Must not be {@code null}
+     * @param toSelect The OSM primitives to select at the end. Can be {@code null}
+     * @param ds The target data set. Must not be {@code null}
+     * @since 12718
+     */
+    public AddPrimitivesCommand(List<PrimitiveData> data, List<PrimitiveData> toSelect, DataSet ds) {
+        super(ds);
         init(data, toSelect);
     }
 

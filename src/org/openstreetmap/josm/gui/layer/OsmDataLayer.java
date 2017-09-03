@@ -294,19 +294,6 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
     }
 
     /**
-     * A listener that gets notified of command queue (undo/redo) size changes.
-     */
-    @FunctionalInterface
-    public interface CommandQueueListener {
-        /**
-         * Notifies the listener about the new queue size
-         * @param queueSize Undo stack size
-         * @param redoSize Redo stack size
-         */
-        void commandChanged(int queueSize, int redoSize);
-    }
-
-    /**
      * Listener called when a state of this layer has changed.
      * @since 10600 (functional interface)
      */
@@ -400,6 +387,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
         super(name);
         CheckParameterUtil.ensureParameterNotNull(data, "data");
         this.data = data;
+        this.data.setName(name);
         this.setAssociatedFile(associatedFile);
         data.addDataSetListener(new DataSetListenerAdapter(this));
         data.addDataSetListener(MultipolygonCache.getInstance());
@@ -602,7 +590,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
         if (processed == null || processed.isEmpty())
             return;
 
-        MainApplication.undoRedo.clean(this);
+        MainApplication.undoRedo.clean(data);
 
         // if uploaded, clean the modified flags as well
         data.cleanupDeletedPrimitives();
@@ -1144,5 +1132,13 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
     @Override
     public void highlightUpdated(HighlightUpdateEvent e) {
         invalidate();
+    }
+
+    @Override
+    public void setName(String name) {
+        if (data != null) {
+            data.setName(name);
+        }
+        super.setName(name);
     }
 }

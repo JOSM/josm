@@ -338,7 +338,7 @@ public abstract class Layer extends AbstractMapViewPaintable implements Destroya
      *
      * @param name the name. If null, the name is set to the empty string.
      */
-    public final void setName(String name) {
+    public void setName(String name) {
         if (this.name != null) {
             removeColorPropertyListener();
         }

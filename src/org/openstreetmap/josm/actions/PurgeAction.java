@@ -117,7 +117,7 @@ public class PurgeAction extends JosmAction {
     public PurgeCommand getPurgeCommand(Collection<OsmPrimitive> sel) {
         layer = getLayerManager().getEditLayer();
         toPurgeAdditionally = new ArrayList<>();
-        PurgeCommand cmd = PurgeCommand.build(layer, sel, toPurgeAdditionally);
+        PurgeCommand cmd = PurgeCommand.build(sel, toPurgeAdditionally);
         modified = cmd.getParticipatingPrimitives().stream().anyMatch(OsmPrimitive::isModified);
         return cmd;
     }

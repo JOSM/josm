@@ -136,7 +136,7 @@ public abstract class Main {
     /**
      * The commands undo/redo handler.
      */
-    public final UndoRedoHandler undoRedo = MainApplication.undoRedo;
+    public final UndoRedoHandler undoRedo = new UndoRedoHandler();
 
     /**
      * The main menu bar at top of screen.
@@ -629,13 +629,26 @@ public abstract class Main {
     }
 
     /**
-     * Gets the data set of the active edit layer.
-     * @return That data set, <code>null</code> if there is no edit layer.
+     * Gets the active edit data set.
+     * @return That data set, <code>null</code>.
      * @since 12691
      */
-    public DataSet getEditDataSet() {
-        return null;
-    }
+    public abstract DataSet getEditDataSet();
+
+    /**
+     * Sets the active data set.
+     * @param ds New edit data set, or <code>null</code>
+     * @since 12718
+     */
+    public abstract void setEditDataSet(DataSet ds);
+
+    /**
+     * Determines if the list of data sets managed by JOSM contains {@code ds}.
+     * @param ds the data set to look for
+     * @return {@code true} if the list of data sets managed by JOSM contains {@code ds}
+     * @since 12718
+     */
+    public abstract boolean containsDataSet(DataSet ds);
 
     /**
      * Registers a {@code JosmAction} and its shortcut.

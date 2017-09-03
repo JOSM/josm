@@ -11,6 +11,7 @@ import java.util.Objects;
 import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -135,7 +136,13 @@ public class SequenceCommand extends Command {
         this.sequenceComplete = sequenceComplete;
     }
 
+    /**
+     * Invalidate all layers that were affected by this command.
+     * @see Layer#invalidate()
+     * @deprecated to be removed end of 2017.
+     */
     @Override
+    @Deprecated
     public void invalidateAffectedLayers() {
         super.invalidateAffectedLayers();
         for (Command c : sequence) {

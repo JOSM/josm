@@ -168,6 +168,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     // Events that occurred while dataset was locked but should be fired after write lock is released
     private final List<AbstractDatasetChangedEvent> cachedEvents = new ArrayList<>();
 
+    private String name;
     private UploadPolicy uploadPolicy;
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
@@ -1357,6 +1358,24 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      */
     public ConflictCollection getConflicts() {
         return conflicts;
+    }
+
+    /**
+     * Returns the name of this data set (optional).
+     * @return the name of this data set. Can be {@code null}
+     * @since 12718
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Sets the name of this data set.
+     * @param name the new name of this data set. Can be {@code null} to reset it
+     * @since 12718
+     */
+    public void setName(String name) {
+        this.name = name;
     }
 
     /* --------------------------------------------------------------------------------- */

@@ -82,7 +82,7 @@ public final class PrimitiveDataPaster extends AbstractOsmDataPaster {
                 throw BugReport.intercept(e).put("data", data);
             }
         }
-        return new AddPrimitivesCommand(bufferCopy, toSelect, layer);
+        return new AddPrimitivesCommand(bufferCopy, toSelect, layer.data);
     }
 
     private static EnumMap<OsmPrimitiveType, Map<Long, Long>> generateNewPrimitives(PrimitiveTransferData pasteBuffer,

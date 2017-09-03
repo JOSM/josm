@@ -71,6 +71,7 @@ import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.UndoRedoHandler;
+import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueueListener;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -83,8 +84,13 @@ import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.io.CustomConfigurator.XMLCommandProcessor;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.AutosaveTask;
+import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.display.LafPreference;
@@ -186,9 +192,9 @@ public class MainApplication extends Main {
 
     /**
      * The commands undo/redo handler.
-     * @since 12641 (as a replacement to {@code Main.main.undoRedo})
+     * @since 12641
      */
-    public static final UndoRedoHandler undoRedo = new UndoRedoHandler(); // Must be declared after layerManager
+    public static UndoRedoHandler undoRedo;
 
     /**
      * Listener that sets the enabled state of undo/redo menu entries.
@@ -212,6 +218,26 @@ public class MainApplication extends Main {
      */
     public MainApplication(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
+        undoRedo = super.undoRedo;
+        getLayerManager().addLayerChangeListener(new LayerChangeListener() {
+            @Override
+            public void layerRemoving(LayerRemoveEvent e) {
+                Layer layer = e.getRemovedLayer();
+                if (layer instanceof OsmDataLayer) {
+                    undoRedo.clean(((OsmDataLayer) layer).data);
+                }
+            }
+
+            @Override
+            public void layerOrderChanged(LayerOrderChangeEvent e) {
+                // Do nothing
+            }
+
+            @Override
+            public void layerAdded(LayerAddEvent e) {
+                // Do nothing
+            }
+        });
     }
 
     /**
@@ -404,6 +430,20 @@ public class MainApplication extends Main {
     @Override
     public DataSet getEditDataSet() {
         return getLayerManager().getEditDataSet();
+    }
+
+    @Override
+    public void setEditDataSet(DataSet ds) {
+        Optional<OsmDataLayer> layer = getLayerManager().getLayersOfType(OsmDataLayer.class).stream()
+                .filter(l -> l.data.equals(ds)).findFirst();
+        if (layer.isPresent()) {
+            getLayerManager().setActiveLayer(layer.get());
+        }
+    }
+
+    @Override
+    public boolean containsDataSet(DataSet ds) {
+        return getLayerManager().getLayersOfType(OsmDataLayer.class).stream().anyMatch(l -> l.data.equals(ds));
     }
 
     /**

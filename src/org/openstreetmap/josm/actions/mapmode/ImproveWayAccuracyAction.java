@@ -487,7 +487,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
                     nodes.remove(candidateNode);
                     newWay.setNodes(nodes);
                     if (nodes.size() < 2) {
-                        final Command deleteCmd = DeleteCommand.delete(getLayerManager().getEditLayer(), Collections.singleton(targetWay), true);
+                        final Command deleteCmd = DeleteCommand.delete(Collections.singleton(targetWay), true);
                         if (deleteCmd != null) {
                             MainApplication.undoRedo.add(deleteCmd);
                         }
@@ -499,7 +499,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
                             tr("Cannot delete node that has tags"),
                             tr("Error"), JOptionPane.ERROR_MESSAGE);
                 } else {
-                    final Command deleteCmd = DeleteCommand.delete(getLayerManager().getEditLayer(), Collections.singleton(candidateNode), true);
+                    final Command deleteCmd = DeleteCommand.delete(Collections.singleton(candidateNode), true);
                     if (deleteCmd != null) {
                         MainApplication.undoRedo.add(deleteCmd);
                     }
