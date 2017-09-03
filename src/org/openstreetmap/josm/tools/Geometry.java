@@ -291,10 +291,10 @@ public final class Geometry {
      */
     public static EastNorth getSegmentSegmentIntersection(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
 
-        CheckParameterUtil.ensureValidCoordinates(p1, "p1");
-        CheckParameterUtil.ensureValidCoordinates(p2, "p2");
-        CheckParameterUtil.ensureValidCoordinates(p3, "p3");
-        CheckParameterUtil.ensureValidCoordinates(p4, "p4");
+        CheckParameterUtil.ensure(p1, "p1", EastNorth::isValid);
+        CheckParameterUtil.ensure(p2, "p2", EastNorth::isValid);
+        CheckParameterUtil.ensure(p3, "p3", EastNorth::isValid);
+        CheckParameterUtil.ensure(p4, "p4", EastNorth::isValid);
 
         double x1 = p1.getX();
         double y1 = p1.getY();
@@ -356,10 +356,10 @@ public final class Geometry {
      */
     public static EastNorth getLineLineIntersection(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
 
-        CheckParameterUtil.ensureValidCoordinates(p1, "p1");
-        CheckParameterUtil.ensureValidCoordinates(p2, "p2");
-        CheckParameterUtil.ensureValidCoordinates(p3, "p3");
-        CheckParameterUtil.ensureValidCoordinates(p4, "p4");
+        CheckParameterUtil.ensure(p1, "p1", EastNorth::isValid);
+        CheckParameterUtil.ensure(p2, "p2", EastNorth::isValid);
+        CheckParameterUtil.ensure(p3, "p3", EastNorth::isValid);
+        CheckParameterUtil.ensure(p4, "p4", EastNorth::isValid);
 
         // Basically, the formula from wikipedia is used:
         //  https://en.wikipedia.org/wiki/Line%E2%80%93line_intersection
@@ -399,10 +399,10 @@ public final class Geometry {
      */
     public static boolean segmentsParallel(EastNorth p1, EastNorth p2, EastNorth p3, EastNorth p4) {
 
-        CheckParameterUtil.ensureValidCoordinates(p1, "p1");
-        CheckParameterUtil.ensureValidCoordinates(p2, "p2");
-        CheckParameterUtil.ensureValidCoordinates(p3, "p3");
-        CheckParameterUtil.ensureValidCoordinates(p4, "p4");
+        CheckParameterUtil.ensure(p1, "p1", EastNorth::isValid);
+        CheckParameterUtil.ensure(p2, "p2", EastNorth::isValid);
+        CheckParameterUtil.ensure(p3, "p3", EastNorth::isValid);
+        CheckParameterUtil.ensure(p4, "p4", EastNorth::isValid);
 
         // Convert line from (point, point) form to ax+by=c
         double a1 = p2.getY() - p1.getY();
@@ -485,9 +485,9 @@ public final class Geometry {
      */
     public static boolean angleIsClockwise(EastNorth commonNode, EastNorth firstNode, EastNorth secondNode) {
 
-        CheckParameterUtil.ensureValidCoordinates(commonNode, "commonNode");
-        CheckParameterUtil.ensureValidCoordinates(firstNode, "firstNode");
-        CheckParameterUtil.ensureValidCoordinates(secondNode, "secondNode");
+        CheckParameterUtil.ensure(commonNode, "commonNode", EastNorth::isValid);
+        CheckParameterUtil.ensure(firstNode, "firstNode", EastNorth::isValid);
+        CheckParameterUtil.ensure(secondNode, "secondNode", EastNorth::isValid);
 
         double dy1 = firstNode.getY() - commonNode.getY();
         double dy2 = secondNode.getY() - commonNode.getY();
@@ -770,8 +770,8 @@ public final class Geometry {
      */
     public static double getSegmentAngle(EastNorth p1, EastNorth p2) {
 
-        CheckParameterUtil.ensureValidCoordinates(p1, "p1");
-        CheckParameterUtil.ensureValidCoordinates(p2, "p2");
+        CheckParameterUtil.ensure(p1, "p1", EastNorth::isValid);
+        CheckParameterUtil.ensure(p2, "p2", EastNorth::isValid);
 
         return Math.atan2(p2.north() - p1.north(), p2.east() - p1.east());
     }
@@ -786,9 +786,9 @@ public final class Geometry {
      */
     public static double getCornerAngle(EastNorth p1, EastNorth p2, EastNorth p3) {
 
-        CheckParameterUtil.ensureValidCoordinates(p1, "p1");
-        CheckParameterUtil.ensureValidCoordinates(p2, "p2");
-        CheckParameterUtil.ensureValidCoordinates(p3, "p3");
+        CheckParameterUtil.ensure(p1, "p1", EastNorth::isValid);
+        CheckParameterUtil.ensure(p2, "p2", EastNorth::isValid);
+        CheckParameterUtil.ensure(p3, "p3", EastNorth::isValid);
 
         Double result = getSegmentAngle(p2, p1) - getSegmentAngle(p2, p3);
         if (result <= -Math.PI) {

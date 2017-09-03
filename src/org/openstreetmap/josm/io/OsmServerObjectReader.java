@@ -95,7 +95,7 @@ public class OsmServerObjectReader extends OsmServerReader {
     }
 
     protected OsmServerObjectReader(PrimitiveId id, boolean full, int version) {
-        CheckParameterUtil.ensureValidPrimitiveId(id, "id");
+        CheckParameterUtil.ensure(id, "id", "id > 0", pid -> pid.getUniqueId() > 0);
         this.id = id;
         this.full = full;
         this.version = version;

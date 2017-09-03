@@ -80,7 +80,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      * @return this task
      */
     public HistoryLoadTask add(PrimitiveId pid) {
-        CheckParameterUtil.ensureValidPrimitiveId(pid, "pid");
+        CheckParameterUtil.ensure(pid, "pid", "pid > 0", id -> id.getUniqueId() > 0);
         toLoad.add(pid);
         return this;
     }
@@ -118,7 +118,7 @@ public class HistoryLoadTask extends PleaseWaitRunnable {
      * @throws IllegalArgumentException if primitive.getId() &lt;= 0
      */
     public HistoryLoadTask add(OsmPrimitive primitive) {
-        CheckParameterUtil.ensureValidPrimitiveId(primitive, "primitive");
+        CheckParameterUtil.ensure(primitive, "primitive", "id > 0", prim -> prim.getUniqueId() > 0);
         return add(primitive.getPrimitiveId());
     }
 
