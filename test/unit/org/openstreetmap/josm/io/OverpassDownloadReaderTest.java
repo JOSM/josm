@@ -6,8 +6,10 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.options;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.time.LocalDateTime;
 import java.util.regex.Matcher;
 
 import org.junit.Before;
@@ -19,6 +21,7 @@ import org.openstreetmap.josm.io.OverpassDownloadReader.OverpassOutpoutFormat;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.OverpassTurboQueryWizard;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.date.DateUtils;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 
@@ -83,6 +86,42 @@ public class OverpassDownloadReaderTest {
                     .withStatus(200)
                     .withHeader("Content-Type", "text/xml")
                     .withBodyFile("nominatim/" + query + ".xml")));
+    }
+
+    /**
+     * Tests evaluating the extended query feature {@code date}.
+     */
+    @Test
+    public void testDate() {
+        LocalDateTime from = LocalDateTime.of(2017, 7, 14, 2, 40);
+        assertEquals("2016-07-14T02:40:00Z", OverpassDownloadReader.date("1 year", from));
+        assertEquals("2007-07-14T02:40:00Z", OverpassDownloadReader.date("10years", from));
+        assertEquals("2017-06-14T02:40:00Z", OverpassDownloadReader.date("1 month", from));
+        assertEquals("2016-09-14T02:40:00Z", OverpassDownloadReader.date("10months", from));
+        assertEquals("2017-07-07T02:40:00Z", OverpassDownloadReader.date("1 week", from));
+        assertEquals("2017-05-05T02:40:00Z", OverpassDownloadReader.date("10weeks", from));
+        assertEquals("2017-07-13T02:40:00Z", OverpassDownloadReader.date("1 day", from));
+        assertEquals("2017-07-04T02:40:00Z", OverpassDownloadReader.date("10days", from));
+        assertEquals("2017-07-14T01:40:00Z", OverpassDownloadReader.date("1 hour", from));
+        assertEquals("2017-07-13T16:40:00Z", OverpassDownloadReader.date("10hours", from));
+        assertEquals("2017-07-14T02:39:00Z", OverpassDownloadReader.date("1 minute", from));
+        assertEquals("2017-07-14T02:30:00Z", OverpassDownloadReader.date("10minutes", from));
+        assertEquals("2017-07-14T02:39:59Z", OverpassDownloadReader.date("1 second", from));
+        assertEquals("2017-07-14T02:39:50Z", OverpassDownloadReader.date("10seconds", from));
+
+        assertEquals("2016-07-13T02:40:00Z", OverpassDownloadReader.date("1 year 1 day", from));
+        assertEquals("2016-07-14T02:38:20Z", OverpassDownloadReader.date("1 year 100 seconds", from));
+        assertEquals("2017-07-13T02:38:20Z", OverpassDownloadReader.date("1 day  100 seconds", from));
+    }
+
+    /**
+     * Tests evaluating the extended query feature {@code date} through {@code newer:} operator.
+     */
+    @Test
+    public void testDateNewer() {
+        final String query = getExpandedQuery("type:node and newer:3minutes");
+        String statement = query.substring(query.indexOf("node(newer:\"") + 12, query.lastIndexOf("\");"));
+        assertNotNull(DateUtils.fromString(statement));
     }
 
     /**
