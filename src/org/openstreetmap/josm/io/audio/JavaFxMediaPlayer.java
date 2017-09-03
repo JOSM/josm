@@ -10,6 +10,7 @@ import java.util.concurrent.CountDownLatch;
 
 import org.openstreetmap.josm.io.audio.AudioPlayer.Execute;
 import org.openstreetmap.josm.io.audio.AudioPlayer.State;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.ListenerList;
 
 import com.sun.javafx.application.PlatformImpl;
@@ -36,8 +37,12 @@ class JavaFxMediaPlayer implements SoundPlayer {
 
     private MediaPlayer mediaPlayer;
 
-    JavaFxMediaPlayer() throws InterruptedException {
-        initFxPlatform();
+    JavaFxMediaPlayer() throws JosmRuntimeException {
+        try {
+            initFxPlatform();
+        } catch (InterruptedException e) {
+            throw new JosmRuntimeException(e);
+        }
     }
 
     /**
