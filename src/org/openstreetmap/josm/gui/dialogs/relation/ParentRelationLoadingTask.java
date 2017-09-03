@@ -75,7 +75,7 @@ public class ParentRelationLoadingTask extends PleaseWaitRunnable {
      */
     public ParentRelationLoadingTask(Relation child, OsmDataLayer layer, boolean full, PleaseWaitProgressMonitor monitor) {
         super(tr("Download referring relations"), monitor, false /* don't ignore exception */);
-        CheckParameterUtil.ensureValidPrimitiveId(child, "child");
+        CheckParameterUtil.ensure(child, "child", "id > 0", ch -> ch.getUniqueId() > 0);
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         referrers = null;
         this.layer = layer;

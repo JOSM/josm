@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.tools;
 
 import java.text.MessageFormat;
+import java.util.function.Predicate;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -20,11 +21,55 @@ public final class CheckParameterUtil {
     }
 
     /**
+     * Ensures that a parameter is not null and that a certain condition holds.
+     * @param <T> parameter type
+     * @param obj parameter value
+     * @param parameterName parameter name
+     * @param conditionMsg string, stating the condition
+     * @param condition the condition to check
+     * @throws IllegalArgumentException in case the object is null or the condition
+     * is violated
+     * @since 12713
+     */
+    public static <T> void ensure(T obj, String parameterName, String conditionMsg, Predicate<T> condition) {
+        ensureParameterNotNull(obj, parameterName);
+        if (!condition.test(obj))
+            throw new IllegalArgumentException(
+                    MessageFormat.format("Parameter value ''{0}'' of type {1} is invalid, violated condition: ''{2}'', got ''{3}''",
+                            parameterName,
+                            obj.getClass().getCanonicalName(),
+                            conditionMsg,
+                            obj));
+    }
+
+    /**
+     * Ensures that a parameter is not null and that a certain condition holds.
+     * @param <T> parameter type
+     * @param obj parameter value
+     * @param parameterName parameter name
+     * @param condition the condition to check
+     * @throws IllegalArgumentException in case the object is null or the condition
+     * is violated
+     * @since 12713
+     */
+    public static <T> void ensure(T obj, String parameterName, Predicate<T> condition) {
+        ensureParameterNotNull(obj, parameterName);
+        if (!condition.test(obj))
+            throw new IllegalArgumentException(
+                    MessageFormat.format("Parameter value ''{0}'' of type {1} is invalid, got ''{2}''",
+                            parameterName,
+                            obj.getClass().getCanonicalName(),
+                            obj));
+    }
+
+    /**
      * Ensures an OSM primitive ID is valid
      * @param id The id to check
      * @param parameterName The parameter name
      * @throws IllegalArgumentException if the primitive ID is not valid (negative or zero)
+     * @deprecated use {@link #ensure(Object, String, String, Predicate)}
      */
+    @Deprecated
     public static void ensureValidPrimitiveId(PrimitiveId id, String parameterName) {
         ensureParameterNotNull(id, parameterName);
         if (id.getUniqueId() <= 0)
@@ -38,7 +83,9 @@ public final class CheckParameterUtil {
      * @param parameterName The parameter name
      * @throws IllegalArgumentException if the lat/lon are {@code null} or not valid
      * @since 5980
+     * @deprecated use {@link #ensure(Object, String, Predicate)}
      */
+    @Deprecated
     public static void ensureValidCoordinates(LatLon latlon, String parameterName) {
         ensureParameterNotNull(latlon, parameterName);
         if (!latlon.isValid())
@@ -52,7 +99,9 @@ public final class CheckParameterUtil {
      * @param parameterName The parameter name
      * @throws IllegalArgumentException if the east/north are {@code null} or not valid
      * @since 5980
+     * @deprecated use {@link #ensure(Object, String, Predicate)}
      */
+    @Deprecated
     public static void ensureValidCoordinates(EastNorth eastnorth, String parameterName) {
         ensureParameterNotNull(eastnorth, parameterName);
         if (!eastnorth.isValid())
@@ -65,7 +114,9 @@ public final class CheckParameterUtil {
      * @param version The version to check
      * @param parameterName The parameter name
      * @throws IllegalArgumentException if the version is not valid (negative)
+     * @deprecated use {@link #ensure(Object, String, String, Predicate)}
      */
+    @Deprecated
     public static void ensureValidVersion(long version, String parameterName) {
         if (version < 0)
             throw new IllegalArgumentException(
@@ -112,7 +163,9 @@ public final class CheckParameterUtil {
      * @param parameterName the name of the parameter to be checked
      * @throws IllegalArgumentException if id is null
      * @throws IllegalArgumentException if id.getType() != NODE
+     * @deprecated use {@link #ensure(Object, String, String, Predicate)}
      */
+    @Deprecated
     public static void ensureValidNodeId(PrimitiveId id, String parameterName) {
         ensureParameterNotNull(id, parameterName);
         if (!id.getType().equals(OsmPrimitiveType.NODE))
