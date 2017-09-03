@@ -6,7 +6,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.ZoneOffset;
 import java.util.EnumMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -20,10 +25,13 @@ import javax.xml.stream.XMLStreamException;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.DataSource;
+import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.io.NameFinder.SearchResult;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.UncheckedParseException;
@@ -145,7 +153,9 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         if (overpassQuery.isEmpty())
             return super.getRequestForBbox(lon1, lat1, lon2, lat2);
         else {
-            final String query = this.overpassQuery.replace("{{bbox}}", lat1 + "," + lon1 + "," + lat2 + "," + lon2);
+            final String query = this.overpassQuery
+                    .replace("{{bbox}}", bbox(lon1, lat1, lon2, lat2))
+                    .replace("{{center}}", center(lon1, lat1, lon2, lat2));
             final String expandedOverpassQuery = expandExtendedQueries(query);
             return "interpreter" + DATA_PREFIX + Utils.encodeUrl(expandedOverpassQuery);
         }
@@ -159,17 +169,29 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
      */
     static String expandExtendedQueries(String query) {
         final StringBuffer sb = new StringBuffer();
-        final Matcher matcher = Pattern.compile("\\{\\{(geocodeArea):([^}]+)\\}\\}").matcher(query);
+        final Matcher matcher = Pattern.compile("\\{\\{(date|geocodeArea|geocodeBbox|geocodeCoords|geocodeId):([^}]+)\\}\\}").matcher(query);
         while (matcher.find()) {
             try {
                 switch (matcher.group(1)) {
+                    case "date":
+                        matcher.appendReplacement(sb, date(matcher.group(2), LocalDateTime.now()));
+                        break;
                     case "geocodeArea":
                         matcher.appendReplacement(sb, geocodeArea(matcher.group(2)));
+                        break;
+                    case "geocodeBbox":
+                        matcher.appendReplacement(sb, geocodeBbox(matcher.group(2)));
+                        break;
+                    case "geocodeCoords":
+                        matcher.appendReplacement(sb, geocodeCoords(matcher.group(2)));
+                        break;
+                    case "geocodeId":
+                        matcher.appendReplacement(sb, geocodeId(matcher.group(2)));
                         break;
                     default:
                         Logging.warn("Unsupported syntax: " + matcher.group(1));
                 }
-            } catch (UncheckedParseException ex) {
+            } catch (UncheckedParseException | IOException | NoSuchElementException | IndexOutOfBoundsException ex) {
                 final String msg = tr("Failed to evaluate {0}", matcher.group());
                 Logging.log(Logging.LEVEL_WARN, msg, ex);
                 matcher.appendReplacement(sb, "// " + msg + "\n");
@@ -179,19 +201,90 @@ public class OverpassDownloadReader extends BoundingBoxDownloader {
         return sb.toString();
     }
 
-    private static String geocodeArea(String area) {
+    static String bbox(double lon1, double lat1, double lon2, double lat2) {
+        return lat1 + "," + lon1 + "," + lat2 + "," + lon2;
+    }
+
+    static String center(double lon1, double lat1, double lon2, double lat2) {
+        LatLon c = new BBox(lon1, lat1, lon2, lat2).getCenter();
+        return c.lat()+ "," + c.lon();
+    }
+
+    static String date(String humanDuration, LocalDateTime from) {
+        // Convert to ISO 8601. Replace months by X temporarily to avoid conflict with minutes
+        String duration = humanDuration.toLowerCase(Locale.ENGLISH).replace(" ", "")
+                .replaceAll("years?", "Y").replaceAll("months?", "X").replaceAll("weeks?", "W")
+                .replaceAll("days?", "D").replaceAll("hours?", "H").replaceAll("minutes?", "M").replaceAll("seconds?", "S");
+        Matcher matcher = Pattern.compile(
+                "((?:[0-9]+Y)?(?:[0-9]+X)?(?:[0-9]+W)?)"+
+                "((?:[0-9]+D)?)" +
+                "((?:[0-9]+H)?(?:[0-9]+M)?(?:[0-9]+(?:[.,][0-9]{0,9})?S)?)?").matcher(duration);
+        boolean javaPer = false;
+        boolean javaDur = false;
+        if (matcher.matches()) {
+            javaPer = matcher.group(1) != null && !matcher.group(1).isEmpty();
+            javaDur = matcher.group(3) != null && !matcher.group(3).isEmpty();
+            duration = 'P' + matcher.group(1).replace('X', 'M') + matcher.group(2);
+            if (javaDur) {
+                duration += 'T' + matcher.group(3);
+            }
+        }
+
+        // Duration is now a full ISO 8601 duration string. Unfortunately Java does not allow to parse it entirely.
+        // We must split the "period" (years, months, weeks, days) from the "duration" (days, hours, minutes, seconds).
+        Period p = null;
+        Duration d = null;
+        int idx = duration.indexOf('T');
+        if (javaPer) {
+            p = Period.parse(javaDur ? duration.substring(0, idx) : duration);
+        }
+        if (javaDur) {
+            d = Duration.parse(javaPer ? 'P' + duration.substring(idx, duration.length()) : duration);
+        } else if (!javaPer) {
+            d = Duration.parse(duration);
+        }
+
+        // Now that period and duration are known, compute the correct date/time
+        LocalDateTime dt = from;
+        if (p != null) {
+            dt = dt.minus(p);
+        }
+        if (d != null) {
+            dt = dt.minus(d);
+        }
+
+        // Returns the date/time formatted in ISO 8601
+        return dt.toInstant(ZoneOffset.UTC).toString();
+    }
+
+    private static SearchResult searchName(String area) throws IOException {
+        return NameFinder.queryNominatim(area).stream().filter(
+                x -> !OsmPrimitiveType.NODE.equals(x.getOsmId().getType())).iterator().next();
+    }
+
+    static String geocodeArea(String area) throws IOException {
         // Offsets defined in https://wiki.openstreetmap.org/wiki/Overpass_API/Overpass_QL#By_element_id
         final EnumMap<OsmPrimitiveType, Long> idOffset = new EnumMap<>(OsmPrimitiveType.class);
         idOffset.put(OsmPrimitiveType.NODE, 0L);
         idOffset.put(OsmPrimitiveType.WAY, 2_400_000_000L);
         idOffset.put(OsmPrimitiveType.RELATION, 3_600_000_000L);
-        try {
-            final PrimitiveId osmId = NameFinder.queryNominatim(area).stream().filter(
-                    x -> !OsmPrimitiveType.NODE.equals(x.getOsmId().getType())).iterator().next().getOsmId();
-            return String.format("area(%d)", osmId.getUniqueId() + idOffset.get(osmId.getType()));
-        } catch (IOException | NoSuchElementException | IndexOutOfBoundsException ex) {
-            throw new UncheckedParseException(ex);
-        }
+        final PrimitiveId osmId = searchName(area).getOsmId();
+        return String.format("area(%d)", osmId.getUniqueId() + idOffset.get(osmId.getType()));
+    }
+
+    static String geocodeBbox(String area) throws IOException {
+        Bounds bounds = searchName(area).getBounds();
+        return bounds.getMinLat() + "," + bounds.getMinLon() + "," + bounds.getMaxLat() + "," + bounds.getMaxLon();
+    }
+
+    static String geocodeCoords(String area) throws IOException {
+        SearchResult result = searchName(area);
+        return result.getLat() + "," + result.getLon();
+    }
+
+    static String geocodeId(String area) throws IOException {
+        PrimitiveId osmId = searchName(area).getOsmId();
+        return String.format("%s(%d)", osmId.getType().getAPIName(), osmId.getUniqueId());
     }
 
     @Override

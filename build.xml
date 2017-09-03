@@ -305,6 +305,7 @@ Build-Date: ${build.tstamp}
             <compilerarg value="-XDignore.symbol.file"/>
             <compilerarg value="-Xep:ReferenceEquality:OFF" compiler="com.google.errorprone.ErrorProneAntCompilerAdapter"/>
             <compilerarg line="-Xmaxwarns 1000"/>
+            <exclude name="org/openstreetmap/josm/io/audio/JavaFxMediaPlayer.java" if:set="noJavaFX"/>
         </javac>
     </target>
     <target name="compile" depends="init,javacc,compile-cots,compile-jmapviewer">
