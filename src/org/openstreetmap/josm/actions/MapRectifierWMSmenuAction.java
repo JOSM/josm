@@ -26,7 +26,7 @@ import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryType;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
-import org.openstreetmap.josm.gui.layer.WMSLayer;
+import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.io.imagery.WMSImagery.WMSGetCapabilitiesException;
@@ -246,7 +246,7 @@ public class MapRectifierWMSmenuAction extends JosmAction {
                 return;
             }
         }
-        MainApplication.getLayerManager().addLayer(new WMSLayer(info));
+        MainApplication.getLayerManager().addLayer(ImageryLayer.create(info));
     }
 
     @Override
