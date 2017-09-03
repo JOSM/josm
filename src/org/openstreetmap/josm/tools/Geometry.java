@@ -36,7 +36,6 @@ import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 
 /**
  * Some tools for geometry related tasks.
@@ -102,7 +101,6 @@ public final class Geometry {
             changedWays[pos] = false;
         }
 
-        OsmDataLayer layer = MainApplication.getLayerManager().getEditLayer();
         DataSet dataset = ways.get(0).getDataSet();
 
         //iterate over all way pairs and introduce the intersections
@@ -209,7 +207,7 @@ public final class Geometry {
                                 intersectionNodes.add(intNode);
 
                                 if (intNode == newNode) {
-                                    cmds.add(layer != null ? new AddCommand(layer, intNode) : new AddCommand(dataset, intNode));
+                                    cmds.add(new AddCommand(dataset, intNode));
                                 }
                             }
                         } else if (test && !intersectionNodes.isEmpty())

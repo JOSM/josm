@@ -692,7 +692,7 @@ public class JoinAreasAction extends JosmAction {
 
         // Delete the discarded inner ways
         if (!discardedWays.isEmpty()) {
-            Command deleteCmd = DeleteCommand.delete(getLayerManager().getEditLayer(), discardedWays, true);
+            Command deleteCmd = DeleteCommand.delete(discardedWays, true);
             if (deleteCmd != null) {
                 cmds.add(deleteCmd);
                 commitCommands(marktr("Delete Ways that are not part of an inner multipolygon"));
@@ -1017,7 +1017,7 @@ public class JoinAreasAction extends JosmAction {
         List<List<Node>> chunks = buildNodeChunks(way, nodes);
 
         if (chunks.size() > 1) {
-            SplitWayResult split = SplitWayAction.splitWay(getLayerManager().getEditLayer(), way, chunks,
+            SplitWayResult split = SplitWayAction.splitWay(way, chunks,
                     Collections.<OsmPrimitive>emptyList(), SplitWayAction.Strategy.keepFirstChunk());
 
             if (split != null) {
@@ -1466,7 +1466,7 @@ public class JoinAreasAction extends JosmAction {
         for (Way w : inner) {
             newRel.addMember(new RelationMember("inner", w));
         }
-        cmds.add(layer != null ? new AddCommand(layer, newRel) :
+        cmds.add(layer != null ? new AddCommand(layer.data, newRel) :
             new AddCommand(inner.iterator().next().getDataSet(), newRel));
         addedRelations.add(newRel);
 
@@ -1537,7 +1537,6 @@ public class JoinAreasAction extends JosmAction {
             cmds.add(new ChangeCommand(r.rel, newRel));
         }
 
-        OsmDataLayer layer = getLayerManager().getEditLayer();
         Relation newRel;
         switch (multiouters.size()) {
         case 0:
@@ -1566,7 +1565,7 @@ public class JoinAreasAction extends JosmAction {
                 relationsToDelete.add(r.rel);
             }
             newRel.addMember(new RelationMember("outer", outer));
-            cmds.add(layer != null ? new AddCommand(layer, newRel) : new AddCommand(outer.getDataSet(), newRel));
+            cmds.add(new AddCommand(outer.getDataSet(), newRel));
         }
     }
 

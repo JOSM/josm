@@ -8,9 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueueListener;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -18,7 +18,7 @@ import org.openstreetmap.josm.tools.Shortcut;
  *
  * @author imi
  */
-public class RedoAction extends JosmAction implements OsmDataLayer.CommandQueueListener {
+public class RedoAction extends JosmAction implements CommandQueueListener {
 
     /**
      * Construct the action with "Redo" as label.

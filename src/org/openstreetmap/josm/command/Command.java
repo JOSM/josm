@@ -34,7 +34,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * Classes implementing Command modify a dataset in a specific way. A command is
  * one atomic action on a specific dataset, such as move or delete.
  *
- * The command remembers the {@link OsmDataLayer} it is operating on.
+ * The command remembers the {@link DataSet} it is operating on.
  *
  * @author imi
  * @since 21 (creation)
@@ -134,7 +134,11 @@ public abstract class Command implements PseudoCommand {
     /** the map of OsmPrimitives in the original state to OsmPrimitives in cloned state */
     private Map<OsmPrimitive, PrimitiveData> cloneMap = new HashMap<>();
 
-    /** the layer which this command is applied to */
+    /**
+     * the layer which this command is applied to
+     * @deprecated to be removed end of 2017. Use {@link #data} instead
+     */
+    @Deprecated
     private final OsmDataLayer layer;
 
     /** the dataset which this command is applied to */
@@ -145,7 +149,7 @@ public abstract class Command implements PseudoCommand {
      */
     public Command() {
         this.layer = MainApplication.getLayerManager().getEditLayer();
-        this.data = layer != null ? layer.data : null;
+        this.data = layer != null ? layer.data : Main.main.getEditDataSet();
     }
 
     /**
@@ -153,7 +157,9 @@ public abstract class Command implements PseudoCommand {
      *
      * @param layer the data layer. Must not be null.
      * @throws IllegalArgumentException if layer is null
+     * @deprecated to be removed end of 2017. Use {@link #Command(DataSet)} instead
      */
+    @Deprecated
     public Command(OsmDataLayer layer) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
         this.layer = layer;
@@ -215,7 +221,9 @@ public abstract class Command implements PseudoCommand {
      *
      * @param oldLayer the old layer that was removed
      * @return true if this command is invalid after that layer is removed.
+     * @deprecated to be removed end of 2017.
      */
+    @Deprecated
     public boolean invalidBecauselayerRemoved(Layer oldLayer) {
         return layer == oldLayer;
     }
@@ -233,7 +241,9 @@ public abstract class Command implements PseudoCommand {
     /**
      * Replies the layer this command is (or was) applied to.
      * @return the layer this command is (or was) applied to
+     * @deprecated to be removed end of 2017. Use {@link #getAffectedDataSet} instead
      */
+    @Deprecated
     protected OsmDataLayer getLayer() {
         return layer;
     }
@@ -370,7 +380,9 @@ public abstract class Command implements PseudoCommand {
     /**
      * Invalidate all layers that were affected by this command.
      * @see Layer#invalidate()
+     * @deprecated to be removed end of 2017.
      */
+    @Deprecated
     public void invalidateAffectedLayers() {
         OsmDataLayer layer = getLayer();
         if (layer != null) {

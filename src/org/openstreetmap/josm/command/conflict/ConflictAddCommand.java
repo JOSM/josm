@@ -15,7 +15,6 @@ import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -32,7 +31,9 @@ public class ConflictAddCommand extends Command {
      * Constructs a new {@code ConflictAddCommand}.
      * @param layer the data layer. Must not be null.
      * @param conflict the conflict to add
+     * @deprecated to be removed end of 2017. Use {@link #ConflictAddCommand(DataSet, Conflict)} instead
      */
+    @Deprecated
     public ConflictAddCommand(OsmDataLayer layer, Conflict<? extends OsmPrimitive> conflict) {
         super(layer);
         this.conflict = conflict;
@@ -55,7 +56,7 @@ public class ConflictAddCommand extends Command {
                 tr("<html>Layer ''{0}'' already has a conflict for object<br>"
                         + "''{1}''.<br>"
                         + "This conflict cannot be added.</html>",
-                        Utils.escapeReservedCharactersHTML(getLayer().getName()),
+                        Utils.escapeReservedCharactersHTML(getAffectedDataSet().getName()),
                         Utils.escapeReservedCharactersHTML(conflict.getMy().getDisplayName(DefaultNameFormatter.getInstance()))
                 ),
                 tr("Double conflict"),
@@ -76,14 +77,15 @@ public class ConflictAddCommand extends Command {
 
     @Override
     public void undoCommand() {
-        if (MainApplication.isDisplayingMapView() && !MainApplication.getLayerManager().containsLayer(getLayer())) {
+        DataSet ds = getAffectedDataSet();
+        if (!Main.main.containsDataSet(ds)) {
             Logging.warn(tr("Layer ''{0}'' does not exist any more. Cannot remove conflict for object ''{1}''.",
-                    getLayer().getName(),
+                    ds.getName(),
                     conflict.getMy().getDisplayName(DefaultNameFormatter.getInstance())
             ));
             return;
         }
-        getAffectedDataSet().getConflicts().remove(conflict);
+        ds.getConflicts().remove(conflict);
     }
 
     @Override

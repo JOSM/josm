@@ -103,7 +103,7 @@ public final class RightAndLefthandTraffic {
             w.removeAll();
         }
         // Purge all other ways and relations so dataset only contains lefthand traffic data
-        PurgeCommand.build(null, toPurge, null).executeCommand();
+        PurgeCommand.build(toPurge, null).executeCommand();
         // Combine adjacent countries into a single polygon
         Collection<Way> optimizedWays = new ArrayList<>();
         List<Multipolygon> areas = JoinAreasAction.collectMultipolygons(ways);

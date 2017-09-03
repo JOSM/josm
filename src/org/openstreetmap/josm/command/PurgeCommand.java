@@ -53,7 +53,9 @@ public class PurgeCommand extends Command {
      * @param layer OSM data layer
      * @param toPurge primitives to purge
      * @param makeIncomplete primitives to make incomplete
+     * @deprecated to be removed end of 2017. Use {@link #PurgeCommand(DataSet, Collection, Collection)} instead
      */
+    @Deprecated
     public PurgeCommand(OsmDataLayer layer, Collection<OsmPrimitive> toPurge, Collection<OsmPrimitive> makeIncomplete) {
         super(layer);
         init(toPurge, makeIncomplete);
@@ -318,8 +320,21 @@ public class PurgeCommand extends Command {
      * @param toPurgeAdditionally optional list that will be filled with primitives to be purged that have not been in the selection
      * @return command to purge selected OSM primitives
      * @since 12688
+     * @deprecated to be removed end of 2017. Use {@link #build(Collection, List)} instead
      */
+    @Deprecated
     public static PurgeCommand build(OsmDataLayer layer, Collection<OsmPrimitive> sel, List<OsmPrimitive> toPurgeAdditionally) {
+        return build(sel, toPurgeAdditionally);
+    }
+
+    /**
+     * Creates a new {@code PurgeCommand} to purge selected OSM primitives.
+     * @param sel selected OSM primitives
+     * @param toPurgeAdditionally optional list that will be filled with primitives to be purged that have not been in the selection
+     * @return command to purge selected OSM primitives
+     * @since 12718
+     */
+    public static PurgeCommand build(Collection<OsmPrimitive> sel, List<OsmPrimitive> toPurgeAdditionally) {
         Set<OsmPrimitive> toPurge = new HashSet<>(sel);
         // finally, contains all objects that are purged
         Set<OsmPrimitive> toPurgeChecked = new HashSet<>();
@@ -422,8 +437,7 @@ public class PurgeCommand extends Command {
             }
         }
 
-        return layer != null ? new PurgeCommand(layer, toPurgeChecked, makeIncomplete)
-                : new PurgeCommand(toPurgeChecked.iterator().next().getDataSet(), toPurgeChecked, makeIncomplete);
+        return new PurgeCommand(toPurgeChecked.iterator().next().getDataSet(), toPurgeChecked, makeIncomplete);
     }
 
     private static boolean hasOnlyIncompleteMembers(

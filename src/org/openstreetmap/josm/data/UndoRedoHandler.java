@@ -10,22 +10,14 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.layer.Layer;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
-import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.layer.OsmDataLayer.CommandQueueListener;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * This is the global undo/redo handler for all {@link OsmDataLayer}s.
+ * This is the global undo/redo handler for all {@link DataSet}s.
  * <p>
- * If you want to change a data layer, you can use {@link #add(Command)} to execute a command on it and make that command undoable.
+ * If you want to change a data set, you can use {@link #add(Command)} to execute a command on it and make that command undoable.
  */
-public class UndoRedoHandler implements LayerChangeListener {
+public class UndoRedoHandler {
 
     /**
      * All commands that were made on the dataset. Don't write from outside!
@@ -44,7 +36,21 @@ public class UndoRedoHandler implements LayerChangeListener {
      * Constructs a new {@code UndoRedoHandler}.
      */
     public UndoRedoHandler() {
-        MainApplication.getLayerManager().addLayerChangeListener(this);
+        // Do nothing
+    }
+
+    /**
+     * A listener that gets notified of command queue (undo/redo) size changes.
+     * @since 12718 (moved from {@code OsmDataLayer}
+     */
+    @FunctionalInterface
+    public interface CommandQueueListener {
+        /**
+         * Notifies the listener about the new queue size
+         * @param queueSize Undo stack size
+         * @param redoSize Redo stack size
+         */
+        void commandChanged(int queueSize, int redoSize);
     }
 
     /**
@@ -91,7 +97,6 @@ public class UndoRedoHandler implements LayerChangeListener {
             oldSelection = ds.getSelected();
         }
         addNoRedraw(c);
-        c.invalidateAffectedLayers();
         afterAdd();
 
         // the command may have changed the selection so tell the listeners about the current situation
@@ -124,7 +129,6 @@ public class UndoRedoHandler implements LayerChangeListener {
             for (int i = 1; i <= num; ++i) {
                 final Command c = commands.removeLast();
                 c.undoCommand();
-                c.invalidateAffectedLayers();
                 redoCommands.addFirst(c);
                 if (commands.isEmpty()) {
                     break;
@@ -160,7 +164,6 @@ public class UndoRedoHandler implements LayerChangeListener {
         for (int i = 0; i < num; ++i) {
             final Command c = redoCommands.removeFirst();
             c.executeCommand();
-            c.invalidateAffectedLayers();
             commands.add(c);
             if (redoCommands.isEmpty()) {
                 break;
@@ -196,21 +199,22 @@ public class UndoRedoHandler implements LayerChangeListener {
     }
 
     /**
-     * Resets all commands that affect the given layer.
-     * @param layer The layer that was affected.
+     * Resets all commands that affect the given dataset.
+     * @param dataSet The data set that was affected.
+     * @since 12718
      */
-    public void clean(Layer layer) {
-        if (layer == null)
+    public void clean(DataSet dataSet) {
+        if (dataSet == null)
             return;
         boolean changed = false;
         for (Iterator<Command> it = commands.iterator(); it.hasNext();) {
-            if (it.next().invalidBecauselayerRemoved(layer)) {
+            if (it.next().getAffectedDataSet() == dataSet) {
                 it.remove();
                 changed = true;
             }
         }
         for (Iterator<Command> it = redoCommands.iterator(); it.hasNext();) {
-            if (it.next().invalidBecauselayerRemoved(layer)) {
+            if (it.next().getAffectedDataSet() == dataSet) {
                 it.remove();
                 changed = true;
             }
@@ -218,21 +222,6 @@ public class UndoRedoHandler implements LayerChangeListener {
         if (changed) {
             fireCommandsChanged();
         }
-    }
-
-    @Override
-    public void layerRemoving(LayerRemoveEvent e) {
-        clean(e.getRemovedLayer());
-    }
-
-    @Override
-    public void layerAdded(LayerAddEvent e) {
-        // Do nothing
-    }
-
-    @Override
-    public void layerOrderChanged(LayerOrderChangeEvent e) {
-        // Do nothing
     }
 
     /**

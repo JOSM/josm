@@ -1,9 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -49,29 +47,15 @@ public class CommandTest {
     }
 
     /**
-     * Test {@link Command#invalidBecauselayerRemoved(org.openstreetmap.josm.gui.layer.Layer)}
-     */
-    @Test
-    public void testInvalidBecauselayerRemoved() {
-        OsmDataLayer layer2 = new OsmDataLayer(new DataSet(), "test", null);
-
-        Command command = new NopCommand();
-        assertFalse(command.invalidBecauselayerRemoved(layer2));
-        assertTrue(command.invalidBecauselayerRemoved(testData.layer));
-
-        Command command2 = new NopCommand(layer2);
-        assertTrue(command2.invalidBecauselayerRemoved(layer2));
-        assertFalse(command2.invalidBecauselayerRemoved(testData.layer));
-    }
-
-    /**
      * Test {@link Command#getLayer()}
+     * @deprecated to be removed end of 2017
      */
     @Test
+    @Deprecated
     public void testGetLayer() {
         OsmDataLayer layer2 = new OsmDataLayer(new DataSet(), "test", null);
         Command command = new NopCommand();
-        Command command2 = new NopCommand(layer2);
+        Command command2 = new NopCommand(layer2.data);
         assertSame(testData.layer, command.getLayer());
         assertSame(layer2, command2.getLayer());
     }
@@ -97,8 +81,8 @@ public class CommandTest {
             super();
         }
 
-        NopCommand(OsmDataLayer layer) {
-            super(layer);
+        NopCommand(DataSet dataset) {
+            super(dataset);
         }
 
         @Override
