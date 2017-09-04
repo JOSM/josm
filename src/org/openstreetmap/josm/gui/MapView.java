@@ -8,12 +8,14 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Shape;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
@@ -510,6 +512,31 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     }
 
     private void drawMapContent(Graphics g) {
+        // In HiDPI-mode, the Graphics g will have a transform that scales
+        // everything by a factor of 2.0 or so. At the same time, the value returned
+        // by getWidth()/getHeight will be reduced by that factor.
+        //
+        // This would work as intended, if we were to draw directly on g. But
+        // with a temporary buffer image, we need to move the scale transform to
+        // the Graphics of the buffer image and (in the end) transfer the content
+        // of the temporary buffer pixel by pixel onto g, without scaling.
+        // (Otherwise, we would upscale a small buffer image and the result would be
+        // blurry, with 2x2 pixel blocks.)
+        Graphics2D gg = (Graphics2D) g;
+        AffineTransform trOrig = gg.getTransform();
+        double uiScaleX = gg.getTransform().getScaleX();
+        double uiScaleY = gg.getTransform().getScaleY();
+        // width/height in full-resolution screen pixels
+        int width = (int) Math.round(getWidth() * uiScaleX);
+        int height = (int) Math.round(getHeight() * uiScaleY);
+        // This transformation corresponds to the original transformation of g,
+        // except for the translation part. It will be applied to the temporary
+        // buffer images.
+        AffineTransform trDef = AffineTransform.getScaleInstance(uiScaleX, uiScaleY);
+        // The goal is to create the temporary image at full pixel resolution,
+        // so scale up the clip shape
+        Shape scaledClip = trDef.createTransformedShape(g.getClip());
+
         List<Layer> visibleLayers = layerManager.getVisibleLayersInZOrder();
 
         int nonChangedLayersCount = 0;
@@ -528,22 +555,20 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
                 && lastClipBounds.contains(g.getClipBounds())
                 && nonChangedLayers.equals(visibleLayers.subList(0, nonChangedLayers.size()));
 
-        if (null == offscreenBuffer || offscreenBuffer.getWidth() != getWidth() || offscreenBuffer.getHeight() != getHeight()) {
-            offscreenBuffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+        if (null == offscreenBuffer || offscreenBuffer.getWidth() != width || offscreenBuffer.getHeight() != height) {
+            offscreenBuffer = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
         }
-
-        Graphics2D tempG = offscreenBuffer.createGraphics();
-        tempG.setClip(g.getClip());
 
         if (!canUseBuffer || nonChangedLayersBuffer == null) {
             if (null == nonChangedLayersBuffer
-                    || nonChangedLayersBuffer.getWidth() != getWidth() || nonChangedLayersBuffer.getHeight() != getHeight()) {
-                nonChangedLayersBuffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_3BYTE_BGR);
+                    || nonChangedLayersBuffer.getWidth() != width || nonChangedLayersBuffer.getHeight() != height) {
+                nonChangedLayersBuffer = new BufferedImage(width, height, BufferedImage.TYPE_3BYTE_BGR);
             }
             Graphics2D g2 = nonChangedLayersBuffer.createGraphics();
-            g2.setClip(g.getClip());
+            g2.setClip(scaledClip);
+            g2.setTransform(trDef);
             g2.setColor(PaintColors.getBackgroundColor());
-            g2.fillRect(0, 0, getWidth(), getHeight());
+            g2.fillRect(0, 0, width, height);
 
             for (int i = 0; i < nonChangedLayersCount; i++) {
                 paintLayer(visibleLayers.get(i), g2);
@@ -552,7 +577,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             // Maybe there were more unchanged layers then last time - draw them to buffer
             if (nonChangedLayers.size() != nonChangedLayersCount) {
                 Graphics2D g2 = nonChangedLayersBuffer.createGraphics();
-                g2.setClip(g.getClip());
+                g2.setClip(scaledClip);
+                g2.setTransform(trDef);
                 for (int i = nonChangedLayers.size(); i < nonChangedLayersCount; i++) {
                     paintLayer(visibleLayers.get(i), g2);
                 }
@@ -564,14 +590,20 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         lastViewID = getViewID();
         lastClipBounds = g.getClipBounds();
 
+        Graphics2D tempG = offscreenBuffer.createGraphics();
+        tempG.setClip(scaledClip);
+        tempG.setTransform(new AffineTransform());
         tempG.drawImage(nonChangedLayersBuffer, 0, 0, null);
+        tempG.setTransform(trDef);
 
         for (int i = nonChangedLayersCount; i < visibleLayers.size(); i++) {
             paintLayer(visibleLayers.get(i), tempG);
         }
 
         try {
-            drawTemporaryLayers(tempG, getLatLonBounds(g.getClipBounds()));
+            drawTemporaryLayers(tempG, getLatLonBounds(new Rectangle(
+                    (int) Math.round(g.getClipBounds().x * uiScaleX),
+                    (int) Math.round(g.getClipBounds().y * uiScaleY))));
         } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
             BugReport.intercept(e).put("temporaryLayers", temporaryLayers).warn();
         }
@@ -596,7 +628,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         }
 
         try {
-            g.drawImage(offscreenBuffer, 0, 0, null);
+            gg.setTransform(new AffineTransform(1, 0, 0, 1, trOrig.getTranslateX(), trOrig.getTranslateY()));
+            gg.drawImage(offscreenBuffer, 0, 0, null);
         } catch (ClassCastException e) {
             // See #11002 and duplicate tickets. On Linux with Java >= 8 Many users face this error here:
             //
@@ -622,6 +655,8 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
             //
             // But the application seems to work fine after, so let's just log the error
             Logging.error(e);
+        } finally {
+            gg.setTransform(trOrig);
         }
     }
 

@@ -80,9 +80,7 @@ public class ImageOverlay implements ImageProcessor {
             height = (int) (h*(offsetBottom-offsetTop));
         }
         ImageIcon overlay;
-        if (width != -1 || height != -1) {
-            image = new ImageProvider(image).resetMaxSize(new Dimension(width, height));
-        }
+        image = new ImageProvider(image).setMaxSize(new Dimension(width, height));
         overlay = image.get();
         int x, y;
         if (width == -1 && offsetLeft < 0) {
