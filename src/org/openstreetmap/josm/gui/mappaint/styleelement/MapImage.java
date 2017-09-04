@@ -31,7 +31,7 @@ public class MapImage {
     /**
      * ImageIcon can change while the image is loading.
      */
-    private BufferedImage img;
+    private Image img;
 
     /**
      * The alpha (opacity) value of the image. It is multiplied to the image alpha channel.
@@ -101,7 +101,7 @@ public class MapImage {
      * @param disabled {@code} true to request disabled version, {@code false} for the standard version
      * @return the image
      */
-    public BufferedImage getImage(boolean disabled) {
+    public Image getImage(boolean disabled) {
         if (disabled) {
             return getDisabled();
         } else {
@@ -109,7 +109,7 @@ public class MapImage {
         }
     }
 
-    private BufferedImage getDisabled() {
+    private Image getDisabled() {
         if (disabledImgCache != null)
                 return disabledImgCache;
         if (img == null)
@@ -126,7 +126,7 @@ public class MapImage {
         return disabledImgCache;
     }
 
-    private BufferedImage getImage() {
+    private Image getImage() {
         if (img != null)
             return img;
         temporary = false;
@@ -143,9 +143,9 @@ public class MapImage {
                         if (result == null) {
                             source.logWarning(tr("Failed to locate image ''{0}''", name));
                             ImageIcon noIcon = MapPaintStyles.getNoIconIcon(source);
-                            img = noIcon == null ? null : (BufferedImage) noIcon.getImage();
+                            img = noIcon == null ? null : noIcon.getImage();
                         } else {
-                            img = (BufferedImage) rescale(result.getImage());
+                            img = rescale(result.getImage());
                         }
                         if (temporary) {
                             disabledImgCache = null;
@@ -159,7 +159,7 @@ public class MapImage {
         );
         synchronized (this) {
             if (img == null) {
-                img = (BufferedImage) ImageProvider.get("clock").getImage();
+                img = ImageProvider.get("clock").getImage();
                 temporary = true;
             }
         }

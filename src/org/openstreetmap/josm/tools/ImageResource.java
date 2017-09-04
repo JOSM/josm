@@ -30,7 +30,7 @@ public class ImageResource {
     /**
      * Caches the image data for resized versions of the same image.
      */
-    private final Map<Dimension, Image> imgCache = new HashMap<>();
+    private final Map<Dimension, BufferedImage> imgCache = new HashMap<>();
     /**
      * SVG diagram information in case of SVG vector image.
      */
@@ -150,61 +150,101 @@ public class ImageResource {
     }
 
     /**
-     * Get an ImageIcon object for the image of this resource
+     * Get an ImageIcon object for the image of this resource.
+     * <p>
+     * Will return a multi-resolution image by default (if possible).
      * @param  dim The requested dimensions. Use (-1,-1) for the original size and (width, -1)
      *         to set the width, but otherwise scale the image proportionally.
+     * @see #getImageIconBounded(java.awt.Dimension, boolean)
      * @return ImageIcon object for the image of this resource, scaled according to dim
      */
     public ImageIcon getImageIcon(Dimension dim) {
+        return getImageIcon(dim, true);
+    }
+    
+    /**
+     * Get an ImageIcon object for the image of this resource.
+     * @param  dim The requested dimensions. Use (-1,-1) for the original size and (width, -1)
+     *         to set the width, but otherwise scale the image proportionally.
+     * @param  multiResolution If true, return a multi-resolution image
+     * (java.awt.image.MultiResolutionImage in Java 9), otherwise a plain {@link BufferedImage}.
+     * When running Java 8, this flag has no effect and a plain image will be returned in any case.
+     * @return ImageIcon object for the image of this resource, scaled according to dim
+     * @since 12722
+     */
+    public ImageIcon getImageIcon(Dimension dim, boolean multiResolution) {
         if (dim.width < -1 || dim.width == 0 || dim.height < -1 || dim.height == 0)
             throw new IllegalArgumentException(dim+" is invalid");
-        Image img = imgCache.get(dim);
-        if (img != null) {
+        BufferedImage img = imgCache.get(dim);
+        if (img == null) {
+            if (svg != null) {
+                Dimension realDim = GuiSizesHelper.getDimensionDpiAdjusted(dim);
+                img = ImageProvider.createImageFromSvg(svg, realDim);
+                if (img == null) {
+                    return null;
+                }
+            } else {
+                if (baseImage == null) throw new AssertionError();
+
+                int realWidth = GuiSizesHelper.getSizeDpiAdjusted(dim.width);
+                int realHeight = GuiSizesHelper.getSizeDpiAdjusted(dim.height);
+                ImageIcon icon = new ImageIcon(baseImage);
+                if (realWidth == -1 && realHeight == -1) {
+                    realWidth = GuiSizesHelper.getSizeDpiAdjusted(icon.getIconWidth());
+                    realHeight = GuiSizesHelper.getSizeDpiAdjusted(icon.getIconHeight());
+                } else if (realWidth == -1) {
+                    realWidth = Math.max(1, icon.getIconWidth() * realHeight / icon.getIconHeight());
+                } else if (realHeight == -1) {
+                    realHeight = Math.max(1, icon.getIconHeight() * realWidth / icon.getIconWidth());
+                }
+                Image i = icon.getImage().getScaledInstance(realWidth, realHeight, Image.SCALE_SMOOTH);
+                img = new BufferedImage(realWidth, realHeight, BufferedImage.TYPE_INT_ARGB);
+                img.getGraphics().drawImage(i, 0, 0, null);
+            }
+            if (overlayInfo != null) {
+                for (ImageOverlay o : overlayInfo) {
+                    o.process(img);
+                }
+            }
+            if (isDisabled) {
+                //Use default Swing functionality to make icon look disabled by applying grayscaling filter.
+                Icon disabledIcon = UIManager.getLookAndFeel().getDisabledIcon(null, new ImageIcon(img));
+                if (disabledIcon == null) {
+                    return null;
+                }
+
+                //Convert Icon to ImageIcon with BufferedImage inside
+                img = new BufferedImage(img.getWidth(), img.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
+                disabledIcon.paintIcon(new JPanel(), img.getGraphics(), 0, 0);
+            }
+            imgCache.put(dim, img);
+        }
+
+        if (!multiResolution)
             return new ImageIcon(img);
+        else {
+            try {
+                Image mrImg = HiDPISupport.getMultiResolutionImage(img, this);
+                return new ImageIcon(mrImg);
+            } catch (NoClassDefFoundError e) {
+                return new ImageIcon(img);
+            } 
         }
-        BufferedImage bimg;
-        if (svg != null) {
-            Dimension realDim = GuiSizesHelper.getDimensionDpiAdjusted(dim);
-            bimg = ImageProvider.createImageFromSvg(svg, realDim);
-            if (bimg == null) {
-                return null;
-            }
-        } else {
-            if (baseImage == null) throw new AssertionError();
+    }
 
-            int realWidth = GuiSizesHelper.getSizeDpiAdjusted(dim.width);
-            int realHeight = GuiSizesHelper.getSizeDpiAdjusted(dim.height);
-            ImageIcon icon = new ImageIcon(baseImage);
-            if (realWidth == -1 && realHeight == -1) {
-                realWidth = GuiSizesHelper.getSizeDpiAdjusted(icon.getIconWidth());
-                realHeight = GuiSizesHelper.getSizeDpiAdjusted(icon.getIconHeight());
-            } else if (realWidth == -1) {
-                realWidth = Math.max(1, icon.getIconWidth() * realHeight / icon.getIconHeight());
-            } else if (realHeight == -1) {
-                realHeight = Math.max(1, icon.getIconHeight() * realWidth / icon.getIconWidth());
-            }
-            Image i = icon.getImage().getScaledInstance(realWidth, realHeight, Image.SCALE_SMOOTH);
-            bimg = new BufferedImage(realWidth, realHeight, BufferedImage.TYPE_INT_ARGB);
-            bimg.getGraphics().drawImage(i, 0, 0, null);
-        }
-        if (overlayInfo != null) {
-            for (ImageOverlay o : overlayInfo) {
-                o.process(bimg);
-            }
-        }
-        if (isDisabled) {
-            //Use default Swing functionality to make icon look disabled by applying grayscaling filter.
-            Icon disabledIcon = UIManager.getLookAndFeel().getDisabledIcon(null, new ImageIcon(bimg));
-            if (disabledIcon == null) {
-                return null;
-            }
-
-            //Convert Icon to ImageIcon with BufferedImage inside
-            bimg = new BufferedImage(bimg.getWidth(), bimg.getHeight(), BufferedImage.TYPE_4BYTE_ABGR);
-            disabledIcon.paintIcon(new JPanel(), bimg.getGraphics(), 0, 0);
-        }
-        imgCache.put(dim, bimg);
-        return new ImageIcon(bimg);
+    /**
+     * Get image icon with a certain maximum size. The image is scaled down
+     * to fit maximum dimensions. (Keeps aspect ratio)
+     * <p>
+     * Will return a multi-resolution image by default (if possible).
+     *
+     * @param maxSize The maximum size. One of the dimensions (width or height) can be -1,
+     * which means it is not bounded.
+     * @return ImageIcon object for the image of this resource, scaled down if needed, according to maxSize
+     * @see #getImageIconBounded(java.awt.Dimension, boolean)
+     */
+    public ImageIcon getImageIconBounded(Dimension maxSize) {
+        return getImageIconBounded(maxSize, true);
     }
 
     /**
@@ -213,9 +253,13 @@ public class ImageResource {
      *
      * @param maxSize The maximum size. One of the dimensions (width or height) can be -1,
      * which means it is not bounded.
+     * @param  multiResolution If true, return a multi-resolution image
+     * (java.awt.image.MultiResolutionImage in Java 9), otherwise a plain {@link BufferedImage}.
+     * When running Java 8, this flag has no effect and a plain image will be returned in any case.
      * @return ImageIcon object for the image of this resource, scaled down if needed, according to maxSize
+     * @since 12722
      */
-    public ImageIcon getImageIconBounded(Dimension maxSize) {
+    public ImageIcon getImageIconBounded(Dimension maxSize, boolean multiResolution) {
         if (maxSize.width < -1 || maxSize.width == 0 || maxSize.height < -1 || maxSize.height == 0)
             throw new IllegalArgumentException(maxSize+" is invalid");
         float sourceWidth;
@@ -239,14 +283,14 @@ public class ImageResource {
         }
 
         if (maxWidth == -1 && maxHeight == -1)
-            return getImageIcon(DEFAULT_DIMENSION);
+            return getImageIcon(DEFAULT_DIMENSION, multiResolution);
         else if (maxWidth == -1)
-            return getImageIcon(new Dimension(-1, maxHeight));
+            return getImageIcon(new Dimension(-1, maxHeight), multiResolution);
         else if (maxHeight == -1)
-            return getImageIcon(new Dimension(maxWidth, -1));
+            return getImageIcon(new Dimension(maxWidth, -1), multiResolution);
         else if (sourceWidth / maxWidth > sourceHeight / maxHeight)
-            return getImageIcon(new Dimension(maxWidth, -1));
+            return getImageIcon(new Dimension(maxWidth, -1), multiResolution);
         else
-            return getImageIcon(new Dimension(-1, maxHeight));
+            return getImageIcon(new Dimension(-1, maxHeight), multiResolution);
    }
 }

@@ -2,6 +2,8 @@
 package org.openstreetmap.josm.gui.mappaint.styleelement;
 
 import java.awt.Color;
+import java.awt.Image;
+import java.awt.image.BufferedImage;
 import java.util.Objects;
 
 import org.openstreetmap.josm.Main;
@@ -15,6 +17,7 @@ import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
+import org.openstreetmap.josm.tools.HiDPISupport;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -78,8 +81,11 @@ public class AreaElement extends StyleElement {
         IconReference iconRef = c.get(FILL_IMAGE, null, IconReference.class);
         if (iconRef != null) {
             fillImage = new MapImage(iconRef.iconName, iconRef.source, false);
-
-            color = new Color(fillImage.getImage(false).getRGB(
+            Image img = fillImage.getImage(false);
+            // get base image from possible multi-resolution image, so we can
+            // cast to BufferedImage and get pixel value at the center of the image
+            img = HiDPISupport.getBaseImage(img);
+            color = new Color(((BufferedImage) img).getRGB(
                     fillImage.getWidth() / 2, fillImage.getHeight() / 2)
             );
 

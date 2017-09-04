@@ -276,6 +276,8 @@ public class ImageProvider {
     protected List<ImageOverlay> overlayInfo;
     /** <code>true</code> if icon must be grayed out */
     protected boolean isDisabled;
+    /** <code>true</code> if multi-resolution image is requested */
+    protected boolean multiResolution = true;
 
     private static SVGUniverse svgUniverse;
 
@@ -287,7 +289,7 @@ public class ImageProvider {
     /**
      * Caches the image data for rotated versions of the same image.
      */
-    private static final Map<Image, Map<Long, ImageResource>> ROTATE_CACHE = new HashMap<>();
+    private static final Map<Image, Map<Long, Image>> ROTATE_CACHE = new HashMap<>();
 
     private static final ExecutorService IMAGE_FETCHER =
             Executors.newSingleThreadExecutor(Utils.newThreadFactory("image-fetcher-%d", Thread.NORM_PRIORITY));
@@ -333,6 +335,7 @@ public class ImageProvider {
         this.additionalClassLoaders = image.additionalClassLoaders;
         this.overlayInfo = image.overlayInfo;
         this.isDisabled = image.isDisabled;
+        this.multiResolution = image.multiResolution;
     }
 
     /**
@@ -595,6 +598,28 @@ public class ImageProvider {
     }
 
     /**
+     * Decide, if multi-resolution image is requested (default <code>true</code>).
+     * <p>
+     * A <code>java.awt.image.MultiResolutionImage</code> is a Java 9 {@link Image}
+     * implementation, which adds support for HiDPI displays. The effect will be
+     * that in HiDPI mode, when GUI elements are scaled by a factor 1.5, 2.0, etc.,
+     * the images are not just up-scaled, but a higher resolution version of the
+     * image is rendered instead.
+     * <p>
+     * Use {@link HiDPISupport#getBaseImage(java.awt.Image)} to extract the original
+     * image from a multi-resolution image.
+     * <p>
+     * See {@link HiDPISupport#processMRImage} for how to process the image without
+     * removing the multi-resolution magic.
+     * @param multiResolution true, if multi-resolution image is requested
+     * @return the current object, for convenience
+     */
+    public ImageProvider setMultiResolution(boolean multiResolution) {
+        this.multiResolution = multiResolution;
+        return this;
+    }
+
+    /**
      * Execute the image request and scale result.
      * @return the requested image or null if the request failed
      */
@@ -605,9 +630,9 @@ public class ImageProvider {
             return null;
         }
         if (virtualMaxWidth != -1 || virtualMaxHeight != -1)
-            return ir.getImageIconBounded(new Dimension(virtualMaxWidth, virtualMaxHeight));
+            return ir.getImageIconBounded(new Dimension(virtualMaxWidth, virtualMaxHeight), multiResolution);
         else
-            return ir.getImageIcon(new Dimension(virtualWidth, virtualHeight));
+            return ir.getImageIcon(new Dimension(virtualWidth, virtualHeight), multiResolution);
     }
 
     /**
@@ -1275,14 +1300,13 @@ public class ImageProvider {
     }
 
     /**
-     * Creates a rotated version of the input image, scaled to the given dimension.
+     * Creates a rotated version of the input image.
      *
      * @param img the image to be rotated.
      * @param rotatedAngle the rotated angle, in degree, clockwise. It could be any double but we
      * will mod it with 360 before using it. More over for caching performance, it will be rounded to
      * an entire value between 0 and 360.
-     * @param dimension The requested dimensions. Use (-1,-1) for the original size
-     * and (width, -1) to set the width, but otherwise scale the image proportionally.
+     * @param dimension ignored
      * @return the image after rotating and scaling.
      * @since 6172
      */
@@ -1290,67 +1314,64 @@ public class ImageProvider {
         CheckParameterUtil.ensureParameterNotNull(img, "img");
 
         // convert rotatedAngle to an integer value from 0 to 360
-        Long originalAngle = Math.round(rotatedAngle % 360);
-        if (rotatedAngle != 0 && originalAngle == 0) {
-            originalAngle = 360L;
-        }
-
-        ImageResource imageResource;
+        Long angleLong = Math.round(rotatedAngle % 360);
+        Long originalAngle = rotatedAngle != 0 && angleLong == 0 ? 360L : angleLong;
 
         synchronized (ROTATE_CACHE) {
-            Map<Long, ImageResource> cacheByAngle = ROTATE_CACHE.get(img);
+            Map<Long, Image> cacheByAngle = ROTATE_CACHE.get(img);
             if (cacheByAngle == null) {
                 cacheByAngle = new HashMap<>();
                 ROTATE_CACHE.put(img, cacheByAngle);
             }
 
-            imageResource = cacheByAngle.get(originalAngle);
+            Image rotatedImg = cacheByAngle.get(originalAngle);
 
-            if (imageResource == null) {
+            if (rotatedImg == null) {
                 // convert originalAngle to a value from 0 to 90
                 double angle = originalAngle % 90;
                 if (originalAngle != 0 && angle == 0) {
                     angle = 90.0;
                 }
-
                 double radian = Utils.toRadians(angle);
 
-                new ImageIcon(img); // load completely
-                int iw = img.getWidth(null);
-                int ih = img.getHeight(null);
-                int w;
-                int h;
+                rotatedImg = HiDPISupport.processMRImage(img, img0 -> {
+                    new ImageIcon(img0); // load completely
+                    int iw = img0.getWidth(null);
+                    int ih = img0.getHeight(null);
+                    int w;
+                    int h;
 
-                if ((originalAngle >= 0 && originalAngle <= 90) || (originalAngle > 180 && originalAngle <= 270)) {
-                    w = (int) (iw * Math.sin(DEGREE_90 - radian) + ih * Math.sin(radian));
-                    h = (int) (iw * Math.sin(radian) + ih * Math.sin(DEGREE_90 - radian));
-                } else {
-                    w = (int) (ih * Math.sin(DEGREE_90 - radian) + iw * Math.sin(radian));
-                    h = (int) (ih * Math.sin(radian) + iw * Math.sin(DEGREE_90 - radian));
-                }
-                Image image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-                imageResource = new ImageResource(image);
-                cacheByAngle.put(originalAngle, imageResource);
-                Graphics g = image.getGraphics();
-                Graphics2D g2d = (Graphics2D) g.create();
+                    if ((originalAngle >= 0 && originalAngle <= 90) || (originalAngle > 180 && originalAngle <= 270)) {
+                        w = (int) (iw * Math.sin(DEGREE_90 - radian) + ih * Math.sin(radian));
+                        h = (int) (iw * Math.sin(radian) + ih * Math.sin(DEGREE_90 - radian));
+                    } else {
+                        w = (int) (ih * Math.sin(DEGREE_90 - radian) + iw * Math.sin(radian));
+                        h = (int) (ih * Math.sin(radian) + iw * Math.sin(DEGREE_90 - radian));
+                    }
+                    Image image = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
+                    Graphics g = image.getGraphics();
+                    Graphics2D g2d = (Graphics2D) g.create();
 
-                // calculate the center of the icon.
-                int cx = iw / 2;
-                int cy = ih / 2;
+                    // calculate the center of the icon.
+                    int cx = iw / 2;
+                    int cy = ih / 2;
 
-                // move the graphics center point to the center of the icon.
-                g2d.translate(w / 2, h / 2);
+                    // move the graphics center point to the center of the icon.
+                    g2d.translate(w / 2, h / 2);
 
-                // rotate the graphics about the center point of the icon
-                g2d.rotate(Utils.toRadians(originalAngle));
+                    // rotate the graphics about the center point of the icon
+                    g2d.rotate(Utils.toRadians(originalAngle));
 
-                g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-                g2d.drawImage(img, -cx, -cy, null);
+                    g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                    g2d.drawImage(img0, -cx, -cy, null);
 
-                g2d.dispose();
-                new ImageIcon(image); // load completely
+                    g2d.dispose();
+                    new ImageIcon(image); // load completely
+                    return image;
+                });
+                cacheByAngle.put(originalAngle, rotatedImg);
             }
-            return imageResource.getImageIcon(dimension).getImage();
+            return rotatedImg;
         }
     }
 
@@ -1411,7 +1432,7 @@ public class ImageProvider {
                                 BufferedImage.TYPE_INT_ARGB);
                         double scaleFactor = Math.min(backgroundRealWidth / (double) iconRealWidth, backgroundRealHeight
                                 / (double) iconRealHeight);
-                        BufferedImage iconImage = icon.getImage(false);
+                        Image iconImage = icon.getImage(false);
                         Image scaledIcon;
                         final int scaledWidth;
                         final int scaledHeight;
