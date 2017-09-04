@@ -18,6 +18,7 @@ import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.coor.ILatLon;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.datum.Datum;
 import org.openstreetmap.josm.data.projection.datum.GRS80Datum;
@@ -191,10 +192,21 @@ public final class Projections {
      *
      * @param ll the geographical point to convert (in WGS84 lat/lon)
      * @return the corresponding east/north coordinates
+     * @since 12725
      */
-    public static EastNorth project(LatLon ll) {
+    public static EastNorth project(ILatLon ll) {
         if (ll == null) return null;
         return Main.getProjection().latlon2eastNorth(ll);
+    }
+
+    /**
+     * Convert from lat/lon to easting/northing using the current projection.
+     *
+     * @param ll the geographical point to convert (in WGS84 lat/lon)
+     * @return the corresponding east/north coordinates
+     */
+    public static EastNorth project(LatLon ll) {
+        return project((ILatLon) ll);
     }
 
     /**

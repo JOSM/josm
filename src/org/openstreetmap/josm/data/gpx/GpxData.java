@@ -416,10 +416,10 @@ public class GpxData extends WithAttributes implements Data {
         for (GpxTrack track : getTracks()) {
             for (GpxTrackSegment seg : track.getSegments()) {
                 WayPoint r = null;
-                for (WayPoint S : seg.getWayPoints()) {
-                    EastNorth en = S.getEastNorth();
+                for (WayPoint wpSeg : seg.getWayPoints()) {
+                    EastNorth en = wpSeg.getEastNorth(Main.getProjection());
                     if (r == null) {
-                        r = S;
+                        r = wpSeg;
                         rx = en.east();
                         ry = en.north();
                         x = px - rx;
@@ -454,17 +454,17 @@ public class GpxData extends WithAttributes implements Data {
                                 double nx = rx - rnoverRS * b;
                                 double ny = ry + rnoverRS * a;
                                 bestEN = new EastNorth(nx, ny);
-                                bestTime = r.time + rnoverRS * (S.time - r.time);
+                                bestTime = r.time + rnoverRS * (wpSeg.time - r.time);
                                 pnminsq = pnsq;
                             }
                         }
-                        r = S;
+                        r = wpSeg;
                         rx = sx;
                         ry = sy;
                     }
                 }
                 if (r != null) {
-                    EastNorth c = r.getEastNorth();
+                    EastNorth c = r.getEastNorth(Main.getProjection());
                     /* if there is only one point in the seg, it will do this twice, but no matter */
                     rx = c.east();
                     ry = c.north();

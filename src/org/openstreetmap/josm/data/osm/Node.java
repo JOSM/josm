@@ -99,6 +99,16 @@ public final class Node extends OsmPrimitive implements INode {
         return lon;
     }
 
+    /**
+     * Replies the projected east/north coordinates.
+     * <p>
+     * Uses the {@link Main#getProjection() global projection} to project the lan/lon-coordinates.
+     * @return the east north coordinates or {@code null} if #is
+     */
+    public EastNorth getEastNorth() {
+        return getEastNorth(Main.getProjection());
+    }
+
     @Override
     public EastNorth getEastNorth(Projecting projection) {
         if (!isLatLonKnown()) return null;

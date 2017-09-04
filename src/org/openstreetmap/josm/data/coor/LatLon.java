@@ -307,7 +307,7 @@ public class LatLon extends Coordinate implements ILatLon {
         case DECIMAL_DEGREES: return cDdFormatter.format(y);
         case DEGREES_MINUTES_SECONDS: return degreesMinutesSeconds(y) + ((y < 0) ? SOUTH : NORTH);
         case NAUTICAL: return degreesMinutes(y) + ((y < 0) ? SOUTH : NORTH);
-        case EAST_NORTH: return cDdFormatter.format(this.getEastNorth().north());
+        case EAST_NORTH: return cDdFormatter.format(this.getEastNorth(Main.getProjection()).north());
         default: return "ERR";
         }
     }
@@ -327,7 +327,7 @@ public class LatLon extends Coordinate implements ILatLon {
         case DECIMAL_DEGREES: return cDdFormatter.format(x);
         case DEGREES_MINUTES_SECONDS: return degreesMinutesSeconds(x) + ((x < 0) ? WEST : EAST);
         case NAUTICAL: return degreesMinutes(x) + ((x < 0) ? WEST : EAST);
-        case EAST_NORTH: return cDdFormatter.format(this.getEastNorth().east());
+        case EAST_NORTH: return cDdFormatter.format(this.getEastNorth(Main.getProjection()).east());
         default: return "ERR";
         }
     }
