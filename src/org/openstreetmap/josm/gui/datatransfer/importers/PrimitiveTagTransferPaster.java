@@ -41,7 +41,10 @@ public class PrimitiveTagTransferPaster extends AbstractTagPaster {
     @Override
     public boolean importTagsOn(TransferSupport support, Collection<? extends OsmPrimitive> selection)
             throws UnsupportedFlavorException, IOException {
-        PrimitiveTagTransferData data = (PrimitiveTagTransferData) support.getTransferable().getTransferData(df);
+        Object o = support.getTransferable().getTransferData(df);
+        if (!(o instanceof PrimitiveTagTransferData))
+            return false;
+        PrimitiveTagTransferData data = (PrimitiveTagTransferData) o;
 
         TagPasteSupport tagPaster = new TagPasteSupport(data, selection);
         List<Command> commands = new ArrayList<>();

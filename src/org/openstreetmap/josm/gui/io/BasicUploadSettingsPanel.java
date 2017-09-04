@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.awt.event.ItemEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
@@ -19,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
@@ -61,9 +63,12 @@ public class BasicUploadSettingsPanel extends JPanel {
     private final HistoryComboBox hcbUploadSource = new HistoryComboBox();
     /** the panel with a summary of the upload parameters */
     private final UploadParameterSummaryPanel pnlUploadParameterSummary = new UploadParameterSummaryPanel();
+    /** the checkbox to request feedback from other users */
+    private final JCheckBox cbRequestReview = new JCheckBox(tr("I would like someone to review my edits."));
     /** the changeset comment model */
     private final transient ChangesetCommentModel changesetCommentModel;
     private final transient ChangesetCommentModel changesetSourceModel;
+    private final transient ChangesetReviewModel changesetReviewModel;
 
     protected JPanel buildUploadCommentPanel() {
         JPanel pnl = new JPanel(new GridBagLayout());
@@ -117,6 +122,8 @@ public class BasicUploadSettingsPanel extends JPanel {
         setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
         add(buildUploadCommentPanel(), BorderLayout.NORTH);
         add(pnlUploadParameterSummary, BorderLayout.CENTER);
+        add(cbRequestReview, BorderLayout.SOUTH);
+        cbRequestReview.addItemListener(e -> changesetReviewModel.setReviewRequested(e.getStateChange() == ItemEvent.SELECTED));
     }
 
     /**
@@ -124,15 +131,21 @@ public class BasicUploadSettingsPanel extends JPanel {
      *
      * @param changesetCommentModel the model for the changeset comment. Must not be null
      * @param changesetSourceModel the model for the changeset source. Must not be null.
+     * @param changesetReviewModel the model for the changeset review. Must not be null.
      * @throws IllegalArgumentException if {@code changesetCommentModel} is null
+     * @since 12719 (signature)
      */
-    public BasicUploadSettingsPanel(ChangesetCommentModel changesetCommentModel, ChangesetCommentModel changesetSourceModel) {
+    public BasicUploadSettingsPanel(ChangesetCommentModel changesetCommentModel, ChangesetCommentModel changesetSourceModel,
+            ChangesetReviewModel changesetReviewModel) {
         CheckParameterUtil.ensureParameterNotNull(changesetCommentModel, "changesetCommentModel");
         CheckParameterUtil.ensureParameterNotNull(changesetSourceModel, "changesetSourceModel");
+        CheckParameterUtil.ensureParameterNotNull(changesetReviewModel, "changesetReviewModel");
         this.changesetCommentModel = changesetCommentModel;
         this.changesetSourceModel = changesetSourceModel;
+        this.changesetReviewModel = changesetReviewModel;
         changesetCommentModel.addChangeListener(new ChangesetCommentChangeListener(hcbUploadComment));
         changesetSourceModel.addChangeListener(new ChangesetCommentChangeListener(hcbUploadSource));
+        changesetReviewModel.addChangeListener(new ChangesetReviewChangeListener());
         build();
     }
 
@@ -246,6 +259,21 @@ public class BasicUploadSettingsPanel extends JPanel {
             String newComment = ((ChangesetCommentModel) e.getSource()).getComment();
             if (!destination.getText().equals(newComment)) {
                 destination.setText(newComment);
+            }
+        }
+    }
+
+    /**
+     * Observes the changeset review model and keeps the review checkbox
+     * in sync with the current changeset review request
+     */
+    class ChangesetReviewChangeListener implements ChangeListener {
+        @Override
+        public void stateChanged(ChangeEvent e) {
+            if (!(e.getSource() instanceof ChangesetReviewModel)) return;
+            boolean newState = ((ChangesetReviewModel) e.getSource()).isReviewRequested();
+            if (cbRequestReview.isSelected() != newState) {
+                cbRequestReview.setSelected(newState);
             }
         }
     }

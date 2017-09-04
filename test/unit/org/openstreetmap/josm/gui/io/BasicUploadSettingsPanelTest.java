@@ -26,6 +26,6 @@ public class BasicUploadSettingsPanelTest {
      */
     @Test
     public void testBasicUploadSettingsPanel() {
-        assertNotNull(new BasicUploadSettingsPanel(new ChangesetCommentModel(), new ChangesetCommentModel()));
+        assertNotNull(new BasicUploadSettingsPanel(new ChangesetCommentModel(), new ChangesetCommentModel(), new ChangesetReviewModel()));
     }
 }

@@ -26,6 +26,6 @@ public class TagSettingsPanelTest {
      */
     @Test
     public void testTagSettingsPanel() {
-        assertNotNull(new TagSettingsPanel(new ChangesetCommentModel(), new ChangesetCommentModel()));
+        assertNotNull(new TagSettingsPanel(new ChangesetCommentModel(), new ChangesetCommentModel(), new ChangesetReviewModel()));
     }
 }
