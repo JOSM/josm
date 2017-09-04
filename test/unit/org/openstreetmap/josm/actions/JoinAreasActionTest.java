@@ -62,7 +62,7 @@ public class JoinAreasActionTest {
             Layer layer = new OsmDataLayer(ds, null, null);
             MainApplication.getLayerManager().addLayer(layer);
             try {
-                new JoinAreasAction().join(ds.getWays());
+                new JoinAreasAction(false).join(ds.getWays());
             } finally {
                 // Ensure we clean the place before leaving, even if test fails.
                 MainApplication.getLayerManager().removeLayer(layer);
@@ -124,7 +124,7 @@ public class JoinAreasActionTest {
             for (OsmPrimitive osm : primitives) {
                 assertTrue(test + "; expected way, but got: " + osm, osm instanceof Way);
             }
-            new JoinAreasAction().join((Collection) primitives);
+            new JoinAreasAction(false).join((Collection) primitives);
             Collection<OsmPrimitive> joinedCol = dsToJoin.getPrimitives(osm -> !osm.isDeleted() && Objects.equals(osm.get("test"), test));
             assertEquals("in test " + test + ":", 1, joinedCol.size());
             Collection<OsmPrimitive> expectedCol = dsExpected.getPrimitives(osm -> !osm.isDeleted() && Objects.equals(osm.get("test"), test));

@@ -60,6 +60,7 @@ public class JoinAreasAction extends JosmAction {
     // This will be used to commit commands and unite them into one large command sequence at the end
     private final transient LinkedList<Command> cmds = new LinkedList<>();
     private int cmdsCount;
+    private DataSet ds;
     private final transient List<Relation> addedRelations = new LinkedList<>();
 
     /**
@@ -537,7 +538,7 @@ public class JoinAreasAction extends JosmAction {
             // see #11026 - Because <ways> is a dynamic filtered (on ways) of a filtered (on selected objects) collection,
             // retrieve effective dataset before joining the ways (which affects the selection, thus, the <ways> collection)
             // Dataset retrieving allows to call this code without relying on Main.getCurrentDataSet(), thus, on a mapview instance
-            DataSet ds = ways.iterator().next().getDataSet();
+            ds = ways.iterator().next().getDataSet();
 
             // Do the job of joining areas
             JoinAreasResult result = joinAreas(areas);
@@ -1538,14 +1539,16 @@ public class JoinAreasAction extends JosmAction {
         }
 
         Relation newRel;
+        RelationRole soleOuter;
         switch (multiouters.size()) {
         case 0:
             return;
         case 1:
             // Found only one to be part of a multipolygon relation, so just add it back as well
-            newRel = new Relation(multiouters.get(0).rel);
-            newRel.addMember(new RelationMember(multiouters.get(0).role, outer));
-            cmds.add(new ChangeCommand(multiouters.get(0).rel, newRel));
+            soleOuter = multiouters.get(0);
+            newRel = new Relation(soleOuter.rel);
+            newRel.addMember(new RelationMember(soleOuter.role, outer));
+            cmds.add(new ChangeCommand(ds, soleOuter.rel, newRel));
             return;
         default:
             // Create a new relation with all previous members and (Way)outer as outer.
@@ -1565,7 +1568,7 @@ public class JoinAreasAction extends JosmAction {
                 relationsToDelete.add(r.rel);
             }
             newRel.addMember(new RelationMember("outer", outer));
-            cmds.add(new AddCommand(outer.getDataSet(), newRel));
+            cmds.add(new AddCommand(ds, newRel));
         }
     }
 

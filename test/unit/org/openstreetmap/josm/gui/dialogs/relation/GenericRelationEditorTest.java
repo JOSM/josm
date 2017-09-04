@@ -89,12 +89,14 @@ public class GenericRelationEditorTest {
      */
     @Test
     public void testAddPrimitivesToRelation() {
-        assertNull(GenericRelationEditor.addPrimitivesToRelation(new Relation(1), Collections.<OsmPrimitive>emptyList()));
-        assertNull(GenericRelationEditor.addPrimitivesToRelation(new Relation(1), Collections.singleton(new Relation(1))));
+        Relation r = new Relation(1);
+        new DataSet(r);
+        assertNull(GenericRelationEditor.addPrimitivesToRelation(r, Collections.<OsmPrimitive>emptyList()));
+        assertNull(GenericRelationEditor.addPrimitivesToRelation(r, Collections.singleton(new Relation(1))));
 
-        assertNotNull(GenericRelationEditor.addPrimitivesToRelation(new Relation(1), Collections.singleton(new Node(1))));
-        assertNotNull(GenericRelationEditor.addPrimitivesToRelation(new Relation(1), Collections.singleton(new Way(1))));
-        assertNotNull(GenericRelationEditor.addPrimitivesToRelation(new Relation(1), Collections.singleton(new Relation(2))));
+        assertNotNull(GenericRelationEditor.addPrimitivesToRelation(r, Collections.singleton(new Node(1))));
+        assertNotNull(GenericRelationEditor.addPrimitivesToRelation(r, Collections.singleton(new Way(1))));
+        assertNotNull(GenericRelationEditor.addPrimitivesToRelation(r, Collections.singleton(new Relation(2))));
     }
 
     /**
