@@ -102,7 +102,7 @@ public class DeleteCommandTest {
      */
     @Test
     public void testReferredDelete() {
-        DeleteCommand.deleteWithReferences(testData.layer, Arrays.asList(testData.existingNode), true).executeCommand();
+        DeleteCommand.deleteWithReferences(Arrays.asList(testData.existingNode), true).executeCommand();
 
         assertTrue(testData.existingNode.isDeleted());
         assertEquals(0, testData.existingWay.getNodesCount());
@@ -205,21 +205,21 @@ public class DeleteCommandTest {
     }
 
     /**
-     * Test {@link DeleteCommand#deleteWaySegment(OsmDataLayer, org.openstreetmap.josm.data.osm.WaySegment)}
+     * Test {@link DeleteCommand#deleteWaySegment(WaySegment)}
      * Way with only 1 segment
      */
     @Test
     public void testDeleteWaySegment() {
         Way way1 = testData.createWay(100, testData.createNode(101), testData.createNode(102));
         WaySegment ws = new WaySegment(way1, 0);
-        Command command = DeleteCommand.deleteWaySegment(testData.layer, ws);
+        Command command = DeleteCommand.deleteWaySegment(ws);
         command.executeCommand();
 
         assertTrue(way1.isDeleted());
     }
 
     /**
-     * Test {@link DeleteCommand#deleteWaySegment(OsmDataLayer, org.openstreetmap.josm.data.osm.WaySegment)}
+     * Test {@link DeleteCommand#deleteWaySegment(WaySegment)}
      * Delete end of way
      */
     @Test
@@ -227,7 +227,7 @@ public class DeleteCommandTest {
         Way way = testData.createWay(200, testData.createNode(201), testData.createNode(202), testData.createNode(203),
                 testData.createNode(204));
         WaySegment ws = new WaySegment(way, 2);
-        Command command = DeleteCommand.deleteWaySegment(testData.layer, ws);
+        Command command = DeleteCommand.deleteWaySegment(ws);
         command.executeCommand();
 
         assertEquals(3, way.getNodesCount());
@@ -237,7 +237,7 @@ public class DeleteCommandTest {
     }
 
     /**
-     * Test {@link DeleteCommand#deleteWaySegment(OsmDataLayer, org.openstreetmap.josm.data.osm.WaySegment)}
+     * Test {@link DeleteCommand#deleteWaySegment(WaySegment)}
      * Delete start of way
      */
     @Test
@@ -245,7 +245,7 @@ public class DeleteCommandTest {
         Way way = testData.createWay(100, testData.createNode(101), testData.createNode(102), testData.createNode(103),
                 testData.createNode(104));
         WaySegment ws = new WaySegment(way, 0);
-        Command command = DeleteCommand.deleteWaySegment(testData.layer, ws);
+        Command command = DeleteCommand.deleteWaySegment(ws);
         command.executeCommand();
 
         assertEquals(3, way.getNodesCount());
@@ -255,7 +255,7 @@ public class DeleteCommandTest {
     }
 
     /**
-     * Test {@link DeleteCommand#deleteWaySegment(OsmDataLayer, org.openstreetmap.josm.data.osm.WaySegment)}
+     * Test {@link DeleteCommand#deleteWaySegment(WaySegment)}
      * Delete start of way
      */
     @Test
@@ -264,7 +264,7 @@ public class DeleteCommandTest {
         Node node104 = testData.createNode(104);
         Way way = testData.createWay(100, testData.createNode(101), testData.createNode(102), node103, node104);
         WaySegment ws = new WaySegment(way, 1);
-        Command command = DeleteCommand.deleteWaySegment(testData.layer, ws);
+        Command command = DeleteCommand.deleteWaySegment(ws);
         command.executeCommand();
 
         assertEquals(2, way.getNodesCount());
@@ -279,7 +279,7 @@ public class DeleteCommandTest {
     }
 
     /**
-     * Test {@link DeleteCommand#deleteWaySegment(OsmDataLayer, org.openstreetmap.josm.data.osm.WaySegment)}
+     * Test {@link DeleteCommand#deleteWaySegment(WaySegment)}
      * Delete start of way
      */
     @Test
@@ -288,7 +288,7 @@ public class DeleteCommandTest {
         Way way = testData.createWay(100, n, testData.createNode(102), testData.createNode(103),
                 testData.createNode(104), n);
         WaySegment ws = new WaySegment(way, 2);
-        Command command = DeleteCommand.deleteWaySegment(testData.layer, ws);
+        Command command = DeleteCommand.deleteWaySegment(ws);
         command.executeCommand();
 
         assertEquals(4, way.getNodesCount());
