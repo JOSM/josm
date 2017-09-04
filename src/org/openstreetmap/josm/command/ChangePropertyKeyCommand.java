@@ -9,10 +9,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import javax.swing.Icon;
 
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.validation.util.NameVisitor;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -65,7 +67,7 @@ public class ChangePropertyKeyCommand extends Command {
     /**
      * Constructs a new {@code ChangePropertyKeyCommand}.
      *
-     * @param object the object subject to change replacement
+     * @param object the object subject to change replacement. Must not be null, and belong to a data set
      * @param key The key to replace
      * @param newKey the new value of the key
      * @since 6329
@@ -77,11 +79,27 @@ public class ChangePropertyKeyCommand extends Command {
     /**
      * Constructs a new {@code ChangePropertyKeyCommand}.
      *
-     * @param objects all objects subject to change replacement
+     * @param objects all objects subject to change replacement. Must not be null or empty, and objects must belong to a data set
      * @param key The key to replace
      * @param newKey the new value of the key
+     * @throws NullPointerException if objects is null or contain null item
+     * @throws NoSuchElementException if objects is empty
      */
     public ChangePropertyKeyCommand(Collection<? extends OsmPrimitive> objects, String key, String newKey) {
+        this(objects.iterator().next().getDataSet(), objects, key, newKey);
+    }
+
+    /**
+     * Constructs a new {@code ChangePropertyKeyCommand}.
+     *
+     * @param ds The target data set. Must not be {@code null}
+     * @param objects all objects subject to change replacement.
+     * @param key The key to replace
+     * @param newKey the new value of the key
+     * @since 12726
+     */
+    public ChangePropertyKeyCommand(DataSet ds, Collection<? extends OsmPrimitive> objects, String key, String newKey) {
+        super(ds);
         this.objects = new LinkedList<>(objects);
         this.key = key;
         this.newKey = newKey;

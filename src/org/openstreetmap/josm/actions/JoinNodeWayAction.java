@@ -23,6 +23,7 @@ import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.MoveCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -83,13 +84,13 @@ public class JoinNodeWayAction extends JosmAction {
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled())
             return;
-        Collection<Node> selectedNodes = getLayerManager().getEditDataSet().getSelectedNodes();
+        DataSet ds = getLayerManager().getEditDataSet();
+        Collection<Node> selectedNodes = ds.getSelectedNodes();
         Collection<Command> cmds = new LinkedList<>();
         Map<Way, MultiMap<Integer, Node>> data = new HashMap<>();
 
         // If the user has selected some ways, only join the node to these.
-        boolean restrictToSelectedWays =
-                !getLayerManager().getEditDataSet().getSelectedWays().isEmpty();
+        boolean restrictToSelectedWays = !ds.getSelectedWays().isEmpty();
 
         // Planning phase: decide where we'll insert the nodes and put it all in "data"
         MapView mapView = MainApplication.getMap().mapView;
@@ -154,7 +155,7 @@ public class JoinNodeWayAction extends JosmAction {
             }
             Way wnew = new Way(w);
             wnew.setNodes(wayNodes);
-            cmds.add(new ChangeCommand(w, wnew));
+            cmds.add(new ChangeCommand(ds, w, wnew));
         }
 
         if (cmds.isEmpty()) return;

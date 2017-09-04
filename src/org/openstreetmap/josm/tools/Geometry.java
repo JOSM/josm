@@ -227,7 +227,7 @@ public final class Geometry {
             Way newWay = new Way(way);
             newWay.setNodes(newNodes[pos]);
 
-            cmds.add(new ChangeCommand(way, newWay));
+            cmds.add(new ChangeCommand(dataset, way, newWay));
         }
 
         return intersectionNodes;

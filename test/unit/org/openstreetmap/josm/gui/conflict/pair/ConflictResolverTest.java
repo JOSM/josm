@@ -4,11 +4,14 @@ package org.openstreetmap.josm.gui.conflict.pair;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.NoSuchElementException;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
@@ -31,7 +34,7 @@ public class ConflictResolverTest {
     /**
      * Unit test of {@link ConflictResolver#buildResolveCommand} - empty case.
      */
-    @Test
+    @Test(expected = NoSuchElementException.class)
     public void testBuildResolveCommandEmpty() {
         assertNotNull(new ConflictResolver().buildResolveCommand());
     }
@@ -46,6 +49,7 @@ public class ConflictResolverTest {
         n1.put("source", "my");
         Node n2 = new Node(LatLon.NORTH_POLE);
         n2.put("source", "theirs");
+        new DataSet(n1, n2);
         resolver.populate(new Conflict<>(n1, n2));
         resolver.decideRemaining(MergeDecisionType.KEEP_MINE);
         assertFalse(((SequenceCommand) resolver.buildResolveCommand()).getChildren().isEmpty());
@@ -61,6 +65,7 @@ public class ConflictResolverTest {
         w1.put("source", "my");
         Way w2 = new Way();
         w2.put("source", "theirs");
+        new DataSet(w1, w2);
         resolver.populate(new Conflict<>(w1, w2));
         resolver.decideRemaining(MergeDecisionType.KEEP_MINE);
         assertFalse(((SequenceCommand) resolver.buildResolveCommand()).getChildren().isEmpty());
@@ -76,6 +81,7 @@ public class ConflictResolverTest {
         r1.put("source", "my");
         Relation r2 = new Relation();
         r2.put("source", "theirs");
+        new DataSet(r1, r2);
         resolver.populate(new Conflict<>(r1, r2));
         resolver.decideRemaining(MergeDecisionType.KEEP_MINE);
         assertFalse(((SequenceCommand) resolver.buildResolveCommand()).getChildren().isEmpty());

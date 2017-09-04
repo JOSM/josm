@@ -38,7 +38,9 @@ public class AddPrimitivesCommand extends Command {
     /**
      * Constructs a new {@code AddPrimitivesCommand} to add data to the current edit layer.
      * @param data The OSM primitives data to add. Must not be {@code null}
+     * @deprecated to be removed end of 2017. Use {@link #AddPrimitivesCommand(List, DataSet)} instead
      */
+    @Deprecated
     public AddPrimitivesCommand(List<PrimitiveData> data) {
         this(data, data);
     }
@@ -48,7 +50,9 @@ public class AddPrimitivesCommand extends Command {
      * @param data The OSM primitives to add. Must not be {@code null}
      * @param toSelect The OSM primitives to select at the end. Can be {@code null}
      * @since 5953
+     * @deprecated to be removed end of 2017. Use {@link #AddPrimitivesCommand(List, List, DataSet)} instead
      */
+    @Deprecated
     public AddPrimitivesCommand(List<PrimitiveData> data, List<PrimitiveData> toSelect) {
         init(data, toSelect);
     }
@@ -76,6 +80,16 @@ public class AddPrimitivesCommand extends Command {
     public AddPrimitivesCommand(List<PrimitiveData> data, List<PrimitiveData> toSelect, DataSet ds) {
         super(ds);
         init(data, toSelect);
+    }
+
+    /**
+     * Constructs a new {@code AddPrimitivesCommand} to add data to the given data set.
+     * @param data The OSM primitives data to add and select. Must not be {@code null}
+     * @param ds The target data set. Must not be {@code null}
+     * @since 12726
+     */
+    public AddPrimitivesCommand(List<PrimitiveData> data, DataSet ds) {
+        this(data, data, ds);
     }
 
     private void init(List<PrimitiveData> data, List<PrimitiveData> toSelect) {

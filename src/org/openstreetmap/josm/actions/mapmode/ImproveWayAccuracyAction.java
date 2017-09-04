@@ -398,12 +398,13 @@ public class ImproveWayAccuracyAction extends MapMode implements
             return;
         }
 
+        DataSet ds = getLayerManager().getEditDataSet();
         updateKeyModifiers(e);
         mousePos = e.getPoint();
 
         if (state == State.SELECTING) {
             if (targetWay != null) {
-                getLayerManager().getEditDataSet().setSelected(targetWay.getPrimitiveId());
+                ds.setSelected(targetWay.getPrimitiveId());
                 updateStateByCurrentSelection();
             }
         } else if (state == State.IMPROVING) {
@@ -424,7 +425,7 @@ public class ImproveWayAccuracyAction extends MapMode implements
                 // Creating a new node
                 Node virtualNode = new Node(mv.getEastNorth(mousePos.x,
                         mousePos.y));
-                virtualCmds.add(new AddCommand(virtualNode));
+                virtualCmds.add(new AddCommand(ds, virtualNode));
 
                 // Looking for candidateSegment copies in ways that are
                 // referenced

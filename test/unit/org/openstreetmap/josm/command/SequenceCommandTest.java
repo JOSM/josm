@@ -11,6 +11,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -53,8 +54,9 @@ public class SequenceCommandTest {
      */
     @Test
     public void testExecute() {
-        final TestCommand command1 = new TestCommand(Arrays.<OsmPrimitive>asList(testData.existingNode));
-        TestCommand command2 = new TestCommand(Arrays.<OsmPrimitive>asList(testData.existingNode2)) {
+        DataSet ds = new DataSet();
+        final TestCommand command1 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode));
+        TestCommand command2 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode2)) {
             @Override
             public boolean executeCommand() {
                 assertTrue(command1.executed);
@@ -74,8 +76,9 @@ public class SequenceCommandTest {
      */
     @Test
     public void testUndo() {
-        final TestCommand command2 = new TestCommand(Arrays.<OsmPrimitive>asList(testData.existingNode2));
-        TestCommand command1 = new TestCommand(Arrays.<OsmPrimitive>asList(testData.existingNode)) {
+        DataSet ds = new DataSet();
+        final TestCommand command2 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode2));
+        TestCommand command1 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode)) {
             @Override
             public void undoCommand() {
                 assertFalse(command2.executed);
@@ -102,9 +105,10 @@ public class SequenceCommandTest {
      */
     @Test
     public void testExecuteRollback() {
-        TestCommand command1 = new TestCommand(null);
-        FailingCommand command2 = new FailingCommand();
-        TestCommand command3 = new TestCommand(null);
+        DataSet ds = new DataSet();
+        TestCommand command1 = new TestCommand(ds, null);
+        FailingCommand command2 = new FailingCommand(ds);
+        TestCommand command3 = new TestCommand(ds, null);
         SequenceCommand command = new SequenceCommand("seq", Arrays.<Command>asList(command1, command2, command3));
         assertFalse(command.executeCommand());
         assertFalse(command1.executed);
@@ -118,9 +122,10 @@ public class SequenceCommandTest {
      */
     @Test
     public void testContinueOnErrors() {
-        TestCommand command1 = new TestCommand(null);
-        FailingCommand command2 = new FailingCommand();
-        TestCommand command3 = new TestCommand(null);
+        DataSet ds = new DataSet();
+        TestCommand command1 = new TestCommand(ds, null);
+        FailingCommand command2 = new FailingCommand(ds);
+        TestCommand command3 = new TestCommand(ds, null);
         SequenceCommand command = new SequenceCommand("seq", Arrays.<Command>asList(command1, command2, command3), true);
         assertTrue(command.executeCommand());
         assertTrue(command1.executed);
@@ -136,11 +141,12 @@ public class SequenceCommandTest {
      */
     @Test
     public void testGetLastCommand() {
-        final TestCommand command1 = new TestCommand(Arrays.<OsmPrimitive>asList(testData.existingNode));
-        final TestCommand command2 = new TestCommand(Arrays.<OsmPrimitive>asList(testData.existingNode2));
+        DataSet ds = new DataSet();
+        final TestCommand command1 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode));
+        final TestCommand command2 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode2));
 
-        assertEquals(command2, new SequenceCommand("seq", command1, command2).getLastCommand());
-        assertNull(new SequenceCommand("seq").getLastCommand());
+        assertEquals(command2, new SequenceCommand(ds, "seq", Arrays.asList(command1, command2), false).getLastCommand());
+        assertNull(new SequenceCommand(ds, "seq", Collections.emptyList(), false).getLastCommand());
     }
 
     /**
@@ -148,16 +154,17 @@ public class SequenceCommandTest {
      */
     @Test
     public void testFillModifiedData() {
-        Command command1 = new TestCommand(Arrays.<OsmPrimitive>asList(testData.existingNode));
-        Command command2 = new TestCommand(Arrays.<OsmPrimitive>asList(testData.existingNode2));
-        Command command3 = new TestCommand(Arrays.<OsmPrimitive>asList(testData.existingWay)) {
+        DataSet ds = new DataSet();
+        Command command1 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode));
+        Command command2 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode2));
+        Command command3 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingWay)) {
             @Override
             public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted,
                     Collection<OsmPrimitive> added) {
                 deleted.addAll(primitives);
             }
         };
-        Command command4 = new TestCommand(Arrays.<OsmPrimitive>asList(testData.existingRelation)) {
+        Command command4 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingRelation)) {
             @Override
             public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted,
                     Collection<OsmPrimitive> added) {
@@ -180,8 +187,9 @@ public class SequenceCommandTest {
      */
     @Test
     public void testGetParticipatingPrimitives() {
-        Command command1 = new TestCommand(Arrays.<OsmPrimitive>asList(testData.existingNode));
-        Command command2 = new TestCommand(Arrays.<OsmPrimitive>asList(testData.existingNode2));
+        DataSet ds = new DataSet();
+        Command command1 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode));
+        Command command2 = new TestCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode2));
 
         SequenceCommand command = new SequenceCommand("seq", command1, command2);
         command.executeCommand();
@@ -196,7 +204,7 @@ public class SequenceCommandTest {
      */
     @Test
     public void testDescription() {
-        assertTrue(new SequenceCommand("test").getDescriptionText().matches("Sequence: test"));
+        assertTrue(new SequenceCommand(new DataSet(), "test", Collections.emptyList(), false).getDescriptionText().matches("Sequence: test"));
     }
 
     /**
@@ -204,9 +212,10 @@ public class SequenceCommandTest {
      */
     @Test
     public void testEqualsContract() {
+        DataSet ds = new DataSet();
         EqualsVerifier.forClass(SequenceCommand.class).usingGetClass()
             .withPrefabValues(Command.class,
-                new AddCommand(new Node(1)), new AddCommand(new Node(2)))
+                new AddCommand(ds, new Node(1)), new AddCommand(ds, new Node(2)))
             .withPrefabValues(DataSet.class,
                     new DataSet(), new DataSet())
             .withPrefabValues(User.class,
@@ -221,8 +230,8 @@ public class SequenceCommandTest {
         protected final Collection<? extends OsmPrimitive> primitives;
         protected boolean executed;
 
-        TestCommand(Collection<? extends OsmPrimitive> primitives) {
-            super();
+        TestCommand(DataSet ds, Collection<? extends OsmPrimitive> primitives) {
+            super(ds);
             this.primitives = primitives;
         }
 
@@ -265,8 +274,8 @@ public class SequenceCommandTest {
 
     private static class FailingCommand extends TestCommand {
 
-        FailingCommand() {
-            super(null);
+        FailingCommand(DataSet ds) {
+            super(ds, null);
         }
 
         @Override
@@ -285,7 +294,5 @@ public class SequenceCommandTest {
         public String toString() {
             return "FailingCommand";
         }
-
     }
-
 }

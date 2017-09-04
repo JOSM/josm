@@ -200,11 +200,10 @@ public class ChangePropertyCommandTest {
         HashMap<String, String> tagsRemove = new HashMap<>();
         tagsRemove.put("existing", "");
 
-        Way way = new Way();
-        way.addNode(node1);
+        Way way = testData.createWay(20, node1);
         way.put("name", "xy");
         way.put("existing", "existing");
-        Relation relation = new Relation();
+        Relation relation = testData.createRelation(30);
         relation.put("name", "xy");
         relation.put("existing", "existing");
 

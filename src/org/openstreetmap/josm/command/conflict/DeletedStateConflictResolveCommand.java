@@ -33,6 +33,7 @@ public class DeletedStateConflictResolveCommand extends ConflictResolveCommand {
      * @param decision the merge decision
      */
     public DeletedStateConflictResolveCommand(Conflict<? extends OsmPrimitive> conflict, MergeDecisionType decision) {
+        super(conflict.getMy().getDataSet());
         this.conflict = conflict;
         this.decision = decision;
     }

@@ -24,7 +24,7 @@ import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.PseudoCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
-import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.validation.Severity;
@@ -81,16 +81,15 @@ public class MapCSSTagCheckerTest {
         assertEquals("fixRemove: {0.key}", check.fixCommands.get(0).toString());
         assertEquals("fixAdd: natural=wetland", check.fixCommands.get(1).toString());
         assertEquals("fixAdd: wetland=marsh", check.fixCommands.get(2).toString());
-        final Node n1 = new Node();
-        n1.put("natural", "marsh");
+        final OsmPrimitive n1 = OsmUtils.createPrimitive("node natural=marsh");
+        final OsmPrimitive n2 = OsmUtils.createPrimitive("node natural=wood");
+        new DataSet(n1, n2);
         assertTrue(check.test(n1));
         assertEquals("deprecated", check.getErrorForPrimitive(n1).getMessage());
         assertEquals("natural=marsh is deprecated", check.getErrorForPrimitive(n1).getDescription());
         assertEquals(Severity.WARNING, check.getErrorForPrimitive(n1).getSeverity());
         assertEquals("Sequence: Fix of natural=marsh is deprecated", check.fixPrimitive(n1).getDescriptionText());
         assertEquals("{natural=}", ((ChangePropertyCommand) check.fixPrimitive(n1).getChildren().iterator().next()).getTags().toString());
-        final Node n2 = new Node();
-        n2.put("natural", "wood");
         assertFalse(check.test(n2));
         assertEquals("The key is natural and the value is marsh",
                 TagCheck.insertArguments(check.rule.selectors.get(0), "The key is {0.key} and the value is {0.value}", null));
@@ -108,6 +107,7 @@ public class MapCSSTagCheckerTest {
                 "fixChangeKey: \"highway => construction\";\n" +
                 "fixAdd: \"highway=construction\";\n" +
                 "}")).parseChecks.get(0);
+        new DataSet(p);
         final Command command = check.fixPrimitive(p);
         assertTrue(command instanceof SequenceCommand);
         final Iterator<PseudoCommand> it = command.getChildren().iterator();

@@ -11,6 +11,7 @@ import java.util.Collections;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -65,8 +66,9 @@ public final class AddNodeAction extends JosmAction {
         Node nnew = new Node(coordinates);
 
         // add the node
-        MainApplication.undoRedo.add(new AddCommand(nnew));
-        getLayerManager().getEditDataSet().setSelected(nnew);
+        DataSet ds = getLayerManager().getEditDataSet();
+        MainApplication.undoRedo.add(new AddCommand(ds, nnew));
+        ds.setSelected(nnew);
         MapView mapView = MainApplication.getMap().mapView;
         if (mapView != null && !mapView.getRealBounds().contains(nnew.getCoor())) {
             AutoScaleAction.zoomTo(Collections.<OsmPrimitive>singleton(nnew));

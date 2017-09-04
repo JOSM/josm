@@ -35,6 +35,7 @@ public class RelationMemberConflictResolverCommand extends ConflictResolveComman
      */
     @SuppressWarnings("unchecked")
     public RelationMemberConflictResolverCommand(Conflict<? extends OsmPrimitive> conflict, List<RelationMember> mergedMembers) {
+        super(conflict.getMy().getDataSet());
         this.conflict = (Conflict<Relation>) conflict;
         this.mergedMembers = mergedMembers;
     }

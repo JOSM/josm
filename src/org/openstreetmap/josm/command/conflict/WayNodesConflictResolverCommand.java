@@ -35,6 +35,7 @@ public class WayNodesConflictResolverCommand extends ConflictResolveCommand {
      */
     @SuppressWarnings("unchecked")
     public WayNodesConflictResolverCommand(Conflict<? extends OsmPrimitive> conflict, List<Node> mergedNodeList) {
+        super(conflict.getMy().getDataSet());
         this.conflict = (Conflict<Way>) conflict;
         this.mergedNodeList = mergedNodeList;
     }

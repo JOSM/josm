@@ -49,7 +49,7 @@ public class SelectCommandTest {
      */
     @Test
     public void testExecute() {
-        SelectCommand command = new SelectCommand(Arrays.asList(testData.existingNode, testData.existingWay));
+        SelectCommand command = new SelectCommand(testData.layer.data, Arrays.asList(testData.existingNode, testData.existingWay));
 
         testData.layer.data.setSelected(Arrays.asList(testData.existingNode2));
 
@@ -66,7 +66,7 @@ public class SelectCommandTest {
     @Test
     public void testExecuteAfterModify() {
         List<OsmPrimitive> list = new ArrayList<>(Arrays.asList(testData.existingNode, testData.existingWay));
-        SelectCommand command = new SelectCommand(list);
+        SelectCommand command = new SelectCommand(testData.layer.data, list);
 
         list.remove(testData.existingNode);
         list.add(testData.existingNode2);
@@ -83,7 +83,7 @@ public class SelectCommandTest {
      */
     @Test
     public void testUndo() {
-        SelectCommand command = new SelectCommand(Arrays.asList(testData.existingNode, testData.existingWay));
+        SelectCommand command = new SelectCommand(testData.layer.data, Arrays.asList(testData.existingNode, testData.existingWay));
         testData.layer.data.setSelected(Arrays.asList(testData.existingNode2));
 
         command.executeCommand();
@@ -109,7 +109,7 @@ public class SelectCommandTest {
         ArrayList<OsmPrimitive> modified = new ArrayList<>();
         ArrayList<OsmPrimitive> deleted = new ArrayList<>();
         ArrayList<OsmPrimitive> added = new ArrayList<>();
-        SelectCommand command = new SelectCommand(Arrays.asList(testData.existingNode, testData.existingWay));
+        SelectCommand command = new SelectCommand(testData.layer.data, Arrays.asList(testData.existingNode, testData.existingWay));
         command.fillModifiedData(modified, deleted, added);
         // intentionally empty.
         assertArrayEquals(new Object[] {}, modified.toArray());
@@ -122,7 +122,7 @@ public class SelectCommandTest {
      */
     @Test
     public void testGetParticipatingPrimitives() {
-        SelectCommand command = new SelectCommand(Arrays.asList(testData.existingNode));
+        SelectCommand command = new SelectCommand(testData.layer.data, Arrays.asList(testData.existingNode));
         command.executeCommand();
         assertArrayEquals(new Object[] {testData.existingNode}, command.getParticipatingPrimitives().toArray());
     }
@@ -132,13 +132,14 @@ public class SelectCommandTest {
      */
     @Test
     public void testDescription() {
-        assertTrue(new SelectCommand(Arrays.<OsmPrimitive>asList(testData.existingNode))
+        DataSet ds = testData.layer.data;
+        assertTrue(new SelectCommand(ds, Arrays.<OsmPrimitive>asList(testData.existingNode))
                 .getDescriptionText().matches("Selected 1 object"));
-        assertTrue(new SelectCommand(Arrays.asList(testData.existingNode, testData.existingWay))
+        assertTrue(new SelectCommand(ds, Arrays.asList(testData.existingNode, testData.existingWay))
                 .getDescriptionText().matches("Selected 2 objects"));
-        assertTrue(new SelectCommand(Arrays.<OsmPrimitive>asList())
+        assertTrue(new SelectCommand(ds, Arrays.<OsmPrimitive>asList())
                 .getDescriptionText().matches("Selected 0 objects"));
-        assertTrue(new SelectCommand(null)
+        assertTrue(new SelectCommand(ds, null)
                 .getDescriptionText().matches("Selected 0 objects"));
     }
 

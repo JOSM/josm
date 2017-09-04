@@ -486,7 +486,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
                         );
                 return;
             }
-            cmds.add(new AddCommand(n));
+            cmds.add(new AddCommand(ds, n));
 
             if (!ctrl) {
                 // Insert the node into all the nearby way segments
@@ -575,7 +575,7 @@ public class DrawAction extends MapMode implements MapViewPaintable, DataSelecti
                 if (way == null) {
                     way = new Way();
                     way.addNode(n0);
-                    cmds.add(new AddCommand(way));
+                    cmds.add(new AddCommand(ds, way));
                     wayToSelect = way;
                 } else {
                     int i;

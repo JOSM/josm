@@ -5,17 +5,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.command.CommandTest.CommandTestData;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.conflict.pair.MergeDecisionType;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
@@ -29,7 +28,7 @@ import nl.jqno.equalsverifier.Warning;
  */
 public class CoordinateConflictResolveCommandTest {
 
-    private OsmDataLayer layer;
+    private CommandTestData testData;
 
     /**
      * Setup test.
@@ -43,20 +42,11 @@ public class CoordinateConflictResolveCommandTest {
      */
     @Before
     public void setUp() {
-        layer = new OsmDataLayer(new DataSet(), null, null);
-        MainApplication.getLayerManager().addLayer(layer);
+        testData = new CommandTestData();
     }
 
-    /**
-     * Cleanup test resources.
-     */
-    @After
-    public void tearDown() {
-        MainApplication.getLayerManager().removeLayer(layer);
-    }
-
-    private static Conflict<Node> createConflict() {
-        return new Conflict<>(new Node(LatLon.ZERO), new Node(new LatLon(50, 50)));
+    private Conflict<Node> createConflict() {
+        return new Conflict<>(testData.existingNode, testData.existingNode2);
     }
 
     /**

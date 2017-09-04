@@ -33,6 +33,7 @@ public class CoordinateConflictResolveCommand extends ConflictResolveCommand {
      * @param decision the merge decision
      */
     public CoordinateConflictResolveCommand(Conflict<? extends OsmPrimitive> conflict, MergeDecisionType decision) {
+        super(conflict.getMy().getDataSet());
         this.conflict = conflict;
         this.decision = decision;
     }

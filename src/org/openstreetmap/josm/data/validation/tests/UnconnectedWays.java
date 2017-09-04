@@ -167,7 +167,7 @@ public abstract class UnconnectedWays extends Test {
         othernodes = new HashSet<>();
         mindist = Main.pref.getDouble(PREFIX + ".node_way_distance", 10.0);
         minmiddledist = Main.pref.getDouble(PREFIX + ".way_way_distance", 0.0);
-        DataSet dataSet = Main.main.getEditDataSet();
+        DataSet dataSet = Main.main != null ? Main.main.getEditDataSet() : null;
         dsArea = dataSet == null ? null : dataSet.getDataSourceArea();
     }
 

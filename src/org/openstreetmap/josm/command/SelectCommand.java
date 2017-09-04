@@ -27,7 +27,9 @@ public class SelectCommand extends Command {
     /**
      * Constructs a new select command.
      * @param newSelection the primitives to select when executing the command.
+     * @deprecated to be removed end of 2017. Use {@link #SelectCommand(DataSet, Collection)} instead
      */
+    @Deprecated
     public SelectCommand(Collection<OsmPrimitive> newSelection) {
         if (newSelection == null || newSelection.isEmpty()) {
             this.newSelection = Collections.emptySet();

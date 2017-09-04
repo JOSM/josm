@@ -302,7 +302,7 @@ public class UnGlueAction extends JosmAction {
         final Node n = new Node(selectedNode, true);
 
         List<Command> cmds = new LinkedList<>();
-        cmds.add(new AddCommand(n));
+        cmds.add(new AddCommand(selectedNode.getDataSet(), n));
         if (dialog != null) {
             dialog.update(selectedNode, Collections.singletonList(n), cmds);
         }
@@ -439,7 +439,7 @@ public class UnGlueAction extends JosmAction {
         // clone the node for the way
         Node newNode = new Node(originalNode, true /* clear OSM ID */);
         newNodes.add(newNode);
-        cmds.add(new AddCommand(newNode));
+        cmds.add(new AddCommand(originalNode.getDataSet(), newNode));
 
         List<Node> nn = new ArrayList<>();
         for (Node pushNode : w.getNodes()) {
@@ -582,7 +582,7 @@ public class UnGlueAction extends JosmAction {
             if (n == selectedNode) {
                 if (seen) {
                     Node newNode = new Node(n, true /* clear OSM ID */);
-                    cmds.add(new AddCommand(newNode));
+                    cmds.add(new AddCommand(selectedNode.getDataSet(), newNode));
                     newNodes.add(newNode);
                     addNodes.add(newNode);
                 } else {

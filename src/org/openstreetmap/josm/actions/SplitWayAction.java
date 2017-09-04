@@ -592,7 +592,7 @@ public class SplitWayAction extends JosmAction {
         // Change the original way
         final Way changedWay = new Way(way);
         changedWay.setNodes(wayToKeep.getNodes());
-        commandList.add(new ChangeCommand(way.getDataSet(), way, changedWay));
+        commandList.add(new ChangeCommand(way, changedWay));
         if (!isMapModeDraw && !newSelection.contains(way)) {
             newSelection.add(way);
         }

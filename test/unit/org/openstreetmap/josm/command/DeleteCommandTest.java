@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -112,11 +113,11 @@ public class DeleteCommandTest {
      * Delete nodes that would be without reference afterwards.
      */
     @Test
-    public void testDelteNodesInWay() {
+    public void testDeleteNodesInWay() {
         testData.existingNode.removeAll();
         // That untagged node should be deleted.
         testData.existingNode2.removeAll();
-        DeleteCommand.delete(testData.layer, Arrays.asList(testData.existingWay), true, true).executeCommand();
+        DeleteCommand.delete(Arrays.asList(testData.existingWay), true, true).executeCommand();
 
         assertTrue(testData.existingWay.isDeleted());
         assertTrue(testData.existingNode2.isDeleted());
@@ -136,7 +137,7 @@ public class DeleteCommandTest {
         Way way2 = new Way(26, 1);
         way2.setNodes(Arrays.asList(node2, node3, node4));
         testData.layer.data.addPrimitive(way2);
-        DeleteCommand.delete(testData.layer, Arrays.asList(way1, way2), true, true).executeCommand();
+        DeleteCommand.delete(Arrays.asList(way1, way2), true, true).executeCommand();
 
         assertTrue(way1.isDeleted());
         assertTrue(way2.isDeleted());
@@ -166,7 +167,7 @@ public class DeleteCommandTest {
     /**
      * Test that {@link DeleteCommand} checks for non-empty list
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NoSuchElementException.class)
     public void testConsistencyNonEmpty() {
         new DeleteCommand(Arrays.<OsmPrimitive>asList());
     }
@@ -174,7 +175,7 @@ public class DeleteCommandTest {
     /**
      * Test that {@link DeleteCommand} checks for non-null list
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void testConsistencyNonNull() {
         new DeleteCommand((Collection<OsmPrimitive>) null);
     }

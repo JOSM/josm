@@ -32,10 +32,11 @@ public class RemoveNodesCommand extends Command {
 
     /**
      * Constructs a new {@code RemoveNodesCommand}.
-     * @param way The way to modify
+     * @param way The way to modify. Must not be null, and belong to a data set
      * @param rmNodes The list of nodes to remove
      */
     public RemoveNodesCommand(Way way, List<Node> rmNodes) {
+        super(way.getDataSet());
         this.way = way;
         this.rmNodes = new HashSet<>(rmNodes);
     }

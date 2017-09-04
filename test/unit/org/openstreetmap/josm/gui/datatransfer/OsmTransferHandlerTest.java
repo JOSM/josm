@@ -63,6 +63,7 @@ public class OsmTransferHandlerTest {
     @Test
     public void testPasteTags() {
         Node n = new Node(LatLon.ZERO);
+        new DataSet(n);
 
         ClipboardUtils.copyString("test=ok");
         transferHandler.pasteTags(Collections.singleton(n));

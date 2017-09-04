@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -71,22 +72,40 @@ public class ChangePropertyCommand extends Command {
     /**
      * Creates a command to change multiple tags of multiple objects
      *
-     * @param objects the objects to modify
+     * @param ds The target data set. Must not be {@code null}
+     * @param objects the objects to modify. Must not be empty
      * @param tags the tags to set
+     * @since 12726
      */
-    public ChangePropertyCommand(Collection<? extends OsmPrimitive> objects, Map<String, String> tags) {
+    public ChangePropertyCommand(DataSet ds, Collection<? extends OsmPrimitive> objects, Map<String, String> tags) {
+        super(ds);
         this.tags = tags;
         init(objects);
     }
 
     /**
+     * Creates a command to change multiple tags of multiple objects
+     *
+     * @param objects the objects to modify. Must not be empty, and objects must belong to a data set
+     * @param tags the tags to set
+     * @throws NullPointerException if objects is null or contain null item
+     * @throws NoSuchElementException if objects is empty
+     */
+    public ChangePropertyCommand(Collection<? extends OsmPrimitive> objects, Map<String, String> tags) {
+        this(objects.iterator().next().getDataSet(), objects, tags);
+    }
+
+    /**
      * Creates a command to change one tag of multiple objects
      *
-     * @param objects the objects to modify
+     * @param objects the objects to modify. Must not be empty, and objects must belong to a data set
      * @param key the key of the tag to set
      * @param value the value of the key to set
+     * @throws NullPointerException if objects is null or contain null item
+     * @throws NoSuchElementException if objects is empty
      */
     public ChangePropertyCommand(Collection<? extends OsmPrimitive> objects, String key, String value) {
+        super(objects.iterator().next().getDataSet());
         this.tags = new HashMap<>(1);
         this.tags.put(key, value);
         init(objects);
@@ -95,9 +114,10 @@ public class ChangePropertyCommand extends Command {
     /**
      * Creates a command to change one tag of one object
      *
-     * @param object the object to modify
+     * @param object the object to modify. Must belong to a data set
      * @param key the key of the tag to set
      * @param value the value of the key to set
+     * @throws NullPointerException if object is null
      */
     public ChangePropertyCommand(OsmPrimitive object, String key, String value) {
         this(Arrays.asList(object), key, value);
@@ -133,8 +153,6 @@ public class ChangePropertyCommand extends Command {
 
     @Override
     public boolean executeCommand() {
-        if (objects.isEmpty())
-            return true;
         final DataSet dataSet = objects.get(0).getDataSet();
         if (dataSet != null) {
             dataSet.beginUpdate();

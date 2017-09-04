@@ -262,6 +262,23 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     }
 
     /**
+     * Constructs a new {@code DataSet} initially filled with the given primitives.
+     * @param osmPrimitives primitives to add to this data set
+     * @since 12726
+     */
+    public DataSet(OsmPrimitive... osmPrimitives) {
+        this();
+        beginUpdate();
+        try {
+            for (OsmPrimitive o : osmPrimitives) {
+                addPrimitive(o);
+            }
+        } finally {
+            endUpdate();
+        }
+    }
+
+    /**
      * Adds a new data source.
      * @param source data source to add
      * @return {@code true} if the collection changed as a result of the call

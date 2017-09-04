@@ -196,6 +196,26 @@ public class MainApplication extends Main {
      */
     public static UndoRedoHandler undoRedo;
 
+    private static final LayerChangeListener undoRedoCleaner = new LayerChangeListener() {
+        @Override
+        public void layerRemoving(LayerRemoveEvent e) {
+            Layer layer = e.getRemovedLayer();
+            if (layer instanceof OsmDataLayer) {
+                undoRedo.clean(((OsmDataLayer) layer).data);
+            }
+        }
+
+        @Override
+        public void layerOrderChanged(LayerOrderChangeEvent e) {
+            // Do nothing
+        }
+
+        @Override
+        public void layerAdded(LayerAddEvent e) {
+            // Do nothing
+        }
+    };
+
     /**
      * Listener that sets the enabled state of undo/redo menu entries.
      */
@@ -219,25 +239,7 @@ public class MainApplication extends Main {
     public MainApplication(MainFrame mainFrame) {
         this.mainFrame = mainFrame;
         undoRedo = super.undoRedo;
-        getLayerManager().addLayerChangeListener(new LayerChangeListener() {
-            @Override
-            public void layerRemoving(LayerRemoveEvent e) {
-                Layer layer = e.getRemovedLayer();
-                if (layer instanceof OsmDataLayer) {
-                    undoRedo.clean(((OsmDataLayer) layer).data);
-                }
-            }
-
-            @Override
-            public void layerOrderChanged(LayerOrderChangeEvent e) {
-                // Do nothing
-            }
-
-            @Override
-            public void layerAdded(LayerAddEvent e) {
-                // Do nothing
-            }
-        });
+        getLayerManager().addLayerChangeListener(undoRedoCleaner);
     }
 
     /**

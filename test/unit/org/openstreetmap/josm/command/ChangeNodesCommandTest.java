@@ -114,9 +114,9 @@ public class ChangeNodesCommandTest {
         Way way = new Way();
         way.addNode(node);
         way.put("name", "xy");
-
+        DataSet ds = new DataSet(node, way);
         assertTrue(
-                new ChangeNodesCommand(way, Arrays.asList(node)).getDescriptionText().matches("Change nodes of.*xy.*"));
+                new ChangeNodesCommand(ds, way, Arrays.asList(node)).getDescriptionText().matches("Change nodes of.*xy.*"));
     }
 
     /**
