@@ -40,7 +40,7 @@ public interface ILatLon {
     /**
      * <p>Replies the projected east/north coordinates.</p>
      *
-     * <p>Uses the {@link Main#getProjection() global projection} to project the lan/lon-coordinates.</p>
+     * <p>Uses the {@link Main#getProjection() global projection} to project the lat/lon-coordinates.</p>
      *
      * @return the east north coordinates or {@code null} if #is
      * @deprecated use {@link #getEastNorth(org.openstreetmap.josm.data.projection.Projecting)}

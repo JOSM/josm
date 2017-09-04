@@ -45,7 +45,7 @@ public class FixDataHookTest {
         new FixDataHook().checkUpload(new APIDataSet());
         assertTrue(MainApplication.undoRedo.commands.isEmpty());
 
-        // Complete data set (except empty which cannot be tested anymore)
+        // Complete data set (except empty node which cannot be tested anymore)
         Way emptyWay = new Way();
         Relation emptyRelation = new Relation();
         Way w1 = new Way();
