@@ -210,7 +210,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
 
     @Override public void visitBoundingBox(BoundingXYVisitor v) {
         for (Marker mkr : data) {
-            v.visit(mkr.getEastNorth());
+            v.visit(mkr);
         }
     }
 
@@ -351,7 +351,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                 }
             }
         }
-        MainApplication.getMap().mapView.zoomTo(currentMarker.getEastNorth());
+        MainApplication.getMap().mapView.zoomTo(currentMarker);
     }
 
     @Override
@@ -370,7 +370,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
                 }
             }
         }
-        MainApplication.getMap().mapView.zoomTo(currentMarker.getEastNorth());
+        MainApplication.getMap().mapView.zoomTo(currentMarker);
     }
 
     public static void playAudio() {

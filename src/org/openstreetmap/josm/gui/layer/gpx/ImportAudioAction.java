@@ -186,7 +186,7 @@ public class ImportAudioAction extends AbstractAction {
                 if (waypoints.contains(w)) {
                     continue;
                 }
-                WayPoint wNear = layer.data.nearestPointOnTrack(w.getEastNorth(), snapDistance);
+                WayPoint wNear = layer.data.nearestPointOnTrack(w.getEastNorth(Main.getProjection()), snapDistance);
                 if (wNear != null) {
                     WayPoint wc = new WayPoint(w.getCoor());
                     wc.time = wNear.time;

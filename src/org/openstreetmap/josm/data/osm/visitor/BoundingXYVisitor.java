@@ -73,15 +73,20 @@ public class BoundingXYVisitor extends AbstractVisitor {
     /**
      * Visiting call for lat/lon.
      * @param latlon lat/lon
+     * @since 12725 (public for ILatLon parameter)
      */
-    public void visit(LatLon latlon) {
+    public void visit(ILatLon latlon) {
         if (latlon != null) {
-            visit((ILatLon) latlon);
+            visit(latlon.getEastNorth(Main.getProjection()));
         }
     }
 
-    private void visit(ILatLon latlon) {
-        visit(latlon.getEastNorth());
+    /**
+     * Visiting call for lat/lon.
+     * @param latlon lat/lon
+     */
+    public void visit(LatLon latlon) {
+        visit((ILatLon) latlon);
     }
 
     /**
@@ -137,10 +142,10 @@ public class BoundingXYVisitor extends AbstractVisitor {
         LatLon maxLatlon = Main.getProjection().eastNorth2latlon(bounds.getMax());
         bounds = new ProjectionBounds(new LatLon(
                         Math.max(-90, minLatlon.lat() - enlargeDegree),
-                        Math.max(-180, minLatlon.lon() - enlargeDegree)).getEastNorth(),
+                        Math.max(-180, minLatlon.lon() - enlargeDegree)).getEastNorth(Main.getProjection()),
                 new LatLon(
                         Math.min(90, maxLatlon.lat() + enlargeDegree),
-                        Math.min(180, maxLatlon.lon() + enlargeDegree)).getEastNorth());
+                        Math.min(180, maxLatlon.lon() + enlargeDegree)).getEastNorth(Main.getProjection()));
     }
 
     /**

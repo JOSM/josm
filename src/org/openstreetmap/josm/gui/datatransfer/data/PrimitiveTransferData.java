@@ -131,7 +131,7 @@ public final class PrimitiveTransferData implements Serializable {
         BoundingXYVisitor visitor = new BoundingXYVisitor();
         for (PrimitiveData pd : getAll()) {
             if (pd instanceof NodeData && !pd.isIncomplete()) {
-                visitor.visit(((NodeData) pd).getEastNorth());
+                visitor.visit(((NodeData) pd));
             }
         }
         ProjectionBounds bounds = visitor.getBounds();

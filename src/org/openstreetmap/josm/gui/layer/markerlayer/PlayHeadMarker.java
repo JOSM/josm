@@ -84,7 +84,7 @@ public final class PlayHeadMarker extends Marker {
 
     @Override
     public boolean containsPoint(Point p) {
-        Point screen = MainApplication.getMap().mapView.getPoint(getEastNorth());
+        Point screen = MainApplication.getMap().mapView.getPoint(this);
         Rectangle r = new Rectangle(screen.x, screen.y, symbol.getIconWidth(),
                 symbol.getIconHeight());
         return r.contains(p);
@@ -213,7 +213,7 @@ public final class PlayHeadMarker extends Marker {
             double closestAudioMarkerDistanceSquared = 1.0E100;
             for (Marker m : recent.parentLayer.data) {
                 if (m instanceof AudioMarker) {
-                    double distanceSquared = m.getEastNorth().distanceSq(en);
+                    double distanceSquared = m.getEastNorth(Main.getProjection()).distanceSq(en);
                     if (distanceSquared < closestAudioMarkerDistanceSquared) {
                         ca = (AudioMarker) m;
                         closestAudioMarkerDistanceSquared = distanceSquared;
@@ -282,7 +282,7 @@ public final class PlayHeadMarker extends Marker {
      */
     public void paint(Graphics g, MapView mv) {
         if (time < 0.0) return;
-        Point screen = mv.getPoint(getEastNorth());
+        Point screen = mv.getPoint(this);
         paintIcon(mv, g, screen.x, screen.y);
     }
 
@@ -346,14 +346,14 @@ public final class PlayHeadMarker extends Marker {
         if (w1 == null)
             return;
         setEastNorth(w2 == null ?
-                w1.getEastNorth() :
-                    w1.getEastNorth().interpolate(w2.getEastNorth(),
+                w1.getEastNorth(Main.getProjection()) :
+                    w1.getEastNorth(Main.getProjection()).interpolate(w2.getEastNorth(Main.getProjection()),
                             (audioTime - w1.time)/(w2.time - w1.time)));
         time = audioTime;
         MapView mapView = MainApplication.getMap().mapView;
         if (jumpToMarker) {
             jumpToMarker = false;
-            mapView.zoomTo(w1.getEastNorth());
+            mapView.zoomTo(w1);
         }
         mapView.repaint();
     }

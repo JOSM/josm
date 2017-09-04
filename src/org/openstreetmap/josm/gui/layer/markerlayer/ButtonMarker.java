@@ -38,7 +38,7 @@ public class ButtonMarker extends Marker {
     }
 
     @Override public boolean containsPoint(Point p) {
-        Point screen = MainApplication.getMap().mapView.getPoint(getEastNorth());
+        Point screen = MainApplication.getMap().mapView.getPoint(this);
         buttonRectangle.setLocation(screen.x+4, screen.y+2);
         return buttonRectangle.contains(p);
     }
@@ -48,7 +48,7 @@ public class ButtonMarker extends Marker {
             super.paint(g, mv, mousePressed, showTextOrIcon);
             return;
         }
-        Point screen = mv.getPoint(getEastNorth());
+        Point screen = mv.getPoint(this);
         buttonRectangle.setLocation(screen.x+4, screen.y+2);
         paintIcon(mv, g, screen.x+4, screen.y+2);
         Border b;

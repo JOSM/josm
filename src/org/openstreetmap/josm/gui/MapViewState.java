@@ -394,7 +394,7 @@ public final class MapViewState implements Serializable {
     private static EastNorth calculateDefaultCenter() {
         Bounds b = Optional.ofNullable(DownloadDialog.getSavedDownloadBounds()).orElseGet(
                 () -> Main.getProjection().getWorldBoundsLatLon());
-        return b.getCenter().getEastNorth();
+        return b.getCenter().getEastNorth(Main.getProjection());
     }
 
     /**

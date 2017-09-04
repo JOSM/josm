@@ -515,12 +515,23 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param latlon The point, where this geopoint would be drawn.
      * @return The point on screen where "point" would be drawn, relative to the own top/left.
      */
-    public Point2D getPoint2D(LatLon latlon) {
+    public Point2D getPoint2D(ILatLon latlon) {
         if (latlon == null) {
             return new Point();
         } else {
-            return getPoint2D(latlon.getEastNorth());
+            return getPoint2D(latlon.getEastNorth(Main.getProjection()));
         }
+    }
+
+    /**
+     * Return the point on the screen where this Coordinate would be.
+     *
+     * Alternative: {@link #getState()}, then {@link MapViewState#getPointFor(ILatLon)}
+     * @param latlon The point, where this geopoint would be drawn.
+     * @return The point on screen where "point" would be drawn, relative to the own top/left.
+     */
+    public Point2D getPoint2D(LatLon latlon) {
+        return getPoint2D((ILatLon) latlon);
     }
 
     /**
@@ -550,10 +561,21 @@ public class NavigatableComponent extends JComponent implements Helpful {
      * @param latlon lat/lon
      * @return point
      * @see #getPoint2D(LatLon)
+     * @since 12725
      */
-    public Point getPoint(LatLon latlon) {
+    public Point getPoint(ILatLon latlon) {
         Point2D d = getPoint2D(latlon);
         return new Point((int) d.getX(), (int) d.getY());
+    }
+
+    /**
+     * looses precision, may overflow (depends on p and current scale)
+     * @param latlon lat/lon
+     * @return point
+     * @see #getPoint2D(LatLon)
+     */
+    public Point getPoint(LatLon latlon) {
+        return getPoint((ILatLon) latlon);
     }
 
     /**
@@ -689,9 +711,18 @@ public class NavigatableComponent extends JComponent implements Helpful {
     /**
      * Zoom to given lat/lon.
      * @param newCenter new center coordinates
+     * @since 12725
+     */
+    public void zoomTo(ILatLon newCenter) {
+        zoomTo(Projections.project(newCenter));
+    }
+
+    /**
+     * Zoom to given lat/lon.
+     * @param newCenter new center coordinates
      */
     public void zoomTo(LatLon newCenter) {
-        zoomTo(Projections.project(newCenter));
+        zoomTo((ILatLon) newCenter);
     }
 
     /**

@@ -190,8 +190,8 @@ public class InspectPrimitiveDataText {
         BBox bbox = o.getBBox();
         if (bbox != null) {
             add(tr("Bounding box: "), bbox.toStringCSV(", "));
-            EastNorth bottomRigth = bbox.getBottomRight().getEastNorth();
-            EastNorth topLeft = bbox.getTopLeft().getEastNorth();
+            EastNorth bottomRigth = bbox.getBottomRight().getEastNorth(Main.getProjection());
+            EastNorth topLeft = bbox.getTopLeft().getEastNorth(Main.getProjection());
             add(tr("Bounding box (projected): "),
                     Double.toString(topLeft.east()), ", ",
                     Double.toString(bottomRigth.north()), ", ",
