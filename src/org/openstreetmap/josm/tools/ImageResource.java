@@ -58,26 +58,7 @@ public class ImageResource {
      */
     public ImageResource(Image img) {
         CheckParameterUtil.ensureParameterNotNull(img);
-        baseImage = scaleBaseImageIfNeeded(img);
-    }
-
-    /** Scale image according to screen DPI if needed.
-     *
-     * @param img an image loaded from file (it's width and height are virtual pixels)
-     * @return original img if virtual size is the same as real size or new image resized to real pixels
-     */
-    private static Image scaleBaseImageIfNeeded(Image img) {
-        int imgWidth = img.getWidth(null);
-        int imgHeight = img.getHeight(null);
-        int realWidth = GuiSizesHelper.getSizeDpiAdjusted(imgWidth);
-        int realHeight = GuiSizesHelper.getSizeDpiAdjusted(imgHeight);
-        if (realWidth != -1 && realHeight != -1 && imgWidth != realWidth && imgHeight != realHeight) {
-            Image realImage = img.getScaledInstance(realWidth, realHeight, Image.SCALE_SMOOTH);
-            BufferedImage bimg = new BufferedImage(realWidth, realHeight, BufferedImage.TYPE_INT_ARGB);
-            bimg.getGraphics().drawImage(realImage, 0, 0, null);
-            return bimg;
-        }
-        return img;
+        baseImage = img;
     }
 
     /**
@@ -161,7 +142,7 @@ public class ImageResource {
     public ImageIcon getImageIcon(Dimension dim) {
         return getImageIcon(dim, true);
     }
-    
+
     /**
      * Get an ImageIcon object for the image of this resource.
      * @param  dim The requested dimensions. Use (-1,-1) for the original size and (width, -1)
@@ -228,7 +209,7 @@ public class ImageResource {
                 return new ImageIcon(mrImg);
             } catch (NoClassDefFoundError e) {
                 return new ImageIcon(img);
-            } 
+            }
         }
     }
 
