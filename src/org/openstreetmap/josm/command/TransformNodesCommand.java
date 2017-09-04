@@ -5,8 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import javax.swing.Icon;
@@ -27,12 +27,12 @@ public abstract class TransformNodesCommand extends Command {
     /**
      * The nodes to transform.
      */
-    protected Collection<Node> nodes = new LinkedList<>();
+    protected final Collection<Node> nodes;
 
     /**
      * List of all old states of the nodes.
      */
-    protected Map<Node, OldNodeState> oldStates = new HashMap<>();
+    protected final Map<Node, OldNodeState> oldStates = new HashMap<>();
 
     /**
      * Stores the state of the nodes before the command.
@@ -46,9 +46,12 @@ public abstract class TransformNodesCommand extends Command {
     /**
      * Creates a TransformNodesObject.
      * Find out the impacted nodes and store their initial state.
-     * @param objects objects to fetch nodes from
+     * @param objects objects to fetch nodes from. Must neither be null nor empty. Items must belong to a data set
+     * @throws NullPointerException if objects is null or contain null item
+     * @throws NoSuchElementException if objects is empty
      */
     public TransformNodesCommand(Collection<? extends OsmPrimitive> objects) {
+        super(objects.iterator().next().getDataSet());
         this.nodes = AllNodesVisitor.getAllNodes(objects);
         storeOldState();
     }

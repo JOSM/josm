@@ -49,6 +49,7 @@ public class TagConflictResolveCommand extends ConflictResolveCommand {
      * @param mergeItems the list of merge decisions, represented as {@link TagMergeItem}s
      */
     public TagConflictResolveCommand(Conflict<? extends OsmPrimitive> conflict, List<TagMergeItem> mergeItems) {
+        super(conflict.getMy().getDataSet());
         this.conflict = conflict;
         this.mergeItems = mergeItems;
     }

@@ -1,18 +1,13 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.command;
 
-import static org.junit.Assert.assertSame;
-
 import java.util.Arrays;
-import java.util.Collection;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
-import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.User;
@@ -36,29 +31,6 @@ public class CommandTest {
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences().i18n();
-    private CommandTestData testData;
-
-    /**
-     * Set up the test data.
-     */
-    @Before
-    public void createTestData() {
-        testData = new CommandTestData();
-    }
-
-    /**
-     * Test {@link Command#getLayer()}
-     * @deprecated to be removed end of 2017
-     */
-    @Test
-    @Deprecated
-    public void testGetLayer() {
-        OsmDataLayer layer2 = new OsmDataLayer(new DataSet(), "test", null);
-        Command command = new NopCommand();
-        Command command2 = new NopCommand(layer2.data);
-        assertSame(testData.layer, command.getLayer());
-        assertSame(layer2, command2.getLayer());
-    }
 
     /**
      * Unit test of methods {@link Command#equals} and {@link Command#hashCode}.
@@ -74,27 +46,6 @@ public class CommandTest {
                 new OsmDataLayer(new DataSet(), "1", null), new OsmDataLayer(new DataSet(), "2", null))
             .suppress(Warning.NONFINAL_FIELDS)
             .verify();
-    }
-
-    private static final class NopCommand extends Command {
-        NopCommand() {
-            super();
-        }
-
-        NopCommand(DataSet dataset) {
-            super(dataset);
-        }
-
-        @Override
-        public String getDescriptionText() {
-            return "";
-        }
-
-        @Override
-        public void fillModifiedData(Collection<OsmPrimitive> modified, Collection<OsmPrimitive> deleted,
-                Collection<OsmPrimitive> added) {
-            // nop
-        }
     }
 
     /**

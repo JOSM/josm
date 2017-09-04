@@ -78,7 +78,7 @@ public class ConflictAddCommand extends Command {
     @Override
     public void undoCommand() {
         DataSet ds = getAffectedDataSet();
-        if (!Main.main.containsDataSet(ds)) {
+        if (Main.main != null && !Main.main.containsDataSet(ds)) {
             Logging.warn(tr("Layer ''{0}'' does not exist any more. Cannot remove conflict for object ''{1}''.",
                     ds.getName(),
                     conflict.getMy().getDisplayName(DefaultNameFormatter.getInstance())

@@ -157,15 +157,15 @@ public class TagSettingsPanel extends JPanel implements TableModelListener {
      */
     class ChangesetReviewChangeListener implements ChangeListener {
 
-        private final String key = "review_requested";
+        private static final String KEY = "review_requested";
 
         @Override
         public void stateChanged(ChangeEvent e) {
             if (e.getSource() instanceof ChangesetReviewModel) {
                 boolean newState = ((ChangesetReviewModel) e.getSource()).isReviewRequested();
-                boolean oldState = "yes".equals(Optional.ofNullable(getTagEditorValue(key)).orElse(""));
+                boolean oldState = "yes".equals(Optional.ofNullable(getTagEditorValue(KEY)).orElse(""));
                 if (oldState != newState) {
-                    setProperty(key, newState ? "yes" : null);
+                    setProperty(KEY, newState ? "yes" : null);
                 }
             }
         }

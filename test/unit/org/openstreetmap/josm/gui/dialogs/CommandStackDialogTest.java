@@ -45,11 +45,12 @@ public class CommandStackDialogTest {
      */
     @Test
     public void testCommandStackDialogNotEmpty() {
-        OsmDataLayer layer = new OsmDataLayer(new DataSet(), "", null);
+        DataSet ds = new DataSet();
+        OsmDataLayer layer = new OsmDataLayer(ds, "", null);
         MainApplication.getLayerManager().addLayer(layer);
         try {
-            Command cmd1 = TestUtils.newCommand();
-            Command cmd2 = TestUtils.newCommand();
+            Command cmd1 = TestUtils.newCommand(ds);
+            Command cmd2 = TestUtils.newCommand(ds);
             MainApplication.undoRedo.add(cmd1);
             MainApplication.undoRedo.add(cmd2);
             MainApplication.undoRedo.undo(1);

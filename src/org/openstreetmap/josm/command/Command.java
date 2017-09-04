@@ -146,7 +146,9 @@ public abstract class Command implements PseudoCommand {
 
     /**
      * Creates a new command in the context of the current edit layer, if any
+     * @deprecated to be removed end of 2017. Use {@link #Command(DataSet)} instead
      */
+    @Deprecated
     public Command() {
         this.layer = MainApplication.getLayerManager().getEditLayer();
         this.data = layer != null ? layer.data : Main.main.getEditDataSet();

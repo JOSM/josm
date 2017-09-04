@@ -9,6 +9,7 @@ import java.util.Objects;
 
 import javax.swing.Icon;
 
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -35,6 +36,18 @@ public class ChangeNodesCommand extends Command {
      * @param newNodes The new list of nodes for the given way
      */
     public ChangeNodesCommand(Way way, List<Node> newNodes) {
+        this(way.getDataSet(), way, newNodes);
+    }
+
+    /**
+     * Constructs a new {@code ChangeNodesCommand}.
+     * @param ds The target data set. Must not be {@code null}
+     * @param way The way to modify
+     * @param newNodes The new list of nodes for the given way
+     * @since 12726
+     */
+    public ChangeNodesCommand(DataSet ds, Way way, List<Node> newNodes) {
+        super(ds);
         this.way = way;
         this.newNodes = newNodes;
         if (newNodes.isEmpty()) {

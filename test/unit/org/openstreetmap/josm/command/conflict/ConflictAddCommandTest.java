@@ -5,16 +5,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.command.CommandTest.CommandTestData;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -27,30 +26,20 @@ import nl.jqno.equalsverifier.Warning;
  */
 public class ConflictAddCommandTest {
 
-    private OsmDataLayer layer;
-
     /**
      * Setup test.
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().platform();
+    private CommandTestData testData;
 
     /**
      * Setup test.
      */
     @Before
     public void setUp() {
-        layer = new OsmDataLayer(new DataSet(), null, null);
-        MainApplication.getLayerManager().addLayer(layer);
-    }
-
-    /**
-     * Cleanup test resources.
-     */
-    @After
-    public void tearDown() {
-        MainApplication.getLayerManager().removeLayer(layer);
+        testData = new CommandTestData();
     }
 
     /**
@@ -58,8 +47,8 @@ public class ConflictAddCommandTest {
      */
     @Test
     public void testExecuteUndoCommand() {
-        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
-        Conflict<Node> conflict = new Conflict<>(new Node(), new Node());
+        DataSet ds = testData.layer.data;
+        Conflict<Node> conflict = new Conflict<>(testData.existingNode, testData.existingNode2);
         ConflictAddCommand cmd = new ConflictAddCommand(ds, conflict);
         assertTrue(cmd.executeCommand());
         assertFalse(ds.getConflicts().isEmpty());
@@ -74,9 +63,8 @@ public class ConflictAddCommandTest {
      */
     @Test
     public void testGetDescriptionIcon() {
-        OsmDataLayer layer = MainApplication.getLayerManager().getEditLayer();
-        Conflict<Node> conflict = new Conflict<>(new Node(), new Node());
-        assertNotNull(new ConflictAddCommand(layer, conflict).getDescriptionIcon());
+        Conflict<Node> conflict = new Conflict<>(testData.existingNode, testData.existingNode2);
+        assertNotNull(new ConflictAddCommand(testData.layer.data, conflict).getDescriptionIcon());
     }
 
     /**

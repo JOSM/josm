@@ -16,9 +16,9 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.data.osm.search.SearchSetting;
-import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Pair;
@@ -41,7 +41,10 @@ public class CreateMultipolygonActionTest {
     private static Map<String, String> getRefToRoleMap(Relation relation) {
         Map<String, String> refToRole = new TreeMap<>();
         for (RelationMember i : relation.getMembers()) {
-            refToRole.put(i.getMember().get("ref"), i.getRole());
+            String ref = i.getMember().get("ref");
+            if (ref != null) {
+                refToRole.put(ref, i.getRole());
+            }
         }
         return refToRole;
     }

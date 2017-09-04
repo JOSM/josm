@@ -141,10 +141,11 @@ public class ChangeCommandTest {
         way.put("name", "xy");
         Relation relation = new Relation();
         relation.put("name", "xy");
+        DataSet ds = new DataSet(node, way, relation);
 
-        assertTrue(new ChangeCommand(node, node).getDescriptionText().matches("Change node.*xy.*"));
-        assertTrue(new ChangeCommand(way, way).getDescriptionText().matches("Change way.*xy.*"));
-        assertTrue(new ChangeCommand(relation, relation).getDescriptionText().matches("Change relation.*xy.*"));
+        assertTrue(new ChangeCommand(ds, node, node).getDescriptionText().matches("Change node.*xy.*"));
+        assertTrue(new ChangeCommand(ds, way, way).getDescriptionText().matches("Change way.*xy.*"));
+        assertTrue(new ChangeCommand(ds, relation, relation).getDescriptionText().matches("Change relation.*xy.*"));
     }
 
     /**

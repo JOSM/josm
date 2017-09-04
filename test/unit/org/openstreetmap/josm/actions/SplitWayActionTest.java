@@ -161,7 +161,6 @@ public final class SplitWayActionTest {
 
     void doTestRouteRelation(final boolean wayIsReversed, final int indexOfWayToKeep) {
         final DataSet dataSet = new DataSet();
-        final OsmDataLayer layer = new OsmDataLayer(dataSet, OsmDataLayer.createNewName(), null);
         final Node n1 = new Node(new LatLon(1, 0));
         final Node n2 = new Node(new LatLon(2, 0));
         final Node n3 = new Node(new LatLon(3, 0));
@@ -196,7 +195,7 @@ public final class SplitWayActionTest {
                 return it.next();
             };
         final SplitWayAction.SplitWayResult result = SplitWayAction.splitWay(
-                layer, w2, SplitWayAction.buildSplitChunks(w2, Arrays.asList(n3, n4, n5)), new ArrayList<OsmPrimitive>(), strategy);
+                w2, SplitWayAction.buildSplitChunks(w2, Arrays.asList(n3, n4, n5)), new ArrayList<OsmPrimitive>(), strategy);
         MainApplication.undoRedo.add(result.getCommand());
 
         assertEquals(6, route.getMembersCount());

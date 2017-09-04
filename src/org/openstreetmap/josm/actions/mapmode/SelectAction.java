@@ -1234,20 +1234,21 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         }
 
         private void createMiddleNodeFromVirtual(EastNorth currentEN) {
+            DataSet ds = getLayerManager().getEditDataSet();
             Collection<Command> virtualCmds = new LinkedList<>();
-            virtualCmds.add(new AddCommand(virtualNode));
+            virtualCmds.add(new AddCommand(ds, virtualNode));
             for (WaySegment virtualWay : virtualWays) {
                 Way w = virtualWay.way;
                 Way wnew = new Way(w);
                 wnew.addNode(virtualWay.lowerIndex + 1, virtualNode);
-                virtualCmds.add(new ChangeCommand(w, wnew));
+                virtualCmds.add(new ChangeCommand(ds, w, wnew));
             }
             virtualCmds.add(new MoveCommand(virtualNode, startEN, currentEN));
             String text = trn("Add and move a virtual new node to way",
                     "Add and move a virtual new node to {0} ways", virtualWays.size(),
                     virtualWays.size());
             MainApplication.undoRedo.add(new SequenceCommand(text, virtualCmds));
-            getLayerManager().getEditDataSet().setSelected(Collections.singleton((OsmPrimitive) virtualNode));
+            ds.setSelected(Collections.singleton((OsmPrimitive) virtualNode));
             clear();
         }
 

@@ -21,6 +21,7 @@ import java.util.Objects;
 import java.util.stream.Stream;
 
 import org.openstreetmap.josm.command.Command;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmUtils;
@@ -256,10 +257,11 @@ public final class TestUtils {
 
     /**
      * Creates a new empty command.
+     * @param ds data set
      * @return a new empty command
      */
-    public static Command newCommand() {
-        return new Command() {
+    public static Command newCommand(DataSet ds) {
+        return new Command(ds) {
             @Override
             public String getDescriptionText() {
                 return "";

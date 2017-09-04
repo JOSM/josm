@@ -247,7 +247,7 @@ public class CreateMultipolygonAction extends JosmAction {
         final List<Command> list = removeTagsFromWaysIfNeeded(relation);
         final String commandName;
         if (existingRelation == null) {
-            list.add(new AddCommand(relation));
+            list.add(new AddCommand(selectedWays.iterator().next().getDataSet(), relation));
             commandName = getName(false);
         } else {
             list.add(new ChangeCommand(existingRelation, relation));

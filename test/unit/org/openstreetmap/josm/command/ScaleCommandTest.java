@@ -54,6 +54,7 @@ public class ScaleCommandTest {
         Node n1 = new Node(new EastNorth(10, 10));
         Node n2 = new Node(new EastNorth(-1, 0));
         Node n3 = new Node(new EastNorth(-9, -10));
+        new DataSet(n1, n2, n3);
         ScaleCommand scale = new ScaleCommand(Arrays.asList(n1, n2, n3), new EastNorth(0, 0));
         scale.setScalingFactor(2.5);
         scale.executeCommand();
@@ -72,6 +73,7 @@ public class ScaleCommandTest {
         Node n1 = new Node(new EastNorth(10, 10));
         Node n2 = new Node(new EastNorth(-1, 0));
         Node n3 = new Node(new EastNorth(-9, -10));
+        new DataSet(n1, n2, n3);
         ScaleCommand scale = new ScaleCommand(Arrays.asList(n1, n2, n3), new EastNorth(0, 0));
         scale.setScalingFactor(2.5);
         scale.executeCommand();

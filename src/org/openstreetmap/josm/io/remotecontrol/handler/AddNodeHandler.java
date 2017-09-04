@@ -11,6 +11,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -95,13 +96,14 @@ public class AddNodeHandler extends RequestHandler {
             }
         }
 
+        DataSet ds = MainApplication.getLayerManager().getEditDataSet();
         if (node == null) {
             node = new Node(ll);
             // Now execute the commands to add this node.
-            MainApplication.undoRedo.add(new AddCommand(node));
+            MainApplication.undoRedo.add(new AddCommand(ds, node));
         }
 
-        MainApplication.getLayerManager().getEditDataSet().setSelected(node);
+        ds.setSelected(node);
         if (PermissionPrefWithDefault.CHANGE_VIEWPORT.isAllowed()) {
             AutoScaleAction.autoScale("selection");
         } else {

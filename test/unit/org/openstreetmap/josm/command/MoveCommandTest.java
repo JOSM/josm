@@ -247,7 +247,7 @@ public class MoveCommandTest {
     public void testDescription() {
         Node node = new Node(LatLon.ZERO);
         node.put("name", "xy");
-
+        new DataSet(node);
         List<OsmPrimitive> nodeList = Arrays.<OsmPrimitive>asList(node);
         assertTrue(new MoveCommand(nodeList, 1, 2).getDescriptionText().matches("Move 1 node"));
         List<OsmPrimitive> nodes = Arrays.<OsmPrimitive>asList(node, testData.existingNode, testData.existingNode2);

@@ -39,6 +39,7 @@ import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataIntegrityProblemException;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
@@ -591,9 +592,9 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             n.setEastNorth(Geometry.closestPointToSegment(a, b, n.getEastNorth()));
             Way wnew = new Way(ws.way);
             wnew.addNode(ws.lowerIndex+1, n);
-            SequenceCommand cmds = new SequenceCommand(tr("Add a new node to an existing way"),
-                    new AddCommand(n), new ChangeCommand(ws.way, wnew));
-            MainApplication.undoRedo.add(cmds);
+            DataSet ds = ws.way.getDataSet();
+            MainApplication.undoRedo.add(new SequenceCommand(tr("Add a new node to an existing way"),
+                    new AddCommand(ds, n), new ChangeCommand(ds, ws.way, wnew)));
         }
     }
 
@@ -602,7 +603,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      */
     private void createNewRectangle() {
         if (selectedSegment == null) return;
-        // crete a new rectangle
+        DataSet ds = getLayerManager().getEditDataSet();
+        // create a new rectangle
         Collection<Command> cmds = new LinkedList<>();
         Node third = new Node(newN2en);
         Node fourth = new Node(newN1en);
@@ -617,14 +619,14 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
         // ... and close the way
         wnew.addNode(selectedSegment.getFirstNode());
         // undo support
-        cmds.add(new AddCommand(third));
+        cmds.add(new AddCommand(ds, third));
         if (!dualAlignSegmentCollapsed) {
-            cmds.add(new AddCommand(fourth));
+            cmds.add(new AddCommand(ds, fourth));
         }
-        cmds.add(new AddCommand(wnew));
+        cmds.add(new AddCommand(ds, wnew));
         Command c = new SequenceCommand(tr("Extrude Way"), cmds);
         MainApplication.undoRedo.add(c);
-        getLayerManager().getEditDataSet().setSelected(wnew);
+        ds.setSelected(wnew);
     }
 
     /**
@@ -633,6 +635,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
      * Uses {@link #newN1en}, {@link #newN2en} calculated by {@link #calculateBestMovementAndNewNodes}
      */
     private void performExtrusion() {
+        DataSet ds = getLayerManager().getEditDataSet();
         // create extrusion
         Collection<Command> cmds = new LinkedList<>();
         Way wnew = new Way(selectedSegment.way);
@@ -660,7 +663,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             wnew.addNode(insertionPoint, n1New);
             wnew.removeNode(n1Old);
             wayWasModified = true;
-            cmds.add(new AddCommand(n1New));
+            cmds.add(new AddCommand(ds, n1New));
             changedNodes.add(n1New);
         } else {
             //introduce new node
@@ -668,7 +671,7 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             wnew.addNode(insertionPoint, n1New);
             wayWasModified = true;
             insertionPoint++;
-            cmds.add(new AddCommand(n1New));
+            cmds.add(new AddCommand(ds, n1New));
             changedNodes.add(n1New);
         }
 
@@ -690,14 +693,14 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
             wnew.addNode(insertionPoint, n2New);
             wnew.removeNode(n2Old);
             wayWasModified = true;
-            cmds.add(new AddCommand(n2New));
+            cmds.add(new AddCommand(ds, n2New));
             changedNodes.add(n2New);
         } else {
             //introduce new node
             Node n2New = new Node(Main.getProjection().eastNorth2latlon(newN2en));
             wnew.addNode(insertionPoint, n2New);
             wayWasModified = true;
-            cmds.add(new AddCommand(n2New));
+            cmds.add(new AddCommand(ds, n2New));
             changedNodes.add(n2New);
         }
 

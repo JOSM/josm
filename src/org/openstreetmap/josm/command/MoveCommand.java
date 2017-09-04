@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import javax.swing.Icon;
@@ -83,11 +84,14 @@ public class MoveCommand extends Command {
 
     /**
      * Constructs a new {@code MoveCommand} and assign the initial object set and movement vector.
-     * @param objects The primitives to move
+     * @param objects The primitives to move. Must neither be null nor empty. Objects must belong to a data set
      * @param x X difference movement. Coordinates are in northern/eastern
      * @param y Y difference movement. Coordinates are in northern/eastern
+     * @throws NullPointerException if objects is null or contain null item
+     * @throws NoSuchElementException if objects is empty
      */
     public MoveCommand(Collection<OsmPrimitive> objects, double x, double y) {
+        super(objects.iterator().next().getDataSet());
         startEN = null;
         saveCheckpoint(); // (0,0) displacement will be saved
         this.x = x;

@@ -102,11 +102,12 @@ abstract class SavingAction extends AbstractRelationEditorAction {
      * @param tagEditorModel tag editor model
      */
     protected void applyExistingNonConflictingRelation(TagEditorModel tagEditorModel) {
-        Relation editedRelation = new Relation(editor.getRelation());
+        Relation originRelation = editor.getRelation();
+        Relation editedRelation = new Relation(originRelation);
         tagEditorModel.applyToPrimitive(editedRelation);
         memberTableModel.applyToRelation(editedRelation);
-        if (!editedRelation.hasEqualSemanticAttributes(editor.getRelation(), false)) {
-            MainApplication.undoRedo.add(new ChangeCommand(editor.getRelation(), editedRelation));
+        if (!editedRelation.hasEqualSemanticAttributes(originRelation, false)) {
+            MainApplication.undoRedo.add(new ChangeCommand(originRelation, editedRelation));
         }
     }
 

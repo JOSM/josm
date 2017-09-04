@@ -74,7 +74,7 @@ public class DeleteCommand extends Command {
 
         @Override
         public String toString() {
-            return "DeleteChildCommand [osm=" + osm + "]";
+            return "DeleteChildCommand [osm=" + osm + ']';
         }
     }
 
@@ -87,13 +87,11 @@ public class DeleteCommand extends Command {
     /**
      * Constructor. Deletes a collection of primitives in the current edit layer.
      *
-     * @param data the primitives to delete. Must neither be null nor empty.
+     * @param data the primitives to delete. Must neither be null nor empty, and belong to a data set
      * @throws IllegalArgumentException if data is null or empty
      */
     public DeleteCommand(Collection<? extends OsmPrimitive> data) {
-        CheckParameterUtil.ensureParameterNotNull(data, "data");
-        this.toDelete = data;
-        checkConsistency();
+        this(data.iterator().next().getDataSet(), data);
     }
 
     /**

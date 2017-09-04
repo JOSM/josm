@@ -27,9 +27,11 @@ public abstract class ConflictResolveCommand extends Command {
 
     /**
      * Constructs a new {@code ConflictResolveCommand} in the context of the current edit layer, if any.
+     * @deprecated to be removed end of 2017. Use {@link #ConflictResolveCommand(DataSet)} instead
      */
+    @Deprecated
     public ConflictResolveCommand() {
-        // Do nothing
+        this(Main.main.getEditDataSet());
     }
 
     /**
@@ -80,15 +82,17 @@ public abstract class ConflictResolveCommand extends Command {
         super.undoCommand();
 
         DataSet ds = getAffectedDataSet();
-        if (!Main.main.containsDataSet(ds)) {
-            Logging.warn(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
-                    this.toString(),
-                    ds.getName()
-            ));
-            return;
-        }
+        if (Main.main != null) {
+            if (!Main.main.containsDataSet(ds)) {
+                Logging.warn(tr("Cannot undo command ''{0}'' because layer ''{1}'' is not present any more",
+                        this.toString(),
+                        ds.getName()
+                ));
+                return;
+            }
 
-        Main.main.setEditDataSet(ds);
+            Main.main.setEditDataSet(ds);
+        }
         reconstituteConflicts();
     }
 

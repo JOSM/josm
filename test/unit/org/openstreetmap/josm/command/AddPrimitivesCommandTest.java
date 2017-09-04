@@ -22,7 +22,6 @@ import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WayData;
-import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -47,14 +46,13 @@ public class AddPrimitivesCommandTest {
      */
     @Test
     public void testAdd() {
-        OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
-        MainApplication.getLayerManager().addLayer(layer1);
+        DataSet ds = new DataSet();
 
         List<PrimitiveData> testData = createTestData();
-        assertTrue(new AddPrimitivesCommand(testData).executeCommand());
+        assertTrue(new AddPrimitivesCommand(testData, ds).executeCommand());
 
-        testContainsTestData(layer1);
-        assertEquals(3, layer1.data.getAllSelected().size());
+        testContainsTestData(ds);
+        assertEquals(3, ds.getAllSelected().size());
     }
 
     /**
@@ -62,37 +60,33 @@ public class AddPrimitivesCommandTest {
      */
     @Test
     public void testAddSetSelection() {
-        OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
-        MainApplication.getLayerManager().addLayer(layer1);
+        DataSet ds = new DataSet();
 
         List<PrimitiveData> testData = createTestData();
-        assertTrue(new AddPrimitivesCommand(testData, testData.subList(2, 3)).executeCommand());
+        assertTrue(new AddPrimitivesCommand(testData, testData.subList(2, 3), ds).executeCommand());
 
-        testContainsTestData(layer1);
+        testContainsTestData(ds);
 
-        assertEquals(1, layer1.data.getAllSelected().size());
-        assertEquals(1, layer1.data.getSelectedWays().size());
+        assertEquals(1, ds.getAllSelected().size());
+        assertEquals(1, ds.getSelectedWays().size());
     }
 
     /**
-     * Tests if the add command respects the layer.
+     * Tests if the add command respects the data set.
      */
     @Test
     public void testAddToLayer() {
-        OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
-        OsmDataLayer layer2 = new OsmDataLayer(new DataSet(), "l1", null);
-
-        MainApplication.getLayerManager().addLayer(layer1);
-        MainApplication.getLayerManager().addLayer(layer2);
+        DataSet ds1 = new DataSet();
+        DataSet ds2 = new DataSet();
 
         List<PrimitiveData> testData = createTestData();
-        assertTrue(new AddPrimitivesCommand(testData, testData.subList(2, 3), layer1).executeCommand());
+        assertTrue(new AddPrimitivesCommand(testData, testData.subList(2, 3), ds1).executeCommand());
 
-        testContainsTestData(layer1);
-        assertTrue(layer2.data.allPrimitives().isEmpty());
+        testContainsTestData(ds1);
+        assertTrue(ds2.allPrimitives().isEmpty());
 
-        assertEquals(1, layer1.data.getAllSelected().size());
-        assertEquals(1, layer1.data.getSelectedWays().size());
+        assertEquals(1, ds1.getAllSelected().size());
+        assertEquals(1, ds1.getSelectedWays().size());
     }
 
     /**
@@ -100,19 +94,18 @@ public class AddPrimitivesCommandTest {
      */
     @Test
     public void testAddIgnoresExisting() {
-        OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
-        MainApplication.getLayerManager().addLayer(layer1);
+        DataSet ds = new DataSet();
 
         List<PrimitiveData> testData = createTestData();
-        assertTrue(new AddPrimitivesCommand(testData).executeCommand());
-        assertEquals(2, layer1.data.getNodes().size());
-        assertEquals(1, layer1.data.getWays().size());
+        assertTrue(new AddPrimitivesCommand(testData, ds).executeCommand());
+        assertEquals(2, ds.getNodes().size());
+        assertEquals(1, ds.getWays().size());
 
         testData.set(2, createTestNode(7));
-        assertTrue(new AddPrimitivesCommand(testData).executeCommand());
+        assertTrue(new AddPrimitivesCommand(testData, ds).executeCommand());
 
-        assertEquals(3, layer1.data.getNodes().size());
-        assertEquals(1, layer1.data.getWays().size());
+        assertEquals(3, ds.getNodes().size());
+        assertEquals(1, ds.getWays().size());
     }
 
     /**
@@ -120,14 +113,13 @@ public class AddPrimitivesCommandTest {
      */
     @Test
     public void testDescription() {
-        OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
-        MainApplication.getLayerManager().addLayer(layer1);
+        DataSet ds = new DataSet();
 
         List<PrimitiveData> testData = createTestData();
         NodeData data2 = createTestNode(7);
 
-        AddPrimitivesCommand command1 = new AddPrimitivesCommand(testData);
-        AddPrimitivesCommand command2 = new AddPrimitivesCommand(Arrays.<PrimitiveData>asList(data2));
+        AddPrimitivesCommand command1 = new AddPrimitivesCommand(testData, ds);
+        AddPrimitivesCommand command2 = new AddPrimitivesCommand(Arrays.<PrimitiveData>asList(data2), ds);
 
         assertEquals("Added 3 objects", command1.getDescriptionText());
         assertEquals("Added 1 object", command2.getDescriptionText());
@@ -145,32 +137,31 @@ public class AddPrimitivesCommandTest {
      */
     @Test
     public void testUndo() {
-        OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
-        MainApplication.getLayerManager().addLayer(layer1);
+        DataSet ds = new DataSet();
 
         List<PrimitiveData> testData = createTestData();
 
-        AddPrimitivesCommand command = new AddPrimitivesCommand(testData);
+        AddPrimitivesCommand command = new AddPrimitivesCommand(testData, ds);
 
         assertTrue(command.executeCommand());
 
-        assertEquals(3, layer1.data.allPrimitives().size());
-        assertEquals(1, layer1.data.getWays().size());
-        Way way = layer1.data.getWays().iterator().next();
+        assertEquals(3, ds.allPrimitives().size());
+        assertEquals(1, ds.getWays().size());
+        Way way = ds.getWays().iterator().next();
 
         for (int i = 0; i < 2; i++) {
             // Needs to work multiple times.
             command.undoCommand();
 
-            assertEquals(0, layer1.data.allPrimitives().size());
-            assertEquals(0, layer1.data.getWays().size());
+            assertEquals(0, ds.allPrimitives().size());
+            assertEquals(0, ds.getWays().size());
 
             // redo
             assertTrue(command.executeCommand());
 
-            assertEquals(3, layer1.data.allPrimitives().size());
-            assertEquals(1, layer1.data.getWays().size());
-            assertSame(way, layer1.data.getWays().iterator().next());
+            assertEquals(3, ds.allPrimitives().size());
+            assertEquals(1, ds.getWays().size());
+            assertSame(way, ds.getWays().iterator().next());
         }
     }
 
@@ -180,36 +171,35 @@ public class AddPrimitivesCommandTest {
      */
     @Test
     public void testUndoIgnoresExisting() {
-        OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
-        MainApplication.getLayerManager().addLayer(layer1);
+        DataSet ds = new DataSet();
 
         List<PrimitiveData> testData = createTestData();
 
-        assertTrue(new AddPrimitivesCommand(testData).executeCommand());
-        assertEquals(2, layer1.data.getNodes().size());
-        assertEquals(1, layer1.data.getWays().size());
+        assertTrue(new AddPrimitivesCommand(testData, ds).executeCommand());
+        assertEquals(2, ds.getNodes().size());
+        assertEquals(1, ds.getWays().size());
 
         testData.set(2, createTestNode(7));
 
-        AddPrimitivesCommand command = new AddPrimitivesCommand(testData);
+        AddPrimitivesCommand command = new AddPrimitivesCommand(testData, ds);
 
         assertTrue(command.executeCommand());
 
-        assertEquals(3, layer1.data.getNodes().size());
-        assertEquals(1, layer1.data.getWays().size());
+        assertEquals(3, ds.getNodes().size());
+        assertEquals(1, ds.getWays().size());
 
         for (int i = 0; i < 2; i++) {
             // Needs to work multiple times.
             command.undoCommand();
 
-            assertEquals(2, layer1.data.getNodes().size());
-            assertEquals(1, layer1.data.getWays().size());
+            assertEquals(2, ds.getNodes().size());
+            assertEquals(1, ds.getWays().size());
 
             // redo
             assertTrue(command.executeCommand());
 
-            assertEquals(3, layer1.data.getNodes().size());
-            assertEquals(1, layer1.data.getWays().size());
+            assertEquals(3, ds.getNodes().size());
+            assertEquals(1, ds.getWays().size());
         }
     }
 
@@ -218,15 +208,14 @@ public class AddPrimitivesCommandTest {
      */
     @Test
     public void testParticipatingPrimitives() {
-        OsmDataLayer layer1 = new OsmDataLayer(new DataSet(), "l1", null);
-        MainApplication.getLayerManager().addLayer(layer1);
+        DataSet ds = new DataSet();
 
         List<PrimitiveData> testData = createTestData();
-        AddPrimitivesCommand command = new AddPrimitivesCommand(testData);
+        AddPrimitivesCommand command = new AddPrimitivesCommand(testData, ds);
         assertTrue(command.executeCommand());
 
         assertEquals(3, command.getParticipatingPrimitives().size());
-        HashSet<OsmPrimitive> should = new HashSet<>(layer1.data.allPrimitives());
+        HashSet<OsmPrimitive> should = new HashSet<>(ds.allPrimitives());
         assertEquals(should, new HashSet<>(command.getParticipatingPrimitives()));
 
         // needs to be the same after undo
@@ -244,28 +233,28 @@ public class AddPrimitivesCommandTest {
         ArrayList<OsmPrimitive> added = new ArrayList<>();
 
         List<PrimitiveData> testData = createTestData();
-        new AddPrimitivesCommand(testData).fillModifiedData(modified, deleted, added);
+        new AddPrimitivesCommand(testData, new DataSet()).fillModifiedData(modified, deleted, added);
 
         assertArrayEquals(new Object[] {}, modified.toArray());
         assertArrayEquals(new Object[] {}, deleted.toArray());
         assertArrayEquals(new Object[] {}, added.toArray());
     }
 
-    private void testContainsTestData(OsmDataLayer layer1) {
-        assertEquals(3, layer1.data.allPrimitives().size());
-        assertEquals(2, layer1.data.getNodes().size());
-        assertEquals(1, layer1.data.getWays().size());
-        assertEquals(3, layer1.data.allModifiedPrimitives().size());
-        for (OsmPrimitive n : layer1.data.allPrimitives()) {
+    private void testContainsTestData(DataSet data) {
+        assertEquals(3, data.allPrimitives().size());
+        assertEquals(2, data.getNodes().size());
+        assertEquals(1, data.getWays().size());
+        assertEquals(3, data.allModifiedPrimitives().size());
+        for (OsmPrimitive n : data.allPrimitives()) {
             assertEquals("test", n.get("test"));
             assertTrue(n.isModified());
         }
 
-        for (Node n : layer1.data.getNodes()) {
+        for (Node n : data.getNodes()) {
             assertEquals(LatLon.ZERO, n.getCoor());
         }
 
-        for (Way w : layer1.data.getWays()) {
+        for (Way w : data.getWays()) {
             assertEquals(2, w.getNodes().size());
             assertEquals(5, w.getNode(0).getId());
             assertEquals(6, w.getNode(1).getId());

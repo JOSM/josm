@@ -28,6 +28,7 @@ public class VersionConflictResolveCommand extends ConflictResolveCommand {
      * @param conflict the conflict data set
      */
     public VersionConflictResolveCommand(Conflict<? extends OsmPrimitive> conflict) {
+        super(conflict.getMy().getDataSet());
         this.conflict = conflict;
     }
 

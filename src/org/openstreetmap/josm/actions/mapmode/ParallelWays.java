@@ -10,10 +10,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
 import org.openstreetmap.josm.data.coor.EastNorth;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.NodeGraph;
 import org.openstreetmap.josm.data.osm.Way;
@@ -185,12 +187,13 @@ public class ParallelWays {
     }
 
     private List<Command> makeAddWayAndNodesCommandList() {
+        DataSet ds = Main.main.getEditDataSet();
         List<Command> commands = new ArrayList<>(sortedNodes.size() + ways.size());
         for (int i = 0; i < sortedNodes.size() - (isClosedPath() ? 1 : 0); i++) {
-            commands.add(new AddCommand(sortedNodes.get(i)));
+            commands.add(new AddCommand(ds, sortedNodes.get(i)));
         }
         for (Way w : ways) {
-            commands.add(new AddCommand(w));
+            commands.add(new AddCommand(ds, w));
         }
         return commands;
     }
