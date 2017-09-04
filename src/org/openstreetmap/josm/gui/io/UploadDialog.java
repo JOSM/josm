@@ -100,6 +100,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     /** the changeset comment model keeping the state of the changeset comment */
     private final transient ChangesetCommentModel changesetCommentModel = new ChangesetCommentModel();
     private final transient ChangesetCommentModel changesetSourceModel = new ChangesetCommentModel();
+    private final transient ChangesetReviewModel changesetReviewModel = new ChangesetReviewModel();
 
     private transient DataSet dataSet;
 
@@ -144,12 +145,12 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
         // a tabbed pane with configuration panels in the lower half
         tpConfigPanels = new CompactTabbedPane();
 
-        pnlBasicUploadSettings = new BasicUploadSettingsPanel(changesetCommentModel, changesetSourceModel);
+        pnlBasicUploadSettings = new BasicUploadSettingsPanel(changesetCommentModel, changesetSourceModel, changesetReviewModel);
         tpConfigPanels.add(pnlBasicUploadSettings);
         tpConfigPanels.setTitleAt(0, tr("Settings"));
         tpConfigPanels.setToolTipTextAt(0, tr("Decide how to upload the data and which changeset to use"));
 
-        pnlTagSettings = new TagSettingsPanel(changesetCommentModel, changesetSourceModel);
+        pnlTagSettings = new TagSettingsPanel(changesetCommentModel, changesetSourceModel, changesetReviewModel);
         tpConfigPanels.add(pnlTagSettings);
         tpConfigPanels.setTitleAt(1, tr("Tags of new changeset"));
         tpConfigPanels.setToolTipTextAt(1, tr("Apply tags to the changeset data is uploaded to"));
