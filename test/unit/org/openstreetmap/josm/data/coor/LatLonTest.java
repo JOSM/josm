@@ -200,7 +200,6 @@ public class LatLonTest {
     @Test
     public void testFormatting() {
         LatLon c = new LatLon(47.000000, 19.000000);
-        assertEquals("47.0;19.0", c.toStringCSV(";"));
         assertEquals("47.0", c.latToString(CoordinateFormat.DECIMAL_DEGREES));
         assertEquals("19.0", c.lonToString(CoordinateFormat.DECIMAL_DEGREES));
         assertEquals("47°00'00.0\"N", c.latToString(CoordinateFormat.DEGREES_MINUTES_SECONDS));
