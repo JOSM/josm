@@ -82,6 +82,7 @@ public class CreateMultipolygonActionTest {
     public void testUpdate1() throws Exception {
         DataSet ds = OsmReader.parseDataSet(new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm"), null);
         Pair<SequenceCommand, Relation> mp = createMultipolygonCommand(ds.getWays(), "ref=\".*1$\"", null);
+        mp.a.executeCommand();
         assertEquals(3, mp.b.getMembersCount());
         assertEquals("{1=outer, 1.1=inner, 1.1.1=outer}", getRefToRoleMap(mp.b).toString());
         Pair<SequenceCommand, Relation> mp2 = createMultipolygonCommand(ds.getWays(), "ref=1.2", mp.b);
@@ -93,6 +94,7 @@ public class CreateMultipolygonActionTest {
     public void testUpdate2() throws Exception {
         DataSet ds = OsmReader.parseDataSet(new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm"), null);
         Pair<SequenceCommand, Relation> mp = createMultipolygonCommand(ds.getWays(), "ref=1 OR ref:1.1.1", null);
+        mp.a.executeCommand();
         assertEquals("{1=outer, 1.1.1=inner}", getRefToRoleMap(mp.b).toString());
         Pair<SequenceCommand, Relation> mp2 = createMultipolygonCommand(ds.getWays(), "ref=1.1 OR ref=1.2 OR ref=1.1.2", mp.b);
         assertEquals("{1=outer, 1.1=inner, 1.1.1=outer, 1.1.2=outer, 1.2=inner}", getRefToRoleMap(mp2.b).toString());

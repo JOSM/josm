@@ -17,6 +17,7 @@ import javax.json.JsonValue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.data.validation.tests.TagChecker;
 import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
@@ -64,12 +65,13 @@ public class TaginfoTestIT {
                     // Check if tag is in internal presets
                     if (!TagChecker.isTagInPresets(key, value)) {
                         // If not, check if we have either a deprecated mapcss test for it
-                        Node n = new Node();
+                        Node n = new Node(LatLon.NORTH_POLE);
                         Way w = new Way();
                         Relation r = new Relation();
                         n.put(key, value);
                         w.put(key, value);
                         r.put(key, value);
+                        new DataSet(n, w, r);
                         if (mapCssTagChecker.getErrorsForPrimitive(n, false).isEmpty()
                          && mapCssTagChecker.getErrorsForPrimitive(w, false).isEmpty()
                          && mapCssTagChecker.getErrorsForPrimitive(r, false).isEmpty()) {

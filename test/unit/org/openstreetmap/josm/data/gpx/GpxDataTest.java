@@ -333,12 +333,12 @@ public class GpxDataTest {
         assertEquals(points.get(1), closeToMiddle);
 
         WayPoint close = data.nearestPointOnTrack(new EastNorth(5, 5), 10);
-        assertEquals(10, close.getEastNorth().east(), .01);
-        assertEquals(5, close.getEastNorth().north(), .01);
+        assertEquals(10, close.getEastNorth(Main.getProjection()).east(), .01);
+        assertEquals(5, close.getEastNorth(Main.getProjection()).north(), .01);
 
         close = data.nearestPointOnTrack(new EastNorth(15, 5), 10);
-        assertEquals(10, close.getEastNorth().east(), .01);
-        assertEquals(5, close.getEastNorth().north(), .01);
+        assertEquals(10, close.getEastNorth(Main.getProjection()).east(), .01);
+        assertEquals(5, close.getEastNorth(Main.getProjection()).north(), .01);
 
         assertNull(data.nearestPointOnTrack(new EastNorth(5, 5), 1));
     }
