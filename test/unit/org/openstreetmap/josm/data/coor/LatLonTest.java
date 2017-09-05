@@ -195,27 +195,6 @@ public class LatLonTest {
     }
 
     /**
-     * Tests the methods {@link LatLon#latToString}, {@link LatLon#lonToString}, {@link LatLon#toStringCSV}.
-     */
-    @Test
-    public void testFormatting() {
-        LatLon c = new LatLon(47.000000, 19.000000);
-        assertEquals("47.0", c.latToString(CoordinateFormat.DECIMAL_DEGREES));
-        assertEquals("19.0", c.lonToString(CoordinateFormat.DECIMAL_DEGREES));
-        assertEquals("47°00'00.0\"N", c.latToString(CoordinateFormat.DEGREES_MINUTES_SECONDS));
-        assertEquals("19°00'00.0\"E", c.lonToString(CoordinateFormat.DEGREES_MINUTES_SECONDS));
-        assertEquals("47°00.000'N", c.latToString(CoordinateFormat.NAUTICAL));
-        assertEquals("19°00.000'E", c.lonToString(CoordinateFormat.NAUTICAL));
-        assertEquals("5942074.0724311", c.latToString(CoordinateFormat.EAST_NORTH));
-        assertEquals("2115070.3250722", c.lonToString(CoordinateFormat.EAST_NORTH));
-        c = new LatLon(-47.000000, -19.000000);
-        assertEquals("47°00'00.0\"S", c.latToString(CoordinateFormat.DEGREES_MINUTES_SECONDS));
-        assertEquals("19°00'00.0\"W", c.lonToString(CoordinateFormat.DEGREES_MINUTES_SECONDS));
-        assertEquals("47°00.000'S", c.latToString(CoordinateFormat.NAUTICAL));
-        assertEquals("19°00.000'W", c.lonToString(CoordinateFormat.NAUTICAL));
-    }
-
-    /**
      * Test {@link LatLon#interpolate(LatLon, double)}
      */
     @Test
