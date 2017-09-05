@@ -40,8 +40,12 @@ public class CreateMultipolygonActionTest {
 
     private static Map<String, String> getRefToRoleMap(Relation relation) {
         Map<String, String> refToRole = new TreeMap<>();
+        String ref = relation.get("ref");
+        if (ref != null) {
+            refToRole.put(ref, "outer");
+        }
         for (RelationMember i : relation.getMembers()) {
-            String ref = i.getMember().get("ref");
+            ref = i.getMember().get("ref");
             if (ref != null) {
                 refToRole.put(ref, i.getRole());
             }
@@ -57,10 +61,14 @@ public class CreateMultipolygonActionTest {
     }
 
     @SuppressWarnings("unchecked")
-    private static Pair<SequenceCommand, Relation> createMultipolygonCommand(Collection<Way> ways, String pattern, Relation r)
+    private static Relation createMultipolygon(Collection<Way> ways, String pattern, Relation r, boolean runCmd)
             throws SearchParseError {
-        return CreateMultipolygonAction.createMultipolygonCommand(
+        Pair<SequenceCommand, Relation> cmd = CreateMultipolygonAction.createMultipolygonCommand(
             (Collection<Way>) (Collection<?>) SubclassFilteredCollection.filter(ways, SearchCompiler.compile(regexpSearch(pattern))), r);
+        if (runCmd) {
+            cmd.a.executeCommand();
+        }
+        return cmd.b;
     }
 
     @Test
@@ -74,29 +82,27 @@ public class CreateMultipolygonActionTest {
     @Test
     public void testCreate2() throws Exception {
         DataSet ds = OsmReader.parseDataSet(new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm"), null);
-        Pair<SequenceCommand, Relation> mp = createMultipolygonCommand(ds.getWays(), "ref=1 OR ref:1.1.", null);
-        assertEquals("{1=outer, 1.1.1=inner, 1.1.2=inner}", getRefToRoleMap(mp.b).toString());
+        Relation mp = createMultipolygon(ds.getWays(), "ref=1 OR ref:1.1.", null, true);
+        assertEquals("{1=outer, 1.1.1=inner, 1.1.2=inner}", getRefToRoleMap(mp).toString());
     }
 
     @Test
     public void testUpdate1() throws Exception {
         DataSet ds = OsmReader.parseDataSet(new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm"), null);
-        Pair<SequenceCommand, Relation> mp = createMultipolygonCommand(ds.getWays(), "ref=\".*1$\"", null);
-        mp.a.executeCommand();
-        assertEquals(3, mp.b.getMembersCount());
-        assertEquals("{1=outer, 1.1=inner, 1.1.1=outer}", getRefToRoleMap(mp.b).toString());
-        Pair<SequenceCommand, Relation> mp2 = createMultipolygonCommand(ds.getWays(), "ref=1.2", mp.b);
-        assertEquals(4, mp2.b.getMembersCount());
-        assertEquals("{1=outer, 1.1=inner, 1.1.1=outer, 1.2=inner}", getRefToRoleMap(mp2.b).toString());
+        Relation mp = createMultipolygon(ds.getWays(), "ref=\".*1$\"", null, true);
+        assertEquals(3, mp.getMembersCount());
+        assertEquals("{1=outer, 1.1=inner, 1.1.1=outer}", getRefToRoleMap(mp).toString());
+        Relation mp2 = createMultipolygon(ds.getWays(), "ref=1.2", mp, true);
+        assertEquals(4, mp2.getMembersCount());
+        assertEquals("{1=outer, 1.1=inner, 1.1.1=outer, 1.2=inner}", getRefToRoleMap(mp2).toString());
     }
 
     @Test
     public void testUpdate2() throws Exception {
         DataSet ds = OsmReader.parseDataSet(new FileInputStream(TestUtils.getTestDataRoot() + "create_multipolygon.osm"), null);
-        Pair<SequenceCommand, Relation> mp = createMultipolygonCommand(ds.getWays(), "ref=1 OR ref:1.1.1", null);
-        mp.a.executeCommand();
-        assertEquals("{1=outer, 1.1.1=inner}", getRefToRoleMap(mp.b).toString());
-        Pair<SequenceCommand, Relation> mp2 = createMultipolygonCommand(ds.getWays(), "ref=1.1 OR ref=1.2 OR ref=1.1.2", mp.b);
-        assertEquals("{1=outer, 1.1=inner, 1.1.1=outer, 1.1.2=outer, 1.2=inner}", getRefToRoleMap(mp2.b).toString());
+        Relation mp = createMultipolygon(ds.getWays(), "ref=1 OR ref:1.1.1", null, true);
+        assertEquals("{1=outer, 1.1.1=inner}", getRefToRoleMap(mp).toString());
+        Relation mp2 = createMultipolygon(ds.getWays(), "ref=1.1 OR ref=1.2 OR ref=1.1.2", mp, false);
+        assertEquals("{1=outer, 1.1=inner, 1.1.1=outer, 1.1.2=outer, 1.2=inner}", getRefToRoleMap(mp2).toString());
     }
 }
