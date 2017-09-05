@@ -23,6 +23,7 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.data.coor.conversion.DMSCoordinateFormat;
 
 /**
  * EXIF metadata extraction test
@@ -103,8 +104,8 @@ public class ExifReaderTest {
         LatLon latlon = ExifReader.readLatLon(directionSampleFile);
         assertNotNull(latlon);
         DecimalFormat f = new DecimalFormat("00.0");
-        assertEquals("51°46'"+f.format(43.0)+"\"", LatLon.degreesMinutesSeconds(latlon.lat()));
-        assertEquals("8°21'"+f.format(56.3)+"\"", LatLon.degreesMinutesSeconds(latlon.lon()));
+        assertEquals("51°46'"+f.format(43.0)+"\"", DMSCoordinateFormat.degreesMinutesSeconds(latlon.lat()));
+        assertEquals("8°21'"+f.format(56.3)+"\"", DMSCoordinateFormat.degreesMinutesSeconds(latlon.lon()));
     }
 
     /**
