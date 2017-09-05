@@ -14,6 +14,7 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -263,6 +264,8 @@ public class JOSMTestRules implements TestRule {
         TimeZone.setDefault(DateUtils.UTC);
         // Set log level to info
         Logging.setLogLevel(Logging.LEVEL_INFO);
+        // Assume anonymous user
+        UserIdentityManager.getInstance().setAnonymous();
 
         // Set up i18n
         if (i18n != null) {
