@@ -20,6 +20,9 @@ public class DMSCoordinateFormat extends AbstractCoordinateFormat {
     private static final String DMS60 = DMS_SECOND_FORMATTER.format(60.0);
     private static final String DMS00 = DMS_SECOND_FORMATTER.format(0.0);
 
+    /**
+     * The unique instance.
+     */
     public static final DMSCoordinateFormat INSTANCE = new DMSCoordinateFormat();
 
     protected DMSCoordinateFormat() {

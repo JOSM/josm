@@ -18,6 +18,9 @@ public class NauticalCoordinateFormat extends AbstractCoordinateFormat {
     private static final String DM60 = DM_MINUTE_FORMATTER.format(60.0);
     private static final String DM00 = DM_MINUTE_FORMATTER.format(0.0);
 
+    /**
+     * The unique instance.
+     */
     public static final NauticalCoordinateFormat INSTANCE = new NauticalCoordinateFormat();
 
     protected NauticalCoordinateFormat() {

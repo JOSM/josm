@@ -13,6 +13,9 @@ import org.openstreetmap.josm.data.coor.ILatLon;
  */
 public class ProjectedCoordinateFormat extends AbstractCoordinateFormat {
 
+    /**
+     * The unique instance.
+     */
     public static final ProjectedCoordinateFormat INSTANCE = new ProjectedCoordinateFormat();
 
     protected ProjectedCoordinateFormat() {

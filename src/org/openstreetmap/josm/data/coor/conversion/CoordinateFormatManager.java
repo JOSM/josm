@@ -11,7 +11,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * Class that manages the available coordinate formats.
  * @since 12735
  */
-public class CoordinateFormatManager {
+public final class CoordinateFormatManager {
 
     private static final List<ICoordinateFormat> formats = new ArrayList<>();
 
