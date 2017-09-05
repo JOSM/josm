@@ -24,8 +24,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateFormat;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
@@ -162,10 +162,10 @@ public class BoundingBoxSelection implements DownloadSelection {
 
     private void updateBboxFields(Bounds area) {
         if (area == null) return;
-        latlon[0].setText(area.getMin().latToString(CoordinateFormat.DECIMAL_DEGREES));
-        latlon[1].setText(area.getMin().lonToString(CoordinateFormat.DECIMAL_DEGREES));
-        latlon[2].setText(area.getMax().latToString(CoordinateFormat.DECIMAL_DEGREES));
-        latlon[3].setText(area.getMax().lonToString(CoordinateFormat.DECIMAL_DEGREES));
+        latlon[0].setText(DecimalDegreesCoordinateFormat.INSTANCE.latToString(area.getMin()));
+        latlon[1].setText(DecimalDegreesCoordinateFormat.INSTANCE.lonToString(area.getMin()));
+        latlon[2].setText(DecimalDegreesCoordinateFormat.INSTANCE.latToString(area.getMax()));
+        latlon[3].setText(DecimalDegreesCoordinateFormat.INSTANCE.lonToString(area.getMax()));
         for (JosmTextField tf: latlon) {
             resetErrorMessage(tf);
         }

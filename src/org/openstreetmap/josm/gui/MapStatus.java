@@ -59,8 +59,11 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.SystemOfMeasurement.SoMChangeListener;
-import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
+import org.openstreetmap.josm.data.coor.conversion.DMSCoordinateFormat;
+import org.openstreetmap.josm.data.coor.conversion.ICoordinateFormat;
+import org.openstreetmap.josm.data.coor.conversion.ProjectedCoordinateFormat;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -209,12 +212,12 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
 
     }
 
-    /** The {@link CoordinateFormat} set in the previous update */
-    private transient CoordinateFormat previousCoordinateFormat;
+    /** The {@link ICoordinateFormat} set in the previous update */
+    private transient ICoordinateFormat previousCoordinateFormat;
     private final ImageLabel latText = new ImageLabel("lat",
-            null, LatLon.SOUTH_POLE.latToString(CoordinateFormat.DEGREES_MINUTES_SECONDS).length(), PROP_BACKGROUND_COLOR.get());
+            null, DMSCoordinateFormat.INSTANCE.latToString(LatLon.SOUTH_POLE).length(), PROP_BACKGROUND_COLOR.get());
     private final ImageLabel lonText = new ImageLabel("lon",
-            null, new LatLon(0, 180).lonToString(CoordinateFormat.DEGREES_MINUTES_SECONDS).length(), PROP_BACKGROUND_COLOR.get());
+            null, DMSCoordinateFormat.INSTANCE.lonToString(new LatLon(0, 180)).length(), PROP_BACKGROUND_COLOR.get());
     private final ImageLabel headingText = new ImageLabel("heading",
             tr("The (compass) heading of the line segment being drawn."),
             DECIMAL_FORMAT.format(360).length() + 1, PROP_BACKGROUND_COLOR.get());
@@ -762,7 +765,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
 
         /** Icons for selecting {@link SystemOfMeasurement} */
         private final Collection<JCheckBoxMenuItem> somItems = new ArrayList<>();
-        /** Icons for selecting {@link CoordinateFormat}  */
+        /** Icons for selecting {@link ICoordinateFormat}  */
         private final Collection<JCheckBoxMenuItem> coordinateFormatItems = new ArrayList<>();
 
         private final JSeparator separator = new JSeparator();
@@ -786,11 +789,11 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
                 somItems.add(item);
                 add(item);
             }
-            for (final CoordinateFormat format : CoordinateFormat.values()) {
+            for (final ICoordinateFormat format : CoordinateFormatManager.getCoordinateFormats()) {
                 JCheckBoxMenuItem item = new JCheckBoxMenuItem(new AbstractAction(format.getDisplayName()) {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        CoordinateFormat.setCoordinateFormat(format);
+                        CoordinateFormatManager.setCoordinateFormat(format);
                     }
                 });
                 coordinateFormatItems.add(item);
@@ -810,7 +813,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
                         item.setSelected(item.getText().equals(currentSOM));
                         item.setVisible(distText.equals(invoker));
                     }
-                    final String currentCorrdinateFormat = CoordinateFormat.getDefaultFormat().getDisplayName();
+                    final String currentCorrdinateFormat = CoordinateFormatManager.getDefaultFormat().getDisplayName();
                     for (JMenuItem item : coordinateFormatItems) {
                         item.setSelected(currentCorrdinateFormat.equals(item.getText()));
                         item.setVisible(latText.equals(invoker) || lonText.equals(invoker));
@@ -872,13 +875,13 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
                     return;
                 // Do not update the view if ctrl is pressed.
                 if ((e.getModifiersEx() & MouseEvent.CTRL_DOWN_MASK) == 0) {
-                    CoordinateFormat mCord = CoordinateFormat.getDefaultFormat();
+                    ICoordinateFormat mCord = CoordinateFormatManager.getDefaultFormat();
                     LatLon p = mv.getLatLon(e.getX(), e.getY());
-                    latText.setText(p.latToString(mCord));
-                    lonText.setText(p.lonToString(mCord));
+                    latText.setText(mCord.latToString(p));
+                    lonText.setText(mCord.lonToString(p));
                     if (Objects.equals(previousCoordinateFormat, mCord)) {
                         // do nothing
-                    } else if (CoordinateFormat.EAST_NORTH.equals(mCord)) {
+                    } else if (ProjectedCoordinateFormat.INSTANCE.equals(mCord)) {
                         latText.setIcon("northing");
                         lonText.setIcon("easting");
                         latText.setToolTipText(tr("The northing at the mouse pointer."));
