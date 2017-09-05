@@ -14,8 +14,6 @@ import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.Note.State;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.gui.JosmUserIdentityManager;
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -100,10 +98,6 @@ public class NoteData {
      */
     public void setSelectedNote(Note note) {
         selectedNote = note;
-        MapFrame map = MainApplication.getMap();
-        if (map != null) {
-            map.noteDialog.selectionChanged();
-        }
         listeners.fireEvent(l -> l.selectedNoteChanged(this));
     }
 
@@ -235,9 +229,6 @@ public class NoteData {
     }
 
     private void dataUpdated() {
-        if (MainApplication.isDisplayingMapView()) {
-            MainApplication.getMap().noteDialog.setNotes(getSortedNotes());
-        }
         listeners.fireEvent(l -> l.noteDataUpdated(this));
     }
 
