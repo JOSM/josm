@@ -16,10 +16,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
-import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
@@ -129,7 +129,7 @@ public final class MessageNotifier {
      * @return {@code true} if user chose an OAuth token or supplied both its username and password, {@code false otherwise}
      */
     public static boolean isUserEnoughIdentified() {
-        JosmUserIdentityManager identManager = JosmUserIdentityManager.getInstance();
+        UserIdentityManager identManager = UserIdentityManager.getInstance();
         if (identManager.isFullyIdentified()) {
             return true;
         } else {

@@ -20,7 +20,7 @@ import javax.swing.JRadioButton;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.gui.JosmUserIdentityManager;
+import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -157,7 +157,7 @@ public class BasicChangesetQueryPanel extends JPanel {
         // query for open changesets only possible if we have a current user which is at least
         // partially identified
         lbl = lblQueries.get(BasicQuery.MY_OPEN_CHANGESETS);
-        if (JosmUserIdentityManager.getInstance().isAnonymous()) {
+        if (UserIdentityManager.getInstance().isAnonymous()) {
             rbQueries.get(BasicQuery.MY_OPEN_CHANGESETS).setEnabled(false);
             lbl.setText(tr("<html>Download my open changesets<br><em>Disabled. " +
                     "Please enter your OSM user name in the preferences first.</em></html>"));
@@ -231,7 +231,7 @@ public class BasicChangesetQueryPanel extends JPanel {
     public ChangesetQuery buildChangesetQuery() {
         BasicQuery q = getSelectedQuery();
         ChangesetQuery query = new ChangesetQuery();
-        JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+        UserIdentityManager im = UserIdentityManager.getInstance();
         if (q == null)
             return query;
         switch(q) {

@@ -24,11 +24,11 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
-import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.ChangesetDialog;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager;
@@ -255,7 +255,7 @@ public class VersionInfoPanel extends JPanel implements ChangeListener {
                 lblUser.setUrl(null);
             }
         } else {
-            String username = JosmUserIdentityManager.getInstance().getUserName();
+            String username = UserIdentityManager.getInstance().getUserName();
             if (username == null) {
                 lblUser.setDescription(tr("anonymous"));
                 lblUser.setUrl(null);

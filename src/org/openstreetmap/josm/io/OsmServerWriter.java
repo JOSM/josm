@@ -12,10 +12,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -201,7 +201,7 @@ public class OsmServerWriter {
             if (changeset.getId() == 0) {
                 api.openChangeset(changeset, monitor.createSubTaskMonitor(0, false));
                 // update the user information
-                changeset.setUser(JosmUserIdentityManager.getInstance().asUser());
+                changeset.setUser(UserIdentityManager.getInstance().asUser());
             } else {
                 api.updateChangeset(changeset, monitor.createSubTaskMonitor(0, false));
             }

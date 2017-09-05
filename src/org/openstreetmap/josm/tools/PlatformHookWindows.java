@@ -65,11 +65,9 @@ import java.util.Locale;
 import java.util.Properties;
 
 import javax.swing.JOptionPane;
-import javax.swing.UIManager;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.gui.preferences.display.LafPreference;
 import org.openstreetmap.josm.io.CertificateAmendment.CertAmend;
 
 /**
@@ -160,25 +158,6 @@ public class PlatformHookWindows implements PlatformHook {
     @Override
     public void afterPrefStartupHook() {
         extendFontconfig("fontconfig.properties.src");
-        // Workaround for JDK-8180379: crash on Windows 10 1703 with Windows L&F and java < 8u152 / 9+171
-        // To remove during Java 9 migration
-        if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("windows 10") &&
-                getDefaultStyle().equals(LafPreference.LAF.get())) {
-            try {
-                final int currentBuild = Integer.parseInt(getCurrentBuild());
-                final int javaVersion = Utils.getJavaVersion();
-                final int javaUpdate = Utils.getJavaUpdate();
-                final int javaBuild = Utils.getJavaBuild();
-                // See https://technet.microsoft.com/en-us/windows/release-info.aspx
-                if (currentBuild >= 15_063 && ((javaVersion == 8 && javaUpdate < 141)
-                        || (javaVersion == 9 && javaUpdate == 0 && javaBuild < 173))) {
-                    // Workaround from https://bugs.openjdk.java.net/browse/JDK-8179014
-                    UIManager.put("FileChooser.useSystemExtensionHiding", Boolean.FALSE);
-                }
-            } catch (NumberFormatException | ReflectiveOperationException e) {
-                Logging.error(e);
-            }
-        }
     }
 
     @Override
@@ -281,15 +260,36 @@ public class PlatformHookWindows implements PlatformHook {
                 ((System.getenv("ProgramFiles(x86)") == null) ? "32" : "64") + "-Bit";
     }
 
-    private static String getProductName() throws IllegalAccessException, InvocationTargetException {
+    /**
+     * Returns the Windows product name from registry (example: "Windows 10 Pro")
+     * @return the Windows product name from registry
+     * @throws IllegalAccessException if Java language access control is enforced and the underlying method is inaccessible
+     * @throws InvocationTargetException if the underlying method throws an exception
+     * @since 12744
+     */
+    public static String getProductName() throws IllegalAccessException, InvocationTargetException {
         return WinRegistry.readString(HKEY_LOCAL_MACHINE, CURRENT_VERSION, "ProductName");
     }
 
-    private static String getReleaseId() throws IllegalAccessException, InvocationTargetException {
+    /**
+     * Returns the Windows release identifier from registry (example: "1703")
+     * @return the Windows release identifier from registry
+     * @throws IllegalAccessException if Java language access control is enforced and the underlying method is inaccessible
+     * @throws InvocationTargetException if the underlying method throws an exception
+     * @since 12744
+     */
+    public static String getReleaseId() throws IllegalAccessException, InvocationTargetException {
         return WinRegistry.readString(HKEY_LOCAL_MACHINE, CURRENT_VERSION, "ReleaseId");
     }
 
-    private static String getCurrentBuild() throws IllegalAccessException, InvocationTargetException {
+    /**
+     * Returns the Windows current build number from registry (example: "15063")
+     * @return the Windows current build number from registry
+     * @throws IllegalAccessException if Java language access control is enforced and the underlying method is inaccessible
+     * @throws InvocationTargetException if the underlying method throws an exception
+     * @since 12744
+     */
+    public static String getCurrentBuild() throws IllegalAccessException, InvocationTargetException {
         return WinRegistry.readString(HKEY_LOCAL_MACHINE, CURRENT_VERSION, "CurrentBuild");
     }
 

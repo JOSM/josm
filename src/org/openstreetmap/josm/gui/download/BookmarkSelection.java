@@ -23,7 +23,7 @@ import javax.swing.event.ListSelectionListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.gui.JosmUserIdentityManager;
+import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.gui.download.BookmarkList.Bookmark;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
@@ -289,7 +289,7 @@ public class BookmarkSelection implements DownloadSelection {
         RefreshAction() {
             putValue(SMALL_ICON, ImageProvider.get("dialogs/changeset", "downloadchangeset"));
             putValue(SHORT_DESCRIPTION, tr("Download bookmarks for my {0} last changesets", BookmarkList.MAX_CHANGESET_BOOKMARKS.get()));
-            setEnabled(!JosmUserIdentityManager.getInstance().isAnonymous());
+            setEnabled(!UserIdentityManager.getInstance().isAnonymous());
         }
 
         @Override

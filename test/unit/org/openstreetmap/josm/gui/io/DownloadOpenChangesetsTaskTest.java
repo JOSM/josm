@@ -9,7 +9,7 @@ import javax.swing.JPanel;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.gui.JosmUserIdentityManager;
+import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -34,13 +34,13 @@ public class DownloadOpenChangesetsTaskTest {
         DownloadOpenChangesetsTask task = new DownloadOpenChangesetsTask(new JPanel());
         assertNull(task.getChangesets());
 
-        assertTrue(JosmUserIdentityManager.getInstance().isAnonymous());
+        assertTrue(UserIdentityManager.getInstance().isAnonymous());
         task.run();
         assertNull(task.getChangesets());
 
         task = new DownloadOpenChangesetsTask(new JPanel());
-        JosmUserIdentityManager.getInstance().setPartiallyIdentified(System.getProperty("osm.username", "josm_test"));
-        assertTrue(JosmUserIdentityManager.getInstance().isPartiallyIdentified());
+        UserIdentityManager.getInstance().setPartiallyIdentified(System.getProperty("osm.username", "josm_test"));
+        assertTrue(UserIdentityManager.getInstance().isPartiallyIdentified());
         task.run();
         assertNotNull(task.getChangesets());
     }

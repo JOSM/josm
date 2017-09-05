@@ -14,7 +14,7 @@ import java.util.List;
 import org.junit.After;
 import org.junit.Test;
 import org.openstreetmap.josm.TestUtils;
-import org.openstreetmap.josm.gui.JosmUserIdentityManager;
+import org.openstreetmap.josm.data.UserIdentityManager;
 
 /**
  * Unit test of {@link ChangesetCache}
@@ -258,10 +258,10 @@ public class ChangesetCacheTest {
 
         assertEquals(3, cache.getChangesets().size());
 
-        JosmUserIdentityManager.getInstance().setAnonymous();
+        UserIdentityManager.getInstance().setAnonymous();
         assertEquals(2, cache.getOpenChangesetsForCurrentUser().size());
 
-        JosmUserIdentityManager.getInstance().setPartiallyIdentified("foo");
+        UserIdentityManager.getInstance().setPartiallyIdentified("foo");
         assertEquals(1, cache.getOpenChangesetsForCurrentUser().size());
     }
 

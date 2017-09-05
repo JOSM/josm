@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
-import org.openstreetmap.josm.gui.JosmUserIdentityManager;
+import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
@@ -243,18 +243,18 @@ public final class ChangesetCache implements PreferenceChangedListener {
     }
 
     /**
-     * If the current user {@link JosmUserIdentityManager#isAnonymous() is known}, the {@link #getOpenChangesets() open changesets}
-     * for the {@link JosmUserIdentityManager#isCurrentUser(User) current user} are returned. Otherwise,
+     * If the current user {@link UserIdentityManager#isAnonymous() is known}, the {@link #getOpenChangesets() open changesets}
+     * for the {@link UserIdentityManager#isCurrentUser(User) current user} are returned. Otherwise,
      * the unfiltered {@link #getOpenChangesets() open changesets} are returned.
      *
      * @return a list of changesets
      */
     public List<Changeset> getOpenChangesetsForCurrentUser() {
-        if (JosmUserIdentityManager.getInstance().isAnonymous()) {
+        if (UserIdentityManager.getInstance().isAnonymous()) {
             return getOpenChangesets();
         } else {
             return new ArrayList<>(SubclassFilteredCollection.filter(getOpenChangesets(),
-                    object -> JosmUserIdentityManager.getInstance().isCurrentUser(object.getUser())));
+                    object -> UserIdentityManager.getInstance().isCurrentUser(object.getUser())));
         }
     }
 

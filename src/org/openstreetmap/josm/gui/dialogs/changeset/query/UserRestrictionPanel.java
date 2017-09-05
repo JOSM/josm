@@ -18,8 +18,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
-import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.preferences.server.UserNameValidator;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
@@ -162,7 +162,7 @@ public class UserRestrictionPanel extends JPanel implements RestrictionPanel {
      * Initializes HMI for user input.
      */
     public void startUserInput() {
-        if (JosmUserIdentityManager.getInstance().isAnonymous()) {
+        if (UserIdentityManager.getInstance().isAnonymous()) {
             lblRestrictedToMyself.setText(tr("Only changesets owned by myself (disabled. JOSM is currently run by an anonymous user)"));
             rbRestrictToMyself.setEnabled(false);
             if (rbRestrictToMyself.isSelected()) {
@@ -187,7 +187,7 @@ public class UserRestrictionPanel extends JPanel implements RestrictionPanel {
     public void fillInQuery(ChangesetQuery query) {
         CheckParameterUtil.ensureParameterNotNull(query, "query");
         if (rbRestrictToMyself.isSelected()) {
-            JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+            UserIdentityManager im = UserIdentityManager.getInstance();
             if (im.isPartiallyIdentified()) {
                 query.forUser(im.getUserName());
             } else if (im.isFullyIdentified()) {
@@ -276,7 +276,7 @@ public class UserRestrictionPanel extends JPanel implements RestrictionPanel {
     public void restoreFromSettings() {
         String v = Main.pref.get(PREF_QUERY_TYPE, "mine");
         if ("mine".equals(v)) {
-            JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+            UserIdentityManager im = UserIdentityManager.getInstance();
             if (im.isAnonymous()) {
                 rbRestrictToUid.setSelected(true);
             } else {
