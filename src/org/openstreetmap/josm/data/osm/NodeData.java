@@ -74,6 +74,9 @@ public class NodeData extends PrimitiveData implements INode {
         }
     }
 
+    /**
+     * @deprecated use {@link #getEastNorth(org.openstreetmap.josm.data.projection.Projecting)}
+     */
     @Override
     @Deprecated
     public EastNorth getEastNorth() {

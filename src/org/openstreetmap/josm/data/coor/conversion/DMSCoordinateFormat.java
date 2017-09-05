@@ -22,7 +22,7 @@ public class DMSCoordinateFormat extends AbstractCoordinateFormat {
 
     public static DMSCoordinateFormat INSTANCE = new DMSCoordinateFormat();
 
-    private DMSCoordinateFormat() {
+    protected DMSCoordinateFormat() {
         super("DEGREES_MINUTES_SECONDS", tr("deg\u00B0 min'' sec\""));
     }
 

@@ -20,7 +20,7 @@ public class NauticalCoordinateFormat extends AbstractCoordinateFormat {
 
     public static NauticalCoordinateFormat INSTANCE = new NauticalCoordinateFormat();
 
-    private NauticalCoordinateFormat() {
+    protected NauticalCoordinateFormat() {
         super("NAUTICAL", tr("deg\u00B0 min'' (Nautical)"));
     }
 

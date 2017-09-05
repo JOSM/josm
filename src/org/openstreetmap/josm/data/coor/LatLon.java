@@ -265,7 +265,7 @@ public class LatLon extends Coordinate implements ILatLon {
      * Formats the latitude part according to the given format
      * @param d the coordinate format to use
      * @return the formatted latitude
-     * @deprecated use {@link org.openstreetmap.josm.data.coor.format.ICoordinateFormat#latToString(ILatLon)
+     * @deprecated use {@link org.openstreetmap.josm.data.coor.format.ICoordinateFormat#latToString(ILatLon)}
      */
     @Deprecated
     public String latToString(CoordinateFormat d) {
@@ -281,7 +281,7 @@ public class LatLon extends Coordinate implements ILatLon {
      * Formats the longitude part according to the given format
      * @param d the coordinate format to use
      * @return the formatted longitude
-     * @deprecated use {@link org.openstreetmap.josm.data.coor.format.ICoordinateFormat#lonToString(ILatLon)
+     * @deprecated use {@link org.openstreetmap.josm.data.coor.format.ICoordinateFormat#lonToString(ILatLon)}
      */
     @Deprecated
     public String lonToString(CoordinateFormat d) {

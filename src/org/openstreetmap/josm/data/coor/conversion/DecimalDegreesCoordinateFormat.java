@@ -13,7 +13,7 @@ public class DecimalDegreesCoordinateFormat extends AbstractCoordinateFormat {
 
     public static DecimalDegreesCoordinateFormat INSTANCE = new DecimalDegreesCoordinateFormat();
 
-    private DecimalDegreesCoordinateFormat() {
+    protected DecimalDegreesCoordinateFormat() {
         super("DECIMAL_DEGREES", tr("Decimal Degrees"));
     }
 
