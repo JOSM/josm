@@ -18,9 +18,12 @@ public class NauticalCoordinateFormat extends AbstractCoordinateFormat {
     private static final String DM60 = DM_MINUTE_FORMATTER.format(60.0);
     private static final String DM00 = DM_MINUTE_FORMATTER.format(0.0);
 
-    public static NauticalCoordinateFormat INSTANCE = new NauticalCoordinateFormat();
+    /**
+     * The unique instance.
+     */
+    public static final NauticalCoordinateFormat INSTANCE = new NauticalCoordinateFormat();
 
-    private NauticalCoordinateFormat() {
+    protected NauticalCoordinateFormat() {
         super("NAUTICAL", tr("deg\u00B0 min'' (Nautical)"));
     }
 

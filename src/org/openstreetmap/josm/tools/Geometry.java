@@ -34,8 +34,6 @@ import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.MapFrame;
 
 /**
  * Some tools for geometry related tasks.
@@ -552,10 +550,7 @@ public final class Geometry {
      * @return Area for the multipolygon (LatLon coordinates)
      */
     public static Area getAreaLatLon(Relation multipolygon) {
-        MapFrame map = MainApplication.getMap();
-        final Multipolygon mp = map == null || map.mapView == null
-                ? new Multipolygon(multipolygon)
-                : MultipolygonCache.getInstance().get(multipolygon);
+        final Multipolygon mp = MultipolygonCache.getInstance().get(multipolygon);
         Path2D path = new Path2D.Double();
         path.setWindingRule(Path2D.WIND_EVEN_ODD);
         for (Multipolygon.PolyData pd : mp.getCombinedPolygons()) {
@@ -693,10 +688,7 @@ public final class Geometry {
      */
     public static double multipolygonArea(Relation multipolygon) {
         double area = 0.0;
-        MapFrame map = MainApplication.getMap();
-        final Multipolygon mp = map == null || map.mapView == null
-                ? new Multipolygon(multipolygon)
-                : MultipolygonCache.getInstance().get(multipolygon);
+        final Multipolygon mp = MultipolygonCache.getInstance().get(multipolygon);
         for (Multipolygon.PolyData pd : mp.getCombinedPolygons()) {
             area += pd.getAreaAndPerimeter(Projections.getProjectionByCode("EPSG:54008")).getArea();
         }

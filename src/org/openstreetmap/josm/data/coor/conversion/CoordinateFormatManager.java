@@ -11,15 +11,19 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * Class that manages the available coordinate formats.
  * @since 12735
  */
-public class CoordinateFormatManager {
+public final class CoordinateFormatManager {
 
-    private final static List<ICoordinateFormat> formats = new ArrayList<>();
+    private static final List<ICoordinateFormat> formats = new ArrayList<>();
 
     static {
         registerCoordinateFormat(DecimalDegreesCoordinateFormat.INSTANCE);
         registerCoordinateFormat(DMSCoordinateFormat.INSTANCE);
         registerCoordinateFormat(NauticalCoordinateFormat.INSTANCE);
         registerCoordinateFormat(ProjectedCoordinateFormat.INSTANCE);
+    }
+
+    private CoordinateFormatManager() {
+        // hide constructor
     }
 
     /**
