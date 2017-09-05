@@ -65,6 +65,7 @@ import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
+import org.openstreetmap.josm.tools.PlatformHook;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 import org.openstreetmap.josm.tools.bugreport.ReportedException;
 
@@ -469,7 +470,9 @@ public final class GuiHelper {
      * </ul>
      * @return extended modifier key used as the appropriate accelerator key for menu shortcuts
      * @since 7539
+     * @deprecated to be removed end of 2017. Use {@link PlatformHook#getMenuShortcutKeyMaskEx()} instead
      */
+    @Deprecated
     public static int getMenuShortcutKeyMaskEx() {
         return Main.isPlatformOsx() ? KeyEvent.META_DOWN_MASK : KeyEvent.CTRL_DOWN_MASK;
     }

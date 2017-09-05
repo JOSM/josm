@@ -22,7 +22,6 @@ import javax.swing.KeyStroke;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * Global shortcut class.
@@ -369,7 +368,7 @@ public final class Shortcut {
     private static void doInit() {
         if (initdone) return;
         initdone = true;
-        int commandDownMask = GuiHelper.getMenuShortcutKeyMaskEx();
+        int commandDownMask = Main.platform.getMenuShortcutKeyMaskEx();
         groups.put(NONE, -1);
         groups.put(MNEMONIC, KeyEvent.ALT_DOWN_MASK);
         groups.put(DIRECT, 0);

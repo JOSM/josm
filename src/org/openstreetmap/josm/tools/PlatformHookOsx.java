@@ -77,6 +77,11 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
         checkExpiredJava(callback);
     }
 
+    @Override
+    public int getMenuShortcutKeyMaskEx() {
+        return KeyEvent.META_DOWN_MASK;
+    }
+
     /**
      * Registers Apple handlers.
      * @param appClass application class
