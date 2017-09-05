@@ -1,26 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
-import java.text.MessageFormat;
-
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
-import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
-import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
+import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.UserInfo;
-import org.openstreetmap.josm.data.preferences.StringSetting;
-import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.io.OnlineResource;
-import org.openstreetmap.josm.io.OsmApi;
-import org.openstreetmap.josm.io.OsmServerUserInfoReader;
-import org.openstreetmap.josm.io.OsmTransferException;
-import org.openstreetmap.josm.io.auth.CredentialsManager;
-import org.openstreetmap.josm.tools.CheckParameterUtil;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
-import org.openstreetmap.josm.tools.Logging;
 
 /**
  * JosmUserIdentityManager is a global object which keeps track of what JOSM knows about
@@ -49,9 +33,11 @@ import org.openstreetmap.josm.tools.Logging;
  *   <li>safely query changesets owned by the current user based on its user id, not on its user name</li>
  *   <li>safely search for objects last touched by the current user based on its user id, not on its user name</li>
  * </ul>
- *
+ * @since 2689 (creation)
+ * @deprecated to be removed end of 2017. Use {@link UserIdentityManager} instead
  */
-public final class JosmUserIdentityManager implements PreferenceChangedListener {
+@Deprecated
+public final class JosmUserIdentityManager {
 
     private static JosmUserIdentityManager instance;
 
@@ -63,27 +49,10 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
     public static synchronized JosmUserIdentityManager getInstance() {
         if (instance == null) {
             instance = new JosmUserIdentityManager();
-            if (OsmApi.isUsingOAuth() && OAuthAccessTokenHolder.getInstance().containsAccessToken() &&
-                    !Main.isOffline(OnlineResource.OSM_API)) {
-                try {
-                    instance.initFromOAuth();
-                } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
-                    Logging.error(e);
-                    // Fall back to preferences if OAuth identification fails for any reason
-                    instance.initFromPreferences();
-                }
-            } else {
-                instance.initFromPreferences();
-            }
-            Main.pref.addPreferenceChangeListener(instance);
+            UserIdentityManager.getInstance();
         }
         return instance;
     }
-
-    private String userName;
-    private UserInfo userInfo;
-    private boolean accessTokenKeyChanged;
-    private boolean accessTokenSecretChanged;
 
     private JosmUserIdentityManager() {
     }
@@ -92,8 +61,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
      * Remembers the fact that the current JOSM user is anonymous.
      */
     public void setAnonymous() {
-        userName = null;
-        userInfo = null;
+        UserIdentityManager.getInstance().setAnonymous();
     }
 
     /**
@@ -105,13 +73,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
      * @throws IllegalArgumentException if userName is empty
      */
     public void setPartiallyIdentified(String userName) {
-        CheckParameterUtil.ensureParameterNotNull(userName, "userName");
-        String trimmedUserName = userName.trim();
-        if (trimmedUserName.isEmpty())
-            throw new IllegalArgumentException(
-                    MessageFormat.format("Expected non-empty value for parameter ''{0}'', got ''{1}''", "userName", userName));
-        this.userName = trimmedUserName;
-        userInfo = null;
+        UserIdentityManager.getInstance().setPartiallyIdentified(userName);
     }
 
     /**
@@ -125,13 +87,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
      * @throws IllegalArgumentException if userInfo is null
      */
     public void setFullyIdentified(String userName, UserInfo userInfo) {
-        CheckParameterUtil.ensureParameterNotNull(userName, "userName");
-        String trimmedUserName = userName.trim();
-        if (trimmedUserName.isEmpty())
-            throw new IllegalArgumentException(tr("Expected non-empty value for parameter ''{0}'', got ''{1}''", "userName", userName));
-        CheckParameterUtil.ensureParameterNotNull(userInfo, "userInfo");
-        this.userName = trimmedUserName;
-        this.userInfo = userInfo;
+        UserIdentityManager.getInstance().setFullyIdentified(userName, userInfo);
     }
 
     /**
@@ -140,7 +96,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
      * @return {@code true} if the current user is anonymous.
      */
     public boolean isAnonymous() {
-        return userName == null && userInfo == null;
+        return UserIdentityManager.getInstance().isAnonymous();
     }
 
     /**
@@ -149,7 +105,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
      * @return true if the current JOSM user is partially identified.
      */
     public boolean isPartiallyIdentified() {
-        return userName != null && userInfo == null;
+        return UserIdentityManager.getInstance().isPartiallyIdentified();
     }
 
     /**
@@ -158,7 +114,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
      * @return true if the current JOSM user is fully identified.
      */
     public boolean isFullyIdentified() {
-        return userName != null && userInfo != null;
+        return UserIdentityManager.getInstance().isFullyIdentified();
     }
 
     /**
@@ -167,7 +123,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
      * @return  the user name of the current JOSM user
      */
     public String getUserName() {
-        return userName;
+        return UserIdentityManager.getInstance().getUserName();
     }
 
     /**
@@ -177,8 +133,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
      * @return  the user id of the current JOSM user
      */
     public int getUserId() {
-        if (userInfo == null) return 0;
-        return userInfo.getId();
+        return UserIdentityManager.getInstance().getUserId();
     }
 
     /**
@@ -188,7 +143,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
      * @return verified additional information about the current user
      */
     public UserInfo getUserInfo() {
-        return userInfo;
+        return UserIdentityManager.getInstance().getUserInfo();
     }
 
     /**
@@ -197,7 +152,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
      * @return the identity as user, or {@link User#getAnonymous()} if {@link #isAnonymous()}
      */
     public User asUser() {
-        return isAnonymous() ? User.getAnonymous() : User.createOsmUser(userInfo != null ? userInfo.getId() : 0, userName);
+        return UserIdentityManager.getInstance().asUser();
     }
 
     /**
@@ -206,18 +161,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
      * @see #initFromOAuth
      */
     public void initFromPreferences() {
-        String userName = CredentialsManager.getInstance().getUsername();
-        if (isAnonymous()) {
-            if (userName != null && !userName.trim().isEmpty()) {
-                setPartiallyIdentified(userName);
-            }
-        } else {
-            if (userName != null && !userName.equals(this.userName)) {
-                setPartiallyIdentified(userName);
-            }
-            // else: same name in the preferences as JOSM already knows about.
-            // keep the state, be it partially or fully identified
-        }
+        UserIdentityManager.getInstance().initFromPreferences();
     }
 
     /**
@@ -227,12 +171,7 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
      * @since 5434
      */
     public void initFromOAuth() {
-        try {
-            UserInfo info = new OsmServerUserInfoReader().fetchUserInfo(NullProgressMonitor.INSTANCE);
-            setFullyIdentified(info.getDisplayName(), info);
-        } catch (IllegalArgumentException | OsmTransferException e) {
-            Logging.error(e);
-        }
+        UserIdentityManager.getInstance().initFromOAuth();
     }
 
     /**
@@ -242,71 +181,17 @@ public final class JosmUserIdentityManager implements PreferenceChangedListener 
      * @return true if the user with name <code>username</code> is the current user
      */
     public boolean isCurrentUser(String username) {
-        return this.userName != null && this.userName.equals(username);
+        return UserIdentityManager.getInstance().isCurrentUser(username);
     }
 
     /**
      * Replies true if the current user is {@link #isFullyIdentified() fully identified} and the {@link #getUserId() user ids} match,
-     * or if the current user is not {@link #isFullyIdentified() fully identified} and the {@link #userName user names} match.
+     * or if the current user is not {@link #isFullyIdentified() fully identified} and the {@link #getUserName() user names} match.
      *
      * @param user the user to test
      * @return true if given user is the current user
      */
     public boolean isCurrentUser(User user) {
-        if (user == null) {
-            return false;
-        } else if (isFullyIdentified()) {
-            return getUserId() == user.getId();
-        } else {
-            return isCurrentUser(user.getName());
-        }
-    }
-
-    /* ------------------------------------------------------------------- */
-    /* interface PreferenceChangeListener                                  */
-    /* ------------------------------------------------------------------- */
-    @Override
-    public void preferenceChanged(PreferenceChangeEvent evt) {
-        switch (evt.getKey()) {
-        case "osm-server.username":
-            String newUserName = null;
-            if (evt.getNewValue() instanceof StringSetting) {
-                newUserName = ((StringSetting) evt.getNewValue()).getValue();
-            }
-            if (newUserName == null || newUserName.trim().isEmpty()) {
-                setAnonymous();
-            } else {
-                if (!newUserName.equals(userName)) {
-                    setPartiallyIdentified(newUserName);
-                }
-            }
-            return;
-        case "osm-server.url":
-            String newUrl = null;
-            if (evt.getNewValue() instanceof StringSetting) {
-                newUrl = ((StringSetting) evt.getNewValue()).getValue();
-            }
-            if (newUrl == null || newUrl.trim().isEmpty()) {
-                setAnonymous();
-            } else if (isFullyIdentified()) {
-                setPartiallyIdentified(getUserName());
-            }
-            break;
-        case "oauth.access-token.key":
-            accessTokenKeyChanged = true;
-            break;
-        case "oauth.access-token.secret":
-            accessTokenSecretChanged = true;
-            break;
-        default: // Do nothing
-        }
-
-        if (accessTokenKeyChanged && accessTokenSecretChanged) {
-            accessTokenKeyChanged = false;
-            accessTokenSecretChanged = false;
-            if (OsmApi.isUsingOAuth()) {
-                getInstance().initFromOAuth();
-            }
-        }
+        return UserIdentityManager.getInstance().isCurrentUser(user);
     }
 }

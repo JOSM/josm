@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui;
+package org.openstreetmap.josm.data;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -16,9 +16,9 @@ import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.UserInfo;
 
 /**
- * Unit tests of {@link JosmUserIdentityManager} class.
+ * Unit tests of {@link UserIdentityManager} class.
  */
-public class JosmUserIdentityManagerTest {
+public class UserIdentityManagerTest {
 
     /**
      * Setup test.
@@ -45,23 +45,23 @@ public class JosmUserIdentityManagerTest {
     @Test
     public void testSingletonAccess() {
 
-        JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+        UserIdentityManager im = UserIdentityManager.getInstance();
 
         // created ?
         assertNotNull(im);
 
-        JosmUserIdentityManager im2 = JosmUserIdentityManager.getInstance();
+        UserIdentityManager im2 = UserIdentityManager.getInstance();
 
         // only one instance
         assertSame(im, im2);
     }
 
     /**
-     * Unit test of {@link JosmUserIdentityManager#setAnonymous}.
+     * Unit test of {@link UserIdentityManager#setAnonymous}.
      */
     @Test
     public void testSetAnonymous() {
-        JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+        UserIdentityManager im = UserIdentityManager.getInstance();
 
         im.setPartiallyIdentified("test");
         im.setAnonymous();
@@ -77,11 +77,11 @@ public class JosmUserIdentityManagerTest {
     }
 
     /**
-     * Unit test of {@link JosmUserIdentityManager#setPartiallyIdentified} - nominal case.
+     * Unit test of {@link UserIdentityManager#setPartiallyIdentified} - nominal case.
      */
     @Test
     public void testSetPartiallyIdentified() {
-        JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+        UserIdentityManager im = UserIdentityManager.getInstance();
         im.setPartiallyIdentified("test");
 
         assertFalse(im.isAnonymous());
@@ -97,35 +97,35 @@ public class JosmUserIdentityManagerTest {
     }
 
     /**
-     * Unit test of {@link JosmUserIdentityManager#setPartiallyIdentified} - null case.
+     * Unit test of {@link UserIdentityManager#setPartiallyIdentified} - null case.
      */
     @Test(expected = IllegalArgumentException.class)
     public void testSetPartiallyIdentifiedNull() {
-        JosmUserIdentityManager.getInstance().setPartiallyIdentified(null);
+        UserIdentityManager.getInstance().setPartiallyIdentified(null);
     }
 
     /**
-     * Unit test of {@link JosmUserIdentityManager#setPartiallyIdentified} - empty case.
+     * Unit test of {@link UserIdentityManager#setPartiallyIdentified} - empty case.
      */
     @Test(expected = IllegalArgumentException.class)
     public void testSetPartiallyIdentifiedEmpty() {
-        JosmUserIdentityManager.getInstance().setPartiallyIdentified("");
+        UserIdentityManager.getInstance().setPartiallyIdentified("");
     }
 
     /**
-     * Unit test of {@link JosmUserIdentityManager#setPartiallyIdentified} - blank case.
+     * Unit test of {@link UserIdentityManager#setPartiallyIdentified} - blank case.
      */
     @Test(expected = IllegalArgumentException.class)
     public void testSetPartiallyIdentifiedBlank() {
-        JosmUserIdentityManager.getInstance().setPartiallyIdentified("  \t  ");
+        UserIdentityManager.getInstance().setPartiallyIdentified("  \t  ");
     }
 
     /**
-     * Unit test of {@link JosmUserIdentityManager#setFullyIdentified} - nominal case.
+     * Unit test of {@link UserIdentityManager#setFullyIdentified} - nominal case.
      */
     @Test
     public void testSetFullyIdentified() {
-        JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+        UserIdentityManager im = UserIdentityManager.getInstance();
 
         UserInfo userInfo = newUserInfo();
 
@@ -144,35 +144,35 @@ public class JosmUserIdentityManagerTest {
     }
 
     /**
-     * Unit test of {@link JosmUserIdentityManager#setFullyIdentified} - null name case.
+     * Unit test of {@link UserIdentityManager#setFullyIdentified} - null name case.
      */
     @Test(expected = IllegalArgumentException.class)
     public void testSetFullyIdentifiedNullName() {
-        JosmUserIdentityManager.getInstance().setFullyIdentified(null, newUserInfo());
+        UserIdentityManager.getInstance().setFullyIdentified(null, newUserInfo());
     }
 
     /**
-     * Unit test of {@link JosmUserIdentityManager#setFullyIdentified} - empty name case.
+     * Unit test of {@link UserIdentityManager#setFullyIdentified} - empty name case.
      */
     @Test(expected = IllegalArgumentException.class)
     public void testSetFullyIdentifiedEmptyName() {
-        JosmUserIdentityManager.getInstance().setFullyIdentified("", newUserInfo());
+        UserIdentityManager.getInstance().setFullyIdentified("", newUserInfo());
     }
 
     /**
-     * Unit test of {@link JosmUserIdentityManager#setFullyIdentified} - blank name case.
+     * Unit test of {@link UserIdentityManager#setFullyIdentified} - blank name case.
      */
     @Test(expected = IllegalArgumentException.class)
     public void testSetFullyIdentifiedBlankName() {
-        JosmUserIdentityManager.getInstance().setFullyIdentified(" \t ", newUserInfo());
+        UserIdentityManager.getInstance().setFullyIdentified(" \t ", newUserInfo());
     }
 
     /**
-     * Unit test of {@link JosmUserIdentityManager#setFullyIdentified} - null info case.
+     * Unit test of {@link UserIdentityManager#setFullyIdentified} - null info case.
      */
     @Test(expected = IllegalArgumentException.class)
     public void testSetFullyIdentifiedNullInfo() {
-        JosmUserIdentityManager.getInstance().setFullyIdentified("test", null);
+        UserIdentityManager.getInstance().setFullyIdentified("test", null);
     }
 
     /**
@@ -180,7 +180,7 @@ public class JosmUserIdentityManagerTest {
      */
     @Test
     public void testInitFromPreferences1() {
-        JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+        UserIdentityManager im = UserIdentityManager.getInstance();
 
         // reset it
         im.setAnonymous();
@@ -205,7 +205,7 @@ public class JosmUserIdentityManagerTest {
      */
     @Test
     public void testInitFromPreferences2() {
-        JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+        UserIdentityManager im = UserIdentityManager.getInstance();
 
         // reset it
         im.setAnonymous();
@@ -230,7 +230,7 @@ public class JosmUserIdentityManagerTest {
      */
     @Test
     public void testInitFromPreferences3() {
-        JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+        UserIdentityManager im = UserIdentityManager.getInstance();
 
         // for this test we disable the listener
         Main.pref.removePreferenceChangeListener(im);
@@ -257,7 +257,7 @@ public class JosmUserIdentityManagerTest {
      */
     @Test
     public void testInitFromPreferences4() {
-        JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+        UserIdentityManager im = UserIdentityManager.getInstance();
 
         // for this test we disable the listener
         Main.pref.removePreferenceChangeListener(im);
@@ -283,7 +283,7 @@ public class JosmUserIdentityManagerTest {
      */
     @Test
     public void testInitFromPreferences5() {
-        JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+        UserIdentityManager im = UserIdentityManager.getInstance();
 
         // for this test we disable the listener
         Main.pref.removePreferenceChangeListener(im);
@@ -304,7 +304,7 @@ public class JosmUserIdentityManagerTest {
 
     @Test
     public void testApiUrlChanged() {
-        JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+        UserIdentityManager im = UserIdentityManager.getInstance();
 
         // reset it
         im.setAnonymous();
@@ -340,9 +340,8 @@ public class JosmUserIdentityManagerTest {
     }
 
     @Test
-    //@Ignore
     public void testUserNameChanged() {
-        JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+        UserIdentityManager im = UserIdentityManager.getInstance();
 
         // reset it
         im.setAnonymous();

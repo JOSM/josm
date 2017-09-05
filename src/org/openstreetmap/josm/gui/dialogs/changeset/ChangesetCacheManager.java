@@ -46,13 +46,13 @@ import org.openstreetmap.josm.actions.downloadtasks.ChangesetContentDownloadTask
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetHeaderDownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetQueryTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
+import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.ChangesetDataSet;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
-import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.changeset.query.ChangesetQueryDialog;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
@@ -464,7 +464,7 @@ public class ChangesetCacheManager extends JFrame {
 
         protected void updateEnabledState() {
             List<Changeset> selected = model.getSelectedChangesets();
-            JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+            UserIdentityManager im = UserIdentityManager.getInstance();
             for (Changeset cs: selected) {
                 if (cs.isOpen()) {
                     if (im.isPartiallyIdentified() && cs.getUser() != null && cs.getUser().getName().equals(im.getUserName())) {

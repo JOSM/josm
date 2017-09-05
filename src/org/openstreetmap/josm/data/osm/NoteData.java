@@ -9,11 +9,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.Note.State;
 import org.openstreetmap.josm.data.notes.NoteComment;
-import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -233,7 +233,7 @@ public class NoteData {
     }
 
     private static User getCurrentUser() {
-        JosmUserIdentityManager userMgr = JosmUserIdentityManager.getInstance();
+        UserIdentityManager userMgr = UserIdentityManager.getInstance();
         return User.createOsmUser(userMgr.getUserId(), userMgr.getUserName());
     }
 

@@ -13,11 +13,11 @@ import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.gui.ExceptionDialogUtil;
-import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.ChangesetQuery;
@@ -60,7 +60,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
 
     @Override
     protected void finish() {
-        if (JosmUserIdentityManager.getInstance().isAnonymous()) {
+        if (UserIdentityManager.getInstance().isAnonymous()) {
             String msg = tr("Could not retrieve the list of your open changesets because<br>"
                     + "JOSM does not know your identity.<br>"
                     + "You have either chosen to work anonymously or you are not entitled<br>"
@@ -95,7 +95,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
      * Refreshes the user info from the server. This is necessary if we don't know the users id yet.
      */
     protected void refreshUserIdentity() {
-        JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+        UserIdentityManager im = UserIdentityManager.getInstance();
         try {
             OsmServerUserInfoReader infoReader = new OsmServerUserInfoReader();
             UserInfo info = infoReader.fetchUserInfo(getProgressMonitor().createSubTaskMonitor(1, false));
@@ -121,7 +121,7 @@ public class DownloadOpenChangesetsTask extends PleaseWaitRunnable {
     @Override
     protected void realRun() throws SAXException, IOException, OsmTransferException {
         try {
-            JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+            UserIdentityManager im = UserIdentityManager.getInstance();
             if (im.isAnonymous()) {
                 refreshUserIdentity();
             } else if (im.isFullyIdentified()) {

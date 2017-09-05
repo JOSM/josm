@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -70,7 +70,7 @@ public class ChangesetQuery {
      * @since 12495
      */
     public static ChangesetQuery forCurrentUser() {
-        JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+        UserIdentityManager im = UserIdentityManager.getInstance();
         if (im.isAnonymous()) {
             throw new IllegalStateException("anonymous user");
         }

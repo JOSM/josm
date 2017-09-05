@@ -25,13 +25,13 @@ import javax.swing.UIManager;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetQueryTask;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
-import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapViewState;
 import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager;
@@ -192,7 +192,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
         public HomeLocationBookmark() {
             setName(tr("Home location"));
             setIcon(ImageProvider.get("help", "home", ImageSizes.SMALLICON));
-            UserInfo info = JosmUserIdentityManager.getInstance().getUserInfo();
+            UserInfo info = UserIdentityManager.getInstance().getUserInfo();
             if (info == null) {
                 throw new IllegalStateException("User not identified");
             }
@@ -250,7 +250,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
     public final void load() {
         final DefaultListModel<Bookmark> model = (DefaultListModel<Bookmark>) getModel();
         model.removeAllElements();
-        JosmUserIdentityManager im = JosmUserIdentityManager.getInstance();
+        UserIdentityManager im = UserIdentityManager.getInstance();
         // Add home location bookmark first, if user fully identified
         if (im.isFullyIdentified()) {
             try {

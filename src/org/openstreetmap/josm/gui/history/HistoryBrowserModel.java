@@ -10,6 +10,7 @@ import javax.swing.JTable;
 import javax.swing.table.TableModel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
@@ -34,7 +35,6 @@ import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
 import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
-import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
@@ -673,7 +673,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
         }
 
         private static User getCurrentUser() {
-            UserInfo info = JosmUserIdentityManager.getInstance().getUserInfo();
+            UserInfo info = UserIdentityManager.getInstance().getUserInfo();
             return info == null ? User.getAnonymous() : User.createOsmUser(info.getId(), info.getDisplayName());
         }
 

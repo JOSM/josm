@@ -6,8 +6,8 @@ import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
 import java.util.Objects;
 
+import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
-import org.openstreetmap.josm.gui.JosmUserIdentityManager;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
@@ -121,7 +121,7 @@ public class CredentialsManager implements CredentialsAgent {
         if (requestorType == RequestorType.SERVER && Objects.equals(OsmApi.getOsmApi().getHost(), host)) {
             String username = credentials.getUserName();
             if (username != null && !username.trim().isEmpty()) {
-                JosmUserIdentityManager.getInstance().setPartiallyIdentified(username);
+                UserIdentityManager.getInstance().setPartiallyIdentified(username);
             }
         }
         delegate.store(requestorType, host, credentials);
