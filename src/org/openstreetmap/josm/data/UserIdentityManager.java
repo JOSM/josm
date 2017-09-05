@@ -49,7 +49,7 @@ import org.openstreetmap.josm.tools.Logging;
  *   <li>safely query changesets owned by the current user based on its user id, not on its user name</li>
  *   <li>safely search for objects last touched by the current user based on its user id, not on its user name</li>
  * </ul>
- * @since xxx (renamed from {@code org.openstreetmap.josm.gui.JosmUserIdentityManager})
+ * @since 12743 (renamed from {@code org.openstreetmap.josm.gui.JosmUserIdentityManager})
  * @since 2689 (creation)
  */
 public final class UserIdentityManager implements PreferenceChangedListener {

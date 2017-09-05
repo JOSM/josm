@@ -811,6 +811,8 @@ public class MainApplication extends Main {
 
         Main.platform.afterPrefStartupHook();
 
+        applyWorkarounds();
+
         FontsManager.initialize();
 
         GuiHelper.setupLanguageFonts();
@@ -933,6 +935,28 @@ public class MainApplication extends Main {
             // but they don't seem to break anything and are difficult to fix
             Logging.info("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to console");
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
+        }
+    }
+
+    static void applyWorkarounds() {
+        // Workaround for JDK-8180379: crash on Windows 10 1703 with Windows L&F and java < 8u141 / 9+172
+        // To remove during Java 9 migration
+        if (System.getProperty("os.name").toLowerCase(Locale.ENGLISH).contains("windows 10") &&
+                platform.getDefaultStyle().equals(LafPreference.LAF.get())) {
+            try {
+                final int currentBuild = Integer.parseInt(PlatformHookWindows.getCurrentBuild());
+                final int javaVersion = Utils.getJavaVersion();
+                final int javaUpdate = Utils.getJavaUpdate();
+                final int javaBuild = Utils.getJavaBuild();
+                // See https://technet.microsoft.com/en-us/windows/release-info.aspx
+                if (currentBuild >= 15_063 && ((javaVersion == 8 && javaUpdate < 141)
+                        || (javaVersion == 9 && javaUpdate == 0 && javaBuild < 173))) {
+                    // Workaround from https://bugs.openjdk.java.net/browse/JDK-8179014
+                    UIManager.put("FileChooser.useSystemExtensionHiding", Boolean.FALSE);
+                }
+            } catch (NumberFormatException | ReflectiveOperationException e) {
+                Logging.error(e);
+            }
         }
     }
 
