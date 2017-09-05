@@ -23,8 +23,7 @@ import javax.swing.ImageIcon;
  * Helper class for HiDPI support.
  *
  * Gives access to the class <code>BaseMultiResolutionImage</code> via reflection,
- * in case it is on classpath. This is to be expected for Java 9, but not for Java 8
- * runtime.
+ * in case it is on classpath. This is to be expected for Java 9, but not for Java 8 runtime.
  *
  * @since 12722
  */
@@ -65,10 +64,10 @@ public class HiDPISupport {
      */
     public static Image getMultiResolutionImage(List<Image> imgs) {
         CheckParameterUtil.ensure(imgs, "imgs", "not empty", ls -> !ls.isEmpty());
-        if (getBaseMultiResolutionImageConstructor().isPresent()) {
-            Constructor<? extends Image> c = getBaseMultiResolutionImageConstructor().get();
+        Optional<Constructor<? extends Image>> baseMrImageConstructor = getBaseMultiResolutionImageConstructor();
+        if (baseMrImageConstructor.isPresent()) {
             try {
-                return c.newInstance((Object) imgs.toArray(new Image[0]));
+                return baseMrImageConstructor.get().newInstance((Object) imgs.toArray(new Image[0]));
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException ex) {
                 Logging.error("Unexpected error while instantiating object of class BaseMultiResolutionImage: " + ex);
             }
@@ -79,20 +78,21 @@ public class HiDPISupport {
     /**
      * Wrapper for the method <code>java.awt.image.BaseMultiResolutionImage#getBaseImage()</code>.
      * <p>
-     * Will return the argument <code>img</code> unchanged, if it is not a multi-resolution
-     * image.
+     * Will return the argument <code>img</code> unchanged, if it is not a multi-resolution image.
      * @param img the image
      * @return if <code>img</code> is a <code>java.awt.image.BaseMultiResolutionImage</code>,
      * then the base image, otherwise the image itself
      */
     public static Image getBaseImage(Image img) {
-        if (!getBaseMultiResolutionImageClass().isPresent() || !getResolutionVariantsMethod().isPresent()) {
+        Optional<Class<? extends Image>> baseMrImageClass = getBaseMultiResolutionImageClass();
+        Optional<Method> resVariantsMethod = getResolutionVariantsMethod();
+        if (!baseMrImageClass.isPresent() || !resVariantsMethod.isPresent()) {
             return img;
         }
-        if (getBaseMultiResolutionImageClass().get().isInstance(img)) {
+        if (baseMrImageClass.get().isInstance(img)) {
             try {
                 @SuppressWarnings("unchecked")
-                List<Image> imgVars = (List) getResolutionVariantsMethod().get().invoke(img);
+                List<Image> imgVars = (List<Image>) resVariantsMethod.get().invoke(img);
                 if (!imgVars.isEmpty()) {
                     return imgVars.get(0);
                 }
@@ -106,21 +106,22 @@ public class HiDPISupport {
     /**
      * Wrapper for the method <code>java.awt.image.MultiResolutionImage#getResolutionVariants()</code>.
      * <p>
-     * Will return the argument as a singleton list, in case it is not a multi-resolution
-     * image.
+     * Will return the argument as a singleton list, in case it is not a multi-resolution image.
      * @param img the image
      * @return if <code>img</code> is a <code>java.awt.image.BaseMultiResolutionImage</code>,
      * then the result of the method <code>#getResolutionVariants()</code>, otherwise the image
      * itself as a singleton list
      */
     public static List<Image> getResolutionVariants(Image img) {
-        if (!getBaseMultiResolutionImageClass().isPresent() || !getResolutionVariantsMethod().isPresent()) {
+        Optional<Class<? extends Image>> baseMrImageClass = getBaseMultiResolutionImageClass();
+        Optional<Method> resVariantsMethod = getResolutionVariantsMethod();
+        if (!baseMrImageClass.isPresent() || !resVariantsMethod.isPresent()) {
             return Collections.singletonList(img);
         }
-        if (getBaseMultiResolutionImageClass().get().isInstance(img)) {
+        if (baseMrImageClass.get().isInstance(img)) {
             try {
                 @SuppressWarnings("unchecked")
-                List<Image> imgVars = (List) getResolutionVariantsMethod().get().invoke(img);
+                List<Image> imgVars = (List<Image>) resVariantsMethod.get().invoke(img);
                 if (!imgVars.isEmpty()) {
                     return imgVars;
                 }
@@ -204,7 +205,7 @@ public class HiDPISupport {
                 if (baseMultiResolutionImageClass == null) {
                     try {
                         @SuppressWarnings("unchecked")
-                        Class<? extends Image> c = (Class) Class.forName("java.awt.image.BaseMultiResolutionImage");
+                        Class<? extends Image> c = (Class<? extends Image>) Class.forName("java.awt.image.BaseMultiResolutionImage");
                         baseMultiResolutionImageClass = Optional.ofNullable(c);
                     } catch (ClassNotFoundException ex) {
                         // class is not present in Java 8

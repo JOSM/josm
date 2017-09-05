@@ -90,8 +90,8 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
                 new BooleanProperty("download.overpass.query-list.opened", false);
         private static final String ACTION_IMG_SUBDIR = "dialogs";
 
-        private JosmTextArea overpassQuery;
-        private OverpassQueryList overpassQueryList;
+        private final JosmTextArea overpassQuery;
+        private final OverpassQueryList overpassQueryList;
 
         /**
          * Create a new {@link OverpassDownloadSourcePanel}
@@ -378,8 +378,8 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
      * Encapsulates data that is required to preform download from Overpass API.
      */
     static class OverpassDownloadData {
-        private String query;
-        private Consumer<Collection<Object>> errorReporter;
+        private final String query;
+        private final Consumer<Collection<Object>> errorReporter;
 
         OverpassDownloadData(String query, Consumer<Collection<Object>> errorReporter) {
             this.query = query;

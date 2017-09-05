@@ -642,7 +642,7 @@ public class DownloadDialog extends JDialog {
      */
     private static class DownloadDialogSplitPane extends JSplitPane {
         private DownloadSourceSizingPolicy policy;
-        private JTabbedPane topComponent;
+        private final JTabbedPane topComponent;
 
         DownloadDialogSplitPane(JTabbedPane newTopComponent, Component newBottomComponent) {
             super(VERTICAL_SPLIT, newTopComponent, newBottomComponent);
