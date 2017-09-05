@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.openstreetmap.josm.data.DataSource;
-import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateFormat;
 import org.openstreetmap.josm.data.osm.AbstractPrimitive;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -193,13 +193,13 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     public void writeDataSources(DataSet ds) {
         for (DataSource s : ds.getDataSources()) {
             out.println("  <bounds minlat='"
-                    + s.bounds.getMin().latToString(CoordinateFormat.DECIMAL_DEGREES)
+                    + DecimalDegreesCoordinateFormat.INSTANCE.latToString(s.bounds.getMin())
                     +"' minlon='"
-                    + s.bounds.getMin().lonToString(CoordinateFormat.DECIMAL_DEGREES)
+                    + DecimalDegreesCoordinateFormat.INSTANCE.lonToString(s.bounds.getMin())
                     +"' maxlat='"
-                    + s.bounds.getMax().latToString(CoordinateFormat.DECIMAL_DEGREES)
+                    + DecimalDegreesCoordinateFormat.INSTANCE.latToString(s.bounds.getMax())
                     +"' maxlon='"
-                    + s.bounds.getMax().lonToString(CoordinateFormat.DECIMAL_DEGREES)
+                    + DecimalDegreesCoordinateFormat.INSTANCE.lonToString(s.bounds.getMax())
                     +"' origin='"+XmlWriter.encode(s.origin)+"' />");
         }
     }
@@ -272,12 +272,12 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         }
         out.print(" open='"+ (cs.isOpen() ? "true" : "false") +'\'');
         if (cs.getMin() != null) {
-            out.print(" min_lon='"+ cs.getMin().lonToString(CoordinateFormat.DECIMAL_DEGREES) +'\'');
-            out.print(" min_lat='"+ cs.getMin().latToString(CoordinateFormat.DECIMAL_DEGREES) +'\'');
+            out.print(" min_lon='"+ DecimalDegreesCoordinateFormat.INSTANCE.lonToString(cs.getMin()) +'\'');
+            out.print(" min_lat='"+ DecimalDegreesCoordinateFormat.INSTANCE.latToString(cs.getMin()) +'\'');
         }
         if (cs.getMax() != null) {
-            out.print(" max_lon='"+ cs.getMin().lonToString(CoordinateFormat.DECIMAL_DEGREES) +'\'');
-            out.print(" max_lat='"+ cs.getMin().latToString(CoordinateFormat.DECIMAL_DEGREES) +'\'');
+            out.print(" max_lon='"+ DecimalDegreesCoordinateFormat.INSTANCE.lonToString(cs.getMin()) +'\'');
+            out.print(" max_lat='"+ DecimalDegreesCoordinateFormat.INSTANCE.latToString(cs.getMin()) +'\'');
         }
         out.println(">");
         addTags(cs, "changeset", false); // also writes closing </changeset>

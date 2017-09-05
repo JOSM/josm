@@ -19,8 +19,8 @@ import javax.swing.event.ChangeListener;
 import org.openstreetmap.gui.jmapviewer.JMapViewer;
 import org.openstreetmap.gui.jmapviewer.MapMarkerDot;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource;
-import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateFormat;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.NavigatableComponent;
@@ -307,8 +307,8 @@ public class CoordinateInfoViewer extends JPanel {
             final LatLon oppositeCoord = coordinates.b;
 
             // display the coordinates
-            lblLat.setText(coord != null ? coord.latToString(CoordinateFormat.DECIMAL_DEGREES) : tr("(none)"));
-            lblLon.setText(coord != null ? coord.lonToString(CoordinateFormat.DECIMAL_DEGREES) : tr("(none)"));
+            lblLat.setText(coord != null ? DecimalDegreesCoordinateFormat.INSTANCE.latToString(coord) : tr("(none)"));
+            lblLon.setText(coord != null ? DecimalDegreesCoordinateFormat.INSTANCE.lonToString(coord) : tr("(none)"));
 
             // update background color to reflect differences in the coordinates
             if (coord == oppositeCoord ||

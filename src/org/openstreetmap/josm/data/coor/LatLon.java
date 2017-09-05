@@ -24,6 +24,9 @@ import java.util.regex.Pattern;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.coor.conversion.DMSCoordinateFormat;
+import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateFormat;
+import org.openstreetmap.josm.data.coor.conversion.NauticalCoordinateFormat;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -68,11 +71,6 @@ public class LatLon extends Coordinate implements ILatLon {
     /** South pole. */
     public static final LatLon SOUTH_POLE = new LatLon(-90, 0);
 
-    private static DecimalFormat cDmsMinuteFormatter = new DecimalFormat("00");
-    private static DecimalFormat cDmsSecondFormatter = new DecimalFormat(
-            Main.pref == null ? "00.0" : Main.pref.get("latlon.dms.decimal-format", "00.0"));
-    private static DecimalFormat cDmMinuteFormatter = new DecimalFormat(
-            Main.pref == null ? "00.000" : Main.pref.get("latlon.dm.decimal-format", "00.000"));
     /**
      * The normal number format for server precision coordinates
      */
@@ -89,11 +87,6 @@ public class LatLon extends Coordinate implements ILatLon {
         cDdHighPecisionFormatter = (DecimalFormat) NumberFormat.getInstance(Locale.UK);
         cDdHighPecisionFormatter.applyPattern("###0.0##########");
     }
-
-    private static final String cDms60 = cDmsSecondFormatter.format(60.0);
-    private static final String cDms00 = cDmsSecondFormatter.format(0.0);
-    private static final String cDm60 = cDmMinuteFormatter.format(60.0);
-    private static final String cDm00 = cDmMinuteFormatter.format(0.0);
 
     /** Character denoting South, as string */
     public static final String SOUTH = trc("compass", "S");
@@ -216,29 +209,11 @@ public class LatLon extends Coordinate implements ILatLon {
      * @param pCoordinate The coordinate to convert
      * @return The coordinate in degrees/minutes/seconds format
      * @since 12561
+     * @deprecated use {@link DMSCoordinateFormat#degreesMinutesSeconds(double)}
      */
+    @Deprecated
     public static String degreesMinutesSeconds(double pCoordinate) {
-
-        double tAbsCoord = Math.abs(pCoordinate);
-        int tDegree = (int) tAbsCoord;
-        double tTmpMinutes = (tAbsCoord - tDegree) * 60;
-        int tMinutes = (int) tTmpMinutes;
-        double tSeconds = (tTmpMinutes - tMinutes) * 60;
-
-        String sDegrees = Integer.toString(tDegree);
-        String sMinutes = cDmsMinuteFormatter.format(tMinutes);
-        String sSeconds = cDmsSecondFormatter.format(tSeconds);
-
-        if (cDms60.equals(sSeconds)) {
-            sSeconds = cDms00;
-            sMinutes = cDmsMinuteFormatter.format(tMinutes+1L);
-        }
-        if ("60".equals(sMinutes)) {
-            sMinutes = "00";
-            sDegrees = Integer.toString(tDegree+1);
-        }
-
-        return sDegrees + '\u00B0' + sMinutes + '\'' + sSeconds + '\"';
+        return DMSCoordinateFormat.degreesMinutesSeconds(pCoordinate);
     }
 
     /**
@@ -246,22 +221,11 @@ public class LatLon extends Coordinate implements ILatLon {
      * @param pCoordinate The coordinate to convert
      * @return The coordinate in degrees/minutes format
      * @since 12537
+     * @deprecated use {@link NauticalCoordinateFormat#degreesMinutes(double)}
      */
+    @Deprecated
     public static String degreesMinutes(double pCoordinate) {
-
-        double tAbsCoord = Math.abs(pCoordinate);
-        int tDegree = (int) tAbsCoord;
-        double tMinutes = (tAbsCoord - tDegree) * 60;
-
-        String sDegrees = Integer.toString(tDegree);
-        String sMinutes = cDmMinuteFormatter.format(tMinutes);
-
-        if (sMinutes.equals(cDm60)) {
-            sMinutes = cDm00;
-            sDegrees = Integer.toString(tDegree+1);
-        }
-
-        return sDegrees + '\u00B0' + sMinutes + '\'';
+        return NauticalCoordinateFormat.degreesMinutes(pCoordinate);
     }
 
     /**
@@ -301,15 +265,11 @@ public class LatLon extends Coordinate implements ILatLon {
      * Formats the latitude part according to the given format
      * @param d the coordinate format to use
      * @return the formatted latitude
+     * @deprecated use {@link org.openstreetmap.josm.data.coor.format.ICoordinateFormat#latToString(ILatLon)
      */
+    @Deprecated
     public String latToString(CoordinateFormat d) {
-        switch(d) {
-        case DECIMAL_DEGREES: return cDdFormatter.format(y);
-        case DEGREES_MINUTES_SECONDS: return degreesMinutesSeconds(y) + ((y < 0) ? SOUTH : NORTH);
-        case NAUTICAL: return degreesMinutes(y) + ((y < 0) ? SOUTH : NORTH);
-        case EAST_NORTH: return cDdFormatter.format(this.getEastNorth(Main.getProjection()).north());
-        default: return "ERR";
-        }
+        return d.getICoordinateFormat().latToString(this);
     }
 
     @Override
@@ -321,15 +281,11 @@ public class LatLon extends Coordinate implements ILatLon {
      * Formats the longitude part according to the given format
      * @param d the coordinate format to use
      * @return the formatted longitude
+     * @deprecated use {@link org.openstreetmap.josm.data.coor.format.ICoordinateFormat#lonToString(ILatLon)
      */
+    @Deprecated
     public String lonToString(CoordinateFormat d) {
-        switch(d) {
-        case DECIMAL_DEGREES: return cDdFormatter.format(x);
-        case DEGREES_MINUTES_SECONDS: return degreesMinutesSeconds(x) + ((x < 0) ? WEST : EAST);
-        case NAUTICAL: return degreesMinutes(x) + ((x < 0) ? WEST : EAST);
-        case EAST_NORTH: return cDdFormatter.format(this.getEastNorth(Main.getProjection()).east());
-        default: return "ERR";
-        }
+        return d.getICoordinateFormat().lonToString(this);
     }
 
     /**
@@ -468,8 +424,8 @@ public class LatLon extends Coordinate implements ILatLon {
      */
     public String toStringCSV(String separator) {
         return Utils.join(separator, Arrays.asList(
-                latToString(CoordinateFormat.DECIMAL_DEGREES),
-                lonToString(CoordinateFormat.DECIMAL_DEGREES)
+                DecimalDegreesCoordinateFormat.INSTANCE.latToString(this),
+                DecimalDegreesCoordinateFormat.INSTANCE.lonToString(this)
         ));
     }
 

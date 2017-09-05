@@ -33,7 +33,9 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
-import org.openstreetmap.josm.data.coor.CoordinateFormat;
+import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
+import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateFormat;
+import org.openstreetmap.josm.data.coor.conversion.ICoordinateFormat;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -723,12 +725,11 @@ public abstract class Main {
      */
     public static void preConstructorInit() {
         // init default coordinate format
-        try {
-            CoordinateFormat.setCoordinateFormat(CoordinateFormat.valueOf(Main.pref.get("coordinates")));
-        } catch (IllegalArgumentException iae) {
-            Logging.trace(iae);
-            CoordinateFormat.setCoordinateFormat(CoordinateFormat.DECIMAL_DEGREES);
+        ICoordinateFormat fmt = CoordinateFormatManager.getCoordinateFormat(Main.pref.get("coordinates"));
+        if (fmt == null) {
+            fmt = DecimalDegreesCoordinateFormat.INSTANCE;
         }
+        CoordinateFormatManager.setCoordinateFormat(fmt);
     }
 
     /**

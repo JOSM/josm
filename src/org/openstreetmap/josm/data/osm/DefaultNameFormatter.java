@@ -21,8 +21,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
 import org.openstreetmap.josm.data.osm.history.HistoryNameFormatter;
 import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
@@ -186,8 +186,8 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
                 preset.nameTemplate.appendText(name, node);
             }
             if (node.getCoor() != null) {
-                name.append(" \u200E(").append(node.getCoor().latToString(CoordinateFormat.getDefaultFormat())).append(", ")
-                    .append(node.getCoor().lonToString(CoordinateFormat.getDefaultFormat())).append(')');
+                name.append(" \u200E(").append(CoordinateFormatManager.getDefaultFormat().latToString(node)).append(", ")
+                    .append(CoordinateFormatManager.getDefaultFormat().lonToString(node)).append(')');
             }
         }
         decorateNameWithId(name, node);
@@ -540,9 +540,9 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         LatLon coord = node.getCoords();
         if (coord != null) {
             sb.append(" (")
-            .append(coord.latToString(CoordinateFormat.getDefaultFormat()))
+            .append(CoordinateFormatManager.getDefaultFormat().latToString(coord))
             .append(", ")
-            .append(coord.lonToString(CoordinateFormat.getDefaultFormat()))
+            .append(CoordinateFormatManager.getDefaultFormat().lonToString(coord))
             .append(')');
         }
         decorateNameWithId(sb, node);

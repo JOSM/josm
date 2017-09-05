@@ -16,8 +16,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.data.Bounds;
-import org.openstreetmap.josm.data.coor.CoordinateFormat;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.conversion.DecimalDegreesCoordinateFormat;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 
@@ -124,10 +124,10 @@ public class BoundingBoxSelectionPanel extends JPanel {
 
     private void updateBboxFields(Bounds area) {
         if (area == null) return;
-        tfLatLon[0].setText(area.getMin().latToString(CoordinateFormat.DECIMAL_DEGREES));
-        tfLatLon[1].setText(area.getMin().lonToString(CoordinateFormat.DECIMAL_DEGREES));
-        tfLatLon[2].setText(area.getMax().latToString(CoordinateFormat.DECIMAL_DEGREES));
-        tfLatLon[3].setText(area.getMax().lonToString(CoordinateFormat.DECIMAL_DEGREES));
+        tfLatLon[0].setText(DecimalDegreesCoordinateFormat.INSTANCE.latToString(area.getMin()));
+        tfLatLon[1].setText(DecimalDegreesCoordinateFormat.INSTANCE.lonToString(area.getMin()));
+        tfLatLon[2].setText(DecimalDegreesCoordinateFormat.INSTANCE.latToString(area.getMax()));
+        tfLatLon[3].setText(DecimalDegreesCoordinateFormat.INSTANCE.lonToString(area.getMax()));
     }
 
     private static class LatitudeValidator extends AbstractTextComponentValidator {
