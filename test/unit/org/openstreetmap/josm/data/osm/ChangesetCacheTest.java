@@ -9,12 +9,18 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.UserIdentityManager;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+import org.openstreetmap.josm.tools.Logging;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Unit test of {@link ChangesetCache}
@@ -22,11 +28,44 @@ import org.openstreetmap.josm.data.UserIdentityManager;
 public class ChangesetCacheTest {
 
     /**
-     * Clears cache after each unit test.
+     * Setup test.
+     */
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules();
+
+    private static final ChangesetCache cache = ChangesetCache.getInstance();
+
+    /**
+     * Clears cache before/after each unit test.
      */
     @After
-    public void after() {
-        ChangesetCache.getInstance().clear();
+    @Before
+    public void clearCache() {
+        cache.listeners.clear();
+        cache.clear();
+    }
+
+    abstract class TestListener implements ChangesetCacheListener {
+
+        protected final CountDownLatch latch = new CountDownLatch(1);
+        protected ChangesetCacheEvent event;
+
+        @Override
+        public void changesetCacheUpdated(ChangesetCacheEvent event) {
+            this.event = event;
+            latch.countDown();
+        }
+
+        protected final void await() {
+            try {
+                latch.await(2, TimeUnit.SECONDS);
+            } catch (InterruptedException e) {
+                Logging.error(e);
+            }
+        }
+
+        abstract void test();
     }
 
     /**
@@ -37,16 +76,8 @@ public class ChangesetCacheTest {
         assertNotNull(ChangesetCache.getInstance());
     }
 
-    @SuppressWarnings("unchecked")
-    private static List<ChangesetCacheListener> getListeners(ChangesetCache cache) throws ReflectiveOperationException {
-        return (List<ChangesetCacheListener>) TestUtils.getPrivateField(cache, "listeners");
-    }
-
     @Test
-    public void testAddAndRemoveListeners() throws ReflectiveOperationException {
-        ChangesetCache cache = ChangesetCache.getInstance();
-        cache.clear();
-
+    public void testAddAndRemoveListeners() {
         // should work
         cache.addChangesetCacheListener(null);
 
@@ -58,19 +89,16 @@ public class ChangesetCacheTest {
         cache.addChangesetCacheListener(listener);
         // adding a second time - should work too
         cache.addChangesetCacheListener(listener);
-        assertEquals(1, getListeners(cache).size()); // ... but only added once
+        assertEquals(1, cache.listeners.size()); // ... but only added once
 
         cache.removeChangesetCacheListener(null);
 
         cache.removeChangesetCacheListener(listener);
-        assertTrue(getListeners(cache).isEmpty());
+        assertTrue(cache.listeners.isEmpty());
     }
 
     @Test
     public void testUpdateGetRemoveCycle() {
-        ChangesetCache cache = ChangesetCache.getInstance();
-        cache.clear();
-
         cache.update(new Changeset(1));
         assertEquals(1, cache.size());
         assertNotNull(cache.get(1));
@@ -81,9 +109,6 @@ public class ChangesetCacheTest {
 
     @Test
     public void testUpdateTwice() {
-        ChangesetCache cache = ChangesetCache.getInstance();
-        cache.clear();
-
         Changeset cs = new Changeset(1);
         cs.setIncomplete(false);
         cs.put("key1", "value1");
@@ -106,11 +131,7 @@ public class ChangesetCacheTest {
     }
 
     @Test
-    public void testContains() throws ReflectiveOperationException {
-        ChangesetCache cache = ChangesetCache.getInstance();
-        getListeners(cache).clear();
-        cache.clear();
-
+    public void testContains() {
         Changeset cs = new Changeset(1);
         cache.update(cs);
 
@@ -124,15 +145,11 @@ public class ChangesetCacheTest {
     }
 
     @Test
-    public void testFireingEventsAddAChangeset() throws ReflectiveOperationException {
-        ChangesetCache cache = ChangesetCache.getInstance();
-        cache.clear();
-        getListeners(cache).clear();
-
-        // should work
-        ChangesetCacheListener listener = new ChangesetCacheListener() {
+    public void testFireingEventsAddAChangeset() {
+        TestListener listener = new TestListener() {
             @Override
-            public void changesetCacheUpdated(ChangesetCacheEvent event) {
+            public void test() {
+                await();
                 assertNotNull(event);
                 assertEquals(1, event.getAddedChangesets().size());
                 assertTrue(event.getRemovedChangesets().isEmpty());
@@ -142,19 +159,16 @@ public class ChangesetCacheTest {
         };
         cache.addChangesetCacheListener(listener);
         cache.update(new Changeset(1));
+        listener.test();
         cache.removeChangesetCacheListener(listener);
     }
 
     @Test
-    public void testFireingEventsUpdateChangeset() throws ReflectiveOperationException {
-        ChangesetCache cache = ChangesetCache.getInstance();
-        cache.clear();
-        getListeners(cache).clear();
-
-        // should work
-        ChangesetCacheListener listener = new ChangesetCacheListener() {
+    public void testFireingEventsUpdateChangeset() {
+        TestListener listener = new TestListener() {
             @Override
-            public void changesetCacheUpdated(ChangesetCacheEvent event) {
+            void test() {
+                await();
                 assertNotNull(event);
                 assertTrue(event.getAddedChangesets().isEmpty());
                 assertTrue(event.getRemovedChangesets().isEmpty());
@@ -162,23 +176,33 @@ public class ChangesetCacheTest {
                 assertEquals(cache, event.getSource());
             }
         };
-        cache.update(new Changeset(1));
+        Changeset cs = new Changeset(1);
+        cache.update(cs);
 
         cache.addChangesetCacheListener(listener);
-        cache.update(new Changeset(1));
+        cache.update(cs);
+        listener.test();
         cache.removeChangesetCacheListener(listener);
     }
 
     @Test
-    public void testFireingEventsRemoveChangeset() throws ReflectiveOperationException {
-        ChangesetCache cache = ChangesetCache.getInstance();
-        cache.clear();
-        getListeners(cache).clear();
-
-        // should work
-        ChangesetCacheListener listener = new ChangesetCacheListener() {
+    public void testFireingEventsRemoveChangeset() {
+        // Waiter listener to ensure the second listener does not receive the first event
+        TestListener waiter = new TestListener() {
             @Override
-            public void changesetCacheUpdated(ChangesetCacheEvent event) {
+            void test() {
+                await();
+            }
+        };
+        cache.addChangesetCacheListener(waiter);
+        cache.update(new Changeset(1));
+        waiter.test();
+        cache.removeChangesetCacheListener(waiter);
+
+        TestListener listener = new TestListener() {
+            @Override
+            void test() {
+                await();
                 assertNotNull(event);
                 assertTrue(event.getAddedChangesets().isEmpty());
                 assertEquals(1, event.getRemovedChangesets().size());
@@ -186,10 +210,9 @@ public class ChangesetCacheTest {
                 assertEquals(cache, event.getSource());
             }
         };
-        cache.update(new Changeset(1));
-
         cache.addChangesetCacheListener(listener);
         cache.remove(1);
+        listener.test();
         cache.removeChangesetCacheListener(listener);
     }
 
@@ -198,7 +221,6 @@ public class ChangesetCacheTest {
      */
     @Test
     public void testGetOpenChangesets() {
-        final ChangesetCache cache = ChangesetCache.getInstance();
         // empty cache => empty list
         assertTrue(
                 "Empty cache should produce an empty list.",
@@ -235,7 +257,6 @@ public class ChangesetCacheTest {
      */
     @Test
     public void testGetOpenChangesetsForCurrentUser() {
-        final ChangesetCache cache = ChangesetCache.getInstance();
         // empty cache => empty list
         assertTrue(
                 "Empty cache should produce an empty list.",
@@ -270,7 +291,6 @@ public class ChangesetCacheTest {
      */
     @Test
     public void testRemove() {
-        final ChangesetCache cache = ChangesetCache.getInstance();
         Changeset cs1 = new Changeset(1);
         cache.update(cs1);
         assertEquals(1, cache.getChangesets().size());
