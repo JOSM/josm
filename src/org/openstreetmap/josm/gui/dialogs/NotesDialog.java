@@ -35,6 +35,7 @@ import org.openstreetmap.josm.data.notes.Note;
 import org.openstreetmap.josm.data.notes.Note.State;
 import org.openstreetmap.josm.data.notes.NoteComment;
 import org.openstreetmap.josm.data.osm.NoteData;
+import org.openstreetmap.josm.data.osm.NoteData.NoteDataUpdateListener;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.NoteInputDialog;
@@ -54,7 +55,7 @@ import org.openstreetmap.josm.tools.date.DateUtils;
  * @since 7852 (renaming)
  * @since 7608 (creation)
  */
-public class NotesDialog extends ToggleDialog implements LayerChangeListener {
+public class NotesDialog extends ToggleDialog implements LayerChangeListener, NoteDataUpdateListener {
 
     private NoteTableModel model;
     private JList<Note> displayList;
@@ -154,12 +155,14 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
             noteData = ((NoteLayer) e.getAddedLayer()).getNoteData();
             model.setData(noteData.getNotes());
             setNotes(noteData.getSortedNotes());
+            noteData.addNoteDataUpdateListener(this);
         }
     }
 
     @Override
     public void layerRemoving(LayerRemoveEvent e) {
         if (e.getRemovedLayer() instanceof NoteLayer) {
+            noteData.removeNoteDataUpdateListener(this);
             noteData = null;
             model.clearData();
             MapFrame map = MainApplication.getMap();
@@ -172,6 +175,16 @@ public class NotesDialog extends ToggleDialog implements LayerChangeListener {
     @Override
     public void layerOrderChanged(LayerOrderChangeEvent e) {
         // ignored
+    }
+
+    @Override
+    public void noteDataUpdated(NoteData data) {
+        setNotes(data.getSortedNotes());
+    }
+
+    @Override
+    public void selectedNoteChanged(NoteData noteData) {
+        selectionChanged();
     }
 
     /**
