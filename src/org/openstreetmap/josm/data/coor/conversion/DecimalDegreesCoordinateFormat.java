@@ -11,7 +11,7 @@ import org.openstreetmap.josm.data.coor.ILatLon;
  */
 public class DecimalDegreesCoordinateFormat extends AbstractCoordinateFormat {
 
-    public static DecimalDegreesCoordinateFormat INSTANCE = new DecimalDegreesCoordinateFormat();
+    public static final DecimalDegreesCoordinateFormat INSTANCE = new DecimalDegreesCoordinateFormat();
 
     protected DecimalDegreesCoordinateFormat() {
         super("DECIMAL_DEGREES", tr("Decimal Degrees"));

@@ -20,7 +20,7 @@ public class DMSCoordinateFormat extends AbstractCoordinateFormat {
     private static final String DMS60 = DMS_SECOND_FORMATTER.format(60.0);
     private static final String DMS00 = DMS_SECOND_FORMATTER.format(0.0);
 
-    public static DMSCoordinateFormat INSTANCE = new DMSCoordinateFormat();
+    public static final DMSCoordinateFormat INSTANCE = new DMSCoordinateFormat();
 
     protected DMSCoordinateFormat() {
         super("DEGREES_MINUTES_SECONDS", tr("deg\u00B0 min'' sec\""));

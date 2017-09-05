@@ -13,7 +13,7 @@ import org.openstreetmap.josm.data.coor.ILatLon;
  */
 public class ProjectedCoordinateFormat extends AbstractCoordinateFormat {
 
-    public static ProjectedCoordinateFormat INSTANCE = new ProjectedCoordinateFormat();
+    public static final ProjectedCoordinateFormat INSTANCE = new ProjectedCoordinateFormat();
 
     protected ProjectedCoordinateFormat() {
         super("EAST_NORTH", tr("Projected Coordinates"));
