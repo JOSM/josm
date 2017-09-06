@@ -1,9 +1,10 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.util;
+package org.openstreetmap.josm.tools;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
+import org.openstreetmap.josm.tools.RotationAngle;
 
 /**
  * Unit tests of {@link RotationAngle} class.

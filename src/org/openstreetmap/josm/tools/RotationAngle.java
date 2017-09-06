@@ -1,19 +1,17 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.util;
+package org.openstreetmap.josm.tools;
 
 import java.util.Locale;
 
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.tools.Geometry;
-import org.openstreetmap.josm.tools.SubclassFilteredCollection;
-import org.openstreetmap.josm.tools.Utils;
 
 /**
  * Determines how an icon is to be rotated depending on the primitive to be displayed.
  * @since  8199 (creation)
  * @since 10599 (functional interface)
+ * @since 12756 (moved from {@code gui.util} package)
  */
 @FunctionalInterface
 public interface RotationAngle {
