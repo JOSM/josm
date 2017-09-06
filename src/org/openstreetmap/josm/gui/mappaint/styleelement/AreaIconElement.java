@@ -11,7 +11,7 @@ import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.styleelement.placement.PartiallyInsideAreaStrategy;
 import org.openstreetmap.josm.gui.mappaint.styleelement.placement.PositionForAreaStrategy;
-import org.openstreetmap.josm.gui.util.RotationAngle;
+import org.openstreetmap.josm.tools.RotationAngle;
 
 /**
  * This class defines how an icon is rendered onto the area.
