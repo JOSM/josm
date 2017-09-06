@@ -2,6 +2,8 @@
 package org.openstreetmap.josm.tools;
 
 import java.awt.GraphicsEnvironment;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -238,6 +240,21 @@ public interface PlatformHook {
     default boolean isOpenJDK() {
         String javaHome = System.getProperty("java.home");
         return javaHome != null && javaHome.contains("openjdk");
+    }
+
+    /**
+     * Returns extended modifier key used as the appropriate accelerator key for menu shortcuts.
+     * It is advised everywhere to use {@link Toolkit#getMenuShortcutKeyMask()} to get the cross-platform modifier, but:
+     * <ul>
+     * <li>it returns KeyEvent.CTRL_MASK instead of KeyEvent.CTRL_DOWN_MASK. We used the extended
+     *    modifier for years, and Oracle recommends to use it instead, so it's best to keep it</li>
+     * <li>the method throws a HeadlessException ! So we would need to handle it for unit tests anyway</li>
+     * </ul>
+     * @return extended modifier key used as the appropriate accelerator key for menu shortcuts
+     * @since 12748 (as a replacement to {@code GuiHelper.getMenuShortcutKeyMaskEx()})
+     */
+    default int getMenuShortcutKeyMaskEx() {
+        return KeyEvent.CTRL_DOWN_MASK;
     }
 
     /**
