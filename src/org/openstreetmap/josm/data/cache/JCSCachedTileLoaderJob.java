@@ -15,12 +15,9 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
-import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.data.cache.ICachedLoaderListener.LoadResult;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -45,7 +42,6 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 8168
  */
 public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements ICachedLoaderJob<K> {
-    private static final Logger LOG = FeatureAdapter.getLogger(JCSCachedTileLoaderJob.class.getCanonicalName());
     protected static final long DEFAULT_EXPIRE_TIME = TimeUnit.DAYS.toMillis(7);
     // Limit for the max-age value send by the server.
     protected static final long EXPIRE_TIME_SERVER_LIMIT = TimeUnit.DAYS.toMillis(28);
@@ -158,7 +154,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             deduplicationKey = url.toString();
         }
         if (deduplicationKey == null) {
-            LOG.log(Level.WARNING, "No url returned for: {0}, skipping", getCacheKey());
+            Logging.warn("No url returned for: {0}, skipping", getCacheKey());
             throw new IllegalArgumentException("No url returned");
         }
         synchronized (inProgress) {
@@ -173,7 +169,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
 
         if (first || force) {
             // submit all jobs to separate thread, so calling thread is not blocked with IO when loading from disk
-            LOG.log(Level.FINE, "JCS - Submitting job for execution for url: {0}", getUrlNoException());
+            Logging.debug("JCS - Submitting job for execution for url: {0}", getUrlNoException());
             downloadJobExecutor.execute(this);
         }
     }
@@ -225,13 +221,13 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
         final Thread currentThread = Thread.currentThread();
         final String oldName = currentThread.getName();
         currentThread.setName("JCS Downloading: " + getUrlNoException());
-        LOG.log(Level.FINE, "JCS - starting fetch of url: {0} ", getUrlNoException());
+        Logging.debug("JCS - starting fetch of url: {0} ", getUrlNoException());
         ensureCacheElement();
         try {
             // try to fetch from cache
             if (!force && cacheElement != null && isCacheElementValid() && isObjectLoadable()) {
                 // we got something in cache, and it's valid, so lets return it
-                LOG.log(Level.FINE, "JCS - Returning object from cache: {0}", getCacheKey());
+                Logging.debug("JCS - Returning object from cache: {0}", getCacheKey());
                 finishLoading(LoadResult.SUCCESS);
                 return;
             }
@@ -244,7 +240,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 if (isObjectLoadable()) {
                     // try to get stale entry in cache
                     finishLoading(LoadResult.SUCCESS);
-                    LOG.log(Level.FINE, "JCS - found stale object in cache: {0}", getUrlNoException());
+                    Logging.debug("JCS - found stale object in cache: {0}", getUrlNoException());
                 } else {
                     // failed completely
                     finishLoading(LoadResult.FAILURE);
@@ -267,7 +263,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             }
         }
         if (listeners == null) {
-            LOG.log(Level.WARNING, "Listener not found for URL: {0}. Listener not notified!", getUrlNoException());
+            Logging.warn("Listener not found for URL: {0}. Listener not notified!", getUrlNoException());
             return;
         }
         for (ICachedLoaderListener l: listeners) {
@@ -284,17 +280,17 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             // that is too large)
             expires = Math.min(expires, attributes.getCreateTime() + EXPIRE_TIME_SERVER_LIMIT);
             if (now > expires) {
-                LOG.log(Level.FINE, "JCS - Object {0} has expired -> valid to {1}, now is: {2}",
+                Logging.debug("JCS - Object {0} has expired -> valid to {1}, now is: {2}",
                         new Object[]{getUrlNoException(), Long.toString(expires), Long.toString(now)});
                 return false;
             }
         } else if (attributes.getLastModification() > 0 &&
                 now - attributes.getLastModification() > DEFAULT_EXPIRE_TIME) {
             // check by file modification date
-            LOG.log(Level.FINE, "JCS - Object has expired, maximum file age reached {0}", getUrlNoException());
+            Logging.debug("JCS - Object has expired, maximum file age reached {0}", getUrlNoException());
             return false;
         } else if (now - attributes.getCreateTime() > DEFAULT_EXPIRE_TIME) {
-            LOG.log(Level.FINE, "JCS - Object has expired, maximum time since object creation reached {0}", getUrlNoException());
+            Logging.debug("JCS - Object has expired, maximum time since object creation reached {0}", getUrlNoException());
             return false;
         }
         return true;
@@ -313,11 +309,11 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             if (isObjectLoadable() &&
                     Boolean.TRUE.equals(useHead.get(getServerKey())) &&
                     isCacheValidUsingHead()) {
-                LOG.log(Level.FINE, "JCS - cache entry verified using HEAD request: {0}", getUrl());
+                Logging.debug("JCS - cache entry verified using HEAD request: {0}", getUrl());
                 return true;
             }
 
-            LOG.log(Level.FINE, "JCS - starting HttpClient GET request for URL: {0}", getUrl());
+            Logging.debug("JCS - starting HttpClient GET request for URL: {0}", getUrl());
             final HttpClient request = getRequest("GET", true);
 
             if (isObjectLoadable() &&
@@ -333,7 +329,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             if (urlConn.getResponseCode() == 304) {
                 // If isModifiedSince or If-None-Match has been set
                 // and the server answers with a HTTP 304 = "Not Modified"
-                LOG.log(Level.FINE, "JCS - If-Modified-Since/ETag test: local version is up to date: {0}", getUrl());
+                Logging.debug("JCS - If-Modified-Since/ETag test: local version is up to date: {0}", getUrl());
                 return true;
             } else if (isObjectLoadable() // we have an object in cache, but we haven't received 304 response code
                     && (
@@ -343,7 +339,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                 // we sent ETag or If-Modified-Since, but didn't get 304 response code
                 // for further requests - use HEAD
                 String serverKey = getServerKey();
-                LOG.log(Level.INFO, "JCS - Host: {0} found not to return 304 codes for If-Modified-Since or If-None-Match headers",
+                Logging.info("JCS - Host: {0} found not to return 304 codes for If-Modified-Since or If-None-Match headers",
                         serverKey);
                 useHead.put(serverKey, Boolean.TRUE);
             }
@@ -369,21 +365,21 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
                     // as empty (eg. empty tile images) to save some space
                     cacheData = createCacheEntry(raw);
                     cache.put(getCacheKey(), cacheData, attributes);
-                    LOG.log(Level.FINE, "JCS - downloaded key: {0}, length: {1}, url: {2}",
+                    Logging.debug("JCS - downloaded key: {0}, length: {1}, url: {2}",
                             new Object[] {getCacheKey(), raw.length, getUrl()});
                     return true;
                 } else if (cacheAsEmpty()) {
                     cacheData = createCacheEntry(new byte[]{});
                     cache.put(getCacheKey(), cacheData, attributes);
-                    LOG.log(Level.FINE, "JCS - Caching empty object {0}", getUrl());
+                    Logging.debug("JCS - Caching empty object {0}", getUrl());
                     return true;
                 } else {
-                    LOG.log(Level.FINE, "JCS - failure during load - reponse is not loadable nor cached as empty");
+                    Logging.debug("JCS - failure during load - reponse is not loadable nor cached as empty");
                     return false;
                 }
             }
         } catch (FileNotFoundException e) {
-            LOG.log(Level.FINE, "JCS - Caching empty object as server returned 404 for: {0}", getUrlNoException());
+            Logging.debug("JCS - Caching empty object as server returned 404 for: {0}", getUrlNoException());
             attributes.setResponseCode(404);
             attributes.setError(e);
             boolean doCache = isResponseLoadable(null, 404, null) || cacheAsEmpty();
@@ -393,7 +389,7 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
             }
             return doCache;
         } catch (IOException e) {
-            LOG.log(Level.FINE, "JCS - IOExecption during communication with server for: {0}", getUrlNoException());
+            Logging.debug("JCS - IOExecption during communication with server for: {0}", getUrlNoException());
             if (isObjectLoadable()) {
                 return true;
             } else {
@@ -404,11 +400,10 @@ public abstract class JCSCachedTileLoaderJob<K, V extends CacheEntry> implements
 
         } catch (InterruptedException e) {
             attributes.setError(e);
-            LOG.log(Level.WARNING, "JCS - Exception during download {0}", getUrlNoException());
-            Logging.warn(e);
+            Logging.logWithStackTrace(Logging.LEVEL_WARN, e, "JCS - Exception during download {0}", getUrlNoException());
             Thread.currentThread().interrupt();
         }
-        LOG.log(Level.WARNING, "JCS - Silent failure during download: {0}", getUrlNoException());
+        Logging.warn("JCS - Silent failure during download: {0}", getUrlNoException());
         return false;
     }
 

@@ -26,7 +26,6 @@ import org.apache.commons.jcs.engine.behavior.ICompositeCacheAttributes.DiskUsag
 import org.apache.commons.jcs.engine.control.CompositeCache;
 import org.apache.commons.jcs.engine.control.CompositeCacheManager;
 import org.apache.commons.jcs.utils.serialization.StandardSerializer;
-import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
@@ -41,8 +40,6 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 8168
  */
 public final class JCSCacheManager {
-    private static final Logger LOG = FeatureAdapter.getLogger(JCSCacheManager.class.getCanonicalName());
-
     private static volatile CompositeCacheManager cacheManager;
     private static long maxObjectTTL = -1;
     private static final String PREFERENCE_PREFIX = "jcs.cache";
@@ -70,12 +67,12 @@ public final class JCSCacheManager {
 
         File cacheDirLockPath = new File(cacheDir, ".lock");
         if (!cacheDirLockPath.exists() && !cacheDirLockPath.createNewFile()) {
-            LOG.log(Level.WARNING, "Cannot create cache dir lock file");
+            Logging.warn("Cannot create cache dir lock file");
         }
         cacheDirLock = new FileOutputStream(cacheDirLockPath).getChannel().tryLock();
 
         if (cacheDirLock == null)
-            LOG.log(Level.WARNING, "Cannot lock cache directory. Will not use disk cache");
+            Logging.warn("Cannot lock cache directory. Will not use disk cache");
 
         // raising logging level gives ~500x performance gain
         // http://westsworld.dk/blog/2008/01/jcs-and-performance/
@@ -229,7 +226,7 @@ public final class JCSCacheManager {
         ret.setDiskLimitType(IDiskCacheAttributes.DiskLimitType.SIZE);
         File path = new File(cachePath);
         if (!path.exists() && !path.mkdirs()) {
-            LOG.log(Level.WARNING, "Failed to create cache path: {0}", cachePath);
+            Logging.warn("Failed to create cache path: {0}", cachePath);
         } else {
             ret.setDiskPath(cachePath);
         }

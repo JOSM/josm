@@ -270,6 +270,19 @@ public final class Logging {
         logPrivate(level, () -> getErrorLogWithStack(message, t));
     }
 
+    /**
+     * Logs a throwable that happened. Adds the stack trace to the log.
+     * @param level The level.
+     * @param t The throwable that should be logged.
+     * @param pattern The formatted message to print.
+     * @param args The objects to insert into format string
+     * @see #logWithStackTrace(Level, Throwable)
+     */
+    public static void logWithStackTrace(Level level, Throwable t, String pattern, Object... args) {
+        logPrivate(level, () -> getErrorLogWithStack(MessageFormat.format(pattern,  args), t));
+    }
+
+
     private static void logPrivate(Level level, String pattern, Object... args) {
         logPrivate(level, () -> MessageFormat.format(pattern, args));
     }
