@@ -537,14 +537,12 @@ public class TagEditorModel extends AbstractTableModel {
         for (OsmPrimitive prim : primitives) {
             for (String oldkey : prim.keySet()) {
                 if (!currentkeys.contains(oldkey)) {
-                    ChangePropertyCommand deleteCommand =
-                        new ChangePropertyCommand(prim, oldkey, null);
-                    commands.add(deleteCommand);
+                    commands.add(new ChangePropertyCommand(prim, oldkey, null));
                 }
             }
         }
 
-        return new SequenceCommand(
+        return commands.isEmpty() ? null : new SequenceCommand(
                 trn("Remove old keys from up to {0} object", "Remove old keys from up to {0} objects", primitives.size(), primitives.size()),
                 commands
         );
