@@ -127,7 +127,7 @@ public class JOSMFixture {
         }
 
         // Setup callbacks
-        DeleteCommand.setDeletionCallback(DeleteAction::checkAndConfirmOutlyingDelete);
+        DeleteCommand.setDeletionCallback(DeleteAction.defaultDeletionCallback);
 
         if (createGui) {
             GuiHelper.runInEDTAndWaitWithException(new Runnable() {
