@@ -15,7 +15,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.UserIdentityManager;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
@@ -30,8 +29,6 @@ import org.openstreetmap.josm.tools.SubclassFilteredCollection;
  *
  * The cache itself listens to {@link java.util.prefs.PreferenceChangeEvent}s. It
  * clears itself if the OSM API URL is changed in the preferences.
- *
- * {@link ChangesetCacheEvent}s are delivered on the EDT.
  *
  */
 public final class ChangesetCache implements PreferenceChangedListener {
@@ -79,11 +76,9 @@ public final class ChangesetCache implements PreferenceChangedListener {
     }
 
     private void fireChangesetCacheEvent(final ChangesetCacheEvent e) {
-        GuiHelper.runInEDT(() -> {
-            for (ChangesetCacheListener l: listeners) {
-                l.changesetCacheUpdated(e);
-            }
-        });
+        for (ChangesetCacheListener l: listeners) {
+            l.changesetCacheUpdated(e);
+        }
     }
 
     private void update(Changeset cs, DefaultChangesetCacheEvent e) {

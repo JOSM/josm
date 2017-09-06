@@ -34,7 +34,7 @@ public final class MessageNotifier {
 
     /**
      * Called when new new messages are detected.
-     * @since xxx
+     * @since 12766
      */
     @FunctionalInterface
     public interface NotifierCallback {
