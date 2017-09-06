@@ -333,20 +333,13 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
     }
 
     /**
-     * Maintains a list of used tags for autocompletion.
-     */
-    private AutoCompletionManager autocomplete;
-
-    /**
      * Returns the autocompletion manager, which maintains a list of used tags for autocompletion.
      * @return the autocompletion manager
+     * @deprecated to be removed end of 2017. Use {@link AutoCompletionManager#of(DataSet)} instead.
      */
+    @Deprecated
     public AutoCompletionManager getAutoCompletionManager() {
-        if (autocomplete == null) {
-            autocomplete = new AutoCompletionManager(this);
-            addDataSetListener(autocomplete);
-        }
-        return autocomplete;
+        return AutoCompletionManager.of(this);
     }
 
     /**

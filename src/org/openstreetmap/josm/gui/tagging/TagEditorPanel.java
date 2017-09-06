@@ -180,7 +180,7 @@ public class TagEditorPanel extends JPanel {
     public void initAutoCompletion(OsmDataLayer layer) {
         CheckParameterUtil.ensureParameterNotNull(layer, "layer");
 
-        AutoCompletionManager autocomplete = layer.data.getAutoCompletionManager();
+        AutoCompletionManager autocomplete = AutoCompletionManager.of(layer.data);
         AutoCompletionList acList = new AutoCompletionList();
 
         TagCellEditor editor = (TagCellEditor) tagTable.getColumnModel().getColumn(0).getCellEditor();

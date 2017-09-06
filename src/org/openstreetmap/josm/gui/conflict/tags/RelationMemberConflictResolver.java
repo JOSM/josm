@@ -35,6 +35,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -202,7 +203,7 @@ public class RelationMemberConflictResolver extends JPanel {
         AutoCompletionList acList = new AutoCompletionList();
         OsmDataLayer editLayer = MainApplication.getLayerManager().getEditLayer();
         if (editLayer != null) {
-            editLayer.data.getAutoCompletionManager().populateWithMemberRoles(acList);
+            AutoCompletionManager.of(editLayer.data).populateWithMemberRoles(acList);
         }
         tfRole.setAutoCompletionList(acList);
         AutoCompletingTextField editor = (AutoCompletingTextField) tblResolver.getColumnModel().getColumn(2).getCellEditor();
@@ -211,7 +212,7 @@ public class RelationMemberConflictResolver extends JPanel {
         }
         AutoCompletionList acList2 = new AutoCompletionList();
         if (editLayer != null) {
-            editLayer.data.getAutoCompletionManager().populateWithKeys(acList2);
+            AutoCompletionManager.of(editLayer.data).populateWithKeys(acList2);
         }
         tfKey.setAutoCompletionList(acList2);
     }

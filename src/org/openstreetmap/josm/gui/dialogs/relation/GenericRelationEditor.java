@@ -93,6 +93,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
@@ -422,7 +423,7 @@ public class GenericRelationEditor extends RelationEditor {
                         AutoCompletionList list = tfRole.getAutoCompletionList();
                         if (list != null) {
                             list.clear();
-                            re.getLayer().data.getAutoCompletionManager().populateWithMemberRoles(list, re.getRelation());
+                            AutoCompletionManager.of(re.getLayer().data).populateWithMemberRoles(list, re.getRelation());
                         }
                     }
                 }

@@ -23,6 +23,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
+import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
@@ -47,7 +48,7 @@ public abstract class TaggingPresetItem {
             return;
         }
         AutoCompletionList list = new AutoCompletionList();
-        layer.data.getAutoCompletionManager().populateWithTagValues(list, keys);
+        AutoCompletionManager.of(layer.data).populateWithTagValues(list, keys);
         field.setAutoCompletionList(list);
     }
 
