@@ -75,6 +75,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueueListener;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -384,6 +385,7 @@ public class MainApplication extends Main {
     protected void shutdown() {
         if (!GraphicsEnvironment.isHeadless()) {
             worker.shutdown();
+            JCSCacheManager.shutdown();
         }
         if (mainFrame != null) {
             mainFrame.storeState();
