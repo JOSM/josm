@@ -33,7 +33,6 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationToChildReference;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.gui.dialogs.DeleteFromRelationConfirmationDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -41,6 +40,8 @@ import org.openstreetmap.josm.tools.Utils;
 
 /**
  * A command to delete a number of primitives from the dataset.
+ * To be used correctly, this class requires an initial call to {@link #setDeletionCallback(DeletionCallback)} to
+ * allow interactive confirmation actions.
  * @since 23
  */
 public class DeleteCommand extends Command {
@@ -93,6 +94,14 @@ public class DeleteCommand extends Command {
          * @since 12760
          */
         boolean confirmRelationDeletion(Collection<Relation> relations);
+
+        /**
+         * Confirm before removing a collection of primitives from their parent relations.
+         * @param references the list of relation-to-child references
+         * @return {@code true} if user confirms the deletion
+         * @since 12763
+         */
+        boolean confirmDeletionFromRelation(Collection<RelationToChildReference> references);
     }
 
     private static DeletionCallback callback;
@@ -576,12 +585,8 @@ public class DeleteCommand extends Command {
         if (!silent) {
             Set<RelationToChildReference> references = RelationToChildReference.getRelationToChildReferences(primitivesToDelete);
             references.removeIf(ref -> ref.getParent().isDeleted());
-            if (!references.isEmpty()) {
-                DeleteFromRelationConfirmationDialog dialog = DeleteFromRelationConfirmationDialog.getInstance();
-                dialog.getModel().populate(references);
-                dialog.setVisible(true);
-                if (dialog.isCanceled())
-                    return null;
+            if (!references.isEmpty() && !callback.confirmDeletionFromRelation(references)) {
+                return null;
             }
         }
 

@@ -18,9 +18,11 @@ import org.openstreetmap.josm.command.DeleteCommand.DeletionCallback;
 import org.openstreetmap.josm.data.osm.DefaultNameFormatter;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
+import org.openstreetmap.josm.data.osm.RelationToChildReference;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.dialogs.DeleteFromRelationConfirmationDialog;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -44,6 +46,14 @@ public final class DeleteAction extends JosmAction {
         @Override
         public boolean confirmRelationDeletion(Collection<Relation> relations) {
             return DeleteAction.confirmRelationDeletion(relations);
+        }
+
+        @Override
+        public boolean confirmDeletionFromRelation(Collection<RelationToChildReference> references) {
+            DeleteFromRelationConfirmationDialog dialog = DeleteFromRelationConfirmationDialog.getInstance();
+            dialog.getModel().populate(references);
+            dialog.setVisible(true);
+            return !dialog.isCanceled();
         }
     };
 
