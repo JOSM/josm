@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
+import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +48,9 @@ import javax.net.ssl.SSLSocketFactory;
 import javax.swing.Action;
 import javax.swing.InputMap;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.LookAndFeel;
 import javax.swing.RepaintManager;
@@ -79,6 +82,7 @@ import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.data.osm.search.SearchMode;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.gui.ProgramArguments.Option;
@@ -106,6 +110,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
+import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.io.CertificateAmendment;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.MessageNotifier;
@@ -121,6 +126,7 @@ import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.tools.FontsManager;
+import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -967,6 +973,7 @@ public class MainApplication extends Main {
     }
 
     static void setupCallbacks() {
+        MessageNotifier.setNotifierCallback(MainApplication::notifyNewMessages);
         DeleteCommand.setDeletionCallback(DeleteAction.defaultDeletionCallback);
     }
 
@@ -1305,5 +1312,21 @@ public class MainApplication extends Main {
         public void handlePreferences() {
             MainApplication.getMenu().preferences.actionPerformed(null);
         }
+    }
+
+    static void notifyNewMessages(UserInfo userInfo) {
+        GuiHelper.runInEDT(() -> {
+            JPanel panel = new JPanel(new GridBagLayout());
+            panel.add(new JLabel(trn("You have {0} unread message.", "You have {0} unread messages.",
+                    userInfo.getUnreadMessages(), userInfo.getUnreadMessages())),
+                    GBC.eol());
+            panel.add(new UrlLabel(Main.getBaseUserUrl() + '/' + userInfo.getDisplayName() + "/inbox",
+                    tr("Click here to see your inbox.")), GBC.eol());
+            panel.setOpaque(false);
+            new Notification().setContent(panel)
+                .setIcon(JOptionPane.INFORMATION_MESSAGE)
+                .setDuration(Notification.TIME_LONG)
+                .show();
+        });
     }
 }

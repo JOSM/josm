@@ -2,33 +2,23 @@
 package org.openstreetmap.josm.io;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
-import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.GridBagLayout;
 import java.net.Authenticator.RequestorType;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
-import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
-import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.gui.widgets.UrlLabel;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsAgentResponse;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
 import org.openstreetmap.josm.io.auth.JosmPreferencesCredentialAgent;
-import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -40,6 +30,29 @@ public final class MessageNotifier {
 
     private MessageNotifier() {
         // Hide default constructor for utils classes
+    }
+
+    /**
+     * Called when new new messages are detected.
+     * @since xxx
+     */
+    @FunctionalInterface
+    public interface NotifierCallback {
+        /**
+         * Perform the actual notification of new messages.
+         * @param userInfo the new user information, that includes the number of unread messages
+         */
+        void notifyNewMessages(UserInfo userInfo);
+    }
+
+    private static NotifierCallback callback;
+
+    /**
+     * Sets the {@link NotifierCallback} responsible of notifying the user when new messages are received.
+     * @param notifierCallback the new {@code NotifierCallback}
+     */
+    public static void setNotifierCallback(NotifierCallback notifierCallback) {
+        callback = notifierCallback;
     }
 
     /** Property defining if this task is enabled or not */
@@ -70,18 +83,7 @@ public final class MessageNotifier {
                             tr("get number of unread messages"));
                     final int unread = userInfo.getUnreadMessages();
                     if (unread > 0 && unread != lastUnreadCount) {
-                        GuiHelper.runInEDT(() -> {
-                            JPanel panel = new JPanel(new GridBagLayout());
-                            panel.add(new JLabel(trn("You have {0} unread message.", "You have {0} unread messages.", unread, unread)),
-                                    GBC.eol());
-                            panel.add(new UrlLabel(Main.getBaseUserUrl() + '/' + userInfo.getDisplayName() + "/inbox",
-                                    tr("Click here to see your inbox.")), GBC.eol());
-                            panel.setOpaque(false);
-                            new Notification().setContent(panel)
-                                .setIcon(JOptionPane.INFORMATION_MESSAGE)
-                                .setDuration(Notification.TIME_LONG)
-                                .show();
-                        });
+                        callback.notifyNewMessages(userInfo);
                         lastUnreadCount = unread;
                     }
                 }

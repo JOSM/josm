@@ -16,11 +16,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
-import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.gui.jmapviewer.Tile;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileJob;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
@@ -42,7 +39,6 @@ import org.openstreetmap.josm.tools.Logging;
  * @since 8168
  */
 public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, BufferedImageCacheEntry> implements TileJob, ICachedLoaderListener {
-    private static final Logger LOG = FeatureAdapter.getLogger(TMSCachedTileLoaderJob.class.getCanonicalName());
     private static final LongProperty MAXIMUM_EXPIRES = new LongProperty("imagery.generic.maximum_expires", TimeUnit.DAYS.toMillis(30));
     private static final LongProperty MINIMUM_EXPIRES = new LongProperty("imagery.generic.minimum_expires", TimeUnit.HOURS.toMillis(1));
     protected final Tile tile;
@@ -122,8 +118,9 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
             try {
                 return content.length > 0 || cacheData.getImage() != null || isNoTileAtZoom();
             } catch (IOException e) {
-                LOG.log(Level.WARNING, "JCS TMS - error loading from cache for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
-                Logging.warn(e);
+                Logging.logWithStackTrace(Logging.LEVEL_WARN, e, "JCS TMS - error loading from cache for tile {0}: {1}",
+                        new Object[] {tile.getKey(), e.getMessage()}
+                        );
             }
         }
         return false;
@@ -207,7 +204,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
                 }
             }
         } catch (IOException e) {
-            LOG.log(Level.WARNING, "JCS TMS - error loading object for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
+            Logging.warn("JCS TMS - error loading object for tile {0}: {1}", new Object[] {tile.getKey(), e.getMessage()});
             tile.setError(e);
             tile.setLoaded(false);
             if (listeners != null) { // listeners might be null, if some other thread notified already about success
@@ -258,7 +255,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
 
     private boolean handleNoTileAtZoom() {
         if (isNoTileAtZoom()) {
-            LOG.log(Level.FINE, "JCS TMS - Tile valid, but no file, as no tiles at this level {0}", tile);
+            Logging.debug("JCS TMS - Tile valid, but no file, as no tiles at this level {0}", tile);
             tile.setError("No tile at this zoom level");
             tile.putValue("tile-info", "no-tile");
             return true;
@@ -268,7 +265,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
 
     private boolean isNoTileAtZoom() {
         if (attributes == null) {
-            LOG.warning("Cache attributes are null");
+            Logging.warn("Cache attributes are null");
         }
         return attributes != null && attributes.isNoTileAtZoom();
     }
