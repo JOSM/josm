@@ -3,6 +3,7 @@ package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
+import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
 import java.util.Collection;
 import java.util.concurrent.CancellationException;
@@ -10,13 +11,17 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.SelectionChangedListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.event.DatasetEventManager.FireMode;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
+import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
@@ -26,6 +31,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
+import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -392,5 +398,54 @@ public abstract class JosmAction extends AbstractAction implements Destroyable {
         public String toString() {
             return "SelectionChangeAdapter [" + JosmAction.this + ']';
         }
+    }
+
+    /**
+     * Check whether user is about to operate on data outside of the download area.
+     * Request confirmation if he is.
+     *
+     * @param operation the operation name which is used for setting some preferences
+     * @param dialogTitle the title of the dialog being displayed
+     * @param outsideDialogMessage the message text to be displayed when data is outside of the download area
+     * @param incompleteDialogMessage the message text to be displayed when data is incomplete
+     * @param primitives the primitives to operate on
+     * @param ignore {@code null} or a primitive to be ignored
+     * @return true, if operating on outlying primitives is OK; false, otherwise
+     * @since 12749 (moved from Command)
+     */
+    public static boolean checkAndConfirmOutlyingOperation(String operation,
+            String dialogTitle, String outsideDialogMessage, String incompleteDialogMessage,
+            Collection<? extends OsmPrimitive> primitives,
+            Collection<? extends OsmPrimitive> ignore) {
+        int checkRes = Command.checkOutlyingOrIncompleteOperation(primitives, ignore);
+        if ((checkRes & Command.IS_OUTSIDE) != 0) {
+            JPanel msg = new JPanel(new GridBagLayout());
+            msg.add(new JMultilineLabel("<html>" + outsideDialogMessage + "</html>"));
+            boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
+                    operation + "_outside_nodes",
+                    Main.parent,
+                    msg,
+                    dialogTitle,
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    JOptionPane.YES_OPTION);
+            if (!answer)
+                return false;
+        }
+        if ((checkRes & Command.IS_INCOMPLETE) != 0) {
+            JPanel msg = new JPanel(new GridBagLayout());
+            msg.add(new JMultilineLabel("<html>" + incompleteDialogMessage + "</html>"));
+            boolean answer = ConditionalOptionPaneUtil.showConfirmationDialog(
+                    operation + "_incomplete",
+                    Main.parent,
+                    msg,
+                    dialogTitle,
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.QUESTION_MESSAGE,
+                    JOptionPane.YES_OPTION);
+            if (!answer)
+                return false;
+        }
+        return true;
     }
 }

@@ -58,6 +58,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager;
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.actions.OpenFileAction;
 import org.openstreetmap.josm.actions.OpenFileAction.OpenFileTask;
@@ -69,6 +70,7 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
+import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueueListener;
@@ -852,6 +854,8 @@ public class MainApplication extends Main {
         ProxySelector.setDefault(proxySelector);
         OAuthAccessTokenHolder.getInstance().init(Main.pref, CredentialsManager.getInstance());
 
+        setupCallbacks();
+
         final SplashScreen splash = GuiHelper.runInEDTAndWaitAndReturn(SplashScreen::new);
         final SplashScreen.SplashProgressMonitor monitor = splash.getProgressMonitor();
         monitor.beginTask(tr("Initializing"));
@@ -958,6 +962,10 @@ public class MainApplication extends Main {
                 Logging.error(e);
             }
         }
+    }
+
+    static void setupCallbacks() {
+        DeleteCommand.setDeletionCallback(DeleteAction::checkAndConfirmOutlyingDelete);
     }
 
     static void setupUIManager() {

@@ -45,4 +45,28 @@ public final class DeleteAction extends JosmAction {
     protected void updateEnabledState(Collection<? extends OsmPrimitive> selection) {
         setEnabled(selection != null && !selection.isEmpty());
     }
+
+    /**
+     * Check whether user is about to delete data outside of the download area.
+     * Request confirmation if he is.
+     * @param primitives the primitives to operate on
+     * @param ignore {@code null} or a primitive to be ignored
+     * @return true, if operating on outlying primitives is OK; false, otherwise
+     * @since 12749 (moved from DeleteCommand)
+     */
+    public static boolean checkAndConfirmOutlyingDelete(Collection<? extends OsmPrimitive> primitives,
+            Collection<? extends OsmPrimitive> ignore) {
+        return checkAndConfirmOutlyingOperation("delete",
+                tr("Delete confirmation"),
+                tr("You are about to delete nodes outside of the area you have downloaded."
+                        + "<br>"
+                        + "This can cause problems because other objects (that you do not see) might use them."
+                        + "<br>"
+                        + "Do you really want to delete?"),
+                tr("You are about to delete incomplete objects."
+                        + "<br>"
+                        + "This will cause problems because you don''t see the real object."
+                        + "<br>" + "Do you really want to delete?"),
+                primitives, ignore);
+    }
 }

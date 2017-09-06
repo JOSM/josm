@@ -79,6 +79,34 @@ public class DeleteCommand extends Command {
     }
 
     /**
+     * Called when a deletion operation must be checked and confirmed by user.
+     * @since 12749
+     */
+    @FunctionalInterface
+    public interface DeletionCallback {
+        /**
+         * Check whether user is about to delete data outside of the download area.
+         * Request confirmation if he is.
+         * @param primitives the primitives to operate on
+         * @param ignore {@code null} or a primitive to be ignored
+         * @return true, if operating on outlying primitives is OK; false, otherwise
+         */
+        boolean checkAndConfirmOutlyingDelete(Collection<? extends OsmPrimitive> primitives, Collection<? extends OsmPrimitive> ignore);
+    }
+
+    private static DeletionCallback callback;
+
+    /**
+     * Sets the global {@link DeletionCallback}.
+     * @param deletionCallback the new {@code DeletionCallback}. Must not be null
+     * @throws NullPointerException if {@code deletionCallback} is null
+     * @since 12749
+     */
+    public static void setDeletionCallback(DeletionCallback deletionCallback) {
+        callback = Objects.requireNonNull(deletionCallback);
+    }
+
+    /**
      * The primitives that get deleted.
      */
     private final Collection<? extends OsmPrimitive> toDelete;
@@ -324,7 +352,7 @@ public class DeleteCommand extends Command {
 
         if (parents.isEmpty())
             return null;
-        if (!silent && !checkAndConfirmOutlyingDelete(parents, null))
+        if (!silent && !callback.checkAndConfirmOutlyingDelete(parents, null))
             return null;
         return new DeleteCommand(parents.iterator().next().getDataSet(), parents);
     }
@@ -525,7 +553,7 @@ public class DeleteCommand extends Command {
             primitivesToDelete.addAll(nodesToDelete);
         }
 
-        if (!silent && !checkAndConfirmOutlyingDelete(
+        if (!silent && !callback.checkAndConfirmOutlyingDelete(
                 primitivesToDelete, Utils.filteredCollection(primitivesToDelete, Way.class)))
             return null;
 
@@ -627,22 +655,6 @@ public class DeleteCommand extends Command {
             SplitWayResult split = SplitWayAction.splitWay(ws.way, Arrays.asList(n1, n2), Collections.<OsmPrimitive>emptyList());
             return split != null ? split.getCommand() : null;
         }
-    }
-
-    public static boolean checkAndConfirmOutlyingDelete(Collection<? extends OsmPrimitive> primitives,
-            Collection<? extends OsmPrimitive> ignore) {
-        return Command.checkAndConfirmOutlyingOperation("delete",
-                tr("Delete confirmation"),
-                tr("You are about to delete nodes outside of the area you have downloaded."
-                        + "<br>"
-                        + "This can cause problems because other objects (that you do not see) might use them."
-                        + "<br>"
-                        + "Do you really want to delete?"),
-                tr("You are about to delete incomplete objects."
-                        + "<br>"
-                        + "This will cause problems because you don''t see the real object."
-                        + "<br>" + "Do you really want to delete?"),
-                primitives, ignore);
     }
 
     private static boolean confirmRelationDeletion(Collection<Relation> relations) {

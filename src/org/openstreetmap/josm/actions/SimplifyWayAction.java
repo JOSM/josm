@@ -52,7 +52,7 @@ public class SimplifyWayAction extends JosmAction {
     }
 
     protected boolean confirmWayWithNodesOutsideBoundingBox(List<? extends OsmPrimitive> primitives) {
-        return DeleteCommand.checkAndConfirmOutlyingDelete(primitives, null);
+        return DeleteAction.checkAndConfirmOutlyingDelete(primitives, null);
     }
 
     protected void alertSelectAtLeastOneWay() {
