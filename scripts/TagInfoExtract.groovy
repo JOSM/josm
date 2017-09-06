@@ -16,6 +16,8 @@ import java.nio.file.Path
 import javax.imageio.ImageIO
 
 import org.openstreetmap.josm.Main
+import org.openstreetmap.josm.actions.DeleteAction
+import org.openstreetmap.josm.command.DeleteCommand
 import org.openstreetmap.josm.data.Version
 import org.openstreetmap.josm.data.coor.LatLon
 import org.openstreetmap.josm.data.osm.Node
@@ -383,6 +385,7 @@ class TagInfoExtract {
         Path tmpdir = Files.createTempDirectory(FileSystems.getDefault().getPath(base_dir), "pref")
         tmpdir.toFile().deleteOnExit()
         System.setProperty("josm.home", tmpdir.toString())
+        DeleteCommand.setDeletionCallback(DeleteAction::checkAndConfirmOutlyingDelete)
         Territories.initialize()
         RightAndLefthandTraffic.initialize()
 

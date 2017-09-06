@@ -662,7 +662,7 @@ public class UnGlueAction extends JosmAction {
             primitives.addAll(selectedNodes);
         if (selectedNode != null)
             primitives.add(selectedNode);
-        final boolean ok = Command.checkAndConfirmOutlyingOperation("unglue",
+        final boolean ok = checkAndConfirmOutlyingOperation("unglue",
                 tr("Unglue confirmation"),
                 tr("You are about to unglue nodes outside of the area you have downloaded."
                         + "<br>"
