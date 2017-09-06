@@ -143,7 +143,7 @@ public class MoveAction extends JosmAction {
                     && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
                 ((MoveCommand) c).moveAgain(distx, disty);
             } else {
-                c = new MoveCommand(selection, distx, disty);
+                c = new MoveCommand(ds, selection, distx, disty);
                 MainApplication.undoRedo.add(c);
             }
         } finally {
