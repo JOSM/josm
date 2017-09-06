@@ -14,6 +14,8 @@ import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
 import org.openstreetmap.josm.JOSMFixture;
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.actions.DeleteAction;
+import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.event.SelectionEventManager;
@@ -268,6 +270,8 @@ public class JOSMTestRules implements TestRule {
         // Assume anonymous user
         UserIdentityManager.getInstance().setAnonymous();
         User.clearUserMap();
+        // Setup callbacks
+        DeleteCommand.setDeletionCallback(DeleteAction::checkAndConfirmOutlyingDelete);
 
         // Set up i18n
         if (i18n != null) {
