@@ -282,7 +282,6 @@ public final class Logging {
         logPrivate(level, () -> getErrorLogWithStack(MessageFormat.format(pattern,  args), t));
     }
 
-
     private static void logPrivate(Level level, String pattern, Object... args) {
         logPrivate(level, () -> MessageFormat.format(pattern, args));
     }
