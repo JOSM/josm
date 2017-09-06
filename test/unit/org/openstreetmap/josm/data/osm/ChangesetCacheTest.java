@@ -165,6 +165,19 @@ public class ChangesetCacheTest {
 
     @Test
     public void testFireingEventsUpdateChangeset() {
+        // Waiter listener to ensure the second listener does not receive the first event
+        TestListener waiter = new TestListener() {
+            @Override
+            void test() {
+                await();
+            }
+        };
+        cache.addChangesetCacheListener(waiter);
+        Changeset cs = new Changeset(1);
+        cache.update(cs);
+        waiter.test();
+        cache.removeChangesetCacheListener(waiter);
+
         TestListener listener = new TestListener() {
             @Override
             void test() {
@@ -176,9 +189,6 @@ public class ChangesetCacheTest {
                 assertEquals(cache, event.getSource());
             }
         };
-        Changeset cs = new Changeset(1);
-        cache.update(cs);
-
         cache.addChangesetCacheListener(listener);
         cache.update(cs);
         listener.test();
