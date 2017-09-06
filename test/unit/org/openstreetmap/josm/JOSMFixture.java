@@ -13,6 +13,8 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import org.openstreetmap.josm.actions.DeleteAction;
+import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MainApplicationTest;
@@ -123,6 +125,9 @@ public class JOSMFixture {
         if (isProductionApiUrl(url)) {
             fail(MessageFormat.format("configured server url ''{0}'' seems to be a productive url, aborting.", url));
         }
+
+        // Setup callbacks
+        DeleteCommand.setDeletionCallback(DeleteAction::checkAndConfirmOutlyingDelete);
 
         if (createGui) {
             GuiHelper.runInEDTAndWaitWithException(new Runnable() {
