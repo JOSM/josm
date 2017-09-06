@@ -38,12 +38,12 @@ public final class DeleteAction extends JosmAction {
         @Override
         public boolean checkAndConfirmOutlyingDelete(Collection<? extends OsmPrimitive> primitives,
                 Collection<? extends OsmPrimitive> ignore) {
-            return checkAndConfirmOutlyingDelete(primitives, ignore);
+            return DeleteAction.checkAndConfirmOutlyingDelete(primitives, ignore);
         }
 
         @Override
         public boolean confirmRelationDeletion(Collection<Relation> relations) {
-            return confirmRelationDeletion(relations);
+            return DeleteAction.confirmRelationDeletion(relations);
         }
     };
 
