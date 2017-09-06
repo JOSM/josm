@@ -44,7 +44,6 @@ public class DataSetMergerTest {
      */
     @Before
     public void setUp() {
-        User.clearUserMap();
         my = new DataSet();
         my.setVersion("0.6");
         their = new DataSet();

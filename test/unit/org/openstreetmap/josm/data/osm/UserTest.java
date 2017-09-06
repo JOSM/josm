@@ -28,19 +28,15 @@ public class UserTest {
      */
     @Test
     public void testCreateOsmUser() {
-        try {
-            User user1 = User.createOsmUser(1, "name1");
-            assertEquals(1, user1.getId());
-            assertEquals("name1", user1.getName());
-            User user2 = User.createOsmUser(1, "name2");
-            assertSame(user1, user2);
-            assertEquals(1, user2.getId());
-            assertEquals("name2", user2.getName());
-            assertEquals(2, user2.getNames().size());
-            assertTrue(user2.getNames().contains("name1"));
-            assertTrue(user2.getNames().contains("name2"));
-        } finally {
-            User.clearUserMap();
-        }
+        User user1 = User.createOsmUser(1, "name1");
+        assertEquals(1, user1.getId());
+        assertEquals("name1", user1.getName());
+        User user2 = User.createOsmUser(1, "name2");
+        assertSame(user1, user2);
+        assertEquals(1, user2.getId());
+        assertEquals("name2", user2.getName());
+        assertEquals(2, user2.getNames().size());
+        assertTrue(user2.getNames().contains("name1"));
+        assertTrue(user2.getNames().contains("name2"));
     }
 }
