@@ -445,7 +445,7 @@ public class TagEditHelper {
             JPanel p = new JPanel(new GridBagLayout());
             mainPanel.add(p, BorderLayout.CENTER);
 
-            AutoCompletionManager autocomplete = MainApplication.getLayerManager().getEditLayer().data.getAutoCompletionManager();
+            AutoCompletionManager autocomplete = AutoCompletionManager.of(MainApplication.getLayerManager().getEditLayer().data);
             List<AutoCompletionListItem> keyList = autocomplete.getKeys();
             keyList.sort(DEFAULT_AC_ITEM_COMPARATOR);
 
@@ -691,7 +691,7 @@ public class TagEditHelper {
                 +"<br><br>"+tr("Please select a key")), GBC.eol().fill(GBC.HORIZONTAL));
 
             cacheRecentTags();
-            AutoCompletionManager autocomplete = MainApplication.getLayerManager().getEditLayer().data.getAutoCompletionManager();
+            AutoCompletionManager autocomplete = AutoCompletionManager.of(MainApplication.getLayerManager().getEditLayer().data);
             List<AutoCompletionListItem> keyList = autocomplete.getKeys();
 
             // remove the object's tag keys from the list

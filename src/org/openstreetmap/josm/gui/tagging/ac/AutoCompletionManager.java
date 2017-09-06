@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -27,6 +28,12 @@ import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
+import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
+import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
+import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
@@ -127,6 +134,8 @@ public class AutoCompletionManager implements DataSetListener {
      * the same as roleCache but for the preset roles can be accessed directly
      */
     static final Set<String> PRESET_ROLE_CACHE = new HashSet<>();
+
+    private static final Map<DataSet, AutoCompletionManager> INSTANCES = new HashMap<>();
 
     /**
      * Constructs a new {@code AutoCompletionManager}.
@@ -420,5 +429,46 @@ public class AutoCompletionManager implements DataSetListener {
     @Override
     public void dataChanged(DataChangedEvent event) {
         dirty = true;
+    }
+
+    private static void registerListeners(AutoCompletionManager autoCompletionManager) {
+        autoCompletionManager.ds.addDataSetListener(autoCompletionManager);
+        MainApplication.getLayerManager().addLayerChangeListener(new LayerChangeListener() {
+            @Override
+            public void layerRemoving(LayerRemoveEvent e) {
+                if (e.getRemovedLayer() instanceof OsmDataLayer
+                        && ((OsmDataLayer) e.getRemovedLayer()).data == autoCompletionManager.ds) {
+                    INSTANCES.remove(autoCompletionManager.ds);
+                    autoCompletionManager.ds.removeDataSetListener(autoCompletionManager);
+                    MainApplication.getLayerManager().removeLayerChangeListener(this);
+                }
+            }
+
+            @Override
+            public void layerOrderChanged(LayerOrderChangeEvent e) {
+                // Do nothing
+            }
+
+            @Override
+            public void layerAdded(LayerAddEvent e) {
+                // Do nothing
+            }
+        });
+    }
+
+    /**
+     * Returns the {@code AutoCompletionManager} for the given data set.
+     * @param dataSet the data set
+     * @return the {@code AutoCompletionManager} for the given data set
+     * @since 12758
+     */
+    public static AutoCompletionManager of(DataSet dataSet) {
+        AutoCompletionManager result = INSTANCES.get(dataSet);
+        if (result == null) {
+            result = new AutoCompletionManager(dataSet);
+            INSTANCES.put(dataSet, result);
+            registerListeners(result);
+        }
+        return result;
     }
 }
