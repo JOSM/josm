@@ -967,7 +967,7 @@ public class MainApplication extends Main {
     }
 
     static void setupCallbacks() {
-        DeleteCommand.setDeletionCallback(DeleteAction::checkAndConfirmOutlyingDelete);
+        DeleteCommand.setDeletionCallback(DeleteAction.defaultDeletionCallback);
     }
 
     static void setupUIManager() {

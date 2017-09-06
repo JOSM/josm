@@ -385,7 +385,7 @@ class TagInfoExtract {
         Path tmpdir = Files.createTempDirectory(FileSystems.getDefault().getPath(base_dir), "pref")
         tmpdir.toFile().deleteOnExit()
         System.setProperty("josm.home", tmpdir.toString())
-        DeleteCommand.setDeletionCallback(DeleteAction.&checkAndConfirmOutlyingDelete)
+        DeleteCommand.setDeletionCallback(DeleteAction.defaultDeletionCallback)
         Territories.initialize()
         RightAndLefthandTraffic.initialize()
 

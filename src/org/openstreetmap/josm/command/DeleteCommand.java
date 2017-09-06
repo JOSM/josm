@@ -5,7 +5,6 @@ import static org.openstreetmap.josm.tools.I18n.marktr;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
-import java.awt.GridBagLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -21,10 +20,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import javax.swing.Icon;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SplitWayAction;
 import org.openstreetmap.josm.actions.SplitWayAction.SplitWayResult;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -37,10 +33,8 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationToChildReference;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.dialogs.DeleteFromRelationConfirmationDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
-import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
@@ -82,7 +76,6 @@ public class DeleteCommand extends Command {
      * Called when a deletion operation must be checked and confirmed by user.
      * @since 12749
      */
-    @FunctionalInterface
     public interface DeletionCallback {
         /**
          * Check whether user is about to delete data outside of the download area.
@@ -92,6 +85,14 @@ public class DeleteCommand extends Command {
          * @return true, if operating on outlying primitives is OK; false, otherwise
          */
         boolean checkAndConfirmOutlyingDelete(Collection<? extends OsmPrimitive> primitives, Collection<? extends OsmPrimitive> ignore);
+
+        /**
+         * Confirm before deleting a relation, as it is a common newbie error.
+         * @param relations relation to check for deletion
+         * @return {@code true} if user confirms the deletion
+         * @since 12760
+         */
+        boolean confirmRelationDeletion(Collection<Relation> relations);
     }
 
     private static DeletionCallback callback;
@@ -544,7 +545,7 @@ public class DeleteCommand extends Command {
         Set<OsmPrimitive> primitivesToDelete = new HashSet<>(selection);
 
         Collection<Relation> relationsToDelete = Utils.filteredCollection(primitivesToDelete, Relation.class);
-        if (!relationsToDelete.isEmpty() && !silent && !confirmRelationDeletion(relationsToDelete))
+        if (!relationsToDelete.isEmpty() && !silent && !callback.confirmRelationDeletion(relationsToDelete))
             return null;
 
         if (alsoDeleteNodesInWay) {
@@ -655,31 +656,6 @@ public class DeleteCommand extends Command {
             SplitWayResult split = SplitWayAction.splitWay(ws.way, Arrays.asList(n1, n2), Collections.<OsmPrimitive>emptyList());
             return split != null ? split.getCommand() : null;
         }
-    }
-
-    private static boolean confirmRelationDeletion(Collection<Relation> relations) {
-        JPanel msg = new JPanel(new GridBagLayout());
-        msg.add(new JMultilineLabel("<html>" + trn(
-                "You are about to delete {0} relation: {1}"
-                + "<br/>"
-                + "This step is rarely necessary and cannot be undone easily after being uploaded to the server."
-                + "<br/>"
-                + "Do you really want to delete?",
-                "You are about to delete {0} relations: {1}"
-                + "<br/>"
-                + "This step is rarely necessary and cannot be undone easily after being uploaded to the server."
-                + "<br/>"
-                + "Do you really want to delete?",
-                relations.size(), relations.size(), DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(relations, 20))
-                + "</html>"));
-        return ConditionalOptionPaneUtil.showConfirmationDialog(
-                "delete_relations",
-                Main.parent,
-                msg,
-                tr("Delete relation?"),
-                JOptionPane.YES_NO_OPTION,
-                JOptionPane.QUESTION_MESSAGE,
-                JOptionPane.YES_OPTION);
     }
 
     @Override

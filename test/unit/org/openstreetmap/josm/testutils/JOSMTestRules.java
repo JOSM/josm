@@ -271,7 +271,7 @@ public class JOSMTestRules implements TestRule {
         UserIdentityManager.getInstance().setAnonymous();
         User.clearUserMap();
         // Setup callbacks
-        DeleteCommand.setDeletionCallback(DeleteAction::checkAndConfirmOutlyingDelete);
+        DeleteCommand.setDeletionCallback(DeleteAction.defaultDeletionCallback);
 
         // Set up i18n
         if (i18n != null) {

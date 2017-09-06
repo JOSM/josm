@@ -15,6 +15,7 @@ import javax.swing.Icon;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
@@ -91,7 +92,21 @@ public class MoveCommand extends Command {
      * @throws NoSuchElementException if objects is empty
      */
     public MoveCommand(Collection<OsmPrimitive> objects, double x, double y) {
-        super(objects.iterator().next().getDataSet());
+        this(objects.iterator().next().getDataSet(), objects, x, y);
+    }
+
+    /**
+     * Constructs a new {@code MoveCommand} and assign the initial object set and movement vector.
+     * @param ds the dataset context for moving these primitives. Must not be null.
+     * @param objects The primitives to move. Must neither be null.
+     * @param x X difference movement. Coordinates are in northern/eastern
+     * @param y Y difference movement. Coordinates are in northern/eastern
+     * @throws NullPointerException if objects is null or contain null item
+     * @throws NoSuchElementException if objects is empty
+     * @since 12759
+     */
+    public MoveCommand(DataSet ds, Collection<OsmPrimitive> objects, double x, double y) {
+        super(ds);
         startEN = null;
         saveCheckpoint(); // (0,0) displacement will be saved
         this.x = x;
@@ -105,16 +120,40 @@ public class MoveCommand extends Command {
 
     /**
      * Constructs a new {@code MoveCommand} to move a collection of primitives.
+     * @param ds the dataset context for moving these primitives. Must not be null.
+     * @param objects The primitives to move
+     * @param start The starting position (northern/eastern)
+     * @param end The ending position (northern/eastern)
+     * @since 12759
+     */
+    public MoveCommand(DataSet ds, Collection<OsmPrimitive> objects, EastNorth start, EastNorth end) {
+        this(Objects.requireNonNull(ds, "ds"),
+             Objects.requireNonNull(objects, "objects"),
+             Objects.requireNonNull(end, "end").getX() - Objects.requireNonNull(start, "start").getX(),
+             Objects.requireNonNull(end, "end").getY() - Objects.requireNonNull(start, "start").getY());
+        startEN = start;
+    }
+
+    /**
+     * Constructs a new {@code MoveCommand} to move a collection of primitives.
      * @param objects The primitives to move
      * @param start The starting position (northern/eastern)
      * @param end The ending position (northern/eastern)
      */
     public MoveCommand(Collection<OsmPrimitive> objects, EastNorth start, EastNorth end) {
-        this(
-                Objects.requireNonNull(objects, "objects"),
-                Objects.requireNonNull(end, "end").getX() - Objects.requireNonNull(start, "start").getX(),
-                Objects.requireNonNull(end, "end").getY() - Objects.requireNonNull(start, "start").getY());
-        startEN = start;
+        this(Objects.requireNonNull(objects, "objects").iterator().next().getDataSet(), objects, start, end);
+    }
+
+    /**
+     * Constructs a new {@code MoveCommand} to move a primitive.
+     * @param ds the dataset context for moving these primitives. Must not be null.
+     * @param p The primitive to move
+     * @param start The starting position (northern/eastern)
+     * @param end The ending position (northern/eastern)
+     * @since 12759
+     */
+    public MoveCommand(DataSet ds, OsmPrimitive p, EastNorth start, EastNorth end) {
+        this(ds, Collections.singleton(Objects.requireNonNull(p, "p")), start, end);
     }
 
     /**
@@ -124,11 +163,7 @@ public class MoveCommand extends Command {
      * @param end The ending position (northern/eastern)
      */
     public MoveCommand(OsmPrimitive p, EastNorth start, EastNorth end) {
-        this(
-                Collections.singleton(Objects.requireNonNull(p, "p")),
-                Objects.requireNonNull(end, "end").getX() - Objects.requireNonNull(start, "start").getX(),
-                Objects.requireNonNull(end, "end").getY() - Objects.requireNonNull(start, "start").getY());
-        startEN = start;
+        this(Collections.singleton(Objects.requireNonNull(p, "p")), start, end);
     }
 
     /**

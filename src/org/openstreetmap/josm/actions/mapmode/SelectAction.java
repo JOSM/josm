@@ -1243,7 +1243,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                 wnew.addNode(virtualWay.lowerIndex + 1, virtualNode);
                 virtualCmds.add(new ChangeCommand(ds, w, wnew));
             }
-            virtualCmds.add(new MoveCommand(virtualNode, startEN, currentEN));
+            virtualCmds.add(new MoveCommand(ds, virtualNode, startEN, currentEN));
             String text = trn("Add and move a virtual new node to way",
                     "Add and move a virtual new node to {0} ways", virtualWays.size(),
                     virtualWays.size());
