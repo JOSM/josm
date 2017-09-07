@@ -14,7 +14,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -31,6 +30,11 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
     private String oSBuildNumber;
 
     private NativeOsCallback osCallback;
+
+    @Override
+    public Platform getPlatform() {
+        return Platform.OSX;
+    }
 
     @Override
     public void preStartupHook() {
@@ -421,10 +425,5 @@ public class PlatformHookOsx implements PlatformHook, InvocationHandler {
     public File getDefaultUserDataDirectory() {
         return new File(System.getProperty("user.home")+"/Library",
                 Main.pref.getJOSMDirectoryBaseName());
-    }
-
-    @Override
-    public List<File> getDefaultProj4NadshiftDirectories() {
-        return Collections.emptyList();
     }
 }

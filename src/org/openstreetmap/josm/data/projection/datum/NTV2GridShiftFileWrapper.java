@@ -4,9 +4,14 @@ package org.openstreetmap.josm.data.projection.datum;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.tools.Platform;
+import org.openstreetmap.josm.tools.PlatformVisitor;
 
 /**
  * Wrapper for {@link NTV2GridShiftFile}.
@@ -28,6 +33,28 @@ public class NTV2GridShiftFileWrapper {
     }
 
     /**
+     * Lists default directories where the ntv2 shift files (NAD) for the proj4
+     * library would be located on different platforms.
+     */
+    public static final PlatformVisitor<List<File>> DEFAULT_PROJ4_NTV2_SHIFT_DIRS =
+            new PlatformVisitor<List<File>>() {
+        @Override
+        public List<File> visitUnixoid() {
+            return Arrays.asList(new File("/usr/local/share/proj"), new File("/usr/share/proj"));
+        }
+
+        @Override
+        public List<File> visitWindows() {
+            return Arrays.asList(new File("C:\\PROJ\\NAD"));
+        }
+
+        @Override
+        public List<File> visitOsx() {
+            return Collections.emptyList();
+        }
+    };
+
+    /**
      * Returns the actual {@link NTV2GridShiftFile} behind this wrapper.
      * The grid file is only loaded once, when first accessed.
      * @return The NTv2 grid file
@@ -37,7 +64,7 @@ public class NTV2GridShiftFileWrapper {
         if (instance == null) {
             File grid = null;
             // Check is the grid is installed in default PROJ.4 directories
-            for (File dir : Main.platform.getDefaultProj4NadshiftDirectories()) {
+            for (File dir : Platform.determinePlatform().accept(DEFAULT_PROJ4_NTV2_SHIFT_DIRS)) {
                 File file = new File(dir, gridFileName);
                 if (file.exists() && file.isFile()) {
                     grid = file;

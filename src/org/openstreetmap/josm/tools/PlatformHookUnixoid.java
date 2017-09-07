@@ -21,7 +21,6 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
 
 import org.openstreetmap.josm.Main;
@@ -65,6 +64,11 @@ public class PlatformHookUnixoid implements PlatformHook {
             "未安装软件包",             // zh_CN
             "尚未安裝"                // zh_TW
     };
+
+    @Override
+    public Platform getPlatform() {
+        return Platform.UNIXOID;
+    }
 
     @Override
     public void preStartupHook() {
@@ -418,11 +422,6 @@ public class PlatformHookUnixoid implements PlatformHook {
                         ".local" + File.separator + "share" + File.separator + Main.pref.getJOSMDirectoryBaseName());
             }
         }
-    }
-
-    @Override
-    public List<File> getDefaultProj4NadshiftDirectories() {
-        return Arrays.asList(new File("/usr/local/share/proj"), new File("/usr/share/proj"));
     }
 
     @Override
