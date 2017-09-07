@@ -10,6 +10,7 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.data.osm.ChangesetCacheEvent;
 import org.openstreetmap.josm.data.osm.ChangesetCacheListener;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * A combobox model for the list of open changesets. The model is populated with the list
@@ -66,7 +67,7 @@ public class OpenChangesetComboBoxModel extends DefaultComboBoxModel<Changeset> 
     /* ------------------------------------------------------------------------------------ */
     @Override
     public void changesetCacheUpdated(ChangesetCacheEvent event) {
-        refresh();
+        GuiHelper.runInEDT(this::refresh);
     }
 
     /* ------------------------------------------------------------------------------------ */

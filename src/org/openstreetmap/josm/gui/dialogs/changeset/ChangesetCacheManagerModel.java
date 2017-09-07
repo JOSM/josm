@@ -197,8 +197,10 @@ public class ChangesetCacheManagerModel extends AbstractTableModel implements Ch
                 }
             }
         }
-        sort();
-        fireTableDataChanged();
-        setSelectedChangesets(selected);
+        GuiHelper.runInEDT(() -> {
+            sort();
+            fireTableDataChanged();
+            setSelectedChangesets(selected);
+        });
     }
 }

@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.osm.ChangesetCacheListener;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Storage;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * This is the model that backs a list of changesets
@@ -227,7 +228,9 @@ public class ChangesetListModel extends DefaultListModel<Changeset> implements C
                 data.set(idx, new Changeset(cs.getId()));
             }
         }
-        fireContentsChanged(this, 0, getSize());
-        setSelectedChangesets(sel);
+        GuiHelper.runInEDT(() -> {
+            fireContentsChanged(this, 0, getSize());
+            setSelectedChangesets(sel);
+        });
     }
 }
