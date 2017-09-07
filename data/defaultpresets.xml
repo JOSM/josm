@@ -2439,7 +2439,7 @@
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:natural=bay"
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:natural=bay"
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:natural=bay" />
-            <label text="A large body of water partially enclosed by land but with a wide mouth." />
+            <label text="An area of water mostly surrounded by land but with level connection to the ocean or a lake." />
             <space />
             <key key="natural" value="bay" />
             <text key="name" text="Name" />
