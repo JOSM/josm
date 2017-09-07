@@ -7,8 +7,6 @@ import java.io.StringWriter;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
-import org.openstreetmap.josm.actions.ShowStatusReportAction;
-
 /**
  * This class contains utility methods to create and handle a bug report.
  * <p>
@@ -20,7 +18,7 @@ import org.openstreetmap.josm.actions.ShowStatusReportAction;
  * In your code, you should add try...catch blocks for any runtime exceptions that might happen. It is fine to catch throwable there.
  * <p>
  * You should then add some debug information there. This can be the OSM ids that caused the error, information on the data you were working on
- * or other local variables. Make sure that no excpetions may occur while computing the values. It is best to send plain local variables to
+ * or other local variables. Make sure that no exceptions may occur while computing the values. It is best to send plain local variables to
  * put(...). If you need to do computations, put them into a lambda expression. Then simply throw the throwable you got from the bug report.
  * The global exception handler will do the rest.
  * <pre>
@@ -116,15 +114,16 @@ public final class BugReport implements Serializable {
 
     /**
      * Gets the full string that should be send as error report.
+     * @param header header text for the error report
      * @return The string.
      * @since 10585
      */
-    public String getReportText() {
+    public String getReportText(String header) {
         StringWriter stringWriter = new StringWriter();
         PrintWriter out = new PrintWriter(stringWriter);
         if (isIncludeStatusReport()) {
             try {
-                out.println(ShowStatusReportAction.getReportHeader());
+                out.println(header);
             } catch (RuntimeException e) { // NOPMD
                 out.println("Could not generate status report: " + e.getMessage());
             }

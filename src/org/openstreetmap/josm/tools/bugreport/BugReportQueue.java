@@ -1,14 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools.bugreport;
 
-import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.BiFunction;
 import java.util.function.Predicate;
 
-import org.openstreetmap.josm.gui.bugreport.BugReportDialog;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -20,15 +17,33 @@ public class BugReportQueue {
 
     private static final BugReportQueue INSTANCE = new BugReportQueue();
 
+    public static final BugReportHandler FALLBACK_BUGREPORT_HANDLER = (e, index) -> {
+        e.printStackTrace();
+        return BugReportQueue.SuppressionMode.NONE;
+    };
+
     private final LinkedList<ReportedException> reportsToDisplay = new LinkedList<>();
     private boolean suppressAllMessages;
     private final ArrayList<ReportedException> suppressFor = new ArrayList<>();
     private Thread displayThread;
-    private final BiFunction<ReportedException, Integer, SuppressionMode> bugReportHandler = getBestHandler();
+    private BugReportHandler bugReportHandler = FALLBACK_BUGREPORT_HANDLER;
     private final CopyOnWriteArrayList<Predicate<ReportedException>> handlers = new CopyOnWriteArrayList<>();
     private int displayedErrors;
 
     private boolean inReportDialog;
+
+    /**
+     * Class that handles reporting a bug to the user.
+     */
+    public interface BugReportHandler {
+        /**
+         * Handle the bug report for a given exception
+         * @param e The exception to display
+         * @param exceptionCounter A counter of how many exceptions have already been worked on
+         * @return The new suppression status
+         */
+        SuppressionMode handle(ReportedException e, int exceptionCounter);
+    }
 
     /**
      * The suppression mode that should be used after the dialog was closed.
@@ -111,7 +126,7 @@ public class BugReportQueue {
             Logging.trace("Intercepted by handler.");
             return SuppressionMode.NONE;
         }
-        return bugReportHandler.apply(e, getDisplayedErrors());
+        return bugReportHandler.handle(e, getDisplayedErrors());
     }
 
     private synchronized int getDisplayedErrors() {
@@ -126,19 +141,12 @@ public class BugReportQueue {
         return !reportsToDisplay.isEmpty() || inReportDialog;
     }
 
-    private static BiFunction<ReportedException, Integer, SuppressionMode> getBestHandler() {
-        if (GraphicsEnvironment.isHeadless()) {
-            return (e, index) -> {
-                e.printStackTrace();
-                return SuppressionMode.NONE;
-            };
-        } else {
-            return BugReportDialog::showFor;
-        }
+    public void setBugReportHandler(BugReportHandler bugReportHandler) {
+        this.bugReportHandler = bugReportHandler;
     }
 
     /**
-     * Allows you to peek or even intersect the bug reports.
+     * Allows you to peek or even intercept the bug reports.
      * @param handler The handler. It can return false to stop all further handling of the exception.
      * @since 10886
      */

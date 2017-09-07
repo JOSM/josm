@@ -66,7 +66,7 @@
     </chunk>
     <chunk id="highway_yesno_incline_oneway_lit_width_sidewalk">
         <reference ref="highway_yesno_incline_oneway_lit_width" />
-        <combo key="sidewalk" text="Sidewalk" values="both,left,right,no" values_context="sidewalk" />
+        <combo key="sidewalk" text="Sidewalk" values="both,left,right,no,separate" values_context="sidewalk" />
     </chunk>
     <chunk id="railway_service">
         <combo key="service" text="Service type" values="yard,siding,spur,crossover" />
@@ -734,7 +734,7 @@
                 <reference ref="highway_yesno_incline" />
                 <check key="lit" text="Lit" />
                 <text key="width" text="Width (meters)" />
-                <combo key="sidewalk" text="Sidewalk" values="both,left,right,no" values_context="sidewalk" />
+                <combo key="sidewalk" text="Sidewalk" values="both,left,right,no,separate" values_context="sidewalk" />
             </optional>
             <preset_link preset_name="Road Restrictions" />
         </item> <!-- Bicycle Road -->

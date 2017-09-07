@@ -87,6 +87,7 @@ import org.openstreetmap.josm.data.osm.search.SearchMode;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.gui.ProgramArguments.Option;
 import org.openstreetmap.josm.gui.SplashScreen.SplashProgressMonitor;
+import org.openstreetmap.josm.gui.bugreport.BugReportDialog;
 import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.io.CustomConfigurator.XMLCommandProcessor;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
@@ -142,6 +143,7 @@ import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
+import org.openstreetmap.josm.tools.bugreport.BugReportQueue;
 import org.xml.sax.SAXException;
 
 /**
@@ -751,6 +753,10 @@ public class MainApplication extends Main {
             System.err.println(e.getMessage());
             System.exit(1);
             return;
+        }
+
+        if (!GraphicsEnvironment.isHeadless()) {
+            BugReportQueue.getInstance().setBugReportHandler(BugReportDialog::showFor);
         }
 
         Level logLevel = args.getLogLevel();

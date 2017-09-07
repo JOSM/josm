@@ -8,10 +8,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
+import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -78,15 +83,63 @@ public enum Compression {
     public InputStream getUncompressedInputStream(InputStream in) throws IOException {
         switch (this) {
             case BZIP2:
-                return Utils.getBZip2InputStream(in);
+                return getBZip2InputStream(in);
             case GZIP:
-                return Utils.getGZipInputStream(in);
+                return getGZipInputStream(in);
             case ZIP:
-                return Utils.getZipInputStream(in);
+                return getZipInputStream(in);
             case NONE:
             default:
                 return in;
         }
+    }
+
+    /**
+     * Returns a Bzip2 input stream wrapping given input stream.
+     * @param in The raw input stream
+     * @return a Bzip2 input stream wrapping given input stream, or {@code null} if {@code in} is {@code null}
+     * @throws IOException if the given input stream does not contain valid BZ2 header
+     * @since 12772 (moved from {@link Utils}, there since 7867)
+     */
+    public static BZip2CompressorInputStream getBZip2InputStream(InputStream in) throws IOException {
+        if (in == null) {
+            return null;
+        }
+        return new BZip2CompressorInputStream(in, /* see #9537 */ true);
+    }
+
+    /**
+     * Returns a Gzip input stream wrapping given input stream.
+     * @param in The raw input stream
+     * @return a Gzip input stream wrapping given input stream, or {@code null} if {@code in} is {@code null}
+     * @throws IOException if an I/O error has occurred
+     * @since 12772 (moved from {@link Utils}, there since 7119)
+     */
+    public static GZIPInputStream getGZipInputStream(InputStream in) throws IOException {
+        if (in == null) {
+            return null;
+        }
+        return new GZIPInputStream(in);
+    }
+
+    /**
+     * Returns a Zip input stream wrapping given input stream.
+     * @param in The raw input stream
+     * @return a Zip input stream wrapping given input stream, or {@code null} if {@code in} is {@code null}
+     * @throws IOException if an I/O error has occurred
+     * @since 12772 (moved from {@link Utils}, there since 7119)
+     */
+    public static ZipInputStream getZipInputStream(InputStream in) throws IOException {
+        if (in == null) {
+            return null;
+        }
+        ZipInputStream zis = new ZipInputStream(in, StandardCharsets.UTF_8);
+        // Positions the stream at the beginning of first entry
+        ZipEntry ze = zis.getNextEntry();
+        if (ze != null && Logging.isDebugEnabled()) {
+            Logging.debug("Zip entry: {0}", ze.getName());
+        }
+        return zis;
     }
 
     /**

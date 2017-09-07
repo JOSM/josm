@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.actions.ShowStatusReportAction;
 
 /**
  * Tests the bug report class.
@@ -34,7 +35,7 @@ public class BugReportTest {
     public void testReportText() {
         ReportedException e = interceptInChildMethod(new IOException("test-exception-message"));
         e.put("test-key", "test-value");
-        String text = new BugReport(e).getReportText();
+        String text = new BugReport(e).getReportText(ShowStatusReportAction.getReportHeader());
 
         assertTrue(text.contains("test-exception-message"));
         assertTrue(text.contains("interceptInChildMethod"));

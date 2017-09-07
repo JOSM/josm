@@ -94,6 +94,14 @@ way[natural=peak],
 way[natural=saddle],
 way[natural=volcano],
 way[natural=tree],
+way[highway=give_way],
+way[highway=milestone],
+way[highway=mini_roundabout],
+way[highway=stop],
+way[highway=street_lamp],
+way[highway=traffic_signals],
+way[highway=turning_loop],
+way[highway=turning_circle],
 way[highway=motorway_junction] {
   throwWarning: tr("{0} on a way. Should be used on a node.", "{0.tag}"); 
 }

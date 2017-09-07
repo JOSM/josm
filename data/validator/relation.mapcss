@@ -33,3 +33,9 @@ relation[type=enforcement][!enforcement] {
   assertMatch: "relation type=enforcement";
   assertNoMatch: "relation type=enforcement enforcement=maxspeed";
 }
+
+/* #15208 */
+relation[type=route][route=mtb    ] > way[bicycle=use_sidepath],
+relation[type=route][route=bicycle] > way[bicycle=use_sidepath] { 
+  throwWarning: tr("way with {0} is part of a bicycle route relation", "{0.tag}");
+}
