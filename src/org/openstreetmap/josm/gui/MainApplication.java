@@ -84,6 +84,9 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.data.osm.search.SearchMode;
+import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileSource;
+import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
+import org.openstreetmap.josm.data.projection.datum.NTV2Proj4DirGridShiftFileSource;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.gui.ProgramArguments.Option;
 import org.openstreetmap.josm.gui.SplashScreen.SplashProgressMonitor;
@@ -112,6 +115,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.RedirectInputMap;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
+import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.CertificateAmendment;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.MessageNotifier;
@@ -234,6 +238,22 @@ public class MainApplication extends Main {
             menu.undo.setEnabled(queueSize > 0);
             menu.redo.setEnabled(redoSize > 0);
         };
+
+    /**
+     * Source of NTV2 shift files: Download from JOSM website.
+     * @since 12777
+     */
+    public static final NTV2GridShiftFileSource JOSM_WEBSITE_NTV2_SOURCE = gridFileName -> {
+        String location = Main.getJOSMWebsite() + "/proj/" + gridFileName;
+        // Try to load grid file
+        CachedFile cf = new CachedFile(location);
+        try {
+            return cf.getInputStream();
+        } catch (IOException ex) {
+            Logging.warn(ex);
+            return null;
+        }
+    };
 
     /**
      * Constructs a new {@code MainApplication} without a window.
@@ -901,6 +921,12 @@ public class MainApplication extends Main {
         toolbar = new ToolbarPreferences();
         Main.toolbar = toolbar;
         ProjectionPreference.setProjection();
+        NTV2GridShiftFileWrapper.registerNTV2GridShiftFileSource(
+                NTV2GridShiftFileWrapper.NTV2_SOURCE_PRIORITY_LOCAL,
+                NTV2Proj4DirGridShiftFileSource.getInstance());
+        NTV2GridShiftFileWrapper.registerNTV2GridShiftFileSource(
+                NTV2GridShiftFileWrapper.NTV2_SOURCE_PRIORITY_DOWNLOAD,
+                JOSM_WEBSITE_NTV2_SOURCE);
         GuiHelper.translateJavaInternalMessages();
         preConstructorInit();
 
