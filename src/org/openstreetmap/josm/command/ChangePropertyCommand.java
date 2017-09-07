@@ -139,12 +139,16 @@ public class ChangePropertyCommand extends Command {
                 String newVal = tag.getValue();
 
                 if (newVal == null || newVal.isEmpty()) {
-                    if (oldVal != null)
+                    if (oldVal != null) {
                         // new value is null and tag exists (will delete tag)
                         modified = true;
-                } else if (oldVal == null || !newVal.equals(oldVal))
+                        break;
+                    }
+                } else if (oldVal == null || !newVal.equals(oldVal)) {
                     // new value is not null and is different from current value
                     modified = true;
+                    break;
+                }
             }
             if (modified)
                 this.objects.add(osm);
@@ -153,6 +157,8 @@ public class ChangePropertyCommand extends Command {
 
     @Override
     public boolean executeCommand() {
+        if (objects.isEmpty())
+            return true;
         final DataSet dataSet = objects.get(0).getDataSet();
         if (dataSet != null) {
             dataSet.beginUpdate();

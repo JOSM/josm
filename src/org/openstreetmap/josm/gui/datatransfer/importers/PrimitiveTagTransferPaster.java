@@ -26,7 +26,7 @@ import org.openstreetmap.josm.gui.conflict.tags.PasteTagsConflictResolverDialog;
 import org.openstreetmap.josm.gui.datatransfer.data.PrimitiveTagTransferData;
 
 /**
- * This class helps pasting tags form other primitives. It handles resolving conflicts.
+ * This class helps pasting tags from other primitives. It handles resolving conflicts.
  * @author Michael Zangl
  * @since 10737
  */
@@ -49,7 +49,10 @@ public class PrimitiveTagTransferPaster extends AbstractTagPaster {
         TagPasteSupport tagPaster = new TagPasteSupport(data, selection);
         List<Command> commands = new ArrayList<>();
         for (Tag tag : tagPaster.execute()) {
-            commands.add(new ChangePropertyCommand(selection, tag.getKey(), "".equals(tag.getValue()) ? null : tag.getValue()));
+            ChangePropertyCommand cmd = new ChangePropertyCommand(selection, tag.getKey(), "".equals(tag.getValue()) ? null : tag.getValue());
+            if (cmd.getObjectsNumber() > 0) {
+                commands.add(cmd);
+            }
         }
         commitCommands(selection, commands);
         return true;
