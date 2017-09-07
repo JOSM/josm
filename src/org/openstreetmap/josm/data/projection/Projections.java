@@ -193,7 +193,9 @@ public final class Projections {
      * @param ll the geographical point to convert (in WGS84 lat/lon)
      * @return the corresponding east/north coordinates
      * @since 12725
+     * @deprecated use <code>Main.getProjection().latlon2eastNorth(ll)</code>
      */
+    @Deprecated
     public static EastNorth project(ILatLon ll) {
         if (ll == null) return null;
         return Main.getProjection().latlon2eastNorth(ll);
@@ -204,7 +206,9 @@ public final class Projections {
      *
      * @param ll the geographical point to convert (in WGS84 lat/lon)
      * @return the corresponding east/north coordinates
+     * @deprecated use <code>Main.getProjection().latlon2eastNorth(ll)</code>
      */
+    @Deprecated
     public static EastNorth project(LatLon ll) {
         return project((ILatLon) ll);
     }
@@ -214,7 +218,9 @@ public final class Projections {
      *
      * @param en the geographical point to convert (in projected coordinates)
      * @return the corresponding lat/lon (WGS84)
+     * @deprecated use <code>Main.getProjection().eastNorth2latlon(en)</code>
      */
+    @Deprecated
     public static LatLon inverseProject(EastNorth en) {
         if (en == null) return null;
         return Main.getProjection().eastNorth2latlon(en);
