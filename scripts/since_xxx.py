@@ -11,23 +11,33 @@ number that is to be expected for the next commit.
 
 import xml.etree.ElementTree as ElementTree
 import subprocess
+import re
 
-svn_info_local = subprocess.check_output("svn info --xml".split(" "))
-rep_url = ElementTree.fromstring(svn_info_local).findtext("./entry/repository/root")
-svn_info_server = subprocess.check_output("svn info --xml".split(" ") + [rep_url])
-rev = int(ElementTree.fromstring(svn_info_server).find("./entry").get("revision")) + 1
-svn_status = subprocess.check_output("svn status --xml".split(" "))
-for el in ElementTree.fromstring(svn_status).findall("./target/entry"):
-    if  el.find('wc-status').get("item") not in ["added", "modified"]:
-        continue
-    path = el.get("path")
-    if not path.endswith('.java'):
-        continue
-    with open(path, 'r') as f:
-        filedata = f.read()
-    filedata2 = filedata.replace("@since xxx", "@since {}".format(rev))
-    if filedata != filedata2:
-        print("replacing '@since xxx' with '@since {}' in '{}'".format(rev, path))
-        with open(path, 'w') as f:
-            f.write(filedata2)
+revision = None
+
+def main():
+    svn_status = subprocess.check_output("svn status --xml".split(" "))
+    for el in ElementTree.fromstring(svn_status).findall("./target/entry"):
+        if  el.find('wc-status').get("item") not in ["added", "modified"]:
+            continue
+        path = el.get("path")
+        if not path.endswith('.java'):
+            continue
+        with open(path, 'r') as f:
+            filedata = f.read()
+        filedata2 = re.sub("@since xxx", lambda _: "@since {}".format(get_revision()), filedata)
+        if filedata != filedata2:
+            print("replacing '@since xxx' with '@since {}' in '{}'".format(get_revision(), path))
+            with open(path, 'w') as f:
+                f.write(filedata2)
+
+def get_revision():
+    global revision
+    if revision is not None:
+        return revision
+    svn_info_local = subprocess.check_output("svn info --xml".split(" "))
+    rep_url = ElementTree.fromstring(svn_info_local).findtext("./entry/repository/root")
+    svn_info_server = subprocess.check_output("svn info --xml".split(" ") + [rep_url])
+    return int(ElementTree.fromstring(svn_info_server).find("./entry").get("revision")) + 1
     
+main()
