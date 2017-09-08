@@ -121,12 +121,20 @@ public class PluginDownloadTask extends PleaseWaitRunnable {
                 throw new PluginDownloadException(msg);
             }
             URL url = new URL(pi.downloadlink);
-            synchronized (this) {
-                downloadConnection = HttpClient.create(url).setAccept(PLUGIN_MIME_TYPES);
-                downloadConnection.connect();
-            }
-            try (InputStream in = downloadConnection.getResponse().getContent()) {
-                Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            Logging.debug("Download plugin {0} from {1}...", pi.name, url);
+            if ("https".equals(url.getProtocol()) || "http".equals(url.getProtocol())) {
+                synchronized (this) {
+                    downloadConnection = HttpClient.create(url).setAccept(PLUGIN_MIME_TYPES);
+                    downloadConnection.connect();
+                }
+                try (InputStream in = downloadConnection.getResponse().getContent()) {
+                    Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                }
+            } else {
+                // this is an alternative for e.g. file:// URLs where HttpClient doesn't work
+                try (InputStream in = url.openConnection().getInputStream()) {
+                    Files.copy(in, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                }
             }
         } catch (MalformedURLException e) {
             String msg = tr("Cannot download plugin ''{0}''. Its download link ''{1}'' is not a valid URL. Skipping download.",
