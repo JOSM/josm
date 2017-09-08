@@ -19,7 +19,7 @@ public class BugReportQueue {
     private static final BugReportQueue INSTANCE = new BugReportQueue();
 
     /**
-     * The fallback bug report handler if none is set. Prints the stacktrace on standard output.
+     * The fallback bug report handler if none is set. Prints the stacktrace on standard error stream.
      * @since 12770
      */
     public static final BugReportHandler FALLBACK_BUGREPORT_HANDLER = (e, index) -> {

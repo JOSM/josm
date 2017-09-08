@@ -57,7 +57,7 @@ public class BugReportSender extends Thread {
 
     /**
      * The fallback bug report sending handler if none is set.
-     * @since xxx
+     * @since 12790
      */
     public static final BugReportSendingHandler FALLBACK_BUGREPORT_SENDING_HANDLER = new BugReportSendingHandler() {
         @Override
