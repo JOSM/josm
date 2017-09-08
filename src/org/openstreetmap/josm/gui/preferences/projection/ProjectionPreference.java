@@ -31,6 +31,7 @@ import org.openstreetmap.josm.data.preferences.CollectionProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.data.projection.CustomProjection;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
@@ -41,6 +42,7 @@ import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Projection preferences.
@@ -254,6 +256,18 @@ public class ProjectionPreference implements SubPreferenceSetting {
     public static void registerProjectionChoice(ProjectionChoice c) {
         projectionChoices.add(c);
         projectionChoicesById.put(c.getId(), c);
+        for (String code : c.allCodes()) {
+            Projections.registerProjectionSupplier(code, () -> {
+                Collection<String> pref = c.getPreferencesFromCode(code);
+                c.setPreferences(pref);
+                try {
+                    return c.getProjection();
+                } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
+                    Logging.log(Logging.LEVEL_WARN, "Unable to get projection "+code+" with "+c+':', e);
+                    return null;
+                }
+            });
+        }
     }
 
     public static ProjectionChoice registerProjectionChoice(String name, String id, Integer epsg, String cacheDir) {
