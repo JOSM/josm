@@ -8,8 +8,8 @@ import java.awt.image.ShortLookupTable;
 import java.util.Collections;
 import java.util.Map;
 
-import org.openstreetmap.josm.gui.layer.ImageProcessor;
 import org.openstreetmap.josm.io.session.SessionAwareReadApply;
+import org.openstreetmap.josm.tools.ImageProcessor;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
