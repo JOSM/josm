@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -154,14 +155,31 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
             monitor.beginTask("");
             monitor.indeterminateSubTask(tr("Downloading plugin list from ''{0}''", printsite));
 
-            URL url = new URL(site);
-            connection = HttpClient.create(url).useCache(false);
-            final HttpClient.Response response = connection.connect();
-            content = response.fetchContent();
-            if (response.getResponseCode() != 200) {
-                throw new IOException(tr("Unsuccessful HTTP request"));
+            final URL url = new URL(site);
+            if ("https".equals(url.getProtocol()) || "http".equals(url.getProtocol())) {
+                connection = HttpClient.create(url).useCache(false);
+                final HttpClient.Response response = connection.connect();
+                content = response.fetchContent();
+                if (response.getResponseCode() != 200) {
+                    throw new IOException(tr("Unsuccessful HTTP request"));
+                }
+                return content;
+            } else {
+                // e.g. when downloading from a file:// URL, we can't use HttpClient
+                try (InputStreamReader in = new InputStreamReader(url.openConnection().getInputStream(), StandardCharsets.UTF_8)) {
+                    final StringBuilder sb = new StringBuilder();
+                    final char[] buffer = new char[8192];
+                    int numChars;
+                    while ((numChars = in.read(buffer)) >= 0) {
+                        sb.append(buffer, 0, numChars);
+                        if (canceled) {
+                            return null;
+                        }
+                    }
+                    return sb.toString();
+                }
             }
-            return content;
+
         } catch (MalformedURLException e) {
             if (canceled) return null;
             Logging.error(e);
