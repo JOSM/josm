@@ -49,28 +49,6 @@ public class NTV2GridShiftFileWrapper {
     }
 
     /**
-     * Lists default directories where the ntv2 shift files (NAD) for the proj4
-     * library would be located on different platforms.
-     */
-    public static final PlatformVisitor<List<File>> DEFAULT_PROJ4_NTV2_SHIFT_DIRS =
-            new PlatformVisitor<List<File>>() {
-        @Override
-        public List<File> visitUnixoid() {
-            return Arrays.asList(new File("/usr/local/share/proj"), new File("/usr/share/proj"));
-        }
-
-        @Override
-        public List<File> visitWindows() {
-            return Arrays.asList(new File("C:\\PROJ\\NAD"));
-        }
-
-        @Override
-        public List<File> visitOsx() {
-            return Collections.emptyList();
-        }
-    };
-
-    /**
      * Returns the actual {@link NTV2GridShiftFile} behind this wrapper.
      * The grid file is only loaded once, when first accessed.
      * @return The NTv2 grid file
@@ -86,9 +64,9 @@ public class NTV2GridShiftFileWrapper {
                         ntv2.loadGridShiftFile(is, false);
                         instance = ntv2;
                         break;
-                     }
-                 }
-             }
+                    }
+                }
+            }
         }
         return instance;
     }
