@@ -33,6 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
@@ -60,6 +61,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.jdesktop.swinghelper.debug.CheckThreadViolationRepaintManager;
 import org.openstreetmap.gui.jmapviewer.FeatureAdapter;
+import org.openstreetmap.josm.CLIModule;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DeleteAction;
 import org.openstreetmap.josm.actions.JosmAction;
@@ -84,6 +86,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.UserInfo;
 import org.openstreetmap.josm.data.osm.search.SearchMode;
+import org.openstreetmap.josm.data.projection.ProjectionCLI;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileSource;
 import org.openstreetmap.josm.data.projection.datum.NTV2GridShiftFileWrapper;
 import org.openstreetmap.josm.data.projection.datum.NTV2Proj4DirGridShiftFileSource;
@@ -162,7 +165,7 @@ public class MainApplication extends Main {
     /**
      * Command-line arguments used to run the application.
      */
-    private static final List<String> COMMAND_LINE_ARGS = new ArrayList<>();
+    private static List<String> commandLineArgs;
 
     /**
      * The main menu bar at top of screen.
@@ -232,6 +235,34 @@ public class MainApplication extends Main {
         }
     };
 
+    private static final List<CLIModule> cliModules = new ArrayList<>();
+
+    /**
+     * Default JOSM command line interface.
+     * <p>
+     * Runs JOSM and performs some action, depending on the options and positional
+     * arguments.
+     */
+    public static final CLIModule JOSM_CLI_MODULE = new CLIModule() {
+        @Override
+        public String getActionKeyword() {
+            return "runjosm";
+        }
+
+        @Override
+        public void processArguments(String[] argArray) {
+            ProgramArguments args = null;
+            // construct argument table
+            try {
+                args = new ProgramArguments(argArray);
+            } catch (IllegalArgumentException e) {
+                System.err.println(e.getMessage());
+                System.exit(1);
+            }
+            mainJOSM(args);
+        }
+    };
+
     /**
      * Listener that sets the enabled state of undo/redo menu entries.
      */
@@ -255,6 +286,20 @@ public class MainApplication extends Main {
             return null;
         }
     };
+
+    static {
+        registerCLIModue(JOSM_CLI_MODULE);
+        registerCLIModue(ProjectionCLI.INSTANCE);
+    }
+
+    /**
+     * Register a command line interface module.
+     * @param module the module
+     * @since 12792
+     */
+    public static void registerCLIModue(CLIModule module) {
+        cliModules.add(module);
+    }
 
     /**
      * Constructs a new {@code MainApplication} without a window.
@@ -487,7 +532,7 @@ public class MainApplication extends Main {
      * @since 11650
      */
     public static List<String> getCommandLineArgs() {
-        return Collections.unmodifiableList(COMMAND_LINE_ARGS);
+        return Collections.unmodifiableList(commandLineArgs);
     }
 
     /**
@@ -765,16 +810,27 @@ public class MainApplication extends Main {
     @SuppressWarnings("deprecation")
     public static void main(final String[] argArray) {
         I18n.init();
+        commandLineArgs = Arrays.asList(Arrays.copyOf(argArray, argArray.length));
 
-        ProgramArguments args = null;
-        // construct argument table
-        try {
-            args = new ProgramArguments(argArray);
-        } catch (IllegalArgumentException e) {
-            System.err.println(e.getMessage());
-            System.exit(1);
-            return;
+        if (argArray.length > 0) {
+            String moduleStr = argArray[0];
+            for (CLIModule module : cliModules) {
+                if (Objects.equals(moduleStr, module.getActionKeyword())) {
+                   String[] argArrayCdr = Arrays.copyOfRange(argArray, 1, argArray.length);
+                   module.processArguments(argArrayCdr);
+                   return;
+                }
+            }
         }
+        // no module specified, use default (josm)
+        JOSM_CLI_MODULE.processArguments(argArray);
+    }
+
+    /**
+     * Main method to run the JOSM GUI.
+     * @param args program arguments
+     */
+    public static void mainJOSM(ProgramArguments args) {
 
         if (!GraphicsEnvironment.isHeadless()) {
             BugReportQueue.getInstance().setBugReportHandler(BugReportDialog::showFor);
@@ -820,8 +876,6 @@ public class MainApplication extends Main {
             showHelp();
             return;
         }
-
-        COMMAND_LINE_ARGS.addAll(Arrays.asList(argArray));
 
         boolean skipLoadingPlugins = args.hasOption(Option.SKIP_PLUGINS);
         if (skipLoadingPlugins) {

@@ -19,6 +19,7 @@ import javax.swing.event.DocumentListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.conversion.LatLonParser;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
@@ -160,7 +161,7 @@ public class JumpToAction extends JosmAction {
                 ll = new LatLon(Double.parseDouble(lat.getText()), Double.parseDouble(lon.getText()));
             } catch (NumberFormatException ex) {
                 try {
-                    ll = LatLon.parse(lat.getText() + "; " + lon.getText());
+                    ll = LatLonParser.parse(lat.getText() + "; " + lon.getText());
                 } catch (IllegalArgumentException ex2) {
                     JOptionPane.showMessageDialog(Main.parent,
                             tr("Could not parse Latitude, Longitude or Zoom. Please check."),

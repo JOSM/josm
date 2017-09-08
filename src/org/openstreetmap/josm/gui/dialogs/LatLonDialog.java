@@ -26,6 +26,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
+import org.openstreetmap.josm.data.coor.conversion.LatLonParser;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -244,7 +245,7 @@ public class LatLonDialog extends ExtendedDialog {
     protected void parseLatLonUserInput() {
         LatLon latLon;
         try {
-            latLon = LatLon.parse(tfLatLon.getText());
+            latLon = LatLonParser.parse(tfLatLon.getText());
             if (!LatLon.isValidLat(latLon.lat()) || !LatLon.isValidLon(latLon.lon())) {
                 latLon = null;
             }
