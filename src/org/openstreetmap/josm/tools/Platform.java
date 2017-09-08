@@ -37,7 +37,7 @@ public enum Platform {
         }
     };
 
-    private static Platform platform;
+    private static volatile Platform platform;
 
     /**
      * Support for the visitor pattern.
