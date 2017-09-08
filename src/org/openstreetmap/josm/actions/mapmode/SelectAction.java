@@ -708,7 +708,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                 if (c instanceof MoveCommand && affectedNodes.equals(((MoveCommand) c).getParticipatingPrimitives())) {
                     ((MoveCommand) c).saveCheckpoint();
                     ((MoveCommand) c).applyVectorTo(currentEN);
-                } else {
+                } else if (!selection.isEmpty()) {
                     c = new MoveCommand(selection, startEN, currentEN);
                     MainApplication.undoRedo.add(c);
                 }
