@@ -1,20 +1,14 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.tools.bugreport;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Objects;
 
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -22,10 +16,6 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.bugreport.DebugTextDisplay;
-import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
-import org.openstreetmap.josm.gui.widgets.UrlLabel;
-import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.HttpClient.Response;
 import org.openstreetmap.josm.tools.Logging;
@@ -44,6 +34,45 @@ import org.xml.sax.SAXException;
  */
 public class BugReportSender extends Thread {
 
+    /**
+     * Called during bug submission to JOSM bugtracker. Completes the bug report submission and handles errors.
+     * @since 12790
+     */
+    public interface BugReportSendingHandler {
+        /**
+         * Called when a bug is sent to JOSM bugtracker.
+         * @param bugUrl URL to visit to effectively submit the bug report to JOSM website
+         * @param statusText the status text being sent
+         * @return <code>null</code> for success or a string in case of an error
+         */
+        String sendingBugReport(String bugUrl, String statusText);
+
+        /**
+         * Called when a bug failed to be sent to JOSM bugtracker.
+         * @param errorMessage the error message
+         * @param statusText the status text being sent
+         */
+        void failed(String errorMessage, String statusText);
+    }
+
+    /**
+     * The fallback bug report sending handler if none is set.
+     * @since xxx
+     */
+    public static final BugReportSendingHandler FALLBACK_BUGREPORT_SENDING_HANDLER = new BugReportSendingHandler() {
+        @Override
+        public String sendingBugReport(String bugUrl, String statusText) {
+            return OpenBrowser.displayUrl(bugUrl);
+        }
+
+        @Override
+        public void failed(String errorMessage, String statusText) {
+            Logging.error("Unable to send bug report: {0}\n{1}", errorMessage, statusText);
+        }
+    };
+
+    private static BugReportSendingHandler handler = FALLBACK_BUGREPORT_SENDING_HANDLER;
+
     private final String statusText;
     private String errorMessage;
 
@@ -61,16 +90,18 @@ public class BugReportSender extends Thread {
         try {
             // first, send the debug text using post.
             String debugTextPasteId = pasteDebugText();
+            String bugUrl = getJOSMTicketURL() + "?pdata_stored=" + debugTextPasteId;
 
-            // then open a browser to display the pasted text.
-            String openBrowserError = OpenBrowser.displayUrl(getJOSMTicketURL() + "?pdata_stored=" + debugTextPasteId);
-            if (openBrowserError != null) {
-                Logging.warn(openBrowserError);
-                failed(openBrowserError);
+            // then notify handler
+            errorMessage = handler.sendingBugReport(bugUrl, statusText);
+            if (errorMessage != null) {
+                Logging.warn(errorMessage);
+                handler.failed(errorMessage, statusText);
             }
         } catch (BugReportSenderException e) {
             Logging.warn(e);
-            failed(e.getMessage());
+            errorMessage = e.getMessage();
+            handler.failed(errorMessage, statusText);
         }
     }
 
@@ -127,21 +158,6 @@ public class BugReportSender extends Thread {
         return token;
     }
 
-    private void failed(String string) {
-        errorMessage = string;
-        SwingUtilities.invokeLater(() -> {
-            JPanel errorPanel = new JPanel(new GridBagLayout());
-            errorPanel.add(new JMultilineLabel(
-                    tr("Opening the bug report failed. Please report manually using this website:")),
-                    GBC.eol().fill(GridBagConstraints.HORIZONTAL));
-            errorPanel.add(new UrlLabel(Main.getJOSMWebsite() + "/newticket", 2), GBC.eop().insets(8, 0, 0, 0));
-            errorPanel.add(new DebugTextDisplay(statusText));
-
-            JOptionPane.showMessageDialog(Main.parent, errorPanel, tr("You have encountered a bug in JOSM"),
-                    JOptionPane.ERROR_MESSAGE);
-        });
-    }
-
     /**
      * Returns the error message that could have occured during bug sending.
      * @return the error message, or {@code null} if successful
@@ -169,5 +185,14 @@ public class BugReportSender extends Thread {
         BugReportSender sender = new BugReportSender(statusText);
         sender.start();
         return sender;
+    }
+
+    /**
+     * Sets the {@link BugReportSendingHandler} for bug report sender.
+     * @param bugReportSendingHandler the handler in charge of completing the bug report submission and handle errors. Must not be null
+     * @since 12790
+     */
+    public static void setBugReportSendingHandler(BugReportSendingHandler bugReportSendingHandler) {
+        handler = Objects.requireNonNull(bugReportSendingHandler, "bugReportSendingHandler");
     }
 }

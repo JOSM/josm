@@ -148,6 +148,7 @@ import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 import org.openstreetmap.josm.tools.bugreport.BugReportExceptionHandler;
 import org.openstreetmap.josm.tools.bugreport.BugReportQueue;
+import org.openstreetmap.josm.tools.bugreport.BugReportSender;
 import org.xml.sax.SAXException;
 
 /**
@@ -777,6 +778,7 @@ public class MainApplication extends Main {
 
         if (!GraphicsEnvironment.isHeadless()) {
             BugReportQueue.getInstance().setBugReportHandler(BugReportDialog::showFor);
+            BugReportSender.setBugReportSendingHandler(BugReportDialog.bugReportSendingHandler);
         }
 
         Level logLevel = args.getLogLevel();

@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools.bugreport;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Predicate;
 
@@ -17,6 +18,10 @@ public class BugReportQueue {
 
     private static final BugReportQueue INSTANCE = new BugReportQueue();
 
+    /**
+     * The fallback bug report handler if none is set. Prints the stacktrace on standard output.
+     * @since 12770
+     */
     public static final BugReportHandler FALLBACK_BUGREPORT_HANDLER = (e, index) -> {
         e.printStackTrace();
         return BugReportQueue.SuppressionMode.NONE;
@@ -141,8 +146,13 @@ public class BugReportQueue {
         return !reportsToDisplay.isEmpty() || inReportDialog;
     }
 
+    /**
+     * Sets the {@link BugReportHandler} for this queue.
+     * @param bugReportHandler the handler in charge of displaying the bug report. Must not be null
+     * @since 12770
+     */
     public void setBugReportHandler(BugReportHandler bugReportHandler) {
-        this.bugReportHandler = bugReportHandler;
+        this.bugReportHandler = Objects.requireNonNull(bugReportHandler, "bugReportHandler");
     }
 
     /**
