@@ -1,11 +1,10 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.tools.bugreport;
+package org.openstreetmap.josm.gui.bugreport;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.gui.bugreport.DebugTextDisplay;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
