@@ -38,6 +38,7 @@ def get_revision():
     svn_info_local = subprocess.check_output("svn info --xml".split(" "))
     rep_url = ElementTree.fromstring(svn_info_local).findtext("./entry/repository/root")
     svn_info_server = subprocess.check_output("svn info --xml".split(" ") + [rep_url])
-    return int(ElementTree.fromstring(svn_info_server).find("./entry").get("revision")) + 1
+    revision = int(ElementTree.fromstring(svn_info_server).find("./entry").get("revision")) + 1
+    return revision
     
 main()
