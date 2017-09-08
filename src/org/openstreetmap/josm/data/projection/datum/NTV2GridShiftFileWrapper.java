@@ -1,16 +1,11 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.projection.datum;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import org.openstreetmap.josm.tools.PlatformVisitor;
 
 /**
  * Wrapper for {@link NTV2GridShiftFile}.

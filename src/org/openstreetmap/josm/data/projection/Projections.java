@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,8 +42,6 @@ import org.openstreetmap.josm.data.projection.proj.ProjFactory;
 import org.openstreetmap.josm.data.projection.proj.Sinusoidal;
 import org.openstreetmap.josm.data.projection.proj.SwissObliqueMercator;
 import org.openstreetmap.josm.data.projection.proj.TransverseMercator;
-import org.openstreetmap.josm.gui.preferences.projection.ProjectionChoice;
-import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -77,7 +76,7 @@ public final class Projections {
     }
 
     private static final Set<String> allCodes = new HashSet<>();
-    private static final Map<String, ProjectionChoice> allProjectionChoicesByCode = new HashMap<>();
+    private static final Map<String, Supplier<Projection>> projectionSuppliersByCode = new HashMap<>();
     private static final Map<String, Projection> projectionsByCode_cache = new HashMap<>();
 
     /*********************************
@@ -156,14 +155,7 @@ public final class Projections {
         } catch (IOException ex) {
             throw new JosmRuntimeException(ex);
         }
-
-        for (ProjectionChoice pc : ProjectionPreference.getProjectionChoices()) {
-            for (String code : pc.allCodes()) {
-                allProjectionChoicesByCode.put(code, pc);
-            }
-        }
         allCodes.addAll(inits.keySet());
-        allCodes.addAll(allProjectionChoicesByCode.keySet());
     }
 
     private Projections() {
@@ -241,6 +233,17 @@ public final class Projections {
 
     public static void registerBaseProjection(String id, Class<? extends Proj> projClass, String origin) {
         registerBaseProjection(id, new ClassProjFactory(projClass), origin);
+    }
+
+    /**
+     * Register a projection supplier, that is, a factory class for projections.
+     * @param code the code of the projection that will be returned
+     * @param supplier a supplier to return a projection with given code
+     * @since 12786
+     */
+    public static void registerProjectionSupplier(String code, Supplier<Projection> supplier) {
+        projectionSuppliersByCode.put(code, supplier);
+        allCodes.add(code);
     }
 
     /**
@@ -350,22 +353,20 @@ public final class Projections {
     public static Projection getProjectionByCode(String code) {
         Projection proj = projectionsByCode_cache.get(code);
         if (proj != null) return proj;
-        ProjectionChoice pc = allProjectionChoicesByCode.get(code);
-        if (pc != null) {
-            Collection<String> pref = pc.getPreferencesFromCode(code);
-            pc.setPreferences(pref);
-            try {
-                proj = pc.getProjection();
-            } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
-                Logging.log(Logging.LEVEL_WARN, "Unable to get projection "+code+" with "+pc+':', e);
-            }
-        }
-        if (proj == null) {
-            ProjectionDefinition pd = inits.get(code);
-            if (pd == null) return null;
+
+        ProjectionDefinition pd = inits.get(code);
+        if (pd != null) {
             proj = new CustomProjection(pd.name, code, pd.definition);
         }
-        projectionsByCode_cache.put(code, proj);
+        if (proj == null) {
+            Supplier<Projection> ps = projectionSuppliersByCode.get(code);
+            if (ps != null) {
+                proj = ps.get();
+            }
+        }
+        if (proj != null) {
+            projectionsByCode_cache.put(code, proj);
+        }
         return proj;
     }
 
