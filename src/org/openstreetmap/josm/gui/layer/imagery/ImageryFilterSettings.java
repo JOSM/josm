@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.openstreetmap.josm.gui.layer.ImageProcessor;
+import org.openstreetmap.josm.tools.ImageProcessor;
 
 /**
  * This class holds the filter settings for an imagery layer.

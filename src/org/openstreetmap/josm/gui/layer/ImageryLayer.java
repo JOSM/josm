@@ -40,6 +40,7 @@ import org.openstreetmap.josm.gui.MenuScroller;
 import org.openstreetmap.josm.gui.layer.imagery.ImageryFilterSettings;
 import org.openstreetmap.josm.gui.layer.imagery.TileSourceDisplaySettings;
 import org.openstreetmap.josm.tools.GBC;
+import org.openstreetmap.josm.tools.ImageProcessor;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.Utils;

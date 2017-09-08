@@ -32,6 +32,7 @@ import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionChangeListener;
 import org.openstreetmap.josm.tools.Destroyable;
+import org.openstreetmap.josm.tools.ImageProcessor;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 

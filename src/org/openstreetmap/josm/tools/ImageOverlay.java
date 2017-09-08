@@ -6,8 +6,6 @@ import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
 
-import org.openstreetmap.josm.gui.layer.ImageProcessor;
-
 /** class to describe how image overlay
  * @since 8095
  */

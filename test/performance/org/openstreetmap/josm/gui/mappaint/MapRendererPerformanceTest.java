@@ -25,6 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.PerformanceTestUtils;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Bounds;
@@ -34,7 +35,6 @@ import org.openstreetmap.josm.data.osm.visitor.paint.RenderBenchmarkCollector.Ca
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer.StyleRecord;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
-import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.StyleSetting.BooleanStyleSetting;
@@ -186,7 +186,7 @@ public class MapRendererPerformanceTest {
                 checkScale = true;
                 scale = SCALE_Z17;
             }
-            nc.zoomTo(Projections.project(center), scale);
+            nc.zoomTo(Main.getProjection().latlon2eastNorth(center), scale);
             if (checkScale) {
                 int lvl = Selector.OptimizedGeneralSelector.scale2level(nc.getDist100Pixel());
                 Assert.assertEquals(17, lvl);
