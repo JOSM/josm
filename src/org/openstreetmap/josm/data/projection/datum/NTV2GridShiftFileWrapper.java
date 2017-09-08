@@ -23,11 +23,10 @@ public class NTV2GridShiftFileWrapper {
     private NTV2GridShiftFile instance;
     private final String gridFileName;
 
-    public static float NTV2_SOURCE_PRIORITY_LOCAL = 10f;
-    public static float NTV2_SOURCE_PRIORITY_DOWNLOAD = 5f;
+    public static final float NTV2_SOURCE_PRIORITY_LOCAL = 10f;
+    public static final float NTV2_SOURCE_PRIORITY_DOWNLOAD = 5f;
 
-    private static Map<Float, NTV2GridShiftFileSource> sources =
-            new TreeMap<Float, NTV2GridShiftFileSource>(Collections.reverseOrder());
+    private static Map<Float, NTV2GridShiftFileSource> sources = new TreeMap<>(Collections.reverseOrder());
 
     /**
      * Register a source for NTV2 grid files.

@@ -33,7 +33,7 @@ public interface PlatformHook {
     /**
      * Visitor to construct a PlatformHook from a given {@link Platform} object.
      */
-    static final PlatformVisitor<PlatformHook> CONSTRUCT_FROM_PLATFORM = new PlatformVisitor<PlatformHook>() {
+    final PlatformVisitor<PlatformHook> CONSTRUCT_FROM_PLATFORM = new PlatformVisitor<PlatformHook>() {
         @Override
         public PlatformHook visitUnixoid() {
             return new PlatformHookUnixoid();

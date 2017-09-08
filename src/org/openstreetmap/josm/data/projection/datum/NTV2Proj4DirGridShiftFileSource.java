@@ -17,7 +17,7 @@ import org.openstreetmap.josm.tools.PlatformVisitor;
  * Shift file source that scans the common data directories of the proj4 library.
  * @since 12777
  */
-public class NTV2Proj4DirGridShiftFileSource implements NTV2GridShiftFileSource, PlatformVisitor<List<File>> {
+public final class NTV2Proj4DirGridShiftFileSource implements NTV2GridShiftFileSource, PlatformVisitor<List<File>> {
 
     private NTV2Proj4DirGridShiftFileSource() {
         // hide constructor
