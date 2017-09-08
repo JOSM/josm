@@ -13,13 +13,13 @@ import java.util.Objects;
 
 import javax.swing.Icon;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.AllNodesVisitor;
-import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -71,7 +71,8 @@ public class MoveCommand extends Command {
      * @param position The new location (lat/lon)
      */
     public MoveCommand(Node node, LatLon position) {
-        this(Collections.singleton((OsmPrimitive) node), Projections.project(position).subtract(node.getEastNorth()));
+        this(Collections.singleton((OsmPrimitive) node),
+                Main.getProjection().latlon2eastNorth(position).subtract(node.getEastNorth()));
     }
 
     /**

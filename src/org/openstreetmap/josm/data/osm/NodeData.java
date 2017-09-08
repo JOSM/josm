@@ -1,10 +1,10 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.osm;
 
+import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
-import org.openstreetmap.josm.data.projection.Projections;
 
 /**
  * The data on a single node (tags and position) that is stored in the database
@@ -82,12 +82,12 @@ public class NodeData extends PrimitiveData implements INode {
     public EastNorth getEastNorth() {
         // No internal caching of projected coordinates needed. In contrast to getEastNorth()
         // on Node, this method is rarely used. Caching would be overkill.
-        return Projections.project(getCoor());
+        return Main.getProjection().latlon2eastNorth(getCoor());
     }
 
     @Override
     public void setEastNorth(EastNorth eastNorth) {
-        setCoor(Projections.inverseProject(eastNorth));
+        setCoor(Main.getProjection().eastNorth2latlon(eastNorth));
     }
 
     @Override

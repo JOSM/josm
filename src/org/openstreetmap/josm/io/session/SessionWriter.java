@@ -30,7 +30,6 @@ import javax.xml.transform.stream.StreamResult;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
@@ -265,7 +264,7 @@ public class SessionWriter {
         viewportEl.appendChild(centerEl);
         MapView mapView = MainApplication.getMap().mapView;
         EastNorth center = mapView.getCenter();
-        LatLon centerLL = Projections.inverseProject(center);
+        LatLon centerLL = Main.getProjection().eastNorth2latlon(center);
         centerEl.setAttribute("lat", Double.toString(centerLL.lat()));
         centerEl.setAttribute("lon", Double.toString(centerLL.lon()));
         Element scale = doc.createElement("scale");
