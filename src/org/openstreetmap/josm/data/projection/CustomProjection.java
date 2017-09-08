@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.ProjectionBounds;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.coor.conversion.LatLonParser;
 import org.openstreetmap.josm.data.projection.datum.CentricDatum;
 import org.openstreetmap.josm.data.projection.datum.Datum;
 import org.openstreetmap.josm.data.projection.datum.NTV2Datum;
@@ -654,44 +655,18 @@ public class CustomProjection extends AbstractProjection {
 
     /**
      * Convert an angle string to a double value
-     * @param angleStr The string. e.g. -1.1 or 50d 10' 3"
+     * @param angleStr The string. e.g. -1.1 or 50d10'3"
      * @param parameterName Only for error message.
      * @return The angle value, in degrees.
      * @throws ProjectionConfigurationException in case of invalid parameter
      */
     public static double parseAngle(String angleStr, String parameterName) throws ProjectionConfigurationException {
-        final String floatPattern = "(\\d+(\\.\\d*)?)";
-        // pattern does all error handling.
-        Matcher in = Pattern.compile("^(?<neg1>-)?"
-                + "(?=\\d)(?:(?<single>" + floatPattern + ")|"
-                + "((?<degree>" + floatPattern + ")d)?"
-                + "((?<minutes>" + floatPattern + ")\')?"
-                + "((?<seconds>" + floatPattern + ")\")?)"
-                + "(?:[NE]|(?<neg2>[SW]))?$").matcher(angleStr);
-
-        if (!in.find()) {
+        try {
+            return LatLonParser.parseCoordinate(angleStr);
+        } catch (IllegalArgumentException e) {
             throw new ProjectionConfigurationException(
                     tr("Unable to parse value ''{1}'' of parameter ''{0}'' as coordinate value.", parameterName, angleStr));
         }
-
-        double value = 0;
-        if (in.group("single") != null) {
-            value += Double.parseDouble(in.group("single"));
-        }
-        if (in.group("degree") != null) {
-            value += Double.parseDouble(in.group("degree"));
-        }
-        if (in.group("minutes") != null) {
-            value += Double.parseDouble(in.group("minutes")) / 60;
-        }
-        if (in.group("seconds") != null) {
-            value += Double.parseDouble(in.group("seconds")) / 3600;
-        }
-
-        if (in.group("neg1") != null ^ in.group("neg2") != null) {
-            value = -value;
-        }
-        return value;
     }
 
     @Override
@@ -914,4 +889,17 @@ public class CustomProjection extends AbstractProjection {
         }
         return result;
     }
+
+    /**
+     * Return true, if a geographic coordinate reference system is represented.
+     *
+     * I.e. if it returns latitude/longitude values rather than Cartesian
+     * east/north coordinates on a flat surface.
+     * @return true, if it is geographic
+     * @since 12792
+     */
+    public boolean isGeographic() {
+        return proj.isGeographic();
+    }
+
 }

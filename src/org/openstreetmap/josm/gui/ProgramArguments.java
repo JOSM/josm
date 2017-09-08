@@ -112,7 +112,7 @@ public class ProgramArguments {
      * @param args command-line arguments array
      */
     private void buildCommandLineArgumentMap(String... args) {
-        LongOpt[] los = Stream.of(Option.values()).map(Option::toLongOpt).toArray(i -> new LongOpt[i]);
+        LongOpt[] los = Stream.of(Option.values()).map(Option::toLongOpt).toArray(LongOpt[]::new);
 
         Getopt g = new Getopt("JOSM", args, "hv", los);
 
