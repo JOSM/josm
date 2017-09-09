@@ -15,7 +15,6 @@ import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
 import java.net.ProxySelector;
 import java.util.EnumMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
@@ -32,6 +31,7 @@ import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.io.DefaultProxySelector;
+import org.openstreetmap.josm.io.ProxyPolicy;
 import org.openstreetmap.josm.io.auth.CredentialsAgent;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
@@ -53,66 +53,6 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
             return getPreferredSize();
         }
     }
-
-    /**
-     * The proxy policy is how JOSM will use proxy information.
-     */
-    public enum ProxyPolicy {
-        /** No proxy: JOSM will access Internet resources directly */
-        NO_PROXY("no-proxy"),
-        /** Use system settings: JOSM will use system proxy settings */
-        USE_SYSTEM_SETTINGS("use-system-settings"),
-        /** Use HTTP proxy: JOSM will use the given HTTP proxy, configured manually */
-        USE_HTTP_PROXY("use-http-proxy"),
-        /** Use HTTP proxy: JOSM will use the given SOCKS proxy */
-        USE_SOCKS_PROXY("use-socks-proxy");
-
-        private final String policyName;
-
-        ProxyPolicy(String policyName) {
-            this.policyName = policyName;
-        }
-
-        /**
-         * Replies the policy name, to be stored in proxy preferences.
-         * @return the policy unique name
-         */
-        public String getName() {
-            return policyName;
-        }
-
-        /**
-         * Retrieves a proxy policy from its name found in preferences.
-         * @param policyName The policy name
-         * @return The proxy policy matching the given name, or {@code null}
-         */
-        public static ProxyPolicy fromName(String policyName) {
-            if (policyName == null) return null;
-            policyName = policyName.trim().toLowerCase(Locale.ENGLISH);
-            for (ProxyPolicy pp: values()) {
-                if (pp.getName().equals(policyName))
-                    return pp;
-            }
-            return null;
-        }
-    }
-
-    /** Property key for proxy policy */
-    public static final String PROXY_POLICY = "proxy.policy";
-    /** Property key for HTTP proxy host */
-    public static final String PROXY_HTTP_HOST = "proxy.http.host";
-    /** Property key for HTTP proxy port */
-    public static final String PROXY_HTTP_PORT = "proxy.http.port";
-    /** Property key for SOCKS proxy host */
-    public static final String PROXY_SOCKS_HOST = "proxy.socks.host";
-    /** Property key for SOCKS proxy port */
-    public static final String PROXY_SOCKS_PORT = "proxy.socks.port";
-    /** Property key for proxy username */
-    public static final String PROXY_USER = "proxy.user";
-    /** Property key for proxy password */
-    public static final String PROXY_PASS = "proxy.pass";
-    /** Property key for proxy exceptions list */
-    public static final String PROXY_EXCEPTIONS = "proxy.exceptions";
 
     private transient Map<ProxyPolicy, JRadioButton> rbProxyPolicy;
     private final JosmTextField tfProxyHttpHost = new JosmTextField();
@@ -323,7 +263,8 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
      * Initializes the panel with the values from the preferences
      */
     public final void initFromPreferences() {
-        ProxyPolicy pp = Optional.ofNullable(ProxyPolicy.fromName(Main.pref.get(PROXY_POLICY, null))).orElse(ProxyPolicy.NO_PROXY);
+        ProxyPolicy pp = Optional.ofNullable(ProxyPolicy.fromName(Main.pref.get(DefaultProxySelector.PROXY_POLICY, null)))
+                .orElse(ProxyPolicy.NO_PROXY);
         rbProxyPolicy.get(pp).setSelected(true);
         String value = Main.pref.get("proxy.host", null);
         if (value != null) {
@@ -331,7 +272,7 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
             tfProxyHttpHost.setText(value);
             Main.pref.put("proxy.host", null);
         } else {
-            tfProxyHttpHost.setText(Main.pref.get(PROXY_HTTP_HOST, ""));
+            tfProxyHttpHost.setText(Main.pref.get(DefaultProxySelector.PROXY_HTTP_HOST, ""));
         }
         value = Main.pref.get("proxy.port", null);
         if (value != null) {
@@ -339,10 +280,10 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
             tfProxyHttpPort.setText(value);
             Main.pref.put("proxy.port", null);
         } else {
-            tfProxyHttpPort.setText(Main.pref.get(PROXY_HTTP_PORT, ""));
+            tfProxyHttpPort.setText(Main.pref.get(DefaultProxySelector.PROXY_HTTP_PORT, ""));
         }
-        tfProxySocksHost.setText(Main.pref.get(PROXY_SOCKS_HOST, ""));
-        tfProxySocksPort.setText(Main.pref.get(PROXY_SOCKS_PORT, ""));
+        tfProxySocksHost.setText(Main.pref.get(DefaultProxySelector.PROXY_SOCKS_HOST, ""));
+        tfProxySocksPort.setText(Main.pref.get(DefaultProxySelector.PROXY_SOCKS_PORT, ""));
 
         if (pp.equals(ProxyPolicy.USE_SYSTEM_SETTINGS) && !DefaultProxySelector.willJvmRetrieveSystemProxies()) {
             Logging.warn(tr("JOSM is configured to use proxies from the system setting, but the JVM is not configured to retrieve them. " +
@@ -416,11 +357,11 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
                 break;
             }
         }
-        Main.pref.put(PROXY_POLICY, Optional.ofNullable(policy).orElse(ProxyPolicy.NO_PROXY).getName());
-        Main.pref.put(PROXY_HTTP_HOST, tfProxyHttpHost.getText());
-        Main.pref.put(PROXY_HTTP_PORT, tfProxyHttpPort.getText());
-        Main.pref.put(PROXY_SOCKS_HOST, tfProxySocksHost.getText());
-        Main.pref.put(PROXY_SOCKS_PORT, tfProxySocksPort.getText());
+        Main.pref.put(DefaultProxySelector.PROXY_POLICY, Optional.ofNullable(policy).orElse(ProxyPolicy.NO_PROXY).getName());
+        Main.pref.put(DefaultProxySelector.PROXY_HTTP_HOST, tfProxyHttpHost.getText());
+        Main.pref.put(DefaultProxySelector.PROXY_HTTP_PORT, tfProxyHttpPort.getText());
+        Main.pref.put(DefaultProxySelector.PROXY_SOCKS_HOST, tfProxySocksHost.getText());
+        Main.pref.put(DefaultProxySelector.PROXY_SOCKS_PORT, tfProxySocksPort.getText());
 
         // update the proxy selector
         ProxySelector selector = ProxySelector.getDefault();

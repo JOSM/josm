@@ -35,7 +35,7 @@ public class GeoJSONExporter extends FileExporter {
     public void exportData(File file, Layer layer) throws IOException {
         if (layer instanceof OsmDataLayer) {
             try (Writer out = Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8)) {
-                out.write(new GeoJSONWriter((OsmDataLayer) layer).write());
+                out.write(new GeoJSONWriter(((OsmDataLayer) layer).data).write());
             }
         } else {
             throw new IllegalArgumentException(tr("Layer ''{0}'' not supported", layer.getClass().toString()));

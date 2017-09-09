@@ -18,15 +18,30 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
-import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel.ProxyPolicy;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
  * This is the default proxy selector used in JOSM.
- *
+ * @since 2641
  */
 public class DefaultProxySelector extends ProxySelector {
+
+    /** Property key for proxy policy */
+    public static final String PROXY_POLICY = "proxy.policy";
+    /** Property key for HTTP proxy host */
+    public static final String PROXY_HTTP_HOST = "proxy.http.host";
+    /** Property key for HTTP proxy port */
+    public static final String PROXY_HTTP_PORT = "proxy.http.port";
+    /** Property key for SOCKS proxy host */
+    public static final String PROXY_SOCKS_HOST = "proxy.socks.host";
+    /** Property key for SOCKS proxy port */
+    public static final String PROXY_SOCKS_PORT = "proxy.socks.port";
+    /** Property key for proxy username */
+    public static final String PROXY_USER = "proxy.user";
+    /** Property key for proxy password */
+    public static final String PROXY_PASS = "proxy.pass";
+    /** Property key for proxy exceptions list */
+    public static final String PROXY_EXCEPTIONS = "proxy.exceptions";
 
     private static final List<Proxy> NO_PROXY_LIST = Collections.singletonList(Proxy.NO_PROXY);
 
@@ -110,19 +125,19 @@ public class DefaultProxySelector extends ProxySelector {
      *
      */
     public final void initFromPreferences() {
-        String value = Main.pref.get(ProxyPreferencesPanel.PROXY_POLICY);
+        String value = Main.pref.get(PROXY_POLICY);
         if (value.isEmpty()) {
             proxyPolicy = ProxyPolicy.NO_PROXY;
         } else {
             proxyPolicy = ProxyPolicy.fromName(value);
             if (proxyPolicy == null) {
                 Logging.warn(tr("Unexpected value for preference ''{0}'' found. Got ''{1}''. Will use no proxy.",
-                        ProxyPreferencesPanel.PROXY_POLICY, value));
+                        PROXY_POLICY, value));
                 proxyPolicy = ProxyPolicy.NO_PROXY;
             }
         }
-        String host = Main.pref.get(ProxyPreferencesPanel.PROXY_HTTP_HOST, null);
-        int port = parseProxyPortValue(ProxyPreferencesPanel.PROXY_HTTP_PORT, Main.pref.get(ProxyPreferencesPanel.PROXY_HTTP_PORT, null));
+        String host = Main.pref.get(PROXY_HTTP_HOST, null);
+        int port = parseProxyPortValue(PROXY_HTTP_PORT, Main.pref.get(PROXY_HTTP_PORT, null));
         httpProxySocketAddress = null;
         if (proxyPolicy.equals(ProxyPolicy.USE_HTTP_PROXY)) {
             if (host != null && !host.trim().isEmpty() && port > 0) {
@@ -133,8 +148,8 @@ public class DefaultProxySelector extends ProxySelector {
             }
         }
 
-        host = Main.pref.get(ProxyPreferencesPanel.PROXY_SOCKS_HOST, null);
-        port = parseProxyPortValue(ProxyPreferencesPanel.PROXY_SOCKS_PORT, Main.pref.get(ProxyPreferencesPanel.PROXY_SOCKS_PORT, null));
+        host = Main.pref.get(PROXY_SOCKS_HOST, null);
+        port = parseProxyPortValue(PROXY_SOCKS_PORT, Main.pref.get(PROXY_SOCKS_PORT, null));
         socksProxySocketAddress = null;
         if (proxyPolicy.equals(ProxyPolicy.USE_SOCKS_PROXY)) {
             if (host != null && !host.trim().isEmpty() && port > 0) {
@@ -145,7 +160,7 @@ public class DefaultProxySelector extends ProxySelector {
             }
         }
         proxyExceptions = new HashSet<>(
-            Main.pref.getCollection(ProxyPreferencesPanel.PROXY_EXCEPTIONS,
+            Main.pref.getCollection(PROXY_EXCEPTIONS,
                     Arrays.asList("localhost", IPV4_LOOPBACK, IPV6_LOOPBACK))
         );
     }

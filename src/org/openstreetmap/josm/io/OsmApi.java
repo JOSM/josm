@@ -49,7 +49,7 @@ import org.xml.sax.SAXParseException;
  *
  * It is conceivable to extract this into an interface later and create various
  * classes implementing the interface, to be able to talk to various kinds of servers.
- * @ince 1523
+ * @since 1523
  */
 public class OsmApi extends OsmConnection {
 
