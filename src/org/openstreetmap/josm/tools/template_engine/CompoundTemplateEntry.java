@@ -12,7 +12,7 @@ public final class CompoundTemplateEntry implements TemplateEntry {
             return new CompoundTemplateEntry(entry);
     }
 
-    private CompoundTemplateEntry(TemplateEntry ... entries) {
+    private CompoundTemplateEntry(TemplateEntry... entries) {
         this.entries = entries;
     }
 

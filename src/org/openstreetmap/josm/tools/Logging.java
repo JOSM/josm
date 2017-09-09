@@ -279,7 +279,7 @@ public final class Logging {
      * @see #logWithStackTrace(Level, Throwable)
      */
     public static void logWithStackTrace(Level level, Throwable t, String pattern, Object... args) {
-        logPrivate(level, () -> getErrorLogWithStack(MessageFormat.format(pattern,  args), t));
+        logPrivate(level, () -> getErrorLogWithStack(MessageFormat.format(pattern, args), t));
     }
 
     private static void logPrivate(Level level, String pattern, Object... args) {

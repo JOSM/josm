@@ -147,7 +147,8 @@ public final class MultikeyActionsHandler {
             lastTimestamp = e.getWhen();
             lastAction = this;
             timer.schedule(new MyTimerTask(lastTimestamp, lastAction), DIALOG_DELAY);
-            MainApplication.getMap().statusLine.setHelpText(STATUS_BAR_ID, tr("{0}... [please type its number]", (String) action.getValue(SHORT_DESCRIPTION)));
+            MainApplication.getMap().statusLine.setHelpText(STATUS_BAR_ID,
+                    tr("{0}... [please type its number]", (String) action.getValue(SHORT_DESCRIPTION)));
         }
 
         @Override

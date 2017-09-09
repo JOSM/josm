@@ -569,7 +569,7 @@ public class Diff {
          * @return 0=nondiscardable, 1=discardable or 2=provisionally discardable for each line
          * @see #equivCount()
          */
-        private byte[] discardable(final int ... counts) {
+        private byte[] discardable(final int... counts) {
             final int end = bufferedLines;
             final byte[] discards = new byte[end];
             final int[] equivs = this.equivs;

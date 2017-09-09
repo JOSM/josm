@@ -16,7 +16,11 @@ import java.util.Set;
  * Deforms an image geometrically according to a given transformation formula.
  * @since 11858
  */
-public class ImageWarp {
+public final class ImageWarp {
+
+    private ImageWarp() {
+        // Hide default constructor
+    }
 
     /**
      * Transformation that translates the pixel coordinates.

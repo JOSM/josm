@@ -209,7 +209,7 @@ public class ListenerList<T> {
             super.failRemove(listener);
         }
 
-        private static void dumpStack(StackTraceElement ... stackTraceElements) {
+        private static void dumpStack(StackTraceElement... stackTraceElements) {
             if (stackTraceElements == null) {
                 Logging.trace("  - (no trace recorded)");
             } else {

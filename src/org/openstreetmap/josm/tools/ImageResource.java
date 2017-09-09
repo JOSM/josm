@@ -136,8 +136,8 @@ public class ImageResource {
      * Will return a multi-resolution image by default (if possible).
      * @param  dim The requested dimensions. Use (-1,-1) for the original size and (width, -1)
      *         to set the width, but otherwise scale the image proportionally.
-     * @see #getImageIconBounded(java.awt.Dimension, boolean)
      * @return ImageIcon object for the image of this resource, scaled according to dim
+     * @see #getImageIconBounded(java.awt.Dimension, boolean)
      */
     public ImageIcon getImageIcon(Dimension dim) {
         return getImageIcon(dim, true);
