@@ -1071,6 +1071,14 @@ public class MainApplication extends Main {
     static void setupCallbacks() {
         MessageNotifier.setNotifierCallback(MainApplication::notifyNewMessages);
         DeleteCommand.setDeletionCallback(DeleteAction.defaultDeletionCallback);
+        OsmUrlToBounds.setMapSizeSupplier(() -> {
+            if (isDisplayingMapView()) {
+                MapView mapView = getMap().mapView;
+                return new Dimension(mapView.getWidth(), mapView.getHeight());
+            } else {
+                return GuiHelper.getScreenSize();
+            }
+        });
     }
 
     static void setupUIManager() {

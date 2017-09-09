@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
@@ -14,15 +15,14 @@ import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Ellipsoid;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.MapView;
-import org.openstreetmap.josm.gui.util.GuiHelper;
 
 /**
  * Parses various URL used in OpenStreetMap projects into {@link Bounds}.
  */
 public final class OsmUrlToBounds {
     private static final String SHORTLINK_PREFIX = "http://osm.org/go/";
+
+    private static Supplier<Dimension> mapSize = () -> new Dimension(800, 600);
 
     private OsmUrlToBounds() {
         // Hide default constructor for utils classes
@@ -204,13 +204,13 @@ public final class OsmUrlToBounds {
                 zoom - 8 - (zoomOffset % 3) - 2);
     }
 
-    private static Dimension getScreenSize() {
-        if (MainApplication.isDisplayingMapView()) {
-            MapView mapView = MainApplication.getMap().mapView;
-            return new Dimension(mapView.getWidth(), mapView.getHeight());
-        } else {
-            return GuiHelper.getScreenSize();
-        }
+    /**
+     * Sets the map size supplier.
+     * @param mapSizeSupplier returns the map size in pixels
+     * @since 12796
+     */
+    public static void setMapSizeSupplier(Supplier<Dimension> mapSizeSupplier) {
+        mapSize = mapSizeSupplier;
     }
 
     private static final int TILE_SIZE_IN_PIXELS = 256;
@@ -223,7 +223,7 @@ public final class OsmUrlToBounds {
      * @return The bounds the OSM server would display
      */
     public static Bounds positionToBounds(final double lat, final double lon, final int zoom) {
-        final Dimension screenSize = getScreenSize();
+        final Dimension screenSize = mapSize.get();
         double scale = (1 << zoom) * TILE_SIZE_IN_PIXELS / (2 * Math.PI * Ellipsoid.WGS84.a);
         double deltaX = screenSize.getWidth() / 2.0 / scale;
         double deltaY = screenSize.getHeight() / 2.0 / scale;
@@ -245,7 +245,7 @@ public final class OsmUrlToBounds {
         final EastNorth min = mercator.latlon2eastNorth(b.getMin());
         final EastNorth max = mercator.latlon2eastNorth(b.getMax());
         final double deltaX = max.getX() - min.getX();
-        final double scale = getScreenSize().getWidth() / deltaX;
+        final double scale = mapSize.get().getWidth() / deltaX;
         final double x = scale * (2 * Math.PI * Ellipsoid.WGS84.a) / TILE_SIZE_IN_PIXELS;
         return (int) Math.round(Math.log(x) / Math.log(2));
     }
