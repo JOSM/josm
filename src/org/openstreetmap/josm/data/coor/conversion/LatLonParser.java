@@ -55,6 +55,10 @@ public class LatLonParser {
         private double lon = Double.NaN;
     }
 
+    private LatLonParser() {
+        // private constructor
+    }
+
     /**
      * Parses the given string as lat/lon.
      * @param coord String to parse

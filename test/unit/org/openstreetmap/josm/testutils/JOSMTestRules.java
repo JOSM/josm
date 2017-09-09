@@ -54,6 +54,7 @@ public class JOSMTestRules implements TestRule {
     private String i18n = null;
     private boolean platform;
     private boolean useProjection;
+    private boolean useProjectionNadGrids;
     private boolean commands;
     private boolean allowMemoryManagerLeaks;
     private boolean useMapStyles;
@@ -153,6 +154,15 @@ public class JOSMTestRules implements TestRule {
      */
     public JOSMTestRules projection() {
         useProjection = true;
+        return this;
+    }
+
+    /**
+     * Set up loading of NTV2 grit shift files to support projections that need them.
+     * @return this instance, for easy chaining
+     */
+    public JOSMTestRules projectionNadGrids() {
+        useProjectionNadGrids = true;
         return this;
     }
 
@@ -312,6 +322,10 @@ public class JOSMTestRules implements TestRule {
 
         if (useProjection) {
             Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
+        }
+
+        if (useProjectionNadGrids) {
+            MainApplication.setupNadGridSources();
         }
 
         // Set API

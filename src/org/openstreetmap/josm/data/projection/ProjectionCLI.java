@@ -32,9 +32,9 @@ public class ProjectionCLI implements CLIModule {
 
     public static final ProjectionCLI INSTANCE = new ProjectionCLI();
 
-    private boolean argInverse = false;
-    private boolean argSwitchInput = false;
-    private boolean argSwitchOutput = false;
+    private boolean argInverse = false;         // NOPMD
+    private boolean argSwitchInput = false;     // NOPMD
+    private boolean argSwitchOutput = false;    // NOPMD
 
     @Override
     public String getActionKeyword() {
@@ -61,6 +61,8 @@ public class ProjectionCLI implements CLIModule {
             case 's':
                 argSwitchOutput = true;
                 break;
+            default:
+                // ignore
             }
         }
 
@@ -126,8 +128,7 @@ public class ProjectionCLI implements CLIModule {
                 "    118d39'30.42\"W 37d20'18.76\"N\n"+
                 "    EOF\n"+
                 "       => 1250371.1334500168 6545331.055189664\n" +
-                "          -1.3208998232319113E7 4486401.160664663\n" +
-                "";
+                "          -1.3208998232319113E7 4486401.160664663\n";
     }
 
     private void run(String fromStr, String toStr, List<String> files) throws ProjectionConfigurationException, IOException {
