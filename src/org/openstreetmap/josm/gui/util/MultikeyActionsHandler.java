@@ -27,6 +27,11 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.MultikeyShortcutAction.MultikeyInfo;
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Handles the different multikey actions.
+ * The possible actions can be selected through a popup menu.
+ * @since 4595
+ */
 public final class MultikeyActionsHandler {
 
     private static final long DIALOG_DELAY = 1000;
