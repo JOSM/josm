@@ -23,7 +23,10 @@
   <suppress checks="." files="[\\/]test[\\/]config[\\/]" />
   <suppress checks="." files="[\\/]test[\\/]data[\\/]" />
   <suppress checks="." files="[\\/]test[\\/]lib[\\/]" />
-  <suppress checks="." files="[\\/]tools[\\/]" />
+  <suppress checks="." files="[\\/]tools[\\/]checkstyle[\\/]" />
+  <suppress checks="." files="[\\/]tools[\\/]findbugs[\\/]" />
+  <suppress checks="." files="[\\/]tools[\\/]japicc[\\/]" />
+  <suppress checks="." files="[\\/]tools[\\/]pmd[\\/]" />
   <suppress checks="." files="[\\/]windows[\\/]" />
   <suppress checks="HeaderCheck" files="Ellipsoid\.java" />
   <suppress checks="HeaderCheck" files="NTV2GridShift\.java" />
