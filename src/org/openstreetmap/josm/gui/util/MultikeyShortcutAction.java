@@ -7,6 +7,10 @@ import javax.swing.Action;
 
 import org.openstreetmap.josm.tools.Shortcut;
 
+/**
+ * Action implementing a multikey shortcut - shorcuts like Ctrl+Alt+S,n will toggle n-th layer visibility.
+ * @since 4595
+ */
 public interface MultikeyShortcutAction extends Action {
 
     class MultikeyInfo {

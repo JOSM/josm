@@ -182,7 +182,7 @@ public class HttpClientTest {
         assertThat(captured.getLevel(), is(Logging.LEVEL_DEBUG));
     }
 
-    @Test()
+    @Test
     public void testHttp401() throws IOException {
         // https://tools.ietf.org/html/rfc2324
         final HttpClient.Response response = HttpClient.create(new URL("https://httpbin.org/status/401")).connect(progress);
