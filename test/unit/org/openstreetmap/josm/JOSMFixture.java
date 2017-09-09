@@ -120,6 +120,9 @@ public class JOSMFixture {
         // init projection
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
 
+        // setup projection grid files
+        MainApplication.setupNadGridSources();
+
         // make sure we don't upload to or test against production
         url = OsmApi.getOsmApi().getBaseUrl().toLowerCase(Locale.ENGLISH).trim();
         if (isProductionApiUrl(url)) {

@@ -23,7 +23,7 @@ public class SwissGridTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().platform();
+    public JOSMTestRules test = new JOSMTestRules().projectionNadGrids().platform();
 
     /**
      * Setup test.

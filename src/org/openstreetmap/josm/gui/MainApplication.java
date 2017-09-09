@@ -977,12 +977,7 @@ public class MainApplication extends Main {
         toolbar = new ToolbarPreferences();
         Main.toolbar = toolbar;
         ProjectionPreference.setProjection();
-        NTV2GridShiftFileWrapper.registerNTV2GridShiftFileSource(
-                NTV2GridShiftFileWrapper.NTV2_SOURCE_PRIORITY_LOCAL,
-                NTV2Proj4DirGridShiftFileSource.getInstance());
-        NTV2GridShiftFileWrapper.registerNTV2GridShiftFileSource(
-                NTV2GridShiftFileWrapper.NTV2_SOURCE_PRIORITY_DOWNLOAD,
-                JOSM_WEBSITE_NTV2_SOURCE);
+        setupNadGridSources();
         GuiHelper.translateJavaInternalMessages();
         preConstructorInit();
 
@@ -1036,6 +1031,19 @@ public class MainApplication extends Main {
             Logging.info("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to console");
             RepaintManager.setCurrentManager(new CheckThreadViolationRepaintManager());
         }
+    }
+
+    /**
+     * Setup the sources for NTV2 grid shift files for projection support.
+     * @since 12795
+     */
+    public static void setupNadGridSources() {
+        NTV2GridShiftFileWrapper.registerNTV2GridShiftFileSource(
+                NTV2GridShiftFileWrapper.NTV2_SOURCE_PRIORITY_LOCAL,
+                NTV2Proj4DirGridShiftFileSource.getInstance());
+        NTV2GridShiftFileWrapper.registerNTV2GridShiftFileSource(
+                NTV2GridShiftFileWrapper.NTV2_SOURCE_PRIORITY_DOWNLOAD,
+                JOSM_WEBSITE_NTV2_SOURCE);
     }
 
     static void applyWorkarounds() {
