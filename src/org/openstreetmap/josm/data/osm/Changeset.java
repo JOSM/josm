@@ -13,7 +13,6 @@ import java.util.Optional;
 
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
@@ -107,8 +106,10 @@ public final class Changeset implements Tagged, Comparable<Changeset> {
     /**
      * Visitor pattern.
      * @param v visitor
+     * @deprecated no longer supported
      */
-    public void visit(Visitor v) {
+    @Deprecated
+    public void visit(org.openstreetmap.josm.data.osm.visitor.Visitor v) {
         v.visit(this);
     }
 

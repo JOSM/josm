@@ -27,7 +27,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
+import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
@@ -96,7 +96,7 @@ public class GeoJSONWriter {
         }
     }
 
-    private class GeometryPrimitiveVisitor extends AbstractVisitor {
+    private class GeometryPrimitiveVisitor implements OsmPrimitiveVisitor {
 
         private final JsonObjectBuilder geomObj;
 

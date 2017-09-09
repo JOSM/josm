@@ -34,7 +34,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryNode;
 import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
-import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
+import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
@@ -644,7 +644,7 @@ public class HistoryBrowserModel extends ChangeNotifier implements ActiveLayerCh
      * Creates a {@link HistoryOsmPrimitive} from a {@link OsmPrimitive}
      *
      */
-    static class HistoryPrimitiveBuilder extends AbstractVisitor {
+    static class HistoryPrimitiveBuilder implements OsmPrimitiveVisitor {
         private HistoryOsmPrimitive clone;
 
         @Override

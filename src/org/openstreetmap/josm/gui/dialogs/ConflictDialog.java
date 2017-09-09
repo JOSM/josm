@@ -50,8 +50,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
-import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
@@ -252,7 +251,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
         if (preferencesColor.equals(BACKGROUND_COLOR.get()))
             return;
         g.setColor(preferencesColor);
-        Visitor conflictPainter = new ConflictPainter(nc, g);
+        OsmPrimitiveVisitor conflictPainter = new ConflictPainter(nc, g);
         synchronized (this) {
             for (OsmPrimitive o : lstConflicts.getSelectedValuesList()) {
                 if (conflicts == null || !conflicts.hasConflictForMy(o)) {
@@ -541,7 +540,7 @@ public final class ConflictDialog extends ToggleDialog implements ActiveLayerCha
     /**
      * Paints conflicts.
      */
-    public static class ConflictPainter extends AbstractVisitor {
+    public static class ConflictPainter implements OsmPrimitiveVisitor {
         // Manage a stack of visited relations to avoid infinite recursion with cyclic relations (fix #7938)
         private final Set<Relation> visited = new HashSet<>();
         private final NavigatableComponent nc;

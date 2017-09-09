@@ -13,7 +13,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer.StyleRecord;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.ElemStyles;
@@ -32,7 +32,7 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
  * Helper to compute style list.
  * @since 11914 (extracted from StyledMapRenderer)
  */
-public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> implements Visitor {
+public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> implements OsmPrimitiveVisitor {
     private final transient List<? extends OsmPrimitive> input;
     private final transient List<StyleRecord> output;
 
@@ -125,11 +125,6 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
     @Override
     public void visit(Relation r) {
         add(r, StyledMapRenderer.computeFlags(r, true));
-    }
-
-    @Override
-    public void visit(Changeset cs) {
-        throw new UnsupportedOperationException();
     }
 
     /**

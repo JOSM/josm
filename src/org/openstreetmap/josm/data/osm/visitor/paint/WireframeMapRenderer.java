@@ -18,7 +18,6 @@ import java.util.List;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.BBox;
-import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -26,7 +25,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.MapViewState.MapViewRectangle;
 import org.openstreetmap.josm.gui.NavigatableComponent;
@@ -38,7 +37,7 @@ import org.openstreetmap.josm.tools.Utils;
  * previous set graphic environment.
  * @since 23
  */
-public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor {
+public class WireframeMapRenderer extends AbstractMapRenderer implements OsmPrimitiveVisitor {
 
     /** Color Preference for ways not matching any other group */
     protected Color dfltWayColor;
@@ -386,13 +385,6 @@ public class WireframeMapRenderer extends AbstractMapRenderer implements Visitor
             }
         }
     }
-
-    /**
-     * Visitor for changesets not used in this class
-     * @param cs The changeset for inspection.
-     */
-    @Override
-    public void visit(Changeset cs) {/* ignore */}
 
     @Override
     public void drawNode(Node n, Color color, int size, boolean fill) {

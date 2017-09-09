@@ -18,7 +18,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.PrimitiveData;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
+import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -43,7 +43,7 @@ public abstract class Command implements PseudoCommand {
     /** IS_INCOMPLETE: operation on incomplete target */
     public static final int IS_INCOMPLETE = 2;
 
-    private static final class CloneVisitor extends AbstractVisitor {
+    private static final class CloneVisitor implements OsmPrimitiveVisitor {
         public final Map<OsmPrimitive, PrimitiveData> orig = new LinkedHashMap<>();
 
         @Override

@@ -9,7 +9,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
+import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 
 /**
  * A visitor that aggregates all primitives it visits.
@@ -18,7 +18,7 @@ import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
  *
  * @author frsantos
  */
-public class AggregatePrimitivesVisitor extends AbstractVisitor {
+public class AggregatePrimitivesVisitor implements OsmPrimitiveVisitor {
     /** Aggregated data */
     private final Collection<OsmPrimitive> aggregatedData = new HashSet<>();
 

@@ -12,8 +12,8 @@ import java.util.Set;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
+import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
-import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.tools.CopyList;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
@@ -206,7 +206,12 @@ public final class Way extends OsmPrimitive implements IWay {
         return chunkSet;
     }
 
-    @Override public void accept(Visitor visitor) {
+    @Deprecated
+    @Override public void accept(org.openstreetmap.josm.data.osm.visitor.Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    @Override public void accept(OsmPrimitiveVisitor visitor) {
         visitor.visit(this);
     }
 

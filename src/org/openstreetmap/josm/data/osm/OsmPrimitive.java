@@ -23,7 +23,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
-import org.openstreetmap.josm.data.osm.visitor.Visitor;
+import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.gui.mappaint.StyleCache;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
@@ -1026,8 +1026,20 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * <p>Visits {@code visitor} for all referrers.</p>
      *
      * @param visitor the visitor. Ignored, if null.
+     * @deprecated use {@link #visitReferrers(OsmPrimitiveVisitor)}
      */
-    public void visitReferrers(Visitor visitor) {
+    @Deprecated
+    public void visitReferrers(org.openstreetmap.josm.data.osm.visitor.Visitor visitor) {
+        visitReferrers((OsmPrimitiveVisitor) visitor);
+    }
+
+    /**
+     * <p>Visits {@code visitor} for all referrers.</p>
+     *
+     * @param visitor the visitor. Ignored, if null.
+     * @since 12809
+     */
+    public void visitReferrers(OsmPrimitiveVisitor visitor) {
         if (visitor == null) return;
         if (this.referrers == null)
             return;
@@ -1077,8 +1089,18 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * Implementation of the visitor scheme. Subclasses have to call the correct
      * visitor function.
      * @param visitor The visitor from which the visit() function must be called.
+     * @deprecated will be removed along with {@link Visitor}
      */
-    public abstract void accept(Visitor visitor);
+    @Deprecated
+    public abstract void accept(org.openstreetmap.josm.data.osm.visitor.Visitor visitor);
+
+    /**
+     * Implementation of the visitor scheme. Subclasses have to call the correct
+     * visitor function.
+     * @param visitor The visitor from which the visit() function must be called.
+     * @since 12809
+     */
+    public abstract void accept(OsmPrimitiveVisitor visitor);
 
     /**
      * Get and write all attributes from the parameter. Does not fire any listener, so

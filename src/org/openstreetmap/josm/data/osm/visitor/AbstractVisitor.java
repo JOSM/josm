@@ -9,7 +9,9 @@ import org.openstreetmap.josm.data.osm.Changeset;
  * the visitors which are not interested.
  *
  * @author fred
+ * @deprecated use {@link OsmPrimitiveVisitor}
  */
+@Deprecated
 public abstract class AbstractVisitor implements Visitor {
 
     @Override

@@ -15,7 +15,7 @@ import org.openstreetmap.josm.data.osm.Way;
  *
  * @author imi
  */
-public class AllNodesVisitor extends AbstractVisitor {
+public class AllNodesVisitor implements OsmPrimitiveVisitor {
 
     /**
      * The resulting nodes collected so far.
