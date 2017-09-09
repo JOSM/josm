@@ -27,11 +27,15 @@ import javax.swing.ImageIcon;
  *
  * @since 12722
  */
-public class HiDPISupport {
+public final class HiDPISupport {
 
     private static volatile Optional<Class<? extends Image>> baseMultiResolutionImageClass;
     private static volatile Optional<Constructor<? extends Image>> baseMultiResolutionImageConstructor;
     private static volatile Optional<Method> resolutionVariantsMethod;
+
+    private HiDPISupport() {
+        // Hide default constructor
+    }
 
     /**
      * Create a multi-resolution image from a base image and an {@link ImageResource}.

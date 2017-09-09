@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.tools;
+package org.openstreetmap.josm.gui.util;
 
 import java.awt.Component;
 import java.awt.Container;

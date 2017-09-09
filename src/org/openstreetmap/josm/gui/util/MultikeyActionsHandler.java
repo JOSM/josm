@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.tools;
+package org.openstreetmap.josm.gui.util;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
@@ -24,7 +24,8 @@ import javax.swing.event.PopupMenuListener;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.tools.MultikeyShortcutAction.MultikeyInfo;
+import org.openstreetmap.josm.gui.util.MultikeyShortcutAction.MultikeyInfo;
+import org.openstreetmap.josm.tools.Shortcut;
 
 public final class MultikeyActionsHandler {
 
@@ -147,7 +148,8 @@ public final class MultikeyActionsHandler {
             lastTimestamp = e.getWhen();
             lastAction = this;
             timer.schedule(new MyTimerTask(lastTimestamp, lastAction), DIALOG_DELAY);
-            MainApplication.getMap().statusLine.setHelpText(STATUS_BAR_ID, tr("{0}... [please type its number]", (String) action.getValue(SHORT_DESCRIPTION)));
+            MainApplication.getMap().statusLine.setHelpText(STATUS_BAR_ID,
+                    tr("{0}... [please type its number]", (String) action.getValue(SHORT_DESCRIPTION)));
         }
 
         @Override

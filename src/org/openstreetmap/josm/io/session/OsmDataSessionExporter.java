@@ -31,7 +31,7 @@ public class OsmDataSessionExporter extends GenericSessionExporter<OsmDataLayer>
         OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, layer.data.getVersion());
         layer.data.getReadLock().lock();
         try {
-            w.writeLayer(layer);
+            w.write(layer.data);
             w.flush();
         } finally {
             layer.data.getReadLock().unlock();

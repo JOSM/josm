@@ -129,10 +129,25 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
         return result;
     }
 
+    /**
+     * Writes the full OSM file for the given layer (header, data sources, osm data).
+     * @param layer OSM data layer
+     * @deprecated To be removed end of 2017. Use {@link #write(DataSet)} instead
+     */
+    @Deprecated
     public void writeLayer(OsmDataLayer layer) {
-        header(layer.data.getUploadPolicy());
-        writeDataSources(layer.data);
-        writeContent(layer.data);
+        write(layer.data);
+    }
+
+    /**
+     * Writes the full OSM file for the given data set (header, data sources, osm data).
+     * @param data OSM data set
+     * @since 12800
+     */
+    public void write(DataSet data) {
+        header(data.getUploadPolicy());
+        writeDataSources(data);
+        writeContent(data);
         footer();
     }
 

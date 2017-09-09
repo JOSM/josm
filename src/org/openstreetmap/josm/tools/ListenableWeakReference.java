@@ -12,9 +12,8 @@ import org.openstreetmap.josm.tools.bugreport.BugReport;
  *
  * A special dereferenced-thread is used for this, so make sure your code is thread-safe.
  * @author Michael Zangl
- * @since 12181
- *
  * @param <T> The weak reference
+ * @since 12181
  */
 public class ListenableWeakReference<T> extends WeakReference<T> {
     private static final ReferenceQueue<Object> GLOBAL_QUEUE = new ReferenceQueue<>();
