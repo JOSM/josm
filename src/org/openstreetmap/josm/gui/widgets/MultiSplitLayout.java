@@ -620,8 +620,13 @@ public class MultiSplitLayout implements LayoutManager {
                 double x = bounds.getX();
                 while (splitChildren.hasNext()) {
                     Node splitChild = splitChildren.next();
-                    Divider dividerChild =
-                        splitChildren.hasNext() ? (Divider) (splitChildren.next()) : null;
+                    Divider dividerChild = null;
+                    if (splitChildren.hasNext()) {
+                        Node next = splitChildren.next();
+                        if (next instanceof Divider) {
+                            dividerChild = (Divider) next;
+                        }
+                    }
 
                     double childWidth;
                     if (getFloatingDividers()) {

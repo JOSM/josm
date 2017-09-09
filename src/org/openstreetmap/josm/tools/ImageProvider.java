@@ -1315,7 +1315,7 @@ public class ImageProvider {
 
         // convert rotatedAngle to an integer value from 0 to 360
         Long angleLong = Math.round(rotatedAngle % 360);
-        Long originalAngle = rotatedAngle != 0 && angleLong == 0 ? 360L : angleLong;
+        Long originalAngle = rotatedAngle != 0 && angleLong == 0 ? Long.valueOf(360L) : angleLong;
 
         synchronized (ROTATE_CACHE) {
             Map<Long, Image> cacheByAngle = ROTATE_CACHE.get(img);
