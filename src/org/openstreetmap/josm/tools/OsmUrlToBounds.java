@@ -6,6 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.openstreetmap.josm.Main;
@@ -210,7 +211,7 @@ public final class OsmUrlToBounds {
      * @since 12796
      */
     public static void setMapSizeSupplier(Supplier<Dimension> mapSizeSupplier) {
-        mapSize = mapSizeSupplier;
+        mapSize = Objects.requireNonNull(mapSizeSupplier, "mapSizeSupplier");
     }
 
     private static final int TILE_SIZE_IN_PIXELS = 256;

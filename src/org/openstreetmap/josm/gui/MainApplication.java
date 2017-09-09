@@ -106,6 +106,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
+import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.display.LafPreference;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
@@ -125,6 +126,7 @@ import org.openstreetmap.josm.io.MessageNotifier;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
+import org.openstreetmap.josm.io.OsmConnection;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
@@ -1069,6 +1071,7 @@ public class MainApplication extends Main {
     }
 
     static void setupCallbacks() {
+        OsmConnection.setOAuthAccessTokenFetcher(OAuthAuthorizationWizard::obtainAccessToken);
         MessageNotifier.setNotifierCallback(MainApplication::notifyNewMessages);
         DeleteCommand.setDeletionCallback(DeleteAction.defaultDeletionCallback);
         OsmUrlToBounds.setMapSizeSupplier(() -> {
