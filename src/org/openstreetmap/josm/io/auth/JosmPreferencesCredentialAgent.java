@@ -12,14 +12,14 @@ import javax.swing.text.html.HTMLEditorKit;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
-import org.openstreetmap.josm.gui.preferences.server.ProxyPreferencesPanel;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
+import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.OsmApi;
 
 /**
  * This is the default credentials agent in JOSM. It keeps username and password for both
  * the OSM API and an optional HTTP proxy in the JOSM preferences file.
- *
+ * @since 2641
  */
 public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
 
@@ -48,8 +48,8 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
                 return null;
             return new PasswordAuthentication(user, password == null ? new char[0] : password.toCharArray());
         case PROXY:
-            user = Main.pref.get(ProxyPreferencesPanel.PROXY_USER, null);
-            password = Main.pref.get(ProxyPreferencesPanel.PROXY_PASS, null);
+            user = Main.pref.get(DefaultProxySelector.PROXY_USER, null);
+            password = Main.pref.get(DefaultProxySelector.PROXY_PASS, null);
             if (user == null)
                 return null;
             return new PasswordAuthentication(user, password == null ? new char[0] : password.toCharArray());
@@ -83,11 +83,11 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
             }
             break;
         case PROXY:
-            Main.pref.put(ProxyPreferencesPanel.PROXY_USER, credentials.getUserName());
+            Main.pref.put(DefaultProxySelector.PROXY_USER, credentials.getUserName());
             if (credentials.getPassword() == null) {
-                Main.pref.put(ProxyPreferencesPanel.PROXY_PASS, null);
+                Main.pref.put(DefaultProxySelector.PROXY_PASS, null);
             } else {
-                Main.pref.put(ProxyPreferencesPanel.PROXY_PASS, String.valueOf(credentials.getPassword()));
+                Main.pref.put(DefaultProxySelector.PROXY_PASS, String.valueOf(credentials.getPassword()));
             }
             break;
         }
