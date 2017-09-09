@@ -75,8 +75,8 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter;
 import org.openstreetmap.josm.data.osm.event.DataSetListenerAdapter.Listener;
-import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
 import org.openstreetmap.josm.data.osm.visitor.BoundingXYVisitor;
+import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapRendererFactory;
 import org.openstreetmap.josm.data.osm.visitor.paint.Rendering;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
@@ -242,7 +242,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
     /**
      * A listener that counts the number of primitives it encounters
      */
-    public static final class DataCountVisitor extends AbstractVisitor {
+    public static final class DataCountVisitor implements OsmPrimitiveVisitor {
         /**
          * Nodes that have been visited
          */

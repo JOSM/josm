@@ -21,7 +21,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.NotOutsideDataSourceArea;
-import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
+import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.tools.GBC;
@@ -37,7 +37,7 @@ import org.openstreetmap.josm.tools.Utils;
  *
  * @author frsantos
  */
-public class Test extends AbstractVisitor implements Comparable<Test> {
+public class Test implements OsmPrimitiveVisitor, Comparable<Test> {
 
     protected static final Predicate<OsmPrimitive> IN_DOWNLOADED_AREA = new NotOutsideDataSourceArea();
 

@@ -18,7 +18,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
-import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
+import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.MultipolygonCache;
 import org.openstreetmap.josm.gui.mappaint.Environment;
 import org.openstreetmap.josm.gui.mappaint.Range;
@@ -142,7 +142,7 @@ public interface Selector {
          * referrer was found.</p>
          *
          */
-        private class MatchingReferrerFinder extends AbstractVisitor {
+        private class MatchingReferrerFinder implements OsmPrimitiveVisitor {
             private final Environment e;
 
             /**
@@ -194,7 +194,7 @@ public interface Selector {
             }
         }
 
-        private abstract static class AbstractFinder extends AbstractVisitor {
+        private abstract static class AbstractFinder implements OsmPrimitiveVisitor {
             protected final Environment e;
 
             protected AbstractFinder(Environment e) {
@@ -240,7 +240,7 @@ public interface Selector {
                 super(e);
             }
 
-            private final AbstractVisitor innerVisitor = new AbstractFinder(e) {
+            private final OsmPrimitiveVisitor innerVisitor = new AbstractFinder(e) {
                 @Override
                 public void visit(Relation r) {
                     if (left.matches(e.withPrimitive(r))) {

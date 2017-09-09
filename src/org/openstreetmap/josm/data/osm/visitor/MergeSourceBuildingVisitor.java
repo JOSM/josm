@@ -29,7 +29,7 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
  * incomplete {@link OsmPrimitive}s in the "hull", if they are not themselves present in the original collection.
  * @since 1891
  */
-public class MergeSourceBuildingVisitor extends AbstractVisitor {
+public class MergeSourceBuildingVisitor implements OsmPrimitiveVisitor {
     private final DataSet selectionBase;
     private final DataSet hull;
     private final Map<OsmPrimitive, PrimitiveData> mappedPrimitives;

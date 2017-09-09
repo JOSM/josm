@@ -22,7 +22,7 @@ import org.openstreetmap.josm.gui.MapFrame;
  * EastNorth values as reference.
  * @author imi
  */
-public class BoundingXYVisitor extends AbstractVisitor {
+public class BoundingXYVisitor implements OsmPrimitiveVisitor {
 
     private ProjectionBounds bounds;
 

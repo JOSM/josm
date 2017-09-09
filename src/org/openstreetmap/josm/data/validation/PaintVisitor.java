@@ -15,7 +15,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.osm.visitor.AbstractVisitor;
+import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.draw.SymbolShape;
@@ -26,7 +26,7 @@ import org.openstreetmap.josm.tools.Utils;
  * @author frsantos
  * @since 5671
  */
-public class PaintVisitor extends AbstractVisitor implements ValidatorVisitor {
+public class PaintVisitor implements OsmPrimitiveVisitor, ValidatorVisitor {
     /** The graphics */
     private final Graphics2D g;
     /** The MapView */
