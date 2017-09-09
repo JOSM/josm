@@ -18,7 +18,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.visitor.Visitor;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -260,40 +259,5 @@ public class ChangesetTest {
         assertEquals(2, cs.keySet().size());
         cs.removeAll();
         assertTrue(cs.keySet().isEmpty());
-    }
-
-    private static class CsVisitor implements Visitor {
-
-        boolean visited;
-
-        @Override
-        public void visit(Node n) {
-            // Do nothing
-        }
-
-        @Override
-        public void visit(Way w) {
-            // Do nothing
-        }
-
-        @Override
-        public void visit(Relation r) {
-            // Do nothing
-        }
-
-        @Override
-        public void visit(Changeset cs) {
-            visited = true;
-        }
-    }
-
-    /**
-     * Unit test of method {@link Changeset#visit}.
-     */
-    @Test
-    public void testVisit() {
-        CsVisitor v = new CsVisitor();
-        new Changeset().visit(v);
-        assertTrue(v.visited);
     }
 }
