@@ -44,19 +44,19 @@ public class LoggingTest {
     };
 
     /**
-     * @throws java.lang.Exception
+     * @throws SecurityException if a security error occurs
      */
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws SecurityException {
         captured = null;
         Logging.getLogger().addHandler(handler);
     }
 
     /**
-     * @throws java.lang.Exception
+     * @throws SecurityException if a security error occurs
      */
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() throws SecurityException {
         Logging.getLogger().removeHandler(handler);
     }
 
@@ -212,7 +212,7 @@ public class LoggingTest {
     }
 
     /**
-     * Test method for {@link org.openstreetmap.josm.tools.Logging#logWithStackTrace(java.util.logging.Level, java.lang.String, java.lang.Throwable)}.
+     * Test method for {@link Logging#logWithStackTrace(Level, String, Throwable)}.
      */
     @Test
     public void testLogWithStackTraceLevelStringThrowable() {

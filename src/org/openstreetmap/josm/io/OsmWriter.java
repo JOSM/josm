@@ -130,7 +130,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     }
 
     /**
-     * Writes the full OSM file for the given layer (header, data sources, osm data).
+     * Writes the full OSM file for the given layer (header, data sources, osm data, footer).
      * @param layer OSM data layer
      * @deprecated To be removed end of 2017. Use {@link #write(DataSet)} instead
      */
@@ -140,7 +140,7 @@ public class OsmWriter extends XmlWriter implements PrimitiveVisitor {
     }
 
     /**
-     * Writes the full OSM file for the given data set (header, data sources, osm data).
+     * Writes the full OSM file for the given data set (header, data sources, osm data, footer).
      * @param data OSM data set
      * @since 12800
      */

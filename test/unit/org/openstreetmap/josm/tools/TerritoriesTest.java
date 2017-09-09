@@ -39,7 +39,7 @@ public class TerritoriesTest {
         check("Paris", new LatLon(48.8567, 2.3508), "EU", "FR", "FX");
     }
 
-    private static void check(String name, LatLon ll, String ... expectedCodes) {
+    private static void check(String name, LatLon ll, String... expectedCodes) {
         for (String e : expectedCodes) {
             assertTrue(name + " " + e, Territories.isIso3166Code(e, ll));
         }

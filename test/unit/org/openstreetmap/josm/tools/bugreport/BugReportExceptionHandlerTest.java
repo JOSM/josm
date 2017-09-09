@@ -27,7 +27,9 @@ public class BugReportExceptionHandlerTest {
     @Test
     public void testHandleException() throws InterruptedException {
         CountDownLatch latch = new CountDownLatch(1);
-        BugReportQueue.getInstance().addBugReportHandler(e -> {latch.countDown(); return false;});
+        BugReportQueue.getInstance().addBugReportHandler(e -> {
+            latch.countDown(); return false;
+        });
         BugReportExceptionHandler.handleException(new Exception("testHandleException"));
         latch.await();
     }
