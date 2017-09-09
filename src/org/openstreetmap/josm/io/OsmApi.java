@@ -29,14 +29,12 @@ import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.IPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.layer.ImageryLayer;
-import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.Capabilities.CapabilitiesParser;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.HttpClient;
+import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.openstreetmap.josm.tools.XmlParsingException;
@@ -51,7 +49,7 @@ import org.xml.sax.SAXParseException;
  *
  * It is conceivable to extract this into an interface later and create various
  * classes implementing the interface, to be able to talk to various kinds of servers.
- *
+ * @ince 1523
  */
 public class OsmApi extends OsmConnection {
 
@@ -75,9 +73,41 @@ public class OsmApi extends OsmConnection {
     public static final String DEFAULT_API_URL = "https://api.openstreetmap.org/api";
 
     // The collection of instantiated OSM APIs
-    private static Map<String, OsmApi> instances = new HashMap<>();
+    private static final Map<String, OsmApi> instances = new HashMap<>();
+
+    private static final ListenerList<OsmApiInitializationListener> listeners = ListenerList.create();
 
     private URL url;
+
+    /**
+     * OSM API initialization listener.
+     * @since 12804
+     */
+    public interface OsmApiInitializationListener {
+        /**
+         * Called when an OSM API instance has been successfully initialized.
+         * @param instance the initialized OSM API instance
+         */
+        void apiInitialized(OsmApi instance);
+    }
+
+    /**
+     * Adds a new OSM API initialization listener.
+     * @param listener OSM API initialization listener to add
+     * @since 12804
+     */
+    public static void addOsmApiInitializationListener(OsmApiInitializationListener listener) {
+        listeners.addListener(listener);
+    }
+
+    /**
+     * Removes an OSM API initialization listener.
+     * @param listener OSM API initialization listener to remove
+     * @since 12804
+     */
+    public static void removeOsmApiInitializationListener(OsmApiInitializationListener listener) {
+        listeners.removeListener(listener);
+    }
 
     /**
      * Replies the {@link OsmApi} for a given server URL
@@ -235,21 +265,7 @@ public class OsmApi extends OsmConnection {
                 initialized = true;
             }
 
-            /* This checks if there are any layers currently displayed that
-             * are now on the blacklist, and removes them. This is a rare
-             * situation - probably only occurs if the user changes the API URL
-             * in the preferences menu. Otherwise they would not have been able
-             * to load the layers in the first place because they would have
-             * been disabled! */
-            if (MainApplication.isDisplayingMapView()) {
-                for (Layer l : MainApplication.getLayerManager().getLayersOfType(ImageryLayer.class)) {
-                    if (((ImageryLayer) l).getInfo().isBlacklisted()) {
-                        Logging.info(tr("Removed layer {0} because it is not allowed by the configured API.", l.getName()));
-                        MainApplication.getLayerManager().removeLayer(l);
-                    }
-                }
-            }
-
+            listeners.fireEvent(l -> l.apiInitialized(this));
         } catch (OsmTransferCanceledException e) {
             throw e;
         } catch (OsmTransferException e) {
