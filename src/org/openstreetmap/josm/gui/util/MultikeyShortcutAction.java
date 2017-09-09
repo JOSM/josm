@@ -1,9 +1,11 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.tools;
+package org.openstreetmap.josm.gui.util;
 
 import java.util.List;
 
 import javax.swing.Action;
+
+import org.openstreetmap.josm.tools.Shortcut;
 
 public interface MultikeyShortcutAction extends Action {
 

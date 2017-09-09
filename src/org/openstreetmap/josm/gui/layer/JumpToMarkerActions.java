@@ -11,8 +11,8 @@ import java.util.List;
 import javax.swing.AbstractAction;
 
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
-import org.openstreetmap.josm.tools.MultikeyActionsHandler;
-import org.openstreetmap.josm.tools.MultikeyShortcutAction;
+import org.openstreetmap.josm.gui.util.MultikeyActionsHandler;
+import org.openstreetmap.josm.gui.util.MultikeyShortcutAction;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
