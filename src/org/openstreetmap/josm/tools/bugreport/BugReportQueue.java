@@ -16,8 +16,6 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class BugReportQueue {
 
-    private static final BugReportQueue INSTANCE = new BugReportQueue();
-
     /**
      * The fallback bug report handler if none is set. Prints the stacktrace on standard error stream.
      * @since 12770
@@ -26,6 +24,8 @@ public class BugReportQueue {
         e.printStackTrace();
         return BugReportQueue.SuppressionMode.NONE;
     };
+
+    private static final BugReportQueue INSTANCE = new BugReportQueue();
 
     private final LinkedList<ReportedException> reportsToDisplay = new LinkedList<>();
     private boolean suppressAllMessages;

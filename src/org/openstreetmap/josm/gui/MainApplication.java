@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
 import java.awt.BorderLayout;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
@@ -931,8 +932,9 @@ public class MainApplication extends Main {
                 args.getSingle(Option.GEOMETRY).orElse(null),
                 !args.hasOption(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
         final MainFrame mainFrame = new MainFrame(geometry);
-        if (mainFrame.getContentPane() instanceof JComponent) {
-            contentPanePrivate = (JComponent) mainFrame.getContentPane();
+        final Container contentPane = mainFrame.getContentPane();
+        if (contentPane instanceof JComponent) {
+            contentPanePrivate = (JComponent) contentPane;
         }
         mainPanel = mainFrame.getPanel();
         Main.parent = mainFrame;
