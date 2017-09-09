@@ -47,7 +47,7 @@
             </fileset>
             <pathelement path="${dist.jar}"/>
             <pathelement path="${groovy.jar}"/>
-            <pathelement path="tools/findbugs/annotations.jar"/>
+            <pathelement path="tools/spotbugs/spotbugs-annotations.jar"/>
         </path>
         <path id="pmd.classpath">
             <fileset dir="${base.dir}/tools/pmd/">
@@ -713,7 +713,7 @@ Build-Date: ${build.tstamp}
         <attribute name="output"/>
         <sequential>
             <echo message="Generating Taginfo for type @{type} to @{output}"/>
-            <groovy src="${taginfoextract}" classpath="${dist.jar}:tools/findbugs/annotations.jar">
+            <groovy src="${taginfoextract}" classpath="${dist.jar}:tools/spotbugs/spotbugs-annotations.jar">
                 <arg value="-t"/>
                 <arg value="@{type}"/>
                 <arg value="--noexit"/>
@@ -789,25 +789,25 @@ Build-Date: ${build.tstamp}
         </checkstyle>
     </target>
 
-    <target name="findbugs" depends="dist">
-        <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="tools/findbugs/findbugs-ant.jar"/>
-        <path id="findbugs-classpath">
-            <fileset dir="${base.dir}/tools/findbugs/">
+    <target name="spotbugs" depends="dist">
+        <taskdef name="spotbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" classpath="tools/spotbugs/spotbugs-ant.jar"/>
+        <path id="spotbugs-classpath">
+            <fileset dir="${base.dir}/tools/spotbugs/">
                 <include name="*.jar"/>
             </fileset>
         </path>
-        <property name="findbugs-classpath" refid="findbugs-classpath"/>
-        <findbugs output="xml"
-                outputFile="findbugs-josm.xml"
-                classpath="${findbugs-classpath}"
+        <property name="spotbugs-classpath" refid="spotbugs-classpath"/>
+        <spotbugs output="xml"
+                outputFile="spotbugs-josm.xml"
+                classpath="${spotbugs-classpath}"
                 pluginList=""
-                excludeFilter="tools/findbugs/josm-filter.xml"
+                excludeFilter="tools/spotbugs/josm-filter.xml"
                 effort="max"
                 reportLevel="low"
                 >
             <sourcePath path="${base.dir}/src" />
             <class location="${dist.jar}" />
-        </findbugs>
+        </spotbugs>
     </target>
 
     <target name="pmd" depends="init-properties">
