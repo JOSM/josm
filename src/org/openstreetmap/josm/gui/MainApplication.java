@@ -98,6 +98,7 @@ import org.openstreetmap.josm.gui.download.DownloadDialog;
 import org.openstreetmap.josm.gui.io.CustomConfigurator.XMLCommandProcessor;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
 import org.openstreetmap.josm.gui.layer.AutosaveTask;
+import org.openstreetmap.josm.gui.layer.ImageryLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
@@ -106,6 +107,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
+import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.gui.preferences.display.LafPreference;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
@@ -125,6 +127,7 @@ import org.openstreetmap.josm.io.MessageNotifier;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
+import org.openstreetmap.josm.io.OsmConnection;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
@@ -384,6 +387,19 @@ public class MainApplication extends Main {
     protected Collection<InitializationTask> parallelInitializationTasks() {
         return Arrays.asList(
             new InitializationTask(tr("Initializing OSM API"), () -> {
+                    OsmApi.addOsmApiInitializationListener(api -> {
+                        // This checks if there are any layers currently displayed that are now on the blacklist, and removes them.
+                        // This is a rare situation - probably only occurs if the user changes the API URL in the preferences menu.
+                        // Otherwise they would not have been able to load the layers in the first place because they would have been disabled
+                        if (isDisplayingMapView()) {
+                            for (Layer l : getLayerManager().getLayersOfType(ImageryLayer.class)) {
+                                if (((ImageryLayer) l).getInfo().isBlacklisted()) {
+                                    Logging.info(tr("Removed layer {0} because it is not allowed by the configured API.", l.getName()));
+                                    getLayerManager().removeLayer(l);
+                                }
+                            }
+                        }
+                    });
                     // We try to establish an API connection early, so that any API
                     // capabilities are already known to the editor instance. However
                     // if it goes wrong that's not critical at this stage.
@@ -1069,6 +1085,7 @@ public class MainApplication extends Main {
     }
 
     static void setupCallbacks() {
+        OsmConnection.setOAuthAccessTokenFetcher(OAuthAuthorizationWizard::obtainAccessToken);
         MessageNotifier.setNotifierCallback(MainApplication::notifyNewMessages);
         DeleteCommand.setDeletionCallback(DeleteAction.defaultDeletionCallback);
         OsmUrlToBounds.setMapSizeSupplier(() -> {

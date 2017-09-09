@@ -26,9 +26,9 @@ public class OsmUrlToBoundsTest {
      */
     @Test
     public void testPositionToBounds() {
-        Assert.assertEquals(new Bounds(51.7167359,8.7573485,51.720724,8.7659315),
+        Assert.assertEquals(new Bounds(51.7167359, 8.7573485, 51.720724, 8.7659315),
                 OsmUrlToBounds.positionToBounds(51.71873, 8.76164, 17));
-        Assert.assertEquals(new Bounds(40.8609329,-75.7523458,40.8633671,-75.7480542),
+        Assert.assertEquals(new Bounds(40.8609329, -75.7523458, 40.8633671, -75.7480542),
                 OsmUrlToBounds.positionToBounds(40.86215, -75.75020, 18));
     }
 
