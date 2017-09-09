@@ -130,7 +130,7 @@ public class OsmExporter extends FileExporter {
         ) {
             layer.data.getReadLock().lock();
             try {
-                w.writeLayer(layer);
+                w.write(layer.data);
             } finally {
                 layer.data.getReadLock().unlock();
             }
