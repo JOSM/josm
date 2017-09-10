@@ -4,7 +4,6 @@ package org.openstreetmap.josm.gui.preferences.server;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.GridBagLayout;
-import java.util.Arrays;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -12,15 +11,13 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.data.preferences.BooleanProperty;
-import org.openstreetmap.josm.data.preferences.CollectionProperty;
-import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
+import org.openstreetmap.josm.io.OverpassDownloadReader;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -29,12 +26,6 @@ import org.openstreetmap.josm.tools.GBC;
  * @since 9142
  */
 public class OverpassServerPreference implements SubPreferenceSetting {
-
-    private static final StringProperty OVERPASS_SERVER = new StringProperty("download.overpass.server",
-            "https://overpass-api.de/api/");
-    private static final CollectionProperty OVERPASS_SERVER_HISTORY = new CollectionProperty("download.overpass.servers",
-            Arrays.asList("https://overpass-api.de/api/", "http://overpass.osm.rambler.ru/cgi/"));
-    private static final BooleanProperty FOR_MULTI_FETCH = new BooleanProperty("download.overpass.for-multi-fetch", false);
 
     private final HistoryComboBox overpassServer = new HistoryComboBox();
     private final JCheckBox forMultiFetch = new JCheckBox(tr("Use Overpass server for object downloads"));
@@ -61,11 +52,11 @@ public class OverpassServerPreference implements SubPreferenceSetting {
         panel.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         panel.add(new JLabel(tr("Overpass server: ")), GBC.std().insets(5, 5, 5, 5));
         panel.add(overpassServer, GBC.eop().fill(GBC.HORIZONTAL));
-        overpassServer.setPossibleItems(OVERPASS_SERVER_HISTORY.get());
-        overpassServer.setText(OVERPASS_SERVER.get());
+        overpassServer.setPossibleItems(OverpassDownloadReader.OVERPASS_SERVER_HISTORY.get());
+        overpassServer.setText(OverpassDownloadReader.OVERPASS_SERVER.get());
 
         panel.add(forMultiFetch, GBC.eop());
-        forMultiFetch.setSelected(useForMultiFetch());
+        forMultiFetch.setSelected(OverpassDownloadReader.FOR_MULTI_FETCH.get());
 
         panel.add(Box.createVerticalGlue(), GBC.eol().fill());
 
@@ -74,9 +65,9 @@ public class OverpassServerPreference implements SubPreferenceSetting {
 
     @Override
     public boolean ok() {
-        OVERPASS_SERVER.put(overpassServer.getText());
-        OVERPASS_SERVER_HISTORY.put(overpassServer.getHistory());
-        FOR_MULTI_FETCH.put(forMultiFetch.isSelected());
+        OverpassDownloadReader.OVERPASS_SERVER.put(overpassServer.getText());
+        OverpassDownloadReader.OVERPASS_SERVER_HISTORY.put(overpassServer.getHistory());
+        OverpassDownloadReader.FOR_MULTI_FETCH.put(forMultiFetch.isSelected());
         return false;
     }
 
@@ -88,16 +79,20 @@ public class OverpassServerPreference implements SubPreferenceSetting {
     /**
      * Returns the URL of the currently selected Overpass server.
      * @return the URL of the currently selected Overpass server.
+     * @deprecated To be removed end of 2017. Use {@code OverpassDownloadReader.OVERPASS_SERVER.get()} instead
      */
+    @Deprecated
     public static String getOverpassServer() {
-        return OVERPASS_SERVER.get();
+        return OverpassDownloadReader.OVERPASS_SERVER.get();
     }
 
     /**
      * Returns true if objects should be fetched from an Overpass server instead of the OSM API.
      * @return true if objects should be fetched from an Overpass server instead of the OSM API.
+     * @deprecated To be removed end of 2017. Use {@code OverpassDownloadReader.FOR_MULTI_FETCH.get()} instead
      */
+    @Deprecated
     public static boolean useForMultiFetch() {
-        return FOR_MULTI_FETCH.get();
+        return OverpassDownloadReader.FOR_MULTI_FETCH.get();
     }
 }

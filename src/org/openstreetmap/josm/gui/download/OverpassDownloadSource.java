@@ -34,7 +34,6 @@ import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.gui.ConditionalOptionPaneUtil;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.download.DownloadSourceSizingPolicy.AdjustableDownloadSizePolicy;
-import org.openstreetmap.josm.gui.preferences.server.OverpassServerPreference;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.OverpassDownloadReader;
@@ -62,7 +61,7 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
         DownloadOsmTask task = new DownloadOsmTask();
         task.setZoomAfterDownload(settings.zoomToData());
         Future<?> future = task.download(
-                new OverpassDownloadReader(area, OverpassServerPreference.getOverpassServer(), data.getQuery()),
+                new OverpassDownloadReader(area, OverpassDownloadReader.OVERPASS_SERVER.get(), data.getQuery()),
                 settings.asNewLayer(), area, null);
         MainApplication.worker.submit(new PostDownloadHandler(task, future, data.getErrorReporter()));
     }
