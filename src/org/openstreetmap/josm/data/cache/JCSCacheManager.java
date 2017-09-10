@@ -92,7 +92,7 @@ public final class JCSCacheManager {
                 // nothing to be done on close
             }
         });
-    };
+    }
 
     private JCSCacheManager() {
         // Hide implicit public constructor for utility classes

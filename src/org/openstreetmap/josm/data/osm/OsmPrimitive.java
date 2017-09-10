@@ -1023,7 +1023,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
     }
 
     /**
-     * <p>Visits {@code visitor} for all referrers.</p>
+     * <p>Visits {@code org.openstreetmap.josm.data.osm.visitor.Visitor} for all referrers.</p>
      *
      * @param visitor the visitor. Ignored, if null.
      * @deprecated use {@link #visitReferrers(OsmPrimitiveVisitor)}

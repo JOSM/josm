@@ -233,6 +233,9 @@ public final class Node extends OsmPrimitive implements INode {
             throw new DataIntegrityProblemException("Complete node with null coordinates: " + toString());
     }
 
+    /**
+     * @deprecated no longer supported
+     */
     @Override
     @Deprecated
     public void accept(org.openstreetmap.josm.data.osm.visitor.Visitor visitor) {
@@ -408,7 +411,7 @@ public final class Node extends OsmPrimitive implements INode {
         CheckParameterUtil.ensureThat(hops >= 0, "hops must be non-negative!");
         return hops == 0
                 ? isConnectedTo(otherNodes, hops, predicate, null)
-                : isConnectedTo(otherNodes, hops, predicate, new TreeSet<Node>());
+                : isConnectedTo(otherNodes, hops, predicate, new TreeSet<>());
     }
 
     private boolean isConnectedTo(final Collection<Node> otherNodes, final int hops, Predicate<Node> predicate, Set<Node> visited) {
