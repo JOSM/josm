@@ -205,7 +205,7 @@ public abstract class AbstractProjection implements Projection {
                 result = projectionBoundsBox;
                 if (result == null) {
                     ProjectionBounds bds = new ProjectionBounds();
-                    visitOutline(getWorldBoundsLatLon(), bds::extend);
+                    visitOutline(getWorldBoundsLatLon(), 1000, bds::extend);
                     projectionBoundsBox = bds;
                 }
             }
