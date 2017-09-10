@@ -206,6 +206,9 @@ public final class Way extends OsmPrimitive implements IWay {
         return chunkSet;
     }
 
+    /**
+     * @deprecated no longer supported
+     */
     @Deprecated
     @Override public void accept(org.openstreetmap.josm.data.osm.visitor.Visitor visitor) {
         visitor.visit(this);
