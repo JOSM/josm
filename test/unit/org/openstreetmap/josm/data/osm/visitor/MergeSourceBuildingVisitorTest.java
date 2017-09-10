@@ -11,7 +11,6 @@ import java.util.Collection;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.coor.LatLon;
-import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -409,13 +408,5 @@ public class MergeSourceBuildingVisitorTest {
         assertTrue(r1.getMembers().contains(new RelationMember("relation-2", r2)));
         assertEquals(1, r2.getMembersCount());
         assertTrue(r2.getMembers().contains(new RelationMember("relation-1", r1)));
-    }
-
-    /**
-     * Unit test of {@code AbstractVisitor#visit(org.openstreetmap.josm.data.osm.Changeset)}.
-     */
-    @Test
-    public void testVisitChangeset() {
-        new MergeSourceBuildingVisitor(new DataSet()).visit(new Changeset());
     }
 }
