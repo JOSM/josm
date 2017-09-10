@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
-import org.openstreetmap.josm.gui.preferences.server.OverpassServerPreference;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -24,7 +23,7 @@ class MultiFetchOverpassObjectReader extends MultiFetchServerObjectReader {
 
     @Override
     protected String getBaseUrl() {
-        return OverpassServerPreference.getOverpassServer();
+        return OverpassDownloadReader.OVERPASS_SERVER.get();
     }
 
     @Override

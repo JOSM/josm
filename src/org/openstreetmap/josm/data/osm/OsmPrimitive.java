@@ -20,9 +20,9 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
+import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.gui.mappaint.StyleCache;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
@@ -1089,7 +1089,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      * Implementation of the visitor scheme. Subclasses have to call the correct
      * visitor function.
      * @param visitor The visitor from which the visit() function must be called.
-     * @deprecated will be removed along with {@link Visitor}
+     * @deprecated will be removed along with {@link org.openstreetmap.josm.data.osm.visitor.Visitor}
      */
     @Deprecated
     public abstract void accept(org.openstreetmap.josm.data.osm.visitor.Visitor visitor);

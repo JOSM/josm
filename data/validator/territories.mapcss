@@ -6,9 +6,9 @@
   fixAdd: "operator=Enedis";
 }
 
-/* #13932 */
-*[addr:street =~ /(?i).*Strasse.*/][inside("DE,AT")],
-*[name =~ /(?i).*Strasse.*/][inside("DE,AT")] {
+/* #13932, #15283 */
+*[addr:street =~ /(?i).*Strasse.*/][addr:street !~ /(?i).*Strasser.*/][inside("DE,AT")],
+*[name =~ /(?i).*Strasse.*/][name !~ /(?i).*Strasser.*/][inside("DE,AT")] {
   throwError: tr("street name contains ss");
 }
 *[addr:street =~ /(?i).*Straße.*/][inside("LI,CH")],

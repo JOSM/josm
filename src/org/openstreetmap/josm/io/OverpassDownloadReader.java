@@ -10,6 +10,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.ZoneOffset;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
@@ -30,6 +31,9 @@ import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
+import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.data.preferences.CollectionProperty;
+import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.NameFinder.SearchResult;
 import org.openstreetmap.josm.tools.HttpClient;
@@ -43,6 +47,24 @@ import org.openstreetmap.josm.tools.Utils;
  * @since 8744
  */
 public class OverpassDownloadReader extends BoundingBoxDownloader {
+
+    /**
+     * Property for current Overpass server.
+     * @since 12816
+     */
+    public static final StringProperty OVERPASS_SERVER = new StringProperty("download.overpass.server",
+            "https://overpass-api.de/api/");
+    /**
+     * Property for list of known Overpass servers.
+     * @since 12816
+     */
+    public static final CollectionProperty OVERPASS_SERVER_HISTORY = new CollectionProperty("download.overpass.servers",
+            Arrays.asList("https://overpass-api.de/api/", "http://overpass.osm.rambler.ru/cgi/"));
+    /**
+     * Property to determine if Overpass API should be used for multi-fetch download.
+     * @since 12816
+     */
+    public static final BooleanProperty FOR_MULTI_FETCH = new BooleanProperty("download.overpass.for-multi-fetch", false);
 
     private static final String DATA_PREFIX = "?data=";
 
