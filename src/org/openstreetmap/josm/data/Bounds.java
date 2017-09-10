@@ -569,7 +569,9 @@ public class Bounds {
      * @param projection The projection that should be used to determine how often the edge should be split along a given corner.
      * @param visitor A function to call for the points on the edge.
      * @since 10806
+     * @deprecated use {@link Projection#visitOutline(Bounds, Consumer)}
      */
+    @Deprecated
     public void visitEdge(Projection projection, Consumer<LatLon> visitor) {
         double width = getWidth();
         double height = maxLat - minLat;
