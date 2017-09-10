@@ -4,6 +4,7 @@ package org.openstreetmap.josm.io;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardWatchEventKinds;
 import java.nio.file.WatchEvent;
@@ -134,6 +135,16 @@ public class FileWatcher {
 
                 // Only way to get full path (http://stackoverflow.com/a/7802029/2257172)
                 Path fullPath = ((Path) key.watchable()).resolve(filename);
+
+                try {
+                    // Some filesystems fire two events when a file is modified. Skip first event (file is empty)
+                    if (Files.size(fullPath) == 0) {
+                        continue;
+                    }
+                } catch (IOException ex) {
+                    Logging.error(ex);
+                    continue;
+                }
 
                 synchronized (this) {
                     StyleSource style = styleMap.get(fullPath);
