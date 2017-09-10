@@ -4,6 +4,7 @@ package org.openstreetmap.josm.data.projection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.DoubleUnaryOperator;
 
 import org.openstreetmap.josm.data.Bounds;
@@ -203,24 +204,9 @@ public abstract class AbstractProjection implements Projection {
             synchronized (this) {
                 result = projectionBoundsBox;
                 if (result == null) {
-                    Bounds b = getWorldBoundsLatLon();
-                    // add 4 corners
-                    result = new ProjectionBounds(latlon2eastNorth(b.getMin()));
-                    result.extend(latlon2eastNorth(b.getMax()));
-                    result.extend(latlon2eastNorth(new LatLon(b.getMinLat(), b.getMaxLon())));
-                    result.extend(latlon2eastNorth(new LatLon(b.getMaxLat(), b.getMinLon())));
-                    // and trace along the outline
-                    double dLon = (b.getMaxLon() - b.getMinLon()) / 1000;
-                    double dLat = (b.getMaxLat() - b.getMinLat()) / 1000;
-                    for (double lon = b.getMinLon(); lon < b.getMaxLon(); lon += dLon) {
-                        result.extend(latlon2eastNorth(new LatLon(b.getMinLat(), lon)));
-                        result.extend(latlon2eastNorth(new LatLon(b.getMaxLat(), lon)));
-                    }
-                    for (double lat = b.getMinLat(); lat < b.getMaxLat(); lat += dLat) {
-                        result.extend(latlon2eastNorth(new LatLon(lat, b.getMinLon())));
-                        result.extend(latlon2eastNorth(new LatLon(lat, b.getMaxLon())));
-                    }
-                    projectionBoundsBox = result;
+                    ProjectionBounds bds = new ProjectionBounds();
+                    visitOutline(getWorldBoundsLatLon(), bds::extend);
+                    projectionBoundsBox = bds;
                 }
             }
         }
@@ -230,5 +216,37 @@ public abstract class AbstractProjection implements Projection {
     @Override
     public Projection getBaseProjection() {
         return this;
+    }
+
+    @Override
+    public void visitOutline(Bounds b, Consumer<EastNorth> visitor) {
+        visitOutline(b, 100, visitor);
+    }
+
+    private void visitOutline(Bounds b, int nPoints, Consumer<EastNorth> visitor) {
+        double minlon = b.getMinLon();
+        if (b.crosses180thMeridian()) {
+            minlon -= 360.0;
+        }
+        double spanLon = b.getMaxLon() - minlon;
+        double spanLat = b.getMaxLat() - b.getMinLat();
+
+        //TODO: Use projection to see if there is any need for doing this along each axis.
+        for (int step = 0; step < nPoints; step++) {
+            visitor.accept(latlon2eastNorth(
+                    new LatLon(b.getMinLat(), minlon + spanLon * step / nPoints)));
+        }
+        for (int step = 0; step < nPoints; step++) {
+            visitor.accept(latlon2eastNorth(
+                    new LatLon(b.getMinLat() + spanLat * step / nPoints, b.getMaxLon())));
+        }
+        for (int step = 0; step < nPoints; step++) {
+            visitor.accept(latlon2eastNorth(
+                    new LatLon(b.getMaxLat(), b.getMaxLon() - spanLon * step / nPoints)));
+        }
+        for (int step = 0; step < nPoints; step++) {
+            visitor.accept(latlon2eastNorth(
+                    new LatLon(b.getMaxLat() - spanLat * step / nPoints, minlon)));
+        }
     }
 }

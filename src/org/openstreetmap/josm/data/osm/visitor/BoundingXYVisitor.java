@@ -55,7 +55,7 @@ public class BoundingXYVisitor implements OsmPrimitiveVisitor {
      */
     public void visit(Bounds b) {
         if (b != null) {
-            b.visitEdge(Main.getProjection(), this::visit);
+            Main.getProjection().visitOutline(b, this::visit);
         }
     }
 

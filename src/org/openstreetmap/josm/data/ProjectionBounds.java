@@ -77,6 +77,23 @@ public class ProjectionBounds {
     }
 
     /**
+     * Construct uninitialized bounds.
+     * <p>
+     * At least one call to {@link #extend(EastNorth)} or {@link #extend(ProjectionBounds)}
+     * is required immediately after construction to initialize the {@code ProjectionBounds}
+     * instance and make it valid.
+     * <p>
+     * Uninitialized {@code ProjectionBounds} must not be passed to other methods
+     * or used in any way other than initializing it.
+     */
+    public ProjectionBounds() {
+        this.minEast = Double.POSITIVE_INFINITY;
+        this.minNorth = Double.POSITIVE_INFINITY;
+        this.maxEast = Double.NEGATIVE_INFINITY;
+        this.maxNorth = Double.NEGATIVE_INFINITY;
+    }
+
+    /**
      * Extends bounds to include point {@code e}.
      * @param e east/north to include
      */
