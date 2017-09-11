@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
+import org.openstreetmap.josm.data.preferences.sources.SourceType;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.MapRendererPerformanceTest;
 import org.openstreetmap.josm.io.Compression;
@@ -70,6 +71,7 @@ public class MapCSSPerformanceTest {
         System.out.print("Loading style '"+STYLE_FILE+"' ...");
         MapCSSStyleSource source = new MapCSSStyleSource(
             new SourceEntry(
+                SourceType.MAP_PAINT_STYLE,
                 STYLE_FILE,
                 "test style",
                 "a test style",

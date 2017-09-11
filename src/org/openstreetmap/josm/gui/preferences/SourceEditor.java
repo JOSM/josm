@@ -740,7 +740,7 @@ public abstract class SourceEditor extends JPanel {
         public void addExtendedSourceEntries(List<ExtendedSourceEntry> sources) {
             if (sources == null) return;
             for (ExtendedSourceEntry info: sources) {
-                data.add(new SourceEntry(info.url, info.name, info.getDisplayName(), true));
+                data.add(new SourceEntry(info.type, info.url, info.name, info.getDisplayName(), true));
             }
             fireTableDataChanged();
             selectionModel.setValueIsAdjusting(true);
@@ -968,7 +968,7 @@ public abstract class SourceEditor extends JPanel {
                 if (canEnable) {
                     active = editEntryDialog.active();
                 }
-                final SourceEntry entry = new SourceEntry(
+                final SourceEntry entry = new SourceEntry(sourceType,
                         editEntryDialog.getURL(),
                         null, editEntryDialog.getTitle(), active);
                 entry.title = getTitleForSourceEntry(entry);
@@ -1508,7 +1508,7 @@ public abstract class SourceEditor extends JPanel {
                         last = null;
                         Matcher m = Pattern.compile("^(.+);(.+)$").matcher(line);
                         if (m.matches()) {
-                            last = new ExtendedSourceEntry(m.group(1), m.group(2));
+                            last = new ExtendedSourceEntry(sourceType, m.group(1), m.group(2));
                             sources.add(last);
                         } else {
                             Logging.error(tr(getStr(I18nString.ILLEGAL_FORMAT_OF_ENTRY), url, line));

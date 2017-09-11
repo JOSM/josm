@@ -21,6 +21,7 @@ import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
+import org.openstreetmap.josm.data.preferences.sources.SourceType;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.IconReference;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.tools.ImageOverlay;
@@ -69,7 +70,7 @@ public abstract class StyleSource extends SourceEntry {
      * @param title The title that can be used as menu entry
      */
     public StyleSource(String url, String name, String title) {
-        super(url, name, title, true);
+        super(SourceType.MAP_PAINT_STYLE, url, name, title, true);
     }
 
     /**

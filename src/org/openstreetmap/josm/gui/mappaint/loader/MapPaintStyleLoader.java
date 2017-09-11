@@ -5,8 +5,10 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
+import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
@@ -65,5 +67,19 @@ public class MapPaintStyleLoader extends PleaseWaitRunnable {
             toReload.add(data.get(i));
         }
         MainApplication.worker.submit(new MapPaintStyleLoader(toReload));
+    }
+
+    /**
+     * Reload style.
+     * @param style {@link StyleSource} to reload
+     * @throws IllegalArgumentException if {@code style} is not a {@code StyleSource} instance
+     * @since 12825
+     */
+    public static void reloadStyle(SourceEntry style) {
+        if (style instanceof StyleSource) {
+            MainApplication.worker.submit(new MapPaintStyleLoader(Collections.singleton((StyleSource) style)));
+        } else {
+            throw new IllegalArgumentException(style + " is not a StyleSource");
+        }
     }
 }

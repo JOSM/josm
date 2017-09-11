@@ -18,6 +18,12 @@ import org.openstreetmap.josm.tools.Utils;
 public class SourceEntry {
 
     /**
+     * The type of source entry.
+     * @since 12825
+     **/
+    public final SourceType type;
+
+    /**
      *  A URL can be anything that CachedFile understands, i.e.
      *  a local file, http://, or a file from the current jar
      */
@@ -57,6 +63,7 @@ public class SourceEntry {
 
     /**
      * Constructs a new {@code SourceEntry}.
+     * @param type type of source entry
      * @param url URL that {@link org.openstreetmap.josm.io.CachedFile} understands
      * @param isZip if url is a zip file and the resource is inside the zip file
      * @param zipEntryPath If {@code isZip} is {@code true}, denotes the path inside the zip file
@@ -69,8 +76,10 @@ public class SourceEntry {
      * @see #name
      * @see #title
      * @see #active
+     * @since 12825
      */
-    public SourceEntry(String url, boolean isZip, String zipEntryPath, String name, String title, boolean active) {
+    public SourceEntry(SourceType type, String url, boolean isZip, String zipEntryPath, String name, String title, boolean active) {
+        this.type = type;
         this.url = url;
         this.isZip = isZip;
         this.zipEntryPath = "".equals(zipEntryPath) ? null : zipEntryPath;
@@ -81,6 +90,7 @@ public class SourceEntry {
 
     /**
      * Constructs a new {@code SourceEntry}.
+     * @param type type of source entry
      * @param url URL that {@link org.openstreetmap.josm.io.CachedFile} understands
      * @param name Source name
      * @param title title that can be used as menu entry
@@ -89,9 +99,10 @@ public class SourceEntry {
      * @see #name
      * @see #title
      * @see #active
+     * @since 12825
      */
-    public SourceEntry(String url, String name, String title, boolean active) {
-        this(url, false, null, name, title, active);
+    public SourceEntry(SourceType type, String url, String name, String title, boolean active) {
+        this(type, url, false, null, name, title, active);
     }
 
     /**
@@ -99,6 +110,7 @@ public class SourceEntry {
      * @param e existing source entry to copy
      */
     public SourceEntry(SourceEntry e) {
+        this.type = e.type;
         this.url = e.url;
         this.isZip = e.isZip;
         this.zipEntryPath = e.zipEntryPath;

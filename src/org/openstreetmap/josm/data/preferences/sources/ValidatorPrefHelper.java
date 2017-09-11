@@ -54,7 +54,7 @@ public class ValidatorPrefHelper extends SourcePrefHelper {
      * Constructs a new {@code PresetPrefHelper}.
      */
     public ValidatorPrefHelper() {
-        super(MapCSSTagChecker.ENTRIES_PREF_KEY);
+        super(MapCSSTagChecker.ENTRIES_PREF_KEY, SourceType.TAGCHECKER_RULE);
     }
 
     @Override
@@ -79,8 +79,8 @@ public class ValidatorPrefHelper extends SourcePrefHelper {
         return def;
     }
 
-    private static void addDefault(List<ExtendedSourceEntry> defaults, String filename, String title, String description) {
-        ExtendedSourceEntry i = new ExtendedSourceEntry(filename+".mapcss", "resource://data/validator/"+filename+".mapcss");
+    private void addDefault(List<ExtendedSourceEntry> defaults, String filename, String title, String description) {
+        ExtendedSourceEntry i = new ExtendedSourceEntry(type, filename+".mapcss", "resource://data/validator/"+filename+".mapcss");
         i.title = title;
         i.description = description;
         defaults.add(i);
@@ -97,6 +97,6 @@ public class ValidatorPrefHelper extends SourcePrefHelper {
 
     @Override
     public SourceEntry deserialize(Map<String, String> s) {
-        return new SourceEntry(s.get("url"), null, s.get("title"), Boolean.parseBoolean(s.get("active")));
+        return new SourceEntry(type, s.get("url"), null, s.get("title"), Boolean.parseBoolean(s.get("active")));
     }
 }

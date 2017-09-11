@@ -23,12 +23,12 @@ public class PresetPrefHelper extends SourcePrefHelper {
      * Constructs a new {@code PresetPrefHelper}.
      */
     public PresetPrefHelper() {
-        super("taggingpreset.entries");
+        super("taggingpreset.entries", SourceType.TAGGING_PRESET);
     }
 
     @Override
     public Collection<ExtendedSourceEntry> getDefault() {
-        ExtendedSourceEntry i = new ExtendedSourceEntry("defaultpresets.xml", "resource://data/defaultpresets.xml");
+        ExtendedSourceEntry i = new ExtendedSourceEntry(type, "defaultpresets.xml", "resource://data/defaultpresets.xml");
         i.title = tr("Internal Preset");
         i.description = tr("The default preset for JOSM");
         return Collections.singletonList(i);
@@ -44,6 +44,6 @@ public class PresetPrefHelper extends SourcePrefHelper {
 
     @Override
     public SourceEntry deserialize(Map<String, String> s) {
-        return new SourceEntry(s.get("url"), null, s.get("title"), true);
+        return new SourceEntry(type, s.get("url"), null, s.get("title"), true);
     }
 }
