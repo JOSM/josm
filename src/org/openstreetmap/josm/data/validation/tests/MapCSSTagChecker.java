@@ -1,7 +1,6 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
-import static org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.FixCommand.evaluateObject;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
@@ -41,6 +40,7 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
+import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -759,7 +759,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                 }
                 addMapCSS(i);
                 if (Main.pref.getBoolean("validator.auto_reload_local_rules", true) && source.isLocal()) {
-                    Main.fileWatcher.registerValidatorRule(source);
+                    Main.fileWatcher.registerSource(source);
                 }
             } catch (IOException | IllegalStateException | IllegalArgumentException ex) {
                 Logging.warn(tr("Failed to add {0} to tag checker", i));
@@ -821,5 +821,21 @@ public class MapCSSTagChecker extends Test.TagTest {
         if (!super.equals(obj)) return false;
         MapCSSTagChecker that = (MapCSSTagChecker) obj;
         return Objects.equals(checks, that.checks);
+    }
+
+    /**
+     * Reload tagchecker rule.
+     * @param rule tagchecker rule to reload
+     * @since 12825
+     */
+    public static void reloadRule(SourceEntry rule) {
+        MapCSSTagChecker tagChecker = OsmValidator.getTest(MapCSSTagChecker.class);
+        if (tagChecker != null) {
+            try {
+                tagChecker.addMapCSS(rule.url);
+            } catch (IOException | ParseException e) {
+                Logging.warn(e);
+            }
+        }
     }
 }

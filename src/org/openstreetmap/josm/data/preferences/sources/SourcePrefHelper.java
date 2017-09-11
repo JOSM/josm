@@ -18,13 +18,17 @@ import org.openstreetmap.josm.Main;
 public abstract class SourcePrefHelper {
 
     private final String pref;
+    protected final SourceType type;
 
     /**
      * Constructs a new {@code SourcePrefHelper} for the given preference key.
      * @param pref The preference key
+     * @param type The source type
+     * @since 12825
      */
-    public SourcePrefHelper(String pref) {
+    public SourcePrefHelper(String pref, SourceType type) {
         this.pref = pref;
+        this.type = type;
     }
 
     /**

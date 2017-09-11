@@ -29,7 +29,7 @@ public class MapPaintPrefHelper extends SourcePrefHelper {
      * Constructs a new {@code MapPaintPrefHelper}.
      */
     public MapPaintPrefHelper() {
-        super("mappaint.style.entries");
+        super("mappaint.style.entries", SourceType.MAP_PAINT_STYLE);
     }
 
     @Override
@@ -79,12 +79,12 @@ public class MapPaintPrefHelper extends SourcePrefHelper {
 
     @Override
     public Collection<ExtendedSourceEntry> getDefault() {
-        ExtendedSourceEntry defJosmMapcss = new ExtendedSourceEntry("elemstyles.mapcss", "resource://styles/standard/elemstyles.mapcss");
+        ExtendedSourceEntry defJosmMapcss = new ExtendedSourceEntry(type, "elemstyles.mapcss", "resource://styles/standard/elemstyles.mapcss");
         defJosmMapcss.active = true;
         defJosmMapcss.name = "standard";
         defJosmMapcss.title = tr("JOSM default (MapCSS)");
         defJosmMapcss.description = tr("Internal style to be used as base for runtime switchable overlay styles");
-        ExtendedSourceEntry defPL2 = new ExtendedSourceEntry("potlatch2.mapcss", "resource://styles/standard/potlatch2.mapcss");
+        ExtendedSourceEntry defPL2 = new ExtendedSourceEntry(type, "potlatch2.mapcss", "resource://styles/standard/potlatch2.mapcss");
         defPL2.active = false;
         defPL2.name = "standard";
         defPL2.title = tr("Potlatch 2");
@@ -107,6 +107,6 @@ public class MapPaintPrefHelper extends SourcePrefHelper {
 
     @Override
     public SourceEntry deserialize(Map<String, String> s) {
-        return new SourceEntry(s.get("url"), s.get("ptoken"), s.get("title"), Boolean.parseBoolean(s.get("active")));
+        return new SourceEntry(type, s.get("url"), s.get("ptoken"), s.get("title"), Boolean.parseBoolean(s.get("active")));
     }
 }

@@ -27,11 +27,13 @@ public class ExtendedSourceEntry extends SourceEntry implements Comparable<Exten
 
     /**
      * Constructs a new {@code ExtendedSourceEntry}.
+     * @param type type of source entry
      * @param simpleFileName file name used for display
      * @param url URL that {@link org.openstreetmap.josm.io.CachedFile} understands
+     * @since 12825
      */
-    public ExtendedSourceEntry(String simpleFileName, String url) {
-        super(url, null, null, true);
+    public ExtendedSourceEntry(SourceType type, String simpleFileName, String url) {
+        super(type, url, null, null, true);
         this.simpleFileName = simpleFileName;
     }
 

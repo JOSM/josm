@@ -36,6 +36,7 @@ import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
+import org.openstreetmap.josm.data.preferences.sources.SourceType;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSStyleSource;
 import org.openstreetmap.josm.io.IllegalDataException;
@@ -301,7 +302,7 @@ public class MapCSSRendererTest {
         }
 
         public SourceEntry getStyleSourceEntry() {
-            return new SourceEntry(getTestDirectory() + "/style.mapcss",
+            return new SourceEntry(SourceType.MAP_PAINT_STYLE, getTestDirectory() + "/style.mapcss",
                     "test style", "a test style", true // active
             );
         }
