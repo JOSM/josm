@@ -65,8 +65,6 @@ import org.xml.sax.SAXException;
  */
 public final class CustomConfigurator {
 
-    private static StringBuilder summary = new StringBuilder();
-
     private CustomConfigurator() {
         // Hide default constructor for utils classes
     }
@@ -76,17 +74,21 @@ public final class CustomConfigurator {
      * @param fmt format
      * @param vars arguments
      * @see String#format
+     * @deprecated to be removed end of 2017. Use {@link PreferencesUtils#log(String, Object...)} instead
      */
+    @Deprecated
     public static void log(String fmt, Object... vars) {
-        summary.append(String.format(fmt, vars));
+        PreferencesUtils.log(fmt, vars);
     }
 
     /**
      * Log a message.
      * @param s message to log
+     * @deprecated to be removed end of 2017. Use {@link PreferencesUtils#log(String)} instead
      */
+    @Deprecated
     public static void log(String s) {
-        summary.append(s).append('\n');
+        PreferencesUtils.log(s);
     }
 
     /**
@@ -94,24 +96,30 @@ public final class CustomConfigurator {
      * @param e exception to log
      * @param s message prefix
      * @since 10469
+     * @deprecated to be removed end of 2017. Use {@link PreferencesUtils#log(Exception, String)} instead
      */
+    @Deprecated
     public static void log(Exception e, String s) {
-        summary.append(s).append(' ').append(Logging.getErrorMessage(e)).append('\n');
+        PreferencesUtils.log(e, s);
     }
 
     /**
      * Returns the log.
      * @return the log
+     * @deprecated to be removed end of 2017. Use {@link PreferencesUtils#getLog()} instead
      */
+    @Deprecated
     public static String getLog() {
-        return summary.toString();
+        return PreferencesUtils.getLog();
     }
 
     /**
      * Resets the log.
+     * @deprecated to be removed end of 2017. Use {@link PreferencesUtils#resetLog()} instead
      */
+    @Deprecated
     public static void resetLog() {
-        summary = new StringBuilder();
+        PreferencesUtils.resetLog();
     }
 
     /**
@@ -184,8 +192,8 @@ public final class CustomConfigurator {
         DownloadFileTask downloadFileTask = new DownloadFileTask(Main.parent, address, fOut, mkdir, unzip);
 
         MainApplication.worker.submit(downloadFileTask);
-        log("Info: downloading file from %s to %s in background ", parentDir, fOut.getAbsolutePath());
-        if (unzip) log("and unpacking it"); else log("");
+        PreferencesUtils.log("Info: downloading file from %s to %s in background ", parentDir, fOut.getAbsolutePath());
+        if (unzip) PreferencesUtils.log("and unpacking it"); else PreferencesUtils.log("");
 
     }
 
@@ -314,10 +322,10 @@ public final class CustomConfigurator {
     public static void deleteFile(String path, String base) {
         String dir = getDirectoryByAbbr(base);
         if (dir == null) {
-            log("Error: Can not find base, use base=cache, base=prefs or base=plugins attribute.");
+            PreferencesUtils.log("Error: Can not find base, use base=cache, base=prefs or base=plugins attribute.");
             return;
         }
-        log("Delete file: %s\n", path);
+        PreferencesUtils.log("Delete file: %s\n", path);
         if (path.contains("..") || path.startsWith("/") || path.contains(":")) {
             return; // some basic protection
         }
@@ -337,7 +345,7 @@ public final class CustomConfigurator {
             }
         }
         if (!Utils.deleteFile(f)) {
-            log("Warning: Can not delete file "+f.getPath());
+            PreferencesUtils.log("Warning: Can not delete file "+f.getPath());
         }
     }
 
@@ -355,13 +363,13 @@ public final class CustomConfigurator {
         deleteList.remove("");
 
         if (!installList.isEmpty()) {
-            log("Plugins install: "+installList);
+            PreferencesUtils.log("Plugins install: "+installList);
         }
         if (!removeList.isEmpty()) {
-            log("Plugins turn off: "+removeList);
+            PreferencesUtils.log("Plugins turn off: "+removeList);
         }
         if (!deleteList.isEmpty()) {
-            log("Plugins delete: "+deleteList);
+            PreferencesUtils.log("Plugins delete: "+deleteList);
         }
 
         final ReadLocalPluginInformationTask task = new ReadLocalPluginInformationTask();
@@ -436,7 +444,7 @@ public final class CustomConfigurator {
         private ScriptEngine engine;
 
         public void openAndReadXML(File file) {
-            log("-- Reading custom preferences from " + file.getAbsolutePath() + " --");
+            PreferencesUtils.log("-- Reading custom preferences from " + file.getAbsolutePath() + " --");
             try {
                 String fileDir = file.getParentFile().getAbsolutePath();
                 if (fileDir != null) engine.eval("scriptDir='"+normalizeDirName(fileDir) +"';");
@@ -444,7 +452,7 @@ public final class CustomConfigurator {
                     openAndReadXML(is);
                 }
             } catch (ScriptException | IOException | SecurityException ex) {
-                log(ex, "Error reading custom preferences:");
+                PreferencesUtils.log(ex, "Error reading custom preferences:");
             }
         }
 
@@ -455,15 +463,15 @@ public final class CustomConfigurator {
                     processXML(document);
                 }
             } catch (SAXException | IOException | ParserConfigurationException ex) {
-                log(ex, "Error reading custom preferences:");
+                PreferencesUtils.log(ex, "Error reading custom preferences:");
             }
-            log("-- Reading complete --");
+            PreferencesUtils.log("-- Reading complete --");
         }
 
         public XMLCommandProcessor(Preferences mainPrefs) {
             try {
                 this.mainPrefs = mainPrefs;
-                resetLog();
+                PreferencesUtils.resetLog();
                 engine = new ScriptEngineManager().getEngineByName("JavaScript");
                 engine.eval("API={}; API.pref={}; API.fragments={};");
 
@@ -481,7 +489,7 @@ public final class CustomConfigurator {
                 engine.eval("API.pluginUninstall = function(names) { "+className+".pluginOperation('',names,'');}");
                 engine.eval("API.pluginDelete = function(names) { "+className+".pluginOperation('','',names);}");
             } catch (ScriptException ex) {
-                log("Error: initializing script engine: "+ex.getMessage());
+                PreferencesUtils.log("Error: initializing script engine: "+ex.getMessage());
                 Logging.error(ex);
             }
         }
@@ -539,7 +547,7 @@ public final class CustomConfigurator {
                     processScriptElement(elem);
                     break;
                 default:
-                    log("Error: Unknown element " + elementName);
+                    PreferencesUtils.log("Error: Unknown element " + elementName);
                 }
             }
         }
@@ -566,16 +574,16 @@ public final class CustomConfigurator {
                     PreferencesUtils.loadPrefsToJS(engine, tmpPref, fragmentVar, false);
                     // we store this fragment as API.fragments['id']
                 } catch (ScriptException ex) {
-                    log(ex, "Error: can not load preferences fragment:");
+                    PreferencesUtils.log(ex, "Error: can not load preferences fragment:");
                 }
             }
 
             if ("replace".equals(oper)) {
-                log("Preferences replace: %d keys: %s\n",
+                PreferencesUtils.log("Preferences replace: %d keys: %s\n",
                    tmpPref.getAllSettings().size(), tmpPref.getAllSettings().keySet().toString());
                 PreferencesUtils.replacePreferences(tmpPref, mainPrefs);
             } else if ("append".equals(oper)) {
-                log("Preferences append: %d keys: %s\n",
+                PreferencesUtils.log("Preferences append: %d keys: %s\n",
                    tmpPref.getAllSettings().size(), tmpPref.getAllSettings().keySet().toString());
                 PreferencesUtils.appendPreferences(tmpPref, mainPrefs);
             } else if ("delete-values".equals(oper)) {
@@ -593,7 +601,7 @@ public final class CustomConfigurator {
             String base = evalVars(item.getAttribute("base"));
             String dir = getDirectoryByAbbr(base);
             if (dir == null) {
-                log("Error: Can not find directory to place file, use base=cache, base=prefs or base=plugins attribute.");
+                PreferencesUtils.log("Error: Can not find directory to place file, use base=cache, base=prefs or base=plugins attribute.");
                 return;
             }
 
@@ -604,7 +612,7 @@ public final class CustomConfigurator {
 
             String address = evalVars(item.getAttribute("url"));
             if (address.isEmpty() || path.isEmpty()) {
-                log("Error: Please specify url=\"where to get file\" and path=\"where to place it\"");
+                PreferencesUtils.log("Error: Please specify url=\"where to get file\" and path=\"where to place it\"");
                 return;
             }
 
@@ -651,7 +659,7 @@ public final class CustomConfigurator {
             try {
                 engine.eval(name+"='"+value+"';");
             } catch (ScriptException ex) {
-                log(ex, String.format("Error: Can not assign variable: %s=%s :", name, value));
+                PreferencesUtils.log(ex, String.format("Error: Can not assign variable: %s=%s :", name, value));
             }
         }
 
@@ -662,7 +670,7 @@ public final class CustomConfigurator {
                 processXmlFragment(elem);
                 v = true;
             } else {
-                log("Error: Illegal test expression in if: %s=%s\n", elem.getAttribute("test"), realValue);
+                PreferencesUtils.log("Error: Illegal test expression in if: %s=%s\n", elem.getAttribute("test"), realValue);
             }
 
             lastV = v;
@@ -678,10 +686,10 @@ public final class CustomConfigurator {
             String taskName = elem.getAttribute("name");
             Element task = tasksMap.get(taskName);
             if (task != null) {
-                log("EXECUTING TASK "+taskName);
+                PreferencesUtils.log("EXECUTING TASK "+taskName);
                 processXmlFragment(task); // process task recursively
             } else {
-                log("Error: Can not execute task "+taskName);
+                PreferencesUtils.log("Error: Can not execute task "+taskName);
                 return true;
             }
             return false;
@@ -689,14 +697,14 @@ public final class CustomConfigurator {
 
         private void processScriptElement(Element elem) {
             String js = elem.getChildNodes().item(0).getTextContent();
-            log("Processing script...");
+            PreferencesUtils.log("Processing script...");
             try {
                 PreferencesUtils.modifyPreferencesByScript(engine, mainPrefs, js);
             } catch (ScriptException ex) {
                 messageBox("e", ex.getMessage());
-                log(ex, "JS error:");
+                PreferencesUtils.log(ex, "JS error:");
             }
-            log("Script finished");
+            PreferencesUtils.log("Script finished");
         }
 
         /**
@@ -712,7 +720,7 @@ public final class CustomConfigurator {
                     String result = engine.eval(mr.group(1)).toString();
                     mr.appendReplacement(sb, result);
                 } catch (ScriptException ex) {
-                    log(ex, String.format("Error: Can not evaluate expression %s :", mr.group(1)));
+                    PreferencesUtils.log(ex, String.format("Error: Can not evaluate expression %s :", mr.group(1)));
                 }
             }
             mr.appendTail(sb);
@@ -733,7 +741,7 @@ public final class CustomConfigurator {
                 CharArrayReader reader = new CharArrayReader(fragmentWithReplacedVars.toCharArray());
                 tmpPref.fromXML(reader);
             } catch (TransformerException | XMLStreamException | IOException ex) {
-                log(ex, "Error: can not read XML fragment:");
+                PreferencesUtils.log(ex, "Error: can not read XML fragment:");
             }
 
             return tmpPref;

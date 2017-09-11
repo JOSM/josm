@@ -38,6 +38,7 @@ import javax.swing.filechooser.FileFilter;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.PreferencesUtils;
 import org.openstreetmap.josm.data.preferences.Setting;
 import org.openstreetmap.josm.data.preferences.StringSetting;
 import org.openstreetmap.josm.gui.dialogs.LogShowDialog;
@@ -263,7 +264,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
         log.append("<html>");
         for (File f : files) {
             CustomConfigurator.readXML(f, tmpPrefs);
-            log.append(CustomConfigurator.getLog());
+            log.append(PreferencesUtils.getLog());
         }
         log.append("</html>");
         String msg = log.toString().replace("\n", "<br/>");

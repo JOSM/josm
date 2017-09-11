@@ -12,7 +12,6 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Collections;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.Main;
@@ -23,7 +22,6 @@ import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Utils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
-import net.trajano.commons.testing.UtilityClassTestUtil;
 
 /**
  * Unit tests for class {@link CustomConfigurator}.
@@ -36,28 +34,6 @@ public class CustomConfiguratorTest {
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
     public JOSMTestRules test = new JOSMTestRules().preferences();
-
-    /**
-     * Setup test.
-     */
-    @Before
-    public void setUp() {
-        CustomConfigurator.resetLog();
-    }
-
-    /**
-     * Test method for {@link CustomConfigurator#log}.
-     */
-    @Test
-    public void testLog() {
-        assertEquals("", CustomConfigurator.getLog());
-        CustomConfigurator.log("test");
-        assertEquals("test\n", CustomConfigurator.getLog());
-        CustomConfigurator.log("%d\n", 100);
-        assertEquals("test\n100\n", CustomConfigurator.getLog());
-        CustomConfigurator.log("test");
-        assertEquals("test\n100\ntest\n", CustomConfigurator.getLog());
-    }
 
     /**
      * Test method for {@link CustomConfigurator#exportPreferencesKeysToFile}.
@@ -105,7 +81,7 @@ public class CustomConfiguratorTest {
         Main.pref.putCollection("test", Collections.<String>emptyList());
         assertTrue(Main.pref.getCollection("test").isEmpty());
         CustomConfigurator.readXML(TestUtils.getTestDataRoot() + "customconfigurator", "append.xml");
-        String log = CustomConfigurator.getLog();
+        String log = PreferencesUtils.getLog();
         assertFalse(log, log.contains("Error"));
         assertFalse(Main.pref.getCollection("test").isEmpty());
 
@@ -116,17 +92,8 @@ public class CustomConfiguratorTest {
         pref.putCollection("lorem_ipsum", Arrays.asList("only 1 string"));
         assertEquals(1, pref.getCollection("lorem_ipsum").size());
         CustomConfigurator.readXML(new File(TestUtils.getTestDataRoot() + "customconfigurator", "replace.xml"), pref);
-        log = CustomConfigurator.getLog();
+        log = PreferencesUtils.getLog();
         assertFalse(log, log.contains("Error"));
         assertEquals(9, pref.getCollection("lorem_ipsum").size());
-    }
-
-    /**
-     * Tests that {@code PreferencesUtils} satisfies utility class criterias.
-     * @throws ReflectiveOperationException if an error occurs
-     */
-    @Test
-    public void testUtilityClass() throws ReflectiveOperationException {
-        UtilityClassTestUtil.assertUtilityClassWellDefined(PreferencesUtils.class);
     }
 }
