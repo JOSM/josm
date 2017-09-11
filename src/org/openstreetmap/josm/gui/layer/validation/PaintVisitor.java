@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.data.validation;
+package org.openstreetmap.josm.gui.layer.validation;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -16,6 +16,8 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
+import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.data.validation.ValidatorVisitor;
 import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.draw.SymbolShape;
@@ -25,6 +27,7 @@ import org.openstreetmap.josm.tools.Utils;
  * Visitor that highlights the primitives affected by an error
  * @author frsantos
  * @since 5671
+ * @since 12823 (moved from {@code data.validation} package)
  */
 public class PaintVisitor implements OsmPrimitiveVisitor, ValidatorVisitor {
     /** The graphics */
