@@ -3,6 +3,7 @@ package org.openstreetmap.josm.tools;
 
 import java.text.MessageFormat;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -150,10 +151,27 @@ public final class CheckParameterUtil {
      * @param condition The condition to check
      * @param message error message
      * @throws IllegalArgumentException if the condition does not hold
+     * @see #ensureThat(boolean, Supplier)
      */
     public static void ensureThat(boolean condition, String message) {
         if (!condition)
             throw new IllegalArgumentException(message);
+    }
+
+    /**
+     * Ensures that the condition {@code condition} holds.
+     *
+     * This method can be used when the message is not a plain string literal,
+     * but somehow constructed. Using a {@link Supplier} improves the performance,
+     * as the string construction is skipped when the condition holds.
+     * @param condition The condition to check
+     * @param messageSupplier supplier of the error message
+     * @throws IllegalArgumentException if the condition does not hold
+     * @since 12822
+     */
+    public static void ensureThat(boolean condition, Supplier<String> messageSupplier) {
+        if (!condition)
+            throw new IllegalArgumentException(messageSupplier.get());
     }
 
     /**

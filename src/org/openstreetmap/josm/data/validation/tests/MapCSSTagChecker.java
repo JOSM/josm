@@ -147,7 +147,7 @@ public class MapCSSTagChecker extends Test.TagTest {
          */
         static void checkObject(final Object obj) {
             CheckParameterUtil.ensureThat(obj instanceof Expression || obj instanceof String,
-                    "instance of Exception or String expected, but got " + obj);
+                    () -> "instance of Exception or String expected, but got " + obj);
         }
 
         /**
