@@ -1,22 +1,50 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.io.auth;
 
-import java.awt.GraphicsEnvironment;
 import java.net.Authenticator.RequestorType;
 import java.net.PasswordAuthentication;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Objects;
 
-import org.openstreetmap.josm.gui.io.CredentialDialog;
-import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Partial implementation of the {@link CredentialsAgent} interface.
  * <p>
- * Provides a memory cache for the credentials and means to query the information 
- * from the user.
+ * Provides a memory cache for the credentials and means to query the information from the user.
+ * @since 4246
  */
 public abstract class AbstractCredentialsAgent implements CredentialsAgent {
+
+    /**
+     * Synchronous credentials provider. Called if no credentials are cached. Can be used for user login prompt.
+     * @since 12821
+     */
+    @FunctionalInterface
+    public interface CredentialsProvider {
+        /**
+         * Fills the given response with appropriate user credentials.
+         * @param requestorType type of the entity requesting authentication
+         * @param agent the credentials agent requesting credentials
+         * @param response authentication response to fill
+         * @param username the known username, if any. Likely to be empty
+         * @param password the known password, if any. Likely to be empty
+         * @param host the host against authentication will be performed
+         */
+        void provideCredentials(RequestorType requestorType, AbstractCredentialsAgent agent, CredentialsAgentResponse response,
+                String username, String password, String host);
+    }
+
+    private static CredentialsProvider credentialsProvider = (a, b, c, d, e, f) -> Logging.error("Credentials provider has not been set");
+
+    /**
+     * Sets the global credentials provider.
+     * @param provider credentials provider. Called if no credentials are cached. Can be used for user login prompt
+     */
+    public static void setCredentialsProvider(CredentialsProvider provider) {
+        credentialsProvider = Objects.requireNonNull(provider, "provider");
+    }
 
     protected Map<RequestorType, PasswordAuthentication> memoryCredentialsCache = new EnumMap<>(RequestorType.class);
 
@@ -50,24 +78,7 @@ public abstract class AbstractCredentialsAgent implements CredentialsAgent {
          * (noSuccessWithLastResponse == true).
          */
         } else if (noSuccessWithLastResponse || username.isEmpty() || password.isEmpty()) {
-            if (!GraphicsEnvironment.isHeadless()) {
-                GuiHelper.runInEDTAndWait(() -> {
-                    CredentialDialog dialog;
-                    if (requestorType.equals(RequestorType.PROXY))
-                        dialog = CredentialDialog.getHttpProxyCredentialDialog(
-                                username, password, host, getSaveUsernameAndPasswordCheckboxText());
-                    else
-                        dialog = CredentialDialog.getOsmApiCredentialDialog(
-                                username, password, host, getSaveUsernameAndPasswordCheckboxText());
-                    dialog.setVisible(true);
-                    response.setCanceled(dialog.isCanceled());
-                    if (dialog.isCanceled())
-                        return;
-                    response.setUsername(dialog.getUsername());
-                    response.setPassword(dialog.getPassword());
-                    response.setSaveCredentials(dialog.isSaveCredentials());
-                });
-            }
+            credentialsProvider.provideCredentials(requestorType, this, response, username, password, host);
             if (response.isCanceled() || response.getUsername() == null || response.getPassword() == null) {
                 return response;
             }

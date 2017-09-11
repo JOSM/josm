@@ -17,6 +17,7 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.net.Authenticator.RequestorType;
 import java.util.Objects;
 
 import javax.swing.AbstractAction;
@@ -31,12 +32,15 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.SideButton;
 import org.openstreetmap.josm.gui.help.ContextSensitiveHelpAction;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.io.auth.AbstractCredentialsAgent;
+import org.openstreetmap.josm.io.auth.CredentialsAgentResponse;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Logging;
@@ -67,6 +71,36 @@ public class CredentialDialog extends JDialog {
         dialog.prepareForProxyCredentials(username, password);
         dialog.pack();
         return dialog;
+    }
+
+    /**
+     * Prompts the user (in the EDT) for credentials and fills the given response with what has been entered.
+     * @param requestorType type of the entity requesting authentication
+     * @param agent the credentials agent requesting credentials
+     * @param response authentication response to fill
+     * @param username the known username, if any. Likely to be empty
+     * @param password the known password, if any. Likely to be empty
+     * @param host the host against authentication will be performed
+     * @since 12821
+     */
+    public static void promptCredentials(RequestorType requestorType, AbstractCredentialsAgent agent, CredentialsAgentResponse response,
+            String username, String password, String host) {
+        GuiHelper.runInEDTAndWait(() -> {
+            CredentialDialog dialog;
+            if (requestorType.equals(RequestorType.PROXY))
+                dialog = getHttpProxyCredentialDialog(
+                        username, password, host, agent.getSaveUsernameAndPasswordCheckboxText());
+            else
+                dialog = getOsmApiCredentialDialog(
+                        username, password, host, agent.getSaveUsernameAndPasswordCheckboxText());
+            dialog.setVisible(true);
+            response.setCanceled(dialog.isCanceled());
+            if (dialog.isCanceled())
+                return;
+            response.setUsername(dialog.getUsername());
+            response.setPassword(dialog.getPassword());
+            response.setSaveCredentials(dialog.isSaveCredentials());
+        });
     }
 
     private boolean canceled;
