@@ -44,6 +44,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinWorkerThread;
@@ -866,8 +867,10 @@ public final class Utils {
      * @param command the command with arguments
      * @return the output
      * @throws IOException when there was an error, e.g. command does not exist
+     * @throws ExecutionException when the return code is != 0. The output is can be retrieved in the exception message
+     * @throws InterruptedException if the current thread is {@linkplain Thread#interrupt() interrupted} by another thread while waiting
      */
-    public static String execOutput(List<String> command) throws IOException {
+    public static String execOutput(List<String> command) throws IOException, ExecutionException, InterruptedException {
         if (Logging.isDebugEnabled()) {
             Logging.debug(join(" ", command));
         }
@@ -883,7 +886,11 @@ public final class Utils {
                     all.append(line);
                 }
             }
-            return all != null ? all.toString() : null;
+            String msg = all != null ? all.toString() : null;
+            if (p.waitFor() != 0) {
+                throw new ExecutionException(msg, null);
+            }
+            return msg;
         }
     }
 
