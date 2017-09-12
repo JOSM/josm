@@ -237,7 +237,9 @@ public class QuadStateCheckBox extends JCheckBox {
         @Override
         public void setEnabled(boolean b) {
             setFocusable(b);
-            other.setEnabled(b);
+            if (other != null) {
+                other.setEnabled(b);
+            }
         }
 
         // -------------------------------------------------------------------------------
