@@ -1,18 +1,19 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.gui.tagging.presets;
+package org.openstreetmap.josm.actions;
 
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import org.openstreetmap.josm.actions.JosmAction;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSearchDialog;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
  * The tagging presets search action (F3).
  * @since 3388
+ * @since 12834 (moved from {@code gui.tagging.presets} package)
  */
 public class TaggingPresetSearchAction extends JosmAction {
 

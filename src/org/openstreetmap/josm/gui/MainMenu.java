@@ -91,6 +91,7 @@ import org.openstreetmap.josm.actions.SessionSaveAsAction;
 import org.openstreetmap.josm.actions.ShowStatusReportAction;
 import org.openstreetmap.josm.actions.SimplifyWayAction;
 import org.openstreetmap.josm.actions.SplitWayAction;
+import org.openstreetmap.josm.actions.TaggingPresetSearchAction;
 import org.openstreetmap.josm.actions.UnGlueAction;
 import org.openstreetmap.josm.actions.UnJoinNodeWayAction;
 import org.openstreetmap.josm.actions.UndoAction;
@@ -119,7 +120,6 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListen
 import org.openstreetmap.josm.gui.mappaint.MapPaintMenu;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
-import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSearchAction;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSearchPrimitiveDialog;
 import org.openstreetmap.josm.tools.Shortcut;
 
