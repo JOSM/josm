@@ -162,7 +162,7 @@ public class FileWatcher {
                         continue;
                     }
                 } catch (IOException ex) {
-                    Logging.error(ex);
+                    Logging.trace(ex);
                     continue;
                 }
 
