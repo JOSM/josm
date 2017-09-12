@@ -1,17 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import java.awt.event.ActionEvent;
-import java.util.Arrays;
-
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JMenu;
-
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.gui.MainApplication;
-import org.openstreetmap.josm.gui.mappaint.loader.MapPaintStyleLoader;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -37,12 +27,6 @@ import org.openstreetmap.josm.tools.Logging;
 public interface StyleSetting {
 
     /**
-     * Adds the menu entry for this style setting to the menu
-     * @param menu The menu to add the setting to
-     */
-    void addMenuEntry(JMenu menu);
-
-    /**
      * gets the value for this setting
      * @return The value the user selected
      */
@@ -62,21 +46,6 @@ public interface StyleSetting {
             this.prefKey = prefKey;
             this.label = label;
             this.def = def;
-        }
-
-        @Override
-        public void addMenuEntry(JMenu menu) {
-            final JCheckBoxMenuItem item = new JCheckBoxMenuItem();
-            Action a = new AbstractAction(label) {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    setValue(item.isSelected());
-                    MainApplication.worker.submit(new MapPaintStyleLoader(Arrays.asList(parentStyle)));
-                }
-            };
-            item.setAction(a);
-            item.setSelected((boolean) getValue());
-            menu.add(item);
         }
 
         public static BooleanStyleSetting create(Cascade c, StyleSource parentStyle, String key) {
