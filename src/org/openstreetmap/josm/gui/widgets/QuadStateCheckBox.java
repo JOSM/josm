@@ -128,7 +128,14 @@ public class QuadStateCheckBox extends JCheckBox {
         }
     }
 
-    private final class QuadStateDecorator implements ButtonModel {
+    /**
+     * Button model for the {@code QuadStateCheckBox}.
+     * It previously only implemented (and still could) the {@code ButtonModel} interface.
+     * But because of JDK-8182577 (Java 9 regression) it now extends {@code ToggleButtonModel} as a workaround.
+     * The previous implementation can be restored after Java 10 migration.
+     * See also https://bugs.openjdk.java.net/browse/JDK-8182695
+     */
+    private final class QuadStateDecorator extends ToggleButtonModel {
         private final ButtonModel other;
         private String propertyText;
 
