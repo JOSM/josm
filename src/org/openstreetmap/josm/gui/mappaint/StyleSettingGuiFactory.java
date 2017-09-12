@@ -8,7 +8,11 @@ import org.openstreetmap.josm.gui.mappaint.StyleSetting.BooleanStyleSetting;
  * {@link StyleSetting} objects.
  * @since 12831
  */
-public class StyleSettingGuiFactory {
+public final class StyleSettingGuiFactory {
+
+    private StyleSettingGuiFactory() {
+        // hide constructor
+    }
 
     /**
      * Create a matching {@link StyleSettingGui} instances for a given
