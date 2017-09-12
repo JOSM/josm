@@ -22,6 +22,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.concurrent.ExecutionException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.CertificateAmendment.CertAmend;
@@ -33,37 +34,6 @@ import org.openstreetmap.josm.io.CertificateAmendment.CertAmend;
 public class PlatformHookUnixoid implements PlatformHook {
 
     private String osDescription;
-
-    // rpm returns translated string "package %s is not installed\n", can't find a way to force english output
-    // translations from https://github.com/rpm-software-management/rpm
-    private static final String[] NOT_INSTALLED = {
-            "not installed",          // en
-            "no s'ha instal·lat",     // ca
-            "尚未安裝",                // cmn
-            "není nainstalován",      // cs
-            "ikke installeret",       // da
-            "nicht installiert",      // de
-            "ne estas instalita",     // eo
-            "no está instalado",      // es
-            "ole asennettu",          // fi
-            "pas installé",           // fr
-            "non è stato installato", // it
-            "はインストールされていません。",   // ja
-            "패키지가 설치되어 있지 않습니다", // ko
-            "ikke installert",        // nb
-            "nie jest zainstalowany", // pl
-            "não está instalado",     // pt
-            "не установлен",          // ru
-            "ni nameščen",            // sl
-            "nie je nainštalovaný",   // sk
-            "није инсталиран",        // sr
-            "inte installerat",       // sv
-            "kurulu değil",           // tr
-            "не встановлено",         // uk
-            "chưa cài đặt gói",       // vi
-            "未安装软件包",             // zh_CN
-            "尚未安裝"                // zh_TW
-    };
 
     @Override
     public Platform getPlatform() {
@@ -126,7 +96,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         try {
             String dist = Utils.execOutput(Arrays.asList("lsb_release", "-i", "-s"));
             return "Debian".equalsIgnoreCase(dist) || "Ubuntu".equalsIgnoreCase(dist) || "Mint".equalsIgnoreCase(dist);
-        } catch (IOException e) {
+        } catch (IOException | ExecutionException | InterruptedException e) {
             // lsb_release is not available on all Linux systems, so don't log at warning level
             Logging.debug(e);
             return false;
@@ -156,17 +126,18 @@ public class PlatformHookUnixoid implements PlatformHook {
                     } else {
                         args = new String[] {"rpm", "-q", "--qf", "%{arch}-%{version}", packageName};
                     }
-                    String version = Utils.execOutput(Arrays.asList(args));
-                    if (version != null) {
-                        for (String notInstalled : NOT_INSTALLED) {
-                            if (version.contains(notInstalled))
-                                break;
+                    try {
+                        String version = Utils.execOutput(Arrays.asList(args));
+                        if (version != null && !version.isEmpty()) {
+                            return packageName + ':' + version;
                         }
-                        return packageName + ':' + version;
+                    } catch (ExecutionException e) {
+                        // Package does not exist, continue
+                        Logging.trace(e);
                     }
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             Logging.warn(e);
         }
         return null;
@@ -185,7 +156,7 @@ public class PlatformHookUnixoid implements PlatformHook {
         if (home.contains("java-8-openjdk") || home.contains("java-1.8.0-openjdk")) {
             return getPackageDetails("openjdk-8-jre", "java-1_8_0-openjdk", "java-1.8.0-openjdk");
         } else if (home.contains("java-9-openjdk") || home.contains("java-1.9.0-openjdk")) {
-            return getPackageDetails("openjdk-9-jre", "java-1_9_0-openjdk", "java-1.9.0-openjdk");
+            return getPackageDetails("openjdk-9-jre", "java-1_9_0-openjdk", "java-1.9.0-openjdk", "java-9-openjdk");
         } else if (home.contains("icedtea")) {
             return getPackageDetails("icedtea-bin");
         } else if (home.contains("oracle")) {
