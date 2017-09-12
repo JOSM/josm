@@ -24,12 +24,12 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ReverseWayAction.ReverseWayResult;
-import org.openstreetmap.josm.actions.SplitWayAction.SplitWayResult;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.command.SequenceCommand;
+import org.openstreetmap.josm.command.SplitWayCommand;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -1018,12 +1018,12 @@ public class JoinAreasAction extends JosmAction {
         List<List<Node>> chunks = buildNodeChunks(way, nodes);
 
         if (chunks.size() > 1) {
-            SplitWayResult split = SplitWayAction.splitWay(way, chunks,
-                    Collections.<OsmPrimitive>emptyList(), SplitWayAction.Strategy.keepFirstChunk());
+            SplitWayCommand split = SplitWayCommand.splitWay(way, chunks,
+                    Collections.<OsmPrimitive>emptyList(), SplitWayCommand.Strategy.keepFirstChunk());
 
             if (split != null) {
                 //execute the command, we need the results
-                cmds.add(split.getCommand());
+                cmds.add(split);
                 commitCommands(marktr("Split ways into fragments"));
 
                 result.add(split.getOriginalWay());

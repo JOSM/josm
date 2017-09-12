@@ -77,6 +77,7 @@ import org.openstreetmap.josm.actions.downloadtasks.PostDownloadHandler;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
 import org.openstreetmap.josm.actions.search.SearchAction;
 import org.openstreetmap.josm.command.DeleteCommand;
+import org.openstreetmap.josm.command.SplitWayCommand;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.UndoRedoHandler;
 import org.openstreetmap.josm.data.UndoRedoHandler.CommandQueueListener;
@@ -1097,6 +1098,7 @@ public class MainApplication extends Main {
         AbstractCredentialsAgent.setCredentialsProvider(CredentialDialog::promptCredentials);
         MessageNotifier.setNotifierCallback(MainApplication::notifyNewMessages);
         DeleteCommand.setDeletionCallback(DeleteAction.defaultDeletionCallback);
+        SplitWayCommand.setWarningNotifier(msg -> new Notification(msg).setIcon(JOptionPane.WARNING_MESSAGE).show());
         FileWatcher.registerLoader(SourceType.MAP_PAINT_STYLE, MapPaintStyleLoader::reloadStyle);
         FileWatcher.registerLoader(SourceType.TAGCHECKER_RULE, MapCSSTagChecker::reloadRule);
         OsmUrlToBounds.setMapSizeSupplier(() -> {
