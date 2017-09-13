@@ -12,7 +12,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
-import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
@@ -83,7 +83,7 @@ public class ImagerySessionExporter extends AbstractSessionExporter<ImageryLayer
         layerElem.setAttribute("type", "imagery");
         layerElem.setAttribute("version", "0.1");
         ImageryPreferenceEntry e = new ImageryPreferenceEntry(layer.getInfo());
-        Map<String, String> data = new LinkedHashMap<>(Preferences.serializeStruct(e, ImageryPreferenceEntry.class));
+        Map<String, String> data = new LinkedHashMap<>(StructUtils.serializeStruct(e, ImageryPreferenceEntry.class));
         Utils.instanceOfThen(layer, AbstractTileSourceLayer.class, tsLayer -> {
             data.putAll(tsLayer.getDisplaySettings().toPropertiesMap());
             if (!tsLayer.getDisplaySettings().isAutoZoom()) {

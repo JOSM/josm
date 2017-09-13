@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Reader;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -24,12 +23,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -42,15 +39,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
-import javax.json.JsonObjectBuilder;
-import javax.json.JsonReader;
-import javax.json.JsonString;
-import javax.json.JsonValue;
-import javax.json.JsonWriter;
 import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
@@ -76,10 +64,8 @@ import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.I18n;
-import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
-import org.openstreetmap.josm.tools.MultiMap;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
 
@@ -1211,7 +1197,9 @@ public class Preferences extends AbstractPreferences {
      *
      * @see #serializeStruct(java.lang.Object, java.lang.Class)
      * @see #deserializeStruct(java.util.Map, java.lang.Class)
+     * @deprecated use {@link StructUtils.StructEntry}
      */
+    @Deprecated
     @Retention(RetentionPolicy.RUNTIME) // keep annotation at runtime
     public @interface pref { }
 
@@ -1220,7 +1208,9 @@ public class Preferences extends AbstractPreferences {
      * Indicates that a certain field should be written to the map, even if the value is the same as the default value.
      *
      * @see #serializeStruct(java.lang.Object, java.lang.Class)
+     * @deprecated use {@link StructUtils.WriteExplicitly}
      */
+    @Deprecated
     @Retention(RetentionPolicy.RUNTIME) // keep annotation at runtime
     public @interface writeExplicitly { }
 
@@ -1232,9 +1222,11 @@ public class Preferences extends AbstractPreferences {
      * @param key main preference key
      * @param klass The struct class
      * @return a list of objects of type T or an empty list if nothing was found
+     * @deprecated use {@link StructUtils#getListOfStructs(IPreferences, String, Class)}
      */
+    @Deprecated
     public <T> List<T> getListOfStructs(String key, Class<T> klass) {
-        return Optional.ofNullable(getListOfStructs(key, null, klass)).orElseGet(Collections::emptyList);
+        return StructUtils.getListOfStructs(this, key, klass);
     }
 
     /**
@@ -1244,13 +1236,11 @@ public class Preferences extends AbstractPreferences {
      * @param def default value
      * @param klass The struct class
      * @return a list of objects of type T or {@code def} if nothing was found
+     * @deprecated use {@link StructUtils#getListOfStructs(IPreferences, String, Collection, Class)}
      */
+    @Deprecated
     public <T> List<T> getListOfStructs(String key, Collection<T> def, Class<T> klass) {
-        List<Map<String, String>> prop =
-            getListOfMaps(key, def == null ? null : serializeListOfStructs(def, klass));
-        if (prop == null)
-            return def == null ? null : new ArrayList<>(def);
-        return prop.stream().map(p -> deserializeStruct(p, klass)).collect(Collectors.toList());
+        return StructUtils.getListOfStructs(this, key, def, klass);
     }
 
     /**
@@ -1268,97 +1258,11 @@ public class Preferences extends AbstractPreferences {
      * @param val the list that is supposed to be saved
      * @param klass The struct class
      * @return true if something has changed
+     * @deprecated use {@link StructUtils#putListOfStructs(IPreferences, String, Collection, Class)}
      */
+    @Deprecated
     public <T> boolean putListOfStructs(String key, Collection<T> val, Class<T> klass) {
-        return putListOfMaps(key, serializeListOfStructs(val, klass));
-    }
-
-    private static <T> List<Map<String, String>> serializeListOfStructs(Collection<T> l, Class<T> klass) {
-        if (l == null)
-            return null;
-        List<Map<String, String>> vals = new ArrayList<>();
-        for (T struct : l) {
-            if (struct != null) {
-                vals.add(serializeStruct(struct, klass));
-            }
-        }
-        return vals;
-    }
-
-    @SuppressWarnings("rawtypes")
-    private static String mapToJson(Map map) {
-        StringWriter stringWriter = new StringWriter();
-        try (JsonWriter writer = Json.createWriter(stringWriter)) {
-            JsonObjectBuilder object = Json.createObjectBuilder();
-            for (Object o: map.entrySet()) {
-                Entry e = (Entry) o;
-                Object evalue = e.getValue();
-                object.add(e.getKey().toString(), evalue.toString());
-            }
-            writer.writeObject(object.build());
-        }
-        return stringWriter.toString();
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private static Map mapFromJson(String s) {
-        Map ret = null;
-        try (JsonReader reader = Json.createReader(new StringReader(s))) {
-            JsonObject object = reader.readObject();
-            ret = new HashMap(object.size());
-            for (Entry<String, JsonValue> e: object.entrySet()) {
-                JsonValue value = e.getValue();
-                if (value instanceof JsonString) {
-                    // in some cases, when JsonValue.toString() is called, then additional quotation marks are left in value
-                    ret.put(e.getKey(), ((JsonString) value).getString());
-                } else {
-                    ret.put(e.getKey(), e.getValue().toString());
-                }
-            }
-        }
-        return ret;
-    }
-
-    @SuppressWarnings("rawtypes")
-    private static String multiMapToJson(MultiMap map) {
-        StringWriter stringWriter = new StringWriter();
-        try (JsonWriter writer = Json.createWriter(stringWriter)) {
-            JsonObjectBuilder object = Json.createObjectBuilder();
-            for (Object o: map.entrySet()) {
-                Entry e = (Entry) o;
-                Set evalue = (Set) e.getValue();
-                JsonArrayBuilder a = Json.createArrayBuilder();
-                for (Object evo: evalue) {
-                    a.add(evo.toString());
-                }
-                object.add(e.getKey().toString(), a.build());
-            }
-            writer.writeObject(object.build());
-        }
-        return stringWriter.toString();
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private static MultiMap multiMapFromJson(String s) {
-        MultiMap ret = null;
-        try (JsonReader reader = Json.createReader(new StringReader(s))) {
-            JsonObject object = reader.readObject();
-            ret = new MultiMap(object.size());
-            for (Entry<String, JsonValue> e: object.entrySet()) {
-                JsonValue value = e.getValue();
-                if (value instanceof JsonArray) {
-                    for (JsonString js: ((JsonArray) value).getValuesAs(JsonString.class)) {
-                        ret.put(e.getKey(), js.getString());
-                    }
-                } else if (value instanceof JsonString) {
-                    // in some cases, when JsonValue.toString() is called, then additional quotation marks are left in value
-                    ret.put(e.getKey(), ((JsonString) value).getString());
-                } else {
-                    ret.put(e.getKey(), e.getValue().toString());
-                }
-            }
-        }
-        return ret;
+        return StructUtils.putListOfStructs(this, key, val, klass);
     }
 
     /**
@@ -1376,39 +1280,11 @@ public class Preferences extends AbstractPreferences {
      * @param struct the object to be converted
      * @param klass the class T
      * @return the resulting map (same data content as <code>struct</code>)
+     * @deprecated use {@link StructUtils#serializeStruct(java.lang.Object, java.lang.Class)}
      */
+    @Deprecated
     public static <T> Map<String, String> serializeStruct(T struct, Class<T> klass) {
-        T structPrototype;
-        try {
-            structPrototype = klass.getConstructor().newInstance();
-        } catch (ReflectiveOperationException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-
-        Map<String, String> hash = new LinkedHashMap<>();
-        for (Field f : klass.getDeclaredFields()) {
-            if (f.getAnnotation(pref.class) == null) {
-                continue;
-            }
-            Utils.setObjectsAccessible(f);
-            try {
-                Object fieldValue = f.get(struct);
-                Object defaultFieldValue = f.get(structPrototype);
-                if (fieldValue != null && (f.getAnnotation(writeExplicitly.class) != null || !Objects.equals(fieldValue, defaultFieldValue))) {
-                    String key = f.getName().replace('_', '-');
-                    if (fieldValue instanceof Map) {
-                        hash.put(key, mapToJson((Map<?, ?>) fieldValue));
-                    } else if (fieldValue instanceof MultiMap) {
-                        hash.put(key, multiMapToJson((MultiMap<?, ?>) fieldValue));
-                    } else {
-                        hash.put(key, fieldValue.toString());
-                    }
-                }
-            } catch (IllegalAccessException ex) {
-                throw new JosmRuntimeException(ex);
-            }
-        }
-        return hash;
+        return StructUtils.serializeStruct(struct, klass);
     }
 
     /**
@@ -1423,59 +1299,11 @@ public class Preferences extends AbstractPreferences {
      * @param hash the string map with initial values
      * @param klass the class T
      * @return an object of class T, initialized as described above
+     * @deprecated use {@link StructUtils#deserializeStruct(java.util.Map, java.lang.Class)}
      */
+    @Deprecated
     public static <T> T deserializeStruct(Map<String, String> hash, Class<T> klass) {
-        T struct = null;
-        try {
-            struct = klass.getConstructor().newInstance();
-        } catch (ReflectiveOperationException ex) {
-            throw new IllegalArgumentException(ex);
-        }
-        for (Entry<String, String> keyValue : hash.entrySet()) {
-            Object value;
-            Field f;
-            try {
-                f = klass.getDeclaredField(keyValue.getKey().replace('-', '_'));
-            } catch (NoSuchFieldException ex) {
-                Logging.trace(ex);
-                continue;
-            }
-            if (f.getAnnotation(pref.class) == null) {
-                continue;
-            }
-            Utils.setObjectsAccessible(f);
-            if (f.getType() == Boolean.class || f.getType() == boolean.class) {
-                value = Boolean.valueOf(keyValue.getValue());
-            } else if (f.getType() == Integer.class || f.getType() == int.class) {
-                try {
-                    value = Integer.valueOf(keyValue.getValue());
-                } catch (NumberFormatException nfe) {
-                    continue;
-                }
-            } else if (f.getType() == Double.class || f.getType() == double.class) {
-                try {
-                    value = Double.valueOf(keyValue.getValue());
-                } catch (NumberFormatException nfe) {
-                    continue;
-                }
-            } else if (f.getType() == String.class) {
-                value = keyValue.getValue();
-            } else if (f.getType().isAssignableFrom(Map.class)) {
-                value = mapFromJson(keyValue.getValue());
-            } else if (f.getType().isAssignableFrom(MultiMap.class)) {
-                value = multiMapFromJson(keyValue.getValue());
-            } else
-                throw new JosmRuntimeException("unsupported preference primitive type");
-
-            try {
-                f.set(struct, value);
-            } catch (IllegalArgumentException ex) {
-                throw new AssertionError(ex);
-            } catch (IllegalAccessException ex) {
-                throw new JosmRuntimeException(ex);
-            }
-        }
-        return struct;
+        return StructUtils.deserializeStruct(hash, klass);
     }
 
     /**

@@ -11,9 +11,9 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.data.Preferences.pref;
-import org.openstreetmap.josm.data.Preferences.writeExplicitly;
+import org.openstreetmap.josm.data.StructUtils;
+import org.openstreetmap.josm.data.StructUtils.StructEntry;
+import org.openstreetmap.josm.data.StructUtils.WriteExplicitly;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -33,11 +33,11 @@ import org.openstreetmap.josm.tools.Logging;
 public class OffsetBookmark {
     private static final List<OffsetBookmark> allBookmarks = new ArrayList<>();
 
-    @pref private String projection_code;
-    @pref private String imagery_name;
-    @pref private String name;
-    @pref @writeExplicitly private double dx, dy;
-    @pref private double center_lon, center_lat;
+    @StructEntry private String projection_code;
+    @StructEntry private String imagery_name;
+    @StructEntry private String name;
+    @StructEntry @WriteExplicitly private double dx, dy;
+    @StructEntry private double center_lon, center_lat;
 
     public boolean isUsable(ImageryLayer layer) {
         if (projection_code == null) return false;
@@ -166,7 +166,8 @@ public class OffsetBookmark {
     }
 
     public static void loadBookmarks() {
-        List<OffsetBookmark> bookmarks = Main.pref.getListOfStructs("imagery.offsetbookmarks", null, OffsetBookmark.class);
+        List<OffsetBookmark> bookmarks = StructUtils.getListOfStructs(
+                Config.getPref(), "imagery.offsetbookmarks", null, OffsetBookmark.class);
         if (bookmarks == null) {
             loadBookmarksOld();
             saveBookmarks();
@@ -183,7 +184,7 @@ public class OffsetBookmark {
     }
 
     public static void saveBookmarks() {
-        Main.pref.putListOfStructs("imagery.offsetbookmarks", allBookmarks, OffsetBookmark.class);
+        StructUtils.putListOfStructs(Config.getPref(), "imagery.offsetbookmarks", allBookmarks, OffsetBookmark.class);
     }
 
     /**
@@ -275,7 +276,7 @@ public class OffsetBookmark {
      * @since 12134
      */
     public Map<String, String> toPropertiesMap() {
-        return Preferences.serializeStruct(this, OffsetBookmark.class);
+        return StructUtils.serializeStruct(this, OffsetBookmark.class);
     }
 
     /**
@@ -286,6 +287,6 @@ public class OffsetBookmark {
      * @since 12134
      */
     public static OffsetBookmark fromPropertiesMap(Map<String, String> properties) {
-        return Preferences.deserializeStruct(properties, OffsetBookmark.class);
+        return StructUtils.deserializeStruct(properties, OffsetBookmark.class);
     }
 }

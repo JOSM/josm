@@ -11,7 +11,7 @@ import java.util.Set;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.MultiMap;
 
@@ -55,7 +55,7 @@ public class ImageryInfoTest {
     }
 
     /**
-     * Tests the {@linkplain Preferences#serializeStruct(Object, Class) serialization} of {@link ImageryInfo.ImageryPreferenceEntry}
+     * Tests the {@linkplain StructUtils#serializeStruct(Object, Class) serialization} of {@link ImageryInfo.ImageryPreferenceEntry}
      */
     @Test
     public void testSerializeStruct() {
@@ -63,16 +63,16 @@ public class ImageryInfoTest {
         info.noTileHeaders = new MultiMap<>();
         info.noTileHeaders.put("ETag", "foo");
         info.noTileHeaders.put("ETag", "bar");
-        final Map<String, String> map = Preferences.serializeStruct(info, ImageryInfo.ImageryPreferenceEntry.class);
+        final Map<String, String> map = StructUtils.serializeStruct(info, ImageryInfo.ImageryPreferenceEntry.class);
         assertEquals("{noTileHeaders={\"ETag\":[\"foo\",\"bar\"]}}", map.toString());
     }
 
     /**
-     * Tests the {@linkplain Preferences#deserializeStruct(Map, Class)} deserialization} of {@link ImageryInfo.ImageryPreferenceEntry}
+     * Tests the {@linkplain StructUtils#deserializeStruct(Map, Class)} deserialization} of {@link ImageryInfo.ImageryPreferenceEntry}
      */
     @Test
     public void testDeserializeStruct() {
-        final ImageryInfo.ImageryPreferenceEntry info = Preferences.deserializeStruct(
+        final ImageryInfo.ImageryPreferenceEntry info = StructUtils.deserializeStruct(
                 Collections.singletonMap("noTileHeaders", "{\"ETag\":[\"foo\",\"bar\"]}"), ImageryInfo.ImageryPreferenceEntry.class);
         MultiMap<String, String> expect = new MultiMap<>();
         expect.put("ETag", "foo");
@@ -83,11 +83,11 @@ public class ImageryInfoTest {
     }
 
     /**
-     * Tests the {@linkplain Preferences#deserializeStruct(Map, Class)} deserialization} of legacy {@link ImageryInfo.ImageryPreferenceEntry}
+     * Tests the {@linkplain StructUtils#deserializeStruct(Map, Class)} deserialization} of legacy {@link ImageryInfo.ImageryPreferenceEntry}
      */
     @Test
     public void testDeserializeStructTicket12474() {
-        final ImageryInfo.ImageryPreferenceEntry info = Preferences.deserializeStruct(
+        final ImageryInfo.ImageryPreferenceEntry info = StructUtils.deserializeStruct(
                 Collections.singletonMap("noTileHeaders", "{\"ETag\":\"foo-and-bar\"}"), ImageryInfo.ImageryPreferenceEntry.class);
         final Set<String> eTag = info.noTileHeaders.get("ETag");
         assertEquals(eTag, Collections.singleton("foo-and-bar"));

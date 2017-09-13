@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
 import org.openstreetmap.josm.data.imagery.OffsetBookmark;
@@ -41,7 +41,7 @@ public class ImagerySessionImporter implements SessionLayerImporter {
         }
         Map<String, String> attributes = readProperties(elem);
 
-        ImageryPreferenceEntry prefEntry = Preferences.deserializeStruct(attributes, ImageryPreferenceEntry.class);
+        ImageryPreferenceEntry prefEntry = StructUtils.deserializeStruct(attributes, ImageryPreferenceEntry.class);
         ImageryInfo info = new ImageryInfo(prefEntry);
         ImageryLayer layer = ImageryLayer.create(info);
         Utils.instanceOfThen(layer, AbstractTileSourceLayer.class, tsLayer -> {

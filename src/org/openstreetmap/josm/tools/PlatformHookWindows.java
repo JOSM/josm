@@ -66,7 +66,9 @@ import java.util.Properties;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.StructUtils;
+import org.openstreetmap.josm.data.StructUtils.StructEntry;
+import org.openstreetmap.josm.data.StructUtils.WriteExplicitly;
 import org.openstreetmap.josm.io.CertificateAmendment.CertAmend;
 import org.openstreetmap.josm.spi.preferences.Config;
 
@@ -85,21 +87,21 @@ public class PlatformHookWindows implements PlatformHook {
         /**
          * The character subset. Basically a free identifier, but should be unique.
          */
-        @Preferences.pref
+        @StructEntry
         public String charset;
 
         /**
          * Platform font name.
          */
-        @Preferences.pref
-        @Preferences.writeExplicitly
+        @StructEntry
+        @WriteExplicitly
         public String name = "";
 
         /**
          * File name.
          */
-        @Preferences.pref
-        @Preferences.writeExplicitly
+        @StructEntry
+        @WriteExplicitly
         public String file = "";
 
         /**
@@ -524,7 +526,7 @@ public class PlatformHookWindows implements PlatformHook {
             OutputStream os = Files.newOutputStream(fontconfigFile);
             os.write(content);
             try (Writer w = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8))) {
-                Collection<FontEntry> extrasPref = Main.pref.getListOfStructs(
+                Collection<FontEntry> extrasPref = StructUtils.getListOfStructs(Config.getPref(),
                         "font.extended-unicode.extra-items", getAdditionalFonts(), FontEntry.class);
                 Collection<FontEntry> extras = new ArrayList<>();
                 w.append("\n\n# Added by JOSM to extend unicode coverage of Java font support:\n\n");

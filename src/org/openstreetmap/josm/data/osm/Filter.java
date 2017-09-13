@@ -3,8 +3,8 @@ package org.openstreetmap.josm.data.osm;
 
 import java.util.Objects;
 
-import org.openstreetmap.josm.data.Preferences.pref;
-import org.openstreetmap.josm.data.Preferences.writeExplicitly;
+import org.openstreetmap.josm.data.StructUtils.StructEntry;
+import org.openstreetmap.josm.data.StructUtils.WriteExplicitly;
 import org.openstreetmap.josm.data.osm.search.SearchMode;
 import org.openstreetmap.josm.data.osm.search.SearchSetting;
 
@@ -70,10 +70,10 @@ public class Filter extends SearchSetting {
     }
 
     public static class FilterPreferenceEntry {
-        @writeExplicitly
-        @pref public String version = "1";
+        @WriteExplicitly
+        @StructEntry public String version = "1";
 
-        @pref public String text;
+        @StructEntry public String text;
 
         /**
          * Mode selector which defines how a filter is combined with the previous one:<ul>
@@ -84,37 +84,37 @@ public class Filter extends SearchSetting {
          * </ul>
          * @see SearchMode
          */
-        @writeExplicitly
-        @pref public String mode = "add";
+        @WriteExplicitly
+        @StructEntry public String mode = "add";
 
-        @pref public boolean case_sensitive;
+        @StructEntry public boolean case_sensitive;
 
-        @pref public boolean regex_search;
+        @StructEntry public boolean regex_search;
 
-        @pref public boolean mapCSS_search;
+        @StructEntry public boolean mapCSS_search;
 
         /**
          * Enabled status.
          * @see Filter#enable
          */
-        @writeExplicitly
-        @pref public boolean enable = true;
+        @WriteExplicitly
+        @StructEntry public boolean enable = true;
 
         /**
          * If this option is activated, the chosen objects are completely hidden.
          * Otherwise they are disabled and shown in a shade of gray.
          * @see Filter#hiding
          */
-        @writeExplicitly
-        @pref public boolean hiding;
+        @WriteExplicitly
+        @StructEntry public boolean hiding;
 
         /**
          * Normally, the specified objects are hidden and the rest is shown.
          * If this option is activated, only the specified objects are shown and the rest is hidden.
          * @see Filter#inverted
          */
-        @writeExplicitly
-        @pref public boolean inverted;
+        @WriteExplicitly
+        @StructEntry public boolean inverted;
 
         @Override
         public int hashCode() {
