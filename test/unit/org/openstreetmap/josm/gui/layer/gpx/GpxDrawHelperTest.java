@@ -10,11 +10,11 @@ import java.util.stream.Collectors;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.io.GpxReaderTest;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.xml.sax.SAXException;
@@ -41,8 +41,8 @@ public class GpxDrawHelperTest {
      */
     @Test
     public void testTicket12312() throws FileNotFoundException, IOException, SAXException {
-        Main.pref.putBoolean("draw.rawgps.colors.dynamic.layer 12312", true);
-        Main.pref.putInt("draw.rawgps.colors.layer 12312", GpxDrawHelper.ColorMode.VELOCITY.toIndex());
+        Config.getPref().putBoolean("draw.rawgps.colors.dynamic.layer 12312", true);
+        Config.getPref().putInt("draw.rawgps.colors.layer 12312", GpxDrawHelper.ColorMode.VELOCITY.toIndex());
         final List<String> colors = calculateColors(TestUtils.getRegressionDataFile(12312, "single_trackpoint.gpx"), "12312", 1);
         assertEquals("[#FF00FF]", colors.toString());
     }
@@ -67,7 +67,7 @@ public class GpxDrawHelperTest {
      */
     @Test
     public void testVelocity() throws IOException, SAXException {
-        Main.pref.putInt("draw.rawgps.colors.layer 001", GpxDrawHelper.ColorMode.VELOCITY.toIndex());
+        Config.getPref().putInt("draw.rawgps.colors.layer 001", GpxDrawHelper.ColorMode.VELOCITY.toIndex());
         final List<String> colors = calculateColors("data_nodist/2094047.gpx", "001", 10);
         assertEquals("[#FF00FF, #FFAD00, #FFA800, #FFA800, #FF9E00, #FF9400, #FF7000, #FF7000, #FF8000, #FF9400]", colors.toString());
     }
@@ -80,8 +80,8 @@ public class GpxDrawHelperTest {
      */
     @Test
     public void testVelocityDynamic() throws IOException, SAXException {
-        Main.pref.putInt("draw.rawgps.colors.layer 002", GpxDrawHelper.ColorMode.VELOCITY.toIndex());
-        Main.pref.putBoolean("draw.rawgps.colors.dynamic.layer 002", true);
+        Config.getPref().putInt("draw.rawgps.colors.layer 002", GpxDrawHelper.ColorMode.VELOCITY.toIndex());
+        Config.getPref().putBoolean("draw.rawgps.colors.dynamic.layer 002", true);
         final List<String> colors = calculateColors("data_nodist/2094047.gpx", "002", 10);
         assertEquals("[#FF00FF, #00FFE0, #00FFC2, #00FFC2, #00FF75, #00FF3D, #99FF00, #94FF00, #38FF00, #00FF38]", colors.toString());
     }
@@ -94,7 +94,7 @@ public class GpxDrawHelperTest {
      */
     @Test
     public void testDirection() throws IOException, SAXException {
-        Main.pref.putInt("draw.rawgps.colors.layer 003", GpxDrawHelper.ColorMode.DIRECTION.toIndex());
+        Config.getPref().putInt("draw.rawgps.colors.layer 003", GpxDrawHelper.ColorMode.DIRECTION.toIndex());
         final List<String> colors = calculateColors("data_nodist/2094047.gpx", "003", 10);
         assertEquals("[#FF00FF, #EAEC25, #EDEA26, #EDE525, #ECD322, #EBB81D, #E85A0D, #E73708, #E84D0B, #EA8A15]", colors.toString());
     }
@@ -107,7 +107,7 @@ public class GpxDrawHelperTest {
      */
     @Test
     public void testTime() throws IOException, SAXException {
-        Main.pref.putInt("draw.rawgps.colors.layer 003", GpxDrawHelper.ColorMode.TIME.toIndex());
+        Config.getPref().putInt("draw.rawgps.colors.layer 003", GpxDrawHelper.ColorMode.TIME.toIndex());
         final List<String> colors = calculateColors("data_nodist/2094047.gpx", "003", 10);
         assertEquals("[#FF00FF, #FF0000, #FF0000, #FF0500, #FF0500, #FF0A00, #FF0A00, #FF1F00, #FF2E00, #FF3300]", colors.toString());
     }

@@ -39,6 +39,7 @@ import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * This class runs a test in an environment that resembles the one used by the JOSM main application.
@@ -275,6 +276,7 @@ public class JOSMTestRules implements TestRule {
 
         cleanUpFromJosmFixture();
 
+        Config.setPreferencesInstance(Main.pref);
         // All tests use the same timezone.
         TimeZone.setDefault(DateUtils.UTC);
         // Set log level to info
@@ -307,7 +309,7 @@ public class JOSMTestRules implements TestRule {
             Main.pref.enableSaveOnPut(false);
             // No pref init -> that would only create the preferences file.
             // We force the use of a wrong API server, just in case anyone attempts an upload
-            Main.pref.put("osm-server.url", "http://invalid");
+            Config.getPref().put("osm-server.url", "http://invalid");
         }
 
         // Set Platform
@@ -333,10 +335,10 @@ public class JOSMTestRules implements TestRule {
 
         // Set API
         if (useAPI == APIType.DEV) {
-            Main.pref.put("osm-server.url", "http://api06.dev.openstreetmap.org/api");
+            Config.getPref().put("osm-server.url", "http://api06.dev.openstreetmap.org/api");
         } else if (useAPI == APIType.FAKE) {
             FakeOsmApi api = FakeOsmApi.getInstance();
-            Main.pref.put("osm-server.url", api.getServerUrl());
+            Config.getPref().put("osm-server.url", api.getServerUrl());
         }
 
         // Initialize API

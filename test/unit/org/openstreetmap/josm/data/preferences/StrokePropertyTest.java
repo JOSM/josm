@@ -8,7 +8,7 @@ import java.awt.BasicStroke;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -32,38 +32,38 @@ public class StrokePropertyTest {
     public void testGetValue() {
         StrokeProperty property = new StrokeProperty("x", "1");
 
-        Main.pref.put("x", "11");
+        Config.getPref().put("x", "11");
         BasicStroke bs = property.get();
         assertWide(bs);
         assertEquals(11, bs.getLineWidth(), 1e-10);
         assertEquals(null, bs.getDashArray());
 
-        Main.pref.put("x", ".5");
+        Config.getPref().put("x", ".5");
         bs = property.get();
         assertThin(bs);
         assertEquals(.5, bs.getLineWidth(), 1e-10);
         assertEquals(null, bs.getDashArray());
 
-        Main.pref.put("x", "2 1");
+        Config.getPref().put("x", "2 1");
         bs = property.get();
         assertWide(bs);
         assertEquals(2, bs.getLineWidth(), 1e-10);
         assertArrayEquals(new float[] {1}, bs.getDashArray(), 1e-10f);
 
-        Main.pref.put("x", "2 0.1 1 10");
+        Config.getPref().put("x", "2 0.1 1 10");
         bs = property.get();
         assertWide(bs);
         assertEquals(2, bs.getLineWidth(), 1e-10);
         assertArrayEquals(new float[] {0.1f, 1, 10}, bs.getDashArray(), 1e-10f);
 
-        Main.pref.put("x", "x");
+        Config.getPref().put("x", "x");
         bs = property.get();
         assertThin(bs);
         assertEquals(1, bs.getLineWidth(), 1e-10);
         assertEquals(null, bs.getDashArray());
 
         // ignore dashes
-        Main.pref.put("x", "11 0 0 0.0001");
+        Config.getPref().put("x", "11 0 0 0.0001");
         bs = property.get();
         assertWide(bs);
         assertEquals(11, bs.getLineWidth(), 1e-10);

@@ -6,11 +6,11 @@ import static org.junit.Assert.assertTrue;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.history.History;
 import org.openstreetmap.josm.data.osm.history.HistoryDataSet;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * History fetching tests. This test operates with production API.
@@ -23,7 +23,7 @@ public class OsmServerHistoryReaderTest {
     @BeforeClass
     public static void init() {
         JOSMFixture.createUnitTestFixture().init();
-        Main.pref.put("osm-server.url", OsmApi.DEFAULT_API_URL);
+        Config.getPref().put("osm-server.url", OsmApi.DEFAULT_API_URL);
     }
 
     /**

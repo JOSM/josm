@@ -27,6 +27,7 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -147,11 +148,11 @@ public class PluginHandlerTestIT {
         // Update the locally installed plugins
         PluginDownloadTask pluginDownloadTask = new PluginDownloadTask(NullProgressMonitor.INSTANCE, plugins, null);
         // Increase default timeout to avoid random network errors on big jar files
-        int defTimeout = Main.pref.getInt("socket.timeout.read", 30);
-        Main.pref.putInt("socket.timeout.read", 2 * defTimeout);
+        int defTimeout = Config.getPref().getInt("socket.timeout.read", 30);
+        Config.getPref().putInt("socket.timeout.read", 2 * defTimeout);
         pluginDownloadTask.run();
         // Restore default timeout
-        Main.pref.putInt("socket.timeout.read", defTimeout);
+        Config.getPref().putInt("socket.timeout.read", defTimeout);
         assertTrue(pluginDownloadTask.getFailedPlugins().toString(), pluginDownloadTask.getFailedPlugins().isEmpty());
         assertEquals(plugins.size(), pluginDownloadTask.getDownloadedPlugins().size());
 

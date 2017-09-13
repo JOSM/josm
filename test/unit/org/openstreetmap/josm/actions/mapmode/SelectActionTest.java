@@ -13,7 +13,6 @@ import java.util.Collection;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.actions.mapmode.SelectAction.Mode;
 import org.openstreetmap.josm.actions.mapmode.SelectAction.SelectActionCursor;
@@ -25,6 +24,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -87,7 +87,7 @@ public class SelectActionTest {
         dataSet.addSelected(n2);
         dataSet.addSelected(w);
 
-        Main.pref.put("edit.initial-move-delay", "0");
+        Config.getPref().put("edit.initial-move-delay", "0");
         MainApplication.getLayerManager().addLayer(layer);
         try {
             MapFrame map = MainApplication.getMap();

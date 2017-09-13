@@ -26,7 +26,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -51,8 +51,8 @@ public class RemoteControlTest {
 
         RemoteControl.start();
         disableCertificateValidation();
-        httpBase = "http://127.0.0.1:"+Main.pref.getInt("remote.control.port", 8111);
-        httpsBase = "https://127.0.0.1:"+Main.pref.getInt("remote.control.https.port", 8112);
+        httpBase = "http://127.0.0.1:"+Config.getPref().getInt("remote.control.port", 8111);
+        httpsBase = "https://127.0.0.1:"+Config.getPref().getInt("remote.control.https.port", 8112);
     }
 
     /**
