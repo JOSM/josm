@@ -92,6 +92,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -422,10 +423,10 @@ public abstract class SourceEditor extends JPanel {
             List<String> iconPaths = iconPathsModel.getIconPaths();
 
             if (!iconPaths.isEmpty()) {
-                if (Main.pref.putList(iconPref, iconPaths)) {
+                if (Config.getPref().putList(iconPref, iconPaths)) {
                     changed = true;
                 }
-            } else if (Main.pref.putList(iconPref, null)) {
+            } else if (Config.getPref().putList(iconPref, null)) {
                 changed = true;
             }
         }

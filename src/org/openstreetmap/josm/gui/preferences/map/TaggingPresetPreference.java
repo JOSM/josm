@@ -31,6 +31,7 @@ import org.openstreetmap.josm.gui.preferences.SourceEditor;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -167,7 +168,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
     @Override
     public void addGui(PreferenceTabbedPane gui) {
         sortMenu = new JCheckBox(tr("Sort presets menu alphabetically"),
-                Main.pref.getBoolean("taggingpreset.sortmenu", false));
+                Config.getPref().getBoolean("taggingpreset.sortmenu", false));
 
         final JPanel panel = new JPanel(new GridBagLayout());
         panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -205,7 +206,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
 
         @Override
         public Collection<String> getInitialIconPathsList() {
-            return Main.pref.getList(ICONPREF, null);
+            return Config.getPref().getList(ICONPREF, null);
         }
 
         @Override
@@ -245,7 +246,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
 
     @Override
     public boolean ok() {
-        boolean restart = Main.pref.putBoolean("taggingpreset.sortmenu", sortMenu.getSelectedObjects() != null);
+        boolean restart = Config.getPref().putBoolean("taggingpreset.sortmenu", sortMenu.getSelectedObjects() != null);
         restart |= sources.finish();
 
         return restart;

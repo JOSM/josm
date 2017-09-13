@@ -37,6 +37,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.Logging;
@@ -142,7 +143,7 @@ public class ReadRemotePluginInformationTask extends PleaseWaitRunnable {
      */
     protected String downloadPluginList(String site, final ProgressMonitor monitor) {
         /* replace %<x> with empty string or x=plugins (separated with comma) */
-        String pl = Utils.join(",", Main.pref.getList("plugins"));
+        String pl = Utils.join(",", Config.getPref().getList("plugins"));
         String printsite = site.replaceAll("%<(.*)>", "");
         if (pl != null && !pl.isEmpty()) {
             site = site.replaceAll("%<(.*)>", "$1"+pl);

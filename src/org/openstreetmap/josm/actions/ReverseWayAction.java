@@ -15,7 +15,6 @@ import java.util.List;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangeCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -27,6 +26,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.UserCancelException;
@@ -153,7 +153,7 @@ public final class ReverseWayAction extends JosmAction {
         wnew.setNodes(nodesCopy);
 
         Collection<Command> corrCmds = Collections.<Command>emptyList();
-        if (Main.pref.getBoolean("tag-correction.reverse-way", true)) {
+        if (Config.getPref().getBoolean("tag-correction.reverse-way", true)) {
             corrCmds = (new ReverseWayTagCorrector()).execute(w, wnew);
         }
         return new ReverseWayResult(wnew, corrCmds, new ChangeCommand(w, wnew));

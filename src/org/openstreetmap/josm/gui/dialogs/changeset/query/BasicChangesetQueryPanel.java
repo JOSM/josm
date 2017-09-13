@@ -18,7 +18,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -26,6 +25,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.io.ChangesetQuery;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -186,11 +186,11 @@ public class BasicChangesetQueryPanel extends JPanel {
     public void rememberInPreferences() {
         BasicQuery q = getSelectedQuery();
         if (q == null) {
-            Main.pref.put("changeset-query.basic.query", null);
+            Config.getPref().put("changeset-query.basic.query", null);
         } else {
-            Main.pref.put("changeset-query.basic.query", q.toString());
+            Config.getPref().put("changeset-query.basic.query", q.toString());
         }
-        Main.pref.putBoolean("changeset-query.basic.my-changesets-only", cbMyChangesetsOnly.isSelected());
+        Config.getPref().putBoolean("changeset-query.basic.my-changesets-only", cbMyChangesetsOnly.isSelected());
     }
 
     /**
@@ -198,7 +198,7 @@ public class BasicChangesetQueryPanel extends JPanel {
      */
     public void restoreFromPreferences() {
         BasicQuery q;
-        String value = Main.pref.get("changeset-query.basic.query", null);
+        String value = Config.getPref().get("changeset-query.basic.query", null);
         if (value == null) {
             q = BasicQuery.MOST_RECENT_CHANGESETS;
         } else {
@@ -211,7 +211,7 @@ public class BasicChangesetQueryPanel extends JPanel {
             }
         }
         rbQueries.get(q).setSelected(true);
-        boolean mineOnly = Main.pref.getBoolean("changeset-query.basic.my-changesets-only", false);
+        boolean mineOnly = Config.getPref().getBoolean("changeset-query.basic.my-changesets-only", false);
         mineOnly = mineOnly || q.equals(BasicQuery.MY_OPEN_CHANGESETS);
         cbMyChangesetsOnly.setSelected(mineOnly);
     }

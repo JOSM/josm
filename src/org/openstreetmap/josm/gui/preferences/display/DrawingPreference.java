@@ -12,7 +12,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.gui.autofilter.AutoFilterManager;
 import org.openstreetmap.josm.gui.autofilter.AutoFilterRule;
@@ -23,6 +22,7 @@ import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -78,64 +78,64 @@ public class DrawingPreference implements SubPreferenceSetting {
         // directionHint
         directionHint.addActionListener(e -> {
             if (directionHint.isSelected()) {
-                headArrow.setSelected(Main.pref.getBoolean("draw.segment.head_only", false));
+                headArrow.setSelected(Config.getPref().getBoolean("draw.segment.head_only", false));
             } else {
                 headArrow.setSelected(false);
             }
             headArrow.setEnabled(directionHint.isSelected());
         });
         directionHint.setToolTipText(tr("Draw direction hints for way segments."));
-        directionHint.setSelected(Main.pref.getBoolean("draw.segment.direction", false));
+        directionHint.setSelected(Config.getPref().getBoolean("draw.segment.direction", false));
 
         // only on the head of a way
         headArrow.setToolTipText(tr("Only on the head of a way."));
-        headArrow.setSelected(Main.pref.getBoolean("draw.segment.head_only", false));
+        headArrow.setSelected(Config.getPref().getBoolean("draw.segment.head_only", false));
         headArrow.setEnabled(directionHint.isSelected());
 
         // draw oneway arrows
         onewayArrow.setToolTipText(tr("Draw arrows in the direction of oneways and other directed features."));
-        onewayArrow.setSelected(Main.pref.getBoolean("draw.oneway", true));
+        onewayArrow.setSelected(Config.getPref().getBoolean("draw.oneway", true));
 
         // segment order number
         segmentOrderNumber.setToolTipText(tr("Draw the order numbers of all segments within their way."));
-        segmentOrderNumber.setSelected(Main.pref.getBoolean("draw.segment.order_number", false));
+        segmentOrderNumber.setSelected(Config.getPref().getBoolean("draw.segment.order_number", false));
         segmentOrderNumberOnSelectedWay.setToolTipText(tr("Draw the order numbers of all segments within their way."));
-        segmentOrderNumberOnSelectedWay.setSelected(Main.pref.getBoolean("draw.segment.order_number.on_selected", false));
+        segmentOrderNumberOnSelectedWay.setSelected(Config.getPref().getBoolean("draw.segment.order_number.on_selected", false));
 
         // downloaded area
         sourceBounds.setToolTipText(tr("Draw the boundaries of data loaded from the server."));
-        sourceBounds.setSelected(Main.pref.getBoolean("draw.data.downloaded_area", true));
+        sourceBounds.setSelected(Config.getPref().getBoolean("draw.data.downloaded_area", true));
 
         // virtual nodes
         virtualNodes.setToolTipText(tr("Draw virtual nodes in select mode for easy way modification."));
-        virtualNodes.setSelected(Main.pref.getInt("mappaint.node.virtual-size", 8) != 0);
+        virtualNodes.setSelected(Config.getPref().getInt("mappaint.node.virtual-size", 8) != 0);
 
         // background layers in inactive color
         inactive.setToolTipText(tr("Draw the inactive data layers in a different color."));
-        inactive.setSelected(Main.pref.getBoolean("draw.data.inactive_color", true));
+        inactive.setSelected(Config.getPref().getBoolean("draw.data.inactive_color", true));
 
         // antialiasing
         useAntialiasing.setToolTipText(tr("Apply antialiasing to the map view resulting in a smoother appearance."));
-        useAntialiasing.setSelected(Main.pref.getBoolean("mappaint.use-antialiasing", true));
+        useAntialiasing.setSelected(Config.getPref().getBoolean("mappaint.use-antialiasing", true));
 
         // wireframe mode antialiasing
         useWireframeAntialiasing.setToolTipText(tr("Apply antialiasing to the map view in wireframe mode resulting in a smoother appearance."));
-        useWireframeAntialiasing.setSelected(Main.pref.getBoolean("mappaint.wireframe.use-antialiasing", false));
+        useWireframeAntialiasing.setSelected(Config.getPref().getBoolean("mappaint.wireframe.use-antialiasing", false));
 
         // highlighting
         useHighlighting.setToolTipText(tr("Hightlight target nodes and ways while drawing or selecting"));
-        useHighlighting.setSelected(Main.pref.getBoolean("draw.target-highlight", true));
+        useHighlighting.setSelected(Config.getPref().getBoolean("draw.target-highlight", true));
 
         drawHelperLine.setToolTipText(tr("Draw rubber-band helper line"));
-        drawHelperLine.setSelected(Main.pref.getBoolean("draw.helper-line", true));
+        drawHelperLine.setSelected(Config.getPref().getBoolean("draw.helper-line", true));
 
         // outlineOnly
         outlineOnly.setToolTipText(tr("This option suppresses the filling of areas, overriding anything specified in the selected style."));
-        outlineOnly.setSelected(Main.pref.getBoolean("draw.data.area_outline_only", false));
+        outlineOnly.setSelected(Config.getPref().getBoolean("draw.data.area_outline_only", false));
 
         // discardable keys
         discardableKeys.setToolTipText(tr("Display keys which have been deemed uninteresting to the point that they can be silently removed."));
-        discardableKeys.setSelected(Main.pref.getBoolean("display.discardable-keys", false));
+        discardableKeys.setSelected(Config.getPref().getBoolean("display.discardable-keys", false));
 
         // auto filters
         autoFilters.setToolTipText(tr("Display buttons to automatically filter numeric values of a predefined tag"));
@@ -194,22 +194,22 @@ public class DrawingPreference implements SubPreferenceSetting {
     @Override
     public boolean ok() {
         boolean restart = gpxPanel.savePreferences();
-        Main.pref.putBoolean("draw.data.area_outline_only", outlineOnly.isSelected());
-        Main.pref.putBoolean("draw.segment.direction", directionHint.isSelected());
-        Main.pref.putBoolean("draw.segment.head_only", headArrow.isSelected());
-        Main.pref.putBoolean("draw.oneway", onewayArrow.isSelected());
-        Main.pref.putBoolean("draw.segment.order_number", segmentOrderNumber.isSelected());
-        Main.pref.putBoolean("draw.segment.order_number.on_selected", segmentOrderNumberOnSelectedWay.isSelected());
-        Main.pref.putBoolean("draw.data.downloaded_area", sourceBounds.isSelected());
-        Main.pref.putBoolean("draw.data.inactive_color", inactive.isSelected());
-        Main.pref.putBoolean("mappaint.use-antialiasing", useAntialiasing.isSelected());
-        Main.pref.putBoolean("mappaint.wireframe.use-antialiasing", useWireframeAntialiasing.isSelected());
-        Main.pref.putBoolean("draw.target-highlight", useHighlighting.isSelected());
-        Main.pref.putBoolean("draw.helper-line", drawHelperLine.isSelected());
-        Main.pref.putBoolean("display.discardable-keys", discardableKeys.isSelected());
+        Config.getPref().putBoolean("draw.data.area_outline_only", outlineOnly.isSelected());
+        Config.getPref().putBoolean("draw.segment.direction", directionHint.isSelected());
+        Config.getPref().putBoolean("draw.segment.head_only", headArrow.isSelected());
+        Config.getPref().putBoolean("draw.oneway", onewayArrow.isSelected());
+        Config.getPref().putBoolean("draw.segment.order_number", segmentOrderNumber.isSelected());
+        Config.getPref().putBoolean("draw.segment.order_number.on_selected", segmentOrderNumberOnSelectedWay.isSelected());
+        Config.getPref().putBoolean("draw.data.downloaded_area", sourceBounds.isSelected());
+        Config.getPref().putBoolean("draw.data.inactive_color", inactive.isSelected());
+        Config.getPref().putBoolean("mappaint.use-antialiasing", useAntialiasing.isSelected());
+        Config.getPref().putBoolean("mappaint.wireframe.use-antialiasing", useWireframeAntialiasing.isSelected());
+        Config.getPref().putBoolean("draw.target-highlight", useHighlighting.isSelected());
+        Config.getPref().putBoolean("draw.helper-line", drawHelperLine.isSelected());
+        Config.getPref().putBoolean("display.discardable-keys", discardableKeys.isSelected());
         AutoFilterManager.PROP_AUTO_FILTER_ENABLED.put(autoFilters.isSelected());
         AutoFilterManager.PROP_AUTO_FILTER_RULE.put(((AutoFilterRule) autoFilterRules.getSelectedItem()).getKey());
-        int vn = Main.pref.getInt("mappaint.node.virtual-size", 8);
+        int vn = Config.getPref().getInt("mappaint.node.virtual-size", 8);
         if (virtualNodes.isSelected()) {
             if (vn < 1) {
                 vn = 8;
@@ -217,7 +217,7 @@ public class DrawingPreference implements SubPreferenceSetting {
         } else {
             vn = 0;
         }
-        Main.pref.putInt("mappaint.node.virtual-size", vn);
+        Config.getPref().putInt("mappaint.node.virtual-size", vn);
         return restart;
     }
 

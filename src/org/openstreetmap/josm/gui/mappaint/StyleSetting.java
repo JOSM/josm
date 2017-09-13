@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.mappaint;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -65,7 +65,7 @@ public interface StyleSetting {
 
         @Override
         public Object getValue() {
-            String val = Main.pref.get(prefKey, null);
+            String val = Config.getPref().get(prefKey, null);
             if (val == null) return def;
             return Boolean.valueOf(val);
         }
@@ -76,9 +76,9 @@ public interface StyleSetting {
             }
             boolean b = (Boolean) o;
             if (b == def) {
-                Main.pref.put(prefKey, null);
+                Config.getPref().put(prefKey, null);
             } else {
-                Main.pref.putBoolean(prefKey, b);
+                Config.getPref().putBoolean(prefKey, b);
             }
         }
     }

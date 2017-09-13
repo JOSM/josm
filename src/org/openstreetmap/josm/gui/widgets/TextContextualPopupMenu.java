@@ -22,7 +22,7 @@ import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.UndoManager;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -171,7 +171,7 @@ public class TextContextualPopupMenu extends JPopupMenu {
         if (action != null) {
             JMenuItem mi = new JMenuItem(action);
             mi.setText(label);
-            if (iconName != null && Main.pref.getBoolean("text.popupmenu.useicons", true)) {
+            if (iconName != null && Config.getPref().getBoolean("text.popupmenu.useicons", true)) {
                 ImageIcon icon = ImageProvider.get(iconName, ImageProvider.ImageSizes.SMALLICON);
                 if (icon != null) {
                     mi.setIcon(icon);

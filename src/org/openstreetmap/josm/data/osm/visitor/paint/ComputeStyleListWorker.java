@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -24,6 +23,7 @@ import org.openstreetmap.josm.gui.mappaint.styleelement.AreaIconElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.NodeElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.TextElement;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 
@@ -59,9 +59,9 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
         this.input = input;
         this.output = output;
         this.directExecutionTaskSize = directExecutionTaskSize;
-        this.drawArea = circum <= Main.pref.getInt("mappaint.fillareas", 10_000_000);
-        this.drawMultipolygon = drawArea && Main.pref.getBoolean("mappaint.multipolygon", true);
-        this.drawRestriction = Main.pref.getBoolean("mappaint.restriction", true);
+        this.drawArea = circum <= Config.getPref().getInt("mappaint.fillareas", 10_000_000);
+        this.drawMultipolygon = drawArea && Config.getPref().getBoolean("mappaint.multipolygon", true);
+        this.drawRestriction = Config.getPref().getBoolean("mappaint.restriction", true);
         this.styles.setDrawMultipolygon(drawMultipolygon);
     }
 

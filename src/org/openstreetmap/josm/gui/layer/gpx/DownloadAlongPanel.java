@@ -18,6 +18,7 @@ import javax.swing.event.ChangeListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -59,10 +60,10 @@ public class DownloadAlongPanel extends JPanel {
         this.prefArea = prefArea;
         this.prefNear = prefNear;
 
-        cbDownloadOsmData = new JCheckBox(tr("OpenStreetMap data"), Main.pref.getBoolean(prefOsm, true));
+        cbDownloadOsmData = new JCheckBox(tr("OpenStreetMap data"), Config.getPref().getBoolean(prefOsm, true));
         cbDownloadOsmData.setToolTipText(tr("Select to download OSM data."));
         add(cbDownloadOsmData, GBC.std().insets(1, 5, 1, 5));
-        cbDownloadGpxData = new JCheckBox(tr("Raw GPS data"), Main.pref.getBoolean(prefGps, false));
+        cbDownloadGpxData = new JCheckBox(tr("Raw GPS data"), Config.getPref().getBoolean(prefGps, false));
         cbDownloadGpxData.setToolTipText(tr("Select to download GPS traces."));
         add(cbDownloadGpxData, GBC.eol().insets(5, 5, 1, 5));
 
@@ -84,7 +85,7 @@ public class DownloadAlongPanel extends JPanel {
         if (prefNear != null) {
             add(new JLabel(tr("Download near:")), GBC.eol());
             downloadNear = new JList<>(new String[]{tr("track only"), tr("waypoints only"), tr("track and waypoints")});
-            downloadNear.setSelectedIndex(Main.pref.getInt(prefNear, 0));
+            downloadNear.setSelectedIndex(Config.getPref().getInt(prefNear, 0));
             add(downloadNear, GBC.eol());
         } else {
             downloadNear = null;
@@ -137,12 +138,12 @@ public class DownloadAlongPanel extends JPanel {
      * Remembers the current settings in the download panel
      */
     protected final void rememberSettings() {
-        Main.pref.putBoolean(prefOsm, isDownloadOsmData());
-        Main.pref.putBoolean(prefGps, isDownloadGpxData());
-        Main.pref.putDouble(prefDist, getDistance());
-        Main.pref.putDouble(prefArea, getArea());
+        Config.getPref().putBoolean(prefOsm, isDownloadOsmData());
+        Config.getPref().putBoolean(prefGps, isDownloadGpxData());
+        Config.getPref().putDouble(prefDist, getDistance());
+        Config.getPref().putDouble(prefArea, getArea());
         if (prefNear != null) {
-            Main.pref.putInt(prefNear, getNear());
+            Config.getPref().putInt(prefNear, getNear());
         }
     }
 

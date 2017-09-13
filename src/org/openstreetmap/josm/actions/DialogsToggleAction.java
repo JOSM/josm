@@ -7,9 +7,9 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -35,14 +35,14 @@ public class DialogsToggleAction extends ToggleAction {
               false
         );
         putValue("help", ht("/ToggleDialogs"));
-        setSelected(Main.pref.getBoolean("draw.dialogspanel", true));
+        setSelected(Config.getPref().getBoolean("draw.dialogspanel", true));
         notifySelectedState();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         toggleSelectedState(e);
-        Main.pref.putBoolean("draw.dialogspanel", isSelected());
+        Config.getPref().putBoolean("draw.dialogspanel", isSelected());
         notifySelectedState();
         setMode();
     }
@@ -51,19 +51,19 @@ public class DialogsToggleAction extends ToggleAction {
         if (MainApplication.isDisplayingMapView()) {
             boolean selected = isSelected();
             if (!selected) {
-                toolbarPreviouslyVisible = Main.pref.getBoolean("toolbar.visible", true);
-                sideToolbarPreviouslyVisible = Main.pref.getBoolean("sidetoolbar.visible", true);
+                toolbarPreviouslyVisible = Config.getPref().getBoolean("toolbar.visible", true);
+                sideToolbarPreviouslyVisible = Config.getPref().getBoolean("sidetoolbar.visible", true);
             }
             MapFrame map = MainApplication.getMap();
             map.setDialogsPanelVisible(selected);
-            map.statusLine.setVisible(selected || Main.pref.getBoolean("statusbar.always-visible", true));
-            MainApplication.getMenu().setVisible(selected || Main.pref.getBoolean("menu.always-visible", true));
+            map.statusLine.setVisible(selected || Config.getPref().getBoolean("statusbar.always-visible", true));
+            MainApplication.getMenu().setVisible(selected || Config.getPref().getBoolean("menu.always-visible", true));
             // Toolbars listen to preference changes, use it here
-            if (!Main.pref.getBoolean("toolbar.always-visible", true) && (!selected || toolbarPreviouslyVisible)) {
-                Main.pref.putBoolean("toolbar.visible", selected);
+            if (!Config.getPref().getBoolean("toolbar.always-visible", true) && (!selected || toolbarPreviouslyVisible)) {
+                Config.getPref().putBoolean("toolbar.visible", selected);
             }
-            if (!Main.pref.getBoolean("sidetoolbar.always-visible", true) && (!selected || sideToolbarPreviouslyVisible)) {
-                Main.pref.putBoolean("sidetoolbar.visible", selected);
+            if (!Config.getPref().getBoolean("sidetoolbar.always-visible", true) && (!selected || sideToolbarPreviouslyVisible)) {
+                Config.getPref().putBoolean("sidetoolbar.visible", selected);
             }
             map.mapView.rememberLastPositionOnScreen();
         }

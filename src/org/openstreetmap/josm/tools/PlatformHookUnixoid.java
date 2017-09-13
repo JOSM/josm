@@ -26,6 +26,7 @@ import java.util.concurrent.ExecutionException;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.CertificateAmendment.CertAmend;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * {@code PlatformHook} implementation for Unix systems.
@@ -50,7 +51,7 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     @Override
     public void openUrl(String url) throws IOException {
-        for (String program : Main.pref.getList("browser.unix",
+        for (String program : Config.getPref().getList("browser.unix",
                 Arrays.asList("xdg-open", "#DESKTOP#", "$BROWSER", "gnome-open", "kfmclient openURL", "firefox"))) {
             try {
                 if ("#DESKTOP#".equals(program)) {

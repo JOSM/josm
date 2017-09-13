@@ -18,9 +18,9 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.projection.datum.NTV2Proj4DirGridShiftFileSource;
 import org.openstreetmap.josm.io.CertificateAmendment.CertAmend;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 /**
@@ -313,7 +313,7 @@ public interface PlatformHook {
         if (expiration != null && expiration.before(new Date())) {
             String version = Utils.getJavaLatestVersion();
             callback.askUpdateJava(version != null ? version : "latest",
-                    Main.pref.get("java.update.url", "https://www.java.com/download"),
+                    Config.getPref().get("java.update.url", "https://www.java.com/download"),
                     DateUtils.getDateFormat(DateFormat.MEDIUM).format(expiration), false);
         }
     }

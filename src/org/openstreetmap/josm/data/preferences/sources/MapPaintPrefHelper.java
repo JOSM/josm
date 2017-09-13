@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TreeSet;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -52,7 +52,7 @@ public class MapPaintPrefHelper extends SourcePrefHelper {
     private boolean insertNewDefaults(List<SourceEntry> list) {
         boolean changed = false;
 
-        Collection<String> knownDefaults = new TreeSet<>(Main.pref.getList("mappaint.style.known-defaults"));
+        Collection<String> knownDefaults = new TreeSet<>(Config.getPref().getList("mappaint.style.known-defaults"));
 
         Collection<ExtendedSourceEntry> defaults = getDefault();
         int insertionIdx = 0;
@@ -70,7 +70,7 @@ public class MapPaintPrefHelper extends SourcePrefHelper {
             }
             knownDefaults.add(def.url);
         }
-        Main.pref.putList("mappaint.style.known-defaults", new ArrayList<>(knownDefaults));
+        Config.getPref().putList("mappaint.style.known-defaults", new ArrayList<>(knownDefaults));
 
         // XML style is not bundled anymore
         list.remove(Utils.find(list, se -> "resource://styles/standard/elemstyles.xml".equals(se.url)));

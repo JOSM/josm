@@ -12,12 +12,13 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
+import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 
@@ -59,7 +60,7 @@ public class CancelAction extends SavingAction {
             int ret = confirmClosingByCancel();
             if (ret == 0) { //Yes, save the changes
                 //copied from OKAction.run()
-                Main.pref.put("relation.editor.generic.lastrole", tfRole.getText());
+                Config.getPref().put("relation.editor.generic.lastrole", tfRole.getText());
                 if (!applyChanges())
                     return;
             } else if (ret == 2 || ret == JOptionPane.CLOSED_OPTION) //Cancel, continue editing

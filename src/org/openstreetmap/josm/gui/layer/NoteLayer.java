@@ -22,7 +22,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JToolTip;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.notes.Note;
@@ -42,6 +41,7 @@ import org.openstreetmap.josm.gui.io.importexport.NoteExporter;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.XmlWriter;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -164,7 +164,7 @@ public class NoteLayer extends AbstractModifiableLayer implements MouseListener,
             toolTip.setTipText(sb.toString());
             Point p = mv.getPoint(noteData.getSelectedNote().getLatLon());
 
-            g.setColor(ColorHelper.html2color(Main.pref.get("color.selected")));
+            g.setColor(ColorHelper.html2color(Config.getPref().get("color.selected")));
             g.drawRect(p.x - (iconWidth / 2), p.y - iconHeight,
                     iconWidth - 1, iconHeight - 1);
 

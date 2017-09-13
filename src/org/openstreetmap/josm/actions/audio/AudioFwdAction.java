@@ -8,10 +8,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.io.audio.AudioPlayer;
 import org.openstreetmap.josm.io.audio.AudioUtil;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -33,7 +33,7 @@ public class AudioFwdAction extends AbstractAudioAction {
         try {
             if (AudioPlayer.playing() || AudioPlayer.paused())
                 AudioPlayer.play(AudioPlayer.url(), AudioPlayer.position()
-                + Main.pref.getDouble("audio.forwardbackamount", 10.0));
+                + Config.getPref().getDouble("audio.forwardbackamount", 10.0));
             else
                 MarkerLayer.playAudio();
         } catch (IOException | InterruptedException ex) {

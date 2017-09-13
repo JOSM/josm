@@ -20,7 +20,6 @@ import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.mapmode.MapMode;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
@@ -55,6 +54,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.widgets.OSDLabel;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -123,7 +123,7 @@ implements ZoomChangeListener, MapModeChangeListener, DataSetListener, Preferenc
 
     private AutoFilterManager() {
         MapFrame.addMapModeChangeListener(this);
-        Main.pref.addPreferenceChangeListener(this);
+        Config.getPref().addPreferenceChangeListener(this);
         NavigatableComponent.addZoomChangeListener(this);
         MainApplication.getLayerManager().addLayerChangeListener(this);
         DatasetEventManager.getInstance().addDatasetListener(this, FireMode.IN_EDT_CONSOLIDATED);

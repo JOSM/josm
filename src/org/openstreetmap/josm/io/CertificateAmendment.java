@@ -28,6 +28,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -118,7 +119,7 @@ public final class CertificateAmendment {
      * @throws GeneralSecurityException if a security error occurs
      */
     public static void addMissingCertificates() throws IOException, GeneralSecurityException {
-        if (!Main.pref.getBoolean("tls.add-missing-certificates", true))
+        if (!Config.getPref().getBoolean("tls.add-missing-certificates", true))
             return;
         KeyStore keyStore = KeyStore.getInstance(KeyStore.getDefaultType());
         Path cacertsPath = Paths.get(System.getProperty("java.home"), "lib", "security", "cacerts");

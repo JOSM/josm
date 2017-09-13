@@ -14,6 +14,7 @@ import org.openstreetmap.josm.data.imagery.CoordinateConversion;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageWarp;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -112,7 +113,7 @@ public class ReprojectionTile extends Tile {
         }
         double scaleMapView = MainApplication.getMap().mapView.getScale();
         ImageWarp.Interpolation interpolation;
-        switch (Main.pref.get("imagery.warp.pixel-interpolation", "bilinear")) {
+        switch (Config.getPref().get("imagery.warp.pixel-interpolation", "bilinear")) {
             case "nearest_neighbor":
                 interpolation = ImageWarp.Interpolation.NEAREST_NEIGHBOR;
                 break;
@@ -158,7 +159,7 @@ public class ReprojectionTile extends Tile {
                 (pbTargetAligned.maxNorth - en11Current.north()) / scale);
 
         ImageWarp.PointTransform transform;
-        int stride = Main.pref.getInt("imagery.warp.projection-interpolation.stride", 7);
+        int stride = Config.getPref().getInt("imagery.warp.projection-interpolation.stride", 7);
         if (stride > 0) {
             transform = new ImageWarp.GridTransform(pointTransform, stride);
         } else {

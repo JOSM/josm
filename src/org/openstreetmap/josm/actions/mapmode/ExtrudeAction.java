@@ -57,6 +57,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
 import org.openstreetmap.josm.gui.util.ModifierExListener;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -306,21 +307,21 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
     @Override
     protected void readPreferences() {
-        initialMoveDelay = Main.pref.getInt("edit.initial-move-delay", 200);
-        initialMoveThreshold = Main.pref.getInt("extrude.initial-move-threshold", 1);
+        initialMoveDelay = Config.getPref().getInt("edit.initial-move-delay", 200);
+        initialMoveThreshold = Config.getPref().getInt("extrude.initial-move-threshold", 1);
         mainColor = new ColorProperty(marktr("Extrude: main line"), Color.RED).get();
         helperColor = new ColorProperty(marktr("Extrude: helper line"), Color.ORANGE).get();
-        helperStrokeDash = GuiHelper.getCustomizedStroke(Main.pref.get("extrude.stroke.helper-line", "1 4"));
+        helperStrokeDash = GuiHelper.getCustomizedStroke(Config.getPref().get("extrude.stroke.helper-line", "1 4"));
         helperStrokeRA = new BasicStroke(1);
-        symbolSize = Main.pref.getDouble("extrude.angle-symbol-radius", 8);
-        nodeDragWithoutCtrl = Main.pref.getBoolean("extrude.drag-nodes-without-ctrl", false);
-        oldLineStroke = GuiHelper.getCustomizedStroke(Main.pref.get("extrude.ctrl.stroke.old-line", "1"));
-        mainStroke = GuiHelper.getCustomizedStroke(Main.pref.get("extrude.stroke.main", "3"));
+        symbolSize = Config.getPref().getDouble("extrude.angle-symbol-radius", 8);
+        nodeDragWithoutCtrl = Config.getPref().getBoolean("extrude.drag-nodes-without-ctrl", false);
+        oldLineStroke = GuiHelper.getCustomizedStroke(Config.getPref().get("extrude.ctrl.stroke.old-line", "1"));
+        mainStroke = GuiHelper.getCustomizedStroke(Config.getPref().get("extrude.stroke.main", "3"));
 
-        ignoreSharedNodes = Main.pref.getBoolean("extrude.ignore-shared-nodes", true);
+        ignoreSharedNodes = Config.getPref().getBoolean("extrude.ignore-shared-nodes", true);
         dualAlignCheckboxMenuItem.getAction().setEnabled(true);
-        useRepeatedShortcut = Main.pref.getBoolean("extrude.dualalign.toggleOnRepeatedX", true);
-        keepSegmentDirection = Main.pref.getBoolean("extrude.dualalign.keep-segment-direction", true);
+        useRepeatedShortcut = Config.getPref().getBoolean("extrude.dualalign.toggleOnRepeatedX", true);
+        keepSegmentDirection = Config.getPref().getBoolean("extrude.dualalign.keep-segment-direction", true);
     }
 
     @Override

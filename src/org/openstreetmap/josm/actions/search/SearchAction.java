@@ -66,6 +66,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSelector;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -111,7 +112,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             }
         });
 
-        for (String s: Main.pref.getList("search.history", Collections.<String>emptyList())) {
+        for (String s: Config.getPref().getList("search.history", Collections.<String>emptyList())) {
             SearchSetting ss = SearchSetting.readFromString(s);
             if (ss != null) {
                 searchHistory.add(ss);
@@ -139,7 +140,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             searchHistory.remove(s);
             searchHistory.addFirst(new SearchSetting(s));
         }
-        int maxsize = Main.pref.getInt("search.history-size", DEFAULT_SEARCH_HISTORY_SIZE);
+        int maxsize = Config.getPref().getInt("search.history-size", DEFAULT_SEARCH_HISTORY_SIZE);
         while (searchHistory.size() > maxsize) {
             searchHistory.removeLast();
         }
@@ -147,7 +148,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         for (SearchSetting item: searchHistory) {
             savedHistory.add(item.writeToString());
         }
-        Main.pref.putList("search.history", new ArrayList<>(savedHistory));
+        Config.getPref().putList("search.history", new ArrayList<>(savedHistory));
     }
 
     /**

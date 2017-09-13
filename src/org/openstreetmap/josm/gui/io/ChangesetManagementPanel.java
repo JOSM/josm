@@ -22,12 +22,12 @@ import javax.swing.JRadioButton;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.ChangesetCache;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -155,7 +155,7 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
         cbCloseAfterUpload = new JCheckBox(tr("Close changeset after upload"));
         cbCloseAfterUpload.setToolTipText(tr("Select to close the changeset after the next upload"));
         add(cbCloseAfterUpload, gc);
-        cbCloseAfterUpload.setSelected(Main.pref.getBoolean("upload.changeset.close", true));
+        cbCloseAfterUpload.setSelected(Config.getPref().getBoolean("upload.changeset.close", true));
         cbCloseAfterUpload.addItemListener(new CloseAfterUploadItemStateListener());
 
         gc.gridx = 0;
@@ -255,11 +255,11 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
             switch(e.getStateChange()) {
             case ItemEvent.SELECTED:
                 firePropertyChange(CLOSE_CHANGESET_AFTER_UPLOAD, false, true);
-                Main.pref.putBoolean("upload.changeset.close", true);
+                Config.getPref().putBoolean("upload.changeset.close", true);
                 break;
             case ItemEvent.DESELECTED:
                 firePropertyChange(CLOSE_CHANGESET_AFTER_UPLOAD, true, false);
-                Main.pref.putBoolean("upload.changeset.close", false);
+                Config.getPref().putBoolean("upload.changeset.close", false);
                 break;
             default: // Do nothing
             }

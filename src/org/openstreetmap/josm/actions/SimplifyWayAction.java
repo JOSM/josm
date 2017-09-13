@@ -33,6 +33,7 @@ import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.Notification;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -164,7 +165,7 @@ public class SimplifyWayAction extends JosmAction {
      * @since 6411
      */
     public final SequenceCommand simplifyWay(Way w) {
-        return simplifyWay(w, Main.pref.getDouble("simplify-way.max-error", 3.0));
+        return simplifyWay(w, Config.getPref().getDouble("simplify-way.max-error", 3.0));
     }
 
     /**

@@ -35,6 +35,7 @@ import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.GpxWriter;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
@@ -109,7 +110,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         desc.setText(gpxData.getString(META_DESC));
         p.add(new JScrollPane(desc), GBC.eop().fill(GBC.BOTH));
 
-        JCheckBox author = new JCheckBox(tr("Add author information"), Main.pref.getBoolean("lastAddAuthor", true));
+        JCheckBox author = new JCheckBox(tr("Add author information"), Config.getPref().getBoolean("lastAddAuthor", true));
         p.add(author, GBC.eol());
 
         JLabel nameLabel = new JLabel(tr("Real name"));
@@ -161,12 +162,12 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         }
         setCanceled(false);
 
-        Main.pref.putBoolean("lastAddAuthor", author.isSelected());
+        Config.getPref().putBoolean("lastAddAuthor", author.isSelected());
         if (!authorName.getText().isEmpty()) {
-            Main.pref.put("lastAuthorName", authorName.getText());
+            Config.getPref().put("lastAuthorName", authorName.getText());
         }
         if (!copyright.getText().isEmpty()) {
-            Main.pref.put("lastCopyright", copyright.getText());
+            Config.getPref().put("lastCopyright", copyright.getText());
         }
 
         if (layer instanceof OsmDataLayer) {
@@ -230,8 +231,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
                         () -> Year.now().toString()));
             }
             if (copyright.getText().isEmpty()) {
-                copyright.setText(Optional.ofNullable(data.getString(META_COPYRIGHT_LICENSE)).orElseGet(
-                        () -> Main.pref.get("lastCopyright", "https://creativecommons.org/licenses/by-sa/2.5")));
+                copyright.setText(Optional.ofNullable(data.getString(META_COPYRIGHT_LICENSE)).orElseGet(() -> Config.getPref().get("lastCopyright", "https://creativecommons.org/licenses/by-sa/2.5")));
                 copyright.setCaretPosition(0);
             }
         } else {
@@ -279,8 +279,8 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             nameLabel.setEnabled(b);
             emailLabel.setEnabled(b);
             if (b) {
-                authorName.setText(Optional.ofNullable(data.getString(META_AUTHOR_NAME)).orElseGet(() -> Main.pref.get("lastAuthorName")));
-                email.setText(Optional.ofNullable(data.getString(META_AUTHOR_EMAIL)).orElseGet(() -> Main.pref.get("lastAuthorEmail")));
+                authorName.setText(Optional.ofNullable(data.getString(META_AUTHOR_NAME)).orElseGet(() -> Config.getPref().get("lastAuthorName")));
+                email.setText(Optional.ofNullable(data.getString(META_AUTHOR_EMAIL)).orElseGet(() -> Config.getPref().get("lastAuthorEmail")));
             } else {
                 authorName.setText("");
                 email.setText("");

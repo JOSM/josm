@@ -4,9 +4,9 @@ package org.openstreetmap.josm.actions.audio;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.audio.AudioPlayer;
 import org.openstreetmap.josm.io.audio.AudioUtil;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -28,7 +28,7 @@ public abstract class AudioFastSlowAction extends AbstractAudioAction {
      */
     public AudioFastSlowAction(String name, String iconName, String tooltip, Shortcut shortcut, boolean fast) {
         super(name, iconName, tooltip, shortcut, true);
-        multiplier = Main.pref.getDouble("audio.fastfwdmultiplier", 1.3);
+        multiplier = Config.getPref().getDouble("audio.fastfwdmultiplier", 1.3);
         if (!fast)
             multiplier = 1.0 / multiplier;
     }

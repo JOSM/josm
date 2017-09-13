@@ -11,10 +11,10 @@ import java.util.List;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
-import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.preferences.sources.SourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.SourceProvider;
 import org.openstreetmap.josm.data.preferences.sources.SourceType;
+import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.data.validation.OsmValidator;
 import org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;

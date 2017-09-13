@@ -12,6 +12,7 @@ import org.openstreetmap.josm.data.imagery.OffsetBookmark;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.io.session.SessionAwareReadApply;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
@@ -100,8 +101,8 @@ public class TileSourceDisplaySettings implements SessionAwareReadApply {
         boolean value = true;
         for (String p : prefixes) {
             String key = p + "." + name;
-            boolean currentValue = Main.pref.getBoolean(key, true);
-            if (!Main.pref.get(key).isEmpty()) {
+            boolean currentValue = Config.getPref().getBoolean(key, true);
+            if (!Config.getPref().get(key).isEmpty()) {
                 value = currentValue;
             }
         }

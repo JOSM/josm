@@ -34,6 +34,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryOsmPrimitive;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.XmlWriter;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.OpenBrowser;
 
@@ -340,7 +341,7 @@ public class VersionTable extends JTable implements ChangeListener {
         TableCellRenderer tcr = tbl.getTableHeader().getDefaultRenderer();
         Object val = tbl.getColumnModel().getColumn(col).getHeaderValue();
         Component comp = tcr.getTableCellRendererComponent(tbl, val, false, false, -1, col);
-        maxwidth = Math.max(comp.getPreferredSize().width + Main.pref.getInt("table.header-inset", 0), maxwidth);
+        maxwidth = Math.max(comp.getPreferredSize().width + Config.getPref().getInt("table.header-inset", 0), maxwidth);
 
         int spacing = tbl.getIntercellSpacing().width;
         tbl.getColumnModel().getColumn(col).setPreferredWidth(maxwidth + spacing);

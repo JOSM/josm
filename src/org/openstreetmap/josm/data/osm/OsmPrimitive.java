@@ -19,12 +19,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.Match;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.gui.mappaint.StyleCache;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -649,7 +649,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
                 "watch", "watch:", "description", "attribution"));
             l.addAll(getDiscardableKeys());
             l.addAll(getWorkInProgressKeys());
-            uninteresting = new HashSet<>(Main.pref.getList("tags.uninteresting", l));
+            uninteresting = new HashSet<>(Config.getPref().getList("tags.uninteresting", l));
         }
         return uninteresting;
     }
@@ -661,7 +661,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      */
     public static Collection<String> getDiscardableKeys() {
         if (discardable == null) {
-            discardable = new HashSet<>(Main.pref.getList("tags.discardable",
+            discardable = new HashSet<>(Config.getPref().getList("tags.discardable",
                     Arrays.asList(
                             "created_by",
                             "converted_by",
@@ -719,7 +719,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      */
     public static Collection<String> getWorkInProgressKeys() {
         if (workinprogress == null) {
-            workinprogress = new HashSet<>(Main.pref.getList("tags.workinprogress",
+            workinprogress = new HashSet<>(Config.getPref().getList("tags.workinprogress",
                     Arrays.asList("note", "fixme", "FIXME")));
         }
         return workinprogress;
@@ -759,7 +759,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
 
     private static Match compileDirectionKeys(String prefName, String defaultValue) throws AssertionError {
         try {
-            return SearchCompiler.compile(Main.pref.get(prefName, defaultValue));
+            return SearchCompiler.compile(Config.getPref().get(prefName, defaultValue));
         } catch (SearchParseError e) {
             Logging.log(Logging.LEVEL_ERROR, "Unable to compile pattern for " + prefName + ", trying default pattern:", e);
         }

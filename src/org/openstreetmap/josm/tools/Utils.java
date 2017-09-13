@@ -69,8 +69,8 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.Compression;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -1245,7 +1245,7 @@ public final class Utils {
      * @return a {@link ForkJoinPool}
      */
     public static ForkJoinPool newForkJoinPool(String pref, final String nameFormat, final int threadPriority) {
-        int noThreads = Main.pref.getInt(pref, Runtime.getRuntime().availableProcessors());
+        int noThreads = Config.getPref().getInt(pref, Runtime.getRuntime().availableProcessors());
         return new ForkJoinPool(noThreads, new ForkJoinPool.ForkJoinWorkerThreadFactory() {
             final AtomicLong count = new AtomicLong(0);
             @Override
@@ -1685,8 +1685,7 @@ public final class Utils {
      */
     public static String getJavaLatestVersion() {
         try {
-            return HttpClient.create(
-                    new URL(Main.pref.get("java.baseline.version.url", "http://javadl-esd-secure.oracle.com/update/baseline.version")))
+            return HttpClient.create(new URL(Config.getPref().get("java.baseline.version.url", "http://javadl-esd-secure.oracle.com/update/baseline.version")))
                     .connect().fetchContent().split("\n")[0];
         } catch (IOException e) {
             Logging.error(e);

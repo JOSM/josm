@@ -7,7 +7,6 @@ import java.awt.Point;
 import java.util.Collections;
 import java.util.Map;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.AutoScaleAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -19,6 +18,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -91,7 +91,7 @@ public class AddNodeHandler extends RequestHandler {
             MapView mapView = MainApplication.getMap().mapView;
             Point p = mapView.getPoint(ll);
             node = mapView.getNearestNode(p, OsmPrimitive::isUsable);
-            if (node != null && node.getCoor().greatCircleDistance(ll) > Main.pref.getDouble("remotecontrol.tolerance", 0.1)) {
+            if (node != null && node.getCoor().greatCircleDistance(ll) > Config.getPref().getDouble("remotecontrol.tolerance", 0.1)) {
                 node = null; // node is too far
             }
         }

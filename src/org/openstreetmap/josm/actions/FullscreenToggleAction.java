@@ -21,6 +21,7 @@ import javax.swing.KeyStroke;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -45,14 +46,14 @@ public class FullscreenToggleAction extends ToggleAction {
         putValue("toolbar", "fullscreen");
         MainApplication.getToolbar().register(this);
         gd = GraphicsEnvironment.isHeadless() ? null : GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
-        setSelected(Main.pref.getBoolean("draw.fullscreen", false));
+        setSelected(Config.getPref().getBoolean("draw.fullscreen", false));
         notifySelectedState();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         toggleSelectedState(e);
-        Main.pref.putBoolean("draw.fullscreen", isSelected());
+        Config.getPref().putBoolean("draw.fullscreen", isSelected());
         notifySelectedState();
         setMode();
     }
@@ -95,7 +96,7 @@ public class FullscreenToggleAction extends ToggleAction {
         // the good thing is: fullscreen works without exclusive mode,
         // since windows (or java?) draws the undecorated window full-
         // screen by default (it's a simulated mode, but should be ok)
-        String exclusive = Main.pref.get("draw.fullscreen.exclusive-mode", "auto");
+        String exclusive = Config.getPref().get("draw.fullscreen.exclusive-mode", "auto");
         if (("true".equals(exclusive) || ("auto".equals(exclusive) && !Main.isPlatformWindows())) && gd != null) {
             gd.setFullScreenWindow(selected ? frame : null);
         }

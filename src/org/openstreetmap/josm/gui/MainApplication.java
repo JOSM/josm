@@ -144,6 +144,7 @@ import org.openstreetmap.josm.io.protocols.data.Handler;
 import org.openstreetmap.josm.io.remotecontrol.RemoteControl;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.FontsManager;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.HttpClient;
@@ -913,11 +914,12 @@ public class MainApplication extends Main {
         }
 
         Main.pref.init(args.hasOption(Option.RESET_PREFERENCES));
+        Config.setPreferencesInstance(Main.pref);
 
         args.getPreferencesToSet().forEach(Main.pref::put);
 
         if (!language.isPresent()) {
-            I18n.set(Main.pref.get("language", null));
+            I18n.set(Config.getPref().get("language", null));
         }
         Main.pref.updateSystemProperties();
 
@@ -937,7 +939,7 @@ public class MainApplication extends Main {
 
         WindowGeometry geometry = WindowGeometry.mainWindow("gui.geometry",
                 args.getSingle(Option.GEOMETRY).orElse(null),
-                !args.hasOption(Option.NO_MAXIMIZE) && Main.pref.getBoolean("gui.maximized", false));
+                !args.hasOption(Option.NO_MAXIMIZE) && Config.getPref().getBoolean("gui.maximized", false));
         final MainFrame mainFrame = new MainFrame(geometry);
         final Container contentPane = mainFrame.getContentPane();
         if (contentPane instanceof JComponent) {
@@ -974,7 +976,7 @@ public class MainApplication extends Main {
         final SplashScreen splash = GuiHelper.runInEDTAndWaitAndReturn(SplashScreen::new);
         final SplashScreen.SplashProgressMonitor monitor = splash.getProgressMonitor();
         monitor.beginTask(tr("Initializing"));
-        GuiHelper.runInEDT(() -> splash.setVisible(Main.pref.getBoolean("draw.splashscreen", true)));
+        GuiHelper.runInEDT(() -> splash.setVisible(Config.getPref().getBoolean("draw.splashscreen", true)));
         Main.setInitStatusListener(new InitStatusListener() {
 
             @Override
@@ -1021,7 +1023,7 @@ public class MainApplication extends Main {
             mainFrame.setVisible(true);
         });
 
-        boolean maximized = Main.pref.getBoolean("gui.maximized", false);
+        boolean maximized = Config.getPref().getBoolean("gui.maximized", false);
         if ((!args.hasOption(Option.NO_MAXIMIZE) && maximized) || args.hasOption(Option.MAXIMIZE)) {
             mainFrame.setMaximized(true);
         }
@@ -1050,7 +1052,7 @@ public class MainApplication extends Main {
             MessageNotifier.start();
         }
 
-        if (Main.pref.getBoolean("debug.edt-checker.enable", Version.getInstance().isLocalBuild())) {
+        if (Config.getPref().getBoolean("debug.edt-checker.enable", Version.getInstance().isLocalBuild())) {
             // Repaint manager is registered so late for a reason - there is lots of violation during startup process
             // but they don't seem to break anything and are difficult to fix
             Logging.info("Enabled EDT checker, wrongful access to gui from non EDT thread will be printed to console");
@@ -1219,10 +1221,10 @@ public class MainApplication extends Main {
      * disabling or enabling IPV6 may only be done with next start.
      */
     private static void checkIPv6() {
-        if ("auto".equals(Main.pref.get("prefer.ipv6", "auto"))) {
+        if ("auto".equals(Config.getPref().get("prefer.ipv6", "auto"))) {
             new Thread((Runnable) () -> { /* this may take some time (DNS, Connect) */
                 boolean hasv6 = false;
-                boolean wasv6 = Main.pref.getBoolean("validated.ipv6", false);
+                boolean wasv6 = Config.getPref().getBoolean("validated.ipv6", false);
                 try {
                     /* Use the check result from last run of the software, as after the test, value
                        changes have no effect anymore */
@@ -1251,14 +1253,14 @@ public class MainApplication extends Main {
                 }
                 if (wasv6 && !hasv6) {
                     Logging.info(tr("Detected no useable IPv6 network, prefering IPv4 over IPv6 after next restart."));
-                    Main.pref.putBoolean("validated.ipv6", hasv6); // be sure it is stored before the restart!
+                    Config.getPref().putBoolean("validated.ipv6", hasv6); // be sure it is stored before the restart!
                     try {
                         RestartAction.restartJOSM();
                     } catch (IOException e) {
                         Logging.error(e);
                     }
                 }
-                Main.pref.putBoolean("validated.ipv6", hasv6);
+                Config.getPref().putBoolean("validated.ipv6", hasv6);
             }, "IPv6-checker").start();
         }
     }

@@ -40,6 +40,7 @@ import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -481,7 +482,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
             pc = mercator;
         }
         id = pc.getId();
-        Main.pref.putList("projection.sub."+id, pref == null ? null : new ArrayList<>(pref));
+        Config.getPref().putList("projection.sub."+id, pref == null ? null : new ArrayList<>(pref));
         if (makeDefault) {
             PROP_PROJECTION_DEFAULT.put(id);
             PROP_SUB_PROJECTION_DEFAULT.put(pref == null ? null : new ArrayList<>(pref));
@@ -559,7 +560,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
      * the last time; null if user has never selected the given projection choice
      */
     public static Collection<String> getSubprojectionPreference(String pcId) {
-        return Main.pref.getList("projection.sub."+pcId, null);
+        return Config.getPref().getList("projection.sub."+pcId, null);
     }
 
     @Override

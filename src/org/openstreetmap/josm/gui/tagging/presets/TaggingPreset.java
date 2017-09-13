@@ -59,6 +59,7 @@ import org.openstreetmap.josm.gui.tagging.presets.items.Roles;
 import org.openstreetmap.josm.gui.tagging.presets.items.Roles.Role;
 import org.openstreetmap.josm.gui.tagging.presets.items.Space;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -209,7 +210,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             return;
         }
         File arch = TaggingPresetReader.getZipIcons();
-        final Collection<String> s = Main.pref.getList("taggingpreset.icon.sources", null);
+        final Collection<String> s = Config.getPref().getList("taggingpreset.icon.sources", null);
         ImageProvider imgProv = new ImageProvider(iconName);
         imgProv.setDirs(s);
         imgProv.setId("presets");

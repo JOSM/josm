@@ -11,8 +11,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.StringProperty;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * A system of units used to express length and area measurements.
@@ -229,7 +229,7 @@ public class SystemOfMeasurement {
      */
     public String getDistText(final double dist, final NumberFormat format, final double threshold) {
         double a = dist / aValue;
-        if (a > bValue / aValue && !Main.pref.getBoolean("system_of_measurement.use_only_lower_unit", false))
+        if (a > bValue / aValue && !Config.getPref().getBoolean("system_of_measurement.use_only_lower_unit", false))
             return formatText(dist / bValue, bName, format);
         else if (a < threshold)
             return "< " + formatText(threshold, aName, format);
@@ -257,8 +257,8 @@ public class SystemOfMeasurement {
      */
     public String getAreaText(final double area, final NumberFormat format, final double threshold) {
         double a = area / (aValue*aValue);
-        boolean lowerOnly = Main.pref.getBoolean("system_of_measurement.use_only_lower_unit", false);
-        boolean customAreaOnly = Main.pref.getBoolean("system_of_measurement.use_only_custom_area_unit", false);
+        boolean lowerOnly = Config.getPref().getBoolean("system_of_measurement.use_only_lower_unit", false);
+        boolean customAreaOnly = Config.getPref().getBoolean("system_of_measurement.use_only_custom_area_unit", false);
         if ((!lowerOnly && areaCustomValue > 0 && a > areaCustomValue / (aValue*aValue)
                 && a < (bValue*bValue) / (aValue*aValue)) || customAreaOnly)
             return formatText(area / areaCustomValue, areaCustomName, format);

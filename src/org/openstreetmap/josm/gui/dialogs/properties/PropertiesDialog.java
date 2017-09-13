@@ -99,6 +99,7 @@ import org.openstreetmap.josm.gui.widgets.CompileSearchTextDecorator;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.HttpClient;
@@ -256,7 +257,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         tagTableFilter = setupFilter();
 
         // combine both tables and wrap them in a scrollPane
-        boolean top = Main.pref.getBoolean("properties.presets.top", true);
+        boolean top = Config.getPref().getBoolean("properties.presets.top", true);
         if (top) {
             bothTables.add(presets, GBC.std().fill(GBC.HORIZONTAL).insets(5, 2, 5, 2).anchor(GBC.NORTHWEST));
             double epsilon = Double.MIN_VALUE; // need to set a weight or else anchor value is ignored
@@ -294,7 +295,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
 
         editHelper.loadTagsIfNeeded();
 
-        Main.pref.addKeyPreferenceChangeListener("display.discardable-keys", preferenceListener);
+        Config.getPref().addKeyPreferenceChangeListener("display.discardable-keys", preferenceListener);
     }
 
     private void buildTagsTable() {
@@ -340,7 +341,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
      * Creates the popup menu @field blankSpaceMenu and its launcher on main panel.
      */
     private void setupBlankSpaceMenu() {
-        if (Main.pref.getBoolean("properties.menu.add_edit_delete", true)) {
+        if (Config.getPref().getBoolean("properties.menu.add_edit_delete", true)) {
             blankSpaceMenuHandler.addAction(addAction);
             PopupMenuLauncher launcher = new BlankSpaceMenuLauncher(blankSpaceMenu);
             bothTables.addMouseListener(launcher);
@@ -353,7 +354,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
      */
     private void setupMembershipMenu() {
         // setting up the membership table
-        if (Main.pref.getBoolean("properties.menu.add_edit_delete", true)) {
+        if (Config.getPref().getBoolean("properties.menu.add_edit_delete", true)) {
             membershipMenuHandler.addAction(editAction);
             membershipMenuHandler.addAction(deleteAction);
             membershipMenu.addSeparator();
@@ -405,7 +406,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
      * Creates the popup menu @field tagMenu and its launcher on tag table.
      */
     private void setupTagsMenu() {
-        if (Main.pref.getBoolean("properties.menu.add_edit_delete", true)) {
+        if (Config.getPref().getBoolean("properties.menu.add_edit_delete", true)) {
             tagMenu.add(addAction);
             tagMenu.add(editAction);
             tagMenu.add(deleteAction);
@@ -540,7 +541,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
     @Override
     public void destroy() {
         super.destroy();
-        Main.pref.removeKeyPreferenceChangeListener("display.discardable-keys", preferenceListener);
+        Config.getPref().removeKeyPreferenceChangeListener("display.discardable-keys", preferenceListener);
         Container parent = pluginHook.getParent();
         if (parent != null) {
             parent.remove(pluginHook);
@@ -572,7 +573,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         // re-load tag data
         tagData.setRowCount(0);
 
-        final boolean displayDiscardableKeys = Main.pref.getBoolean("display.discardable-keys", false);
+        final boolean displayDiscardableKeys = Config.getPref().getBoolean("display.discardable-keys", false);
         final Map<String, Integer> keyCount = new HashMap<>();
         final Map<String, String> tags = new HashMap<>();
         valueCount.clear();
@@ -1135,7 +1136,7 @@ implements SelectionChangedListener, ActiveLayerChangeListener, DataSetListenerA
         @Override
         public void actionPerformed(ActionEvent e) {
             try {
-                String base = Main.pref.get("url.openstreetmap-wiki", "https://wiki.openstreetmap.org/wiki/");
+                String base = Config.getPref().get("url.openstreetmap-wiki", "https://wiki.openstreetmap.org/wiki/");
                 String lang = LanguageInfo.getWikiLanguagePrefix();
                 final List<URI> uris = new ArrayList<>();
                 int row;

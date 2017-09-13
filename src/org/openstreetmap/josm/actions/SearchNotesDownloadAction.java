@@ -21,6 +21,7 @@ import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -40,7 +41,7 @@ public class SearchNotesDownloadAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         HistoryComboBox searchTermBox = new HistoryComboBox();
-        List<String> searchHistory = new LinkedList<>(Main.pref.getList(HISTORY_KEY, new LinkedList<String>()));
+        List<String> searchHistory = new LinkedList<>(Config.getPref().getList(HISTORY_KEY, new LinkedList<String>()));
         Collections.reverse(searchHistory);
         searchTermBox.setPossibleItems(searchHistory);
 
@@ -69,7 +70,7 @@ public class SearchNotesDownloadAction extends JosmAction {
         }
 
         searchTermBox.addCurrentItemToHistory();
-        Main.pref.putList(HISTORY_KEY, searchTermBox.getHistory());
+        Config.getPref().putList(HISTORY_KEY, searchTermBox.getHistory());
 
         performSearch(searchTerm);
     }
@@ -90,8 +91,8 @@ public class SearchNotesDownloadAction extends JosmAction {
             Logging.trace(ignore);
         }
 
-        int noteLimit = Main.pref.getInt("osm.notes.downloadLimit", 1000);
-        int closedLimit = Main.pref.getInt("osm.notes.daysClosed", 7);
+        int noteLimit = Config.getPref().getInt("osm.notes.downloadLimit", 1000);
+        int closedLimit = Config.getPref().getInt("osm.notes.daysClosed", 7);
 
         StringBuilder sb = new StringBuilder(128);
         sb.append(OsmApi.getOsmApi().getBaseUrl())

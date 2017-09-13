@@ -57,6 +57,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.ListPopupMenu;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -164,7 +165,7 @@ public class ChangesetDialog extends ToggleDialog {
         pnl.add(cbInSelectionOnly);
         cbInSelectionOnly.setToolTipText(tr("<html>Select to show changesets for the currently selected objects only.<br>"
                 + "Unselect to show all changesets for objects in the current data layer.</html>"));
-        cbInSelectionOnly.setSelected(Main.pref.getBoolean("changeset-dialog.for-selected-objects-only", false));
+        cbInSelectionOnly.setSelected(Config.getPref().getBoolean("changeset-dialog.for-selected-objects-only", false));
         return pnl;
     }
 
@@ -274,7 +275,7 @@ public class ChangesetDialog extends ToggleDialog {
     class FilterChangeHandler implements ItemListener {
         @Override
         public void itemStateChanged(ItemEvent e) {
-            Main.pref.putBoolean("changeset-dialog.for-selected-objects-only", cbInSelectionOnly.isSelected());
+            Config.getPref().putBoolean("changeset-dialog.for-selected-objects-only", cbInSelectionOnly.isSelected());
             pnlList.removeAll();
             if (cbInSelectionOnly.isSelected()) {
                 pnlList.add(new JScrollPane(lstInSelection), BorderLayout.CENTER);

@@ -9,7 +9,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.IntStream;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
@@ -24,6 +23,7 @@ import org.openstreetmap.josm.gui.mappaint.MultiCascade;
 import org.openstreetmap.josm.gui.mappaint.StyleElementList;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.BoxProvider;
 import org.openstreetmap.josm.gui.mappaint.styleelement.BoxTextElement.SimpleBoxProvider;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.RotationAngle;
@@ -195,7 +195,7 @@ public class NodeElement extends StyleElement {
         mapImage.offsetX = Math.round(offsetXF);
         mapImage.offsetY = Math.round(offsetYF);
 
-        mapImage.alpha = Utils.clamp(Main.pref.getInt("mappaint.icon-image-alpha", 255), 0, 255);
+        mapImage.alpha = Utils.clamp(Config.getPref().getInt("mappaint.icon-image-alpha", 255), 0, 255);
         Integer pAlpha = Utils.colorFloat2int(c.get(keys[ICON_OPACITY_IDX], null, float.class));
         if (pAlpha != null) {
             mapImage.alpha = pAlpha;
@@ -355,11 +355,10 @@ public class NodeElement extends StyleElement {
         else {
             // This is only executed once, so no performance concerns.
             // However, it would be better, if the settings could be changed at runtime.
-            int size = max(
-                    Main.pref.getInt("mappaint.node.selected-size", 5),
-                    Main.pref.getInt("mappaint.node.unselected-size", 3),
-                    Main.pref.getInt("mappaint.node.connection-size", 5),
-                    Main.pref.getInt("mappaint.node.tagged-size", 3)
+            int size = max(Config.getPref().getInt("mappaint.node.selected-size", 5),
+                    Config.getPref().getInt("mappaint.node.unselected-size", 3),
+                    Config.getPref().getInt("mappaint.node.connection-size", 5),
+                    Config.getPref().getInt("mappaint.node.tagged-size", 3)
             );
             return new SimpleBoxProvider(new Rectangle(-size/2, -size/2, size, size));
         }

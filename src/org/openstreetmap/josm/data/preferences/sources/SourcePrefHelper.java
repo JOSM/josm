@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Helper class for specialized extensions preferences.
@@ -57,7 +57,7 @@ public abstract class SourcePrefHelper {
      */
     public List<SourceEntry> get() {
 
-        List<Map<String, String>> src = Main.pref.getListOfMaps(pref, null);
+        List<Map<String, String>> src = Config.getPref().getListOfMaps(pref, null);
         if (src == null)
             return new ArrayList<>(getDefault());
 
@@ -78,13 +78,13 @@ public abstract class SourcePrefHelper {
      */
     public boolean put(Collection<? extends SourceEntry> entries) {
         List<Map<String, String>> setting = serializeList(entries);
-        boolean unset = Main.pref.getListOfMaps(pref, null) == null;
+        boolean unset = Config.getPref().getListOfMaps(pref, null) == null;
         if (unset) {
             Collection<Map<String, String>> def = serializeList(getDefault());
             if (setting.equals(def))
                 return false;
         }
-        return Main.pref.putListOfMaps(pref, setting);
+        return Config.getPref().putListOfMaps(pref, setting);
     }
 
     private List<Map<String, String>> serializeList(Collection<? extends SourceEntry> entries) {

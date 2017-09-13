@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.MergeNodesAction;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -34,6 +33,7 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.MultiMap;
 
 /**
@@ -45,7 +45,7 @@ public class DuplicateNode extends Test {
 
     private static class NodeHash implements Hash<Object, Object> {
 
-        private final double precision = Main.pref.getDouble("validator.duplicatenodes.precision", 0.);
+        private final double precision = Config.getPref().getDouble("validator.duplicatenodes.precision", 0.);
 
         private LatLon roundCoord(LatLon coor) {
             return new LatLon(

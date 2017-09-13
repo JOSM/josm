@@ -65,6 +65,7 @@ import org.openstreetmap.josm.data.validation.tests.WronglyOrderedWays;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.ValidatorLayer;
 import org.openstreetmap.josm.gui.preferences.projection.ProjectionPreference;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -281,7 +282,7 @@ public final class OsmValidator {
     }
 
     private static void applyPrefs(Map<String, Test> tests, boolean beforeUpload) {
-        for (String testName : Main.pref.getList(beforeUpload
+        for (String testName : Config.getPref().getList(beforeUpload
         ? ValidatorPrefHelper.PREF_SKIP_TESTS_BEFORE_UPLOAD : ValidatorPrefHelper.PREF_SKIP_TESTS)) {
             Test test = tests.get(testName);
             if (test != null) {

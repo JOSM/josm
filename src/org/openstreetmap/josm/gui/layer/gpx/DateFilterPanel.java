@@ -18,6 +18,7 @@ import javax.swing.event.ChangeListener;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.widgets.DateEditorWithSlider;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 
 /**
@@ -104,7 +105,7 @@ public class DateFilterPanel extends JPanel {
     public void saveInPrefs() {
         Main.pref.putLong(prefDateMin, dateFrom.getDate().getTime());
         Main.pref.putLong(prefDateMax, dateTo.getDate().getTime());
-        Main.pref.putBoolean(prefDate0, noTimestampCb.isSelected());
+        Config.getPref().putBoolean(prefDate0, noTimestampCb.isSelected());
     }
 
     /**
@@ -116,7 +117,7 @@ public class DateFilterPanel extends JPanel {
         if (t1 != 0) dateFrom.setDate(new Date(t1));
         long t2 = Main.pref.getLong(prefDateMax, 0);
         if (t2 != 0) dateTo.setDate(new Date(t2));
-        noTimestampCb.setSelected(Main.pref.getBoolean(prefDate0, false));
+        noTimestampCb.setSelected(Config.getPref().getBoolean(prefDate0, false));
     }
 
     /**

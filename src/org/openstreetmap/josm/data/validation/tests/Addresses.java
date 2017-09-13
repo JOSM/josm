@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -24,6 +23,7 @@ import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
@@ -204,7 +204,7 @@ public class Addresses extends Test {
             return; // TODO handle multipolygon houses ?
         }
         if (centroid == null) return; // fix #8305
-        double maxDistance = Main.pref.getDouble("validator.addresses.max_street_distance", 200.0);
+        double maxDistance = Config.getPref().getDouble("validator.addresses.max_street_distance", 200.0);
         boolean hasIncompleteWays = false;
         for (Way streetPart : street) {
             for (Pair<Node, Node> chunk : streetPart.getNodePairs(false)) {

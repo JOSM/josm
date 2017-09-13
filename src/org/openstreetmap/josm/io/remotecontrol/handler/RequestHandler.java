@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -146,7 +147,7 @@ public abstract class RequestHandler {
          * older versions of WMSPlugin.
          */
         PermissionPrefWithDefault permissionPref = getPermissionPref();
-        if (permissionPref != null && permissionPref.pref != null && !Main.pref.getBoolean(permissionPref.pref, permissionPref.defaultVal)) {
+        if (permissionPref != null && permissionPref.pref != null && !Config.getPref().getBoolean(permissionPref.pref, permissionPref.defaultVal)) {
             String err = MessageFormat.format("RemoteControl: ''{0}'' forbidden by preferences", myCommand);
             Logging.info(err);
             throw new RequestHandlerForbiddenException(err);
@@ -155,7 +156,7 @@ public abstract class RequestHandler {
         /* Does the user want to confirm everything?
          * If yes, display specific confirmation message.
          */
-        if (Main.pref.getBoolean(globalConfirmationKey, globalConfirmationDefault)) {
+        if (Config.getPref().getBoolean(globalConfirmationKey, globalConfirmationDefault)) {
             // Ensure dialog box does not exceed main window size
             Integer maxWidth = (int) Math.max(200, Main.parent.getWidth()*0.6);
             String message = "<html><div>" + getPermissionMessage() +
@@ -275,7 +276,7 @@ public abstract class RequestHandler {
     protected boolean isLoadInNewLayer() {
         return args.get("new_layer") != null && !args.get("new_layer").isEmpty()
                 ? Boolean.parseBoolean(args.get("new_layer"))
-                : Main.pref.getBoolean(loadInNewLayerKey, loadInNewLayerDefault);
+                : Config.getPref().getBoolean(loadInNewLayerKey, loadInNewLayerDefault);
     }
 
     public void setSender(String sender) {

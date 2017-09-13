@@ -26,7 +26,6 @@ import javax.swing.KeyStroke;
 import javax.swing.border.EtchedBorder;
 import javax.swing.plaf.basic.BasicComboBoxEditor;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.data.osm.PrimitiveId;
 import org.openstreetmap.josm.data.osm.SimplePrimitiveId;
@@ -37,6 +36,7 @@ import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.OsmIdTextField;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitiveTypesComboBox;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
@@ -179,7 +179,7 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
      */
     protected void restorePrimitivesHistory(HistoryComboBox cbHistory) {
         List<String> cmtHistory = new LinkedList<>(
-                Main.pref.getList(getClass().getName() + ".primitivesHistory", new LinkedList<String>()));
+                Config.getPref().getList(getClass().getName() + ".primitivesHistory", new LinkedList<String>()));
         // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
         Collections.reverse(cmtHistory);
         cbHistory.setPossibleItems(cmtHistory);
@@ -192,7 +192,7 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
      */
     protected void remindPrimitivesHistory(HistoryComboBox cbHistory) {
         cbHistory.addCurrentItemToHistory();
-        Main.pref.putList(getClass().getName() + ".primitivesHistory", cbHistory.getHistory());
+        Config.getPref().putList(getClass().getName() + ".primitivesHistory", cbHistory.getHistory());
     }
 
     /**
@@ -207,9 +207,9 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
     @Override
     public void setupDialog() {
         setContent(panel, false);
-        cbType.setSelectedIndex(Main.pref.getInt("downloadprimitive.lasttype", 0));
+        cbType.setSelectedIndex(Config.getPref().getInt("downloadprimitive.lasttype", 0));
         tfId.setType(cbType.getType());
-        if (Main.pref.getBoolean("downloadprimitive.autopaste", true)) {
+        if (Config.getPref().getBoolean("downloadprimitive.autopaste", true)) {
             tryToPasteFromClipboard(tfId, cbType);
         }
         setDefaultButton(getContinueButtonIndex());
@@ -220,7 +220,7 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
     protected void tryToPasteFromClipboard(OsmIdTextField tfId, OsmPrimitiveTypesComboBox cbType) {
         String buf = ClipboardUtils.getClipboardStringContent();
         if (buf == null || buf.isEmpty()) return;
-        if (buf.length() > Main.pref.getInt("downloadprimitive.max-autopaste-length", 2000)) return;
+        if (buf.length() > Config.getPref().getInt("downloadprimitive.max-autopaste-length", 2000)) return;
         final List<SimplePrimitiveId> ids = SimplePrimitiveId.fuzzyParse(buf);
         if (!ids.isEmpty()) {
             final String parsedText = ids.stream().map(x -> x.getType().getAPIName().charAt(0) + String.valueOf(x.getUniqueId()))
@@ -243,7 +243,7 @@ public class OsmIdSelectionDialog extends ExtendedDialog implements WindowListen
 
     @Override public void windowClosed(WindowEvent e) {
         if (e != null && e.getComponent() == this && getValue() == getContinueButtonIndex()) {
-            Main.pref.putInt("downloadprimitive.lasttype", cbType.getSelectedIndex());
+            Config.getPref().putInt("downloadprimitive.lasttype", cbType.getSelectedIndex());
 
             if (!tfId.readIds()) {
                 JOptionPane.showMessageDialog(getParent(),

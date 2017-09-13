@@ -10,10 +10,10 @@ import javax.swing.BorderFactory;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapView;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.template_engine.TemplateEngineDataProvider;
 
 /**
@@ -66,7 +66,7 @@ public class ButtonMarker extends Marker {
         b.paintBorder(mv, g, r.x, r.y, r.width, r.height);
 
         String labelText = getText();
-        if (labelText != null && Main.pref.getBoolean("marker.buttonlabels", true)) {
+        if (labelText != null && Config.getPref().getBoolean("marker.buttonlabels", true)) {
             g.drawString(labelText, screen.x+4, screen.y+2);
         }
     }

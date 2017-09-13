@@ -23,6 +23,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -142,7 +143,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
         } else {
             authMethod = "oauth";
         }
-        Main.pref.put("osm-server.auth-method", authMethod);
+        Config.getPref().put("osm-server.auth-method", authMethod);
         if ("basic".equals(authMethod)) {
             // save username and password and clear the OAuth token
             pnlBasicAuthPreferences.saveToPreferences();

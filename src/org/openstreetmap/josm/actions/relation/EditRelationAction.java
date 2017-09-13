@@ -18,6 +18,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -69,7 +70,7 @@ public class EditRelationAction extends AbstractRelationAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (!isEnabled() || relations.isEmpty()) return;
-        if (relations.size() > Main.pref.getInt("warn.open.maxrelations", 5) &&
+        if (relations.size() > Config.getPref().getInt("warn.open.maxrelations", 5) &&
             /* I18N english text for value 1 makes no real sense, never called for values <= maxrel (usually 5) */
             JOptionPane.OK_OPTION != JOptionPane.showConfirmDialog(Main.parent,
                     "<html>"+trn("You are about to open <b>{0}</b> different relation editor simultaneously.<br/>Do you want to continue?",

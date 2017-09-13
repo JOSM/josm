@@ -9,9 +9,9 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.JToggleButton;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
 import org.openstreetmap.josm.actions.ExpertToggleAction.ExpertModeChangeListener;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Destroyable;
 
@@ -92,12 +92,12 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
 
     @Override
     public void applyButtonHiddenPreferences() {
-        boolean alwaysHideDisabled = Main.pref.getBoolean("sidetoolbar.hideDisabledButtons", false);
+        boolean alwaysHideDisabled = Config.getPref().getBoolean("sidetoolbar.hideDisabledButtons", false);
         if (!isEnabled() && (hideIfDisabled || alwaysHideDisabled)) {
             setVisible(false);  // hide because of disabled button
         } else {
             boolean hiddenFlag = false;
-            String hiddenFlagStr = Main.pref.get(getPreferenceKey(), null);
+            String hiddenFlagStr = Config.getPref().get(getPreferenceKey(), null);
             if (hiddenFlagStr == null) {
                 if (isExpert && !ExpertToggleAction.isExpert()) {
                     hiddenFlag = true;
@@ -117,9 +117,9 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
         }
         if ((b && isExpert && !ExpertToggleAction.isExpert()) ||
             (!b && isExpert && ExpertToggleAction.isExpert())) {
-            Main.pref.put(getPreferenceKey(), null);
+            Config.getPref().put(getPreferenceKey(), null);
         } else {
-            Main.pref.putBoolean(getPreferenceKey(), b);
+            Config.getPref().putBoolean(getPreferenceKey(), b);
         }
     }
 

@@ -14,11 +14,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.ChangeNotifier;
 import org.openstreetmap.josm.plugins.PluginException;
 import org.openstreetmap.josm.plugins.PluginHandler;
 import org.openstreetmap.josm.plugins.PluginInformation;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -39,7 +39,7 @@ public class PluginPreferencesModel extends ChangeNotifier {
      */
     public PluginPreferencesModel() {
         currentActivePlugins = new HashSet<>();
-        currentActivePlugins.addAll(Main.pref.getList("plugins"));
+        currentActivePlugins.addAll(Config.getPref().getList("plugins"));
     }
 
     /**
@@ -79,7 +79,7 @@ public class PluginPreferencesModel extends ChangeNotifier {
         sort();
         filterDisplayedPlugins(filterExpression);
         Set<String> activePlugins = new HashSet<>();
-        activePlugins.addAll(Main.pref.getList("plugins"));
+        activePlugins.addAll(Config.getPref().getList("plugins"));
         for (PluginInformation pi: availablePlugins) {
             if (selectedPluginsMap.get(pi) == null && activePlugins.contains(pi.name)) {
                 selectedPluginsMap.put(pi, Boolean.TRUE);
@@ -229,7 +229,7 @@ public class PluginPreferencesModel extends ChangeNotifier {
      * Initializes the model from preferences
      */
     public void initFromPreferences() {
-        Collection<String> enabledPlugins = Main.pref.getList("plugins", null);
+        Collection<String> enabledPlugins = Config.getPref().getList("plugins", null);
         if (enabledPlugins == null) {
             this.selectedPluginsMap.clear();
             return;

@@ -43,6 +43,7 @@ import org.openstreetmap.josm.data.osm.BBox;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.gui.layer.AbstractCachedTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -150,7 +151,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
 
         uncachedLoader = new OsmTileLoader(this);
         uncachedLoader.headers.putAll(headers);
-        setZoomContolsVisible(Main.pref.getBoolean("slippy_map_chooser.zoomcontrols", false));
+        setZoomContolsVisible(Config.getPref().getBoolean("slippy_map_chooser.zoomcontrols", false));
         setMapMarkerVisible(false);
         setMinimumSize(new Dimension(350, 350 / 2));
         // We need to set an initial size - this prevents a wrong zoom selection
@@ -159,9 +160,9 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         if (cachedLoader == null) {
             setFileCacheEnabled(false);
         } else {
-            setFileCacheEnabled(Main.pref.getBoolean("slippy_map_chooser.file_cache", true));
+            setFileCacheEnabled(Config.getPref().getBoolean("slippy_map_chooser.file_cache", true));
         }
-        setMaxTilesInMemory(Main.pref.getInt("slippy_map_chooser.max_tiles", 1000));
+        setMaxTilesInMemory(Config.getPref().getInt("slippy_map_chooser.max_tiles", 1000));
 
         List<TileSource> tileSources = getAllTileSources();
 

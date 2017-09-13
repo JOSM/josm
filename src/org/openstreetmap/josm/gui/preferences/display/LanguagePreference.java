@@ -17,13 +17,13 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.preferences.PreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.PreferenceSettingFactory;
 import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.LanguageInfo;
@@ -54,7 +54,7 @@ public class LanguagePreference implements SubPreferenceSetting {
         LanguageComboBoxModel model = new LanguageComboBoxModel();
         // Selecting the language BEFORE the JComboBox listens to model changes speed up initialization by ~35ms (see #7386)
         // See https://stackoverflow.com/questions/3194958/fast-replacement-for-jcombobox-basiccomboboxui
-        model.selectLanguage(Main.pref.get(LANGUAGE));
+        model.selectLanguage(Config.getPref().get(LANGUAGE));
         langCombo = new JosmComboBox<>(model);
         langCombo.setRenderer(new LanguageCellRenderer());
 
@@ -72,9 +72,9 @@ public class LanguagePreference implements SubPreferenceSetting {
     @Override
     public boolean ok() {
         if (langCombo.getSelectedItem() == null)
-            return Main.pref.put(LANGUAGE, null);
+            return Config.getPref().put(LANGUAGE, null);
         else
-            return Main.pref.put(LANGUAGE,
+            return Config.getPref().put(LANGUAGE,
                     LanguageInfo.getJOSMLocaleCode((Locale) langCombo.getSelectedItem()));
     }
 

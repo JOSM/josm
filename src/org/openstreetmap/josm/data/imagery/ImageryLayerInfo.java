@@ -24,6 +24,7 @@ import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.OfflineAccessException;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.imagery.ImageryReader;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 import org.xml.sax.SAXException;
@@ -56,7 +57,7 @@ public class ImageryLayerInfo {
      * @since 7434
      */
     public static Collection<String> getImageryLayersSites() {
-        return Main.pref.getList("imagery.layers.sites", Arrays.asList(DEFAULT_LAYER_SITES));
+        return Config.getPref().getList("imagery.layers.sites", Arrays.asList(DEFAULT_LAYER_SITES));
     }
 
     private ImageryLayerInfo() {
@@ -235,7 +236,7 @@ public class ImageryLayerInfo {
     public void updateEntriesFromDefaults(boolean dropold) {
         // add new default entries to the user selection
         boolean changed = false;
-        Collection<String> knownDefaults = new TreeSet<>(Main.pref.getList("imagery.layers.default"));
+        Collection<String> knownDefaults = new TreeSet<>(Config.getPref().getList("imagery.layers.default"));
         Collection<String> newKnownDefaults = new TreeSet<>();
         for (ImageryInfo def : defaultLayers) {
             if (def.isDefaultEntry()) {
@@ -278,7 +279,7 @@ public class ImageryLayerInfo {
         if (!dropold && !knownDefaults.isEmpty()) {
             newKnownDefaults.addAll(knownDefaults);
         }
-        Main.pref.putList("imagery.layers.default", new ArrayList<>(newKnownDefaults));
+        Config.getPref().putList("imagery.layers.default", new ArrayList<>(newKnownDefaults));
 
         // automatically update user entries with same id as a default entry
         for (int i = 0; i < layers.size(); i++) {

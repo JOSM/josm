@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.osm.Node;
@@ -32,6 +31,7 @@ import org.openstreetmap.josm.gui.mappaint.styleelement.StyleElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.TextElement;
 import org.openstreetmap.josm.gui.mappaint.styleelement.TextLabel;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -73,7 +73,7 @@ public class ElemStyles implements PreferenceChangedListener {
      */
     public ElemStyles() {
         styleSources = new ArrayList<>();
-        Main.pref.addPreferenceChangeListener(this);
+        Config.getPref().addPreferenceChangeListener(this);
     }
 
     /**
@@ -516,7 +516,7 @@ public class ElemStyles implements PreferenceChangedListener {
     /**
      * Determines whether primitive has area-type {@link StyleElement}s, but
      * no line-type StyleElements.
-     * 
+     *
      * {@link TextElement} is ignored, as it can be both line and area-type.
      * @param p the OSM primitive
      * @return {@code true} if primitive has area elements, but no line elements
@@ -550,7 +550,7 @@ public class ElemStyles implements PreferenceChangedListener {
      * as soon as this preference value is changed by the user.
      *
      * In addition, it adds an intermediate cache for the preference values,
-     * as frequent preference lookup (using <code>Main.pref.get()</code>) for
+     * as frequent preference lookup (using <code>Config.getPref().get()</code>) for
      * each primitive can be slow during rendering.
      *
      * @param key preference key
@@ -563,7 +563,7 @@ public class ElemStyles implements PreferenceChangedListener {
         if (preferenceCache.containsKey(key)) {
             res = preferenceCache.get(key);
         } else {
-            res = Main.pref.get(key, null);
+            res = Config.getPref().get(key, null);
             preferenceCache.put(key, res);
         }
         return res != null ? res : def;

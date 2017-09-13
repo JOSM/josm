@@ -103,6 +103,7 @@ import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.GBC;
@@ -429,12 +430,12 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
      */
     @Override public void paint(final Graphics2D g, final MapView mv, Bounds box) {
         boolean active = mv.getLayerManager().getActiveLayer() == this;
-        boolean inactive = !active && Main.pref.getBoolean("draw.data.inactive_color", true);
+        boolean inactive = !active && Config.getPref().getBoolean("draw.data.inactive_color", true);
         boolean virtual = !inactive && mv.isVirtualNodesEnabled();
 
         // draw the hatched area for non-downloaded region. only draw if we're the active
         // and bounds are defined; don't draw for inactive layers or loaded GPX files etc
-        if (active && Main.pref.getBoolean("draw.data.downloaded_area", true) && !data.getDataSources().isEmpty()) {
+        if (active && Config.getPref().getBoolean("draw.data.downloaded_area", true) && !data.getDataSources().isEmpty()) {
             // initialize area with current viewport
             Rectangle b = mv.getBounds();
             // on some platforms viewport bounds seem to be offset from the left,
@@ -871,7 +872,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
                 gpxLayer.setAssociatedFile(new File(getAssociatedFile().getParentFile(), filename));
             }
             MainApplication.getLayerManager().addLayer(gpxLayer);
-            if (Main.pref.getBoolean("marker.makeautomarkers", true) && !gpxData.waypoints.isEmpty()) {
+            if (Config.getPref().getBoolean("marker.makeautomarkers", true) && !gpxData.waypoints.isEmpty()) {
                 MainApplication.getLayerManager().addLayer(new MarkerLayer(gpxData, tr("Converted from: {0}", getName()), null, gpxLayer));
             }
             MainApplication.getLayerManager().removeLayer(OsmDataLayer.this);
@@ -1088,7 +1089,7 @@ public class OsmDataLayer extends AbstractModifiableLayer implements Listener, D
         String extension = PROPERTY_SAVE_EXTENSION.get();
         File file = getAssociatedFile();
         if (file == null && isRenamed()) {
-            StringBuilder filename = new StringBuilder(Main.pref.get("lastDirectory")).append('/').append(getName());
+            StringBuilder filename = new StringBuilder(Config.getPref().get("lastDirectory")).append('/').append(getName());
             if (!OsmImporter.FILE_FILTER.acceptName(filename.toString())) {
                 filename.append('.').append(extension);
             }

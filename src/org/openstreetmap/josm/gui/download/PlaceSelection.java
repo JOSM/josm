@@ -54,6 +54,7 @@ import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.io.NameFinder;
 import org.openstreetmap.josm.io.NameFinder.SearchResult;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -104,7 +105,7 @@ public class PlaceSelection implements DownloadSelection {
 
         lpanel.add(new JLabel(tr("Choose the server for searching:")));
         lpanel.add(server);
-        String s = Main.pref.get("namefinder.server", SERVERS[0].name);
+        String s = Config.getPref().get("namefinder.server", SERVERS[0].name);
         for (int i = 0; i < SERVERS.length; ++i) {
             if (SERVERS[i].name.equals(s)) {
                 server.setSelectedIndex(i);
@@ -114,7 +115,7 @@ public class PlaceSelection implements DownloadSelection {
 
         cbSearchExpression = new HistoryComboBox();
         cbSearchExpression.setToolTipText(tr("Enter a place name to search for"));
-        List<String> cmtHistory = new LinkedList<>(Main.pref.getList(HISTORY_KEY, new LinkedList<String>()));
+        List<String> cmtHistory = new LinkedList<>(Config.getPref().getList(HISTORY_KEY, new LinkedList<String>()));
         Collections.reverse(cmtHistory);
         cbSearchExpression.setPossibleItems(cmtHistory);
         lpanel.add(cbSearchExpression);
@@ -188,7 +189,7 @@ public class PlaceSelection implements DownloadSelection {
             if (!isEnabled() || cbSearchExpression.getText().trim().isEmpty())
                 return;
             cbSearchExpression.addCurrentItemToHistory();
-            Main.pref.putList(HISTORY_KEY, cbSearchExpression.getHistory());
+            Config.getPref().putList(HISTORY_KEY, cbSearchExpression.getHistory());
             NameQueryTask task = new NameQueryTask(cbSearchExpression.getText());
             MainApplication.worker.submit(task);
         }
@@ -226,7 +227,7 @@ public class PlaceSelection implements DownloadSelection {
             super(tr("Querying name server"), false /* don't ignore exceptions */);
             this.searchExpression = searchExpression;
             useserver = (Server) server.getSelectedItem();
-            Main.pref.put("namefinder.server", useserver.name);
+            Config.getPref().put("namefinder.server", useserver.name);
         }
 
         @Override

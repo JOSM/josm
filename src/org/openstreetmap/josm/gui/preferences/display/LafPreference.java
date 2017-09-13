@@ -38,6 +38,7 @@ import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.widgets.FileChooserManager;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.date.DateUtils;
@@ -123,16 +124,16 @@ public class LafPreference implements SubPreferenceSetting {
 
         // Show splash screen on startup
         showSplashScreen.setToolTipText(tr("Show splash screen at startup"));
-        showSplashScreen.setSelected(Main.pref.getBoolean("draw.splashscreen", true));
+        showSplashScreen.setSelected(Config.getPref().getBoolean("draw.splashscreen", true));
         panel.add(showSplashScreen, GBC.eop().insets(20, 0, 0, 0));
 
         // Show ID in selection
         showID.setToolTipText(tr("Show object ID in selection lists"));
-        showID.setSelected(Main.pref.getBoolean("osm-primitives.showid", false));
+        showID.setSelected(Config.getPref().getBoolean("osm-primitives.showid", false));
 
         // Show localized names
         showLocalizedName.setToolTipText(tr("Show localized name in selection lists, if available"));
-        showLocalizedName.setSelected(Main.pref.getBoolean("osm-primitives.localize-name", true));
+        showLocalizedName.setSelected(Config.getPref().getBoolean("osm-primitives.localize-name", true));
         ExpertToggleAction.addVisibilitySwitcher(showLocalizedName);
 
         modeless.setToolTipText(tr("Do not require to switch modes (potlatch style workflow)"));
@@ -201,13 +202,13 @@ public class LafPreference implements SubPreferenceSetting {
     @Override
     public boolean ok() {
         boolean mod = false;
-        Main.pref.putBoolean("draw.splashscreen", showSplashScreen.isSelected());
-        Main.pref.putBoolean("osm-primitives.showid", showID.isSelected());
-        Main.pref.putBoolean("osm-primitives.localize-name", showLocalizedName.isSelected());
+        Config.getPref().putBoolean("draw.splashscreen", showSplashScreen.isSelected());
+        Config.getPref().putBoolean("osm-primitives.showid", showID.isSelected());
+        Config.getPref().putBoolean("osm-primitives.localize-name", showLocalizedName.isSelected());
         MapFrame.MODELESS.put(modeless.isSelected());
-        Main.pref.putBoolean(ToggleDialog.PROP_DYNAMIC_BUTTONS.getKey(), dynamicButtons.isSelected());
-        Main.pref.putBoolean(DateUtils.PROP_ISO_DATES.getKey(), isoDates.isSelected());
-        Main.pref.putBoolean(FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.getKey(), nativeFileChoosers.isSelected());
+        Config.getPref().putBoolean(ToggleDialog.PROP_DYNAMIC_BUTTONS.getKey(), dynamicButtons.isSelected());
+        Config.getPref().putBoolean(DateUtils.PROP_ISO_DATES.getKey(), isoDates.isSelected());
+        Config.getPref().putBoolean(FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.getKey(), nativeFileChoosers.isSelected());
         MapMover.PROP_ZOOM_REVERSE_WHEEL.put(zoomReverseWheel.isSelected());
         NavigatableComponent.PROP_ZOOM_INTERMEDIATE_STEPS.put(zoomIntermediateSteps.isSelected());
         NavigatableComponent.PROP_ZOOM_RATIO.put(Math.pow(2, 1/(double) spinZoomRatio.getModel().getValue()));

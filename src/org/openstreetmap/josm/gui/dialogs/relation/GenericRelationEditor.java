@@ -99,6 +99,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetHandler;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -428,7 +429,7 @@ public class GenericRelationEditor extends RelationEditor {
                     }
                 }
         );
-        tfRole.setText(Main.pref.get("relation.editor.generic.lastrole", ""));
+        tfRole.setText(Config.getPref().get("relation.editor.generic.lastrole", ""));
         return tfRole;
     }
 

@@ -19,9 +19,9 @@ import javax.swing.text.Document;
 import javax.swing.text.PlainDocument;
 import javax.swing.text.StyleConstants;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.CellEditorSupport;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -78,7 +78,7 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
 
             String currentText = getText(0, getLength());
             // if the text starts with a number we don't autocomplete
-            if (Main.pref.getBoolean("autocomplete.dont_complete_numbers", true)) {
+            if (Config.getPref().getBoolean("autocomplete.dont_complete_numbers", true)) {
                 try {
                     Long.parseLong(str);
                     if (currentText.isEmpty()) {

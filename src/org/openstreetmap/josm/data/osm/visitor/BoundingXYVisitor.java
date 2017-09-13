@@ -16,6 +16,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Calculates the total bounding rectangle of a series of {@link OsmPrimitive} objects, using the
@@ -125,7 +126,7 @@ public class BoundingXYVisitor implements OsmPrimitiveVisitor {
      * equal <code>null</code>) this method does not do anything.
      */
     public void enlargeBoundingBox() {
-        enlargeBoundingBox(Main.pref.getDouble("edit.zoom-enlarge-bbox", 0.002));
+        enlargeBoundingBox(Config.getPref().getDouble("edit.zoom-enlarge-bbox", 0.002));
     }
 
     /**

@@ -20,7 +20,6 @@ import java.util.TreeSet;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.relation.DownloadSelectedIncompleteMembersAction;
 import org.openstreetmap.josm.command.AddCommand;
 import org.openstreetmap.josm.command.ChangeCommand;
@@ -42,6 +41,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.DownloadRelationTask;
 import org.openstreetmap.josm.gui.dialogs.relation.RelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.sort.RelationSorter;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.Utils;
@@ -114,7 +114,7 @@ public class CreateMultipolygonAction extends JosmAction {
                     // uses 'SwingUtilities.invokeLater' to fire events so we have to do the same.)
                     SwingUtilities.invokeLater(() -> {
                             MainApplication.getMap().relationListDialog.selectRelation(relation);
-                            if (Main.pref.getBoolean("multipoly.show-relation-editor", false)) {
+                            if (Config.getPref().getBoolean("multipoly.show-relation-editor", false)) {
                                 //Open relation edit window, if set up in preferences
                                 RelationEditor editor = RelationEditor.getEditor(
                                         MainApplication.getLayerManager().getEditLayer(), relation, null);
@@ -381,7 +381,7 @@ public class CreateMultipolygonAction extends JosmAction {
         }
 
         // filter out empty key conflicts - we need second iteration
-        if (!Main.pref.getBoolean("multipoly.alltags", false)) {
+        if (!Config.getPref().getBoolean("multipoly.alltags", false)) {
             for (RelationMember m : relation.getMembers()) {
                 if (m.hasRole() && "outer".equals(m.getRole()) && m.isWay()) {
                     for (String key : values.keySet()) {
@@ -397,7 +397,7 @@ public class CreateMultipolygonAction extends JosmAction {
             values.remove(key);
         }
 
-        for (String linearTag : Main.pref.getList("multipoly.lineartagstokeep", DEFAULT_LINEAR_TAGS)) {
+        for (String linearTag : Config.getPref().getList("multipoly.lineartagstokeep", DEFAULT_LINEAR_TAGS)) {
             values.remove(linearTag);
         }
 
@@ -407,7 +407,7 @@ public class CreateMultipolygonAction extends JosmAction {
         values.put("area", OsmUtils.TRUE_VALUE);
 
         List<Command> commands = new ArrayList<>();
-        boolean moveTags = Main.pref.getBoolean("multipoly.movetags", true);
+        boolean moveTags = Config.getPref().getBoolean("multipoly.movetags", true);
 
         for (Entry<String, String> entry : values.entrySet()) {
             List<OsmPrimitive> affectedWays = new ArrayList<>();

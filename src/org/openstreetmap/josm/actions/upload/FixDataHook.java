@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.SequenceCommand;
@@ -20,6 +19,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Fixes defective data entries for all modified objects before upload
@@ -186,7 +186,7 @@ public class FixDataHook implements UploadHook {
      */
     @Override
     public boolean checkUpload(APIDataSet apiDataSet) {
-        if (Main.pref.getBoolean("fix.data.on.upload", true)) {
+        if (Config.getPref().getBoolean("fix.data.on.upload", true)) {
             Collection<Command> cmds = new LinkedList<>();
 
             for (OsmPrimitive osm : apiDataSet.getPrimitives()) {

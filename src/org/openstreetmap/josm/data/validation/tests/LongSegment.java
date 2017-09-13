@@ -8,7 +8,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -18,6 +17,7 @@ import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Checks for very long segments.
@@ -111,7 +111,7 @@ public class LongSegment extends Test {
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        maxlength = Main.pref.getInt("validator.maximum.segment.length", 15_000);
+        maxlength = Config.getPref().getInt("validator.maximum.segment.length", 15_000);
         reported = new HashSet<>();
         visitedWays = new HashSet<>();
     }

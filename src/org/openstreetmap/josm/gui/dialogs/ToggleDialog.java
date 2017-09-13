@@ -68,6 +68,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.gui.util.WindowGeometry.WindowGeometryException;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -244,9 +245,9 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         String helpId = "Dialog/"+getClass().getName().substring(getClass().getName().lastIndexOf('.')+1);
         toggleAction.putValue("help", helpId.substring(0, helpId.length()-6));
 
-        isShowing = Main.pref.getBoolean(preferencePrefix+".visible", defShow);
-        isDocked = Main.pref.getBoolean(preferencePrefix+".docked", true);
-        isCollapsed = Main.pref.getBoolean(preferencePrefix+".minimized", false);
+        isShowing = Config.getPref().getBoolean(preferencePrefix+".visible", defShow);
+        isDocked = Config.getPref().getBoolean(preferencePrefix+".docked", true);
+        isCollapsed = Config.getPref().getBoolean(preferencePrefix+".minimized", false);
         buttonHiding = propButtonHiding.get();
 
         /** show the minimize button */
@@ -256,7 +257,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
         setBorder(BorderFactory.createEtchedBorder());
 
         MainApplication.redirectToMainContentPane(this);
-        Main.pref.addPreferenceChangeListener(this);
+        Config.getPref().addPreferenceChangeListener(this);
 
         registerInWindowMenu();
     }
@@ -467,7 +468,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             MainApplication.getMenu().windowMenu.remove(windowMenuItem);
         }
         Toolkit.getDefaultToolkit().removeAWTEventListener(this);
-        Main.pref.removePreferenceChangeListener(this);
+        Config.getPref().removePreferenceChangeListener(this);
         destroyComponents(this, false);
     }
 
@@ -772,7 +773,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     protected void setIsShowing(boolean val) {
         isShowing = val;
-        Main.pref.putBoolean(preferencePrefix+".visible", val);
+        Config.getPref().putBoolean(preferencePrefix+".visible", val);
         stateChanged();
     }
 
@@ -781,13 +782,13 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             buttonsPanel.setVisible(!val || buttonHiding != ButtonHidingType.ALWAYS_HIDDEN);
         }
         isDocked = val;
-        Main.pref.putBoolean(preferencePrefix+".docked", val);
+        Config.getPref().putBoolean(preferencePrefix+".docked", val);
         stateChanged();
     }
 
     protected void setIsCollapsed(boolean val) {
         isCollapsed = val;
-        Main.pref.putBoolean(preferencePrefix+".minimized", val);
+        Config.getPref().putBoolean(preferencePrefix+".minimized", val);
         stateChanged();
     }
 
@@ -924,7 +925,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
                 if (buttonRow == null) {
                     continue;
                 }
-                final JPanel buttonRowPanel = new JPanel(Main.pref.getBoolean("dialog.align.left", false)
+                final JPanel buttonRowPanel = new JPanel(Config.getPref().getBoolean("dialog.align.left", false)
                         ? new FlowLayout(FlowLayout.LEFT) : new GridLayout(1, buttonRow.size()));
                 buttonsPanel.add(buttonRowPanel);
                 for (SideButton button : buttonRow) {

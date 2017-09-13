@@ -22,11 +22,11 @@ import javax.swing.text.JTextComponent;
 import javax.swing.text.PlainDocument;
 import javax.swing.text.StyleConstants;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -139,7 +139,7 @@ public class AutoCompletingComboBox extends JosmComboBox<AutoCompletionListItem>
             // item for lookup and selection
             Object item;
             // if the text is a number we don't autocomplete
-            if (Main.pref.getBoolean("autocomplete.dont_complete_numbers", true)) {
+            if (Config.getPref().getBoolean("autocomplete.dont_complete_numbers", true)) {
                 try {
                     Long.parseLong(str);
                     if (!curText.isEmpty())

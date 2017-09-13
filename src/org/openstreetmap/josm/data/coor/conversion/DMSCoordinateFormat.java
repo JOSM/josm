@@ -5,8 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.DecimalFormat;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.ILatLon;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Coordinate format that converts a coordinate to degrees, minutes and seconds.
@@ -16,7 +16,7 @@ public class DMSCoordinateFormat extends AbstractCoordinateFormat {
 
     private static final DecimalFormat DMS_MINUTE_FORMATTER = new DecimalFormat("00");
     private static final DecimalFormat DMS_SECOND_FORMATTER = new DecimalFormat(
-            Main.pref == null ? "00.0" : Main.pref.get("latlon.dms.decimal-format", "00.0"));
+            Config.getPref() == null ? "00.0" : Config.getPref().get("latlon.dms.decimal-format", "00.0"));
     private static final String DMS60 = DMS_SECOND_FORMATTER.format(60.0);
     private static final String DMS00 = DMS_SECOND_FORMATTER.format(0.0);
 

@@ -76,6 +76,7 @@ import org.openstreetmap.josm.gui.widgets.CompileSearchTextDecorator;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -121,7 +122,7 @@ public class RelationListDialog extends ToggleDialog
     private transient JMenuItem addSelectionToRelationMenuItem;
 
     private final transient HighlightHelper highlightHelper = new HighlightHelper();
-    private final boolean highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
+    private final boolean highlightEnabled = Config.getPref().getBoolean("draw.target-highlight", true);
     private final transient RecentRelationsAction recentRelationsAction;
 
     /**

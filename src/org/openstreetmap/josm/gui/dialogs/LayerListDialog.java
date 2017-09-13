@@ -65,13 +65,14 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
+import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
 import org.openstreetmap.josm.gui.util.MultikeyActionsHandler;
 import org.openstreetmap.josm.gui.util.MultikeyShortcutAction.MultikeyInfo;
-import org.openstreetmap.josm.gui.layer.NativeScaleLayer;
 import org.openstreetmap.josm.gui.widgets.DisableShortcutsOnFocusGainedTextField;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.gui.widgets.ScrollableTable;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -537,7 +538,7 @@ public class LayerListDialog extends ToggleDialog {
             if (isActiveLayer(layer)) {
                 label.setFont(label.getFont().deriveFont(Font.BOLD));
             }
-            if (Main.pref.getBoolean("dialog.layer.colorname", true)) {
+            if (Config.getPref().getBoolean("dialog.layer.colorname", true)) {
                 AbstractProperty<Color> prop = layer.getColorProperty();
                 Color c = prop == null ? null : prop.get();
                 if (c == null || !model.getLayers().stream()

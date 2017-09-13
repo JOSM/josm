@@ -28,6 +28,7 @@ import org.openstreetmap.josm.gui.preferences.server.ProxyPreferenceListener;
 import org.openstreetmap.josm.gui.widgets.JosmEditorPane;
 import org.openstreetmap.josm.io.CacheCustomContent;
 import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
@@ -94,9 +95,9 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
         protected byte[] updateData() throws IOException {
             String motd = new WikiReader().readLang("StartupPage");
             // Save this to prefs in case JOSM is updated so MOTD can be refreshed
-            Main.pref.putInt("cache.motd.html.version", myVersion);
-            Main.pref.put("cache.motd.html.java", myJava);
-            Main.pref.put("cache.motd.html.lang", myLang);
+            Config.getPref().putInt("cache.motd.html.version", myVersion);
+            Config.getPref().put("cache.motd.html.java", myJava);
+            Config.getPref().put("cache.motd.html.lang", myLang);
             return motd.getBytes(StandardCharsets.UTF_8);
         }
 
@@ -114,9 +115,9 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
             // 1. Not yet written - but so isn't the interval variable, so it gets updated anyway
             // 2. Cannot be written (e.g. while developing). Obviously we don't want to update
             // everytime because of something we can't read.
-            return (Main.pref.getInt("cache.motd.html.version", -999) == myVersion)
-            && Main.pref.get("cache.motd.html.java").equals(myJava)
-            && Main.pref.get("cache.motd.html.lang").equals(myLang);
+            return (Config.getPref().getInt("cache.motd.html.version", -999) == myVersion)
+            && Config.getPref().get("cache.motd.html.java").equals(myJava)
+            && Config.getPref().get("cache.motd.html.lang").equals(myLang);
         }
     }
 
@@ -145,7 +146,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
     private void getMOTD() {
         // Asynchronously get MOTD to speed-up JOSM startup
         Thread t = new Thread((Runnable) () -> {
-            if (!contentInitialized && Main.pref.getBoolean("help.displaymotd", true)) {
+            if (!contentInitialized && Config.getPref().getBoolean("help.displaymotd", true)) {
                 try {
                     content = new MotdContent().updateIfRequiredString();
                     contentInitialized = true;

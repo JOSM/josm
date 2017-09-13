@@ -39,6 +39,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListen
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.widgets.OsmPrimitivesTable;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * The table of members a selected relation has.
@@ -128,7 +129,7 @@ public class MemberTable extends OsmPrimitivesTable implements IMemberModelListe
     };
 
     private void initHighlighting() {
-        highlightEnabled = Main.pref.getBoolean("draw.target-highlight", true);
+        highlightEnabled = Config.getPref().getBoolean("draw.target-highlight", true);
         if (!highlightEnabled) return;
         getMemberTableModel().getSelectionModel().addListSelectionListener(highlighterListener);
         if (MainApplication.isDisplayingMapView()) {

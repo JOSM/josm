@@ -17,6 +17,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -65,7 +66,7 @@ public class RenameLayerAction extends AbstractAction {
         panel.add(filerename);
         filerename.setEnabled(file != null);
         if (filerename.isEnabled()) {
-            filerename.setSelected(Main.pref.getBoolean("layer.rename-file", true));
+            filerename.setSelected(Config.getPref().getBoolean("layer.rename-file", true));
         }
 
         final JOptionPane optionPane = new InitialValueOptionPane(panel, name);
@@ -80,7 +81,7 @@ public class RenameLayerAction extends AbstractAction {
 
         String nameText = name.getText();
         if (filerename.isEnabled()) {
-            Main.pref.putBoolean("layer.rename-file", filerename.isSelected());
+            Config.getPref().putBoolean("layer.rename-file", filerename.isSelected());
             if (filerename.isSelected()) {
                 String newname = nameText;
                 if (newname.indexOf('/') == -1 && newname.indexOf('\\') == -1) {

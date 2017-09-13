@@ -16,9 +16,9 @@ import javax.swing.JSeparator;
 import javax.swing.event.MenuEvent;
 import javax.swing.event.MenuListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.OpenFileAction.OpenFileTask;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -57,7 +57,7 @@ public class RecentlyOpenedFilesMenu extends JMenu {
 
     private void rebuild() {
         removeAll();
-        Collection<String> fileHistory = Main.pref.getList("file-open.history");
+        Collection<String> fileHistory = Config.getPref().getList("file-open.history");
 
         for (final String file : fileHistory) {
             add(new OpenRecentAction(file));
@@ -100,7 +100,7 @@ public class RecentlyOpenedFilesMenu extends JMenu {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Main.pref.putList("file-open.history", null);
+            Config.getPref().putList("file-open.history", null);
         }
     }
 }

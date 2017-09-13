@@ -12,9 +12,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.NavigatableComponent;
 import org.openstreetmap.josm.plugins.PluginHandler;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -150,7 +150,7 @@ public final class MapRendererFactory {
 
     private MapRendererFactory() {
         registerDefaultRenderers();
-        String rendererClassName = Main.pref.get(PREF_KEY_RENDERER_CLASS_NAME, null);
+        String rendererClassName = Config.getPref().get(PREF_KEY_RENDERER_CLASS_NAME, null);
         if (rendererClassName != null) {
             activateMapRenderer(rendererClassName);
         } else {
@@ -273,7 +273,7 @@ public final class MapRendererFactory {
                     MessageFormat.format("Class ''{0}'' not registered as renderer. Can''t activate it.", renderer.getName())
             );
         this.activeRenderer = renderer;
-        Main.pref.put(PREF_KEY_RENDERER_CLASS_NAME, activeRenderer.getName());
+        Config.getPref().put(PREF_KEY_RENDERER_CLASS_NAME, activeRenderer.getName());
 
     }
 

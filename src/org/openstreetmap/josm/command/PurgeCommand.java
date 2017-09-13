@@ -15,7 +15,6 @@ import java.util.Set;
 
 import javax.swing.Icon;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.conflict.Conflict;
 import org.openstreetmap.josm.data.conflict.ConflictCollection;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -31,6 +30,7 @@ import org.openstreetmap.josm.data.osm.Storage;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WayData;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -383,7 +383,7 @@ public class PurgeCommand extends Command {
             }
 
         // Add untagged way nodes. Do not add nodes that have other referrers not yet to-be-purged.
-        if (Main.pref.getBoolean("purge.add_untagged_waynodes", true)) {
+        if (Config.getPref().getBoolean("purge.add_untagged_waynodes", true)) {
             Set<OsmPrimitive> wayNodes = new HashSet<>();
             for (OsmPrimitive osm : toPurgeChecked) {
                 if (osm instanceof Way) {
@@ -408,7 +408,7 @@ public class PurgeCommand extends Command {
             }
         }
 
-        if (Main.pref.getBoolean("purge.add_relations_with_only_incomplete_members", true)) {
+        if (Config.getPref().getBoolean("purge.add_relations_with_only_incomplete_members", true)) {
             Set<Relation> relSet = new HashSet<>();
             for (OsmPrimitive osm : toPurgeChecked) {
                 for (OsmPrimitive parent : osm.getReferrers()) {

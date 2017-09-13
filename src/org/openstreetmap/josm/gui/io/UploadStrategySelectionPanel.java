@@ -30,7 +30,6 @@ import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.Capabilities;
@@ -38,6 +37,7 @@ import org.openstreetmap.josm.io.MaxChangesetSizeExceededPolicy;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.UploadStrategy;
 import org.openstreetmap.josm.io.UploadStrategySpecification;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -322,7 +322,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
     public void initFromPreferences() {
         UploadStrategy strategy = UploadStrategy.getFromPreferences();
         rbStrategy.get(strategy).setSelected(true);
-        int chunkSize = Main.pref.getInt("osm-server.upload-strategy.chunk-size", 1);
+        int chunkSize = Config.getPref().getInt("osm-server.upload-strategy.chunk-size", 1);
         tfChunkSize.setText(Integer.toString(chunkSize));
         updateNumRequestsLabels();
     }
@@ -336,7 +336,7 @@ public class UploadStrategySelectionPanel extends JPanel implements PropertyChan
         int chunkSize;
         try {
             chunkSize = Integer.parseInt(tfChunkSize.getText().trim());
-            Main.pref.putInt("osm-server.upload-strategy.chunk-size", chunkSize);
+            Config.getPref().putInt("osm-server.upload-strategy.chunk-size", chunkSize);
         } catch (NumberFormatException e) {
             // don't save invalid value to preferences
             Logging.trace(e);

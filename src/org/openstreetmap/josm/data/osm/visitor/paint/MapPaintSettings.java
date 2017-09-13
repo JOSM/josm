@@ -3,9 +3,9 @@ package org.openstreetmap.josm.data.osm.visitor.paint;
 
 import java.awt.Color;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Global mappaint settings.
@@ -68,14 +68,14 @@ public final class MapPaintSettings implements PreferenceChangedListener {
 
     private MapPaintSettings() {
         load();
-        Main.pref.addPreferenceChangeListener(this);
+        Config.getPref().addPreferenceChangeListener(this);
     }
 
     private void load() {
-        showDirectionArrow = Main.pref.getBoolean("draw.segment.direction", false);
-        showOnewayArrow = Main.pref.getBoolean("draw.oneway", true);
-        useRealWidth = Main.pref.getBoolean("mappaint.useRealWidth", false);
-        defaultSegmentWidth = Main.pref.getInt("mappaint.segment.default-width", 2);
+        showDirectionArrow = Config.getPref().getBoolean("draw.segment.direction", false);
+        showOnewayArrow = Config.getPref().getBoolean("draw.oneway", true);
+        useRealWidth = Config.getPref().getBoolean("mappaint.useRealWidth", false);
+        defaultSegmentWidth = Config.getPref().getInt("mappaint.segment.default-width", 2);
 
         selectedColor = PaintColors.SELECTED.get();
         relationSelectedColor = PaintColors.RELATIONSELECTED.get();
@@ -90,24 +90,24 @@ public final class MapPaintSettings implements PreferenceChangedListener {
             taggedConnectionColor = connectionColor;
         }
 
-        showOrderNumber = Main.pref.getBoolean("draw.segment.order_number", false);
-        showOrderNumberOnSelectedWay = Main.pref.getBoolean("draw.segment.order_number.on_selected", false);
-        showHeadArrowOnly = Main.pref.getBoolean("draw.segment.head_only", false);
+        showOrderNumber = Config.getPref().getBoolean("draw.segment.order_number", false);
+        showOrderNumberOnSelectedWay = Config.getPref().getBoolean("draw.segment.order_number.on_selected", false);
+        showHeadArrowOnly = Config.getPref().getBoolean("draw.segment.head_only", false);
 
-        showNamesDistance = Main.pref.getInt("mappaint.shownames", 10_000_000);
-        useStrokesDistance = Main.pref.getInt("mappaint.strokes", 10_000_000);
-        showIconsDistance = Main.pref.getInt("mappaint.showicons", 10_000_000);
+        showNamesDistance = Config.getPref().getInt("mappaint.shownames", 10_000_000);
+        useStrokesDistance = Config.getPref().getInt("mappaint.strokes", 10_000_000);
+        showIconsDistance = Config.getPref().getInt("mappaint.showicons", 10_000_000);
 
-        selectedNodeSize = Main.pref.getInt("mappaint.node.selected-size", 5);
-        unselectedNodeSize = Main.pref.getInt("mappaint.node.unselected-size", 3);
-        connectionNodeSize = Main.pref.getInt("mappaint.node.connection-size", 5);
-        taggedNodeSize = Main.pref.getInt("mappaint.node.tagged-size", 3);
-        fillSelectedNode = Main.pref.getBoolean("mappaint.node.fill-selected", true);
-        fillUnselectedNode = Main.pref.getBoolean("mappaint.node.fill-unselected", false);
-        fillTaggedNode = Main.pref.getBoolean("mappaint.node.fill-tagged", true);
-        fillConnectionNode = Main.pref.getBoolean("mappaint.node.fill-connection", false);
+        selectedNodeSize = Config.getPref().getInt("mappaint.node.selected-size", 5);
+        unselectedNodeSize = Config.getPref().getInt("mappaint.node.unselected-size", 3);
+        connectionNodeSize = Config.getPref().getInt("mappaint.node.connection-size", 5);
+        taggedNodeSize = Config.getPref().getInt("mappaint.node.tagged-size", 3);
+        fillSelectedNode = Config.getPref().getBoolean("mappaint.node.fill-selected", true);
+        fillUnselectedNode = Config.getPref().getBoolean("mappaint.node.fill-unselected", false);
+        fillTaggedNode = Config.getPref().getBoolean("mappaint.node.fill-tagged", true);
+        fillConnectionNode = Config.getPref().getBoolean("mappaint.node.fill-connection", false);
 
-        outlineOnly = Main.pref.getBoolean("draw.data.area_outline_only", false);
+        outlineOnly = Config.getPref().getBoolean("draw.data.area_outline_only", false);
     }
 
     @Override

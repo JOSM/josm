@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.preferences;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * This is an old-style cached preference value.
@@ -20,14 +20,14 @@ public abstract class CachedProperty<T> extends AbstractProperty<T> implements P
 
     protected CachedProperty(String key, String defaultValueAsString) {
         super(key, null);
-        Main.pref.addKeyPreferenceChangeListener(key, this);
+        Config.getPref().addKeyPreferenceChangeListener(key, this);
         this.defaultValueAsString = defaultValueAsString;
         updateValue();
     }
 
     protected final void updateValue() {
-        if (!Main.pref.get(key).isEmpty()) {
-            this.value = fromString(Main.pref.get(key));
+        if (!Config.getPref().get(key).isEmpty()) {
+            this.value = fromString(Config.getPref().get(key));
         } else {
             this.value = getDefaultValue();
         }
@@ -42,7 +42,7 @@ public abstract class CachedProperty<T> extends AbstractProperty<T> implements P
     }
 
     public void put(String value) {
-        Main.pref.put(key, value);
+        Config.getPref().put(key, value);
         this.value = fromString(value);
         updateCount++;
     }

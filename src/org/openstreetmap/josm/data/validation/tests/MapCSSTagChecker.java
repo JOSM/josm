@@ -1,6 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.validation.tests;
 
+import static org.openstreetmap.josm.data.validation.tests.MapCSSTagChecker.FixCommand.evaluateObject;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.io.BufferedReader;
@@ -62,6 +63,7 @@ import org.openstreetmap.josm.gui.mappaint.mapcss.parsergen.ParseException;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
@@ -734,7 +736,7 @@ public class MapCSSTagChecker extends Test.TagTest {
             checks.remove(url);
             checks.putAll(url, result.parseChecks);
             // Check assertions, useful for development of local files
-            if (Main.pref.getBoolean("validator.check_assert_local_rules", false) && Utils.isLocalUrl(url)) {
+            if (Config.getPref().getBoolean("validator.check_assert_local_rules", false) && Utils.isLocalUrl(url)) {
                 for (String msg : checkAsserts(result.parseChecks)) {
                     Logging.warn(msg);
                 }
@@ -758,7 +760,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                     Logging.debug(tr("Adding {0} to tag checker", i));
                 }
                 addMapCSS(i);
-                if (Main.pref.getBoolean("validator.auto_reload_local_rules", true) && source.isLocal()) {
+                if (Config.getPref().getBoolean("validator.auto_reload_local_rules", true) && source.isLocal()) {
                     Main.fileWatcher.registerSource(source);
                 }
             } catch (IOException | IllegalStateException | IllegalArgumentException ex) {

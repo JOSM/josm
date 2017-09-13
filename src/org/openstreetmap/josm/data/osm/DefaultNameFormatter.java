@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
 import org.openstreetmap.josm.data.osm.history.HistoryNameFormatter;
@@ -30,6 +29,7 @@ import org.openstreetmap.josm.data.osm.history.HistoryRelation;
 import org.openstreetmap.josm.data.osm.history.HistoryWay;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetNameTemplateList;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.AlphanumComparator;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Utils;
@@ -104,7 +104,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     public static synchronized List<String> getNamingtagsForRelations() {
         if (namingTagsForRelations == null) {
             namingTagsForRelations = new ArrayList<>(
-                    Main.pref.getList("relation.nameOrder", Arrays.asList(DEFAULT_NAMING_TAGS_FOR_RELATIONS))
+                    Config.getPref().getList("relation.nameOrder", Arrays.asList(DEFAULT_NAMING_TAGS_FOR_RELATIONS))
                     );
         }
         return namingTagsForRelations;
@@ -118,8 +118,8 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param primitive the primitive
      */
     protected void decorateNameWithId(StringBuilder name, IPrimitive primitive) {
-        if (Main.pref.getBoolean("osm-primitives.showid")) {
-            if (Main.pref.getBoolean("osm-primitives.showid.new-primitives")) {
+        if (Config.getPref().getBoolean("osm-primitives.showid")) {
+            if (Config.getPref().getBoolean("osm-primitives.showid.new-primitives")) {
                 name.append(tr(" [id: {0}]", primitive.getUniqueId()));
             } else {
                 name.append(tr(" [id: {0}]", primitive.getId()));
@@ -154,7 +154,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             TaggingPreset preset = TaggingPresetNameTemplateList.getInstance().findPresetTemplate(node);
             if (preset == null) {
                 String n;
-                if (Main.pref.getBoolean("osm-primitives.localize-name", true)) {
+                if (Config.getPref().getBoolean("osm-primitives.localize-name", true)) {
                     n = node.getLocalName();
                 } else {
                     n = node.getName();
@@ -232,7 +232,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
             TaggingPreset preset = TaggingPresetNameTemplateList.getInstance().findPresetTemplate(way);
             if (preset == null) {
                 String n;
-                if (Main.pref.getBoolean("osm-primitives.localize-name", true)) {
+                if (Config.getPref().getBoolean("osm-primitives.localize-name", true)) {
                     n = way.getLocalName();
                 } else {
                     n = way.getName();
@@ -432,7 +432,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
 
     private static String getNameTagValue(IRelation relation, String nameTag) {
         if ("name".equals(nameTag)) {
-            if (Main.pref.getBoolean("osm-primitives.localize-name", true))
+            if (Config.getPref().getBoolean("osm-primitives.localize-name", true))
                 return relation.getLocalName();
             else
                 return relation.getName();
@@ -518,7 +518,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
      * @param primitive the primitive
      */
     protected void decorateNameWithId(StringBuilder name, HistoryOsmPrimitive primitive) {
-        if (Main.pref.getBoolean("osm-primitives.showid")) {
+        if (Config.getPref().getBoolean("osm-primitives.showid")) {
             name.append(tr(" [id: {0}]", primitive.getId()));
         }
     }
@@ -527,7 +527,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     public String format(HistoryNode node) {
         StringBuilder sb = new StringBuilder();
         String name;
-        if (Main.pref.getBoolean("osm-primitives.localize-name", true)) {
+        if (Config.getPref().getBoolean("osm-primitives.localize-name", true)) {
             name = node.getLocalName();
         } else {
             name = node.getName();
@@ -553,7 +553,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     public String format(HistoryWay way) {
         StringBuilder sb = new StringBuilder();
         String name;
-        if (Main.pref.getBoolean("osm-primitives.localize-name", true)) {
+        if (Config.getPref().getBoolean("osm-primitives.localize-name", true)) {
             name = way.getLocalName();
         } else {
             name = way.getName();
@@ -600,7 +600,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
         for (String n : relation.getTags().keySet()) {
             // #3328: "note " and " note" are name tags too
             if (namingTags.contains(n.trim())) {
-                if (Main.pref.getBoolean("osm-primitives.localize-name", true)) {
+                if (Config.getPref().getBoolean("osm-primitives.localize-name", true)) {
                     nameTag = relation.getLocalName();
                 } else {
                     nameTag = relation.getName();

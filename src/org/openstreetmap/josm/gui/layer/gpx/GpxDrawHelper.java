@@ -52,6 +52,7 @@ import org.openstreetmap.josm.gui.layer.MapViewPaintable.MapViewEvent;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable.PaintableInvalidationEvent;
 import org.openstreetmap.josm.gui.layer.MapViewPaintable.PaintableInvalidationListener;
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ColorScale;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -182,7 +183,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
     private boolean gpxLayerInvalidated;
 
     private void setupColors() {
-        hdopAlpha = Main.pref.getInt("hdop.color.alpha", -1);
+        hdopAlpha = Config.getPref().getInt("hdop.color.alpha", -1);
         velocityScale = ColorScale.createHSBScale(256);
         /** Colors (without custom alpha channel, if given) for HDOP painting. **/
         hdopScale = ColorScale.createHSBScale(256).makeReversed().addTitle(tr("HDOP"));
@@ -319,9 +320,9 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
         colorTracksTune = Main.pref.getInteger("draw.rawgps.colorTracksTune", spec, 45);
         colorModeDynamic = Main.pref.getBoolean("draw.rawgps.colors.dynamic", spec, false);
         /* good HDOP's are between 1 and 3, very bad HDOP's go into 3 digit values */
-        hdoprange = Main.pref.getInt("hdop.range", 7);
-        minTrackDurationForTimeColoring = Main.pref.getInt("draw.rawgps.date-coloring-min-dt", 60);
-        largePointAlpha = Main.pref.getInt("draw.rawgps.large.alpha", -1) & 0xFF;
+        hdoprange = Config.getPref().getInt("hdop.range", 7);
+        minTrackDurationForTimeColoring = Config.getPref().getInt("draw.rawgps.date-coloring-min-dt", 60);
+        largePointAlpha = Config.getPref().getInt("draw.rawgps.large.alpha", -1) & 0xFF;
 
         // get heatmap parameters
         heatMapEnabled = Main.pref.getBoolean("draw.rawgps.heatmap.enabled", spec, false);
@@ -427,7 +428,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
 
         // set hints for the render
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-            Main.pref.getBoolean("mappaint.gpx.use-antialiasing", false) ?
+            Config.getPref().getBoolean("mappaint.gpx.use-antialiasing", false) ?
                     RenderingHints.VALUE_ANTIALIAS_ON : RenderingHints.VALUE_ANTIALIAS_OFF);
 
         if (lineWidth != 0) {

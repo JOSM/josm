@@ -32,6 +32,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitiveType;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.io.Capabilities.CapabilitiesParser;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.ListenerList;
@@ -131,7 +132,7 @@ public class OsmApi extends OsmConnection {
     }
 
     private static String getServerUrlFromPref() {
-        return Main.pref.get("osm-server.url", DEFAULT_API_URL);
+        return Config.getPref().get("osm-server.url", DEFAULT_API_URL);
     }
 
     /**
@@ -592,7 +593,7 @@ public class OsmApi extends OsmConnection {
      * @return the max number of retries
      */
     protected int getMaxRetries() {
-        int ret = Main.pref.getInt("osm-server.max-num-retries", DEFAULT_MAX_NUM_RETRIES);
+        int ret = Config.getPref().getInt("osm-server.max-num-retries", DEFAULT_MAX_NUM_RETRIES);
         return Math.max(ret, 0);
     }
 
@@ -610,7 +611,7 @@ public class OsmApi extends OsmConnection {
      * @return the authentication method
      */
     public static String getAuthMethod() {
-        return Main.pref.get("osm-server.auth-method", "oauth");
+        return Config.getPref().get("osm-server.auth-method", "oauth");
     }
 
     protected final String sendRequest(String requestMethod, String urlSuffix, String requestBody, ProgressMonitor monitor)

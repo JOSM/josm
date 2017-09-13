@@ -31,6 +31,7 @@ import org.openstreetmap.josm.gui.MapViewState.MapViewPoint;
 import org.openstreetmap.josm.gui.draw.MapViewPath;
 import org.openstreetmap.josm.gui.draw.SymbolShape;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -236,7 +237,7 @@ class DrawSnapHelper {
     }
 
     private void computeSnapAngles() {
-        snapAngles = Main.pref.getList(DRAW_ANGLESNAP_ANGLES,
+        snapAngles = Config.getPref().getList(DRAW_ANGLESNAP_ANGLES,
                 Arrays.asList("0", "30", "45", "60", "90", "120", "135", "150", "180"))
                 .stream()
                 .mapToDouble(DrawSnapHelper::parseSnapAngle)
@@ -258,7 +259,7 @@ class DrawSnapHelper {
      * @param angles The angles
      */
     public void saveAngles(String... angles) {
-        Main.pref.putList(DRAW_ANGLESNAP_ANGLES, Arrays.asList(angles));
+        Config.getPref().putList(DRAW_ANGLESNAP_ANGLES, Arrays.asList(angles));
     }
 
     /**

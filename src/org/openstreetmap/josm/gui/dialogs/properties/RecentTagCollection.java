@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.openstreetmap.josm.data.osm.Tag;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.data.osm.search.SearchSetting;
-import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.preferences.ListProperty;
 
 /**

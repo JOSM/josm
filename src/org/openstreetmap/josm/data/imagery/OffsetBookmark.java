@@ -21,6 +21,7 @@ import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.AbstractTileSourceLayer;
 import org.openstreetmap.josm.gui.layer.ImageryLayer;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -176,8 +177,7 @@ public class OffsetBookmark {
 
     // migration code - remove Nov. 2017
     private static void loadBookmarksOld() {
-        for (Collection<String> c : Main.pref.getArray("imagery.offsets",
-                Collections.<Collection<String>>emptySet())) {
+        for (Collection<String> c : Config.getPref().getListOfLists("imagery.offsets")) {
             allBookmarks.add(new OffsetBookmark(c));
         }
     }

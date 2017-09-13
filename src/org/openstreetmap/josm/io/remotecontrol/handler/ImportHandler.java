@@ -14,6 +14,7 @@ import org.openstreetmap.josm.actions.downloadtasks.DownloadOsmTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadTask;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -39,7 +40,7 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
                 // As of 2015-04, Overpass Turbo requires this branch of code ...
                 Logging.debug("Remote control, /import: defaulting to DownloadOsmTask");
                 new DownloadOsmTask().loadUrl(isLoadInNewLayer(), url.toExternalForm(), null);
-            } else if (Main.pref.getBoolean("remotecontrol.import.interactive", true)) {
+            } else if (Config.getPref().getBoolean("remotecontrol.import.interactive", true)) {
                 // OpenLocationAction queries the user if more than one task is suitable
                 MainApplication.getMenu().openLocation.openUrl(isLoadInNewLayer(), url.toExternalForm());
             } else {
@@ -100,7 +101,7 @@ public class ImportHandler extends RequestHandler.RawURLParseRequestHandler {
     @Override
     protected void validateRequest() throws RequestHandlerBadRequestException {
         String urlString = args != null ? args.get("url") : null;
-        if (Main.pref.getBoolean("remotecontrol.importhandler.fix_url_query", true)) {
+        if (Config.getPref().getBoolean("remotecontrol.importhandler.fix_url_query", true)) {
             urlString = Utils.fixURLQuery(urlString);
         }
         try {

@@ -50,6 +50,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.KeyPressReleaseListener;
 import org.openstreetmap.josm.gui.util.ModifierExListener;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
@@ -201,11 +202,11 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         super.enterMode();
         mv.addMouseListener(this);
         mv.addMouseMotionListener(this);
-        mv.setVirtualNodesEnabled(Main.pref.getInt("mappaint.node.virtual-size", 8) != 0);
-        drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
-        initialMoveDelay = Main.pref.getInt("edit.initial-move-delay", 200);
-        initialMoveThreshold = Main.pref.getInt("edit.initial-move-threshold", 5);
-        repeatedKeySwitchLassoOption = Main.pref.getBoolean("mappaint.select.toggle-lasso-on-repeated-S", true);
+        mv.setVirtualNodesEnabled(Config.getPref().getInt("mappaint.node.virtual-size", 8) != 0);
+        drawTargetHighlight = Config.getPref().getBoolean("draw.target-highlight", true);
+        initialMoveDelay = Config.getPref().getInt("edit.initial-move-delay", 200);
+        initialMoveThreshold = Config.getPref().getInt("edit.initial-move-threshold", 5);
+        repeatedKeySwitchLassoOption = Config.getPref().getBoolean("mappaint.select.toggle-lasso-on-repeated-S", true);
         cycleManager.init();
         virtualManager.init();
         // This is required to update the cursors when ctrl/shift/alt is pressed
@@ -827,7 +828,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                 MainApplication.undoRedo.undo();
             }
         }
-        int max = Main.pref.getInt("warn.move.maxelements", 20), limit = max;
+        int max = Config.getPref().getInt("warn.move.maxelements", 20), limit = max;
         for (OsmPrimitive osm : getLayerManager().getEditDataSet().getSelected()) {
             if (osm instanceof Way) {
                 limit -= ((Way) osm).getNodes().size();
@@ -1038,8 +1039,8 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
          * read preferences
          */
         private void init() {
-            waitForMouseUpParameter = Main.pref.getBoolean("mappaint.select.waits-for-mouse-up", false);
-            multipleMatchesParameter = Main.pref.getBoolean("selectaction.cycles.multiple.matches", false);
+            waitForMouseUpParameter = Config.getPref().getBoolean("mappaint.select.waits-for-mouse-up", false);
+            multipleMatchesParameter = Config.getPref().getBoolean("selectaction.cycles.multiple.matches", false);
         }
 
         /**
@@ -1174,10 +1175,10 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         private int virtualSpace;
 
         private void init() {
-            nodeVirtualSize = Main.pref.getInt("mappaint.node.virtual-size", 8);
-            int virtualSnapDistSq = Main.pref.getInt("mappaint.node.virtual-snap-distance", 8);
+            nodeVirtualSize = Config.getPref().getInt("mappaint.node.virtual-size", 8);
+            int virtualSnapDistSq = Config.getPref().getInt("mappaint.node.virtual-snap-distance", 8);
             virtualSnapDistSq2 = virtualSnapDistSq*virtualSnapDistSq;
-            virtualSpace = Main.pref.getInt("mappaint.node.virtual-space", 70);
+            virtualSpace = Config.getPref().getInt("mappaint.node.virtual-space", 70);
         }
 
         /**

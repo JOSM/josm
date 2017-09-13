@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.visitor.paint.MapPaintSettings;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer;
@@ -14,6 +13,7 @@ import org.openstreetmap.josm.gui.mappaint.Cascade;
 import org.openstreetmap.josm.gui.mappaint.Keyword;
 import org.openstreetmap.josm.gui.mappaint.StyleKeys;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Instruction.RelativeFloat;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Class that defines how objects ({@link OsmPrimitive}) should be drawn on the map.
@@ -147,7 +147,7 @@ public abstract class StyleElement implements StyleKeys {
             synchronized (lock) {
                 s = defaultFontSize;
                 if (s == null) {
-                    defaultFontSize = s = (float) Main.pref.getInt("mappaint.fontsize", 8);
+                    defaultFontSize = s = (float) Config.getPref().getInt("mappaint.fontsize", 8);
                 }
             }
         }
@@ -160,7 +160,7 @@ public abstract class StyleElement implements StyleKeys {
             synchronized (lock) {
                 n = defaultFontName;
                 if (n == null) {
-                    defaultFontName = n = Main.pref.get("mappaint.font", "Droid Sans");
+                    defaultFontName = n = Config.getPref().get("mappaint.font", "Droid Sans");
                 }
             }
         }
