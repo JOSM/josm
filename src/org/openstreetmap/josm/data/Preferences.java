@@ -55,11 +55,11 @@ import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.preferences.AbstractPreferences;
+import org.openstreetmap.josm.spi.preferences.AbstractPreferences;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
-import org.openstreetmap.josm.data.preferences.IPreferences;
+import org.openstreetmap.josm.spi.preferences.IPreferences;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.ListListSetting;
 import org.openstreetmap.josm.data.preferences.ListSetting;

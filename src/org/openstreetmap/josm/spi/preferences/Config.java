@@ -3,10 +3,9 @@ package org.openstreetmap.josm.spi.preferences;
 
 import java.util.Objects;
 
-import org.openstreetmap.josm.data.preferences.IPreferences;
-
 /**
  * Class to hold the global preferences object.
+ * @since 12847
  */
 public class Config {
 
@@ -15,6 +14,7 @@ public class Config {
     /**
      * Get the preferences.
      * @return the preferences
+     * @since 12847
      */
     public static IPreferences getPref() {
         return preferences;

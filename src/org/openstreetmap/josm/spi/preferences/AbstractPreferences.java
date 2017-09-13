@@ -1,14 +1,19 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.data.preferences;
+package org.openstreetmap.josm.spi.preferences;
 
 import java.util.List;
 import java.util.Map;
 
+import org.openstreetmap.josm.data.preferences.ListListSetting;
+import org.openstreetmap.josm.data.preferences.ListSetting;
+import org.openstreetmap.josm.data.preferences.MapListSetting;
+import org.openstreetmap.josm.data.preferences.Setting;
+import org.openstreetmap.josm.data.preferences.StringSetting;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
  * Abstract implementation of the {@link IPreferences} interface.
- * @since 12840
+ * @since 12847
  */
 public abstract class AbstractPreferences implements IPreferences {
 

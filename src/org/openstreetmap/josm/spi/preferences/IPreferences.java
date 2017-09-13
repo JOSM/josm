@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.data.preferences;
+package org.openstreetmap.josm.spi.preferences;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,7 +12,7 @@ import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
  *
  * Allows to save and retrieve user defined settings. The backend storage depends
  * on the implementation.
- * @since 12840
+ * @since 12847
  */
 public interface IPreferences {
 
