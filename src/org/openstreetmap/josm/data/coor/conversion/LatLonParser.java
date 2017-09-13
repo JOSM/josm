@@ -209,7 +209,7 @@ public final class LatLonParser {
 
         if (!in.find()) {
             throw new IllegalArgumentException(
-                    tr("Unable to parse as coordinate value: '{0}'", angleStr));
+                    tr("Unable to parse as coordinate value: ''{0}''", angleStr));
         }
 
         double value = 0;
