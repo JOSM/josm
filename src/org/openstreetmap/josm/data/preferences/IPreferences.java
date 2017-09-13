@@ -60,7 +60,7 @@ public interface IPreferences {
         return get(key, "");
     }
 
-   /**
+    /**
      * Set a value for a certain setting.
      * @param key the unique identifier for the setting
      * @param value the value of the setting. Can be null or "" which both removes the key-value entry.
@@ -94,7 +94,7 @@ public interface IPreferences {
      */
     boolean putBoolean(String key, boolean value);
 
-   /**
+    /**
      * Gets an integer preference
      * @param key The preference key
      * @param def The default value to use
