@@ -27,7 +27,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.Changeset;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -37,6 +36,7 @@ import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
@@ -152,10 +152,10 @@ public class MultiFetchServerObjectReaderTest {
         logger.info("initializing ...");
         JOSMFixture.createFunctionalTestFixture().init();
 
-        Main.pref.put("osm-server.auth-method", "basic");
+        Config.getPref().put("osm-server.auth-method", "basic");
 
         // don't use atomic upload, the test API server can't cope with large diff uploads
-        Main.pref.putBoolean("osm-server.atomic-upload", false);
+        Config.getPref().putBoolean("osm-server.atomic-upload", false);
 
         File dataSetCacheOutputFile = new File(System.getProperty("java.io.tmpdir"),
                 MultiFetchServerObjectReaderTest.class.getName() + ".dataset");

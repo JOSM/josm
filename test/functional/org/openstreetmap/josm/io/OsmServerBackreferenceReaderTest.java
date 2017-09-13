@@ -39,6 +39,7 @@ import org.openstreetmap.josm.data.osm.RelationMember;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.projection.Projections;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -160,11 +161,11 @@ public class OsmServerBackreferenceReaderTest {
 
         JOSMFixture.createFunctionalTestFixture().init();
 
-        Main.pref.put("osm-server.auth-method", "basic");
+        Config.getPref().put("osm-server.auth-method", "basic");
 
         // don't use atomic upload, the test API server can't cope with large diff uploads
         //
-        Main.pref.putBoolean("osm-server.atomic-upload", false);
+        Config.getPref().putBoolean("osm-server.atomic-upload", false);
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
         Logging.setLogLevel(Logging.LEVEL_DEBUG);
 
