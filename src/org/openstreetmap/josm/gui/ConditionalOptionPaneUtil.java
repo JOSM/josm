@@ -16,8 +16,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -56,10 +56,9 @@ public final class ConditionalOptionPaneUtil {
      * @return the preference value for the preference key "message." + <code>prefKey</code> + ".value"
      */
     public static int getDialogReturnValue(String prefKey) {
-        return Utils.firstNonNull(
-                immediateChoices.get(prefKey),
+        return Utils.firstNonNull(immediateChoices.get(prefKey),
                 sessionChoices.get(prefKey),
-                !Main.pref.getBoolean("message." + prefKey, true) ? Main.pref.getInt("message." + prefKey + ".value", -1) : -1
+                !Config.getPref().getBoolean("message." + prefKey, true) ? Config.getPref().getInt("message." + prefKey + ".value", -1) : -1
         );
     }
 
@@ -238,8 +237,8 @@ public final class ConditionalOptionPaneUtil {
                     sessionChoices.put(prefKey, value);
                     break;
                 case PERMANENT:
-                    Main.pref.putBoolean("message." + prefKey, false);
-                    Main.pref.putInt("message." + prefKey + ".value", value);
+                    Config.getPref().putBoolean("message." + prefKey, false);
+                    Config.getPref().putInt("message." + prefKey + ".value", value);
                     break;
             }
         }

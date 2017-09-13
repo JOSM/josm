@@ -11,7 +11,7 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Class that helps to parse tags from arbitrary text
@@ -19,9 +19,9 @@ import org.openstreetmap.josm.Main;
 public final class TextTagParser {
 
     // properties need JOSM restart to apply, modified rarely enough
-    private static final int MAX_KEY_LENGTH = Main.pref.getInt("tags.paste.max-key-length", 50);
-    private static final int MAX_KEY_COUNT = Main.pref.getInt("tags.paste.max-key-count", 30);
-    private static final String KEY_PATTERN = Main.pref.get("tags.paste.tag-pattern", "[0-9a-zA-Z:_]*");
+    private static final int MAX_KEY_LENGTH = Config.getPref().getInt("tags.paste.max-key-length", 50);
+    private static final int MAX_KEY_COUNT = Config.getPref().getInt("tags.paste.max-key-count", 30);
+    private static final String KEY_PATTERN = Config.getPref().get("tags.paste.tag-pattern", "[0-9a-zA-Z:_]*");
     private static final int MAX_VALUE_LENGTH = 255;
 
     private TextTagParser() {

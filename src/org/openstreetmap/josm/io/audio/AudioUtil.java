@@ -15,6 +15,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -43,7 +44,7 @@ public final class AudioUtil {
             double bytesPerSecond = audioFormat.getFrameRate() /* frames per second */
                 * audioFormat.getFrameSize() /* bytes per frame */;
             double naturalLength = filesize / bytesPerSecond;
-            double calibration = Main.pref.getDouble("audio.calibration", 1.0 /* default, ratio */);
+            double calibration = Config.getPref().getDouble("audio.calibration", 1.0 /* default, ratio */);
             return naturalLength / calibration;
         } catch (UnsupportedAudioFileException | IOException e) {
             Logging.debug(e);

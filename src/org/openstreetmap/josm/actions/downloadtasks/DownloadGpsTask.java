@@ -12,7 +12,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Bounds.ParseMethod;
 import org.openstreetmap.josm.data.ProjectionBounds;
@@ -34,6 +33,7 @@ import org.openstreetmap.josm.io.OsmServerLocationReader;
 import org.openstreetmap.josm.io.OsmServerLocationReader.GpxUrlPattern;
 import org.openstreetmap.josm.io.OsmServerReader;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.xml.sax.SAXException;
 
@@ -168,7 +168,7 @@ public class DownloadGpsTask extends AbstractDownloadTask<GpxData> {
         }
 
         private GpxLayer findGpxMergeLayer() {
-            boolean merge = Main.pref.getBoolean("download.gps.mergeWithLocal", false);
+            boolean merge = Config.getPref().getBoolean("download.gps.mergeWithLocal", false);
             Layer active = MainApplication.getLayerManager().getActiveLayer();
             if (active instanceof GpxLayer && (merge || ((GpxLayer) active).data.fromServer))
                 return (GpxLayer) active;

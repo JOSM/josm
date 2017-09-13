@@ -13,6 +13,7 @@ import javax.swing.KeyStroke;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.HelpAction;
 import org.openstreetmap.josm.gui.MainApplication;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 
@@ -32,7 +33,7 @@ public final class HelpUtil {
      * @return the base wiki URL
      */
     public static String getWikiBaseUrl() {
-        return Main.pref.get("help.baseurl", Main.getJOSMWebsite());
+        return Config.getPref().get("help.baseurl", Main.getJOSMWebsite());
     }
 
     /**
@@ -131,7 +132,7 @@ public final class HelpUtil {
         String ret = LanguageInfo.getWikiLanguagePrefix(type);
         if (ret == null)
             return ret;
-        ret = '/' + ret + Main.pref.get("help.pathhelp", "/Help").replaceAll("^\\/+", ""); // remove leading /
+        ret = '/' + ret + Config.getPref().get("help.pathhelp", "/Help").replaceAll("^\\/+", ""); // remove leading /
         return ret.replaceAll("\\/+", "\\/"); // collapse sequences of //
     }
 

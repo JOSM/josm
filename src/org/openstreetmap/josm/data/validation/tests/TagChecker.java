@@ -25,7 +25,6 @@ import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.ChangePropertyCommand;
 import org.openstreetmap.josm.command.ChangePropertyKeyCommand;
 import org.openstreetmap.josm.command.Command;
@@ -48,6 +47,7 @@ import org.openstreetmap.josm.gui.tagging.presets.items.CheckGroup;
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem;
 import org.openstreetmap.josm.gui.widgets.EditableList;
 import org.openstreetmap.josm.io.CachedFile;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.MultiMap;
@@ -189,7 +189,7 @@ public class TagChecker extends TagTest {
         harmonizedKeys.clear();
 
         StringBuilder errorSources = new StringBuilder();
-        for (String source : Main.pref.getList(PREF_SOURCES, DEFAULT_SOURCES)) {
+        for (String source : Config.getPref().getList(PREF_SOURCES, DEFAULT_SOURCES)) {
             try (
                 CachedFile cf = new CachedFile(source);
                 BufferedReader reader = cf.getContentReader()
@@ -281,7 +281,7 @@ public class TagChecker extends TagTest {
      */
     public static void initializePresets() {
 
-        if (!Main.pref.getBoolean(PREF_CHECK_VALUES, true))
+        if (!Config.getPref().getBoolean(PREF_CHECK_VALUES, true))
             return;
 
         Collection<TaggingPreset> presets = TaggingPresets.getTaggingPresets();
@@ -291,7 +291,7 @@ public class TagChecker extends TagTest {
                 additionalPresetsValueData.putVoid(a);
             }
             // TODO directionKeys are no longer in OsmPrimitive (search pattern is used instead)
-            for (String a : Main.pref.getList(ValidatorPrefHelper.PREFIX + ".knownkeys",
+            for (String a : Config.getPref().getList(ValidatorPrefHelper.PREFIX + ".knownkeys",
                     Arrays.asList("is_in", "int_ref", "fixme", "population"))) {
                 additionalPresetsValueData.putVoid(a);
             }
@@ -583,24 +583,24 @@ public class TagChecker extends TagTest {
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        checkKeys = Main.pref.getBoolean(PREF_CHECK_KEYS, true);
+        checkKeys = Config.getPref().getBoolean(PREF_CHECK_KEYS, true);
         if (isBeforeUpload) {
-            checkKeys = checkKeys && Main.pref.getBoolean(PREF_CHECK_KEYS_BEFORE_UPLOAD, true);
+            checkKeys = checkKeys && Config.getPref().getBoolean(PREF_CHECK_KEYS_BEFORE_UPLOAD, true);
         }
 
-        checkValues = Main.pref.getBoolean(PREF_CHECK_VALUES, true);
+        checkValues = Config.getPref().getBoolean(PREF_CHECK_VALUES, true);
         if (isBeforeUpload) {
-            checkValues = checkValues && Main.pref.getBoolean(PREF_CHECK_VALUES_BEFORE_UPLOAD, true);
+            checkValues = checkValues && Config.getPref().getBoolean(PREF_CHECK_VALUES_BEFORE_UPLOAD, true);
         }
 
-        checkComplex = Main.pref.getBoolean(PREF_CHECK_COMPLEX, true);
+        checkComplex = Config.getPref().getBoolean(PREF_CHECK_COMPLEX, true);
         if (isBeforeUpload) {
-            checkComplex = checkComplex && Main.pref.getBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, true);
+            checkComplex = checkComplex && Config.getPref().getBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, true);
         }
 
-        checkFixmes = Main.pref.getBoolean(PREF_CHECK_FIXMES, true);
+        checkFixmes = Config.getPref().getBoolean(PREF_CHECK_FIXMES, true);
         if (isBeforeUpload) {
-            checkFixmes = checkFixmes && Main.pref.getBoolean(PREF_CHECK_FIXMES_BEFORE_UPLOAD, true);
+            checkFixmes = checkFixmes && Config.getPref().getBoolean(PREF_CHECK_FIXMES_BEFORE_UPLOAD, true);
         }
     }
 
@@ -618,23 +618,23 @@ public class TagChecker extends TagTest {
 
         testPanel.add(new JLabel(name+" :"), GBC.eol().insets(3, 0, 0, 0));
 
-        prefCheckKeys = new JCheckBox(tr("Check property keys."), Main.pref.getBoolean(PREF_CHECK_KEYS, true));
+        prefCheckKeys = new JCheckBox(tr("Check property keys."), Config.getPref().getBoolean(PREF_CHECK_KEYS, true));
         prefCheckKeys.setToolTipText(tr("Validate that property keys are valid checking against list of words."));
         testPanel.add(prefCheckKeys, GBC.std().insets(20, 0, 0, 0));
 
         prefCheckKeysBeforeUpload = new JCheckBox();
-        prefCheckKeysBeforeUpload.setSelected(Main.pref.getBoolean(PREF_CHECK_KEYS_BEFORE_UPLOAD, true));
+        prefCheckKeysBeforeUpload.setSelected(Config.getPref().getBoolean(PREF_CHECK_KEYS_BEFORE_UPLOAD, true));
         testPanel.add(prefCheckKeysBeforeUpload, a);
 
-        prefCheckComplex = new JCheckBox(tr("Use complex property checker."), Main.pref.getBoolean(PREF_CHECK_COMPLEX, true));
+        prefCheckComplex = new JCheckBox(tr("Use complex property checker."), Config.getPref().getBoolean(PREF_CHECK_COMPLEX, true));
         prefCheckComplex.setToolTipText(tr("Validate property values and tags using complex rules."));
         testPanel.add(prefCheckComplex, GBC.std().insets(20, 0, 0, 0));
 
         prefCheckComplexBeforeUpload = new JCheckBox();
-        prefCheckComplexBeforeUpload.setSelected(Main.pref.getBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, true));
+        prefCheckComplexBeforeUpload.setSelected(Config.getPref().getBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, true));
         testPanel.add(prefCheckComplexBeforeUpload, a);
 
-        final Collection<String> sources = Main.pref.getList(PREF_SOURCES, DEFAULT_SOURCES);
+        final Collection<String> sources = Config.getPref().getList(PREF_SOURCES, DEFAULT_SOURCES);
         sourcesList = new EditableList(tr("TagChecker source"));
         sourcesList.setItems(sources);
         testPanel.add(new JLabel(tr("Data sources ({0})", "*.cfg")), GBC.eol().insets(23, 0, 0, 0));
@@ -648,20 +648,20 @@ public class TagChecker extends TagTest {
 
         handlePrefEnable();
 
-        prefCheckValues = new JCheckBox(tr("Check property values."), Main.pref.getBoolean(PREF_CHECK_VALUES, true));
+        prefCheckValues = new JCheckBox(tr("Check property values."), Config.getPref().getBoolean(PREF_CHECK_VALUES, true));
         prefCheckValues.setToolTipText(tr("Validate that property values are valid checking against presets."));
         testPanel.add(prefCheckValues, GBC.std().insets(20, 0, 0, 0));
 
         prefCheckValuesBeforeUpload = new JCheckBox();
-        prefCheckValuesBeforeUpload.setSelected(Main.pref.getBoolean(PREF_CHECK_VALUES_BEFORE_UPLOAD, true));
+        prefCheckValuesBeforeUpload.setSelected(Config.getPref().getBoolean(PREF_CHECK_VALUES_BEFORE_UPLOAD, true));
         testPanel.add(prefCheckValuesBeforeUpload, a);
 
-        prefCheckFixmes = new JCheckBox(tr("Check for FIXMES."), Main.pref.getBoolean(PREF_CHECK_FIXMES, true));
+        prefCheckFixmes = new JCheckBox(tr("Check for FIXMES."), Config.getPref().getBoolean(PREF_CHECK_FIXMES, true));
         prefCheckFixmes.setToolTipText(tr("Looks for nodes or ways with FIXME in any property value."));
         testPanel.add(prefCheckFixmes, GBC.std().insets(20, 0, 0, 0));
 
         prefCheckFixmesBeforeUpload = new JCheckBox();
-        prefCheckFixmesBeforeUpload.setSelected(Main.pref.getBoolean(PREF_CHECK_FIXMES_BEFORE_UPLOAD, true));
+        prefCheckFixmesBeforeUpload.setSelected(Config.getPref().getBoolean(PREF_CHECK_FIXMES_BEFORE_UPLOAD, true));
         testPanel.add(prefCheckFixmesBeforeUpload, a);
     }
 
@@ -680,15 +680,15 @@ public class TagChecker extends TagTest {
         testBeforeUpload = prefCheckKeysBeforeUpload.isSelected() || prefCheckValuesBeforeUpload.isSelected()
                 || prefCheckFixmesBeforeUpload.isSelected() || prefCheckComplexBeforeUpload.isSelected();
 
-        Main.pref.putBoolean(PREF_CHECK_VALUES, prefCheckValues.isSelected());
-        Main.pref.putBoolean(PREF_CHECK_COMPLEX, prefCheckComplex.isSelected());
-        Main.pref.putBoolean(PREF_CHECK_KEYS, prefCheckKeys.isSelected());
-        Main.pref.putBoolean(PREF_CHECK_FIXMES, prefCheckFixmes.isSelected());
-        Main.pref.putBoolean(PREF_CHECK_VALUES_BEFORE_UPLOAD, prefCheckValuesBeforeUpload.isSelected());
-        Main.pref.putBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, prefCheckComplexBeforeUpload.isSelected());
-        Main.pref.putBoolean(PREF_CHECK_KEYS_BEFORE_UPLOAD, prefCheckKeysBeforeUpload.isSelected());
-        Main.pref.putBoolean(PREF_CHECK_FIXMES_BEFORE_UPLOAD, prefCheckFixmesBeforeUpload.isSelected());
-        return Main.pref.putList(PREF_SOURCES, sourcesList.getItems());
+        Config.getPref().putBoolean(PREF_CHECK_VALUES, prefCheckValues.isSelected());
+        Config.getPref().putBoolean(PREF_CHECK_COMPLEX, prefCheckComplex.isSelected());
+        Config.getPref().putBoolean(PREF_CHECK_KEYS, prefCheckKeys.isSelected());
+        Config.getPref().putBoolean(PREF_CHECK_FIXMES, prefCheckFixmes.isSelected());
+        Config.getPref().putBoolean(PREF_CHECK_VALUES_BEFORE_UPLOAD, prefCheckValuesBeforeUpload.isSelected());
+        Config.getPref().putBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, prefCheckComplexBeforeUpload.isSelected());
+        Config.getPref().putBoolean(PREF_CHECK_KEYS_BEFORE_UPLOAD, prefCheckKeysBeforeUpload.isSelected());
+        Config.getPref().putBoolean(PREF_CHECK_FIXMES_BEFORE_UPLOAD, prefCheckFixmesBeforeUpload.isSelected());
+        return Config.getPref().putList(PREF_SOURCES, sourcesList.getItems());
     }
 
     @Override

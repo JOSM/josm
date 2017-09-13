@@ -6,7 +6,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.util.Arrays;
 import java.util.List;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Contains a preference name to control permission for the operation
@@ -53,7 +53,7 @@ public class PermissionPrefWithDefault {
     }
 
     public boolean isAllowed() {
-        return Main.pref.getBoolean(pref, defaultVal);
+        return Config.getPref().getBoolean(pref, defaultVal);
     }
 
     public static List<PermissionPrefWithDefault> getPermissionPrefs() {

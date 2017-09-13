@@ -45,6 +45,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -192,7 +193,7 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
         while (true) {
             String filename = String.format("%1$s_%2$tY%2$tm%2$td_%2$tH%2$tM%2$tS%2$tL%3$s",
                     layer.layerFileName, now, index == 0 ? "" : ('_' + Integer.toString(index)));
-            File result = new File(autosaveDir, filename + '.' + Main.pref.get("autosave.extension", "osm"));
+            File result = new File(autosaveDir, filename + '.' + Config.getPref().get("autosave.extension", "osm"));
             try {
                 if (index > PROP_INDEX_LIMIT.get())
                     throw new IOException("index limit exceeded");

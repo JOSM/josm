@@ -49,6 +49,7 @@ import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.plugins.PluginHandler;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
@@ -362,7 +363,7 @@ public class DownloadDialog extends JDialog {
         DOWNLOAD_NEWLAYER.put(cbNewLayer.isSelected());
         DOWNLOAD_ZOOMTODATA.put(cbZoomToDownloadedData.isSelected());
         if (currentBounds != null) {
-            Main.pref.put("osm-download.bounds", currentBounds.encodeAsString(";"));
+            Config.getPref().put("osm-download.bounds", currentBounds.encodeAsString(";"));
         }
     }
 
@@ -405,7 +406,7 @@ public class DownloadDialog extends JDialog {
      * @since 6509
      */
     public static Bounds getSavedDownloadBounds() {
-        String value = Main.pref.get("osm-download.bounds");
+        String value = Config.getPref().get("osm-download.bounds");
         if (!value.isEmpty()) {
             try {
                 return new Bounds(value, ";");

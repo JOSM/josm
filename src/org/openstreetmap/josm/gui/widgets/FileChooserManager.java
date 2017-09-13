@@ -14,6 +14,7 @@ import org.openstreetmap.josm.actions.DiskAccessAction;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.actions.SaveActionBase;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * A chained utility class used to create and open {@link AbstractFileChooser} dialogs.<br>
@@ -89,9 +90,9 @@ public class FileChooserManager {
     public FileChooserManager(boolean open, String lastDirProperty, String defaultDir) {
         this.open = open;
         this.lastDirProperty = lastDirProperty == null || lastDirProperty.isEmpty() ? "lastDirectory" : lastDirProperty;
-        this.curDir = Main.pref.get(this.lastDirProperty).isEmpty() ?
+        this.curDir = Config.getPref().get(this.lastDirProperty).isEmpty() ?
                 defaultDir == null || defaultDir.isEmpty() ? "." : defaultDir
-                : Main.pref.get(this.lastDirProperty);
+                : Config.getPref().get(this.lastDirProperty);
     }
 
     // CHECKSTYLE.ON: LineLength
@@ -344,7 +345,7 @@ public class FileChooserManager {
         }
 
         if (!fc.getCurrentDirectory().getAbsolutePath().equals(curDir)) {
-            Main.pref.put(lastDirProperty, fc.getCurrentDirectory().getAbsolutePath());
+            Config.getPref().put(lastDirProperty, fc.getCurrentDirectory().getAbsolutePath());
         }
 
         if (!open && !FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.get() &&

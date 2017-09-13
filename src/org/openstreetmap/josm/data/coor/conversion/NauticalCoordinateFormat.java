@@ -5,8 +5,8 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.text.DecimalFormat;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.ILatLon;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Coordinate format that converts a coordinate to degrees and minutes (nautical format).
@@ -14,7 +14,7 @@ import org.openstreetmap.josm.data.coor.ILatLon;
  */
 public class NauticalCoordinateFormat extends AbstractCoordinateFormat {
     private static final DecimalFormat DM_MINUTE_FORMATTER = new DecimalFormat(
-            Main.pref == null ? "00.000" : Main.pref.get("latlon.dm.decimal-format", "00.000"));
+            Config.getPref() == null ? "00.000" : Config.getPref().get("latlon.dm.decimal-format", "00.000"));
     private static final String DM60 = DM_MINUTE_FORMATTER.format(60.0);
     private static final String DM00 = DM_MINUTE_FORMATTER.format(0.0);
 

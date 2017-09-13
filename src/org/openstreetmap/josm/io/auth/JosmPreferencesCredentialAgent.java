@@ -10,11 +10,11 @@ import java.util.Objects;
 
 import javax.swing.text.html.HTMLEditorKit;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.oauth.OAuthToken;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
 import org.openstreetmap.josm.io.DefaultProxySelector;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * This is the default credentials agent in JOSM. It keeps username and password for both
@@ -35,11 +35,11 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
         switch(requestorType) {
         case SERVER:
             if (Objects.equals(OsmApi.getOsmApi().getHost(), host)) {
-                user = Main.pref.get("osm-server.username", null);
-                password = Main.pref.get("osm-server.password", null);
+                user = Config.getPref().get("osm-server.username", null);
+                password = Config.getPref().get("osm-server.password", null);
             } else if (host != null) {
-                user = Main.pref.get("server.username."+host, null);
-                password = Main.pref.get("server.password."+host, null);
+                user = Config.getPref().get("server.username."+host, null);
+                password = Config.getPref().get("server.password."+host, null);
             } else {
                 user = null;
                 password = null;
@@ -48,8 +48,8 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
                 return null;
             return new PasswordAuthentication(user, password == null ? new char[0] : password.toCharArray());
         case PROXY:
-            user = Main.pref.get(DefaultProxySelector.PROXY_USER, null);
-            password = Main.pref.get(DefaultProxySelector.PROXY_PASS, null);
+            user = Config.getPref().get(DefaultProxySelector.PROXY_USER, null);
+            password = Config.getPref().get(DefaultProxySelector.PROXY_PASS, null);
             if (user == null)
                 return null;
             return new PasswordAuthentication(user, password == null ? new char[0] : password.toCharArray());
@@ -67,27 +67,27 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
         switch(requestorType) {
         case SERVER:
             if (Objects.equals(OsmApi.getOsmApi().getHost(), host)) {
-                Main.pref.put("osm-server.username", credentials.getUserName());
+                Config.getPref().put("osm-server.username", credentials.getUserName());
                 if (credentials.getPassword() == null) {
-                    Main.pref.put("osm-server.password", null);
+                    Config.getPref().put("osm-server.password", null);
                 } else {
-                    Main.pref.put("osm-server.password", String.valueOf(credentials.getPassword()));
+                    Config.getPref().put("osm-server.password", String.valueOf(credentials.getPassword()));
                 }
             } else if (host != null) {
-                Main.pref.put("server.username."+host, credentials.getUserName());
+                Config.getPref().put("server.username."+host, credentials.getUserName());
                 if (credentials.getPassword() == null) {
-                    Main.pref.put("server.password."+host, null);
+                    Config.getPref().put("server.password."+host, null);
                 } else {
-                    Main.pref.put("server.password."+host, String.valueOf(credentials.getPassword()));
+                    Config.getPref().put("server.password."+host, String.valueOf(credentials.getPassword()));
                 }
             }
             break;
         case PROXY:
-            Main.pref.put(DefaultProxySelector.PROXY_USER, credentials.getUserName());
+            Config.getPref().put(DefaultProxySelector.PROXY_USER, credentials.getUserName());
             if (credentials.getPassword() == null) {
-                Main.pref.put(DefaultProxySelector.PROXY_PASS, null);
+                Config.getPref().put(DefaultProxySelector.PROXY_PASS, null);
             } else {
-                Main.pref.put(DefaultProxySelector.PROXY_PASS, String.valueOf(credentials.getPassword()));
+                Config.getPref().put(DefaultProxySelector.PROXY_PASS, String.valueOf(credentials.getPassword()));
             }
             break;
         }
@@ -102,8 +102,8 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
      */
     @Override
     public OAuthToken lookupOAuthAccessToken() throws CredentialsAgentException {
-        String accessTokenKey = Main.pref.get("oauth.access-token.key", null);
-        String accessTokenSecret = Main.pref.get("oauth.access-token.secret", null);
+        String accessTokenKey = Config.getPref().get("oauth.access-token.key", null);
+        String accessTokenSecret = Config.getPref().get("oauth.access-token.secret", null);
         if (accessTokenKey == null && accessTokenSecret == null)
             return null;
         return new OAuthToken(accessTokenKey, accessTokenSecret);
@@ -118,11 +118,11 @@ public class JosmPreferencesCredentialAgent extends AbstractCredentialsAgent {
     @Override
     public void storeOAuthAccessToken(OAuthToken accessToken) throws CredentialsAgentException {
         if (accessToken == null) {
-            Main.pref.put("oauth.access-token.key", null);
-            Main.pref.put("oauth.access-token.secret", null);
+            Config.getPref().put("oauth.access-token.key", null);
+            Config.getPref().put("oauth.access-token.secret", null);
         } else {
-            Main.pref.put("oauth.access-token.key", accessToken.getKey());
-            Main.pref.put("oauth.access-token.secret", accessToken.getSecret());
+            Config.getPref().put("oauth.access-token.key", accessToken.getKey());
+            Config.getPref().put("oauth.access-token.secret", accessToken.getSecret());
         }
     }
 

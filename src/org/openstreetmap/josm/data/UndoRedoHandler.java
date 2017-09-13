@@ -10,6 +10,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -73,7 +74,7 @@ public class UndoRedoHandler {
         // Limit the number of commands in the undo list.
         // Currently you have to undo the commands one by one. If
         // this changes, a higher default value may be reasonable.
-        if (commands.size() > Main.pref.getInt("undo.max", 1000)) {
+        if (commands.size() > Config.getPref().getInt("undo.max", 1000)) {
             commands.removeFirst();
         }
         redoCommands.clear();

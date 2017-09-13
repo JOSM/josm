@@ -27,6 +27,7 @@ import org.openstreetmap.josm.data.osm.event.NodeMovedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
 import org.openstreetmap.josm.data.osm.visitor.paint.relations.Multipolygon.PolyData.Intersection;
 import org.openstreetmap.josm.data.projection.Projection;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Geometry;
 import org.openstreetmap.josm.tools.Geometry.AreaAndPerimeter;
 import org.openstreetmap.josm.tools.Logging;
@@ -95,21 +96,21 @@ public class Multipolygon {
 
         private void initFromPreferences() {
             initDefaults();
-            if (Main.pref == null) return;
+            if (Config.getPref() == null) return;
             Collection<String> literals;
-            literals = Main.pref.getList(PREF_KEY_OUTER_ROLES);
+            literals = Config.getPref().getList(PREF_KEY_OUTER_ROLES);
             if (literals != null && !literals.isEmpty()) {
                 setNormalized(literals, outerExactRoles);
             }
-            literals = Main.pref.getList(PREF_KEY_OUTER_ROLE_PREFIXES);
+            literals = Config.getPref().getList(PREF_KEY_OUTER_ROLE_PREFIXES);
             if (literals != null && !literals.isEmpty()) {
                 setNormalized(literals, outerRolePrefixes);
             }
-            literals = Main.pref.getList(PREF_KEY_INNER_ROLES);
+            literals = Config.getPref().getList(PREF_KEY_INNER_ROLES);
             if (literals != null && !literals.isEmpty()) {
                 setNormalized(literals, innerExactRoles);
             }
-            literals = Main.pref.getList(PREF_KEY_INNER_ROLE_PREFIXES);
+            literals = Config.getPref().getList(PREF_KEY_INNER_ROLE_PREFIXES);
             if (literals != null && !literals.isEmpty()) {
                 setNormalized(literals, innerRolePrefixes);
             }
@@ -156,9 +157,9 @@ public class Multipolygon {
     private static synchronized MultipolygonRoleMatcher getMultipolygonRoleMatcher() {
         if (roleMatcher == null) {
             roleMatcher = new MultipolygonRoleMatcher();
-            if (Main.pref != null) {
+            if (Config.getPref() != null) {
                 roleMatcher.initFromPreferences();
-                Main.pref.addPreferenceChangeListener(roleMatcher);
+                Config.getPref().addPreferenceChangeListener(roleMatcher);
             }
         }
         return roleMatcher;

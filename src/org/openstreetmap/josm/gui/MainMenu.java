@@ -121,6 +121,7 @@ import org.openstreetmap.josm.gui.mappaint.MapPaintMenu;
 import org.openstreetmap.josm.gui.preferences.imagery.ImageryPreference;
 import org.openstreetmap.josm.gui.preferences.map.TaggingPresetPreference;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetSearchPrimitiveDialog;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Shortcut;
 
 /**
@@ -798,11 +799,11 @@ public class MainMenu extends JMenuBar {
                 MainMenu.WINDOW_MENU_GROUP.ALWAYS);
         changesetManager.addButtonModel(mi.getModel());
 
-        if (!Main.pref.getBoolean("audio.menuinvisible", false)) {
+        if (!Config.getPref().getBoolean("audio.menuinvisible", false)) {
             showAudioMenu(true);
         }
 
-        Main.pref.addPreferenceChangeListener(e -> {
+        Config.getPref().addPreferenceChangeListener(e -> {
             if ("audio.menuinvisible".equals(e.getKey())) {
                 showAudioMenu(!Boolean.parseBoolean(e.getNewValue().toString()));
             }

@@ -5,7 +5,7 @@ import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Support class to handle size information of Gui elements
@@ -31,7 +31,7 @@ public final class GuiSizesHelper {
         if (screenDPI == -1) {
             synchronized (GuiSizesHelper.class) {
                 if (screenDPI == -1) {
-                    float scalePref = (float) Main.pref.getDouble("gui.scale", 1.0);
+                    float scalePref = (float) Config.getPref().getDouble("gui.scale", 1.0);
                     if (scalePref != 0) {
                         screenDPI = 96f * scalePref;
                     } else {

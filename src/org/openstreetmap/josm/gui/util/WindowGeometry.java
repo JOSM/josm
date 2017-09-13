@@ -19,6 +19,7 @@ import java.util.regex.Pattern;
 import javax.swing.JComponent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -205,7 +206,7 @@ public class WindowGeometry {
     }
 
     protected final void initFromPreferences(String preferenceKey) throws WindowGeometryException {
-        String value = Main.pref.get(preferenceKey);
+        String value = Config.getPref().get(preferenceKey);
         if (value.isEmpty())
             throw new WindowGeometryException(
                     tr("Preference with key ''{0}'' does not exist. Cannot restore window geometry from preferences.", preferenceKey));
@@ -274,7 +275,7 @@ public class WindowGeometry {
         StringBuilder value = new StringBuilder(32);
         value.append("x=").append(topLeft.x).append(",y=").append(topLeft.y)
              .append(",width=").append(extent.width).append(",height=").append(extent.height);
-        Main.pref.put(preferenceKey, value.toString());
+        Config.getPref().put(preferenceKey, value.toString());
     }
 
     /**

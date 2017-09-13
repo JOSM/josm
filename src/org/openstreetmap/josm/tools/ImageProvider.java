@@ -71,6 +71,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.plugins.PluginHandler;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -121,15 +122,15 @@ public class ImageProvider {
      */
     public enum ImageSizes {
         /** SMALL_ICON value of an Action */
-        SMALLICON(Main.pref.getInt("iconsize.smallicon", 16)),
+        SMALLICON(Config.getPref().getInt("iconsize.smallicon", 16)),
         /** LARGE_ICON_KEY value of an Action */
-        LARGEICON(Main.pref.getInt("iconsize.largeicon", 24)),
+        LARGEICON(Config.getPref().getInt("iconsize.largeicon", 24)),
         /** map icon */
-        MAP(Main.pref.getInt("iconsize.map", 16)),
+        MAP(Config.getPref().getInt("iconsize.map", 16)),
         /** map icon maximum size */
-        MAPMAX(Main.pref.getInt("iconsize.mapmax", 48)),
+        MAPMAX(Config.getPref().getInt("iconsize.mapmax", 48)),
         /** cursor icon size */
-        CURSOR(Main.pref.getInt("iconsize.cursor", 32)),
+        CURSOR(Config.getPref().getInt("iconsize.cursor", 32)),
         /** cursor overlay icon size */
         CURSOROVERLAY(CURSOR),
         /** menu icon size */
@@ -141,7 +142,7 @@ public class ImageProvider {
         /** Layer list icon size
          * @since 8323
          */
-        LAYER(Main.pref.getInt("iconsize.layer", 16)),
+        LAYER(Config.getPref().getInt("iconsize.layer", 16)),
         /** Toolbar button icon size
          * @since 9253
          */
@@ -149,16 +150,16 @@ public class ImageProvider {
         /** Side button maximum height
          * @since 9253
          */
-        SIDEBUTTON(Main.pref.getInt("iconsize.sidebutton", 20)),
+        SIDEBUTTON(Config.getPref().getInt("iconsize.sidebutton", 20)),
         /** Settings tab icon size
          * @since 9253
          */
-        SETTINGS_TAB(Main.pref.getInt("iconsize.settingstab", 48)),
+        SETTINGS_TAB(Config.getPref().getInt("iconsize.settingstab", 48)),
         /**
          * The default image size
          * @since 9705
          */
-        DEFAULT(Main.pref.getInt("iconsize.default", 24)),
+        DEFAULT(Config.getPref().getInt("iconsize.default", 24)),
         /**
          * Splash dialog logo size
          * @since 10358
@@ -1017,7 +1018,7 @@ public class ImageProvider {
                 "https://upload.wikimedia.org/wikipedia/commons/",
                 "https://wiki.openstreetmap.org/wiki/File:"
                 );
-        final Collection<String> baseUrls = Main.pref.getList("image-provider.wiki.urls", defaultBaseUrls);
+        final Collection<String> baseUrls = Config.getPref().getList("image-provider.wiki.urls", defaultBaseUrls);
 
         final String fn = name.substring(name.lastIndexOf('/') + 1);
 

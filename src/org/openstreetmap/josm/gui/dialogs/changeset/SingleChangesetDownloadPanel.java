@@ -21,6 +21,7 @@ import org.openstreetmap.josm.actions.downloadtasks.ChangesetContentDownloadTask
 import org.openstreetmap.josm.gui.widgets.ChangesetIdTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -59,7 +60,7 @@ public class SingleChangesetDownloadPanel extends JPanel {
         tfChangesetId.getDocument().addDocumentListener(actDownload);
         add(btn);
 
-        if (Main.pref.getBoolean("downloadchangeset.autopaste", true)) {
+        if (Config.getPref().getBoolean("downloadchangeset.autopaste", true)) {
             tfChangesetId.tryToPasteFromClipboard();
         }
     }

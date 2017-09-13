@@ -11,10 +11,10 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.UserIdentityManager;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 
 /**
@@ -44,7 +44,7 @@ public final class ChangesetCache implements PreferenceChangedListener {
      * Constructs a new {@code ChangesetCache}.
      */
     private ChangesetCache() {
-        Main.pref.addPreferenceChangeListener(this);
+        Config.getPref().addPreferenceChangeListener(this);
     }
 
     /**

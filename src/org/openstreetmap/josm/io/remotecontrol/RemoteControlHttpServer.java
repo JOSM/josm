@@ -8,7 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -32,7 +32,7 @@ public class RemoteControlHttpServer extends Thread {
      */
     public static void restartRemoteControlHttpServer() {
         stopRemoteControlHttpServer();
-        int port = Main.pref.getInt("remote.control.port", 8111);
+        int port = Config.getPref().getInt("remote.control.port", 8111);
         try {
             instance4 = new RemoteControlHttpServer(port, false);
             instance4.start();

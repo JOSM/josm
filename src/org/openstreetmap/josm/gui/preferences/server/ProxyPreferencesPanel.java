@@ -24,7 +24,6 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmPasswordField;
@@ -35,6 +34,7 @@ import org.openstreetmap.josm.io.ProxyPolicy;
 import org.openstreetmap.josm.io.auth.CredentialsAgent;
 import org.openstreetmap.josm.io.auth.CredentialsAgentException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -263,27 +263,27 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
      * Initializes the panel with the values from the preferences
      */
     public final void initFromPreferences() {
-        ProxyPolicy pp = Optional.ofNullable(ProxyPolicy.fromName(Main.pref.get(DefaultProxySelector.PROXY_POLICY, null)))
+        ProxyPolicy pp = Optional.ofNullable(ProxyPolicy.fromName(Config.getPref().get(DefaultProxySelector.PROXY_POLICY, null)))
                 .orElse(ProxyPolicy.NO_PROXY);
         rbProxyPolicy.get(pp).setSelected(true);
-        String value = Main.pref.get("proxy.host", null);
+        String value = Config.getPref().get("proxy.host", null);
         if (value != null) {
             // legacy support
             tfProxyHttpHost.setText(value);
-            Main.pref.put("proxy.host", null);
+            Config.getPref().put("proxy.host", null);
         } else {
-            tfProxyHttpHost.setText(Main.pref.get(DefaultProxySelector.PROXY_HTTP_HOST, ""));
+            tfProxyHttpHost.setText(Config.getPref().get(DefaultProxySelector.PROXY_HTTP_HOST, ""));
         }
-        value = Main.pref.get("proxy.port", null);
+        value = Config.getPref().get("proxy.port", null);
         if (value != null) {
             // legacy support
             tfProxyHttpPort.setText(value);
-            Main.pref.put("proxy.port", null);
+            Config.getPref().put("proxy.port", null);
         } else {
-            tfProxyHttpPort.setText(Main.pref.get(DefaultProxySelector.PROXY_HTTP_PORT, ""));
+            tfProxyHttpPort.setText(Config.getPref().get(DefaultProxySelector.PROXY_HTTP_PORT, ""));
         }
-        tfProxySocksHost.setText(Main.pref.get(DefaultProxySelector.PROXY_SOCKS_HOST, ""));
-        tfProxySocksPort.setText(Main.pref.get(DefaultProxySelector.PROXY_SOCKS_PORT, ""));
+        tfProxySocksHost.setText(Config.getPref().get(DefaultProxySelector.PROXY_SOCKS_HOST, ""));
+        tfProxySocksPort.setText(Config.getPref().get(DefaultProxySelector.PROXY_SOCKS_PORT, ""));
 
         if (pp.equals(ProxyPolicy.USE_SYSTEM_SETTINGS) && !DefaultProxySelector.willJvmRetrieveSystemProxies()) {
             Logging.warn(tr("JOSM is configured to use proxies from the system setting, but the JVM is not configured to retrieve them. " +
@@ -357,11 +357,11 @@ public class ProxyPreferencesPanel extends VerticallyScrollablePanel {
                 break;
             }
         }
-        Main.pref.put(DefaultProxySelector.PROXY_POLICY, Optional.ofNullable(policy).orElse(ProxyPolicy.NO_PROXY).getName());
-        Main.pref.put(DefaultProxySelector.PROXY_HTTP_HOST, tfProxyHttpHost.getText());
-        Main.pref.put(DefaultProxySelector.PROXY_HTTP_PORT, tfProxyHttpPort.getText());
-        Main.pref.put(DefaultProxySelector.PROXY_SOCKS_HOST, tfProxySocksHost.getText());
-        Main.pref.put(DefaultProxySelector.PROXY_SOCKS_PORT, tfProxySocksPort.getText());
+        Config.getPref().put(DefaultProxySelector.PROXY_POLICY, Optional.ofNullable(policy).orElse(ProxyPolicy.NO_PROXY).getName());
+        Config.getPref().put(DefaultProxySelector.PROXY_HTTP_HOST, tfProxyHttpHost.getText());
+        Config.getPref().put(DefaultProxySelector.PROXY_HTTP_PORT, tfProxyHttpPort.getText());
+        Config.getPref().put(DefaultProxySelector.PROXY_SOCKS_HOST, tfProxySocksHost.getText());
+        Config.getPref().put(DefaultProxySelector.PROXY_SOCKS_PORT, tfProxySocksPort.getText());
 
         // update the proxy selector
         ProxySelector selector = ProxySelector.getDefault();

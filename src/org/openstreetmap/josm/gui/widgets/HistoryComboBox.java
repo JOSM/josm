@@ -5,8 +5,8 @@ import java.util.List;
 
 import javax.swing.text.JTextComponent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * An {@link AutoCompletingComboBox} which keeps a history
@@ -23,7 +23,7 @@ public class HistoryComboBox extends AutoCompletingComboBox {
      * Constructs a new {@code HistoryComboBox}.
      */
     public HistoryComboBox() {
-        int maxsize = Main.pref.getInt("search.history-size", DEFAULT_SEARCH_HISTORY_SIZE);
+        int maxsize = Config.getPref().getInt("search.history-size", DEFAULT_SEARCH_HISTORY_SIZE);
         model = new ComboBoxHistory(maxsize);
         setModel(model);
         setEditable(true);

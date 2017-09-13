@@ -5,9 +5,9 @@ import java.io.PrintStream;
 import java.util.List;
 import java.util.function.Supplier;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.paint.StyledMapRenderer.StyleRecord;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -147,7 +147,7 @@ public class RenderBenchmarkCollector {
      * @return A supplier that returns a nop or a logging benchmark.
      */
     public static Supplier<RenderBenchmarkCollector> defaultBenchmarkSupplier() {
-        return () -> Logging.isTraceEnabled() || Main.pref.getBoolean("mappaint.render.benchmark", false)
+        return () -> Logging.isTraceEnabled() || Config.getPref().getBoolean("mappaint.render.benchmark", false)
                 ? new LoggingBenchmark() : new RenderBenchmarkCollector();
     }
 }

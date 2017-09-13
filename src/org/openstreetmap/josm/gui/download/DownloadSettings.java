@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.download;
 
-import org.openstreetmap.josm.data.Bounds;
-
 import java.util.Optional;
+
+import org.openstreetmap.josm.data.Bounds;
 
 /**
  * The global settings of {@link DownloadDialog}.

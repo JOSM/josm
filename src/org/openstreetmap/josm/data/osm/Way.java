@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CopyList;
 import org.openstreetmap.josm.tools.Pair;
 import org.openstreetmap.josm.tools.Utils;
@@ -608,7 +608,7 @@ public final class Way extends OsmPrimitive implements IWay {
                             "<html>" + tr("Deleted node referenced by {0}",
                                     DefaultNameFormatter.getInstance().formatAsHtmlUnorderedList(this)) + "</html>");
             }
-            if (Main.pref.getBoolean("debug.checkNullCoor", true)) {
+            if (Config.getPref().getBoolean("debug.checkNullCoor", true)) {
                 for (Node n: nodes) {
                     if (n.isVisible() && !n.isIncomplete() && !n.isLatLonKnown())
                         throw new DataIntegrityProblemException("Complete visible node with null coordinates: " + toString(),

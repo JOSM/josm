@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -125,7 +125,7 @@ public class DefaultProxySelector extends ProxySelector {
      *
      */
     public final void initFromPreferences() {
-        String value = Main.pref.get(PROXY_POLICY);
+        String value = Config.getPref().get(PROXY_POLICY);
         if (value.isEmpty()) {
             proxyPolicy = ProxyPolicy.NO_PROXY;
         } else {
@@ -136,8 +136,8 @@ public class DefaultProxySelector extends ProxySelector {
                 proxyPolicy = ProxyPolicy.NO_PROXY;
             }
         }
-        String host = Main.pref.get(PROXY_HTTP_HOST, null);
-        int port = parseProxyPortValue(PROXY_HTTP_PORT, Main.pref.get(PROXY_HTTP_PORT, null));
+        String host = Config.getPref().get(PROXY_HTTP_HOST, null);
+        int port = parseProxyPortValue(PROXY_HTTP_PORT, Config.getPref().get(PROXY_HTTP_PORT, null));
         httpProxySocketAddress = null;
         if (proxyPolicy.equals(ProxyPolicy.USE_HTTP_PROXY)) {
             if (host != null && !host.trim().isEmpty() && port > 0) {
@@ -148,8 +148,8 @@ public class DefaultProxySelector extends ProxySelector {
             }
         }
 
-        host = Main.pref.get(PROXY_SOCKS_HOST, null);
-        port = parseProxyPortValue(PROXY_SOCKS_PORT, Main.pref.get(PROXY_SOCKS_PORT, null));
+        host = Config.getPref().get(PROXY_SOCKS_HOST, null);
+        port = parseProxyPortValue(PROXY_SOCKS_PORT, Config.getPref().get(PROXY_SOCKS_PORT, null));
         socksProxySocketAddress = null;
         if (proxyPolicy.equals(ProxyPolicy.USE_SOCKS_PROXY)) {
             if (host != null && !host.trim().isEmpty() && port > 0) {
@@ -160,7 +160,7 @@ public class DefaultProxySelector extends ProxySelector {
             }
         }
         proxyExceptions = new HashSet<>(
-            Main.pref.getList(PROXY_EXCEPTIONS,
+            Config.getPref().getList(PROXY_EXCEPTIONS,
                     Arrays.asList("localhost", IPV4_LOOPBACK, IPV6_LOOPBACK))
         );
     }

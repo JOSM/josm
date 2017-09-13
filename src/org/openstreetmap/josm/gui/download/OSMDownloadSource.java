@@ -18,7 +18,6 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.event.ChangeListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.AbstractDownloadTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadGpsTask;
 import org.openstreetmap.josm.actions.downloadtasks.DownloadNotesTask;
@@ -31,6 +30,7 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
 import org.openstreetmap.josm.gui.util.GuiHelper;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -297,10 +297,10 @@ public class OSMDownloadSource implements DownloadSource<OSMDownloadSource.OSMDo
                 isAreaTooLarge = false;
             } else if (isDownloadNotes() && !isDownloadOsmData() && !isDownloadGpxData()) {
                 // see max_note_request_area in https://github.com/openstreetmap/openstreetmap-website/blob/master/config/example.application.yml
-                isAreaTooLarge = bbox.getArea() > Main.pref.getDouble("osm-server.max-request-area-notes", 25);
+                isAreaTooLarge = bbox.getArea() > Config.getPref().getDouble("osm-server.max-request-area-notes", 25);
             } else {
                 // see max_request_area in https://github.com/openstreetmap/openstreetmap-website/blob/master/config/example.application.yml
-                isAreaTooLarge = bbox.getArea() > Main.pref.getDouble("osm-server.max-request-area", 0.25);
+                isAreaTooLarge = bbox.getArea() > Config.getPref().getDouble("osm-server.max-request-area", 0.25);
             }
 
             displaySizeCheckResult(isAreaTooLarge);

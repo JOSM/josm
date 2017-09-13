@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.LanguageInfo.LocaleType;
 
 /**
@@ -29,7 +30,7 @@ public class WikiReader {
      * Constructs a new {@code WikiReader}.
      */
     public WikiReader() {
-        this(Main.pref.get("help.baseurl", Main.getJOSMWebsite()));
+        this(Config.getPref().get("help.baseurl", Main.getJOSMWebsite()));
     }
 
     /**

@@ -59,6 +59,7 @@ import org.openstreetmap.josm.gui.util.WindowGeometry;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.UploadStrategy;
 import org.openstreetmap.josm.io.UploadStrategySpecification;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageOverlay;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -251,7 +252,7 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
 
         setMinimumSize(new Dimension(600, 350));
 
-        Main.pref.addPreferenceChangeListener(this);
+        Config.getPref().addPreferenceChangeListener(this);
     }
 
     /**
@@ -652,8 +653,8 @@ public class UploadDialog extends AbstractUploadDialog implements PropertyChange
     }
 
     private static String getLastChangesetTagFromHistory(String historyKey, List<String> def) {
-        Collection<String> history = Main.pref.getList(historyKey, def);
-        int age = (int) (System.currentTimeMillis() / 1000 - Main.pref.getInt(BasicUploadSettingsPanel.HISTORY_LAST_USED_KEY, 0));
+        Collection<String> history = Config.getPref().getList(historyKey, def);
+        int age = (int) (System.currentTimeMillis() / 1000 - Config.getPref().getInt(BasicUploadSettingsPanel.HISTORY_LAST_USED_KEY, 0));
         if (history != null && age < Main.pref.getLong(BasicUploadSettingsPanel.HISTORY_MAX_AGE_KEY, TimeUnit.HOURS.toMillis(4))
                 && !history.isEmpty()) {
             return history.iterator().next();

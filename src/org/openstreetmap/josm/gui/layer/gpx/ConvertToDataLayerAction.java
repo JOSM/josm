@@ -35,6 +35,7 @@ import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.markerlayer.Marker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.widgets.UrlLabel;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -118,7 +119,7 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
             final DataSet ds = new DataSet();
             for (Marker marker : layer.data) {
                 final Node node = new Node(marker.getCoor());
-                final Collection<String> mapping = Main.pref.getList("gpx.to-osm-mapping", Arrays.asList(
+                final Collection<String> mapping = Config.getPref().getList("gpx.to-osm-mapping", Arrays.asList(
                         GpxConstants.GPX_NAME, "name",
                         GpxConstants.GPX_DESC, "description",
                         GpxConstants.GPX_CMT, "note",

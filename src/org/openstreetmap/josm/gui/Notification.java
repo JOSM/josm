@@ -9,8 +9,8 @@ import javax.swing.JEditorPane;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * A Notification Message similar to a popup window, but without disrupting the
@@ -42,23 +42,23 @@ public class Notification {
      * Very short and very easy to grasp message (3 s).
      * E.g. "Please select at least one node".
      */
-    public static final int TIME_SHORT = Main.pref.getInt("notification-time-short-ms", 3000);
+    public static final int TIME_SHORT = Config.getPref().getInt("notification-time-short-ms", 3000);
 
     /**
      * Short message of one or two lines (5 s).
      */
-    public static final int TIME_DEFAULT = Main.pref.getInt("notification-time-default-ms", 5000);
+    public static final int TIME_DEFAULT = Config.getPref().getInt("notification-time-default-ms", 5000);
 
     /**
      * Somewhat longer message (10 s).
      */
-    public static final int TIME_LONG = Main.pref.getInt("notification-time-long-ms", 10_000);
+    public static final int TIME_LONG = Config.getPref().getInt("notification-time-long-ms", 10_000);
 
     /**
      * Long text.
      * (Make sure is still sensible to show as a notification)
      */
-    public static final int TIME_VERY_LONG = Main.pref.getInt("notification-time-very_long-ms", 20_000);
+    public static final int TIME_VERY_LONG = Config.getPref().getInt("notification-time-very_long-ms", 20_000);
 
     private Component content;
     private int duration = Notification.TIME_DEFAULT;

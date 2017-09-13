@@ -26,7 +26,6 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -36,6 +35,7 @@ import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmApiInitializationException;
 import org.openstreetmap.josm.io.OsmTransferCanceledException;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -144,9 +144,9 @@ public class OsmApiUrlInputPanel extends JPanel {
         String oldUrl = OsmApi.getOsmApi().getServerUrl();
         String hmiUrl = getStrippedApiUrl();
         if (cbUseDefaultServerUrl.isSelected() || OsmApi.DEFAULT_API_URL.equals(hmiUrl)) {
-            Main.pref.put("osm-server.url", null);
+            Config.getPref().put("osm-server.url", null);
         } else {
-            Main.pref.put("osm-server.url", hmiUrl);
+            Config.getPref().put("osm-server.url", hmiUrl);
             tfOsmServerUrl.addCurrentItemToHistory();
             SERVER_URL_HISTORY.put(tfOsmServerUrl.getHistory());
         }

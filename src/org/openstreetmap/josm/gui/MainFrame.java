@@ -19,7 +19,6 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerOrderChangeEvent;
@@ -27,6 +26,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer.LayerStateChangeListener;
 import org.openstreetmap.josm.gui.util.WindowGeometry;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -109,7 +109,7 @@ public class MainFrame extends JFrame {
         if (geometry != null) {
             geometry.remember("gui.geometry");
         }
-        Main.pref.putBoolean("gui.maximized", (windowState & JFrame.MAXIMIZED_BOTH) != 0);
+        Config.getPref().putBoolean("gui.maximized", (windowState & JFrame.MAXIMIZED_BOTH) != 0);
     }
 
     /**

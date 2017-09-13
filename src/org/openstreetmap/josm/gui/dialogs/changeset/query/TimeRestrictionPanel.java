@@ -21,13 +21,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.io.ChangesetQuery;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * This is the panel to apply a time restriction to the changeset query.
@@ -295,16 +295,16 @@ public class TimeRestrictionPanel extends JPanel implements RestrictionPanel {
     public void rememberSettings() {
         String prefRoot = "changeset-query.advanced.time-restrictions";
         if (rbClosedAfter.isSelected()) {
-            Main.pref.put(prefRoot + ".query-type", "closed-after");
+            Config.getPref().put(prefRoot + ".query-type", "closed-after");
         } else if (rbClosedAfterAndCreatedBefore.isSelected()) {
-            Main.pref.put(prefRoot + ".query-type", "closed-after-created-before");
+            Config.getPref().put(prefRoot + ".query-type", "closed-after-created-before");
         }
-        Main.pref.put(prefRoot + ".closed-after.date", tfClosedAfterDate1.getText());
-        Main.pref.put(prefRoot + ".closed-after.time", tfClosedAfterTime1.getText());
-        Main.pref.put(prefRoot + ".closed-created.closed.date", tfClosedAfterDate2.getText());
-        Main.pref.put(prefRoot + ".closed-created.closed.time", tfClosedAfterTime2.getText());
-        Main.pref.put(prefRoot + ".closed-created.created.date", tfCreatedBeforeDate.getText());
-        Main.pref.put(prefRoot + ".closed-created.created.time", tfCreatedBeforeTime.getText());
+        Config.getPref().put(prefRoot + ".closed-after.date", tfClosedAfterDate1.getText());
+        Config.getPref().put(prefRoot + ".closed-after.time", tfClosedAfterTime1.getText());
+        Config.getPref().put(prefRoot + ".closed-created.closed.date", tfClosedAfterDate2.getText());
+        Config.getPref().put(prefRoot + ".closed-created.closed.time", tfClosedAfterTime2.getText());
+        Config.getPref().put(prefRoot + ".closed-created.created.date", tfCreatedBeforeDate.getText());
+        Config.getPref().put(prefRoot + ".closed-created.created.time", tfCreatedBeforeTime.getText());
     }
 
     /**
@@ -312,18 +312,18 @@ public class TimeRestrictionPanel extends JPanel implements RestrictionPanel {
      */
     public void restoreFromSettings() {
         String prefRoot = "changeset-query.advanced.open-restrictions";
-        String v = Main.pref.get(prefRoot + ".query-type", "closed-after");
+        String v = Config.getPref().get(prefRoot + ".query-type", "closed-after");
         rbClosedAfter.setSelected("closed-after".equals(v));
         rbClosedAfterAndCreatedBefore.setSelected("closed-after-created-before".equals(v));
         if (!rbClosedAfter.isSelected() && !rbClosedAfterAndCreatedBefore.isSelected()) {
             rbClosedAfter.setSelected(true);
         }
-        tfClosedAfterDate1.setText(Main.pref.get(prefRoot + ".closed-after.date", ""));
-        tfClosedAfterTime1.setText(Main.pref.get(prefRoot + ".closed-after.time", ""));
-        tfClosedAfterDate2.setText(Main.pref.get(prefRoot + ".closed-created.closed.date", ""));
-        tfClosedAfterTime2.setText(Main.pref.get(prefRoot + ".closed-created.closed.time", ""));
-        tfCreatedBeforeDate.setText(Main.pref.get(prefRoot + ".closed-created.created.date", ""));
-        tfCreatedBeforeTime.setText(Main.pref.get(prefRoot + ".closed-created.created.time", ""));
+        tfClosedAfterDate1.setText(Config.getPref().get(prefRoot + ".closed-after.date", ""));
+        tfClosedAfterTime1.setText(Config.getPref().get(prefRoot + ".closed-after.time", ""));
+        tfClosedAfterDate2.setText(Config.getPref().get(prefRoot + ".closed-created.closed.date", ""));
+        tfClosedAfterTime2.setText(Config.getPref().get(prefRoot + ".closed-created.closed.time", ""));
+        tfCreatedBeforeDate.setText(Config.getPref().get(prefRoot + ".closed-created.created.date", ""));
+        tfCreatedBeforeTime.setText(Config.getPref().get(prefRoot + ".closed-created.created.time", ""));
         if (!valClosedAfterDate1.isValid()) {
             tfClosedAfterDate1.setText("");
         }

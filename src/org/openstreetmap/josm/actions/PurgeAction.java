@@ -35,6 +35,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.OsmPrimitivRenderer;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -98,7 +99,7 @@ public class PurgeAction extends JosmAction {
                 return;
 
             clearUndoRedo = cbClearUndoRedo.isSelected();
-            Main.pref.putBoolean("purge.clear_undo_redo", clearUndoRedo);
+            Config.getPref().putBoolean("purge.clear_undo_redo", clearUndoRedo);
         }
 
         MainApplication.undoRedo.add(cmd);
@@ -179,7 +180,7 @@ public class PurgeAction extends JosmAction {
         }
 
         cbClearUndoRedo = new JCheckBox(tr("Clear Undo/Redo buffer"));
-        cbClearUndoRedo.setSelected(Main.pref.getBoolean("purge.clear_undo_redo", false));
+        cbClearUndoRedo.setSelected(Config.getPref().getBoolean("purge.clear_undo_redo", false));
 
         pnl.add(new JSeparator(), GBC.eol().fill(GBC.HORIZONTAL).insets(0, 5, 0, 5));
         pnl.add(cbClearUndoRedo, GBC.eol());

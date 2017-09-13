@@ -18,6 +18,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane.ButtonSpec;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.io.SaveLayersDialog;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -94,7 +95,7 @@ public class RestartAction extends JosmAction {
             cmd = getCommands();
         }
         Logging.info("Restart "+cmd);
-        if (Logging.isDebugEnabled() && Main.pref.getBoolean("restart.debug.simulation")) {
+        if (Logging.isDebugEnabled() && Config.getPref().getBoolean("restart.debug.simulation")) {
             Logging.debug("Restart cancelled to get debug info");
             return;
         }

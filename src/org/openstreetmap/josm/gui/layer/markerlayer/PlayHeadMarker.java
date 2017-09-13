@@ -27,6 +27,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.io.audio.AudioPlayer;
 import org.openstreetmap.josm.io.audio.AudioUtil;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Singleton marker class to track position of audio.
@@ -59,11 +60,11 @@ public final class PlayHeadMarker extends Marker {
 
     private PlayHeadMarker() {
         super(LatLon.ZERO, "",
-                Main.pref.get("marker.audiotracericon", "audio-tracer"),
+                Config.getPref().get("marker.audiotracericon", "audio-tracer"),
                 null, -1.0, 0.0);
-        enabled = Main.pref.getBoolean("marker.traceaudio", true);
+        enabled = Config.getPref().getBoolean("marker.traceaudio", true);
         if (!enabled) return;
-        dropTolerance = Main.pref.getInt("marker.playHeadDropTolerance", 50);
+        dropTolerance = Config.getPref().getInt("marker.playHeadDropTolerance", 50);
         if (MainApplication.isDisplayingMapView()) {
             MapFrame map = MainApplication.getMap();
             map.mapView.addMouseListener(new MouseAdapter() {
@@ -293,7 +294,7 @@ public final class PlayHeadMarker extends Marker {
         if (!enabled) return;
         jumpToMarker = true;
         if (timer == null) {
-            animationInterval = Main.pref.getDouble("marker.audioanimationinterval", 1.0); //milliseconds
+            animationInterval = Config.getPref().getDouble("marker.audioanimationinterval", 1.0); //milliseconds
             timer = new Timer((int) (animationInterval * 1000.0), e -> timerAction());
             timer.setInitialDelay(0);
         } else {

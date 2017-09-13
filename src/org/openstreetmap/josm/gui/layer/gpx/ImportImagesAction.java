@@ -20,6 +20,7 @@ import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.FileChooserManager;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -67,7 +68,7 @@ public class ImportImagesAction extends AbstractAction {
             return;
         }
         JpgImporter importer = new JpgImporter(layer);
-        AbstractFileChooser fc = new FileChooserManager(true, "geoimage.lastdirectory", Main.pref.get("lastDirectory")).
+        AbstractFileChooser fc = new FileChooserManager(true, "geoimage.lastdirectory", Config.getPref().get("lastDirectory")).
                 createFileChooser(true, null, importer.filter, JFileChooser.FILES_AND_DIRECTORIES).openFileChooser();
         if (fc != null) {
             File[] sel = fc.getSelectedFiles();

@@ -18,6 +18,7 @@ import org.openstreetmap.josm.io.OsmApi;
 import org.openstreetmap.josm.io.OsmServerUserInfoReader;
 import org.openstreetmap.josm.io.OsmTransferException;
 import org.openstreetmap.josm.io.auth.CredentialsManager;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
@@ -76,7 +77,7 @@ public final class UserIdentityManager implements PreferenceChangedListener {
             } else {
                 instance.initFromPreferences();
             }
-            Main.pref.addPreferenceChangeListener(instance);
+            Config.getPref().addPreferenceChangeListener(instance);
         }
         return instance;
     }

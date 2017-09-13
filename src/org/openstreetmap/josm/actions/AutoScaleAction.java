@@ -36,6 +36,7 @@ import org.openstreetmap.josm.gui.dialogs.ConflictDialog;
 import org.openstreetmap.josm.gui.dialogs.LayerListDialog;
 import org.openstreetmap.josm.gui.dialogs.ValidatorDialog.ValidatorBoundingXYVisitor;
 import org.openstreetmap.josm.gui.layer.Layer;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
 
@@ -261,7 +262,7 @@ public class AutoScaleAction extends JosmAction {
         v.visit(error);
         if (v.getBounds() == null)
             return null;
-        v.enlargeBoundingBox(Main.pref.getDouble("validator.zoom-enlarge-bbox", 0.0002));
+        v.enlargeBoundingBox(Config.getPref().getDouble("validator.zoom-enlarge-bbox", 0.0002));
         return v;
     }
 
@@ -313,7 +314,7 @@ public class AutoScaleAction extends JosmAction {
         v.enlargeBoundingBoxLogarithmically(100);
         // Make the bounding box at least 100 meter wide to
         // ensure reasonable zoom level when zooming onto single nodes.
-        v.enlargeToMinSize(Main.pref.getDouble("zoom_to_selection_min_size_in_meter", 100));
+        v.enlargeToMinSize(Config.getPref().getDouble("zoom_to_selection_min_size_in_meter", 100));
         return v;
     }
 

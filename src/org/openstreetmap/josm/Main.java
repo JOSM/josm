@@ -48,6 +48,7 @@ import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
 import org.openstreetmap.josm.io.FileWatcher;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -723,7 +724,7 @@ public abstract class Main {
      */
     public static void preConstructorInit() {
         // init default coordinate format
-        ICoordinateFormat fmt = CoordinateFormatManager.getCoordinateFormat(Main.pref.get("coordinates"));
+        ICoordinateFormat fmt = CoordinateFormatManager.getCoordinateFormat(Config.getPref().get("coordinates"));
         if (fmt == null) {
             fmt = DecimalDegreesCoordinateFormat.INSTANCE;
         }
@@ -1006,8 +1007,8 @@ public abstract class Main {
      * @since 6897
      */
     public static String getJOSMWebsite() {
-        if (Main.pref != null)
-            return Main.pref.get("josm.url", JOSM_WEBSITE);
+        if (Config.getPref() != null)
+            return Config.getPref().get("josm.url", JOSM_WEBSITE);
         return JOSM_WEBSITE;
     }
 
@@ -1027,8 +1028,8 @@ public abstract class Main {
      * @since 6897
      */
     public static String getOSMWebsite() {
-        if (Main.pref != null)
-            return Main.pref.get("osm.url", OSM_WEBSITE);
+        if (Config.getPref() != null)
+            return Config.getPref().get("osm.url", OSM_WEBSITE);
         return OSM_WEBSITE;
     }
 
@@ -1051,8 +1052,8 @@ public abstract class Main {
      * @since 7678
      */
     public static String getBaseBrowseUrl() {
-        if (Main.pref != null)
-            return Main.pref.get("osm-browse.url", getOSMWebsiteDependingOnSelectedApi());
+        if (Config.getPref() != null)
+            return Config.getPref().get("osm-browse.url", getOSMWebsiteDependingOnSelectedApi());
         return getOSMWebsiteDependingOnSelectedApi();
     }
 
@@ -1062,8 +1063,8 @@ public abstract class Main {
      * @since 7678
      */
     public static String getBaseUserUrl() {
-        if (Main.pref != null)
-            return Main.pref.get("osm-user.url", getOSMWebsiteDependingOnSelectedApi() + "/user");
+        if (Config.getPref() != null)
+            return Config.getPref().get("osm-user.url", getOSMWebsiteDependingOnSelectedApi() + "/user");
         return getOSMWebsiteDependingOnSelectedApi() + "/user";
     }
 

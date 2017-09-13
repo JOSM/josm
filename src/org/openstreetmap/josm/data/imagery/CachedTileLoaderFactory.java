@@ -14,6 +14,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.preferences.StringProperty;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -71,8 +72,8 @@ public class CachedTileLoaderFactory implements TileLoaderFactory {
             headers.putAll(inputHeaders);
 
         return getLoader(listener, cache,
-                (int) TimeUnit.SECONDS.toMillis(Main.pref.getInt("socket.timeout.connect", 15)),
-                (int) TimeUnit.SECONDS.toMillis(Main.pref.getInt("socket.timeout.read", 30)),
+                (int) TimeUnit.SECONDS.toMillis(Config.getPref().getInt("socket.timeout.connect", 15)),
+                (int) TimeUnit.SECONDS.toMillis(Config.getPref().getInt("socket.timeout.read", 30)),
                 headers);
     }
 

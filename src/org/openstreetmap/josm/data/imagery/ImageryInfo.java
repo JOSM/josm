@@ -25,11 +25,11 @@ import org.openstreetmap.gui.jmapviewer.interfaces.ICoordinate;
 import org.openstreetmap.gui.jmapviewer.tilesources.AbstractTileSource;
 import org.openstreetmap.gui.jmapviewer.tilesources.OsmTileSource.Mapnik;
 import org.openstreetmap.gui.jmapviewer.tilesources.TileSourceInfo;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.Preferences.pref;
 import org.openstreetmap.josm.io.Capabilities;
 import org.openstreetmap.josm.io.OsmApi;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.LanguageInfo;
@@ -816,9 +816,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public void clearId() {
         if (this.id != null) {
-            Collection<String> newAddedIds = new TreeSet<>(Main.pref.getList("imagery.layers.addedIds"));
+            Collection<String> newAddedIds = new TreeSet<>(Config.getPref().getList("imagery.layers.addedIds"));
             newAddedIds.add(this.id);
-            Main.pref.putList("imagery.layers.addedIds", new ArrayList<>(newAddedIds));
+            Config.getPref().putList("imagery.layers.addedIds", new ArrayList<>(newAddedIds));
         }
         setId(null);
     }

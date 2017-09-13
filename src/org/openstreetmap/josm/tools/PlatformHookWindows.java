@@ -68,6 +68,7 @@ import javax.swing.JOptionPane;
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.io.CertificateAmendment.CertAmend;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * {@code PlatformHook} implementation for Microsoft Windows systems.
@@ -500,12 +501,12 @@ public class PlatformHookWindows implements PlatformHook {
      * @param templateFileName file name of the fontconfig.properties template file
      */
     protected void extendFontconfig(String templateFileName) {
-        String customFontconfigFile = Main.pref.get("fontconfig.properties", null);
+        String customFontconfigFile = Config.getPref().get("fontconfig.properties", null);
         if (customFontconfigFile != null) {
             Utils.updateSystemProperty("sun.awt.fontconfig", customFontconfigFile);
             return;
         }
-        if (!Main.pref.getBoolean("font.extended-unicode", true))
+        if (!Config.getPref().getBoolean("font.extended-unicode", true))
             return;
 
         String javaLibPath = System.getProperty("java.home") + File.separator + "lib";

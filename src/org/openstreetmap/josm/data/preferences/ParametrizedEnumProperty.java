@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.data.preferences;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -22,11 +22,11 @@ public abstract class ParametrizedEnumProperty<T extends Enum<T>> {
     protected abstract String getKey(String... params);
 
     public T get(String... params) {
-        return parse(Main.pref.get(getKey(params), defaultValue.name()));
+        return parse(Config.getPref().get(getKey(params), defaultValue.name()));
     }
 
     public boolean put(T value, String... params) {
-        return Main.pref.put(getKey(params), value.name());
+        return Config.getPref().put(getKey(params), value.name());
     }
 
     protected T parse(String s) {

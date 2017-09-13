@@ -28,6 +28,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SourceEditor;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -64,7 +65,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
     @Override
     public void addGui(PreferenceTabbedPane gui) {
         enableIconDefault = new JCheckBox(tr("Enable built-in icon defaults"),
-                Main.pref.getBoolean("mappaint.icon.enable-defaults", true));
+                Config.getPref().getBoolean("mappaint.icon.enable-defaults", true));
 
         sources = new MapPaintSourceEditor();
 
@@ -104,7 +105,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
 
         @Override
         public Collection<String> getInitialIconPathsList() {
-            return Main.pref.getList(ICONPREF, null);
+            return Config.getPref().getList(ICONPREF, null);
         }
 
         @Override
@@ -169,7 +170,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
 
     @Override
     public boolean ok() {
-        boolean reload = Main.pref.putBoolean("mappaint.icon.enable-defaults", enableIconDefault.isSelected());
+        boolean reload = Config.getPref().putBoolean("mappaint.icon.enable-defaults", enableIconDefault.isSelected());
         reload |= sources.finish();
         if (reload) {
             MapPaintStyles.readFromPreferences();

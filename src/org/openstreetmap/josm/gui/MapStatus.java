@@ -78,6 +78,7 @@ import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor.Progr
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.ImageLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -99,7 +100,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public final class MapStatus extends JPanel implements Helpful, Destroyable, PreferenceChangedListener, SoMChangeListener {
 
-    private final DecimalFormat DECIMAL_FORMAT = new DecimalFormat(Main.pref.get("statusbar.decimal-format", "0.0"));
+    private final DecimalFormat DECIMAL_FORMAT = new DecimalFormat(Config.getPref().get("statusbar.decimal-format", "0.0"));
     private static final AbstractProperty<Double> DISTANCE_THRESHOLD = new DoubleProperty("statusbar.distance-threshold", 0.01).cached();
 
     private static final AbstractProperty<Boolean> SHOW_ID = new BooleanProperty("osm-primitives.showid", false);
@@ -774,7 +775,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
-                Main.pref.putBoolean("statusbar.always-visible", sel);
+                Config.getPref().putBoolean("statusbar.always-visible", sel);
             }
         });
 
@@ -819,7 +820,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
                         item.setVisible(latText.equals(invoker) || lonText.equals(invoker));
                     }
                     separator.setVisible(distText.equals(invoker) || latText.equals(invoker) || lonText.equals(invoker));
-                    doNotHide.setSelected(Main.pref.getBoolean("statusbar.always-visible", true));
+                    doNotHide.setSelected(Config.getPref().getBoolean("statusbar.always-visible", true));
                 }
 
                 @Override
@@ -913,7 +914,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
         add(angleText, GBC.std().insets(3, 0, 0, 0));
         add(distText, GBC.std().insets(3, 0, 0, 0));
 
-        if (Main.pref.getBoolean("statusbar.change-system-of-measurement-on-click", true)) {
+        if (Config.getPref().getBoolean("statusbar.change-system-of-measurement-on-click", true)) {
             distText.addMouseListener(new MouseAdapter() {
                 private final List<String> soms = new ArrayList<>(new TreeSet<>(SystemOfMeasurement.ALL_SYSTEMS.keySet()));
 
@@ -944,7 +945,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
         add(progressBar, gbc);
         progressBar.addMouseListener(new ShowMonitorDialogMouseAdapter());
 
-        Main.pref.addPreferenceChangeListener(this);
+        Config.getPref().addPreferenceChangeListener(this);
 
         mvComponentAdapter = new ComponentAdapter() {
             @Override
@@ -973,7 +974,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
      */
     public void updateSystemOfMeasurement(String newsom) {
         SystemOfMeasurement.setSystemOfMeasurement(newsom);
-        if (Main.pref.getBoolean("statusbar.notify.change-system-of-measurement", true)) {
+        if (Config.getPref().getBoolean("statusbar.notify.change-system-of-measurement", true)) {
             new Notification(tr("System of measurement changed to {0}", newsom))
                 .setDuration(Notification.TIME_SHORT)
                 .show();
@@ -1078,7 +1079,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
         double dist = -1;
         // Compute total length of selected way(s) until an arbitrary limit set to 250 ways
         // in order to prevent performance issue if a large number of ways are selected (old behaviour kept in that case, see #8403)
-        int maxWays = Math.max(1, Main.pref.getInt("selection.max-ways-for-statusline", 250));
+        int maxWays = Math.max(1, Config.getPref().getInt("selection.max-ways-for-statusline", 250));
         if (!ways.isEmpty() && ways.size() <= maxWays) {
             dist = 0.0;
             for (Way w : ways) {
@@ -1105,7 +1106,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
     @Override
     public void destroy() {
         SystemOfMeasurement.removeSoMChangeListener(this);
-        Main.pref.removePreferenceChangeListener(this);
+        Config.getPref().removePreferenceChangeListener(this);
         mv.removeComponentListener(mvComponentAdapter);
 
         // MapFrame gets destroyed when the last layer is removed, but the status line background

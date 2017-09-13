@@ -21,13 +21,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -71,7 +71,7 @@ public class Text extends KeyedItem {
         } else {
             initAutoCompletionField(textField, key);
         }
-        if (Main.pref.getBoolean("taggingpreset.display-keys-as-hint", true)) {
+        if (Config.getPref().getBoolean("taggingpreset.display-keys-as-hint", true)) {
             textField.setHint(key);
         }
         if (length != null && !length.isEmpty()) {

@@ -23,6 +23,7 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
@@ -126,7 +127,7 @@ public abstract class TaggingPresetItem {
     }
 
     protected static ImageIcon loadImageIcon(String iconName, File zipIcons, Integer maxSize) {
-        final Collection<String> s = Main.pref.getList("taggingpreset.icon.sources", null);
+        final Collection<String> s = Config.getPref().getList("taggingpreset.icon.sources", null);
         ImageProvider imgProv = new ImageProvider(iconName).setDirs(s).setId("presets").setArchive(zipIcons).setOptional(true);
         if (maxSize != null) {
             imgProv.setMaxSize(maxSize);

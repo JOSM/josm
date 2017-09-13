@@ -78,6 +78,7 @@ import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.io.GpxReader;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ExifReader;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -171,9 +172,9 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 actionPerformed(null);
                 break;
             case DONE:
-                Main.pref.put("geoimage.timezone", timezone.formatTimezone());
-                Main.pref.put("geoimage.delta", delta.formatOffset());
-                Main.pref.putBoolean("geoimage.showThumbs", yLayer.useThumbs);
+                Config.getPref().put("geoimage.timezone", timezone.formatTimezone());
+                Config.getPref().put("geoimage.delta", delta.formatOffset());
+                Config.getPref().putBoolean("geoimage.showThumbs", yLayer.useThumbs);
 
                 yLayer.useThumbs = cbShowThumbs.isSelected();
                 yLayer.startLoadThumbs();
@@ -420,7 +421,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
             JosmComboBox<String> cbTimezones = new JosmComboBox<>(vtTimezones.toArray(new String[vtTimezones.size()]));
 
-            String tzId = Main.pref.get("geoimage.timezoneid", "");
+            String tzId = Config.getPref().get("geoimage.timezoneid", "");
             TimeZone defaultTz;
             if (tzId.isEmpty()) {
                 defaultTz = TimeZone.getDefault();
@@ -528,7 +529,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
                 tzId = selectedTz.substring(0, pos - 1);
                 String tzValue = selectedTz.substring(pos + 1, selectedTz.length() - 1);
 
-                Main.pref.put("geoimage.timezoneid", tzId);
+                Config.getPref().put("geoimage.timezoneid", tzId);
                 tfOffset.setText(Offset.milliseconds(delta).formatOffset());
                 tfTimezone.setText(tzValue);
 
@@ -583,7 +584,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         JPanel panelTf = new JPanel(new GridBagLayout());
 
         try {
-            timezone = Timezone.parseTimezone(Optional.ofNullable(Main.pref.get("geoimage.timezone", "0:00")).orElse("0:00"));
+            timezone = Timezone.parseTimezone(Optional.ofNullable(Config.getPref().get("geoimage.timezone", "0:00")).orElse("0:00"));
         } catch (ParseException e) {
             timezone = Timezone.ZERO;
         }
@@ -592,7 +593,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
         tfTimezone.setText(timezone.formatTimezone());
 
         try {
-            delta = Offset.parseOffset(Main.pref.get("geoimage.delta", "0"));
+            delta = Offset.parseOffset(Config.getPref().get("geoimage.delta", "0"));
         } catch (ParseException e) {
             delta = Offset.ZERO;
         }
@@ -626,7 +627,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
 
         labelPosition.setEnabled(cbExifImg.isEnabled() || cbTaggedImg.isEnabled());
 
-        boolean ticked = yLayer.thumbsLoaded || Main.pref.getBoolean("geoimage.showThumbs", false);
+        boolean ticked = yLayer.thumbsLoaded || Config.getPref().getBoolean("geoimage.showThumbs", false);
         cbShowThumbs = new JCheckBox(tr("Show Thumbnail images on the map"), ticked);
         cbShowThumbs.setEnabled(!yLayer.thumbsLoaded);
 

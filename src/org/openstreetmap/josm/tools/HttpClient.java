@@ -35,6 +35,7 @@ import org.openstreetmap.josm.io.ProgressInputStream;
 import org.openstreetmap.josm.io.ProgressOutputStream;
 import org.openstreetmap.josm.io.UTFInputStreamReader;
 import org.openstreetmap.josm.io.auth.DefaultAuthenticator;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Provides a uniform access for a HTTP/HTTPS server. This class should be used in favour of {@link HttpURLConnection}.
@@ -44,12 +45,12 @@ public final class HttpClient {
 
     private URL url;
     private final String requestMethod;
-    private int connectTimeout = (int) TimeUnit.SECONDS.toMillis(Main.pref.getInt("socket.timeout.connect", 15));
-    private int readTimeout = (int) TimeUnit.SECONDS.toMillis(Main.pref.getInt("socket.timeout.read", 30));
+    private int connectTimeout = (int) TimeUnit.SECONDS.toMillis(Config.getPref().getInt("socket.timeout.connect", 15));
+    private int readTimeout = (int) TimeUnit.SECONDS.toMillis(Config.getPref().getInt("socket.timeout.read", 30));
     private byte[] requestBody;
     private long ifModifiedSince;
     private final Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-    private int maxRedirects = Main.pref.getInt("socket.maxredirects", 5);
+    private int maxRedirects = Config.getPref().getInt("socket.maxredirects", 5);
     private boolean useCache;
     private String reasonForRequest;
     private String outputMessage = tr("Uploading data ...");

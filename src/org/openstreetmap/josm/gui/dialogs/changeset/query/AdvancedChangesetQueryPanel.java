@@ -14,11 +14,11 @@ import javax.swing.JCheckBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
 import org.openstreetmap.josm.io.ChangesetQuery;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * This panel allows to specify a changeset query
@@ -208,10 +208,10 @@ public class AdvancedChangesetQueryPanel extends JPanel {
      * Remember settings in preferences.
      */
     public void rememberSettings() {
-        Main.pref.putBoolean("changeset-query.advanced.user-restrictions", cbUserRestriction.isSelected());
-        Main.pref.putBoolean("changeset-query.advanced.open-restrictions", cbOpenAndCloseRestrictions.isSelected());
-        Main.pref.putBoolean("changeset-query.advanced.time-restrictions", cbTimeRestrictions.isSelected());
-        Main.pref.putBoolean("changeset-query.advanced.bbox-restrictions", cbBoundingBoxRestriction.isSelected());
+        Config.getPref().putBoolean("changeset-query.advanced.user-restrictions", cbUserRestriction.isSelected());
+        Config.getPref().putBoolean("changeset-query.advanced.open-restrictions", cbOpenAndCloseRestrictions.isSelected());
+        Config.getPref().putBoolean("changeset-query.advanced.time-restrictions", cbTimeRestrictions.isSelected());
+        Config.getPref().putBoolean("changeset-query.advanced.bbox-restrictions", cbBoundingBoxRestriction.isSelected());
 
         pnlUserRestriction.rememberSettings();
         pnlOpenAndCloseRestriction.rememberSettings();
@@ -222,10 +222,10 @@ public class AdvancedChangesetQueryPanel extends JPanel {
      * Restore settings from preferences.
      */
     public void restoreFromSettings() {
-        cbUserRestriction.setSelected(Main.pref.getBoolean("changeset-query.advanced.user-restrictions", false));
-        cbOpenAndCloseRestrictions.setSelected(Main.pref.getBoolean("changeset-query.advanced.open-restrictions", false));
-        cbTimeRestrictions.setSelected(Main.pref.getBoolean("changeset-query.advanced.time-restrictions", false));
-        cbBoundingBoxRestriction.setSelected(Main.pref.getBoolean("changeset-query.advanced.bbox-restrictions", false));
+        cbUserRestriction.setSelected(Config.getPref().getBoolean("changeset-query.advanced.user-restrictions", false));
+        cbOpenAndCloseRestrictions.setSelected(Config.getPref().getBoolean("changeset-query.advanced.open-restrictions", false));
+        cbTimeRestrictions.setSelected(Config.getPref().getBoolean("changeset-query.advanced.time-restrictions", false));
+        cbBoundingBoxRestriction.setSelected(Config.getPref().getBoolean("changeset-query.advanced.bbox-restrictions", false));
     }
 
     class RestrictionGroupStateChangeHandler implements ItemListener {

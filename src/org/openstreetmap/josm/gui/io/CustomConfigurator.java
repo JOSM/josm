@@ -49,6 +49,7 @@ import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.LanguageInfo;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -399,7 +400,7 @@ public final class CustomConfigurator {
                                 new PluginDownloadTask(Main.parent, toInstallPlugins, tr("Installing plugins"));
                         MainApplication.worker.submit(pluginDownloadTask);
                     }
-                    List<String> pls = new ArrayList<>(Main.pref.getList("plugins"));
+                    List<String> pls = new ArrayList<>(Config.getPref().getList("plugins"));
                     for (PluginInformation pi2: toInstallPlugins) {
                         if (!pls.contains(pi2.name)) {
                             pls.add(pi2.name);
@@ -412,7 +413,7 @@ public final class CustomConfigurator {
                         pls.remove(pi4.name);
                         new File(Main.pref.getPluginsDirectory(), pi4.name+".jar").deleteOnExit();
                     }
-                    Main.pref.putList("plugins", pls);
+                    Config.getPref().putList("plugins", pls);
                 });
             }
         };

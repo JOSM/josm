@@ -13,7 +13,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * This is a UI widget for resolving tag conflicts, i.e. differences of the tag values
@@ -59,14 +59,12 @@ public class TagConflictResolver extends JPanel {
                 model.setShowTagsWithConflictsOnly(cbShowTagsWithConflictsOnly.isSelected());
                 cbShowTagsWithMultiValuesOnly.setEnabled(cbShowTagsWithConflictsOnly.isSelected());
         });
-        cbShowTagsWithConflictsOnly.setSelected(
-                Main.pref.getBoolean(getClass().getName() + ".showTagsWithConflictsOnly", false)
+        cbShowTagsWithConflictsOnly.setSelected(Config.getPref().getBoolean(getClass().getName() + ".showTagsWithConflictsOnly", false)
         );
         cbShowTagsWithMultiValuesOnly.addChangeListener(
                 e -> model.setShowTagsWithMultiValuesOnly(cbShowTagsWithMultiValuesOnly.isSelected())
         );
-        cbShowTagsWithMultiValuesOnly.setSelected(
-                Main.pref.getBoolean(getClass().getName() + ".showTagsWithMultiValuesOnly", false)
+        cbShowTagsWithMultiValuesOnly.setSelected(Config.getPref().getBoolean(getClass().getName() + ".showTagsWithMultiValuesOnly", false)
         );
         cbShowTagsWithMultiValuesOnly.setEnabled(cbShowTagsWithConflictsOnly.isSelected());
         return pnl;
@@ -77,8 +75,8 @@ public class TagConflictResolver extends JPanel {
      *
      */
     public void rememberPreferences() {
-        Main.pref.putBoolean(getClass().getName() + ".showTagsWithConflictsOnly", cbShowTagsWithConflictsOnly.isSelected());
-        Main.pref.putBoolean(getClass().getName() + ".showTagsWithMultiValuesOnly", cbShowTagsWithMultiValuesOnly.isSelected());
+        Config.getPref().putBoolean(getClass().getName() + ".showTagsWithConflictsOnly", cbShowTagsWithConflictsOnly.isSelected());
+        Config.getPref().putBoolean(getClass().getName() + ".showTagsWithMultiValuesOnly", cbShowTagsWithMultiValuesOnly.isSelected());
     }
 
     protected final void build() {

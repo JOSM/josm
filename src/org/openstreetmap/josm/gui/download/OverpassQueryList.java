@@ -48,6 +48,7 @@ import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.DefaultTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
 import org.openstreetmap.josm.gui.widgets.SearchTextResultListPanel;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -253,7 +254,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
             toSave.add(it);
         }
 
-        Main.pref.putListOfMaps(PREFERENCE_ITEMS, toSave);
+        Config.getPref().putListOfMaps(PREFERENCE_ITEMS, toSave);
     }
 
     /**
@@ -262,7 +263,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
      */
     private static Map<String, SelectorItem> restorePreferences() {
         Collection<Map<String, String>> toRetrieve =
-                Main.pref.getListOfMaps(PREFERENCE_ITEMS, Collections.emptyList());
+                Config.getPref().getListOfMaps(PREFERENCE_ITEMS, Collections.emptyList());
         Map<String, SelectorItem> result = new HashMap<>();
 
         for (Map<String, String> entry : toRetrieve) {

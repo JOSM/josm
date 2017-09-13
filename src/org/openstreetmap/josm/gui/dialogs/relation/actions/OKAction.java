@@ -5,13 +5,13 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.event.ActionEvent;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTable;
 import org.openstreetmap.josm.gui.dialogs.relation.MemberTableModel;
-import org.openstreetmap.josm.gui.dialogs.relation.IRelationEditor;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 
 /**
@@ -39,7 +39,7 @@ public class OKAction extends SavingAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Main.pref.put("relation.editor.generic.lastrole", tfRole.getText());
+        Config.getPref().put("relation.editor.generic.lastrole", tfRole.getText());
         memberTable.stopHighlighting();
         if (!applyChanges())
             return;

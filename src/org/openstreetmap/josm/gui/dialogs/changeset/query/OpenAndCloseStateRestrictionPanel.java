@@ -12,9 +12,9 @@ import javax.swing.ButtonGroup;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.io.ChangesetQuery;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * This is the panel for selecting whether the changeset query should be restricted to
@@ -108,11 +108,11 @@ public class OpenAndCloseStateRestrictionPanel extends JPanel implements Restric
      */
     public void rememberSettings() {
         if (rbBoth.isSelected()) {
-            Main.pref.put(PREF_QUERY_TYPE, "both");
+            Config.getPref().put(PREF_QUERY_TYPE, "both");
         } else if (rbOpenOnly.isSelected()) {
-            Main.pref.put(PREF_QUERY_TYPE, "open");
+            Config.getPref().put(PREF_QUERY_TYPE, "open");
         } else if (rbClosedOnly.isSelected()) {
-            Main.pref.put(PREF_QUERY_TYPE, "closed");
+            Config.getPref().put(PREF_QUERY_TYPE, "closed");
         }
     }
 
@@ -120,7 +120,7 @@ public class OpenAndCloseStateRestrictionPanel extends JPanel implements Restric
      * Restore settings from preferences.
      */
     public void restoreFromSettings() {
-        String v = Main.pref.get(PREF_QUERY_TYPE, "open");
+        String v = Config.getPref().get(PREF_QUERY_TYPE, "open");
         rbBoth.setSelected("both".equals(v));
         rbOpenOnly.setSelected("open".equals(v));
         rbClosedOnly.setSelected("closed".equals(v));

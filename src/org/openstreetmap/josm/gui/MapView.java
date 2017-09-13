@@ -75,6 +75,7 @@ import org.openstreetmap.josm.gui.layer.markerlayer.PlayHeadMarker;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles.MapPaintSylesUpdateListener;
 import org.openstreetmap.josm.io.audio.AudioPlayer;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -276,7 +277,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
         initialViewport = viewportData;
         layerManager.addAndFireLayerChangeListener(this);
         layerManager.addActiveLayerChangeListener(this);
-        Main.pref.addPreferenceChangeListener(this);
+        Config.getPref().addPreferenceChangeListener(this);
 
         addComponentListener(new ComponentAdapter() {
             @Override
@@ -812,7 +813,7 @@ LayerManager.LayerChangeListener, MainLayerManager.ActiveLayerChangeListener {
     public void destroy() {
         layerManager.removeAndFireLayerChangeListener(this);
         layerManager.removeActiveLayerChangeListener(this);
-        Main.pref.removePreferenceChangeListener(this);
+        Config.getPref().removePreferenceChangeListener(this);
         SelectionEventManager.getInstance().removeSelectionListener(repaintSelectionChangedListener);
         MultipolygonCache.getInstance().clear();
         if (mapMover != null) {

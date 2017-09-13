@@ -31,6 +31,7 @@ import org.openstreetmap.josm.gui.layer.markerlayer.AudioMarker;
 import org.openstreetmap.josm.gui.layer.markerlayer.MarkerLayer;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.io.audio.AudioUtil;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -137,7 +138,7 @@ public class ImportAudioAction extends AbstractAction {
         Collection<WayPoint> waypoints = new ArrayList<>();
         boolean timedMarkersOmitted = false;
         boolean untimedMarkersOmitted = false;
-        double snapDistance = Main.pref.getDouble("marker.audiofromuntimedwaypoints.distance", 1.0e-3);
+        double snapDistance = Config.getPref().getDouble("marker.audiofromuntimedwaypoints.distance", 1.0e-3);
         // about 25 m
         WayPoint wayPointFromTimeStamp = null;
 
@@ -170,7 +171,7 @@ public class ImportAudioAction extends AbstractAction {
         }
 
         // (a) try explicit timestamped waypoints - unless suppressed
-        if (hasWaypoints && Main.pref.getBoolean("marker.audiofromexplicitwaypoints", true)) {
+        if (hasWaypoints && Config.getPref().getBoolean("marker.audiofromexplicitwaypoints", true)) {
             for (WayPoint w : layer.data.waypoints) {
                 if (w.time > firstTime) {
                     waypoints.add(w);
@@ -181,7 +182,7 @@ public class ImportAudioAction extends AbstractAction {
         }
 
         // (b) try explicit waypoints without timestamps - unless suppressed
-        if (hasWaypoints && Main.pref.getBoolean("marker.audiofromuntimedwaypoints", true)) {
+        if (hasWaypoints && Config.getPref().getBoolean("marker.audiofromuntimedwaypoints", true)) {
             for (WayPoint w : layer.data.waypoints) {
                 if (waypoints.contains(w)) {
                     continue;
@@ -201,7 +202,7 @@ public class ImportAudioAction extends AbstractAction {
         }
 
         // (c) use explicitly named track points, again unless suppressed
-        if (layer.data.tracks != null && Main.pref.getBoolean("marker.audiofromnamedtrackpoints", false)
+        if (layer.data.tracks != null && Config.getPref().getBoolean("marker.audiofromnamedtrackpoints", false)
                 && !layer.data.tracks.isEmpty()) {
             for (GpxTrack track : layer.data.tracks) {
                 for (GpxTrackSegment seg : track.getSegments()) {
@@ -215,12 +216,12 @@ public class ImportAudioAction extends AbstractAction {
         }
 
         // (d) use timestamp of file as location on track
-        if (hasTracks && Main.pref.getBoolean("marker.audiofromwavtimestamps", false)) {
+        if (hasTracks && Config.getPref().getBoolean("marker.audiofromwavtimestamps", false)) {
             double lastModified = audioFile.lastModified() / 1000.0; // lastModified is in milliseconds
             double duration = AudioUtil.getCalibratedDuration(audioFile);
             double startTime = lastModified - duration;
             startTime = firstStartTime + (startTime - firstStartTime)
-                    / Main.pref.getDouble("audio.calibration", 1.0 /* default, ratio */);
+                    / Config.getPref().getDouble("audio.calibration", 1.0 /* default, ratio */);
             WayPoint w1 = null;
             WayPoint w2 = null;
 
@@ -258,7 +259,7 @@ public class ImportAudioAction extends AbstractAction {
         // (e) analyse audio for spoken markers here, in due course
 
         // (f) simply add a single marker at the start of the track
-        if ((Main.pref.getBoolean("marker.audiofromstart") || waypoints.isEmpty()) && hasTracks) {
+        if ((Config.getPref().getBoolean("marker.audiofromstart") || waypoints.isEmpty()) && hasTracks) {
             boolean gotOne = false;
             for (GpxTrack track : layer.data.tracks) {
                 for (GpxTrackSegment seg : track.getSegments()) {

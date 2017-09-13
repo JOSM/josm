@@ -12,7 +12,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.command.Command;
 import org.openstreetmap.josm.command.DeleteCommand;
 import org.openstreetmap.josm.data.osm.DataSet;
@@ -29,6 +28,7 @@ import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.util.HighlightHelper;
 import org.openstreetmap.josm.gui.util.ModifierExListener;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -110,7 +110,7 @@ public class DeleteAction extends MapMode implements ModifierExListener {
         if (!isEnabled())
             return;
 
-        drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
+        drawTargetHighlight = Config.getPref().getBoolean("draw.target-highlight", true);
 
         MapFrame map = MainApplication.getMap();
         map.mapView.addMouseListener(this);

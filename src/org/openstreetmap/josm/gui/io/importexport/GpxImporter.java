@@ -9,7 +9,6 @@ import java.io.InputStream;
 
 import javax.swing.JOptionPane;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
 import org.openstreetmap.josm.data.gpx.GpxData;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -19,6 +18,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.GpxReader;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
 
@@ -94,8 +94,7 @@ public class GpxImporter extends FileImporter {
      * @return a GPX file filter
      */
     public static ExtensionFileFilter getFileFilter() {
-        return ExtensionFileFilter.newFilterWithArchiveExtensions(
-            "gpx", Main.pref.get("save.extension.gpx", "gpx"), tr("GPX Files"), true);
+        return ExtensionFileFilter.newFilterWithArchiveExtensions("gpx", Config.getPref().get("save.extension.gpx", "gpx"), tr("GPX Files"), true);
     }
 
     @Override
@@ -147,7 +146,7 @@ public class GpxImporter extends FileImporter {
         if (data.hasRoutePoints() || data.hasTrackPoints()) {
             gpxLayer = new GpxLayer(data, gpxLayerName, data.storageFile != null);
         }
-        if (Main.pref.getBoolean("marker.makeautomarkers", true) && !data.waypoints.isEmpty()) {
+        if (Config.getPref().getBoolean("marker.makeautomarkers", true) && !data.waypoints.isEmpty()) {
             markerLayer = new MarkerLayer(data, markerLayerName, data.storageFile, gpxLayer);
             if (markerLayer.data.isEmpty()) {
                 markerLayer = null;

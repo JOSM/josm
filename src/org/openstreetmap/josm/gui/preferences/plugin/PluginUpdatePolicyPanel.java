@@ -19,11 +19,11 @@ import javax.swing.JRadioButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.plugins.PluginHandler;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
 /**
@@ -174,16 +174,14 @@ public class PluginUpdatePolicyPanel extends JPanel {
      * Loads the relevant preference values from the JOSM preferences
      */
     public final void initFromPreferences() {
-        rbVersionBasedUpatePolicy.get(Optional.ofNullable(Policy.fromPreferenceValue(
-                Main.pref.get("pluginmanager.version-based-update.policy", "ask"))).orElse(Policy.ASK)).setSelected(true);
-        rbTimeBasedUpatePolicy.get(Optional.ofNullable(Policy.fromPreferenceValue(
-                Main.pref.get("pluginmanager.time-based-update.policy", "ask"))).orElse(Policy.ASK)).setSelected(true);
+        rbVersionBasedUpatePolicy.get(Optional.ofNullable(Policy.fromPreferenceValue(Config.getPref().get("pluginmanager.version-based-update.policy", "ask"))).orElse(Policy.ASK)).setSelected(true);
+        rbTimeBasedUpatePolicy.get(Optional.ofNullable(Policy.fromPreferenceValue(Config.getPref().get("pluginmanager.time-based-update.policy", "ask"))).orElse(Policy.ASK)).setSelected(true);
 
-        String pref = Main.pref.get("pluginmanager.warntime", null);
+        String pref = Config.getPref().get("pluginmanager.warntime", null);
         int days = 0;
         if (pref != null) {
             // remove legacy preference
-            Main.pref.put("pluginmanager.warntime", null);
+            Config.getPref().put("pluginmanager.warntime", null);
             try {
                 days = Integer.parseInt(pref.trim());
             } catch (NumberFormatException e) {
@@ -195,7 +193,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
             }
         }
         if (days == 0) {
-            days = Main.pref.getInt("pluginmanager.time-based-update.interval", PluginHandler.DEFAULT_TIME_BASED_UPDATE_INTERVAL);
+            days = Config.getPref().getInt("pluginmanager.time-based-update.interval", PluginHandler.DEFAULT_TIME_BASED_UPDATE_INTERVAL);
         }
         tfUpdateInterval.setText(Integer.toString(days));
     }
@@ -209,7 +207,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
         //
         for (Policy p: Policy.values()) {
             if (rbVersionBasedUpatePolicy.get(p).isSelected()) {
-                Main.pref.put("pluginmanager.version-based-update.policy", p.getPreferencesValue());
+                Config.getPref().put("pluginmanager.version-based-update.policy", p.getPreferencesValue());
                 break;
             }
         }
@@ -218,7 +216,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
         //
         for (Policy p: Policy.values()) {
             if (rbTimeBasedUpatePolicy.get(p).isSelected()) {
-                Main.pref.put("pluginmanager.time-based-update.policy", p.getPreferencesValue());
+                Config.getPref().put("pluginmanager.time-based-update.policy", p.getPreferencesValue());
                 break;
             }
         }
@@ -234,7 +232,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
         } catch (NumberFormatException e) {
             days = PluginHandler.DEFAULT_TIME_BASED_UPDATE_INTERVAL;
         }
-        Main.pref.putInt("pluginmanager.time-based-update.interval", days);
+        Config.getPref().putInt("pluginmanager.time-based-update.interval", days);
     }
 
     class TimeBasedPolicyChangeListener implements ChangeListener {

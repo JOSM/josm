@@ -50,6 +50,7 @@ import org.openstreetmap.josm.gui.layer.JumpToMarkerActions.JumpToPreviousMarker
 import org.openstreetmap.josm.gui.layer.Layer;
 import org.openstreetmap.josm.gui.layer.gpx.ConvertToDataLayerAction;
 import org.openstreetmap.josm.io.audio.AudioPlayer;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -229,7 +230,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
         components.add(new CustomizeColor(this));
         components.add(SeparatorLayerAction.INSTANCE);
         components.add(new SynchronizeAudio());
-        if (Main.pref.getBoolean("marker.traceaudio", true)) {
+        if (Config.getPref().getBoolean("marker.traceaudio", true)) {
             components.add(new MoveAudio());
         }
         components.add(new JumpToNextMarker(this));
@@ -438,7 +439,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
      * @return <code>true</code> if text should be shown, <code>false</code> otherwise.
      */
     private boolean isTextOrIconShown() {
-        String current = Main.pref.get("marker.show "+getName(), "show");
+        String current = Config.getPref().get("marker.show "+getName(), "show");
         return "show".equalsIgnoreCase(current);
     }
 
@@ -490,7 +491,7 @@ public class MarkerLayer extends Layer implements JumpToMarkerLayer {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Main.pref.put("marker.show "+layer.getName(), layer.isTextOrIconShown() ? "hide" : "show");
+            Config.getPref().put("marker.show "+layer.getName(), layer.isTextOrIconShown() ? "hide" : "show");
             layer.invalidate();
         }
 

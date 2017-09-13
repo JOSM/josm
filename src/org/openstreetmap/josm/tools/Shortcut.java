@@ -22,6 +22,7 @@ import javax.swing.KeyStroke;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Global shortcut class.
@@ -169,7 +170,7 @@ public final class Shortcut {
 
     // create a shortcut object from an string as saved in the preferences
     private Shortcut(String prefString) {
-        List<String> s = new ArrayList<>(Main.pref.getList(prefString));
+        List<String> s = new ArrayList<>(Config.getPref().getList(prefString));
         this.shortText = prefString.substring(15);
         this.longText = s.get(0);
         this.requestedKey = Integer.parseInt(s.get(1));
@@ -181,7 +182,7 @@ public final class Shortcut {
     }
 
     private void saveDefault() {
-        Main.pref.getList("shortcut.entry."+shortText, Arrays.asList(longText,
+        Config.getPref().getList("shortcut.entry."+shortText, Arrays.asList(longText,
             String.valueOf(requestedKey), String.valueOf(requestedGroup), String.valueOf(requestedKey),
             String.valueOf(getGroupModifier(requestedGroup)), String.valueOf(true), String.valueOf(false)));
     }
@@ -189,9 +190,9 @@ public final class Shortcut {
     // get a string that can be put into the preferences
     private boolean save() {
         if (isAutomatic() || isReset() || !isAssignedUser()) {
-            return Main.pref.putList("shortcut.entry."+shortText, null);
+            return Config.getPref().putList("shortcut.entry."+shortText, null);
         } else {
-            return Main.pref.putList("shortcut.entry."+shortText, Arrays.asList(longText,
+            return Config.getPref().putList("shortcut.entry."+shortText, Arrays.asList(longText,
                 String.valueOf(requestedKey), String.valueOf(requestedGroup), String.valueOf(assignedKey),
                 String.valueOf(assignedModifier), String.valueOf(assignedDefault), String.valueOf(assignedUser)));
         }

@@ -39,6 +39,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.conflict.tags.CombinePrimitiveResolverDialog;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -113,7 +114,7 @@ public class MergeNodesAction extends JosmAction {
         if (size == 1) // to avoid division by 0 in mode 2
             return candidates.get(0);
 
-        switch (Main.pref.getInt("merge-nodes.mode", 0)) {
+        switch (Config.getPref().getInt("merge-nodes.mode", 0)) {
         case 0:
             return candidates.get(size - 1);
         case 1:

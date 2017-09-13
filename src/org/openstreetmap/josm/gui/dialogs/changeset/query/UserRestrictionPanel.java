@@ -17,7 +17,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.help.HelpUtil;
@@ -26,6 +25,7 @@ import org.openstreetmap.josm.gui.widgets.JMultilineLabel;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.io.ChangesetQuery;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
@@ -260,21 +260,21 @@ public class UserRestrictionPanel extends JPanel implements RestrictionPanel {
      */
     public void rememberSettings() {
         if (rbRestrictToMyself.isSelected()) {
-            Main.pref.put(PREF_QUERY_TYPE, "mine");
+            Config.getPref().put(PREF_QUERY_TYPE, "mine");
         } else if (rbRestrictToUid.isSelected()) {
-            Main.pref.put(PREF_QUERY_TYPE, "uid");
+            Config.getPref().put(PREF_QUERY_TYPE, "uid");
         } else if (rbRestrictToUserName.isSelected()) {
-            Main.pref.put(PREF_QUERY_TYPE, "username");
+            Config.getPref().put(PREF_QUERY_TYPE, "username");
         }
-        Main.pref.put(PREF_ROOT + ".uid", tfUid.getText());
-        Main.pref.put(PREF_ROOT + ".username", tfUserName.getText());
+        Config.getPref().put(PREF_ROOT + ".uid", tfUid.getText());
+        Config.getPref().put(PREF_ROOT + ".username", tfUserName.getText());
     }
 
     /**
      * Restore settings from preferences.
      */
     public void restoreFromSettings() {
-        String v = Main.pref.get(PREF_QUERY_TYPE, "mine");
+        String v = Config.getPref().get(PREF_QUERY_TYPE, "mine");
         if ("mine".equals(v)) {
             UserIdentityManager im = UserIdentityManager.getInstance();
             if (im.isAnonymous()) {
@@ -287,11 +287,11 @@ public class UserRestrictionPanel extends JPanel implements RestrictionPanel {
         } else if ("username".equals(v)) {
             rbRestrictToUserName.setSelected(true);
         }
-        tfUid.setText(Main.pref.get(PREF_ROOT + ".uid", ""));
+        tfUid.setText(Config.getPref().get(PREF_ROOT + ".uid", ""));
         if (!valUid.isValid()) {
             tfUid.setText("");
         }
-        tfUserName.setText(Main.pref.get(PREF_ROOT + ".username", ""));
+        tfUserName.setText(Config.getPref().get(PREF_ROOT + ".username", ""));
     }
 
     class UserRestrictionChangedHandler implements ItemListener {

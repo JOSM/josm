@@ -60,6 +60,7 @@ import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.ReadLocalPluginInformationTask;
 import org.openstreetmap.josm.plugins.ReadRemotePluginInformationTask;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
@@ -301,7 +302,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
         if (model.isActivePluginsChanged()) {
             List<String> l = new LinkedList<>(model.getSelectedPluginNames());
             Collections.sort(l);
-            Main.pref.putList("plugins", l);
+            Config.getPref().putList("plugins", l);
             if (!model.getNewlyDeactivatedPlugins().isEmpty())
                 return true;
             for (PluginInformation pi : model.getNewlyActivatedPlugins()) {
@@ -358,7 +359,7 @@ public final class PluginPreference extends DefaultTabPreferenceSetting {
                     SwingUtilities.invokeLater(() -> {
                         model.updateAvailablePlugins(task.getAvailablePlugins());
                         pnlPluginPreferences.refreshView();
-                        Main.pref.putInt("pluginmanager.version", Version.getInstance().getVersion()); // fix #7030
+                        Config.getPref().putInt("pluginmanager.version", Version.getInstance().getVersion()); // fix #7030
                     });
                 }
             };

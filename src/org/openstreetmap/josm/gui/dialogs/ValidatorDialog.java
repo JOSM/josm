@@ -57,6 +57,7 @@ import org.openstreetmap.josm.gui.preferences.validator.ValidatorPreference;
 import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.widgets.PopupMenuLauncher;
 import org.openstreetmap.josm.io.OsmTransferException;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
@@ -492,7 +493,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
                 if (ds != null) {
                     ds.setSelected(sel);
                 }
-                if (Main.pref.getBoolean("validator.autozoom", false)) {
+                if (Config.getPref().getBoolean("validator.autozoom", false)) {
                     AutoScaleAction.zoomTo(sel);
                 }
             }
@@ -572,7 +573,7 @@ public class ValidatorDialog extends ToggleDialog implements SelectionChangedLis
      * @param newSelection The new selection
      */
     public void updateSelection(Collection<? extends OsmPrimitive> newSelection) {
-        if (!Main.pref.getBoolean(ValidatorPrefHelper.PREF_FILTER_BY_SELECTION, false))
+        if (!Config.getPref().getBoolean(ValidatorPrefHelper.PREF_FILTER_BY_SELECTION, false))
             return;
         if (newSelection.isEmpty()) {
             tree.setFilter(null);

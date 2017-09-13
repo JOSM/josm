@@ -22,6 +22,7 @@ import org.openstreetmap.josm.gui.progress.ProgressMonitor;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.Compression;
 import org.openstreetmap.josm.io.nmea.NmeaReader;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * File importer allowing to import NMEA-0183 files (*.nmea/nme/nma/log/txt files).
@@ -54,7 +55,7 @@ public class NMEAImporter extends FileImporter {
 
                 GuiHelper.runInEDT(() -> {
                     MainApplication.getLayerManager().addLayer(gpxLayer);
-                    if (Main.pref.getBoolean("marker.makeautomarkers", true)) {
+                    if (Config.getPref().getBoolean("marker.makeautomarkers", true)) {
                         MarkerLayer ml = new MarkerLayer(r.data, tr("Markers from {0}", fn), fileFinal, gpxLayer);
                         if (!ml.data.isEmpty()) {
                             MainApplication.getLayerManager().addLayer(ml);

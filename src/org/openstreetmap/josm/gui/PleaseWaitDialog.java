@@ -19,10 +19,10 @@ import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.UIManager;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.progress.swing.PleaseWaitProgressMonitor.ProgressMonitorDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.JosmTextArea;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -81,7 +81,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
             public void componentResized(ComponentEvent ev) {
                 int w = getWidth();
                 if (w > 200) {
-                    Main.pref.putInt("progressdialog.size", w);
+                    Config.getPref().putInt("progressdialog.size", w);
                 }
             }
         });
@@ -97,7 +97,7 @@ public class PleaseWaitDialog extends JDialog implements ProgressMonitorDialog {
         invalidate();
         setDropTarget(null); // Workaround to JDK bug 7027598/7100524/7169912 (#8613)
         pack();
-        setSize(Main.pref.getInt("progressdialog.size", 600), getSize().height);
+        setSize(Config.getPref().getInt("progressdialog.size", 600), getSize().height);
     }
 
     /**

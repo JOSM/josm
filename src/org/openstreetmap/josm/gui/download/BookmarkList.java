@@ -22,7 +22,6 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 import javax.swing.UIManager;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.downloadtasks.ChangesetQueryTask;
 import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.UserIdentityManager;
@@ -38,6 +37,7 @@ import org.openstreetmap.josm.gui.dialogs.changeset.ChangesetCacheManager;
 import org.openstreetmap.josm.gui.mappaint.mapcss.Selector;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.ChangesetQuery;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.ImageProvider.ImageSizes;
 import org.openstreetmap.josm.tools.Logging;
@@ -261,7 +261,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
             }
         }
         // Then add manual bookmarks previously saved in local preferences
-        Collection<Collection<String>> args = Main.pref.getArray("bookmarks", null);
+        List<List<String>> args = Config.getPref().getListOfLists("bookmarks", null);
         if (args != null) {
             List<Bookmark> bookmarks = new LinkedList<>();
             for (Collection<String> entry : args) {
@@ -314,7 +314,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
             array[4] = String.valueOf(area.getMaxLon());
             coll.add(Arrays.asList(array));
         }
-        Main.pref.putListOfLists("bookmarks", coll);
+        Config.getPref().putListOfLists("bookmarks", coll);
     }
 
     /**

@@ -12,9 +12,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.data.osm.visitor.PrimitiveVisitor;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CopyList;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
@@ -506,7 +506,7 @@ public final class Relation extends OsmPrimitive implements IRelation {
                             String.format("Relation member must be part of the same dataset as relation(%s, %s)",
                                     getPrimitiveId(), rm.getMember().getPrimitiveId()));
             }
-            if (Main.pref.getBoolean("debug.checkDeleteReferenced", true)) {
+            if (Config.getPref().getBoolean("debug.checkDeleteReferenced", true)) {
                 for (RelationMember rm: members) {
                     if (rm.getMember().isDeleted())
                         throw new DataIntegrityProblemException("Deleted member referenced: " + toString());

@@ -27,6 +27,7 @@ import org.openstreetmap.josm.gui.MapView;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.io.remotecontrol.AddTagsDialog;
 import org.openstreetmap.josm.io.remotecontrol.PermissionPrefWithDefault;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Adds a way to the current dataset. For instance, {@code /add_way?way=lat1,lon2;lat2,lon2}.
@@ -129,7 +130,7 @@ public class AddWayHandler extends RequestHandler {
         if (MainApplication.isDisplayingMapView()) {
             MapView mapView = MainApplication.getMap().mapView;
             nd = mapView.getNearestNode(mapView.getPoint(ll), OsmPrimitive::isUsable);
-            if (nd != null && nd.getCoor().greatCircleDistance(ll) > Main.pref.getDouble("remote.tolerance", 0.1)) {
+            if (nd != null && nd.getCoor().greatCircleDistance(ll) > Config.getPref().getDouble("remote.tolerance", 0.1)) {
                 nd = null; // node is too far
             }
         }
@@ -137,7 +138,7 @@ public class AddWayHandler extends RequestHandler {
         Node prev = null;
         for (Entry<LatLon, Node> entry : addedNodes.entrySet()) {
             LatLon lOld = entry.getKey();
-            if (lOld.greatCircleDistance(ll) < Main.pref.getDouble("remotecontrol.tolerance", 0.1)) {
+            if (lOld.greatCircleDistance(ll) < Config.getPref().getDouble("remotecontrol.tolerance", 0.1)) {
                 prev = entry.getValue();
                 break;
             }

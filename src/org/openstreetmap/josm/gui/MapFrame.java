@@ -41,7 +41,6 @@ import javax.swing.event.PopupMenuListener;
 import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import javax.swing.plaf.basic.BasicSplitPaneUI;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.LassoModeAction;
 import org.openstreetmap.josm.actions.mapmode.DeleteAction;
 import org.openstreetmap.josm.actions.mapmode.DrawAction;
@@ -79,6 +78,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.util.AdvancedKeyPressDetector;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Destroyable;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
@@ -294,7 +294,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
             }
         }
 
-        if (Main.pref.getBoolean("debug.advanced-keypress-detector.enable", true)) {
+        if (Config.getPref().getBoolean("debug.advanced-keypress-detector.enable", true)) {
             keyDetector.register();
         }
     }
@@ -344,7 +344,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         MainApplication.getLayerManager().removeLayerChangeListener(this);
         MainApplication.getLayerManager().removeActiveLayerChangeListener(this);
         dialogsPanel.destroy();
-        Main.pref.removePreferenceChangeListener(sidetoolbarPreferencesChangedListener);
+        Config.getPref().removePreferenceChangeListener(sidetoolbarPreferencesChangedListener);
         for (int i = 0; i < toolBarActions.getComponentCount(); ++i) {
             if (toolBarActions.getComponent(i) instanceof Destroyable) {
                 ((Destroyable) toolBarActions.getComponent(i)).destroy();
@@ -495,7 +495,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         /**
          * sideToolBar: add map modes icons
          */
-        if (Main.pref.getBoolean("sidetoolbar.mapmodes.visible", true)) {
+        if (Config.getPref().getBoolean("sidetoolbar.mapmodes.visible", true)) {
             toolBarActions.setAlignmentX(0.5f);
             toolBarActions.setBorder(null);
             toolBarActions.setInheritsPopupMenu(true);
@@ -510,7 +510,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         /**
          * sideToolBar: add toggle dialogs icons
          */
-        if (Main.pref.getBoolean("sidetoolbar.toggledialogs.visible", true)) {
+        if (Config.getPref().getBoolean("sidetoolbar.toggledialogs.visible", true)) {
             ((JToolBar) sideToolBar).addSeparator(new Dimension(0, 18));
             toolBarToggle.setAlignmentX(0.5f);
             toolBarToggle.setBorder(null);
@@ -533,17 +533,17 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         /**
          * sideToolBar: decide scroll- and visibility
          */
-        if (Main.pref.getBoolean("sidetoolbar.scrollable", true)) {
+        if (Config.getPref().getBoolean("sidetoolbar.scrollable", true)) {
             final ScrollViewport svp = new ScrollViewport(sideToolBar, ScrollViewport.VERTICAL_DIRECTION);
             sideToolBar = svp;
         }
-        sideToolBar.setVisible(Main.pref.getBoolean("sidetoolbar.visible", true));
+        sideToolBar.setVisible(Config.getPref().getBoolean("sidetoolbar.visible", true));
         sidetoolbarPreferencesChangedListener = e -> {
             if ("sidetoolbar.visible".equals(e.getKey())) {
-                sideToolBar.setVisible(Main.pref.getBoolean("sidetoolbar.visible"));
+                sideToolBar.setVisible(Config.getPref().getBoolean("sidetoolbar.visible"));
             }
         };
-        Main.pref.addPreferenceChangeListener(sidetoolbarPreferencesChangedListener);
+        Config.getPref().addPreferenceChangeListener(sidetoolbarPreferencesChangedListener);
 
         /**
          * sideToolBar: add it to the panel
@@ -553,7 +553,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
         /**
          * statusLine: add to panel
          */
-        if (statusLine != null && Main.pref.getBoolean("statusline.visible", true)) {
+        if (statusLine != null && Config.getPref().getBoolean("statusline.visible", true)) {
             panel.add(statusLine, BorderLayout.SOUTH);
         }
     }
@@ -582,7 +582,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
-                Main.pref.putBoolean("sidetoolbar.always-visible", sel);
+                Config.getPref().putBoolean("sidetoolbar.always-visible", sel);
             }
         });
         {
@@ -605,7 +605,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
                             }
                         }, 0);
                     }
-                    doNotHide.setSelected(Main.pref.getBoolean("sidetoolbar.always-visible", true));
+                    doNotHide.setSelected(Config.getPref().getBoolean("sidetoolbar.always-visible", true));
                 }
 
                 @Override
@@ -624,7 +624,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
             add(new AbstractAction(tr("Hide edit toolbar")) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Main.pref.putBoolean("sidetoolbar.visible", false);
+                    Config.getPref().putBoolean("sidetoolbar.visible", false);
                 }
             });
             add(doNotHide);
