@@ -130,13 +130,6 @@ public final class CreateCircleAction extends JosmAction {
         if (!isEnabled())
             return;
 
-        int numberOfNodesInCircle = Main.pref.getInteger("createcircle.nodecount", 16);
-        if (numberOfNodesInCircle < 1) {
-            numberOfNodesInCircle = 1;
-        } else if (numberOfNodesInCircle > 100) {
-            numberOfNodesInCircle = 100;
-        }
-
         DataSet ds = getLayerManager().getEditDataSet();
         Collection<OsmPrimitive> sel = ds.getSelected();
         List<Node> nodes = OsmPrimitive.getFilteredList(sel, Node.class);
@@ -192,6 +185,17 @@ public final class CreateCircleAction extends JosmAction {
         EastNorth n1 = nodes.get(0).getEastNorth();
         double r = Math.sqrt(Math.pow(center.east()-n1.east(), 2) +
                 Math.pow(center.north()-n1.north(), 2));
+
+        // see #10777
+        LatLon ll1 = Main.getProjection().eastNorth2latlon(n1);
+        LatLon ll2 = Main.getProjection().eastNorth2latlon(center);
+
+        double radiusInMeters = ll1.greatCircleDistance(ll2);
+
+        int numberOfNodesInCircle = (int) Math.ceil(6.0 * Math.pow(radiusInMeters, 0.5));
+        if (numberOfNodesInCircle < 6) {
+           numberOfNodesInCircle = 6;
+        }
 
         // Order nodes by angle
         PolarNode[] angles = new PolarNode[nodes.size()];
