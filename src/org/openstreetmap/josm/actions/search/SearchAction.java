@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.gui.help.HelpUtil.ht;
 import static org.openstreetmap.josm.tools.I18n.tr;
 import static org.openstreetmap.josm.tools.I18n.trn;
 
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -668,7 +669,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
          * @param foundMatches The number of matches added to the result.
          * @param setting The setting used.
          */
-        void receiveSearchResult(DataSet ds, Collection<OsmPrimitive> result, int foundMatches, SearchSetting setting);
+        void receiveSearchResult(DataSet ds, Collection<OsmPrimitive> result, int foundMatches, SearchSetting setting, Component parent);
     }
 
     /**
@@ -677,7 +678,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
     private static class SelectSearchReceiver implements SearchReceiver {
 
         @Override
-        public void receiveSearchResult(DataSet ds, Collection<OsmPrimitive> result, int foundMatches, SearchSetting setting) {
+        public void receiveSearchResult(DataSet ds, Collection<OsmPrimitive> result, int foundMatches, SearchSetting setting, Component parent) {
             ds.setSelected(result);
             MapFrame map = MainApplication.getMap();
             if (foundMatches == 0) {
@@ -699,7 +700,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                 }
                 if (!GraphicsEnvironment.isHeadless()) {
                     JOptionPane.showMessageDialog(
-                            Main.parent,
+                            parent,
                             msg,
                             tr("Warning"),
                             JOptionPane.WARNING_MESSAGE
@@ -720,7 +721,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
 
         @Override
         public void receiveSearchResult(DataSet ds, Collection<OsmPrimitive> result, int foundMatches,
-                SearchSetting setting) {
+                SearchSetting setting, Component parent) {
                     this.result = result;
         }
     }
@@ -825,7 +826,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             if (canceled) {
                 return;
             }
-            resultReceiver.receiveSearchResult(ds, selection, foundMatches, setting);
+            resultReceiver.receiveSearchResult(ds, selection, foundMatches, setting, getProgressMonitor().getWindowParent());
         }
     }
 
