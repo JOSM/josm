@@ -109,7 +109,7 @@ public abstract class AbstractPreferences implements IPreferences {
      * @param setting the value of the setting. In case it is null, the key-value entry will be removed.
      * @return {@code true}, if something has changed (i.e. value is different than before)
      */
-    public abstract boolean putSetting(final String key, Setting<?> setting);
+    public abstract boolean putSetting(String key, Setting<?> setting);
 
     /**
      * Get settings value for a certain key and provide default a value.

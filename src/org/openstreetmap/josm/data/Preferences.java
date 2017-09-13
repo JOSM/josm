@@ -58,6 +58,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.AbstractPreferences;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
+import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IPreferences;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.ListListSetting;
@@ -1196,7 +1197,7 @@ public class Preferences extends AbstractPreferences {
      * @param key The key to store the list in
      * @param value A list of key/value maps
      * @return <code>true</code> if the value was changed
-     * @see #getListOfMaps(String, Collection)
+     * @see #getListOfMaps(java.lang.String, java.util.List)
      * @deprecated use {@link IPreferences#putListOfMaps(java.lang.String, java.util.List)}
      */
     @Deprecated
