@@ -27,7 +27,7 @@ import org.openstreetmap.josm.data.Bounds;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.coor.conversion.CoordinateFormatManager;
 import org.openstreetmap.josm.data.coor.conversion.ICoordinateFormat;
-import org.openstreetmap.josm.data.preferences.CollectionProperty;
+import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
 import org.openstreetmap.josm.data.projection.CustomProjection;
 import org.openstreetmap.josm.data.projection.Projection;
@@ -290,7 +290,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
 
     private static final StringProperty PROP_PROJECTION_DEFAULT = new StringProperty("projection.default", mercator.getId());
     private static final StringProperty PROP_COORDINATES = new StringProperty("coordinates", null);
-    private static final CollectionProperty PROP_SUB_PROJECTION_DEFAULT = new CollectionProperty("projection.default.sub", null);
+    private static final ListProperty PROP_SUB_PROJECTION_DEFAULT = new ListProperty("projection.default.sub", null);
     private static final String[] unitsValues = ALL_SYSTEMS.keySet().toArray(new String[ALL_SYSTEMS.size()]);
     private static final String[] unitsValuesTr = new String[unitsValues.length];
     static {
@@ -481,10 +481,10 @@ public class ProjectionPreference implements SubPreferenceSetting {
             pc = mercator;
         }
         id = pc.getId();
-        Main.pref.putCollection("projection.sub."+id, pref);
+        Main.pref.putList("projection.sub."+id, pref == null ? null : new ArrayList<>(pref));
         if (makeDefault) {
             PROP_PROJECTION_DEFAULT.put(id);
-            PROP_SUB_PROJECTION_DEFAULT.put(pref);
+            PROP_SUB_PROJECTION_DEFAULT.put(pref == null ? null : new ArrayList<>(pref));
         } else {
             projectionChoice = id;
         }
@@ -559,7 +559,7 @@ public class ProjectionPreference implements SubPreferenceSetting {
      * the last time; null if user has never selected the given projection choice
      */
     public static Collection<String> getSubprojectionPreference(String pcId) {
-        return Main.pref.getCollection("projection.sub."+pcId, null);
+        return Main.pref.getList("projection.sub."+pcId, null);
     }
 
     @Override

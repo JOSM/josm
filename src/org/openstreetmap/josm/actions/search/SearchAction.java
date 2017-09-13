@@ -111,7 +111,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             }
         });
 
-        for (String s: Main.pref.getCollection("search.history", Collections.<String>emptyList())) {
+        for (String s: Main.pref.getList("search.history", Collections.<String>emptyList())) {
             SearchSetting ss = SearchSetting.readFromString(s);
             if (ss != null) {
                 searchHistory.add(ss);
@@ -139,7 +139,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
             searchHistory.remove(s);
             searchHistory.addFirst(new SearchSetting(s));
         }
-        int maxsize = Main.pref.getInteger("search.history-size", DEFAULT_SEARCH_HISTORY_SIZE);
+        int maxsize = Main.pref.getInt("search.history-size", DEFAULT_SEARCH_HISTORY_SIZE);
         while (searchHistory.size() > maxsize) {
             searchHistory.removeLast();
         }
@@ -147,7 +147,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
         for (SearchSetting item: searchHistory) {
             savedHistory.add(item.writeToString());
         }
-        Main.pref.putCollection("search.history", savedHistory);
+        Main.pref.putList("search.history", new ArrayList<>(savedHistory));
     }
 
     /**

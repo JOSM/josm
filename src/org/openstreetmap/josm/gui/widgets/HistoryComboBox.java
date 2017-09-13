@@ -23,7 +23,7 @@ public class HistoryComboBox extends AutoCompletingComboBox {
      * Constructs a new {@code HistoryComboBox}.
      */
     public HistoryComboBox() {
-        int maxsize = Main.pref.getInteger("search.history-size", DEFAULT_SEARCH_HISTORY_SIZE);
+        int maxsize = Main.pref.getInt("search.history-size", DEFAULT_SEARCH_HISTORY_SIZE);
         model = new ComboBoxHistory(maxsize);
         setModel(model);
         setEditable(true);

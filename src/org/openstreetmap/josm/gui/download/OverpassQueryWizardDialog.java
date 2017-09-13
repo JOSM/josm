@@ -19,7 +19,7 @@ import javax.swing.event.HyperlinkEvent;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.preferences.CollectionProperty;
+import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
@@ -46,8 +46,8 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
     private static final String TD_END = "</td>";
     private static final String SPAN_START = "<span>";
     private static final String SPAN_END = "</span>";
-    private static final CollectionProperty OVERPASS_WIZARD_HISTORY =
-            new CollectionProperty("download.overpass.wizard", new ArrayList<String>());
+    private static final ListProperty OVERPASS_WIZARD_HISTORY =
+            new ListProperty("download.overpass.wizard", new ArrayList<String>());
     private final transient OverpassTurboQueryWizard overpassQueryBuilder;
 
     // dialog buttons

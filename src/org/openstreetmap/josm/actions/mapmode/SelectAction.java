@@ -201,10 +201,10 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         super.enterMode();
         mv.addMouseListener(this);
         mv.addMouseMotionListener(this);
-        mv.setVirtualNodesEnabled(Main.pref.getInteger("mappaint.node.virtual-size", 8) != 0);
+        mv.setVirtualNodesEnabled(Main.pref.getInt("mappaint.node.virtual-size", 8) != 0);
         drawTargetHighlight = Main.pref.getBoolean("draw.target-highlight", true);
-        initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay", 200);
-        initialMoveThreshold = Main.pref.getInteger("edit.initial-move-threshold", 5);
+        initialMoveDelay = Main.pref.getInt("edit.initial-move-delay", 200);
+        initialMoveThreshold = Main.pref.getInt("edit.initial-move-threshold", 5);
         repeatedKeySwitchLassoOption = Main.pref.getBoolean("mappaint.select.toggle-lasso-on-repeated-S", true);
         cycleManager.init();
         virtualManager.init();
@@ -827,7 +827,7 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
                 MainApplication.undoRedo.undo();
             }
         }
-        int max = Main.pref.getInteger("warn.move.maxelements", 20), limit = max;
+        int max = Main.pref.getInt("warn.move.maxelements", 20), limit = max;
         for (OsmPrimitive osm : getLayerManager().getEditDataSet().getSelected()) {
             if (osm instanceof Way) {
                 limit -= ((Way) osm).getNodes().size();
@@ -1174,10 +1174,10 @@ public class SelectAction extends MapMode implements ModifierExListener, KeyPres
         private int virtualSpace;
 
         private void init() {
-            nodeVirtualSize = Main.pref.getInteger("mappaint.node.virtual-size", 8);
-            int virtualSnapDistSq = Main.pref.getInteger("mappaint.node.virtual-snap-distance", 8);
+            nodeVirtualSize = Main.pref.getInt("mappaint.node.virtual-size", 8);
+            int virtualSnapDistSq = Main.pref.getInt("mappaint.node.virtual-snap-distance", 8);
             virtualSnapDistSq2 = virtualSnapDistSq*virtualSnapDistSq;
-            virtualSpace = Main.pref.getInteger("mappaint.node.virtual-space", 70);
+            virtualSpace = Main.pref.getInt("mappaint.node.virtual-space", 70);
         }
 
         /**

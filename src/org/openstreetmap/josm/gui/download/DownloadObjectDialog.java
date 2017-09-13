@@ -102,9 +102,9 @@ public class DownloadObjectDialog extends OsmIdSelectionDialog {
     public void windowClosed(WindowEvent e) {
         super.windowClosed(e);
         if (e != null && e.getComponent() == this && getValue() == 1) {
-            Main.pref.put("downloadprimitive.referrers", referrers.isSelected());
-            Main.pref.put("downloadprimitive.full", fullRel.isSelected());
-            Main.pref.put("download.newlayer", newLayer.isSelected());
+            Main.pref.putBoolean("downloadprimitive.referrers", referrers.isSelected());
+            Main.pref.putBoolean("downloadprimitive.full", fullRel.isSelected());
+            Main.pref.putBoolean("download.newlayer", newLayer.isSelected());
         }
     }
 }

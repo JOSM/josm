@@ -422,10 +422,10 @@ public abstract class SourceEditor extends JPanel {
             List<String> iconPaths = iconPathsModel.getIconPaths();
 
             if (!iconPaths.isEmpty()) {
-                if (Main.pref.putCollection(iconPref, iconPaths)) {
+                if (Main.pref.putList(iconPref, iconPaths)) {
                     changed = true;
                 }
-            } else if (Main.pref.putCollection(iconPref, null)) {
+            } else if (Main.pref.putList(iconPref, null)) {
                 changed = true;
             }
         }

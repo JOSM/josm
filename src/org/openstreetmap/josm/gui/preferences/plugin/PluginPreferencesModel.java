@@ -39,7 +39,7 @@ public class PluginPreferencesModel extends ChangeNotifier {
      */
     public PluginPreferencesModel() {
         currentActivePlugins = new HashSet<>();
-        currentActivePlugins.addAll(Main.pref.getCollection("plugins", currentActivePlugins));
+        currentActivePlugins.addAll(Main.pref.getList("plugins"));
     }
 
     /**
@@ -79,7 +79,7 @@ public class PluginPreferencesModel extends ChangeNotifier {
         sort();
         filterDisplayedPlugins(filterExpression);
         Set<String> activePlugins = new HashSet<>();
-        activePlugins.addAll(Main.pref.getCollection("plugins", activePlugins));
+        activePlugins.addAll(Main.pref.getList("plugins"));
         for (PluginInformation pi: availablePlugins) {
             if (selectedPluginsMap.get(pi) == null && activePlugins.contains(pi.name)) {
                 selectedPluginsMap.put(pi, Boolean.TRUE);
@@ -229,7 +229,7 @@ public class PluginPreferencesModel extends ChangeNotifier {
      * Initializes the model from preferences
      */
     public void initFromPreferences() {
-        Collection<String> enabledPlugins = Main.pref.getCollection("plugins", null);
+        Collection<String> enabledPlugins = Main.pref.getList("plugins", null);
         if (enabledPlugins == null) {
             this.selectedPluginsMap.clear();
             return;

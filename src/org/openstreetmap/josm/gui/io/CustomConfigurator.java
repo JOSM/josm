@@ -399,7 +399,7 @@ public final class CustomConfigurator {
                                 new PluginDownloadTask(Main.parent, toInstallPlugins, tr("Installing plugins"));
                         MainApplication.worker.submit(pluginDownloadTask);
                     }
-                    Collection<String> pls = new ArrayList<>(Main.pref.getCollection("plugins"));
+                    List<String> pls = new ArrayList<>(Main.pref.getList("plugins"));
                     for (PluginInformation pi2: toInstallPlugins) {
                         if (!pls.contains(pi2.name)) {
                             pls.add(pi2.name);
@@ -412,7 +412,7 @@ public final class CustomConfigurator {
                         pls.remove(pi4.name);
                         new File(Main.pref.getPluginsDirectory(), pi4.name+".jar").deleteOnExit();
                     }
-                    Main.pref.putCollection("plugins", pls);
+                    Main.pref.putList("plugins", pls);
                 });
             }
         };

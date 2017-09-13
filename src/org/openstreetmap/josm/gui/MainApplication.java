@@ -1251,14 +1251,14 @@ public class MainApplication extends Main {
                 }
                 if (wasv6 && !hasv6) {
                     Logging.info(tr("Detected no useable IPv6 network, prefering IPv4 over IPv6 after next restart."));
-                    Main.pref.put("validated.ipv6", hasv6); // be sure it is stored before the restart!
+                    Main.pref.putBoolean("validated.ipv6", hasv6); // be sure it is stored before the restart!
                     try {
                         RestartAction.restartJOSM();
                     } catch (IOException e) {
                         Logging.error(e);
                     }
                 }
-                Main.pref.put("validated.ipv6", hasv6);
+                Main.pref.putBoolean("validated.ipv6", hasv6);
             }, "IPv6-checker").start();
         }
     }

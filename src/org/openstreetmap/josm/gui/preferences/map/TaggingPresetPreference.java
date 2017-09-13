@@ -205,7 +205,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
 
         @Override
         public Collection<String> getInitialIconPathsList() {
-            return Main.pref.getCollection(ICONPREF, null);
+            return Main.pref.getList(ICONPREF, null);
         }
 
         @Override
@@ -245,7 +245,7 @@ public final class TaggingPresetPreference implements SubPreferenceSetting {
 
     @Override
     public boolean ok() {
-        boolean restart = Main.pref.put("taggingpreset.sortmenu", sortMenu.getSelectedObjects() != null);
+        boolean restart = Main.pref.putBoolean("taggingpreset.sortmenu", sortMenu.getSelectedObjects() != null);
         restart |= sources.finish();
 
         return restart;

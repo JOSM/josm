@@ -195,10 +195,10 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
         boolean httpsChanged = RemoteControl.PROP_REMOTECONTROL_HTTPS_ENABLED.put(httpsEnabled);
         if (enabled) {
             for (Entry<PermissionPrefWithDefault, JCheckBox> p : prefs.entrySet()) {
-                Main.pref.put(p.getKey().pref, p.getValue().isSelected());
+                Main.pref.putBoolean(p.getKey().pref, p.getValue().isSelected());
             }
-            Main.pref.put(RequestHandler.loadInNewLayerKey, loadInNewLayer.isSelected());
-            Main.pref.put(RequestHandler.globalConfirmationKey, alwaysAskUserConfirm.isSelected());
+            Main.pref.putBoolean(RequestHandler.loadInNewLayerKey, loadInNewLayer.isSelected());
+            Main.pref.putBoolean(RequestHandler.globalConfirmationKey, alwaysAskUserConfirm.isSelected());
         }
         if (changed) {
             if (enabled) {

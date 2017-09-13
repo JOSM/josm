@@ -255,7 +255,7 @@ public final class MapPaintStyles {
             dirs.add(sourceDir.getPath());
         }
 
-        Collection<String> prefIconDirs = Main.pref.getCollection("mappaint.icon.sources");
+        Collection<String> prefIconDirs = Main.pref.getList("mappaint.icon.sources");
         for (String fileset : prefIconDirs) {
             String[] a;
             if (fileset.indexOf('=') >= 0) {

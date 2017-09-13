@@ -22,7 +22,7 @@ import org.openstreetmap.josm.data.osm.OsmUtils;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
 import org.openstreetmap.josm.data.osm.WaySegment;
-import org.openstreetmap.josm.data.preferences.CollectionProperty;
+import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.data.validation.Severity;
 import org.openstreetmap.josm.data.validation.Test;
 import org.openstreetmap.josm.data.validation.TestError;
@@ -49,7 +49,7 @@ public class OverlappingWays extends Test {
     protected static final int OVERLAPPING_AREA = 120;
     protected static final int DUPLICATE_WAY_SEGMENT = 121;
 
-    protected static final CollectionProperty IGNORED_KEYS = new CollectionProperty(
+    protected static final ListProperty IGNORED_KEYS = new ListProperty(
             "overlapping-ways.ignored-keys", Arrays.asList("barrier", "building", "historic:building", "man_made"));
 
     /** Constructor */

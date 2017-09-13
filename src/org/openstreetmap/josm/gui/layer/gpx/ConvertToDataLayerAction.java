@@ -118,7 +118,7 @@ public abstract class ConvertToDataLayerAction<T extends Layer> extends Abstract
             final DataSet ds = new DataSet();
             for (Marker marker : layer.data) {
                 final Node node = new Node(marker.getCoor());
-                final Collection<String> mapping = Main.pref.getCollection("gpx.to-osm-mapping", Arrays.asList(
+                final Collection<String> mapping = Main.pref.getList("gpx.to-osm-mapping", Arrays.asList(
                         GpxConstants.GPX_NAME, "name",
                         GpxConstants.GPX_DESC, "description",
                         GpxConstants.GPX_CMT, "note",

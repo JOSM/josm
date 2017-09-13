@@ -582,7 +582,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
-                Main.pref.put("sidetoolbar.always-visible", sel);
+                Main.pref.putBoolean("sidetoolbar.always-visible", sel);
             }
         });
         {
@@ -624,7 +624,7 @@ public class MapFrame extends JPanel implements Destroyable, ActiveLayerChangeLi
             add(new AbstractAction(tr("Hide edit toolbar")) {
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    Main.pref.put("sidetoolbar.visible", false);
+                    Main.pref.putBoolean("sidetoolbar.visible", false);
                 }
             });
             add(doNotHide);

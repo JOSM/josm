@@ -96,8 +96,8 @@ public class ValidatorTestsPreference implements SubPreferenceSetting {
 
     @Override
     public boolean ok() {
-        Collection<String> tests = new LinkedList<>();
-        Collection<String> testsBeforeUpload = new LinkedList<>();
+        List<String> tests = new LinkedList<>();
+        List<String> testsBeforeUpload = new LinkedList<>();
 
         for (Test test : allTests) {
             test.ok();
@@ -115,8 +115,8 @@ public class ValidatorTestsPreference implements SubPreferenceSetting {
         testsToInitialize.remove(OsmValidator.getTest(MapCSSTagChecker.class));
         OsmValidator.initializeTests(testsToInitialize);
 
-        Main.pref.putCollection(ValidatorPrefHelper.PREF_SKIP_TESTS, tests);
-        Main.pref.putCollection(ValidatorPrefHelper.PREF_SKIP_TESTS_BEFORE_UPLOAD, testsBeforeUpload);
+        Main.pref.putList(ValidatorPrefHelper.PREF_SKIP_TESTS, tests);
+        Main.pref.putList(ValidatorPrefHelper.PREF_SKIP_TESTS_BEFORE_UPLOAD, testsBeforeUpload);
         ValidatorPrefHelper.PREF_USE_IGNORE.put(prefUseIgnore.isSelected());
         ValidatorPrefHelper.PREF_OTHER.put(prefOther.isSelected());
         ValidatorPrefHelper.PREF_OTHER_UPLOAD.put(prefOtherUpload.isSelected());

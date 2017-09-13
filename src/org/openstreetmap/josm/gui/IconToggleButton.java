@@ -119,7 +119,7 @@ public class IconToggleButton extends JToggleButton implements HideableButton, P
             (!b && isExpert && ExpertToggleAction.isExpert())) {
             Main.pref.put(getPreferenceKey(), null);
         } else {
-            Main.pref.put(getPreferenceKey(), b);
+            Main.pref.putBoolean(getPreferenceKey(), b);
         }
     }
 

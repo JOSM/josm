@@ -57,7 +57,7 @@ public class RecentlyOpenedFilesMenu extends JMenu {
 
     private void rebuild() {
         removeAll();
-        Collection<String> fileHistory = Main.pref.getCollection("file-open.history");
+        Collection<String> fileHistory = Main.pref.getList("file-open.history");
 
         for (final String file : fileHistory) {
             add(new OpenRecentAction(file));
@@ -100,7 +100,7 @@ public class RecentlyOpenedFilesMenu extends JMenu {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            Main.pref.putCollection("file-open.history", null);
+            Main.pref.putList("file-open.history", null);
         }
     }
 }

@@ -236,7 +236,7 @@ class DrawSnapHelper {
     }
 
     private void computeSnapAngles() {
-        snapAngles = Main.pref.getCollection(DRAW_ANGLESNAP_ANGLES,
+        snapAngles = Main.pref.getList(DRAW_ANGLESNAP_ANGLES,
                 Arrays.asList("0", "30", "45", "60", "90", "120", "135", "150", "180"))
                 .stream()
                 .mapToDouble(DrawSnapHelper::parseSnapAngle)
@@ -258,7 +258,7 @@ class DrawSnapHelper {
      * @param angles The angles
      */
     public void saveAngles(String... angles) {
-        Main.pref.putCollection(DRAW_ANGLESNAP_ANGLES, Arrays.asList(angles));
+        Main.pref.putList(DRAW_ANGLESNAP_ANGLES, Arrays.asList(angles));
     }
 
     /**

@@ -132,14 +132,14 @@ public final class AudioPreference extends DefaultTabPreferenceSetting {
 
     @Override
     public boolean ok() {
-        Main.pref.put("audio.menuinvisible", !audioMenuVisible.isSelected());
-        Main.pref.put("marker.traceaudio", markerAudioTraceVisible.isSelected());
-        Main.pref.put("marker.buttonlabels", markerButtonLabels.isSelected());
-        Main.pref.put("marker.audiofromexplicitwaypoints", audioMarkersFromExplicitWaypoints.isSelected());
-        Main.pref.put("marker.audiofromuntimedwaypoints", audioMarkersFromUntimedWaypoints.isSelected());
-        Main.pref.put("marker.audiofromnamedtrackpoints", audioMarkersFromNamedTrackpoints.isSelected());
-        Main.pref.put("marker.audiofromwavtimestamps", audioMarkersFromWavTimestamps.isSelected());
-        Main.pref.put("marker.audiofromstart", audioMarkersFromStart.isSelected());
+        Main.pref.putBoolean("audio.menuinvisible", !audioMenuVisible.isSelected());
+        Main.pref.putBoolean("marker.traceaudio", markerAudioTraceVisible.isSelected());
+        Main.pref.putBoolean("marker.buttonlabels", markerButtonLabels.isSelected());
+        Main.pref.putBoolean("marker.audiofromexplicitwaypoints", audioMarkersFromExplicitWaypoints.isSelected());
+        Main.pref.putBoolean("marker.audiofromuntimedwaypoints", audioMarkersFromUntimedWaypoints.isSelected());
+        Main.pref.putBoolean("marker.audiofromnamedtrackpoints", audioMarkersFromNamedTrackpoints.isSelected());
+        Main.pref.putBoolean("marker.audiofromwavtimestamps", audioMarkersFromWavTimestamps.isSelected());
+        Main.pref.putBoolean("marker.audiofromstart", audioMarkersFromStart.isSelected());
         Main.pref.put("audio.forwardbackamount", audioForwardBackAmount.getText());
         Main.pref.put("audio.fastfwdmultiplier", audioFastForwardMultiplier.getText());
         Main.pref.put("audio.leadin", audioLeadIn.getText());

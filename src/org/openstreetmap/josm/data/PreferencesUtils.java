@@ -98,7 +98,7 @@ public final class PreferencesUtils {
                 mainpref.putSetting(key, entry.getValue());
             } else if (entry.getValue() instanceof ListSetting) {
                 ListSetting lSetting = (ListSetting) entry.getValue();
-                Collection<String> newItems = getCollection(mainpref, key, true);
+                List<String> newItems = getList(mainpref, key, true);
                 if (newItems == null) continue;
                 for (String item : lSetting.getValue()) {
                     // add nonexisting elements to then list
@@ -106,19 +106,19 @@ public final class PreferencesUtils {
                         newItems.add(item);
                     }
                 }
-                mainpref.putCollection(key, newItems);
+                mainpref.putList(key, newItems);
             } else if (entry.getValue() instanceof ListListSetting) {
                 ListListSetting llSetting = (ListListSetting) entry.getValue();
-                Collection<Collection<String>> newLists = getArray(mainpref, key, true);
+                List<List<String>> newLists = getListOfLists(mainpref, key, true);
                 if (newLists == null) continue;
 
-                for (Collection<String> list : llSetting.getValue()) {
+                for (List<String> list : llSetting.getValue()) {
                     // add nonexisting list (equals comparison for lists is used implicitly)
                     if (!newLists.contains(list)) {
                         newLists.add(list);
                     }
                 }
-                mainpref.putArray(key, newLists);
+                mainpref.putListOfLists(key, newLists);
             } else if (entry.getValue() instanceof MapListSetting) {
                 MapListSetting mlSetting = (MapListSetting) entry.getValue();
                 List<Map<String, String>> newMaps = getListOfStructs(mainpref, key, true);
@@ -132,7 +132,7 @@ public final class PreferencesUtils {
                         newMaps.add(map);
                     }
                 }
-                mainpref.putListOfStructs(entry.getKey(), newMaps);
+                mainpref.putListOfMaps(entry.getKey(), newMaps);
             }
         }
     }
@@ -154,7 +154,7 @@ public final class PreferencesUtils {
                 }
             } else if (entry.getValue() instanceof ListSetting) {
                 ListSetting lSetting = (ListSetting) entry.getValue();
-                Collection<String> newItems = getCollection(mainpref, key, true);
+                List<String> newItems = getList(mainpref, key, true);
                 if (newItems == null) continue;
 
                 // remove mentioned items from collection
@@ -162,14 +162,14 @@ public final class PreferencesUtils {
                     log("Deleting preferences: from list %s: %s\n", key, item);
                     newItems.remove(item);
                 }
-                mainpref.putCollection(entry.getKey(), newItems);
+                mainpref.putList(entry.getKey(), newItems);
             } else if (entry.getValue() instanceof ListListSetting) {
                 ListListSetting llSetting = (ListListSetting) entry.getValue();
-                Collection<Collection<String>> newLists = getArray(mainpref, key, true);
+                List<List<String>> newLists = getListOfLists(mainpref, key, true);
                 if (newLists == null) continue;
 
                 // if items are found in one of lists, remove that list!
-                Iterator<Collection<String>> listIterator = newLists.iterator();
+                Iterator<List<String>> listIterator = newLists.iterator();
                 while (listIterator.hasNext()) {
                     Collection<String> list = listIterator.next();
                     for (Collection<String> removeList : llSetting.getValue()) {
@@ -181,7 +181,7 @@ public final class PreferencesUtils {
                     }
                 }
 
-                mainpref.putArray(key, newLists);
+                mainpref.putListOfLists(key, newLists);
             } else if (entry.getValue() instanceof MapListSetting) {
                 MapListSetting mlSetting = (MapListSetting) entry.getValue();
                 List<Map<String, String>> newMaps = getListOfStructs(mainpref, key, true);
@@ -198,7 +198,7 @@ public final class PreferencesUtils {
                         }
                     }
                 }
-                mainpref.putListOfStructs(entry.getKey(), newMaps);
+                mainpref.putListOfMaps(entry.getKey(), newMaps);
             }
         }
     }
@@ -222,7 +222,7 @@ public final class PreferencesUtils {
         }
     }
 
-    private static Collection<String> getCollection(Preferences mainpref, String key, boolean warnUnknownDefault) {
+    private static List<String> getList(Preferences mainpref, String key, boolean warnUnknownDefault) {
         ListSetting existing = Utils.cast(mainpref.settingsMap.get(key), ListSetting.class);
         ListSetting defaults = Utils.cast(mainpref.defaultsMap.get(key), ListSetting.class);
         if (existing == null && defaults == null) {
@@ -235,7 +235,7 @@ public final class PreferencesUtils {
             return defaults.getValue() == null ? null : new ArrayList<>(defaults.getValue());
     }
 
-    private static Collection<Collection<String>> getArray(Preferences mainpref, String key, boolean warnUnknownDefault) {
+    private static List<List<String>> getListOfLists(Preferences mainpref, String key, boolean warnUnknownDefault) {
         ListListSetting existing = Utils.cast(mainpref.settingsMap.get(key), ListListSetting.class);
         ListListSetting defaults = Utils.cast(mainpref.defaultsMap.get(key), ListListSetting.class);
 

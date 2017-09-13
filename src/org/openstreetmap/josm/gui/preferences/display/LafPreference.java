@@ -201,13 +201,13 @@ public class LafPreference implements SubPreferenceSetting {
     @Override
     public boolean ok() {
         boolean mod = false;
-        Main.pref.put("draw.splashscreen", showSplashScreen.isSelected());
-        Main.pref.put("osm-primitives.showid", showID.isSelected());
-        Main.pref.put("osm-primitives.localize-name", showLocalizedName.isSelected());
+        Main.pref.putBoolean("draw.splashscreen", showSplashScreen.isSelected());
+        Main.pref.putBoolean("osm-primitives.showid", showID.isSelected());
+        Main.pref.putBoolean("osm-primitives.localize-name", showLocalizedName.isSelected());
         MapFrame.MODELESS.put(modeless.isSelected());
-        Main.pref.put(ToggleDialog.PROP_DYNAMIC_BUTTONS.getKey(), dynamicButtons.isSelected());
-        Main.pref.put(DateUtils.PROP_ISO_DATES.getKey(), isoDates.isSelected());
-        Main.pref.put(FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.getKey(), nativeFileChoosers.isSelected());
+        Main.pref.putBoolean(ToggleDialog.PROP_DYNAMIC_BUTTONS.getKey(), dynamicButtons.isSelected());
+        Main.pref.putBoolean(DateUtils.PROP_ISO_DATES.getKey(), isoDates.isSelected());
+        Main.pref.putBoolean(FileChooserManager.PROP_USE_NATIVE_FILE_DIALOG.getKey(), nativeFileChoosers.isSelected());
         MapMover.PROP_ZOOM_REVERSE_WHEEL.put(zoomReverseWheel.isSelected());
         NavigatableComponent.PROP_ZOOM_INTERMEDIATE_STEPS.put(zoomIntermediateSteps.isSelected());
         NavigatableComponent.PROP_ZOOM_RATIO.put(Math.pow(2, 1/(double) spinZoomRatio.getModel().getValue()));

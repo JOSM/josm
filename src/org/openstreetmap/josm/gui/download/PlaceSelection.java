@@ -114,7 +114,7 @@ public class PlaceSelection implements DownloadSelection {
 
         cbSearchExpression = new HistoryComboBox();
         cbSearchExpression.setToolTipText(tr("Enter a place name to search for"));
-        List<String> cmtHistory = new LinkedList<>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
+        List<String> cmtHistory = new LinkedList<>(Main.pref.getList(HISTORY_KEY, new LinkedList<String>()));
         Collections.reverse(cmtHistory);
         cbSearchExpression.setPossibleItems(cmtHistory);
         lpanel.add(cbSearchExpression);
@@ -188,7 +188,7 @@ public class PlaceSelection implements DownloadSelection {
             if (!isEnabled() || cbSearchExpression.getText().trim().isEmpty())
                 return;
             cbSearchExpression.addCurrentItemToHistory();
-            Main.pref.putCollection(HISTORY_KEY, cbSearchExpression.getHistory());
+            Main.pref.putList(HISTORY_KEY, cbSearchExpression.getHistory());
             NameQueryTask task = new NameQueryTask(cbSearchExpression.getText());
             MainApplication.worker.submit(task);
         }

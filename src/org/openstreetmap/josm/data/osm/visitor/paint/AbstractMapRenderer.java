@@ -181,9 +181,9 @@ public abstract class AbstractMapRenderer implements Rendering {
      * @param virtual <code>true</code> if virtual nodes are used
      */
     protected void getSettings(boolean virtual) {
-        this.virtualNodeSize = virtual ? Main.pref.getInteger("mappaint.node.virtual-size", 8) / 2 : 0;
-        this.virtualNodeSpace = Main.pref.getInteger("mappaint.node.virtual-space", 70);
-        this.segmentNumberSpace = Main.pref.getInteger("mappaint.segmentnumber.space", 40);
+        this.virtualNodeSize = virtual ? Main.pref.getInt("mappaint.node.virtual-size", 8) / 2 : 0;
+        this.virtualNodeSpace = Main.pref.getInt("mappaint.node.virtual-space", 70);
+        this.segmentNumberSpace = Main.pref.getInt("mappaint.segmentnumber.space", 40);
         getColors();
     }
 

@@ -173,7 +173,7 @@ public class CorrelateGpxWithImages extends AbstractAction {
             case DONE:
                 Main.pref.put("geoimage.timezone", timezone.formatTimezone());
                 Main.pref.put("geoimage.delta", delta.formatOffset());
-                Main.pref.put("geoimage.showThumbs", yLayer.useThumbs);
+                Main.pref.putBoolean("geoimage.showThumbs", yLayer.useThumbs);
 
                 yLayer.useThumbs = cbShowThumbs.isSelected();
                 yLayer.startLoadThumbs();

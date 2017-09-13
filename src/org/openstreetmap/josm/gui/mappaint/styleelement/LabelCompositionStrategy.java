@@ -237,10 +237,10 @@ public interface LabelCompositionStrategy {
                 this.nameComplementTags = new ArrayList<>(Arrays.asList(DEFAULT_NAME_COMPLEMENT_TAGS));
             } else {
                 this.nameTags = new ArrayList<>(
-                        Main.pref.getCollection("mappaint.nameOrder", Arrays.asList(DEFAULT_NAME_TAGS))
+                        Main.pref.getList("mappaint.nameOrder", Arrays.asList(DEFAULT_NAME_TAGS))
                 );
                 this.nameComplementTags = new ArrayList<>(
-                        Main.pref.getCollection("mappaint.nameComplementOrder", Arrays.asList(DEFAULT_NAME_COMPLEMENT_TAGS))
+                        Main.pref.getList("mappaint.nameComplementOrder", Arrays.asList(DEFAULT_NAME_COMPLEMENT_TAGS))
                 );
             }
         }

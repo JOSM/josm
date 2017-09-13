@@ -161,7 +161,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser {
         } else {
             setFileCacheEnabled(Main.pref.getBoolean("slippy_map_chooser.file_cache", true));
         }
-        setMaxTilesInMemory(Main.pref.getInteger("slippy_map_chooser.max_tiles", 1000));
+        setMaxTilesInMemory(Main.pref.getInt("slippy_map_chooser.max_tiles", 1000));
 
         List<TileSource> tileSources = getAllTileSources();
 

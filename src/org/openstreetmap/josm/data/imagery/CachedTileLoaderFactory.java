@@ -71,8 +71,8 @@ public class CachedTileLoaderFactory implements TileLoaderFactory {
             headers.putAll(inputHeaders);
 
         return getLoader(listener, cache,
-                (int) TimeUnit.SECONDS.toMillis(Main.pref.getInteger("socket.timeout.connect", 15)),
-                (int) TimeUnit.SECONDS.toMillis(Main.pref.getInteger("socket.timeout.read", 30)),
+                (int) TimeUnit.SECONDS.toMillis(Main.pref.getInt("socket.timeout.connect", 15)),
+                (int) TimeUnit.SECONDS.toMillis(Main.pref.getInt("socket.timeout.read", 30)),
                 headers);
     }
 

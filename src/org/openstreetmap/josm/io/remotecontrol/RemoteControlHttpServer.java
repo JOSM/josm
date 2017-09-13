@@ -32,7 +32,7 @@ public class RemoteControlHttpServer extends Thread {
      */
     public static void restartRemoteControlHttpServer() {
         stopRemoteControlHttpServer();
-        int port = Main.pref.getInteger("remote.control.port", 8111);
+        int port = Main.pref.getInt("remote.control.port", 8111);
         try {
             instance4 = new RemoteControlHttpServer(port, false);
             instance4.start();

@@ -176,7 +176,7 @@ public class OAuthAccessTokenHolder {
     public void save(Preferences preferences, CredentialsAgent cm) {
         CheckParameterUtil.ensureParameterNotNull(preferences, "preferences");
         CheckParameterUtil.ensureParameterNotNull(cm, "cm");
-        preferences.put("oauth.access-token.save-to-preferences", saveToPreferences);
+        preferences.putBoolean("oauth.access-token.save-to-preferences", saveToPreferences);
         try {
             if (!saveToPreferences) {
                 cm.storeOAuthAccessToken(null);

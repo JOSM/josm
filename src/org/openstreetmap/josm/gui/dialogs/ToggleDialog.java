@@ -772,7 +772,7 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
 
     protected void setIsShowing(boolean val) {
         isShowing = val;
-        Main.pref.put(preferencePrefix+".visible", val);
+        Main.pref.putBoolean(preferencePrefix+".visible", val);
         stateChanged();
     }
 
@@ -781,13 +781,13 @@ public class ToggleDialog extends JPanel implements ShowHideButtonListener, Help
             buttonsPanel.setVisible(!val || buttonHiding != ButtonHidingType.ALWAYS_HIDDEN);
         }
         isDocked = val;
-        Main.pref.put(preferencePrefix+".docked", val);
+        Main.pref.putBoolean(preferencePrefix+".docked", val);
         stateChanged();
     }
 
     protected void setIsCollapsed(boolean val) {
         isCollapsed = val;
-        Main.pref.put(preferencePrefix+".minimized", val);
+        Main.pref.putBoolean(preferencePrefix+".minimized", val);
         stateChanged();
     }
 

@@ -97,19 +97,19 @@ public class Multipolygon {
             initDefaults();
             if (Main.pref == null) return;
             Collection<String> literals;
-            literals = Main.pref.getCollection(PREF_KEY_OUTER_ROLES);
+            literals = Main.pref.getList(PREF_KEY_OUTER_ROLES);
             if (literals != null && !literals.isEmpty()) {
                 setNormalized(literals, outerExactRoles);
             }
-            literals = Main.pref.getCollection(PREF_KEY_OUTER_ROLE_PREFIXES);
+            literals = Main.pref.getList(PREF_KEY_OUTER_ROLE_PREFIXES);
             if (literals != null && !literals.isEmpty()) {
                 setNormalized(literals, outerRolePrefixes);
             }
-            literals = Main.pref.getCollection(PREF_KEY_INNER_ROLES);
+            literals = Main.pref.getList(PREF_KEY_INNER_ROLES);
             if (literals != null && !literals.isEmpty()) {
                 setNormalized(literals, innerExactRoles);
             }
-            literals = Main.pref.getCollection(PREF_KEY_INNER_ROLE_PREFIXES);
+            literals = Main.pref.getList(PREF_KEY_INNER_ROLE_PREFIXES);
             if (literals != null && !literals.isEmpty()) {
                 setNormalized(literals, innerRolePrefixes);
             }

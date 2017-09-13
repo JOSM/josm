@@ -11,7 +11,7 @@ import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.data.osm.search.SearchSetting;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
-import org.openstreetmap.josm.data.preferences.CollectionProperty;
+import org.openstreetmap.josm.data.preferences.ListProperty;
 
 /**
  * Manages list of recently used tags that will be displayed in the {@link PropertiesDialog}.
@@ -43,7 +43,7 @@ class RecentTagCollection {
         tagsToIgnore = SearchCompiler.Never.INSTANCE;
     }
 
-    public void loadFromPreference(CollectionProperty property) {
+    public void loadFromPreference(ListProperty property) {
         recentTags.clear();
         Iterator<String> it = property.get().iterator();
         while (it.hasNext()) {
@@ -53,7 +53,7 @@ class RecentTagCollection {
         }
     }
 
-    public void saveToPreference(CollectionProperty property) {
+    public void saveToPreference(ListProperty property) {
         List<String> c = new ArrayList<>(recentTags.size() * 2);
         for (Tag t : recentTags.keySet()) {
             c.add(t.getKey());

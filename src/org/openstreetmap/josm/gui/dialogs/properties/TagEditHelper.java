@@ -72,7 +72,7 @@ import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.data.osm.search.SearchSetting;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
-import org.openstreetmap.josm.data.preferences.CollectionProperty;
+import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.data.preferences.EnumProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
@@ -127,7 +127,7 @@ public class TagEditHelper {
     public static final IntegerProperty PROPERTY_RECENT_TAGS_NUMBER = new IntegerProperty("properties.recently-added-tags",
             DEFAULT_LRU_TAGS_NUMBER);
     /** The preference storage of recent tags */
-    public static final CollectionProperty PROPERTY_RECENT_TAGS = new CollectionProperty("properties.recent-tags",
+    public static final ListProperty PROPERTY_RECENT_TAGS = new ListProperty("properties.recent-tags",
             Collections.<String>emptyList());
     public static final StringProperty PROPERTY_TAGS_TO_IGNORE = new StringProperty("properties.recent-tags.ignore",
             new SearchSetting().writeToString());

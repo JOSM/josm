@@ -75,7 +75,7 @@ public final class MapPaintSettings implements PreferenceChangedListener {
         showDirectionArrow = Main.pref.getBoolean("draw.segment.direction", false);
         showOnewayArrow = Main.pref.getBoolean("draw.oneway", true);
         useRealWidth = Main.pref.getBoolean("mappaint.useRealWidth", false);
-        defaultSegmentWidth = Main.pref.getInteger("mappaint.segment.default-width", 2);
+        defaultSegmentWidth = Main.pref.getInt("mappaint.segment.default-width", 2);
 
         selectedColor = PaintColors.SELECTED.get();
         relationSelectedColor = PaintColors.RELATIONSELECTED.get();
@@ -94,14 +94,14 @@ public final class MapPaintSettings implements PreferenceChangedListener {
         showOrderNumberOnSelectedWay = Main.pref.getBoolean("draw.segment.order_number.on_selected", false);
         showHeadArrowOnly = Main.pref.getBoolean("draw.segment.head_only", false);
 
-        showNamesDistance = Main.pref.getInteger("mappaint.shownames", 10_000_000);
-        useStrokesDistance = Main.pref.getInteger("mappaint.strokes", 10_000_000);
-        showIconsDistance = Main.pref.getInteger("mappaint.showicons", 10_000_000);
+        showNamesDistance = Main.pref.getInt("mappaint.shownames", 10_000_000);
+        useStrokesDistance = Main.pref.getInt("mappaint.strokes", 10_000_000);
+        showIconsDistance = Main.pref.getInt("mappaint.showicons", 10_000_000);
 
-        selectedNodeSize = Main.pref.getInteger("mappaint.node.selected-size", 5);
-        unselectedNodeSize = Main.pref.getInteger("mappaint.node.unselected-size", 3);
-        connectionNodeSize = Main.pref.getInteger("mappaint.node.connection-size", 5);
-        taggedNodeSize = Main.pref.getInteger("mappaint.node.tagged-size", 3);
+        selectedNodeSize = Main.pref.getInt("mappaint.node.selected-size", 5);
+        unselectedNodeSize = Main.pref.getInt("mappaint.node.unselected-size", 3);
+        connectionNodeSize = Main.pref.getInt("mappaint.node.connection-size", 5);
+        taggedNodeSize = Main.pref.getInt("mappaint.node.tagged-size", 3);
         fillSelectedNode = Main.pref.getBoolean("mappaint.node.fill-selected", true);
         fillUnselectedNode = Main.pref.getBoolean("mappaint.node.fill-unselected", false);
         fillTaggedNode = Main.pref.getBoolean("mappaint.node.fill-tagged", true);

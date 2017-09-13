@@ -78,7 +78,7 @@ public interface StyleSetting {
             if (b == def) {
                 Main.pref.put(prefKey, null);
             } else {
-                Main.pref.put(prefKey, b);
+                Main.pref.putBoolean(prefKey, b);
             }
         }
     }

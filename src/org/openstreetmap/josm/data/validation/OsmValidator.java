@@ -281,7 +281,7 @@ public final class OsmValidator {
     }
 
     private static void applyPrefs(Map<String, Test> tests, boolean beforeUpload) {
-        for (String testName : Main.pref.getCollection(beforeUpload
+        for (String testName : Main.pref.getList(beforeUpload
         ? ValidatorPrefHelper.PREF_SKIP_TESTS_BEFORE_UPLOAD : ValidatorPrefHelper.PREF_SKIP_TESTS)) {
             Test test = tests.get(testName);
             if (test != null) {

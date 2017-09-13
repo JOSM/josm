@@ -158,7 +158,7 @@ public class ReprojectionTile extends Tile {
                 (pbTargetAligned.maxNorth - en11Current.north()) / scale);
 
         ImageWarp.PointTransform transform;
-        int stride = Main.pref.getInteger("imagery.warp.projection-interpolation.stride", 7);
+        int stride = Main.pref.getInt("imagery.warp.projection-interpolation.stride", 7);
         if (stride > 0) {
             transform = new ImageWarp.GridTransform(pointTransform, stride);
         } else {

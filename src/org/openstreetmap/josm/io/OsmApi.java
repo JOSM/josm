@@ -592,7 +592,7 @@ public class OsmApi extends OsmConnection {
      * @return the max number of retries
      */
     protected int getMaxRetries() {
-        int ret = Main.pref.getInteger("osm-server.max-num-retries", DEFAULT_MAX_NUM_RETRIES);
+        int ret = Main.pref.getInt("osm-server.max-num-retries", DEFAULT_MAX_NUM_RETRIES);
         return Math.max(ret, 0);
     }
 

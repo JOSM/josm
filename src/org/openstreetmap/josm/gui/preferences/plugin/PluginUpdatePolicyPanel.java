@@ -195,7 +195,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
             }
         }
         if (days == 0) {
-            days = Main.pref.getInteger("pluginmanager.time-based-update.interval", PluginHandler.DEFAULT_TIME_BASED_UPDATE_INTERVAL);
+            days = Main.pref.getInt("pluginmanager.time-based-update.interval", PluginHandler.DEFAULT_TIME_BASED_UPDATE_INTERVAL);
         }
         tfUpdateInterval.setText(Integer.toString(days));
     }
@@ -234,7 +234,7 @@ public class PluginUpdatePolicyPanel extends JPanel {
         } catch (NumberFormatException e) {
             days = PluginHandler.DEFAULT_TIME_BASED_UPDATE_INTERVAL;
         }
-        Main.pref.putInteger("pluginmanager.time-based-update.interval", days);
+        Main.pref.putInt("pluginmanager.time-based-update.interval", days);
     }
 
     class TimeBasedPolicyChangeListener implements ChangeListener {

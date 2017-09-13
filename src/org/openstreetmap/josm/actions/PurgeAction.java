@@ -98,7 +98,7 @@ public class PurgeAction extends JosmAction {
                 return;
 
             clearUndoRedo = cbClearUndoRedo.isSelected();
-            Main.pref.put("purge.clear_undo_redo", clearUndoRedo);
+            Main.pref.putBoolean("purge.clear_undo_redo", clearUndoRedo);
         }
 
         MainApplication.undoRedo.add(cmd);

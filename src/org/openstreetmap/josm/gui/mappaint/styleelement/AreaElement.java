@@ -89,7 +89,7 @@ public class AreaElement extends StyleElement {
                     fillImage.getWidth() / 2, fillImage.getHeight() / 2)
             );
 
-            fillImage.alpha = Utils.clamp(Main.pref.getInteger("mappaint.fill-image-alpha", 255), 0, 255);
+            fillImage.alpha = Utils.clamp(Main.pref.getInt("mappaint.fill-image-alpha", 255), 0, 255);
             Integer pAlpha = Utils.colorFloat2int(c.get(FILL_OPACITY, null, float.class));
             if (pAlpha != null) {
                 fillImage.alpha = pAlpha;

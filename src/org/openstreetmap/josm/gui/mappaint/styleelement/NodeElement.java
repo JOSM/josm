@@ -195,7 +195,7 @@ public class NodeElement extends StyleElement {
         mapImage.offsetX = Math.round(offsetXF);
         mapImage.offsetY = Math.round(offsetYF);
 
-        mapImage.alpha = Utils.clamp(Main.pref.getInteger("mappaint.icon-image-alpha", 255), 0, 255);
+        mapImage.alpha = Utils.clamp(Main.pref.getInt("mappaint.icon-image-alpha", 255), 0, 255);
         Integer pAlpha = Utils.colorFloat2int(c.get(keys[ICON_OPACITY_IDX], null, float.class));
         if (pAlpha != null) {
             mapImage.alpha = pAlpha;
@@ -356,10 +356,10 @@ public class NodeElement extends StyleElement {
             // This is only executed once, so no performance concerns.
             // However, it would be better, if the settings could be changed at runtime.
             int size = max(
-                    Main.pref.getInteger("mappaint.node.selected-size", 5),
-                    Main.pref.getInteger("mappaint.node.unselected-size", 3),
-                    Main.pref.getInteger("mappaint.node.connection-size", 5),
-                    Main.pref.getInteger("mappaint.node.tagged-size", 3)
+                    Main.pref.getInt("mappaint.node.selected-size", 5),
+                    Main.pref.getInt("mappaint.node.unselected-size", 3),
+                    Main.pref.getInt("mappaint.node.connection-size", 5),
+                    Main.pref.getInt("mappaint.node.tagged-size", 3)
             );
             return new SimpleBoxProvider(new Rectangle(-size/2, -size/2, size, size));
         }

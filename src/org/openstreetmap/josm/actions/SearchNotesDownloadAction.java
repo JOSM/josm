@@ -40,7 +40,7 @@ public class SearchNotesDownloadAction extends JosmAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         HistoryComboBox searchTermBox = new HistoryComboBox();
-        List<String> searchHistory = new LinkedList<>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
+        List<String> searchHistory = new LinkedList<>(Main.pref.getList(HISTORY_KEY, new LinkedList<String>()));
         Collections.reverse(searchHistory);
         searchTermBox.setPossibleItems(searchHistory);
 
@@ -69,7 +69,7 @@ public class SearchNotesDownloadAction extends JosmAction {
         }
 
         searchTermBox.addCurrentItemToHistory();
-        Main.pref.putCollection(HISTORY_KEY, searchTermBox.getHistory());
+        Main.pref.putList(HISTORY_KEY, searchTermBox.getHistory());
 
         performSearch(searchTerm);
     }
@@ -90,8 +90,8 @@ public class SearchNotesDownloadAction extends JosmAction {
             Logging.trace(ignore);
         }
 
-        int noteLimit = Main.pref.getInteger("osm.notes.downloadLimit", 1000);
-        int closedLimit = Main.pref.getInteger("osm.notes.daysClosed", 7);
+        int noteLimit = Main.pref.getInt("osm.notes.downloadLimit", 1000);
+        int closedLimit = Main.pref.getInt("osm.notes.daysClosed", 7);
 
         StringBuilder sb = new StringBuilder(128);
         sb.append(OsmApi.getOsmApi().getBaseUrl())

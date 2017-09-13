@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -158,7 +157,7 @@ public class TagChecker extends TagTest {
 
     protected EditableList sourcesList;
 
-    private static final Set<String> DEFAULT_SOURCES = new HashSet<>(Arrays.asList(/*DATA_FILE, */IGNORE_FILE, SPELL_FILE));
+    private static final List<String> DEFAULT_SOURCES = Arrays.asList(/*DATA_FILE, */IGNORE_FILE, SPELL_FILE);
 
     /**
      * Constructor
@@ -190,7 +189,7 @@ public class TagChecker extends TagTest {
         harmonizedKeys.clear();
 
         StringBuilder errorSources = new StringBuilder();
-        for (String source : Main.pref.getCollection(PREF_SOURCES, DEFAULT_SOURCES)) {
+        for (String source : Main.pref.getList(PREF_SOURCES, DEFAULT_SOURCES)) {
             try (
                 CachedFile cf = new CachedFile(source);
                 BufferedReader reader = cf.getContentReader()
@@ -292,7 +291,7 @@ public class TagChecker extends TagTest {
                 additionalPresetsValueData.putVoid(a);
             }
             // TODO directionKeys are no longer in OsmPrimitive (search pattern is used instead)
-            for (String a : Main.pref.getCollection(ValidatorPrefHelper.PREFIX + ".knownkeys",
+            for (String a : Main.pref.getList(ValidatorPrefHelper.PREFIX + ".knownkeys",
                     Arrays.asList("is_in", "int_ref", "fixme", "population"))) {
                 additionalPresetsValueData.putVoid(a);
             }
@@ -635,7 +634,7 @@ public class TagChecker extends TagTest {
         prefCheckComplexBeforeUpload.setSelected(Main.pref.getBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, true));
         testPanel.add(prefCheckComplexBeforeUpload, a);
 
-        final Collection<String> sources = Main.pref.getCollection(PREF_SOURCES, DEFAULT_SOURCES);
+        final Collection<String> sources = Main.pref.getList(PREF_SOURCES, DEFAULT_SOURCES);
         sourcesList = new EditableList(tr("TagChecker source"));
         sourcesList.setItems(sources);
         testPanel.add(new JLabel(tr("Data sources ({0})", "*.cfg")), GBC.eol().insets(23, 0, 0, 0));
@@ -681,15 +680,15 @@ public class TagChecker extends TagTest {
         testBeforeUpload = prefCheckKeysBeforeUpload.isSelected() || prefCheckValuesBeforeUpload.isSelected()
                 || prefCheckFixmesBeforeUpload.isSelected() || prefCheckComplexBeforeUpload.isSelected();
 
-        Main.pref.put(PREF_CHECK_VALUES, prefCheckValues.isSelected());
-        Main.pref.put(PREF_CHECK_COMPLEX, prefCheckComplex.isSelected());
-        Main.pref.put(PREF_CHECK_KEYS, prefCheckKeys.isSelected());
-        Main.pref.put(PREF_CHECK_FIXMES, prefCheckFixmes.isSelected());
-        Main.pref.put(PREF_CHECK_VALUES_BEFORE_UPLOAD, prefCheckValuesBeforeUpload.isSelected());
-        Main.pref.put(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, prefCheckComplexBeforeUpload.isSelected());
-        Main.pref.put(PREF_CHECK_KEYS_BEFORE_UPLOAD, prefCheckKeysBeforeUpload.isSelected());
-        Main.pref.put(PREF_CHECK_FIXMES_BEFORE_UPLOAD, prefCheckFixmesBeforeUpload.isSelected());
-        return Main.pref.putCollection(PREF_SOURCES, sourcesList.getItems());
+        Main.pref.putBoolean(PREF_CHECK_VALUES, prefCheckValues.isSelected());
+        Main.pref.putBoolean(PREF_CHECK_COMPLEX, prefCheckComplex.isSelected());
+        Main.pref.putBoolean(PREF_CHECK_KEYS, prefCheckKeys.isSelected());
+        Main.pref.putBoolean(PREF_CHECK_FIXMES, prefCheckFixmes.isSelected());
+        Main.pref.putBoolean(PREF_CHECK_VALUES_BEFORE_UPLOAD, prefCheckValuesBeforeUpload.isSelected());
+        Main.pref.putBoolean(PREF_CHECK_COMPLEX_BEFORE_UPLOAD, prefCheckComplexBeforeUpload.isSelected());
+        Main.pref.putBoolean(PREF_CHECK_KEYS_BEFORE_UPLOAD, prefCheckKeysBeforeUpload.isSelected());
+        Main.pref.putBoolean(PREF_CHECK_FIXMES_BEFORE_UPLOAD, prefCheckFixmesBeforeUpload.isSelected());
+        return Main.pref.putList(PREF_SOURCES, sourcesList.getItems());
     }
 
     @Override
