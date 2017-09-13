@@ -43,7 +43,7 @@ public class CustomConfiguratorTest {
     public void testExportPreferencesKeysToFile() throws IOException {
         File tmp = File.createTempFile("josm.testExportPreferencesKeysToFile.lorem_ipsum", ".xml");
 
-        Main.pref.putCollection("lorem_ipsum", Arrays.asList(
+        Main.pref.putList("lorem_ipsum", Arrays.asList(
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
                 "Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                 "Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.",
@@ -56,15 +56,15 @@ public class CustomConfiguratorTest {
         CustomConfigurator.exportPreferencesKeysToFile(tmp.getAbsolutePath(), false, "lorem_ipsum");
         String xml = Utils.join("\n", Files.readAllLines(tmp.toPath(), StandardCharsets.UTF_8));
         assertTrue(xml.contains("<preferences operation=\"replace\">"));
-        for (String entry : Main.pref.getCollection("lorem_ipsum")) {
+        for (String entry : Main.pref.getList("lorem_ipsum")) {
             assertTrue(entry + "\nnot found in:\n" + xml, xml.contains(entry));
         }
 
-        Main.pref.putCollection("test", Arrays.asList("11111111", "2222222", "333333333"));
+        Main.pref.putList("test", Arrays.asList("11111111", "2222222", "333333333"));
         CustomConfigurator.exportPreferencesKeysByPatternToFile(tmp.getAbsolutePath(), true, "test");
         xml = Utils.join("\n", Files.readAllLines(tmp.toPath(), StandardCharsets.UTF_8));
         assertTrue(xml.contains("<preferences operation=\"append\">"));
-        for (String entry : Main.pref.getCollection("test")) {
+        for (String entry : Main.pref.getList("test")) {
             assertTrue(entry + "\nnot found in:\n" + xml, xml.contains(entry));
         }
 
@@ -78,22 +78,22 @@ public class CustomConfiguratorTest {
     @Test
     public void testReadXML() throws IOException {
         // Test 1 - read(dir, file) + append
-        Main.pref.putCollection("test", Collections.<String>emptyList());
-        assertTrue(Main.pref.getCollection("test").isEmpty());
+        Main.pref.putList("test", Collections.<String>emptyList());
+        assertTrue(Main.pref.getList("test").isEmpty());
         CustomConfigurator.readXML(TestUtils.getTestDataRoot() + "customconfigurator", "append.xml");
         String log = PreferencesUtils.getLog();
         assertFalse(log, log.contains("Error"));
-        assertFalse(Main.pref.getCollection("test").isEmpty());
+        assertFalse(Main.pref.getList("test").isEmpty());
 
         // Test 2 - read(file, pref) + replace
         Preferences pref = new Preferences();
         // avoid messing up preferences file (that makes all following unit tests fail)
         pref.enableSaveOnPut(false);
-        pref.putCollection("lorem_ipsum", Arrays.asList("only 1 string"));
-        assertEquals(1, pref.getCollection("lorem_ipsum").size());
+        pref.putList("lorem_ipsum", Arrays.asList("only 1 string"));
+        assertEquals(1, pref.getList("lorem_ipsum").size());
         CustomConfigurator.readXML(new File(TestUtils.getTestDataRoot() + "customconfigurator", "replace.xml"), pref);
         log = PreferencesUtils.getLog();
         assertFalse(log, log.contains("Error"));
-        assertEquals(9, pref.getCollection("lorem_ipsum").size());
+        assertEquals(9, pref.getList("lorem_ipsum").size());
     }
 }

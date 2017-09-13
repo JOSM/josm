@@ -35,9 +35,9 @@ public class AudioPreferenceTest {
      */
     @Test
     public void testAddGui() {
-        Main.pref.put("audio.menuinvisible", true);
+        Main.pref.putBoolean("audio.menuinvisible", true);
         PreferencesTestUtils.doTestPreferenceSettingAddGui(new AudioPreference.Factory(), null);
-        Main.pref.put("audio.menuinvisible", false);
+        Main.pref.putBoolean("audio.menuinvisible", false);
         PreferencesTestUtils.doTestPreferenceSettingAddGui(new AudioPreference.Factory(), null);
     }
 }

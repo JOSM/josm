@@ -13,7 +13,7 @@ import org.junit.Test;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.search.SearchParseError;
 import org.openstreetmap.josm.data.osm.search.SearchSetting;
-import org.openstreetmap.josm.data.preferences.CollectionProperty;
+import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -52,7 +52,7 @@ public class RecentTagCollectionTest {
         recentTags.add(baz);
         assertEquals(Arrays.asList(foo, baz), recentTags.toList());
 
-        final CollectionProperty pref = new CollectionProperty("properties.recent-tags", Collections.<String>emptyList());
+        final ListProperty pref = new ListProperty("properties.recent-tags", Collections.<String>emptyList());
         recentTags.saveToPreference(pref);
         assertEquals(Arrays.asList("name", "foo", "name", "baz"), pref.get());
         pref.put(Arrays.asList("key=", "=value"));
