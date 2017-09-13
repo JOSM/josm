@@ -306,8 +306,8 @@ public class ExtrudeAction extends MapMode implements MapViewPaintable, KeyPress
 
     @Override
     protected void readPreferences() {
-        initialMoveDelay = Main.pref.getInteger("edit.initial-move-delay", 200);
-        initialMoveThreshold = Main.pref.getInteger("extrude.initial-move-threshold", 1);
+        initialMoveDelay = Main.pref.getInt("edit.initial-move-delay", 200);
+        initialMoveThreshold = Main.pref.getInt("extrude.initial-move-threshold", 1);
         mainColor = new ColorProperty(marktr("Extrude: main line"), Color.RED).get();
         helperColor = new ColorProperty(marktr("Extrude: helper line"), Color.ORANGE).get();
         helperStrokeDash = GuiHelper.getCustomizedStroke(Main.pref.get("extrude.stroke.helper-line", "1 4"));

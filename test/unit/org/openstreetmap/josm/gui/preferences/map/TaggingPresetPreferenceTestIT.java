@@ -57,8 +57,8 @@ public class TaggingPresetPreferenceTestIT {
                 .loadAndGetAvailableSources();
         assertFalse(sources.isEmpty());
         // Double traditional timeouts to avoid random problems
-        Main.pref.putInteger("socket.timeout.connect", 30);
-        Main.pref.putInteger("socket.timeout.read", 60);
+        Main.pref.putInt("socket.timeout.connect", 30);
+        Main.pref.putInt("socket.timeout.read", 60);
         Map<Object, Throwable> allErrors = new HashMap<>();
         Set<String> allMessages = new HashSet<>();
         for (ExtendedSourceEntry source : sources) {

@@ -397,7 +397,7 @@ public class CreateMultipolygonAction extends JosmAction {
             values.remove(key);
         }
 
-        for (String linearTag : Main.pref.getCollection("multipoly.lineartagstokeep", DEFAULT_LINEAR_TAGS)) {
+        for (String linearTag : Main.pref.getList("multipoly.lineartagstokeep", DEFAULT_LINEAR_TAGS)) {
             values.remove(linearTag);
         }
 

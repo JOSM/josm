@@ -190,7 +190,7 @@ public class BasicChangesetQueryPanel extends JPanel {
         } else {
             Main.pref.put("changeset-query.basic.query", q.toString());
         }
-        Main.pref.put("changeset-query.basic.my-changesets-only", cbMyChangesetsOnly.isSelected());
+        Main.pref.putBoolean("changeset-query.basic.my-changesets-only", cbMyChangesetsOnly.isSelected());
     }
 
     /**

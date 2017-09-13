@@ -57,7 +57,7 @@ public abstract class SourcePrefHelper {
      */
     public List<SourceEntry> get() {
 
-        Collection<Map<String, String>> src = Main.pref.getListOfStructs(pref, (Collection<Map<String, String>>) null);
+        List<Map<String, String>> src = Main.pref.getListOfMaps(pref, null);
         if (src == null)
             return new ArrayList<>(getDefault());
 
@@ -77,18 +77,18 @@ public abstract class SourcePrefHelper {
      * @return {@code true}, if something has changed (i.e. value is different than before)
      */
     public boolean put(Collection<? extends SourceEntry> entries) {
-        Collection<Map<String, String>> setting = serializeList(entries);
-        boolean unset = Main.pref.getListOfStructs(pref, (Collection<Map<String, String>>) null) == null;
+        List<Map<String, String>> setting = serializeList(entries);
+        boolean unset = Main.pref.getListOfMaps(pref, null) == null;
         if (unset) {
             Collection<Map<String, String>> def = serializeList(getDefault());
             if (setting.equals(def))
                 return false;
         }
-        return Main.pref.putListOfStructs(pref, setting);
+        return Main.pref.putListOfMaps(pref, setting);
     }
 
-    private Collection<Map<String, String>> serializeList(Collection<? extends SourceEntry> entries) {
-        Collection<Map<String, String>> setting = new ArrayList<>(entries.size());
+    private List<Map<String, String>> serializeList(Collection<? extends SourceEntry> entries) {
+        List<Map<String, String>> setting = new ArrayList<>(entries.size());
         for (SourceEntry e : entries) {
             setting.add(serialize(e));
         }

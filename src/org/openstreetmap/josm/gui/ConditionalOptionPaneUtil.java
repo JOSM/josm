@@ -59,7 +59,7 @@ public final class ConditionalOptionPaneUtil {
         return Utils.firstNonNull(
                 immediateChoices.get(prefKey),
                 sessionChoices.get(prefKey),
-                !Main.pref.getBoolean("message." + prefKey, true) ? Main.pref.getInteger("message." + prefKey + ".value", -1) : -1
+                !Main.pref.getBoolean("message." + prefKey, true) ? Main.pref.getInt("message." + prefKey + ".value", -1) : -1
         );
     }
 
@@ -238,8 +238,8 @@ public final class ConditionalOptionPaneUtil {
                     sessionChoices.put(prefKey, value);
                     break;
                 case PERMANENT:
-                    Main.pref.put("message." + prefKey, false);
-                    Main.pref.putInteger("message." + prefKey + ".value", value);
+                    Main.pref.putBoolean("message." + prefKey, false);
+                    Main.pref.putInt("message." + prefKey + ".value", value);
                     break;
             }
         }

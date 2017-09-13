@@ -228,8 +228,8 @@ public abstract class SaveActionBase extends DiskAccessAction {
             return;
         }
 
-        int maxsize = Math.max(0, Main.pref.getInteger("file-open.history.max-size", 15));
-        Collection<String> oldHistory = Main.pref.getCollection("file-open.history");
+        int maxsize = Math.max(0, Main.pref.getInt("file-open.history.max-size", 15));
+        Collection<String> oldHistory = Main.pref.getList("file-open.history");
         List<String> history = new LinkedList<>(oldHistory);
         history.remove(filepath);
         history.add(0, filepath);

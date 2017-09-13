@@ -160,7 +160,7 @@ public class DefaultProxySelector extends ProxySelector {
             }
         }
         proxyExceptions = new HashSet<>(
-            Main.pref.getCollection(PROXY_EXCEPTIONS,
+            Main.pref.getList(PROXY_EXCEPTIONS,
                     Arrays.asList("localhost", IPV4_LOOPBACK, IPV6_LOOPBACK))
         );
     }

@@ -243,7 +243,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
      * Saves all elements from the list to {@link Main#pref}.
      */
     private void savePreferences() {
-        Collection<Map<String, String>> toSave = new ArrayList<>(this.items.size());
+        List<Map<String, String>> toSave = new ArrayList<>(this.items.size());
         for (SelectorItem item : this.items.values()) {
             Map<String, String> it = new HashMap<>();
             it.put(KEY_KEY, item.getKey());
@@ -253,7 +253,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
             toSave.add(it);
         }
 
-        Main.pref.putListOfStructs(PREFERENCE_ITEMS, toSave);
+        Main.pref.putListOfMaps(PREFERENCE_ITEMS, toSave);
     }
 
     /**
@@ -262,7 +262,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
      */
     private static Map<String, SelectorItem> restorePreferences() {
         Collection<Map<String, String>> toRetrieve =
-                Main.pref.getListOfStructs(PREFERENCE_ITEMS, Collections.emptyList());
+                Main.pref.getListOfMaps(PREFERENCE_ITEMS, Collections.emptyList());
         Map<String, SelectorItem> result = new HashMap<>();
 
         for (Map<String, String> entry : toRetrieve) {

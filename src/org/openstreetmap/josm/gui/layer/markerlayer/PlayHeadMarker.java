@@ -63,7 +63,7 @@ public final class PlayHeadMarker extends Marker {
                 null, -1.0, 0.0);
         enabled = Main.pref.getBoolean("marker.traceaudio", true);
         if (!enabled) return;
-        dropTolerance = Main.pref.getInteger("marker.playHeadDropTolerance", 50);
+        dropTolerance = Main.pref.getInt("marker.playHeadDropTolerance", 50);
         if (MainApplication.isDisplayingMapView()) {
             MapFrame map = MainApplication.getMap();
             map.mapView.addMouseListener(new MouseAdapter() {

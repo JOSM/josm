@@ -155,7 +155,7 @@ public class MultiFetchServerObjectReaderTest {
         Main.pref.put("osm-server.auth-method", "basic");
 
         // don't use atomic upload, the test API server can't cope with large diff uploads
-        Main.pref.put("osm-server.atomic-upload", false);
+        Main.pref.putBoolean("osm-server.atomic-upload", false);
 
         File dataSetCacheOutputFile = new File(System.getProperty("java.io.tmpdir"),
                 MultiFetchServerObjectReaderTest.class.getName() + ".dataset");

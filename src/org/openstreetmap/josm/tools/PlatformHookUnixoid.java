@@ -50,7 +50,7 @@ public class PlatformHookUnixoid implements PlatformHook {
 
     @Override
     public void openUrl(String url) throws IOException {
-        for (String program : Main.pref.getCollection("browser.unix",
+        for (String program : Main.pref.getList("browser.unix",
                 Arrays.asList("xdg-open", "#DESKTOP#", "$BROWSER", "gnome-open", "kfmclient openURL", "firefox"))) {
             try {
                 if ("#DESKTOP#".equals(program)) {

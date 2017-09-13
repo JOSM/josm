@@ -208,10 +208,10 @@ public class AdvancedChangesetQueryPanel extends JPanel {
      * Remember settings in preferences.
      */
     public void rememberSettings() {
-        Main.pref.put("changeset-query.advanced.user-restrictions", cbUserRestriction.isSelected());
-        Main.pref.put("changeset-query.advanced.open-restrictions", cbOpenAndCloseRestrictions.isSelected());
-        Main.pref.put("changeset-query.advanced.time-restrictions", cbTimeRestrictions.isSelected());
-        Main.pref.put("changeset-query.advanced.bbox-restrictions", cbBoundingBoxRestriction.isSelected());
+        Main.pref.putBoolean("changeset-query.advanced.user-restrictions", cbUserRestriction.isSelected());
+        Main.pref.putBoolean("changeset-query.advanced.open-restrictions", cbOpenAndCloseRestrictions.isSelected());
+        Main.pref.putBoolean("changeset-query.advanced.time-restrictions", cbTimeRestrictions.isSelected());
+        Main.pref.putBoolean("changeset-query.advanced.bbox-restrictions", cbBoundingBoxRestriction.isSelected());
 
         pnlUserRestriction.rememberSettings();
         pnlOpenAndCloseRestriction.rememberSettings();

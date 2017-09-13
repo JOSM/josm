@@ -104,7 +104,7 @@ public class DefaultNameFormatter implements NameFormatter, HistoryNameFormatter
     public static synchronized List<String> getNamingtagsForRelations() {
         if (namingTagsForRelations == null) {
             namingTagsForRelations = new ArrayList<>(
-                    Main.pref.getCollection("relation.nameOrder", Arrays.asList(DEFAULT_NAMING_TAGS_FOR_RELATIONS))
+                    Main.pref.getList("relation.nameOrder", Arrays.asList(DEFAULT_NAMING_TAGS_FOR_RELATIONS))
                     );
         }
         return namingTagsForRelations;

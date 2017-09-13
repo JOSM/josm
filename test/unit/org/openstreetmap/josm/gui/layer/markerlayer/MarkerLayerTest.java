@@ -39,7 +39,7 @@ public class MarkerLayerTest {
      */
     @Before
     public void setUp() {
-        Main.pref.put("marker.traceaudio", true);
+        Main.pref.putBoolean("marker.traceaudio", true);
     }
 
     /**

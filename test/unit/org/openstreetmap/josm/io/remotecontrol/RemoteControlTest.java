@@ -51,8 +51,8 @@ public class RemoteControlTest {
 
         RemoteControl.start();
         disableCertificateValidation();
-        httpBase = "http://127.0.0.1:"+Main.pref.getInteger("remote.control.port", 8111);
-        httpsBase = "https://127.0.0.1:"+Main.pref.getInteger("remote.control.https.port", 8112);
+        httpBase = "http://127.0.0.1:"+Main.pref.getInt("remote.control.port", 8111);
+        httpsBase = "https://127.0.0.1:"+Main.pref.getInt("remote.control.https.port", 8112);
     }
 
     /**

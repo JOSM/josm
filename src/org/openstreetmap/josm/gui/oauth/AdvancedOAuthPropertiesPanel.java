@@ -280,7 +280,7 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
      */
     public void rememberPreferences(Preferences pref) {
         CheckParameterUtil.ensureParameterNotNull(pref, "pref");
-        pref.put("oauth.settings.use-default", cbUseDefaults.isSelected());
+        pref.putBoolean("oauth.settings.use-default", cbUseDefaults.isSelected());
         if (cbUseDefaults.isSelected()) {
             new OAuthParameters(null, null, null, null, null, null, null).rememberPreferences(pref);
         } else {

@@ -774,7 +774,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
-                Main.pref.put("statusbar.always-visible", sel);
+                Main.pref.putBoolean("statusbar.always-visible", sel);
             }
         });
 
@@ -1078,7 +1078,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
         double dist = -1;
         // Compute total length of selected way(s) until an arbitrary limit set to 250 ways
         // in order to prevent performance issue if a large number of ways are selected (old behaviour kept in that case, see #8403)
-        int maxWays = Math.max(1, Main.pref.getInteger("selection.max-ways-for-statusline", 250));
+        int maxWays = Math.max(1, Main.pref.getInt("selection.max-ways-for-statusline", 250));
         if (!ways.isEmpty() && ways.size() <= maxWays) {
             dist = 0.0;
             for (Way w : ways) {

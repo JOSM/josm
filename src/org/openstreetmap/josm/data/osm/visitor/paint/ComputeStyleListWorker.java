@@ -59,7 +59,7 @@ public class ComputeStyleListWorker extends RecursiveTask<List<StyleRecord>> imp
         this.input = input;
         this.output = output;
         this.directExecutionTaskSize = directExecutionTaskSize;
-        this.drawArea = circum <= Main.pref.getInteger("mappaint.fillareas", 10_000_000);
+        this.drawArea = circum <= Main.pref.getInt("mappaint.fillareas", 10_000_000);
         this.drawMultipolygon = drawArea && Main.pref.getBoolean("mappaint.multipolygon", true);
         this.drawRestriction = Main.pref.getBoolean("mappaint.restriction", true);
         this.styles.setDrawMultipolygon(drawMultipolygon);

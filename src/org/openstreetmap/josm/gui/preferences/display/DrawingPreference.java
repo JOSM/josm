@@ -108,7 +108,7 @@ public class DrawingPreference implements SubPreferenceSetting {
 
         // virtual nodes
         virtualNodes.setToolTipText(tr("Draw virtual nodes in select mode for easy way modification."));
-        virtualNodes.setSelected(Main.pref.getInteger("mappaint.node.virtual-size", 8) != 0);
+        virtualNodes.setSelected(Main.pref.getInt("mappaint.node.virtual-size", 8) != 0);
 
         // background layers in inactive color
         inactive.setToolTipText(tr("Draw the inactive data layers in a different color."));
@@ -194,22 +194,22 @@ public class DrawingPreference implements SubPreferenceSetting {
     @Override
     public boolean ok() {
         boolean restart = gpxPanel.savePreferences();
-        Main.pref.put("draw.data.area_outline_only", outlineOnly.isSelected());
-        Main.pref.put("draw.segment.direction", directionHint.isSelected());
-        Main.pref.put("draw.segment.head_only", headArrow.isSelected());
-        Main.pref.put("draw.oneway", onewayArrow.isSelected());
-        Main.pref.put("draw.segment.order_number", segmentOrderNumber.isSelected());
-        Main.pref.put("draw.segment.order_number.on_selected", segmentOrderNumberOnSelectedWay.isSelected());
-        Main.pref.put("draw.data.downloaded_area", sourceBounds.isSelected());
-        Main.pref.put("draw.data.inactive_color", inactive.isSelected());
-        Main.pref.put("mappaint.use-antialiasing", useAntialiasing.isSelected());
-        Main.pref.put("mappaint.wireframe.use-antialiasing", useWireframeAntialiasing.isSelected());
-        Main.pref.put("draw.target-highlight", useHighlighting.isSelected());
-        Main.pref.put("draw.helper-line", drawHelperLine.isSelected());
-        Main.pref.put("display.discardable-keys", discardableKeys.isSelected());
+        Main.pref.putBoolean("draw.data.area_outline_only", outlineOnly.isSelected());
+        Main.pref.putBoolean("draw.segment.direction", directionHint.isSelected());
+        Main.pref.putBoolean("draw.segment.head_only", headArrow.isSelected());
+        Main.pref.putBoolean("draw.oneway", onewayArrow.isSelected());
+        Main.pref.putBoolean("draw.segment.order_number", segmentOrderNumber.isSelected());
+        Main.pref.putBoolean("draw.segment.order_number.on_selected", segmentOrderNumberOnSelectedWay.isSelected());
+        Main.pref.putBoolean("draw.data.downloaded_area", sourceBounds.isSelected());
+        Main.pref.putBoolean("draw.data.inactive_color", inactive.isSelected());
+        Main.pref.putBoolean("mappaint.use-antialiasing", useAntialiasing.isSelected());
+        Main.pref.putBoolean("mappaint.wireframe.use-antialiasing", useWireframeAntialiasing.isSelected());
+        Main.pref.putBoolean("draw.target-highlight", useHighlighting.isSelected());
+        Main.pref.putBoolean("draw.helper-line", drawHelperLine.isSelected());
+        Main.pref.putBoolean("display.discardable-keys", discardableKeys.isSelected());
         AutoFilterManager.PROP_AUTO_FILTER_ENABLED.put(autoFilters.isSelected());
         AutoFilterManager.PROP_AUTO_FILTER_RULE.put(((AutoFilterRule) autoFilterRules.getSelectedItem()).getKey());
-        int vn = Main.pref.getInteger("mappaint.node.virtual-size", 8);
+        int vn = Main.pref.getInt("mappaint.node.virtual-size", 8);
         if (virtualNodes.isSelected()) {
             if (vn < 1) {
                 vn = 8;
@@ -217,7 +217,7 @@ public class DrawingPreference implements SubPreferenceSetting {
         } else {
             vn = 0;
         }
-        Main.pref.putInteger("mappaint.node.virtual-size", vn);
+        Main.pref.putInt("mappaint.node.virtual-size", vn);
         return restart;
     }
 

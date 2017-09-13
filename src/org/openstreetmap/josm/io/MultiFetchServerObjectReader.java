@@ -320,7 +320,7 @@ public class MultiFetchServerObjectReader extends OsmServerReader {
         Set<Long> toFetch = new HashSet<>(ids);
         // Build a list of fetchers that will  download smaller sets containing only MAX_IDS_PER_REQUEST (200) primitives each.
         // we will run up to MAX_DOWNLOAD_THREADS concurrent fetchers.
-        int threadsNumber = Main.pref.getInteger("osm.download.threads", OsmApi.MAX_DOWNLOAD_THREADS);
+        int threadsNumber = Main.pref.getInt("osm.download.threads", OsmApi.MAX_DOWNLOAD_THREADS);
         threadsNumber = Utils.clamp(threadsNumber, 1, OsmApi.MAX_DOWNLOAD_THREADS);
         final ExecutorService exec = Executors.newFixedThreadPool(
                 threadsNumber, Utils.newThreadFactory(getClass() + "-%d", Thread.NORM_PRIORITY));

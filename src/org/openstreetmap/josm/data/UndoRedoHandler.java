@@ -73,7 +73,7 @@ public class UndoRedoHandler {
         // Limit the number of commands in the undo list.
         // Currently you have to undo the commands one by one. If
         // this changes, a higher default value may be reasonable.
-        if (commands.size() > Main.pref.getInteger("undo.max", 1000)) {
+        if (commands.size() > Main.pref.getInt("undo.max", 1000)) {
             commands.removeFirst();
         }
         redoCommands.clear();

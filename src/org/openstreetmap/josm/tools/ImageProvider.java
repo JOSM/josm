@@ -121,15 +121,15 @@ public class ImageProvider {
      */
     public enum ImageSizes {
         /** SMALL_ICON value of an Action */
-        SMALLICON(Main.pref.getInteger("iconsize.smallicon", 16)),
+        SMALLICON(Main.pref.getInt("iconsize.smallicon", 16)),
         /** LARGE_ICON_KEY value of an Action */
-        LARGEICON(Main.pref.getInteger("iconsize.largeicon", 24)),
+        LARGEICON(Main.pref.getInt("iconsize.largeicon", 24)),
         /** map icon */
-        MAP(Main.pref.getInteger("iconsize.map", 16)),
+        MAP(Main.pref.getInt("iconsize.map", 16)),
         /** map icon maximum size */
-        MAPMAX(Main.pref.getInteger("iconsize.mapmax", 48)),
+        MAPMAX(Main.pref.getInt("iconsize.mapmax", 48)),
         /** cursor icon size */
-        CURSOR(Main.pref.getInteger("iconsize.cursor", 32)),
+        CURSOR(Main.pref.getInt("iconsize.cursor", 32)),
         /** cursor overlay icon size */
         CURSOROVERLAY(CURSOR),
         /** menu icon size */
@@ -141,7 +141,7 @@ public class ImageProvider {
         /** Layer list icon size
          * @since 8323
          */
-        LAYER(Main.pref.getInteger("iconsize.layer", 16)),
+        LAYER(Main.pref.getInt("iconsize.layer", 16)),
         /** Toolbar button icon size
          * @since 9253
          */
@@ -149,16 +149,16 @@ public class ImageProvider {
         /** Side button maximum height
          * @since 9253
          */
-        SIDEBUTTON(Main.pref.getInteger("iconsize.sidebutton", 20)),
+        SIDEBUTTON(Main.pref.getInt("iconsize.sidebutton", 20)),
         /** Settings tab icon size
          * @since 9253
          */
-        SETTINGS_TAB(Main.pref.getInteger("iconsize.settingstab", 48)),
+        SETTINGS_TAB(Main.pref.getInt("iconsize.settingstab", 48)),
         /**
          * The default image size
          * @since 9705
          */
-        DEFAULT(Main.pref.getInteger("iconsize.default", 24)),
+        DEFAULT(Main.pref.getInt("iconsize.default", 24)),
         /**
          * Splash dialog logo size
          * @since 10358
@@ -1012,12 +1012,12 @@ public class ImageProvider {
      * @return the requested image or null if the request failed
      */
     private static ImageResource getIfAvailableWiki(String name, ImageType type) {
-        final Collection<String> defaultBaseUrls = Arrays.asList(
+        final List<String> defaultBaseUrls = Arrays.asList(
                 "https://wiki.openstreetmap.org/w/images/",
                 "https://upload.wikimedia.org/wikipedia/commons/",
                 "https://wiki.openstreetmap.org/wiki/File:"
                 );
-        final Collection<String> baseUrls = Main.pref.getCollection("image-provider.wiki.urls", defaultBaseUrls);
+        final Collection<String> baseUrls = Main.pref.getList("image-provider.wiki.urls", defaultBaseUrls);
 
         final String fn = name.substring(name.lastIndexOf('/') + 1);
 

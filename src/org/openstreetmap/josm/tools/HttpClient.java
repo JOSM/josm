@@ -44,12 +44,12 @@ public final class HttpClient {
 
     private URL url;
     private final String requestMethod;
-    private int connectTimeout = (int) TimeUnit.SECONDS.toMillis(Main.pref.getInteger("socket.timeout.connect", 15));
-    private int readTimeout = (int) TimeUnit.SECONDS.toMillis(Main.pref.getInteger("socket.timeout.read", 30));
+    private int connectTimeout = (int) TimeUnit.SECONDS.toMillis(Main.pref.getInt("socket.timeout.connect", 15));
+    private int readTimeout = (int) TimeUnit.SECONDS.toMillis(Main.pref.getInt("socket.timeout.read", 30));
     private byte[] requestBody;
     private long ifModifiedSince;
     private final Map<String, String> headers = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
-    private int maxRedirects = Main.pref.getInteger("socket.maxredirects", 5);
+    private int maxRedirects = Main.pref.getInt("socket.maxredirects", 5);
     private boolean useCache;
     private String reasonForRequest;
     private String outputMessage = tr("Uploading data ...");

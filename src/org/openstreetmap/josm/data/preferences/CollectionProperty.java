@@ -7,7 +7,9 @@ import org.openstreetmap.josm.Main;
 
 /**
  * A property containing a {@code Collection} of {@code String} as value.
+ * @deprecated use {@link ListProperty}
  */
+@Deprecated
 public class CollectionProperty extends AbstractProperty<Collection<String>> {
 
     /**

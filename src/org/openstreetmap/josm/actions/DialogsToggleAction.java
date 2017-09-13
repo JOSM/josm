@@ -42,7 +42,7 @@ public class DialogsToggleAction extends ToggleAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         toggleSelectedState(e);
-        Main.pref.put("draw.dialogspanel", isSelected());
+        Main.pref.putBoolean("draw.dialogspanel", isSelected());
         notifySelectedState();
         setMode();
     }
@@ -60,10 +60,10 @@ public class DialogsToggleAction extends ToggleAction {
             MainApplication.getMenu().setVisible(selected || Main.pref.getBoolean("menu.always-visible", true));
             // Toolbars listen to preference changes, use it here
             if (!Main.pref.getBoolean("toolbar.always-visible", true) && (!selected || toolbarPreviouslyVisible)) {
-                Main.pref.put("toolbar.visible", selected);
+                Main.pref.putBoolean("toolbar.visible", selected);
             }
             if (!Main.pref.getBoolean("sidetoolbar.always-visible", true) && (!selected || sideToolbarPreviouslyVisible)) {
-                Main.pref.put("sidetoolbar.visible", selected);
+                Main.pref.putBoolean("sidetoolbar.visible", selected);
             }
             map.mapView.rememberLastPositionOnScreen();
         }

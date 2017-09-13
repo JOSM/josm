@@ -274,7 +274,7 @@ public class ChangesetDialog extends ToggleDialog {
     class FilterChangeHandler implements ItemListener {
         @Override
         public void itemStateChanged(ItemEvent e) {
-            Main.pref.put("changeset-dialog.for-selected-objects-only", cbInSelectionOnly.isSelected());
+            Main.pref.putBoolean("changeset-dialog.for-selected-objects-only", cbInSelectionOnly.isSelected());
             pnlList.removeAll();
             if (cbInSelectionOnly.isSelected()) {
                 pnlList.add(new JScrollPane(lstInSelection), BorderLayout.CENTER);

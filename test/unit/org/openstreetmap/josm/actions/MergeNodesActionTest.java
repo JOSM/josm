@@ -42,7 +42,7 @@ public class MergeNodesActionTest {
      */
     @Test(expected = IllegalStateException.class)
     public void testSelectTargetLocationNodeInvalidMode() {
-        Main.pref.putInteger("merge-nodes.mode", -1);
+        Main.pref.putInt("merge-nodes.mode", -1);
         MergeNodesAction.selectTargetLocationNode(Arrays.asList(new Node(0), new Node(1)));
     }
 
@@ -51,14 +51,14 @@ public class MergeNodesActionTest {
      */
     @Test
     public void testSelectTargetLocationNode() {
-        Main.pref.putInteger("merge-nodes.mode", 0);
+        Main.pref.putInt("merge-nodes.mode", 0);
         assertEquals(1, MergeNodesAction.selectTargetLocationNode(Arrays.asList(new Node(0), new Node(1))).getId());
 
-        Main.pref.putInteger("merge-nodes.mode", 1);
+        Main.pref.putInt("merge-nodes.mode", 1);
         assertEquals(LatLon.ZERO, MergeNodesAction.selectTargetLocationNode(
                 Arrays.asList(new Node(LatLon.NORTH_POLE), new Node(LatLon.SOUTH_POLE))).getCoor());
 
-        Main.pref.putInteger("merge-nodes.mode", 2);
+        Main.pref.putInt("merge-nodes.mode", 2);
         assertEquals(LatLon.NORTH_POLE, MergeNodesAction.selectTargetLocationNode(
                 Arrays.asList(new Node(LatLon.NORTH_POLE))).getCoor());
     }

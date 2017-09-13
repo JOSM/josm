@@ -27,7 +27,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.text.JTextComponent;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.preferences.CollectionProperty;
+import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
@@ -57,7 +57,7 @@ public class OsmApiUrlInputPanel extends JPanel {
     private JButton btnTest;
     /** indicates whether to use the default OSM URL or not */
     private JCheckBox cbUseDefaultServerUrl;
-    private final transient CollectionProperty SERVER_URL_HISTORY = new CollectionProperty("osm-server.url-history", Arrays.asList(
+    private final transient ListProperty SERVER_URL_HISTORY = new ListProperty("osm-server.url-history", Arrays.asList(
             "http://api06.dev.openstreetmap.org/api", "http://master.apis.dev.openstreetmap.org/api"));
 
     private transient ApiUrlPropagator propagator;

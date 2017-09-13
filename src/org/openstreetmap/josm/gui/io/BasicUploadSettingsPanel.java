@@ -77,7 +77,7 @@ public class BasicUploadSettingsPanel extends JPanel {
         pnl.add(commentLabel, GBC.eol().insets(0, 5, 10, 3).fill(GBC.HORIZONTAL));
         hcbUploadComment.setToolTipText(tr("Enter an upload comment"));
         hcbUploadComment.setMaxTextLength(Changeset.MAX_CHANGESET_TAG_LENGTH);
-        List<String> cmtHistory = new LinkedList<>(Main.pref.getCollection(HISTORY_KEY, new LinkedList<String>()));
+        List<String> cmtHistory = new LinkedList<>(Main.pref.getList(HISTORY_KEY, new LinkedList<String>()));
         Collections.reverse(cmtHistory); // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
         hcbUploadComment.setPossibleItems(cmtHistory);
         CommentModelListener commentModelListener = new CommentModelListener(hcbUploadComment, changesetCommentModel);
@@ -99,7 +99,7 @@ public class BasicUploadSettingsPanel extends JPanel {
 
         hcbUploadSource.setToolTipText(tr("Enter a source"));
         hcbUploadSource.setMaxTextLength(Changeset.MAX_CHANGESET_TAG_LENGTH);
-        List<String> sourceHistory = new LinkedList<>(Main.pref.getCollection(SOURCE_HISTORY_KEY, getDefaultSources()));
+        List<String> sourceHistory = new LinkedList<>(Main.pref.getList(SOURCE_HISTORY_KEY, getDefaultSources()));
         Collections.reverse(sourceHistory); // we have to reverse the history, because ComboBoxHistory will reverse it again in addElement()
         hcbUploadSource.setPossibleItems(sourceHistory);
         CommentModelListener sourceModelListener = new CommentModelListener(hcbUploadSource, changesetSourceModel);
@@ -165,11 +165,11 @@ public class BasicUploadSettingsPanel extends JPanel {
     public void rememberUserInput() {
         // store the history of comments
         hcbUploadComment.addCurrentItemToHistory();
-        Main.pref.putCollection(HISTORY_KEY, hcbUploadComment.getHistory());
-        Main.pref.putInteger(HISTORY_LAST_USED_KEY, (int) (TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())));
+        Main.pref.putList(HISTORY_KEY, hcbUploadComment.getHistory());
+        Main.pref.putInt(HISTORY_LAST_USED_KEY, (int) (TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())));
         // store the history of sources
         hcbUploadSource.addCurrentItemToHistory();
-        Main.pref.putCollection(SOURCE_HISTORY_KEY, hcbUploadSource.getHistory());
+        Main.pref.putList(SOURCE_HISTORY_KEY, hcbUploadSource.getHistory());
     }
 
     /**

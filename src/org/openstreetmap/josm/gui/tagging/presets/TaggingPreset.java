@@ -209,7 +209,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             return;
         }
         File arch = TaggingPresetReader.getZipIcons();
-        final Collection<String> s = Main.pref.getCollection("taggingpreset.icon.sources", null);
+        final Collection<String> s = Main.pref.getList("taggingpreset.icon.sources", null);
         ImageProvider imgProv = new ImageProvider(iconName);
         imgProv.setDirs(s);
         imgProv.setId("presets");

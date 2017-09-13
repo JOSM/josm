@@ -147,7 +147,7 @@ public abstract class StyleElement implements StyleKeys {
             synchronized (lock) {
                 s = defaultFontSize;
                 if (s == null) {
-                    defaultFontSize = s = (float) Main.pref.getInteger("mappaint.fontsize", 8);
+                    defaultFontSize = s = (float) Main.pref.getInt("mappaint.fontsize", 8);
                 }
             }
         }

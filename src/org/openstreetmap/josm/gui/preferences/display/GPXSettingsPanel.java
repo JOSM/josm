@@ -453,7 +453,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
         if (layerName == null) {
             layerNameDot = "";
         }
-        Main.pref.put("marker.makeautomarkers"+layerNameDot, makeAutoMarkers.isSelected());
+        Main.pref.putBoolean("marker.makeautomarkers"+layerNameDot, makeAutoMarkers.isSelected());
         if (drawRawGpsLinesGlobal.isSelected()) {
             Main.pref.put("draw.rawgps.lines" + layerNameDot, null);
             Main.pref.put("draw.rawgps.max-line-length" + layerNameDot, null);
@@ -465,25 +465,25 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             Main.pref.put("draw.rawgps.min-arrow-distance"+layerNameDot, null);
         } else {
             if (layerName == null || !locLayer) {
-                Main.pref.put("draw.rawgps.lines" + layerNameDot, drawRawGpsLinesAll.isSelected());
+                Main.pref.putBoolean("draw.rawgps.lines" + layerNameDot, drawRawGpsLinesAll.isSelected());
                 Main.pref.put("draw.rawgps.max-line-length" + layerNameDot, drawRawGpsMaxLineLength.getText());
             }
             if (layerName == null || locLayer) {
-                Main.pref.put("draw.rawgps.lines.local" + layerNameDot, drawRawGpsLinesAll.isSelected() || drawRawGpsLinesLocal.isSelected());
+                Main.pref.putBoolean("draw.rawgps.lines.local" + layerNameDot, drawRawGpsLinesAll.isSelected() || drawRawGpsLinesLocal.isSelected());
                 Main.pref.put("draw.rawgps.max-line-length.local" + layerNameDot, drawRawGpsMaxLineLengthLocal.getText());
             }
-            Main.pref.put("draw.rawgps.lines.force"+layerNameDot, forceRawGpsLines.isSelected());
-            Main.pref.put("draw.rawgps.direction"+layerNameDot, drawGpsArrows.isSelected());
-            Main.pref.put("draw.rawgps.alternatedirection"+layerNameDot, drawGpsArrowsFast.isSelected());
+            Main.pref.putBoolean("draw.rawgps.lines.force"+layerNameDot, forceRawGpsLines.isSelected());
+            Main.pref.putBoolean("draw.rawgps.direction"+layerNameDot, drawGpsArrows.isSelected());
+            Main.pref.putBoolean("draw.rawgps.alternatedirection"+layerNameDot, drawGpsArrowsFast.isSelected());
             Main.pref.put("draw.rawgps.min-arrow-distance"+layerNameDot, drawGpsArrowsMinDist.getText());
         }
 
-        Main.pref.put("draw.rawgps.hdopcircle"+layerNameDot, hdopCircleGpsPoints.isSelected());
-        Main.pref.put("draw.rawgps.large"+layerNameDot, largeGpsPoints.isSelected());
+        Main.pref.putBoolean("draw.rawgps.hdopcircle"+layerNameDot, hdopCircleGpsPoints.isSelected());
+        Main.pref.putBoolean("draw.rawgps.large"+layerNameDot, largeGpsPoints.isSelected());
         Main.pref.put("draw.rawgps.linewidth"+layerNameDot, drawLineWidth.getText());
-        Main.pref.put("draw.rawgps.lines.alpha-blend"+layerNameDot, drawLineWithAlpha.isSelected());
+        Main.pref.putBoolean("draw.rawgps.lines.alpha-blend"+layerNameDot, drawLineWithAlpha.isSelected());
 
-        Main.pref.put("mappaint.gpx.use-antialiasing", useGpsAntialiasing.isSelected());
+        Main.pref.putBoolean("mappaint.gpx.use-antialiasing", useGpsAntialiasing.isSelected());
 
         TemplateEntryProperty.forMarker(layerName).put(waypointLabelPattern.getText());
         TemplateEntryProperty.forAudioMarker(layerName).put(audioWaypointLabelPattern.getText());
@@ -494,25 +494,25 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             Main.pref.put("draw.rawgps.colorTracksTunec"+layerNameDot, null);
             return false;
         } else if (colorTypeVelocity.isSelected()) {
-            Main.pref.putInteger("draw.rawgps.colors"+layerNameDot, 1);
+            Main.pref.putInt("draw.rawgps.colors"+layerNameDot, 1);
         } else if (colorTypeDilution.isSelected()) {
-            Main.pref.putInteger("draw.rawgps.colors"+layerNameDot, 2);
+            Main.pref.putInt("draw.rawgps.colors"+layerNameDot, 2);
         } else if (colorTypeDirection.isSelected()) {
-            Main.pref.putInteger("draw.rawgps.colors"+layerNameDot, 3);
+            Main.pref.putInt("draw.rawgps.colors"+layerNameDot, 3);
         } else if (colorTypeTime.isSelected()) {
-            Main.pref.putInteger("draw.rawgps.colors"+layerNameDot, 4);
+            Main.pref.putInt("draw.rawgps.colors"+layerNameDot, 4);
         } else if (colorTypeHeatMap.isSelected()) {
-            Main.pref.putInteger("draw.rawgps.colors"+layerNameDot, 5);
+            Main.pref.putInt("draw.rawgps.colors"+layerNameDot, 5);
         } else {
-            Main.pref.putInteger("draw.rawgps.colors"+layerNameDot, 0);
+            Main.pref.putInt("draw.rawgps.colors"+layerNameDot, 0);
         }
-        Main.pref.put("draw.rawgps.colors.dynamic"+layerNameDot, colorDynamic.isSelected());
+        Main.pref.putBoolean("draw.rawgps.colors.dynamic"+layerNameDot, colorDynamic.isSelected());
         int ccti = colorTypeVelocityTune.getSelectedIndex();
-        Main.pref.putInteger("draw.rawgps.colorTracksTune"+layerNameDot, ccti == 2 ? 10 : (ccti == 1 ? 20 : 45));
-        Main.pref.putInteger("draw.rawgps.heatmap.colormap"+layerNameDot, colorTypeHeatMapTune.getSelectedIndex());
-        Main.pref.put("draw.rawgps.heatmap.use-points"+layerNameDot, colorTypeHeatMapPoints.isSelected());
-        Main.pref.putInteger("draw.rawgps.heatmap.gain"+layerNameDot, colorTypeHeatMapGain.getValue());
-        Main.pref.putInteger("draw.rawgps.heatmap.lower-limit"+layerNameDot, colorTypeHeatMapLowerLimit.getValue());
+        Main.pref.putInt("draw.rawgps.colorTracksTune"+layerNameDot, ccti == 2 ? 10 : (ccti == 1 ? 20 : 45));
+        Main.pref.putInt("draw.rawgps.heatmap.colormap"+layerNameDot, colorTypeHeatMapTune.getSelectedIndex());
+        Main.pref.putBoolean("draw.rawgps.heatmap.use-points"+layerNameDot, colorTypeHeatMapPoints.isSelected());
+        Main.pref.putInt("draw.rawgps.heatmap.gain"+layerNameDot, colorTypeHeatMapGain.getValue());
+        Main.pref.putInt("draw.rawgps.heatmap.lower-limit"+layerNameDot, colorTypeHeatMapLowerLimit.getValue());
 
         return false;
     }

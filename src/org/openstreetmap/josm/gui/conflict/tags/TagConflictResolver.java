@@ -77,8 +77,8 @@ public class TagConflictResolver extends JPanel {
      *
      */
     public void rememberPreferences() {
-        Main.pref.put(getClass().getName() + ".showTagsWithConflictsOnly", cbShowTagsWithConflictsOnly.isSelected());
-        Main.pref.put(getClass().getName() + ".showTagsWithMultiValuesOnly", cbShowTagsWithMultiValuesOnly.isSelected());
+        Main.pref.putBoolean(getClass().getName() + ".showTagsWithConflictsOnly", cbShowTagsWithConflictsOnly.isSelected());
+        Main.pref.putBoolean(getClass().getName() + ".showTagsWithMultiValuesOnly", cbShowTagsWithMultiValuesOnly.isSelected());
     }
 
     protected final void build() {

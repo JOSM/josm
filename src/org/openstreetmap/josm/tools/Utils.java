@@ -1245,7 +1245,7 @@ public final class Utils {
      * @return a {@link ForkJoinPool}
      */
     public static ForkJoinPool newForkJoinPool(String pref, final String nameFormat, final int threadPriority) {
-        int noThreads = Main.pref.getInteger(pref, Runtime.getRuntime().availableProcessors());
+        int noThreads = Main.pref.getInt(pref, Runtime.getRuntime().availableProcessors());
         return new ForkJoinPool(noThreads, new ForkJoinPool.ForkJoinWorkerThreadFactory() {
             final AtomicLong count = new AtomicLong(0);
             @Override

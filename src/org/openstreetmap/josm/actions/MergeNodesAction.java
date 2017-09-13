@@ -113,7 +113,7 @@ public class MergeNodesAction extends JosmAction {
         if (size == 1) // to avoid division by 0 in mode 2
             return candidates.get(0);
 
-        switch (Main.pref.getInteger("merge-nodes.mode", 0)) {
+        switch (Main.pref.getInt("merge-nodes.mode", 0)) {
         case 0:
             return candidates.get(size - 1);
         case 1:

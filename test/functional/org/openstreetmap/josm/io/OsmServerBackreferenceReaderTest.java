@@ -164,7 +164,7 @@ public class OsmServerBackreferenceReaderTest {
 
         // don't use atomic upload, the test API server can't cope with large diff uploads
         //
-        Main.pref.put("osm-server.atomic-upload", false);
+        Main.pref.putBoolean("osm-server.atomic-upload", false);
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857")); // Mercator
         Logging.setLogLevel(Logging.LEVEL_DEBUG);
 

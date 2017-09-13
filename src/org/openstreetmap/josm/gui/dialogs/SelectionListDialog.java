@@ -523,7 +523,7 @@ public class SelectionListDialog extends ToggleDialog {
                     break;
                 }
             }
-            int maxsize = Main.pref.getInteger("select.history-size", SELECTION_HISTORY_SIZE);
+            int maxsize = Main.pref.getInt("select.history-size", SELECTION_HISTORY_SIZE);
             while (history.size() > maxsize) {
                 history.removeLast();
             }
@@ -661,8 +661,8 @@ public class SelectionListDialog extends ToggleDialog {
          * Sorts the current elements in the selection
          */
         public synchronized void sort() {
-            if (selection.size() <= Main.pref.getInteger("selection.no_sort_above", 100_000)) {
-                boolean quick = selection.size() > Main.pref.getInteger("selection.fast_sort_above", 10_000);
+            if (selection.size() <= Main.pref.getInt("selection.no_sort_above", 100_000)) {
+                boolean quick = selection.size() > Main.pref.getInt("selection.fast_sort_above", 10_000);
                 Comparator<OsmPrimitive> c = Main.pref.getBoolean("selection.sort_relations_before_ways", true)
                         ? OsmPrimitiveComparator.orderingRelationsWaysNodes()
                         : OsmPrimitiveComparator.orderingWaysRelationsNodes();

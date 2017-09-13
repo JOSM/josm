@@ -55,9 +55,10 @@ import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.preferences.AbstractPreferences;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
-import org.openstreetmap.josm.data.preferences.DoubleProperty;
+import org.openstreetmap.josm.data.preferences.IPreferences;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.ListListSetting;
 import org.openstreetmap.josm.data.preferences.ListSetting;
@@ -103,7 +104,7 @@ import org.xml.sax.SAXException;
  * @author imi
  * @since 74
  */
-public class Preferences {
+public class Preferences extends AbstractPreferences {
 
     private static final String COLOR_PREFIX = "color.";
 
@@ -254,6 +255,7 @@ public class Preferences {
      * Adds a new preferences listener.
      * @param listener The listener to add
      */
+    @Override
     public void addPreferenceChangeListener(PreferenceChangedListener listener) {
         if (listener != null) {
             listeners.addListener(listener);
@@ -264,6 +266,7 @@ public class Preferences {
      * Removes a preferences listener.
      * @param listener The listener to remove
      */
+    @Override
     public void removePreferenceChangeListener(PreferenceChangedListener listener) {
         listeners.removeListener(listener);
     }
@@ -274,6 +277,7 @@ public class Preferences {
      * @param listener The listener to add.
      * @since 10824
      */
+    @Override
     public void addKeyPreferenceChangeListener(String key, PreferenceChangedListener listener) {
         listenersForKey(key).addListener(listener);
     }
@@ -302,6 +306,7 @@ public class Preferences {
      * @param key The preference key to listen to
      * @param listener The listener to add.
      */
+    @Override
     public void removeKeyPreferenceChangeListener(String key, PreferenceChangedListener listener) {
         Optional.ofNullable(keyListeners.get(key)).orElseThrow(
                 () -> new IllegalArgumentException("There are no listeners registered for " + key))
@@ -479,26 +484,6 @@ public class Preferences {
     }
 
     /**
-     * Get settings value for a certain key.
-     * @param key the identifier for the setting
-     * @return "" if there is nothing set for the preference key, the corresponding value otherwise. The result is not null.
-     */
-    public synchronized String get(final String key) {
-        String value = get(key, null);
-        return value == null ? "" : value;
-    }
-
-    /**
-     * Get settings value for a certain key and provide default a value.
-     * @param key the identifier for the setting
-     * @param def the default value. For each call of get() with a given key, the default value must be the same.
-     * @return the corresponding value if the property has been set before, {@code def} otherwise
-     */
-    public synchronized String get(final String key, final String def) {
-        return getSetting(key, new StringSetting(def), StringSetting.class).getValue();
-    }
-
-    /**
      * Gets all normal (string) settings that have a key starting with the prefix
      * @param prefix The start of the key
      * @return The key names of the settings
@@ -551,28 +536,6 @@ public class Preferences {
     }
 
     /**
-     * Gets a boolean preference
-     * @param key The preference key
-     * @return The boolean or <code>false</code> if it could not be parsed
-     * @see IntegerProperty#get()
-     */
-    public synchronized boolean getBoolean(final String key) {
-        String s = get(key, null);
-        return s != null && Boolean.parseBoolean(s);
-    }
-
-    /**
-     * Gets a boolean preference
-     * @param key The preference key
-     * @param def The default value to use
-     * @return The boolean, <code>false</code> if it could not be parsed, the default value if it is unset
-     * @see IntegerProperty#get()
-     */
-    public synchronized boolean getBoolean(final String key, final boolean def) {
-        return Boolean.parseBoolean(get(key, Boolean.toString(def)));
-    }
-
-    /**
      * Gets an boolean that may be specialized
      * @param key The basic key
      * @param specName The sub-key to append to the key
@@ -590,22 +553,14 @@ public class Preferences {
     }
 
     /**
-     * Set a value for a certain setting.
-     * @param key the unique identifier for the setting
-     * @param value the value of the setting. Can be null or "" which both removes the key-value entry.
-     * @return {@code true}, if something has changed (i.e. value is different than before)
-     */
-    public boolean put(final String key, String value) {
-        return putSetting(key, value == null || value.isEmpty() ? null : new StringSetting(value));
-    }
-
-    /**
      * Set a boolean value for a certain setting.
      * @param key the unique identifier for the setting
      * @param value The new value
      * @return {@code true}, if something has changed (i.e. value is different than before)
      * @see BooleanProperty
+     * @deprecated use {@link IPreferences#putBoolean(String, boolean)}
      */
+    @Deprecated
     public boolean put(final String key, final boolean value) {
         return put(key, Boolean.toString(value));
     }
@@ -616,7 +571,9 @@ public class Preferences {
      * @param value The new value
      * @return {@code true}, if something has changed (i.e. value is different than before)
      * @see IntegerProperty#put(Integer)
+     * @deprecated use {@link IPreferences#putInt(String, int)}
      */
+    @Deprecated
     public boolean putInteger(final String key, final Integer value) {
         return put(key, Integer.toString(value));
     }
@@ -627,7 +584,9 @@ public class Preferences {
      * @param value The new value
      * @return {@code true}, if something has changed (i.e. value is different than before)
      * @see DoubleProperty#put(Double)
+     * @deprecated use {@link IPreferences#putDouble(java.lang.String, double)}
      */
+    @Deprecated
     public boolean putDouble(final String key, final Double value) {
         return put(key, Double.toString(value));
     }
@@ -662,7 +621,7 @@ public class Preferences {
     protected void save(File prefFile, Stream<Entry<String, Setting<?>>> settings, boolean defaults) throws IOException {
         if (!defaults) {
             /* currently unused, but may help to fix configuration issues in future */
-            putInteger("josm.version", Version.getInstance().getVersion());
+            putInt("josm.version", Version.getInstance().getVersion());
 
             updateSystemProperties();
         }
@@ -973,7 +932,9 @@ public class Preferences {
      * @param def The default value to use
      * @return The integer
      * @see IntegerProperty#get()
+     * @deprecated use {@link IPreferences#getInt(String, int)}
      */
+    @Deprecated
     public synchronized int getInteger(String key, int def) {
         String v = get(key, Integer.toString(def));
         if (v.isEmpty())
@@ -1033,32 +994,13 @@ public class Preferences {
     }
 
     /**
-     * Gets a double preference
-     * @param key The preference key
-     * @param def The default value to use
-     * @return The double value or the default value if it could not be parsed
-     * @see LongProperty#get()
-     */
-    public synchronized double getDouble(String key, double def) {
-        String v = get(key, Double.toString(def));
-        if (null == v)
-            return def;
-
-        try {
-            return Double.parseDouble(v);
-        } catch (NumberFormatException e) {
-            // fall out
-            Logging.trace(e);
-        }
-        return def;
-    }
-
-    /**
      * Get a list of values for a certain key
      * @param key the identifier for the setting
      * @param def the default value.
      * @return the corresponding value if the property has been set before, {@code def} otherwise
+     * @deprecated use {@link IPreferences#getList(java.lang.String, java.util.List)}
      */
+    @Deprecated
     public Collection<String> getCollection(String key, Collection<String> def) {
         return getSetting(key, ListSetting.create(def), ListSetting.class).getValue();
     }
@@ -1067,9 +1009,11 @@ public class Preferences {
      * Get a list of values for a certain key
      * @param key the identifier for the setting
      * @return the corresponding value if the property has been set before, an empty collection otherwise.
+     * @deprecated use {@link IPreferences#getList(java.lang.String)}
      */
+    @Deprecated
     public Collection<String> getCollection(String key) {
-        Collection<String> val = getCollection(key, null);
+        Collection<String> val = getList(key, null);
         return val == null ? Collections.<String>emptyList() : val;
     }
 
@@ -1077,12 +1021,12 @@ public class Preferences {
      * Removes a value from a given String collection
      * @param key The preference key the collection is stored with
      * @param value The value that should be removed in the collection
-     * @see #getCollection(String)
+     * @see #getList(String)
      */
     public synchronized void removeFromCollection(String key, String value) {
-        List<String> a = new ArrayList<>(getCollection(key, Collections.<String>emptyList()));
+        List<String> a = new ArrayList<>(getList(key, Collections.<String>emptyList()));
         a.remove(value);
-        putCollection(key, a);
+        putList(key, a);
     }
 
     /**
@@ -1092,6 +1036,7 @@ public class Preferences {
      * @param setting the value of the setting. In case it is null, the key-value entry will be removed.
      * @return {@code true}, if something has changed (i.e. value is different than before)
      */
+    @Override
     public boolean putSetting(final String key, Setting<?> setting) {
         CheckParameterUtil.ensureParameterNotNull(key);
         if (setting != null && setting.getValue() == null)
@@ -1145,6 +1090,7 @@ public class Preferences {
      * @return the corresponding value if the property has been set before, {@code def} otherwise
      */
     @SuppressWarnings("unchecked")
+    @Override
     public synchronized <T extends Setting<?>> T getSetting(String key, T def, Class<T> klass) {
         CheckParameterUtil.ensureParameterNotNull(key);
         CheckParameterUtil.ensureParameterNotNull(def);
@@ -1171,7 +1117,9 @@ public class Preferences {
      * @param key key
      * @param value value
      * @return {@code true}, if something has changed (i.e. value is different than before)
+     * @deprecated use {@link IPreferences#putList(java.lang.String, java.util.List)}
      */
+    @Deprecated
     public boolean putCollection(String key, Collection<String> value) {
         return putSetting(key, value == null ? null : ListSetting.create(value));
     }
@@ -1184,14 +1132,14 @@ public class Preferences {
      * @return {@code true}, if something has changed (i.e. value is different than before)
      */
     public boolean putCollectionBounded(String key, int maxsize, Collection<String> val) {
-        Collection<String> newCollection = new ArrayList<>(Math.min(maxsize, val.size()));
+        List<String> newCollection = new ArrayList<>(Math.min(maxsize, val.size()));
         for (String i : val) {
             if (newCollection.size() >= maxsize) {
                 break;
             }
             newCollection.add(i);
         }
-        return putCollection(key, newCollection);
+        return putList(key, newCollection);
     }
 
     /**
@@ -1211,7 +1159,9 @@ public class Preferences {
      * Gets a collection of string collections for the given key
      * @param key The key
      * @return The collection of string collections or an empty collection as default
+     * @deprecated use {@link IPreferences#getListOfLists(java.lang.String)}
      */
+    @Deprecated
     public Collection<Collection<String>> getArray(String key) {
         Collection<Collection<String>> res = getArray(key, null);
         return res == null ? Collections.<Collection<String>>emptyList() : res;
@@ -1222,7 +1172,9 @@ public class Preferences {
      * @param key key
      * @param value value
      * @return {@code true}, if something has changed (i.e. value is different than before)
+     * @deprecated use {@link IPreferences#putListOfLists(java.lang.String, java.util.List)}
      */
+    @Deprecated
     public boolean putArray(String key, Collection<Collection<String>> value) {
         return putSetting(key, value == null ? null : ListListSetting.create(value));
     }
@@ -1232,7 +1184,9 @@ public class Preferences {
      * @param key The key to search at
      * @param def The default value to use
      * @return The stored value or the default one if it could not be parsed
+     * @deprecated use {@link IPreferences#getListOfMaps(java.lang.String, java.util.List)}
      */
+    @Deprecated
     public Collection<Map<String, String>> getListOfStructs(String key, Collection<Map<String, String>> def) {
         return getSetting(key, new MapListSetting(def == null ? null : new ArrayList<>(def)), MapListSetting.class).getValue();
     }
@@ -1242,8 +1196,10 @@ public class Preferences {
      * @param key The key to store the list in
      * @param value A list of key/value maps
      * @return <code>true</code> if the value was changed
-     * @see #getListOfStructs(String, Collection)
+     * @see #getListOfMaps(String, Collection)
+     * @deprecated use {@link IPreferences#putListOfMaps(java.lang.String, java.util.List)}
      */
+    @Deprecated
     public boolean putListOfStructs(String key, Collection<Map<String, String>> value) {
         return putSetting(key, value == null ? null : new MapListSetting(new ArrayList<>(value)));
     }
@@ -1289,8 +1245,8 @@ public class Preferences {
      * @return a list of objects of type T or {@code def} if nothing was found
      */
     public <T> List<T> getListOfStructs(String key, Collection<T> def, Class<T> klass) {
-        Collection<Map<String, String>> prop =
-            getListOfStructs(key, def == null ? null : serializeListOfStructs(def, klass));
+        List<Map<String, String>> prop =
+            getListOfMaps(key, def == null ? null : serializeListOfStructs(def, klass));
         if (prop == null)
             return def == null ? null : new ArrayList<>(def);
         return prop.stream().map(p -> deserializeStruct(p, klass)).collect(Collectors.toList());
@@ -1313,13 +1269,13 @@ public class Preferences {
      * @return true if something has changed
      */
     public <T> boolean putListOfStructs(String key, Collection<T> val, Class<T> klass) {
-        return putListOfStructs(key, serializeListOfStructs(val, klass));
+        return putListOfMaps(key, serializeListOfStructs(val, klass));
     }
 
-    private static <T> Collection<Map<String, String>> serializeListOfStructs(Collection<T> l, Class<T> klass) {
+    private static <T> List<Map<String, String>> serializeListOfStructs(Collection<T> l, Class<T> klass) {
         if (l == null)
             return null;
-        Collection<Map<String, String>> vals = new ArrayList<>();
+        List<Map<String, String>> vals = new ArrayList<>();
         for (T struct : l) {
             if (struct != null) {
                 vals.add(serializeStruct(struct, klass));
@@ -1574,7 +1530,7 @@ public class Preferences {
      * @see #getOnlinePluginSites
      */
     public Collection<String> getPluginSites() {
-        return getCollection("pluginmanager.sites", Collections.singleton(Main.getJOSMWebsite()+"/pluginicons%<?plugins=>"));
+        return getList("pluginmanager.sites", Collections.singletonList(Main.getJOSMWebsite()+"/pluginicons%<?plugins=>"));
     }
 
     /**
@@ -1601,7 +1557,7 @@ public class Preferences {
      * @param sites the site URLs
      */
     public void setPluginSites(Collection<String> sites) {
-        putCollection("pluginmanager.sites", sites);
+        putList("pluginmanager.sites", new ArrayList<>(sites));
     }
 
     /**
@@ -1701,7 +1657,7 @@ public class Preferences {
                     }
                 }
                 if (modified) {
-                    putListOfStructs(key, l);
+                    putListOfMaps(key, l);
                 }
             }
         }
@@ -1717,7 +1673,7 @@ public class Preferences {
                 if (val.isPresent()) {
                     l.add(helper.serialize(val.get()));
                 }
-                putListOfStructs(key, l);
+                putListOfMaps(key, l);
             }
         }
     }

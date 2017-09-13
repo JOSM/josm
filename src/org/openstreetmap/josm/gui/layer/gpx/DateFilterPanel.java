@@ -104,7 +104,7 @@ public class DateFilterPanel extends JPanel {
     public void saveInPrefs() {
         Main.pref.putLong(prefDateMin, dateFrom.getDate().getTime());
         Main.pref.putLong(prefDateMax, dateTo.getDate().getTime());
-        Main.pref.put(prefDate0, noTimestampCb.isSelected());
+        Main.pref.putBoolean(prefDate0, noTimestampCb.isSelected());
     }
 
     /**

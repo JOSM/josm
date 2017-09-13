@@ -329,11 +329,11 @@ public class OpenFileAction extends DiskAccessAction {
             }
 
             if (recordHistory) {
-                Collection<String> oldFileHistory = Main.pref.getCollection("file-open.history");
+                Collection<String> oldFileHistory = Main.pref.getList("file-open.history");
                 fileHistory.addAll(oldFileHistory);
                 // remove the files which failed to load from the list
                 fileHistory.removeAll(failedAll);
-                int maxsize = Math.max(0, Main.pref.getInteger("file-open.history.max-size", 15));
+                int maxsize = Math.max(0, Main.pref.getInt("file-open.history.max-size", 15));
                 Main.pref.putCollectionBounded("file-open.history", maxsize, fileHistory);
             }
         }

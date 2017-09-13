@@ -255,11 +255,11 @@ public class ChangesetManagementPanel extends JPanel implements ListDataListener
             switch(e.getStateChange()) {
             case ItemEvent.SELECTED:
                 firePropertyChange(CLOSE_CHANGESET_AFTER_UPLOAD, false, true);
-                Main.pref.put("upload.changeset.close", true);
+                Main.pref.putBoolean("upload.changeset.close", true);
                 break;
             case ItemEvent.DESELECTED:
                 firePropertyChange(CLOSE_CHANGESET_AFTER_UPLOAD, true, false);
-                Main.pref.put("upload.changeset.close", false);
+                Main.pref.putBoolean("upload.changeset.close", false);
                 break;
             default: // Do nothing
             }

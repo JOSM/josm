@@ -80,7 +80,7 @@ public class RenameLayerAction extends AbstractAction {
 
         String nameText = name.getText();
         if (filerename.isEnabled()) {
-            Main.pref.put("layer.rename-file", filerename.isSelected());
+            Main.pref.putBoolean("layer.rename-file", filerename.isSelected());
             if (filerename.isSelected()) {
                 String newname = nameText;
                 if (newname.indexOf('/') == -1 && newname.indexOf('\\') == -1) {

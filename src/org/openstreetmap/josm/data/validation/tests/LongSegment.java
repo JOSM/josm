@@ -111,7 +111,7 @@ public class LongSegment extends Test {
     @Override
     public void startTest(ProgressMonitor monitor) {
         super.startTest(monitor);
-        maxlength = Main.pref.getInteger("validator.maximum.segment.length", 15_000);
+        maxlength = Main.pref.getInt("validator.maximum.segment.length", 15_000);
         reported = new HashSet<>();
         visitedWays = new HashSet<>();
     }

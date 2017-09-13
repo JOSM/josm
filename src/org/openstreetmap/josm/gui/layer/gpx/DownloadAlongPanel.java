@@ -84,7 +84,7 @@ public class DownloadAlongPanel extends JPanel {
         if (prefNear != null) {
             add(new JLabel(tr("Download near:")), GBC.eol());
             downloadNear = new JList<>(new String[]{tr("track only"), tr("waypoints only"), tr("track and waypoints")});
-            downloadNear.setSelectedIndex(Main.pref.getInteger(prefNear, 0));
+            downloadNear.setSelectedIndex(Main.pref.getInt(prefNear, 0));
             add(downloadNear, GBC.eol());
         } else {
             downloadNear = null;
@@ -137,12 +137,12 @@ public class DownloadAlongPanel extends JPanel {
      * Remembers the current settings in the download panel
      */
     protected final void rememberSettings() {
-        Main.pref.put(prefOsm, isDownloadOsmData());
-        Main.pref.put(prefGps, isDownloadGpxData());
+        Main.pref.putBoolean(prefOsm, isDownloadOsmData());
+        Main.pref.putBoolean(prefGps, isDownloadGpxData());
         Main.pref.putDouble(prefDist, getDistance());
         Main.pref.putDouble(prefArea, getArea());
         if (prefNear != null) {
-            Main.pref.putInteger(prefNear, getNear());
+            Main.pref.putInt(prefNear, getNear());
         }
     }
 

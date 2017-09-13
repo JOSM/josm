@@ -90,7 +90,7 @@ public final class TaggingPresets {
                 }
             }
             for (JMenu submenu : submenus.values()) {
-                if (submenu.getItemCount() >= Main.pref.getInteger("taggingpreset.min-elements-for-scroller", 15)) {
+                if (submenu.getItemCount() >= Main.pref.getInt("taggingpreset.min-elements-for-scroller", 15)) {
                     MenuScroller.setScrollerFor(submenu);
                 }
             }

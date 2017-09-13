@@ -41,7 +41,7 @@ public class ImageryPreferenceTest {
     @Test
     public void testAddGui() {
         String fileUrl = new File(TestUtils.getTestDataRoot()+"__files/imagery/maps.xml").toURI().toString();
-        Main.pref.putCollection("imagery.layers.sites", Arrays.asList(fileUrl));
+        Main.pref.putList("imagery.layers.sites", Arrays.asList(fileUrl));
         PreferencesTestUtils.doTestPreferenceSettingAddGui(new ImageryPreference.Factory(), null);
     }
 }

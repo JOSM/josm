@@ -90,7 +90,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
         if (isOffline()) {
             return false;
         }
-        return Main.pref.getInteger("cache." + ident, 0) + updateInterval < TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
+        return Main.pref.getInt("cache." + ident, 0) + updateInterval < TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())
                 || !isCacheValid();
     }
 
@@ -140,7 +140,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
     private byte[] updateForce() throws T {
         this.data = updateData();
         saveToDisk();
-        Main.pref.putInteger("cache." + ident, (int) (TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())));
+        Main.pref.putInt("cache." + ident, (int) (TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis())));
         return data;
     }
 

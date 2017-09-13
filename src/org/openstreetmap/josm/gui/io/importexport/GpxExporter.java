@@ -161,7 +161,7 @@ public class GpxExporter extends FileExporter implements GpxConstants {
         }
         setCanceled(false);
 
-        Main.pref.put("lastAddAuthor", author.isSelected());
+        Main.pref.putBoolean("lastAddAuthor", author.isSelected());
         if (!authorName.getText().isEmpty()) {
             Main.pref.put("lastAuthorName", authorName.getText());
         }

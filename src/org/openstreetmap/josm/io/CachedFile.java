@@ -380,14 +380,14 @@ public class CachedFile implements Closeable {
             url = new URL(name);
             if (!"file".equals(url.getProtocol())) {
                 String prefKey = getPrefKey(url, destDir);
-                List<String> localPath = new ArrayList<>(Main.pref.getCollection(prefKey));
+                List<String> localPath = new ArrayList<>(Main.pref.getList(prefKey));
                 if (localPath.size() == 2) {
                     File lfile = new File(localPath.get(1));
                     if (lfile.exists()) {
                         Utils.deleteFile(lfile);
                     }
                 }
-                Main.pref.putCollection(prefKey, null);
+                Main.pref.putList(prefKey, null);
             }
         } catch (MalformedURLException e) {
             Logging.warn(e);
@@ -418,7 +418,7 @@ public class CachedFile implements Closeable {
         long maxAgeMillis = maxAge;
         Long ifModifiedSince = null;
         File localFile = null;
-        List<String> localPathEntry = new ArrayList<>(Main.pref.getCollection(prefKey));
+        List<String> localPathEntry = new ArrayList<>(Main.pref.getList(prefKey));
         boolean offline = false;
         try {
             checkOfflineAccess(urlStr);
@@ -475,7 +475,7 @@ public class CachedFile implements Closeable {
                 Logging.debug("304 Not Modified ({0})", urlStr);
                 if (localFile == null)
                     throw new AssertionError();
-                Main.pref.putCollection(prefKey,
+                Main.pref.putList(prefKey,
                         Arrays.asList(Long.toString(System.currentTimeMillis()), localPathEntry.get(1)));
                 return localFile;
             } else if (con.getResponseCode() == HttpURLConnection.HTTP_NOT_FOUND) {
@@ -487,7 +487,7 @@ public class CachedFile implements Closeable {
             activeConnection = null;
             localFile = new File(destDir, localPath);
             if (Main.platform.rename(destDirFile, localFile)) {
-                Main.pref.putCollection(prefKey,
+                Main.pref.putList(prefKey,
                         Arrays.asList(Long.toString(System.currentTimeMillis()), localFile.toString()));
             } else {
                 Logging.warn(tr("Failed to rename file {0} to {1}.",

@@ -816,9 +816,9 @@ public class ImageryInfo extends TileSourceInfo implements Comparable<ImageryInf
      */
     public void clearId() {
         if (this.id != null) {
-            Collection<String> newAddedIds = new TreeSet<>(Main.pref.getCollection("imagery.layers.addedIds"));
+            Collection<String> newAddedIds = new TreeSet<>(Main.pref.getList("imagery.layers.addedIds"));
             newAddedIds.add(this.id);
-            Main.pref.putCollection("imagery.layers.addedIds", newAddedIds);
+            Main.pref.putList("imagery.layers.addedIds", new ArrayList<>(newAddedIds));
         }
         setId(null);
     }

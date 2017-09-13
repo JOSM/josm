@@ -299,7 +299,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
      * Saves all manual bookmarks to the preferences file.
      */
     public final void save() {
-        List<Collection<String>> coll = new LinkedList<>();
+        List<List<String>> coll = new LinkedList<>();
         for (Object o : ((DefaultListModel<Bookmark>) getModel()).toArray()) {
             if (o instanceof HomeLocationBookmark || o instanceof ChangesetBookmark) {
                 continue;
@@ -314,7 +314,7 @@ public class BookmarkList extends JList<BookmarkList.Bookmark> {
             array[4] = String.valueOf(area.getMaxLon());
             coll.add(Arrays.asList(array));
         }
-        Main.pref.putArray("bookmarks", coll);
+        Main.pref.putListOfLists("bookmarks", coll);
     }
 
     /**

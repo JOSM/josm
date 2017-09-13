@@ -340,7 +340,7 @@ public class VersionTable extends JTable implements ChangeListener {
         TableCellRenderer tcr = tbl.getTableHeader().getDefaultRenderer();
         Object val = tbl.getColumnModel().getColumn(col).getHeaderValue();
         Component comp = tcr.getTableCellRendererComponent(tbl, val, false, false, -1, col);
-        maxwidth = Math.max(comp.getPreferredSize().width + Main.pref.getInteger("table.header-inset", 0), maxwidth);
+        maxwidth = Math.max(comp.getPreferredSize().width + Main.pref.getInt("table.header-inset", 0), maxwidth);
 
         int spacing = tbl.getIntercellSpacing().width;
         tbl.getColumnModel().getColumn(col).setPreferredWidth(maxwidth + spacing);

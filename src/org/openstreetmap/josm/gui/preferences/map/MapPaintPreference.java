@@ -104,7 +104,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
 
         @Override
         public Collection<String> getInitialIconPathsList() {
-            return Main.pref.getCollection(ICONPREF, null);
+            return Main.pref.getList(ICONPREF, null);
         }
 
         @Override
@@ -169,7 +169,7 @@ public class MapPaintPreference implements SubPreferenceSetting {
 
     @Override
     public boolean ok() {
-        boolean reload = Main.pref.put("mappaint.icon.enable-defaults", enableIconDefault.isSelected());
+        boolean reload = Main.pref.putBoolean("mappaint.icon.enable-defaults", enableIconDefault.isSelected());
         reload |= sources.finish();
         if (reload) {
             MapPaintStyles.readFromPreferences();

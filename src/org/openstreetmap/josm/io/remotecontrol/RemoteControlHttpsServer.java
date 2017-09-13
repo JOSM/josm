@@ -311,7 +311,7 @@ public class RemoteControlHttpsServer extends Thread {
     public static void restartRemoteControlHttpsServer() {
         stopRemoteControlHttpsServer();
         if (RemoteControl.PROP_REMOTECONTROL_HTTPS_ENABLED.get()) {
-            int port = Main.pref.getInteger("remote.control.https.port", HTTPS_PORT);
+            int port = Main.pref.getInt("remote.control.https.port", HTTPS_PORT);
             try {
                 instance4 = new RemoteControlHttpsServer(port, false);
                 instance4.start();

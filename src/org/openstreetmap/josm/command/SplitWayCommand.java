@@ -272,7 +272,7 @@ public class SplitWayCommand extends SequenceCommand {
     public static SplitWayCommand doSplitWay(Way way, Way wayToKeep, List<Way> newWays, List<OsmPrimitive> newSelection) {
 
         Collection<Command> commandList = new ArrayList<>(newWays.size());
-        Collection<String> nowarnroles = Main.pref.getCollection("way.split.roles.nowarn",
+        Collection<String> nowarnroles = Main.pref.getList("way.split.roles.nowarn",
                 Arrays.asList("outer", "inner", "forward", "backward", "north", "south", "east", "west"));
 
         //final MapFrame map = MainApplication.getMap();

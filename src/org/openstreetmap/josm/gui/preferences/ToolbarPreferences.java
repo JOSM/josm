@@ -495,13 +495,13 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
         private final JMenuItem remove = new JMenuItem(new AbstractAction(tr("Remove from toolbar")) {
             @Override
             public void actionPerformed(ActionEvent e) {
-                Collection<String> t = new LinkedList<>(getToolString());
+                List<String> t = new LinkedList<>(getToolString());
                 ActionParser parser = new ActionParser(null);
                 // get text definition of current action
                 String res = parser.saveAction(act);
                 // remove the button from toolbar preferences
                 t.remove(res);
-                Main.pref.putCollection("toolbar", t);
+                Main.pref.putList("toolbar", t);
                 MainApplication.getToolbar().refreshToolbarControl();
             }
         });
@@ -531,8 +531,8 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             @Override
             public void actionPerformed(ActionEvent e) {
                 boolean sel = ((JCheckBoxMenuItem) e.getSource()).getState();
-                Main.pref.put("toolbar.always-visible", sel);
-                Main.pref.put("menu.always-visible", sel);
+                Main.pref.putBoolean("toolbar.always-visible", sel);
+                Main.pref.putBoolean("menu.always-visible", sel);
             }
         });
 
@@ -970,7 +970,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
         @Override
         public boolean ok() {
-            Collection<String> t = new LinkedList<>();
+            List<String> t = new LinkedList<>();
             ActionParser parser = new ActionParser(null);
             for (int i = 0; i < selected.size(); ++i) {
                 ActionDefinition action = selected.get(i);
@@ -986,7 +986,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
             if (t.isEmpty()) {
                 t = Collections.singletonList(EMPTY_TOOLBAR_MARKER);
             }
-            Main.pref.putCollection("toolbar", t);
+            Main.pref.putList("toolbar", t);
             MainApplication.getToolbar().refreshToolbarControl();
             return false;
         }
@@ -1073,7 +1073,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
 
     public static Collection<String> getToolString() {
 
-        Collection<String> toolStr = Main.pref.getCollection("toolbar", Arrays.asList(deftoolbar));
+        Collection<String> toolStr = Main.pref.getList("toolbar", Arrays.asList(deftoolbar));
         if (toolStr == null || toolStr.isEmpty()) {
             toolStr = Arrays.asList(deftoolbar);
         }
@@ -1213,7 +1213,7 @@ public class ToolbarPreferences implements PreferenceSettingFactory {
                 t.add(definitionText); // add to the end
             }
         }
-        Main.pref.putCollection("toolbar", t);
+        Main.pref.putList("toolbar", t);
         MainApplication.getToolbar().refreshToolbarControl();
     }
 

@@ -649,7 +649,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
                 "watch", "watch:", "description", "attribution"));
             l.addAll(getDiscardableKeys());
             l.addAll(getWorkInProgressKeys());
-            uninteresting = new HashSet<>(Main.pref.getCollection("tags.uninteresting", l));
+            uninteresting = new HashSet<>(Main.pref.getList("tags.uninteresting", l));
         }
         return uninteresting;
     }
@@ -661,7 +661,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      */
     public static Collection<String> getDiscardableKeys() {
         if (discardable == null) {
-            discardable = new HashSet<>(Main.pref.getCollection("tags.discardable",
+            discardable = new HashSet<>(Main.pref.getList("tags.discardable",
                     Arrays.asList(
                             "created_by",
                             "converted_by",
@@ -719,7 +719,7 @@ public abstract class OsmPrimitive extends AbstractPrimitive implements Comparab
      */
     public static Collection<String> getWorkInProgressKeys() {
         if (workinprogress == null) {
-            workinprogress = new HashSet<>(Main.pref.getCollection("tags.workinprogress",
+            workinprogress = new HashSet<>(Main.pref.getList("tags.workinprogress",
                     Arrays.asList("note", "fixme", "FIXME")));
         }
         return workinprogress;

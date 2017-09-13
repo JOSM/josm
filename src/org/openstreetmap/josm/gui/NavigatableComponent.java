@@ -870,7 +870,7 @@ public class NavigatableComponent extends JComponent implements Helpful {
         Date now = new Date();
         if ((now.getTime() - zoomTimestamp.getTime()) > (Main.pref.getDouble("zoom.undo.delay", 1.0) * 1000)) {
             zoomUndoBuffer.push(new ZoomData(center, scale));
-            if (zoomUndoBuffer.size() > Main.pref.getInteger("zoom.undo.max", 50)) {
+            if (zoomUndoBuffer.size() > Main.pref.getInt("zoom.undo.max", 50)) {
                 zoomUndoBuffer.remove(0);
             }
             zoomRedoBuffer.clear();
@@ -1143,10 +1143,10 @@ public class NavigatableComponent extends JComponent implements Helpful {
         DataSet ds = MainApplication.getLayerManager().getEditDataSet();
 
         if (ds != null) {
-            double snapDistanceSq = Main.pref.getInteger("mappaint.segment.snap-distance", 10);
+            double snapDistanceSq = Main.pref.getInt("mappaint.segment.snap-distance", 10);
             snapDistanceSq *= snapDistanceSq;
 
-            for (Way w : ds.searchWays(getBBox(p, Main.pref.getInteger("mappaint.segment.snap-distance", 10)))) {
+            for (Way w : ds.searchWays(getBBox(p, Main.pref.getInt("mappaint.segment.snap-distance", 10)))) {
                 if (!predicate.test(w)) {
                     continue;
                 }

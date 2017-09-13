@@ -94,7 +94,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
         protected byte[] updateData() throws IOException {
             String motd = new WikiReader().readLang("StartupPage");
             // Save this to prefs in case JOSM is updated so MOTD can be refreshed
-            Main.pref.putInteger("cache.motd.html.version", myVersion);
+            Main.pref.putInt("cache.motd.html.version", myVersion);
             Main.pref.put("cache.motd.html.java", myJava);
             Main.pref.put("cache.motd.html.lang", myLang);
             return motd.getBytes(StandardCharsets.UTF_8);
@@ -114,7 +114,7 @@ public final class GettingStarted extends JPanel implements ProxyPreferenceListe
             // 1. Not yet written - but so isn't the interval variable, so it gets updated anyway
             // 2. Cannot be written (e.g. while developing). Obviously we don't want to update
             // everytime because of something we can't read.
-            return (Main.pref.getInteger("cache.motd.html.version", -999) == myVersion)
+            return (Main.pref.getInt("cache.motd.html.version", -999) == myVersion)
             && Main.pref.get("cache.motd.html.java").equals(myJava)
             && Main.pref.get("cache.motd.html.lang").equals(myLang);
         }
