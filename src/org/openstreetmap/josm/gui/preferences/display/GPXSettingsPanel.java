@@ -469,8 +469,10 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
                 Main.pref.put("draw.rawgps.max-line-length" + layerNameDot, drawRawGpsMaxLineLength.getText());
             }
             if (layerName == null || locLayer) {
-                Main.pref.putBoolean("draw.rawgps.lines.local" + layerNameDot, drawRawGpsLinesAll.isSelected() || drawRawGpsLinesLocal.isSelected());
-                Main.pref.put("draw.rawgps.max-line-length.local" + layerNameDot, drawRawGpsMaxLineLengthLocal.getText());
+                Main.pref.putBoolean("draw.rawgps.lines.local" + layerNameDot,
+                        drawRawGpsLinesAll.isSelected() || drawRawGpsLinesLocal.isSelected());
+                Main.pref.put("draw.rawgps.max-line-length.local" + layerNameDot,
+                        drawRawGpsMaxLineLengthLocal.getText());
             }
             Main.pref.putBoolean("draw.rawgps.lines.force"+layerNameDot, forceRawGpsLines.isSelected());
             Main.pref.putBoolean("draw.rawgps.direction"+layerNameDot, drawGpsArrows.isSelected());
