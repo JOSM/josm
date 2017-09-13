@@ -39,6 +39,7 @@ import org.openstreetmap.josm.tools.Territories;
 import org.openstreetmap.josm.tools.date.DateUtils;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * This class runs a test in an environment that resembles the one used by the JOSM main application.
@@ -275,6 +276,7 @@ public class JOSMTestRules implements TestRule {
 
         cleanUpFromJosmFixture();
 
+        Config.setPreferencesInstance(Main.pref);
         // All tests use the same timezone.
         TimeZone.setDefault(DateUtils.UTC);
         // Set log level to info
