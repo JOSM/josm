@@ -40,6 +40,7 @@ import org.openstreetmap.josm.plugins.PluginHandlerTestIT;
 import org.openstreetmap.josm.plugins.PluginInformation;
 import org.openstreetmap.josm.plugins.PluginListParseException;
 import org.openstreetmap.josm.plugins.PluginListParser;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Shortcut;
@@ -204,7 +205,7 @@ public class MainApplicationTest {
     @Test
     public void testSetupUIManager() {
         MainApplication.setupUIManager();
-        assertEquals(Main.pref.get("laf", Main.platform.getDefaultStyle()), UIManager.getLookAndFeel().getClass().getCanonicalName());
+        assertEquals(Config.getPref().get("laf", Main.platform.getDefaultStyle()), UIManager.getLookAndFeel().getClass().getCanonicalName());
     }
 
     private static PluginInformation newPluginInformation(String plugin) throws PluginListParseException {

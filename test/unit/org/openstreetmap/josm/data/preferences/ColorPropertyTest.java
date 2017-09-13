@@ -8,7 +8,7 @@ import java.awt.Color;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -41,7 +41,7 @@ public class ColorPropertyTest {
     public void testGet() {
         assertEquals(Color.RED, base.get());
 
-        Main.pref.put("color.test", "#00ff00");
+        Config.getPref().put("color.test", "#00ff00");
         assertEquals(new Color(0xff00ff00), base.get());
     }
 
@@ -54,7 +54,7 @@ public class ColorPropertyTest {
 
         base.put(new Color(0xff00ff00));
         assertEquals(new Color(0xff00ff00), base.get());
-        assertEquals("#00ff00", Main.pref.get("color.test").toLowerCase());
+        assertEquals("#00ff00", Config.getPref().get("color.test").toLowerCase());
 
         base.put(null);
         assertEquals(Color.RED, base.get());

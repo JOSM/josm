@@ -10,9 +10,9 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.UserInfo;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -187,17 +187,17 @@ public class UserIdentityManagerTest {
         im.setAnonymous();
 
         // for this test we disable the listener
-        Main.pref.removePreferenceChangeListener(im);
+        Config.getPref().removePreferenceChangeListener(im);
 
         try {
-            Main.pref.put("osm-server.url", null);
-            Main.pref.put("osm-server.username", null);
+            Config.getPref().put("osm-server.url", null);
+            Config.getPref().put("osm-server.username", null);
 
             im.initFromPreferences();
 
             assertTrue(im.isAnonymous());
         } finally {
-            Main.pref.addPreferenceChangeListener(im);
+            Config.getPref().addPreferenceChangeListener(im);
         }
     }
 
@@ -212,17 +212,17 @@ public class UserIdentityManagerTest {
         im.setAnonymous();
 
         // for this test we disable the listener
-        Main.pref.removePreferenceChangeListener(im);
+        Config.getPref().removePreferenceChangeListener(im);
 
         try {
-            Main.pref.put("osm-server.url", "http://api.openstreetmap.org");
-            Main.pref.put("osm-server.username", null);
+            Config.getPref().put("osm-server.url", "http://api.openstreetmap.org");
+            Config.getPref().put("osm-server.username", null);
 
             im.initFromPreferences();
 
             assertTrue(im.isAnonymous());
         } finally {
-            Main.pref.addPreferenceChangeListener(im);
+            Config.getPref().addPreferenceChangeListener(im);
         }
     }
 
@@ -234,20 +234,20 @@ public class UserIdentityManagerTest {
         UserIdentityManager im = UserIdentityManager.getInstance();
 
         // for this test we disable the listener
-        Main.pref.removePreferenceChangeListener(im);
+        Config.getPref().removePreferenceChangeListener(im);
 
         try {
             // reset it
             im.setAnonymous();
 
-            Main.pref.put("osm-server.url", "http://api.openstreetmap.org");
-            Main.pref.put("osm-server.username", "test");
+            Config.getPref().put("osm-server.url", "http://api.openstreetmap.org");
+            Config.getPref().put("osm-server.username", "test");
 
             im.initFromPreferences();
 
             assertTrue(im.isPartiallyIdentified());
         } finally {
-            Main.pref.addPreferenceChangeListener(im);
+            Config.getPref().addPreferenceChangeListener(im);
         }
     }
 
@@ -261,19 +261,19 @@ public class UserIdentityManagerTest {
         UserIdentityManager im = UserIdentityManager.getInstance();
 
         // for this test we disable the listener
-        Main.pref.removePreferenceChangeListener(im);
+        Config.getPref().removePreferenceChangeListener(im);
 
         try {
             im.setFullyIdentified("test1", newUserInfo());
 
-            Main.pref.put("osm-server.url", "http://api.openstreetmap.org");
-            Main.pref.put("osm-server.username", "test2");
+            Config.getPref().put("osm-server.url", "http://api.openstreetmap.org");
+            Config.getPref().put("osm-server.username", "test2");
 
             im.initFromPreferences();
 
             assertTrue(im.isPartiallyIdentified());
         } finally {
-            Main.pref.addPreferenceChangeListener(im);
+            Config.getPref().addPreferenceChangeListener(im);
         }
     }
 
@@ -287,19 +287,19 @@ public class UserIdentityManagerTest {
         UserIdentityManager im = UserIdentityManager.getInstance();
 
         // for this test we disable the listener
-        Main.pref.removePreferenceChangeListener(im);
+        Config.getPref().removePreferenceChangeListener(im);
 
         try {
             im.setFullyIdentified("test1", new UserInfo());
 
-            Main.pref.put("osm-server.url", "http://api.openstreetmap.org");
-            Main.pref.put("osm-server.username", "test1");
+            Config.getPref().put("osm-server.url", "http://api.openstreetmap.org");
+            Config.getPref().put("osm-server.username", "test1");
 
             im.initFromPreferences();
 
             assertTrue(im.isFullyIdentified());
         } finally {
-            Main.pref.addPreferenceChangeListener(im);
+            Config.getPref().addPreferenceChangeListener(im);
         }
     }
 
@@ -310,33 +310,33 @@ public class UserIdentityManagerTest {
         // reset it
         im.setAnonymous();
 
-        Main.pref.put("osm-server.url", "http://api.openstreetmap.org");
+        Config.getPref().put("osm-server.url", "http://api.openstreetmap.org");
         assertTrue(im.isAnonymous());
 
-        Main.pref.put("osm-server.url", null);
+        Config.getPref().put("osm-server.url", null);
         assertTrue(im.isAnonymous());
 
         // reset it
         im.setPartiallyIdentified("test");
 
-        Main.pref.put("osm-server.url", "http://api.openstreetmap.org");
+        Config.getPref().put("osm-server.url", "http://api.openstreetmap.org");
         assertTrue(im.isPartiallyIdentified());
         assertEquals("test", im.getUserName());
 
-        Main.pref.put("osm-server.url", null);
+        Config.getPref().put("osm-server.url", null);
         assertTrue(im.isAnonymous());
 
         // reset it
         im.setFullyIdentified("test", newUserInfo());
 
-        Main.pref.put("osm-server.url", "http://api.openstreetmap.org");
+        Config.getPref().put("osm-server.url", "http://api.openstreetmap.org");
         assertTrue(im.isPartiallyIdentified());
         assertEquals("test", im.getUserName());
 
         // reset it
         im.setFullyIdentified("test", newUserInfo());
 
-        Main.pref.put("osm-server.url", null);
+        Config.getPref().put("osm-server.url", null);
         assertTrue(im.isAnonymous());
     }
 
@@ -347,31 +347,31 @@ public class UserIdentityManagerTest {
         // reset it
         im.setAnonymous();
 
-        Main.pref.put("osm-server.username", "test");
+        Config.getPref().put("osm-server.username", "test");
         assertTrue(im.isPartiallyIdentified());
         assertEquals("test", im.getUserName());
 
-        Main.pref.put("osm-server.username", null);
+        Config.getPref().put("osm-server.username", null);
         assertTrue(im.isAnonymous());
         assertEquals(User.getAnonymous(), im.asUser());
 
         // reset it
         im.setPartiallyIdentified("test1");
 
-        Main.pref.put("osm-server.username", "test2");
+        Config.getPref().put("osm-server.username", "test2");
         assertTrue(im.isPartiallyIdentified());
         assertEquals("test2", im.getUserName());
         User usr = im.asUser();
         assertEquals(0, usr.getId());
         assertEquals("test2", usr.getName());
 
-        Main.pref.put("osm-server.username", null);
+        Config.getPref().put("osm-server.username", null);
         assertTrue(im.isAnonymous());
 
         // reset it
         im.setFullyIdentified("test1", newUserInfo());
 
-        Main.pref.put("osm-server.username", "test2");
+        Config.getPref().put("osm-server.username", "test2");
         assertTrue(im.isPartiallyIdentified());
         assertEquals("test2", im.getUserName());
         usr = im.asUser();
@@ -381,7 +381,7 @@ public class UserIdentityManagerTest {
         // reset it
         im.setFullyIdentified("test1", newUserInfo());
 
-        Main.pref.put("osm-server.username", null);
+        Config.getPref().put("osm-server.username", null);
         assertTrue(im.isAnonymous());
     }
 }

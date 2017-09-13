@@ -9,10 +9,10 @@ import java.util.Collections;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -42,7 +42,7 @@ public class MergeNodesActionTest {
      */
     @Test(expected = IllegalStateException.class)
     public void testSelectTargetLocationNodeInvalidMode() {
-        Main.pref.putInt("merge-nodes.mode", -1);
+        Config.getPref().putInt("merge-nodes.mode", -1);
         MergeNodesAction.selectTargetLocationNode(Arrays.asList(new Node(0), new Node(1)));
     }
 
@@ -51,14 +51,14 @@ public class MergeNodesActionTest {
      */
     @Test
     public void testSelectTargetLocationNode() {
-        Main.pref.putInt("merge-nodes.mode", 0);
+        Config.getPref().putInt("merge-nodes.mode", 0);
         assertEquals(1, MergeNodesAction.selectTargetLocationNode(Arrays.asList(new Node(0), new Node(1))).getId());
 
-        Main.pref.putInt("merge-nodes.mode", 1);
+        Config.getPref().putInt("merge-nodes.mode", 1);
         assertEquals(LatLon.ZERO, MergeNodesAction.selectTargetLocationNode(
                 Arrays.asList(new Node(LatLon.NORTH_POLE), new Node(LatLon.SOUTH_POLE))).getCoor());
 
-        Main.pref.putInt("merge-nodes.mode", 2);
+        Config.getPref().putInt("merge-nodes.mode", 2);
         assertEquals(LatLon.NORTH_POLE, MergeNodesAction.selectTargetLocationNode(
                 Arrays.asList(new Node(LatLon.NORTH_POLE))).getCoor());
     }

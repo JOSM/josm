@@ -309,7 +309,7 @@ public class JOSMTestRules implements TestRule {
             Main.pref.enableSaveOnPut(false);
             // No pref init -> that would only create the preferences file.
             // We force the use of a wrong API server, just in case anyone attempts an upload
-            Main.pref.put("osm-server.url", "http://invalid");
+            Config.getPref().put("osm-server.url", "http://invalid");
         }
 
         // Set Platform
@@ -335,10 +335,10 @@ public class JOSMTestRules implements TestRule {
 
         // Set API
         if (useAPI == APIType.DEV) {
-            Main.pref.put("osm-server.url", "http://api06.dev.openstreetmap.org/api");
+            Config.getPref().put("osm-server.url", "http://api06.dev.openstreetmap.org/api");
         } else if (useAPI == APIType.FAKE) {
             FakeOsmApi api = FakeOsmApi.getInstance();
-            Main.pref.put("osm-server.url", api.getServerUrl());
+            Config.getPref().put("osm-server.url", api.getServerUrl());
         }
 
         // Initialize API

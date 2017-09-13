@@ -15,8 +15,8 @@ import javax.swing.JPanel;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.util.WindowGeometry.WindowGeometryException;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -52,7 +52,7 @@ public class WindowGeometryTest {
         assertEquals(new WindowGeometry(new Point(0, 0), dim), WindowGeometry.centerOnScreen(dim));
         assertEquals(new WindowGeometry(new Point(300, 250), dim), WindowGeometry.centerOnScreen(dim, null));
 
-        Main.pref.put("gui.geometry", "x=0,y=0,width=800,height=600");
+        Config.getPref().put("gui.geometry", "x=0,y=0,width=800,height=600");
         assertEquals(new WindowGeometry(new Point(300, 250), dim), WindowGeometry.centerOnScreen(dim));
     }
 
@@ -62,7 +62,7 @@ public class WindowGeometryTest {
      */
     @Test(expected = WindowGeometryException.class)
     public void testWindowGeometryException1() throws WindowGeometryException {
-        Main.pref.put("test", null);
+        Config.getPref().put("test", null);
         new WindowGeometry("test");
     }
 
@@ -72,7 +72,7 @@ public class WindowGeometryTest {
      */
     @Test(expected = WindowGeometryException.class)
     public void testWindowGeometryException2() throws WindowGeometryException {
-        Main.pref.put("test", "");
+        Config.getPref().put("test", "");
         new WindowGeometry("test");
     }
 
@@ -82,7 +82,7 @@ public class WindowGeometryTest {
      */
     @Test(expected = WindowGeometryException.class)
     public void testWindowGeometryException3() throws WindowGeometryException {
-        Main.pref.put("test", "x=not_a_number");
+        Config.getPref().put("test", "x=not_a_number");
         new WindowGeometry("test");
     }
 
@@ -92,7 +92,7 @@ public class WindowGeometryTest {
      */
     @Test(expected = WindowGeometryException.class)
     public void testWindowGeometryException4() throws WindowGeometryException {
-        Main.pref.put("test", "wrong_pattern");
+        Config.getPref().put("test", "wrong_pattern");
         new WindowGeometry("test");
     }
 
@@ -102,7 +102,7 @@ public class WindowGeometryTest {
      */
     @Test
     public void testWindowGeometryException5() throws WindowGeometryException {
-        Main.pref.put("test", "x=15,y=55,width=200,height=100");
+        Config.getPref().put("test", "x=15,y=55,width=200,height=100");
         assertNotNull(new WindowGeometry("test"));
     }
 

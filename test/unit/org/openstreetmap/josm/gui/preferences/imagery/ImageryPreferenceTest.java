@@ -8,9 +8,9 @@ import java.util.Arrays;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.gui.preferences.PreferencesTestUtils;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -41,7 +41,7 @@ public class ImageryPreferenceTest {
     @Test
     public void testAddGui() {
         String fileUrl = new File(TestUtils.getTestDataRoot()+"__files/imagery/maps.xml").toURI().toString();
-        Main.pref.putList("imagery.layers.sites", Arrays.asList(fileUrl));
+        Config.getPref().putList("imagery.layers.sites", Arrays.asList(fileUrl));
         PreferencesTestUtils.doTestPreferenceSettingAddGui(new ImageryPreference.Factory(), null);
     }
 }

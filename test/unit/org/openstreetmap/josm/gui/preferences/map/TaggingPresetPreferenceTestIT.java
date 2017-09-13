@@ -16,10 +16,10 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.Timeout;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetReader;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
@@ -57,8 +57,8 @@ public class TaggingPresetPreferenceTestIT {
                 .loadAndGetAvailableSources();
         assertFalse(sources.isEmpty());
         // Double traditional timeouts to avoid random problems
-        Main.pref.putInt("socket.timeout.connect", 30);
-        Main.pref.putInt("socket.timeout.read", 60);
+        Config.getPref().putInt("socket.timeout.connect", 30);
+        Config.getPref().putInt("socket.timeout.read", 60);
         Map<Object, Throwable> allErrors = new HashMap<>();
         Set<String> allMessages = new HashSet<>();
         for (ExtendedSourceEntry source : sources) {

@@ -14,10 +14,10 @@ import java.util.Collections;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.TestUtils;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.PreferencesUtils;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -43,7 +43,7 @@ public class CustomConfiguratorTest {
     public void testExportPreferencesKeysToFile() throws IOException {
         File tmp = File.createTempFile("josm.testExportPreferencesKeysToFile.lorem_ipsum", ".xml");
 
-        Main.pref.putList("lorem_ipsum", Arrays.asList(
+        Config.getPref().putList("lorem_ipsum", Arrays.asList(
                 "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
                 "Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.",
                 "Cras elementum ultrices diam. Maecenas ligula massa, varius a, semper congue, euismod non, mi.",
@@ -56,15 +56,15 @@ public class CustomConfiguratorTest {
         CustomConfigurator.exportPreferencesKeysToFile(tmp.getAbsolutePath(), false, "lorem_ipsum");
         String xml = Utils.join("\n", Files.readAllLines(tmp.toPath(), StandardCharsets.UTF_8));
         assertTrue(xml.contains("<preferences operation=\"replace\">"));
-        for (String entry : Main.pref.getList("lorem_ipsum")) {
+        for (String entry : Config.getPref().getList("lorem_ipsum")) {
             assertTrue(entry + "\nnot found in:\n" + xml, xml.contains(entry));
         }
 
-        Main.pref.putList("test", Arrays.asList("11111111", "2222222", "333333333"));
+        Config.getPref().putList("test", Arrays.asList("11111111", "2222222", "333333333"));
         CustomConfigurator.exportPreferencesKeysByPatternToFile(tmp.getAbsolutePath(), true, "test");
         xml = Utils.join("\n", Files.readAllLines(tmp.toPath(), StandardCharsets.UTF_8));
         assertTrue(xml.contains("<preferences operation=\"append\">"));
-        for (String entry : Main.pref.getList("test")) {
+        for (String entry : Config.getPref().getList("test")) {
             assertTrue(entry + "\nnot found in:\n" + xml, xml.contains(entry));
         }
 
@@ -78,12 +78,12 @@ public class CustomConfiguratorTest {
     @Test
     public void testReadXML() throws IOException {
         // Test 1 - read(dir, file) + append
-        Main.pref.putList("test", Collections.<String>emptyList());
-        assertTrue(Main.pref.getList("test").isEmpty());
+        Config.getPref().putList("test", Collections.<String>emptyList());
+        assertTrue(Config.getPref().getList("test").isEmpty());
         CustomConfigurator.readXML(TestUtils.getTestDataRoot() + "customconfigurator", "append.xml");
         String log = PreferencesUtils.getLog();
         assertFalse(log, log.contains("Error"));
-        assertFalse(Main.pref.getList("test").isEmpty());
+        assertFalse(Config.getPref().getList("test").isEmpty());
 
         // Test 2 - read(file, pref) + replace
         Preferences pref = new Preferences();
