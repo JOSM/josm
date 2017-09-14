@@ -69,23 +69,22 @@ public class ScrollViewport extends JPanel {
         }
 
         @Override
-        public void mouseExited(MouseEvent arg0) {
+        public void mouseExited(MouseEvent e) {
+            mouseReleased(e);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
             ScrollViewport.this.scrollDirection = NO_SCROLL;
             timer.stop();
         }
 
         @Override
-        public void mouseReleased(MouseEvent arg0) {
-            ScrollViewport.this.scrollDirection = NO_SCROLL;
-            timer.stop();
-        }
-
-        @Override public void mousePressed(MouseEvent arg0) {
+        public void mousePressed(MouseEvent e) {
             ScrollViewport.this.scrollDirection = direction;
             scroll();
             timer.restart();
         }
-
     }
 
     private final JViewport vp = new JViewport();

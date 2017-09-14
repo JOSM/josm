@@ -82,7 +82,7 @@ public class RelationMemberData implements PrimitiveId, Serializable {
      */
     @Override
     public OsmPrimitiveType getType() {
-        return memberType;
+        return getMemberType();
     }
 
     /**
@@ -90,7 +90,7 @@ public class RelationMemberData implements PrimitiveId, Serializable {
      */
     @Override
     public long getUniqueId() {
-        return memberId;
+        return getMemberId();
     }
 
     @Override

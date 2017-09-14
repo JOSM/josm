@@ -100,9 +100,7 @@ class ActionFlagsTableCell extends JPanel implements TableCellRenderer, TableCel
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-        updatePanel((SaveLayerInfo) value);
-        updateCheckboxes(value);
-        return this;
+        return getTableCellEditorComponent(table, value, isSelected, row, column);
     }
 
     @Override
