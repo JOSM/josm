@@ -10,11 +10,15 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import org.junit.Rule;
 import org.junit.Test;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler;
 import org.openstreetmap.josm.io.OsmReader;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Test of boundaries OSM file.
@@ -35,6 +39,13 @@ public class BoundariesTestIT {
             "US-MT", "US-NE", "US-NV", "US-NH", "US-NJ", "US-NM", "US-NY", "US-NC", "US-ND", "US-MP", "US-OH", "US-OK", "US-OR", "US-PA",
             "US-PR", "US-RI", "US-SC", "US-SD", "US-TN", "US-TX", "US-UM", "US-UT", "US-VT", "US-VA", "US-VI", "US-WA", "US-WV", "US-WI",
             "US-WY");
+
+    /**
+     * Setup test.
+     */
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
      * Test of boundaries OSM file.
