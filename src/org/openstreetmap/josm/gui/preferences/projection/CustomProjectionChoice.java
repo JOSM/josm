@@ -23,8 +23,8 @@ import org.openstreetmap.josm.data.projection.CustomProjection;
 import org.openstreetmap.josm.data.projection.Projection;
 import org.openstreetmap.josm.data.projection.ProjectionConfigurationException;
 import org.openstreetmap.josm.data.projection.Projections;
+import org.openstreetmap.josm.data.tagging.ac.AutoCompletionItem;
 import org.openstreetmap.josm.gui.ExtendedDialog;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 import org.openstreetmap.josm.gui.widgets.AbstractTextComponentValidator;
 import org.openstreetmap.josm.gui.widgets.HistoryComboBox;
 import org.openstreetmap.josm.gui.widgets.HtmlPanel;
@@ -64,7 +64,7 @@ public class CustomProjectionChoice extends AbstractProjectionChoice implements 
         private void build(String initialText, final ActionListener listener) {
             input = new JosmTextField(30);
             cbInput = new HistoryComboBox();
-            cbInput.setPrototypeDisplayValue(new AutoCompletionListItem("xxxx"));
+            cbInput.setPrototypeDisplayValue(new AutoCompletionItem("xxxx"));
             cbInput.setEditor(new BasicComboBoxEditor() {
                 @Override
                 protected JosmTextField createEditorComponent() {

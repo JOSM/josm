@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -14,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
@@ -28,6 +30,9 @@ import org.openstreetmap.josm.data.osm.event.PrimitivesRemovedEvent;
 import org.openstreetmap.josm.data.osm.event.RelationMembersChangedEvent;
 import org.openstreetmap.josm.data.osm.event.TagsChangedEvent;
 import org.openstreetmap.josm.data.osm.event.WayNodesChangedEvent;
+import org.openstreetmap.josm.data.tagging.ac.AutoCompletionItem;
+import org.openstreetmap.josm.data.tagging.ac.AutoCompletionPriority;
+import org.openstreetmap.josm.data.tagging.ac.AutoCompletionSet;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerAddEvent;
 import org.openstreetmap.josm.gui.layer.LayerManager.LayerChangeListener;
@@ -45,11 +50,10 @@ import org.openstreetmap.josm.tools.Utils;
  * AutoCompletionManager holds a cache of keys with a list of
  * possible auto completion values for each key.
  *
- * Each DataSet is assigned one AutoCompletionManager instance such that
+ * Each DataSet can be assigned one AutoCompletionManager instance such that
  * <ol>
  *   <li>any key used in a tag in the data set is part of the key list in the cache</li>
- *   <li>any value used in a tag for a specific key is part of the autocompletion list of
- *     this key</li>
+ *   <li>any value used in a tag for a specific key is part of the autocompletion list of this key</li>
  * </ol>
  *
  * Building up auto completion lists should not
@@ -270,14 +274,13 @@ public class AutoCompletionManager implements DataSetListener {
     }
 
     /**
-     * Populates the {@link AutoCompletionList} with the currently cached
-     * member roles.
+     * Populates the {@link AutoCompletionList} with the currently cached member roles.
      *
      * @param list the list to populate
      */
     public void populateWithMemberRoles(AutoCompletionList list) {
-        list.add(TaggingPresets.getPresetRoles(), AutoCompletionItemPriority.IS_IN_STANDARD);
-        list.add(getRoleCache(), AutoCompletionItemPriority.IS_IN_DATASET);
+        list.add(TaggingPresets.getPresetRoles(), AutoCompletionPriority.IS_IN_STANDARD);
+        list.add(getRoleCache(), AutoCompletionPriority.IS_IN_DATASET);
     }
 
     /**
@@ -296,10 +299,10 @@ public class AutoCompletionManager implements DataSetListener {
         if (r != null && presets != null && !presets.isEmpty()) {
             for (TaggingPreset tp : presets) {
                 if (tp.roles != null) {
-                    list.add(Utils.transform(tp.roles.roles, (Function<Role, String>) x -> x.key), AutoCompletionItemPriority.IS_IN_STANDARD);
+                    list.add(Utils.transform(tp.roles.roles, (Function<Role, String>) x -> x.key), AutoCompletionPriority.IS_IN_STANDARD);
                 }
             }
-            list.add(r.getMemberRoles(), AutoCompletionItemPriority.IS_IN_DATASET);
+            list.add(r.getMemberRoles(), AutoCompletionPriority.IS_IN_DATASET);
         } else {
             populateWithMemberRoles(list);
         }
@@ -311,15 +314,14 @@ public class AutoCompletionManager implements DataSetListener {
      * @param list the list to populate
      */
     public void populateWithKeys(AutoCompletionList list) {
-        list.add(TaggingPresets.getPresetKeys(), AutoCompletionItemPriority.IS_IN_STANDARD);
-        list.add(new AutoCompletionListItem("source", AutoCompletionItemPriority.IS_IN_STANDARD));
-        list.add(getDataKeys(), AutoCompletionItemPriority.IS_IN_DATASET);
+        list.add(TaggingPresets.getPresetKeys(), AutoCompletionPriority.IS_IN_STANDARD);
+        list.add(new AutoCompletionItem("source", AutoCompletionPriority.IS_IN_STANDARD));
+        list.add(getDataKeys(), AutoCompletionPriority.IS_IN_DATASET);
         list.addUserInput(getUserInputKeys());
     }
 
     /**
-     * Populates the an {@link AutoCompletionList} with the currently cached
-     * values for a tag
+     * Populates the an {@link AutoCompletionList} with the currently cached values for a tag
      *
      * @param list the list to populate
      * @param key the tag key
@@ -329,16 +331,15 @@ public class AutoCompletionManager implements DataSetListener {
     }
 
     /**
-     * Populates the an {@link AutoCompletionList} with the currently cached
-     * values for some given tags
+     * Populates the an {@link AutoCompletionList} with the currently cached values for some given tags
      *
      * @param list the list to populate
      * @param keys the tag keys
      */
     public void populateWithTagValues(AutoCompletionList list, List<String> keys) {
         for (String key : keys) {
-            list.add(TaggingPresets.getPresetValues(key), AutoCompletionItemPriority.IS_IN_STANDARD);
-            list.add(getDataValues(key), AutoCompletionItemPriority.IS_IN_DATASET);
+            list.add(TaggingPresets.getPresetValues(key), AutoCompletionPriority.IS_IN_STANDARD);
+            list.add(getDataValues(key), AutoCompletionPriority.IS_IN_DATASET);
             list.addUserInput(getUserInputValues(key));
         }
     }
@@ -346,37 +347,110 @@ public class AutoCompletionManager implements DataSetListener {
     /**
      * Returns the currently cached tag keys.
      * @return a list of tag keys
+     * @deprecated to be removed end of 2017. Use {@link #getTagKeys()} instead
      */
+    @Deprecated
     public List<AutoCompletionListItem> getKeys() {
-        AutoCompletionList list = new AutoCompletionList();
-        populateWithKeys(list);
-        return list.getList();
+        return getTagKeys().stream().map(AutoCompletionListItem::new).collect(Collectors.toList());
     }
 
     /**
      * Returns the currently cached tag values for a given tag key.
      * @param key the tag key
      * @return a list of tag values
+     * @deprecated to be removed end of 2017. Use {@link #getTagValues(String)} instead
      */
+    @Deprecated
     public List<AutoCompletionListItem> getValues(String key) {
-        return getValues(Arrays.asList(key));
+        return getTagValues(key).stream().map(AutoCompletionListItem::new).collect(Collectors.toList());
     }
 
     /**
      * Returns the currently cached tag values for a given list of tag keys.
      * @param keys the tag keys
      * @return a list of tag values
+     * @deprecated to be removed end of 2017. Use {@link #getTagValues(List)} instead
      */
+    @Deprecated
     public List<AutoCompletionListItem> getValues(List<String> keys) {
-        AutoCompletionList list = new AutoCompletionList();
-        populateWithTagValues(list, keys);
-        return list.getList();
+        return getTagValues(keys).stream().map(AutoCompletionListItem::new).collect(Collectors.toList());
     }
 
-    /*********************************************************
+    private static List<AutoCompletionItem> setToList(AutoCompletionSet set, Comparator<AutoCompletionItem> comparator) {
+        List<AutoCompletionItem> list = set.stream().collect(Collectors.toList());
+        list.sort(comparator);
+        return list;
+    }
+
+    /**
+     * Returns the currently cached tag keys.
+     * @return a set of tag keys
+     * @since 12859
+     */
+    public AutoCompletionSet getTagKeys() {
+        AutoCompletionList list = new AutoCompletionList();
+        populateWithKeys(list);
+        return list.getSet();
+    }
+
+    /**
+     * Returns the currently cached tag keys.
+     * @param comparator the custom comparator used to sort the list
+     * @return a list of tag keys
+     * @since 12859
+     */
+    public List<AutoCompletionItem> getTagKeys(Comparator<AutoCompletionItem> comparator) {
+        return setToList(getTagKeys(), comparator);
+    }
+
+    /**
+     * Returns the currently cached tag values for a given tag key.
+     * @param key the tag key
+     * @return a set of tag values
+     * @since 12859
+     */
+    public AutoCompletionSet getTagValues(String key) {
+        return getTagValues(Arrays.asList(key));
+    }
+
+    /**
+     * Returns the currently cached tag values for a given tag key.
+     * @param key the tag key
+     * @param comparator the custom comparator used to sort the list
+     * @return a list of tag values
+     * @since 12859
+     */
+    public List<AutoCompletionItem> getTagValues(String key, Comparator<AutoCompletionItem> comparator) {
+        return setToList(getTagValues(key), comparator);
+    }
+
+    /**
+     * Returns the currently cached tag values for a given list of tag keys.
+     * @param keys the tag keys
+     * @return a set of tag values
+     * @since 12859
+     */
+    public AutoCompletionSet getTagValues(List<String> keys) {
+        AutoCompletionList list = new AutoCompletionList();
+        populateWithTagValues(list, keys);
+        return list.getSet();
+    }
+
+    /**
+     * Returns the currently cached tag values for a given list of tag keys.
+     * @param keys the tag keys
+     * @param comparator the custom comparator used to sort the list
+     * @return a set of tag values
+     * @since 12859
+     */
+    public List<AutoCompletionItem> getTagValues(List<String> keys, Comparator<AutoCompletionItem> comparator) {
+        return setToList(getTagValues(keys), comparator);
+    }
+
+    /*
      * Implementation of the DataSetListener interface
      *
-     **/
+     */
 
     @Override
     public void primitivesAdded(PrimitivesAddedEvent event) {

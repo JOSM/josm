@@ -3,8 +3,8 @@ package org.openstreetmap.josm.gui.tagging.presets.items;
 
 import javax.swing.JPanel;
 
+import org.openstreetmap.josm.data.tagging.ac.AutoCompletionPriority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingTextField;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionItemPriority;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionList;
 import org.openstreetmap.josm.gui.widgets.JosmComboBox;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -63,7 +63,7 @@ public class Combo extends ComboMultiSelect {
         }
         AutoCompletionList acList = tf.getAutoCompletionList();
         if (acList != null) {
-            acList.add(getDisplayValues(), AutoCompletionItemPriority.IS_IN_STANDARD);
+            acList.add(getDisplayValues(), AutoCompletionPriority.IS_IN_STANDARD);
         }
         combobox.setEditor(tf);
 

@@ -76,13 +76,13 @@ import org.openstreetmap.josm.data.preferences.EnumProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.ListProperty;
 import org.openstreetmap.josm.data.preferences.StringProperty;
+import org.openstreetmap.josm.data.tagging.ac.AutoCompletionItem;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.IExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.datatransfer.ClipboardUtils;
 import org.openstreetmap.josm.gui.mappaint.MapPaintStyles;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletingComboBox;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
 import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionManager;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPreset;
 import org.openstreetmap.josm.gui.tagging.presets.TaggingPresets;
@@ -111,7 +111,7 @@ public class TagEditHelper {
     private String changedKey;
     private String objKey;
 
-    static final Comparator<AutoCompletionListItem> DEFAULT_AC_ITEM_COMPARATOR =
+    static final Comparator<AutoCompletionItem> DEFAULT_AC_ITEM_COMPARATOR =
             (o1, o2) -> String.CASE_INSENSITIVE_ORDER.compare(o1.getValue(), o2.getValue());
 
     /** Default number of recent tags */
@@ -392,13 +392,13 @@ public class TagEditHelper {
     protected class EditTagDialog extends AbstractTagsDialog implements IEditTagDialog {
         private final String key;
         private final transient Map<String, Integer> m;
-        private final transient Comparator<AutoCompletionListItem> usedValuesAwareComparator;
+        private final transient Comparator<AutoCompletionItem> usedValuesAwareComparator;
 
-        private final transient ListCellRenderer<AutoCompletionListItem> cellRenderer = new ListCellRenderer<AutoCompletionListItem>() {
+        private final transient ListCellRenderer<AutoCompletionItem> cellRenderer = new ListCellRenderer<AutoCompletionItem>() {
             private final DefaultListCellRenderer def = new DefaultListCellRenderer();
             @Override
-            public Component getListCellRendererComponent(JList<? extends AutoCompletionListItem> list,
-                    AutoCompletionListItem value, int index, boolean isSelected, boolean cellHasFocus) {
+            public Component getListCellRendererComponent(JList<? extends AutoCompletionItem> list,
+                    AutoCompletionItem value, int index, boolean isSelected, boolean cellHasFocus) {
                 Component c = def.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 if (c instanceof JLabel) {
                     String str = value.getValue();
@@ -446,11 +446,10 @@ public class TagEditHelper {
             mainPanel.add(p, BorderLayout.CENTER);
 
             AutoCompletionManager autocomplete = AutoCompletionManager.of(MainApplication.getLayerManager().getEditLayer().data);
-            List<AutoCompletionListItem> keyList = autocomplete.getKeys();
-            keyList.sort(DEFAULT_AC_ITEM_COMPARATOR);
+            List<AutoCompletionItem> keyList = autocomplete.getTagKeys(DEFAULT_AC_ITEM_COMPARATOR);
 
             keys = new AutoCompletingComboBox(key);
-            keys.setPossibleACItems(keyList);
+            keys.setPossibleAcItems(keyList);
             keys.setEditable(true);
             keys.setSelectedItem(key);
 
@@ -459,8 +458,7 @@ public class TagEditHelper {
             p.add(Box.createHorizontalStrut(10), GBC.std());
             p.add(keys, GBC.eol().fill(GBC.HORIZONTAL));
 
-            List<AutoCompletionListItem> valueList = autocomplete.getValues(getAutocompletionKeys(key));
-            valueList.sort(usedValuesAwareComparator);
+            List<AutoCompletionItem> valueList = autocomplete.getTagValues(getAutocompletionKeys(key), usedValuesAwareComparator);
 
             final String selection = m.size() != 1 ? tr("<different>") : m.entrySet().iterator().next().getKey();
 
@@ -468,7 +466,7 @@ public class TagEditHelper {
             values.setRenderer(cellRenderer);
 
             values.setEditable(true);
-            values.setPossibleACItems(valueList);
+            values.setPossibleAcItems(valueList);
             values.setSelectedItem(selection);
             values.getEditor().setItem(selection);
             p.add(Box.createVerticalStrut(5), GBC.eol());
@@ -629,7 +627,7 @@ public class TagEditHelper {
         * @param comparator Class to decide what values are offered on autocompletion
         * @return The created adapter
         */
-        protected FocusAdapter addFocusAdapter(final AutoCompletionManager autocomplete, final Comparator<AutoCompletionListItem> comparator) {
+        protected FocusAdapter addFocusAdapter(final AutoCompletionManager autocomplete, final Comparator<AutoCompletionItem> comparator) {
            // get the combo box' editor component
            final JTextComponent editor = values.getEditorComponent();
            // Refresh the values model when focus is gained
@@ -638,10 +636,9 @@ public class TagEditHelper {
                public void focusGained(FocusEvent e) {
                    String key = keys.getEditor().getItem().toString();
 
-                   List<AutoCompletionListItem> valueList = autocomplete.getValues(getAutocompletionKeys(key));
-                   valueList.sort(comparator);
+                   List<AutoCompletionItem> valueList = autocomplete.getTagValues(getAutocompletionKeys(key), comparator);
                    Logging.trace("Focus gained by {0}, e={1}", values, e);
-                   values.setPossibleACItems(valueList);
+                   values.setPossibleAcItems(valueList);
                    values.getEditor().selectAll();
                    objKey = key;
                }
@@ -691,14 +688,13 @@ public class TagEditHelper {
                 +"<br><br>"+tr("Please select a key")), GBC.eol().fill(GBC.HORIZONTAL));
 
             cacheRecentTags();
-            AutoCompletionManager autocomplete = AutoCompletionManager.of(MainApplication.getLayerManager().getEditLayer().data);
-            List<AutoCompletionListItem> keyList = autocomplete.getKeys();
+            AutoCompletionManager autocomplete = AutoCompletionManager.of(Main.main.getEditDataSet());
+            List<AutoCompletionItem> keyList = autocomplete.getTagKeys(DEFAULT_AC_ITEM_COMPARATOR);
 
             // remove the object's tag keys from the list
             keyList.removeIf(item -> containsDataKey(item.getValue()));
 
-            keyList.sort(DEFAULT_AC_ITEM_COMPARATOR);
-            keys.setPossibleACItems(keyList);
+            keys.setPossibleAcItems(keyList);
             keys.setEditable(true);
 
             mainPanel.add(keys, GBC.eop().fill(GBC.HORIZONTAL));
