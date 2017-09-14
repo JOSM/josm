@@ -1013,7 +1013,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
      * @param id The object that caused the status update (or a id object it selects). May be <code>null</code>
      * @param text The text
      */
-    public void setHelpText(Object id, final String text) {
+    public synchronized void setHelpText(Object id, final String text) {
         StatusTextHistory entry = new StatusTextHistory(id, text);
 
         statusText.remove(entry);
@@ -1029,7 +1029,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
      * Removes a help text and restores the previous one
      * @param id The id passed to {@link #setHelpText(Object, String)}
      */
-    public void resetHelpText(Object id) {
+    public synchronized void resetHelpText(Object id) {
         if (statusText.isEmpty())
             return;
 
