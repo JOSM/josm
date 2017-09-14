@@ -915,6 +915,7 @@ public class MainApplication extends Main {
 
         Main.pref.init(args.hasOption(Option.RESET_PREFERENCES));
         Config.setPreferencesInstance(Main.pref);
+        Config.setBaseDirectoriesProvider(Main.pref);
 
         args.getPreferencesToSet().forEach(Main.pref::put);
 

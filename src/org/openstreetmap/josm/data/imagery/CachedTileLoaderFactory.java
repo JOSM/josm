@@ -10,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoader;
 import org.openstreetmap.gui.jmapviewer.interfaces.TileLoaderListener;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.preferences.StringProperty;
@@ -56,7 +55,7 @@ public class CachedTileLoaderFactory implements TileLoaderFactory {
     private static StringProperty getTileCacheDir() {
         String defPath = null;
         try {
-            defPath = new File(Main.pref.getCacheDirectory(), "tiles").getAbsolutePath();
+            defPath = new File(Config.getDirs().getCacheDirectory(), "tiles").getAbsolutePath();
         } catch (SecurityException e) {
             Logging.warn(e);
         }

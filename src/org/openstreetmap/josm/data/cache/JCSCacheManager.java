@@ -26,9 +26,9 @@ import org.apache.commons.jcs.engine.behavior.ICompositeCacheAttributes.DiskUsag
 import org.apache.commons.jcs.engine.control.CompositeCache;
 import org.apache.commons.jcs.engine.control.CompositeCacheManager;
 import org.apache.commons.jcs.utils.serialization.StandardSerializer;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
@@ -100,7 +100,7 @@ public final class JCSCacheManager {
 
     @SuppressWarnings("resource")
     private static void initialize() throws IOException {
-        File cacheDir = new File(Main.pref.getCacheDirectory(), "jcs");
+        File cacheDir = new File(Config.getDirs().getCacheDirectory(), "jcs");
 
         if (!cacheDir.exists() && !cacheDir.mkdirs())
             throw new IOException("Cannot access cache directory");

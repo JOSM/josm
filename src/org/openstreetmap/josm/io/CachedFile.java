@@ -276,7 +276,7 @@ public class CachedFile implements Closeable {
             if (name == null || name.startsWith("resource://")) {
                 return null;
             } else if (name.startsWith("josmdir://")) {
-                cacheFile = new File(Main.pref.getUserDataDirectory(), name.substring("josmdir://".length()));
+                cacheFile = new File(Config.getDirs().getUserDataDirectory(), name.substring("josmdir://".length()));
             } else if (name.startsWith("josmplugindir://")) {
                 cacheFile = new File(Main.pref.getPluginsDirectory(), name.substring("josmplugindir://".length()));
             } else {
@@ -447,7 +447,7 @@ public class CachedFile implements Closeable {
             }
         }
         if (destDir == null) {
-            destDir = Main.pref.getCacheDirectory().getPath();
+            destDir = Config.getDirs().getCacheDirectory().getPath();
         }
 
         File destDirFile = new File(destDir);

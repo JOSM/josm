@@ -28,7 +28,6 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.OpenFileAction.OpenFileTask;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.event.AbstractDatasetChangedEvent;
@@ -116,8 +115,8 @@ public class AutosaveTask extends TimerTask implements LayerChangeListener, List
     private final Object layersLock = new Object();
     private final Deque<File> deletedLayers = new LinkedList<>();
 
-    private final File autosaveDir = new File(Main.pref.getUserDataDirectory(), AUTOSAVE_DIR);
-    private final File deletedLayersDir = new File(Main.pref.getUserDataDirectory(), DELETED_LAYERS_DIR);
+    private final File autosaveDir = new File(Config.getDirs().getUserDataDirectory(), AUTOSAVE_DIR);
+    private final File deletedLayersDir = new File(Config.getDirs().getUserDataDirectory(), DELETED_LAYERS_DIR);
 
     /**
      * Replies the autosave directory.

@@ -97,6 +97,7 @@ public class JOSMFixture {
         System.setProperty("josm.home", josmHome);
         TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
         Config.setPreferencesInstance(Main.pref);
+        Config.setBaseDirectoriesProvider(Main.pref);
         Main.pref.resetToInitialState();
         Main.pref.enableSaveOnPut(false);
         I18n.init();

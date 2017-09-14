@@ -277,6 +277,7 @@ public class JOSMTestRules implements TestRule {
         cleanUpFromJosmFixture();
 
         Config.setPreferencesInstance(Main.pref);
+        Config.setBaseDirectoriesProvider(Main.pref);
         // All tests use the same timezone.
         TimeZone.setDefault(DateUtils.UTC);
         // Set log level to info

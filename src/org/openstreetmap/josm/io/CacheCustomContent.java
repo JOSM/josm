@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -76,7 +75,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
     public CacheCustomContent(String ident, int updateInterval) {
         this.ident = ident;
         this.updateInterval = updateInterval;
-        this.path = new File(Main.pref.getCacheDirectory(), ident);
+        this.path = new File(Config.getDirs().getCacheDirectory(), ident);
     }
 
     /**

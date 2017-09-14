@@ -7,7 +7,6 @@ import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.io.remotecontrol.handler.RequestHandler;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -95,7 +94,7 @@ public class RemoteControl {
      * @since 7335
      */
     public static String getRemoteControlDir() {
-        return new File(Main.pref.getUserDataDirectory(), "remotecontrol").getAbsolutePath();
+        return new File(Config.getDirs().getUserDataDirectory(), "remotecontrol").getAbsolutePath();
     }
 
     /**
