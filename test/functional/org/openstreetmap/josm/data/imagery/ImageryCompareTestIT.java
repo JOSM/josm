@@ -5,8 +5,12 @@ import static org.junit.Assert.fail;
 
 import java.net.URL;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.openstreetmap.josm.testutils.JOSMTestRules;
 import org.openstreetmap.josm.tools.HttpClient;
+
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 
 /**
  * Automatic test of imagery synchronization between JOSM and ELI.
@@ -16,6 +20,13 @@ public class ImageryCompareTestIT {
 
     private static String BLACK_PREFIX = "<pre style=\"margin:3px;color:black\">";
     private static String RED_PREFIX = "<pre style=\"margin:3px;color:red\">";
+
+    /**
+     * Setup test.
+     */
+    @Rule
+    @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
+    public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
      * Test of imagery entries.
