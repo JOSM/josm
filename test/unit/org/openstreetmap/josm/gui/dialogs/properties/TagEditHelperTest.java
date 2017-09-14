@@ -16,7 +16,7 @@ import javax.swing.table.DefaultTableModel;
 
 import org.junit.Rule;
 import org.junit.Test;
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
+import org.openstreetmap.josm.data.tagging.ac.AutoCompletionItem;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
@@ -45,16 +45,16 @@ public class TagEditHelperTest {
      */
     @Test
     public void testAcItemComparator() {
-        List<AutoCompletionListItem> list = new ArrayList<>();
-        list.add(new AutoCompletionListItem("Bing Sat"));
-        list.add(new AutoCompletionListItem("survey"));
-        list.add(new AutoCompletionListItem("Bing"));
-        list.add(new AutoCompletionListItem("digitalglobe"));
-        list.add(new AutoCompletionListItem("bing"));
-        list.add(new AutoCompletionListItem("DigitalGlobe"));
+        List<AutoCompletionItem> list = new ArrayList<>();
+        list.add(new AutoCompletionItem("Bing Sat"));
+        list.add(new AutoCompletionItem("survey"));
+        list.add(new AutoCompletionItem("Bing"));
+        list.add(new AutoCompletionItem("digitalglobe"));
+        list.add(new AutoCompletionItem("bing"));
+        list.add(new AutoCompletionItem("DigitalGlobe"));
         list.sort(TagEditHelper.DEFAULT_AC_ITEM_COMPARATOR);
         assertEquals(Arrays.asList("Bing", "bing", "Bing Sat", "digitalglobe", "DigitalGlobe", "survey"),
-                list.stream().map(AutoCompletionListItem::getValue).collect(Collectors.toList()));
+                list.stream().map(AutoCompletionItem::getValue).collect(Collectors.toList()));
     }
 
     /**

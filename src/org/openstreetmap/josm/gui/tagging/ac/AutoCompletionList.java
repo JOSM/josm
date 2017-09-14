@@ -4,22 +4,25 @@ package org.openstreetmap.josm.gui.tagging.ac;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
+import org.openstreetmap.josm.data.tagging.ac.AutoCompletionItem;
+import org.openstreetmap.josm.data.tagging.ac.AutoCompletionPriority;
+import org.openstreetmap.josm.data.tagging.ac.AutoCompletionSet;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 
 /**
- * AutoCompletionList manages a list of {@link AutoCompletionListItem}s.
+ * AutoCompletionList manages a graphical list of {@link AutoCompletionItem}s.
  *
  * The list is sorted, items with higher priority first, then according to lexicographic order
- * on the value of the {@link AutoCompletionListItem}.
+ * on the value of the {@link AutoCompletionItem}.
  *
- * AutoCompletionList maintains two views on the list of {@link AutoCompletionListItem}s.
+ * AutoCompletionList maintains two views on the list of {@link AutoCompletionItem}s.
  * <ol>
  *   <li>the bare, unfiltered view which includes all items</li>
  *   <li>a filtered view, which includes only items which match a current filter expression</li>
@@ -32,21 +35,18 @@ import org.openstreetmap.josm.tools.CheckParameterUtil;
 public class AutoCompletionList extends AbstractTableModel {
 
     /** the bare list of AutoCompletionItems */
-    private final transient List<AutoCompletionListItem> list;
+    private final transient AutoCompletionSet list;
     /**  the filtered list of AutoCompletionItems */
-    private final transient ArrayList<AutoCompletionListItem> filtered;
+    private final transient ArrayList<AutoCompletionItem> filtered;
     /** the filter expression */
     private String filter;
-    /** map from value to priority */
-    private final transient Map<String, AutoCompletionListItem> valutToItemMap;
 
     /**
      * constructor
      */
     public AutoCompletionList() {
-        list = new ArrayList<>();
+        list = new AutoCompletionSet();
         filtered = new ArrayList<>();
-        valutToItemMap = new HashMap<>();
     }
 
     /**
@@ -80,21 +80,34 @@ public class AutoCompletionList extends AbstractTableModel {
     }
 
     /**
-     * adds an AutoCompletionListItem to the list. Only adds the item if it
+     * adds an {@link AutoCompletionListItem} to the list. Only adds the item if it
      * is not null and if not in the list yet.
      *
      * @param item the item
+     * @deprecated To be removed end of 2017. Use {@link #add(AutoCompletionItem)} instead
      */
+    @Deprecated
     public void add(AutoCompletionListItem item) {
         if (item == null)
             return;
-        appendOrUpdatePriority(item);
-        sort();
-        filter();
+        add(item.getItem());
     }
 
     /**
-     * adds another AutoCompletionList to this list. An item is only
+     * adds an {@link AutoCompletionItem} to the list. Only adds the item if it
+     * is not null and if not in the list yet.
+     *
+     * @param item the item
+     * @since 12859
+     */
+    public void add(AutoCompletionItem item) {
+        if (item != null && list.add(item)) {
+            filter();
+        }
+    }
+
+    /**
+     * adds another {@link AutoCompletionList} to this list. An item is only
      * added it is not null and if it does not exist in the list yet.
      *
      * @param other another auto completion list; must not be null
@@ -102,27 +115,36 @@ public class AutoCompletionList extends AbstractTableModel {
      */
     public void add(AutoCompletionList other) {
         CheckParameterUtil.ensureParameterNotNull(other, "other");
-        for (AutoCompletionListItem item : other.list) {
-            appendOrUpdatePriority(item);
-        }
-        sort();
-        filter();
+        add(other.list);
     }
 
     /**
-     * adds a list of AutoCompletionListItem to this list. Only items which
+     * adds a colleciton of {@link AutoCompletionItem} to this list. An item is only
+     * added it is not null and if it does not exist in the list yet.
+     *
+     * @param collection auto completion collection; must not be null
+     * @throws IllegalArgumentException if other is null
+     * @since 12859
+     */
+    public void add(Collection<AutoCompletionItem> collection) {
+        CheckParameterUtil.ensureParameterNotNull(collection, "collection");
+        if (list.addAll(collection)) {
+            filter();
+        }
+    }
+
+    /**
+     * adds a list of {@link AutoCompletionListItem} to this list. Only items which
      * are not null and which do not exist yet in the list are added.
      *
      * @param other a list of AutoCompletionListItem; must not be null
      * @throws IllegalArgumentException if other is null
+     * @deprecated to be removed end of 2017. Use {@link #add(Collection)} instead
      */
+    @Deprecated
     public void add(List<AutoCompletionListItem> other) {
         CheckParameterUtil.ensureParameterNotNull(other, "other");
-        for (AutoCompletionListItem toadd : other) {
-            appendOrUpdatePriority(toadd);
-        }
-        sort();
-        filter();
+        add(other.stream().map(AutoCompletionListItem::getItem).collect(Collectors.toList()));
     }
 
     /**
@@ -131,20 +153,25 @@ public class AutoCompletionList extends AbstractTableModel {
      *
      * @param values a list of strings to add
      * @param priority the priority to use
+     * @deprecated to be removed end of 2017. Use {@link #add(Collection, AutoCompletionPriority)} instead
      */
+    @Deprecated
     public void add(Collection<String> values, AutoCompletionItemPriority priority) {
-        if (values == null)
-            return;
-        for (String value : values) {
-            if (value == null) {
-                continue;
-            }
-            AutoCompletionListItem item = new AutoCompletionListItem(value, priority);
-            appendOrUpdatePriority(item);
+        add(values, priority.getPriority());
+    }
 
+    /**
+     * adds a list of strings to this list. Only strings which
+     * are not null and which do not exist yet in the list are added.
+     *
+     * @param values a list of strings to add
+     * @param priority the priority to use
+     * @since 12859
+     */
+    public void add(Collection<String> values, AutoCompletionPriority priority) {
+        if (values != null && list.addAll(values, priority)) {
+            filter();
         }
-        sort();
-        filter();
     }
 
     /**
@@ -152,27 +179,8 @@ public class AutoCompletionList extends AbstractTableModel {
      * @param values values that have been entered by the user
      */
     public void addUserInput(Collection<String> values) {
-        if (values == null)
-            return;
-        int i = 0;
-        for (String value : values) {
-            if (value != null) {
-                appendOrUpdatePriority(
-                        new AutoCompletionListItem(value, new AutoCompletionItemPriority(false, false, false, i++)));
-            }
-        }
-        sort();
-        filter();
-    }
-
-    protected void appendOrUpdatePriority(AutoCompletionListItem toAdd) {
-        AutoCompletionListItem item = valutToItemMap.get(toAdd.getValue());
-        if (item == null) {
-            // new item does not exist yet. Add it to the list
-            list.add(toAdd);
-            valutToItemMap.put(toAdd.getValue(), toAdd);
-        } else {
-            item.setPriority(item.getPriority().mergeWith(toAdd.getPriority()));
+        if (values != null && list.addUserInput(values)) {
+            filter();
         }
     }
 
@@ -182,10 +190,24 @@ public class AutoCompletionList extends AbstractTableModel {
      *
      * @param item the item to check
      * @return true, if item is in the list; false, otherwise
+     * @deprecated to be removed end of 2017. Use {@link #contains(AutoCompletionItem)} instead
      */
+    @Deprecated
     public boolean contains(AutoCompletionListItem item) {
         if (item == null)
             return false;
+        return contains(item.getItem());
+    }
+
+    /**
+     * checks whether a specific item is already in the list. Matches for the
+     * the value <strong>and</strong> the priority of the item
+     *
+     * @param item the item to check
+     * @return true, if item is in the list; false, otherwise
+     * @since 12859
+     */
+    public boolean contains(AutoCompletionItem item) {
         return list.contains(item);
     }
 
@@ -197,36 +219,17 @@ public class AutoCompletionList extends AbstractTableModel {
      * @return true, if value is in the list; false, otherwise
      */
     public boolean contains(String value) {
-        if (value == null)
-            return false;
-        for (AutoCompletionListItem item: list) {
-            if (item.getValue().equals(value))
-                return true;
-        }
-        return false;
+        return list.contains(value);
     }
 
     /**
      * removes the auto completion item with key <code>key</code>
-     * @param key  the key;
+     * @param key the key
      */
     public void remove(String key) {
-        if (key == null)
-            return;
-        for (int i = 0; i < list.size(); i++) {
-            AutoCompletionListItem item = list.get(i);
-            if (item.getValue().equals(key)) {
-                list.remove(i);
-                return;
-            }
+        if (key != null) {
+            list.remove(key);
         }
-    }
-
-    /**
-     * sorts the list
-     */
-    protected void sort() {
-        Collections.sort(list);
     }
 
     protected void filter() {
@@ -234,20 +237,14 @@ public class AutoCompletionList extends AbstractTableModel {
         if (filter == null) {
             // Collections.copy throws an exception "Source does not fit in dest"
             filtered.ensureCapacity(list.size());
-            for (AutoCompletionListItem item: list) {
-                filtered.add(item);
-            }
+            filtered.addAll(list);
             return;
         }
 
         // apply the pattern to list of possible values. If it matches, add the
         // value to the list of filtered values
         //
-        for (AutoCompletionListItem item : list) {
-            if (item.getValue().startsWith(filter)) {
-                filtered.add(item);
-            }
-        }
+        list.stream().filter(e -> e.getValue().startsWith(filter)).forEach(filtered::add);
         fireTableDataChanged();
     }
 
@@ -257,7 +254,7 @@ public class AutoCompletionList extends AbstractTableModel {
      * @return the number of filtered items
      */
     public int getFilteredSize() {
-        return this.filtered.size();
+        return filtered.size();
     }
 
     /**
@@ -266,27 +263,37 @@ public class AutoCompletionList extends AbstractTableModel {
      * @return the item
      *
      * @throws IndexOutOfBoundsException if idx is out of bounds
+     * @deprecated to be removed end of 2017. Use {@link #getFilteredItemAt(int)} instead
      */
+    @Deprecated
     public AutoCompletionListItem getFilteredItem(int idx) {
-        if (idx < 0 || idx >= getFilteredSize())
-            throw new IndexOutOfBoundsException("idx out of bounds. idx=" + idx);
+        return new AutoCompletionListItem(getFilteredItemAt(idx));
+    }
+
+    /**
+     * replies the idx-th item from the list of filtered items
+     * @param idx the index; must be in the range 0 &lt;= idx &lt; {@link #getFilteredSize()}
+     * @return the item
+     *
+     * @throws IndexOutOfBoundsException if idx is out of bounds
+     * @since 12859
+     */
+    public AutoCompletionItem getFilteredItemAt(int idx) {
         return filtered.get(idx);
     }
 
-    List<AutoCompletionListItem> getList() {
+    AutoCompletionSet getSet() {
         return list;
     }
 
-    List<AutoCompletionListItem> getUnmodifiableList() {
-        return Collections.unmodifiableList(list);
+    Set<AutoCompletionItem> getUnmodifiableSet() {
+        return Collections.unmodifiableSet(list);
     }
 
     /**
      * removes all elements from the auto completion list
-     *
      */
     public void clear() {
-        valutToItemMap.clear();
         list.clear();
         fireTableDataChanged();
     }
@@ -298,12 +305,11 @@ public class AutoCompletionList extends AbstractTableModel {
 
     @Override
     public int getRowCount() {
-
         return list == null ? 0 : getFilteredSize();
     }
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        return list == null ? null : getFilteredItem(rowIndex);
+        return list == null ? null : getFilteredItemAt(rowIndex);
     }
 }

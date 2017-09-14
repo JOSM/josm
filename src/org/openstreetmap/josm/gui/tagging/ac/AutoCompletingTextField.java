@@ -98,7 +98,7 @@ public class AutoCompletingTextField extends JosmTextField implements ComboBoxEd
             autoCompletionList.applyFilter(prefix+str);
             if (autoCompletionList.getFilteredSize() > 0 && !Objects.equals(str, noAutoCompletionString)) {
                 // there are matches. Insert the new text and highlight the auto completed suffix
-                String matchingString = autoCompletionList.getFilteredItem(0).getValue();
+                String matchingString = autoCompletionList.getFilteredItemAt(0).getValue();
                 remove(0, getLength());
                 super.insertString(0, matchingString, a);
 

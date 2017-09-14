@@ -8,12 +8,12 @@ import java.util.NoSuchElementException;
 
 import javax.swing.DefaultComboBoxModel;
 
-import org.openstreetmap.josm.gui.tagging.ac.AutoCompletionListItem;
+import org.openstreetmap.josm.data.tagging.ac.AutoCompletionItem;
 
 /**
  * A data model for {@link HistoryComboBox}
  */
-class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem> implements Iterable<AutoCompletionListItem> {
+class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionItem> implements Iterable<AutoCompletionItem> {
 
     private final int maxSize;
 
@@ -30,7 +30,7 @@ class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem> imple
      * @param s the element to add
      */
     public void addElement(String s) {
-        addElement(new AutoCompletionListItem(s));
+        addElement(new AutoCompletionItem(s));
     }
 
     /**
@@ -38,7 +38,7 @@ class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem> imple
      * @param o the element to add
      */
     @Override
-    public void addElement(AutoCompletionListItem o) {
+    public void addElement(AutoCompletionItem o) {
         String newEntry = o.getValue();
 
         // if history contains this object already, delete it,
@@ -63,8 +63,8 @@ class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem> imple
     }
 
     @Override
-    public Iterator<AutoCompletionListItem> iterator() {
-        return new Iterator<AutoCompletionListItem>() {
+    public Iterator<AutoCompletionItem> iterator() {
+        return new Iterator<AutoCompletionItem>() {
 
             private int position = -1;
 
@@ -79,7 +79,7 @@ class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem> imple
             }
 
             @Override
-            public AutoCompletionListItem next() {
+            public AutoCompletionItem next() {
                 if (!hasNext())
                     throw new NoSuchElementException();
                 position++;
@@ -101,12 +101,12 @@ class ComboBoxHistory extends DefaultComboBoxModel<AutoCompletionListItem> imple
     }
 
     /**
-     * Returns the {@link AutoCompletionListItem} items as strings
+     * Returns the {@link AutoCompletionItem} items as strings
      * @return a list of strings
      */
     public List<String> asStringList() {
         List<String> list = new ArrayList<>(maxSize);
-        for (AutoCompletionListItem item : this) {
+        for (AutoCompletionItem item : this) {
             list.add(item.getValue());
         }
         return list;
