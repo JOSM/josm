@@ -17,7 +17,6 @@ import java.util.Collection;
 import javax.imageio.ImageIO;
 
 import org.apache.commons.jcs.access.behavior.ICacheAccess;
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.cache.BufferedImageCacheEntry;
 import org.openstreetmap.josm.data.cache.JCSCacheManager;
 import org.openstreetmap.josm.gui.MainApplication;
@@ -69,7 +68,7 @@ public class ThumbsLoader implements Runnable {
         if (!cacheOff) {
             try {
                 cache = JCSCacheManager.getCache("geoimage-thumbnails", 0, 120,
-                        Main.pref.getCacheDirectory().getPath() + File.separator + "geoimage-thumbnails");
+                        Config.getDirs().getCacheDirectory().getPath() + File.separator + "geoimage-thumbnails");
             } catch (IOException e) {
                 Logging.warn("Failed to initialize cache for geoimage-thumbnails");
                 Logging.warn(e);

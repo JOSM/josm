@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.JoinAreasAction;
 import org.openstreetmap.josm.actions.JoinAreasAction.JoinAreasResult;
 import org.openstreetmap.josm.actions.JoinAreasAction.Multipolygon;
@@ -31,6 +30,7 @@ import org.openstreetmap.josm.io.IllegalDataException;
 import org.openstreetmap.josm.io.OsmReader;
 import org.openstreetmap.josm.io.OsmWriter;
 import org.openstreetmap.josm.io.OsmWriterFactory;
+import org.openstreetmap.josm.spi.preferences.Config;
 
 /**
  * Look up, if there is right- or left-hand traffic at a certain place.
@@ -152,7 +152,7 @@ public final class RightAndLefthandTraffic {
 
     private static void saveOptimizedBoundaries(Collection<Way> optimizedWays) {
         DataSet ds = optimizedWays.iterator().next().getDataSet();
-        File file = new File(Main.pref.getCacheDirectory(), "left-right-hand-traffic.osm");
+        File file = new File(Config.getDirs().getCacheDirectory(), "left-right-hand-traffic.osm");
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
              OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, ds.getVersion())
             ) {
@@ -165,7 +165,7 @@ public final class RightAndLefthandTraffic {
     }
 
     private static Collection<Way> loadOptimizedBoundaries() {
-        try (InputStream is = new FileInputStream(new File(Main.pref.getCacheDirectory(), "left-right-hand-traffic.osm"))) {
+        try (InputStream is = new FileInputStream(new File(Config.getDirs().getCacheDirectory(), "left-right-hand-traffic.osm"))) {
            return OsmReader.parseDataSet(is, null).getWays();
         } catch (IllegalDataException | IOException ex) {
             Logging.trace(ex);

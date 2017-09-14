@@ -50,6 +50,7 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.util.GuiHelper;
 import org.openstreetmap.josm.gui.widgets.AbstractFileChooser;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
@@ -368,7 +369,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                        }
                     }
                 }
-                files = Main.pref.getPreferencesDirectory().listFiles();
+                files = Config.getDirs().getPreferencesDirectory().listFiles();
                 if (files != null) {
                     for (File f: files) {
                        String s = f.getName();

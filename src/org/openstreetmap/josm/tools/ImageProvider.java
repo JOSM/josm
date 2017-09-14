@@ -926,7 +926,8 @@ public class ImageProvider {
      * @return the requested image or null if the request failed
      */
     private static ImageResource getIfAvailableHttp(String url, ImageType type) {
-        try (CachedFile cf = new CachedFile(url).setDestDir(new File(Main.pref.getCacheDirectory(), "images").getPath());
+        try (CachedFile cf = new CachedFile(url).setDestDir(
+                new File(Config.getDirs().getCacheDirectory(), "images").getPath());
              InputStream is = cf.getInputStream()) {
             switch (type) {
             case SVG:
@@ -1171,8 +1172,8 @@ public class ImageProvider {
             }
         }
         // Try user-data directory
-        if (Main.pref != null) {
-            String dir = new File(Main.pref.getUserDataDirectory(), "images").getAbsolutePath();
+        if (Config.getDirs() != null) {
+            String dir = new File(Config.getDirs().getUserDataDirectory(), "images").getAbsolutePath();
             try {
                 u = getImageUrl(dir, imageName, additionalClassLoaders);
                 if (u != null)
@@ -1245,7 +1246,8 @@ public class ImageProvider {
 
             parser.setEntityResolver((publicId, systemId) -> new InputSource(new ByteArrayInputStream(new byte[0])));
 
-            try (CachedFile cf = new CachedFile(base + fn).setDestDir(new File(Main.pref.getUserDataDirectory(), "images").getPath());
+            try (CachedFile cf = new CachedFile(base + fn).setDestDir(
+                        new File(Config.getDirs().getUserDataDirectory(), "images").getPath());
                  InputStream is = cf.getInputStream()) {
                 parser.parse(new InputSource(is));
             }

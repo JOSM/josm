@@ -383,6 +383,7 @@ class TagInfoExtract {
         Logging.setLogLevel(Logging.LEVEL_INFO)
         Main.pref.enableSaveOnPut(false)
         Config.setPreferencesInstance(Main.pref)
+        Config.setBaseDirectoriesProvider(Main.pref);
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"))
         Path tmpdir = Files.createTempDirectory(FileSystems.getDefault().getPath(base_dir), "pref")
         tmpdir.toFile().deleteOnExit()

@@ -43,7 +43,6 @@ import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.spi.preferences.AbstractPreferences;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
@@ -61,6 +60,8 @@ import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.io.OfflineAccessException;
 import org.openstreetmap.josm.io.OnlineResource;
+import org.openstreetmap.josm.spi.preferences.AbstractPreferences;
+import org.openstreetmap.josm.spi.preferences.IBaseDirectories;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.I18n;
@@ -91,7 +92,7 @@ import org.xml.sax.SAXException;
  * @author imi
  * @since 74
  */
-public class Preferences extends AbstractPreferences {
+public class Preferences extends AbstractPreferences implements IBaseDirectories {
 
     private static final String COLOR_PREFIX = "color.";
 
@@ -330,6 +331,7 @@ public class Preferences extends AbstractPreferences {
      * @return The user defined preferences directory, containing the preferences.xml file
      * @since 7834
      */
+    @Override
     public File getPreferencesDirectory() {
         if (preferencesDir != null)
             return preferencesDir;
@@ -354,6 +356,7 @@ public class Preferences extends AbstractPreferences {
      * @return The user data directory, containing autosave, plugins, etc.
      * @since 7834
      */
+    @Override
     public File getUserDataDirectory() {
         if (userdataDir != null)
             return userdataDir;
@@ -403,6 +406,7 @@ public class Preferences extends AbstractPreferences {
      *
      * @return the cache directory
      */
+    @Override
     public File getCacheDirectory() {
         if (cacheDir != null)
             return cacheDir;
