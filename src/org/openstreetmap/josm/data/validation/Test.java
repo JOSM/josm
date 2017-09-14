@@ -20,6 +20,7 @@ import org.openstreetmap.josm.data.osm.Node;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Relation;
 import org.openstreetmap.josm.data.osm.Way;
+import org.openstreetmap.josm.data.osm.search.SearchCompiler.InDataSourceArea;
 import org.openstreetmap.josm.data.osm.search.SearchCompiler.NotOutsideDataSourceArea;
 import org.openstreetmap.josm.data.osm.visitor.OsmPrimitiveVisitor;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
@@ -40,6 +41,7 @@ import org.openstreetmap.josm.tools.Utils;
 public class Test implements OsmPrimitiveVisitor, Comparable<Test> {
 
     protected static final Predicate<OsmPrimitive> IN_DOWNLOADED_AREA = new NotOutsideDataSourceArea();
+    protected static final Predicate<OsmPrimitive> IN_DOWNLOADED_AREA_STRICT = new InDataSourceArea(true);
 
     /** Name of the test */
     protected final String name;
