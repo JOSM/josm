@@ -230,11 +230,11 @@ public final class ShowStatusReportAction extends JosmAction {
         final String envJavaHomeAlt = Main.isPlatformWindows() ? "%JAVA_HOME%" : "${JAVA_HOME}";
         final String propJavaHome = System.getProperty("java.home");
         final String propJavaHomeAlt = "<java.home>";
-        final String prefDir = Config.getDirs().getPreferencesDirectory().toString();
+        final String prefDir = Config.getDirs().getPreferencesDirectory(false).toString();
         final String prefDirAlt = "<josm.pref>";
-        final String userDataDir = Config.getDirs().getUserDataDirectory().toString();
+        final String userDataDir = Config.getDirs().getUserDataDirectory(false).toString();
         final String userDataDirAlt = "<josm.userdata>";
-        final String userCacheDir = Config.getDirs().getCacheDirectory().toString();
+        final String userCacheDir = Config.getDirs().getCacheDirectory(false).toString();
         final String userCacheDirAlt = "<josm.cache>";
         final String userHomeDir = System.getProperty("user.home");
         final String userHomeDirAlt = Main.isPlatformWindows() ? "%UserProfile%" : "${HOME}";

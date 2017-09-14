@@ -476,7 +476,7 @@ public class PlatformHookWindows implements PlatformHook {
     @Override
     public File getDefaultUserDataDirectory() {
         // Use preferences directory by default
-        return Config.getDirs().getPreferencesDirectory();
+        return Config.getDirs().getPreferencesDirectory(false);
     }
 
     /**
@@ -521,7 +521,7 @@ public class PlatformHookWindows implements PlatformHook {
             Properties props = new Properties();
             props.load(fis);
             byte[] content = Files.readAllBytes(templateFile);
-            File cachePath = Config.getDirs().getCacheDirectory();
+            File cachePath = Config.getDirs().getCacheDirectory(true);
             Path fontconfigFile = cachePath.toPath().resolve("fontconfig.properties");
             OutputStream os = Files.newOutputStream(fontconfigFile);
             os.write(content);

@@ -424,9 +424,9 @@ public final class CustomConfigurator {
     private static String getDirectoryByAbbr(String base) {
         String dir;
         if ("prefs".equals(base) || base.isEmpty()) {
-            dir = Config.getDirs().getPreferencesDirectory().getAbsolutePath();
+            dir = Config.getDirs().getPreferencesDirectory(false).getAbsolutePath();
         } else if ("cache".equals(base)) {
-            dir = Config.getDirs().getCacheDirectory().getAbsolutePath();
+            dir = Config.getDirs().getCacheDirectory(false).getAbsolutePath();
         } else if ("plugins".equals(base)) {
             dir = Main.pref.getPluginsDirectory().getAbsolutePath();
         } else {
@@ -476,7 +476,7 @@ public final class CustomConfigurator {
                 engine = new ScriptEngineManager().getEngineByName("JavaScript");
                 engine.eval("API={}; API.pref={}; API.fragments={};");
 
-                engine.eval("homeDir='"+normalizeDirName(Config.getDirs().getPreferencesDirectory().getAbsolutePath()) +"';");
+                engine.eval("homeDir='"+normalizeDirName(Config.getDirs().getPreferencesDirectory(false).getAbsolutePath()) +"';");
                 engine.eval("josmVersion="+Version.getInstance().getVersion()+';');
                 String className = CustomConfigurator.class.getName();
                 engine.eval("API.messageBox="+className+".messageBox");

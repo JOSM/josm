@@ -175,7 +175,7 @@ public final class OsmValidator {
      * @return The validator directory
      */
     public static String getValidatorDir() {
-        return new File(Config.getDirs().getUserDataDirectory(), "validator").getAbsolutePath();
+        return new File(Config.getDirs().getUserDataDirectory(true), "validator").getAbsolutePath();
     }
 
     /**

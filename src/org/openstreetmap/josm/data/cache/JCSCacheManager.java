@@ -100,7 +100,7 @@ public final class JCSCacheManager {
 
     @SuppressWarnings("resource")
     private static void initialize() throws IOException {
-        File cacheDir = new File(Config.getDirs().getCacheDirectory(), "jcs");
+        File cacheDir = new File(Config.getDirs().getCacheDirectory(true), "jcs");
 
         if (!cacheDir.exists() && !cacheDir.mkdirs())
             throw new IOException("Cannot access cache directory");
