@@ -174,8 +174,14 @@ public class PluginUpdatePolicyPanel extends JPanel {
      * Loads the relevant preference values from the JOSM preferences
      */
     public final void initFromPreferences() {
-        rbVersionBasedUpatePolicy.get(Optional.ofNullable(Policy.fromPreferenceValue(Config.getPref().get("pluginmanager.version-based-update.policy", "ask"))).orElse(Policy.ASK)).setSelected(true);
-        rbTimeBasedUpatePolicy.get(Optional.ofNullable(Policy.fromPreferenceValue(Config.getPref().get("pluginmanager.time-based-update.policy", "ask"))).orElse(Policy.ASK)).setSelected(true);
+        rbVersionBasedUpatePolicy.get(
+                Optional.ofNullable(Policy.fromPreferenceValue(
+                        Config.getPref().get("pluginmanager.version-based-update.policy", "ask"))).orElse(Policy.ASK))
+                .setSelected(true);
+        rbTimeBasedUpatePolicy.get(
+                Optional.ofNullable(Policy.fromPreferenceValue(
+                        Config.getPref().get("pluginmanager.time-based-update.policy", "ask"))).orElse(Policy.ASK))
+                .setSelected(true);
 
         String pref = Config.getPref().get("pluginmanager.warntime", null);
         int days = 0;

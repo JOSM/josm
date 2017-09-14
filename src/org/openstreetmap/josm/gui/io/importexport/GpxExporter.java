@@ -231,7 +231,8 @@ public class GpxExporter extends FileExporter implements GpxConstants {
                         () -> Year.now().toString()));
             }
             if (copyright.getText().isEmpty()) {
-                copyright.setText(Optional.ofNullable(data.getString(META_COPYRIGHT_LICENSE)).orElseGet(() -> Config.getPref().get("lastCopyright", "https://creativecommons.org/licenses/by-sa/2.5")));
+                copyright.setText(Optional.ofNullable(data.getString(META_COPYRIGHT_LICENSE)).orElseGet(
+                        () -> Config.getPref().get("lastCopyright", "https://creativecommons.org/licenses/by-sa/2.5")));
                 copyright.setCaretPosition(0);
             }
         } else {
@@ -279,8 +280,10 @@ public class GpxExporter extends FileExporter implements GpxConstants {
             nameLabel.setEnabled(b);
             emailLabel.setEnabled(b);
             if (b) {
-                authorName.setText(Optional.ofNullable(data.getString(META_AUTHOR_NAME)).orElseGet(() -> Config.getPref().get("lastAuthorName")));
-                email.setText(Optional.ofNullable(data.getString(META_AUTHOR_EMAIL)).orElseGet(() -> Config.getPref().get("lastAuthorEmail")));
+                authorName.setText(Optional.ofNullable(data.getString(META_AUTHOR_NAME)).orElseGet(
+                        () -> Config.getPref().get("lastAuthorName")));
+                email.setText(Optional.ofNullable(data.getString(META_AUTHOR_EMAIL)).orElseGet(
+                        () -> Config.getPref().get("lastAuthorEmail")));
             } else {
                 authorName.setText("");
                 email.setText("");
