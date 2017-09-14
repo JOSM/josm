@@ -94,7 +94,8 @@ public class Highways extends Test {
     @Override
     public void visit(Way w) {
         if (w.isUsable()) {
-            if (w.isClosed() && w.hasTag(HIGHWAY, CLASSIFIED_HIGHWAYS) && w.hasTag("junction", "roundabout")) {
+            if (w.isClosed() && w.hasTag(HIGHWAY, CLASSIFIED_HIGHWAYS) && w.hasTag("junction", "roundabout")
+                    && IN_DOWNLOADED_AREA_STRICT.test(w)) {
                 // TODO: find out how to handle splitted roundabouts (see #12841)
                 testWrongRoundabout(w);
             }
