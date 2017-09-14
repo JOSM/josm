@@ -44,6 +44,7 @@ import org.openstreetmap.josm.gui.tagging.presets.TaggingPresetType
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem
 import org.openstreetmap.josm.gui.tagging.presets.items.KeyedItem.MatchType
 import org.openstreetmap.josm.io.CachedFile
+import org.openstreetmap.josm.spi.preferences.Config
 import org.openstreetmap.josm.tools.Logging
 import org.openstreetmap.josm.tools.RightAndLefthandTraffic
 import org.openstreetmap.josm.tools.Territories
@@ -381,6 +382,7 @@ class TagInfoExtract {
         Main.determinePlatformHook()
         Logging.setLogLevel(Logging.LEVEL_INFO)
         Main.pref.enableSaveOnPut(false)
+        Config.setPreferencesInstance(Main.pref)
         Main.setProjection(Projections.getProjectionByCode("EPSG:3857"))
         Path tmpdir = Files.createTempDirectory(FileSystems.getDefault().getPath(base_dir), "pref")
         tmpdir.toFile().deleteOnExit()

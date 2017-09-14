@@ -433,7 +433,7 @@ public final class PluginHandler {
             togglePreferenceKey = "pluginmanager.version-based-update.policy";
         } else {
             long tim = System.currentTimeMillis();
-            long last = Main.pref.getLong("pluginmanager.lastupdate", 0);
+            long last = Config.getPref().getLong("pluginmanager.lastupdate", 0);
             Integer maxTime = Config.getPref().getInt("pluginmanager.time-based-update.interval", DEFAULT_TIME_BASED_UPDATE_INTERVAL);
             long d = TimeUnit.MILLISECONDS.toDays(tim - last);
             if ((last <= 0) || (maxTime <= 0)) {

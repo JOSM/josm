@@ -435,7 +435,7 @@ public class CachedFile implements Closeable {
                 if (maxAge == DEFAULT_MAXTIME
                         || maxAge <= 0 // arbitrary value <= 0 is deprecated
                 ) {
-                    maxAgeMillis = TimeUnit.SECONDS.toMillis(Main.pref.getLong("mirror.maxtime", TimeUnit.DAYS.toSeconds(7)));
+                    maxAgeMillis = TimeUnit.SECONDS.toMillis(Config.getPref().getLong("mirror.maxtime", TimeUnit.DAYS.toSeconds(7)));
                 }
                 age = System.currentTimeMillis() - Long.parseLong(localPathEntry.get(0));
                 if (offline || age < maxAgeMillis) {

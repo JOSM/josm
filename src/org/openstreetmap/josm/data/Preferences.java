@@ -584,7 +584,9 @@ public class Preferences extends AbstractPreferences {
      * @param value The new value
      * @return {@code true}, if something has changed (i.e. value is different than before)
      * @see LongProperty#put(Long)
+     * @deprecated use {@link IPreferences#putLong(java.lang.String, long)}
      */
+    @Deprecated
     public boolean putLong(final String key, final Long value) {
         return put(key, Long.toString(value));
     }
@@ -952,27 +954,6 @@ public class Preferences extends AbstractPreferences {
 
         try {
             return Integer.parseInt(v);
-        } catch (NumberFormatException e) {
-            // fall out
-            Logging.trace(e);
-        }
-        return def;
-    }
-
-    /**
-     * Gets a long preference
-     * @param key The preference key
-     * @param def The default value to use
-     * @return The long value or the default value if it could not be parsed
-     * @see LongProperty#get()
-     */
-    public synchronized long getLong(String key, long def) {
-        String v = get(key, Long.toString(def));
-        if (null == v)
-            return def;
-
-        try {
-            return Long.parseLong(v);
         } catch (NumberFormatException e) {
             // fall out
             Logging.trace(e);

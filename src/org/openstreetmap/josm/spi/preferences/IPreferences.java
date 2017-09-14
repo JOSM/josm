@@ -104,13 +104,29 @@ public interface IPreferences {
     int getInt(String key, int def);
 
     /**
-     * Set a boolean value for a certain setting.
+     * Set an integer value for a certain setting.
      * @param key the unique identifier for the setting
      * @param value The new value
      * @return {@code true}, if something has changed (i.e. value is different than before)
      * @since 12840
      */
     boolean putInt(String key, int value);
+
+    /**
+     * Gets a long preference
+     * @param key The preference key
+     * @param def The default value to use
+     * @return The long value or the default value if it could not be parsed
+     */
+    long getLong(String key, long def);
+
+    /**
+     * Set a long value for a certain setting.
+     * @param key the unique identifier for the setting
+     * @param value The new value
+     * @return {@code true}, if something has changed (i.e. value is different than before)
+     */
+    boolean putLong(String key, long value);
 
     /**
      * Gets a double preference
