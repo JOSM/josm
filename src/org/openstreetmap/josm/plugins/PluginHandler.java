@@ -139,7 +139,8 @@ public final class PluginHandler {
             new DeprecatedPlugin("proj4j", inCore),
             new DeprecatedPlugin("OpenStreetView", tr("replaced by new {0} plugin", "OpenStreetCam")),
             new DeprecatedPlugin("imageryadjust", inCore),
-            new DeprecatedPlugin("walkingpapers", tr("replaced by new {0} plugin", "fieldpapers"))
+            new DeprecatedPlugin("walkingpapers", tr("replaced by new {0} plugin", "fieldpapers")),
+            new DeprecatedPlugin("czechaddress", tr("no longer required"))
         );
     }
 
