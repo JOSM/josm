@@ -15,7 +15,6 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 import javax.swing.event.ChangeListener;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.gui.layer.GpxLayer;
 import org.openstreetmap.josm.gui.widgets.DateEditorWithSlider;
 import org.openstreetmap.josm.spi.preferences.Config;
@@ -103,8 +102,8 @@ public class DateFilterPanel extends JPanel {
      * Called by other components when it is correct time to save date filtering parameters
      */
     public void saveInPrefs() {
-        Main.pref.putLong(prefDateMin, dateFrom.getDate().getTime());
-        Main.pref.putLong(prefDateMax, dateTo.getDate().getTime());
+        Config.getPref().putLong(prefDateMin, dateFrom.getDate().getTime());
+        Config.getPref().putLong(prefDateMax, dateTo.getDate().getTime());
         Config.getPref().putBoolean(prefDate0, noTimestampCb.isSelected());
     }
 
@@ -113,9 +112,9 @@ public class DateFilterPanel extends JPanel {
      * Called by other components when it is needed.
      */
     public void loadFromPrefs() {
-        long t1 = Main.pref.getLong(prefDateMin, 0);
+        long t1 = Config.getPref().getLong(prefDateMin, 0);
         if (t1 != 0) dateFrom.setDate(new Date(t1));
-        long t2 = Main.pref.getLong(prefDateMax, 0);
+        long t2 = Config.getPref().getLong(prefDateMax, 0);
         if (t2 != 0) dateTo.setDate(new Date(t2));
         noTimestampCb.setSelected(Config.getPref().getBoolean(prefDate0, false));
     }

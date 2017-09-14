@@ -58,6 +58,26 @@ public abstract class AbstractPreferences implements IPreferences {
     }
 
     @Override
+    public long getLong(String key, long def) {
+        String v = get(key, Long.toString(def));
+        if (null == v)
+            return def;
+
+        try {
+            return Long.parseLong(v);
+        } catch (NumberFormatException e) {
+            // fall out
+            Logging.trace(e);
+        }
+        return def;
+    }
+
+    @Override
+    public boolean putLong(final String key, final long value) {
+        return put(key, Long.toString(value));
+    }
+
+    @Override
     public synchronized double getDouble(String key, double def) {
         String v = get(key, Double.toString(def));
         if (null == v)
