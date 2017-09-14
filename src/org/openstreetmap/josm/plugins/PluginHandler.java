@@ -138,7 +138,8 @@ public final class PluginHandler {
             new DeprecatedPlugin("josm-geojson", tr("replaced by new {0} plugin", "geojson")),
             new DeprecatedPlugin("proj4j", inCore),
             new DeprecatedPlugin("OpenStreetView", tr("replaced by new {0} plugin", "OpenStreetCam")),
-            new DeprecatedPlugin("imageryadjust", inCore)
+            new DeprecatedPlugin("imageryadjust", inCore),
+            new DeprecatedPlugin("walkingpapers", tr("replaced by new {0} plugin", "fieldpapers"))
         );
     }
 
