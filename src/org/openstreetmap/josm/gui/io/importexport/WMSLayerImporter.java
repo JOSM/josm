@@ -11,7 +11,7 @@ import java.io.ObjectInputStream;
 import java.util.Map;
 
 import org.openstreetmap.josm.actions.ExtensionFileFilter;
-import org.openstreetmap.josm.data.Preferences;
+import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.imagery.ImageryInfo;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
@@ -71,7 +71,7 @@ public class WMSLayerImporter extends FileImporter {
                 zoomTo = (EastNorth) ois.readObject();
 
                 @SuppressWarnings("unchecked")
-                ImageryPreferenceEntry entry = Preferences.deserializeStruct(
+                ImageryPreferenceEntry entry = StructUtils.deserializeStruct(
                         (Map<String, String>) ois.readObject(),
                         ImageryPreferenceEntry.class);
                 info = new ImageryInfo(entry);

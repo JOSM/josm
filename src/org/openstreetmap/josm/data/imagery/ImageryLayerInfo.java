@@ -18,6 +18,7 @@ import java.util.TreeSet;
 import java.util.concurrent.ExecutorService;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.StructUtils;
 import org.openstreetmap.josm.data.imagery.ImageryInfo.ImageryPreferenceEntry;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.io.CachedFile;
@@ -85,7 +86,8 @@ public class ImageryLayerInfo {
      */
     public void load(boolean fastFail) {
         clear();
-        List<ImageryPreferenceEntry> entries = Main.pref.getListOfStructs("imagery.entries", null, ImageryPreferenceEntry.class);
+        List<ImageryPreferenceEntry> entries = StructUtils.getListOfStructs(
+                Config.getPref(), "imagery.entries", null, ImageryPreferenceEntry.class);
         if (entries != null) {
             for (ImageryPreferenceEntry prefEntry : entries) {
                 try {
@@ -361,7 +363,7 @@ public class ImageryLayerInfo {
         for (ImageryInfo info : layers) {
             entries.add(new ImageryPreferenceEntry(info));
         }
-        Main.pref.putListOfStructs("imagery.entries", entries, ImageryPreferenceEntry.class);
+        StructUtils.putListOfStructs(Config.getPref(), "imagery.entries", entries, ImageryPreferenceEntry.class);
     }
 
     /**

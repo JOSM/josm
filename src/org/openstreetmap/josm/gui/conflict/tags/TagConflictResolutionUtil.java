@@ -14,11 +14,12 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import java.util.stream.Collectors;
 
-import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences.pref;
+import org.openstreetmap.josm.data.StructUtils;
+import org.openstreetmap.josm.data.StructUtils.StructEntry;
 import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.data.osm.Tag;
 import org.openstreetmap.josm.data.osm.TagCollection;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Pair;
 
@@ -157,12 +158,13 @@ public final class TagConflictResolutionUtil {
      */
     public static Collection<AutomaticTagConflictResolver> getAutomaticTagConflictResolvers() {
         if (automaticTagConflictResolvers == null) {
-            Collection<AutomaticCombine> automaticTagConflictCombines =
-                    Main.pref.getListOfStructs(
+            Collection<AutomaticCombine> automaticTagConflictCombines = StructUtils.getListOfStructs(
+                            Config.getPref(),
                             "automatic-tag-conflict-resolution.combine",
                             defaultAutomaticTagConflictCombines, AutomaticCombine.class);
             Collection<AutomaticChoiceGroup> automaticTagConflictChoiceGroups =
-                    AutomaticChoiceGroup.groupChoices(Main.pref.getListOfStructs(
+                    AutomaticChoiceGroup.groupChoices(StructUtils.getListOfStructs(
+                            Config.getPref(),
                             "automatic-tag-conflict-resolution.choice",
                             defaultAutomaticTagConflictChoices, AutomaticChoice.class));
             // Use a tmp variable to fully construct the collection before setting
@@ -229,16 +231,16 @@ public final class TagConflictResolutionUtil {
     public static class AutomaticCombine implements AutomaticTagConflictResolver {
 
         /** The Tag key to match */
-        @pref public String key;
+        @StructEntry public String key;
 
         /** A free description */
-        @pref public String description = "";
+        @StructEntry public String description = "";
 
         /** If regular expression must be used to match the Tag key or the value. */
-        @pref public boolean isRegex;
+        @StructEntry public boolean isRegex;
 
         /** The separator to use to combine the values. */
-        @pref public String separator = ";";
+        @StructEntry public String separator = ";";
 
         /** If the combined values must be sorted.
          * Possible values:
@@ -248,7 +250,7 @@ public final class TagConflictResolutionUtil {
          * <li> * - No ordering.</li>
          * </ul>
          */
-        @pref public String sort;
+        @StructEntry public String sort;
 
         /** Default constructor. */
         public AutomaticCombine() {
@@ -316,25 +318,25 @@ public final class TagConflictResolutionUtil {
     public static class AutomaticChoice {
 
         /** The Tag key to match. */
-        @pref public String key;
+        @StructEntry public String key;
 
         /** The name of the {link AutomaticChoice group} this choice belongs to. */
-        @pref public String group;
+        @StructEntry public String group;
 
         /** A free description. */
-        @pref public String description = "";
+        @StructEntry public String description = "";
 
         /** If regular expression must be used to match the Tag key or the value. */
-        @pref public boolean isRegex;
+        @StructEntry public boolean isRegex;
 
         /** The Tag value to match. */
-        @pref public String value;
+        @StructEntry public String value;
 
         /**
          * The score to give to this choice in order to choose the best value
          * Natural String ordering is used to identify the best score.
          */
-        @pref public String score;
+        @StructEntry public String score;
 
         /** Default constructor. */
         public AutomaticChoice() {
@@ -403,13 +405,13 @@ public final class TagConflictResolutionUtil {
     public static class AutomaticChoiceGroup implements AutomaticTagConflictResolver {
 
         /** The Tag key to match. */
-        @pref public String key;
+        @StructEntry public String key;
 
         /** The name of the group. */
         final String group;
 
         /** If regular expression must be used to match the Tag key. */
-        @pref public boolean isRegex;
+        @StructEntry public boolean isRegex;
 
         /** The list of choice to choose from. */
         final List<AutomaticChoice> choices;
