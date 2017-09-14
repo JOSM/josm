@@ -75,7 +75,7 @@ public abstract class CacheCustomContent<T extends Throwable> {
     public CacheCustomContent(String ident, int updateInterval) {
         this.ident = ident;
         this.updateInterval = updateInterval;
-        this.path = new File(Config.getDirs().getCacheDirectory(), ident);
+        this.path = new File(Config.getDirs().getCacheDirectory(true), ident);
     }
 
     /**

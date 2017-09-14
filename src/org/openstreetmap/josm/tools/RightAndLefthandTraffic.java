@@ -152,7 +152,7 @@ public final class RightAndLefthandTraffic {
 
     private static void saveOptimizedBoundaries(Collection<Way> optimizedWays) {
         DataSet ds = optimizedWays.iterator().next().getDataSet();
-        File file = new File(Config.getDirs().getCacheDirectory(), "left-right-hand-traffic.osm");
+        File file = new File(Config.getDirs().getCacheDirectory(true), "left-right-hand-traffic.osm");
         try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8);
              OsmWriter w = OsmWriterFactory.createOsmWriter(new PrintWriter(writer), false, ds.getVersion())
             ) {
@@ -165,7 +165,8 @@ public final class RightAndLefthandTraffic {
     }
 
     private static Collection<Way> loadOptimizedBoundaries() {
-        try (InputStream is = new FileInputStream(new File(Config.getDirs().getCacheDirectory(), "left-right-hand-traffic.osm"))) {
+        try (InputStream is = new FileInputStream(new File(
+                Config.getDirs().getCacheDirectory(false), "left-right-hand-traffic.osm"))) {
            return OsmReader.parseDataSet(is, null).getWays();
         } catch (IllegalDataException | IOException ex) {
             Logging.trace(ex);

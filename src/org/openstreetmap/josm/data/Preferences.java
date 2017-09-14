@@ -330,9 +330,15 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * Returns the user defined preferences directory, containing the preferences.xml file
      * @return The user defined preferences directory, containing the preferences.xml file
      * @since 7834
+     * @deprecated use {@link #getPreferencesDirectory(boolean)}
      */
-    @Override
+    @Deprecated
     public File getPreferencesDirectory() {
+        return getPreferencesDirectory(false);
+    }
+
+    @Override
+    public File getPreferencesDirectory(boolean createIfMissing) {
         if (preferencesDir != null)
             return preferencesDir;
         String path;
@@ -347,6 +353,15 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
                 preferencesDir = Main.platform.getDefaultPrefDirectory();
             }
         }
+        if (createIfMissing && !preferencesDir.exists() && !preferencesDir.mkdirs()) {
+            Logging.warn(tr("Failed to create missing preferences directory: {0}", preferencesDir.getAbsoluteFile()));
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    tr("<html>Failed to create missing preferences directory: {0}</html>", preferencesDir.getAbsoluteFile()),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
         return preferencesDir;
     }
 
@@ -355,9 +370,15 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * Depending on the OS it may be the same directory as preferences directory.
      * @return The user data directory, containing autosave, plugins, etc.
      * @since 7834
+     * @deprecated use {@link #getUserDataDirectory(boolean)}
      */
-    @Override
+    @Deprecated
     public File getUserDataDirectory() {
+        return getUserDataDirectory(false);
+    }
+
+    @Override
+    public File getUserDataDirectory(boolean createIfMissing) {
         if (userdataDir != null)
             return userdataDir;
         String path;
@@ -372,6 +393,15 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
                 userdataDir = Main.platform.getDefaultUserDataDirectory();
             }
         }
+        if (createIfMissing && !userdataDir.exists() && !userdataDir.mkdirs()) {
+            Logging.warn(tr("Failed to create missing user data directory: {0}", userdataDir.getAbsoluteFile()));
+            JOptionPane.showMessageDialog(
+                    Main.parent,
+                    tr("<html>Failed to create missing user data directory: {0}</html>", userdataDir.getAbsoluteFile()),
+                    tr("Error"),
+                    JOptionPane.ERROR_MESSAGE
+            );
+        }
         return userdataDir;
     }
 
@@ -380,7 +410,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @return The user preferences file (preferences.xml)
      */
     public File getPreferenceFile() {
-        return new File(getPreferencesDirectory(), "preferences.xml");
+        return new File(getPreferencesDirectory(false), "preferences.xml");
     }
 
     /**
@@ -388,7 +418,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @return the cache file for default preferences
      */
     public File getDefaultsCacheFile() {
-        return new File(getCacheDirectory(), "default_preferences.xml");
+        return new File(getCacheDirectory(true), "default_preferences.xml");
     }
 
     /**
@@ -396,7 +426,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @return The user plugin directory
      */
     public File getPluginsDirectory() {
-        return new File(getUserDataDirectory(), "plugins");
+        return new File(getUserDataDirectory(false), "plugins");
     }
 
     /**
@@ -405,9 +435,15 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * If the directory doesn't exist on the file system, it will be created by this method.
      *
      * @return the cache directory
+     * @deprecated use {@link #getCacheDirectory(boolean)}
      */
-    @Override
+    @Deprecated
     public File getCacheDirectory() {
+        return getCacheDirectory(true);
+    }
+
+    @Override
+    public File getCacheDirectory(boolean createIfMissing) {
         if (cacheDir != null)
             return cacheDir;
         String path = System.getProperty("josm.cache");
@@ -426,7 +462,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
                 }
             }
         }
-        if (!cacheDir.exists() && !cacheDir.mkdirs()) {
+        if (createIfMissing && !cacheDir.exists() && !cacheDir.mkdirs()) {
             Logging.warn(tr("Failed to create missing cache directory: {0}", cacheDir.getAbsoluteFile()));
             JOptionPane.showMessageDialog(
                     Main.parent,
@@ -453,8 +489,8 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      */
     public Collection<String> getAllPossiblePreferenceDirs() {
         Set<String> locations = new HashSet<>();
-        addPossibleResourceDir(locations, getPreferencesDirectory().getPath());
-        addPossibleResourceDir(locations, getUserDataDirectory().getPath());
+        addPossibleResourceDir(locations, getPreferencesDirectory(false).getPath());
+        addPossibleResourceDir(locations, getUserDataDirectory(false).getPath());
         addPossibleResourceDir(locations, System.getenv("JOSM_RESOURCES"));
         addPossibleResourceDir(locations, System.getProperty("josm.resources"));
         if (Main.isPlatformWindows()) {
@@ -717,7 +753,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
     public void init(boolean reset) {
         initSuccessful = false;
         // get the preferences.
-        File prefDir = getPreferencesDirectory();
+        File prefDir = getPreferencesDirectory(false);
         if (prefDir.exists()) {
             if (!prefDir.isDirectory()) {
                 Logging.warn(tr("Failed to initialize preferences. Preference directory ''{0}'' is not a directory.",

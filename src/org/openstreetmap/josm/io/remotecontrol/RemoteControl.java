@@ -94,7 +94,7 @@ public class RemoteControl {
      * @since 7335
      */
     public static String getRemoteControlDir() {
-        return new File(Config.getDirs().getUserDataDirectory(), "remotecontrol").getAbsolutePath();
+        return new File(Config.getDirs().getUserDataDirectory(true), "remotecontrol").getAbsolutePath();
     }
 
     /**

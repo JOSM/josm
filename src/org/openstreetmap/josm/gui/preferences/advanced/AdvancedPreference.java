@@ -369,7 +369,7 @@ public final class AdvancedPreference extends DefaultTabPreferenceSetting {
                        }
                     }
                 }
-                files = Config.getDirs().getPreferencesDirectory().listFiles();
+                files = Config.getDirs().getPreferencesDirectory(false).listFiles();
                 if (files != null) {
                     for (File f: files) {
                        String s = f.getName();

@@ -55,7 +55,7 @@ public class CachedTileLoaderFactory implements TileLoaderFactory {
     private static StringProperty getTileCacheDir() {
         String defPath = null;
         try {
-            defPath = new File(Config.getDirs().getCacheDirectory(), "tiles").getAbsolutePath();
+            defPath = new File(Config.getDirs().getCacheDirectory(true), "tiles").getAbsolutePath();
         } catch (SecurityException e) {
             Logging.warn(e);
         }

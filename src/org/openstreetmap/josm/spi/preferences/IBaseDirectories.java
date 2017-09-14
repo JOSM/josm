@@ -14,20 +14,29 @@ public interface IBaseDirectories {
     /**
      * Get the directory where user-specific configuration and preferences
      * should be stored.
+     * @param createIfMissing if true, automatically creates this directory,
+     * in case it is missing
      * @return the preferences directory
+     * @since 12856
      */
-    File getPreferencesDirectory();
+    File getPreferencesDirectory(boolean createIfMissing);
 
     /**
      * Get the directory where user-specific data files should be stored.
+     * @param createIfMissing if true, automatically creates this directory,
+     * in case it is missing
      * @return the user data directory
+     * @since 12856
      */
-    File getUserDataDirectory();
+    File getUserDataDirectory(boolean createIfMissing);
 
     /**
      * Get the directory where user-specific cached content (non-essential data)
      * should be stored.
+     * @param createIfMissing if true, automatically creates this directory,
+     * in case it is missing
      * @return the cache directory
+     * @since 12856
      */
-    File getCacheDirectory();
+    File getCacheDirectory(boolean createIfMissing);
 }
