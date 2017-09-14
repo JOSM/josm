@@ -147,7 +147,8 @@ public abstract class RequestHandler {
          * older versions of WMSPlugin.
          */
         PermissionPrefWithDefault permissionPref = getPermissionPref();
-        if (permissionPref != null && permissionPref.pref != null && !Config.getPref().getBoolean(permissionPref.pref, permissionPref.defaultVal)) {
+        if (permissionPref != null && permissionPref.pref != null &&
+                !Config.getPref().getBoolean(permissionPref.pref, permissionPref.defaultVal)) {
             String err = MessageFormat.format("RemoteControl: ''{0}'' forbidden by preferences", myCommand);
             Logging.info(err);
             throw new RequestHandlerForbiddenException(err);

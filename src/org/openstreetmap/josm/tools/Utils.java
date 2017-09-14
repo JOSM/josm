@@ -1685,7 +1685,10 @@ public final class Utils {
      */
     public static String getJavaLatestVersion() {
         try {
-            return HttpClient.create(new URL(Config.getPref().get("java.baseline.version.url", "http://javadl-esd-secure.oracle.com/update/baseline.version")))
+            return HttpClient.create(
+                    new URL(Config.getPref().get(
+                            "java.baseline.version.url",
+                            "http://javadl-esd-secure.oracle.com/update/baseline.version")))
                     .connect().fetchContent().split("\n")[0];
         } catch (IOException e) {
             Logging.error(e);

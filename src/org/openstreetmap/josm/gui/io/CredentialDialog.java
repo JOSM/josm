@@ -355,7 +355,8 @@ public class CredentialDialog extends JDialog {
             super.build();
             tfUserName.setToolTipText(tr("Please enter the user name for authenticating at your proxy server"));
             tfPassword.setToolTipText(tr("Please enter the password for authenticating at your proxy server"));
-            lblHeading.setText("<html>" + tr("Authenticating at the HTTP proxy ''{0}'' failed. Please enter a valid username and a valid password.",
+            lblHeading.setText("<html>" +
+                    tr("Authenticating at the HTTP proxy ''{0}'' failed. Please enter a valid username and a valid password.",
                             Config.getPref().get(DefaultProxySelector.PROXY_HTTP_HOST) + ':' +
                             Config.getPref().get(DefaultProxySelector.PROXY_HTTP_PORT)) + "</html>");
             lblWarning.setText("<html>" +

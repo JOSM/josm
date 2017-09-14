@@ -7,9 +7,13 @@ import java.util.Objects;
  * Class to hold the global preferences object.
  * @since 12847
  */
-public class Config {
+public final class Config {
 
     private static IPreferences preferences;
+
+    private Config() {
+        // hide constructor
+    }
 
     /**
      * Get the preferences.

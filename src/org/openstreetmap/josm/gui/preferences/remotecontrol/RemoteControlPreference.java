@@ -167,8 +167,10 @@ public final class RemoteControlPreference extends DefaultTabPreferenceSetting {
 
         remote.add(Box.createVerticalGlue(), GBC.eol().fill(GBC.VERTICAL));
 
-        loadInNewLayer.setSelected(Config.getPref().getBoolean(RequestHandler.loadInNewLayerKey, RequestHandler.loadInNewLayerDefault));
-        alwaysAskUserConfirm.setSelected(Config.getPref().getBoolean(RequestHandler.globalConfirmationKey, RequestHandler.globalConfirmationDefault));
+        loadInNewLayer.setSelected(Config.getPref().getBoolean(
+                RequestHandler.loadInNewLayerKey, RequestHandler.loadInNewLayerDefault));
+        alwaysAskUserConfirm.setSelected(Config.getPref().getBoolean(
+                RequestHandler.globalConfirmationKey, RequestHandler.globalConfirmationDefault));
 
         ActionListener remoteControlEnabled = e -> {
             GuiHelper.setEnabledRec(wrapper, enableRemoteControl.isSelected());

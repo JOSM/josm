@@ -94,7 +94,8 @@ public class GpxImporter extends FileImporter {
      * @return a GPX file filter
      */
     public static ExtensionFileFilter getFileFilter() {
-        return ExtensionFileFilter.newFilterWithArchiveExtensions("gpx", Config.getPref().get("save.extension.gpx", "gpx"), tr("GPX Files"), true);
+        return ExtensionFileFilter.newFilterWithArchiveExtensions("gpx",
+                Config.getPref().get("save.extension.gpx", "gpx"), tr("GPX Files"), true);
     }
 
     @Override
