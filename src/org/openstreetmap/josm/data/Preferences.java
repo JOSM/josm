@@ -339,18 +339,18 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
 
     @Override
     public File getPreferencesDirectory(boolean createIfMissing) {
-        if (preferencesDir != null)
-            return preferencesDir;
-        String path;
-        path = System.getProperty("josm.pref");
-        if (path != null) {
-            preferencesDir = new File(path).getAbsoluteFile();
-        } else {
-            path = System.getProperty("josm.home");
+        if (preferencesDir == null) {
+            String path;
+            path = System.getProperty("josm.pref");
             if (path != null) {
                 preferencesDir = new File(path).getAbsoluteFile();
             } else {
-                preferencesDir = Main.platform.getDefaultPrefDirectory();
+                path = System.getProperty("josm.home");
+                if (path != null) {
+                    preferencesDir = new File(path).getAbsoluteFile();
+                } else {
+                    preferencesDir = Main.platform.getDefaultPrefDirectory();
+                }
             }
         }
         if (createIfMissing && !preferencesDir.exists() && !preferencesDir.mkdirs()) {
@@ -379,18 +379,18 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
 
     @Override
     public File getUserDataDirectory(boolean createIfMissing) {
-        if (userdataDir != null)
-            return userdataDir;
-        String path;
-        path = System.getProperty("josm.userdata");
-        if (path != null) {
-            userdataDir = new File(path).getAbsoluteFile();
-        } else {
-            path = System.getProperty("josm.home");
+        if (userdataDir == null) {
+            String path;
+            path = System.getProperty("josm.userdata");
             if (path != null) {
                 userdataDir = new File(path).getAbsoluteFile();
             } else {
-                userdataDir = Main.platform.getDefaultUserDataDirectory();
+                path = System.getProperty("josm.home");
+                if (path != null) {
+                    userdataDir = new File(path).getAbsoluteFile();
+                } else {
+                    userdataDir = Main.platform.getDefaultUserDataDirectory();
+                }
             }
         }
         if (createIfMissing && !userdataDir.exists() && !userdataDir.mkdirs()) {
@@ -444,21 +444,21 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
 
     @Override
     public File getCacheDirectory(boolean createIfMissing) {
-        if (cacheDir != null)
-            return cacheDir;
-        String path = System.getProperty("josm.cache");
-        if (path != null) {
-            cacheDir = new File(path).getAbsoluteFile();
-        } else {
-            path = System.getProperty("josm.home");
+        if (cacheDir == null) {
+            String path = System.getProperty("josm.cache");
             if (path != null) {
-                cacheDir = new File(path, "cache");
+                cacheDir = new File(path).getAbsoluteFile();
             } else {
-                path = get("cache.folder", null);
+                path = System.getProperty("josm.home");
                 if (path != null) {
-                    cacheDir = new File(path).getAbsoluteFile();
+                    cacheDir = new File(path, "cache");
                 } else {
-                    cacheDir = Main.platform.getDefaultCacheDirectory();
+                    path = get("cache.folder", null);
+                    if (path != null) {
+                        cacheDir = new File(path).getAbsoluteFile();
+                    } else {
+                        cacheDir = Main.platform.getDefaultCacheDirectory();
+                    }
                 }
             }
         }
