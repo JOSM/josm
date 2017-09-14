@@ -46,7 +46,6 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
-import org.openstreetmap.josm.spi.preferences.IPreferences;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
 import org.openstreetmap.josm.data.preferences.ListListSetting;
 import org.openstreetmap.josm.data.preferences.ListSetting;
@@ -62,6 +61,7 @@ import org.openstreetmap.josm.io.OfflineAccessException;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.spi.preferences.AbstractPreferences;
 import org.openstreetmap.josm.spi.preferences.IBaseDirectories;
+import org.openstreetmap.josm.spi.preferences.IPreferences;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.I18n;
@@ -281,12 +281,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
     }
 
     private ListenerList<PreferenceChangedListener> listenersForKey(String key) {
-        ListenerList<PreferenceChangedListener> keyListener = keyListeners.get(key);
-        if (keyListener == null) {
-            keyListener = ListenerList.create();
-            keyListeners.put(key, keyListener);
-        }
-        return keyListener;
+        return keyListeners.computeIfAbsent(key, k -> ListenerList.create());
     }
 
     /**

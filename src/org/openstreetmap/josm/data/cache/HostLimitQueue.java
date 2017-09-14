@@ -158,11 +158,7 @@ public class HostLimitQueue extends LinkedBlockingDeque<Runnable> {
         Semaphore limit = hostSemaphores.get(host);
         if (limit == null) {
             synchronized (hostSemaphores) {
-                limit = hostSemaphores.get(host);
-                if (limit == null) {
-                    limit = new Semaphore(hostLimit);
-                    hostSemaphores.put(host, limit);
-                }
+                limit = hostSemaphores.computeIfAbsent(host, k -> new Semaphore(hostLimit));
             }
         }
         return limit;

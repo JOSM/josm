@@ -128,13 +128,7 @@ public class RelationChecker extends Test {
     private static Map<String, RoleInfo> buildRoleInfoMap(Relation n) {
         Map<String, RoleInfo> map = new HashMap<>();
         for (RelationMember m : n.getMembers()) {
-            String role = m.getRole();
-            RoleInfo ri = map.get(role);
-            if (ri == null) {
-                ri = new RoleInfo();
-                map.put(role, ri);
-            }
-            ri.total++;
+            map.computeIfAbsent(m.getRole(), k -> new RoleInfo()).total++;
         }
         return map;
     }

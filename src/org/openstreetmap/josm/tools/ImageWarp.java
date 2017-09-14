@@ -90,13 +90,7 @@ public final class ImageWarp {
         }
 
         private Point2D getValue(int xIdx, int yIdx) {
-            Map<Integer, Point2D> row = getRow(yIdx);
-            Point2D val = row.get(xIdx);
-            if (val == null) {
-                val = trfm.transform(new Point2D.Double(xIdx * stride, yIdx * stride));
-                row.put(xIdx, val);
-            }
-            return val;
+            return getRow(yIdx).computeIfAbsent(xIdx, k -> trfm.transform(new Point2D.Double(xIdx * stride, yIdx * stride)));
         }
 
         private Map<Integer, Point2D> getRow(int yIdx) {

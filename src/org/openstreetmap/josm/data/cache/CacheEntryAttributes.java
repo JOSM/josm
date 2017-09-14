@@ -88,13 +88,8 @@ public class CacheEntryAttributes extends ElementAttributes {
      * @return int value of the string
      */
     private long getLongAttr(String key) {
-        String val = attrs.get(key);
-        if (val == null) {
-            attrs.put(key, "0");
-            return 0;
-        }
         try {
-            return Long.parseLong(val);
+            return Long.parseLong(attrs.computeIfAbsent(key, k -> "0"));
         } catch (NumberFormatException e) {
             attrs.put(key, "0");
             return 0;

@@ -107,64 +107,28 @@ public class RelationNodeMap {
     }
 
     private void addPair(Node n, int i) {
-        Set<Integer> ts = map.nodes.get(n);
-        if (ts == null) {
-            ts = new TreeSet<>();
-            map.nodes.put(n, ts);
-        }
-        ts.add(i);
-
-        Set<Node> ts2 = map.ways.get(i);
-        if (ts2 == null) {
-            ts2 = new TreeSet<>();
-            map.ways.put(i, ts2);
-        }
-        ts2.add(n);
+        map.nodes.computeIfAbsent(n, k -> new TreeSet<>()).add(i);
+        map.ways.computeIfAbsent(i, k -> new TreeSet<>()).add(n);
     }
 
     private void addNodeWayMap(Node n, int i) {
-        Set<Integer> ts = onewayMap.nodes.get(n);
-        if (ts == null) {
-            ts = new TreeSet<>();
-            onewayMap.nodes.put(n, ts);
-        }
-        ts.add(i);
+        onewayMap.nodes.computeIfAbsent(n, k -> new TreeSet<>()).add(i);
     }
 
     private void addWayNodeMap(Node n, int i) {
-        Set<Node> ts2 = onewayMap.ways.get(i);
-        if (ts2 == null) {
-            ts2 = new TreeSet<>();
-            onewayMap.ways.put(i, ts2);
-        }
-        ts2.add(n);
+        onewayMap.ways.computeIfAbsent(i, k -> new TreeSet<>()).add(n);
     }
 
     private void addNodeWayMapReverse(Node n, int i) {
-        Set<Integer> ts = onewayReverseMap.nodes.get(n);
-        if (ts == null) {
-            ts = new TreeSet<>();
-            onewayReverseMap.nodes.put(n, ts);
-        }
-        ts.add(i);
+        onewayReverseMap.nodes.computeIfAbsent(n, k -> new TreeSet<>()).add(i);
     }
 
     private void addWayNodeMapReverse(Node n, int i) {
-        Set<Node> ts2 = onewayReverseMap.ways.get(i);
-        if (ts2 == null) {
-            ts2 = new TreeSet<>();
-            onewayReverseMap.ways.put(i, ts2);
-        }
-        ts2.add(n);
+        onewayReverseMap.ways.computeIfAbsent(i, k -> new TreeSet<>()).add(n);
     }
 
     private void addRemainingForward(Node n, int i) {
-        Set<Node> ts2 = remainingOneway.get(i);
-        if (ts2 == null) {
-            ts2 = new TreeSet<>();
-            remainingOneway.put(i, ts2);
-        }
-        ts2.add(n);
+        remainingOneway.computeIfAbsent(i, k -> new TreeSet<>()).add(n);
     }
 
     private Integer firstOneway;
