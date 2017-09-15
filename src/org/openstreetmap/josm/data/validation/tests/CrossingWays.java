@@ -314,15 +314,9 @@ public abstract class CrossingWays extends Test {
      * @return A list with all the cells the segment crosses
      */
     public static List<List<WaySegment>> getSegments(Map<Point2D, List<WaySegment>> cellSegments, EastNorth n1, EastNorth n2) {
-
         List<List<WaySegment>> cells = new ArrayList<>();
         for (Point2D cell : ValUtil.getSegmentCells(n1, n2, OsmValidator.getGridDetail())) {
-            List<WaySegment> segments = cellSegments.get(cell);
-            if (segments == null) {
-                segments = new ArrayList<>();
-                cellSegments.put(cell, segments);
-            }
-            cells.add(segments);
+            cells.add(cellSegments.computeIfAbsent(cell, k -> new ArrayList<>()));
         }
         return cells;
     }

@@ -65,12 +65,7 @@ public class MultiMap<A, B> {
      * @param value value to be associated with the specified key
      */
     public void put(A key, B value) {
-        Set<B> vals = map.get(key);
-        if (vals == null) {
-            vals = new LinkedHashSet<>();
-            map.put(key, vals);
-        }
-        vals.add(value);
+        map.computeIfAbsent(key, k -> new LinkedHashSet<>()).add(value);
     }
 
     /**
@@ -94,12 +89,7 @@ public class MultiMap<A, B> {
      * @param values values to be associated with the specified key
      */
     public void putAll(A key, Collection<B> values) {
-        Set<B> vals = map.get(key);
-        if (vals == null) {
-            vals = new LinkedHashSet<>(values);
-            map.put(key, vals);
-        }
-        vals.addAll(values);
+        map.computeIfAbsent(key, k -> new LinkedHashSet<>(values)).addAll(values);
     }
 
     /**

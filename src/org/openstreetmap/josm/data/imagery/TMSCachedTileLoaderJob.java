@@ -67,12 +67,7 @@ public class TMSCachedTileLoaderJob extends JCSCachedTileLoaderJob<String, Buffe
         if (listener != null) {
             String deduplicationKey = getCacheKey();
             synchronized (inProgress) {
-                Set<TileLoaderListener> newListeners = inProgress.get(deduplicationKey);
-                if (newListeners == null) {
-                    newListeners = new HashSet<>();
-                    inProgress.put(deduplicationKey, newListeners);
-                }
-                newListeners.add(listener);
+                inProgress.computeIfAbsent(deduplicationKey, k -> new HashSet<>()).add(listener);
             }
         }
     }

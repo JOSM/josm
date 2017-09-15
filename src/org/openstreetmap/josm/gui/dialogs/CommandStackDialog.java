@@ -207,20 +207,17 @@ public class CommandStackDialog extends ToggleDialog implements CommandQueueList
 
             @Override
             public void treeNodesInserted(TreeModelEvent e) {
-                updater.updateEnabledState();
-                updateTitle();
+                treeNodesChanged(e);
             }
 
             @Override
             public void treeNodesRemoved(TreeModelEvent e) {
-                updater.updateEnabledState();
-                updateTitle();
+                treeNodesChanged(e);
             }
 
             @Override
             public void treeStructureChanged(TreeModelEvent e) {
-                updater.updateEnabledState();
-                updateTitle();
+                treeNodesChanged(e);
             }
         });
     }

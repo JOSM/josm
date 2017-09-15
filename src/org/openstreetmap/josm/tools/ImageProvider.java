@@ -1321,12 +1321,7 @@ public class ImageProvider {
         Long originalAngle = rotatedAngle != 0 && angleLong == 0 ? Long.valueOf(360L) : angleLong;
 
         synchronized (ROTATE_CACHE) {
-            Map<Long, Image> cacheByAngle = ROTATE_CACHE.get(img);
-            if (cacheByAngle == null) {
-                cacheByAngle = new HashMap<>();
-                ROTATE_CACHE.put(img, cacheByAngle);
-            }
-
+            Map<Long, Image> cacheByAngle = ROTATE_CACHE.computeIfAbsent(img, k -> new HashMap<>());
             Image rotatedImg = cacheByAngle.get(originalAngle);
 
             if (rotatedImg == null) {

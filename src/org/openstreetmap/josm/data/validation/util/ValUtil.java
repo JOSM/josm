@@ -55,23 +55,13 @@ public final class ValUtil {
         // Start of the way
         cell = new Point2D.Double(x0, y0);
         cellNodes.add(cell);
-        List<Way> ways = cellWays.get(cell);
-        if (ways == null) {
-            ways = new ArrayList<>();
-            cellWays.put(cell, ways);
-        }
-        cells.add(ways);
+        cells.add(cellWays.computeIfAbsent(cell, k -> new ArrayList<>()));
 
         // End of the way
         cell = new Point2D.Double(x1, y1);
         if (!cellNodes.contains(cell)) {
             cellNodes.add(cell);
-            ways = cellWays.get(cell);
-            if (ways == null) {
-                ways = new ArrayList<>();
-                cellWays.put(cell, ways);
-            }
-            cells.add(ways);
+            cells.add(cellWays.computeIfAbsent(cell, k -> new ArrayList<>()));
         }
 
         // Then floor coordinates, in case the way is in the border of the cell.
@@ -86,24 +76,14 @@ public final class ValUtil {
         cell = new Point2D.Double(x0, y0);
         if (!cellNodes.contains(cell)) {
             cellNodes.add(cell);
-            ways = cellWays.get(cell);
-            if (ways == null) {
-                ways = new ArrayList<>();
-                cellWays.put(cell, ways);
-            }
-            cells.add(ways);
+            cells.add(cellWays.computeIfAbsent(cell, k -> new ArrayList<>()));
         }
 
         // End of the way
         cell = new Point2D.Double(x1, y1);
         if (!cellNodes.contains(cell)) {
             cellNodes.add(cell);
-            ways = cellWays.get(cell);
-            if (ways == null) {
-                ways = new ArrayList<>();
-                cellWays.put(cell, ways);
-            }
-            cells.add(ways);
+            cells.add(cellWays.computeIfAbsent(cell, k -> new ArrayList<>()));
         }
         return cells;
     }

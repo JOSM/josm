@@ -150,14 +150,7 @@ public class RelationSorter {
             boolean wasAdded = false;
             for (AdditionalSorter sorter : ADDITIONAL_SORTERS) {
                 if (sorter.acceptsMember(m)) {
-                    List<RelationMember> list;
-                    list = customMap.get(sorter);
-                    if (list == null) {
-                        list = new LinkedList<>();
-                        customMap.put(sorter, list);
-                    }
-                    list.add(m);
-                    wasAdded = true;
+                    wasAdded = customMap.computeIfAbsent(sorter, k -> new LinkedList<>()).add(m);
                     break;
                 }
             }

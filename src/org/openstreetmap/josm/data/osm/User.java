@@ -73,12 +73,7 @@ public final class User {
             return lastUser;
         }
 
-        Long ouid = uid;
-        User user = userMap.get(ouid);
-        if (user == null) {
-            user = new User(uid, name);
-            userMap.put(ouid, user);
-        }
+        User user = userMap.computeIfAbsent(uid, k -> new User(uid, name));
         if (name != null) user.addName(name);
 
         lastUser = user;

@@ -670,8 +670,7 @@ public final class MapStatus extends JPanel implements Helpful, Destroyable, Pre
 
                  @Override
                  public void mouseDragged(MouseEvent e) {
-                    l.setBackground(SystemColor.info);
-                    l.setForeground(SystemColor.infoText);
+                     mouseMoved(e);
                  }
             });
             return l;

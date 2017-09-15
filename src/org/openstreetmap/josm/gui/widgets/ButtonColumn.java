@@ -85,7 +85,6 @@ public class ButtonColumn extends AbstractCellEditor implements TableCellRendere
             editButton.setText(value.toString());
             editButton.setIcon(null);
         }
-        this.editorValue = value;
         return editButton;
     }
 

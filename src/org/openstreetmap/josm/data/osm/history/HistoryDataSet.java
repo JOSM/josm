@@ -124,10 +124,7 @@ public class HistoryDataSet implements LayerChangeListener {
      */
     public void put(HistoryOsmPrimitive primitive) {
         PrimitiveId id = new SimplePrimitiveId(primitive.getId(), primitive.getType());
-        if (data.get(id) == null) {
-            data.put(id, new ArrayList<HistoryOsmPrimitive>());
-        }
-        data.get(id).add(primitive);
+        data.computeIfAbsent(id, k-> new ArrayList<>()).add(primitive);
         fireHistoryUpdated(id);
     }
 

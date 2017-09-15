@@ -281,12 +281,7 @@ public class APIDataSet {
         }
 
         public Set<Relation> getChildren(Relation relation) {
-            Set<Relation> p = children.get(relation);
-            if (p == null) {
-                p = new HashSet<>();
-                children.put(relation, p);
-            }
-            return p;
+            return children.computeIfAbsent(relation, k -> new HashSet<>());
         }
 
         public void addDependency(Relation relation, Relation child) {

@@ -505,15 +505,15 @@ public class AutoCompletionManager implements DataSetListener {
         dirty = true;
     }
 
-    private static void registerListeners(AutoCompletionManager autoCompletionManager) {
-        autoCompletionManager.ds.addDataSetListener(autoCompletionManager);
+    private AutoCompletionManager registerListeners() {
+        ds.addDataSetListener(this);
         MainApplication.getLayerManager().addLayerChangeListener(new LayerChangeListener() {
             @Override
             public void layerRemoving(LayerRemoveEvent e) {
                 if (e.getRemovedLayer() instanceof OsmDataLayer
-                        && ((OsmDataLayer) e.getRemovedLayer()).data == autoCompletionManager.ds) {
-                    INSTANCES.remove(autoCompletionManager.ds);
-                    autoCompletionManager.ds.removeDataSetListener(autoCompletionManager);
+                        && ((OsmDataLayer) e.getRemovedLayer()).data == ds) {
+                    INSTANCES.remove(ds);
+                    ds.removeDataSetListener(AutoCompletionManager.this);
                     MainApplication.getLayerManager().removeLayerChangeListener(this);
                 }
             }
@@ -528,6 +528,7 @@ public class AutoCompletionManager implements DataSetListener {
                 // Do nothing
             }
         });
+        return this;
     }
 
     /**
@@ -537,12 +538,6 @@ public class AutoCompletionManager implements DataSetListener {
      * @since 12758
      */
     public static AutoCompletionManager of(DataSet dataSet) {
-        AutoCompletionManager result = INSTANCES.get(dataSet);
-        if (result == null) {
-            result = new AutoCompletionManager(dataSet);
-            INSTANCES.put(dataSet, result);
-            registerListeners(result);
-        }
-        return result;
+        return INSTANCES.computeIfAbsent(dataSet, ds -> new AutoCompletionManager(ds).registerListeners());
     }
 }
