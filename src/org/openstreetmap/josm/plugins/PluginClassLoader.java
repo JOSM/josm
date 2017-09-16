@@ -4,7 +4,9 @@ package org.openstreetmap.josm.plugins;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
 
 import org.openstreetmap.josm.tools.Logging;
 
@@ -12,12 +14,12 @@ import org.openstreetmap.josm.tools.Logging;
  * Class loader for JOSM plugins.
  * <p>
  * In addition to the classes in the plugin jar file, it loads classes of required
- * plugins. The JOSM core classes should be provided by the the parent class loader.
+ * plugins. The JOSM core classes should be provided by the parent class loader.
  * @since 12322
  */
 public class PluginClassLoader extends URLClassLoader {
 
-    Collection<PluginClassLoader> dependencies;
+    private final Collection<PluginClassLoader> dependencies;
 
     static {
         ClassLoader.registerAsParallelCapable();
@@ -38,28 +40,47 @@ public class PluginClassLoader extends URLClassLoader {
      * Add class loader of a required plugin.
      * This plugin will have access to the classes of the dependent plugin
      * @param dependency the class loader of the required plugin
+     * @return {@code true} if the collection of dependencies changed as a result of the call
+     * @since 12867
      */
-    public void addDependency(PluginClassLoader dependency) {
-        dependencies.add(dependency);
+    public boolean addDependency(PluginClassLoader dependency) {
+        // Add dependency only if not already present (directly or transitively through another one)
+        boolean result = !dependencies.contains(Objects.requireNonNull(dependency, "dependency"))
+                && !dependencies.stream().anyMatch(pcl -> pcl.dependencies.contains(dependency))
+                && dependencies.add(dependency);
+        if (result) {
+            // Now, remove top-level single dependencies, which would be children of the added one
+            dependencies.removeIf(pcl -> pcl.dependencies.isEmpty() && dependency.dependencies.contains(pcl));
+        }
+        return result;
     }
 
     @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
-        for (PluginClassLoader dep : dependencies) {
-            try {
-                Class<?> result = dep.loadClass(name, resolve);
-                if (result != null) {
-                    return result;
+        Class<?> result = findLoadedClass(name);
+        if (result == null) {
+            for (PluginClassLoader dep : dependencies) {
+                try {
+                    result = dep.loadClass(name, resolve);
+                    if (result != null) {
+                        return result;
+                    }
+                } catch (ClassNotFoundException e) {
+                    // do nothing
+                    Logging.trace("Plugin class not found in {0}: {1}", dep, e.getMessage());
                 }
-            } catch (ClassNotFoundException e) {
-                // do nothing
-                Logging.trace("Plugin class not found in {0}: {1}", dep, e.getMessage());
             }
+            result = super.loadClass(name, resolve);
         }
-        Class<?> result = super.loadClass(name, resolve);
         if (result != null) {
             return result;
         }
         throw new ClassNotFoundException(name);
+    }
+
+    @Override
+    public String toString() {
+        return "PluginClassLoader [urls=" + Arrays.toString(getURLs()) +
+                (dependencies.isEmpty() ? "" : ", dependencies=" + dependencies) + ']';
     }
 }

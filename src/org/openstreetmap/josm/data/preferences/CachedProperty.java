@@ -50,7 +50,7 @@ public abstract class CachedProperty<T> extends AbstractProperty<T> implements P
     @Override
     public final boolean put(T value) {
         // Not used
-        throw new IllegalAccessError("You cannot use put(T). Use put(String) instead.");
+        throw new UnsupportedOperationException("You cannot use put(T). Use put(String) instead.");
     }
 
     public int getUpdateCount() {
