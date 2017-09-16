@@ -306,7 +306,7 @@ public final class PluginHandler {
     static {
         try {
             sources.add(ClassLoader.getSystemClassLoader());
-            sources.add(org.openstreetmap.josm.gui.MainApplication.class.getClassLoader());
+            sources.add(PluginHandler.class.getClassLoader());
         } catch (SecurityException ex) {
             Logging.debug(ex);
             sources.add(ImageProvider.class.getClassLoader());
@@ -861,6 +861,7 @@ public final class PluginHandler {
             }
 
             extendJoinedPluginResourceCL(toLoad);
+            ImageProvider.addAdditionalClassLoaders(getResourceClassLoaders());
             monitor.setTicksCount(toLoad.size());
             for (PluginInformation info : toLoad) {
                 monitor.setExtraText(tr("Loading plugin ''{0}''...", info.name));
