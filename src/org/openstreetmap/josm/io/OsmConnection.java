@@ -49,7 +49,7 @@ public class OsmConnection {
         void obtainAccessToken(URL serverUrl) throws InvocationTargetException, InterruptedException;
     }
 
-    static OAuthAccessTokenFetcher fetcher = u -> {
+    static volatile OAuthAccessTokenFetcher fetcher = u -> {
         throw new JosmRuntimeException("OsmConnection.setOAuthAccessTokenFetcher() has not been called");
     };
 

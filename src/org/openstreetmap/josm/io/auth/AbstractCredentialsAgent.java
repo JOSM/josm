@@ -36,7 +36,8 @@ public abstract class AbstractCredentialsAgent implements CredentialsAgent {
                 String username, String password, String host);
     }
 
-    private static CredentialsProvider credentialsProvider = (a, b, c, d, e, f) -> Logging.error("Credentials provider has not been set");
+    private static volatile CredentialsProvider credentialsProvider =
+            (a, b, c, d, e, f) -> Logging.error("Credentials provider has not been set");
 
     /**
      * Sets the global credentials provider.

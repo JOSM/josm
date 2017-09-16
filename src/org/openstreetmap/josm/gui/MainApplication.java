@@ -177,7 +177,7 @@ public class MainApplication extends Main {
     /**
      * Command-line arguments used to run the application.
      */
-    private static List<String> commandLineArgs;
+    private static volatile List<String> commandLineArgs;
 
     /**
      * The main menu bar at top of screen.
@@ -225,7 +225,7 @@ public class MainApplication extends Main {
      * The commands undo/redo handler.
      * @since 12641
      */
-    public static UndoRedoHandler undoRedo;
+    public static volatile UndoRedoHandler undoRedo;
 
     private static final LayerChangeListener undoRedoCleaner = new LayerChangeListener() {
         @Override

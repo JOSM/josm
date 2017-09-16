@@ -23,7 +23,7 @@ import org.openstreetmap.josm.data.projection.Projections;
 public final class OsmUrlToBounds {
     private static final String SHORTLINK_PREFIX = "http://osm.org/go/";
 
-    private static Supplier<Dimension> mapSize = () -> new Dimension(800, 600);
+    private static volatile Supplier<Dimension> mapSize = () -> new Dimension(800, 600);
 
     private OsmUrlToBounds() {
         // Hide default constructor for utils classes

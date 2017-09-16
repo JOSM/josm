@@ -32,7 +32,7 @@ import org.openstreetmap.josm.tools.Utils;
  */
 public final class PreferencesUtils {
 
-    private static StringBuilder summary = new StringBuilder();
+    private static volatile StringBuilder summary = new StringBuilder();
 
     private PreferencesUtils() {
         // Hide implicit public constructor for utility class

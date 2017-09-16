@@ -46,7 +46,7 @@ public final class MessageNotifier {
         void notifyNewMessages(UserInfo userInfo);
     }
 
-    private static NotifierCallback callback;
+    private static volatile NotifierCallback callback;
 
     /**
      * Sets the {@link NotifierCallback} responsible of notifying the user when new messages are received.
