@@ -71,7 +71,7 @@ public class BugReportSender extends Thread {
         }
     };
 
-    private static BugReportSendingHandler handler = FALLBACK_BUGREPORT_SENDING_HANDLER;
+    private static volatile BugReportSendingHandler handler = FALLBACK_BUGREPORT_SENDING_HANDLER;
 
     private final String statusText;
     private String errorMessage;

@@ -102,7 +102,7 @@ public class DeleteCommand extends Command {
         boolean confirmDeletionFromRelation(Collection<RelationToChildReference> references);
     }
 
-    private static DeletionCallback callback;
+    private static volatile DeletionCallback callback;
 
     /**
      * Sets the global {@link DeletionCallback}.

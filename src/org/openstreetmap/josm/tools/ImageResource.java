@@ -208,6 +208,7 @@ public class ImageResource {
                 Image mrImg = HiDPISupport.getMultiResolutionImage(img, this);
                 return new ImageIcon(mrImg);
             } catch (NoClassDefFoundError e) {
+                Logging.trace(e);
                 return new ImageIcon(img);
             }
         }

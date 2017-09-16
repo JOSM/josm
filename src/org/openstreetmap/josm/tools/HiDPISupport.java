@@ -214,6 +214,7 @@ public final class HiDPISupport {
                     } catch (ClassNotFoundException ex) {
                         // class is not present in Java 8
                         baseMultiResolutionImageClass = Optional.empty();
+                        Logging.trace(ex);
                     }
                 }
             }

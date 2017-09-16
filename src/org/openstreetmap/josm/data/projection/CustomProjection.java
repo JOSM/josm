@@ -665,7 +665,7 @@ public class CustomProjection extends AbstractProjection {
             return LatLonParser.parseCoordinate(angleStr);
         } catch (IllegalArgumentException e) {
             throw new ProjectionConfigurationException(
-                    tr("Unable to parse value ''{1}'' of parameter ''{0}'' as coordinate value.", parameterName, angleStr));
+                    tr("Unable to parse value ''{1}'' of parameter ''{0}'' as coordinate value.", parameterName, angleStr), e);
         }
     }
 

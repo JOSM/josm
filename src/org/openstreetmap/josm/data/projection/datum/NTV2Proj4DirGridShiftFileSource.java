@@ -65,6 +65,7 @@ public final class NTV2Proj4DirGridShiftFileSource implements NTV2GridShiftFileS
                 return new FileInputStream(grid.getAbsoluteFile());
             } catch (FileNotFoundException ex) {
                 Logging.warn("NTV2 grid shift file not found: " + grid);
+                Logging.trace(ex);
             }
         }
         return null;
