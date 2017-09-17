@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 ###########################################################################
-# Java API Compliance Checker (JAPICC) 2.1
+# Java API Compliance Checker (JAPICC) 2.3
 # A tool for checking backward compatibility of a Java library API
 #
 # Written by Andrey Ponomarenko
@@ -42,9 +42,9 @@ use File::Basename qw(dirname);
 use Cwd qw(abs_path cwd);
 use Data::Dumper;
 
-my $TOOL_VERSION = "2.1";
-my $API_DUMP_VERSION = "2.1";
-my $API_DUMP_VERSION_MIN = "2.0";
+my $TOOL_VERSION = "2.3";
+my $API_DUMP_VERSION = "2.2";
+my $API_DUMP_VERSION_MIN = "2.2";
 
 # Internal modules
 my $MODULES_DIR = getModules();
@@ -109,6 +109,7 @@ GetOptions("h|help!" => \$In::Opt{"Help"},
   "skip-internal-packages|skip-internal=s" => \$In::Opt{"SkipInternalPackages"},
   "skip-internal-types=s" => \$In::Opt{"SkipInternalTypes"},
   "dump|dump-api=s" => \$In::Opt{"DumpAPI"},
+  "check-packages=s" => \$In::Opt{"CheckPackages"},
   "classes-list=s" => \$In::Opt{"ClassListPath"},
   "annotations-list=s" => \$In::Opt{"AnnotationsListPath"},
   "skip-annotations-list=s" => \$In::Opt{"SkipAnnotationsListPath"},
@@ -290,16 +291,23 @@ EXTRA OPTIONS:
         *examples*
   
   -skip-internal-packages PATTERN
-      Do not check packages matched by the pattern.
+      Do not check packages matched by the regular expression.
   
   -skip-internal-types PATTERN
-      Do not check types (classes and interfaces) matched by the pattern.
+      Do not check types (classes and interfaces) matched by the regular
+      expression. It's matched against full qualified type names (e.g.
+      'org.xyz.Name<T>'). It has to match any part of type name.
   
   -dump|-dump-api PATH
       Dump library API to gzipped TXT format file. You can transfer it
       anywhere and pass instead of the descriptor. Also it may be used
-      for debugging the tool.
-      
+      for debugging the tool. PATH is the path to the Java archive or
+      XML descriptor of the library.
+  
+  -check-packages PATTERN
+      Check packages matched by the regular expression. Other packages
+      will not be checked.
+  
   -classes-list PATH
       This option allows to specify a file with a list
       of classes that should be checked, other classes will not be checked.
@@ -441,6 +449,8 @@ sub helpMsg() {
 #Aliases
 my (%MethodInfo, %TypeInfo, %TName_Tid) = ();
 
+my %TName_Tid_Generic = ();
+
 #Separate checked and unchecked exceptions
 my %KnownRuntimeExceptions= map {$_=>1} (
     "java.lang.AnnotationTypeMismatchException",
@@ -521,6 +531,7 @@ my %CheckedTypes;
 #Classes
 my %LibArchives;
 my %Class_Methods;
+my %Class_Methods_Generic;
 my %Class_AbstractMethods;
 my %Class_Fields;
 my %ClassMethod_AddedUsed;
@@ -529,6 +540,7 @@ my %Class_Constructed;
 #Methods
 my %CheckedMethods;
 my %MethodUsed;
+my %OldMethodSignature;
 
 #Merging
 my %AddedMethod_Abstract;
@@ -536,6 +548,7 @@ my %RemovedMethod_Abstract;
 my %ChangedReturnFromVoid;
 my %CompatRules;
 my %IncompleteRules;
+my %UnknownRules;
 
 #Report
 my %TypeChanges;
@@ -622,7 +635,8 @@ sub mergeClasses()
     foreach my $ClassName (keys(%{$Class_Methods{1}}))
     {
         next if(not $ClassName);
-        my $Type1 = getType($TName_Tid{1}{$ClassName}, 1);
+        my $Type1_Id = $TName_Tid{1}{$ClassName};
+        my $Type1 = getType($Type1_Id, 1);
         
         if($Type1->{"Type"}!~/class|interface/) {
             next;
@@ -633,12 +647,77 @@ sub mergeClasses()
             next;
         }
         
-        if(not classFilter($Type1, 1, 0)) {
+        if(not classFilter($Type1, 1, 1)) {
             next;
         }
         
-        my $Type2_Id = $TName_Tid{2}{$ClassName};
-        if(not $Type2_Id)
+        my $GenericName = getGeneric($ClassName);
+        my $Type2_Id = undef;
+        
+        if(defined $TName_Tid{2}{$ClassName}) {
+            $Type2_Id = $TName_Tid{2}{$ClassName};
+        }
+        elsif(defined $TName_Tid_Generic{2}{$GenericName}) {
+            $Type2_Id = $TName_Tid_Generic{2}{$GenericName};
+        }
+        
+        if($Type2_Id)
+        {
+            my $TName1 = $Type1->{"Name"};
+            my $TName2 = getTypeName($Type2_Id, 2);
+            
+            my $Generic1 = (index($TName1, "<")!=-1);
+            my $Generic2 = (index($TName2, "<")!=-1);
+            
+            if($Generic1 ne $Generic2)
+            { # removed generic parameters
+                foreach my $Method (keys(%{$Class_Methods{1}{$ClassName}}))
+                {
+                    if(not methodFilter($Method, 1)) {
+                        next;
+                    }
+                    
+                    $CheckedTypes{$ClassName} = 1;
+                    $CheckedMethods{$Method} = 1;
+                    
+                    if($Type1->{"Type"} eq "class")
+                    {
+                        if($Generic1)
+                        {
+                            %{$CompatProblems{$Method}{"Class_Became_Raw"}{"this"}} = (
+                                "Type_Name"=>$ClassName,
+                                "New_Value"=>$TName2,
+                                "Target"=>$ClassName);
+                        }
+                        else
+                        {
+                            %{$CompatProblems{$Method}{"Class_Became_Generic"}{"this"}} = (
+                                "Type_Name"=>$ClassName,
+                                "New_Value"=>$TName2,
+                                "Target"=>$ClassName);
+                        }
+                    }
+                    else
+                    {
+                        if($Generic1)
+                        {
+                            %{$CompatProblems{$Method}{"Interface_Became_Raw"}{"this"}} = (
+                                "Type_Name"=>$ClassName,
+                                "New_Value"=>$TName2,
+                                "Target"=>$ClassName);
+                        }
+                        else
+                        {
+                            %{$CompatProblems{$Method}{"Interface_Became_Generic"}{"this"}} = (
+                                "Type_Name"=>$ClassName,
+                                "New_Value"=>$TName2,
+                                "Target"=>$ClassName);
+                        }
+                    }
+                }
+            }
+        }
+        else
         { # classes and interfaces with public methods
             foreach my $Method (keys(%{$Class_Methods{1}{$ClassName}}))
             {
@@ -685,8 +764,17 @@ sub mergeClasses()
         }
         
         my $ClassName = $Class1->{"Name"};
+        my $GenericName = getGeneric($ClassName);
+        my $Class2_Id = undef;
         
-        if(my $Class2_Id = $TName_Tid{2}{$ClassName})
+        if(defined $TName_Tid{2}{$ClassName}) {
+            $Class2_Id = $TName_Tid{2}{$ClassName};
+        }
+        elsif(defined $TName_Tid_Generic{2}{$GenericName}) {
+            $Class2_Id = $TName_Tid_Generic{2}{$GenericName};
+        }
+        
+        if($Class2_Id)
         { # classes and interfaces with public static fields
             if(not defined $Class_Methods{1}{$ClassName})
             {
@@ -868,9 +956,15 @@ sub mergeTypes($$)
     
     return {} if(not $Type1{"Name"} or not $Type2{"Name"});
     return {} if(not $Type1{"Archive"} or not $Type2{"Archive"});
-    return {} if($Type1{"Name"} ne $Type2{"Name"});
+    if($Type1{"Name"} ne $Type2{"Name"})
+    {
+        if(getGeneric($Type1{"Name"}) ne getGeneric($Type2{"Name"}))
+        { # compare type declarations if became generic or raw
+            return {};
+        }
+    }
     
-    if(not classFilter(\%Type1, 1, 0)) {
+    if(not classFilter(\%Type1, 1, 1)) {
         return {};
     }
     
@@ -924,7 +1018,7 @@ sub mergeTypes($$)
     
     pushType($Type1_Id, $Type2_Id);
     
-    foreach my $AddedMethod (keys(%{$AddedMethod_Abstract{$Type1{"Name"}}}))
+    foreach my $AddedMethod (keys(%{$AddedMethod_Abstract{$Type2{"Name"}}}))
     {
         if($Type1{"Type"} eq "class")
         {
@@ -999,53 +1093,51 @@ sub mergeTypes($$)
         my $SuperClassName1 = $SuperClass1->{"Name"};
         my $SuperClassName2 = $SuperClass2->{"Name"};
         
+        # Java 6: java.lang.Object
+        # Java 7: none
+        if(not $SuperClassName1) {
+            $SuperClassName1 = "java.lang.Object";
+        }
+        
+        if(not $SuperClassName2) {
+            $SuperClassName2 = "java.lang.Object";
+        }
+        
         if($SuperClassName2 ne $SuperClassName1)
         {
-            if($SuperClassName1 eq "java.lang.Object"
-            or not $SuperClassName1)
+            if($SuperClassName1 eq "java.lang.Object")
             {
-              # Java 6: java.lang.Object
-              # Java 7: none
-                if($SuperClassName2 ne "java.lang.Object")
+                if($SuperClass2->{"Abstract"}
+                and $Type1{"Abstract"} and $Type2{"Abstract"}
+                and keys(%{$Class_AbstractMethods{2}{$SuperClassName2}}))
                 {
-                    if($SuperClass2->{"Abstract"}
-                    and $Type1{"Abstract"} and $Type2{"Abstract"}
-                    and keys(%{$Class_AbstractMethods{2}{$SuperClassName2}}))
+                    if(my ($Invoked, $InvokedBy) = getInvoked($Type1{"Name"}))
                     {
-                        if(my ($Invoked, $InvokedBy) = getInvoked($Type1{"Name"}))
-                        {
-                            %{$SubProblems{"Abstract_Class_Added_Super_Abstract_Class_Invoked_By_Others"}{""}} = (
-                                "Type_Name"=>$Type1{"Name"},
-                                "Target"=>$SuperClassName2,
-                                "Invoked"=>$Invoked,
-                                "Invoked_By"=>$InvokedBy);
-                        }
-                        else
-                        {
-                            %{$SubProblems{"Abstract_Class_Added_Super_Abstract_Class"}{""}} = (
-                                "Type_Name"=>$Type1{"Name"},
-                                "Target"=>$SuperClassName2);
-                        }
+                        %{$SubProblems{"Abstract_Class_Added_Super_Abstract_Class_Invoked_By_Others"}{""}} = (
+                            "Type_Name"=>$Type1{"Name"},
+                            "Target"=>$SuperClassName2,
+                            "Invoked"=>$Invoked,
+                            "Invoked_By"=>$InvokedBy);
                     }
                     else
                     {
-                        %{$SubProblems{"Added_Super_Class"}{""}} = (
+                        %{$SubProblems{"Abstract_Class_Added_Super_Abstract_Class"}{""}} = (
                             "Type_Name"=>$Type1{"Name"},
                             "Target"=>$SuperClassName2);
                     }
                 }
-            }
-            elsif($SuperClassName2 eq "java.lang.Object"
-            or not $SuperClassName2)
-            {
-              # Java 6: java.lang.Object
-              # Java 7: none
-                if($SuperClassName1 ne "java.lang.Object")
+                else
                 {
-                    %{$SubProblems{"Removed_Super_Class"}{""}} = (
+                    %{$SubProblems{"Added_Super_Class"}{""}} = (
                         "Type_Name"=>$Type1{"Name"},
-                        "Target"=>$SuperClassName1);
+                        "Target"=>$SuperClassName2);
                 }
+            }
+            elsif($SuperClassName2 eq "java.lang.Object")
+            {
+                %{$SubProblems{"Removed_Super_Class"}{""}} = (
+                    "Type_Name"=>$Type1{"Name"},
+                    "Target"=>$SuperClassName1);
             }
             else
             {
@@ -1336,7 +1428,7 @@ sub mergeTypes($$)
             }
         }
         
-        my %Sub_SubChanges = detectTypeChange($FieldType1_Id, $FieldType2_Id, "Field");
+        my %Sub_SubChanges = detectTypeChange(\%Type1, \%Type2, $FieldType1_Id, $FieldType2_Id, "Field");
         foreach my $Sub_SubProblemType (keys(%Sub_SubChanges))
         {
             %{$SubProblems{$Sub_SubProblemType}{$Field_Name}}=(
@@ -1459,7 +1551,16 @@ sub getMShort($)
 sub findMethod($$$$)
 {
     my ($Method, $MethodVersion, $ClassName, $ClassVersion) = @_;
-    my $ClassId = $TName_Tid{$ClassVersion}{$ClassName};
+    
+    my $GenericName = getGeneric($ClassName);
+    my $ClassId = undef;
+    
+    if(defined $TName_Tid{$ClassVersion}{$ClassName}) {
+        $ClassId = $TName_Tid{$ClassVersion}{$ClassName};
+    }
+    elsif(defined $TName_Tid_Generic{$ClassVersion}{$GenericName}) {
+        $ClassId = $TName_Tid_Generic{$ClassVersion}{$GenericName};
+    }
     
     if($ClassId)
     {
@@ -1516,16 +1617,27 @@ sub findMethod($$$$)
 sub findMethod_Class($$$)
 {
     my ($Method, $ClassName, $ClassVersion) = @_;
+    
     my $TargetSuffix = getMSuffix($Method);
     my $TargetShortName = getMShort($Method);
+    my $GenericName = getGeneric($ClassName);
     
-    if(not defined $Class_Methods{$ClassVersion}{$ClassName}) {
+    my @Candidates = ();
+    
+    if(defined $Class_Methods{$ClassVersion}{$ClassName}) {
+        @Candidates = keys(%{$Class_Methods{$ClassVersion}{$ClassName}});
+    }
+    elsif(defined $Class_Methods_Generic{$ClassVersion}{$GenericName}) {
+        @Candidates = keys(%{$Class_Methods_Generic{$ClassVersion}{$GenericName}});
+    }
+    else {
         return undef;
     }
     
-    foreach my $Candidate (sort keys(%{$Class_Methods{$ClassVersion}{$ClassName}}))
+    foreach my $Candidate (sort @Candidates)
     { # search for method with the same parameters suffix
         next if($MethodInfo{$ClassVersion}{$Candidate}{"Constructor"});
+        
         if($TargetSuffix eq getMSuffix($Candidate))
         {
             if($TargetShortName eq getMShort($Candidate)) {
@@ -1535,6 +1647,13 @@ sub findMethod_Class($$$)
     }
     
     return undef;
+}
+
+sub getBaseSignature($)
+{
+    my $Method = $_[0];
+    $Method=~s/\)(.+)\Z/\)/g;
+    return $Method;
 }
 
 sub prepareData($)
@@ -1556,6 +1675,11 @@ sub prepareData($)
         my $TName = $TypeAttr->{"Name"};
         
         $TName_Tid{$LVer}{$TName} = $TypeId;
+        
+        if(defined $TypeAttr->{"Archive"})
+        { # declaration
+            $TName_Tid_Generic{$LVer}{getGeneric($TName)} = $TypeId;
+        }
         
         if(not $TypeAttr->{"Dep"})
         {
@@ -1589,6 +1713,8 @@ sub prepareData($)
         {
             my $CName = getTypeName($ClassId, $LVer);
             $Class_Methods{$LVer}{$CName}{$Method} = 1;
+            $Class_Methods_Generic{$LVer}{getGeneric($CName)}{$Method} = 1;
+            
             if($MAttr->{"Abstract"}) {
                 $Class_AbstractMethods{$LVer}{$CName}{$Method} = 1;
             }
@@ -1602,6 +1728,11 @@ sub prepareData($)
             else {
                 registerUsage($MAttr->{"Return"}, $LVer);
             }
+        }
+        
+        if($LVer==1 and not $MAttr->{"Constructor"}
+        and my $BaseSign = getBaseSignature($Method)) {
+            $OldMethodSignature{$BaseSign} = $Method;
         }
     }
 }
@@ -1856,6 +1987,30 @@ sub mergeParameters($$$)
     
     # checking type declaration changes
     my $SubProblems = mergeTypes($ParamType1_Id, $ParamType2_Id);
+    
+    my $Type1 = getType($ParamType1_Id, 1);
+    my $Type2 = getType($ParamType2_Id, 2);
+    
+    if($Type1->{"Name"} ne $Type2->{"Name"})
+    {
+        if(index($Type1->{"Name"}, "...")!=-1 and index($Type2->{"Name"}, "[]")!=-1)
+        {
+            %{$CompatProblems{$Method}{"Variable_Arity_To_Array"}{$Parameter_Name}} = (
+                "Type_Name"=>getTypeName($MethodInfo{1}{$Method}{"Class"}, 1),
+                "Param_Name"=>$Parameter_Name,
+                "Old_Value"=>$Type1->{"Name"},
+                "New_Value"=>$Type2->{"Name"});
+        }
+        elsif(index($Type1->{"Name"}, "[]")!=-1 and index($Type2->{"Name"}, "...")!=-1)
+        {
+            %{$CompatProblems{$Method}{"Array_To_Variable_Arity"}{$Parameter_Name}} = (
+                "Type_Name"=>getTypeName($MethodInfo{1}{$Method}{"Class"}, 1),
+                "Param_Name"=>$Parameter_Name,
+                "Old_Value"=>$Type1->{"Name"},
+                "New_Value"=>$Type2->{"Name"});
+        }
+    }
+    
     foreach my $SubProblemType (keys(%{$SubProblems}))
     {
         foreach my $SubLocation (keys(%{$SubProblems->{$SubProblemType}}))
@@ -1866,9 +2021,9 @@ sub mergeParameters($$$)
     }
 }
 
-sub detectTypeChange($$$)
+sub detectTypeChange($$$$$)
 {
-    my ($Type1_Id, $Type2_Id, $Prefix) = @_;
+    my ($Ct1, $Ct2, $Type1_Id, $Type2_Id, $Prefix) = @_;
     my %LocalProblems = ();
     
     my $Type1 = getType($Type1_Id, 1);
@@ -1876,6 +2031,23 @@ sub detectTypeChange($$$)
     
     my $Type1_Name = $Type1->{"Name"};
     my $Type2_Name = $Type2->{"Name"};
+    
+    my $Type1_Show = $Type1_Name;
+    my $Type2_Show = $Type2_Name;
+    
+    if(defined $Ct1->{"GenericParam"}
+    and defined $Ct1->{"GenericParam"}{$Type1_Name})
+    {
+        $Type1_Name = getTypeName($Ct1->{"GenericParam"}{$Type1_Name}, 1);
+        $Type1_Show .= " extends ".$Type1_Name;
+    }
+    
+    if(defined $Ct2->{"GenericParam"}
+    and defined $Ct2->{"GenericParam"}{$Type2_Name})
+    {
+        $Type2_Name = getTypeName($Ct2->{"GenericParam"}{$Type2_Name}, 2);
+        $Type2_Show .= " extends ".$Type2_Name;
+    }
     
     my $Type1_Base = undef;
     my $Type2_Base = undef;
@@ -1896,6 +2068,7 @@ sub detectTypeChange($$$)
     
     return () if(not $Type1_Name or not $Type2_Name);
     return () if(not $Type1_Base->{"Name"} or not $Type2_Base->{"Name"});
+    
     if($Type1_Base->{"Name"} ne $Type2_Base->{"Name"} and $Type1_Name eq $Type2_Name)
     {# base type change
         %{$LocalProblems{"Changed_".$Prefix."_BaseType"}}=(
@@ -1905,8 +2078,8 @@ sub detectTypeChange($$$)
     elsif($Type1_Name ne $Type2_Name)
     {# type change
         %{$LocalProblems{"Changed_".$Prefix."_Type"}}=(
-            "Old_Value"=>$Type1_Name,
-            "New_Value"=>$Type2_Name);
+            "Old_Value"=>$Type1_Show,
+            "New_Value"=>$Type2_Show);
     }
     return %LocalProblems;
 }
@@ -1952,7 +2125,8 @@ sub getSignature($$$)
     
     # settings
     my ($Full, $Html, $Simple, $Italic, $Color,
-    $ShowParams, $ShowClass, $ShowAttr, $Desc, $Target) = (0, 0, 0, 0, 0, 0, 0, 0, 0, undef);
+    $ShowParams, $ShowClass, $ShowAttr, $Desc,
+    $ShowReturn, $Target) = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, undef);
     
     if($Kind=~/Full/) {
         $Full = 1;
@@ -1984,10 +2158,13 @@ sub getSignature($$$)
     if($Kind=~/Desc/) {
         $Desc = 1;
     }
+    if($Kind=~/Return/) {
+        $ShowReturn = 1;
+    }
     
     if(not defined $MethodInfo{$LVer}{$Method}{"ShortName"})
     { # from java.lang.Object
-        if($Html or $Simple) {
+        if($Html) {
             return specChars($Method);
         }
         else {
@@ -1995,7 +2172,16 @@ sub getSignature($$$)
         }
     }
     
-    my $Signature = $MethodInfo{$LVer}{$Method}{"ShortName"};
+    my $Signature = "";
+    
+    my $ShortName = $MethodInfo{$LVer}{$Method}{"ShortName"};
+    
+    if($Html) {
+        $ShortName = specChars($ShortName);
+    }
+    
+    $Signature .= $ShortName;
+    
     if($Full or $ShowClass)
     {
         my $Class = getTypeName($MethodInfo{$LVer}{$Method}{"Class"}, $LVer);
@@ -2137,7 +2323,10 @@ sub getSignature($$$)
                 }
             }
         }
-        
+    }
+    
+    if($Full or $ShowReturn)
+    {
         if(my $ReturnId = $MethodInfo{$LVer}{$Method}{"Return"})
         {
             my $RName = getTypeName($ReturnId, $LVer);
@@ -2150,7 +2339,10 @@ sub getSignature($$$)
                 $RName=~s/(\A|\<\s*|\,\s*)[a-z0-9\.]+\./$1/g;
             }
             
-            if($Simple) {
+            if($Desc) {
+                $Signature = "<b>".specChars($RName)."</b> ".$Signature;
+            }
+            elsif($Simple) {
                 $Signature .= " <b>:</b> ".specChars($RName);
             }
             elsif($Html) {
@@ -2160,7 +2352,10 @@ sub getSignature($$$)
                 $Signature .= " : ".$RName;
             }
         }
-        
+    }
+    
+    if($Full)
+    {
         if(not $In::Opt{"SkipDeprecated"})
         {
             if($MethodInfo{$LVer}{$Method}{"Deprecated"}) {
@@ -2320,6 +2515,22 @@ sub getSummary($)
         "Problems"=>0,
         "Warnings"=>0,
         "Affected"=>0);
+    
+    # check rules
+    foreach my $Method (sort keys(%CompatProblems))
+    {
+        foreach my $Kind (keys(%{$CompatProblems{$Method}}))
+        {
+            if(not defined $CompatRules{"Binary"}{$Kind} and not defined $CompatRules{"Source"}{$Kind})
+            { # unknown rule
+                if(not $UnknownRules{$Level}{$Kind})
+                { # only one warning
+                    printMsg("WARNING", "unknown rule \"$Kind\" (\"$Level\")");
+                    $UnknownRules{$Level}{$Kind}=1;
+                }
+            }
+        }
+    }
     
     foreach my $Method (sort keys(%CompatProblems))
     {
@@ -2613,7 +2824,11 @@ sub getSummary($)
     $META_DATA .= "checked_types:".keys(%CheckedTypes).";";
     $META_DATA .= "tool_version:$TOOL_VERSION";
     $Problem_Summary .= "</table>\n";
-    return ($TestInfo.$TestResults.$Problem_Summary, $META_DATA);
+    
+    my $AnyChanged = ($Added or $Removed or $M_Problems_High or $M_Problems_Medium or $M_Problems_Low or
+    $T_Problems_High or $T_Problems_Medium or $T_Problems_Low or $M_Other or $T_Other);
+    
+    return ($TestInfo.$TestResults.$Problem_Summary, $META_DATA, $AnyChanged);
 }
 
 sub getStyle($$$)
@@ -2709,7 +2924,7 @@ sub getReportAdded($)
                     $ADDED_METHODS .= "<div class='symbols'>";
                 }
                 
-                my @SortedMethods = sort {lc($MethodInfo{2}{$a}{"Signature"}) cmp lc($MethodInfo{2}{$b}{"Signature"})} keys(%{$NameSpace_Method{$NameSpace}});
+                my @SortedMethods = sort {lc($MethodInfo{2}{$a}{"Signature"}) cmp lc($MethodInfo{2}{$b}{"Signature"})} sort keys(%{$NameSpace_Method{$NameSpace}});
                 foreach my $Method (@SortedMethods)
                 {
                     $Added_Number += 1;
@@ -2813,7 +3028,7 @@ sub getReportRemoved($)
                     $REMOVED_METHODS .= "<div class='symbols'>";
                 }
                 
-                my @SortedMethods = sort {lc($MethodInfo{1}{$a}{"Signature"}) cmp lc($MethodInfo{1}{$b}{"Signature"})} keys(%{$NameSpace_Method{$NameSpace}});
+                my @SortedMethods = sort {lc($MethodInfo{1}{$a}{"Signature"}) cmp lc($MethodInfo{1}{$b}{"Signature"})} sort keys(%{$NameSpace_Method{$NameSpace}});
                 foreach my $Method (@SortedMethods)
                 {
                     $Removed_Number += 1;
@@ -2928,9 +3143,9 @@ sub addMarkup($)
     return $Content;
 }
 
-sub applyMacroses($$$$$)
+sub applyMacroses($$$$$$)
 {
-    my ($Level, $Kind, $Content, $Problem, $AddAttr) = @_;
+    my ($Level, $Subj, $Kind, $Content, $Problem, $AddAttr) = @_;
     
     $Content = addMarkup($Content);
     
@@ -2976,6 +3191,10 @@ sub applyMacroses($$$$$)
                 or $Kind!~/Overridden|Moved_Up/) {
                     $Fmt = "HTML|Desc";
                 }
+            }
+            
+            if($Subj eq "Change") {
+                $Fmt .= "|Return";
             }
             
             if(defined $MethodInfo{1}{$Value}
@@ -3061,7 +3280,7 @@ sub getReportMethodProblems($$)
                     $METHOD_PROBLEMS .= "<span class='pkg_t'>package</span> <span class='pkg'>$NameSpace</span><br/>\n";
                 }
                 
-                my @SortedMethods = sort {lc($MethodInfo{1}{$a}{"Signature"}) cmp lc($MethodInfo{1}{$b}{"Signature"})} keys(%{$NameSpace_Method{$NameSpace}});
+                my @SortedMethods = sort {lc($MethodInfo{1}{$a}{"Signature"}) cmp lc($MethodInfo{1}{$b}{"Signature"})} sort keys(%{$NameSpace_Method{$NameSpace}});
                 foreach my $Method (@SortedMethods)
                 {
                     my %AddAttr = ();
@@ -3077,9 +3296,9 @@ sub getReportMethodProblems($$)
                         {
                             my $ProblemAttr = $MethodChanges{$Method}{$Kind}{$Loc};
                             
-                            if(my $Change = applyMacroses($Level, $Kind, $CompatRules{$Level}{$Kind}{"Change"}, $ProblemAttr, \%AddAttr))
+                            if(my $Change = applyMacroses($Level, "Change", $Kind, $CompatRules{$Level}{$Kind}{"Change"}, $ProblemAttr, \%AddAttr))
                             {
-                                my $Effect = applyMacroses($Level, $Kind, $CompatRules{$Level}{$Kind}{"Effect"}, $ProblemAttr, \%AddAttr);
+                                my $Effect = applyMacroses($Level, "Effect", $Kind, $CompatRules{$Level}{$Kind}{"Effect"}, $ProblemAttr, \%AddAttr);
                                 $METHOD_REPORT .= "<tr>\n<th>$ProblemNum</th>\n<td>".$Change."</td>\n<td>".$Effect."</td>\n</tr>\n";
                                 $ProblemNum += 1;
                                 $ProblemsNum += 1;
@@ -3232,9 +3451,9 @@ sub getReportTypeProblems($$)
                         
                         my $ProblemAttr = $TypeChanges_Sev{$TypeName}{$Kind}{$Location};
                         
-                        if(my $Change = applyMacroses($Level, $Kind, $CompatRules{$Level}{$Kind}{"Change"}, $ProblemAttr, \%AddAttr))
+                        if(my $Change = applyMacroses($Level, "Change", $Kind, $CompatRules{$Level}{$Kind}{"Change"}, $ProblemAttr, \%AddAttr))
                         {
-                            my $Effect = applyMacroses($Level, $Kind, $CompatRules{$Level}{$Kind}{"Effect"}, $ProblemAttr, \%AddAttr);
+                            my $Effect = applyMacroses($Level, "Effect", $Kind, $CompatRules{$Level}{$Kind}{"Effect"}, $ProblemAttr, \%AddAttr);
                             
                             $TYPE_REPORT .= "<tr>\n<th>$ProblemNum</th>\n<td>".$Change."</td>\n<td>".$Effect."</td>\n</tr>\n";
                             $ProblemNum += 1;
@@ -3586,10 +3805,10 @@ sub getReport($)
         my $Keywords = $In::Opt{"TargetTitle"}.", compatibility";
         my $Description = "Compatibility report for the ".$In::Opt{"TargetTitle"}." library between ".$In::Desc{1}{"Version"}." and ".$In::Desc{2}{"Version"}." versions";
         
-        my ($BSummary, $BMetaData) = getSummary("Binary");
-        my ($SSummary, $SMetaData) = getSummary("Source");
+        my ($BSummary, $BMetaData, $BAnyChanged) = getSummary("Binary");
+        my ($SSummary, $SMetaData, $SAnyChanged) = getSummary("Source");
         
-        my $Report = "<!-\- $BMetaData -\->\n<!-\- $SMetaData -\->\n".composeHTML_Head($Level, $Title, $Keywords, $Description, $CssStyles, $JScripts)."<body><a name='Source'></a><a name='Binary'></a><a name='Top'></a>";
+        my $Report = "<!-\- $BMetaData -\->\n<!-\- $SMetaData -\->\n".composeHTML_Head($Level, $Title, $Keywords, $Description, $CssStyles, $JScripts, ($BAnyChanged or $SAnyChanged))."<body><a name='Source'></a><a name='Binary'></a><a name='Top'></a>";
         
         $Report .= getReportHeader("Join");
         $Report .= "<br/><div class='tabset'>\n";
@@ -3607,13 +3826,13 @@ sub getReport($)
     }
     else
     {
-        my ($Summary, $MetaData) = getSummary($Level);
+        my ($Summary, $MetaData, $AnyChanged) = getSummary($Level);
         
         my $Title = $In::Opt{"TargetTitle"}.": ".$In::Desc{1}{"Version"}." to ".$In::Desc{2}{"Version"}." ".lc($Level)." compatibility report";
         my $Keywords = $In::Opt{"TargetTitle"}.", ".lc($Level).", compatibility";
         my $Description = "$Level compatibility report for the ".$In::Opt{"TargetTitle"}." library between ".$In::Desc{1}{"Version"}." and ".$In::Desc{2}{"Version"}." versions";
         
-        my $Report = "<!-\- $MetaData -\->\n".composeHTML_Head($Level, $Title, $Keywords, $Description, $CssStyles, $JScripts)."<body><a name='Top'></a>";
+        my $Report = "<!-\- $MetaData -\->\n".composeHTML_Head($Level, $Title, $Keywords, $Description, $CssStyles, $JScripts, $AnyChanged)."<body><a name='Top'></a>";
         $Report .= getReportHeader($Level)."\n".$Summary."\n";
         $Report .= getReportAdded($Level).getReportRemoved($Level);
         $Report .= getReportProblems("High", $Level).getReportProblems("Medium", $Level).getReportProblems("Low", $Level).getReportProblems("Safe", $Level);
@@ -3666,9 +3885,9 @@ sub getReportProblems($$)
     return $Report;
 }
 
-sub composeHTML_Head($$$$$$)
+sub composeHTML_Head($$$$$$$)
 {
-    my ($Level, $Title, $Keywords, $Description, $Styles, $Scripts) = @_;
+    my ($Level, $Title, $Keywords, $Description, $Styles, $Scripts, $AnyChanged) = @_;
     
     my $Head = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\n";
     $Head .= "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">\n";
@@ -3676,6 +3895,10 @@ sub composeHTML_Head($$$$$$)
     $Head .= "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\" />\n";
     $Head .= "<meta name=\"keywords\" content=\"$Keywords\" />\n";
     $Head .= "<meta name=\"description\" content=\"$Description\" />\n";
+    
+    if(not $AnyChanged) {
+        $Head .= "<meta name=\"robots\" content=\"noindex\" />\n";
+    }
     
     my $RPath = getReportPath($Level);
     
@@ -3748,43 +3971,62 @@ sub detectAdded()
                 next;
             }
             
-            my $ClassId = $MethodInfo{2}{$Method}{"Class"};
-            my $CName = getTypeName($ClassId, 2);
+            my $Class = getType($MethodInfo{2}{$Method}{"Class"}, 2);
             
-            $CheckedTypes{$CName} = 1;
+            $CheckedTypes{$Class->{"Name"}} = 1;
             $CheckedMethods{$Method} = 1;
             
             if(not $MethodInfo{2}{$Method}{"Constructor"}
-            and my $Overridden = findMethod($Method, 2, $CName, 2))
+            and my $Overridden = findMethod($Method, 2, $Class->{"Name"}, 2))
             {
                 if(defined $MethodInfo{1}{$Overridden}
-                and getTypeType($ClassId, 2) eq "class" and $TName_Tid{1}{$CName})
+                and $Class->{"Type"} eq "class"
+                and ($TName_Tid{1}{$Class->{"Name"}} or $TName_Tid_Generic{1}{getGeneric($Class->{"Name"})}))
                 { # class should exist in previous version
                     %{$CompatProblems{$Overridden}{"Class_Overridden_Method"}{"this.".getSFormat($Method)}}=(
-                        "Type_Name"=>$CName,
+                        "Type_Name"=>$Class->{"Name"},
                         "Target"=>$MethodInfo{2}{$Method}{"Signature"},
                         "Old_Value"=>$Overridden,
                         "New_Value"=>$Method);
                 }
             }
             if($MethodInfo{2}{$Method}{"Abstract"}) {
-                $AddedMethod_Abstract{$CName}{$Method} = 1;
+                $AddedMethod_Abstract{$Class->{"Name"}}{$Method} = 1;
             }
             
-            %{$CompatProblems{$Method}{"Added_Method"}{""}}=();
+            if(not ($MethodInfo{2}{$Method}{"Access"} eq "protected" and $Class->{"Final"})) {
+                %{$CompatProblems{$Method}{"Added_Method"}{""}} = ();
+            }
             
             if(not $MethodInfo{2}{$Method}{"Constructor"})
             {
-                if(getTypeName($MethodInfo{2}{$Method}{"Return"}, 2) ne "void"
-                and my $VoidMethod = checkVoidMethod($Method))
+                my $VoidMethod = checkVoidMethod($Method);
+                my $ReturnType = getTypeName($MethodInfo{2}{$Method}{"Return"}, 2);
+                
+                if(defined $Class->{"GenericParam"}
+                and defined $Class->{"GenericParam"}{$ReturnType}) {
+                    $ReturnType = getTypeName($Class->{"GenericParam"}{$ReturnType}, 2);
+                }
+                
+                if(defined $MethodInfo{1}{$VoidMethod}
+                and $ReturnType ne "void")
+                { # return value type changed from void
+                    $ChangedReturnFromVoid{$VoidMethod} = 1;
+                    $ChangedReturnFromVoid{$Method} = 1;
+                    
+                    %{$CompatProblems{$VoidMethod}{"Changed_Method_Return_From_Void"}{""}}=(
+                        "New_Value"=>getTypeName($MethodInfo{2}{$Method}{"Return"}, 2)
+                    );
+                }
+                elsif(my $OldMethod = $OldMethodSignature{getBaseSignature($Method)})
                 {
-                    if(defined $MethodInfo{1}{$VoidMethod})
-                    { # return value type changed from "void" to 
-                        $ChangedReturnFromVoid{$VoidMethod} = 1;
-                        $ChangedReturnFromVoid{$Method} = 1;
+                    if($OldMethod ne $Method)
+                    {
+                        my $OldReturnType = getTypeName($MethodInfo{1}{$OldMethod}{"Return"}, 1);
                         
-                        %{$CompatProblems{$VoidMethod}{"Changed_Method_Return_From_Void"}{""}}=(
-                            "New_Value"=>getTypeName($MethodInfo{2}{$Method}{"Return"}, 2)
+                        %{$CompatProblems{$OldMethod}{"Changed_Method_Return"}{""}}=(
+                            "Old_Value"=>$OldReturnType,
+                            "New_Value"=>$ReturnType
                         );
                     }
                 }
@@ -3803,20 +4045,20 @@ sub detectRemoved()
                 next;
             }
             
-            my $ClassId = $MethodInfo{1}{$Method}{"Class"};
-            my $CName = getTypeName($ClassId, 1);
+            my $Class = getType($MethodInfo{1}{$Method}{"Class"}, 1);
             
-            $CheckedTypes{$CName} = 1;
+            $CheckedTypes{$Class->{"Name"}} = 1;
             $CheckedMethods{$Method} = 1;
             
             if(not $MethodInfo{1}{$Method}{"Constructor"}
-            and my $MovedUp = findMethod($Method, 1, $CName, 2))
+            and my $MovedUp = findMethod($Method, 1, $Class->{"Name"}, 2))
             {
-                if(getTypeType($ClassId, 1) eq "class"
-                and not $MethodInfo{1}{$Method}{"Abstract"} and $TName_Tid{2}{$CName})
+                if($Class->{"Type"} eq "class"
+                and not $MethodInfo{1}{$Method}{"Abstract"}
+                and ($TName_Tid{2}{$Class->{"Name"}} or $TName_Tid_Generic{2}{getGeneric($Class->{"Name"})}))
                 {# class should exist in newer version
                     %{$CompatProblems{$Method}{"Class_Method_Moved_Up_Hierarchy"}{"this.".getSFormat($MovedUp)}}=(
-                        "Type_Name"=>$CName,
+                        "Type_Name"=>$Class->{"Name"},
                         "Target"=>$MethodInfo{2}{$MovedUp}{"Signature"},
                         "Old_Value"=>$Method,
                         "New_Value"=>$MovedUp);
@@ -3825,9 +4067,12 @@ sub detectRemoved()
             else
             {
                 if($MethodInfo{1}{$Method}{"Abstract"}) {
-                    $RemovedMethod_Abstract{$CName}{$Method} = 1;
+                    $RemovedMethod_Abstract{$Class->{"Name"}}{$Method} = 1;
                 }
-                %{$CompatProblems{$Method}{"Removed_Method"}{""}}=();
+                
+                if(not ($MethodInfo{1}{$Method}{"Access"} eq "protected" and $Class->{"Final"})) {
+                    %{$CompatProblems{$Method}{"Removed_Method"}{""}} = ();
+                }
             }
         }
     }
@@ -3929,12 +4174,18 @@ sub readAPIDump($$$)
     {
         if(cmpVersions($APIVer, $API_DUMP_VERSION)>0)
         { # future formats
-            exitStatus("Dump_Version", "the versions of the API dump is newer than version of the tool");
+            exitStatus("Dump_Version", "version of the API dump is newer than version of the tool");
+        }
+        
+        if(cmpVersions($APIVer, $API_DUMP_VERSION)<0)
+        { # old formats
+            printMsg("WARNING", "version of the API dump is older than version of the tool");
         }
     }
     
-    if(cmpVersions($APIVer, $API_DUMP_VERSION_MIN)<0) {
-        exitStatus("Dump_Version", "the version of the API dump is too old and unsupported anymore, please regenerate it");
+    if(cmpVersions($APIVer, $API_DUMP_VERSION_MIN)<0)
+    { # obsolete formats
+        exitStatus("Dump_Version", "version of the API dump is too old and unsupported anymore, please regenerate it");
     }
     
     if($Subj ne "Dep")
@@ -4223,10 +4474,11 @@ sub unpackDump($)
         }
         chdir($UnpackDir);
         system("$UnzipCmd \"$Path\" >contents.txt");
+        chdir($In::Opt{"OrigDir"});
         if($?) {
             exitStatus("Error", "can't extract \'$Path\'");
         }
-        chdir($In::Opt{"OrigDir"});
+        
         my @Contents = ();
         foreach (split("\n", readFile("$UnpackDir/contents.txt")))
         {
@@ -4258,10 +4510,10 @@ sub unpackDump($)
                 exitStatus("Error", "can't extract \'$Path\'");
             }
             my @Contents = qx/$TarCmd -xvf "$Dir\\$FileName.tar"/;
+            chdir($In::Opt{"OrigDir"});
             if($? or not @Contents) {
                 exitStatus("Error", "can't extract \'$Path\'");
             }
-            chdir($In::Opt{"OrigDir"});
             unlink($Dir."/".$FileName.".tar");
             chomp $Contents[0];
             return join_P($UnpackDir, $Contents[0]);
@@ -4274,10 +4526,10 @@ sub unpackDump($)
             }
             chdir($UnpackDir);
             my @Contents = qx/$TarCmd -xvzf "$Path" 2>&1/;
+            chdir($In::Opt{"OrigDir"});
             if($? or not @Contents) {
                 exitStatus("Error", "can't extract \'$Path\'");
             }
-            chdir($In::Opt{"OrigDir"});
             $Contents[0]=~s/^x //; # OS X
             chomp $Contents[0];
             return join_P($UnpackDir, $Contents[0]);
@@ -4307,7 +4559,7 @@ sub createArchive($$)
         system("$ZipCmd -j \"$Name.zip\" \"$Path\" >\"$TmpDir/null\"");
         if($?)
         { # cannot allocate memory (or other problems with "zip")
-            unlink($Path);
+            chdir($In::Opt{"OrigDir"});
             exitStatus("Error", "can't pack the API dump: ".$!);
         }
         chdir($In::Opt{"OrigDir"});
@@ -4325,15 +4577,14 @@ sub createArchive($$)
             exitStatus("Not_Found", "can't find \"gzip\"");
         }
         my $Pkg = abs_path($To)."/".$Name.".tar.gz";
-        unlink($Pkg);
-        chdir($From);
-        system($TarCmd, "-czf", $Pkg, $Name);
+        if(-e $Pkg) {
+            unlink($Pkg);
+        }
+        system($TarCmd, "-C", $From, "-czf", $Pkg, $Name);
         if($?)
         { # cannot allocate memory (or other problems with "tar")
-            unlink($Path);
             exitStatus("Error", "can't pack the API dump: ".$!);
         }
-        chdir($In::Opt{"OrigDir"});
         unlink($Path);
         return $To."/".$Name.".tar.gz";
     }
@@ -4767,6 +5018,8 @@ sub scenario()
         if(-f $ClientPath)
         {
             detectDefaultPaths("bin", undef);
+            loadModule("APIDump");
+            
             readArchive(0, $ClientPath)
         }
         else {
@@ -4784,7 +5037,8 @@ sub scenario()
         initAliases(1);
         
         my $Count = 0;
-        foreach my $Method (keys(%{$MethodInfo{1}})) {
+        foreach my $Method (keys(%{$MethodInfo{1}}))
+        {
             $Count += methodFilter($Method, 1);
         }
         

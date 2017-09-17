@@ -134,9 +134,10 @@ sub readArchive($$)
         }
         
         my $ClassName = getFilename($ClassPath);
-        if($ClassName=~/\$\d/) {
+        if($ClassName=~/\$\d/ or $ClassName eq "module-info") {
             next;
         }
+        
         $ClassPath = cutPrefix($ClassPath, $ExtractPath); # javap decompiler accepts relative paths only
         
         my $ClassDir = getDirname($ClassPath);
@@ -219,9 +220,9 @@ sub sepParams($$$)
     return @Parts;
 }
 
-sub simpleDecl($)
+sub simpleDecl($$)
 {
-    my $Line = $_[0];
+    my ($Line, $LVer) = @_;
     
     my %B = ( "<"=>0, ">"=>0 );
     my @Chars = split("", $Line);
@@ -286,7 +287,7 @@ sub simpleDecl($)
     foreach my $R (@Replace)
     {
         if($Line=~s/([A-Za-z\d\?]+) extends \Q$R\E/$1/) {
-            $Tmpl{$1} = $R;
+            $Tmpl{$1} = registerType($R, $LVer);
         }
     }
     
@@ -316,7 +317,7 @@ sub readClasses($$$)
     my $Pid = open3(*IN, *OUT, *ERR, @Cmd);
     close(IN);
     
-    my (%TypeAttr, $CurrentMethod, $CurrentPackage, $CurrentClass) = ();
+    my (%TypeAttr, $CurrentMethod, $CurrentPackage, $CurrentClass, $CurrentClass_Short) = ();
     my ($InParamTable, $InVarTypeTable, $InExceptionTable, $InCode) = (0, 0, 0, 0);
     
     my $InAnnotations = undef;
@@ -487,7 +488,7 @@ sub readClasses($$$)
         { # <T extends java.lang.Object>
           # <KEYIN extends java.lang.Object ...
             if($LINE=~/<[A-Z\d\?]+ /i) {
-                ($LINE, $TmplP) = simpleDecl($LINE);
+                ($LINE, $TmplP) = simpleDecl($LINE, $LVer);
             }
         }
         
@@ -627,7 +628,7 @@ sub readClasses($$$)
                 $MethodAttr{"Access"} = "package-private";
             }
             $MethodAttr{"Class"} = registerType($TypeAttr{"Name"}, $LVer);
-            if($MethodAttr{"ShortName"}=~/\A(|(.+)\.)\Q$CurrentClass\E\Z/)
+            if($MethodAttr{"ShortName"}=~/\A(|(.+)\.)(\Q$CurrentClass\E|\Q$CurrentClass_Short\E)\Z/)
             {
                 if($2)
                 {
@@ -687,11 +688,17 @@ sub readClasses($$$)
             if(index($LINE_N, ": #")==-1
             and $LINE_N=~/(Signature|descriptor):\s*(.+?)\s*\Z/i)
             { # create run-time unique name ( java/io/PrintStream.println (Ljava/lang/String;)V )
+                my $SignParams = $2;
+                
+                # Generic classes
+                my $ShortClass = $CurrentClass;
+                $ShortClass=~s/<.*>//g;
+                
                 if($MethodAttr{"Constructor"}) {
-                    $CurrentMethod = $CurrentClass.".\"<init>\":".$2;
+                    $CurrentMethod = $ShortClass.".\"<init>\":".$SignParams;
                 }
                 else {
-                    $CurrentMethod = $CurrentClass.".".$MethodAttr{"ShortName"}.":".$2;
+                    $CurrentMethod = $ShortClass.".".$MethodAttr{"ShortName"}.":".$SignParams;
                 }
                 if(my $PackageName = getSFormat($CurrentPackage)) {
                     $CurrentMethod = $PackageName."/".$CurrentMethod;
@@ -831,10 +838,17 @@ sub readClasses($$$)
                 $CurrentClass = $TypeAttr{"Name"};
                 $CurrentPackage = "";
             }
+            
             if($CurrentClass=~s/#/./g)
             { # javax.swing.text.GlyphView.GlyphPainter <=> GlyphView$GlyphPainter
                 $TypeAttr{"Name"}=~s/#/./g;
             }
+            
+            $CurrentClass_Short = $CurrentClass;
+            if(index($CurrentClass_Short, "<")!=-1) {
+                $CurrentClass_Short=~s/<.+>//g;
+            }
+            
             if($LINE=~/(\A|\s+)(public|protected|private)\s+/) {
                 $TypeAttr{"Access"} = $2;
             }
@@ -884,6 +898,10 @@ sub readClasses($$$)
             if($LINE=~/(\A|\s+)static\s+/) {
                 $TypeAttr{"Static"} = 1;
             }
+            
+            if($TmplP) {
+                $TypeAttr{"GenericParam"} = $TmplP;
+            }
         }
         elsif(index($LINE, "Deprecated: true")!=-1
         or index($LINE, "Deprecated: length")!=-1)
@@ -917,6 +935,10 @@ sub readClasses($$$)
     
     waitpid($Pid, 0);
     chdir($In::Opt{"OrigDir"});
+    
+    if(my $Err = $?>>8) {
+        exitStatus("Error", "failed to run javap");
+    }
     
     if(not $NonEmpty) {
         exitStatus("Error", "internal error in parser");
@@ -960,6 +982,14 @@ sub registerType($$)
         {
             $TypeInfo{$LVer}{$Tid}{"BaseType"} = $BaseTypeId;
             $TypeInfo{$LVer}{$Tid}{"Type"} = "array";
+        }
+    }
+    elsif($TName=~/(.+)\.\.\.\Z/)
+    {
+        if(my $BaseTypeId = registerType($1, $LVer))
+        {
+            $TypeInfo{$LVer}{$Tid}{"BaseType"} = $BaseTypeId;
+            $TypeInfo{$LVer}{$Tid}{"Type"} = "variable-arity";
         }
     }
     

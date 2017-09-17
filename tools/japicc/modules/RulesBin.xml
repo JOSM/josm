@@ -51,7 +51,43 @@
         Return value type has been changed from **void** to @new_value.
     </change>
     <effect>
-        This method has been removed because the return type is part of the method signature.
+        This method has been removed because the return type is part of the method signature. A client program may be interrupted by **NoSuchMethodError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Changed_Method_Return
+    </id>
+    <severity>
+        High
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Return value type has been changed from @old_value to @new_value.
+    </change>
+    <effect>
+        This method has been removed because the return type is part of the method signature. A client program may be interrupted by **NoSuchMethodError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Static_Method_Became_Final
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Method became final.
+    </change>
+    <effect>
+        No effect.
     </effect>
 </rule>
 
@@ -300,11 +336,35 @@
         Variable_Arity_To_Array
     </id>
     <severity>
-        Low
+        Safe
     </severity>
     <kind>
         Methods
     </kind>
+    <change>
+        Type of parameter @param_name has been changed from @old_value to @new_value.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Array_To_Variable_Arity
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Methods
+    </kind>
+    <change>
+        Type of parameter @param_name has been changed from @old_value to @new_value.
+    </change>
+    <effect>
+        No effect.
+    </effect>
 </rule>
 
 <rule>
@@ -802,7 +862,7 @@
         Changed_Super_Class
     </id>
     <severity>
-        Medium
+        Low
     </severity>
     <kind>
         Types
@@ -1155,6 +1215,78 @@
     </change>
     <effect>
         A client program may be interrupted by **IncompatibleClassChangeError** exception.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Became_Generic
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        This interface became **generic** (@new_value).
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Interface_Became_Raw
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        This interface became **raw**.
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Became_Generic
+    </id>
+    <severity>
+        Safe
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        This class became **generic** (@new_value).
+    </change>
+    <effect>
+        No effect.
+    </effect>
+</rule>
+
+<rule>
+    <id>
+        Class_Became_Raw
+    </id>
+    <severity>
+        Low
+    </severity>
+    <kind>
+        Types
+    </kind>
+    <change>
+        This class became **raw**.
+    </change>
+    <effect>
+        No effect.
     </effect>
 </rule>
 
