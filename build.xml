@@ -661,7 +661,7 @@ Build-Date: ${build.tstamp}
             </restrict>
         </delete>
         <!-- Download plugins -->
-        <copy todir="${dir}" flatten="true">
+        <copy todir="${dir}" flatten="true" verbose="true" failonerror="false">
             <resourcelist>
                 <string value="${plugins}"/>
             </resourcelist>
