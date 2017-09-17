@@ -567,15 +567,19 @@ Build-Date: ${build.tstamp}
             public static ** valueOf(java.lang.String);
         }
 
-        # Keep unused public methods (can be useful for plugins)
-        -keepclassmembers class * {
+        # Keep unused public classes and methods (needed for plugins)
+        -keep public class * {
             public protected *;
         }
 
-        # Keep serialization methods
+        # Keep serialization code
         -keepclassmembers class * implements java.io.Serializable {
+            static final long serialVersionUID; 
+            private static final java.io.ObjectStreamField[] serialPersistentFields;
             private void writeObject(java.io.ObjectOutputStream);
             private void readObject(java.io.ObjectInputStream);
+            java.lang.Object writeReplace(); 
+            java.lang.Object readResolve();
         }
 
         # Disable annoying [proguard] Note: the configuration keeps the entry point '...', but not the descriptor class '...'.
@@ -597,13 +601,12 @@ Build-Date: ${build.tstamp}
             <arg value="${dist-optimized.jar}"/>
         </exec>
     </target>
-    <target name="check-plugins" depends="dist-optimized">
-        <echo message="Check of plugins binary compatibility (needs ant 1.8)"/>
+    <target name="check-plugins" depends="dist-optimized" description="Check of plugins binary compatibility">
         <local name="dir"/>
         <local name="plugins"/>
         <property name="dir" value="plugin-check"/>
         <typedef uri="antlib:org.codehaus.mojo.animal_sniffer">
-            <classpath path="tools/animal-sniffer-ant-tasks-1.15.jar"/>
+            <classpath path="tools/animal-sniffer-ant-tasks.jar"/>
         </typedef>
         <mkdir dir="${dir}"/>
         <!-- List of deprecated plugins -->
@@ -669,35 +672,54 @@ Build-Date: ${build.tstamp}
                 <fileset file="${dist-optimized.jar}"/>
                 <fileset file="${java.home}/lib/rt.jar"/>
                 <fileset file="${java.home}/lib/jce.jar"/>
+                <fileset file="${java.home}/lib/ext/jfxrt.jar"/>
             </path>
         </as:build-signatures>
-        <as:check-signature signature="${dir}/api.sig">
-            <ignore classname="au.edu.*"/>
-            <ignore classname="au.com.*"/>
+        <as:check-signature signature="${dir}/api.sig" failonerror="false">
+            <ignore classname="au.*"/>
             <ignore classname="com.*"/>
-            <ignore classname="de.miethxml.*"/>
-            <ignore classname="javafx.*"/>
+            <ignore classname="de.*"/>
+            <ignore classname="edu.*"/>
+            <ignore classname="groovy.*"/>
+            <ignore classname="it.*"/>
             <ignore classname="javax.*"/>
             <ignore classname="jogamp.*"/>
             <ignore classname="junit.*"/>
-            <ignore classname="net.sf.*"/>
-            <ignore classname="nu.xom.*"/>
+            <ignore classname="kdu_jni.*"/>
+            <ignore classname="net.*"/>
+            <ignore classname="netscape.*"/>
+            <ignore classname="nu.*"/>
+            <ignore classname="oracle.*"/>
             <ignore classname="org.apache.*"/>
+            <ignore classname="org.bouncycastle.*"/>
             <ignore classname="org.codehaus.*"/>
             <ignore classname="org.dom4j.*"/>
+            <ignore classname="org.eclipse.*"/>
+            <ignore classname="org.ejml.*"/>
+            <ignore classname="org.gdal.*"/>
+            <ignore classname="org.hibernate.*"/>
             <ignore classname="org.hsqldb.*"/>
             <ignore classname="org.ibex.*"/>
             <ignore classname="org.iso_relax.*"/>
             <ignore classname="org.jaitools.*"/>
             <ignore classname="org.jaxen.*"/>
+            <ignore classname="org.jboss.*"/>
             <ignore classname="org.jdom2.*"/>
+            <ignore classname="org.jfree.*"/>
             <ignore classname="org.jgraph.*"/>
-            <ignore classname="org.joda.time.*"/>
-            <ignore classname="org.jvnet.staxex.*"/>
+            <ignore classname="org.joda.*"/>
+            <ignore classname="org.junit.*"/>
+            <ignore classname="org.jvnet.*"/>
             <ignore classname="org.kxml2.*"/>
             <ignore classname="org.objectweb.*"/>
+            <ignore classname="org.osgi.*"/>
+            <ignore classname="org.postgresql.*"/>
             <ignore classname="org.python.*"/>
+        	<ignore classname="org.seasar.*"/>
             <ignore classname="org.slf4j.*"/>
+            <ignore classname="org.springframework.*"/>
+            <ignore classname="org.testng.*"/>
+            <ignore classname="org.zeromq.*"/>
             <!-- plugins used by another ones -->
             <ignore classname="org.openstreetmap.josm.plugins.geotools.*"/>
             <ignore classname="org.openstreetmap.josm.plugins.jna.*"/>

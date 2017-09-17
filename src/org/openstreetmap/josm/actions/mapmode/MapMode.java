@@ -71,7 +71,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
      * @param shortcut a ready-created shortcut object or null if you don't want a shortcut.
      * @param mapFrame unused but kept for plugin compatibility. Can be {@code null}
      * @param cursor cursor displayed when map mode is active
-     * @deprecated use {@link #MapMode(String, String, String, Shortcut, Cursor) instead}
+     * @deprecated use {@link #MapMode(String, String, String, Shortcut, Cursor)} instead
      */
     @Deprecated
     public MapMode(String name, String iconName, String tooltip, Shortcut shortcut, MapFrame mapFrame, Cursor cursor) {
@@ -85,7 +85,7 @@ public abstract class MapMode extends JosmAction implements MouseListener, Mouse
      * @param tooltip  a longer description of the action that will be displayed in the tooltip.
      * @param mapFrame unused but kept for plugin compatibility. Can be {@code null}
      * @param cursor cursor displayed when map mode is active
-     * @deprecated use {@link #MapMode(String, String, String, Cursor) instead}
+     * @deprecated use {@link #MapMode(String, String, String, Cursor)} instead
      */
     @Deprecated
     public MapMode(String name, String iconName, String tooltip, MapFrame mapFrame, Cursor cursor) {
