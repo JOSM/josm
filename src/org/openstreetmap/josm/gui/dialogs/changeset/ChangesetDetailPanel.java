@@ -22,6 +22,7 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -37,6 +38,7 @@ import org.openstreetmap.josm.data.osm.OsmPrimitive;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.help.HelpUtil;
+import org.openstreetmap.josm.gui.history.OpenChangesetPopupMenu;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager.ActiveLayerChangeListener;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
@@ -62,12 +64,15 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
     private final JosmTextField tfCreatedOn = new JosmTextField(20);
     private final JosmTextField tfClosedOn  = new JosmTextField(20);
 
+    private final OpenChangesetPopupMenuAction   actOpenChangesetPopupMenu   = new OpenChangesetPopupMenuAction();
     private final DownloadChangesetContentAction actDownloadChangesetContent = new DownloadChangesetContentAction(this);
     private final UpdateChangesetAction          actUpdateChangesets         = new UpdateChangesetAction();
     private final RemoveFromCacheAction          actRemoveFromCache          = new RemoveFromCacheAction();
     private final SelectInCurrentLayerAction     actSelectInCurrentLayer     = new SelectInCurrentLayerAction();
     private final ZoomInCurrentLayerAction       actZoomInCurrentLayerAction = new ZoomInCurrentLayerAction();
     // CHECKSTYLE.ON: SingleSpaceSeparator
+    
+    private JButton btnOpenChangesetPopupMenu;
 
     private transient Changeset currentChangeset;
 
@@ -76,6 +81,10 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
 
         JToolBar tb = new JToolBar(JToolBar.VERTICAL);
         tb.setFloatable(false);
+
+        // -- display changeset
+        btnOpenChangesetPopupMenu = tb.add(actOpenChangesetPopupMenu);
+        actOpenChangesetPopupMenu.initProperties(currentChangeset);
 
         // -- remove from cache action
         tb.add(actRemoveFromCache);
@@ -258,6 +267,7 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
         } else {
             updateView(cs);
         }
+        actOpenChangesetPopupMenu.initProperties(currentChangeset);
         actDownloadChangesetContent.initProperties();
         actUpdateChangesets.initProperties(currentChangeset);
         actRemoveFromCache.initProperties(currentChangeset);
@@ -321,6 +331,26 @@ public class ChangesetDetailPanel extends JPanel implements PropertyChangeListen
 
         public void initProperties(Changeset cs) {
             setEnabled(cs != null && !Main.isOffline(OnlineResource.OSM_API));
+        }
+    }
+
+    /**
+     * The action for opening {@link OpenChangesetPopupMenu}
+     */
+    class OpenChangesetPopupMenuAction extends AbstractAction {
+        OpenChangesetPopupMenuAction() {
+            putValue(NAME, tr("View changeset"));
+            new ImageProvider("help/internet").getResource().attachImageIcon(this);
+        }
+
+        @Override
+        public void actionPerformed(ActionEvent evt) {
+            if (currentChangeset != null)
+                new OpenChangesetPopupMenu(currentChangeset.getId()).show(btnOpenChangesetPopupMenu);
+        }
+
+        void initProperties(Changeset cs) {
+            setEnabled(cs != null);
         }
     }
 
