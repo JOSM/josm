@@ -715,7 +715,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.osgi.*"/>
             <ignore classname="org.postgresql.*"/>
             <ignore classname="org.python.*"/>
-        	<ignore classname="org.seasar.*"/>
+            <ignore classname="org.seasar.*"/>
             <ignore classname="org.slf4j.*"/>
             <ignore classname="org.springframework.*"/>
             <ignore classname="org.testng.*"/>
@@ -726,6 +726,7 @@ Build-Date: ${build.tstamp}
             <ignore classname="org.openstreetmap.josm.plugins.jts.*"/>
             <ignore classname="org.openstreetmap.josm.plugins.log4j.*"/>
             <ignore classname="org.openstreetmap.josm.plugins.utilsplugin2.*"/>
+            <ignore classname="sun.*"/>
             <path path="${dir}"/>
         </as:check-signature>
     </target>
