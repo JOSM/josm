@@ -63,7 +63,9 @@ sub getMaxArg()
     }
     
     # Linux
-    return POSIX::sysconf(POSIX::_SC_ARG_MAX);
+    # return POSIX::sysconf(POSIX::_SC_ARG_MAX);
+    # javap failed on rt.jar (GC triggered before VM initialization completed)
+    return 10000;
 }
 
 sub divideArray($)

@@ -94,4 +94,11 @@ sub getType($$)
     return $TypeInfo{$LVer}{$TypeId};
 }
 
+sub getGeneric($)
+{
+    my $Name = $_[0];
+    $Name=~s/<.*>//g;
+    return $Name;
+}
+
 return 1;

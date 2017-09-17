@@ -285,6 +285,13 @@ sub skipPackage($$)
         }
     }
     
+    if(my $Check = $In::Opt{"CheckPackages"})
+    {
+        if($Package!~/$Check/) {
+            return 1;
+        }
+    }
+    
     return 0;
 }
 

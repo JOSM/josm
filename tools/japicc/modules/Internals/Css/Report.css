@@ -43,7 +43,7 @@ span.sect_aff {
     color:#cc3300;
 }
 span.ext {
-    font-weight:100;
+    font-weight:normal;
 }
 span.jar {
     color:#cc3300;
@@ -88,7 +88,7 @@ span.sym_p span, span.sym_pd span {
 }
 span.attr {
     color:Black;
-    font-weight:100;
+    font-weight:normal;
 }
 span.deprecated {
     color:Red;
@@ -141,7 +141,7 @@ table.summary {
 }
 table.summary th {
     background-color:#eeeeee;
-    font-weight:100;
+    font-weight:normal;
     text-align:left;
     font-size:0.94em;
     white-space:nowrap;
@@ -176,7 +176,7 @@ span.focus_p {
     background-color:#DCDCDC;
 }
 span.ttype {
-    font-weight:100;
+    font-weight:normal;
 }
 span.nowrap {
     white-space:nowrap;
@@ -187,36 +187,36 @@ span.value {
 }
 .passed {
     background-color:#CCFFCC;
-    font-weight:100;
+    font-weight:normal;
 }
 .warning {
     background-color:#F4F4AF;
-    font-weight:100;
+    font-weight:normal;
 }
 .failed {
     background-color:#FFCCCC;
-    font-weight:100;
+    font-weight:normal;
 }
 .new {
     background-color:#C6DEFF;
-    font-weight:100;
+    font-weight:normal;
 }
 
 .compatible {
     background-color:#CCFFCC;
-    font-weight:100;
+    font-weight:normal;
 }
 .almost_compatible {
     background-color:#FFDAA3;
-    font-weight:100;
+    font-weight:normal;
 }
 .incompatible {
     background-color:#FFCCCC;
-    font-weight:100;
+    font-weight:normal;
 }
 .gray {
     background-color:#DCDCDC;
-    font-weight:100;
+    font-weight:normal;
 }
 
 .top_ref {

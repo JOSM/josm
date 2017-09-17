@@ -25,7 +25,7 @@ use Config;
 
 my %Cache;
 
-my $MD5_LEN = 8;
+my $MD5_LEN = 12;
 
 sub getOSgroup()
 {

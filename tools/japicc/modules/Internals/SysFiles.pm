@@ -194,8 +194,10 @@ sub detectDefaultPaths($$)
         {
             if(my $Ver = `$JavacCmd -version 2>&1`)
             {
-                if($Ver=~/javac\s+(.+)/) {
+                if($Ver=~/javac\s+(.+)/)
+                {
                     printMsg("INFO", "Using Java ".$1);
+                    $In::Opt{"CompilerVer"} = $1;
                 }
             }
         }
