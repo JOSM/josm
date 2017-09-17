@@ -833,7 +833,7 @@ public final class DataSet extends QuadBucketPrimitiveStore implements Data, Pro
      *
      * @param selection the selection
      * @param fireSelectionChangeEvent true, if the selection change listeners are to be notified; false, otherwise
-     * @deprecated Use {@link #setSelected(Collection)} instead. To bee removed end of 2017. Does not seem to be used by plugins.
+     * @deprecated Use {@link #setSelected(Collection)} instead. To be removed end of 2017. Does not seem to be used by plugins.
      */
     @Deprecated
     public void setSelected(Collection<? extends PrimitiveId> selection, boolean fireSelectionChangeEvent) {

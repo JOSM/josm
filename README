@@ -116,7 +116,7 @@ This is an overview of the files and directories in the JOSM code repository:
     - performance/          performance tests (source code)
     - unit/                 unit tests (source code)
 - tools/                    libraries and tools that help in the development process
-    - animal-sniffer-ant-tasks-1.15.jar
+    - animal-sniffer-ant-tasks.jar
                             used to build and check code signatures to ensure plugins binary compatibility 
     - appbundler-1.0ea.jar  used to build Mac OS X package
     - checkstyle/           libs and config files for checkstyle (automatically detects code style

@@ -411,7 +411,7 @@ public class LatLon extends Coordinate implements ILatLon {
      * Returns this lat/lon pair in human-readable format separated by {@code separator}.
      * @param separator values separator
      * @return String in the format {@code "1.23456[separator]2.34567"}
-     * @deprecated method removed without replacment
+     * @deprecated method removed without replacement
      */
     @Deprecated
     public String toStringCSV(String separator) {

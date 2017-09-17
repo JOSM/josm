@@ -140,7 +140,8 @@ public final class PluginHandler {
             new DeprecatedPlugin("OpenStreetView", tr("replaced by new {0} plugin", "OpenStreetCam")),
             new DeprecatedPlugin("imageryadjust", inCore),
             new DeprecatedPlugin("walkingpapers", tr("replaced by new {0} plugin", "fieldpapers")),
-            new DeprecatedPlugin("czechaddress", tr("no longer required"))
+            new DeprecatedPlugin("czechaddress", tr("no longer required")),
+            new DeprecatedPlugin("kendzi3d_Improved_by_Andrei", tr("no longer required"))
         );
     }
 
