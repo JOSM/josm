@@ -54,6 +54,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.ImageProvider;
 import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.JosmRuntimeException;
+import org.openstreetmap.josm.tools.ListenerList;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
 
@@ -83,7 +84,14 @@ public class DownloadDialog extends JDialog {
         return instance;
     }
 
-    protected final transient List<DownloadSource<?>> downloadSources = new ArrayList<>();
+    protected static final ListenerList<DownloadSourceListener> downloadSourcesListeners = ListenerList.create();
+    protected static final List<DownloadSource<?>> downloadSources = new ArrayList<>();
+    static {
+        // add default download sources
+        addDownloadSource(new OSMDownloadSource());
+        addDownloadSource(new OverpassDownloadSource());
+    }
+
     protected final transient List<DownloadSelection> downloadSelections = new ArrayList<>();
     protected final JTabbedPane tpDownloadAreaSelectors = new JTabbedPane();
     protected final DownloadSourceTabs downloadSourcesTab = new DownloadSourceTabs();
@@ -113,10 +121,6 @@ public class DownloadDialog extends JDialog {
      */
     protected final JPanel buildMainPanel() {
         mainPanel = new JPanel(new GridBagLayout());
-
-        // add default download sources
-        addDownloadSource(new OSMDownloadSource());
-        addDownloadSource(new OverpassDownloadSource());
 
         // must be created before hook
         slippyMapChooser = new SlippyMapChooser();
@@ -334,14 +338,15 @@ public class DownloadDialog extends JDialog {
      * @param <T> The type of the download data.
      * @throws JosmRuntimeException If the download source is already added. Note, download sources are
      * compared by their reference.
+     * @since 12878
      */
-    public <T> void addDownloadSource(DownloadSource<T> downloadSource) {
+    public static <T> void addDownloadSource(DownloadSource<T> downloadSource) {
         if (downloadSources.contains(downloadSource)) {
             throw new JosmRuntimeException("The download source you are trying to add already exists.");
         }
 
         downloadSources.add(downloadSource);
-        addNewDownloadSourceTab(downloadSource);
+        downloadSourcesListeners.fireEvent(l -> l.downloadSourceAdded(downloadSource));
     }
 
     /**
@@ -580,8 +585,13 @@ public class DownloadDialog extends JDialog {
      * @author Michael Zangl
      * @since 12706
      */
-    private static class DownloadSourceTabs extends JTabbedPane {
+    private static class DownloadSourceTabs extends JTabbedPane implements DownloadSourceListener {
         private final List<AbstractDownloadSourcePanel<?>> allPanels = new ArrayList<>();
+
+        DownloadSourceTabs() {
+            downloadSources.forEach(this::downloadSourceAdded);
+            downloadSourcesListeners.addListener(this);
+        }
 
         List<AbstractDownloadSourcePanel<?>> getAllPanels() {
             return allPanels;
@@ -630,6 +640,11 @@ public class DownloadDialog extends JDialog {
                 throw new IllegalArgumentException("Can only add AbstractDownloadSourcePanels");
             }
             super.insertTab(title, icon, component, tip, index);
+        }
+
+        @Override
+        public void downloadSourceAdded(DownloadSource<?> source) {
+            addPanel(source.createPanel());
         }
     }
 

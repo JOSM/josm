@@ -30,6 +30,6 @@
 	<classpathentry kind="lib" path="test/lib/unitils-core/ognl-2.6.9.jar"/>
 	<classpathentry kind="lib" path="test/lib/fest/debug-1.0.jar"/>
 	<classpathentry exported="true" kind="con" path="GROOVY_DSL_SUPPORT"/>
-	<classpathentry kind="lib" path="tools/spotbugs/spotbugs-annotations.jar"/>
+	<classpathentry exported="true" kind="lib" path="tools/spotbugs/spotbugs-annotations.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
