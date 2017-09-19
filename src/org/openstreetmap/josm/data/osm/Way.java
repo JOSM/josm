@@ -666,6 +666,20 @@ public final class Way extends OsmPrimitive implements IWay {
         }
         return false;
     }
+    
+    /**
+     * Replies true if all nodes of the way are drawable, false otherwise.
+     * @return true if all nodes of the way are drawable, false otherwise.
+     * @since 12876
+     */
+    public boolean hasOnlyDrawableNodes() {
+        Node[] nodes = this.nodes;
+        for (Node node : nodes) {
+            if (!node.isDrawable())
+                return false;
+        }
+        return true;
+    }
 
     @Override
     public boolean isUsable() {
@@ -674,7 +688,7 @@ public final class Way extends OsmPrimitive implements IWay {
 
     @Override
     public boolean isDrawable() {
-        return super.isDrawable() && !hasIncompleteNodes();
+        return super.isDrawable() && hasOnlyDrawableNodes();
     }
 
     /**

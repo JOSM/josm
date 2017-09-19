@@ -1661,7 +1661,7 @@ public class StyledMapRenderer extends AbstractMapRenderer {
     private void paintRecord(StyleRecord record) {
         try {
             record.paintPrimitive(paintSettings, this);
-        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException e) {
+        } catch (JosmRuntimeException | IllegalArgumentException | IllegalStateException | NullPointerException e) {
             throw BugReport.intercept(e).put("record", record);
         }
     }
