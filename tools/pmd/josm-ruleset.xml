@@ -75,6 +75,7 @@
   <rule ref="rulesets/java/strictexception.xml">
   	<exclude name="ExceptionAsFlowControl"/>
   	<exclude name="AvoidCatchingGenericException"/>
+  	<exclude name="AvoidCatchingNPE"/>
   	<exclude name="AvoidRethrowingException"/>
   </rule>
   <rule ref="rulesets/java/strings.xml">
