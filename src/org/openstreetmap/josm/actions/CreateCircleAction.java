@@ -161,17 +161,10 @@ public final class CreateCircleAction extends JosmAction {
 
         if (nodes.size() == 2) {
             // diameter: two single nodes needed or a way with two nodes
-            Node n1 = nodes.get(0);
-            double x1 = n1.getEastNorth().east();
-            double y1 = n1.getEastNorth().north();
-            Node n2 = nodes.get(1);
-            double x2 = n2.getEastNorth().east();
-            double y2 = n2.getEastNorth().north();
+            EastNorth n1 = nodes.get(0).getEastNorth();
+            EastNorth n2 = nodes.get(1).getEastNorth();
 
-            // calculate the center (xc/yc)
-            double xc = 0.5 * (x1 + x2);
-            double yc = 0.5 * (y1 + y2);
-            center = new EastNorth(xc, yc);
+            center = n1.getCenter(n2);
         } else {
             // triangle: three single nodes needed or a way with three nodes
             center = Geometry.getCenter(nodes);
@@ -183,8 +176,7 @@ public final class CreateCircleAction extends JosmAction {
 
         // calculate the radius (r)
         EastNorth n1 = nodes.get(0).getEastNorth();
-        double r = Math.sqrt(Math.pow(center.east()-n1.east(), 2) +
-                Math.pow(center.north()-n1.north(), 2));
+        double r = n1.distance(center);
 
         // see #10777
         LatLon ll1 = Main.getProjection().eastNorth2latlon(n1);
@@ -193,8 +185,13 @@ public final class CreateCircleAction extends JosmAction {
         double radiusInMeters = ll1.greatCircleDistance(ll2);
 
         int numberOfNodesInCircle = (int) Math.ceil(6.0 * Math.pow(radiusInMeters, 0.5));
+        // an odd number of nodes makes the distribution uneven
+        if ((numberOfNodesInCircle % 2) == 1) {
+            // add 1 to make it even
+            numberOfNodesInCircle += 1;
+        }
         if (numberOfNodesInCircle < 6) {
-           numberOfNodesInCircle = 6;
+            numberOfNodesInCircle = 6;
         }
 
         // Order nodes by angle
