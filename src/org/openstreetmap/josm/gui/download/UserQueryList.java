@@ -54,10 +54,11 @@ import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 
 /**
- * A component to select user saved Overpass queries.
- * @since 12574
+ * A component to select user saved queries.
+ * @since 12880
+ * @since 12574 as OverpassQueryList
  */
-public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQueryList.SelectorItem> {
+public final class UserQueryList extends SearchTextResultListPanel<UserQueryList.SelectorItem> {
 
     private static final DateTimeFormatter FORMAT = DateTimeFormatter.ofPattern("HH:mm:ss, dd-MM-yyyy");
 
@@ -78,7 +79,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
     private static final String KEY_KEY = "key";
     private static final String QUERY_KEY = "query";
     private static final String LAST_EDIT_KEY = "lastEdit";
-    private static final String PREFERENCE_ITEMS = "download.overpass.query";
+    private final String preferenceKey;
 
     private static final String TRANSLATED_HISTORY = tr("history");
 
@@ -86,14 +87,16 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
      * Constructs a new {@code OverpassQueryList}.
      * @param parent The parent of this component.
      * @param target The text component to which the queries must be added.
+     * @param preferenceKey The {@linkplain org.openstreetmap.josm.spi.preferences.IPreferences preference} key to store the user queries
      */
-    public OverpassQueryList(Component parent, JTextComponent target) {
+    public UserQueryList(Component parent, JTextComponent target, String preferenceKey) {
         this.target = target;
         this.componentParent = parent;
+        this.preferenceKey = preferenceKey;
         this.items = restorePreferences();
 
-        OverpassQueryListMouseAdapter mouseHandler = new OverpassQueryListMouseAdapter(lsResult, lsResultModel);
-        super.lsResult.setCellRenderer(new OverpassQueryCellRendered());
+        QueryListMouseAdapter mouseHandler = new QueryListMouseAdapter(lsResult, lsResultModel);
+        super.lsResult.setCellRenderer(new QueryCellRendered());
         super.setDblClickListener(e -> doubleClickEvent());
         super.lsResult.addMouseListener(mouseHandler);
         super.lsResult.addMouseMotionListener(mouseHandler);
@@ -254,16 +257,16 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
             toSave.add(it);
         }
 
-        Config.getPref().putListOfMaps(PREFERENCE_ITEMS, toSave);
+        Config.getPref().putListOfMaps(preferenceKey, toSave);
     }
 
     /**
      * Loads the user saved items from {@link Main#pref}.
      * @return A set of the user saved items.
      */
-    private static Map<String, SelectorItem> restorePreferences() {
+    private Map<String, SelectorItem> restorePreferences() {
         Collection<Map<String, String>> toRetrieve =
-                Config.getPref().getListOfMaps(PREFERENCE_ITEMS, Collections.emptyList());
+                Config.getPref().getListOfMaps(preferenceKey, Collections.emptyList());
         Map<String, SelectorItem> result = new HashMap<>();
 
         for (Map<String, String> entry : toRetrieve) {
@@ -284,14 +287,14 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
         return result;
     }
 
-    private class OverpassQueryListMouseAdapter extends MouseAdapter {
+    private class QueryListMouseAdapter extends MouseAdapter {
 
         private final JList<SelectorItem> list;
         private final ResultListModel<SelectorItem> model;
         private final JPopupMenu emptySelectionPopup = new JPopupMenu();
         private final JPopupMenu elementPopup = new JPopupMenu();
 
-        OverpassQueryListMouseAdapter(JList<SelectorItem> list, ResultListModel<SelectorItem> listModel) {
+        QueryListMouseAdapter(JList<SelectorItem> list, ResultListModel<SelectorItem> listModel) {
             this.list = list;
             this.model = listModel;
 
@@ -371,9 +374,9 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
     /**
      * This class defines the way each element is rendered in the list.
      */
-    private static class OverpassQueryCellRendered extends JLabel implements ListCellRenderer<SelectorItem> {
+    private static class QueryCellRendered extends JLabel implements ListCellRenderer<SelectorItem> {
 
-        OverpassQueryCellRendered() {
+        QueryCellRendered() {
             setOpaque(true);
         }
 
@@ -549,7 +552,7 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
 
     /**
      * This class represents an Overpass query used by the user that can be
-     * shown within {@link OverpassQueryList}.
+     * shown within {@link UserQueryList}.
      */
     public static class SelectorItem {
         private final String itemKey;
@@ -601,8 +604,8 @@ public final class OverpassQueryList extends SearchTextResultListPanel<OverpassQ
         }
 
         /**
-         * Gets the overpass query of this item.
-         * @return A string representing the overpass query of this item.
+         * Gets the query of this item.
+         * @return A string representing the query of this item.
          */
         public String getQuery() {
             return this.query;
