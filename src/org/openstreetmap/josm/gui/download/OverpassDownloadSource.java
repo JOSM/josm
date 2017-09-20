@@ -90,7 +90,7 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
         private static final String ACTION_IMG_SUBDIR = "dialogs";
 
         private final JosmTextArea overpassQuery;
-        private final OverpassQueryList overpassQueryList;
+        private final UserQueryList overpassQueryList;
 
         /**
          * Create a new {@link OverpassDownloadSourcePanel}
@@ -133,7 +133,7 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
             });
 
 
-            this.overpassQueryList = new OverpassQueryList(this, this.overpassQuery);
+            this.overpassQueryList = new UserQueryList(this, this.overpassQuery, "download.overpass.query");
             this.overpassQueryList.setPreferredSize(new Dimension(350, 300));
 
             EditSnippetAction edit = new EditSnippetAction();
@@ -287,7 +287,7 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
         }
 
         /**
-         * Action that delegates snippet creation to {@link OverpassQueryList#createNewItem()}.
+         * Action that delegates snippet creation to {@link UserQueryList#createNewItem()}.
          */
         private class AddSnippetAction extends AbstractAction {
 
@@ -307,7 +307,7 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
         }
 
         /**
-         * Action that delegates snippet removal to {@link OverpassQueryList#removeSelectedItem()}.
+         * Action that delegates snippet removal to {@link UserQueryList#removeSelectedItem()}.
          */
         private class RemoveSnippetAction extends AbstractAction implements ListSelectionListener {
 
@@ -340,7 +340,7 @@ public class OverpassDownloadSource implements DownloadSource<OverpassDownloadSo
         }
 
         /**
-         * Action that delegates snippet edit to {@link OverpassQueryList#editSelectedItem()}.
+         * Action that delegates snippet edit to {@link UserQueryList#editSelectedItem()}.
          */
         private class EditSnippetAction extends AbstractAction implements ListSelectionListener {
 
