@@ -23,7 +23,7 @@ import java.util.TimeZone;
 import javax.swing.ImageIcon;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.coor.CachedLatLon;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.ILatLon;

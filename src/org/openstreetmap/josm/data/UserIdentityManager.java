@@ -6,12 +6,12 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 import java.text.MessageFormat;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
-import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.oauth.OAuthAccessTokenHolder;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.UserInfo;
-import org.openstreetmap.josm.data.preferences.StringSetting;
+import org.openstreetmap.josm.spi.preferences.StringSetting;
 import org.openstreetmap.josm.gui.progress.NullProgressMonitor;
 import org.openstreetmap.josm.io.OnlineResource;
 import org.openstreetmap.josm.io.OsmApi;

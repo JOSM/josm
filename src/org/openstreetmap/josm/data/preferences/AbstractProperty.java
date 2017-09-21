@@ -3,8 +3,8 @@ package org.openstreetmap.josm.data.preferences;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
-import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
-import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.tools.ListenableWeakReference;
 import org.openstreetmap.josm.tools.bugreport.BugReport;
 

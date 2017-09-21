@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.data.preferences;
+package org.openstreetmap.josm.spi.preferences;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * Setting containing a {@link List} of {@code List}s of {@link String} values.
- * @since 9759
+ * @since xxx (moved from package {@code org.openstreetmap.josm.data.preferences})
  */
 public class ListListSetting extends AbstractSetting<List<List<String>>> {
 

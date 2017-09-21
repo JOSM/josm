@@ -31,6 +31,11 @@ import javax.xml.validation.Validator;
 
 import org.openstreetmap.josm.io.CachedFile;
 import org.openstreetmap.josm.io.XmlStreamParsingException;
+import org.openstreetmap.josm.spi.preferences.Setting;
+import org.openstreetmap.josm.spi.preferences.ListListSetting;
+import org.openstreetmap.josm.spi.preferences.ListSetting;
+import org.openstreetmap.josm.spi.preferences.MapListSetting;
+import org.openstreetmap.josm.spi.preferences.StringSetting;
 import org.openstreetmap.josm.tools.Logging;
 import org.xml.sax.SAXException;
 

@@ -1,9 +1,9 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.data.preferences;
+package org.openstreetmap.josm.spi.preferences;
 
 /**
  * Setting containing a {@link String} value.
- * @since 9759
+ * @since xxx (moved from package {@code org.openstreetmap.josm.data.preferences})
  */
 public class StringSetting extends AbstractSetting<String> {
     /**

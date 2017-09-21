@@ -15,7 +15,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import org.openstreetmap.josm.data.preferences.ListSetting;
+import org.openstreetmap.josm.spi.preferences.ListSetting;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;

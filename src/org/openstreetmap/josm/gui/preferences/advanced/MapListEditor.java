@@ -15,7 +15,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.table.AbstractTableModel;
 
-import org.openstreetmap.josm.data.preferences.MapListSetting;
+import org.openstreetmap.josm.spi.preferences.MapListSetting;
 
 /**
  * Editor for List of Maps preference entries.

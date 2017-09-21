@@ -17,11 +17,11 @@ import javax.script.ScriptException;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
-import org.openstreetmap.josm.data.preferences.ListListSetting;
-import org.openstreetmap.josm.data.preferences.ListSetting;
-import org.openstreetmap.josm.data.preferences.MapListSetting;
-import org.openstreetmap.josm.data.preferences.Setting;
-import org.openstreetmap.josm.data.preferences.StringSetting;
+import org.openstreetmap.josm.spi.preferences.ListListSetting;
+import org.openstreetmap.josm.spi.preferences.ListSetting;
+import org.openstreetmap.josm.spi.preferences.MapListSetting;
+import org.openstreetmap.josm.spi.preferences.Setting;
+import org.openstreetmap.josm.spi.preferences.StringSetting;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.Utils;
 

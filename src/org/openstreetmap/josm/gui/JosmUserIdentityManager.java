@@ -1,7 +1,7 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui;
 
-import org.openstreetmap.josm.data.Preferences.PreferenceChangeEvent;
+import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
 import org.openstreetmap.josm.data.UserIdentityManager;
 import org.openstreetmap.josm.data.osm.User;
 import org.openstreetmap.josm.data.osm.UserInfo;
