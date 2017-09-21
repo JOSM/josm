@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.data.preferences;
+package org.openstreetmap.josm.spi.preferences;
 
 import org.junit.Rule;
 import org.junit.Test;

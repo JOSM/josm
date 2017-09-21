@@ -14,6 +14,12 @@ import java.util.TreeMap;
 
 import org.junit.Test;
 import org.openstreetmap.josm.data.Version;
+import org.openstreetmap.josm.spi.preferences.Setting;
+import org.openstreetmap.josm.spi.preferences.ListListSetting;
+import org.openstreetmap.josm.spi.preferences.ListSetting;
+import org.openstreetmap.josm.spi.preferences.AbstractSetting;
+import org.openstreetmap.josm.spi.preferences.StringSetting;
+import org.openstreetmap.josm.spi.preferences.MapListSetting;
 
 /**
  * Unit tests for class {@link PreferencesWriter}.
