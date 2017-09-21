@@ -3,7 +3,7 @@ package org.openstreetmap.josm.spi.preferences;
 
 /**
  * Listener to preference change events.
- * @since xxx
+ * @since 12881
  */
 @FunctionalInterface
 public interface PreferenceChangedListener {

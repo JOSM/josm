@@ -3,7 +3,7 @@ package org.openstreetmap.josm.spi.preferences;
 
 /**
  * Event triggered when a preference entry value changes.
- * @since xxx
+ * @since 12881
  */
 public interface PreferenceChangeEvent {
 

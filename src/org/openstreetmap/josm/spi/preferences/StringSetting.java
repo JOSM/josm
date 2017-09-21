@@ -3,7 +3,7 @@ package org.openstreetmap.josm.spi.preferences;
 
 /**
  * Setting containing a {@link String} value.
- * @since xxx (moved from package {@code org.openstreetmap.josm.data.preferences})
+ * @since 12881 (moved from package {@code org.openstreetmap.josm.data.preferences})
  */
 public class StringSetting extends AbstractSetting<String> {
     /**

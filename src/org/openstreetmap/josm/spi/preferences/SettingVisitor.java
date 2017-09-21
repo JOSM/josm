@@ -3,7 +3,7 @@ package org.openstreetmap.josm.spi.preferences;
 
 /**
  * Visitor interface for {@link Setting} implementations.
- * @since xxx (moved from package {@code org.openstreetmap.josm.data.preferences})
+ * @since 12881 (moved from package {@code org.openstreetmap.josm.data.preferences})
  */
 public interface SettingVisitor {
     /**
