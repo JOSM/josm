@@ -11,7 +11,7 @@ import java.util.Arrays;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.openstreetmap.josm.JOSMFixture;
-import org.openstreetmap.josm.data.preferences.StringSetting;
+import org.openstreetmap.josm.spi.preferences.StringSetting;
 import org.openstreetmap.josm.gui.preferences.advanced.PreferencesTable.AllSettingsTableModel;
 
 /**

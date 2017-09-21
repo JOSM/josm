@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.data.preferences;
+package org.openstreetmap.josm.spi.preferences;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -9,9 +9,9 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 /**
- * Test {@link ListListSetting}.
+ * Test {@link MapListSetting}.
  */
-public class ListListSettingTest {
+public class MapListSettingTest {
     /**
      * This is a preference test
      */
@@ -20,11 +20,11 @@ public class ListListSettingTest {
     public JOSMTestRules test = new JOSMTestRules().preferences();
 
     /**
-     * Unit test of methods {@link ListListSetting#equals} and {@link ListListSetting#hashCode}.
+     * Unit test of methods {@link MapListSetting#equals} and {@link MapListSetting#hashCode}.
      */
     @Test
     public void testEqualsContract() {
-        EqualsVerifier.forClass(ListListSetting.class).usingGetClass()
+        EqualsVerifier.forClass(MapListSetting.class).usingGetClass()
             .withIgnoredFields("isNew", "time")
             .verify();
     }
