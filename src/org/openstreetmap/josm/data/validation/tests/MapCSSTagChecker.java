@@ -328,7 +328,7 @@ public class MapCSSTagChecker extends Test.TagTest {
                             check.fixCommands.add(FixCommand.fixAdd(ai.val));
                         } else if ("fixRemove".equals(ai.key)) {
                             CheckParameterUtil.ensureThat(!(ai.val instanceof String) || !(val != null && val.contains("=")),
-                                    "Unexpected '='. Please only specify the key to remove!");
+                                    "Unexpected '='. Please only specify the key to remove in: " + ai);
                             check.fixCommands.add(FixCommand.fixRemove(ai.val));
                         } else if (val != null && "fixChangeKey".equals(ai.key)) {
                             CheckParameterUtil.ensureThat(val.contains("=>"), "Separate old from new key by '=>'!");
