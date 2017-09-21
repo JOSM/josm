@@ -3,7 +3,7 @@ package org.openstreetmap.josm.spi.preferences;
 
 /**
  * Default implementation of the {@link PreferenceChangeEvent} interface.
- * @since xxx
+ * @since 12881
  */
 public class DefaultPreferenceChangeEvent implements PreferenceChangeEvent {
     

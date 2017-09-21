@@ -7,7 +7,7 @@ package org.openstreetmap.josm.spi.preferences;
  * Implementations must provide a proper <code>equals</code> method.
  *
  * @param <T> the data type for the value
- * @since xxx (moved from package {@code org.openstreetmap.josm.data.preferences})
+ * @since 12881 (moved from package {@code org.openstreetmap.josm.data.preferences})
  */
 public interface Setting<T> {
     /**

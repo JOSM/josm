@@ -253,7 +253,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
     /**
      * Adds a new preferences listener.
      * @param listener The listener to add
-     * @since xxx
+     * @since 12881
      */
     @Override
     public void addPreferenceChangeListener(org.openstreetmap.josm.spi.preferences.PreferenceChangedListener listener) {
@@ -277,7 +277,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
     /**
      * Removes a preferences listener.
      * @param listener The listener to remove
-     * @since xxx
+     * @since 12881
      */
     @Override
     public void removePreferenceChangeListener(org.openstreetmap.josm.spi.preferences.PreferenceChangedListener listener) {
@@ -298,7 +298,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * Adds a listener that only listens to changes in one preference
      * @param key The preference key to listen to
      * @param listener The listener to add.
-     * @since xxx
+     * @since 12881
      */
     @Override
     public void addKeyPreferenceChangeListener(String key, org.openstreetmap.josm.spi.preferences.PreferenceChangedListener listener) {
@@ -340,7 +340,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * Removes a listener that only listens to changes in one preference
      * @param key The preference key to listen to
      * @param listener The listener to add.
-     * @since xxx
+     * @since 12881
      */
     @Override
     public void removeKeyPreferenceChangeListener(String key, org.openstreetmap.josm.spi.preferences.PreferenceChangedListener listener) {

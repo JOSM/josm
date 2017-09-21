@@ -7,7 +7,7 @@ import java.util.Objects;
  * Base abstract class of all settings, holding the setting value.
  *
  * @param <T> The setting type
- * @since xxx (moved from package {@code org.openstreetmap.josm.data.preferences})
+ * @since 12881 (moved from package {@code org.openstreetmap.josm.data.preferences})
  */
 public abstract class AbstractSetting<T> implements Setting<T> {
     protected final T value;

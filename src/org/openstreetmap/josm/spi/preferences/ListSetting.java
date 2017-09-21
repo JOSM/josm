@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * Setting containing a {@link List} of {@link String} values.
- * @since xxx (moved from package {@code org.openstreetmap.josm.data.preferences})
+ * @since 12881 (moved from package {@code org.openstreetmap.josm.data.preferences})
  */
 public class ListSetting extends AbstractSetting<List<String>> {
     /**

@@ -9,7 +9,7 @@ import java.util.Map;
 
 /**
  * Setting containing a {@link List} of {@link Map}s of {@link String} values.
- * @since xxx (moved from package {@code org.openstreetmap.josm.data.preferences})
+ * @since 12881 (moved from package {@code org.openstreetmap.josm.data.preferences})
  */
 public class MapListSetting extends AbstractSetting<List<Map<String, String>>> {
 
