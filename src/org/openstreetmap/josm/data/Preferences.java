@@ -194,6 +194,9 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
         void preferenceChanged(PreferenceChangeEvent e);
     }
 
+    /**
+     * @deprecated private class is deprecated
+     */
     @Deprecated
     private static class DefaultPreferenceChangeEvent implements PreferenceChangeEvent {
         private final String key;
@@ -226,9 +229,15 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
 
     private final HashMap<String, ListenerList<org.openstreetmap.josm.spi.preferences.PreferenceChangedListener>> keyListeners = new HashMap<>();
 
+    /**
+     * @deprecated deprecated private field
+     */
     @Deprecated
     private final ListenerList<Preferences.PreferenceChangedListener> listenersDeprecated = ListenerList.create();
 
+    /**
+     * @deprecated deprecated private field
+     */
     @Deprecated
     private final HashMap<String, ListenerList<Preferences.PreferenceChangedListener>> keyListenersDeprecated = new HashMap<>();
 
@@ -310,7 +319,8 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @param key The preference key to listen to
      * @param listener The listener to add.
      * @since 10824
-     * @deprecated use {@link #addKeyPreferenceChangeListener(java.lang.String, org.openstreetmap.josm.spi.preferences.PreferenceChangedListener)}
+     * @deprecated use
+     * {@link #addKeyPreferenceChangeListener(java.lang.String, org.openstreetmap.josm.spi.preferences.PreferenceChangedListener)}
      */
     @Deprecated
     public void addKeyPreferenceChangeListener(String key, Preferences.PreferenceChangedListener listener) {
@@ -331,6 +341,9 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
         return keyListeners.computeIfAbsent(key, k -> ListenerList.create());
     }
 
+    /**
+     * @deprecated deprecated private method
+     */
     @Deprecated
     private ListenerList<Preferences.PreferenceChangedListener> listenersForKeyDeprecated(String key) {
         return keyListenersDeprecated.computeIfAbsent(key, k -> ListenerList.create());
@@ -353,7 +366,8 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * Removes a listener that only listens to changes in one preference
      * @param key The preference key to listen to
      * @param listener The listener to add.
-     * @deprecated use {@link #removeKeyPreferenceChangeListener(java.lang.String, org.openstreetmap.josm.spi.preferences.PreferenceChangedListener)}
+     * @deprecated use
+     * {@link #removeKeyPreferenceChangeListener(java.lang.String, org.openstreetmap.josm.spi.preferences.PreferenceChangedListener)}
      */
     @Deprecated
     public void removeKeyPreferenceChangeListener(String key, Preferences.PreferenceChangedListener listener) {
@@ -363,7 +377,8 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
     }
 
     protected void firePreferenceChanged(String key, Setting<?> oldValue, Setting<?> newValue) {
-        final org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent evt = new org.openstreetmap.josm.spi.preferences.DefaultPreferenceChangeEvent(key, oldValue, newValue);
+        final org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent evt =
+                new org.openstreetmap.josm.spi.preferences.DefaultPreferenceChangeEvent(key, oldValue, newValue);
         listeners.fireEvent(listener -> listener.preferenceChanged(evt));
 
         ListenerList<org.openstreetmap.josm.spi.preferences.PreferenceChangedListener> forKey = keyListeners.get(key);
@@ -373,6 +388,9 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
         firePreferenceChangedDeprecated(key, oldValue, newValue);
     }
 
+    /**
+     * @deprecated deprecated private method
+     */
     @Deprecated
     private void firePreferenceChangedDeprecated(String key, Setting<?> oldValue, Setting<?> newValue) {
         final Preferences.PreferenceChangeEvent evtDeprecated = new Preferences.DefaultPreferenceChangeEvent(key, oldValue, newValue);

@@ -7,7 +7,6 @@ import javax.swing.JCheckBoxMenuItem;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent;
-import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.spi.preferences.PreferenceChangedListener;
 import org.openstreetmap.josm.data.preferences.BooleanProperty;
 
