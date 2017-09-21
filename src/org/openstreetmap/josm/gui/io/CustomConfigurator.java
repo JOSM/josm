@@ -44,7 +44,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Preferences;
 import org.openstreetmap.josm.data.PreferencesUtils;
 import org.openstreetmap.josm.data.Version;
-import org.openstreetmap.josm.data.preferences.Setting;
+import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.plugins.PluginDownloadTask;
 import org.openstreetmap.josm.plugins.PluginInformation;

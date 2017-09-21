@@ -47,14 +47,14 @@ import org.openstreetmap.josm.data.preferences.BooleanProperty;
 import org.openstreetmap.josm.data.preferences.ColorProperty;
 import org.openstreetmap.josm.data.preferences.DoubleProperty;
 import org.openstreetmap.josm.data.preferences.IntegerProperty;
-import org.openstreetmap.josm.data.preferences.ListListSetting;
-import org.openstreetmap.josm.data.preferences.ListSetting;
+import org.openstreetmap.josm.spi.preferences.ListListSetting;
+import org.openstreetmap.josm.spi.preferences.ListSetting;
 import org.openstreetmap.josm.data.preferences.LongProperty;
-import org.openstreetmap.josm.data.preferences.MapListSetting;
+import org.openstreetmap.josm.spi.preferences.MapListSetting;
 import org.openstreetmap.josm.data.preferences.PreferencesReader;
 import org.openstreetmap.josm.data.preferences.PreferencesWriter;
-import org.openstreetmap.josm.data.preferences.Setting;
-import org.openstreetmap.josm.data.preferences.StringSetting;
+import org.openstreetmap.josm.spi.preferences.Setting;
+import org.openstreetmap.josm.spi.preferences.StringSetting;
 import org.openstreetmap.josm.data.preferences.sources.ExtendedSourceEntry;
 import org.openstreetmap.josm.data.preferences.sources.ValidatorPrefHelper;
 import org.openstreetmap.josm.io.OfflineAccessException;
@@ -156,7 +156,9 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
 
     /**
      * Event triggered when a preference entry value changes.
+     * @deprecated use {@link org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent}
      */
+    @Deprecated
     public interface PreferenceChangeEvent {
         /**
          * Returns the preference key.
@@ -180,8 +182,10 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
     /**
      * Listener to preference change events.
      * @since 10600 (functional interface)
+     * @deprecated use {@link org.openstreetmap.josm.spi.preferences.PreferenceChangedListener}
      */
     @FunctionalInterface
+    @Deprecated
     public interface PreferenceChangedListener {
         /**
          * Trigerred when a preference entry value changes.
@@ -190,6 +194,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
         void preferenceChanged(PreferenceChangeEvent e);
     }
 
+    @Deprecated
     private static class DefaultPreferenceChangeEvent implements PreferenceChangeEvent {
         private final String key;
         private final Setting<?> oldValue;
@@ -217,9 +222,15 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
         }
     }
 
-    private final ListenerList<PreferenceChangedListener> listeners = ListenerList.create();
+    private final ListenerList<org.openstreetmap.josm.spi.preferences.PreferenceChangedListener> listeners = ListenerList.create();
 
-    private final HashMap<String, ListenerList<PreferenceChangedListener>> keyListeners = new HashMap<>();
+    private final HashMap<String, ListenerList<org.openstreetmap.josm.spi.preferences.PreferenceChangedListener>> keyListeners = new HashMap<>();
+
+    @Deprecated
+    private final ListenerList<Preferences.PreferenceChangedListener> listenersDeprecated = ListenerList.create();
+
+    @Deprecated
+    private final HashMap<String, ListenerList<Preferences.PreferenceChangedListener>> keyListenersDeprecated = new HashMap<>();
 
     /**
      * Constructs a new {@code Preferences}.
@@ -242,21 +253,56 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
     /**
      * Adds a new preferences listener.
      * @param listener The listener to add
+     * @since xxx
      */
     @Override
-    public void addPreferenceChangeListener(PreferenceChangedListener listener) {
+    public void addPreferenceChangeListener(org.openstreetmap.josm.spi.preferences.PreferenceChangedListener listener) {
         if (listener != null) {
             listeners.addListener(listener);
         }
     }
 
     /**
+     * Adds a new preferences listener.
+     * @param listener The listener to add
+     * @deprecated use {@link #addPreferenceChangeListener(org.openstreetmap.josm.spi.preferences.PreferenceChangedListener)}
+     */
+    @Deprecated
+    public void addPreferenceChangeListener(Preferences.PreferenceChangedListener listener) {
+        if (listener != null) {
+            listenersDeprecated.addListener(listener);
+        }
+    }
+
+    /**
      * Removes a preferences listener.
      * @param listener The listener to remove
+     * @since xxx
      */
     @Override
-    public void removePreferenceChangeListener(PreferenceChangedListener listener) {
+    public void removePreferenceChangeListener(org.openstreetmap.josm.spi.preferences.PreferenceChangedListener listener) {
         listeners.removeListener(listener);
+    }
+
+    /**
+     * Removes a preferences listener.
+     * @param listener The listener to remove
+     * @deprecated use {@link #removePreferenceChangeListener(org.openstreetmap.josm.spi.preferences.PreferenceChangedListener)}
+     */
+    @Deprecated
+    public void removePreferenceChangeListener(Preferences.PreferenceChangedListener listener) {
+        listenersDeprecated.removeListener(listener);
+    }
+
+    /**
+     * Adds a listener that only listens to changes in one preference
+     * @param key The preference key to listen to
+     * @param listener The listener to add.
+     * @since xxx
+     */
+    @Override
+    public void addKeyPreferenceChangeListener(String key, org.openstreetmap.josm.spi.preferences.PreferenceChangedListener listener) {
+        listenersForKey(key).addListener(listener);
     }
 
     /**
@@ -264,10 +310,11 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @param key The preference key to listen to
      * @param listener The listener to add.
      * @since 10824
+     * @deprecated use {@link #addKeyPreferenceChangeListener(java.lang.String, org.openstreetmap.josm.spi.preferences.PreferenceChangedListener)}
      */
-    @Override
-    public void addKeyPreferenceChangeListener(String key, PreferenceChangedListener listener) {
-        listenersForKey(key).addListener(listener);
+    @Deprecated
+    public void addKeyPreferenceChangeListener(String key, Preferences.PreferenceChangedListener listener) {
+        listenersForKeyDeprecated(key).addListener(listener);
     }
 
     /**
@@ -276,33 +323,64 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @param listener The listener to add.
      * @since 10824
      */
-    public void addWeakKeyPreferenceChangeListener(String key, PreferenceChangedListener listener) {
+    public void addWeakKeyPreferenceChangeListener(String key, org.openstreetmap.josm.spi.preferences.PreferenceChangedListener listener) {
         listenersForKey(key).addWeakListener(listener);
     }
 
-    private ListenerList<PreferenceChangedListener> listenersForKey(String key) {
+    private ListenerList<org.openstreetmap.josm.spi.preferences.PreferenceChangedListener> listenersForKey(String key) {
         return keyListeners.computeIfAbsent(key, k -> ListenerList.create());
+    }
+
+    @Deprecated
+    private ListenerList<Preferences.PreferenceChangedListener> listenersForKeyDeprecated(String key) {
+        return keyListenersDeprecated.computeIfAbsent(key, k -> ListenerList.create());
     }
 
     /**
      * Removes a listener that only listens to changes in one preference
      * @param key The preference key to listen to
      * @param listener The listener to add.
+     * @since xxx
      */
     @Override
-    public void removeKeyPreferenceChangeListener(String key, PreferenceChangedListener listener) {
+    public void removeKeyPreferenceChangeListener(String key, org.openstreetmap.josm.spi.preferences.PreferenceChangedListener listener) {
         Optional.ofNullable(keyListeners.get(key)).orElseThrow(
                 () -> new IllegalArgumentException("There are no listeners registered for " + key))
         .removeListener(listener);
     }
 
+    /**
+     * Removes a listener that only listens to changes in one preference
+     * @param key The preference key to listen to
+     * @param listener The listener to add.
+     * @deprecated use {@link #removeKeyPreferenceChangeListener(java.lang.String, org.openstreetmap.josm.spi.preferences.PreferenceChangedListener)}
+     */
+    @Deprecated
+    public void removeKeyPreferenceChangeListener(String key, Preferences.PreferenceChangedListener listener) {
+        Optional.ofNullable(keyListenersDeprecated.get(key)).orElseThrow(
+                () -> new IllegalArgumentException("There are no listeners registered for " + key))
+        .removeListener(listener);
+    }
+
     protected void firePreferenceChanged(String key, Setting<?> oldValue, Setting<?> newValue) {
-        final PreferenceChangeEvent evt = new DefaultPreferenceChangeEvent(key, oldValue, newValue);
+        final org.openstreetmap.josm.spi.preferences.PreferenceChangeEvent evt = new org.openstreetmap.josm.spi.preferences.DefaultPreferenceChangeEvent(key, oldValue, newValue);
         listeners.fireEvent(listener -> listener.preferenceChanged(evt));
 
-        ListenerList<PreferenceChangedListener> forKey = keyListeners.get(key);
+        ListenerList<org.openstreetmap.josm.spi.preferences.PreferenceChangedListener> forKey = keyListeners.get(key);
         if (forKey != null) {
             forKey.fireEvent(listener -> listener.preferenceChanged(evt));
+        }
+        firePreferenceChangedDeprecated(key, oldValue, newValue);
+    }
+
+    @Deprecated
+    private void firePreferenceChangedDeprecated(String key, Setting<?> oldValue, Setting<?> newValue) {
+        final Preferences.PreferenceChangeEvent evtDeprecated = new Preferences.DefaultPreferenceChangeEvent(key, oldValue, newValue);
+        listenersDeprecated.fireEvent(listener -> listener.preferenceChanged(evtDeprecated));
+
+        ListenerList<Preferences.PreferenceChangedListener> forKeyDeprecated = keyListenersDeprecated.get(key);
+        if (forKeyDeprecated != null) {
+            forKeyDeprecated.fireEvent(listener -> listener.preferenceChanged(evtDeprecated));
         }
     }
 

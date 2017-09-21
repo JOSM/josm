@@ -1,5 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.data.preferences;
+package org.openstreetmap.josm.spi.preferences;
 
 import java.util.Objects;
 
@@ -7,7 +7,7 @@ import java.util.Objects;
  * Base abstract class of all settings, holding the setting value.
  *
  * @param <T> The setting type
- * @since 9759
+ * @since xxx (moved from package {@code org.openstreetmap.josm.data.preferences})
  */
 public abstract class AbstractSetting<T> implements Setting<T> {
     protected final T value;

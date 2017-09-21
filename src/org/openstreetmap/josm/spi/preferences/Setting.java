@@ -1,7 +1,5 @@
 // License: GPL. For details, see LICENSE file.
-package org.openstreetmap.josm.data.preferences;
-
-import org.openstreetmap.josm.data.Preferences;
+package org.openstreetmap.josm.spi.preferences;
 
 /**
  * Interface for a preference value.
@@ -9,7 +7,7 @@ import org.openstreetmap.josm.data.Preferences;
  * Implementations must provide a proper <code>equals</code> method.
  *
  * @param <T> the data type for the value
- * @since 9759
+ * @since xxx (moved from package {@code org.openstreetmap.josm.data.preferences})
  */
 public interface Setting<T> {
     /**
@@ -71,7 +69,7 @@ public interface Setting<T> {
      *
      * For default preferences. A setting is marked as new, if it has been seen
      * in the current session.
-     * Methods like {@link Preferences#get(java.lang.String, java.lang.String)},
+     * Methods like {@link IPreferences#get(java.lang.String, java.lang.String)},
      * can be called from different parts of the code with the same key. In this case,
      * the supplied default value must match. However, this is only an error if the mismatching
      * default value has been seen in the same session (and not loaded from cache).

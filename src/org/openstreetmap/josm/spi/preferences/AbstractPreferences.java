@@ -4,11 +4,6 @@ package org.openstreetmap.josm.spi.preferences;
 import java.util.List;
 import java.util.Map;
 
-import org.openstreetmap.josm.data.preferences.ListListSetting;
-import org.openstreetmap.josm.data.preferences.ListSetting;
-import org.openstreetmap.josm.data.preferences.MapListSetting;
-import org.openstreetmap.josm.data.preferences.Setting;
-import org.openstreetmap.josm.data.preferences.StringSetting;
 import org.openstreetmap.josm.tools.Logging;
 
 /**

@@ -5,8 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.openstreetmap.josm.data.Preferences.PreferenceChangedListener;
-
 /**
  * Interface for preference handling.
  *

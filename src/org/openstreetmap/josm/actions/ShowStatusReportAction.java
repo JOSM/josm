@@ -26,7 +26,7 @@ import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Version;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.DatasetConsistencyTest;
-import org.openstreetmap.josm.data.preferences.Setting;
+import org.openstreetmap.josm.spi.preferences.Setting;
 import org.openstreetmap.josm.data.preferences.sources.MapPaintPrefHelper;
 import org.openstreetmap.josm.data.preferences.sources.PresetPrefHelper;
 import org.openstreetmap.josm.data.preferences.sources.SourcePrefHelper;
