@@ -150,6 +150,7 @@ import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.HttpClient;
 import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.ImageProvider;
+import org.openstreetmap.josm.tools.JosmRuntimeException;
 import org.openstreetmap.josm.tools.Logging;
 import org.openstreetmap.josm.tools.OpenBrowser;
 import org.openstreetmap.josm.tools.OsmUrlToBounds;
@@ -1090,7 +1091,7 @@ public class MainApplication extends Main {
                     // Workaround from https://bugs.openjdk.java.net/browse/JDK-8179014
                     UIManager.put("FileChooser.useSystemExtensionHiding", Boolean.FALSE);
                 }
-            } catch (NumberFormatException | ReflectiveOperationException e) {
+            } catch (NumberFormatException | ReflectiveOperationException | JosmRuntimeException e) {
                 Logging.error(e);
             }
         }

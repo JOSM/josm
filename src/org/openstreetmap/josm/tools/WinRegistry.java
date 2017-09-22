@@ -62,7 +62,7 @@ public final class WinRegistry {
             regQueryInfoKey = userClass.getDeclaredMethod("WindowsRegQueryInfoKey1", int.class);
             regEnumKeyEx = userClass.getDeclaredMethod("WindowsRegEnumKeyEx", int.class, int.class, int.class);
             Utils.setObjectsAccessible(regOpenKey, regCloseKey, regQueryValueEx, regEnumValue, regQueryInfoKey, regEnumKeyEx);
-        } catch (SecurityException | ReflectiveOperationException e) {
+        } catch (RuntimeException | ReflectiveOperationException e) {
             throw new JosmRuntimeException(e);
         }
     }
