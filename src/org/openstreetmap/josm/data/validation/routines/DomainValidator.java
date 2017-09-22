@@ -1060,7 +1060,6 @@ public final class DomainValidator extends AbstractValidator {
         "ott", // ott Dish DBS Corporation
         "ovh", // ovh OVH SAS
         "page", // page Charleston Road Registry Inc.
-        "pamperedchef", // pamperedchef The Pampered Chef, Ltd.
         "panasonic", // panasonic Panasonic Corporation
         "panerai", // panerai Richemont DNS Inc.
         "paris", // paris City of Paris
