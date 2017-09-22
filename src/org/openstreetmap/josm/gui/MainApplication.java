@@ -300,16 +300,16 @@ public class MainApplication extends Main {
     };
 
     static {
-        registerCLIModue(JOSM_CLI_MODULE);
-        registerCLIModue(ProjectionCLI.INSTANCE);
+        registerCLIModule(JOSM_CLI_MODULE);
+        registerCLIModule(ProjectionCLI.INSTANCE);
     }
 
     /**
      * Register a command line interface module.
      * @param module the module
-     * @since 12792
+     * @since 12886
      */
-    public static void registerCLIModue(CLIModule module) {
+    public static void registerCLIModule(CLIModule module) {
         cliModules.add(module);
     }
 
