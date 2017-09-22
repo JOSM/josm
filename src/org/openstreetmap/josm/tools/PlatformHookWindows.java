@@ -309,7 +309,7 @@ public class PlatformHookWindows implements PlatformHook {
                 sb.append(' ').append(releaseId);
             }
             sb.append(" (").append(getCurrentBuild()).append(')');
-        } catch (ReflectiveOperationException e) {
+        } catch (ReflectiveOperationException | JosmRuntimeException e) {
             Logging.error(e);
         }
         return sb.toString();
