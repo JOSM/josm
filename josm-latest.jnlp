@@ -19,7 +19,7 @@
         <all-permissions/>
     </security>
     <resources>
-        <java version="1.8+"/>
+        <java version="1.8+" java-vm-args="--add-modules=java.activation,java.se.ee --add-exports=java.base/sun.security.util=ALL-UNNAMED --add-exports=java.base/sun.security.x509=ALL-UNNAMED --add-exports=java.desktop/com.apple.eawt=ALL-UNNAMED --add-exports=java.desktop/com.sun.imageio.spi=ALL-UNNAMED --add-exports=javafx.graphics/com.sun.javafx.application=ALL-UNNAMED --add-exports=jdk.deploy/com.sun.deploy.config=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/jdk.internal.loader=ALL-UNNAMED --add-opens=java.desktop/javax.imageio.spi=ALL-UNNAMED --add-opens=java.desktop/javax.swing.text.html=ALL-UNNAMED --add-opens=java.prefs/java.util.prefs=ALL-UNNAMED"/>
         <jar href="josm-latest.jar"/>
         <property name="java.util.Arrays.useLegacyMergeSort" value="true"/>
     </resources>
