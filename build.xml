@@ -454,7 +454,7 @@ Build-Date: ${build.tstamp}
                 <junit printsummary="yes" fork="true" forkmode="once">
                     <jvmarg value="-Dfile.encoding=UTF-8"/>
                     <jvmarg value="--add-modules" if:set="isJava9" />
-                    <jvmarg value="java.se.ee" if:set="isJava9" />
+                    <jvmarg value="java.activation,java.se.ee" if:set="isJava9" />
                     <jvmarg value="--add-exports" if:set="isJava9" />
                     <jvmarg value="java.base/sun.security.util=ALL-UNNAMED" if:set="isJava9" />
                     <jvmarg value="--add-exports" if:set="isJava9" />

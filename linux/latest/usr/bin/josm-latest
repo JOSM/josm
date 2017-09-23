@@ -47,7 +47,7 @@ fi
 if [ "$JAVACMD" ]; then
     echo "Using $JAVACMD to execute josm-latest." || true
     if [ "`expr match \"${JAVACMD}\" 'java-9'`" != "0" ]; then
-        JAVA_OPTS="--add-modules java.se.ee $JAVA_OPTS"
+        JAVA_OPTS="--add-modules java.activation,java.se.ee $JAVA_OPTS"
     fi
     set +e
     while true; do
