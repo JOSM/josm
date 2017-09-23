@@ -5,7 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.Locale;
 
-import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.PreferencesUtils;
 import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.Logging;
 
@@ -84,7 +84,7 @@ public enum UploadStrategy {
             // will be inserted.
             v = Config.getPref().get("osm-server.atomic-upload", null);
             if (v != null) {
-                Main.pref.removeFromCollection("osm-server.atomic-upload", v);
+                PreferencesUtils.removeFromCollection(Config.getPref(), "osm-server.atomic-upload", v);
             } else {
                 v = "";
             }

@@ -15,6 +15,7 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.PreferencesUtils;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.io.importexport.FileExporter;
 import org.openstreetmap.josm.gui.layer.Layer;
@@ -234,6 +235,6 @@ public abstract class SaveActionBase extends DiskAccessAction {
         List<String> history = new LinkedList<>(oldHistory);
         history.remove(filepath);
         history.add(0, filepath);
-        Main.pref.putCollectionBounded("file-open.history", maxsize, history);
+        PreferencesUtils.putCollectionBounded(Config.getPref(), "file-open.history", maxsize, history);
     }
 }
