@@ -32,8 +32,8 @@ import java.util.Random;
 
 import javax.swing.ImageIcon;
 
-import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.Bounds;
+import org.openstreetmap.josm.data.PreferencesUtils;
 import org.openstreetmap.josm.data.SystemOfMeasurement;
 import org.openstreetmap.josm.data.SystemOfMeasurement.SoMChangeListener;
 import org.openstreetmap.josm.data.coor.LatLon;
@@ -278,7 +278,7 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
      */
     public ColorMode getColorMode(String layerName) {
         try {
-            int i = Main.pref.getInteger("draw.rawgps.colors", specName(layerName), 0);
+            int i = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.colors", specName(layerName), 0);
             return ColorMode.fromIndex(i);
         } catch (IndexOutOfBoundsException e) {
             Logging.warn(e);
@@ -299,38 +299,38 @@ public class GpxDrawHelper implements SoMChangeListener, MapViewPaintable.LayerP
      **/
     public void readPreferences(String layerName) {
         String spec = specName(layerName);
-        forceLines = Main.pref.getBoolean("draw.rawgps.lines.force", spec, false);
-        direction = Main.pref.getBoolean("draw.rawgps.direction", spec, false);
-        lineWidth = Main.pref.getInteger("draw.rawgps.linewidth", spec, 0);
-        alphaLines = Main.pref.getBoolean("draw.rawgps.lines.alpha-blend", spec, false);
+        forceLines = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.lines.force", spec, false);
+        direction = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.direction", spec, false);
+        lineWidth = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.linewidth", spec, 0);
+        alphaLines = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.lines.alpha-blend", spec, false);
 
         if (!data.fromServer) {
-            maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length.local", spec, -1);
-            lines = Main.pref.getBoolean("draw.rawgps.lines.local", spec, true);
+            maxLineLength = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.max-line-length.local", spec, -1);
+            lines = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.lines.local", spec, true);
         } else {
-            maxLineLength = Main.pref.getInteger("draw.rawgps.max-line-length", spec, 200);
-            lines = Main.pref.getBoolean("draw.rawgps.lines", spec, true);
+            maxLineLength = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.max-line-length", spec, 200);
+            lines = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.lines", spec, true);
         }
-        large = Main.pref.getBoolean("draw.rawgps.large", spec, false);
-        largesize = Main.pref.getInteger("draw.rawgps.large.size", spec, 3);
-        hdopCircle = Main.pref.getBoolean("draw.rawgps.hdopcircle", spec, false);
+        large = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.large", spec, false);
+        largesize = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.large.size", spec, 3);
+        hdopCircle = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.hdopcircle", spec, false);
         colored = getColorMode(layerName);
-        alternateDirection = Main.pref.getBoolean("draw.rawgps.alternatedirection", spec, false);
-        delta = Main.pref.getInteger("draw.rawgps.min-arrow-distance", spec, 40);
-        colorTracksTune = Main.pref.getInteger("draw.rawgps.colorTracksTune", spec, 45);
-        colorModeDynamic = Main.pref.getBoolean("draw.rawgps.colors.dynamic", spec, false);
+        alternateDirection = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.alternatedirection", spec, false);
+        delta = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.min-arrow-distance", spec, 40);
+        colorTracksTune = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.colorTracksTune", spec, 45);
+        colorModeDynamic = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.colors.dynamic", spec, false);
         /* good HDOP's are between 1 and 3, very bad HDOP's go into 3 digit values */
         hdoprange = Config.getPref().getInt("hdop.range", 7);
         minTrackDurationForTimeColoring = Config.getPref().getInt("draw.rawgps.date-coloring-min-dt", 60);
         largePointAlpha = Config.getPref().getInt("draw.rawgps.large.alpha", -1) & 0xFF;
 
         // get heatmap parameters
-        heatMapEnabled = Main.pref.getBoolean("draw.rawgps.heatmap.enabled", spec, false);
-        heatMapDrawExtraLine = Main.pref.getBoolean("draw.rawgps.heatmap.line-extra", spec, false);
-        heatMapDrawColorTableIdx = Main.pref.getInteger("draw.rawgps.heatmap.colormap", spec, 0);
-        heatMapDrawPointMode = Main.pref.getBoolean("draw.rawgps.heatmap.use-points", spec, false);
-        heatMapDrawGain = Main.pref.getInteger("draw.rawgps.heatmap.gain", spec, 0);
-        heatMapDrawLowerLimit = Main.pref.getInteger("draw.rawgps.heatmap.lower-limit", spec, 0);
+        heatMapEnabled = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.heatmap.enabled", spec, false);
+        heatMapDrawExtraLine = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.heatmap.line-extra", spec, false);
+        heatMapDrawColorTableIdx = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.heatmap.colormap", spec, 0);
+        heatMapDrawPointMode = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.heatmap.use-points", spec, false);
+        heatMapDrawGain = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.heatmap.gain", spec, 0);
+        heatMapDrawLowerLimit = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.heatmap.lower-limit", spec, 0);
 
         // shrink to range
         heatMapDrawGain = Utils.clamp(heatMapDrawGain, -10, 10);

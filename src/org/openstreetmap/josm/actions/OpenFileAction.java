@@ -31,6 +31,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.filechooser.FileFilter;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.data.PreferencesUtils;
 import org.openstreetmap.josm.gui.HelpAwareOptionPane;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
@@ -335,7 +336,7 @@ public class OpenFileAction extends DiskAccessAction {
                 // remove the files which failed to load from the list
                 fileHistory.removeAll(failedAll);
                 int maxsize = Math.max(0, Config.getPref().getInt("file-open.history.max-size", 15));
-                Main.pref.putCollectionBounded("file-open.history", maxsize, fileHistory);
+                PreferencesUtils.putCollectionBounded(Config.getPref(), "file-open.history", maxsize, fileHistory);
             }
         }
 

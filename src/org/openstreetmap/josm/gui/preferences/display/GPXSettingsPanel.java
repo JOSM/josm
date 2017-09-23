@@ -24,6 +24,7 @@ import javax.swing.JSlider;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.actions.ExpertToggleAction;
+import org.openstreetmap.josm.data.PreferencesUtils;
 import org.openstreetmap.josm.gui.layer.gpx.GpxDrawHelper;
 import org.openstreetmap.josm.gui.layer.markerlayer.Marker;
 import org.openstreetmap.josm.gui.layer.markerlayer.Marker.TemplateEntryProperty;
@@ -391,8 +392,8 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             // no line preferences for layer is found
             drawRawGpsLinesGlobal.setSelected(true);
         } else {
-            Boolean lf = Main.pref.getBoolean("draw.rawgps.lines.local", layerName, true);
-            if (Main.pref.getBoolean("draw.rawgps.lines", layerName, true)) {
+            Boolean lf =  PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.lines.local", layerName, true);
+            if (PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.lines", layerName, true)) {
                 drawRawGpsLinesAll.setSelected(true);
             } else if (lf) {
                 drawRawGpsLinesLocal.setSelected(true);
@@ -401,16 +402,26 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             }
         }
 
-        drawRawGpsMaxLineLengthLocal.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.max-line-length.local", layerName, -1)));
-        drawRawGpsMaxLineLength.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.max-line-length", layerName, 200)));
-        drawLineWidth.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.linewidth", layerName, 0)));
-        drawLineWithAlpha.setSelected(Main.pref.getBoolean("draw.rawgps.lines.alpha-blend", layerName, false));
-        forceRawGpsLines.setSelected(Main.pref.getBoolean("draw.rawgps.lines.force", layerName, false));
-        drawGpsArrows.setSelected(Main.pref.getBoolean("draw.rawgps.direction", layerName, false));
-        drawGpsArrowsFast.setSelected(Main.pref.getBoolean("draw.rawgps.alternatedirection", layerName, false));
-        drawGpsArrowsMinDist.setText(Integer.toString(Main.pref.getInteger("draw.rawgps.min-arrow-distance", layerName, 40)));
-        hdopCircleGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.hdopcircle", layerName, false));
-        largeGpsPoints.setSelected(Main.pref.getBoolean("draw.rawgps.large", layerName, false));
+        drawRawGpsMaxLineLengthLocal.setText(Integer.toString(PreferencesUtils.getInteger(Config.getPref(),
+                "draw.rawgps.max-line-length.local", layerName, -1)));
+        drawRawGpsMaxLineLength.setText(Integer.toString(PreferencesUtils.getInteger(Config.getPref(),
+                "draw.rawgps.max-line-length", layerName, 200)));
+        drawLineWidth.setText(Integer.toString(PreferencesUtils.getInteger(Config.getPref(),
+                "draw.rawgps.linewidth", layerName, 0)));
+        drawLineWithAlpha.setSelected(PreferencesUtils.getBoolean(Config.getPref(),
+                "draw.rawgps.lines.alpha-blend", layerName, false));
+        forceRawGpsLines.setSelected(PreferencesUtils.getBoolean(Config.getPref(),
+                "draw.rawgps.lines.force", layerName, false));
+        drawGpsArrows.setSelected(PreferencesUtils.getBoolean(Config.getPref(),
+                "draw.rawgps.direction", layerName, false));
+        drawGpsArrowsFast.setSelected(PreferencesUtils.getBoolean(Config.getPref(),
+                "draw.rawgps.alternatedirection", layerName, false));
+        drawGpsArrowsMinDist.setText(Integer.toString(PreferencesUtils.getInteger(Config.getPref(),
+                "draw.rawgps.min-arrow-distance", layerName, 40)));
+        hdopCircleGpsPoints.setSelected(PreferencesUtils.getBoolean(Config.getPref(),
+                "draw.rawgps.hdopcircle", layerName, false));
+        largeGpsPoints.setSelected(PreferencesUtils.getBoolean(Config.getPref(),
+                "draw.rawgps.large", layerName, false));
         useGpsAntialiasing.setSelected(Config.getPref().getBoolean("mappaint.gpx.use-antialiasing", false));
 
         drawRawGpsLinesActionListener.actionPerformed(null);
@@ -423,7 +434,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             colorTypeHeatMapGain.setValue(0);
             colorTypeHeatMapLowerLimit.setValue(0);
         } else {
-            int colorType = Main.pref.getInteger("draw.rawgps.colors", layerName, 0);
+            int colorType = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.colors", layerName, 0);
             switch (colorType) {
             case 0: colorTypeNone.setSelected(true); break;
             case 1: colorTypeVelocity.setSelected(true); break;
@@ -433,13 +444,18 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             case 5: colorTypeHeatMap.setSelected(true); break;
             default: Logging.warn("Unknown color type: " + colorType);
             }
-            int ccts = Main.pref.getInteger("draw.rawgps.colorTracksTune", layerName, 45);
+            int ccts = PreferencesUtils.getInteger(Config.getPref(), "draw.rawgps.colorTracksTune", layerName, 45);
             colorTypeVelocityTune.setSelectedIndex(ccts == 10 ? 2 : (ccts == 20 ? 1 : 0));
-            colorTypeHeatMapTune.setSelectedIndex(Main.pref.getInteger("draw.rawgps.heatmap.colormap", layerName, 0));
-            colorDynamic.setSelected(Main.pref.getBoolean("draw.rawgps.colors.dynamic", layerName, false));
-            colorTypeHeatMapPoints.setSelected(Main.pref.getBoolean("draw.rawgps.heatmap.use-points", layerName, false));
-            colorTypeHeatMapGain.setValue(Main.pref.getInteger("draw.rawgps.heatmap.gain", layerName, 0));
-            colorTypeHeatMapLowerLimit.setValue(Main.pref.getInteger("draw.rawgps.heatmap.lower-limit", layerName, 0));
+            colorTypeHeatMapTune.setSelectedIndex(PreferencesUtils.getInteger(Config.getPref(),
+                    "draw.rawgps.heatmap.colormap", layerName, 0));
+            colorDynamic.setSelected(PreferencesUtils.getBoolean(Config.getPref(),
+                    "draw.rawgps.colors.dynamic", layerName, false));
+            colorTypeHeatMapPoints.setSelected(PreferencesUtils.getBoolean(Config.getPref(),
+                    "draw.rawgps.heatmap.use-points", layerName, false));
+            colorTypeHeatMapGain.setValue(PreferencesUtils.getInteger(Config.getPref(),
+                    "draw.rawgps.heatmap.gain", layerName, 0));
+            colorTypeHeatMapLowerLimit.setValue(PreferencesUtils.getInteger(Config.getPref(),
+                    "draw.rawgps.heatmap.lower-limit", layerName, 0));
         }
     }
 

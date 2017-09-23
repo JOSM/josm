@@ -5,6 +5,7 @@ import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -17,6 +18,7 @@ import javax.script.ScriptException;
 import javax.swing.JOptionPane;
 
 import org.openstreetmap.josm.Main;
+import org.openstreetmap.josm.spi.preferences.IPreferences;
 import org.openstreetmap.josm.spi.preferences.ListListSetting;
 import org.openstreetmap.josm.spi.preferences.ListSetting;
 import org.openstreetmap.josm.spi.preferences.MapListSetting;
@@ -475,4 +477,89 @@ public final class PreferencesUtils {
         // Execute conversion script
         engine.eval(init);
     }
+
+    /**
+     * Gets an boolean that may be specialized
+     * @param prefs the preferences
+     * @param key The basic key
+     * @param specName The sub-key to append to the key
+     * @param def The default value
+     * @return The boolean value or the default value if it could not be parsed
+     * @since 12891
+     */
+    public static boolean getBoolean(IPreferences prefs, final String key, final String specName, final boolean def) {
+        synchronized (prefs) {
+            boolean generic = prefs.getBoolean(key, def);
+            String skey = key+'.'+specName;
+            String svalue = prefs.get(skey, null);
+            if (svalue != null)
+                return Boolean.parseBoolean(svalue);
+            else
+                return generic;
+        }
+    }
+
+    /**
+     * Gets an integer that may be specialized
+     * @param prefs the preferences
+     * @param key The basic key
+     * @param specName The sub-key to append to the key
+     * @param def The default value
+     * @return The integer value or the default value if it could not be parsed
+     * @since 12891
+     */
+    public static int getInteger(IPreferences prefs, String key, String specName, int def) {
+        synchronized (prefs) {
+            String v = prefs.get(key+'.'+specName);
+            if (v.isEmpty())
+                v = prefs.get(key, Integer.toString(def));
+            if (v.isEmpty())
+                return def;
+
+            try {
+                return Integer.parseInt(v);
+            } catch (NumberFormatException e) {
+                // fall out
+                Logging.trace(e);
+            }
+            return def;
+        }
+    }
+
+    /**
+     * Removes a value from a given String collection
+     * @param prefs the preferences
+     * @param key The preference key the collection is stored with
+     * @param value The value that should be removed in the collection
+     * @see #getList(String)
+     * @since 12891
+     */
+    public static void removeFromCollection(IPreferences prefs, String key, String value) {
+        synchronized (prefs) {
+            List<String> a = new ArrayList<>(prefs.getList(key, Collections.<String>emptyList()));
+            a.remove(value);
+            prefs.putList(key, a);
+        }
+    }
+
+    /**
+     * Saves at most {@code maxsize} items of collection {@code val}.
+     * @param prefs the preferences
+     * @param key key
+     * @param maxsize max number of items to save
+     * @param val value
+     * @return {@code true}, if something has changed (i.e. value is different than before)
+     * @since 12891
+     */
+    public static boolean putCollectionBounded(IPreferences prefs, String key, int maxsize, Collection<String> val) {
+        List<String> newCollection = new ArrayList<>(Math.min(maxsize, val.size()));
+        for (String i : val) {
+            if (newCollection.size() >= maxsize) {
+                break;
+            }
+            newCollection.add(i);
+        }
+        return prefs.putList(key, newCollection);
+    }
+
 }

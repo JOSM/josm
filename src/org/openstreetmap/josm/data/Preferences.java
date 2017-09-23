@@ -659,7 +659,9 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @param specName The sub-key to append to the key
      * @param def The default value
      * @return The boolean value or the default value if it could not be parsed
+     * @deprecated use {@link PreferencesUtils#getBoolean(IPreferences, String, String, boolean)}
      */
+    @Deprecated
     public synchronized boolean getBoolean(final String key, final String specName, final boolean def) {
         boolean generic = getBoolean(key, def);
         String skey = key+'.'+specName;
@@ -1075,7 +1077,9 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @param specName The sub-key to append to the key
      * @param def The default value
      * @return The integer value or the default value if it could not be parsed
+     * @deprecated use {@link PreferencesUtils#getInteger(IPreferences, String, String, int)
      */
+    @Deprecated
     public synchronized int getInteger(String key, String specName, int def) {
         String v = get(key+'.'+specName);
         if (v.isEmpty())
@@ -1121,7 +1125,9 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @param key The preference key the collection is stored with
      * @param value The value that should be removed in the collection
      * @see #getList(String)
+     * @deprecated use {@link PreferencesUtils#removeFromCollection(IPreferences, String, String)}
      */
+    @Deprecated
     public synchronized void removeFromCollection(String key, String value) {
         List<String> a = new ArrayList<>(getList(key, Collections.<String>emptyList()));
         a.remove(value);
@@ -1229,7 +1235,9 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @param maxsize max number of items to save
      * @param val value
      * @return {@code true}, if something has changed (i.e. value is different than before)
+     * @deprecated use {@link PreferencesUtils#putCollectionBounded(IPreferences, String, int, Collection)}
      */
+    @Deprecated
     public boolean putCollectionBounded(String key, int maxsize, Collection<String> val) {
         List<String> newCollection = new ArrayList<>(Math.min(maxsize, val.size()));
         for (String i : val) {
@@ -1247,7 +1255,9 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @param key preference key
      * @param def default array value
      * @return array value
+     * @deprecated use {@link #getListOfLists(java.lang.String, java.util.List)}
      */
+    @Deprecated
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public synchronized Collection<Collection<String>> getArray(String key, Collection<Collection<String>> def) {
         ListListSetting val = getSetting(key, ListListSetting.create(def), ListListSetting.class);
