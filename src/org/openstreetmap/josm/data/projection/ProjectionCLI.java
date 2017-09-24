@@ -18,6 +18,7 @@ import org.openstreetmap.josm.CLIModule;
 import org.openstreetmap.josm.data.coor.EastNorth;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.coor.conversion.LatLonParser;
+import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Utils;
 
 import gnu.getopt.Getopt;
@@ -42,6 +43,7 @@ public class ProjectionCLI implements CLIModule {
 
     @Override
     public void processArguments(String[] argArray) {
+        Getopt.setI18nHandler(I18n::tr);
         Getopt getopt = new Getopt("JOSM projection", argArray, "Irh", new LongOpt[] {
                 new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h')});
 

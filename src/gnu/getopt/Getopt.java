@@ -20,11 +20,10 @@
 
 package gnu.getopt;
 
-import static org.openstreetmap.josm.tools.I18n.tr;
-
 import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**************************************************************************/
 
@@ -581,7 +580,23 @@ Getopt(String progname, String[] argv, String optstring,
 
 /**************************************************************************/
 
+private static Function<String, String> tr = Function.identity();
+
+/**
+ * Set the global translation handler for Getopt.
+ *
+ * This needs to be done before any call to {@link Getopt} or {@link LongOpt}
+ * constructor.
+ * @param tr function that takes messages in English and returns the localized message
+ */
+public static void setI18nHandler(Function<String, String> tr) {
+    Getopt.tr = tr;
+}
+
 static class OptI18n {
+
+    private final Map<String, String> trns = new HashMap<>();
+
     public  OptI18n() {
         add("getopt.ambigious", tr("{0}: option ''{1}'' is ambiguous"));
         add("getopt.arguments1", tr("{0}: option ''--{1}'' does not allow an argument"));
@@ -595,7 +610,9 @@ static class OptI18n {
         add("getopt.invalidValue", tr("Invalid value {0} for parameter ''has_arg''"));
     }
 
-    Map<String, String> trns = new HashMap<String, String>();
+    private String tr(String s) {
+        return Getopt.tr.apply(s);
+    }
 
     private void add(String key, String value) {
         trns.put(key, value);
