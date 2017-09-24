@@ -527,14 +527,13 @@ public final class PreferencesUtils {
     }
 
     /**
-     * Removes a value from a given String collection
+     * Removes a value from a given String list
      * @param prefs the preferences
-     * @param key The preference key the collection is stored with
-     * @param value The value that should be removed in the collection
-     * @see #getList(String)
-     * @since 12891
+     * @param key The preference key the list is stored with
+     * @param value The value that should be removed in the list
+     * @since 12894
      */
-    public static void removeFromCollection(IPreferences prefs, String key, String value) {
+    public static void removeFromList(IPreferences prefs, String key, String value) {
         synchronized (prefs) {
             List<String> a = new ArrayList<>(prefs.getList(key, Collections.<String>emptyList()));
             a.remove(value);
@@ -543,15 +542,15 @@ public final class PreferencesUtils {
     }
 
     /**
-     * Saves at most {@code maxsize} items of collection {@code val}.
+     * Saves at most {@code maxsize} items of list {@code val}.
      * @param prefs the preferences
      * @param key key
      * @param maxsize max number of items to save
      * @param val value
      * @return {@code true}, if something has changed (i.e. value is different than before)
-     * @since 12891
+     * @since 12894
      */
-    public static boolean putCollectionBounded(IPreferences prefs, String key, int maxsize, Collection<String> val) {
+    public static boolean putListBounded(IPreferences prefs, String key, int maxsize, List<String> val) {
         List<String> newCollection = new ArrayList<>(Math.min(maxsize, val.size()));
         for (String i : val) {
             if (newCollection.size() >= maxsize) {

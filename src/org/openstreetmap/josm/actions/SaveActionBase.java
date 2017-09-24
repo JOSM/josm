@@ -235,6 +235,6 @@ public abstract class SaveActionBase extends DiskAccessAction {
         List<String> history = new LinkedList<>(oldHistory);
         history.remove(filepath);
         history.add(0, filepath);
-        PreferencesUtils.putCollectionBounded(Config.getPref(), "file-open.history", maxsize, history);
+        PreferencesUtils.putListBounded(Config.getPref(), "file-open.history", maxsize, history);
     }
 }

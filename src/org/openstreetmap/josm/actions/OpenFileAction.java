@@ -336,7 +336,7 @@ public class OpenFileAction extends DiskAccessAction {
                 // remove the files which failed to load from the list
                 fileHistory.removeAll(failedAll);
                 int maxsize = Math.max(0, Config.getPref().getInt("file-open.history.max-size", 15));
-                PreferencesUtils.putCollectionBounded(Config.getPref(), "file-open.history", maxsize, fileHistory);
+                PreferencesUtils.putListBounded(Config.getPref(), "file-open.history", maxsize, new ArrayList<>(fileHistory));
             }
         }
 

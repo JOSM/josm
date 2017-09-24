@@ -348,7 +348,7 @@ public final class PluginHandler {
         for (DeprecatedPlugin depr : DEPRECATED_PLUGINS) {
             if (plugins.contains(depr.name)) {
                 plugins.remove(depr.name);
-                PreferencesUtils.removeFromCollection(Config.getPref(), "plugins", depr.name);
+                PreferencesUtils.removeFromList(Config.getPref(), "plugins", depr.name);
                 removedPlugins.add(depr);
             }
         }
@@ -402,7 +402,7 @@ public final class PluginHandler {
                     +"<br>It should be disabled.<br>Delete from preferences?</html>",
                     Utils.escapeReservedCharactersHTML(unmaintained));
             if (confirmDisablePlugin(parent, msg, unmaintained)) {
-                PreferencesUtils.removeFromCollection(Config.getPref(), "plugins", unmaintained);
+                PreferencesUtils.removeFromList(Config.getPref(), "plugins", unmaintained);
                 plugins.remove(unmaintained);
             }
         }
@@ -800,7 +800,7 @@ public final class PluginHandler {
             Logging.error(e);
         }
         if (msg != null && confirmDisablePlugin(parent, msg, plugin.name)) {
-            PreferencesUtils.removeFromCollection(Config.getPref(), "plugins", plugin.name);
+            PreferencesUtils.removeFromList(Config.getPref(), "plugins", plugin.name);
         }
     }
 
