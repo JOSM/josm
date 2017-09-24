@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.stream.Stream;
 
+import org.openstreetmap.josm.tools.I18n;
 import org.openstreetmap.josm.tools.Logging;
 
 import gnu.getopt.Getopt;
@@ -112,8 +113,8 @@ public class ProgramArguments {
      * @param args command-line arguments array
      */
     private void buildCommandLineArgumentMap(String... args) {
+        Getopt.setI18nHandler(I18n::tr);
         LongOpt[] los = Stream.of(Option.values()).map(Option::toLongOpt).toArray(LongOpt[]::new);
-
         Getopt g = new Getopt("JOSM", args, "hv", los);
 
         int c;
