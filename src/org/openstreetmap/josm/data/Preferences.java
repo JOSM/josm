@@ -1077,7 +1077,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @param specName The sub-key to append to the key
      * @param def The default value
      * @return The integer value or the default value if it could not be parsed
-     * @deprecated use {@link PreferencesUtils#getInteger(IPreferences, String, String, int)
+     * @deprecated use {@link PreferencesUtils#getInteger(IPreferences, String, String, int)}
      */
     @Deprecated
     public synchronized int getInteger(String key, String specName, int def) {
@@ -1125,7 +1125,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @param key The preference key the collection is stored with
      * @param value The value that should be removed in the collection
      * @see #getList(String)
-     * @deprecated use {@link PreferencesUtils#removeFromCollection(IPreferences, String, String)}
+     * @deprecated use {@link PreferencesUtils#removeFromList(IPreferences, String, String)}
      */
     @Deprecated
     public synchronized void removeFromCollection(String key, String value) {
@@ -1235,7 +1235,7 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
      * @param maxsize max number of items to save
      * @param val value
      * @return {@code true}, if something has changed (i.e. value is different than before)
-     * @deprecated use {@link PreferencesUtils#putCollectionBounded(IPreferences, String, int, Collection)}
+     * @deprecated use {@link PreferencesUtils#putListBounded(IPreferences, String, int, List)}
      */
     @Deprecated
     public boolean putCollectionBounded(String key, int maxsize, Collection<String> val) {

@@ -84,7 +84,7 @@ public enum UploadStrategy {
             // will be inserted.
             v = Config.getPref().get("osm-server.atomic-upload", null);
             if (v != null) {
-                PreferencesUtils.removeFromCollection(Config.getPref(), "osm-server.atomic-upload", v);
+                PreferencesUtils.removeFromList(Config.getPref(), "osm-server.atomic-upload", v);
             } else {
                 v = "";
             }
