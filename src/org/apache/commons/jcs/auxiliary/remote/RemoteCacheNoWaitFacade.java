@@ -24,8 +24,6 @@ import java.util.List;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheAttributes;
 import org.apache.commons.jcs.auxiliary.remote.server.behavior.RemoteType;
 import org.apache.commons.jcs.engine.CacheStatus;
-import org.apache.commons.jcs.engine.behavior.ICache;
-import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
 import org.apache.commons.jcs.engine.behavior.IElementSerializer;
 import org.apache.commons.jcs.engine.logging.behavior.ICacheEventLogger;
 import org.apache.commons.logging.Log;
@@ -64,29 +62,6 @@ public class RemoteCacheNoWaitFacade<K, V>
                                     RemoteCacheFactory cacheFactory)
     {
         super( noWaits, rca, cacheEventLogger, elementSerializer );
-        this.cacheFactory = cacheFactory;
-    }
-
-    /**
-     * Constructs with the given remote cache, and fires events to any listeners.
-     * <p>
-     * @param noWaits
-     * @param rca
-     * @param cacheMgr
-     * @param cacheEventLogger
-     * @param elementSerializer
-     * @param cacheFactory
-     * @deprecated Unused parameter cacheMgr scheduled for removal
-     */
-    @Deprecated
-    public RemoteCacheNoWaitFacade( List<ICache<K, V>> noWaits,
-                                    RemoteCacheAttributes rca,
-                                    ICompositeCacheManager cacheMgr,
-                                    ICacheEventLogger cacheEventLogger,
-                                    IElementSerializer elementSerializer,
-                                    RemoteCacheFactory cacheFactory)
-    {
-        super( noWaits, rca, cacheMgr, cacheEventLogger, elementSerializer );
         this.cacheFactory = cacheFactory;
     }
 

@@ -49,65 +49,6 @@ public abstract class JCS
     private static CompositeCacheManager cacheMgr;
 
     /**
-     * Define a new cache region with the given name. In the oracle specification, these attributes
-     * are global and not region specific, regional overrides is a value add each region should be
-     * able to house both cache and element attribute sets. It is more efficient to define a cache
-     * in the props file and then strictly use the get access method. Use of the define region
-     * outside of an initialization block should be avoided.
-     * <p>
-     * @param name Name that will identify the region
-     * @return CacheAccess instance for the new region
-     * @throws CacheException
-     * 
-     * @deprecated Duplicate of getInstance(String)
-     */
-    @Deprecated
-	public static <K, V> CacheAccess<K, V> defineRegion( String name )
-        throws CacheException
-    {
-        CompositeCache<K, V> cache = getCacheManager().getCache( name );
-        return new CacheAccess<K, V>( cache );
-    }
-
-    /**
-     * Define a new cache region with the specified name and attributes.
-     * <p>
-     * @param name Name that will identify the region
-     * @param cattr CompositeCacheAttributes for the region
-     * @return CacheAccess instance for the new region
-     * @throws CacheException
-     * 
-     * @deprecated Duplicate of getInstance(String, ICompositeCacheAttributes)
-     */
-    @Deprecated
-	public static <K, V> CacheAccess<K, V> defineRegion( String name, ICompositeCacheAttributes cattr )
-        throws CacheException
-    {
-        CompositeCache<K, V> cache = getCacheManager().getCache( name, cattr );
-        return new CacheAccess<K, V>( cache );
-    }
-
-    /**
-     * Define a new cache region with the specified name and attributes and return a CacheAccess to
-     * it.
-     * <p>
-     * @param name Name that will identify the region
-     * @param cattr CompositeCacheAttributes for the region
-     * @param attr Attributes for the region
-     * @return CacheAccess instance for the new region
-     * @throws CacheException
-     * 
-     * @deprecated Duplicate of getInstance(String, ICompositeCacheAttributes, IElementAttributes)
-     */
-    @Deprecated
-	public static <K, V> CacheAccess<K, V> defineRegion( String name, ICompositeCacheAttributes cattr, IElementAttributes attr )
-        throws CacheException
-    {
-        CompositeCache<K, V> cache = getCacheManager().getCache( name, cattr, attr );
-        return new CacheAccess<K, V>( cache );
-    }
-
-    /**
      * Set the filename that the cache manager will be initialized with. Only matters before the
      * instance is initialized.
      * <p>
@@ -221,7 +162,7 @@ public abstract class JCS
         CompositeCache<K, V> cache = getCacheManager().getCache( region, icca, eattr );
         return new CacheAccess<K, V>( cache );
     }
-    
+
     /**
      * Get a GroupCacheAccess which accesses the provided region.
      * <p>

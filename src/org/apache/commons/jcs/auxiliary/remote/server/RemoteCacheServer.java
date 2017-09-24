@@ -36,7 +36,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.jcs.access.exception.CacheException;
-import org.apache.commons.jcs.auxiliary.remote.RemoteUtils;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheListener;
 import org.apache.commons.jcs.auxiliary.remote.server.behavior.IRemoteCacheServer;
 import org.apache.commons.jcs.auxiliary.remote.server.behavior.IRemoteCacheServerAttributes;
@@ -127,7 +126,7 @@ public class RemoteCacheServer<K, V>
      * Constructor for the RemoteCacheServer object. This initializes the server with the values
      * from the properties object.
      * <p>
-     * @param rcsa 
+     * @param rcsa
      * @param config cache hub configuration
      * @throws RemoteException
      */
@@ -156,69 +155,6 @@ public class RemoteCacheServer<K, V>
         init( config );
     }
 
-    /**
-     * Constructor for the RemoteCacheServer object. This initializes the server with the values
-     * from the config file.
-     * <p>
-     * @param rcsa
-     * @throws RemoteException
-     * 
-     * @deprecated Use version with Properties object instead
-     */
-    @Deprecated
-    protected RemoteCacheServer( IRemoteCacheServerAttributes rcsa )
-        throws RemoteException
-    {
-        super( rcsa.getServicePort() );
-        this.remoteCacheServerAttributes = rcsa;
-        init( rcsa.getConfigFileName() );
-    }
-
-    /**
-     * Constructor for the RemoteCacheServer object. This initializes the server with the values
-     * from the config file.
-     * <p>
-     * @param rcsa
-     * @param customRMISocketFactory
-     * @throws RemoteException
-     * 
-     * @deprecated Use version with Properties object instead
-     */
-    @Deprecated
-    protected RemoteCacheServer( IRemoteCacheServerAttributes rcsa, RMISocketFactory customRMISocketFactory )
-        throws RemoteException
-    {
-        super( rcsa.getServicePort(), customRMISocketFactory, customRMISocketFactory );
-        this.remoteCacheServerAttributes = rcsa;
-        init( rcsa.getConfigFileName() );
-    }
-
-    /**
-     * Initialize the RMI Cache Server from a properties file.
-     * <p>
-     * @param prop
-     * @throws RemoteException if the configuration of the cache manager instance fails
-     * 
-     * @deprecated Use version with Properties parameter instead
-     */
-    @Deprecated
-    private void init( String propFile ) throws RemoteException
-    {
-        String propFileName = propFile == null ? DFEAULT_REMOTE_CONFIGURATION_FILE : propFile;
-        
-        Properties prop = null;
-        try
-        {
-            prop = RemoteUtils.loadProps(propFileName);
-        }
-        catch (IOException e)
-        {
-            throw new RemoteException(e.getMessage(), e);
-        }
-        
-        init(prop);
-    }
-    
     /**
      * Initialize the RMI Cache Server from a properties object.
      * <p>

@@ -95,15 +95,6 @@ public interface ICacheEventQueue<K, V>
     void destroy();
 
     /**
-     * Gets the alive attribute of the ICacheEventQueue object. Alive just
-     * indicates that there are active threads. This is less important that if
-     * the queue is working.
-     * <p>
-     * @return The alive value
-     */
-    boolean isAlive();
-
-    /**
      * A Queue is working unless it has reached its max failure count.
      * <p>
      * @return boolean

@@ -102,33 +102,6 @@ public abstract class AbstractCacheEventQueue<K, V>
     }
 
     /**
-     * If they queue has an active thread it is considered alive.
-     * <p>
-     * @return The alive value
-     * 
-     * @deprecated The alive-logic is not used 
-     */
-    @Deprecated
-	@Override
-    public boolean isAlive()
-    {
-        return true;
-    }
-
-    /**
-     * Sets whether the queue is actively processing -- if there are working threads.
-     * <p>
-     * @param aState
-     * 
-     * @deprecated The alive-logic is not used 
-     */
-    @Deprecated
-	public void setAlive( boolean aState )
-    {
-        // do nothing
-    }
-
-    /**
      * @return The listenerId value
      */
     @Override

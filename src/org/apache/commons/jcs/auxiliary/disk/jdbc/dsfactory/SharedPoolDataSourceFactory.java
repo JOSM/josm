@@ -24,9 +24,9 @@ import java.sql.SQLException;
 import javax.sql.ConnectionPoolDataSource;
 import javax.sql.DataSource;
 
-import org.apache.commons.dbcp.cpdsadapter.DriverAdapterCPDS;
-import org.apache.commons.dbcp.datasources.InstanceKeyDataSource;
-import org.apache.commons.dbcp.datasources.SharedPoolDataSource;
+import org.apache.commons.dbcp2.cpdsadapter.DriverAdapterCPDS;
+import org.apache.commons.dbcp2.datasources.InstanceKeyDataSource;
+import org.apache.commons.dbcp2.datasources.SharedPoolDataSource;
 import org.apache.commons.jcs.auxiliary.disk.jdbc.JDBCDiskCacheAttributes;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -79,7 +79,7 @@ public class SharedPoolDataSourceFactory implements DataSourceFactory
         SharedPoolDataSource dataSource = new SharedPoolDataSource();
         initJdbc2Pool(dataSource, config);
         dataSource.setConnectionPoolDataSource(cpds);
-        dataSource.setMaxActive(config.getMaxActive());
+        dataSource.setMaxTotal(config.getMaxTotal());
         this.ds = dataSource;
     }
 
@@ -127,7 +127,6 @@ public class SharedPoolDataSourceFactory implements DataSourceFactory
         cpds.setUrl(config.getUrl());
         cpds.setUser(config.getUserName());
         cpds.setPassword(config.getPassword());
-        cpds.setMaxActive(config.getMaxActive());
 
         return cpds;
     }

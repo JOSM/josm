@@ -1,7 +1,5 @@
 package org.apache.commons.jcs.auxiliary.remote.http.client;
 
-import java.io.IOException;
-
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,14 +19,18 @@ import java.io.IOException;
  * under the License.
  */
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.httpclient.HttpVersion;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.cookie.CookiePolicy;
+import java.io.IOException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpVersion;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
  * This class simply configures the http multithreaded connection manager.
@@ -37,11 +39,11 @@ import org.apache.commons.logging.LogFactory;
  */
 public abstract class AbstractHttpClient
 {
-    /** The connection manager. */
-    private MultiThreadedHttpConnectionManager connectionManager;
-
     /** The client */
     private HttpClient httpClient;
+
+    /** The protocol version */
+    private HttpVersion httpVersion;
 
     /** Configuration settings. */
     private RemoteHttpCacheAttributes remoteHttpCacheAttributes;
@@ -58,84 +60,87 @@ public abstract class AbstractHttpClient
     public AbstractHttpClient( RemoteHttpCacheAttributes remoteHttpCacheAttributes )
     {
         this.remoteHttpCacheAttributes = remoteHttpCacheAttributes;
-        this.connectionManager = new MultiThreadedHttpConnectionManager();
-        this.httpClient = new HttpClient(this.connectionManager);
 
-        configureClient();
+        String httpVersion = getRemoteHttpCacheAttributes().getHttpVersion();
+        if ( "1.1".equals( httpVersion ) )
+        {
+            this.httpVersion = HttpVersion.HTTP_1_1;
+        }
+        else if ( "1.0".equals( httpVersion ) )
+        {
+            this.httpVersion = HttpVersion.HTTP_1_0;
+        }
+        else
+        {
+            log.warn( "Unrecognized value for 'httpVersion': [" + httpVersion + "], defaulting to 1.1" );
+            this.httpVersion = HttpVersion.HTTP_1_1;
+        }
+
+        HttpClientBuilder builder = HttpClientBuilder.create();
+        configureClient(builder);
+        this.httpClient = builder.build();
     }
 
     /**
      * Configures the http client.
+     *
+     * @param builder client builder to configure
      */
-    protected void configureClient()
+    protected void configureClient(HttpClientBuilder builder)
     {
         if ( getRemoteHttpCacheAttributes().getMaxConnectionsPerHost() > 0 )
         {
-            this.connectionManager.getParams()
-                .setMaxTotalConnections(getRemoteHttpCacheAttributes().getMaxConnectionsPerHost());
-            this.connectionManager.getParams()
-                .setDefaultMaxConnectionsPerHost(getRemoteHttpCacheAttributes().getMaxConnectionsPerHost());
+            builder.setMaxConnTotal(getRemoteHttpCacheAttributes().getMaxConnectionsPerHost());
+            builder.setMaxConnPerRoute(getRemoteHttpCacheAttributes().getMaxConnectionsPerHost());
         }
 
-        this.connectionManager.getParams().setSoTimeout( getRemoteHttpCacheAttributes().getSocketTimeoutMillis() );
-
-        String httpVersion = getRemoteHttpCacheAttributes().getHttpVersion();
-        if ( httpVersion != null )
-        {
-            if ( "1.1".equals( httpVersion ) )
-            {
-                this.httpClient.getParams().setParameter( "http.protocol.version", HttpVersion.HTTP_1_1 );
-            }
-            else if ( "1.0".equals( httpVersion ) )
-            {
-                this.httpClient.getParams().setParameter( "http.protocol.version", HttpVersion.HTTP_1_0 );
-            }
-            else
-            {
-                log.warn( "Unrecognized value for 'httpVersion': [" + httpVersion + "]" );
-            }
-        }
-
-        this.connectionManager.getParams()
-            .setConnectionTimeout(getRemoteHttpCacheAttributes().getConnectionTimeoutMillis());
-
-        // By default we instruct HttpClient to ignore cookies.
-        this.httpClient.getParams().setCookiePolicy( CookiePolicy.IGNORE_COOKIES );
+        builder.setDefaultRequestConfig(RequestConfig.custom()
+                .setConnectTimeout(getRemoteHttpCacheAttributes().getConnectionTimeoutMillis())
+                .setSocketTimeout(getRemoteHttpCacheAttributes().getSocketTimeoutMillis())
+                // By default we instruct HttpClient to ignore cookies.
+                .setCookieSpec(CookieSpecs.IGNORE_COOKIES)
+                .build());
     }
 
     /**
-     * Extracted method that can be overwritten to do additional things to the post before the call
-     * is made.
+     * Execute the web service call
      * <p>
-     * @param post the post that is about to get executed.
+     * @param builder builder for the post request
+     *
+     * @return the call response
+     *
      * @throws IOException on i/o error
      */
-    protected final void doWebserviceCall( HttpMethod post )
+    protected final HttpResponse doWebserviceCall( RequestBuilder builder )
         throws IOException
     {
-        HttpState httpState = preProcessWebserviceCall( post );
-        this.httpClient.executeMethod( null, post, httpState );
-        postProcessWebserviceCall( post, httpState );
+        preProcessWebserviceCall( builder.setVersion(httpVersion) );
+        HttpUriRequest request = builder.build();
+        HttpResponse httpResponse = this.httpClient.execute( request );
+        postProcessWebserviceCall( request, httpResponse );
+
+        return httpResponse;
     }
 
     /**
-     * Called before the executeMethod on the client.
+     * Called before the execute call on the client.
      * <p>
-     * @param post http method
-     * @return HttpState
+     * @param requestBuilder http method request builder
+     *
      * @throws IOException
      */
-    protected abstract HttpState preProcessWebserviceCall( HttpMethod post )
+    protected abstract void preProcessWebserviceCall( RequestBuilder requestBuilder )
         throws IOException;
 
     /**
-     * Called after the executeMethod on the client.
+     * Called after the execute call on the client.
      * <p>
-     * @param post http method
-     * @param httpState state
+     * @param request http request
+     * @param httpState result of execution
+     *
      * @throws IOException
      */
-    protected abstract void postProcessWebserviceCall( HttpMethod post, HttpState httpState )
+    protected abstract void postProcessWebserviceCall( HttpUriRequest request, HttpResponse httpState )
         throws IOException;
 
     /**

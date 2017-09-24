@@ -63,10 +63,10 @@ public class JDBCDiskCacheAttributes
     private boolean testBeforeInsert = true;
 
     /** This is the default limit on the maximum number of active connections. */
-    public static final int DEFAULT_MAX_ACTIVE = 10;
+    public static final int DEFAULT_MAX_TOTAL = 10;
 
     /** Max connections allowed */
-    private int maxActive = DEFAULT_MAX_ACTIVE;
+    private int maxTotal = DEFAULT_MAX_TOTAL;
 
     /** This is the default setting for the cleanup routine. */
     public static final int DEFAULT_SHRINKER_INTERVAL_SECONDS = 300;
@@ -243,19 +243,19 @@ public class JDBCDiskCacheAttributes
     }
 
     /**
-     * @param maxActive The maxActive to set.
+     * @param maxTotal The maxTotal to set.
      */
-    public void setMaxActive( int maxActive )
+    public void setMaxTotal( int maxActive )
     {
-        this.maxActive = maxActive;
+        this.maxTotal = maxActive;
     }
 
     /**
-     * @return Returns the maxActive.
+     * @return Returns the maxTotal.
      */
-    public int getMaxActive()
+    public int getMaxTotal()
     {
-        return maxActive;
+        return maxTotal;
     }
 
     /**
@@ -322,7 +322,7 @@ public class JDBCDiskCacheAttributes
         buf.append( "\n DriverClassName [" + getDriverClassName() + "]" );
         buf.append( "\n TableName [" + getTableName() + "]" );
         buf.append( "\n TestBeforeInsert [" + isTestBeforeInsert() + "]" );
-        buf.append( "\n MaxActive [" + getMaxActive() + "]" );
+        buf.append( "\n MaxActive [" + getMaxTotal() + "]" );
         buf.append( "\n AllowRemoveAll [" + isAllowRemoveAll() + "]" );
         buf.append( "\n ShrinkerIntervalSeconds [" + getShrinkerIntervalSeconds() + "]" );
         buf.append( "\n useDiskShrinker [" + isUseDiskShrinker() + "]" );

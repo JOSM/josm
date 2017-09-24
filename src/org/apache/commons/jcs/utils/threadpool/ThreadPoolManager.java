@@ -107,7 +107,7 @@ public class ThreadPoolManager
     {
     	return createPool(config, threadNamePrefix, Thread.NORM_PRIORITY);
     }
-    
+
     /**
      * Creates a pool based on the configuration info.
      * <p>
@@ -183,12 +183,12 @@ public class ThreadPoolManager
     public ScheduledExecutorService createSchedulerPool( PoolConfiguration config, String threadNamePrefix, int threadPriority )
     {
     	ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(
-    			config.getMaximumPoolSize(), 
+    			config.getMaximumPoolSize(),
     			new DaemonThreadFactory(threadNamePrefix, threadPriority));
 
         return scheduler;
     }
-    
+
     /**
      * Returns a configured instance of the ThreadPoolManger To specify a configuration file or
      * Properties object to use call the appropriate setter prior to calling getInstance.
@@ -222,7 +222,7 @@ public class ThreadPoolManager
                     log.warn("Failed to close pool " + pool, t);
                 }
             }
-            
+
             for ( ScheduledExecutorService pool : INSTANCE.schedulerPools.values() )
             {
                 try
@@ -234,7 +234,7 @@ public class ThreadPoolManager
                     log.warn("Failed to close pool " + pool, t);
                 }
             }
-            
+
             INSTANCE = null;
         }
     }
@@ -279,23 +279,6 @@ public class ThreadPoolManager
         }
 
         return pool;
-    }
-    
-    /**
-     * Returns a pool by name. If a pool by this name does not exist in the configuration file or
-     * properties, one will be created using the default values.
-     * <p>
-     * Pools are lazily created.
-     * <p>
-     * @param name
-     * @return The thread pool configured for the name.
-     * 
-     * @deprecated Use getExecutorService() instead
-     */
-    @Deprecated
-	public ThreadPoolExecutor getPool( String name )
-    {
-    	return (ThreadPoolExecutor) getExecutorService(name);
     }
 
     /**
@@ -389,7 +372,7 @@ public class ThreadPoolManager
     {
     	return loadConfig(root, defaultConfig);
     }
-    
+
     /**
      * Configures the PoolConfiguration settings.
      * <p>

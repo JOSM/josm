@@ -94,56 +94,6 @@ public class RemoteCacheServerFactory
      * <p>
      * A remote cache is either a local cache or a cluster cache.
      * <p>
-     * @param host the host name 
-     * @param port the port number
-     * @param propFile the remote cache hub configuration file
-     * @throws IOException
-     * 
-     * @deprecated Use startup(String, int, Properties) instead
-     */
-    @Deprecated
-    public static void startup( String host, int port, String propFile )
-        throws IOException
-    {
-        if ( log.isInfoEnabled() )
-        {
-            log.info( "ConfigFileName = [" + propFile + "]" );
-        }
-        Properties props = RemoteUtils.loadProps( propFile );
-        startup(host, port, props);
-    }
-
-    /**
-     * Starts up the remote cache server on this JVM, and binds it to the registry on the given host
-     * and port.
-     * <p>
-     * A remote cache is either a local cache or a cluster cache.
-     * <p>
-     * @param host the host name 
-     * @param port the port number
-     * @param props the remote cache hub configuration
-     * @param propFile the remote cache hub configuration file
-     * @throws IOException
-     * 
-     * @deprecated Use startup(String, int, Properties) instead
-     */
-    @Deprecated
-    public static void startup( String host, int port, Properties props, String propFile )
-        throws IOException
-    {
-        if ( log.isWarnEnabled() )
-        {
-            log.warn( "ConfigFileName = [" + propFile + "] ignored" );
-        }
-        startup(host, port, props);
-    }
-
-    /**
-     * Starts up the remote cache server on this JVM, and binds it to the registry on the given host
-     * and port.
-     * <p>
-     * A remote cache is either a local cache or a cluster cache.
-     * <p>
      * @param host
      * @param port
      * @param props
@@ -516,12 +466,12 @@ public class RemoteCacheServerFactory
 
     /**
      * Look up the remote cache service admin instance
-     *  
+     *
      * @param config the configuration properties
      * @param port the local port
      * @return the admin object instance
-     * 
-     * @throws Exception if lookup fails 
+     *
+     * @throws Exception if lookup fails
      */
     private static ICacheServiceAdmin lookupCacheServiceAdmin(Properties config, int port) throws Exception
     {
@@ -537,10 +487,10 @@ public class RemoteCacheServerFactory
         {
             log.debug( "server found" );
         }
-        
+
         return (ICacheServiceAdmin) obj;
     }
-    
+
     /**
      * @param serviceName the serviceName to set
      */

@@ -30,9 +30,7 @@ import java.util.Set;
 import org.apache.commons.jcs.auxiliary.AbstractAuxiliaryCache;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheAttributes;
 import org.apache.commons.jcs.engine.CacheStatus;
-import org.apache.commons.jcs.engine.behavior.ICache;
 import org.apache.commons.jcs.engine.behavior.ICacheElement;
-import org.apache.commons.jcs.engine.behavior.ICompositeCacheManager;
 import org.apache.commons.jcs.engine.behavior.IElementSerializer;
 import org.apache.commons.jcs.engine.logging.behavior.ICacheEventLogger;
 import org.apache.commons.jcs.engine.stats.StatElement;
@@ -78,37 +76,6 @@ public abstract class AbstractRemoteCacheNoWaitFacade<K, V>
         {
             // FIXME: This cast is very brave. Remove this.
             ((RemoteCache<K, V>)nw.getRemoteCache()).setFacade(this);
-        }
-    }
-
-    /**
-     * Constructs with the given remote cache, and fires events to any listeners.
-     * <p>
-     * @param noWaits
-     * @param rca
-     * @param cacheMgr
-     * @param cacheEventLogger
-     * @param elementSerializer
-     * @deprecated Unused parameter cacheMgr scheduled for removal
-     */
-    @Deprecated
-    public AbstractRemoteCacheNoWaitFacade( List<ICache<K, V>> noWaits, RemoteCacheAttributes rca,
-                                    ICompositeCacheManager cacheMgr, ICacheEventLogger cacheEventLogger,
-                                    IElementSerializer elementSerializer )
-    {
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "CONSTRUCTING NO WAIT FACADE" );
-        }
-        this.remoteCacheAttributes = rca;
-        setCacheEventLogger( cacheEventLogger );
-        setElementSerializer( elementSerializer );
-        this.noWaits = new ArrayList<RemoteCacheNoWait<K,V>>();
-        for (ICache<K, V> nw : noWaits)
-        {
-            RemoteCacheNoWait<K,V> rcnw = (RemoteCacheNoWait<K,V>)nw;
-            ((RemoteCache<K, V>)rcnw.getRemoteCache()).setFacade(this);
-            this.noWaits.add(rcnw);
         }
     }
 

@@ -375,19 +375,6 @@ public class BlockDisk
      * Calculates the file offset for a particular block.
      * <p>
      * @param block number
-     * @return the byte offset for this block in the file as an int; may overflow
-     * @deprecated (since 2.0) use {@link #calculateByteOffsetForBlockAsLong(int)} instead
-     */
-    @Deprecated
-    protected int calculateByteOffsetForBlock( int block )
-    {
-        return block * blockSizeBytes;
-    }
-
-    /**
-     * Calculates the file offset for a particular block.
-     * <p>
-     * @param block number
      * @return the byte offset for this block in the file as a long
      * @since 2.0
      */

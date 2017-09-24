@@ -20,21 +20,20 @@ package org.apache.commons.jcs.auxiliary.remote.http.client;
  */
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.nio.charset.Charset;
 
-import org.apache.commons.httpclient.HttpException;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.httpclient.methods.ByteArrayRequestEntity;
-import org.apache.commons.httpclient.methods.PostMethod;
-import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.jcs.auxiliary.remote.behavior.IRemoteCacheDispatcher;
 import org.apache.commons.jcs.auxiliary.remote.value.RemoteCacheRequest;
 import org.apache.commons.jcs.auxiliary.remote.value.RemoteCacheResponse;
 import org.apache.commons.jcs.utils.serialization.StandardSerializer;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.apache.http.HttpException;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.methods.RequestBuilder;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.util.EntityUtils;
 
 /** Calls the service. */
 public class RemoteHttpCacheDispatcher
@@ -42,7 +41,7 @@ public class RemoteHttpCacheDispatcher
     implements IRemoteCacheDispatcher
 {
     /** Parameter encoding */
-    private static final String DEFAULT_ENCODING = "UTF-8";
+    private static final Charset DEFAULT_ENCODING = Charset.forName("UTF-8");
 
     /** Named of the parameter */
     private static final String PARAMETER_REQUEST_TYPE = "RequestType";
@@ -85,9 +84,9 @@ public class RemoteHttpCacheDispatcher
         {
             byte[] requestAsByteArray = serializer.serialize( remoteCacheRequest );
 
-            String url = addParameters( remoteCacheRequest, getRemoteHttpCacheAttributes().getUrl() );
-
-            byte[] responseAsByteArray = processRequest( requestAsByteArray, url );
+            byte[] responseAsByteArray = processRequest( requestAsByteArray,
+                    remoteCacheRequest,
+                    getRemoteHttpCacheAttributes().getUrl());
 
             RemoteCacheResponse<T> remoteCacheResponse = null;
             try
@@ -107,121 +106,88 @@ public class RemoteHttpCacheDispatcher
     }
 
     /**
-     * @param requestAsByteArray
-     * @param url
+     * Process single request
+     *
+     * @param requestAsByteArray request body
+     * @param remoteCacheRequest the cache request
+     * @param url target url
+     *
      * @return byte[] - the response
+     *
      * @throws IOException
      * @throws HttpException
      */
-    protected byte[] processRequest( byte[] requestAsByteArray, String url )
+    protected <K, V> byte[] processRequest( byte[] requestAsByteArray,
+            RemoteCacheRequest<K, V> remoteCacheRequest, String url )
         throws IOException, HttpException
     {
-        PostMethod post = new PostMethod( url );
-        RequestEntity requestEntity = new ByteArrayRequestEntity( requestAsByteArray );
-        post.setRequestEntity( requestEntity );
-        doWebserviceCall( post );
-        byte[] response = post.getResponseBody();
+        RequestBuilder builder = RequestBuilder.post( url ).setCharset( DEFAULT_ENCODING );
+
+        if ( getRemoteHttpCacheAttributes().isIncludeCacheNameAsParameter()
+            && remoteCacheRequest.getCacheName() != null )
+        {
+            builder.addParameter( PARAMETER_CACHE_NAME, remoteCacheRequest.getCacheName() );
+        }
+        if ( getRemoteHttpCacheAttributes().isIncludeKeysAndPatternsAsParameter() )
+        {
+            String keyValue = "";
+            switch ( remoteCacheRequest.getRequestType() )
+            {
+                case GET:
+                case REMOVE:
+                case GET_KEYSET:
+                    keyValue = remoteCacheRequest.getKey().toString();
+                    break;
+                case GET_MATCHING:
+                    keyValue = remoteCacheRequest.getPattern();
+                    break;
+                case GET_MULTIPLE:
+                    keyValue = remoteCacheRequest.getKeySet().toString();
+                    break;
+                case UPDATE:
+                    keyValue = remoteCacheRequest.getCacheElement().getKey().toString();
+                    break;
+                default:
+                    break;
+            }
+            builder.addParameter( PARAMETER_KEY, keyValue );
+        }
+        if ( getRemoteHttpCacheAttributes().isIncludeRequestTypeasAsParameter() )
+        {
+            builder.addParameter( PARAMETER_REQUEST_TYPE,
+                remoteCacheRequest.getRequestType().toString() );
+        }
+
+        builder.setEntity(new ByteArrayEntity( requestAsByteArray ));
+        HttpResponse httpResponse = doWebserviceCall( builder );
+        byte[] response = EntityUtils.toByteArray( httpResponse.getEntity() );
         return response;
     }
 
     /**
-     * @param remoteCacheRequest
-     * @param baseUrl
-     * @return String
-     */
-    protected <K, V> String addParameters( RemoteCacheRequest<K, V> remoteCacheRequest, String baseUrl )
-    {
-        StringBuilder url = new StringBuilder( baseUrl == null ? "" : baseUrl );
-
-        try
-        {
-            if ( baseUrl != null && baseUrl.indexOf( "?" ) == -1 )
-            {
-                url.append( "?" );
-            }
-            else
-            {
-                url.append( "&" );
-            }
-
-            if ( getRemoteHttpCacheAttributes().isIncludeCacheNameAsParameter() )
-            {
-                if ( remoteCacheRequest.getCacheName() != null )
-                {
-                    url.append( PARAMETER_CACHE_NAME + "="
-                        + URLEncoder.encode( remoteCacheRequest.getCacheName(), DEFAULT_ENCODING ) );
-                }
-            }
-            if ( getRemoteHttpCacheAttributes().isIncludeKeysAndPatternsAsParameter() )
-            {
-                String keyValue = "";
-                switch ( remoteCacheRequest.getRequestType() )
-                {
-                    case GET:
-                    case REMOVE:
-                    case GET_KEYSET:
-                        keyValue = remoteCacheRequest.getKey() + "";
-                        break;
-                    case GET_MATCHING:
-                        keyValue = remoteCacheRequest.getPattern();
-                        break;
-                    case GET_MULTIPLE:
-                        keyValue = remoteCacheRequest.getKeySet() + "";
-                        break;
-                    case UPDATE:
-                        keyValue = remoteCacheRequest.getCacheElement().getKey() + "";
-                        break;
-                    default:
-                        break;
-                }
-                String encodedKeyValue = URLEncoder.encode( keyValue, DEFAULT_ENCODING );
-                url.append( "&" + PARAMETER_KEY + "=" + encodedKeyValue );
-            }
-            if ( getRemoteHttpCacheAttributes().isIncludeRequestTypeasAsParameter() )
-            {
-                url.append( "&"
-                    + PARAMETER_REQUEST_TYPE
-                    + "="
-                    + URLEncoder.encode( remoteCacheRequest.getRequestType().toString(), DEFAULT_ENCODING ) );
-            }
-        }
-        catch ( UnsupportedEncodingException e )
-        {
-            log.error( "Couldn't encode URL.", e );
-        }
-
-        if ( log.isDebugEnabled() )
-        {
-            log.debug( "Url: " + url.toString() );
-        }
-
-        return url.toString();
-    }
-
-    /**
-     * Called before the executeMethod on the client.
+     * Called before the execute call on the client.
      * <p>
-     * @param post http method
-     * @return HttpState
+     * @param requestBuilder http method request builder
+     *
      * @throws IOException
      */
     @Override
-    protected HttpState preProcessWebserviceCall( HttpMethod post )
+    protected void preProcessWebserviceCall( RequestBuilder requestBuilder )
         throws IOException
     {
         // do nothing. Child can override.
-        return null;
     }
 
     /**
-     * Called after the executeMethod on the client.
+     * Called after the execute call on the client.
      * <p>
-     * @param post http method
-     * @param httpState state
+     * @param request http request
+     * @param httpState result of execution
+     *
      * @throws IOException
      */
     @Override
-    protected void postProcessWebserviceCall( HttpMethod post, HttpState httpState )
+    protected void postProcessWebserviceCall( HttpUriRequest request, HttpResponse httpState )
         throws IOException
     {
         // do nothing. Child can override.

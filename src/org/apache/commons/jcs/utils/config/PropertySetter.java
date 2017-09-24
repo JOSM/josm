@@ -1,5 +1,14 @@
 package org.apache.commons.jcs.utils.config;
 
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.io.File;
+import java.lang.reflect.Method;
+import java.util.Enumeration;
+import java.util.Properties;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -21,15 +30,6 @@ package org.apache.commons.jcs.utils.config;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.io.File;
-import java.lang.reflect.Method;
-import java.util.Enumeration;
-import java.util.Properties;
 
 /**
  * This class is based on the log4j class org.apache.log4j.config.PropertySetter that was made by
@@ -265,7 +265,6 @@ public class PropertySetter
         }
         else if( type.isEnum() )
         {
-            @SuppressWarnings("unchecked") // type check in if()
             Enum<?> en = Enum.valueOf(type.asSubclass(Enum.class), v );
             return en;
         }
