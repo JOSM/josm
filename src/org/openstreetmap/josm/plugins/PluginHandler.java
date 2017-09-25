@@ -845,7 +845,7 @@ public final class PluginHandler {
             for (PluginInformation info : toLoad) {
                 PluginClassLoader cl = classLoaders.get(info);
                 DEPENDENCIES:
-                for (String depName : info.getRequiredPlugins()) {
+                for (String depName : info.getLocalRequiredPlugins()) {
                     for (PluginInformation depInfo : toLoad) {
                         if (depInfo.getName().equals(depName)) {
                             cl.addDependency(classLoaders.get(depInfo));
