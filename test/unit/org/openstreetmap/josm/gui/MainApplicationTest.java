@@ -57,7 +57,7 @@ public class MainApplicationTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().main().https().devAPI().timeout(20000);
+    public JOSMTestRules test = new JOSMTestRules().main().projection().https().devAPI().timeout(20000);
 
     /**
      * Make sure {@link MainApplication#contentPanePrivate} is initialized.
