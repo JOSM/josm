@@ -252,18 +252,18 @@ public class MainApplicationTest {
     @Test
     public void testPostConstructorProcessCmdLineBounds() {
         doTestPostConstructorProcessCmdLine(
-                "0.01,0.01,0.05,0.05",
+                "-47.20,-126.75,-47.10,-126.65",
                 "51.35,-0.4,51.60,0.2", true);
     }
 
     /**
      * Unit test of {@link MainApplication#postConstructorProcessCmdLine} - nominal case with http/https URLs.
-     * This test assumes the DEV API contains nodes around 0,0 and GPX tracks around London
+     * This test assumes the DEV API contains nodes around -47.15, -126.7 (R'lyeh) and GPX tracks around London
      */
     @Test
     public void testPostConstructorProcessCmdLineHttpUrl() {
         doTestPostConstructorProcessCmdLine(
-                "http://api06.dev.openstreetmap.org/api/0.6/map?bbox=0.01,0.01,0.05,0.05",
+                "http://api06.dev.openstreetmap.org/api/0.6/map?bbox=-126.75,-47.20,-126.65,-47.10",
                 "https://master.apis.dev.openstreetmap.org/api/0.6/trackpoints?bbox=-0.4,51.35,0.2,51.6&page=0", true);
     }
 
