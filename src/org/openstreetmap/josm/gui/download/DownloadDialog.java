@@ -387,6 +387,7 @@ public class DownloadDialog extends JDialog {
             tpDownloadAreaSelectors.setSelectedIndex(0);
         }
 
+        downloadSourcesTab.getAllPanels().forEach(AbstractDownloadSourcePanel::restoreSettings);
         downloadSourcesTab.setSelected(DOWNLOAD_SOURCE_TAB.get());
 
         if (MainApplication.isDisplayingMapView()) {
@@ -485,7 +486,7 @@ public class DownloadDialog extends JDialog {
      * @param <T> The type of the download data.
      */
     protected <T> void addNewDownloadSourceTab(DownloadSource<T> downloadSource) {
-        downloadSourcesTab.addPanel(downloadSource.createPanel());
+        downloadSourcesTab.addPanel(downloadSource.createPanel(this));
     }
 
     /**
@@ -585,7 +586,7 @@ public class DownloadDialog extends JDialog {
      * @author Michael Zangl
      * @since 12706
      */
-    private static class DownloadSourceTabs extends JTabbedPane implements DownloadSourceListener {
+    private class DownloadSourceTabs extends JTabbedPane implements DownloadSourceListener {
         private final List<AbstractDownloadSourcePanel<?>> allPanels = new ArrayList<>();
 
         DownloadSourceTabs() {
@@ -644,7 +645,7 @@ public class DownloadDialog extends JDialog {
 
         @Override
         public void downloadSourceAdded(DownloadSource<?> source) {
-            addPanel(source.createPanel());
+            addPanel(source.createPanel(DownloadDialog.this));
         }
     }
 

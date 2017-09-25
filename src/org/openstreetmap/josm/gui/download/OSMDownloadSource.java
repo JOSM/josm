@@ -48,8 +48,8 @@ public class OSMDownloadSource implements DownloadSource<OSMDownloadSource.OSMDo
     public static final String SIMPLE_NAME = "osmdownloadpanel";
 
     @Override
-    public AbstractDownloadSourcePanel<OSMDownloadData> createPanel() {
-        return new OSMDownloadSourcePanel(this);
+    public AbstractDownloadSourcePanel<OSMDownloadData> createPanel(DownloadDialog dialog) {
+        return new OSMDownloadSourcePanel(this, dialog);
     }
 
     @Override
@@ -144,15 +144,17 @@ public class OSMDownloadSource implements DownloadSource<OSMDownloadSource.OSMDo
 
         /**
          * Creates a new {@link OSMDownloadSourcePanel}.
+         * @param dialog the parent download dialog, as {@code DownloadDialog.getInstance()} might not be initialized yet
          * @param ds The osm download source the panel is for.
+         * @since 12900
          */
-        public OSMDownloadSourcePanel(OSMDownloadSource ds) {
+        public OSMDownloadSourcePanel(OSMDownloadSource ds, DownloadDialog dialog) {
             super(ds);
             setLayout(new GridBagLayout());
 
             // size check depends on selected data source
             final ChangeListener checkboxChangeListener = e ->
-                    DownloadDialog.getInstance().getSelectedDownloadArea().ifPresent(this::updateSizeCheck);
+                    dialog.getSelectedDownloadArea().ifPresent(this::updateSizeCheck);
 
             // adding the download tasks
             add(new JLabel(tr("Data Sources and Types:")), GBC.std().insets(5, 5, 1, 5).anchor(GBC.CENTER));

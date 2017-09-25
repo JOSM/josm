@@ -12,9 +12,11 @@ public interface DownloadSource<T> {
 
     /**
      * Creates a panel with GUI specific for the download source.
+     * @param dialog the parent download dialog, as {@code DownloadDialog.getInstance()} might not be initialized yet
      * @return Returns {@link AbstractDownloadSourcePanel}.
+     * @since 12900
      */
-    AbstractDownloadSourcePanel<T> createPanel();
+    AbstractDownloadSourcePanel<T> createPanel(DownloadDialog dialog);
 
     /**
      * Downloads the data.
