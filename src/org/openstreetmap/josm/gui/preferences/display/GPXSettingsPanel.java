@@ -392,7 +392,7 @@ public class GPXSettingsPanel extends JPanel implements ValidationListener {
             // no line preferences for layer is found
             drawRawGpsLinesGlobal.setSelected(true);
         } else {
-            Boolean lf =  PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.lines.local", layerName, true);
+            Boolean lf = PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.lines.local", layerName, true);
             if (PreferencesUtils.getBoolean(Config.getPref(), "draw.rawgps.lines", layerName, true)) {
                 drawRawGpsLinesAll.setSelected(true);
             } else if (lf) {
