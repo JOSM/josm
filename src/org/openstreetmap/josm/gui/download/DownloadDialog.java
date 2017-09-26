@@ -364,6 +364,7 @@ public class DownloadDialog extends JDialog {
      */
     public void rememberSettings() {
         DOWNLOAD_TAB.put(tpDownloadAreaSelectors.getSelectedIndex());
+        downloadSourcesTab.getAllPanels().forEach(AbstractDownloadSourcePanel::rememberSettings);
         downloadSourcesTab.getSelectedPanel().ifPresent(panel -> DOWNLOAD_SOURCE_TAB.put(panel.getSimpleName()));
         DOWNLOAD_NEWLAYER.put(cbNewLayer.isSelected());
         DOWNLOAD_ZOOMTODATA.put(cbZoomToDownloadedData.isSelected());
