@@ -502,7 +502,7 @@ public class SplitWayAction extends JosmAction {
     @Deprecated
     public static SplitWayResult splitWay(Way way, List<List<Node>> wayChunks,
             Collection<? extends OsmPrimitive> selection, Strategy splitStrategy) {
-        SplitWayCommand cmd = SplitWayCommand.splitWay(way, wayChunks, selection, x -> splitStrategy.determineWayToKeep(x));
+        SplitWayCommand cmd = SplitWayCommand.splitWay(way, wayChunks, selection, splitStrategy::determineWayToKeep);
         return cmd != null ? new SplitWayResult(cmd) : null;
     }
 
