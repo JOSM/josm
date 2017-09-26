@@ -89,7 +89,7 @@ public final class OverpassQueryWizardDialog extends ExtendedDialog {
         panel.add(queryWizard, GBC.eol().insets(0, 0, 0, 15).fill(GBC.HORIZONTAL).anchor(GBC.SOUTH));
         panel.add(scroll, GBC.eol().fill(GBC.BOTH).anchor(GBC.CENTER));
 
-        List<String> items = OVERPASS_WIZARD_HISTORY.get();
+        List<String> items = new ArrayList<>(OVERPASS_WIZARD_HISTORY.get());
         Collections.reverse(items);
         queryWizard.setPossibleItems(items);
         if (!items.isEmpty()) {
