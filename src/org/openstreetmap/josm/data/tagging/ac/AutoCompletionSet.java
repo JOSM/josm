@@ -2,6 +2,7 @@
 package org.openstreetmap.josm.data.tagging.ac;
 
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -46,7 +47,7 @@ public class AutoCompletionSet extends TreeSet<AutoCompletionItem> {
      * @return {@code true} if this set changed as a result of the call
      */
     public boolean addAll(Collection<String> values, AutoCompletionPriority priority) {
-        return addAll(values.stream().filter(v -> v != null).map(v -> new AutoCompletionItem(v, priority)).collect(Collectors.toList()));
+        return addAll(values.stream().filter(Objects::nonNull).map(v -> new AutoCompletionItem(v, priority)).collect(Collectors.toList()));
     }
 
     /**

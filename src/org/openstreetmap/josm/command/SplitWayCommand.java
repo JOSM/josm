@@ -37,7 +37,7 @@ import org.openstreetmap.josm.tools.Logging;
  */
 public class SplitWayCommand extends SequenceCommand {
 
-    private static volatile Consumer<String> warningNotifier = msg -> Logging.warn(msg);
+    private static volatile Consumer<String> warningNotifier = Logging::warn;
 
     /**
      * Sets the global warning notifier.
