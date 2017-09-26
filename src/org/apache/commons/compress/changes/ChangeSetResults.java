@@ -85,9 +85,6 @@ public class ChangeSetResults {
      * @return true, if this filename already has been added
      */
     boolean hasBeenAdded(final String filename) {
-        if(addedFromChangeSet.contains(filename) || addedFromStream.contains(filename)) {
-            return true;
-        } 
-        return false;
+        return addedFromChangeSet.contains(filename) || addedFromStream.contains(filename);
     }
 }

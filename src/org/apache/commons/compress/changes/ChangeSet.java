@@ -143,10 +143,8 @@ public final class ChangeSet {
                         continue;
                     }
 
-                    if (Change.TYPE_DELETE == pChange.type() && source.equals(target)) {
-                        it.remove();
-                    } else if (Change.TYPE_DELETE_DIR == pChange.type() && 
-                               target.matches(source + "/.*")) {
+                    if (Change.TYPE_DELETE == pChange.type() && source.equals(target) ||
+                            (Change.TYPE_DELETE_DIR == pChange.type() && target.matches(source + "/.*"))) {
                         it.remove();
                     }
                 }
