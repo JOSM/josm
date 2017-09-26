@@ -84,7 +84,7 @@ public class Check extends KeyedItem {
         check.setPropertyText(key);
         check.setState(check.getState()); // to update the tooltip text
 
-        p.add(check, GBC.eol().fill(GBC.HORIZONTAL));
+        p.add(check, GBC.eol()); // Do not fill, see #15104
         return true;
     }
 
