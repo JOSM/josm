@@ -274,7 +274,7 @@ public class TarArchiveOutputStream extends ArchiveOutputStream {
         }
 
         if (haveUnclosedEntry) {
-            throw new IOException("This archives contains unclosed entries.");
+            throw new IOException("This archive contains unclosed entries.");
         }
         writeEOFRecord();
         writeEOFRecord();
