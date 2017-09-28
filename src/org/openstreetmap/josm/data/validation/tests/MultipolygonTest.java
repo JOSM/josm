@@ -223,7 +223,7 @@ public class MultipolygonTest extends Test {
                                     .highlight(wOuter)
                                     .build());
                         } else if (areaStyle) { /* style on outer way of multipolygon, but equal to polygon */
-                            errors.add(TestError.builder(this, Severity.ERROR, OUTER_STYLE)
+                            errors.add(TestError.builder(this, Severity.WARNING, OUTER_STYLE)
                                     .message(tr("Area style on outer way"))
                                     .primitives(Arrays.asList(r, wOuter))
                                     .highlight(wOuter)
