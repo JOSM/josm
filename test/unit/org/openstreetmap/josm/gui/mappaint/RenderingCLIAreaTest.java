@@ -31,7 +31,7 @@ public class RenderingCLIAreaTest {
      */
     @Rule
     @SuppressFBWarnings(value = "URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    public JOSMTestRules test = new JOSMTestRules().projection();
+    public JOSMTestRules test = new JOSMTestRules().projection().territories();
 
     @Parameterized.Parameters
     public static Collection<Object[]> runs() {
@@ -162,7 +162,6 @@ public class RenderingCLIAreaTest {
     public void testDetermineRenderingArea() {
         RenderingCLI cli = new RenderingCLI();
         cli.parseArguments(args);
-        cli.initialize();
         RenderingCLI.RenderingArea ra = cli.determineRenderingArea(null);
         Assert.assertThat(ra.scale, scaleMatcher);
         Assert.assertThat(ra.bounds, boundsMatcher);
