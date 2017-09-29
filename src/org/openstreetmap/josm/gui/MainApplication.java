@@ -112,6 +112,7 @@ import org.openstreetmap.josm.gui.layer.LayerManager.LayerRemoveEvent;
 import org.openstreetmap.josm.gui.layer.MainLayerManager;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.layer.TMSLayer;
+import org.openstreetmap.josm.gui.mappaint.RenderingCLI;
 import org.openstreetmap.josm.gui.mappaint.loader.MapPaintStyleLoader;
 import org.openstreetmap.josm.gui.oauth.OAuthAuthorizationWizard;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
@@ -303,6 +304,7 @@ public class MainApplication extends Main {
     static {
         registerCLIModule(JOSM_CLI_MODULE);
         registerCLIModule(ProjectionCLI.INSTANCE);
+        registerCLIModule(RenderingCLI.INSTANCE);
     }
 
     /**
