@@ -181,6 +181,17 @@
             <text key="maxwidth" text="Max. width (meters)" length="7" />
         </optional>
     </chunk>
+    <chunk id="optional_name">
+        <optional>
+            <text key="name" text="Name" />
+        </optional>
+    </chunk>
+    <chunk id="optional_name_operator">
+        <optional>
+            <text key="name" text="Name" />
+            <text key="operator" text="Operator" />
+        </optional>
+    </chunk>
     <chunk id="name_leisure_pitch">
         <text key="name" text="Name" />
         <combo key="leisure" text="Type" values="pitch,sports_centre,stadium" default="pitch" />
@@ -2292,8 +2303,8 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=basin" />
             <space />
             <key key="landuse" value="basin" />
-            <text key="name" text="Name" />
             <combo key="basin" text="Type" values="retention,infiltration,detention" />
+            <reference ref="optional_name" />
         </item> <!-- Basin -->
         <item name="Reservoir" icon="presets/landuse/reservoir.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=reservoir"
@@ -2305,8 +2316,8 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=reservoir" />
             <space />
             <key key="landuse" value="reservoir" />
-            <text key="name" text="Name" />
             <combo key="reservoir_type" text="Type" values="evaporator,sewage,tailings,water_storage" />
+            <reference ref="optional_name" />
         </item> <!-- Reservoir -->
         <item name="Covered Reservoir" icon="presets/landmark/reservoir_covered.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=reservoir_covered"
@@ -2319,7 +2330,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:man_made=reservoir_covered" />
             <space />
             <key key="man_made" value="reservoir_covered" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Covered Reservoir -->
         <separator/>
         <item name="Water" name_context="natural" icon="presets/nautical/water.svg" type="closedway,multipolygon" preset_name_label="true">
@@ -10273,8 +10284,8 @@
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:landuse=forest" />
             <space />
             <key key="landuse" value="forest" />
-            <text key="name" text="Name" />
             <reference ref="leaf" />
+            <reference ref="optional_name" />
         </item> <!-- Forest -->
         <item name="Cutline" icon="presets/landmark/cutline.svg" type="way" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:man_made=cutline"
@@ -10474,7 +10485,7 @@
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:landuse=farmyard" />
             <space />
             <key key="landuse" value="farmyard" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Farmyard -->
         <item name="Farmland" icon="presets/landuse/farmland.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=farmland"
@@ -10487,8 +10498,8 @@
                   pl.href="http://wiki.openstreetmap.org/wiki/Pl:Tag:landuse=farmland" />
             <space />
             <key key="landuse" value="farmland" />
-            <text key="name" text="Name" />
             <combo key="crop" text="Crop" values="corn,grass,rice,wheat,hop" values_context="crop" />
+            <reference ref="optional_name" />
         </item> <!-- Farmland -->
         <item name="Meadow" icon="presets/landuse/meadow.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=meadow"
@@ -10501,7 +10512,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=meadow" />
             <space />
             <key key="landuse" value="meadow" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Meadow -->
         <item name="Orchard" icon="presets/landuse/orchard.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=orchard"
@@ -10514,8 +10525,8 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=orchard" />
             <space />
             <key key="landuse" value="orchard" />
-            <text key="name" text="Name" />
             <combo key="trees" text="Trees" values="olive_trees,apple_trees,oil_palms,orange_trees,almond_trees,banana_plants,coconut_palms,hazel_plants,cherry_trees,persimmon_trees,walnut_trees,plum_trees,peach_trees,tea_plants" />
+            <reference ref="optional_name" />
         </item> <!-- Orchard -->
         <item name="Vineyard" icon="presets/landuse/vineyard.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=vineyard"
@@ -10526,7 +10537,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=vineyard" />
             <space />
             <key key="landuse" value="vineyard" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Vineyard -->
         <item name="Greenhouse Horticulture" icon="presets/landuse/greenhouse_horticulture.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=greenhouse_horticulture"
@@ -10541,8 +10552,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=greenhouse_horticulture" />
             <space />
             <key key="landuse" value="greenhouse_horticulture" />
-            <text key="name" text="Name" />
-            <text key="operator" text="Operator" />
+            <reference ref="optional_name_operator" />
         </item> <!-- Greenhouse Horticulture -->
         <item name="Plant Nursery" icon="presets/landuse/plant_nursery.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=plant_nursery"
@@ -10554,9 +10564,8 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=plant_nursery" />
             <space />
             <key key="landuse" value="plant_nursery" />
-            <text key="name" text="Name" />
-            <text key="operator" text="Operator" />
             <reference ref="genus_species_taxon" />
+            <reference ref="optional_name_operator" />
         </item> <!-- Plant Nursery -->
         <item name="Aquaculture" icon="presets/landuse/aquaculture.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=aquaculture"
@@ -10565,9 +10574,8 @@
                   ja.href="http://wiki.openstreetmap.org/wiki/JA:Tag:landuse=aquaculture" />
             <space />
             <key key="landuse" value="aquaculture" />
-            <text key="name" text="Name" />
-            <text key="operator" text="Operator" />
             <combo key="aquaculture" text="Aquaculture" values="shrimp,fish,mussels" />
+            <reference ref="optional_name_operator" />
         </item> <!-- Aquaculture -->
         <item name="Allotments" icon="presets/landuse/allotments.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=allotments"
@@ -10581,7 +10589,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=allotments" />
             <space />
             <key key="landuse" value="allotments" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Allotments -->
         <separator/>
         <item name="Garden" icon="presets/leisure/garden.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -10594,7 +10602,7 @@
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:leisure=garden" />
             <space />
             <key key="leisure" value="garden" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Garden -->
         <item name="Grass" icon="presets/landuse/meadow.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=grass"
@@ -10609,7 +10617,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=grass" />
             <space />
             <key key="landuse" value="grass" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Grass -->
         <item name="Village Green" icon="presets/leisure/common.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=village_green"
@@ -10624,7 +10632,7 @@
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:landuse=village_green" />
             <space />
             <key key="landuse" value="village_green" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Village Green -->
         <item name="Common" icon="presets/leisure/common.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=common"
@@ -10638,7 +10646,7 @@
                   uk.href="http://wiki.openstreetmap.org/wiki/Uk:Tag:leisure=common" />
             <space />
             <key key="leisure" value="common" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Common -->
         <item name="Park" icon="presets/leisure/park.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:leisure=park"
@@ -10652,7 +10660,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:leisure=park" />
             <space />
             <key key="leisure" value="park" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Park -->
         <item name="Recreation Ground" icon="presets/leisure/common.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=recreation_ground"
@@ -10665,7 +10673,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=recreation_ground" />
             <space />
             <key key="landuse" value="recreation_ground" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Recreation Ground -->
         <separator/>
         <item name="Residential Area" icon="presets/landmark/building.svg" type="closedway,multipolygon" preset_name_label="true">
@@ -10680,7 +10688,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=residential" />
             <space />
             <key key="landuse" value="residential" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Residential Area -->
         <item name="Graveyard" icon="presets/landuse/graveyard.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:amenity=grave_yard"
@@ -10734,7 +10742,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=retail" />
             <space />
             <key key="landuse" value="retail" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Retail -->
         <item name="Commercial" icon="presets/landuse/commercial.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=commercial"
@@ -10747,7 +10755,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=commercial" />
             <space />
             <key key="landuse" value="commercial" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Commercial -->
         <item name="Industrial" icon="presets/landmark/works.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=industrial"
@@ -10761,8 +10769,8 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=industrial" />
             <space />
             <key key="landuse" value="industrial" />
-            <text key="name" text="Name" />
             <combo key="industrial" text="Type" values="bakery,brewery,brickyard,depot,distributor,factory,grinding_mill,heating_station,machine_shop,mine,oil,port,salt_pond,sawmill,scrap_yard,shipyard,slaughterhouse,warehouse" values_context="industrial" />
+            <reference ref="optional_name" />
         </item> <!-- Industrial -->
         <item name="Garages" icon="presets/landuse/garages.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=garages"
@@ -10775,8 +10783,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=garages" />
             <space />
             <key key="landuse" value="garages" />
-            <text key="name" text="Name" />
-            <text key="operator" text="Operator" />
+            <reference ref="optional_name_operator" />
         </item> <!-- Garages -->
         <item name="Railway Land" icon="presets/landuse/railway.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=railway"
@@ -10788,7 +10795,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=railway" />
             <space />
             <key key="landuse" value="railway" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Railway Land -->
         <item name="Military" icon="presets/landuse/military.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=military"
@@ -10799,7 +10806,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=military" />
             <space />
             <key key="landuse" value="military" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Military -->
         <separator/>
         <item name="Construction Area" icon="presets/landuse/construction.svg" type="closedway,multipolygon" preset_name_label="true">
@@ -10814,7 +10821,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=construction" />
             <space />
             <key key="landuse" value="construction" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Construction Area -->
         <item name="Brownfield" icon="presets/landuse/brownfield.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=brownfield"
@@ -10827,7 +10834,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=brownfield" />
             <space />
             <key key="landuse" value="brownfield" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Brownfield -->
         <item name="Greenfield" icon="presets/landuse/greenfield.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=greenfield"
@@ -10839,7 +10846,7 @@
                   pt.href="http://wiki.openstreetmap.org/wiki/Pt:Tag:landuse=greenfield" />
             <space />
             <key key="landuse" value="greenfield" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Greenfield -->
         <item name="Landfill" icon="presets/landuse/landfill.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=landfill"
@@ -10852,7 +10859,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=landfill" />
             <space />
             <key key="landuse" value="landfill" />
-            <text key="name" text="Name" />
+            <reference ref="optional_name" />
         </item> <!-- Landfill -->
         <item name="Quarry" icon="presets/landmark/mine.svg" type="closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:landuse=quarry"
