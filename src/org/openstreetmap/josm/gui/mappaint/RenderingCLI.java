@@ -251,7 +251,7 @@ public class RenderingCLI implements CLIModule {
                 if (!getopt.getOptarg().equals("auto")) {
                     try {
                         argBounds = new Bounds(getopt.getOptarg(), ",", Bounds.ParseMethod.LEFT_BOTTOM_RIGHT_TOP, false);
-                    } catch (IllegalArgumentException iae) {
+                    } catch (IllegalArgumentException iae) { // NOPMD
                         throw new IllegalArgumentException(tr("Unable to parse {0} parameter: {1}", "--bounds", iae.getMessage()));
                     }
                 }
@@ -291,7 +291,7 @@ public class RenderingCLI implements CLIModule {
                         double lon = LatLonParser.parseCoordinate(parts[0]);
                         double lat = LatLonParser.parseCoordinate(parts[1]);
                         argAnchor = new LatLon(lat, lon);
-                    } catch (IllegalArgumentException iae) {
+                    } catch (IllegalArgumentException iae) { // NOPMD
                         throw new IllegalArgumentException(tr("In option {0}: {1}", "--anchor", iae.getMessage()));
                     }
                     break;
@@ -435,7 +435,7 @@ public class RenderingCLI implements CLIModule {
         Config.setPreferencesInstance(new MemoryPreferences());
         Config.getPref().putBoolean("mappaint.auto_reload_local_styles", false); // unnecessary to listen for external changes
         String projCode = Optional.ofNullable(argProjection).orElse("epsg:3857");
-        Main.setProjection(Projections.getProjectionByCode(projCode.toUpperCase()));
+        Main.setProjection(Projections.getProjectionByCode(projCode.toUpperCase(Locale.US)));
 
         RightAndLefthandTraffic.initialize();
     }
