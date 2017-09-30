@@ -781,7 +781,13 @@ public class MainApplication extends Main {
         return tr("Java OpenStreetMap Editor")+" ["
                 +Version.getInstance().getAgentString()+"]\n\n"+
                 tr("usage")+":\n"+
-                "\tjava -jar josm.jar <options>...\n\n"+
+                "\tjava -jar josm.jar [<command>] <options>...\n\n"+
+                tr("commands")+":\n"+
+                "\trunjosm     "+tr("launch JOSM (default, performed when no command is specified)")+'\n'+
+                "\trender      "+tr("render data and save the result to an image file")+'\n'+
+                "\tproject     "+tr("convert coordinates from one coordinate reference system to another")+"\n\n"+
+                tr("For details on the {0} and {1} commands, run them with the {2} option.", "render", "project", "--help")+'\n'+
+                tr("The remainder of this help page documents the {0} command.", "runjosm")+"\n\n"+
                 tr("options")+":\n"+
                 "\t--help|-h                                 "+tr("Show this help")+'\n'+
                 "\t--geometry=widthxheight(+|-)x(+|-)y       "+tr("Standard unix geometry argument")+'\n'+
