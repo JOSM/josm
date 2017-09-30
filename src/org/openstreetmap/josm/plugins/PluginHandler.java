@@ -858,7 +858,7 @@ public final class PluginHandler {
                             continue DEPENDENCIES;
                         }
                     }
-                    throw new AssertionError("unable to find dependency " + depName + " for plugin " + info.getName());
+                    Logging.error("unable to find dependency " + depName + " for plugin " + info.getName());
                 }
             }
 
