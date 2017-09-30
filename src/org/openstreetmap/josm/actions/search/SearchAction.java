@@ -57,6 +57,7 @@ import org.openstreetmap.josm.data.osm.search.SearchSetting;
 import org.openstreetmap.josm.gui.ExtendedDialog;
 import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.MapFrame;
+import org.openstreetmap.josm.gui.Notification;
 import org.openstreetmap.josm.gui.PleaseWaitRunnable;
 import org.openstreetmap.josm.gui.mappaint.mapcss.MapCSSException;
 import org.openstreetmap.josm.gui.preferences.ToolbarPreferences;
@@ -700,12 +701,7 @@ public class SearchAction extends JosmAction implements ParameterizedAction {
                     map.statusLine.setHelpText(msg);
                 }
                 if (!GraphicsEnvironment.isHeadless()) {
-                    JOptionPane.showMessageDialog(
-                            parent,
-                            msg,
-                            tr("Warning"),
-                            JOptionPane.WARNING_MESSAGE
-                    );
+                    new Notification(msg).show();
                 }
             } else {
                 map.statusLine.setHelpText(tr("Found {0} matches", foundMatches));
