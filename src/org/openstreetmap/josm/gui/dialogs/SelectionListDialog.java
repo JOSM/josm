@@ -86,6 +86,7 @@ import org.openstreetmap.josm.tools.InputMapUtils;
 import org.openstreetmap.josm.tools.Shortcut;
 import org.openstreetmap.josm.tools.SubclassFilteredCollection;
 import org.openstreetmap.josm.tools.Utils;
+import org.openstreetmap.josm.tools.bugreport.BugReport;
 
 /**
  * A small tool dialog for displaying the current selection.
@@ -463,7 +464,7 @@ public class SelectionListDialog extends ToggleDialog {
      * JOSM selection.
      *
      */
-    private static class SelectionListModel extends AbstractListModel<OsmPrimitive>
+    static class SelectionListModel extends AbstractListModel<OsmPrimitive>
     implements ActiveLayerChangeListener, SelectionChangedListener, DataSetListener {
 
         private static final int SELECTION_HISTORY_SIZE = 10;
@@ -661,14 +662,19 @@ public class SelectionListDialog extends ToggleDialog {
          * Sorts the current elements in the selection
          */
         public synchronized void sort() {
-            if (selection.size() <= Config.getPref().getInt("selection.no_sort_above", 100_000)) {
-                boolean quick = selection.size() > Config.getPref().getInt("selection.fast_sort_above", 10_000);
+            int size = selection.size();
+            if (size > 1 && size <= Config.getPref().getInt("selection.no_sort_above", 100_000)) {
+                boolean quick = size > Config.getPref().getInt("selection.fast_sort_above", 10_000);
                 Comparator<OsmPrimitive> c = Config.getPref().getBoolean("selection.sort_relations_before_ways", true)
                         ? OsmPrimitiveComparator.orderingRelationsWaysNodes()
                         : OsmPrimitiveComparator.orderingWaysRelationsNodes();
-                selection.sort(c.thenComparing(quick
-                        ? OsmPrimitiveComparator.comparingUniqueId()
-                        : OsmPrimitiveComparator.comparingNames()));
+                try {
+                    selection.sort(c.thenComparing(quick
+                            ? OsmPrimitiveComparator.comparingUniqueId()
+                            : OsmPrimitiveComparator.comparingNames()));
+                } catch (IllegalArgumentException e) {
+                    throw BugReport.intercept(e).put("size", size).put("quick", quick).put("selection", selection);
+                }
             }
         }
 
