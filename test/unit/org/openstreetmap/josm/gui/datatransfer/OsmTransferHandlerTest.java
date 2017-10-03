@@ -13,6 +13,7 @@ import org.openstreetmap.josm.actions.CopyAction;
 import org.openstreetmap.josm.data.coor.LatLon;
 import org.openstreetmap.josm.data.osm.DataSet;
 import org.openstreetmap.josm.data.osm.Node;
+import org.openstreetmap.josm.gui.MainApplication;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.testutils.JOSMTestRules;
 
@@ -63,7 +64,7 @@ public class OsmTransferHandlerTest {
     @Test
     public void testPasteTags() {
         Node n = new Node(LatLon.ZERO);
-        new DataSet(n);
+        MainApplication.getLayerManager().addLayer(new OsmDataLayer(new DataSet(n), "testPasteTags", null));
 
         ClipboardUtils.copyString("test=ok");
         transferHandler.pasteTags(Collections.singleton(n));
