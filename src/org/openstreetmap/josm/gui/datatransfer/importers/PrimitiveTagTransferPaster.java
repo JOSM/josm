@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +50,9 @@ public class PrimitiveTagTransferPaster extends AbstractTagPaster {
         TagPasteSupport tagPaster = new TagPasteSupport(data, selection);
         List<Command> commands = new ArrayList<>();
         for (Tag tag : tagPaster.execute()) {
-            ChangePropertyCommand cmd = new ChangePropertyCommand(selection, tag.getKey(), "".equals(tag.getValue()) ? null : tag.getValue());
+            Map<String, String> tags = new HashMap<>(1);
+            tags.put(tag.getKey(), "".equals(tag.getValue()) ? null : tag.getValue());
+            ChangePropertyCommand cmd = new ChangePropertyCommand(Main.main.getEditDataSet(), selection, tags);
             if (cmd.getObjectsNumber() > 0) {
                 commands.add(cmd);
             }
