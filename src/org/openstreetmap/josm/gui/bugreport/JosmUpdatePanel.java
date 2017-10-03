@@ -60,10 +60,10 @@ public class JosmUpdatePanel extends JPanel {
 
     private static int getTestedVersion() {
         try {
-            String testedString = new WikiReader().read(Main.getJOSMWebsite() + "/wiki/TestedVersion?format=txt");
+            String testedString = new WikiReader().read(Main.getJOSMWebsite() + "/tested");
             return Integer.parseInt(testedString.trim());
         } catch (NumberFormatException | IOException e) {
-            Logging.log(Logging.LEVEL_WARN, "Unable to detect latest version of JOSM:", e);
+            Logging.log(Logging.LEVEL_WARN, "Unable to detect current tested version of JOSM:", e);
             return -1;
         }
     }
