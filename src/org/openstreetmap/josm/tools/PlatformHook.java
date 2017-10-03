@@ -46,7 +46,7 @@ public interface PlatformHook {
 
         @Override
         public PlatformHook visitOsx() {
-            return new PlatformHookUnixoid();
+            return new PlatformHookOsx();
         }
     };
 
