@@ -140,7 +140,7 @@ public final class HttpClient {
                 if (DefaultAuthenticator.getInstance().isEnabled() && connection.getResponseCode() == HttpURLConnection.HTTP_UNAUTHORIZED) {
                     DefaultAuthenticator.getInstance().addFailedCredentialHost(url.getHost());
                 }
-            } catch (IOException e) {
+            } catch (IOException | IllegalArgumentException e) {
                 Logging.info("{0} {1} -> !!!", requestMethod, url);
                 Logging.warn(e);
                 //noinspection ThrowableResultOfMethodCallIgnored
