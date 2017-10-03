@@ -10557,6 +10557,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=vineyard" />
             <space />
             <key key="landuse" value="vineyard" />
+            <combo key="crop" text="Crop" values="grape" default="grape" values_context="crop" />
             <reference ref="optional_name" />
         </item> <!-- Vineyard -->
         <item name="Greenhouse Horticulture" icon="presets/landuse/greenhouse_horticulture.svg" type="closedway,multipolygon" preset_name_label="true">
