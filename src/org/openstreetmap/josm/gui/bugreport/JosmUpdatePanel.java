@@ -35,7 +35,7 @@ public class JosmUpdatePanel extends JPanel {
         super(new GridBagLayout());
         josmVersion = Version.getInstance().getVersion();
 
-        add(new JMultilineLabel(tr("Your current version of JOSM is {0}", josmVersion)), GBC.eol().fill(GBC.HORIZONTAL));
+        add(new JMultilineLabel(tr("Your current version of JOSM is {0}", Integer.toString(josmVersion))), GBC.eol().fill(GBC.HORIZONTAL));
         testedVersionField = new JMultilineLabel(tr("JOSM is searching for updates..."));
         add(testedVersionField, GBC.eol().fill(GBC.HORIZONTAL));
 
@@ -82,7 +82,7 @@ public class JosmUpdatePanel extends JPanel {
 
     private void displayOutOfDate(int testedVersion) {
         testedVersionField
-                .setText(tr("JOSM is out of date. The current version is {0}. Try updating JOSM.", testedVersion));
+                .setText(tr("JOSM is out of date. The current version is {0}. Try updating JOSM.", Integer.toString(testedVersion)));
         showUpdateButton();
     }
 
