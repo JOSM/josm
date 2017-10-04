@@ -7,6 +7,7 @@ import static org.openstreetmap.josm.tools.I18n.trn;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.GridBagLayout;
 import java.awt.event.KeyEvent;
@@ -1171,6 +1172,17 @@ public class MainApplication extends Main {
         for (String p : Arrays.asList(
                 "EditorPane", "FormattedTextField", "PasswordField", "TextArea", "TextField", "TextPane")) {
             UIManager.put(p+".caretForeground", UIManager.getColor(p+".foreground"));
+        }
+
+        double menuFontFactor = Config.getPref().getDouble("gui.scale.menu.font", 1.0);
+        if (menuFontFactor != 1.0) {
+            for (String key : Arrays.asList(
+                    "Menu.font", "MenuItem.font", "CheckBoxMenuItem.font", "RadioButtonMenuItem.font", "MenuItem.acceleratorFont")) {
+                Font font = UIManager.getFont(key);
+                if (font != null) {
+                    UIManager.put(key, font.deriveFont(font.getSize2D() * (float) menuFontFactor));
+                }
+            }
         }
     }
 
