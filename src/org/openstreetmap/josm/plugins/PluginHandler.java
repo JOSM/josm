@@ -1420,10 +1420,16 @@ public final class PluginHandler {
     private static PluginProxy getPluginCausingException(Throwable ex) {
         PluginProxy err = null;
         List<StackTraceElement> stack = new ArrayList<>();
+        Set<Throwable> seen = new HashSet<>();
         Throwable current = ex;
         while (current != null) {
+            seen.add(current);
             stack.addAll(Arrays.asList(current.getStackTrace()));
-            current = current.getCause();
+            Throwable cause = current.getCause();
+            if (cause != null && seen.contains(cause)) {
+                break; // circular refernce
+            }
+            current = cause;
         }
 
         // remember the error position, as multiple plugins may be involved, we search the topmost one
