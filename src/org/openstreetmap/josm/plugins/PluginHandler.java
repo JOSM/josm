@@ -1419,14 +1419,20 @@ public final class PluginHandler {
      */
     private static PluginProxy getPluginCausingException(Throwable ex) {
         PluginProxy err = null;
-        StackTraceElement[] stack = ex.getStackTrace();
+        List<StackTraceElement> stack = new ArrayList<>();
+        Throwable current = ex;
+        while (current != null) {
+            stack.addAll(Arrays.asList(current.getStackTrace()));
+            current = current.getCause();
+        }
+
         // remember the error position, as multiple plugins may be involved, we search the topmost one
-        int pos = stack.length;
+        int pos = stack.size();
         for (PluginProxy p : pluginList) {
             String baseClass = p.getPluginInformation().className;
             baseClass = baseClass.substring(0, baseClass.lastIndexOf('.'));
             for (int elpos = 0; elpos < pos; ++elpos) {
-                if (stack[elpos].getClassName().startsWith(baseClass)) {
+                if (stack.get(elpos).getClassName().startsWith(baseClass)) {
                     pos = elpos;
                     err = p;
                 }
