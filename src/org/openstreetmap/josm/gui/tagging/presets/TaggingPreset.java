@@ -483,7 +483,7 @@ public class TaggingPreset extends AbstractAction implements ActiveLayerChangeLi
             return DIALOG_ANSWER_CANCEL;
         } else if (p.getComponentCount() != 0 && (sel.isEmpty() || p.hasElements)) {
             String title = trn("Change {0} object", "Change {0} objects", sel.size(), sel.size());
-            if (sel.isEmpty()) {
+            if (!showNewRelation && sel.isEmpty()) {
                 if (originalSelectionEmpty) {
                     title = tr("Nothing selected!");
                 } else {
