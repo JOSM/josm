@@ -5,7 +5,7 @@
 Helper script to replace "@since xxx" in Javadoc by the upcoming revision number.
 
 Will retrieve the current revision number from the server. It runs over all
-modified and added .java files and replaces xxx in "@since xxx" by the revision
+modified and added .java files and replaces xxx in "since xxx" by the revision
 number that is to be expected for the next commit.
 """
 
@@ -25,9 +25,9 @@ def main():
             continue
         with open(path, 'r') as f:
             filedata = f.read()
-        filedata2 = re.sub("@since xxx", lambda _: "@since {}".format(get_revision()), filedata)
+        filedata2 = re.sub("since xxx", lambda _: "since {}".format(get_revision()), filedata)
         if filedata != filedata2:
-            print("replacing '@since xxx' with '@since {}' in '{}'".format(get_revision(), path))
+            print("replacing 'since xxx' with 'since {}' in '{}'".format(get_revision(), path))
             with open(path, 'w') as f:
                 f.write(filedata2)
 

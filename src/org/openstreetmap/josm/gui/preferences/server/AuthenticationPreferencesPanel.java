@@ -133,7 +133,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
     }
 
     /**
-     * Saves the current values to preferences
+     * Saves the current values to the preferences
      */
     public final void saveToPreferences() {
         // save the authentication method
@@ -148,7 +148,7 @@ public class AuthenticationPreferencesPanel extends VerticallyScrollablePanel im
             // save username and password and clear the OAuth token
             pnlBasicAuthPreferences.saveToPreferences();
             OAuthAccessTokenHolder.getInstance().clear();
-            OAuthAccessTokenHolder.getInstance().save(Main.pref, CredentialsManager.getInstance());
+            OAuthAccessTokenHolder.getInstance().save(CredentialsManager.getInstance());
         } else if ("oauth".equals(authMethod)) {
             // clear the password in the preferences
             pnlBasicAuthPreferences.clearPassword();

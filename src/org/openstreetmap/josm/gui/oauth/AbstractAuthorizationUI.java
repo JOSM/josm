@@ -129,11 +129,24 @@ public abstract class AbstractAuthorizationUI extends VerticallyScrollablePanel 
     public abstract boolean isSaveAccessTokenToPreferences();
 
     /**
+     * Initializes the authorisation UI.
+     *
+     * @param paramApiUrl the API URL. Must not be null.
+     * @throws IllegalArgumentException if paramApiUrl is null
+     */
+    public void initialize(String paramApiUrl) {
+        CheckParameterUtil.ensureParameterNotNull(paramApiUrl, "paramApiUrl");
+        pnlAdvancedProperties.initialize(paramApiUrl);
+    }
+
+    /**
      * Initializes the authorisation UI with preference values in <code>pref</code>.
      *
      * @param pref the preferences. Must not be null.
      * @throws IllegalArgumentException if pref is null
+     * @deprecated (since 12928) replaced by {@link #initialize(java.lang.String)}
      */
+    @Deprecated
     public void initFromPreferences(Preferences pref) {
         CheckParameterUtil.ensureParameterNotNull(pref, "pref");
         pnlAdvancedProperties.initFromPreferences(pref);
