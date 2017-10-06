@@ -290,12 +290,8 @@ public class TarUtils {
                                    final ZipEncoding encoding)
         throws IOException {
 
-        int len = length;
-        for (; len > 0; len--) {
-            if (buffer[offset + len - 1] != 0) {
-                break;
-            }
-        }
+        int len = 0;
+        for (int i = offset; len < length && buffer[i] != 0; i++, len++);
         if (len > 0) {
             final byte[] b = new byte[len];
             System.arraycopy(buffer, offset, b, 0, len);
