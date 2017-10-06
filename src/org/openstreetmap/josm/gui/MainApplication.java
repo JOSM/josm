@@ -980,7 +980,7 @@ public class MainApplication extends Main {
         Authenticator.setDefault(DefaultAuthenticator.getInstance());
         DefaultProxySelector proxySelector = new DefaultProxySelector(ProxySelector.getDefault());
         ProxySelector.setDefault(proxySelector);
-        OAuthAccessTokenHolder.getInstance().init(Main.pref, CredentialsManager.getInstance());
+        OAuthAccessTokenHolder.getInstance().init(CredentialsManager.getInstance());
 
         setupCallbacks();
 

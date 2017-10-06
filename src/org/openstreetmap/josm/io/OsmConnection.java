@@ -113,7 +113,7 @@ public class OsmConnection {
      */
     protected void addOAuthAuthorizationHeader(HttpClient connection) throws OsmTransferException {
         if (oauthParameters == null) {
-            oauthParameters = OAuthParameters.createFromPreferences(Main.pref);
+            oauthParameters = OAuthParameters.createFromApiUrl(OsmApi.getOsmApi().getServerUrl());
         }
         OAuthConsumer consumer = oauthParameters.buildConsumer();
         OAuthAccessTokenHolder holder = OAuthAccessTokenHolder.getInstance();
@@ -145,7 +145,7 @@ public class OsmConnection {
             }
             fetcher.obtainAccessToken(apiUrl);
             OAuthAccessTokenHolder.getInstance().setSaveToPreferences(true);
-            OAuthAccessTokenHolder.getInstance().save(Main.pref, CredentialsManager.getInstance());
+            OAuthAccessTokenHolder.getInstance().save(CredentialsManager.getInstance());
         } catch (MalformedURLException | InterruptedException | InvocationTargetException e) {
             throw new MissingOAuthAccessTokenException(e);
         }

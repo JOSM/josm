@@ -23,6 +23,7 @@ import org.openstreetmap.josm.gui.help.HelpUtil;
 import org.openstreetmap.josm.gui.widgets.JosmTextField;
 import org.openstreetmap.josm.gui.widgets.SelectAllOnFocusGainedDecorator;
 import org.openstreetmap.josm.gui.widgets.VerticallyScrollablePanel;
+import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -256,9 +257,30 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
     /**
      * Initializes the panel from the values in the preferences <code>preferences</code>.
      *
+     * @param paramApiUrl the API URL. Must not be null.
+     * @throws IllegalArgumentException if paramApiUrl is null
+     */
+    public void initialize(String paramApiUrl) {
+        CheckParameterUtil.ensureParameterNotNull(paramApiUrl, "paramApiUrl");
+        setApiUrl(paramApiUrl);
+        boolean useDefault = Config.getPref().getBoolean("oauth.settings.use-default", true);
+        ilUseDefault.setEnabled(false);
+        if (useDefault) {
+            resetToDefaultSettings();
+        } else {
+            setAdvancedParameters(OAuthParameters.createFromApiUrl(paramApiUrl));
+        }
+        ilUseDefault.setEnabled(true);
+    }
+
+    /**
+     * Initializes the panel from the values in the preferences <code>preferences</code>.
+     *
      * @param pref the preferences. Must not be null.
      * @throws IllegalArgumentException if pref is null
+     * @deprecated (since 12928) replaced by {@link #initialize(java.lang.String)}
      */
+    @Deprecated
     public void initFromPreferences(Preferences pref) {
         CheckParameterUtil.ensureParameterNotNull(pref, "pref");
         setApiUrl(pref.get("osm-server.url"));
@@ -274,10 +296,24 @@ public class AdvancedOAuthPropertiesPanel extends VerticallyScrollablePanel {
 
     /**
      * Remembers the current values in the preferences <code>pref</code>.
+     */
+    public void rememberPreferences() {
+        Config.getPref().putBoolean("oauth.settings.use-default", cbUseDefaults.isSelected());
+        if (cbUseDefaults.isSelected()) {
+            new OAuthParameters(null, null, null, null, null, null, null).rememberPreferences();
+        } else {
+            getAdvancedParameters().rememberPreferences();
+        }
+    }
+
+    /**
+     * Remembers the current values in the preferences <code>pref</code>.
      *
      * @param pref the preferences. Must not be null.
      * @throws IllegalArgumentException if pref is null.
+     * @deprecated (since 12928) replaced by {@link #rememberPreferences()}
      */
+    @Deprecated
     public void rememberPreferences(Preferences pref) {
         CheckParameterUtil.ensureParameterNotNull(pref, "pref");
         pref.putBoolean("oauth.settings.use-default", cbUseDefaults.isSelected());

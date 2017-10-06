@@ -168,8 +168,34 @@ public class FullyAutomaticAuthorizationUI extends AbstractAuthorizationUI {
 
     /**
      * Initializes the panel with values from the preferences
-     * @param pref Preferences structure
+     * @param paramApiUrl the API URL
      */
+    @Override
+    public void initialize(String paramApiUrl) {
+        super.initialize(paramApiUrl);
+        CredentialsAgent cm = CredentialsManager.getInstance();
+        try {
+            PasswordAuthentication pa = cm.lookup(RequestorType.SERVER, OsmApi.getOsmApi().getHost());
+            if (pa == null) {
+                tfUserName.setText("");
+                tfPassword.setText("");
+            } else {
+                tfUserName.setText(pa.getUserName() == null ? "" : pa.getUserName());
+                tfPassword.setText(pa.getPassword() == null ? "" : String.valueOf(pa.getPassword()));
+            }
+        } catch (CredentialsAgentException e) {
+            Logging.error(e);
+            tfUserName.setText("");
+            tfPassword.setText("");
+        }
+    }
+
+    /**
+     * Initializes the panel with values from the preferences
+     * @param pref Preferences structure
+     * @deprecated (since 12928) replaced by {@link #initialize(java.lang.String)}
+     */
+    @Deprecated
     @Override
     public void initFromPreferences(Preferences pref) {
         super.initFromPreferences(pref);
