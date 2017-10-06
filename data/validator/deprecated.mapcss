@@ -810,13 +810,12 @@ node[type][pipeline=marker] {
   fixChangeKey: "type => studio";
 }
 
-/* #11507, #12297 */
+/* #11507, #12297, #15409 */
 *[power=cable_distribution_cabinet] {
   throwWarning: tr("{0} is deprecated", "{0.tag}");
-  suggestAlternative: "man_made=street_cabinet + street_cabinet=power";
+  suggestAlternative: "man_made=street_cabinet + street_cabinet=*";
   group: tr("deprecated tagging");
   fixAdd: "man_made=street_cabinet";
-  fixAdd: "street_cabinet=power";
   fixRemove: "power";
 }
 
