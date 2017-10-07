@@ -8,6 +8,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Base64;
 
+import org.openstreetmap.josm.tools.bugreport.BugReport;
+
 /**
  * Connection for "data:" protocol allowing to read inlined base64 images.
  * <p>
@@ -31,6 +33,10 @@ public class DataConnection extends URLConnection {
 
     @Override
     public InputStream getInputStream() throws IOException {
-        return new ByteArrayInputStream(Base64.getDecoder().decode(url.toString().replaceFirst("^.*;base64,", "")));
+        try {
+            return new ByteArrayInputStream(Base64.getDecoder().decode(url.toString().replaceFirst("^.*;base64,", "")));
+        } catch (IllegalArgumentException e) {
+            throw BugReport.intercept(e).put("url", url);
+        }
     }
 }
