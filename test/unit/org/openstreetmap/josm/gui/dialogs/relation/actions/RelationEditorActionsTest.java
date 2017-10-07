@@ -59,6 +59,7 @@ public class RelationEditorActionsTest {
         new CopyMembersAction(memberTableModel, layer, editor).actionPerformed(null);
         new PasteMembersAction(memberTable, layer, editor).actionPerformed(null);
 
+        new SelectAction(layer, editor).actionPerformed(null);
         new DeleteCurrentRelationAction(layer, editor).actionPerformed(null);
 
         new DownloadIncompleteMembersAction(memberTable, memberTableModel, "downloadincomplete", layer, editor).actionPerformed(null);
