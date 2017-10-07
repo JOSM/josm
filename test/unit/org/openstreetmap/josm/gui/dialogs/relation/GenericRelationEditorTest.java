@@ -22,6 +22,7 @@ import org.openstreetmap.josm.gui.dialogs.relation.actions.DeleteCurrentRelation
 import org.openstreetmap.josm.gui.dialogs.relation.actions.DuplicateRelationAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.OKAction;
 import org.openstreetmap.josm.gui.dialogs.relation.actions.RefreshAction;
+import org.openstreetmap.josm.gui.dialogs.relation.actions.SelectAction;
 import org.openstreetmap.josm.gui.layer.OsmDataLayer;
 import org.openstreetmap.josm.gui.tagging.TagEditorModel;
 import org.openstreetmap.josm.gui.tagging.TagEditorPanel;
@@ -142,6 +143,7 @@ public class GenericRelationEditorTest {
         assertNotNull(GenericRelationEditor.buildToolBar(
                 new RefreshAction(memberTable, memberTableModel, tagModel, layer, re),
                 new ApplyAction(memberTable, memberTableModel, tagModel, layer, re),
+                new SelectAction(layer, re),
                 new DuplicateRelationAction(memberTableModel, tagModel, layer),
                 new DeleteCurrentRelationAction(layer, re)));
     }
