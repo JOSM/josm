@@ -346,7 +346,7 @@ public class RenderingCLI implements CLIModule {
                                 tr("Expected integer number for option {0}, but got ''{1}''", "--max-image-size", getopt.getOptarg()));
                     }
                     if (argMaxImageSize < 0) throw new IllegalArgumentException(
-                            tr("Expected integer number => 0 for option {0}, but got ''{1}''", "--max-image-size", getopt.getOptarg()));
+                            tr("Expected integer number >= 0 for option {0}, but got ''{1}''", "--max-image-size", getopt.getOptarg()));
                     break;
                 default:
                     throw new AssertionError("Unexpected option index: " + getopt.getLongind());
