@@ -47,8 +47,10 @@ public class OAuthParametersTest {
 
     /**
      * Unit test of method {@link OAuthParameters#createFromPreferences}.
+     * @deprecated to remove end of 2017
      */
     @Test
+    @Deprecated
     public void testCreateFromPreferences() {
         assertNotNull(OAuthParameters.createFromPreferences(Main.pref));
     }
