@@ -79,6 +79,8 @@ public class LatLonDialog extends ExtendedDialog {
                       )) +
                 "<table><tr><td>" +
                 Utils.joinAsHtmlUnorderedList(Arrays.asList(
+                        "49.29918 19.24788",
+                        "49.29918, 19.24788",
                         "49.29918&deg; 19.24788&deg;",
                         "N 49.29918 E 19.24788",
                         "W 49&deg;29.918&#39; S 19&deg;24.788&#39;",
@@ -86,11 +88,11 @@ public class LatLonDialog extends ExtendedDialog {
                         "49.29918 N, 19.24788 E",
                         "49&deg;29&#39;21&quot; N 19&deg;24&#39;38&quot; E",
                         "49 29 51, 19 24 18",
-                        "49 29, 19 24",
-                        "E 49 29, N 19 24"
+                        "49 29, 19 24"
                       )) +
                 "</td><td>" +
                 Utils.joinAsHtmlUnorderedList(Arrays.asList(
+                        "E 49 29, N 19 24",
                         "49&deg; 29; 19&deg; 24",
                         "N 49&deg; 29, W 19&deg; 24",
                         "49&deg; 29.5 S, 19&deg; 24.6 E",
