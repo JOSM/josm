@@ -285,12 +285,15 @@
         <text key="operator" text="Operator" />
         <text key="branch" text="Branch operator" />
     </chunk>
-    <chunk id="cable_circuit">
+    <chunk id="cables">
         <combo key="cables" text="Amount of Cables" values="1,2,3,4,6,9,12" />
+    </chunk>
+    <chunk id="cables_circuits">
+        <reference ref="cables" />
         <combo key="circuits" text="Amount of circuits" values="1,2,3,4" />
     </chunk>
     <chunk id="power_loc">
-        <combo key="location" text="Location" values="outdoor,indoor,underground,platform,kiosk" values_context="power" />
+        <combo key="location" text="Location" values="outdoor,indoor,underground,platform,rooftop,kiosk" values_context="power" />
     </chunk>
     <chunk id="power_extra">
         <reference ref="power_loc" />
@@ -298,7 +301,7 @@
         <reference ref="ref_operator_branch" />
     </chunk>
     <chunk id="power_line_extra">
-        <reference ref="cable_circuit" />
+        <reference ref="cables_circuits" />
         <reference ref="voltage_frequency" />
     </chunk>
     <chunk id="power_generator">
@@ -7606,6 +7609,13 @@
                   fr.href="http://wiki.openstreetmap.org/wiki/FR:Tag:power=switch" />
             <space />
             <key key="power" value="switch" />
+            <combo key="switch" text="Type of switch" values="mechanical,circuit_breaker,disconnector,earthing" match="key" values_context="power" />
+            <reference ref="power_loc" />
+            <optional>
+                <reference ref="voltage" />
+                <reference ref="cables" />
+                <reference ref="ref_operator_branch" />
+            </optional>
         </item> <!-- Power Switch -->
         <separator/>
         <item name="Power Converter" icon="presets/power/converter.svg" type="node,closedway,multipolygon" preset_name_label="true">
@@ -7761,7 +7771,7 @@
             <reference ref="voltage_frequency" />
             <reference ref="ref_operator_branch" />
             <optional>
-                <reference ref="cable_circuit" />
+                <reference ref="cables_circuits" />
                 <combo key="wires" text="Number of conductors/wires per cable" values="single,double,triple,quad,fivefold,sixfold,eightfold" values_context="power" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
                 <check key="communication" text="Used for data communications" value_on="line" value_off="" default="off" />
@@ -7777,7 +7787,7 @@
             <reference ref="voltage_frequency" />
             <reference ref="ref_operator_branch" />
             <optional>
-                <reference ref="cable_circuit" />
+                <reference ref="cables_circuits" />
                 <combo key="location" text="Location" values="underground,underwater,overground" values_context="power cable" />
                 <combo key="layer" text="Layer" values="5,4,3,2,1,0,-1,-2,-3,-4,-5" length="3" />
                 <check key="communication" text="Used for data communications" value_on="line" value_off="" default="off" />
@@ -10557,7 +10567,7 @@
                   ru.href="http://wiki.openstreetmap.org/wiki/RU:Tag:landuse=vineyard" />
             <space />
             <key key="landuse" value="vineyard" />
-            <combo key="crop" text="Crop" values="grape" default="grape" values_context="crop" />
+            <key key="crop" value="grape" match="keyvalue" />
             <reference ref="optional_name" />
         </item> <!-- Vineyard -->
         <item name="Greenhouse Horticulture" icon="presets/landuse/greenhouse_horticulture.svg" type="closedway,multipolygon" preset_name_label="true">
