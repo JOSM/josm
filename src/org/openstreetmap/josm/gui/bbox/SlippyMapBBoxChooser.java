@@ -224,7 +224,7 @@ public class SlippyMapBBoxChooser extends JMapViewer implements BBoxChooser, Mai
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2d = (Graphics2D)g;
+        Graphics2D g2d = (Graphics2D) g;
 
         // draw shaded area for non-downloaded region of current "edit layer", but only if there *is* a current "edit layer",
         // and it has defined bounds. Routine is analogous to that in OsmDataLayer's paint routine (but just different

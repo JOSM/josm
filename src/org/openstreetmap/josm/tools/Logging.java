@@ -51,6 +51,10 @@ public final class Logging {
     private static final RememberWarningHandler WARNINGS = new RememberWarningHandler();
 
     static {
+        // We need to be sure java.locale.providers system property is initialized by JOSM, not by JRE
+        // The call to ConsoleHandler constructor makes the JRE access this property by side effect
+        I18n.setupJavaLocaleProviders();
+
         LOGGER.setLevel(Level.ALL);
         LOGGER.setUseParentHandlers(false);
 
