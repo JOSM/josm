@@ -9,6 +9,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -59,7 +61,16 @@ public class BasicChangesetQueryPanel extends JPanel {
             rb.addItemListener(selectedQueryHandler);
             rbQueries.put(q, rb);
             bgQueries.add(rb);
-            lblQueries.put(q, new JMultilineLabel(""));
+            JMultilineLabel lbl = new JMultilineLabel("");
+            lbl.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (rb.isEnabled()) {
+                        rb.setSelected(true);
+                    }
+                }
+            });
+            lblQueries.put(q, lbl);
         }
 
         GridBagConstraints gc = new GridBagConstraints();
