@@ -976,15 +976,15 @@ public class ImageProvider {
             String base64 = m.group(2);
             String data = m.group(3);
             byte[] bytes;
-            if (";base64".equals(base64)) {
-                bytes = Base64.getDecoder().decode(data);
-            } else {
-                try {
+            try {
+                if (";base64".equals(base64)) {
+                    bytes = Base64.getDecoder().decode(data);
+                } else {
                     bytes = Utils.decodeUrl(data).getBytes(StandardCharsets.UTF_8);
-                } catch (IllegalArgumentException ex) {
-                    Logging.log(Logging.LEVEL_WARN, "Unable to decode URL data part: "+ex.getMessage() + " (" + data + ')', ex);
-                    return null;
                 }
+            } catch (IllegalArgumentException ex) {
+                Logging.log(Logging.LEVEL_WARN, "Unable to decode URL data part: "+ex.getMessage() + " (" + data + ')', ex);
+                return null;
             }
             String mediatype = m.group(1);
             if ("image/svg+xml".equals(mediatype)) {
