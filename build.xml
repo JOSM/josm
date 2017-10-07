@@ -150,7 +150,7 @@ Build-Date: ${build.tstamp}
                 <attribute name="Application-Name" value="JOSM - Java OpenStreetMap Editor"/>
                 <!-- Java 9 stuff. Entries are safely ignored by Java 8 -->
                 <attribute name="Add-Exports" value="java.base/sun.security.util java.base/sun.security.x509 java.desktop/com.apple.eawt java.desktop/com.sun.imageio.spi javafx.graphics/com.sun.javafx.application jdk.deploy/com.sun.deploy.config" />
-                <attribute name="Add-Opens" value="java.base/java.lang java.base/jdk.internal.loader java.desktop/javax.imageio.spi java.desktop/javax.swing.text.html java.prefs/java.util.prefs" />
+                <attribute name="Add-Opens" value="java.base/java.lang java.base/java.nio java.base/jdk.internal.loader java.base/jdk.internal.ref java.desktop/javax.imageio.spi java.desktop/javax.swing.text.html java.prefs/java.util.prefs" />
             </manifest>
             <service type="java.text.spi.DecimalFormatSymbolsProvider" provider="org.openstreetmap.josm.tools.JosmDecimalFormatSymbolsProvider" />
             <zipfileset dir="images" prefix="images"/>
@@ -470,6 +470,8 @@ Build-Date: ${build.tstamp}
                     <jvmarg value="java.base/java.io=ALL-UNNAMED" if:set="isJava9" />
                     <jvmarg value="--add-opens" if:set="isJava9" />
                     <jvmarg value="java.base/java.lang=ALL-UNNAMED" if:set="isJava9" />
+                    <jvmarg value="--add-opens" if:set="isJava9" />
+                    <jvmarg value="java.base/java.nio=ALL-UNNAMED" if:set="isJava9" />
                     <jvmarg value="--add-opens" if:set="isJava9" />
                     <jvmarg value="java.base/java.text=ALL-UNNAMED" if:set="isJava9" />
                     <jvmarg value="--add-opens" if:set="isJava9" />
