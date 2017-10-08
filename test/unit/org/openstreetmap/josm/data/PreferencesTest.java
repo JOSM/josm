@@ -31,8 +31,8 @@ public class PreferencesTest {
      */
     @Test
     public void testColorName() {
-        assertEquals("color.layer {5DE308C0-916F-4B5A-B3DB-D45E17F30172}.gpx",
-                Main.pref.getColorName("color.layer {5DE308C0-916F-4B5A-B3DB-D45E17F30172}.gpx"));
+        assertEquals("Layer: {5DE308C0-916F-4B5A-B3DB-D45E17F30172}.gpx",
+                Main.pref.getColorName("layer {5DE308C0-916F-4B5A-B3DB-D45E17F30172}.gpx"));
     }
 
     /**
