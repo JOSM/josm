@@ -144,7 +144,7 @@ public class ColorPreference implements SubPreferenceSetting {
     }
 
     private static String getName(String o) {
-        return Main.pref.getColorName("color." + o);
+        return Main.pref.getColorName(o);
     }
 
     @Override
