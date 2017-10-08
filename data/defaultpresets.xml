@@ -105,6 +105,12 @@
             <check key="bicycle" text="Bicycle"/>
         </optional>
     </chunk>
+    <chunk id="min_age">
+        <text key="min_age" text="Minimum age" />
+    </chunk>
+    <chunk id="max_age">
+        <text key="max_age" text="Maximum age" />
+    </chunk>
     <chunk id="name_ref">
         <text key="name" text="Name" />
         <text key="ref" text="Reference" />
@@ -4470,7 +4476,7 @@
             <check key="drive_in" text="Drive-in theater" />
             <check key="cinema:3D" text="3D" />
             <text key="screen" text="Number of screens" />
-            <text key="min_age" text="Minimum age" />
+            <reference ref="min_age" />
             <reference ref="link_contact_address_payment" />
             <preset_link preset_name="Building" />
         </item> <!-- Movie Theater/Cinema -->
@@ -4630,6 +4636,7 @@
             <space />
             <key key="leisure" value="playground" />
             <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="max_age" />
         </item> <!-- Playground -->
         <item name="Picnic Site" icon="presets/leisure/picnic.svg" type="node,closedway,multipolygon" preset_name_label="true">
             <link href="http://wiki.openstreetmap.org/wiki/Tag:tourism=picnic_site"
@@ -4723,6 +4730,7 @@
             <space />
             <key key="amenity" value="nightclub" />
             <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="min_age" />
             <space />
             <reference ref="internet_smoking" />
             <space />
@@ -5205,6 +5213,8 @@
             <space />
             <key key="amenity" value="kindergarten" />
             <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="min_age" />
+            <reference ref="max_age" />
             <reference ref="link_contact_address" />
             <preset_link preset_name="Building" />
         </item> <!-- Kindergarten -->
@@ -5224,6 +5234,7 @@
             <space />
             <key key="amenity" value="school" />
             <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="min_age" />
             <reference ref="link_contact_address" />
             <preset_link preset_name="Building" />
         </item> <!-- School -->
@@ -8902,6 +8913,7 @@
             <space />
             <key key="shop" value="erotic" />
             <reference ref="name_operator_oh_wheelchair" />
+            <reference ref="min_age" />
             <reference ref="link_contact_address_payment" />
         </item> <!-- Erotic -->
     </group> <!-- For the body -->
