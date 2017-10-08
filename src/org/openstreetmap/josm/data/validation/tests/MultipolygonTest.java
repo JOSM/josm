@@ -276,6 +276,7 @@ public class MultipolygonTest extends Test {
         if (!sharedNodes.isEmpty()) {
             for (int i = 0; i < allPolygons.size(); i++) {
                 PolyData pd1 = allPolygons.get(i);
+                checkPolygonForSelfIntersection(r, pd1);
                 for (int j = i + 1; j < allPolygons.size(); j++) {
                     PolyData pd2 = allPolygons.get(j);
                     if (!checkProblemMap(crossingPolyMap, pd1, pd2)) {
@@ -295,6 +296,42 @@ public class MultipolygonTest extends Test {
             // we found no intersection or crossing between the polygons and they are closed
             // now we can calculate the nesting level to verify the roles with some simple node checks
             checkRoles(r, allPolygons, wayMap, sharedNodes);
+        }
+    }
+
+    /**
+     * Check if a polygon ring is self-intersecting when the ring was build from multiple ways.
+     * An self intersection in a single way is checked in {@link SelfIntersectingWay}.
+     * @param r the relation
+     * @param pd the ring
+     */
+    private void checkPolygonForSelfIntersection(Relation r, PolyData pd) {
+        if (pd.getWayIds().size() == 1)
+            return;
+        List<Node> wayNodes = pd.getNodes();
+        int num = wayNodes.size();
+        Set<Node> nodes = new HashSet<>();
+        Node firstNode = wayNodes.get(0);
+        nodes.add(firstNode);
+        List<Node> isNodes = new ArrayList<>();
+        for (int i = 1; i < num - 1; i++) {
+            Node n = wayNodes.get(i);
+            if (nodes.contains(n)) {
+                isNodes.add(n);
+            } else {
+                nodes.add(n);
+            }
+        }
+        if (!isNodes.isEmpty()) {
+            List<OsmPrimitive> prims = new ArrayList<>();
+            prims.add(r);
+            prims.addAll(isNodes);
+            errors.add(TestError.builder(this, Severity.WARNING, CROSSING_WAYS)
+                    .message(tr("Self-intersecting polygon ring"))
+                    .primitives(prims)
+                    .highlight(isNodes)
+                    .build());
+
         }
     }
 
