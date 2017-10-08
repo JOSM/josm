@@ -79,7 +79,7 @@ public class ColorPreference implements SubPreferenceSetting {
         String key;
         Color color;
 
-        public ColorEntry(String key, String colorHtml) {
+        ColorEntry(String key, String colorHtml) {
             CheckParameterUtil.ensureParameterNotNull(key, "key");
             this.key = key;
             this.color = ColorHelper.html2color(colorHtml);
@@ -98,7 +98,7 @@ public class ColorPreference implements SubPreferenceSetting {
         private final List<ColorEntry> data;
         private final List<ColorEntry> deleted;
 
-        public ColorTableModel() {
+        ColorTableModel() {
             this.data = new ArrayList<>();
             this.deleted = new ArrayList<>();
         }
