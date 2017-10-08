@@ -3086,6 +3086,7 @@
                     <check key="fuel:biodiesel" text="Bio Diesel" />
                     <check key="fuel:GTL_diesel" text="Diesel (Gas To Liquid - ultimate diesel)" />
                     <check key="fuel:HGV_diesel" text="Diesel for Heavy Good Vehicles" />
+                    <check key="fuel:adblue" text="Diesel Exhaust Fluid (AdBlue/AUS32)" />
                     <check key="fuel:octane_80" text="Octane 80" />
                     <check key="fuel:octane_91" text="Octane 91" />
                     <check key="fuel:octane_92" text="Octane 92" />
