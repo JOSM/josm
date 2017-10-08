@@ -9,11 +9,12 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -71,9 +72,22 @@ public class ColorPreference implements SubPreferenceSetting {
     private JButton defaultSet;
     private JButton remove;
 
-    private static class ColorEntry {
+    private static class ColorEntry implements Comparable<ColorEntry> {
         String key;
         Color color;
+
+        public ColorEntry(String key, String colorHtml) {
+            this.key = key;
+            this.color = ColorHelper.html2color(colorHtml);
+            if (this.color == null) {
+                Logging.warn("Unable to get color from '"+colorHtml+"' for color preference '"+key+'\'');
+            }
+        }
+
+        @Override
+        public int compareTo(ColorEntry o) {
+            return Collator.getInstance().compare(getName(key), getName(o.key));
+        }
     }
 
     private static class ColorTableModel extends AbstractTableModel {
@@ -157,39 +171,31 @@ public class ColorPreference implements SubPreferenceSetting {
 
         tableModel.clear();
         // fill model with colors:
-        Map<String, String> colorKeyList = new TreeMap<>();
-        Map<String, String> colorKeyListMappaint = new TreeMap<>();
-        Map<String, String> colorKeyListLayer = new TreeMap<>();
-        for (String key : colorMap.keySet()) {
+        List<ColorEntry> colorKeyList = new ArrayList<>();
+        List<ColorEntry> colorKeyListMappaint = new ArrayList<>();
+        List<ColorEntry> colorKeyListLayer = new ArrayList<>();
+        for (Map.Entry<String, String> e : colorMap.entrySet()) {
+            String key = e.getKey();
+            String html = e.getValue();
             if (key.startsWith("layer.")) {
-                colorKeyListLayer.put(getName(key), key);
+                colorKeyListLayer.add(new ColorEntry(key, html));
             } else if (key.startsWith("mappaint.")) {
-                // use getName(key)+key, as getName() may be ambiguous
-                colorKeyListMappaint.put(getName(key)+key, key);
+                colorKeyListMappaint.add(new ColorEntry(key, html));
             } else {
-                colorKeyList.put(getName(key), key);
+                colorKeyList.add(new ColorEntry(key, html));
             }
         }
-        addColorRows(colorMap, colorKeyList);
-        addColorRows(colorMap, colorKeyListMappaint);
-        addColorRows(colorMap, colorKeyListLayer);
+        addColorRows(colorKeyList);
+        addColorRows(colorKeyListMappaint);
+        addColorRows(colorKeyListLayer);
         if (this.colors != null) {
             this.colors.repaint();
         }
     }
 
-    private void addColorRows(Map<String, String> colorMap, Map<String, String> keyMap) {
-        for (String value : keyMap.values()) {
-            ColorEntry entry = new ColorEntry();
-            String html = colorMap.get(value);
-            Color color = ColorHelper.html2color(html);
-            if (color == null) {
-                Logging.warn("Unable to get color from '"+html+"' for color preference '"+value+'\'');
-            }
-            entry.key = value;
-            entry.color = color;
-            tableModel.addEntry(entry);
-        }
+    private void addColorRows(List<ColorEntry> entries) {
+        Collections.sort(entries);
+        entries.forEach(tableModel::addEntry);
     }
 
     /**
