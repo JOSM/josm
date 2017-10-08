@@ -4,6 +4,7 @@ package org.openstreetmap.josm.gui.preferences.display;
 import static org.openstreetmap.josm.tools.I18n.tr;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.MouseAdapter;
@@ -26,8 +27,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
 
 import org.openstreetmap.josm.Main;
 import org.openstreetmap.josm.data.osm.visitor.paint.PaintColors;
@@ -45,7 +46,6 @@ import org.openstreetmap.josm.gui.preferences.PreferenceTabbedPane;
 import org.openstreetmap.josm.gui.preferences.SubPreferenceSetting;
 import org.openstreetmap.josm.gui.preferences.TabPreferenceSetting;
 import org.openstreetmap.josm.gui.util.GuiHelper;
-import org.openstreetmap.josm.spi.preferences.Config;
 import org.openstreetmap.josm.tools.ColorHelper;
 import org.openstreetmap.josm.tools.GBC;
 import org.openstreetmap.josm.tools.Logging;
@@ -217,18 +217,21 @@ public class ColorPreference implements SubPreferenceSetting {
             }
         });
         colors.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        final TableCellRenderer oldColorsRenderer = colors.getDefaultRenderer(Object.class);
-        colors.setDefaultRenderer(Object.class, (t, o, selected, focus, row, column) -> {
-            if (o == null)
-                return new JLabel();
-            if (column == 1) {
-                Color c = (Color) o;
-                JLabel l = new JLabel(ColorHelper.color2html(c));
-                GuiHelper.setBackgroundReadable(l, c);
-                l.setOpaque(true);
-                return l;
+        colors.getColumnModel().getColumn(1).setCellRenderer(new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(
+                    JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                Component comp = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (value != null && comp instanceof JLabel) {
+                    JLabel label = (JLabel) comp;
+                    Color c = (Color) value;
+                    label.setText(ColorHelper.color2html(c));
+                    GuiHelper.setBackgroundReadable(label, c);
+                    label.setOpaque(true);
+                    return label;
+                }
+                return comp;
             }
-            return oldColorsRenderer.getTableCellRendererComponent(t, getName(o.toString()), selected, focus, row, column);
         });
         colors.getColumnModel().getColumn(1).setWidth(100);
         colors.setToolTipText(tr("Colors used by different objects in JOSM."));
