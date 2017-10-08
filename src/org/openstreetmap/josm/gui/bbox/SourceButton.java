@@ -1,23 +1,27 @@
 // License: GPL. For details, see LICENSE file.
 package org.openstreetmap.josm.gui.bbox;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.RenderingHints;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.util.Collection;
+import static org.openstreetmap.josm.tools.I18n.tr;
 
-import javax.swing.ImageIcon;
-import javax.swing.JComponent;
+import java.awt.Dimension;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
+import javax.swing.ButtonModel;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
+import javax.swing.JToggleButton;
 
 import org.openstreetmap.gui.jmapviewer.interfaces.TileSource;
+import org.openstreetmap.josm.gui.widgets.PopupMenuButton;
 import org.openstreetmap.josm.tools.CheckParameterUtil;
 import org.openstreetmap.josm.tools.ImageProvider;
 
@@ -25,121 +29,107 @@ import org.openstreetmap.josm.tools.ImageProvider;
  * Button that allows to choose the imagery source used for slippy map background.
  * @since 1390
  */
-public class SourceButton extends JComponent {
+public class SourceButton extends PopupMenuButton {
+    protected class TileSourceButtonModel extends JToggleButton.ToggleButtonModel implements ActionListener {
+        protected final TileSource tileSource;
 
-    private static final int LAYER_HEIGHT = 20;
-    private static final int LEFT_PADDING = 5;
-    private static final int TOP_PADDING = 5;
-    private static final int BOTTOM_PADDING = 5;
+        public TileSourceButtonModel(TileSource tileSource_) {
+            super();
+            this.tileSource = tileSource_;
+            this.addActionListener(this);
+        }
 
-    private transient TileSource[] sources;
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            if (SourceButton.this.slippyMapBBoxChooser.getTileController().getTileSource() != this.tileSource) { // prevent infinite recursion
+                SourceButton.this.slippyMapBBoxChooser.toggleMapSource(this.tileSource);
+            }
+        }
+    }
 
-    private final ImageIcon enlargeImage;
-    private final ImageIcon shrinkImage;
-    private final Dimension hiddenDimension;
-
-    // Calculated after component is added to container
-    private int barWidth;
-    private Dimension shownDimension;
-    private Font font;
-
-    private boolean isEnlarged;
-
-    private int currentMap;
-    private final SlippyMapBBoxChooser slippyMapBBoxChooser;
+    protected final SlippyMapBBoxChooser slippyMapBBoxChooser;
+    protected final ButtonModel showDownloadAreaButtonModel;
+    private List<TileSource> sources;
+    private ButtonGroup sourceButtonGroup;
 
     /**
      * Constructs a new {@code SourceButton}.
      * @param slippyMapBBoxChooser parent slippy map
      * @param sources list of imagery sources to display
      */
-    public SourceButton(SlippyMapBBoxChooser slippyMapBBoxChooser, Collection<TileSource> sources) {
-        this.slippyMapBBoxChooser = slippyMapBBoxChooser;
-        setSources(sources);
-        enlargeImage = ImageProvider.get("layer-switcher-maximize");
-        shrinkImage = ImageProvider.get("layer-switcher-minimize");
-
-        hiddenDimension = new Dimension(enlargeImage.getIconWidth(), enlargeImage.getIconHeight());
-        setPreferredSize(hiddenDimension);
-
-        addMouseListener(mouseListener);
+    public SourceButton(
+        SlippyMapBBoxChooser slippyMapBBoxChooser_,
+        Collection<TileSource> sources_,
+        ButtonModel showDownloadAreaButtonModel_
+    ) {
+        super(new ImageProvider("dialogs/layerlist").getResource().getImageIcon(new Dimension(16, 16)));
+        this.showDownloadAreaButtonModel = showDownloadAreaButtonModel_;
+        this.slippyMapBBoxChooser = slippyMapBBoxChooser_;
+        this.setPreferredSize(new Dimension(24, 24));
+        this.setSources(sources_);
     }
 
-    private final transient MouseListener mouseListener = new MouseAdapter() {
-        @Override
-        public void mouseReleased(MouseEvent e) {
-            if (e.getButton() == MouseEvent.BUTTON1) {
-                Point point = e.getPoint();
-                if (isEnlarged) {
-                    if (barWidth < point.x && point.y < shrinkImage.getIconHeight()) {
-                        toggle();
-                    } else {
-                        int result = (point.y - 5) / LAYER_HEIGHT;
-                        if (result >= 0 && result < SourceButton.this.sources.length) {
-                            SourceButton.this.slippyMapBBoxChooser.toggleMapSource(SourceButton.this.sources[result]);
-                            currentMap = result;
-                            toggle();
-                        }
-                    }
-                } else {
-                    toggle();
-                }
-            }
+    protected void generatePopupMenu() {
+        JPopupMenu pm = new JPopupMenu();
+        this.sourceButtonGroup = new ButtonGroup();
+        for (TileSource ts : this.sources) {
+            JRadioButtonMenuItem menuItem = new JRadioButtonMenuItem(ts.getName());
+            TileSourceButtonModel buttonModel = new TileSourceButtonModel(ts);
+            menuItem.setModel(buttonModel);
+            pm.add(menuItem);
+            this.sourceButtonGroup.add(menuItem);
+
+            // attempt to initialize button group matching current state of slippyMapBBoxChooser
+            buttonModel.setSelected(this.slippyMapBBoxChooser.getTileController().getTileSource() == ts);
         }
-    };
+
+        pm.addSeparator();
+
+        JCheckBoxMenuItem showDownloadAreaItem = new JCheckBoxMenuItem(tr("Show downloaded area"));
+        showDownloadAreaItem.setModel(this.showDownloadAreaButtonModel);
+        pm.add(showDownloadAreaItem);
+
+        this.setPopupMenu(pm);
+    }
+
+    private void setSourceDefault() {
+        Enumeration<AbstractButton> elems = this.sourceButtonGroup.getElements();
+        if (elems.hasMoreElements()) {
+            elems.nextElement().setSelected(true);
+        }
+    }
 
     /**
      * Set the tile sources.
      * @param sources The tile sources to display
      * @since 6364
      */
-    public final void setSources(Collection<TileSource> sources) {
-        CheckParameterUtil.ensureParameterNotNull(sources, "sources");
-        this.sources = sources.toArray(new TileSource[sources.size()]);
-        shownDimension = null;
-    }
-
-    @Override
-    protected void paintComponent(Graphics graphics) {
-        Graphics2D g = (Graphics2D) graphics.create();
-        try {
-            calculateShownDimension();
-            g.setFont(font);
-            if (isEnlarged) {
-                g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                int radioButtonSize = 10;
-
-                g.setColor(new Color(0, 0, 139, 179));
-                g.fillRoundRect(0, 0, barWidth + shrinkImage.getIconWidth(),
-                        sources.length * LAYER_HEIGHT + TOP_PADDING + BOTTOM_PADDING, 10, 10);
-                for (int i = 0; i < sources.length; i++) {
-                    g.setColor(Color.WHITE);
-                    g.fillOval(LEFT_PADDING, TOP_PADDING + i * LAYER_HEIGHT + 6, radioButtonSize, radioButtonSize);
-                    g.drawString(sources[i].getName(), LEFT_PADDING + radioButtonSize + LEFT_PADDING,
-                            TOP_PADDING + i * LAYER_HEIGHT + g.getFontMetrics().getHeight());
-                    if (currentMap == i) {
-                        g.setColor(Color.BLACK);
-                        g.fillOval(LEFT_PADDING + 1, TOP_PADDING + 7 + i * LAYER_HEIGHT, radioButtonSize - 2, radioButtonSize - 2);
-                    }
-                }
-
-                g.drawImage(shrinkImage.getImage(), barWidth, 0, null);
-            } else {
-                g.drawImage(enlargeImage.getImage(), 0, 0, null);
-            }
-        } finally {
-            g.dispose();
+    public final void setSources(Collection<TileSource> sources_) {
+        CheckParameterUtil.ensureParameterNotNull(sources_, "sources_");
+        this.sources = new ArrayList<TileSource>(sources_);
+        this.generatePopupMenu();
+        if (this.sourceButtonGroup.getSelection() == null) {
+            this.setSourceDefault();
         }
     }
 
     /**
-     * Toggle the visibility of imagery source list.
+     * Get the tile sources.
+     * @return unmodifiable collection of tile sources
      */
-    public void toggle() {
-        this.isEnlarged = !this.isEnlarged;
-        calculateShownDimension();
-        setPreferredSize(isEnlarged ? shownDimension : hiddenDimension);
-        revalidate();
+    public final Collection<TileSource> getSources() {
+        return Collections.unmodifiableCollection(this.sources);
+    }
+
+    /**
+     * Get the currently-selected tile source.
+     */
+    public final TileSource getCurrentSource() {
+        TileSourceButtonModel buttonModel = (TileSourceButtonModel) this.sourceButtonGroup.getSelection();
+        if (buttonModel != null) {
+            return buttonModel.tileSource;
+        }
+        return null;
     }
 
     /**
@@ -147,28 +137,15 @@ public class SourceButton extends JComponent {
      * @param tileSource the new imagery source to use
      */
     public void setCurrentMap(TileSource tileSource) {
-        for (int i = 0; i < sources.length; i++) {
-            if (sources[i].equals(tileSource)) {
-                currentMap = i;
+        Enumeration<AbstractButton> elems = this.sourceButtonGroup.getElements();
+        while (elems.hasMoreElements()) {
+            AbstractButton b = elems.nextElement();
+            if (((TileSourceButtonModel) b.getModel()).tileSource == tileSource) {
+                b.setSelected(true);
                 return;
             }
         }
-        currentMap = 0;
-    }
-
-    private void calculateShownDimension() {
-        if (shownDimension == null) {
-            font = getFont().deriveFont(Font.BOLD).deriveFont(15.0f);
-            int textWidth = 0;
-            FontMetrics fm = getFontMetrics(font);
-            for (TileSource source: sources) {
-                int width = fm.stringWidth(source.getName());
-                if (width > textWidth) {
-                    textWidth = width;
-                }
-            }
-            barWidth = textWidth + 50;
-            shownDimension = new Dimension(barWidth + shrinkImage.getIconWidth(), sources.length * LAYER_HEIGHT + TOP_PADDING + BOTTOM_PADDING);
-        }
+        // failed to find the correct one
+        this.setSourceDefault();
     }
 }
