@@ -75,7 +75,7 @@ public class ColorPreference implements SubPreferenceSetting {
     private JButton defaultSet;
     private JButton remove;
 
-    private static class ColorEntry implements Comparable<ColorEntry> {
+    private static class ColorEntry {
         String key;
         Color color;
 
@@ -90,12 +90,6 @@ public class ColorPreference implements SubPreferenceSetting {
 
         public String getDisplay() {
             return Main.pref.getColorName(key);
-        }
-
-        @Override
-        public int compareTo(ColorEntry o) {
-            if (o == null) return -1;
-            return Collator.getInstance().compare(getDisplay(), o.getDisplay());
         }
     }
 
@@ -207,7 +201,7 @@ public class ColorPreference implements SubPreferenceSetting {
     }
 
     private void addColorRows(List<ColorEntry> entries) {
-        Collections.sort(entries);
+        Collections.sort(entries, (e1, e2) -> Collator.getInstance().compare(e1.getDisplay(), e2.getDisplay()));
         entries.forEach(tableModel::addEntry);
     }
 
