@@ -95,6 +95,8 @@ import org.xml.sax.SAXException;
 public class Preferences extends AbstractPreferences implements IBaseDirectories {
 
     private static final String COLOR_PREFIX = "color.";
+    private static final Pattern COLOR_LAYER_PATTERN = Pattern.compile("layer (.+)");
+    private static final Pattern COLOR_MAPPAINT_PATTERN = Pattern.compile("mappaint\\.(.+?)\\.(.+)");
 
     private static final String[] OBSOLETE_PREF_KEYS = {
       "imagery.layers.addedIds", /* remove entry after June 2017 */
@@ -977,16 +979,22 @@ public class Preferences extends AbstractPreferences implements IBaseDirectories
 
     /* only for preferences */
     public synchronized String getColorName(String o) {
-        Matcher m = Pattern.compile("mappaint\\.(.+?)\\.(.+)").matcher(o);
-        if (m.matches()) {
-            return tr("Paint style {0}: {1}", tr(I18n.escape(m.group(1))), tr(I18n.escape(m.group(2))));
-        }
-        m = Pattern.compile("layer (.+)").matcher(o);
+        Matcher m = COLOR_LAYER_PATTERN.matcher(o);
         if (m.matches()) {
             return tr("Layer: {0}", tr(I18n.escape(m.group(1))));
         }
         String fullKey = COLOR_PREFIX + o;
-        return colornames.containsKey(fullKey) ? tr(I18n.escape(colornames.get(fullKey))) : fullKey;
+        if (colornames.containsKey(fullKey)) {
+            String name = colornames.get(fullKey);
+            Matcher m2 = COLOR_MAPPAINT_PATTERN.matcher(name);
+            if (m2.matches()) {
+                return tr("Paint style {0}: {1}", tr(I18n.escape(m2.group(1))), tr(I18n.escape(m2.group(2))));
+            } else {
+                return tr(I18n.escape(colornames.get(fullKey)));
+            }
+        } else {
+            return fullKey;
+        }
     }
 
     /**
